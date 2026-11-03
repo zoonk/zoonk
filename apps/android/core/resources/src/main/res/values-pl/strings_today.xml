@@ -19,6 +19,7 @@
   "today_coming_stalled": "74afed68a1184633af1fdb397cae6039f3b22f1d9c95429561d2da0a6b2f6d46",
   "today_coming_title": "4b85ad32e14b179ff8e21af16bfef336b81bb8c3f5f2f07d8529f3df32190da6",
   "today_coming_writing": "783eb012e7181c87472f8e3fd240b2310e96a8f3c9507732a61365dceef7cc42",
+  "today_completed_lessons_detail": "3ead628db914b6bb2447d30370a5dba1430389ac1053d5e2dbf46788ad6c7360",
   "today_connection_lost": "2ea15112203e79d03ac0f0e9550b16779a7c15b53240357afb930e6f6da94fee",
   "today_connection_lost_detail": "07c15854b1b07214636185f5519bce3eee6fbc020e031e13ea5c8e7e9a981a1b",
   "today_continue_explanation": "622d25446591cbb5b39f82146c830cd385c57824faee6d24a2703abffad340c6",
@@ -432,6 +433,8 @@
     <string name="today_practice_anytime">Ćwicz, kiedy chcesz</string>
     <string name="today_mistakes_notebook">Zeszyt błędów</string>
     <string name="today_mistakes_redo">Popraw błędne odpowiedzi</string>
+    <!-- Under "Completed lessons" in Practice anytime. -->
+    <string name="today_completed_lessons_detail">Wróć do dowolnej ukończonej lekcji</string>
     <string name="today_mistakes_return_tomorrow">Dzisiejsze błędy wrócą jutro</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d do przećwiczenia</item>

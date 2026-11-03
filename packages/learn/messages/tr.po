@@ -103,6 +103,7 @@ msgstr "Çalışıldı"
 
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/session/session-queue.tsx
@@ -584,9 +585,9 @@ msgstr "{dateKind, select, month {Hedefindeki tüm konuları {date} ayına kadar
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
-msgctxt "Nmkk7T"
-msgid "{dateKind, select, month {Your date, {date}, has passed. You can choose a new one on the next screen.} other {Your date, {date}, has passed. You can choose a new one on the next screen.}}"
-msgstr "{dateKind, select, month {Hedef tarihin olan {date} geçti. Sonraki ekranda yeni bir tarih seçebilirsin.} other {Hedef tarihin olan {date} geçti. Sonraki ekranda yeni bir tarih seçebilirsin.}}"
+msgctxt "2IAd52"
+msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}"
+msgstr "{dateKind, select, month {Hedef tarihin ({date}) geçti.} other {Hedef tarihin ({date}) geçti.}}"
 
 #: src/_components/time-answer-lines.tsx
 msgctxt "lzWfsi"
@@ -2180,6 +2181,34 @@ msgstr "Yarın yeniden deneyebilirsin"
 msgctxt "ohcs3n"
 msgid "New try in your next session"
 msgstr "Bir sonraki çalışmanda yeniden deneyebilirsin"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/plan-sections.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "Tamamlanan dersler"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+msgctxt "Sr-Gso"
+msgid "Go back to any lesson you've finished"
+msgstr "Tamamladığın derslerden istediğine geri dön"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "6dIxDP"
+msgid "Yesterday"
+msgstr "Dün"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "qckJsw"
+msgid "Lessons you finish show up here, so you can do them again anytime."
+msgstr "Tamamladığın dersler burada görünür, böylece istediğin zaman tekrar edebilirsin."
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "Daha fazla göster"
 
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
@@ -4138,6 +4167,7 @@ msgstr ", buradasın"
 #: src/missions/mission-copy.tsx
 #: src/session/session-queue.tsx
 #: src/today/today-block-row.tsx
+#: src/today/today-row-open.tsx
 msgctxt "9G_42V"
 msgid ", done"
 msgstr ", tamamlandı"
@@ -7129,11 +7159,6 @@ msgctxt "iqfrWz"
 msgid "What you got wrong"
 msgstr "Yanlış yaptıkların"
 
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "Daha fazla göster"
-
 #: src/mistakes/mistakes-row.tsx
 msgctxt "lLGcbO"
 msgid "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
@@ -9715,6 +9740,18 @@ msgstr "Kullanım amacın"
 msgctxt "LHVFe7"
 msgid "E.g., reports, A/B tests"
 msgstr "Örn. raporlar, A/B testleri"
+
+#. A link under the daily study time that opens the question about the goal's date, to change it.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "pttbjJ"
+msgid "Change date"
+msgstr "Tarihi değiştir"
+
+#. A link under the daily study time that opens the question about the goal's date, for a goal with none yet.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "BJnENG"
+msgid "Choose a date"
+msgstr "Bir tarih seç"
 
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"
@@ -12926,11 +12963,6 @@ msgid "{phase} · after the challenge before it"
 msgstr "{phase} · önceki meydan okumadan sonra"
 
 #: src/today/today-block-row.tsx
-msgctxt "PFPoFb"
-msgid ", counts toward a mission"
-msgstr ", bir görevde ilerleme sağlar"
-
-#: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
 msgid ", skipped"
 msgstr ", atlandı"
@@ -13284,6 +13316,11 @@ msgstr "{goal} için planını hazırlıyoruz"
 msgctxt "YIDCBU"
 msgid "It usually takes a minute or two. Your first day opens here as soon as it's ready."
 msgstr "Genellikle bir iki dakika sürer. İlk günün hazır olur olmaz burada açılır."
+
+#: src/today/today-row-open.tsx
+msgctxt "PFPoFb"
+msgid ", counts toward a mission"
+msgstr ", bir görevde ilerleme sağlar"
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx

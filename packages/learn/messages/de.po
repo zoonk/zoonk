@@ -103,6 +103,7 @@ msgstr "Gelernt"
 
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/session/session-queue.tsx
@@ -584,9 +585,9 @@ msgstr "{dateKind, select, month {Deckt bis {date} alle Inhalte für dein Ziel a
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
-msgctxt "Nmkk7T"
-msgid "{dateKind, select, month {Your date, {date}, has passed. You can choose a new one on the next screen.} other {Your date, {date}, has passed. You can choose a new one on the next screen.}}"
-msgstr "{dateKind, select, month {Dein Zieltermin im {date} ist vorbei. Auf der nächsten Seite kannst du einen neuen wählen.} other {Dein Zieltermin am {date} ist vorbei. Auf der nächsten Seite kannst du einen neuen wählen.}}"
+msgctxt "2IAd52"
+msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}"
+msgstr "{dateKind, select, month {Dein Zieldatum ({date}) liegt in der Vergangenheit.} other {Dein Zieldatum ({date}) liegt in der Vergangenheit.}}"
 
 #: src/_components/time-answer-lines.tsx
 msgctxt "lzWfsi"
@@ -2180,6 +2181,34 @@ msgstr "Neuer Versuch morgen"
 msgctxt "ohcs3n"
 msgid "New try in your next session"
 msgstr "Neuer Versuch in deiner nächsten Lerneinheit"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/plan-sections.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "Abgeschlossene Lektionen"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+msgctxt "Sr-Gso"
+msgid "Go back to any lesson you've finished"
+msgstr "Jede abgeschlossene Lektion noch einmal öffnen"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "6dIxDP"
+msgid "Yesterday"
+msgstr "Gestern"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "qckJsw"
+msgid "Lessons you finish show up here, so you can do them again anytime."
+msgstr "Abgeschlossene Lektionen erscheinen hier, damit du sie jederzeit wiederholen kannst."
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "Mehr anzeigen"
 
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
@@ -4138,6 +4167,7 @@ msgstr ", du bist hier"
 #: src/missions/mission-copy.tsx
 #: src/session/session-queue.tsx
 #: src/today/today-block-row.tsx
+#: src/today/today-row-open.tsx
 msgctxt "9G_42V"
 msgid ", done"
 msgstr ", abgeschlossen"
@@ -7129,11 +7159,6 @@ msgctxt "iqfrWz"
 msgid "What you got wrong"
 msgstr "Was du falsch beantwortet hast"
 
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "Mehr anzeigen"
-
 #: src/mistakes/mistakes-row.tsx
 msgctxt "lLGcbO"
 msgid "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
@@ -9715,6 +9740,18 @@ msgstr "Wofür du es nutzen möchtest"
 msgctxt "LHVFe7"
 msgid "E.g., reports, A/B tests"
 msgstr "Z. B. Berichte, A/B-Tests"
+
+#. A link under the daily study time that opens the question about the goal's date, to change it.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "pttbjJ"
+msgid "Change date"
+msgstr "Datum ändern"
+
+#. A link under the daily study time that opens the question about the goal's date, for a goal with none yet.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "BJnENG"
+msgid "Choose a date"
+msgstr "Datum auswählen"
 
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"
@@ -12926,11 +12963,6 @@ msgid "{phase} · after the challenge before it"
 msgstr "{phase} · nach der vorherigen Herausforderung"
 
 #: src/today/today-block-row.tsx
-msgctxt "PFPoFb"
-msgid ", counts toward a mission"
-msgstr ", zählt für eine Mission"
-
-#: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
 msgid ", skipped"
 msgstr ", übersprungen"
@@ -13284,6 +13316,11 @@ msgstr "Wir erstellen deinen Plan für {goal}"
 msgctxt "YIDCBU"
 msgid "It usually takes a minute or two. Your first day opens here as soon as it's ready."
 msgstr "Das dauert normalerweise ein bis zwei Minuten. Dein erster Tag öffnet sich hier, sobald er bereit ist."
+
+#: src/today/today-row-open.tsx
+msgctxt "PFPoFb"
+msgid ", counts toward a mission"
+msgstr ", zählt für eine Mission"
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx

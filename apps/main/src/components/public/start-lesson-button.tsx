@@ -4,7 +4,7 @@ import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { useRouter } from "@/i18n/navigation";
 import { getLessonWritingHref } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
-import { ORIGIN_PARAM, withCatalogOrigin } from "@/lib/public/public-hrefs";
+import { ORIGIN_PARAM, withOrigin } from "@/lib/public/public-hrefs";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
@@ -56,7 +56,7 @@ function useLessonStart({ lessonId, origin }: { lessonId: string; origin: string
       }
 
       startTransition(() =>
-        router.push(withCatalogOrigin(getLessonWritingHref({ answer, lessonId }), origin)),
+        router.push(withOrigin(getLessonWritingHref({ answer, lessonId }), origin)),
       );
     } finally {
       opening.current = false;

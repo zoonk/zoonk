@@ -91,9 +91,16 @@ extension SetupProgress {
       return nil
     }
 
-    let answered = history.filter(Self.questions.contains).count
-    let remaining = steps.filter { $0 != current && Self.questions.contains($0) }.count
-    self.init(step: answered + 1, total: answered + 1 + remaining)
+    // Each question counts once, where the learner meets it: an earlier one opened again from a
+    // later screen keeps its place, and the screen it was opened from is still ahead.
+    let ahead = steps.filter(Self.questions.contains)
+    let behind = history.filter {
+      Self.questions.contains($0) && ($0 == current || !ahead.contains($0))
+    }
+
+    var seen = Set<Components.Schemas.OnboardingStep>()
+    let order = (behind + [current] + ahead).filter { seen.insert($0).inserted }
+    self.init(step: (order.firstIndex(of: current) ?? 0) + 1, total: order.count)
   }
 }
 
@@ -108,8 +115,10 @@ private struct GoalSteps: View {
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
   @State private var history: [Components.Schemas.OnboardingStep]
-  /// A step the learner went Back to; nil follows the next step the server says.
+  /// A step the learner went Back to, or opened from a later one; nil follows the next step the
+  /// server says.
   @State private var revisiting: Components.Schemas.OnboardingStep?
+  @State private var scheduleDraft: ScheduleQuestion.Draft?
   @State private var isSaving = false
   @State private var failed = false
   /// Why the last save was refused, when the answer itself was.
@@ -165,7 +174,9 @@ private struct GoalSteps: View {
   var body: some View {
     StepScreen(
       step: step, view: view, isSaving: isSaving, failed: failed, refusal: refusal,
+      scheduleDraft: scheduleDraft,
       onAnswer: answer,
+      onChangeDate: changeDate,
       onPlacementDone: finishPlacement
     )
     .environment(\.onboardingAside, .planSoFar(planFacts))
@@ -272,6 +283,12 @@ private struct GoalSteps: View {
     history.append(answered)
     revisiting = nil
 
+    // Reaching a screen already in the history returns to it as it was, so Back skips the
+    // questions opened from it.
+    if let seen = history.firstIndex(of: updated.steps.first ?? .plan) {
+      history.removeSubrange(seen...)
+    }
+
     if updated.goal.id != view.goal.id {
       onGoalMoved(updated.goal.id)
     }
@@ -282,8 +299,21 @@ private struct GoalSteps: View {
       return
     }
 
+    // What the time question kept for a date change is stale once the learner leaves it by Back.
+    if step == .schedule {
+      scheduleDraft = nil
+    }
+
     failed = false
     revisiting = previous
+  }
+
+  /// Back returns to the time question, and so does the date's answer, after any question it raises.
+  private func changeDate(_ draft: ScheduleQuestion.Draft) {
+    scheduleDraft = draft
+    history.append(step)
+    failed = false
+    revisiting = .targetDate
   }
 
   private func startOver() async {
@@ -331,7 +361,9 @@ private struct StepScreen: View {
   let isSaving: Bool
   let failed: Bool
   let refusal: OnboardingError?
+  let scheduleDraft: ScheduleQuestion.Draft?
   let onAnswer: ([String: Any]) -> Void
+  let onChangeDate: (ScheduleQuestion.Draft) -> Void
   let onPlacementDone: () async throws -> Void
 
   var body: some View {
@@ -348,7 +380,8 @@ private struct StepScreen: View {
       PlanStep(view: view)
     case .schedule:
       ScheduleQuestion(
-        view: view, isSaving: isSaving, failed: failed, refusal: refusal, onAnswer: onAnswer
+        view: view, draft: scheduleDraft, isSaving: isSaving, failed: failed, refusal: refusal,
+        onAnswer: onAnswer, onChangeDate: onChangeDate
       )
       .onboardingColumn()
     default:

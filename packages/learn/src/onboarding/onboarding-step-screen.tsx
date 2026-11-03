@@ -29,6 +29,7 @@ import {
 import { RoleStep } from "./steps/role-step";
 import { ScheduleStep } from "./steps/schedule-step";
 import { SubjectsLevelStep } from "./steps/subjects-level-step";
+import { type ScheduleDraft } from "./steps/use-schedule";
 
 function getSubject(view: OnboardingView): string {
   const subject = view.goal.details.subject;
@@ -147,8 +148,10 @@ export function OnboardingStepScreen({
   onPlacementDone,
   pending,
   plan,
+  refreshPages,
   routes,
   run,
+  schedule,
   step,
   view,
 }: {
@@ -158,7 +161,9 @@ export function OnboardingStepScreen({
   onPlacementDone: () => void;
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
+  refreshPages: () => void;
   routes: OnboardingRoutes;
+  schedule: { draft: ScheduleDraft | null; onChangeDate: (draft: ScheduleDraft) => void };
   run: GenerationRun | null;
   step: OnboardingStep;
   view: OnboardingView;
@@ -175,12 +180,16 @@ export function OnboardingStepScreen({
       return (
         <ScheduleStep
           {...props}
+          // Its answers are for one date, so a date saved while it shows asks them again.
+          key={view.goal.targetDate ?? "none"}
           // An exam takes its notice's day when the learner gave none.
           dated={view.goal.targetDate !== null || view.goal.kind === "exam"}
+          draft={schedule.draft}
           exam={view.goal.kind === "exam"}
           findTimeToCover={(week) => actions.findTimeToCover({ goalId: view.goal.id, ...week })}
           getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
           goal={view.goal}
+          onChangeDate={schedule.onChangeDate}
           planReadiness={view.planReadiness}
           recommendedMinutes={view.recommendedMinutes}
           run={run}
@@ -231,6 +240,7 @@ export function OnboardingStepScreen({
           planActions={plan.planActions}
           focusTestHref={routes.focusTest(view.goal.id)}
           planLinkHref={routes.planLink}
+          refreshPages={refreshPages}
           run={run}
           signUpHref={routes.signUp}
           todayHref={routes.today}

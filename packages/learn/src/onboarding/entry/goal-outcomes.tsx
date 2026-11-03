@@ -2,6 +2,7 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import {
   GuitarIcon,
   HandHeartIcon,
@@ -34,9 +35,9 @@ export function SignUpLink({ href }: { href: string }) {
   const t = useExtracted();
 
   return (
-    <a className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
+    <PendingLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
       {t("Create a free account")}
-    </a>
+    </PendingLink>
   );
 }
 
@@ -220,9 +221,12 @@ function WaitlistNote({
       <p className="text-muted-foreground text-sm" role="status">
         {t("Create an account so we can let you know.")}
         {space}
-        <a className="text-foreground font-medium underline underline-offset-4" href={signUpHref}>
+        <PendingLink
+          className="text-foreground font-medium underline underline-offset-4"
+          href={signUpHref}
+        >
           {t("Create an account")}
-        </a>
+        </PendingLink>
       </p>
     );
   }

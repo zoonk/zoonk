@@ -8,6 +8,7 @@ function startedRun(): Extract<LessonStartOutcome, { reason: "started" }> {
     answers: [],
     hyperdrive: { knownStepIds: [], streak: 0 },
     reason: "started",
+    replay: false,
     runId: crypto.randomUUID(),
     startedAt: new Date().toISOString(),
   };

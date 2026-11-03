@@ -11,6 +11,7 @@ import { Link, getPathname } from "@/i18n/navigation";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { type PriceInfo } from "@zoonk/utils/currency";
 import { getExtracted } from "next-intl/server";
 import { getMonthlyEquivalent, getYearlyPriceComparison } from "./billing-prices";
@@ -60,17 +61,17 @@ export async function PlusLoginLink({
 
   if (!hasChoice) {
     return (
-      <a className={className} href={getHref()}>
+      <PendingLink className={className} href={getHref()}>
         {t("Get Plus")}
-      </a>
+      </PendingLink>
     );
   }
 
   return PERIODS.map((period) => (
     <Variant as="span" className="contents" key={period} name={billingSwitch} value={period}>
-      <a className={className} href={getHref(period)}>
+      <PendingLink className={className} href={getHref(period)}>
         {t("Get Plus")}
-      </a>
+      </PendingLink>
     </Variant>
   ));
 }

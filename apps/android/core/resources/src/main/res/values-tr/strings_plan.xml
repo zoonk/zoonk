@@ -513,8 +513,8 @@
   "plan_time_none": "0e960584c81586c7eecedff194297b2d8060df9b21579c4b6b4528031e17146f",
   "plan_time_none_month": "f6d0cbe3b67a0295cb8cfca52bf4c13ffdc8df95bd4f0117a20e0f857cf02f2b",
   "plan_time_on_weekends": "db0f2d7eff188a1d0f9512a3052cbcce2c6ef8a4a548cbc90b1faf8464e2ca55",
-  "plan_time_past_date": "e13261c24d205a3fa9d33d6529ba3e6baed636eed988ea429cd23c9fb0483820",
-  "plan_time_past_date_month": "58cd0eb4de575d190eedd505df8153a0ca8937e44a7d701febd8b81f5613a5b0",
+  "plan_time_past_date": "0c99bbe1a2a5f7b50dcf611abbf2f4c78056d8d0e1770c8337c6d1269ee81eed",
+  "plan_time_past_date_month": "460501f695e3241f499b6000ddcf580d7eb6e0e651c47f1a2cc9468db473e1ea",
   "plan_time_share_exam": "1893d33bb0429e007a039dc001739506ababb4646d9d11970210987a571225ec",
   "plan_time_share_exam_month": "d37ddf3b71b95690359d9df15012faae3d47a3b27ba0a1e352b0ee7921fcf47b",
   "plan_time_share_goal": "7ec6af210109881e3973d9a530900a22ed7163544562804c8151354b929be16f",
@@ -1441,9 +1441,9 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">Hedefindeki tüm konuları %1$s tarihine kadar ele alır.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_past_date">Hedef tarihin (%1$s) geçti. Sonraki ekranda yeni bir tarih seçebilirsin.</string>
+    <string name="plan_time_past_date">Hedef tarihin (%1$s) geçti.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="plan_time_past_date_month">Hedef tarihin (%1$s) geçti. Sonraki ekranda yeni bir tarih seçebilirsin.</string>
+    <string name="plan_time_past_date_month">Hedef tarihin (%1$s) geçti.</string>
     <string name="plan_time_finish_unknown">Bu program için bitiş tarihi tahmin edemiyoruz. Çalışma süreni veya çalışma günü sayını artırmayı dene.</string>
     <string name="plan_time_finish_failed">Ne zaman bitireceğini hesaplayamadık.</string>
     <string name="plan_time_no_days">En az bir çalışma günü seç.</string>

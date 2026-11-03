@@ -3,7 +3,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useTransition } from "react";
 import { KindMark } from "../_components/kind-tile";
 import { PlusMark } from "../_components/plus-lock";
 import { TestOutStartLink } from "../_components/test-out-start-link";
@@ -15,19 +14,14 @@ import { type DayStep } from "../session/session-types";
 import { getChallengePhase, useBlockDetail, useBlockTitle } from "../session/use-block-copy";
 import { useTodayScreen } from "./today-context";
 import { NEXT_TITLE_ID } from "./today-ids";
-import { isFinished } from "./today-queue";
+import { getLessonAgainId, isFinished } from "./today-queue";
+import { LessonAgainLink, ROW_OPEN_CLASS, RowOpen } from "./today-row-open";
 import { useRowLabel } from "./use-row-label";
 import { useLessonBeingWritten } from "./use-today-copy";
 
 export type RowFold = { hidden: boolean; phone: boolean; wide: boolean };
 
 export const NO_FOLD: RowFold = { hidden: false, phone: false, wide: false };
-
-/**
- * Its `::after` stretches over the whole row, so the row is one target with its focus ring there.
- */
-const ROW_OPEN_CLASS =
-  "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-[0.625rem] focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 disabled:cursor-default";
 
 function useWaitLabel() {
   const t = useExtracted();
@@ -63,43 +57,6 @@ export function getRowClass({
       : "before:-inset-x-2.5",
     fold.hidden && fold.phone && "max-sm:hidden",
     fold.hidden && fold.wide && "hidden",
-  );
-}
-
-function RowOpen({
-  block,
-  children,
-  countsTowardMission,
-  isNext,
-}: {
-  block: DayStep;
-  children: React.ReactNode;
-  countsTowardMission: boolean;
-  isNext: boolean;
-}) {
-  const { actions } = useTodayScreen();
-  const t = useExtracted();
-  const title = useBlockTitle();
-  const [pending, startTransition] = useTransition();
-
-  const open = () => {
-    startTransition(async () => {
-      await actions.openBlock(block);
-    });
-  };
-
-  return (
-    <button
-      aria-busy={pending || undefined}
-      aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
-      className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
-      data-slot="today-row-open"
-      disabled={pending}
-      onClick={open}
-      type="button"
-    >
-      {children}
-    </button>
   );
 }
 
@@ -185,6 +142,40 @@ export function useCountsTowardMission() {
     );
 }
 
+function RowTarget({
+  block,
+  countsTowardMission,
+  isNext,
+  lessonAgainId,
+  opens,
+}: {
+  block: DayStep;
+  countsTowardMission: boolean;
+  isNext: boolean;
+  lessonAgainId: string | null;
+  opens: boolean;
+}) {
+  const name = <RowName block={block} isNext={isNext} />;
+
+  if (lessonAgainId) {
+    return (
+      <LessonAgainLink block={block} lessonId={lessonAgainId}>
+        {name}
+      </LessonAgainLink>
+    );
+  }
+
+  if (isFinished(block) || block.waitReason || !opens) {
+    return name;
+  }
+
+  return (
+    <RowOpen block={block} countsTowardMission={countsTowardMission} isNext={isNext}>
+      {name}
+    </RowOpen>
+  );
+}
+
 /**
  * A finished row shows no minutes: they were the plan's estimate, and "✓ Reviews 8 min" above "2
  * min studied" read as time studied.
@@ -204,12 +195,15 @@ export function BlockRow({
   const finished = isFinished(block);
   const countsTowardMission = useCountsTowardMission()(block);
   const wait = block.waitReason;
-  const name = <RowName block={block} isNext={isNext} />;
+  const lessonAgainId = getLessonAgainId(block);
 
   return (
     <li
       aria-current={isNext ? "step" : undefined}
-      className={getRowClass({ finished, fold, isNext })}
+      className={cn(
+        getRowClass({ finished, fold, isNext }),
+        lessonAgainId && "has-[a:hover]:before:bg-muted/70",
+      )}
       data-slot={isNext ? "today-next" : undefined}
     >
       <span className="flex h-5 w-3 shrink-0 items-center justify-center">
@@ -217,13 +211,13 @@ export function BlockRow({
       </span>
 
       <div className="flex min-w-0 flex-1 flex-col gap-px">
-        {finished || wait || !opens ? (
-          name
-        ) : (
-          <RowOpen block={block} countsTowardMission={countsTowardMission} isNext={isNext}>
-            {name}
-          </RowOpen>
-        )}
+        <RowTarget
+          block={block}
+          countsTowardMission={countsTowardMission}
+          isNext={isNext}
+          lessonAgainId={lessonAgainId}
+          opens={opens}
+        />
 
         {!finished && <RowLines block={block} isNext={isNext} wait={wait} />}
       </div>

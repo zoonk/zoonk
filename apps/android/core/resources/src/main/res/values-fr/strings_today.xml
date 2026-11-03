@@ -19,6 +19,7 @@
   "today_coming_stalled": "dd69f59ae2b061a641b0bc9e52db86560b85a8fc54e529b32f391a138f5a3979",
   "today_coming_title": "980878d5649b82d3861c10cf3ed61ec6629e7d6732aa554aa04374c9643c941b",
   "today_coming_writing": "46ea1f8c5ef79d2c84de5125192bc3a416991788afff946003633752df3e1534",
+  "today_completed_lessons_detail": "8ab7dec75b425053fa41bf808f6ad9054a0687ed2fc61d98ef24dfa0da9855eb",
   "today_connection_lost": "17ae1220ab6744533c222894bce3bdbd18535ad726526ae78ee0af4f825f23e0",
   "today_connection_lost_detail": "5c025dbdbc242cacc5899174e1361cdc7b67e75240e41dba0b4421ac017df51a",
   "today_continue_explanation": "a31d58b1c10fa1a4a9a0727dfae2ca99834d7ce8c86db3654646dfc1a8b21361",
@@ -418,6 +419,8 @@
     <string name="today_practice_anytime">S’entraîner à tout moment</string>
     <string name="today_mistakes_notebook">Carnet d’erreurs</string>
     <string name="today_mistakes_redo">Refais les exercices où tu t’es trompé</string>
+    <!-- Under "Completed lessons" in Practice anytime. -->
+    <string name="today_completed_lessons_detail">Retrouve toutes les leçons que tu as terminées</string>
     <string name="today_mistakes_return_tomorrow">Les erreurs d’aujourd’hui seront à revoir demain</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d erreur à réviser</item>

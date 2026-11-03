@@ -115,6 +115,34 @@ describe("the buddy's conversation", () => {
     expect(api.inputs.map((input) => input.question)).toStrictEqual([question]);
   });
 
+  it("shows a question as sent at once, and puts it back in the composer when it doesn't go through", async () => {
+    const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
+    const connectionDrops = Promise.withResolvers<null>();
+    const question = "Why do I study fractions first?";
+
+    api.next("create", async () => {
+      await connectionDrops.promise;
+      throw new TypeError("Failed to fetch");
+    });
+
+    renderConversation();
+    await ask(question);
+
+    const composer = page.getByRole("textbox", { name: "Message Zu" });
+    const turn = page.getByRole("article", { name: "Your question" });
+    await expect.element(turn).toMatchTextContent(`${question}ZuThinking…`);
+    await expect.element(composer).toHaveValue("");
+
+    connectionDrops.resolve(null);
+
+    await expect
+      .element(page.getByRole("alert"))
+      .toHaveTextContent("We couldn't send your last question. Try again.");
+
+    await expect.element(turn).not.toBeInTheDocument();
+    await expect.element(composer).toHaveValue(question);
+  });
+
   it("shows the thread the page read at once, without reading it again from the browser", async () => {
     const api = stubTutorApi({});
 

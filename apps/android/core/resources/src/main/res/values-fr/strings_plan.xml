@@ -513,8 +513,8 @@
   "plan_time_none": "50347b1aa97a8cb2b4dc3e01669a51f59b6fe58caa7ac02063dbd19d0a2b0b7b",
   "plan_time_none_month": "4f31206383c8e5e88596393137edd022a2e5163308f964b49293f8d5bd899a3c",
   "plan_time_on_weekends": "05ab1cc64f4ae6a32ff7125ce481c7efc8cc5440d491f16b65c0ede70f78e831",
-  "plan_time_past_date": "b366e2d3e5d95a2ed92fadc6193fae5328f959fc7339a10def2c6f4473eeb232",
-  "plan_time_past_date_month": "9335db332aaac6b9afd8a852cd186eb26486cbe48addf06881c7fa421ce32795",
+  "plan_time_past_date": "9fbe74e261b45d4ed10368eca021f019d7aa0ec02f2e0a36e402b93f0b4c273f",
+  "plan_time_past_date_month": "7c837cb1ac041cc898bc00c456afdd71c9955aeab7fc340c37911bece32e5900",
   "plan_time_share_exam": "4cc49ae51e976b272170d85be45deaeac439b999f55778f585432c06eba738e1",
   "plan_time_share_exam_month": "e97bedfedd053d4dd58c100d3666ef0678a31b3e6f9ebaed0cd846f7c8109e29",
   "plan_time_share_goal": "1447e0801b3b63938073dcb789090070bca88428a363385fa1dc55e449764574",
@@ -1523,9 +1523,9 @@
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_goal_all_month">Permet d’étudier tout le contenu de ton objectif d’ici %1$s.</string>
     <!-- %1$s is a day, such as "May 5". -->
-    <string name="plan_time_past_date">La date que tu as choisie, le %1$s, est passée. Tu peux en choisir une autre à l’écran suivant.</string>
+    <string name="plan_time_past_date">La date prévue, le %1$s, est passée.</string>
     <!-- %1$s is a month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it. -->
-    <string name="plan_time_past_date_month">La date que tu as choisie, %1$s, est passée. Tu peux en choisir une autre à l’écran suivant.</string>
+    <string name="plan_time_past_date_month">La date prévue (%1$s) est passée.</string>
     <string name="plan_time_finish_unknown">Nous ne pouvons pas estimer de date de fin avec ce rythme. Essaie d’étudier plus longtemps ou plus de jours.</string>
     <string name="plan_time_finish_failed">Nous n’avons pas pu calculer ta date de fin.</string>
     <string name="plan_time_no_days">Choisis au moins un jour d’étude.</string>

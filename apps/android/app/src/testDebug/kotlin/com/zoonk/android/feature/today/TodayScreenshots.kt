@@ -137,7 +137,15 @@ class TodayScreenshots {
                     buddyName = "Zu",
                     refreshIfChanged = app.today::refreshIfChanged,
                     brainPower = 1240,
-                    practice = { TodayPracticeRows(MistakeListAvailability(ready = 3, tomorrow = 1), MOCKS, SPEAKING, navigate = {}) },
+                    practice = {
+                        TodayPracticeRows(
+                            MistakeListAvailability(ready = 3, tomorrow = 1),
+                            MOCKS,
+                            SPEAKING,
+                            completedLessons = true,
+                            navigate = {},
+                        )
+                    },
                 )
             }
         }

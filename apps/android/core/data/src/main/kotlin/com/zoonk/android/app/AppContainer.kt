@@ -46,6 +46,8 @@ import com.zoonk.android.feature.challenge.ChallengeStore
 import com.zoonk.android.feature.challenge.LiveChallengeApi
 import com.zoonk.android.feature.checkpoint.CheckpointStore
 import com.zoonk.android.feature.checkpoint.LiveCheckpointApi
+import com.zoonk.android.feature.completedlessons.CompletedLessonsStore
+import com.zoonk.android.feature.completedlessons.LiveCompletedLessonsApi
 import com.zoonk.android.feature.conversation.ConversationStore
 import com.zoonk.android.feature.conversation.LiveConversationApi
 import com.zoonk.android.feature.essay.EssayStore
@@ -296,6 +298,7 @@ class AppContainer private constructor(
     val questionBlocks = QuestionBlockStore(LiveQuestionBlockApi(api), cache, timeZone)
     val mistakes = MistakesStore(LiveMistakesApi(api), cache, timeZone)
     val mistakesNotebook = MistakesNotebookStore(LiveNotebookApi(api), cache, sessions, timeZone)
+    val completedLessons = CompletedLessonsStore(LiveCompletedLessonsApi(api), cache, sessions)
     val patterns = PatternStore(LivePatternApi(api), cache, timeZone)
     val checkpoints = CheckpointStore(LiveCheckpointApi(api), cache, timeZone)
     val challenges = ChallengeStore(LiveChallengeApi(api), cache, timeZone)

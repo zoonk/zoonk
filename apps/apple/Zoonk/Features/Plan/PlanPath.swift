@@ -11,6 +11,8 @@ struct PlanPathSection: View {
     let done = phases.filter { $0.state == .done }.count
 
     Section {
+      PlanCompletedLessonsRow()
+
       if context.goal.kind == .language,
         let alphabet = store.languageUnits(goalId: context.goal.id).value?.alphabet
       {
@@ -499,6 +501,8 @@ struct PlanSyllabusSection: View {
     let isExam = goalKind == .exam
 
     Section {
+      PlanCompletedLessonsRow()
+
       ForEach(syllabus.subjects) { subject in
         NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
           SyllabusSubjectRow(subject: subject, isExam: isExam)
@@ -530,6 +534,28 @@ struct PlanSyllabusSection: View {
         Text(
           "\(syllabus.subjects.count) modules", tableName: "Plan",
           comment: "How many modules the plan has")
+      }
+    }
+  }
+}
+
+/// Phones list the study places nowhere else, so the path leads to the lessons already done.
+private struct PlanCompletedLessonsRow: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(\.tabBarPlacement) private var tabBarPlacement
+
+  var body: some View {
+    if tabBarPlacement?.listsStudyPlaces != true,
+      learner.summary.value?.places.completedLessons == true
+    {
+      NavigationLink(value: AppRoute.completedLessons) {
+        Label {
+          Text(
+            "Completed lessons", tableName: "Plan",
+            comment: "Opens the page of the lessons the learner finished")
+        } icon: {
+          Image(systemName: "clock.arrow.circlepath")
+        }
       }
     }
   }

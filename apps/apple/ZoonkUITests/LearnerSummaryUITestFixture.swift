@@ -33,7 +33,10 @@ let learnerSummaryUITestJSON = """
     "level": { "color": "yellow", "level": 12 },
     "missions": null,
     "nextChangeAt": 4102444800000,
-    "places": { "exam": true, "mindMaps": true, "readyMistakes": 2, "speaking": true },
+    "places": {
+      "completedLessons": false, "exam": true, "mindMaps": true, "readyMistakes": 2,
+      "speaking": true
+    },
     "readAt": 1767225600000,
     "tier": "free",
     "timeZone": "America/New_York",

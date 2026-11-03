@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "completed_lessons_empty_description": "8aeab41bf6eb5885d7fc6116700d198d043ecbf28d98b703d9ac39eb12f5d2b6",
+  "completed_lessons_empty_title": "f934156c78426bcfa0e96683a0f112672d174f8a9cab7f018d5903f72e88a263",
+  "completed_lessons_load_more_failed": "ca93e1ed2fbaefaab533987e1a81ca9182d6f4d69d9b086db4f65db73879cc69",
+  "completed_lessons_loading_more": "7f23944a546573f829958f856e329f420c0df386c9220a7ab782260ea798e444",
+  "completed_lessons_today": "866a6446f9c83cf4cf467af890cf412f2af6efffce0632642764c54e4dae0d43",
+  "completed_lessons_yesterday": "26160d345a2b8f3fc7409fe8bd024d2b1cac04efa8dba6b48c0d275ed4e5ec28"
+}
+-->
+<resources>
+    <!-- A section title over the lessons the learner last finished today. -->
+    <string name="completed_lessons_today">Bugün</string>
+    <!-- A section title over the lessons the learner last finished yesterday. -->
+    <string name="completed_lessons_yesterday">Dün</string>
+    <string name="completed_lessons_empty_title">Henüz tamamladığın ders yok</string>
+    <string name="completed_lessons_empty_description">Tamamladığın dersler burada görünür, böylece istediğin zaman tekrar yapabilirsin.</string>
+    <!-- Read aloud while the next lessons load at the end of the list. -->
+    <string name="completed_lessons_loading_more">Daha fazla ders yüklüyoruz…</string>
+    <string name="completed_lessons_load_more_failed">Yüklenemedi. Tekrar dene.</string>
+</resources>

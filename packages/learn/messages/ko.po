@@ -103,6 +103,7 @@ msgstr "학습함"
 
 #: src/_components/coverage-bar.tsx
 #: src/challenge/challenge-labels.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/session/session-queue.tsx
@@ -584,9 +585,9 @@ msgstr "{dateKind, select, month {{date}까지 목표에 필요한 내용을 모
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
-msgctxt "Nmkk7T"
-msgid "{dateKind, select, month {Your date, {date}, has passed. You can choose a new one on the next screen.} other {Your date, {date}, has passed. You can choose a new one on the next screen.}}"
-msgstr "{dateKind, select, month {설정한 날짜({date})가 지났어요. 다음 화면에서 새 날짜를 선택할 수 있어요.} other {설정한 날짜({date})가 지났어요. 다음 화면에서 새 날짜를 선택할 수 있어요.}}"
+msgctxt "2IAd52"
+msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}"
+msgstr "{dateKind, select, month {정한 날짜({date})가 지났어요.} other {정한 날짜({date})가 지났어요.}}"
 
 #: src/_components/time-answer-lines.tsx
 msgctxt "lzWfsi"
@@ -2180,6 +2181,34 @@ msgstr "내일 다시 도전"
 msgctxt "ohcs3n"
 msgid "New try in your next session"
 msgstr "다음 학습에서 다시 도전"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/journey/plan-sections.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "완료한 레슨"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+msgctxt "Sr-Gso"
+msgid "Go back to any lesson you've finished"
+msgstr "완료한 레슨을 언제든 다시 해 보세요"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "6dIxDP"
+msgid "Yesterday"
+msgstr "어제"
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+msgctxt "qckJsw"
+msgid "Lessons you finish show up here, so you can do them again anytime."
+msgstr "레슨을 완료하면 여기에 표시돼요. 언제든 다시 해 볼 수 있어요."
+
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "더 보기"
 
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
@@ -4138,6 +4167,7 @@ msgstr ", 현재 위치"
 #: src/missions/mission-copy.tsx
 #: src/session/session-queue.tsx
 #: src/today/today-block-row.tsx
+#: src/today/today-row-open.tsx
 msgctxt "9G_42V"
 msgid ", done"
 msgstr ", 완료"
@@ -7129,11 +7159,6 @@ msgctxt "iqfrWz"
 msgid "What you got wrong"
 msgstr "틀린 문제"
 
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "더 보기"
-
 #: src/mistakes/mistakes-row.tsx
 msgctxt "lLGcbO"
 msgid "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
@@ -9715,6 +9740,18 @@ msgstr "활용할 업무"
 msgctxt "LHVFe7"
 msgid "E.g., reports, A/B tests"
 msgstr "예: 보고서, A/B 테스트"
+
+#. A link under the daily study time that opens the question about the goal's date, to change it.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "pttbjJ"
+msgid "Change date"
+msgstr "날짜 바꾸기"
+
+#. A link under the daily study time that opens the question about the goal's date, for a goal with none yet.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "BJnENG"
+msgid "Choose a date"
+msgstr "날짜 정하기"
 
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"
@@ -12926,11 +12963,6 @@ msgid "{phase} · after the challenge before it"
 msgstr "{phase} · 앞선 챌린지를 마친 뒤"
 
 #: src/today/today-block-row.tsx
-msgctxt "PFPoFb"
-msgid ", counts toward a mission"
-msgstr ", 미션 달성에 반영돼요"
-
-#: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
 msgid ", skipped"
 msgstr ", 건너뜀"
@@ -13284,6 +13316,11 @@ msgstr "{goal} 목표에 맞춰 계획을 만들고 있어요"
 msgctxt "YIDCBU"
 msgid "It usually takes a minute or two. Your first day opens here as soon as it's ready."
 msgstr "보통 1~2분 걸려요. 준비되면 여기서 바로 첫날 학습을 시작할 수 있어요."
+
+#: src/today/today-row-open.tsx
+msgctxt "PFPoFb"
+msgid ", counts toward a mission"
+msgstr ", 미션 달성에 반영돼요"
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx

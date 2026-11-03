@@ -592,6 +592,10 @@
     <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
     <string name="onboarding_weekend_time">Different time on weekends</string>
     <string name="onboarding_schedule_time_label">Time a day</string>
+    <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
+    <string name="onboarding_choose_date">Choose a date</string>
+    <!-- The same link when the goal has a date. -->
+    <string name="onboarding_change_date">Change date</string>
     <string name="onboarding_study_days">Study days</string>
     <string name="onboarding_weekend_time_label">Time on weekends</string>
     <string name="onboarding_answers_saved">Your answers are saved.</string>

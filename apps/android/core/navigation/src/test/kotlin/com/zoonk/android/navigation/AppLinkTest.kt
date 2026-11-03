@@ -22,6 +22,7 @@ class AppLinkTest {
             "/mind-maps#natural-sciences" to AppRoute.MindMaps(subject = "natural-sciences"),
             "/pt/mind-maps#ci%C3%AAncias" to AppRoute.MindMaps(subject = "ciências"),
             "/mistakes" to AppRoute.Mistakes,
+            "/completed-lessons" to AppRoute.CompletedLessons,
             "/speaking" to AppRoute.Speaking(),
             "/speaking?task=2" to AppRoute.Speaking(task = "2"),
             "/buddy/earlier-questions" to AppRoute.EarlierQuestions,

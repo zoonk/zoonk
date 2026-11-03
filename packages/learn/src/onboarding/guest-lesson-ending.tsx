@@ -3,6 +3,7 @@
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { BookOpenIcon, CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
@@ -87,12 +88,12 @@ export function GuestLessonNext({
 
       <div className="flex flex-col gap-2">
         {plan}
-        <a
+        <PendingLink
           className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full")}
           href={signUpHref}
         >
           {t("Create an account to save")}
-        </a>
+        </PendingLink>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: e2e-api-${{ github.event.pull_request.number || github.ref }}
+  group: e2e-api-${{ github.event.pull_request.number || github.run_id }}
   # A newer push waits for the running suite instead of cancelling it, so a busy PR's suite still
   # finishes. GitHub keeps one run pending, the newest.
   cancel-in-progress: false

@@ -66,6 +66,7 @@ export type LearnerSummaryToday = {
 
 /** Mistakes become practice-ready at the next learner-local midnight, covered by nextChangeAt. */
 export type LearnerSummaryPlaces = {
+  completedLessons: boolean;
   exam: boolean;
   mindMaps: boolean;
   readyMistakes: number;

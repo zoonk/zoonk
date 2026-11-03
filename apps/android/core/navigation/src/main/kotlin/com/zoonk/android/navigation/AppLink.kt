@@ -125,6 +125,10 @@ object AppLink {
                         AppRoute.Mistakes
                     }
 
+                    "completed-lessons" -> {
+                        AppRoute.CompletedLessons
+                    }
+
                     "speaking" -> {
                         AppRoute.Speaking(task = query["task"])
                     }
