@@ -1,7 +1,7 @@
 import "server-only";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { imageSceneSchema } from "@zoonk/ai/tasks/images/scene-schema";
-import { getImagePalette } from "@zoonk/ai/tasks/images/style";
+import { type ImageCanvas, getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { prisma } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -19,7 +19,16 @@ const CHECK_TIER = chooseServiceTier({ wait: "later" });
 
 async function findAsset(assetId: string) {
   const asset = await prisma.mediaAsset.findUnique({
-    select: { id: true, language: true, ownerId: true, palette: true, scene: true, url: true },
+    select: {
+      height: true,
+      id: true,
+      language: true,
+      ownerId: true,
+      palette: true,
+      scene: true,
+      url: true,
+      width: true,
+    },
     where: { id: assetId },
   });
 
@@ -28,6 +37,10 @@ async function findAsset(assetId: string) {
 }
 
 type CheckedAsset = NonNullable<Awaited<ReturnType<typeof findAsset>>>;
+
+function getAssetCanvas({ height, width }: Pick<CheckedAsset, "height" | "width">): ImageCanvas {
+  return width !== null && width === height ? "square" : "landscape";
+}
 
 function usesPicture(assetId: string) {
   return {
@@ -118,6 +131,7 @@ export async function checkImageAsset({
 
   const drawn = await drawCheckedImage({
     analytics,
+    canvas: getAssetCanvas(asset),
     corrections: review.problems,
     language,
     palette: getImagePalette(asset.palette),

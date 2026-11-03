@@ -7,10 +7,13 @@ import { type CourseCategory } from "@zoonk/utils/categories";
 export const IMAGE_STYLE_VERSION = 4;
 
 /**
- * Landscape leaves room on a phone for the words and options under a picture, and costs less than
- * 1024x1280 portrait (158 output tokens against 173 on gpt-image-2.5-flare, 2 Nov 2026).
+ * A hook or step picture is landscape, leaving room on a phone for the words and options under it,
+ * and costs less than 1024x1280 portrait (158 output tokens against 173 on gpt-image-2.5-flare, 2
+ * Nov 2026). A picture that is an answer option is square, since options sit in a grid (196 tokens).
  */
-export const IMAGE_SIZE = "1536x1024";
+export const IMAGE_SIZES = { landscape: "1536x1024", square: "1024x1024" } as const;
+
+export type ImageCanvas = keyof typeof IMAGE_SIZES;
 
 /**
  * Each subject keeps its colors in every image, so a course looks like one course. Hex values

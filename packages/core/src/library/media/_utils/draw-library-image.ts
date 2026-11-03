@@ -1,7 +1,7 @@
 import "server-only";
 import { type ImageSceneParams, generateImageScene } from "@zoonk/ai/tasks/images/scene";
 import { type ImageScene, describeImageScene } from "@zoonk/ai/tasks/images/scene-schema";
-import { getImagePalette } from "@zoonk/ai/tasks/images/style";
+import { type ImageCanvas, getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { resolveLibraryIdentity } from "../../identity/resolve-library-identity";
@@ -14,6 +14,7 @@ export type ImageAnalytics = ImageSceneParams["analytics"];
 export type LibraryImageRequest = {
   request: string;
   alt?: string | null;
+  canvas?: ImageCanvas;
   screenText?: string | null;
   context?: string | null;
   language: string;
@@ -37,6 +38,7 @@ function numberLabels(parts: readonly string[]): ImageScene["labels"] {
 export async function drawLibraryImage({
   alt,
   analytics,
+  canvas,
   category,
   context,
   language,
@@ -79,7 +81,7 @@ export async function drawLibraryImage({
   }
 
   const palette = getImagePalette(category);
-  const drawn = await drawImage({ analytics, language, palette, scene });
+  const drawn = await drawImage({ analytics, canvas, language, palette, scene });
 
   if (!drawn) {
     return null;

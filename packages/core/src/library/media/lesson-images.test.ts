@@ -419,7 +419,7 @@ describe("pictures questions are asked about", () => {
     ]);
   });
 
-  it("draws a picture option alone, without text or its name, and links it to its option", async () => {
+  it("draws a picture option alone and square, without text or its name, and links it to its option", async () => {
     const lesson = await libraryLessonFixture();
 
     const step = await libraryStepFixture({
@@ -430,11 +430,12 @@ describe("pictures questions are asked about", () => {
 
     const sceneSpy = mockImageScene(testScene({ focalObject: `a ${randomUUID()} doorway` }));
     mockSearchTerms([]);
-    mockDrawnImages([await drawTestImage()]);
+    const drawSpy = mockDrawnImages([await drawTestImage()]);
 
     const outcome = await createStepOptionPicture({ optionId: "gothic", stepId: step.id });
 
     expect(outcome).toMatchObject({ status: "generated" });
+    expect(drawSpy).toHaveBeenCalledWith(expect.objectContaining({ canvas: "square" }));
 
     expect(sceneSpy).toHaveBeenCalledWith(
       expect.objectContaining({ screenText: pictureCheckContent.question, textAllowed: false }),

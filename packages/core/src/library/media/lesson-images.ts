@@ -200,6 +200,7 @@ export async function createStepOptionPicture({
     ...getLessonPictureScope(lesson),
     alt: request.alt,
     analytics,
+    canvas: "square",
     request: request.prompt,
     screenText: request.screenText,
     textAllowed: false,
