@@ -491,6 +491,14 @@ describe("the opening", () => {
     ]);
   });
 
+  it("is still awaited once the call connects, until the character's first words arrive", () => {
+    const connected = play({ events: [], talkSeconds: 120, until: 400 });
+    const greeting = play({ events: GREETING, talkSeconds: 120, until: 600 });
+
+    expect(getCallEndingView(connected.state, 400).greeted).toBe(false);
+    expect(getCallEndingView(greeting.state, 600).greeted).toBe(true);
+  });
+
   it("isn't sent once more when the talk time ran out on the same tick", () => {
     const opened = { at: 0, id: "opening", startMs: 0, type: "acknowledged" } as const;
     const { log } = play({ events: [opened], talkSeconds: 5, until: 9000 });

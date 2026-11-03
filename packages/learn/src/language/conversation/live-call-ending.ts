@@ -382,6 +382,7 @@ export function getCallEndingView(state: CallEndingState, at: number) {
 
   return {
     characterSpeaking: isCharacterSpeaking(state, at),
+    greeted: state.characterAt !== null,
     learnerSpeaking: state.learnerSpeaking,
     quietHint: quiet !== null && quiet >= state.timing.quietHintMs,
     reason: state.reason,

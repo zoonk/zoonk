@@ -122,7 +122,7 @@ function useTurnState({
     return { detail: null, mark: <CallingMark />, title: t("Reconnecting…") };
   }
 
-  if (!turn) {
+  if (!turn?.greeted) {
     return {
       detail: t("{name} answers first.", { name }),
       mark: <CallingMark />,
