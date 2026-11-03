@@ -148,14 +148,17 @@ async function getRouting({
   return routing.exitTo === null && fromPage ? fromPage : routing;
 }
 
+/** A guest opening a lesson from Today or Completed lessons already has a goal: no visitor's ending. */
 function isGuestLesson({
+  origin,
   session,
   studySessionId,
 }: {
+  origin: LessonOrigin | null;
   session: Awaited<ReturnType<typeof getSession>>;
   studySessionId: string | null;
 }): boolean {
-  return Boolean(session?.user.isAnonymous) && studySessionId === null;
+  return Boolean(session?.user.isAnonymous) && studySessionId === null && origin?.kind !== "app";
 }
 
 /**
@@ -184,7 +187,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     ([lessonResult, lessonSession, context]) =>
       getRouting({
         inSession: context !== null,
-        isGuest: isGuestLesson({ session: lessonSession, studySessionId }),
+        isGuest: isGuestLesson({ origin, session: lessonSession, studySessionId }),
         lesson: lessonResult?.status === "ready" ? lessonResult.lesson : null,
         origin,
       }),
@@ -214,7 +217,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     routingRead,
   ]);
 
-  const isGuest = isGuestLesson({ session, studySessionId });
+  const isGuest = isGuestLesson({ origin, session, studySessionId });
   const soundsEnabled = profile?.soundsEnabled ?? true;
 
   const played = result?.status === "ready" ? { lesson: result.lesson } : null;
