@@ -6,6 +6,8 @@ import Observation
 final class CertificatesStore {
   /// Newest first.
   let list: Resource<[Certificate]>
+  /// Only the empty page reads it, as main's does.
+  let upNext: Resource<[CertificateUpNext]>
 
   @ObservationIgnored private let api: any CertificatesAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -25,6 +27,16 @@ final class CertificatesStore {
       }
 
       return try await api.list(token: session.bearerToken)
+    }
+    upNext = cache.resource(
+      audience: .signedIn, domains: [.goals, .learningProfile, .userProgress],
+      isEmpty: \.isEmpty
+    ) { session in
+      guard let session else {
+        return nil
+      }
+
+      return try await api.upNext(token: session.bearerToken)
     }
   }
 

@@ -2,9 +2,7 @@ import SwiftUI
 
 /// Every certificate the learner earned, newest first, in one list.
 struct CertificatesScreen: View {
-  @Environment(AppRouter.self) private var router
   @Environment(CertificatesStore.self) private var store
-  @Environment(LearnerSummaryStore.self) private var learner
   @ScaledMetric(relativeTo: .body) private var pictureWidth = 84.0
 
   let open: (_ code: String) -> Void
@@ -25,30 +23,7 @@ struct CertificatesScreen: View {
           }
         }
       case .empty:
-        let upNext = learner.summary.value?.certificateGoals ?? []
-
-        if upNext.isEmpty {
-          noCertificates
-            .lonePage()
-        } else {
-          List {
-            Section {
-              noCertificates
-            }
-            .listRowBackground(Color.clear)
-
-            Section {
-              ForEach(upNext) { goal in
-                upNextRow(goal)
-              }
-            } header: {
-              Text(
-                "Up next", tableName: "Certificates",
-                comment: "Heading over the learner's goals that can still earn a certificate")
-            }
-          }
-          .lonePage()
-        }
+        EmptyCertificates()
       case .failed(let error):
         PracticeLoadFailureView(error: error) {
           Task { await store.list.refresh() }
@@ -63,53 +38,6 @@ struct CertificatesScreen: View {
         "Certificates", tableName: "Certificates", comment: "Title of the learner's certificates")
     )
     .loads(store.list)
-  }
-
-  private var noCertificates: some View {
-    ContentUnavailableView {
-      Label {
-        Text(
-          "No certificates yet", tableName: "Certificates",
-          comment: "Title when the learner has no certificate")
-      } icon: {
-        Image(systemName: "rosette")
-      }
-    } description: {
-      Text(
-        "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too.",
-        tableName: "Certificates", comment: "How the learner earns certificates")
-    } actions: {
-      Button {
-        router.sheet = nil
-        router.showRoot(of: .today)
-      } label: {
-        Text(
-          "Continue learning", tableName: "Certificates",
-          comment: "Goes to Today from the empty certificates page")
-      }
-      .buttonStyle(.mainAction)
-    }
-  }
-
-  private func upNextRow(_ goal: LearnerGoal) -> some View {
-    VStack(alignment: .leading, spacing: 2) {
-      Text(goal.title)
-
-      Group {
-        if goal.kind == .language {
-          Text(
-            "Comes when every skill you practice reaches the next level", tableName: "Certificates",
-            comment: "Under a language goal on the empty certificates page: when it earns one")
-        } else {
-          Text(
-            "Your certificate comes when you finish the plan", tableName: "Certificates",
-            comment: "Under a course goal on the empty certificates page: when it earns one")
-        }
-      }
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
-    }
-    .accessibilityElement(children: .combine)
   }
 
   private func row(_ certificate: Certificate) -> some View {
@@ -133,5 +61,98 @@ struct CertificatesScreen: View {
       }
       .disclosureChevron()
     }
+  }
+}
+
+/// Main's empty page: how certificates are earned, then each goal that can still earn one. The
+/// goals arrive after the page, so they join its list below what's already there.
+private struct EmptyCertificates: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(CertificatesStore.self) private var store
+
+  var body: some View {
+    List {
+      Section {
+        ContentUnavailableView {
+          Label {
+            Text(
+              "No certificates yet", tableName: "Certificates",
+              comment: "Title when the learner has no certificate")
+          } icon: {
+            Image(systemName: "rosette")
+          }
+        } description: {
+          Text(
+            "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too.",
+            tableName: "Certificates", comment: "How the learner earns certificates")
+        } actions: {
+          Button {
+            router.sheet = nil
+            router.showRoot(of: .today)
+          } label: {
+            Text(
+              "Continue learning", tableName: "Certificates",
+              comment: "Goes to Today from the empty certificates page")
+          }
+          .buttonStyle(.mainAction)
+        }
+      }
+      .listRowBackground(Color.clear)
+
+      if let upNext = store.upNext.value {
+        Section {
+          ForEach(upNext) { goal in
+            UpNextRow(goal: goal)
+          }
+        } header: {
+          Text(
+            "Up next", tableName: "Certificates",
+            comment: "Heading over the learner's goals that can still earn a certificate")
+        }
+      }
+    }
+    .lonePage()
+    // The list too, so pull to refresh also brings back goals that failed to load.
+    .loads(store.list, store.upNext)
+  }
+}
+
+private struct UpNextRow: View {
+  let goal: CertificateUpNext
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(goal.title)
+
+        Group {
+          if goal.progress == nil {
+            Text(
+              "Comes when every skill you practice reaches the next level",
+              tableName: "Certificates",
+              comment: "Under a language goal on the empty certificates page: when it earns one")
+          } else {
+            Text(
+              "Your certificate comes when you finish the plan", tableName: "Certificates",
+              comment: "Under a course goal on the empty certificates page: when it earns one")
+          }
+        }
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      }
+
+      if let progress = goal.progress {
+        HStack(spacing: 8) {
+          ProgressView(value: progress)
+            .tint(.success)
+            .accessibilityHidden(true)
+
+          Text(wholePercent(progress * 100))
+            .font(.subheadline)
+            .monospacedDigit()
+        }
+      }
+    }
+    .accessibilityElement(children: .combine)
   }
 }

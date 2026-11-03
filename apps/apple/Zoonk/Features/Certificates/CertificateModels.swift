@@ -61,12 +61,12 @@ struct Certificate: Decodable, Hashable, Identifiable, Sendable {
   }
 }
 
-extension LearnerSummary {
-  /// The active goals that can still earn a certificate. Main also waits for a course plan's first
-  /// lesson, a count the summary doesn't carry.
-  var certificateGoals: [LearnerGoal] {
-    goals.filter { $0.status == .active && $0.kind != .explain }
-  }
+/// A goal that can still earn a certificate.
+struct CertificateUpNext: Equatable, Identifiable, Sendable {
+  let id: String
+  let title: String
+  /// The plan's share of lessons done, 0 to 1; nil for a language, which earns one by levels.
+  let progress: Double?
 }
 
 extension CertificateFacts {

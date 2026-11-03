@@ -127,6 +127,10 @@ private actor CertificatesAPIStub: CertificatesAPIClient {
   func claim(token: String, goalID: String) async throws -> ClaimedCertificate? {
     nil
   }
+
+  func upNext(token: String) async throws -> [CertificateUpNext] {
+    []
+  }
 }
 
 extension CurrentAccount {
