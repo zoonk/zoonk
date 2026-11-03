@@ -17,7 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +31,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -40,55 +41,88 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.account.AccountStore
 import kotlinx.coroutines.launch
 
-/** Saves the profile name, which every certificate prints and the buddy calls the learner by. */
+/**
+ * Saves the profile name, which every certificate prints and the buddy calls the learner by. The
+ * name being typed and whether the learner is [changing] the one they have live in the saved state,
+ * so they survive folding (which moves the field between pages) and a save that ends after it.
+ */
 class CertificateNameModel(
     private val account: AccountStore,
+    private val saved: SavedStateHandle,
 ) : ViewModel() {
+    var name by mutableStateOf(saved.get<String>(NAME).orEmpty())
+        private set
+
+    var changing by mutableStateOf(saved.get<Boolean>(CHANGING) == true)
+        private set
+
     var isSaving by mutableStateOf(false)
         private set
 
     var failed by mutableStateOf(false)
         private set
 
-    fun save(
-        name: String,
-        onSaved: () -> Unit,
-    ) {
+    fun type(text: String) {
+        name = text
+        saved[NAME] = text
+    }
+
+    fun change(current: String) {
+        type(current)
+        changing = true
+        saved[CHANGING] = true
+    }
+
+    fun stop() {
+        changing = false
+        saved[CHANGING] = false
+    }
+
+    fun save() {
         if (isSaving || name.isBlank()) return
         isSaving = true
         failed = false
         viewModelScope.launch {
             val failure = account.saveProfile(name.trim())
             isSaving = false
-            if (failure == null) onSaved() else failed = true
+            if (failure == null) stop() else failed = true
         }
+    }
+
+    private companion object {
+        const val NAME = "name"
+        const val CHANGING = "changing"
     }
 }
 
+/** The name model of the screen it's called from; [key] tells apart moments the same screen shows. */
+@Composable
+fun certificateNameModel(
+    app: AppContainer,
+    key: String? = null,
+): CertificateNameModel = viewModel(key = key) { CertificateNameModel(app.account, createSavedStateHandle()) }
+
 /**
- * Main's name field from the award moment. [current] null asks for a first name, which the
- * learner can't skip here; with a name, [onCancel] (or Back) leaves it unchanged.
+ * Main's name field from the award moment. [current] null asks for a first name, which the learner
+ * can't skip here; with a name, Cancel (or Back) leaves it unchanged.
  */
 @Composable
 fun CertificateNameField(
-    app: AppContainer,
     current: String?,
-    onSaved: () -> Unit,
+    model: CertificateNameModel,
     modifier: Modifier = Modifier,
-    onCancel: (() -> Unit)? = null,
 ) {
-    val model = viewModel { CertificateNameModel(app.account) }
-    var name by rememberSaveable { mutableStateOf(current.orEmpty()) }
     val focus = remember { FocusRequester() }
-    val save = { model.save(name, onSaved) }
+    val name = model.name
+    val save = model::save
 
-    BackHandler(enabled = onCancel != null) { onCancel?.invoke() }
+    BackHandler(enabled = current != null, onBack = model::stop)
     LaunchedEffect(Unit) { if (current != null) focus.requestFocus() }
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
             value = name,
-            onValueChange = { name = it },
+            onValueChange = model::type,
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -127,7 +161,9 @@ fun CertificateNameField(
         }
 
         Row(Modifier.align(Alignment.End), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            onCancel?.let { TextButton(onClick = it, enabled = !model.isSaving) { Text(stringResource(R.string.certificates_cancel)) } }
+            if (current != null) {
+                TextButton(onClick = model::stop, enabled = !model.isSaving) { Text(stringResource(R.string.certificates_cancel)) }
+            }
             Button(onClick = save, enabled = name.isNotBlank() && !model.isSaving) { Text(stringResource(R.string.certificates_save)) }
         }
     }

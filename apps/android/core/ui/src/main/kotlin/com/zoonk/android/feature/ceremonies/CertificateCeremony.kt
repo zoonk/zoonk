@@ -2,14 +2,17 @@ package com.zoonk.android.feature.ceremonies
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
@@ -55,12 +58,15 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.certificates.CertificateAction
+import com.zoonk.android.feature.certificates.CertificateActions
 import com.zoonk.android.feature.certificates.CertificateKind
 import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.feature.certificates.CertificateNameField
+import com.zoonk.android.feature.certificates.CertificateNameModel
 import com.zoonk.android.feature.certificates.CertificatePicture
 import com.zoonk.android.feature.certificates.LinkedInSheet
 import com.zoonk.android.feature.certificates.caption
+import com.zoonk.android.feature.certificates.certificateNameModel
 import com.zoonk.android.feature.certificates.fileName
 import com.zoonk.android.feature.certificates.languageWord
 import com.zoonk.android.feature.certificates.pictureLabel
@@ -73,6 +79,7 @@ import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.launch
@@ -83,7 +90,8 @@ import kotlin.time.TimeSource
  * write earned ([awarded], oldest first, so the newest shows on top and Share and LinkedIn act on
  * it). Their words come with the result; the pictures, links and the learner's current name come
  * from the learner's list, which a completion leaves stale. Closing marks them shown; a guest's
- * [onCreateAccount] leaves them unshown, so the moment is still there on the way back.
+ * [onCreateAccount] leaves them unshown, so the moment is still there on the way back. On an open
+ * book the certificate takes the page before the fold, and the words and Continue the page after it.
  */
 @Composable
 fun CertificateCeremony(
@@ -108,6 +116,14 @@ fun CertificateCeremony(
     val top = owned.lastOrNull()
     val shownAt = remember { timeSource.markNow() }
     var closing by remember { mutableStateOf(false) }
+    // Above both layouts: folding moves the words between the one column and the page after the fold, and each keeps its scroll.
+    val actions = rememberCertificateActions(app)
+    val name = certificateNameModel(app, key = "certificate-name:${codes.joinToString()}")
+    var linkedIn by rememberSaveable { mutableStateOf(false) }
+    val columnScroll = rememberScrollState()
+    val stageScroll = rememberScrollState()
+    val wordsScroll = rememberScrollState()
+    val wordsAndActions = @Composable { Words(app, open, top, isGuest, onCreateAccount, actions, name) { linkedIn = true } }
 
     fun close() {
         if (closing || shownAt.elapsedNow() < STEADY) return
@@ -116,35 +132,67 @@ fun CertificateCeremony(
         onClose()
     }
 
+    val continueButton =
+        @Composable {
+            Button(
+                onClick = ::close,
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+            ) { Text(stringResource(R.string.certificates_continue)) }
+        }
+
     FullScreenDialog(onDismissRequest = ::close) {
         Surface(Modifier.fillMaxSize()) {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .statusBarsPadding()
-                    .navigationBarsPadding()
-                    .imePadding(),
-            ) {
-                Column(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                            .padding(horizontal = 16.dp, vertical = 32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Stage(app, owned)
-                    Words(app, open, top, isGuest, onCreateAccount)
+            PageWithSupportingPane(
+                supportingPane = {
+                    StagePage(wordsScroll, footer = continueButton) { wordsAndActions() }
+                },
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                        .navigationBarsPadding()
+                        .imePadding(),
+                panesTouch = true,
+                atFoldOnly = true,
+            ) { wordsBeside ->
+                if (wordsBeside) {
+                    StagePage(stageScroll) { Stage(app, owned) }
+                } else {
+                    StagePage(columnScroll, footer = continueButton) {
+                        Stage(app, owned)
+                        Spacer(Modifier.height(32.dp))
+                        wordsAndActions()
+                    }
                 }
-
-                Button(
-                    onClick = ::close,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp),
-                ) { Text(stringResource(R.string.certificates_continue)) }
             }
         }
+
+        if (linkedIn && top != null) {
+            LinkedInSheet(top, onCopy = actions::copy, onDismiss = { linkedIn = false })
+        }
+    }
+}
+
+/** A page of the moment, its [content] centered and scrolling, with [footer] pinned under it. */
+@Composable
+private fun StagePage(
+    scroll: ScrollState,
+    footer: (@Composable () -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(Modifier.fillMaxSize()) {
+        Column(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(scroll)
+                    .padding(horizontal = 16.dp, vertical = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            content = content,
+        )
+        footer?.invoke()
     }
 }
 
@@ -201,14 +249,14 @@ private fun Words(
     top: OwnedCertificate?,
     isGuest: Boolean,
     onCreateAccount: (() -> Unit)?,
+    actions: CertificateActions,
+    name: CertificateNameModel,
+    onAddToLinkedIn: () -> Unit,
 ) {
-    val actions = rememberCertificateActions(app)
-    var editing by rememberSaveable { mutableStateOf(false) }
-    var linkedIn by rememberSaveable { mutableStateOf(false) }
     val recipient = top?.recipientName
 
     Column(
-        Modifier.widthIn(max = 480.dp).fillMaxWidth().padding(top = 32.dp),
+        Modifier.widthIn(max = 480.dp).fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -237,18 +285,12 @@ private fun Words(
             // The list says whether the learner has a name; until it loads, nothing asks for one.
             top == null -> {}
 
-            recipient == null || editing -> {
-                CertificateNameField(
-                    app = app,
-                    current = recipient,
-                    onSaved = { editing = false },
-                    modifier = Modifier.padding(top = 24.dp),
-                    onCancel = if (recipient == null) null else ({ editing = false }),
-                )
+            recipient == null || name.changing -> {
+                CertificateNameField(recipient, name, Modifier.padding(top = 24.dp))
             }
 
             else -> {
-                NameRow(recipient) { editing = true }
+                NameRow(recipient) { name.change(recipient) }
                 Row(Modifier.fillMaxWidth().padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     val fileName = top.fileName()
                     val caption = top.caption()
@@ -263,7 +305,7 @@ private fun Words(
                         }
                         PendingLabel(actions.busy == CertificateAction.Share, stringResource(R.string.certificates_share))
                     }
-                    OutlinedButton(onClick = { linkedIn = true }, modifier = Modifier.weight(1f)) {
+                    OutlinedButton(onClick = onAddToLinkedIn, modifier = Modifier.weight(1f)) {
                         Icon(painterResource(R.drawable.ic_north_east), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
                         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Text(stringResource(R.string.certificates_add_to_linkedin))
@@ -281,10 +323,6 @@ private fun Words(
                 textAlign = TextAlign.Center,
             )
         }
-    }
-
-    if (linkedIn && top != null) {
-        LinkedInSheet(top, onCopy = actions::copy, onDismiss = { linkedIn = false })
     }
 }
 

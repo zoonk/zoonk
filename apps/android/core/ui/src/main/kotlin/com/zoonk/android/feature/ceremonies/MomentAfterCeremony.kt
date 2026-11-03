@@ -30,8 +30,9 @@ typealias MomentCeremony = @Composable (milestone: Milestone, onClose: () -> Uni
 typealias CertificatesMoment = @Composable (certificates: List<CertificateName>, onClose: () -> Unit) -> Unit
 
 /**
- * Main's `MomentAfterCeremony`: a finished run's [certificates], the rarest first, then its
- * [milestone] ceremony, when it has them, then its moment.
+ * Main's `MomentAfterCeremony`: what a finished run earned, the rarest moment first: its
+ * [certificates] (oldest first, as the result lists them), then its [milestone] ceremony, when it
+ * has them, then its moment.
  */
 @Composable
 fun MomentAfterCeremony(
