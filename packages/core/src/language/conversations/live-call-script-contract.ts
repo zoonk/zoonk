@@ -46,7 +46,7 @@ export const liveCallScriptSchema = z
         }),
         goodbyeQuietMs: millisecondsSchema.meta({
           description:
-            "Hang up once the goodbye was said and nothing (character transcript, learner speech or typing) happened for this long, or once no words (a character or learner transcript, typing) came for `answerWaitMs`, so a noisy microphone can't hold the call open",
+            "Hang up once the goodbye was said and nothing (character transcript, learner speech or typing) happened for this long, or once no words (a character or learner transcript, typing or a sent reply) came for `answerWaitMs`, so a noisy microphone can't hold the call open",
         }),
         goodbyeRetryMs: millisecondsSchema.meta({
           description:
