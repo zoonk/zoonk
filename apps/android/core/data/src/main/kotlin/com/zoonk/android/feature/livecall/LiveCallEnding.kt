@@ -27,6 +27,7 @@ class LiveCallEnding(
         /** [reason] picks the words: every goal met thanks the learner, the others have to go. */
         data class SayGoodbye(
             val reason: EndingReason,
+            val whileLearnerSpeaks: Boolean,
         ) : Step
 
         /** [reason] is null at the hard stop. */
@@ -91,7 +92,7 @@ class LiveCallEnding(
     /** The microphone heard the learner; a muted or blocked one never reports. */
     fun learnerSpoke(now: Long) {
         lastVoiceAt = now
-        learnerActed()
+        learnerActed(now)
     }
 
     /**
@@ -100,20 +101,20 @@ class LiveCallEnding(
      */
     fun learnerHeard(now: Long) {
         lastHeardAt = now
-        learnerActed()
-        silenceSince = now
+        learnerActed(now)
+        silenceSince = silenceSince ?: now
     }
 
     /** A reply being typed holds the goodbye: the character can't see it and would talk over it. */
     fun learnerTyped(now: Long) {
         lastTypedAt = now
-        learnerActed()
+        learnerActed(now)
     }
 
     fun learnerSent(now: Long) {
         lastSentAt = now
         lastTypedAt = null
-        learnerActed()
+        learnerActed(now)
     }
 
     fun goalsMet(now: Long) = arm(EndingReason.Done, now)
@@ -164,11 +165,11 @@ class LiveCallEnding(
         if (sentAt == null) {
             if (!canSayGoodbye(armed, now)) return null
             goodbyeSentAt = now
-            return Step.SayGoodbye(armed)
+            return Step.SayGoodbye(armed, learnerTalking(now))
         }
         if (goodbyeRetried || now - maxOf(sentAt, lastActivityAt()) < timing.goodbyeRetryMs) return null
         goodbyeRetried = true
-        return Step.SayGoodbye(armed)
+        return Step.SayGoodbye(armed, learnerTalking(now))
     }
 
     private fun canSayGoodbye(
@@ -183,7 +184,7 @@ class LiveCallEnding(
         if (sentAt != null && sentAt >= armedAt) {
             return (lastCharacterAt ?: Long.MIN_VALUE) > sentAt || now - sentAt >= timing.answerWaitMs
         }
-        if (learnerSpeaking(now) || lastHeardAt?.let { now - it < timing.characterQuietMs } == true) return true
+        if (learnerTalking(now)) return true
         val characterStopped = lastCharacterAt?.plus(timing.characterQuietMs) ?: liveAt
         return now - maxOf(characterStopped, learnerAt() ?: Long.MIN_VALUE) >= timing.answerWaitMs
     }
@@ -204,10 +205,14 @@ class LiveCallEnding(
         armedAt = now
     }
 
-    private fun learnerActed() {
-        silenceSince = null
+    /** Only what the learner does once the character stopped answers it: talking over its last words doesn't. */
+    private fun learnerActed(now: Long) {
+        silenceSince = silenceSince?.takeIf { it > now }
         checkedIn = false
     }
+
+    /** The microphone hears them, or their words just came back: the model waits for a speaker to finish. */
+    private fun learnerTalking(now: Long) = learnerSpeaking(now) || lastHeardAt?.let { now - it < timing.characterQuietMs } == true
 
     private fun learnerAt() = listOfNotNull(lastVoiceAt, lastHeardAt, lastTypedAt, lastSentAt).maxOrNull()
 

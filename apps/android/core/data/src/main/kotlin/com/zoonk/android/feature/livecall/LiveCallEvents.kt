@@ -29,8 +29,8 @@ sealed interface LiveServerEvent {
         val id: String,
     ) : LiveServerEvent
 
-    /** The session took the commentary sent with [clientEventId]; [startMs] is where on its timeline, when it says. */
-    data class CommentaryTaken(
+    /** The session took the cue sent with [clientEventId], on any channel; [startMs] is where on its timeline, when it says. */
+    data class CueTaken(
         val clientEventId: String,
         val startMs: Double?,
     ) : LiveServerEvent
@@ -60,8 +60,8 @@ sealed interface LiveServerEvent {
                     (event["delegation"] as? JsonObject)?.string("id")?.let(::Delegation)
                 }
 
-                "session.commentary.appended" -> {
-                    event.string("client_event_id")?.let { CommentaryTaken(it, event.number("start_ms")) }
+                "session.commentary.appended", "session.thinking.appended", "session.instructions.appended" -> {
+                    event.string("client_event_id")?.let { CueTaken(it, event.number("start_ms")) }
                 }
 
                 else -> {

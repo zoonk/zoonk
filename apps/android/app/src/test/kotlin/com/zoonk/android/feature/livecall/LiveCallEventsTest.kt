@@ -30,7 +30,7 @@ class LiveCallEventsTest {
             LiveServerEvent.parse("""{"type":"session.delegation.created","delegation":{"id":"d1","target":"client"}}"""),
         )
         assertEquals(
-            LiveServerEvent.CommentaryTaken("bye-1", 5200.0),
+            LiveServerEvent.CueTaken("bye-1", 5200.0),
             LiveServerEvent.parse(
                 """{"type":"session.commentary.appended","event_id":"e2","client_event_id":"bye-1","start_ms":5200,"end_ms":5400}""",
             ),
@@ -45,7 +45,13 @@ class LiveCallEventsTest {
         assertNull(LiveServerEvent.parse("""{"type":"session.output_transcript.delta","delta":"x","start_ms":"5","end_ms":6}"""))
         assertNull(LiveServerEvent.parse("""{"type":"session.commentary.appended","event_id":"e2","start_ms":5200,"end_ms":5400}"""))
         assertEquals(
-            LiveServerEvent.CommentaryTaken("bye-1", null),
+            LiveServerEvent.CueTaken("bye-2", 7100.0),
+            LiveServerEvent.parse(
+                """{"type":"session.thinking.appended","event_id":"e3","client_event_id":"bye-2","start_ms":7100,"end_ms":7100}""",
+            ),
+        )
+        assertEquals(
+            LiveServerEvent.CueTaken("bye-1", null),
             LiveServerEvent.parse("""{"type":"session.commentary.appended","event_id":"e2","client_event_id":"bye-1"}"""),
         )
         assertNull(LiveServerEvent.parse("not json"))

@@ -102,18 +102,18 @@ class LiveCallTest {
         runCurrent()
     }
 
-    private val FakeTransport.goodbyes get() = commentary.filter { it.content == cues.goodbye.text || it.content == cues.goodbyeDone.text }
+    private val FakeTransport.goodbyes get() = appended.filter { it.content == cues.goodbye.text || it.content == cues.goodbyeDone.text }
 
     private val FakeTransport.checkIns get() = commentary.count { it.content == cues.checkIn.text }
 
     /** The session took the latest goodbye cue at [atMs] on its timeline, now by default. */
     private fun TestScope.goodbyeTaken(atMs: Double = currentTime.toDouble()) {
-        transport.onEvent(LiveServerEvent.CommentaryTaken(requireNotNull(transport.goodbyes.last().eventId), atMs))
+        transport.onEvent(LiveServerEvent.CueTaken(requireNotNull(transport.goodbyes.last().eventId), atMs))
         runCurrent()
     }
 
     private fun TestScope.openingTaken() {
-        transport.onEvent(LiveServerEvent.CommentaryTaken(requireNotNull(transport.openings.last().eventId), currentTime.toDouble()))
+        transport.onEvent(LiveServerEvent.CueTaken(requireNotNull(transport.openings.last().eventId), currentTime.toDouble()))
         runCurrent()
     }
 
@@ -250,7 +250,7 @@ class LiveCallTest {
 
             transport.onEvent(learnerSays("Un ", 1000.0, 1400.0))
             transport.onEvent(learnerSays("café.", 1400.0, 2000.0))
-            transport.onEvent(characterSays("Claro."))
+            transport.onEvent(characterSays("Claro.", 2400.0, 2900.0))
             wait(LiveCall.REPLY_SETTLED - 1.milliseconds)
             assertTrue(client.checks.isEmpty())
             wait(1.milliseconds)
@@ -275,15 +275,15 @@ class LiveCallTest {
             live()
 
             transport.onEvent(learnerSays("Hola", 0.0, 500.0))
-            transport.onEvent(characterSays("Hola"))
+            transport.onEvent(characterSays("Hola", 700.0, 1000.0))
             wait(LiveCall.REPLY_SETTLED)
-            transport.onEvent(learnerSays("Un café", 900.0, 1500.0))
-            transport.onEvent(characterSays("Sí"))
+            transport.onEvent(learnerSays("Un café", 2900.0, 3500.0))
+            transport.onEvent(characterSays("Sí", 3800.0, 4000.0))
             wait(LiveCall.REPLY_SETTLED)
-            assertEquals(1, client.checks.size)
+            assertEquals("The running check holds the next", 1, client.checks.size)
 
             gate.complete(Unit)
-            runCurrent()
+            wait(LiveCall.REPLY_SETTLED)
             assertEquals(2, client.checks.size)
             assertEquals(4, client.checks.last().size)
         }
@@ -318,6 +318,11 @@ class LiveCallTest {
             learnerTalks(until = 20.2.seconds)
 
             assertEquals(listOf(cues.goodbye.text), transport.goodbyes.map { it.content })
+            assertEquals(
+                "Said aloud at once, it would talk over a pause in the answer",
+                LiveCallCue.Channel.THINKING,
+                transport.goodbyes.single().channel,
+            )
             assertEquals(EndingReason.Time, call.state.value.ending)
         }
 
@@ -346,6 +351,7 @@ class LiveCallTest {
             assertTrue(transport.goodbyes.isEmpty())
             wait(0.2.seconds)
             assertEquals("8 s after the character stopped, at 20.3 s", 1, transport.goodbyes.size)
+            assertEquals("Nobody talks: said aloud at once", LiveCallCue.Channel.COMMENTARY, transport.goodbyes.single().channel)
 
             wait(30.seconds)
             assertEquals("No check-in once the ending started", 0, transport.checkIns)
@@ -824,6 +830,38 @@ class LiveCallTest {
             transport.onEvent(LiveServerEvent.Delegation("del_1"))
 
             assertEquals(cues.noBackend.command(delegationId = "del_1"), transport.thinking.single())
+        }
+
+    @Test
+    fun learnerWordsOverTheCharactersLastOnesDontEndASilenceThatHasntStarted() =
+        runTest(dispatcher) {
+            live()
+            characterTalks(until = 1.seconds)
+            learnerTalks(until = 1.6.seconds)
+
+            waitUntil(27.2.seconds)
+            assertEquals(0, transport.checkIns)
+            wait(0.2.seconds)
+            assertEquals("25 s after the character stopped, at 2.4 s", 1, transport.checkIns)
+        }
+
+    @Test
+    fun aLateLearnerFragmentWaitsWithTheAnswerForTheTranscriptToSettle() =
+        runTest(dispatcher) {
+            live()
+            transport.onEvent(characterSays("¿Qué desea?", 0.0, 600.0))
+            transport.onEvent(learnerSays("Un ", 1000.0, 1400.0))
+            wait(0.5.seconds)
+            transport.onEvent(characterSays("Claro.", 2000.0, 2500.0))
+            wait(0.5.seconds)
+            transport.onEvent(learnerSays("café.", 1400.0, 1900.0))
+
+            wait(1.9.seconds)
+            assertTrue("The transcript settles for 2 s after its last fragment", client.checks.isEmpty())
+            wait(0.1.seconds)
+            assertEquals("On the session's timeline the character spoke last", 1, client.checks.size)
+            wait(10.seconds)
+            assertEquals(1, client.checks.size)
         }
 
     @Test

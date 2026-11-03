@@ -111,9 +111,8 @@ class LiveCall(
     private val timers = mutableListOf<Job>()
     private var settle: Job? = null
     private var examCuesSent = 0
-    private var learnerTurn = false
+    private var checkTiming = CheckTiming()
     private var checking = false
-    private var checkAgain = false
 
     /** Without [microphone] the call runs on typed replies. Starting again cancels a start still on its way. */
     fun start(
@@ -153,8 +152,7 @@ class LiveCall(
         val trimmed = text.trim()
         if (trimmed.isEmpty() || !mutableState.value.isOpen) return
         mutableState.update { it.copy(turns = it.turns.addingTypedReply(trimmed)) }
-        learnerTurn = true
-        settle?.cancel()
+        heardForCheck(Speaker.LEARNER, startMs = null)
         val cue = setup?.script?.cues?.typedReply
         if (phase == LiveCallPhase.Live && cue != null) {
             send(typedReply(cue, trimmed))
@@ -317,15 +315,13 @@ class LiveCall(
             is LiveServerEvent.Transcript -> {
                 mutableState.update { it.copy(turns = it.turns.adding(event)) }
                 if (event.speaker == Speaker.LEARNER) {
-                    learnerTurn = true
-                    settle?.cancel()
                     ending?.learnerHeard(now)
                     mutableState.update { it.copy(learnerSpoke = true) }
                 } else {
                     ending?.characterSaid(now, event.startMs)
                     gaps.characterSaid(now)
-                    characterTurn()
                 }
+                heardForCheck(event.speaker, event.startMs)
                 advance()
             }
 
@@ -338,7 +334,7 @@ class LiveCall(
                     ?.let { send(it.command(delegationId = event.id)) }
             }
 
-            is LiveServerEvent.CommentaryTaken -> {
+            is LiveServerEvent.CueTaken -> {
                 when (event.clientEventId) {
                     in openingEvents -> ending?.openingTaken(now)
                     in goodbyeEvents -> ending?.goodbyeTaken(event.startMs)
@@ -425,7 +421,10 @@ class LiveCall(
 
                 is LiveCallEnding.Step.SayGoodbye -> {
                     val cue = if (step.reason == EndingReason.Done) script.cues.goodbyeDone else script.cues.goodbye
-                    send(cue.command(eventId = UUID.randomUUID().toString().also(goodbyeEvents::add)))
+                    // Measured: said aloud at once, a goodbye talked over a learner pausing mid-answer;
+                    // as context to keep in mind, it waited for them.
+                    val channel = if (step.whileLearnerSpeaks) LiveCallCue.Channel.THINKING else cue.channel
+                    send(LiveClientCommand.Append(channel, cue.text, eventId = UUID.randomUUID().toString().also(goodbyeEvents::add)))
                 }
 
                 is LiveCallEnding.Step.HangUp -> {
@@ -454,43 +453,40 @@ class LiveCall(
         transport?.send(command)
     }
 
-    /** The character answering what the learner said: once its answer settles, what was said is checked against the goals. */
-    private fun characterTurn() {
-        if (!learnerTurn || task.examCues != null) return
+    /** Every fragment waits for the transcript to settle again; a check still running holds the next. An exam's goal is graded at its end. */
+    private fun heardForCheck(
+        speaker: Speaker,
+        startMs: Double?,
+    ) {
+        if (task.examCues != null) return
+        checkTiming = checkTiming.hearing(speaker, startMs)
         settle?.cancel()
         settle =
             scope.launch {
-                delay(REPLY_SETTLED)
-                learnerTurn = false
-                // Its own job: a learner speaking meanwhile delays the next check, never cancels this one.
-                scope.launch { checkObjectives() }
+                do delay(REPLY_SETTLED) while (checking)
+                // Its own job: words that come while it runs hold the next check, never cancel this one.
+                if (checkTiming.isDue) scope.launch { checkObjectives() }
             }
     }
 
-    /** One check at a time; a turn that ends meanwhile is checked right after it. */
     private suspend fun checkObjectives() {
-        if (checking) {
-            checkAgain = true
-            return
-        }
         checking = true
         try {
-            do {
-                checkAgain = false
-                val checkedAt = now() ?: return
-                val check = client.checkObjectives(mutableState.value.turns.conversationTurns) ?: continue
-                if (phase != LiveCallPhase.Live) return
-                val machine = ending ?: return
-                if (check.objectivesMet.size > mutableState.value.metLabels.size) {
-                    mutableState.update { it.copy(metLabels = check.objectivesMet) }
-                }
-                if (machine.reason == null) check.progress?.let { send(it.command()) }
-                if (check.goodbye) machine.saidGoodbye(checkedAt)
-                if (task.objectives.isNotEmpty() && check.objectivesMet.containsAll(task.objectives)) {
-                    now()?.let(machine::goalsMet)
-                }
-                advance()
-            } while (checkAgain)
+            val checkedAt = now() ?: return
+            val turns = mutableState.value.turns.conversationTurns
+            checkTiming = checkTiming.read()
+            val check = client.checkObjectives(turns) ?: return
+            if (phase != LiveCallPhase.Live) return
+            val machine = ending ?: return
+            if (check.objectivesMet.size > mutableState.value.metLabels.size) {
+                mutableState.update { it.copy(metLabels = check.objectivesMet) }
+            }
+            if (machine.reason == null) check.progress?.let { send(it.command()) }
+            if (check.goodbye) machine.saidGoodbye(checkedAt)
+            if (task.objectives.isNotEmpty() && check.objectivesMet.containsAll(task.objectives)) {
+                now()?.let(machine::goalsMet)
+            }
+            advance()
         } finally {
             checking = false
         }
@@ -567,8 +563,8 @@ class LiveCall(
         /** A session that hasn't started after this isn't going to. */
         val CONNECT_TIMEOUT = 15.seconds
 
-        /** The character's answer has settled once its transcript stays quiet this long. */
-        val REPLY_SETTLED = 1500.milliseconds
+        /** The transcript has settled once it stays still this long: the learner's words come back up to 1.8 s late. */
+        val REPLY_SETTLED = 2000.milliseconds
 
         val TICK = 200.milliseconds
     }
