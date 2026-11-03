@@ -3,9 +3,9 @@ import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs, promisify } from "node:util";
+import { getLocalDatabaseUrl } from "@zoonk/db/local-database";
 import z from "zod";
 
-const DEFAULT_DATABASE_URL = "postgresql://localhost:5432/zoonk";
 const DEFAULT_OUTPUT = "datasets/production-inputs.json";
 const DEFAULT_LIMIT = 50;
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
@@ -39,13 +39,13 @@ function parseCliArgs() {
   }
 
   return {
-    databaseUrl: getLocalDatabaseUrl(values["database-url"] ?? DEFAULT_DATABASE_URL),
+    databaseUrl: requireLocalHost(values["database-url"] ?? getLocalDatabaseUrl()),
     limit,
     out: path.resolve(values.out ?? DEFAULT_OUTPUT),
   };
 }
 
-function getLocalDatabaseUrl(value: string): string {
+function requireLocalHost(value: string): string {
   const url = new URL(value);
 
   if (!LOCAL_HOSTS.has(url.hostname)) {

@@ -194,8 +194,8 @@ function dropOnExit({ name, serverUrl }: { name: string; serverUrl: string }): v
 
 /** Refuses a copy whose migrations differ from the repository's: tests never use an old schema. */
 export default async function setupTestDatabase(): Promise<() => Promise<void>> {
-  const templateUrl = getTestEnvironment("test").DATABASE_URL_UNPOOLED ?? "";
-  const copyUrl = getTestRunEnvironment().DATABASE_URL_UNPOOLED ?? "";
+  const templateUrl = getTestEnvironment("test").DATABASE_URL_UNPOOLED;
+  const copyUrl = getTestRunEnvironment().DATABASE_URL_UNPOOLED;
   const template = getDatabaseName(templateUrl);
   const name = getDatabaseName(copyUrl);
   const serverUrl = withDatabase({ name: MAINTENANCE_DATABASE, url: templateUrl });

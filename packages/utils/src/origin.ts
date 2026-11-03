@@ -2,11 +2,13 @@ import { getEnvironment, isLocalhostSupported } from "./environment";
 import { type SupportedLocale } from "./locale";
 import { API_URL } from "./url";
 
+const NEXT_DEFAULT_PORT = 3000;
+
 function getScheme(domain: string): "http" | "https" {
   return domain.startsWith("localhost") ? "http" : "https";
 }
 
-/** Throws when no base URL is configured. */
+/** Throws in a deployment that configures no base URL. */
 export function getBaseUrl(): string {
   if (isLocalhostSupported() && process.env.PORTLESS_URL) {
     return process.env.PORTLESS_URL;
@@ -20,6 +22,11 @@ export function getBaseUrl(): string {
 
   if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
+  }
+
+  // `pnpm start` builds before Portless gives each server its URL, and Next.js sets `PORT` once one listens.
+  if (isLocalhostSupported()) {
+    return `http://localhost:${process.env.PORT || NEXT_DEFAULT_PORT}`;
   }
 
   throw new Error(

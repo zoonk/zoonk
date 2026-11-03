@@ -25,7 +25,6 @@ export async function startLiveCallApi({ port, repository }: { port: number; rep
           environment: process.env,
           launcherPid: String(process.pid),
         }),
-        NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth",
       },
       stdio: ["ignore", "pipe", "pipe"],
     },

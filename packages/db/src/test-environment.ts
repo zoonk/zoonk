@@ -1,45 +1,48 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseEnv } from "node:util";
+import { getLocalDatabaseUrl } from "./local-database.ts";
 
 function readEnvironment(path: string): Record<string, string> {
-  const values = parseEnv(readFileSync(path, "utf8"));
+  const values = existsSync(path) ? parseEnv(readFileSync(path, "utf8")) : {};
 
   return Object.fromEntries(
     Object.entries(values).filter((entry): entry is [string, string] => entry[1] !== undefined),
   );
 }
 
-function withRunApi(environment: Record<string, string>): Record<string, string> {
+type TestEnvironment = Record<string, string> & {
+  DATABASE_URL: string;
+  DATABASE_URL_UNPOOLED: string;
+};
+
+function withRunApi(environment: TestEnvironment): TestEnvironment {
   const apiUrl = process.env.E2E_API_URL;
   return apiUrl ? { ...environment, NEXT_PUBLIC_API_URL: apiUrl } : environment;
 }
 
 /** Overrides a development URL in the shell, so Prisma, Vitest, Playwright and E2E share one. */
-export function getTestEnvironment(mode: "test" | "e2e"): Record<string, string> {
+export function getTestEnvironment(mode: "test" | "e2e"): TestEnvironment {
   const directory = resolve(import.meta.dirname, "..");
-  const defaults = readEnvironment(resolve(directory, `.env.${mode}`));
-  const localPath = resolve(directory, `.env.${mode}.local`);
+  const url = getLocalDatabaseUrl(mode);
+
+  const defaults = {
+    DATABASE_URL: url,
+    DATABASE_URL_UNPOOLED: url,
+    ...readEnvironment(resolve(directory, `.env.${mode}`)),
+  };
 
   if (process.env.CI) {
-    const pooled =
-      process.env.DATABASE_URL || process.env.DATABASE_URL_UNPOOLED || defaults.DATABASE_URL;
-
-    const unpooled =
-      process.env.DATABASE_URL_UNPOOLED ||
-      process.env.DATABASE_URL ||
-      defaults.DATABASE_URL_UNPOOLED;
-
     return withRunApi({
       ...Object.fromEntries(
         Object.entries(defaults).map(([key, value]) => [key, process.env[key] ?? value]),
       ),
-      ...(pooled && { DATABASE_URL: pooled }),
-      ...(unpooled && { DATABASE_URL_UNPOOLED: unpooled }),
+      DATABASE_URL: process.env.DATABASE_URL || process.env.DATABASE_URL_UNPOOLED || url,
+      DATABASE_URL_UNPOOLED: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || url,
     });
   }
 
-  return withRunApi({ ...defaults, ...(existsSync(localPath) && readEnvironment(localPath)) });
+  return withRunApi({ ...defaults, ...readEnvironment(resolve(directory, `.env.${mode}.local`)) });
 }
 
 export const TEST_RUN_DATABASE_MARKER = "_run_";
@@ -63,17 +66,12 @@ function toRunDatabaseUrl(url: string): string {
  * The copy is named after the process, which runs both this config and the `test-database.ts`
  * global setup that creates it.
  */
-export function getTestRunEnvironment(): Record<string, string> {
+export function getTestRunEnvironment(): TestEnvironment {
   const environment = getTestEnvironment("test");
-  const { DATABASE_URL: pooled, DATABASE_URL_UNPOOLED: unpooled } = environment;
-
-  if (!pooled || !unpooled) {
-    throw new Error("The test environment has no DATABASE_URL and DATABASE_URL_UNPOOLED.");
-  }
 
   return {
     ...environment,
-    DATABASE_URL: toRunDatabaseUrl(pooled),
-    DATABASE_URL_UNPOOLED: toRunDatabaseUrl(unpooled),
+    DATABASE_URL: toRunDatabaseUrl(environment.DATABASE_URL),
+    DATABASE_URL_UNPOOLED: toRunDatabaseUrl(environment.DATABASE_URL_UNPOOLED),
   };
 }

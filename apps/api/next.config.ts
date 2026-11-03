@@ -83,6 +83,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   distDir: isE2E ? ".next-e2e" : ".next",
   env: {
+    NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth",
     ZOONK_APP: "api",
     // Prerendered auth pages link to the main app as the build knew it, so the API's own E2E build
     // names the address its server runs with, as deployments and Main's E2E do.
