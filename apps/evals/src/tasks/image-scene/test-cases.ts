@@ -136,7 +136,7 @@ export const TEST_CASES: ImageSceneCase[] = [
   },
   {
     expectations:
-      "Two paintings compared, one above the other, labeled only 1 and 2: a calm, symmetrical Renaissance scene with soft even light, and a dramatic Baroque scene with a strong diagonal and a bright light against deep shadow. No titles, artists or style names written in the picture, since the question asks which is which.",
+      "Two paintings compared side by side, labeled only 1 and 2: a calm, symmetrical Renaissance scene with soft even light, and a dramatic Baroque scene with a strong diagonal and a bright light against deep shadow. No titles, artists or style names written in the picture, since the question asks which is which.",
     expected: { labels: "some" },
     id: "paintings-comparison-pt",
     userInput: {

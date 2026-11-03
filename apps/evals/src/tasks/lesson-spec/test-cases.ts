@@ -758,10 +758,36 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     id: "pt-patrimonio-liquido-beginner",
     userInput: {
       activityTemplates: ACTIVITY_TEMPLATES,
-      chapterLessons: outlined({
-        after: ["Desafio: Elementos do patrimônio"],
-        before: ["Bens e direitos", "Obrigações", "Separação patrimonial"],
-      }),
+      chapterLessons: [
+        {
+          canDo: "Identificar bens e direitos de uma entidade",
+          ideas: [
+            "Bens são recursos que a empresa controla e pode usar ou vender, como máquinas, dinheiro e marcas adquiridas.",
+            "Direitos são valores ou benefícios que a empresa tem a receber, como o pagamento por uma venda entregue.",
+          ],
+          order: "before",
+          title: "Bens e direitos",
+        },
+        {
+          canDo: "Identificar obrigações de uma entidade",
+          ideas: [
+            "Uma obrigação é um compromisso que a empresa já tem com outra parte e ainda precisa cumprir, mesmo antes do vencimento.",
+            "Um plano de compra, por si só, não cria uma obrigação.",
+          ],
+          order: "before",
+          title: "Obrigações",
+        },
+        {
+          canDo: "Distinguir o patrimônio da entidade do patrimônio pessoal",
+          ideas: [
+            "Na contabilidade, a empresa é considerada separadamente de seus proprietários.",
+            "Os bens, direitos e dívidas da empresa não se confundem automaticamente com os itens pessoais de seus proprietários.",
+          ],
+          order: "before",
+          title: "Separação patrimonial",
+        },
+        ...outlined({ after: ["Desafio: Elementos do patrimônio"] }),
+      ],
       chapterTitle: "Elementos do patrimônio",
       courseTitle: "Contabilidade",
       language: "pt",
@@ -789,10 +815,29 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     id: "pt-niveis-ecologicos-beginner",
     userInput: {
       activityTemplates: ACTIVITY_TEMPLATES,
-      chapterLessons: outlined({
-        after: ["Estrutura e função nos seres vivos", "Desafio: Organização da vida"],
-        before: ["Características dos seres vivos", "Organização dos organismos"],
-      }),
+      chapterLessons: [
+        {
+          canDo: "Reconhecer características compartilhadas pelos seres vivos",
+          ideas: [
+            "Todo ser vivo é formado por células, unidades que compõem seu corpo e realizam atividades essenciais.",
+            "Reprodução é a formação de novos seres vivos a partir de seres vivos anteriores, mas nem todo indivíduo se reproduz.",
+          ],
+          order: "before",
+          title: "Características dos seres vivos",
+        },
+        {
+          canDo: "Relacionar células, tecidos, órgãos e organismos",
+          ideas: [
+            "A célula é uma pequena unidade viva que compõe os seres vivos; um organismo é um ser vivo inteiro.",
+            "Em muitos organismos multicelulares, células organizadas formam tecidos, e diferentes tecidos que trabalham juntos formam órgãos.",
+          ],
+          order: "before",
+          title: "Organização dos organismos",
+        },
+        ...outlined({
+          after: ["Estrutura e função nos seres vivos", "Desafio: Organização da vida"],
+        }),
+      ],
       chapterTitle: "Organização da vida",
       courseTitle: "Biologia",
       language: "pt",

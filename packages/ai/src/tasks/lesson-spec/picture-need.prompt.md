@@ -16,5 +16,5 @@ A picture only decorates when:
 - It repeats numbers the words give, as price tags, bars or icons (a $50 tag marked -20%, a bar for 10 next to a bar for 15, rows of coins): numbers are a table or a chart the app draws, never a picture.
 - It's text drawn as an image: a formula, a derivation, code, a terminal, an app's or a website's screen.
 - At `intermediate` and `advanced`, it shows something every learner already knows the look of (a dog, a coin, a phone) when the screen isn't about a detail of it they don't know.
-- It shows the same thing as `PREVIOUS_PICTURE`, with nothing new to see. The same scene with another part highlighted is new.
+- It shows the same thing as `PREVIOUS_PICTURE`, with nothing new to see, even with what the scene was already about now highlighted. The same scene with a different part highlighted (one gear, then the chain it turns) is new.
 - It gives away the answer to the screen's own question.

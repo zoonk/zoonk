@@ -9,8 +9,9 @@ import instructions from "./picture-need.prompt.md";
 const fallbackModel = "openai/gpt-6-luna";
 
 /**
- * A missing teaching picture costs the learner more than one picture too many. On the eval this
- * caught 11 of 16 decorative pictures and dropped 2 of 36 that teach; 0.5 dropped 4.
+ * A missing teaching picture costs the learner more than one picture too many. On the level-aware
+ * eval (2 Nov 2026) this caught 7 of 12 decorative pictures and dropped 2 of 43 that teach; 0.5
+ * caught 9 and dropped 3.
  */
 const TEACHES_AT = 0.45;
 
