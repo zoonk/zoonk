@@ -82,7 +82,7 @@ test.describe("Exam speaking tasks", () => {
 
     await page.getByRole("button", { name: "Start the call" }).click();
     const transcript = page.getByRole("log", { name: "Conversation" });
-    await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toBeVisible();
+    await expect(transcript.getByText(SCENARIO.openingLine)).toBeVisible();
     await expect(page.getByRole("region", { name: "Your card" })).toBeVisible();
 
     await page

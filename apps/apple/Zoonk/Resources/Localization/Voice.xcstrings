@@ -1,71 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · Level %@" : {
-      "comment" : "A call's length and level, over its title",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Level %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · Level %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Nivel %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Niveau %2$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Livello %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@・レベル%2$@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · 레벨 %2$@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Poziom %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Nível %2$@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · Seviye %2$@"
-          }
-        }
-      }
-    },
     "%@ · Task %lld of %lld" : {
       "comment" : "An exam task's place in its speaking paper",
       "localizations" : {
@@ -131,67 +66,120 @@
         }
       }
     },
-    "%@ / %@" : {
-      "comment" : "The call's elapsed time over its length",
+    "%@ answers and speaks first." : {
+      "comment" : "How a call works: step 1",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ / %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ / %2$@"
+            "value" : "%@ nimmt ab und spricht zuerst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ / %2$@"
+            "value" : "%@ contesta la llamada y habla primero."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ / %2$@"
+            "value" : "%@ décroche et commence la conversation."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ / %2$@"
+            "value" : "%@ risponde e comincia a parlare."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ / %2$@"
+            "value" : "%@さんが応答して、先に話し始めます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ / %2$@"
+            "value" : "%@(이)가 응답하고 먼저 말을 걸어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ / %2$@"
+            "value" : "%@ odbiera i zaczyna rozmowę."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ / %2$@"
+            "value" : "%@ atende e fala primeiro."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ / %2$@"
+            "value" : "%@ sohbete katılır ve önce konuşur."
+          }
+        }
+      }
+    },
+    "%@ answers first." : {
+      "comment" : "While calling: the character speaks first",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ spricht zuerst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ contesta primero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ commence la conversation."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prima risponde %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@さんが先に話します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@(이)가 먼저 말해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ zaczyna rozmowę."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ fala primeiro."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önce %@ konuşur."
           }
         }
       }
@@ -255,61 +243,120 @@
         }
       }
     },
-    "%@ is talking…" : {
-      "comment" : "The character is speaking",
+    "%@ is saying goodbye" : {
+      "comment" : "The character says goodbye before the call ends",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ spricht …"
+            "value" : "%@ verabschiedet sich"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ está hablando…"
+            "value" : "%@ se está despidiendo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ parle…"
+            "value" : "%@ dit au revoir"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ sta parlando…"
+            "value" : "%@ ti sta salutando"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@が話しています…"
+            "value" : "%@さんが最後のあいさつをしています"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@(이)가 말하고 있어요…"
+            "value" : "%@(이)가 작별 인사를 하고 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ mówi…"
+            "value" : "%@ się żegna"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ está falando…"
+            "value" : "%@ está se despedindo"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ konuşuyor…"
+            "value" : "%@ vedalaşıyor"
+          }
+        }
+      }
+    },
+    "%@ is talking" : {
+      "comment" : "The character is speaking",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ spricht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ está hablando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ parle"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ sta parlando"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@さんが話しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@(이)가 말하고 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ mówi"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ está falando"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ konuşuyor"
           }
         }
       }
@@ -983,6 +1030,71 @@
         }
       }
     },
+    "About %@ · Level %@" : {
+      "comment" : "A call's length and level, over its title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa %1$@ · Level %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About %1$@ · Level %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproximadamente %1$@ · Nivel %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Environ %1$@ · Niveau %2$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Circa %1$@ · Livello %2$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "約%1$@・レベル%2$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "약 %1$@ · 레벨 %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Około %1$@ · Poziom %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca de %1$@ · Nível %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaklaşık %1$@ · Seviye %2$@"
+          }
+        }
+      }
+    },
     "Accuracy" : {
       "comment" : "A speaking criterion",
       "localizations" : {
@@ -1038,6 +1150,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doğruluk"
+          }
+        }
+      }
+    },
+    "All goals done. %@ will wrap up after your answer." : {
+      "comment" : "Every goal is met: the character ends the call after the learner's answer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Ziele erreicht. %@ beendet das Gespräch nach deiner Antwort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los objetivos completados. %@ terminará la llamada después de tu respuesta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les objectifs sont atteints. %@ terminera l’appel après ta réponse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto tutti gli obiettivi. %@ concluderà la conversazione dopo la tua risposta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標をすべて達成しました。返答のあと、%@さんが会話を締めくくります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 목표를 달성했어요. 대답을 마치면 %@(이)가 대화를 마무리할 거예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wszystkie cele osiągnięte. %@ zakończy rozmowę po twojej odpowiedzi."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os objetivos concluídos. %@ vai encerrar a conversa depois da sua resposta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm hedefler tamamlandı. %@ cevabından sonra sohbeti bitirecek."
+          }
+        }
+      }
+    },
+    "Allow the microphone in Settings to talk with %@, or do this call by typing." : {
+      "comment" : "How to do a call with the microphone blocked",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erlaub in den Einstellungen den Mikrofonzugriff, um mit %@ zu sprechen, oder schreib deine Antworten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permite el acceso al micrófono en Configuración para hablar con %@, o haz la llamada por escrito."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorise l’accès au micro dans Réglages pour parler avec %@, ou réponds par écrit."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consenti l’accesso al microfono nelle Impostazioni per parlare con %@, oppure rispondi per iscritto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@さんと声で話すには、「設定」でマイクの使用を許可してください。文字入力でも会話できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정에서 마이크 사용을 허용해 %@에게 말하거나, 글로 입력해 대화하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Włącz dostęp do mikrofonu w Ustawieniach, a %@ porozmawia z tobą. Możesz też pisać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permita o uso do microfone nos Ajustes para conversar com %@, ou participe digitando."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ile konuşmak için Ayarlar’dan mikrofon izni ver ya da yazarak sohbet et."
+          }
+        }
+      }
+    },
+    "Almost time. %@ will say goodbye after your answer." : {
+      "comment" : "The call's time is up: the character ends it after the learner's answer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Zeit ist fast um. %@ verabschiedet sich nach deiner Antwort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El tiempo está por terminar. %@ se despedirá después de tu respuesta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est bientôt la fin. %@ dira au revoir après ta réponse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tempo sta per finire. %@ ti saluterà dopo la tua risposta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もうすぐ終了時間です。返答のあと、%@さんが最後のあいさつをします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "곧 대화를 마칠 시간이에요. 대답을 마치면 %@(이)가 작별 인사를 할 거예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czas się kończy. %@ pożegna się po twojej odpowiedzi."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O tempo está acabando. %@ vai se despedir depois da sua resposta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Süre dolmak üzere. %@ cevabından sonra vedalaşacak."
           }
         }
       }
@@ -1392,6 +1681,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tek bir kısa deneme sınavına dayanan bir tahmin, resmî bir puan değil."
+          }
+        }
+      }
+    },
+    "Answer %@ out loud." : {
+      "comment" : "Before the learner's first spoken answer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antworte %@ laut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responde a %@ en voz alta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réponds à %@ à voix haute."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rispondi a %@ ad alta voce."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@さんに声で答えてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에게 소리 내어 대답하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odpowiedz na głos. %@ słucha."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responda a %@ em voz alta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ile konuşurken sesli cevap ver."
           }
         }
       }
@@ -1809,6 +2157,65 @@
         }
       }
     },
+    "Call %@" : {
+      "comment" : "Starts a live call with the character",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit %@ sprechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llamar a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appeler %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parla con %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@さんと会話練習をする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@와(과) 대화하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zadzwoń do: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversar com %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ile sohbet et"
+          }
+        }
+      }
+    },
     "Call again" : {
       "comment" : "Calls again after a drop",
       "localizations" : {
@@ -1927,6 +2334,65 @@
         }
       }
     },
+    "Call ended" : {
+      "comment" : "The call hung up and is being saved",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespräch beendet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llamada terminada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appel terminé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversazione terminata"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話が終了しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화 종료"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozmowa zakończona"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversa encerrada"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sohbet bitti"
+          }
+        }
+      }
+    },
     "Call time" : {
       "comment" : "VoiceOver: the call's clock",
       "localizations" : {
@@ -1986,61 +2452,61 @@
         }
       }
     },
-    "Calling…" : {
-      "comment" : "The call is ringing",
+    "Calling %@…" : {
+      "comment" : "The call is ringing the character",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verbindung wird aufgebaut …"
+            "value" : "Wir rufen %@ an…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llamando…"
+            "value" : "Llamando a %@…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appel en cours…"
+            "value" : "Appel à %@…"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo avviando la conversazione…"
+            "value" : "Stiamo contattando %@…"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "接続しています…"
+            "value" : "%@さんを呼び出しています…"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "연결하고 있어요…"
+            "value" : "%@에게 연결하고 있어요…"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dzwonimy…"
+            "value" : "Dzwonimy do: %@…"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chamando…"
+            "value" : "Chamando %@…"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bağlanıyoruz…"
+            "value" : "%@ ile bağlantı kuruyoruz…"
           }
         }
       }
@@ -2218,6 +2684,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sohbet etmek için ücretsiz bir hesap gerekli"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "comment" : "Stops a call that hasn't connected yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbrechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annulla"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンセル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anuluj"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İptal et"
           }
         }
       }
@@ -3939,6 +4464,65 @@
         }
       }
     },
+    "How the call works" : {
+      "comment" : "Before a call: what will happen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "So läuft das Gespräch ab"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo funciona la llamada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment se déroule l’appel"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come funziona la conversazione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話の流れ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화 진행 방식"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jak przebiega rozmowa"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como funciona a conversa"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sohbet nasıl ilerler"
+          }
+        }
+      }
+    },
     "IELTS speaking mock" : {
       "comment" : "A speaking mock's name",
       "localizations" : {
@@ -4171,6 +4755,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Başka bir sohbet başlattığında sona erdi."
+          }
+        }
+      }
+    },
+    "It ends on its own after about %@." : {
+      "comment" : "An exam task's call stops by itself at about its length",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach etwa %@ endet es von selbst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina sola después de aproximadamente %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’appel se termine automatiquement après environ %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termina automaticamente dopo circa %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "約%@で自動的に終了します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "약 %@ 후에 자동으로 끝나요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Po około %@ rozmowa kończy się sama."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ela termina sozinha em cerca de %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaklaşık %@ sonra kendiliğinden biter."
           }
         }
       }
@@ -4777,6 +5420,65 @@
         }
       }
     },
+    "Listen, then answer." : {
+      "comment" : "The character's first turn: the learner answers after it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hör zu und antworte dann."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escucha y luego responde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écoute, puis réponds."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ascolta, poi rispondi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "話を聞いてから答えてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "먼저 듣고 대답하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posłuchaj, a potem odpowiedz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escute, depois responda."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dinle, sonra cevap ver."
+          }
+        }
+      }
+    },
     "Listening to how it sounded…" : {
       "comment" : "Shown while a word said out loud is graded",
       "localizations" : {
@@ -4954,61 +5656,61 @@
         }
       }
     },
-    "Microphone off" : {
-      "comment" : "The microphone is blocked",
+    "Microphone on" : {
+      "comment" : "The learner unmuted themselves",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mikrofon ausgeschaltet"
+            "value" : "Mikrofon an"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Micrófono desactivado"
+            "value" : "Micrófono activado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Micro désactivé"
+            "value" : "Micro activé"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Microfono disattivato"
+            "value" : "Microfono attivo"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "マイクが使えません"
+            "value" : "マイクがオンです"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "마이크 사용 차단됨"
+            "value" : "마이크 켜짐"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mikrofon wyłączony"
+            "value" : "Mikrofon włączony"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Microfone desativado"
+            "value" : "Microfone ligado"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mikrofon kapalı"
+            "value" : "Mikrofon açık"
           }
         }
       }
@@ -7438,6 +8140,65 @@
         }
       }
     },
+    "Scroll to latest" : {
+      "comment" : "Scrolls a call to its newest line",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zur neuesten Nachricht scrollen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a lo más reciente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aller au dernier message"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vai all’ultimo messaggio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新の発言へ移動する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최신 메시지로 이동"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przewiń do najnowszej wypowiedzi"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir para a última mensagem"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En sona kaydır"
+          }
+        }
+      }
+    },
     "See how it went" : {
       "comment" : "Ends the round",
       "localizations" : {
@@ -7729,65 +8490,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doğru söylendi"
-          }
-        }
-      }
-    },
-    "Speak or type. The microphone is used only during the call." : {
-      "comment" : "How the call hears the learner",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sprich oder schreib. Das Mikrofon wird nur während des Gesprächs genutzt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Habla o escribe. El micrófono solo se usa durante la llamada."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parle ou écris. Le micro est utilisé uniquement pendant l’appel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parla o scrivi. Il microfono viene usato solo durante la conversazione."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "話すか、文字で入力してください。マイクは会話中だけ使用します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "말하거나 입력하세요. 마이크는 대화 중에만 사용돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mów lub pisz. Korzystamy z mikrofonu tylko podczas rozmowy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fale ou digite. O microfone é usado apenas durante a conversa."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konuş veya yaz. Mikrofon yalnızca sohbet sırasında kullanılır."
           }
         }
       }
@@ -8614,6 +9316,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa bir ara ver, sonra tekrar dene."
+          }
+        }
+      }
+    },
+    "Take your time." : {
+      "comment" : "The learner has been quiet a while",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lass dir Zeit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tómate tu tiempo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prends ton temps."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fai con calma."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ゆっくりで大丈夫です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "천천히 해도 괜찮아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie spiesz się."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem pressa."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acele etme."
           }
         }
       }
@@ -9692,6 +10453,65 @@
         }
       }
     },
+    "Then it's your turn: answer out loud, or type if you can't talk." : {
+      "comment" : "How a call works: step 2",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dann bist du dran: Antworte laut oder schreib, wenn du nicht sprechen kannst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Después es tu turno: responde en voz alta o escribe si no puedes hablar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensuite, c’est à toi : réponds à voix haute, ou écris si tu ne peux pas parler."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poi tocca a te: rispondi ad alta voce o scrivi se non puoi parlare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次は答える番です。声で答えるか、話せないときは文字で答えてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그다음엔 대답할 차례예요. 소리 내어 말하거나, 말하기 어려우면 글로 입력하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potem twoja kolej: odpowiedz na głos lub napisz, jeśli nie możesz mówić."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depois é sua vez: responda em voz alta ou digite se não puder falar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonra sıra sende: sesli cevap ver ya da konuşamıyorsan yaz."
+          }
+        }
+      }
+    },
     "This call has ended" : {
       "comment" : "A call that can't go on",
       "localizations" : {
@@ -10636,6 +11456,124 @@
         }
       }
     },
+    "Turn your sound on. The microphone is on only during the call." : {
+      "comment" : "Before a call: what it needs from the learner's device",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schalt den Ton ein. Das Mikrofon ist nur während des Gesprächs an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa el sonido. El micrófono solo está activado durante la llamada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active le son. Le micro n’est actif que pendant l’appel."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attiva l’audio. Il microfono è attivo solo durante la conversazione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "端末の音をオンにしてください。マイクは会話中だけオンになります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소리를 켜세요. 마이크는 대화 중에만 켜져요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Włącz dźwięk. Mikrofon jest włączony tylko podczas rozmowy."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ative o som. O microfone só fica ligado durante a conversa."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cihazının sesini aç. Mikrofon yalnızca sohbet sırasında açık olur."
+          }
+        }
+      }
+    },
+    "Type instead" : {
+      "comment" : "Does the call by typing",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stattdessen schreiben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responder por escrito"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répondre par écrit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rispondi per iscritto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字入力に切り替える"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "글로 대화하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napisz zamiast mówić"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responder por texto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazarak devam et"
+          }
+        }
+      }
+    },
     "Type your reply" : {
       "comment" : "Typed reply field",
       "localizations" : {
@@ -10695,6 +11633,65 @@
         }
       }
     },
+    "Type your reply below." : {
+      "comment" : "A call without the microphone: how to answer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schreib unten deine Antwort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escribe tu respuesta abajo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écris ta réponse ci-dessous."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrivi la tua risposta qui sotto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下の欄に返答を入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래에 답변을 입력하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wpisz odpowiedź poniżej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Digite sua resposta abaixo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cevabını aşağıya yaz."
+          }
+        }
+      }
+    },
     "Unit challenge" : {
       "comment" : "A checkpoint call's title",
       "localizations" : {
@@ -10750,6 +11747,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ünite meydan okuması"
+          }
+        }
+      }
+    },
+    "Unmute to answer out loud, or type your reply." : {
+      "comment" : "While muted: how to answer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schalt dein Mikrofon ein, um laut zu antworten, oder schreib deine Antwort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa el micrófono para responder en voz alta o escribe tu respuesta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réactive ton micro pour répondre à voix haute, ou écris ta réponse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riattiva il microfono per rispondere ad alta voce o scrivi la tua risposta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミュートを解除して声で答えるか、文字で返答してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이크를 켜고 소리 내어 대답하거나, 답변을 입력하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Włącz mikrofon, by odpowiedzieć na głos, lub wpisz odpowiedź."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ative o microfone para responder em voz alta ou digite sua resposta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesli cevap vermek için mikrofonunu aç ya da cevabını yaz."
           }
         }
       }
@@ -11340,6 +12396,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İyi gidenler"
+          }
+        }
+      }
+    },
+    "When you've done everything, or after about %@, %@ says goodbye and the call ends." : {
+      "comment" : "How a call works: step 3",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du alles erledigt hast, spätestens aber nach etwa %1$@, verabschiedet sich %2$@ und das Gespräch endet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "When you've done everything, or after about %1$@, %2$@ says goodbye and the call ends."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando completes todo o después de aproximadamente %1$@, %2$@ se despide y la llamada termina."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand tu as tout terminé, ou après environ %1$@, %2$@ dit au revoir et l’appel se termine."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando hai completato tutto o dopo circa %1$@, %2$@ ti saluta e la conversazione termina."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "やることがすべて終わるか、約%1$@が経つと、%2$@さんが最後のあいさつをして会話が終わります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표를 모두 달성하거나 %1$@쯤 지나면 %2$@(이)가 작별 인사를 하고 대화가 끝나요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Po osiągnięciu wszystkich celów lub po około %1$@ %2$@ żegna się i rozmowa się kończy."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando você terminar tudo ou depois de cerca de %1$@, %2$@ se despede e a conversa termina."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her şeyi tamamladığında ya da yaklaşık %1$@ sonra %2$@ vedalaşır ve sohbet biter."
           }
         }
       }
@@ -12471,124 +13592,6 @@
         }
       }
     },
-    "Your call time for this month is almost up." : {
-      "comment" : "The plan's call time runs out this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Gesprächszeit für diesen Monat ist fast aufgebraucht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya casi se agota tu tiempo de llamadas de este mes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton temps d’appel pour ce mois est presque épuisé."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stai per esaurire il tempo di conversazione di questo mese."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月の会話時間は残りわずかです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달 대화 시간이 얼마 남지 않았어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zostało ci niewiele czasu na rozmowy w tym miesiącu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu tempo de conversa deste mês está acabando."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki sohbet süren bitmek üzere."
-          }
-        }
-      }
-    },
-    "Your call time for today is almost up." : {
-      "comment" : "The plan's call time runs out today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Gesprächszeit für heute ist fast aufgebraucht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya casi se agota tu tiempo de llamadas de hoy."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton temps d’appel pour aujourd’hui est presque épuisé."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stai per esaurire il tempo di conversazione di oggi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の会話時間は残りわずかです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 대화 시간이 얼마 남지 않았어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zostało ci niewiele czasu na rozmowy na dziś."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu tempo de conversa de hoje está acabando."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü sohbet süren bitmek üzere."
-          }
-        }
-      }
-    },
     "Your calls come back next month, or get Plus for higher call limits." : {
       "comment" : "A free learner used this month's call time",
       "localizations" : {
@@ -12825,6 +13828,65 @@
         }
       }
     },
+    "Your microphone is off" : {
+      "comment" : "The learner blocked the microphone",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Mikrofon ist aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu micrófono está desactivado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton micro est désactivé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il microfono è disattivato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイクがオフです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이크가 꺼져 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój mikrofon jest wyłączony"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu microfone está desligado"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofonun kapalı"
+          }
+        }
+      }
+    },
     "Your mock opens as soon as it's ready." : {
       "comment" : "A speaking mock opens by itself once it's written",
       "localizations" : {
@@ -12998,6 +14060,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kart hazır olur olmaz bölümün açılır."
+          }
+        }
+      }
+    },
+    "Your turn" : {
+      "comment" : "The learner should answer now",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist dran"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu turno"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À toi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca a te"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "答える番です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대답할 차례예요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoja kolej"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua vez"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıra sende"
           }
         }
       }

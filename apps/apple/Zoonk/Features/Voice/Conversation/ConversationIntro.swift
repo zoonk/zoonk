@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// What a call's intro shows: from the call, or from a checkpoint's read before the call is made.
 struct CallIntro {
@@ -21,6 +22,8 @@ struct CallIntro {
   let objectives: [Objective]
   let situation: String
   let speakingTask: Components.Schemas.ExamSpeakingTask?
+  /// A role-play call, not an exam's.
+  let callsCharacter: Bool
   let targetLanguage: String
   let title: String
 
@@ -35,6 +38,7 @@ struct CallIntro {
     }
     situation = conversation.situation
     speakingTask = conversation.speakingTask
+    callsCharacter = conversation.callsCharacter
     targetLanguage = conversation.targetLanguage
     title = conversation.title
   }
@@ -48,6 +52,7 @@ struct CallIntro {
     objectives = intro.objectives.map { Objective(description: $0.description, label: $0.label) }
     situation = intro.situation
     speakingTask = intro.examTask?.value1
+    callsCharacter = intro.examTask == nil
     targetLanguage = intro.targetLanguage
     title = intro.title
   }
@@ -78,11 +83,14 @@ struct ConversationIntro<Footer: View>: View {
 
   @ViewBuilder
   private var situation: some View {
+    let length = Duration.seconds(intro.minutes * 60).formatted(
+      .units(allowed: [.minutes], width: .abbreviated))
+
     Section {
       VStack(alignment: .leading, spacing: 8) {
         Text(
-          "\(Duration.seconds(intro.minutes * 60).formatted(.units(allowed: [.minutes], width: .wide)))\u{00A0}· Level \(intro.level)",
-          tableName: "Voice", comment: "A call's length and level, over its title"
+          "About \(length)\u{00A0}· Level \(intro.level)", tableName: "Voice",
+          comment: "A call's length and level, over its title"
         )
         .font(.caption.monospaced())
         .foregroundStyle(.tertiary)
@@ -92,6 +100,15 @@ struct ConversationIntro<Footer: View>: View {
 
         Text(intro.speakingTask?.card.summary ?? intro.situation)
           .foregroundStyle(.secondary)
+
+        if !intro.callsCharacter {
+          Text(
+            "It ends on its own after about \(length).", tableName: "Voice",
+            comment: "An exam task's call stops by itself at about its length"
+          )
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+        }
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
@@ -111,6 +128,10 @@ struct ConversationIntro<Footer: View>: View {
 
       ExamTaskCard(task: examTask)
     } else {
+      if intro.callsCharacter {
+        HowTheCallWorks(intro: intro)
+      }
+
       Section {
         ForEach(intro.objectives, id: \.label) { objective in
           VStack(alignment: .leading, spacing: 2) {
@@ -127,8 +148,8 @@ struct ConversationIntro<Footer: View>: View {
       } footer: {
         Label {
           Text(
-            "Speak or type. The microphone is used only during the call.", tableName: "Voice",
-            comment: "How the call hears the learner")
+            "Turn your sound on. The microphone is on only during the call.", tableName: "Voice",
+            comment: "Before a call: what it needs from the learner's device")
         } icon: {
           Image(systemName: "mic")
         }
@@ -147,6 +168,8 @@ struct ConversationIntro<Footer: View>: View {
 /// A call the learner's plan leaves to Plus shows the same intro, locked.
 struct CallStartFooter: View {
   let isLocked: Bool
+  /// Whom the learner calls; nil for an examiner, whose call just starts.
+  let callee: String?
   let onStart: () -> Void
 
   var body: some View {
@@ -164,7 +187,7 @@ struct CallStartFooter: View {
     } else {
       Button(action: onStart) {
         Label {
-          Text("Start the call", tableName: "Voice", comment: "Starts a live call")
+          CallButtonTitle(callee: callee)
         } icon: {
           Image(systemName: "phone.fill")
         }
@@ -173,6 +196,112 @@ struct CallStartFooter: View {
       .buttonStyle(.mainAction)
       .controlSize(.large)
       .keyboardShortcut(.defaultAction)
+    }
+  }
+}
+
+struct CallButtonTitle: View {
+  let callee: String?
+
+  var body: some View {
+    if let callee {
+      Text("Call \(callee)", tableName: "Voice", comment: "Starts a live call with the character")
+    } else {
+      Text("Start the call", tableName: "Voice", comment: "Starts a live call")
+    }
+  }
+}
+
+/// The learner said no to the microphone: nothing is reserved until they choose to type or allow
+/// it in Settings.
+struct CallMicrophoneOff: View {
+  @Environment(\.openURL) private var openURL
+  @AccessibilityFocusState private var isMessageFocused: Bool
+
+  let name: String
+  let onType: () -> Void
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Text(
+        "Your microphone is off", tableName: "Voice", comment: "The learner blocked the microphone"
+      )
+      .font(.headline)
+
+      Text(
+        "Allow the microphone in Settings to talk with \(name), or do this call by typing.",
+        tableName: "Voice", comment: "How to do a call with the microphone blocked"
+      )
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .accessibilityElement(children: .combine)
+    // It replaces the Call button VoiceOver was on.
+    .accessibilityFocused($isMessageFocused)
+    .onAppear {
+      isMessageFocused = true
+    }
+
+    Button(action: onType) {
+      Label {
+        Text("Type instead", tableName: "Voice", comment: "Does the call by typing")
+      } icon: {
+        Image(systemName: "keyboard")
+      }
+      .frame(maxWidth: .infinity)
+    }
+    .buttonStyle(.mainAction)
+    .controlSize(.large)
+
+    Button {
+      if let url = URL(string: UIApplication.openSettingsURLString) {
+        openURL(url)
+      }
+    } label: {
+      Text("Open Settings", tableName: "Voice", comment: "Button that opens the app's settings")
+        .frame(maxWidth: .infinity)
+    }
+    .buttonStyle(.bordered)
+    .controlSize(.large)
+  }
+}
+
+/// What happens once the learner calls, so the character speaking first is no surprise.
+private struct HowTheCallWorks: View {
+  let intro: CallIntro
+
+  var body: some View {
+    let name = intro.character.name
+    let length = Duration.seconds(intro.minutes * 60).formatted(
+      .units(allowed: [.minutes], width: .abbreviated))
+
+    Section {
+      step(1) {
+        Text(
+          "\(name) answers and speaks first.", tableName: "Voice",
+          comment: "How a call works: step 1")
+      }
+      step(2) {
+        Text(
+          "Then it's your turn: answer out loud, or type if you can't talk.", tableName: "Voice",
+          comment: "How a call works: step 2")
+      }
+      step(3) {
+        Text(
+          "When you've done everything, or after about \(length), \(name) says goodbye and the call ends.",
+          tableName: "Voice", comment: "How a call works: step 3")
+      }
+    } header: {
+      Text("How the call works", tableName: "Voice", comment: "Before a call: what will happen")
+    }
+  }
+
+  private func step(_ number: Int, @ViewBuilder _ text: () -> Text) -> some View {
+    Label {
+      text()
+    } icon: {
+      Image(systemName: "\(number).circle")
     }
   }
 }

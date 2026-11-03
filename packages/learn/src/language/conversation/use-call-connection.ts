@@ -6,7 +6,7 @@ import { type CallLimit } from "../../_components/help-limit-notice";
 
 type LiveCallSetup = Pick<
   LanguageConversationSetup,
-  "connectionId" | "deadlineAt" | "endsAtLimit" | "seconds" | "sessionUrl"
+  "connectionId" | "deadlineAt" | "script" | "seconds" | "sessionUrl" | "talkSeconds"
 >;
 
 export type ConversationConnection =

@@ -1,24 +1,32 @@
 import { randomUUID } from "node:crypto";
 import { authenticatedCallFixture } from "@/workflows/calls/_test-utils/live-call-fixtures";
 import { liveCallDeadlineWorkflow } from "@/workflows/calls/live-call-deadline-workflow";
+import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
 import {
   createLiveCallSession,
   hangUpLiveCallSession,
   isLiveCallAvailable,
 } from "@zoonk/ai/tasks/language/live-call-session";
+import { LIVE_CALL_WRAP_UP_SECONDS } from "@zoonk/core/entitlements/limits";
 import {
+  languageConversationObjectiveCheckSchema,
   languageConversationSetupSchema,
   liveCallSdpResponseSchema,
 } from "@zoonk/core/language/conversations/contract";
 import { prisma } from "@zoonk/db";
-import { LIVE_CALL_SDP_OFFER } from "@zoonk/testing/fixtures/language";
+import { LIVE_CALL_SDP_OFFER, RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
+import { POST as checkObjectives } from "../objective-checks/route";
 import { POST as end } from "./[connectionId]/end/route";
 import { POST as redeem } from "./[connectionId]/sdp/route";
 import { POST as reserve } from "./route";
+
+vi.mock("@zoonk/ai/tasks/language/conversation-objectives", () => ({
+  checkConversationObjectives: vi.fn(),
+}));
 
 vi.mock("@zoonk/ai/tasks/language/live-call-session", () => ({
   createLiveCallSession: vi.fn(),
@@ -86,6 +94,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     expect(response.headers.get("Cache-Control")).toBe("no-store");
     const setup = languageConversationSetupSchema.parse(await response.json());
     expect(createLiveCallSession).not.toHaveBeenCalled();
+    expect(setup.seconds - setup.talkSeconds).toBe(LIVE_CALL_WRAP_UP_SECONDS);
 
     expect(start).toHaveBeenCalledWith(liveCallDeadlineWorkflow, [
       { connectionId: setup.connectionId, deadlineAt: new Date(setup.deadlineAt) },
@@ -141,7 +150,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
-  it("keeps an End OpenAI didn't confirm retryable, with the connection still open", async () => {
+  it("ends a call whose hangup OpenAI didn't confirm, marked unconfirmed", async () => {
     const { conversationId } = await authenticatedCallFixture();
 
     const setup = await setupOf(reserveCall(conversationId));
@@ -149,16 +158,11 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(201);
     vi.mocked(hangUpLiveCallSession).mockRejectedValue(new Error("OpenAI is unavailable"));
     const response = await endCall(conversationId, setup.connectionId);
-    expect(response.status).toBe(409);
-    expect(response.headers.get("Retry-After")).toBe("5");
-
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: "PREVIOUS_CONNECTION_CLOSING" },
-    });
+    expect(response.status).toBe(200);
 
     await expect(
       prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
-    ).resolves.toMatchObject({ state: "live" });
+    ).resolves.toMatchObject({ endReason: "learner", endUnconfirmed: true, state: "ended" });
   });
 
   it("rejects malformed request bodies and connection IDs before spending", async () => {
@@ -217,5 +221,50 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     ).resolves.toBe(401);
 
     expect(createLiveCallSession).not.toHaveBeenCalled();
+  });
+
+  it("answers an objective check with the goals met and the progress cue", async () => {
+    const { conversationId } = await authenticatedCallFixture();
+    const setup = await setupOf(reserveCall(conversationId));
+    await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(201);
+    const [first, second] = RENTING_SCENARIO.objectives;
+
+    vi.mocked(checkConversationObjectives).mockResolvedValueOnce({
+      data: { goodbye: false, met: [{ label: first?.label ?? "", learnerWords: "Is it free?" }] },
+      provenance: {
+        generatedAt: new Date().toISOString(),
+        latencyMs: 1,
+        model: "test",
+        promptVersion: "test",
+        provider: "openai",
+        requestedModel: "test",
+        runId: "test",
+        usage: {},
+      },
+      systemPrompt: "",
+      usage: undefined as never,
+      userPrompt: "",
+    });
+
+    const response = await checkObjectives(
+      request(`/v1/language-conversations/${conversationId}/objective-checks`, {
+        turns: [
+          { speaker: "learner", text: "Is it free?" },
+          { speaker: "character", text: "Yes, it is." },
+        ],
+      }),
+      { params: Promise.resolve({ conversationId }) },
+    );
+
+    expect(response.status).toBe(200);
+
+    expect(languageConversationObjectiveCheckSchema.parse(await response.json())).toStrictEqual({
+      goodbye: false,
+      objectivesMet: [first?.label],
+      progress: {
+        channel: "thinking",
+        text: expect.stringContaining(`Still to do: "${second?.label}"`),
+      },
+    });
   });
 });

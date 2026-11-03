@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// A call that already ended opens on its result. A checkpoint's call opens on its intro before
-/// it's made, and its Start makes the call and calls at once, as main's checkpoint page does.
+/// it's made, and its Call makes the call and calls at once, as main's checkpoint page does.
 struct ConversationScreen: View {
   enum Source: Equatable {
     case conversation(String)
@@ -14,6 +14,8 @@ struct ConversationScreen: View {
   @State private var isInCall = false
   @State private var day: DayResult?
   @State private var started: String?
+  /// The learner tapped Call on the intro: a call written first opens on its intro instead.
+  @State private var callsNow = false
 
   let source: Source
   /// A running mock's speaking task goes back to the mock without the call's own result: the mock's
@@ -58,11 +60,14 @@ struct ConversationScreen: View {
     let call = voice.checkpointCall(blockId: blockId)
 
     if let started {
-      conversation(started, callsRightAway: true)
+      conversation(started, callsRightAway: callsNow)
     } else if case .ready(let made)? = call.value {
       conversation(made.conversationId, callsRightAway: false)
     } else {
-      CheckpointCallIntro(call: call, blockId: blockId) { started = $0 }
+      CheckpointCallIntro(call: call, blockId: blockId) { conversationId, callsNow in
+        self.callsNow = callsNow
+        started = conversationId
+      }
     }
   }
 
@@ -72,6 +77,7 @@ struct ConversationScreen: View {
       day: $day, onSaved: onSaved
     ) { again in
       day = nil
+      callsNow = false
       started = again
     }
     .id(conversationId)
@@ -267,43 +273,49 @@ private struct LiveCallRun: View {
   private func runView(_ call: LiveCall) -> some View {
     if conversation.locked || call.failure == .plusRequired {
       ConversationIntro(intro: CallIntro(conversation)) {
-        CallStartFooter(isLocked: true) {}
+        CallStartFooter(isLocked: true, callee: nil) {}
       }
     } else if call.phase == .idle {
       ConversationIntro(intro: CallIntro(conversation)) {
-        CallStartFooter(isLocked: false) {
-          Task { await call.start() }
+        if call.micBlocked {
+          CallMicrophoneOff(name: conversation.character.name) {
+            Task { await call.startTyping() }
+          }
+        } else {
+          CallStartFooter(isLocked: false, callee: callee) {
+            Task { await call.start() }
+          }
         }
       }
     } else if saving == .ended || saving == .takenOver {
       CallProblemView(problem: .saveEnded(takenOver: saving == .takenOver)) { action in
         handle(action, call: call)
       }
-    } else if let saving {
-      SavingCallView(
-        state: saving,
-        isGrading: conversation.kind == .speakingMock || conversation.speakingTask != nil
-      ) {
-        Task { await save() }
-      }
-    } else if call.phase == .ended {
-      SavingCallView(state: .saving, isGrading: conversation.speakingTask != nil) {}
-    } else if call.phase == .failed, let failure = call.failure {
+    } else if call.phase == .failed, saving == nil, let failure = call.failure {
       CallProblemView(problem: .call(failure, call.limit)) { action in
         handle(action, call: call)
       }
     } else {
       ConversationLiveView(
-        call: call, conversation: conversation, usedHelp: $usedHelp,
+        call: call, conversation: conversation, usedHelp: $usedHelp, saving: saving,
         onEnd: {
-          // A call that hasn't connected yet has nothing to save: ending it goes back to the intro.
+          // A call that hasn't connected yet has nothing to save: cancelling it goes back to the
+          // intro.
           if call.phase == .connecting {
+            call.cancel()
             restart(callNow: false)
           } else {
             call.hangUp()
           }
+        },
+        onRetrySave: {
+          Task { await save() }
         })
     }
+  }
+
+  private var callee: String? {
+    conversation.callsCharacter ? conversation.character.name : nil
   }
 
   private func handle(_ action: CallProblemView.Action, call: LiveCall) {

@@ -46,12 +46,12 @@ class ConversationFlowTest {
         show()
 
         compose.onNodeWithText("Order at the café").assertExists()
-        compose.onNodeWithText("Ask for a coffee").assertExists()
-        seen("Speak or type. The microphone is used only during the call.")
+        seen("Ask for a coffee")
+        seen("Turn your sound on. The microphone is on only during the call.")
 
         goLive()
         assertTrue(transport.microphone)
-        compose.onNodeWithText("Listening…").assertExists()
+        compose.onNodeWithText("Calling Lucía…").assertExists()
 
         transport.onEvent(characterSays("¡Hola! ¿Qué le pongo?"))
         transport.onEvent(learnerSays("Un café, por favor.", 1000.0, 3000.0))
@@ -61,10 +61,15 @@ class ConversationFlowTest {
         compose.onNode(hasSetTextAction()).performTextInput("Con leche")
         compose.onNodeWithContentDescription("Send").performClick()
         seen("You: Con leche")
-        assertTrue(transport.instructions.last().endsWith("\"Con leche\""))
+        assertTrue(
+            transport.commentary
+                .last()
+                .content
+                .endsWith("\"Con leche\""),
+        )
 
         compose.onNodeWithContentDescription("Help").performClick()
-        seen("Phrases you can use")
+        compose.onNodeWithText("Phrases you can use").assertExists()
 
         compose.onNodeWithContentDescription("End").performClick()
         compose.waitForIdle()
@@ -88,13 +93,13 @@ class ConversationFlowTest {
     @Test
     fun endingACallThatHasntConnectedGoesBackToItsIntro() {
         show()
-        compose.onNodeWithText("Start the call").performClick()
-        compose.onNodeWithText("Calling…").assertExists()
+        compose.onNodeWithText("Call Lucía").performClick()
+        compose.onNodeWithText("Calling Lucía…").assertExists()
 
-        compose.onNodeWithContentDescription("End").performClick()
+        compose.onNodeWithContentDescription("Cancel").performClick()
         compose.waitForIdle()
 
-        compose.onNodeWithText("Start the call").assertExists()
+        compose.onNodeWithText("Call Lucía").assertExists()
         assertEquals(listOf(com.zoonk.android.feature.livecall.CONNECTION), client.ended)
         assertTrue(transport.closed)
     }
@@ -112,14 +117,14 @@ class ConversationFlowTest {
                 ),
             )
         show()
-        compose.onNodeWithText("Start the call").performClick()
+        compose.onNodeWithText("Call Lucía").performClick()
 
         compose.onNodeWithText("You're already in a call").assertExists()
         compose.onNodeWithText("End that call and start this one").performClick()
         compose.waitForIdle()
 
         assertEquals(listOf(false, true), client.connects)
-        compose.onNodeWithText("Calling…").assertExists()
+        compose.onNodeWithText("Calling Lucía…").assertExists()
     }
 
     @Test
@@ -147,7 +152,7 @@ class ConversationFlowTest {
         compose.onNodeWithText("Call again").performClick()
         compose.waitForIdle()
         assertEquals(2, transports.size)
-        compose.onNodeWithText("Calling…").assertExists()
+        compose.onNodeWithText("Calling Lucía…").assertExists()
     }
 
     @Test

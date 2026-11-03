@@ -8,7 +8,7 @@ import { useExtracted } from "next-intl";
 import { SpeechStatusIcon, useSpeechActionLabel } from "../../speech/speech-parts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
 
-function CharacterAvatar({ name, talking }: { name: string; talking: boolean }) {
+export function CharacterAvatar({ name, talking }: { name: string; talking: boolean }) {
   return (
     <span
       aria-hidden="true"

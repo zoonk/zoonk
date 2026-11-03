@@ -33,9 +33,9 @@ class OngoingCallsTest {
             val client = FakeCallClient().apply { endAnswers = ArrayDeque(listOf(null, null, false)) }
             val call =
                 LiveCall(
-                    LiveCallScript("Hola", emptyList(), emptyList(), 3),
+                    LiveCallTask(kind = "practice", objectives = emptyList(), met = emptyList()),
                     client,
-                    { _, onEvent, onLost -> FakeTransport(true, onEvent, onLost) },
+                    { _, signals -> FakeTransport(true, signals) },
                     scope,
                 )
             val calls = OngoingCalls(context, scope)

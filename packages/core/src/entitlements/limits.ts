@@ -21,6 +21,12 @@ const CALL_CHECKS_COST_MICROS = 10_000;
 
 /** Connection overhead reserves money without reducing the learner's allowed talk time. */
 const LIVE_CALL_OVERHEAD_SECONDS = 15;
+
+/**
+ * After the talk time, so the character can say goodbye once the learner has had their last word.
+ * Held in the deadline and the reserved money, never in the learner's call minutes.
+ */
+export const LIVE_CALL_WRAP_UP_SECONDS = 45;
 export const LIVE_CALL_INITIALIZATION_SECONDS = 15;
 export const LIVE_CALL_ATTEMPTS_PER_DAY = 30;
 export const LIVE_CALL_CONNECT_WINDOW_SECONDS = 60;
@@ -56,11 +62,12 @@ export function getLiveCallCostMicros(seconds: number): number {
   );
 }
 
-export function getLiveCallReservationMicros(seconds: number): number {
-  return getLiveCallCostMicros(seconds + LIVE_CALL_OVERHEAD_SECONDS);
+/** What a call holding these talk seconds reserves, with its overhead and its wrap-up. */
+export function getLiveCallReservationMicros(talkSeconds: number): number {
+  return getLiveCallCostMicros(
+    talkSeconds + LIVE_CALL_WRAP_UP_SECONDS + LIVE_CALL_OVERHEAD_SECONDS,
+  );
 }
-
-export const MIN_CALL_SECONDS = SECONDS_PER_MINUTE;
 
 const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
   free: {
@@ -128,10 +135,9 @@ export const ESSAY_GRADE_COST_MICROS = 20_000;
 
 export const TYPED_GRADE_COST_MICROS = 5000;
 
-/** Costs are USD millionths; reusable content is free, and calls add their seconds. */
-const COST_MICROS: Record<UsageKind, number> = {
+/** Costs are USD millionths; reusable content is free. */
+const COST_MICROS: Record<Exclude<UsageKind, "conversation">, number> = {
   assist: 5000,
-  conversation: CALL_CHECKS_COST_MICROS,
   explanation: 20_000,
   goal: GOAL_COST_MICROS,
   lessonStart: GENERATED_LESSON_COST_MICROS,
@@ -168,6 +174,11 @@ export function getUsageRule({ kind, tier }: { kind: UsageKind; tier: Entitlemen
   return USAGE_RULES[tier][kind];
 }
 
+/** A plan's call lengths fit in one day of its call time; longer ones come with Plus. */
+export function getLongestCallSeconds(tier: EntitlementTier): number {
+  return getUsageRule({ kind: "conversation", tier }).daySeconds ?? 0;
+}
+
 export function getActiveGoalLimit(tier: EntitlementTier): number | null {
   return ACTIVE_GOAL_LIMITS[tier];
 }
@@ -176,6 +187,7 @@ export function getDailySpendBudgetMicros(tier: EntitlementTier): number {
   return DAILY_SPEND_BUDGET_MICROS[tier];
 }
 
+/** A call's cost is its whole reservation, so every money cap admits the amount it reserves. */
 export function getEstimatedCostMicros({
   generated,
   kind,
@@ -183,14 +195,18 @@ export function getEstimatedCostMicros({
 }: {
   generated: boolean;
   kind: UsageKind;
-  /** A call's time, paid by the second. */
+  /** A call's talk time. */
   seconds?: number;
 }): number {
+  if (kind === "conversation") {
+    return getLiveCallReservationMicros(seconds);
+  }
+
   if (REUSABLE_KINDS.has(kind) && !generated) {
     return 0;
   }
 
-  return COST_MICROS[kind] + Math.round(seconds * CALL_SECOND_COST_MICROS);
+  return COST_MICROS[kind];
 }
 
 export function getExamPrepAccess(tier: EntitlementTier) {

@@ -30,6 +30,20 @@ describe(addTranscriptFragment, () => {
     ]);
   });
 
+  it("keeps a space between a speaker's words said after a pause", () => {
+    const turns = [
+      { delta: "It's still available.", endMs: 2000, speaker: "character" as const, startMs: 0 },
+      { delta: "Are you", endMs: 31_200, speaker: "character" as const, startMs: 31_000 },
+      { delta: " still there?", endMs: 31_600, speaker: "character" as const, startMs: 31_200 },
+      { delta: "$2,", endMs: 33_000, speaker: "character" as const, startMs: 32_800 },
+      { delta: "400", endMs: 33_200, speaker: "character" as const, startMs: 33_000 },
+    ].reduce<TranscriptTurn[]>((all, fragment) => addTranscriptFragment(all, fragment), []);
+
+    expect(toConversationTurns(turns)).toStrictEqual([
+      { speaker: "character", text: "It's still available. Are you still there? $2,400" },
+    ]);
+  });
+
   it("starts a new spoken turn after a typed reply", () => {
     const typed = addTypedReply(buildCall(), "Can I see it on Saturday?");
 

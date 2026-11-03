@@ -375,7 +375,7 @@ async function openUnitCall({ learner, page }: { learner: Learner; page: Page })
   const dialog = page.getByRole("dialog", { name: "Practice a conversation" });
   await dialog.getByText("1 min", { exact: true }).click();
   await expect(dialog.getByRole("radio", { exact: true, name: "1 min" })).toBeChecked();
-  await dialog.getByRole("button", { name: "Start the call" }).click();
+  await dialog.getByRole("button", { name: "Continue" }).click();
   await expect(page).toHaveURL(/\/conversation\/[\da-f-]{36}$/u);
   const id = new URL(page.url()).pathname.split("/").at(-1);
 
@@ -400,11 +400,10 @@ async function leaveAndReturn({
   await expect(page.getByRole("button", { name: "Practice a conversation" })).toBeVisible();
   await page.goForward();
   await expect(page).toHaveURL(new RegExp(`/conversation/${callId}$`, "u"));
-  await expect(callAlert(page)).toContainText("The call didn't connect");
 }
 
 test.describe("Live call server states", () => {
-  test("a microphone resolving after Activity hide and return cannot restart the cancelled call", async ({
+  test("a microphone allowed after Activity hide and return starts no call", async ({
     stateCallResources: owned,
   }) => {
     const learner = await createLanguageLearner({ withSubscription: true });
@@ -415,11 +414,12 @@ test.describe("Live call server states", () => {
       await answerLiveCalls(page, "answers");
       const callId = await openUnitCall({ learner, page });
       const actions = observeActions({ conversationId: callId, page });
-      await page.getByRole("button", { name: "Start the call" }).click();
+      await page.getByRole("button", { name: "Call Linda" }).click();
       await expect.poll(() => microphoneSnapshot(page)).toMatchObject({ pending: 1 });
       const token = getString(await microphoneSnapshot(page), "token");
       expect(token).toBeTruthy();
       await leaveAndReturn({ callId, learner, page });
+      await expect(page.getByRole("button", { name: "Call Linda" })).toBeEnabled();
       expect(getString(await microphoneSnapshot(page), "token")).toBe(token);
       await releaseMicrophone(page);
 
@@ -427,7 +427,7 @@ test.describe("Live call server states", () => {
         .poll(() => microphoneSnapshot(page))
         .toMatchObject({ pending: 0, tracks: ["ended"] });
 
-      await expect(callAlert(page)).toContainText("The call didn't connect");
+      await expect(page.getByRole("button", { name: "Call Linda" })).toBeEnabled();
       expect(actions.reserve).toHaveLength(0);
       expect(actions.sdp).toHaveLength(0);
       expect(actions.complete).toHaveLength(0);
@@ -449,14 +449,14 @@ test.describe("Live call server states", () => {
     try {
       await answerLiveCalls(firstTab, "answers");
       await firstTab.goto(`/conversation/${first.id}`);
-      await firstTab.getByRole("button", { name: "Start the call" }).click();
+      await firstTab.getByRole("button", { name: "Call Linda" }).click();
       await expectLive(firstTab);
       const original = await connectionFor(first.id);
       await closeBehavior({ mode: "hold", request, sessionId: original.providerSessionId });
       await answerLiveCalls(page, "answers");
       const callId = await openUnitCall({ learner, page });
       const actions = observeActions({ conversationId: callId, page });
-      await page.getByRole("button", { name: "Start the call" }).click();
+      await page.getByRole("button", { name: "Call Linda" }).click();
       await page.getByRole("button", { name: "End that call and start this one" }).click();
 
       await expect
@@ -464,6 +464,7 @@ test.describe("Live call server states", () => {
         .toBe(true);
 
       await leaveAndReturn({ callId, learner, page });
+      await expect(callAlert(page)).toContainText("The call didn't connect");
       await closeBehavior({ mode: "confirm", request, sessionId: original.providerSessionId });
 
       await expect
@@ -496,7 +497,7 @@ test.describe("Live call server states", () => {
       await answerLiveCalls(page, "answers");
       const actions = observeActions({ conversationId: call.id, page });
       await page.goto(`/conversation/${call.id}`);
-      await page.getByRole("button", { name: "Start the call" }).click();
+      await page.getByRole("button", { name: "Call Linda" }).click();
       await expectLive(page);
       const connection = await connectionFor(call.id);
       await page.getByRole("textbox", { name: "Type your reply" }).fill("Please keep this reply.");
@@ -511,6 +512,11 @@ test.describe("Live call server states", () => {
 
       await expect.poll(() => actions.complete.length).toBe(1);
       expect(actions.end).toContain(connection.id);
+
+      await expect(
+        prisma.liveCallConnection.findUnique({ where: { id: connection.id } }),
+      ).resolves.toMatchObject({ endReason: "learner", endUnconfirmed: true, state: "ended" });
+
       expect(actions.complete[0]?.connectionId).toBe(connection.id);
 
       expect(actions.complete[0]?.turns).toEqual(
@@ -537,7 +543,7 @@ test.describe("Live call server states", () => {
 
     await answerLiveCalls(page, "answers");
     await page.goto(`/conversation/${call.id}`);
-    await page.getByRole("button", { name: "Start the call" }).click();
+    await page.getByRole("button", { name: "Call Linda" }).click();
     await expectLive(page);
     const connection = await connectionFor(call.id);
 

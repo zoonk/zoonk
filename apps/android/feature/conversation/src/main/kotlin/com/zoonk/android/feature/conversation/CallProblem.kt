@@ -4,22 +4,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.livecall.LiveCallFailure
@@ -29,7 +20,6 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.limitMessage
-import kotlinx.coroutines.delay
 
 /** Why a call stopped before its result: a failure, or a save the server refused. */
 sealed interface CallProblemKind {
@@ -185,62 +175,3 @@ private fun Problem(
         item(key = "problem") { Box(Modifier.callItem()) { content() } }
     }
 }
-
-/** A call's feedback takes a few seconds, an exam's grade 13 to 33 s (about 23 for most). */
-@Composable
-internal fun SavingCall(
-    save: CallSave,
-    grading: Boolean,
-    title: String,
-    onRetry: () -> Unit,
-    onClose: () -> Unit,
-) {
-    if (save == CallSave.Saving) {
-        val slow by produceState(false) {
-            delay(if (grading) SLOW_GRADE_MS else SLOW_FEEDBACK_MS)
-            value = true
-        }
-        val line =
-            when {
-                grading && slow -> R.string.conversation_rating_slow
-                grading -> R.string.conversation_rating
-                slow -> R.string.conversation_writing_feedback_slow
-                else -> R.string.conversation_writing_feedback
-            }
-        CallFrame(title = { CallTitle(title) }, onClose = onClose) {
-            item(key = "saving") {
-                Row(
-                    Modifier.callItem().semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
-                    Text(
-                        stringResource(line),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-            }
-        }
-        return
-    }
-
-    val message = if (save == CallSave.Closing) R.string.conversation_still_closing else R.string.conversation_save_failed
-    CallFrame(title = { CallTitle(title) }, onClose = onClose, bottomBar = {
-        Button(onClick = onRetry, modifier = Modifier.barAction()) { Text(stringResource(R.string.conversation_try_again)) }
-    }) {
-        item(key = "failed") {
-            Text(
-                stringResource(message),
-                Modifier.callItem().semantics {
-                    liveRegion = LiveRegionMode.Polite
-                },
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
-    }
-}
-
-private const val SLOW_FEEDBACK_MS = 20_000L
-private const val SLOW_GRADE_MS = 45_000L

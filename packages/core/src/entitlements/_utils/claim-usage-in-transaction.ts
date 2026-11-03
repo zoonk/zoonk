@@ -2,13 +2,14 @@ import { type TransactionClient, type UsageKind } from "@zoonk/db";
 import { type UsageDecision } from "../contract";
 import { getEstimatedCostMicros } from "../limits";
 import { type EntitlementViewer } from "./entitlement-viewer";
-import { evaluateUsage, getCallHold, getCallTimeLeft } from "./evaluate-usage";
+import { evaluateUsage } from "./evaluate-usage";
 import { claimGuestSpend } from "./guest-spend-budget";
 import { countUsage } from "./usage-counts";
 
 type UsageClaim = { decision: UsageDecision; recorded: boolean };
 
 export async function claimUsageInTransaction({
+  continuing = false,
   generated,
   kind,
   now,
@@ -17,6 +18,8 @@ export async function claimUsageInTransaction({
   transaction,
   viewer,
 }: {
+  /** Continues a start the limits already admitted, so only its use is recorded. */
+  continuing?: boolean;
   generated: boolean;
   kind: UsageKind;
   now: Date;
@@ -33,24 +36,18 @@ export async function claimUsageInTransaction({
     return { decision: { status: "allowed" }, recorded: false };
   }
 
-  const counts = await countUsage({ client: transaction, kind, now, userId: viewer.userId });
+  const costMicros = getEstimatedCostMicros({ generated, kind, seconds });
 
-  const hold =
-    seconds === undefined
-      ? null
-      : getCallHold({
-          left: getCallTimeLeft({
-            kind,
-            tier: viewer.tier,
-            usedThisMonth: counts.secondsThisMonth,
-            usedToday: counts.secondsToday,
-          }),
-          seconds,
-        });
-
-  const held = hold?.heldSeconds ?? 0;
-  const costMicros = getEstimatedCostMicros({ generated, kind, seconds: held });
-  const decision = evaluateUsage({ costMicros, counts, generated, kind, now, tier: viewer.tier });
+  const decision: UsageDecision = continuing
+    ? { status: "allowed" }
+    : evaluateUsage({
+        costMicros,
+        counts: await countUsage({ client: transaction, kind, now, userId: viewer.userId }),
+        generated,
+        kind,
+        now,
+        tier: viewer.tier,
+      });
 
   if (decision.status !== "allowed") {
     return { decision, recorded: false };
@@ -68,20 +65,11 @@ export async function claimUsageInTransaction({
       createdAt: now,
       generated,
       kind,
-      seconds: held,
+      seconds: seconds ?? 0,
       targetId,
       userId: viewer.userId,
     },
   });
 
-  if (!hold) {
-    return { decision, recorded: true };
-  }
-
-  return {
-    decision: hold.shortenedBy
-      ? { ...decision, heldSeconds: held, shortenedBy: hold.shortenedBy }
-      : { ...decision, heldSeconds: held },
-    recorded: true,
-  };
+  return { decision, recorded: true };
 }
