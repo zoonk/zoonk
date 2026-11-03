@@ -25,25 +25,6 @@ describe("dragging activity items with a mouse", () => {
       .toBeVisible();
   });
 
-  it("categorize: an item dragged onto a group is sorted into it", async () => {
-    openActivity({ template: "categorize" });
-
-    await dragWithMouse({
-      from: page.getByRole("button", { exact: true, name: "Burning wood" }),
-      to: page.getByRole("region", { name: "New substance" }),
-    });
-
-    await expect.element(page.getByText("1 of 3 sorted", { exact: true })).toBeVisible();
-
-    await expect
-      .element(
-        page
-          .getByRole("region", { name: "New substance" })
-          .getByRole("button", { exact: true, name: "Burning wood" }),
-      )
-      .toBeVisible();
-  });
-
   it("argument builder: a quote dragged onto the evidence is picked", async () => {
     openActivity({ template: "argumentBuilder" });
 

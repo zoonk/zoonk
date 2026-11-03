@@ -43,25 +43,6 @@ describe("dragging activity items with a finger", () => {
       .not.toBeInTheDocument();
   });
 
-  it("categorize: an item held and dragged onto a group sorts it", async () => {
-    openActivity({ template: "categorize" });
-
-    await holdAndDrag({
-      from: page.getByRole("button", { exact: true, name: "Burning wood" }),
-      to: page.getByRole("region", { name: "New substance" }),
-    });
-
-    await expect.element(page.getByText("1 of 3 sorted", { exact: true })).toBeVisible();
-
-    await expect
-      .element(
-        page
-          .getByRole("region", { name: "New substance" })
-          .getByRole("button", { exact: true, name: "Burning wood" }),
-      )
-      .toBeVisible();
-  });
-
   it("argument builder: a quote held and dragged onto the evidence is picked", async () => {
     openActivity({ template: "argumentBuilder" });
 

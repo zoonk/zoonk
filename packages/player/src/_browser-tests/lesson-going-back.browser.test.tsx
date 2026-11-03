@@ -79,9 +79,9 @@ function activity(content: ActivityContent = activityContentFixtures.categorize)
   return activityStep({ content });
 }
 
-async function sortItem({ group, item }: { group: string; item: string }) {
-  await page.getByRole("button", { exact: true, name: item }).click();
-  await page.getByRole("button", { name: `Put ${item} in ${group}` }).click();
+async function sortCard({ group, item }: { group: string; item: string }) {
+  await expect.element(page.getByText(item, { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: group }).click();
 }
 
 async function goBackAndReturn() {
@@ -103,14 +103,13 @@ describe("going back to reread", () => {
   it("keeps an activity as the learner left it until they come back and check it", async () => {
     playLesson([reading, activity()]);
     await page.getByRole("button", { name: /^Next/u }).click();
-    await sortItem({ group: "New substance", item: "Burning wood" });
-    await page.getByRole("button", { exact: true, name: "Melting ice" }).click();
+    await sortCard({ group: "Same substance", item: "Melting ice" });
 
     await goBackAndReturn();
 
     await expect.element(page.getByText("1 of 3 sorted", { exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Put Melting ice in Same substance" }).click();
-    await sortItem({ group: "New substance", item: "Rusting iron" });
+    await sortCard({ group: "New substance", item: "Rusting iron" });
+    await sortCard({ group: "New substance", item: "Burning wood" });
     await checkActivity();
     await expectVerdict("Correct!");
   });
@@ -138,9 +137,9 @@ describe("going back to reread", () => {
   it("starts a missed activity over when it comes back", async () => {
     playLesson([reading, activity()]);
     await page.getByRole("button", { name: /^Next/u }).click();
-    await sortItem({ group: "Same substance", item: "Burning wood" });
-    await sortItem({ group: "Same substance", item: "Melting ice" });
-    await sortItem({ group: "New substance", item: "Rusting iron" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "New substance", item: "Rusting iron" });
+    await sortCard({ group: "Same substance", item: "Burning wood" });
     await checkActivity();
     await expectVerdict("Not quite");
 

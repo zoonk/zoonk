@@ -617,6 +617,7 @@ msgid "Split both sides into {count} equal groups"
 msgstr "Dividi entrambi i lati in {count} gruppi uguali"
 
 #: src/activities/balance/balance-controls.tsx
+#: src/activities/categorize/categorize-sorting.tsx
 #: src/activities/decision-tree/decision-tree-activity.tsx
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "JkS37H"
@@ -673,55 +674,39 @@ msgctxt "8JMvOf"
 msgid "{times} times more"
 msgstr "{times} volte in più"
 
+#. Read by screen readers after a card is sorted; {next} is the card to sort now.
 #: src/activities/categorize/categorize-activity.tsx
-msgctxt "VOcx64"
-msgid "{item} is in {group}. {sorted} of {total} sorted."
-msgstr "{item} è nel gruppo {group}. {sorted} su {total} classificati."
+msgctxt "gF3jVY"
+msgid "{item} is in {group}. Next: {next}."
+msgstr "{item} è nel gruppo {group}. Prossima carta: {next}."
 
 #: src/activities/categorize/categorize-activity.tsx
-msgctxt "OnWRsG"
-msgid "right group"
-msgstr "gruppo giusto"
+msgctxt "vmmoiT"
+msgid "{item} is in {group}."
+msgstr "{item} è nel gruppo {group}."
+
+#. Read by screen readers after Undo: this card is back to be sorted again.
+#: src/activities/categorize/categorize-activity.tsx
+msgctxt "2I4Dzf"
+msgid "Took back {item}."
+msgstr "Hai ripreso {item}."
 
 #: src/activities/categorize/categorize-activity.tsx
-msgctxt "4xT_96"
-msgid "wrong group"
-msgstr "gruppo sbagliato"
+msgctxt "COrd83"
+msgid "Sort {total, plural, one {# card} other {# cards}} into {groups}, one at a time."
+msgstr "Metti {total, plural, one {# carta} other {# carte}} nei gruppi {groups}, una alla volta."
 
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "xsV8g3"
-msgid "To sort"
-msgstr "Da classificare"
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "htRVos"
-msgid "All sorted. Check when you're ready."
-msgstr "Hai classificato tutto. Controlla quando vuoi."
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "6BdpHo"
-msgid "{sorted} of {total} sorted"
-msgstr "{sorted} su {total} classificati"
-
-#: src/activities/categorize/categorize-activity.tsx
-msgctxt "p97Ob6"
-msgid "Sort {total} items into {groups}. Pick an item, then pick its group. {sorted} of {total} sorted."
-msgstr "Classifica {total} elementi nei gruppi {groups}. Scegli un elemento, poi il suo gruppo. {sorted} su {total} classificati."
-
+#. On a group, beside the last card sorted into it: how many more cards it holds.
 #: src/activities/categorize/categorize-group.tsx
-msgctxt "gYfi1i"
-msgid "Put {item} in {group}"
-msgstr "Metti {item} nel gruppo {group}"
+msgctxt "jNJRxP"
+msgid "+{count}"
+msgstr "+{count}"
 
+#. A group that holds no cards once every card is sorted.
 #: src/activities/categorize/categorize-group.tsx
-msgctxt "N91Eq1"
-msgid "Put it here"
-msgstr "Mettilo qui"
-
-#: src/activities/categorize/categorize-group.tsx
-msgctxt "KjR3ZD"
-msgid "Nothing here yet"
-msgstr "Qui non c’è ancora nulla"
+msgctxt "7CMfs1"
+msgid "No cards here"
+msgstr "Nessuna carta qui"
 
 #: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
@@ -732,6 +717,39 @@ msgstr "{right} su {total} nel gruppo giusto"
 msgctxt "Q5lL_i"
 msgid "{item} belongs in {group}."
 msgstr "{item} va nel gruppo {group}."
+
+#. Title of the menu that moves a sorted card to another group.
+#: src/activities/categorize/categorize-row.tsx
+msgctxt "AfxJ0y"
+msgid "Move to"
+msgstr "Sposta in"
+
+#: src/activities/categorize/categorize-row.tsx
+msgctxt "OnWRsG"
+msgid "right group"
+msgstr "gruppo giusto"
+
+#: src/activities/categorize/categorize-row.tsx
+msgctxt "4xT_96"
+msgid "wrong group"
+msgstr "gruppo sbagliato"
+
+#: src/activities/categorize/categorize-sorted.tsx
+msgctxt "7N2fCS"
+msgid "All sorted. Tap a card to move it."
+msgstr "Tutto sistemato. Tocca una carta per spostarla."
+
+#. Progress while sorting: how many of the cards already have a group.
+#: src/activities/categorize/categorize-sorting.tsx
+msgctxt "6BdpHo"
+msgid "{sorted} of {total} sorted"
+msgstr "{sorted} su {total} classificate"
+
+#. Under the card being sorted, above the groups to choose from.
+#: src/activities/categorize/categorize-sorting.tsx
+msgctxt "c5muiH"
+msgid "Which group does it belong in?"
+msgstr "A quale gruppo appartiene?"
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "LGYdYn"

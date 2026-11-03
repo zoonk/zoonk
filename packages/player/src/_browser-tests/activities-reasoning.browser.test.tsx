@@ -8,6 +8,7 @@ import {
   focusOn,
   openActivity,
   press,
+  pressOnPage,
 } from "../_test-utils/activity-player";
 import { inlineImage } from "../preview/preview-steps";
 
@@ -16,9 +17,13 @@ const LEAF = {
   prompt: "Two long pine needles joined at the base on a twig",
 };
 
-async function sortItem({ group, item }: { group: string; item: string }) {
-  await page.getByRole("button", { exact: true, name: item }).click();
-  await page.getByRole("button", { name: `Put ${item} in ${group}` }).click();
+async function sortCard({ group, item }: { group: string; item: string }) {
+  await expect.element(page.getByText(item, { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: group }).click();
+}
+
+function sortedCard({ group, item }: { group: string; item: string }) {
+  return page.getByRole("region", { name: group }).getByRole("button", { name: item });
 }
 
 async function matchCards(left: string, right: string) {
@@ -30,10 +35,10 @@ describe("reasoning activities", () => {
   it("categorize: every item in its group is right", async () => {
     openActivity({ template: "categorize" });
     await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
-    await sortItem({ group: "New substance", item: "Burning wood" });
-    await sortItem({ group: "Same substance", item: "Melting ice" });
-    await sortItem({ group: "New substance", item: "Rusting iron" });
-    await expect.element(page.getByText("All sorted. Check when you're ready.")).toBeVisible();
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "New substance", item: "Rusting iron" });
+    await sortCard({ group: "New substance", item: "Burning wood" });
+    await expect.element(page.getByText("All sorted. Tap a card to move it.")).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("3 of 3 in the right group")).toBeVisible();
@@ -49,11 +54,44 @@ describe("reasoning activities", () => {
     await expect.element(page.getByText("Example numbers, not real data")).not.toBeInTheDocument();
   });
 
+  it("categorize: a tap on a card already in a group sorts the next card into it", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+
+    await page.getByRole("button", { name: "Same substance" }).getByText("Melting ice").click();
+    await expect.element(page.getByText("2 of 3 sorted", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Burning wood", { exact: true })).toBeVisible();
+  });
+
+  it("categorize: Undo takes back the last card", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await page.getByRole("button", { name: "Undo" }).click();
+    await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Melting ice", { exact: true })).toBeVisible();
+  });
+
+  it("categorize: a sorted card moves to another group from its menu", async () => {
+    openActivity({ template: "categorize" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "Same substance", item: "Rusting iron" });
+    await sortCard({ group: "New substance", item: "Burning wood" });
+    await sortedCard({ group: "Same substance", item: "Rusting iron" }).click();
+    await page.getByRole("menuitem", { name: "New substance" }).click();
+
+    await expect
+      .element(sortedCard({ group: "New substance", item: "Rusting iron" }))
+      .toBeVisible();
+
+    await checkActivity();
+    await expectVerdict("Correct!");
+  });
+
   it("categorize: a misplaced item says where it belongs and why", async () => {
     openActivity({ template: "categorize" });
-    await sortItem({ group: "Same substance", item: "Burning wood" });
-    await sortItem({ group: "Same substance", item: "Melting ice" });
-    await sortItem({ group: "New substance", item: "Rusting iron" });
+    await sortCard({ group: "Same substance", item: "Melting ice" });
+    await sortCard({ group: "New substance", item: "Rusting iron" });
+    await sortCard({ group: "Same substance", item: "Burning wood" });
     await checkActivity();
     await expectVerdict("Not quite");
     await expect.element(page.getByText("Burning wood belongs in New substance.")).toBeVisible();
@@ -239,28 +277,35 @@ describe("reasoning activities", () => {
 });
 
 describe("reasoning activities with only a keyboard", () => {
-  it("categorize: Space picks an item and its group, then Check", async () => {
+  it("categorize: number keys sort each card in turn, then Enter checks", async () => {
     openActivity({ template: "categorize" });
-
-    const placements = [
-      ["Burning wood", "New substance"],
-      ["Melting ice", "Same substance"],
-      ["Rusting iron", "New substance"],
-    ] as const;
-
-    for (const [item, group] of placements) {
-      // oxlint-disable-next-line no-await-in-loop -- Each item is sorted in turn.
-      await focusOn(page.getByRole("button", { exact: true, name: item }));
-      // oxlint-disable-next-line no-await-in-loop -- Each item is sorted in turn.
-      await press("Space");
-      // oxlint-disable-next-line no-await-in-loop -- Each item is sorted in turn.
-      await focusOn(page.getByRole("button", { name: `Put ${item} in ${group}` }));
-      // oxlint-disable-next-line no-await-in-loop -- Each item is sorted in turn.
-      await press("Space");
-    }
-
-    await focusOn(page.getByRole("button", { name: "Check" }));
+    await focusOn(page.getByRole("button", { name: "New substance" }));
+    await press("2");
+    await press("1");
+    await press("1");
+    await expect.element(page.getByText("All sorted. Tap a card to move it.")).toHaveFocus();
     await press("Enter");
     await expectVerdict("Correct!");
+  });
+
+  it("categorize: Escape closes a card's menu and stays on the activity", async () => {
+    const { onExit } = openActivity({ template: "categorize" });
+    await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
+    await pressOnPage("2");
+    await press("1");
+    await press("1");
+    await focusOn(sortedCard({ group: "Same substance", item: "Melting ice" }));
+    await press("Enter");
+
+    const moveToNew = page.getByRole("menuitem", { name: "New substance" });
+    await expect.element(moveToNew).toBeVisible();
+    await press("Escape");
+    await expect.element(moveToNew).not.toBeInTheDocument();
+
+    await expect
+      .element(sortedCard({ group: "Same substance", item: "Melting ice" }))
+      .toBeVisible();
+
+    expect(onExit).not.toHaveBeenCalled();
   });
 });
