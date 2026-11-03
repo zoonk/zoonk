@@ -32,6 +32,7 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(ActivityExpression.evaluate("sin(pi) / -2")?.sign, .plus)
     XCTAssertEqual(ActivityExpression.evaluate("(0.1 + 0.2) - 0.3"), 0)
     XCTAssertEqual(ActivityExpression.evaluate("1000000000001 - 1000000000000"), 1)
+    XCTAssertEqual(ActivityExpression.evaluate("sin(1e16)^2 + cos(1e16)^2")!, 1, accuracy: 1e-12)
     XCTAssertNil(ActivityExpression.evaluate("1e308 * 10 - 1"), "Overflow fails, as in core")
     XCTAssertNil(ActivityExpression.evaluate("1e999 - 1"))
     XCTAssertNil(ActivityExpression.evaluate("x - 1", variables: ["x": .infinity]))

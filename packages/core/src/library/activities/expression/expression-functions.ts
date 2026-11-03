@@ -10,8 +10,15 @@ export function withoutRoundingError(value: number, inputSize: number): number {
   return Math.abs(value) <= Number.EPSILON * inputSize ? 0 : value;
 }
 
+/**
+ * Past this, the cutoff an angle's rounding allows would keep growing until it zeroed real values,
+ * like sin(1e16) ≈ 0.78.
+ */
+const MAX_ROUNDED_ANGLE = 1e9;
+
 function trig(apply: (radians: number) => number): (radians: number) => number {
-  return (radians) => withoutRoundingError(apply(radians), Math.abs(radians));
+  return (radians) =>
+    withoutRoundingError(apply(radians), Math.min(Math.abs(radians), MAX_ROUNDED_ANGLE));
 }
 
 export const trigFunctions = { cos: trig(Math.cos), sin: trig(Math.sin), tan: trig(Math.tan) };

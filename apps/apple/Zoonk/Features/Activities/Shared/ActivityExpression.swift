@@ -19,16 +19,24 @@ enum ActivityExpression {
     withoutRoundingError(left + right, inputSize: max(left.magnitude, right.magnitude))
   }
 
+  /// Core's `MAX_ROUNDED_ANGLE`: past this, the cutoff an angle's rounding allows would keep
+  /// growing until it zeroed real values, like sin(1e16) ≈ 0.78.
+  private static let maxRoundedAngle = 1e9
+
+  private static func trig(_ value: Double, radians: Double) -> Double {
+    withoutRoundingError(value, inputSize: min(radians.magnitude, maxRoundedAngle))
+  }
+
   static func sine(_ radians: Double) -> Double {
-    withoutRoundingError(sin(radians), inputSize: radians.magnitude)
+    trig(sin(radians), radians: radians)
   }
 
   static func cosine(_ radians: Double) -> Double {
-    withoutRoundingError(cos(radians), inputSize: radians.magnitude)
+    trig(cos(radians), radians: radians)
   }
 
   static func tangent(_ radians: Double) -> Double {
-    withoutRoundingError(tan(radians), inputSize: radians.magnitude)
+    trig(tan(radians), radians: radians)
   }
 
   static func evaluate(_ source: String, variables: [String: Double] = [:]) -> Double? {

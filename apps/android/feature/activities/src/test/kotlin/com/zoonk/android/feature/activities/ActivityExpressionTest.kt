@@ -50,6 +50,11 @@ class ActivityExpressionTest {
         )
 
     @Test
+    fun keepsTheTrigOfAHugeAngle() {
+        assertEquals(1.0, ActivityExpression.evaluate("sin(1e16)^2 + cos(1e16)^2")!!, 1e-12)
+    }
+
+    @Test
     fun evaluatesFormulasAsCoreDoes() {
         assertEquals(cases.map { it.third }, cases.map { (source, variables) -> ActivityExpression.evaluate(source, variables) })
     }

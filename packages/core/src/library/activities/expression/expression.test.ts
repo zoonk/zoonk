@@ -102,6 +102,7 @@ describe(evaluateFormula, () => {
     ["1 + 1e-10 - 1", 1e-10],
     ["1000000000001 - 1000000000000", 1],
     ["sin(100 * pi + 1e-10)", 1e-10],
+    ["sin(1e16)^2 + cos(1e16)^2", 1],
   ])("keeps a small result rounding can't explain: %s", (source, expected) => {
     expect(Number(valueOf(source)) / expected).toBeCloseTo(1, 3);
   });

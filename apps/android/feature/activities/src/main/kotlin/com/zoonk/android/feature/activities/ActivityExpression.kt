@@ -15,6 +15,7 @@ import kotlin.math.ln
 import kotlin.math.log10
 import kotlin.math.log2
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sign
 import kotlin.math.sin
@@ -41,11 +42,22 @@ object ActivityExpression {
         inputSize: Double,
     ): Double = if (abs(value) <= Math.ulp(1.0) * inputSize) 0.0 else value
 
-    fun sine(radians: Double) = withoutRoundingError(sin(radians), abs(radians))
+    /**
+     * Core's `MAX_ROUNDED_ANGLE`: past this, the cutoff an angle's rounding allows would keep growing until it zeroed
+     * real values, like sin(1e16) ≈ 0.78.
+     */
+    private const val MAX_ROUNDED_ANGLE = 1e9
 
-    fun cosine(radians: Double) = withoutRoundingError(cos(radians), abs(radians))
+    private fun trig(
+        value: Double,
+        radians: Double,
+    ) = withoutRoundingError(value, min(abs(radians), MAX_ROUNDED_ANGLE))
 
-    fun tangent(radians: Double) = withoutRoundingError(tan(radians), abs(radians))
+    fun sine(radians: Double) = trig(sin(radians), radians)
+
+    fun cosine(radians: Double) = trig(cos(radians), radians)
+
+    fun tangent(radians: Double) = trig(tan(radians), radians)
 
     private val tokenPattern = Regex("""(\s+)|((?:\d+\.?\d*|\.\d+)(?:[Ee][+-]?\d+)?)|([A-Z_a-z]\w*)|([(),*+/^-])|(.)""")
 
