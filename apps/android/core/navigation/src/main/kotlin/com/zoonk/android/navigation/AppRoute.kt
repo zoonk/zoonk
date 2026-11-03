@@ -184,12 +184,17 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data object Logbook : AppRoute
 
-    /** `firstAnswer` is the option a visitor picked on the lesson's public page, checked as the first step. */
+    /**
+     * `firstAnswer` is the option a visitor picked on the lesson's public page, checked as the first step.
+     * `fromCatalog`: opened from a public catalog page, so a guest's lesson ends with "Build my plan"; opened
+     * anywhere else in the app, it ends as a learner's.
+     */
     @Serializable
     data class Lesson(
         val lessonId: String,
         val sessionId: String? = null,
         val firstAnswer: String? = null,
+        val fromCatalog: Boolean = false,
     ) : AppRoute
 
     @Serializable
