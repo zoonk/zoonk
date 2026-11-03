@@ -20,6 +20,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -30,6 +32,7 @@ import com.zoonk.android.data.StepTimes
 import com.zoonk.android.feature.exam.FakeMockApi
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.setup.LocalSetupWarmUp
+import com.zoonk.android.feature.onboarding.setup.NoticeReading
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanBuilding
 import com.zoonk.android.feature.onboarding.setup.PlanNext
@@ -46,6 +49,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.ExamDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -62,8 +66,9 @@ import java.io.File
 /**
  * Review screenshots of the setup's waits with the goal's guesses, written only on demand:
  * `./gradlew :feature:onboarding:testDebugUnitTest --tests '*WarmUpScreenshots*' --rerun -Pzoonk.shots=<folder>`.
- * Each plays one learner through the plan's wait, the time question's and placement's: a guess on each, then the work
- * ready while they're still guessing, its way on pinned to the page's bottom. An exam notice's reading deals no guesses.
+ * Each plays one learner through the plan's wait, an exam notice's reading on the plan step (its connection lost and
+ * back) and the time question, and placement's wait: a guess on each, then the work ready while they're still guessing,
+ * its way on pinned to the page's bottom.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -114,14 +119,18 @@ class WarmUpScreenshots {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
+        // Its own places in the deck, so the documents' reading shows the first cards and placement still has its last.
+        val readingWarmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
         val planApi = FakePlanApi().apply { shownPlan = planOf(ready = false) }
         val plans = PlanStore(planApi, cache)
-        val readingPlans = PlanStore(FakePlanApi().apply { shownPlan = planOf(notice = "reading") }, cache)
+        val readingPlanApi = FakePlanApi().apply { shownPlan = planOf(notice = "reading") }
+        val readingPlans = PlanStore(readingPlanApi, cache)
         val onboardingApi = FakeOnboardingApi().apply { placement = placementOf(status = "preparing", next = null) }
         val onboarding = OnboardingStore(onboardingApi, cache, session) { SignInResult.SignedIn }
         val mocks = MockStore(FakeMockApi(options = null), cache)
         var scene by mutableIntStateOf(0)
         var scheduleReady by mutableStateOf(false)
+        var noticeRead by mutableStateOf(false)
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
@@ -149,16 +158,33 @@ class WarmUpScreenshots {
                                     }
 
                                     2 -> {
-                                        PlanRevealStep(
-                                            examGoal(),
-                                            isGuest = false,
-                                            libraryCourse = null,
-                                            run = MAPPING,
-                                            onRetryRun = {},
-                                            plans = readingPlans,
-                                            navigator = rememberAppNavigator(),
-                                            here = AppRoute.GoalSetup(GOAL_ID),
-                                        )
+                                        CompositionLocalProvider(LocalSetupWarmUp provides readingWarmUps) {
+                                            PlanRevealStep(
+                                                examGoal(),
+                                                isGuest = false,
+                                                libraryCourse = null,
+                                                run = MAPPING,
+                                                onRetryRun = {},
+                                                plans = readingPlans,
+                                                navigator = rememberAppNavigator(),
+                                                here = AppRoute.GoalSetup(GOAL_ID),
+                                            )
+                                        }
+                                    }
+
+                                    3 -> {
+                                        CompositionLocalProvider(LocalSetupWarmUp provides readingWarmUps) {
+                                            val hold = rememberReadyHold(noticeRead)
+                                            NoticeReading(
+                                                ExamDocument.NOTICE,
+                                                lastEdition = false,
+                                                WARM_UP_ID,
+                                                failure = null,
+                                                onRetry = null,
+                                                hold,
+                                                PlanNext.TimeQuestion,
+                                            )
+                                        }
                                     }
 
                                     else -> {
@@ -203,8 +229,26 @@ class WarmUpScreenshots {
         scene = 2
         compose.waitForIdle()
         write("plan-reading-$name")
+        compose.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
+        readingPlanApi.planFailure = ApiException(ApiError.Network)
+        compose.mainClock.advanceTimeBy(10_500)
+        compose.waitForIdle()
+        write("plan-reading-connection-lost-$name")
+        readingPlanApi.planFailure = null
+        readingPlanApi.shownPlan = planOf()
+        compose.onNodeWithText("Reconnect").performScrollTo().performClick()
+        compose.mainClock.advanceTimeBy(3_500)
+        compose.waitForIdle()
+        write("plan-reading-ready-$name")
 
         scene = 3
+        compose.waitForIdle()
+        compose.onNodeWithText("8").performScrollTo().performClick()
+        noticeRead = true
+        compose.waitForIdle()
+        write("time-reading-ready-$name")
+
+        scene = 4
         compose.waitForIdle()
         compose.onNodeWithText("Start").performScrollTo().performClick()
         compose.waitForIdle()

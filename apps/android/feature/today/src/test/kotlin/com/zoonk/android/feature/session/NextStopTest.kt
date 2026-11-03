@@ -9,6 +9,7 @@ import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -17,6 +18,9 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.feature.warmup.WARM_UP_ID
+import com.zoonk.android.feature.warmup.WarmUpStore
+import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
@@ -51,6 +55,7 @@ class NextStopTest {
     private val statuses = mutableListOf<LessonReadiness.Status?>()
     private var settled = LessonReadiness.Status.READY
     private var setAside = false
+    private var warmUpId: UUID? = null
     private var readinessReads = 0
 
     /** What each read of the day shows of the step, in order; then its lesson written. */
@@ -94,7 +99,7 @@ class NextStopTest {
                         generationId = "run-1",
                         setAside = setAside,
                         status = status ?: throw ApiException(ApiError.Unauthorized),
-                        warmUpId = null,
+                        warmUpId = warmUpId,
                     )
                 },
                 generations = { generations },
@@ -119,6 +124,7 @@ class NextStopTest {
                         },
                         onStop = onStop,
                         navigator = rememberAppNavigator(),
+                        warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, signIn),
                     )
                 }
             }
@@ -163,6 +169,25 @@ class NextStopTest {
         assertEquals(3, readinessReads)
         assertEquals(1, dayReads)
         assertEquals(1, waits.size)
+    }
+
+    @Test
+    fun aGuessOnTheFirstLessonsWaitKeepsItsCardOnceTheLessonIsWritten() {
+        warmUpId = UUID.fromString(WARM_UP_ID)
+        statuses += LessonReadiness.Status.GENERATING
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.waitForIdle()
+        rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
+        rule.onNodeWithText("Next guess").assertExists()
+
+        rule.mainClock.advanceTimeBy(6_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Your lesson is ready.").assertExists()
+        rule.onNodeWithText("Start").assertExists()
+        rule.onNodeWithText("Here's the answer").assertExists()
+        rule.onNodeWithText("Next guess").assertDoesNotExist()
     }
 
     @Test
