@@ -295,7 +295,10 @@ export const liveCallSdpResponseSchema = z
   .meta({ id: "LiveCallSdpResponse" });
 
 export const languageConversationObjectiveCheckInputSchema = z
-  .object({ turns: conversationTurnsSchema })
+  .object({
+    connectionId: z.uuid().meta({ description: "The live connection the learner is talking on" }),
+    turns: conversationTurnsSchema,
+  })
   .strict()
   .meta({ id: "LanguageConversationObjectiveCheckInput" });
 

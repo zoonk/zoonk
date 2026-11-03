@@ -279,6 +279,7 @@ class LiveCallTest {
                     LanguageConversationTurn(Speaker.CHARACTER, "Claro."),
                 )
             assertEquals(listOf(said), client.checks)
+            assertEquals(listOf(CONNECTION), client.checkedConnections)
             assertEquals(listOf("Order a coffee"), call.state.value.metLabels)
             assertEquals(progress.command(), transport.thinking.single())
             assertNull(call.state.value.ending)

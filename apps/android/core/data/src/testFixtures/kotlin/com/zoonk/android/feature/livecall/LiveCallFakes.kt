@@ -127,6 +127,7 @@ class FakeCallClient : LiveCallClient {
     val ended = mutableListOf<UUID>()
     var endAnswers = ArrayDeque<Boolean?>()
     val checks = mutableListOf<List<LanguageConversationTurn>>()
+    val checkedConnections = mutableListOf<UUID>()
     var check: (
         List<LanguageConversationTurn>,
     ) -> LanguageConversationObjectiveCheck? = {
@@ -164,7 +165,11 @@ class FakeCallClient : LiveCallClient {
         return if (endAnswers.isEmpty()) false else endAnswers.removeFirst()
     }
 
-    override suspend fun checkObjectives(turns: List<LanguageConversationTurn>): LanguageConversationObjectiveCheck? {
+    override suspend fun checkObjectives(
+        connectionId: UUID,
+        turns: List<LanguageConversationTurn>,
+    ): LanguageConversationObjectiveCheck? {
+        checkedConnections += connectionId
         checks += turns
         checkGate?.await()
         return check(turns)

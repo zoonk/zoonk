@@ -34,6 +34,8 @@ import { LIVE_CALL_WRAP_UP_SECONDS } from "../../entitlements/limits";
 import { writeTestCall } from "./_test-utils/write-test-call";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
 import { completeLanguageConversation } from "./complete-language-conversation";
+import { type ConversationTurn } from "./conversation-contract";
+import { endLiveCall } from "./end-live-call";
 import { getLanguageConversation } from "./get-language-conversation";
 import { redeemLiveCallSdp } from "./redeem-live-call-sdp";
 import { startLanguageConversation } from "./start-language-conversation";
@@ -81,7 +83,6 @@ const COMPLETION = {
 
 const FREE_CALL_SECONDS = 120;
 const PRACTICE_SECONDS = 120;
-const TEN_MINUTES_MS = 600_000;
 const DAY_MS = 86_400_000;
 
 function objectivesAnswer(labels: string[], { goodbye = false } = {}) {
@@ -104,10 +105,16 @@ async function startPractice(chapterId: string) {
   return started.conversationId;
 }
 
-async function connectPractice(chapterId: string) {
+type PracticeCall = { connectionId: string; conversationId: string };
+
+async function connectPractice(chapterId: string): Promise<PracticeCall> {
   const conversationId = await startPractice(chapterId);
-  await connectTestCall(conversationId);
-  return conversationId;
+  const { setup } = await connectTestCall(conversationId);
+  return { connectionId: setup.connectionId, conversationId };
+}
+
+function checkGoals({ connectionId, conversationId }: PracticeCall, turns: ConversationTurn[]) {
+  return checkLanguageConversationObjectives({ conversationId, input: { connectionId, turns } });
 }
 
 const CONVERSATION_UPDATE = /UPDATE "public"\."language_conversations"/u;
@@ -382,7 +389,7 @@ describe("language conversations", () => {
     freezeClock();
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const { conversationId } = await connectPractice(renting.id);
 
     vi.setSystemTime(new Date(Date.now() + 45_000));
 
@@ -429,16 +436,13 @@ describe("language conversations", () => {
   it("marks the goals the learner's words achieved and keeps them for the call", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
-    const turns = TURNS.slice(0, 2);
+    const call = await connectPractice(renting.id);
 
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
       objectivesAnswer(["Is it available?"]),
     );
 
-    await expect(
-      checkLanguageConversationObjectives({ conversationId, input: { turns } }),
-    ).resolves.toStrictEqual({
+    await expect(checkGoals(call, TURNS.slice(0, 2))).resolves.toStrictEqual({
       check: {
         goodbye: false,
         objectivesMet: ["Is it available?"],
@@ -456,9 +460,7 @@ describe("language conversations", () => {
       objectivesAnswer(["Book a viewing"]),
     );
 
-    await expect(
-      checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } }),
-    ).resolves.toStrictEqual({
+    await expect(checkGoals(call, TURNS)).resolves.toStrictEqual({
       check: {
         goodbye: false,
         objectivesMet: ["Is it available?", "Book a viewing"],
@@ -474,7 +476,7 @@ describe("language conversations", () => {
       turns: TURNS,
     });
 
-    await expect(getLanguageConversation(conversationId)).resolves.toMatchObject({
+    await expect(getLanguageConversation(call.conversationId)).resolves.toMatchObject({
       conversation: { objectives: [{ met: true }, { met: true }, { met: false }] },
     });
   });
@@ -482,13 +484,13 @@ describe("language conversations", () => {
   it("reads each turn once: a transcript sent again or at once asks no model, a longer one only its new turns", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
-
-    const check = (turns: typeof TURNS) =>
-      checkLanguageConversationObjectives({ conversationId, input: { turns } });
+    const call = await connectPractice(renting.id);
+    const check = (turns: typeof TURNS) => checkGoals(call, turns);
+    const shouted = { ...call, connectionId: call.connectionId.toUpperCase() };
 
     await Promise.all([check(TURNS), check(TURNS), check(TURNS)]);
     await check(TURNS);
+    await checkGoals(shouted, TURNS);
 
     expect(checkConversationObjectives).toHaveBeenCalledOnce();
 
@@ -510,9 +512,9 @@ describe("language conversations", () => {
   it("reads turns once when longer transcripts are sent at once", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const call = await connectPractice(renting.id);
 
-    const row = holdConversationRow(conversationId);
+    const row = holdConversationRow(call.conversationId);
     const pid = await row.pid;
     const turns = [...TURNS, { speaker: "learner" as const, text: "How much is the deposit?" }];
 
@@ -520,12 +522,7 @@ describe("language conversations", () => {
     const sent = await [2, 3, 4].reduce<Promise<Promise<unknown>[]>>(
       async (previous, count, index) => {
         const earlier = await previous;
-
-        const check = checkLanguageConversationObjectives({
-          conversationId,
-          input: { turns: turns.slice(0, count) },
-        });
-
+        const check = checkGoals(call, turns.slice(0, count));
         await waitForBlockedStatement(pid, CONVERSATION_UPDATE, index + 1);
         return [...earlier, check];
       },
@@ -542,16 +539,13 @@ describe("language conversations", () => {
   it("checks a call's goals live about as often as its minutes hold exchanges", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const call = await connectPractice(renting.id);
     const learnerTurn = { speaker: "learner" as const, text: "And the deposit?" };
 
     await Array.from({ length: 12 }, (_, index) => index + 1).reduce(
       (previous, extra) =>
         previous.then(() =>
-          checkLanguageConversationObjectives({
-            conversationId,
-            input: { turns: [...TURNS, ...Array.from({ length: extra }, () => learnerTurn)] },
-          }),
+          checkGoals(call, [...TURNS, ...Array.from({ length: extra }, () => learnerTurn)]),
         ),
       Promise.resolve<unknown>(null),
     );
@@ -562,10 +556,8 @@ describe("language conversations", () => {
   it("marks a goal two overlapping checks both found only once", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
-
-    const check = (turns: typeof TURNS) =>
-      checkLanguageConversationObjectives({ conversationId, input: { turns } });
+    const call = await connectPractice(renting.id);
+    const check = (turns: typeof TURNS) => checkGoals(call, turns);
 
     vi.mocked(checkConversationObjectives).mockResolvedValue(
       objectivesAnswer(["Is it available?"]),
@@ -586,22 +578,20 @@ describe("language conversations", () => {
     ]);
 
     await expect(
-      prisma.languageConversation.findUniqueOrThrow({ where: { id: conversationId } }),
+      prisma.languageConversation.findUniqueOrThrow({ where: { id: call.conversationId } }),
     ).resolves.toMatchObject({ objectivesMet: ["Is it available?"] });
   });
 
   it("keeps the goals already met when a check fails", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const call = await connectPractice(renting.id);
 
-    await checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } });
+    await checkGoals(call, TURNS);
     vi.mocked(checkConversationObjectives).mockRejectedValueOnce(new Error("model down"));
     const longer = [...TURNS, { speaker: "learner" as const, text: "And the deposit?" }];
 
-    await expect(
-      checkLanguageConversationObjectives({ conversationId, input: { turns: longer } }),
-    ).resolves.toStrictEqual({
+    await expect(checkGoals(call, longer)).resolves.toStrictEqual({
       check: {
         goodbye: false,
         objectivesMet: ["Is it available?", "Book a viewing"],
@@ -614,7 +604,7 @@ describe("language conversations", () => {
   it("says when the call ended with a goodbye, and sends no progress once every goal is met", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const call = await connectPractice(renting.id);
 
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
       objectivesAnswer(["Is it available?", "Book a viewing", "Ask about the deposit"], {
@@ -622,9 +612,7 @@ describe("language conversations", () => {
       }),
     );
 
-    await expect(
-      checkLanguageConversationObjectives({ conversationId, input: { turns: GOODBYE_TURNS } }),
-    ).resolves.toStrictEqual({
+    await expect(checkGoals(call, GOODBYE_TURNS)).resolves.toStrictEqual({
       check: {
         goodbye: true,
         objectivesMet: ["Is it available?", "Book a viewing", "Ask about the deposit"],
@@ -637,48 +625,45 @@ describe("language conversations", () => {
   it("sends no progress with a goodbye, though goals are left: the character has already said goodbye", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const call = await connectPractice(renting.id);
 
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
       objectivesAnswer(["Is it available?"], { goodbye: true }),
     );
 
-    await expect(
-      checkLanguageConversationObjectives({ conversationId, input: { turns: GOODBYE_TURNS } }),
-    ).resolves.toStrictEqual({
+    await expect(checkGoals(call, GOODBYE_TURNS)).resolves.toStrictEqual({
       check: { goodbye: true, objectivesMet: ["Is it available?"], progress: null },
       status: "ready",
     });
   });
 
-  it("checks goals only for the learner's connected call while it runs", async () => {
+  it("checks goals only on the learner's live connection of the call", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const input = { turns: TURNS };
     const notConnected = await startPractice(renting.id);
-    const connected = await connectPractice(renting.id);
+    await reserveTestCall(notConnected);
+
+    const reservation = await prisma.liveCallConnection.findFirstOrThrow({
+      where: { conversationId: notConnected },
+    });
 
     await expect(
-      checkLanguageConversationObjectives({ conversationId: notConnected, input }),
+      checkGoals({ connectionId: reservation.id, conversationId: notConnected }, TURNS),
+    ).resolves.toStrictEqual({ status: "invalid" });
+
+    const call = await connectPractice(renting.id);
+
+    await expect(
+      checkGoals({ connectionId: call.connectionId, conversationId: notConnected }, TURNS),
     ).resolves.toStrictEqual({ status: "invalid" });
 
     const stranger = await userFixture();
     mockSession(stranger.id);
-
-    await expect(
-      checkLanguageConversationObjectives({ conversationId: connected, input }),
-    ).resolves.toStrictEqual({ status: "notFound" });
+    await expect(checkGoals(call, TURNS)).resolves.toStrictEqual({ status: "notFound" });
 
     mockSession(user.id);
-
-    await prisma.languageConversation.update({
-      data: { startedAt: new Date(Date.now() - TEN_MINUTES_MS) },
-      where: { id: connected },
-    });
-
-    await expect(
-      checkLanguageConversationObjectives({ conversationId: connected, input }),
-    ).resolves.toStrictEqual({ status: "conversationEnded" });
+    await endLiveCall({ connectionId: call.connectionId, reason: "learner" });
+    await expect(checkGoals(call, TURNS)).resolves.toStrictEqual({ status: "invalid" });
 
     expect(checkConversationObjectives).not.toHaveBeenCalled();
   });
@@ -708,7 +693,7 @@ describe("language conversations", () => {
   it("finishes a call once with feedback, Brain Power, the ledger and speaking evidence", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const { conversationId } = await connectPractice(renting.id);
 
     const first = await completeLanguageConversation({
       conversationId,
@@ -761,7 +746,7 @@ describe("language conversations", () => {
   it("celebrates the belt and the tenth of Energy a call reaches, once", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const { conversationId } = await connectPractice(renting.id);
 
     const progress = { currentEnergy: 79.95, lastActiveAt: new Date(), totalBrainPower: 2490n };
 
@@ -789,13 +774,14 @@ describe("language conversations", () => {
   it("counts the goals marked during the call with the ones the full transcript shows", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const call = await connectPractice(renting.id);
+    const { conversationId } = call;
 
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
       objectivesAnswer(["Ask about the deposit"]),
     );
 
-    await checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } });
+    await checkGoals(call, TURNS);
 
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
       objectivesAnswer(["Book a viewing"]),
@@ -819,7 +805,7 @@ describe("language conversations", () => {
   it("keeps the call when the feedback model fails", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
+    const { conversationId } = await connectPractice(renting.id);
     vi.mocked(writeConversationFeedback).mockRejectedValue(new Error("model down"));
 
     const result = await completeLanguageConversation({

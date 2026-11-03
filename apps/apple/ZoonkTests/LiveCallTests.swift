@@ -203,11 +203,11 @@ final class LiveCallTests: XCTestCase {
 
     // The transcript settles 2 s after its last fragment, longer than the learner's words lag.
     try? await Task.sleep(for: .milliseconds(1700))
-    XCTAssertEqual(server.checks, 0)
-    await waitUpTo(5) { server.checks > 0 }
+    XCTAssertEqual(server.checkedConnections, [])
+    await waitUpTo(5) { !server.checkedConnections.isEmpty }
     try? await Task.sleep(for: .seconds(2.5))
 
-    XCTAssertEqual(server.checks, 1)
+    XCTAssertEqual(server.checkedConnections, ["connection-1"])
   }
 
   func testWordsArrivingDuringACheckDontLoseItsAnswer() async {
@@ -221,7 +221,7 @@ final class LiveCallTests: XCTestCase {
     transport.onEvent?(
       .transcript(speaker: .learner, delta: "Is it free?", startMs: 1000, endMs: 1500))
     transport.onEvent?(.transcript(speaker: .character, delta: " Yes.", startMs: 3000, endMs: 3500))
-    await waitUpTo(5) { server.checks > 0 }
+    await waitUpTo(5) { !server.checkedConnections.isEmpty }
 
     transport.onEvent?(
       .transcript(speaker: .character, delta: " It is.", startMs: 3500, endMs: 4000))
@@ -1188,7 +1188,7 @@ private final class FakeServer {
   private(set) var connects = 0
   /// Whether each reservation asked to end the learner's other call.
   private(set) var takeovers: [Bool] = []
-  private(set) var checks = 0
+  private(set) var checkedConnections: [String] = []
   private let holdsChecks: Bool
   private var pendingCheck: CheckedContinuation<ObjectiveCheck?, Never>?
   private let holdsConnects: Bool
@@ -1256,8 +1256,8 @@ private final class FakeServer {
         self.ended.append(connectionId)
         return self.confirmsHangup ? self.endedAtDeadline : nil
       },
-      checkObjectives: { _ in
-        self.checks += 1
+      checkObjectives: { connectionId, _ in
+        self.checkedConnections.append(connectionId)
 
         guard self.holdsChecks else {
           return nil

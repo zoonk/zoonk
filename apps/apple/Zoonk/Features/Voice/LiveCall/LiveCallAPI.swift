@@ -232,12 +232,14 @@ struct LiveCallAPI: Sendable {
 
   func checkObjectives(
     conversationId: String,
+    connectionId: String,
     turns: [ConversationTurn],
     token: String
   ) async throws -> ObjectiveCheck? {
     try await clients.perform(token: token) { client in
       let output = try await client.checkLanguageConversationObjectives(
-        path: .init(conversationId: conversationId), body: .json(.init(turns: turns)))
+        path: .init(conversationId: conversationId),
+        body: .json(.init(connectionId: connectionId, turns: turns)))
 
       guard case .ok(let response) = output else {
         return nil
