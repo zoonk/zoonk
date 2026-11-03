@@ -124,14 +124,17 @@ export function LessonPicturesProvider({
   return <LessonPicturesContext value={state}>{children}</LessonPicturesContext>;
 }
 
-function useStepPicture(step: PlayableLibraryStep) {
-  const { drawn, pending: waiting } = use(LessonPicturesContext);
+function getStepPicture({ drawn, pending: waiting }: PicturesState, step: PlayableLibraryStep) {
   const own = "image" in step ? step.image : null;
   const image = own ?? drawn[step.id] ?? null;
   const asks = getImageRequest(step) !== null;
   const pending = !image && asks && waiting.includes(step.id);
 
   return { image, pending };
+}
+
+function useStepPicture(step: PlayableLibraryStep) {
+  return getStepPicture(use(LessonPicturesContext), step);
 }
 
 export function useOptionPicture(step: PlayableLibraryStep, optionId: string) {
@@ -143,10 +146,14 @@ export function useOptionPicture(step: PlayableLibraryStep, optionId: string) {
   return { image, pending };
 }
 
-export function useIsRequiredPictureDrawing(step: PlayableLibraryStep): boolean {
-  const { pending } = useStepPicture(step);
+export function useIsRequiredPictureDrawing(step: PlayableLibraryStep | null): boolean {
+  const pictures = use(LessonPicturesContext);
 
-  return pending && "content" in step && asksNumberedPicture(step);
+  if (!step) {
+    return false;
+  }
+
+  return getStepPicture(pictures, step).pending && "content" in step && asksNumberedPicture(step);
 }
 
 export function useIsExploredPictureLost(step: PlayableLibraryStep): boolean {

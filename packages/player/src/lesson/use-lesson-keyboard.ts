@@ -2,7 +2,7 @@
 
 import { useEnterKey, useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { useTutorBuddy } from "../questions/tutor-buddy";
-import { runPrimary } from "./lesson-action-bar";
+import { runPrimary, useLessonPrimary } from "./lesson-action-bar";
 import { useLeaveLesson } from "./lesson-leave";
 import { useLessonPlayer } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
@@ -12,6 +12,7 @@ const SCREEN_KEY = { mode: "none", screen: true } as const;
 
 export function useLessonKeyboard() {
   const { actions, screen, state } = useLessonPlayer();
+  const primary = useLessonPrimary();
   const leave = useLeaveLesson();
   const { isPaused } = useLessonInteraction();
   const buddy = useTutorBuddy();
@@ -22,7 +23,7 @@ export function useLessonKeyboard() {
       return false;
     }
 
-    if (!screen.primary || screen.primary.disabled) {
+    if (!primary || primary.disabled) {
       return false;
     }
 

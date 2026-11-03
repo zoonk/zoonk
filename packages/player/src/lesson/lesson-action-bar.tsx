@@ -15,6 +15,7 @@ import { useExtracted } from "next-intl";
 import { PromptAudioButton } from "../components/prompt-audio-button";
 import { usePromptAudio } from "../player-audio-context";
 import { TutorAskButton } from "../questions/tutor-dock";
+import { useIsRequiredPictureDrawing } from "./_components/lesson-pictures";
 import { LESSON_PRIMARY_ID } from "./_utils/lesson-focus";
 import { isReadStep } from "./_utils/lesson-steps";
 import { type LessonPlayerActions, useLessonPlayer } from "./lesson-player-context";
@@ -36,6 +37,17 @@ export function runPrimary({
   } else {
     actions.continue();
   }
+}
+
+/** A question's answer stays hidden while the numbered picture it asks about is drawing, as its options are locked. */
+export function useLessonPrimary(): LessonScreen["primary"] {
+  const { screen } = useLessonPlayer();
+  const isPictureDrawing = useIsRequiredPictureDrawing(screen.step);
+  const { primary } = screen;
+
+  return primary && isPictureDrawing && primary.action !== "continue"
+    ? { ...primary, disabled: true }
+    : primary;
 }
 
 function PrimaryLabel({ label }: { label: LessonPrimaryLabel }) {
@@ -71,7 +83,7 @@ function PromptAudio() {
 export function LessonActionBar() {
   const t = useExtracted();
   const { actions, screen } = useLessonPlayer();
-  const { primary } = screen;
+  const primary = useLessonPrimary();
 
   if (!primary) {
     return null;
