@@ -1457,6 +1457,20 @@ describe("docked beside the lesson", () => {
     await expect.element(suggestions).not.toBeInTheDocument();
   });
 
+  it("offers no suggestions beside the lesson while a question is still on its way", async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    const saveQuestion = api.hold("create");
+    playLesson({ lesson });
+
+    const suggestions = lessonAside().getByRole("list", { name: "Suggested questions" });
+    await suggestions.getByRole("button", { name: "Explain it more simply" }).click();
+    await dockedConversation().getByRole("button", { name: "From the lesson" }).click();
+    await expect.element(suggestions).not.toBeInTheDocument();
+
+    await saveQuestion();
+    await expect.element(suggestions).not.toBeInTheDocument();
+  });
+
   it("offers two questions to ask after a wrong answer, each sent with a tap", async () => {
     const { api, lesson } = lessonWithTutor();
     playLesson({ lesson });

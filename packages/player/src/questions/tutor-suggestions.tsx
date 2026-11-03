@@ -7,10 +7,10 @@ import { getQuestionLimit } from "./lesson-question-errors";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { type OfferedSuggestion } from "./lesson-question-state";
 
-/** A lost question is sent again before anything new, so a suggestion would only resend it. */
+/** A question on its way, or lost and sent again before anything new, leaves a suggestion nothing to do. */
 export function useOffersSuggestions(): boolean {
   const { state, unresolvedQuestion } = useLessonQuestionController();
-  return !getQuestionLimit(state) && unresolvedQuestion === null;
+  return !getQuestionLimit(state) && state.creating === null && unresolvedQuestion === null;
 }
 
 /** Rows 36px tall with an 8px gap keep each 44px hit area out of its neighbor's. */

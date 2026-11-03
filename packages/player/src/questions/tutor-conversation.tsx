@@ -218,7 +218,7 @@ function ConversationBody({
   const controller = useLessonQuestionController();
   const { canAskQuestions, state } = controller;
   const ready = state.loadStatus === "ready" && state.error !== "load";
-  const empty = ready && state.questions.length === 0 && !state.creating;
+  const empty = ready && state.questions.length === 0;
   const offersSuggestions = useOffersSuggestions();
 
   const answering = state.questions.some((question) => isLessonQuestionAnswerInProgress(question));
