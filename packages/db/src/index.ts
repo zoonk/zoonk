@@ -83,6 +83,7 @@ export type {
   UsageRecord,
   UserLearningProfile,
   UserProgress,
+  WarmUp,
 } from "./generated/prisma/client";
 
 export {

@@ -284,6 +284,7 @@ describe(getLessonWaitingState, () => {
         generationId: runId,
         setAside: false,
         status: "generating",
+        warmUpId: null,
       },
       status: "ready",
     });
@@ -315,7 +316,13 @@ describe(getLessonWaitingState, () => {
     });
 
     await expect(getLessonWaitingState({ lessonId: ready.id })).resolves.toStrictEqual({
-      state: { alternative: null, generationId: null, setAside: false, status: "ready" },
+      state: {
+        alternative: null,
+        generationId: null,
+        setAside: false,
+        status: "ready",
+        warmUpId: null,
+      },
       status: "ready",
     });
   });

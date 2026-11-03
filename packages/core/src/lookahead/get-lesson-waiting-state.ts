@@ -19,6 +19,7 @@ type LessonWaitingState = {
   alternative: ReadyAlternative | null;
   /** A failed lesson its checks set aside: it's never written again, so there's nothing to retry. */
   setAside: boolean;
+  warmUpId: string | null;
 };
 
 export type LessonWaitingResult =
@@ -84,7 +85,13 @@ export async function getLessonWaitingState({
 
   if (state.status === "ready") {
     return {
-      state: { alternative: null, generationId: null, setAside: false, status: "ready" },
+      state: {
+        alternative: null,
+        generationId: null,
+        setAside: false,
+        status: "ready",
+        warmUpId: null,
+      },
       status: "ready",
     };
   }
@@ -95,6 +102,7 @@ export async function getLessonWaitingState({
       generationId: state.status === "generating" ? state.runId : null,
       setAside: state.status === "failed" && state.setAside,
       status: state.status,
+      warmUpId: null,
     },
     status: "ready",
   };

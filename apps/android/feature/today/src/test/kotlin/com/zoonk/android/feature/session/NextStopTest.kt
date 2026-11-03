@@ -94,6 +94,7 @@ class NextStopTest {
                         generationId = "run-1",
                         setAside = setAside,
                         status = status ?: throw ApiException(ApiError.Unauthorized),
+                        warmUpId = null,
                     )
                 },
                 generations = { generations },
