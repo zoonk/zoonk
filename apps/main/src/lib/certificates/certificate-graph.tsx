@@ -1,4 +1,5 @@
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
+import { type RouteLabel, fitRouteLabels } from "./certificate-layout";
 import { CERTIFICATE_COLORS } from "./certificate-palette";
 import { type CertificateView, type CertificateGraph as Graph } from "./certificate-view";
 
@@ -87,15 +88,7 @@ function scaleRoute(spec: RouteSpec, scale: number): RouteSpec {
   };
 }
 
-function RouteLabels({
-  spec,
-  zoneStarts,
-  zones,
-}: {
-  spec: RouteSpec;
-  zoneStarts: number[];
-  zones: RouteZone[];
-}) {
+function RouteLabels({ labels, spec }: { labels: RouteLabel[]; spec: RouteSpec }) {
   return (
     <div
       style={{
@@ -105,21 +98,21 @@ function RouteLabels({
         position: "relative",
       }}
     >
-      {zones.map((zone, index) => (
+      {labels.map(({ label, left }) => (
         <span
-          key={zone.label}
+          key={label}
           style={{
             color: CERTIFICATE_COLORS.muted,
             fontFamily: "Geist Mono",
             fontSize: spec.labelSize,
-            left: index === 0 ? 0 : zoneStarts[index],
+            left,
             letterSpacing: 0,
             position: "absolute",
             top: 0,
             whiteSpace: "nowrap",
           }}
         >
-          {zone.label}
+          {label}
         </span>
       ))}
     </div>
@@ -140,10 +133,19 @@ function CertificateRoute({
   const { end, middle, pad, station, stations, zoneStarts } = getRouteGeometry({ spec, zones });
   const tickReach = spec.height * ROUTE.tickReach;
 
+  const labels = fitRouteLabels({
+    fontSize: spec.labelSize,
+    labels: zones.map(({ label }, index) => ({
+      label,
+      left: index === 0 ? 0 : (zoneStarts[index] ?? 0),
+    })),
+    width: spec.width,
+  });
+
   return (
     <div style={{ display: "flex", flexDirection: "column", width: spec.width }}>
       {showLabels && zones.some((zone) => zone.label) && (
-        <RouteLabels spec={spec} zoneStarts={zoneStarts} zones={zones} />
+        <RouteLabels labels={labels} spec={spec} />
       )}
 
       <div
