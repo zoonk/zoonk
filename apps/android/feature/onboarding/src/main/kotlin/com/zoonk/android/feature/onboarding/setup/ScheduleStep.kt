@@ -186,8 +186,18 @@ private fun ColumnScope.ScheduleTime(
     val gateAnswer = if (dated) covering else timeAdvice
     val gateFailed = gateAnswer.status == PollStatus.Failed
     val waits = waitsForPlan(gate, answered != null, run)
-    if (waits && gate.readingNotice && !gateFailed && !run.isStopped) {
-        NoticeReading(if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE, lastEdition = false)
+    // The documents' reading has its own hold, which only a guess on it can keep after they're read.
+    val readingHold = rememberReadyHold(ready = !waits)
+    if ((waits && gate.readingNotice) || (!waits && !readingHold.over)) {
+        NoticeReading(
+            if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE,
+            lastEdition = false,
+            run.warmUpId,
+            run.stoppedBy(pollFailed = gateFailed),
+            if (gateFailed) gateAnswer.restart else LocalPlanStart.current?.onRetry,
+            readingHold,
+            PlanNext.TimeQuestion,
+        )
         return
     }
 
