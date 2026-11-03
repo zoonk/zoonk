@@ -78,11 +78,11 @@ struct CertificateLinkedInSheet: View {
       }
       .sensoryFeedback(.success, trigger: copied) { _, copied in copied != nil }
       .task(id: copied) {
-        guard copied != nil else {
+        // SwiftUI cancels this wait when another field is copied; clearing then hides its "Copied".
+        guard copied != nil, (try? await Task.sleep(for: .seconds(2))) != nil else {
           return
         }
 
-        try? await Task.sleep(for: .seconds(2))
         copied = nil
       }
     }
@@ -140,9 +140,6 @@ struct CertificateLinkedInSheet: View {
           }
         }
         .buttonStyle(.bordered)
-        .accessibilityLabel(
-          Text("Copy", tableName: "Certificates", comment: "Copies one field for LinkedIn's form")
-        )
         .accessibilityValue(label)
       }
     }
