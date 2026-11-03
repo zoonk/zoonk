@@ -66,7 +66,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.livecall.EndingReason
@@ -144,8 +143,9 @@ internal fun ConversationLive(
                 .lastOrNull()
                 ?.text
                 ?.length
-    // The learner starts and stops following the newest words by scrolling; words arriving never
-    // change it, however far a growing turn reaches past the view.
+    // The learner starts and stops following the newest words by scrolling, drags and flings alike;
+    // the app's own scrolling never passes through nested scrolling, and words arriving never change
+    // it, however far a growing turn reaches past the view.
     var following by rememberSaveable { mutableStateOf(true) }
     val scrolled =
         remember(listState) {
@@ -155,16 +155,8 @@ internal fun ConversationLive(
                     available: Offset,
                     source: NestedScrollSource,
                 ): Offset {
-                    if (source == NestedScrollSource.UserInput) following = listState.isNearEnd()
-                    return Offset.Zero
-                }
-
-                override suspend fun onPostFling(
-                    consumed: Velocity,
-                    available: Velocity,
-                ): Velocity {
                     following = listState.isNearEnd()
-                    return Velocity.Zero
+                    return Offset.Zero
                 }
             }
         }
