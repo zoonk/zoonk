@@ -859,10 +859,11 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       - MUST be in Brazilian Portuguese, for total beginners
       ${UNANSWERABLE_GUESS}
       - The plan's guess gives itself away by its words: it asks which purchase he might not find in the statement "yet", and only the right option says "ainda não" while both others say "já debitado". The written options are worded alike, so the question's words don't point to the right one
+      - Every option, the application's included, reads as a natural answer in plain words. The plan's application asks what is still missing and how to treat two records; options written as fragments joined by semicolons, like an answer key ("Outro extrato; transferência interna; fatura sem duplicar"), fail
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-registros-financeiros-guess",
+    id: "pt-registros-financeiros-guess-options",
     userInput: budgetLesson("pt-registros-financeiros-beginner"),
   },
 ];
