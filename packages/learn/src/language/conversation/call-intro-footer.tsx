@@ -106,10 +106,25 @@ export function CallIntroFooter({
   const t = useExtracted();
   const microphone = useMicrophoneAsk({ blocked: microphoneBlocked, onAudio: onStart });
   const { name } = conversation.character;
+  const status = useRef<HTMLDivElement>(null);
+
+  // The message replaces the button the learner pressed: keep their place there, not at the top.
+  useEffect(() => {
+    if (microphone.blocked && document.activeElement === document.body) {
+      status.current?.focus();
+    }
+  }, [microphone.blocked]);
 
   return (
     <>
-      <div aria-atomic="true" aria-live="polite" className="empty:absolute" role="status">
+      <div
+        aria-atomic="true"
+        aria-live="polite"
+        className="outline-none empty:absolute"
+        ref={status}
+        role="status"
+        tabIndex={-1}
+      >
         {start === "dailyLimitReached" && (
           <StudyTimeUsedUpNote>
             {t({

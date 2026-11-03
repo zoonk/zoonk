@@ -15,7 +15,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TaskHeaderTitle, useTaskAsideShown } from "../../_components/task-header";
 import { TaskBody } from "../../_components/task-layout";
 import { formatClock } from "../../_utils/clock";
@@ -75,12 +75,23 @@ function Transcript({
   );
 }
 
-/** It never takes focus on its own: speaking comes first, and a phone's keyboard would cover the call. */
+/**
+ * It takes focus only in a call made by typing: otherwise speaking comes first, and a phone's
+ * keyboard would cover the call.
+ */
 function TypedReply({ call }: { call: LiveCall }) {
   const t = useExtracted();
   const [text, setText] = useState("");
+  const field = useRef<HTMLInputElement>(null);
   const { scrollToEnd } = useMessageScroller();
   const canSend = call.phase === "connecting" || call.phase === "live";
+  const typedCall = call.micBlocked;
+
+  useEffect(() => {
+    if (typedCall && document.activeElement === document.body) {
+      field.current?.focus();
+    }
+  }, [typedCall]);
 
   const send = () => {
     const trimmed = text.trim();
@@ -109,6 +120,7 @@ function TypedReply({ call }: { call: LiveCall }) {
         // A phone's keyboard shrinks the view: the newest line stays in sight above it.
         onFocus={() => scrollToEnd({ behavior: "instant" })}
         placeholder={t("Or type your reply")}
+        ref={field}
         value={text}
       />
       <Button className="size-11" disabled={!canSend || !text.trim()} size="icon" type="submit">

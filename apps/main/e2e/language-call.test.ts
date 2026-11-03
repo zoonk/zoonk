@@ -269,10 +269,15 @@ test.describe("Language calls", () => {
     await expect(page.getByText("Your microphone is off")).toBeVisible();
 
     await expect(
+      page.getByRole("status").filter({ hasText: "Your microphone is off" }),
+    ).toBeFocused();
+
+    await expect(
       prisma.liveCallConnection.count({ where: { conversationId: call.id } }),
     ).resolves.toBe(0);
 
     await page.getByRole("button", { name: "Type instead" }).click();
+    await expect(page.getByRole("textbox", { name: "Type your reply" })).toBeFocused();
 
     await expect(
       page
