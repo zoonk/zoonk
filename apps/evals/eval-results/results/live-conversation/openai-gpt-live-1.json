@@ -463,6 +463,733 @@
           }
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "role",
+          "reasoning": "Emma uses the exact opening, stays in character, follows Marcos's responses, and uses the market, meeting arrangements, and family lunch consistently. She lets him ask about the plan and logistics, does not correct his grammar, and closes politely.",
+          "score": 10,
+          "label": "Stays in role and scenario",
+          "weight": 30
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The English is natural, simple, and appropriate for A2, with no Portuguese or difficult vocabulary. However, the turns beginning 'Great! I want to go' and 'Nice! We can walk' each contain three sentences, exceeding the one-or-two-sentence limit. The separate consecutive goodbye turns are also unnecessary.",
+          "score": 8,
+          "label": "At the learner's level and language",
+          "weight": 25
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "Both objectives are achieved and correctly marked on learner lines. Marcos accepts the market plan, which Emma confirms in her next response, and explicitly agrees to both 10am and Union Station before the second mark.",
+          "score": 10,
+          "label": "Objectives reached and marked",
+          "weight": 20
+        },
+        {
+          "categoryId": "memory",
+          "reasoning": "Emma never mentions the interview. This breaks no rule, but the rubric explicitly assigns 8 when a character who knows the learner leaves out a fitting fact.",
+          "score": 8,
+          "label": "Uses the learner's note",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2339,
+          "outputTokens": 596,
+          "reasoningTokens": 149
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Two character turns contain three sentences rather than the required one or two. The consecutive closing turns also make the ending slightly repetitive.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Emma could briefly wish Marcos luck with his Friday interview, then return to Saturday planning. Omitting this fitting fact is permitted, but misses an opportunity for appropriate personalization.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Emma, Marcos's friend from his English class, calls him (A2, Brazilian Portuguese speaker) in simple US English to plan Saturday. She knows him, so she may mention his job interview on Friday once, briefly and in simple English (wishing him luck or asking if he's ready), then go back to planning. She never says how she knows, never quotes the note in Portuguese, and lets him choose the plan and agree on a time.",
+        "expected": {
+          "objectivesMet": [
+            "Choose a plan",
+            "Agree on a time"
+          ]
+        },
+        "id": "pt-en-a2-memory-friend-1",
+        "userInput": {
+          "call": {
+            "kind": "unit",
+            "learnerLanguage": "pt",
+            "learnerNote": "Tem uma entrevista de emprego numa empresa de software na sexta-feira",
+            "level": "A2",
+            "scenario": {
+              "character": {
+                "name": "Emma",
+                "place": "Toronto",
+                "role": "amiga"
+              },
+              "characterBrief": "You are Emma, Marcos's friend from his English class in Toronto. You call to plan Saturday. Facts: you'd like to go to St. Lawrence Market on Saturday morning; you can meet at 10am at Union Station; you have a family lunch at 1pm. Speak simply and slowly.",
+              "hints": [
+                "Yes, I'm free on Saturday.",
+                "What do you want to do?",
+                "What time can we meet?"
+              ],
+              "objectives": [
+                {
+                  "description": "Combinar o que vocês vão fazer no sábado",
+                  "label": "Choose a plan"
+                },
+                {
+                  "description": "Combinar a hora e o lugar para se encontrar",
+                  "label": "Agree on a time"
+                }
+              ],
+              "openingLine": "Hi Marcos! It's Emma. Are you free on Saturday?",
+              "situation": "Sua amiga Emma, da aula de inglês, liga para combinar um passeio no sábado.",
+              "title": "Combinar o sábado com uma amiga"
+            },
+            "targetLanguage": "en"
+          },
+          "learner": {
+            "about": "Marcos, 34, a Brazilian software developer moving to Toronto for work with his wife. They'll live in an apartment in Scarborough. He has a job interview at a software company on Friday.",
+            "plan": [
+              "Say yes, you're free on Saturday, and ask what she wants to do.",
+              "Say the market is a good idea, with an A2 mistake (like 'I like very much markets').",
+              "Ask what time and where you meet.",
+              "Agree to her time and place."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "role",
+          "reasoning": "Linda uses the required opening, stays in character, answers the learner's questions with the supplied apartment facts, and accepts Saturday at ten. She never corrects grammar or reveals instructions. The only small polish issue is the redundant final farewell.",
+          "score": 9,
+          "label": "Stays in role and scenario",
+          "weight": 30
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The replies use short, simple, natural English suitable for A2 and stay within one or two sentences per turn. The requested Portuguese clarification is one short sentence, immediately followed by a simple English explanation.",
+          "score": 10,
+          "label": "At the learner's level and language",
+          "weight": 25
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "All three objectives are achieved and correctly marked on the learner's corresponding lines. The viewing proposal counts because Linda accepts Saturday at ten in her immediate response.",
+          "score": 10,
+          "label": "Objectives reached and marked",
+          "weight": 20
+        },
+        {
+          "categoryId": "memory",
+          "reasoning": "Linda leaves the dog note out and never implies prior knowledge of Marcos or Thor. This is permitted; the rubric explicitly assigns 9 when a character meeting the learner for the first time omits a fitting fact.",
+          "score": 9,
+          "label": "Uses the learner's note",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2439,
+          "outputTokens": 604,
+          "reasoningTokens": 212
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Linda adds a second farewell in a separate character turn after already saying goodbye. This is redundant and slightly weakens the natural ending.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Linda, a Toronto landlord, talks with Marcos (A2, Brazilian Portuguese speaker) for the first time, in simple US English. She runs the call exactly as without a note (availability, rent, deposit, Saturday viewing) and lets him book the viewing. She has never met him, so she never acts as if she knows about his dog: at most she asks one natural question such as whether he has pets, and she never names the dog before he does.",
+        "expected": {
+          "objectivesMet": [
+            "Is it available?",
+            "Ask about the deposit",
+            "Book a viewing"
+          ]
+        },
+        "id": "pt-en-a2-memory-landlord-1",
+        "userInput": {
+          "call": {
+            "kind": "unit",
+            "learnerLanguage": "pt",
+            "learnerNote": "Tem um cachorro chamado Thor",
+            "level": "A2",
+            "scenario": {
+              "character": {
+                "name": "Linda",
+                "place": "Queen Street",
+                "role": "proprietária"
+              },
+              "characterBrief": "You are Linda, a friendly landlord renting a one-bedroom apartment on Queen Street, Toronto. Rent is $2,400 a month, utilities not included, deposit is first and last month's rent. The apartment is still available. You can show it on Saturday at 10am or 2pm. Speak simply and slowly.",
+              "hints": [
+                "Is the apartment still available?",
+                "How much is the deposit?",
+                "Can I see it on Saturday?",
+                "Are utilities included?"
+              ],
+              "objectives": [
+                {
+                  "description": "Perguntar se o apartamento ainda está livre",
+                  "label": "Is it available?"
+                },
+                {
+                  "description": "Marcar um horário para ver o apartamento",
+                  "label": "Book a viewing"
+                },
+                {
+                  "description": "Perguntar quanto é a caução",
+                  "label": "Ask about the deposit"
+                }
+              ],
+              "openingLine": "Hi! Are you calling about the apartment on Queen Street?",
+              "situation": "Você viu um anúncio de apartamento em Toronto e liga para a proprietária para saber se ainda está disponível e marcar uma visita.",
+              "title": "Ligar para marcar uma visita"
+            },
+            "targetLanguage": "en"
+          },
+          "learner": {
+            "about": "Marcos, 34, a Brazilian software developer moving to Toronto for work with his wife. They'll live in an apartment in Scarborough. They have a dog named Thor.",
+            "plan": [
+              "Say yes, you're calling about the apartment, and ask if it's still available, with Portuguese question word order (like 'The apartment is still available?').",
+              "Ask how much the rent is and whether the utilities are included, with an A2 mistake (like 'Is included the utilities?').",
+              "Ask how much the deposit is.",
+              "Ask in Portuguese what a word or phrase she just used about the deposit means.",
+              "Say you understand, and ask to see the apartment on Saturday at ten."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "role",
+          "reasoning": "The officer uses the specified opening, stays in the immigration role, and avoids grammar correction or instruction disclosure. However, he omits the required duration question, leaves the work question unresolved, and closes while his temporary-accommodation question is still unanswered.",
+          "score": 7,
+          "label": "Stays in role and scenario",
+          "weight": 30
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The officer consistently uses short, simple, natural English appropriate for A2. Each turn contains no more than two sentences and one question, with no Portuguese or unnecessary language explanations.",
+          "score": 10,
+          "label": "At the learner's level and language",
+          "weight": 25
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "Both objectives are achieved and correctly marked on the learner's lines: Marcos explains that he is coming for work and states that he will live with his wife in an apartment in Scarborough. Neither mark relies solely on something the officer says or appears prematurely.",
+          "score": 10,
+          "label": "Objectives reached and marked",
+          "weight": 20
+        },
+        {
+          "categoryId": "memory",
+          "reasoning": "The football and Flamengo note is irrelevant to this immigration encounter and is omitted entirely, exactly as required. The officer neither implies prior knowledge nor mentions the note's source.",
+          "score": 10,
+          "label": "Uses the learner's note",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2233,
+          "outputTokens": 626,
+          "reasoningTokens": 178
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The officer never asks how long Marcos will stay, although the expectations explicitly require this question; Marcos volunteers the duration instead. The officer also ends immediately after asking about temporary accommodation, without allowing Marcos to answer.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Marcos answers the question about his type of work with his length of stay. The officer acknowledges that information but never resolves the unanswered work question, making the exchange less coherent.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "An immigration officer at Toronto Pearson talks with Marcos (A2, Brazilian Portuguese speaker) in simple US English. Marcos's football team has nothing to do with his arrival, so the officer leaves the note out entirely: no question about football or Flamengo. He asks why Marcos is in Canada, how long he'll stay and where he'll live.",
+        "expected": {
+          "objectivesMet": [
+            "Explain your visit",
+            "Say where you'll live"
+          ]
+        },
+        "id": "pt-en-a2-memory-officer-1",
+        "userInput": {
+          "call": {
+            "kind": "unit",
+            "learnerLanguage": "pt",
+            "learnerNote": "Torce para o Flamengo e joga futebol aos domingos",
+            "level": "A2",
+            "scenario": {
+              "character": {
+                "name": "Officer Grant",
+                "place": "Toronto Pearson",
+                "role": "agente de imigração"
+              },
+              "characterBrief": "You are a calm immigration officer at Toronto Pearson airport. Ask why the traveler is in Canada, how long they will stay and where they will live. Be polite and brief.",
+              "hints": [
+                "I'm moving here to work.",
+                "I'll stay with my wife.",
+                "Here is my work permit."
+              ],
+              "objectives": [
+                {
+                  "description": "Explicar por que você está no Canadá",
+                  "label": "Explain your visit"
+                },
+                {
+                  "description": "Dizer onde você vai morar",
+                  "label": "Say where you'll live"
+                }
+              ],
+              "openingLine": "Good morning. What brings you to Canada?",
+              "situation": "Você acabou de chegar em Toronto e o agente de imigração faz algumas perguntas.",
+              "title": "Passar pela imigração"
+            },
+            "targetLanguage": "en"
+          },
+          "learner": {
+            "about": "Marcos, 34, a Brazilian software developer moving to Toronto for work with his wife. They'll live in an apartment in Scarborough. He supports Flamengo and plays football on Sundays.",
+            "plan": [
+              "Say you come to Canada for work and have a work permit, with an A2 tense mistake (like 'I come to Canada for work').",
+              "Say you'll stay for two years, maybe more.",
+              "Say you will live with your wife in an apartment in Scarborough."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "role",
+          "reasoning": "Carmen uses the required opening, stays in her host-mother role, responds to Sam’s arrival, gives the correct dinner time, and closes politely. She leaves room for Sam to ask about dinner and never explains language or reveals instructions.",
+          "score": 9,
+          "label": "Stays in role and scenario",
+          "weight": 30
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The dialogue stays in simple Spanish with short, accessible A1 sentences. However, the arrival follow-up has three sentences, and “¿En qué día llegas?” is less idiomatic than “¿Qué día llegas?”. The extra closing turn also adds unnecessary speech.",
+          "score": 8,
+          "label": "At the learner's level and language",
+          "weight": 25
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "Both objectives are achieved and correctly marked on the learner’s lines: Sam states Sunday at six in the evening and asks what time dinner is. Carmen acknowledges the arrival and answers the dinner question immediately afterward.",
+          "score": 10,
+          "label": "Objectives reached and marked",
+          "weight": 20
+        },
+        {
+          "categoryId": "memory",
+          "reasoning": "Carmen does not mention Lucy. Since she already knows Sam through exchanged messages and the detail fits a brief personal greeting, the explicit score for permitted omission by a character who knows the learner is 8.",
+          "score": 8,
+          "label": "Uses the learner's note",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2296,
+          "outputTokens": 640,
+          "reasoningTokens": 164
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "One follow-up contains three sentences rather than the requested one or two. “¿En qué día llegas?” is understandable but less natural than “¿Qué día llegas?”. The two consecutive character turns at the end make the goodbye unnecessarily repetitive.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Carmen could briefly ask “¿Cómo está Lucy?” at a natural moment, then return to Sam’s arrival. Omitting this fitting personal detail is permitted, but misses an opportunity for personalization.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Carmen, a host mother in Mexico City, talks with Sam (A1, US English speaker) in very short, slow, simple Spanish (about 3 to 6 words a sentence). She has exchanged messages with Sam, so she may ask about his sister Lucy once, in a few simple Spanish words, then go back to his arrival. She never says how she knows and never uses English for it. She lets Sam say when he arrives and ask about dinner.",
+        "expected": {
+          "objectivesMet": [
+            "Decir cuándo llegas",
+            "Preguntar por la cena"
+          ]
+        },
+        "id": "en-es-a1-memory-host-1",
+        "userInput": {
+          "call": {
+            "kind": "unit",
+            "learnerLanguage": "en",
+            "learnerNote": "Has a younger sister, Lucy, who is 10",
+            "level": "A1",
+            "scenario": {
+              "character": {
+                "name": "Carmen",
+                "place": "Coyoacán, Ciudad de México",
+                "role": "host mother"
+              },
+              "characterBrief": "Carmen, 55, a warm host mother in Coyoacán, Mexico City. The learner will stay with her family during a four-week Spanish course that starts next Monday; you've exchanged messages but never spoken. Facts: she lives with her husband Luis and their cat Nube; dinner is at 8pm; she can pick the learner up at the airport. Speak very slowly and simply.",
+              "hints": [
+                "Hola, Carmen. Estoy bien.",
+                "Llego el domingo.",
+                "¿A qué hora es la cena?"
+              ],
+              "objectives": [
+                {
+                  "description": "Say what day and time you arrive.",
+                  "label": "Decir cuándo llegas"
+                },
+                {
+                  "description": "Ask what time dinner is.",
+                  "label": "Preguntar por la cena"
+                }
+              ],
+              "openingLine": "¡Hola! Soy Carmen. ¿Cómo estás?",
+              "situation": "Before your Spanish course in Mexico City, you call Carmen, your host mother, to say when you arrive.",
+              "title": "Call your host family"
+            },
+            "targetLanguage": "es"
+          },
+          "learner": {
+            "about": "Sam, 24, from Chicago, a beginner in Spanish who starts a course in Mexico City next week. He has a younger sister, Lucy, who is 10.",
+            "plan": [
+              "Say hello, you're fine, and that you're Sam.",
+              "Say you arrive on Sunday at six in the evening.",
+              "Ask what time dinner is.",
+              "Say thank you and see you on Sunday."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "role",
+          "reasoning": "Rafael uses the exact opening, stays in character, gives consistent meeting and slide information, and lets Tom agree. However, he supplies the scheduling details before Tom asks instead of letting the learner elicit them. The second farewell is also unnecessary. No role-breaking or language-teaching cap applies.",
+          "score": 8,
+          "label": "Stays in role and scenario",
+          "weight": 30
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The Portuguese is natural, conversational Brazilian Portuguese suitable for B1, with common vocabulary and no English drift. Most replies follow the short-turn requirement, but the additional final turn contains three sentences. The prescribed opening is not treated as a generated level failure.",
+          "score": 8,
+          "label": "At the learner's level and language",
+          "weight": 25
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "Both objectives are achieved and correctly marked. Tom explicitly agrees to present, and Rafael proceeds on that basis. The details mark follows Tom's slide-location question after the schedule has been confirmed; Rafael's immediately following answer supplies the location, which counts under the stated marking rule.",
+          "score": 10,
+          "label": "Objectives reached and marked",
+          "weight": 20
+        },
+        {
+          "categoryId": "memory",
+          "reasoning": "Rafael never mentions the training fact. Because he is a coworker who knows Tom and the fact could fit a brief personal check-in, the explicit omission rule assigns a score of 8. There is no disclosure of the note's source or misuse of its contents.",
+          "score": 8,
+          "label": "Uses the learner's note",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2340,
+          "outputTokens": 756,
+          "reasoningTokens": 227
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Rafael gives the meeting's day, time, and video format before Tom asks, contrary to the expectation that he provide details on request. This makes Tom's subsequent question redundant and weakens the learner-led exchange.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "After politely returning Tom's farewell, Rafael adds another consecutive closing turn. That unnecessary turn also contains three short sentences rather than the specified one or two.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "A single brief Portuguese question about Tom's half-marathon training could add appropriate coworker familiarity before returning to the favor. Omitting it is allowed, but misses this personalization opportunity.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Rafael, Tom's coworker, calls him (B1, US English speaker) in Brazilian Portuguese to ask him to present at Wednesday's client meeting. They work together, so he may mention Tom's half marathon training once, briefly (asking how the training is going), but the favor stays the point of the call. He never says how he knows, gives the details from his notes when Tom asks and lets Tom agree.",
+        "expected": {
+          "objectivesMet": [
+            "Aceitar a apresentação",
+            "Confirmar os detalhes"
+          ]
+        },
+        "id": "en-pt-b1-memory-coworker-1",
+        "userInput": {
+          "call": {
+            "kind": "unit",
+            "learnerLanguage": "en",
+            "learnerNote": "Is training for a half marathon in December",
+            "level": "B1",
+            "scenario": {
+              "character": {
+                "name": "Rafael",
+                "place": "Estúdio Pixel, São Paulo",
+                "role": "coworker"
+              },
+              "characterBrief": "Rafael, a designer on the learner's team at Estúdio Pixel in São Paulo; they've worked together for two months. He calls because the client meeting moved from Thursday to Wednesday at 10am, on video, and he can't make it, so he needs the learner to present the new app screens. The slides are in the team folder, and he'll email the client's notes tonight.",
+              "hints": [
+                "Claro, pode falar.",
+                "Que horas é a reunião?",
+                "Onde estão os slides?"
+              ],
+              "objectives": [
+                {
+                  "description": "Agree to present in his place.",
+                  "label": "Aceitar a apresentação"
+                },
+                {
+                  "description": "Find out the day and time and where the slides are.",
+                  "label": "Confirmar os detalhes"
+                }
+              ],
+              "openingLine": "Oi, Tom! Tudo bem? Tem um minutinho? Preciso de uma ajuda.",
+              "situation": "Rafael, your coworker, calls to ask you a favor about a client meeting.",
+              "title": "Help a coworker"
+            },
+            "targetLanguage": "pt"
+          },
+          "learner": {
+            "about": "Tom, 29, an American app designer who moved to São Paulo for a new job. He's training for a half marathon in December.",
+            "plan": [
+              "Say sure, you have a minute, and ask what he needs.",
+              "Say yes, you can present, and ask what day and time the meeting is.",
+              "Ask where the slides are.",
+              "Say thanks, it's all fine, and wish him a good week."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "role",
+          "reasoning": "Juliana stays in character, uses the supplied opening with only a punctuation difference, responds to the actual order, and charges the correct R$27 for a cappuccino and three pão de queijo. She accepts card payment and closes politely. Her natural repetition of 'três pães de queijo' is not an explicit grammar correction.",
+          "score": 10,
+          "label": "Stays in role and scenario",
+          "weight": 30
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The Portuguese is natural and accessible at B1, with no English drift. However, multiple turns exceed the explicit one-or-two-sentence limit, and the additional consecutive farewell unnecessarily extends the ending.",
+          "score": 8,
+          "label": "At the learner's level and language",
+          "weight": 25
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "Both objectives are achieved and correctly marked. The food order completes the previously requested drink order, and Juliana accepts it immediately afterward. The payment mark follows the learner's earlier price question and accompanies handing over the card, which Juliana accepts in her next turn.",
+          "score": 10,
+          "label": "Objectives reached and marked",
+          "weight": 20
+        },
+        {
+          "categoryId": "memory",
+          "reasoning": "Juliana leaves the learner's move to São Paulo unmentioned and never implies prior knowledge of this stranger. The rubric explicitly assigns 9 when a character meeting the learner for the first time omits a fitting fact.",
+          "score": 9,
+          "label": "Uses the learner's note",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2329,
+          "outputTokens": 646,
+          "reasoningTokens": 167
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Some character turns exceed the one-or-two-sentence limit: the explanation of pão de queijo has four sentences, and the response to the learner's thanks has three. A separate, consecutive farewell also makes the ending slightly repetitive.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The explanation of pão de queijo would be more useful if it identified cheese as a main ingredient instead of describing it only as a warm baked snack.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Juliana, a barista in São Paulo, serves Tom (B1, US English speaker) in Brazilian Portuguese. She has never met him, so she never acts as if she knows he just moved to São Paulo: at most she asks one natural question such as whether he's new around here, in Portuguese, and then goes back to his order. She gives prices from her notes and lets him order and pay.",
+        "expected": {
+          "objectivesMet": [
+            "Fazer o pedido",
+            "Pagar"
+          ]
+        },
+        "id": "en-pt-b1-memory-barista-1",
+        "userInput": {
+          "call": {
+            "kind": "unit",
+            "learnerLanguage": "en",
+            "learnerNote": "Moved to São Paulo three weeks ago for a new job",
+            "level": "B1",
+            "scenario": {
+              "character": {
+                "name": "Juliana",
+                "place": "Café Paulista, Vila Madalena",
+                "role": "barista"
+              },
+              "characterBrief": "Juliana, a friendly barista at a small café in Vila Madalena, São Paulo. Menu: café coado R$8, cappuccino R$12, pão de queijo R$6 or three for R$15, bolo de cenoura R$10. Card and Pix accepted; no change for cash today.",
+              "hints": [
+                "Eu queria um cappuccino, por favor.",
+                "O que é pão de queijo?",
+                "Posso pagar com cartão?"
+              ],
+              "objectives": [
+                {
+                  "description": "Order a drink and something to eat.",
+                  "label": "Fazer o pedido"
+                },
+                {
+                  "description": "Ask how much it is and pay.",
+                  "label": "Pagar"
+                }
+              ],
+              "openingLine": "Oi, boa tarde! O que vai ser hoje?",
+              "situation": "You're at a café in São Paulo. Order something to drink and eat, and pay.",
+              "title": "Order at a café"
+            },
+            "targetLanguage": "pt"
+          },
+          "learner": {
+            "about": "Tom, 29, an American app designer who moved to São Paulo for a new job. He moved three weeks ago.",
+            "plan": [
+              "Order a cappuccino and ask what pão de queijo is.",
+              "Order three pão de queijo.",
+              "Ask how much it is.",
+              "Say you'll pay by card, and hand her your card.",
+              "Say thanks and that it smells great."
+            ]
+          }
+        }
+      }
     }
   ],
   "taskId": "live-conversation"

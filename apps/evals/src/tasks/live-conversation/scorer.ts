@@ -3,7 +3,10 @@ import { type TaskScorer } from "@/lib/types";
 import { normalizeString } from "@zoonk/utils/string";
 import { type CallTurn } from "./learner";
 import { type LiveConversationInput } from "./run-call";
-import { LIVE_CONVERSATION_SCORE_CATEGORIES } from "./score-categories";
+import {
+  LIVE_CONVERSATION_SCORE_CATEGORIES,
+  MEMORY_CALL_SCORE_CATEGORIES,
+} from "./score-categories";
 
 export type LiveConversationOutput = { seconds: number; turns: CallTurn[] };
 
@@ -21,6 +24,9 @@ const MAX_TURN_SENTENCES = 4;
 
 /** GPT-Live's transcript of its own speech may differ in a word or two from the opening line. */
 const OPENING_WORDS_SHARE = 0.8;
+
+/** Four words of the note in a row are a quote, not a shared word or name. */
+const QUOTE_WORDS = 4;
 
 const SENTENCE_END = /(?<=[.!?…])\s+/u;
 const PUNCTUATION = /[^\p{L}\p{N}\s]/gu;
@@ -105,6 +111,31 @@ function checkTurnLengths({ input, turns }: { input: LiveConversationInput; turn
   ];
 }
 
+function toQuotes(note: string): string[] {
+  const words = toWords(note);
+
+  return words
+    .slice(0, Math.max(0, words.length - QUOTE_WORDS + 1))
+    .map((_, index) => words.slice(index, index + QUOTE_WORDS).join(" "));
+}
+
+function checkNoteQuotes({ input, turns }: { input: LiveConversationInput; turns: CallTurn[] }) {
+  const quotes = toQuotes(input.call.learnerNote ?? "");
+
+  const quoted = turns
+    .filter((turn) => turn.speaker === "character")
+    .flatMap((turn) => quotes.filter((quote) => toWords(turn.text).join(" ").includes(quote)));
+
+  return quotes.length === 0
+    ? []
+    : [
+        {
+          passed: quoted.length === 0,
+          problem: `The character quoted the learner's note: ${quoted.map((quote) => `"${quote}"`).join(", ")}.`,
+        },
+      ];
+}
+
 function formatTranscript(turns: readonly CallTurn[]): string {
   return turns
     .map((turn) => {
@@ -133,6 +164,7 @@ function checkCall({
     checkOpening({ input, turns }),
     ...checkObjectives({ expected, input, turns }),
     ...checkTurnLengths({ input, turns }),
+    ...checkNoteQuotes({ input, turns }),
   ];
 
   return {
@@ -145,8 +177,8 @@ function checkCall({
 
 /**
  * Code checks the call's shape (the opening line, every objective the learner reached marked once
- * and nothing else, short replies at the learner's level), then a judge reads the transcript for
- * role, level and objectives.
+ * and nothing else, short replies at the learner's level, no quote of the learner's note), then a
+ * judge reads the transcript for role, level and objectives, and for how a note was used.
  */
 export const scoreLiveConversation: TaskScorer<LiveConversationExpected> = ({
   output,
@@ -162,7 +194,9 @@ export const scoreLiveConversation: TaskScorer<LiveConversationExpected> = ({
   return scoreWithCodeChecks({
     check: (text) => checkCall({ expected, input, output: text }),
     output,
-    scoreCategories: LIVE_CONVERSATION_SCORE_CATEGORIES,
+    scoreCategories: input.call.learnerNote
+      ? MEMORY_CALL_SCORE_CATEGORIES
+      : LIVE_CONVERSATION_SCORE_CATEGORIES,
     testCase,
   });
 };

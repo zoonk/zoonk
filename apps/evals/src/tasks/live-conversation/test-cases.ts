@@ -5,10 +5,10 @@ import { SEED_LEARNERS_TODAY } from "../../datasets/seed-learners";
 import { type LiveConversationInput } from "./run-call";
 import { type LiveConversationExpected } from "./scorer";
 
-type Scenario = LiveConversationInput["call"]["scenario"];
+export type Scenario = LiveConversationInput["call"]["scenario"];
 
 /** Marcos's calls from the seed (Portuguese speaker moving to Toronto), by the unit they practice. */
-function getMarcosScenario(chapter: string): Scenario {
+export function getMarcosScenario(chapter: string): Scenario {
   const marcos = listSeedPersonas({ now: new Date(`${SEED_LEARNERS_TODAY}T12:00:00Z`) }).find(
     (learner) => learner.key === "marcos",
   );
@@ -24,8 +24,16 @@ function getMarcosScenario(chapter: string): Scenario {
   return conversationScenarioSchema.parse(scenario.content);
 }
 
-const MARCOS =
+export const MARCOS =
   "Marcos, 34, a Brazilian software developer moving to Toronto for work with his wife. They'll live in an apartment in Scarborough.";
+
+export const RENTING_PLAN = [
+  "Say yes, you're calling about the apartment, and ask if it's still available, with Portuguese question word order (like 'The apartment is still available?').",
+  "Ask how much the rent is and whether the utilities are included, with an A2 mistake (like 'Is included the utilities?').",
+  "Ask how much the deposit is.",
+  "Ask in Portuguese what a word or phrase she just used about the deposit means.",
+  "Say you understand, and ask to see the apartment on Saturday at ten.",
+];
 
 const WORK_SCENARIO: Scenario = {
   character: { name: "Mariana", place: "Estúdio Pixel, São Paulo", role: "team manager" },
@@ -94,16 +102,7 @@ export const TEST_CASES: TestCase<LiveConversationExpected, LiveConversationInpu
         scenario: getMarcosScenario("renting"),
         targetLanguage: "en",
       },
-      learner: {
-        about: MARCOS,
-        plan: [
-          "Say yes, you're calling about the apartment, and ask if it's still available, with Portuguese question word order (like 'The apartment is still available?').",
-          "Ask how much the rent is and whether the utilities are included, with an A2 mistake (like 'Is included the utilities?').",
-          "Ask how much the deposit is.",
-          "Ask in Portuguese what a word or phrase she just used about the deposit means.",
-          "Say you understand, and ask to see the apartment on Saturday at ten.",
-        ],
-      },
+      learner: { about: MARCOS, plan: RENTING_PLAN },
     },
   },
   {
