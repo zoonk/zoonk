@@ -8,7 +8,8 @@ export function afterPageLoad(): Promise<void> {
         return;
       }
 
-      setTimeout(resolve, 0);
+      // Safari has no idle callback; waiting as long as one would at most lets hydration finish.
+      setTimeout(resolve, IDLE_TIMEOUT_MS);
     };
 
     if (document.readyState === "complete") {
