@@ -1800,7 +1800,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acabo de terminar %1$@ en Zoonk: %#@lessons@ y aproximadamente %3$@ de estudio."
+            "value" : "Recién terminé %1$@ en Zoonk: %#@lessons@ y aproximadamente %3$@ de estudio."
           },
           "substitutions" : {
             "lessons" : {
@@ -1884,7 +1884,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonkで%1$@の%#@lessons@を修了しました。学習時間は約%3$@でした。"
+            "value" : "Zoonkで%1$@を修了しました（%#@lessons@、学習時間は約%3$@）。"
           },
           "substitutions" : {
             "lessons" : {
@@ -1906,7 +1906,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk에서 방금 %1$@ 코스를 마쳤어요. %#@lessons@를 약 %3$@ 동안 공부했어요."
+            "value" : "Zoonk에서 %1$@ 학습을 막 마쳤어요(%#@lessons@, 학습 시간 약 %3$@)."
           },
           "substitutions" : {
             "lessons" : {
@@ -1928,7 +1928,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Właśnie udało mi się ukończyć kurs w Zoonku: %1$@, %#@lessons@ i około %3$@ nauki."
+            "value" : "Kurs „%1$@” w Zoonku już za mną: %#@lessons@ i mniej więcej %3$@ nauki."
           },
           "substitutions" : {
             "lessons" : {
@@ -1990,7 +1990,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk’ta %1$@ kursunu yeni bitirdim: %#@lessons@ ve yaklaşık %3$@ çalışma."
+            "value" : "Zoonk’ta %1$@ kursunu az önce bitirdim: %#@lessons@ ve yaklaşık %3$@ çalışma."
           },
           "substitutions" : {
             "lessons" : {
@@ -2073,7 +2073,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acabo de terminar %1$@ en Zoonk: %#@lessons@."
+            "value" : "Recién terminé %1$@ en Zoonk: %#@lessons@."
           },
           "substitutions" : {
             "lessons" : {
@@ -2157,7 +2157,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonkで%1$@の%#@lessons@を修了しました。"
+            "value" : "Zoonkで%1$@を修了しました（%#@lessons@）。"
           },
           "substitutions" : {
             "lessons" : {
@@ -2179,7 +2179,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk에서 방금 %1$@ 코스를 마쳤어요. %#@lessons@를 공부했어요."
+            "value" : "Zoonk에서 %1$@ 학습을 막 마쳤어요(%#@lessons@)."
           },
           "substitutions" : {
             "lessons" : {
@@ -2201,7 +2201,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Właśnie udało mi się ukończyć kurs w Zoonku: %1$@, %#@lessons@."
+            "value" : "Kurs „%1$@” w Zoonku już za mną: %#@lessons@."
           },
           "substitutions" : {
             "lessons" : {
@@ -2263,7 +2263,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk’ta %1$@ kursunu yeni bitirdim: %#@lessons@."
+            "value" : "Zoonk’ta %1$@ kursunu az önce bitirdim: %#@lessons@."
           },
           "substitutions" : {
             "lessons" : {
