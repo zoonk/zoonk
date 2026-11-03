@@ -31643,12 +31643,18 @@
             "type": "string",
             "format": "uri",
             "description": "The certificate itself, landscape, for print and saving"
+          },
+          "screen": {
+            "type": "string",
+            "format": "uri",
+            "description": "The same certificate at screen size (2246 × 1588), for every on-screen display; print and saving use print"
           }
         },
         "required": [
           "link",
           "post",
-          "print"
+          "print",
+          "screen"
         ],
         "additionalProperties": false,
         "description": "PNG pictures of the certificate, public (no auth header). They change when the learner's name changes"
@@ -90080,6 +90086,13 @@
               }
             ]
           },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, then POST /me/certificates/{code}/views for each. Images and links: GET /certificates/{code}"
+          },
           "comesBack": {
             "type": "array",
             "items": {
@@ -90307,6 +90320,7 @@
           "buddyAte",
           "capsulesSealed",
           "ceremony",
+          "certificates",
           "comesBack",
           "correct",
           "energy",

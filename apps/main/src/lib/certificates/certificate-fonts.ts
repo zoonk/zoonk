@@ -1,11 +1,13 @@
 import "server-only";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { getContentLocale } from "@zoonk/utils/locale";
+import { type ImageResponse } from "next/og";
 
-type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+type SatoriFont = NonNullable<
+  NonNullable<ConstructorParameters<typeof ImageResponse>[1]>["fonts"]
+>[number];
 
-type SatoriFont = { data: Buffer; name: string; style: "normal"; weight: FontWeight };
+type FontFile = Pick<SatoriFont, "name" | "weight"> & { file: string };
 
 const FONTS_DIR = join(process.cwd(), "src/lib/certificates/fonts");
 
@@ -14,7 +16,7 @@ const FONTS_DIR = join(process.cwd(), "src/lib/certificates/fonts");
  * hundreds: the 560, 620 and 640 instances answer for 600, 700 and 800. These copies carry no
  * kerning, since Satori leaves a wide gap after every word it kerns.
  */
-const LATIN_FONTS: { file: string; name: string; weight: FontWeight }[] = [
+const LATIN_FONTS: FontFile[] = [
   { file: "Geist-400.ttf", name: "Geist", weight: 400 },
   { file: "Geist-500.ttf", name: "Geist", weight: 500 },
   { file: "Geist-560.ttf", name: "Geist", weight: 600 },
@@ -26,29 +28,23 @@ const LATIN_FONTS: { file: string; name: string; weight: FontWeight }[] = [
   { file: "NotoSans-400.ttf", name: "Noto Sans", weight: 400 },
 ];
 
-const LOCALE_FONTS: Record<string, { file: string; name: string }> = {
-  ja: { file: "NotoSansJP-400.ttf", name: "Noto Sans JP" },
-  ko: { file: "NotoSansKR-400.ttf", name: "Noto Sans KR" },
+/** A certificate's own words in Japanese or Korean, which Geist doesn't draw. */
+const LOCALE_FONTS: Record<string, FontFile[]> = {
+  ja: [{ file: "NotoSansJP-400.ttf", name: "Noto Sans JP", weight: 400 }],
+  ko: [{ file: "NotoSansKR-400.ttf", name: "Noto Sans KR", weight: 400 }],
 };
 
 /** Satori's weights for the design's: kind and chips 560, readouts 620, the brand 640. */
 export const FONT_WEIGHTS = { brand: 800, kind: 600, readout: 700 } as const;
 
-async function loadFont(font: { file: string; name: string; weight: FontWeight }) {
-  return {
-    data: await readFile(join(FONTS_DIR, font.file)),
-    name: font.name,
-    style: "normal" as const,
-    weight: font.weight,
-  };
+async function loadFont({ file, ...font }: FontFile): Promise<SatoriFont> {
+  return { ...font, data: await readFile(join(FONTS_DIR, file)), style: "normal" };
 }
 
 const fontsByLocale = new Map<string, Promise<SatoriFont[]>>();
 
 /** The same array each time, so Satori parses each font once per instance. */
-export function getCertificateFonts(language: string): Promise<SatoriFont[]> {
-  const locale = getContentLocale(language) ?? "";
-  const localeFont = LOCALE_FONTS[locale];
+export function getCertificateFonts(locale: string): Promise<SatoriFont[]> {
   const cached = fontsByLocale.get(locale);
 
   if (cached) {
@@ -56,9 +52,7 @@ export function getCertificateFonts(language: string): Promise<SatoriFont[]> {
   }
 
   const fonts = Promise.all(
-    [...LATIN_FONTS, ...(localeFont ? [{ ...localeFont, weight: 400 as const }] : [])].map((font) =>
-      loadFont(font),
-    ),
+    [...LATIN_FONTS, ...(LOCALE_FONTS[locale] ?? [])].map((font) => loadFont(font)),
   );
 
   fontsByLocale.set(locale, fonts);

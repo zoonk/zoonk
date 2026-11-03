@@ -282,3 +282,37 @@ export function listLevelTestLevels(
 export function toLevelLabels(scores: LevelTestScores): Partial<Record<LanguageSkill, string>> {
   return Object.fromEntries(listLevelTestLevels(scores).map((level) => [level.skill, level.label]));
 }
+
+export type LevelTestMeasure = {
+  /** Questions answered, skipped ones left out, and the spoken sentence once graded. */
+  answered: number;
+  /** A skill with no answer keeps its starting estimate, a prior rather than a measurement. */
+  measured: { score: number; skill: LanguageSkill }[];
+  /** Every reading and listening question was asked: the learner didn't finish early. */
+  ranToEnd: boolean;
+};
+
+export function getLevelTestMeasure({
+  bank,
+  progress,
+  scores,
+}: {
+  bank: LevelTestBank;
+  progress: TestAnswers;
+  scores: LevelTestScores;
+}): LevelTestMeasure {
+  const answeredSkills = QUESTION_SKILLS.filter(
+    (skill) => scoreAnswers({ bank, progress, skill }).length > 0,
+  );
+
+  const spoken =
+    scores.speaking === undefined ? [] : [{ score: scores.speaking, skill: "speaking" as const }];
+
+  return {
+    answered: progress.answers.filter((answer) => !answer.skipped).length + spoken.length,
+    measured: [...answeredSkills.map((skill) => ({ score: scores[skill], skill })), ...spoken],
+    ranToEnd: QUESTION_SKILLS.every(
+      (skill) => countAsked({ bank, progress, skill }) >= QUESTIONS_PER_SKILL,
+    ),
+  };
+}

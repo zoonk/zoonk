@@ -3,7 +3,7 @@ import { getExtracted } from "next-intl/server";
 import { CATEGORY_ICONS, type CategoryInfo } from "./category-icons";
 
 export async function getCategories(locale?: string): Promise<CategoryInfo[]> {
-  const t = await getExtracted({ locale });
+  const t = await getExtracted(locale === undefined ? undefined : { locale });
 
   return [
     { icon: CATEGORY_ICONS.arts, key: "arts", label: t("Arts") },

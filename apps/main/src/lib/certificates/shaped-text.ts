@@ -30,6 +30,9 @@ const DESCENT = 0.295;
 
 const ELLIPSIS = "…";
 
+/** Longer than any real name or title; see `normalizeRuns`. */
+const MAX_GRAPHEMES = 200;
+
 /** How close to the narrowest width balancing gets, as a share of the box. */
 const BALANCE_PRECISION = 0.01;
 
@@ -123,9 +126,28 @@ async function drawText({
   };
 }
 
-/** Whitespace in a profile name (a pasted tab or line break) would break the line where Pango sees it. */
+function getGraphemes(text: string): string[] {
+  return Array.from(
+    new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text),
+    ({ segment }) => segment,
+  );
+}
+
+function capText(text: string): string {
+  const graphemes = getGraphemes(text);
+
+  return graphemes.length > MAX_GRAPHEMES
+    ? `${graphemes.slice(0, MAX_GRAPHEMES).join("").trimEnd()}${ELLIPSIS}`
+    : text;
+}
+
+/**
+ * Whitespace in a profile name (a pasted tab or line break) would break the line where Pango sees
+ * it. Profile names have no length limit, and Pango's work grows with the text, so a name past any
+ * real one is cut.
+ */
 function normalizeRuns(runs: readonly TextRun[]): TextRun[] {
-  return runs.map((run) => ({ ...run, text: run.text.replaceAll(/\s+/gu, " ") }));
+  return runs.map((run) => ({ ...run, text: capText(run.text.replaceAll(/\s+/gu, " ")) }));
 }
 
 type ShapeInput = {
@@ -146,6 +168,7 @@ async function searchSizes({
   }
 
   const middle = Math.floor((low + high) / 2);
+
   const shaped = await drawText({
     box: input.box,
     runs: input.runs,
@@ -235,13 +258,6 @@ export async function shapeText({
   const shaped = fitted ?? (await drawText({ box, runs: normalized, size: sizes.at(-1) ?? 0 }));
 
   return balanceLines({ box, runs: normalized, shaped });
-}
-
-function getGraphemes(text: string): string[] {
-  return Array.from(
-    new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text),
-    ({ segment }) => segment,
-  );
 }
 
 async function searchTruncation({

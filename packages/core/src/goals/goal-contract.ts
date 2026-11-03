@@ -48,10 +48,31 @@ const timeZoneSchema = z
   .refine(isValidTimeZone, { message: "Invalid timezone" })
   .meta({ description: "The learner's IANA timezone" });
 
+/**
+ * Only core writes these: research the notice's question formats, which shared questions read,
+ * and the level test its progress and result, which a placement certificate certifies.
+ */
+const CORE_DETAILS_KEYS: ReadonlySet<string> = new Set([
+  "levelTest",
+  "noticeFormats",
+  "skillLevels",
+]);
+
+function isCoreDetail([key]: [string, unknown]): boolean {
+  return CORE_DETAILS_KEYS.has(key);
+}
+
+export function withoutCoreDetails<Value>(details: Record<string, Value>): Record<string, Value> {
+  return Object.fromEntries(Object.entries(details).filter((entry) => !isCoreDetail(entry)));
+}
+
+export function onlyCoreDetails<Value>(details: Record<string, Value>): Record<string, Value> {
+  return Object.fromEntries(Object.entries(details).filter((entry) => isCoreDetail(entry)));
+}
+
 const detailsSchema = z
   .record(z.string(), z.json())
-  // Only research writes the notice's question formats, and shared questions read them.
-  .overwrite(({ noticeFormats: _written, ...details }) => details)
+  .overwrite((details) => withoutCoreDetails(details))
   .refine((details) => JSON.stringify(details).length <= MAX_GOAL_DETAILS_LENGTH, {
     message: `Details are at most ${MAX_GOAL_DETAILS_LENGTH} characters as JSON`,
   })

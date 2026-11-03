@@ -13,7 +13,7 @@ import { createCertificateCode } from "./certificate-code";
 
 const LEVEL_ORDER = Object.values(CourseLevel);
 
-const COURSE_WORK_KINDS = ["lesson", "chapter", "boss"] as const;
+const COURSE_WORK_KINDS: ReadonlySet<PlanItem["kind"]> = new Set(["lesson", "chapter", "boss"]);
 
 type CourseItem = Pick<
   PlanItem,
@@ -255,12 +255,19 @@ export async function awardCourseCertificate(
   return { certificate, created: true };
 }
 
-/** Counts each plan's work left first, so a write that leaves work to do reads nothing more. */
+/**
+ * Only finished lessons, chapters and challenges can finish a course, and each plan's work left is
+ * counted first, so other writes read nothing more.
+ */
 export async function awardCourseCertificates(
   tx: TransactionClient,
-  { planIds }: { planIds: readonly string[] },
+  { finished }: { finished: readonly Pick<PlanItem, "kind" | "planId">[] },
 ): Promise<void> {
-  const ids = [...new Set(planIds)];
+  const ids = [
+    ...new Set(
+      finished.filter((item) => COURSE_WORK_KINDS.has(item.kind)).map((item) => item.planId),
+    ),
+  ];
 
   if (ids.length === 0) {
     return;

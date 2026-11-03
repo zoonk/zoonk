@@ -1,5 +1,6 @@
 import { getTotalDuration } from "@/lib/public/total-duration";
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
+import { parseCefrScore } from "@zoonk/utils/cefr";
 import { formatDuration } from "@zoonk/utils/duration";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { getNumberFormatter } from "@zoonk/utils/localized-number";
@@ -65,14 +66,19 @@ export function getShownTopics(topics: readonly string[]): { hidden: number; sho
   return { hidden: Math.max(0, topics.length - MAX_TOPICS), shown: topics.slice(0, MAX_TOPICS) };
 }
 
-/** The ladder's half steps from A1 up: two per band to C1, one for C2. */
-const LADDER_STEPS = ["A1", "A1+", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C1+", "C2"];
+const HALF_STEPS_PER_BAND = 2;
 
-/** A level fills through its whole band; a placement fills to the half step it measured. */
+/**
+ * The ladder's cells to fill, two per band from A1: a level fills through its whole band, a
+ * placement to the half step it measured.
+ */
 export function getLadderFill(facts: Pick<CertificateFacts, "kind" | "level" | "measuredLevel">) {
-  if (facts.kind === "placement" && facts.measuredLevel) {
-    return LADDER_STEPS.indexOf(facts.measuredLevel) + 1;
+  const measured = facts.kind === "placement" ? parseCefrScore(facts.measuredLevel) : null;
+  const level = parseCefrScore(facts.level);
+
+  if (measured !== null) {
+    return measured * HALF_STEPS_PER_BAND + 1;
   }
 
-  return facts.level ? LADDER_STEPS.indexOf(`${facts.level}+`) + 1 : 0;
+  return level === null ? 0 : (level + 1) * HALF_STEPS_PER_BAND;
 }

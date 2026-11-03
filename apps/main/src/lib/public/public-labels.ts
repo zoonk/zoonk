@@ -43,7 +43,7 @@ export async function getTotalDurationLabel(totalMinutes: number): Promise<strin
 
 /** Read once: looking each up on its own would run the translations inside `Promise.all`. */
 export async function getLevelLabels(locale?: string): Promise<Record<CourseLevel, string>> {
-  const t = await getExtracted({ locale });
+  const t = await getExtracted(locale === undefined ? undefined : { locale });
 
   return {
     advanced: t("Advanced"),

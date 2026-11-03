@@ -2,7 +2,6 @@ import "server-only";
 import { getCategoryNames } from "@/lib/categories/category";
 import { getLevelLabels } from "@/lib/public/public-labels";
 import { type CertificateFacts, type CertifiedLevel } from "@zoonk/core/certificates/contract";
-import { type LanguageSkill } from "@zoonk/db";
 import { formatCertificateCode, getCertificateLinks } from "@zoonk/utils/certificate-links";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
@@ -10,12 +9,18 @@ import { getExtracted } from "next-intl/server";
 import {
   formatCertificateDate,
   formatCount,
-  formatStudyTime,
   getLadderFill,
   getShownTopics,
-  getStudyTimeStat,
 } from "./certificate-format";
 import { CERTIFICATE_COLORS, SUBJECT_COLORS } from "./certificate-palette";
+import {
+  type CertificateStat,
+  type KindInput,
+  type Readout,
+  getSkillReadouts,
+  getStudyFacts,
+  getStudyStats,
+} from "./certificate-study-view";
 import { type TextRun } from "./shaped-text";
 
 const NEXT_BAND: Record<CertifiedLevel, string> = {
@@ -26,13 +31,9 @@ const NEXT_BAND: Record<CertifiedLevel, string> = {
   C1: "C2",
 };
 
-type Readout = { label: string; value: string };
-
 export type CertificateGraph =
   | { kind: "ladder"; filled: number; reached: string | null }
-  | { kind: "route"; zones: { chapters: number; label: string }[] };
-
-export type CertificateStat = { label: string; unit: string; value: string };
+  | { kind: "route"; topics: number; zones: { chapters: number; label: string }[] };
 
 type CommonView = {
   date: string;
@@ -58,8 +59,6 @@ type KindView = {
 };
 
 export type CertificateView = CommonView & KindView;
-
-type KindInput = { facts: CertificateFacts; locale: string };
 
 function getTargetLanguageName(facts: CertificateFacts): string {
   return facts.targetLanguage
@@ -126,100 +125,6 @@ async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> 
       message: "Verify this certificate",
     }),
   };
-}
-
-async function getSkillReadouts({ facts, locale }: KindInput): Promise<Readout[]> {
-  const t = await getExtracted({ locale });
-
-  const skillNames: Record<LanguageSkill, string> = {
-    listening: t("Listening"),
-    reading: t("Reading"),
-    speaking: t("Speaking"),
-    writing: t("Writing"),
-  };
-
-  return facts.skillLevels.map((skillLevel) => ({
-    label: skillNames[skillLevel.skill],
-    value: skillLevel.label,
-  }));
-}
-
-/** Completed, lessons studied, lessons passed by test (when any) and study time (when known). */
-async function getStudyFacts({ facts, locale }: KindInput): Promise<Readout[]> {
-  const t = await getExtracted({ locale });
-  const lessonsTestedOut = facts.lessonsTestedOut ?? 0;
-
-  const completed = {
-    label: t({
-      description: "A certificate's fact: the day the learner finished the course or level.",
-      message: "Completed",
-    }),
-    value: formatCertificateDate({ isoDate: facts.completedOn, locale }),
-  };
-
-  const lessonsStudied = {
-    label: t({
-      description: "A certificate's fact: how many of the plan's lessons the learner studied.",
-      message: "Lessons studied",
-    }),
-    value: formatCount({ count: facts.lessonsStudied ?? 0, locale }),
-  };
-
-  const testedOut = {
-    label: t({
-      description:
-        "A certificate's fact: lessons the learner skipped by passing a test, said for outsiders.",
-      message: "Passed by test",
-    }),
-    value: formatCount({ count: lessonsTestedOut, locale }),
-  };
-
-  const studyTime = facts.minutes !== null && {
-    label: t({
-      description:
-        "A certificate's fact: about how long the studied lessons take. In Brazilian Portuguese: “Carga horária”.",
-      message: "Study time",
-    }),
-    value: t({
-      description:
-        "A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária).",
-      message: "about {duration}",
-      values: { duration: formatStudyTime({ locale, minutes: facts.minutes }) },
-    }),
-  };
-
-  return [completed, lessonsStudied, lessonsTestedOut > 0 && testedOut, studyTime].filter(
-    (fact) => fact !== false,
-  );
-}
-
-/** The post's big numbers: lessons studied and, when known, the hours they take. */
-async function getStudyStats({ facts, locale }: KindInput): Promise<CertificateStat[]> {
-  const t = await getExtracted({ locale });
-  const lessonsStudied = facts.lessonsStudied ?? 0;
-
-  const lessons = {
-    label: t({
-      description:
-        "Under a big number on a certificate's social post: how many lessons the learner studied.",
-      message:
-        "{count, plural, =0 {lessons studied} one {lesson studied} other {lessons studied}}",
-      values: { count: lessonsStudied },
-    }),
-    unit: "",
-    value: formatCount({ count: lessonsStudied, locale }),
-  };
-
-  const studyTime = facts.minutes !== null && {
-    ...getStudyTimeStat({ locale, minutes: facts.minutes }),
-    label: t({
-      description:
-        "Under a big number of hours on a certificate's social post, such as “~41 h” over “of study”.",
-      message: "of study",
-    }),
-  };
-
-  return [lessons, studyTime].filter((stat) => stat !== false);
 }
 
 async function getPlacementView(input: KindInput): Promise<KindView> {
@@ -360,7 +265,7 @@ async function getCourseView(input: KindInput): Promise<KindView> {
           description:
             "After “Topics covered” when the certificate lists only the first six topics.",
           message: "and {count} more",
-          values: { count: hidden },
+          values: { count: formatCount({ count: hidden, locale }) },
         })
       : null;
 
@@ -376,7 +281,7 @@ async function getCourseView(input: KindInput): Promise<KindView> {
       description: "The fine print on a course certificate.",
       message: "Awarded for finishing every lesson and challenge of this course on Zoonk.",
     }),
-    graph: { kind: "route", zones },
+    graph: { kind: "route", topics: facts.topics.length, zones },
     meta,
     stats,
     subject: facts.category

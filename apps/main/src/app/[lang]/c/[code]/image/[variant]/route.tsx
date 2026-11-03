@@ -11,6 +11,9 @@ import { type NextRequest } from "next/server";
  */
 const CACHE_CONTROL = "public, max-age=3600, s-maxage=86400";
 
+/** Its own limit keeps the route in its own Vercel function, so the certificate fonts (about 24 MB) ship only with it. */
+export const maxDuration = 30;
+
 export async function GET(
   request: NextRequest,
   { params }: RouteContext<"/[lang]/c/[code]/image/[variant]">,

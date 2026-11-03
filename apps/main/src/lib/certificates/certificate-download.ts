@@ -1,8 +1,11 @@
 /** Characters that file systems refuse in a name, and control characters. */
-const UNSAFE_FILE_CHARACTERS = /[\u0000-\u001F\u007F"*/:<>?\\|]/gu;
+const UNSAFE_FILE_CHARACTERS = /[\p{Cc}"*/:<>?\\|]/gu;
 const NON_ASCII = /[^ -~]/gu;
 const COMBINING_MARKS = /\p{M}/gu;
 const MAX_NAME_LENGTH = 180;
+const HEX_RADIX = 16;
+
+const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 
 function toFileName(parts: readonly (string | null)[]): string {
   const name = parts
@@ -10,18 +13,29 @@ function toFileName(parts: readonly (string | null)[]): string {
     .filter(Boolean)
     .join(" - ");
 
-  return `${Array.from(name).slice(0, MAX_NAME_LENGTH).join("")}.png`;
+  const kept = Array.from(graphemes.segment(name), ({ segment }) => segment).slice(
+    0,
+    MAX_NAME_LENGTH,
+  );
+
+  return `${kept.join("").trim()}.png`;
 }
 
 function toAscii(text: string | null): string | null {
-  return text?.normalize("NFKD").replaceAll(COMBINING_MARKS, "").replaceAll(NON_ASCII, "") ?? null;
+  return (
+    text
+      ?.normalize("NFKD")
+      .replaceAll(/\s+/gu, " ")
+      .replaceAll(COMBINING_MARKS, "")
+      .replaceAll(NON_ASCII, "") ?? null
+  );
 }
 
 /** RFC 5987 leaves these out of a `filename*` value, and `encodeURIComponent` keeps them. */
 function encodeExtendedValue(value: string): string {
   return encodeURIComponent(value).replaceAll(
     /['()*]/gu,
-    (char) => `%${char.codePointAt(0)?.toString(16).toUpperCase()}`,
+    (char) => `%${char.codePointAt(0)?.toString(HEX_RADIX).toUpperCase()}`,
   );
 }
 
