@@ -126,7 +126,7 @@ private struct HookStepView: View {
       }
 
       LessonTextBlocks(content.text ?? "")
-        .font(.title2.weight(.semibold))
+        .font(.body)
     }
   }
 
