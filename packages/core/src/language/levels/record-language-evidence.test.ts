@@ -9,10 +9,7 @@ import {
   holdLearnerLock,
   waitForBlockedStatement,
 } from "../../_test-utils/learner-lock";
-import {
-  recordLanguageSkillEvidence,
-  recordLanguageStepEvidence,
-} from "./record-language-evidence";
+import { recordLanguageStepEvidence } from "./record-language-evidence";
 
 const ENGLISH_BEGINNER = { level: "beginner" as const, targetLanguage: "en" };
 
@@ -140,10 +137,10 @@ describe("language evidence selection admission", () => {
 
       const plan = await planFixture({ goalId: goal.id });
 
-      await recordLanguageSkillEvidence({
-        evidence: { ceiling: 2, correct: 1, total: 1 },
-        language,
-        skill,
+      await recordLanguageStepEvidence({
+        isCorrect: true,
+        lesson: { level: "beginner", targetLanguage: language },
+        step: { kind: skill, wordId: null },
         userId: user.id,
       });
 
@@ -238,10 +235,10 @@ describe("language evidence selection admission", () => {
 
     const pid = await holder.pid;
 
-    const evidence = recordLanguageSkillEvidence({
-      evidence: { ceiling: 1.5, correct: 1, total: 1 },
-      language: "ja",
-      skill: "reading",
+    const evidence = recordLanguageStepEvidence({
+      isCorrect: true,
+      lesson: { level: "beginner", targetLanguage: "ja" },
+      step: { kind: "reading", wordId: null },
       userId: user.id,
     });
 
@@ -297,10 +294,10 @@ describe("language evidence selection admission", () => {
 
     const pid = await holder.pid;
 
-    const evidence = recordLanguageSkillEvidence({
-      evidence: { ceiling: 1.5, correct: 1, total: 1 },
-      language: "ja",
-      skill: "reading",
+    const evidence = recordLanguageStepEvidence({
+      isCorrect: true,
+      lesson: { level: "beginner", targetLanguage: "ja" },
+      step: { kind: "reading", wordId: null },
       userId: user.id,
     });
 
@@ -335,10 +332,10 @@ describe("language evidence selection admission", () => {
 
     await Promise.all(
       Array.from({ length: answers }, () =>
-        recordLanguageSkillEvidence({
-          evidence: { ceiling: 1.5, correct: 1, total: 1 },
-          language: "ja",
-          skill: "reading",
+        recordLanguageStepEvidence({
+          isCorrect: true,
+          lesson: { level: "beginner", targetLanguage: "ja" },
+          step: { kind: "reading", wordId: null },
           userId: user.id,
         }),
       ),
