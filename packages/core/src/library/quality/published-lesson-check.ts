@@ -28,6 +28,7 @@ import {
   toWritingContext,
 } from "../lessons/_utils/lesson-writing-inputs";
 import { saveLessonVersion } from "../lessons/_utils/save-lesson-content";
+import { loadLessonReuse } from "../lessons/lesson-reuse";
 import {
   CURRENT_STEPS,
   lockCurrentLessonVersion,
@@ -154,17 +155,18 @@ export async function redraftPublishedLesson({
   heldBackDrafts: HeldBackDraft[];
   version: number;
 }): Promise<PublishedLessonOutcome> {
-  const [inputs, current, analytics] = await Promise.all([
+  const [inputs, current, analytics, reuse] = await Promise.all([
     loadPublishedLessonInputs(context.lessonId),
     readCurrentLessonVersion(context.lessonId),
     toTaskAnalytics(context),
+    loadLessonReuse({ forExam: context.forExam, lessonId: context.lessonId }),
   ]);
 
   if (!inputs || current !== version) {
     return { status: "replaced" };
   }
 
-  const writer = pickDraftWriter({ heldBackDrafts });
+  const writer = pickDraftWriter({ heldBackDrafts, reuse });
 
   const draft = await writeLessonDraft({
     ...toWritingContext(inputs),

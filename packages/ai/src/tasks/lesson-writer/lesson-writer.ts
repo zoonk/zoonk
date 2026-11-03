@@ -4,7 +4,12 @@ import { getModelFamily } from "../../_utils/model-family";
 import { schemaInPrompt } from "../../_utils/schema-in-prompt";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import {
+  type CallReuse,
+  type Reasoning,
+  type ServiceTier,
+  buildProviderOptions,
+} from "../../provider-options";
 import { readsNoviceRules } from "../_utils/novice-rules";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import typedQuestionRules from "../items/item-rules/typed-question.prompt.md";
@@ -26,11 +31,11 @@ const systemPrompt = rulesTemplate.replace("{{TYPED_QUESTION}}", () =>
 const lessonOutput = schemaInPrompt(writtenLessonSchema, { repair: fitWrittenBounds });
 
 /**
- * Terra leads: Sonnet 5.5 and Opus 5.5 wrote more engaging lessons in a benchmark where no judge
- * scored its own family (3 Nov 2026, 24 cases), but at 7 and 10 times Terra's cost and about twice
- * its time. Sonnet comes next: it matched or beat Opus, with fewer factual slips, at two thirds of
- * its cost. Each model falls back to the others, all from other families, so an outage at one
- * provider doesn't stop lessons.
+ * In a benchmark where no judge scored its own family (3 Nov 2026, 24 cases), Sonnet 5.5 matched or
+ * beat Opus 5.5, with fewer factual slips, at two thirds of its cost, and both wrote more engaging
+ * lessons than Terra at 7 and 10 times its cost and about twice its time. `getLessonWriterModel`
+ * picks the first writer; each model falls back to the others, all from other families, so an
+ * outage at one provider doesn't stop lessons.
  */
 const WRITER_MODELS = [
   "openai/gpt-6.1-terra",
@@ -38,7 +43,16 @@ const WRITER_MODELS = [
   "google/gemini-4-argon",
 ] as const;
 
-const [defaultModel] = WRITER_MODELS;
+const [defaultModel, sharedLessonModel] = WRITER_MODELS;
+
+/**
+ * Sonnet 5.5 writes a lesson other learners will read: it beat Terra on held-out cases by 1.55
+ * points, 2.25 on "Engaging, not a textbook" (3 Nov 2026), at about 7 times the cost, which a shared
+ * lesson spreads across its readers. A lesson for one learner stays with Terra.
+ */
+export function getLessonWriterModel({ reuse }: { reuse: CallReuse }): string {
+  return reuse === "personal" ? defaultModel : sharedLessonModel;
+}
 
 function getFallbackModels(model: string): string[] {
   return WRITER_MODELS.filter((candidate) => candidate !== model);

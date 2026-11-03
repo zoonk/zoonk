@@ -1,9 +1,12 @@
 import { generateText } from "ai";
 import { describe, expect, it, vi } from "vitest";
+import { getModelFamily } from "../../_utils/model-family";
+import { type CallReuse } from "../../provider-options";
 import { answerOnceWith } from "../_test-utils/answer-once-with";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { type LessonScreen, type LessonSpec } from "../lesson-spec/lesson-spec-rules";
-import { getLessonRewriteModel, writeLessonDraft } from "./lesson-writer";
+import { getLessonCheckModels } from "../quality/lesson-check-models";
+import { getLessonRewriteModel, getLessonWriterModel, writeLessonDraft } from "./lesson-writer";
 import type * as Ai from "ai";
 
 /** Where the schema the answer follows starts, after the writer's rules. */
@@ -78,6 +81,30 @@ function spec(screens: LessonScreen[]): LessonSpec {
 function option(text: string, isCorrect: boolean) {
   return { isCorrect, reason: "Why.", text };
 }
+
+const SONNET = "anthropic/claude-sonnet-5.5";
+const TERRA = "openai/gpt-6.1-terra";
+const ARGON = "google/gemini-4-argon";
+const REUSES: CallReuse[] = ["bounded", "library", "personal"];
+
+describe(getLessonWriterModel, () => {
+  it("writes lessons other learners read with Sonnet and a learner's own with Terra", () => {
+    expect(REUSES.map((reuse) => getLessonWriterModel({ reuse }))).toStrictEqual([
+      SONNET,
+      SONNET,
+      TERRA,
+    ]);
+  });
+
+  it("gives every writer the chain may serve a reviewer from another family", () => {
+    for (const reuse of REUSES) {
+      for (const writerModel of [getLessonWriterModel({ reuse }), SONNET, TERRA, ARGON]) {
+        const { model } = getLessonCheckModels({ reuse, writerModel });
+        expect(getModelFamily(model)).not.toBe(getModelFamily(writerModel));
+      }
+    }
+  });
+});
 
 describe(getLessonRewriteModel, () => {
   it("picks the writer chain's first model from a family whose drafts weren't held back", () => {
