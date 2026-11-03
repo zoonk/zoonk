@@ -7,13 +7,15 @@ GitHub Actions owns every deployment. The Vercel projects keep the Git connectio
 | PR opened, updated, or reopened  | Code quality, Vitest (unit, database integration and player browser tests), and main/API E2E for PRs targeting `main`.                     |
 | Preview requested                | `pnpm preview [pr]` (or "Run workflow" on PR Preview) gives an open same-repository PR a Neon branch and Vercel previews.                  |
 | PR closed                        | Cancel remaining preview builds and delete the PR's Neon branch.                                                                           |
-| Push to `main`                   | Code quality, unit/integration tests, and main/API E2E. After success, migrate staging and deploy the three staging apps.                  |
+| Push to `main`                   | Code quality, unit/integration tests, and main/API E2E. After success, `main`'s newest commit migrates and deploys staging.                |
 | Push to `main` touching the blog | Deploy the blog to production when the push changes `apps/blog`, the lockfile or `turbo.json`. "Run workflow" on Blog redeploys `main`.    |
 | Push a `v*` tag                  | Run CI if the exact commit has not already passed CI on `main`. This supports hotfix commits outside `main`.                               |
 | Publish a stable GitHub release  | Require successful CI for the tagged commit, migrate production once, and deploy all three production apps concurrently on Turbo machines. |
 | Publish a prerelease             | No production deployment.                                                                                                                  |
 
 Production domains move automatically when each deployment succeeds. Apps switch independently, so a failed release can leave a successful app on the new version while another remains on the old version. Production releases are serialized with GitHub's `queue: max`; up to 100 runs can wait without replacing one another.
+
+Every push to `main` runs its checks right away, alongside any earlier push's. Staging only takes `main`'s newest commit: a run whose commit `main` has moved past by the time its checks pass skips staging, and a newer commit's staging deploy cancels an older one still running, along with the Vercel builds it started. Rerunning an older commit's staging job fails instead of deploying it.
 
 ## Configuration contract
 

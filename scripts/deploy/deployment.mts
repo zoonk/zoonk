@@ -153,7 +153,8 @@ export async function assertPullRequestOpen(): Promise<void> {
   }
 }
 
-export async function cancelPreviews({ runId }: { runId?: string } = {}): Promise<void> {
+/** Stops the queued and building deployments this run started, or without a run, the PR's previews. */
+export async function cancelBuilds({ runId }: { runId?: string } = {}): Promise<void> {
   async function cancelProject(project: Project): Promise<void> {
     const query = { limit: "100", projectId: project.id, state: "QUEUED,INITIALIZING,BUILDING" };
 
@@ -165,8 +166,9 @@ export async function cancelPreviews({ runId }: { runId?: string } = {}): Promis
       const obsolete = deployments.filter(
         (deployment) =>
           deployment.target !== "production" &&
-          deployment.meta?.ciPreviewPr === requiredEnv("PR_NUMBER") &&
-          (!runId || deployment.meta.ciRunId === runId),
+          (runId
+            ? deployment.meta?.ciRunId === runId
+            : deployment.meta?.ciPreviewPr === requiredEnv("PR_NUMBER")),
       );
 
       await Promise.all(
@@ -183,7 +185,7 @@ export async function cancelPreviews({ runId }: { runId?: string } = {}): Promis
             }
           }
 
-          process.stdout.write(`Stopped superseded ${project.app} preview build\n`);
+          process.stdout.write(`Stopped a ${project.app} build\n`);
         }),
       );
 
