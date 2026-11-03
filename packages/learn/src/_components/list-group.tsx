@@ -36,7 +36,7 @@ export const LIST_ROW_CLASS = cn(
 
 export const LIST_ROW_INTERACTIVE_CLASS = cn(
   LIST_ROW_CLASS,
-  "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none [--press-scale:0.99] focus-visible:before:ring-[3px]",
+  "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none select-none [--press-scale:0.99] focus-visible:before:ring-[3px]",
 );
 
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";

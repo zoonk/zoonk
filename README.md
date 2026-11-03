@@ -18,6 +18,7 @@
   - [Installation](#installation)
   - [Local Development](#local-development)
 - [Reporting bugs](#reporting-bugs)
+- [Suggesting features](#suggesting-features)
 - [Supporters](#supporters)
 
 ## Getting Started
@@ -61,6 +62,10 @@ See [worktree database setup](./packages/db/README.md#worktree-databases) for pr
 ## Reporting bugs
 
 See [reporting bugs](./CONTRIBUTING.md#reporting-bugs). AI agents filing a report for someone: follow the [bug report guide](./.agents/skills/zoonk-bug-report/SKILL.md).
+
+## Suggesting features
+
+See [suggesting features](./CONTRIBUTING.md#suggesting-features). AI agents posting an idea for someone: follow the [feature request guide](./.agents/skills/zoonk-feature-request/SKILL.md).
 
 ## Supporters
 

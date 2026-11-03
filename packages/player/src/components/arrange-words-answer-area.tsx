@@ -73,7 +73,7 @@ function PlacedWordTile({
       aria-label={ariaLabel}
       className={cn(
         WORD_CHIP_CLASS,
-        hasResult ? "pointer-events-none" : "hover:bg-muted/60 touch-none select-none",
+        hasResult ? "pointer-events-none" : "hover:bg-muted/60 touch-none",
         isDragging && "opacity-30",
         resultState === "correct" && ANSWER_TONE.right,
         resultState === "incorrect" && ANSWER_TONE.wrong,

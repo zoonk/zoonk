@@ -20,10 +20,10 @@ async function loadGoalScope(goalId: string) {
 
 type ScopeFailure = Exclude<Awaited<ReturnType<typeof loadGoalScope>>, { status: "ready" }>;
 
-/** Counts unavailable practice too, not only mistakes currently ready to drill. */
-export async function countOpenGoalMistakes(input: {
+/** Open counts unavailable practice too, not only mistakes currently ready to drill. */
+export async function countGoalMistakes(input: {
   goalId: string;
-}): Promise<ScopeFailure | { open: number; status: "ready" }> {
+}): Promise<ScopeFailure | { fixed: number; open: number; status: "ready" }> {
   "use cache: private";
 
   const scope = await loadGoalScope(input.goalId);
@@ -32,13 +32,14 @@ export async function countOpenGoalMistakes(input: {
     return scope;
   }
 
-  const open = await prisma.mistake.count({
-    where: {
-      status: "open",
-      userId: scope.userId,
-      ...(scope.skillIds ? { skillId: { in: scope.skillIds } } : {}),
-    },
+  const groups = await prisma.mistake.groupBy({
+    _count: { id: true },
+    by: ["status"],
+    where: { userId: scope.userId, ...(scope.skillIds ? { skillId: { in: scope.skillIds } } : {}) },
   });
 
-  return { open, status: "ready" };
+  const count = (status: "fixed" | "open") =>
+    groups.find((group) => group.status === status)?._count.id ?? 0;
+
+  return { fixed: count("fixed"), open: count("open"), status: "ready" };
 }

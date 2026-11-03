@@ -88,7 +88,7 @@ A renderer draws the canvas only. It reads `content.check.kind` to know whether 
 
 ## Rules
 
-- Accessible: every interaction has a keyboard path, visible focus, labels and spoken values, 44px touch targets, text of at least 12px, and a text alternative. Nothing is drag only.
+- Accessible: every interaction has a keyboard path, visible focus, labels and spoken values, 44px touch targets that don't select their text (see the player README's styling), text of at least 12px, and a text alternative. Nothing is drag only.
 - Reduced motion: use `motion-safe:` for transitions, so animations become instant changes.
 - Colors: semantic tokens only (`viz-accent`, teal for what the learner moves; `viz-highlight`, amber for a target or a prize, never red; `viz-secondary`, fuchsia for a second series; never blue or violet, which mean the learner's own pick and Brain Power; and their `-soft` fills for data; `success`, `destructive`, `muted-foreground`, `border` for the rest). They follow light and dark on their own. Pictures with natural colors (diagram tones, atoms in the molecule builder) are the exception, with contrast checked for both themes.
 - Formulas run through core's expression evaluator, never `eval`. Computed answers come from core's template hooks (`getActivityTemplate(id).computeValue` / `computeExpected`), so the canvas can't disagree with grading.

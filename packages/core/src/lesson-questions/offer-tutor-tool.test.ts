@@ -4,6 +4,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -437,12 +438,13 @@ describe("every feature the buddy can suggest", () => {
       status: "unavailable",
     });
 
-    const otherSkill = await skillFixture();
+    const [otherSkill, finer] = await Promise.all([skillFixture(), skillFixture()]);
     const skillId = library.skills[0]?.id ?? null;
 
     await Promise.all([
+      lessonSkillFixture({ lessonId: library.lessons[0]?.id ?? "", skillId: finer.id }),
       mistakeFixture({ skillId, userId: user.id }),
-      mistakeFixture({ skillId, userId: user.id }),
+      mistakeFixture({ skillId: finer.id, userId: user.id }),
       mistakeFixture({ skillId, status: "fixed", userId: user.id }),
       mistakeFixture({ skillId: otherSkill.id, userId: user.id }),
     ]);

@@ -647,7 +647,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meta atual. Trocar de meta"
+            "value" : "Objetivo atual. Trocar de objetivo"
           }
         },
         "tr" : {
@@ -883,7 +883,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Concluída"
+            "value" : "Concluído"
           }
         },
         "tr" : {
@@ -1237,7 +1237,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pausada"
+            "value" : "Pausado"
           }
         },
         "tr" : {
@@ -1414,7 +1414,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pronta para começar"
+            "value" : "Pronto para começar"
           }
         },
         "tr" : {
@@ -1650,7 +1650,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar uma meta"
+            "value" : "Começar um objetivo"
           }
         },
         "tr" : {
@@ -1709,7 +1709,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar uma nova meta"
+            "value" : "Começar um novo objetivo"
           }
         },
         "tr" : {
@@ -1827,7 +1827,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comece com uma meta"
+            "value" : "Comece com um objetivo"
           }
         },
         "tr" : {
@@ -2476,7 +2476,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que você vai estudar a cada dia até sua meta e o que o plano abrange."
+            "value" : "O que você vai estudar a cada dia até alcançar seu objetivo e o que o plano abrange."
           }
         },
         "tr" : {
@@ -2594,7 +2594,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas metas"
+            "value" : "Seus objetivos"
           }
         },
         "tr" : {
@@ -2653,7 +2653,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas metas não carregaram. Tente de novo"
+            "value" : "Seus objetivos não carregaram. Tente de novo"
           }
         },
         "tr" : {

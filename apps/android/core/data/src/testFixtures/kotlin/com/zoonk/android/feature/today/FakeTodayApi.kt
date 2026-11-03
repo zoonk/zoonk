@@ -39,7 +39,7 @@ class FakeTodayApi(
     override suspend fun mistakes(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = MistakeListAvailability(ready = 0, tomorrow = 0)
+    ) = GoalMistakes(MistakeListAvailability(ready = 0, tomorrow = 0), total = 0)
 
     override suspend fun language(
         session: AuthenticatedSession,

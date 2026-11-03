@@ -56,6 +56,12 @@ sealed interface TodayRead {
     data object GoalNotActive : TodayRead
 }
 
+/** The goal's open mistakes by when they can be practiced, and every mistake it has had, fixed ones included. */
+data class GoalMistakes(
+    val availability: MistakeListAvailability,
+    val total: Long,
+)
+
 interface TodayApi {
     /** The day in the device's [timeZone], which the goal follows. */
     suspend fun today(
@@ -73,11 +79,10 @@ interface TodayApi {
     /** Everything the learner has learned, in points; null before any. */
     suspend fun brainPower(session: AuthenticatedSession): Long?
 
-    /** Mistakes ready to practice now and those back tomorrow. */
     suspend fun mistakes(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): MistakeListAvailability
+    ): GoalMistakes
 
     /** A language goal's level and its exam-style speaking. */
     suspend fun language(
@@ -153,7 +158,7 @@ class TodayStore(
         cache.resource(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session -> session?.let { api.brainPower(it) } }
 
     val mistakes =
-        cache.keyed<UUID, MistakeListAvailability>(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session, goalId ->
+        cache.keyed<UUID, GoalMistakes>(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session, goalId ->
             session?.let { api.mistakes(it, goalId) }
         }
 
