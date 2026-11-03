@@ -1,0 +1,26 @@
+[data-slot="certificate-print"] {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+
+  body:has(> [data-slot="certificate-print"]) {
+    background: white;
+  }
+
+  body:has(> [data-slot="certificate-print"]) > :not([data-slot="certificate-print"]) {
+    display: none !important;
+  }
+
+  body > [data-slot="certificate-print"] {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
+    print-color-adjust: exact;
+  }
+}

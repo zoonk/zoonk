@@ -237,6 +237,14 @@ msgid "Completed lessons"
 msgstr "完了したレッスン"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "認定証"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
@@ -855,6 +863,11 @@ msgstr "相棒が質問に答え、学習計画を調整します。"
 msgctxt "BV0cQk"
 msgid "Your day"
 msgstr "今日の学習"
+
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "svDFL8"
+msgid "Print, download or share your certificates anytime."
+msgstr "認定証はいつでも印刷、ダウンロード、シェアできます。"
 
 #: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
 msgctxt "1ZQwwl"
@@ -2404,6 +2417,27 @@ msgstr "無料で始める"
 msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "アカウントを削除しました。"
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "kgqbTN"
+msgid "We couldn't find this certificate"
+msgstr "この証明書が見つかりませんでした"
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "pFjRPG"
+msgid "Check the link. A certificate's link ends in its 12-character code, like {example}, and works with or without the dashes."
+msgstr "リンクを確認してください。証明書のリンクには、{example}のように末尾に12文字のコードが入ります。ハイフンがあってもなくても開けます。"
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "15PZTm"
+msgid "Go to Zoonk"
+msgstr "Zoonkへ移動する"
+
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "4566_7"
+msgid "A certificate issued by Zoonk. Anyone with its link can check it."
+msgstr "Zoonkが発行した証明書です。リンクがあれば誰でも確認できます。"
 
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx

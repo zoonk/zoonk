@@ -42,6 +42,7 @@ msgstr "上限を変更する"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
+#: src/certificates/certificates-screen.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 msgctxt "nC-1Um"
@@ -119,6 +120,8 @@ msgstr "今日"
 
 #: src/_components/create-account-link.tsx
 #: src/_components/help-limit-notice.tsx
+#: src/certificates/certificate-moment-parts.tsx
+#: src/certificates/certificate-page.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -146,6 +149,7 @@ msgstr "1日の学習時間"
 #: src/_components/detail-page.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
+#: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
 #: src/language/conversation/conversation-result.tsx
@@ -189,6 +193,9 @@ msgstr "{percent}%完了"
 
 #: src/_components/details-drawer.tsx
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
@@ -933,6 +940,7 @@ msgid "Glasses"
 msgstr "メガネ"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -945,6 +953,7 @@ msgid "Cancel"
 msgstr "キャンセル"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-name.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -955,6 +964,8 @@ msgid "Save"
 msgstr "保存する"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-details.tsx
+#: src/certificates/certificate-moment-parts.tsx
 #: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-tools.tsx
 msgctxt "BY343C"
@@ -1269,6 +1280,8 @@ msgid "Buddy"
 msgstr "相棒"
 
 #: src/buddies/buddy-picker.tsx
+#: src/certificates/certificate-details.tsx
+#: src/certificates/certificate-linkedin.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "名前"
@@ -1442,6 +1455,526 @@ msgstr "{buddy}が成長しました！"
 msgctxt "d5UGw8"
 msgid "Wear them"
 msgstr "相棒にかける"
+
+#: src/certificates/certificate-copy-button.tsx
+msgctxt "p556q3"
+msgid "Copied"
+msgstr "コピー済み"
+
+#: src/certificates/certificate-copy-button.tsx
+#: src/certificates/certificate-details.tsx
+msgctxt "4l6vz1"
+msgid "Copy"
+msgstr "コピー"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "CgT-Q3"
+msgid "Levels"
+msgstr "レベル"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "avtgF2"
+msgid "Taken"
+msgstr "受験日"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "修了日"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "mrBiB2"
+msgid "Lessons studied"
+msgstr "学習したレッスン"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "dx3nJs"
+msgid "Passed by test"
+msgstr "テストで合格したレッスン"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "KHL8ap"
+msgid "Study time"
+msgstr "学習時間"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "回答数"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "LbAVCO"
+msgid "Certificate ID"
+msgstr "証明書ID"
+
+#: src/certificates/certificate-details.tsx
+#: src/onboarding/entry/paste-link.tsx
+msgctxt "JBWS0c"
+msgid "Link"
+msgstr "リンク"
+
+#: src/certificates/certificate-details.tsx
+#: src/certificates/certificate-share.tsx
+#: src/plan/use-share-plan.ts
+msgctxt "zU_q1N"
+msgid "Link copied"
+msgstr "リンクをコピーしました"
+
+#: src/certificates/certificate-details.tsx
+#: src/syllabus/subject-aside.tsx
+msgctxt "Lv0zJu"
+msgid "Details"
+msgstr "詳細"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "QshKyk"
+msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
+msgstr "リンクを知っている人なら誰でもこの証明書を見られます。このページは検索結果に表示されません。"
+
+#. A language and a CEFR level, such as "Spanish B1": a certificate's name.
+#: src/certificates/certificate-labels.ts
+msgctxt "ZP9lOu"
+msgid "{language} {level}"
+msgstr "{language} {level}"
+
+#: src/certificates/certificate-labels.ts
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "WSC4bY"
+msgid "Placement result"
+msgstr "レベル判定結果"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "zaINXN"
+msgid "Certificate of completion"
+msgstr "修了証"
+
+#. An approximate study time, such as "about 41 hr".
+#: src/certificates/certificate-labels.ts
+msgctxt "8QINPM"
+msgid "about {duration}"
+msgstr "約{duration}"
+
+#. The course levels a certificate covers, such as "Beginner to Advanced".
+#: src/certificates/certificate-labels.ts
+msgctxt "tXYVJd"
+msgid "{from} to {to}"
+msgstr "{from}〜{to}"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "u9fD-O"
+msgid "Placement result for {name}: {certificate}"
+msgstr "{name}さんのレベル判定結果：{certificate}"
+
+#: src/certificates/certificate-labels.ts
+#: src/certificates/placement-row.tsx
+msgctxt "vc8W5b"
+msgid "Placement result: {certificate}"
+msgstr "レベル判定結果：{certificate}"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "ZfBPq3"
+msgid "{name} completed level {level} in {language}"
+msgstr "{name}さんが{level}レベルの{language}を修了しました"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "7ULGz_"
+msgid "Level {level} in {language}, completed on Zoonk"
+msgstr "{level}レベルの{language}をZoonkで修了しました"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "do3pHn"
+msgid "{name} completed {course}"
+msgstr "{name}さんが{course}を修了しました"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "z9WxBG"
+msgid "{course}, completed on Zoonk"
+msgstr "{course}をZoonkで修了しました"
+
+#. A certificate's name on LinkedIn, such as "Spanish B1 placement result": the language and level, then the kind.
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "2i1LGp"
+msgid "{certificate} placement result"
+msgstr "{certificate}のレベル判定結果"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "B-Co6Y"
+msgid "Add to your LinkedIn profile"
+msgstr "LinkedInプロフィールに追加する"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "bv21CP"
+msgid "LinkedIn opens its form to add a license or certification. Copy each field into it."
+msgstr "LinkedInで資格や認定を追加するフォームが開きます。各項目をコピーして貼り付けてください。"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "Gsc9HO"
+msgid "Copy the name"
+msgstr "名称をコピーする"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "Stmjvy"
+msgid "Copy the issuing organization"
+msgstr "発行団体をコピーする"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "chGb2H"
+msgid "Issuing organization"
+msgstr "発行団体"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "c3mXbd"
+msgid "Issue date"
+msgstr "発行日"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "iIH6lJ"
+msgid "Copy the credential ID"
+msgstr "認定IDをコピーする"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "NMHFhh"
+msgid "Credential ID"
+msgstr "認定ID"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "GkUPxx"
+msgid "Copy the credential URL"
+msgstr "認定URLをコピーする"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "bV_-Gb"
+msgid "Credential URL"
+msgstr "認定URL"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "CEB03t"
+msgid "Open LinkedIn"
+msgstr "LinkedInを開く"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "l4zQLP"
+msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs."
+msgstr "名前は学習者がZoonkアカウントに登録したもので、Zoonkでは身分証明書による確認はしていません。"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "s94wjH"
+msgid "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result."
+msgstr "レベルは、ヨーロッパ言語共通参照枠（CEFR）に沿っています。公式試験の結果ではありません。"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "_1AldP"
+msgid "Zoonk's placement test asks 3 reading questions, 3 listening questions and one sentence to say aloud, each adapted to the answers before it. It estimated this level from those {count, plural, one {# answer} other {# answers}}; skills the learner skipped aren't counted."
+msgstr "Zoonkのレベル診断テストでは、リーディング3問、リスニング3問、1文を声に出して言う問題が出ます。各問題の内容は、それまでの回答に合わせて変わります。このレベルは、その{count, plural, other {#件の回答}}をもとに推定したものです。スキップしたスキルは含まれていません。"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "X1QrOq"
+msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
+msgstr "Zoonkは、レッスンや練習での回答から、各スキル（リーディング、リスニング、スピーキング、ライティング）を測定します。回答を通じて伸びたスキルがすべて次のレベルに達すると、学習中のレベルを修了したことになります。この証明書は、それらのスキルがすべて{level}に達した時点で発行されました。"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "9Bnhaw"
+msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it."
+msgstr "Zoonkでは、コースの学習計画にあるすべてのレッスンを、学習またはテストへの合格で終え、計画内のすべてのチャレンジに勝つと、この証明書が発行されます。"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "wB_Ebz"
+msgid "It's a record of completion on Zoonk, not academic credit."
+msgstr "Zoonkでの修了記録で、学校の単位にはなりません。"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "I9vOlY"
+msgid "What this certificate means"
+msgstr "この証明書が示すこと"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "fAGVcM"
+msgid "Topics covered"
+msgstr "対象トピック"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "8Rm1i0"
+msgid "Can do"
+msgstr "できること"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "NnlD8J"
+msgid "Learn {course} on Zoonk"
+msgstr "Zoonkで{course}を学ぶ"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "1h_6la"
+msgid "Learn {language} on Zoonk"
+msgstr "Zoonkで{language}を学ぶ"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "hxYqqG"
+msgid "A plan for each day that fits your time, starting from what you already know."
+msgstr "すでに知っていることをもとに、使える時間に合わせた毎日の学習計画です。"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "VJA_YD"
+msgid "Start this course"
+msgstr "このコースを始める"
+
+#: src/certificates/certificate-meaning.tsx
+#: src/onboarding/how-it-works.tsx
+msgctxt "npIkqE"
+msgid "Start free, no account needed."
+msgstr "アカウントなしで無料で始められます。"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "buj2o3"
+msgid "Your {certificate} certificate is ready."
+msgstr "{certificate}の証明書ができました。"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "e63c09"
+msgid "{level} complete!"
+msgstr "{level}修了！"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "BAZS05"
+msgid "Your {certificate} placement result is ready."
+msgstr "{certificate}のレベル診断結果が出ました。"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "lopydx"
+msgid "Your certificate for {course} is ready."
+msgstr "{course}の証明書ができました。"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "SqnwjO"
+msgid "Course complete!"
+msgstr "コース修了！"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "H8ofJ_"
+msgid "{count, plural, other {# certificates earned}}"
+msgstr "{count, plural, other {証明書を#枚取得}}"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "72XHg-"
+msgid "Your {list} certificates are ready."
+msgstr "{list}の証明書ができました。"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "5g51Cu"
+msgid "{count, plural, one {Create a free account to keep your certificate and put your name on it.} other {Create a free account to keep your certificates and put your name on them.}}"
+msgstr "{count, plural, other {無料アカウントを作成すると、証明書を保存でき、名前も入れられます。}}"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "_QSets"
+msgid "They're saved in Certificates."
+msgstr "「証明書」に保存されています。"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "m77iCk"
+msgid "It's saved in Certificates."
+msgstr "「証明書」に保存されています。"
+
+#: src/certificates/certificate-moment-parts.tsx
+msgctxt "e_2HUM"
+msgid "On your certificate: <strong>{name}</strong>"
+msgstr "証明書に載る名前：<strong>{name}</strong>さん"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "CG1x0d"
+msgid "Name on your certificates"
+msgstr "証明書に記載する名前"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Zeqtwb"
+msgid "Your name, as it should appear"
+msgstr "証明書に載せたい名前"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "m4c_De"
+msgid "Your full name"
+msgstr "フルネーム"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Vrz1pI"
+msgid "Your certificates and your buddy use this name."
+msgstr "証明書への記載や、相棒からの呼びかけに使う名前です。"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "F6SpEM"
+msgid "Your certificates and your buddy use this name. You can change it anytime."
+msgstr "証明書への記載や、相棒からの呼びかけに使う名前です。いつでも変更できます。"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Qcr1L3"
+msgid "It shows on every certificate and its link. Your buddy calls you by it too."
+msgstr "すべての証明書とそのリンク先に表示されます。相棒もこの名前で呼びかけます。"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "5lbext"
+msgid "Your certificates"
+msgstr "証明書"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "qqmDMo"
+msgid "Every Zoonk certificate has its own link."
+msgstr "Zoonkの証明書には、それぞれ専用のリンクがあります。"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "QXN1kN"
+msgid "Verified certificate · issued by Zoonk"
+msgstr "認証済みの証明書・Zoonk発行"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "PDKCn3"
+msgid "Measured by Zoonk's placement test on {date}."
+msgstr "{date}にZoonkのレベル診断テストで測定しました。"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "faSg-e"
+msgid "Certificate of completion, issued on {date}."
+msgstr "{date}発行の修了証明書です。"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "oyh3QA"
+msgid "Create a free account to keep your certificate and put your name on it."
+msgstr "無料アカウントを作成すると、証明書を保存でき、名前も入れられます。"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "CXRlIo"
+msgid "Print"
+msgstr "印刷する"
+
+#: src/certificates/certificate-page.tsx
+#: src/memory/memory-screen.tsx
+#: src/mind-maps/mind-map-card.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "5q3qC0"
+msgid "Download"
+msgstr "ダウンロード"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "dkg2AU"
+msgid "My {language} placement result on Zoonk: {level}."
+msgstr "Zoonkでの{language}のレベル判定結果は{level}でした。"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "sfDPEB"
+msgid "I just completed level {level} in {language} on Zoonk."
+msgstr "Zoonkでレベル{level}を修了しました（{language}）。"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "xgqZIz"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}."
+msgstr "Zoonkで{course}を修了しました（{lessons, plural, =0 {#レッスン} other {#レッスン}}）。"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "_w9o_B"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} and about {minutes, plural, one {# minute} other {# minutes}} of study."
+msgstr "Zoonkで{course}を修了しました（{lessons, plural, =0 {#レッスン} other {#レッスン}}、学習時間は約{minutes, plural, other {#分}}）。"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "WJJ7jr"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} and about {hours, plural, one {# hour} other {# hours}} of study."
+msgstr "Zoonkで{course}を修了しました（{lessons, plural, =0 {#レッスン} other {#レッスン}}、学習時間は約{hours, plural, other {#時間}}）。"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "DquYTO"
+msgid "Text copied. Paste it into your LinkedIn post."
+msgstr "文章をコピーしました。LinkedInの投稿に貼り付けてください。"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "31QcAi"
+msgid "Text copied. Paste it into your Facebook post."
+msgstr "文章をコピーしました。Facebookの投稿に貼り付けてください。"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "tXB0F9"
+msgid "Share your certificate"
+msgstr "認定証をシェアする"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "Mpsug3"
+msgid "Your post shows this picture and links to your certificate's page."
+msgstr "投稿には、この画像と認定証のページへのリンクが表示されます。"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "tfBQnN"
+msgid "Suggested text"
+msgstr "投稿文の例"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "l2ddvP"
+msgid "Copy the suggested text"
+msgstr "投稿文の例をコピーする"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "rIB4Ud"
+msgid "Post on"
+msgstr "投稿先"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "lbr3Lq"
+msgid "Copy link"
+msgstr "リンクをコピーする"
+
+#: src/certificates/certificate-sharing.tsx
+msgctxt "OKhRC6"
+msgid "Share"
+msgstr "シェアする"
+
+#: src/certificates/certificate-sharing.tsx
+msgctxt "L2bkq_"
+msgid "Add to LinkedIn"
+msgstr "LinkedInに追加する"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "認定証"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "Ek6qb7"
+msgid "Comes when every skill you practice reaches the next level"
+msgstr "練習しているすべてのスキルが次のレベルに進むと取得できます"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "ojltlj"
+msgid "Your certificate comes when you finish the plan"
+msgstr "学習計画を終えると認定証を取得できます"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "GyTxyv"
+msgid "No certificates yet"
+msgstr "認定証はまだありません"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "SHp4oN"
+msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
+msgstr "コースや語学のレベルを修了すると、認定証がここに表示されます。無料で印刷やシェアができます。レベル判定テストの結果もここに表示されます。"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "0X-xfW"
+msgid "Continue learning"
+msgstr "学習を続ける"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "7yoAJi"
+msgid "{count, plural, one {# certificate} other {# certificates}}"
+msgstr "{count, plural, other {#枚の認定証}}"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "svDFL8"
+msgid "Print, download or share your certificates anytime."
+msgstr "認定証はいつでも印刷、ダウンロード、シェアできます。"
+
+#: src/certificates/placement-row.tsx
+msgctxt "BnNTsQ"
+msgid "Create a free account to keep it and share it."
+msgstr "無料アカウントを作成すると、この結果を保存してシェアできます。"
+
+#: src/certificates/placement-row.tsx
+msgctxt "DcP7sL"
+msgid "Saved in your certificates. Share it anytime."
+msgstr "認定証の一覧に保存しました。いつでもシェアできます。"
 
 #: src/challenge/challenge-call-intro.tsx
 #: src/challenge/challenge-intro.tsx
@@ -4676,6 +5209,16 @@ msgid "<date></date> · exam"
 msgstr "<date></date> · 試験"
 
 #: src/journey/study-next.tsx
+msgctxt "koWpue"
+msgid "View certificate"
+msgstr "認定証を見る"
+
+#: src/journey/study-next.tsx
+msgctxt "n-Px0T"
+msgid "Get your certificate"
+msgstr "認定証を取得する"
+
+#: src/journey/study-next.tsx
 msgctxt "rw5sWV"
 msgid "Continue at {level}"
 msgstr "{level}で学習を続ける"
@@ -6277,13 +6820,6 @@ msgstr "メモリを準備しています…"
 msgctxt "Ob8gKI"
 msgid "Preparing…"
 msgstr "準備しています…"
-
-#: src/memory/memory-screen.tsx
-#: src/mind-maps/mind-map-card.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "5q3qC0"
-msgid "Download"
-msgstr "ダウンロード"
 
 #: src/memory/memory-screen.tsx
 msgctxt "owirfw"
@@ -8711,11 +9247,6 @@ msgid "Ask"
 msgstr "質問する"
 
 #: src/onboarding/entry/paste-link.tsx
-msgctxt "JBWS0c"
-msgid "Link"
-msgstr "リンク"
-
-#: src/onboarding/entry/paste-link.tsx
 msgctxt "IB_QxY"
 msgid "https://… an article, a class page or a PDF"
 msgstr "https://… 記事や授業のページ、PDFなど"
@@ -8866,11 +9397,6 @@ msgstr "日程付きの学習計画と最初のレッスンを受け取る"
 msgctxt "HK3ph8"
 msgid "How it works"
 msgstr "使い方"
-
-#: src/onboarding/how-it-works.tsx
-msgctxt "npIkqE"
-msgid "Start free, no account needed."
-msgstr "アカウントなしで無料で始められます。"
 
 #: src/onboarding/library-course-offer.tsx
 msgctxt "JHbf4S"
@@ -11416,11 +11942,6 @@ msgctxt "w-dRYG"
 msgid "{count, plural, other {# topics from {subjects} are back in your plan: you missed questions on them.}}"
 msgstr "{count, plural, other {#個のトピック（{subjects}）が、関連する問題で間違いがあったため、学習計画に戻りました。}}"
 
-#: src/plan/use-share-plan.ts
-msgctxt "zU_q1N"
-msgid "Link copied"
-msgstr "リンクをコピーしました"
-
 #: src/plan/use-short-list.ts
 msgctxt "WeWUAR"
 msgid "{names} and {count, number} more"
@@ -12510,11 +13031,6 @@ msgstr "もともと知っていた"
 msgctxt "Wfs1md"
 msgid "{count, plural, one {# lesson skipped} other {# lessons skipped}}"
 msgstr "{count, plural, other {#レッスンをスキップ}}"
-
-#: src/syllabus/subject-aside.tsx
-msgctxt "Lv0zJu"
-msgid "Details"
-msgstr "詳細"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "AGSt8i"

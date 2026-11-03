@@ -20,6 +20,7 @@ import {
   SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
+  SuggestionLinkAction,
   SuggestionOpen,
   SuggestionSaveError,
   SuggestionSummary,
@@ -28,6 +29,56 @@ import { useLevelName } from "../course/use-level-name";
 import { SlotContent } from "../plan/plan-suggestion-context";
 
 type CourseLink = StudyNextView["related"][number];
+
+/** A finished course's certificate: its page once written, else the claim that writes it. */
+type StudyNextCertificate = { href: string | null; onClaim: () => Promise<boolean> };
+
+export type StudyNext = {
+  certificate: StudyNextCertificate | null;
+  onContinue: () => Promise<boolean>;
+  view: StudyNextView;
+};
+
+function CertificateAction({
+  certificate,
+  primary,
+}: {
+  certificate: StudyNextCertificate;
+  primary: boolean;
+}) {
+  const t = useExtracted();
+  const [failed, setFailed] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const variant = primary ? "default" : "outline";
+
+  if (certificate.href) {
+    return (
+      <SuggestionLinkAction href={certificate.href} variant={variant}>
+        {t("View certificate")}
+      </SuggestionLinkAction>
+    );
+  }
+
+  const claim = () => {
+    startTransition(async () => {
+      setFailed(!(await certificate.onClaim()));
+    });
+  };
+
+  return (
+    <>
+      <SuggestionAction
+        aria-busy={isPending || undefined}
+        disabled={isPending}
+        onClick={claim}
+        variant={variant}
+      >
+        {t("Get your certificate")}
+      </SuggestionAction>
+      {failed && <SuggestionSaveError />}
+    </>
+  );
+}
 
 function ContinueAtNextLevel({
   next,
@@ -92,10 +143,10 @@ function RelatedCourses({
 
 export function StudyNextSuggestion({
   courseHref,
-  next: { onContinue, view: next },
+  next: { certificate, onContinue, view: next },
 }: {
   courseHref: (course: CourseLink) => string;
-  next: { onContinue: () => Promise<boolean>; view: StudyNextView };
+  next: StudyNext;
 }) {
   const t = useExtracted();
   const hasNext = next.nextLevel !== null || next.related.length > 0;
@@ -114,9 +165,14 @@ export function StudyNextSuggestion({
           <SuggestionDescription>{t("Here's what to study next.")}</SuggestionDescription>
         )}
 
-        {next.nextLevel && (
+        {(next.nextLevel || certificate) && (
           <SuggestionActions>
-            <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />
+            {certificate && (
+              <CertificateAction certificate={certificate} primary={!next.nextLevel} />
+            )}
+            {next.nextLevel && (
+              <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />
+            )}
           </SuggestionActions>
         )}
 

@@ -11,6 +11,7 @@ import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../../_components/save-error";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
+import { type LevelTestPlacement, PlacementRow } from "../../certificates/placement-row";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -123,11 +124,13 @@ export function TestDone({
   levels,
   onContinue,
   pending,
+  placement,
 }: {
   failed: boolean;
   levels: ReadyTest["levels"];
   onContinue: () => void;
   pending: boolean;
+  placement: LevelTestPlacement | null;
 }) {
   const t = useExtracted();
 
@@ -143,6 +146,7 @@ export function TestDone({
         </OnboardingDescription>
       </OnboardingHeading>
       <LevelBars levels={levels} />
+      {placement && <PlacementRow {...placement} />}
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
         <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>

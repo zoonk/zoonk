@@ -237,6 +237,14 @@ msgid "Completed lessons"
 msgstr "Lezioni completate"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "Certificati"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
@@ -855,6 +863,11 @@ msgstr "Il tuo compagno risponde alle tue domande e adatta il tuo piano."
 msgctxt "BV0cQk"
 msgid "Your day"
 msgstr "La tua giornata"
+
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "svDFL8"
+msgid "Print, download or share your certificates anytime."
+msgstr "Stampa, scarica o condividi i tuoi certificati quando vuoi."
 
 #: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
 msgctxt "1ZQwwl"
@@ -2404,6 +2417,27 @@ msgstr "Inizia gratis"
 msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Il tuo account è stato eliminato."
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "kgqbTN"
+msgid "We couldn't find this certificate"
+msgstr "Non abbiamo trovato questo certificato"
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "pFjRPG"
+msgid "Check the link. A certificate's link ends in its 12-character code, like {example}, and works with or without the dashes."
+msgstr "Controlla il link. Il link di un certificato termina con il suo codice di 12 caratteri, come {example}, e funziona con o senza trattini."
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "15PZTm"
+msgid "Go to Zoonk"
+msgstr "Vai su Zoonk"
+
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "4566_7"
+msgid "A certificate issued by Zoonk. Anyone with its link can check it."
+msgstr "Un certificato rilasciato da Zoonk. Chiunque abbia il link può verificarlo."
 
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx

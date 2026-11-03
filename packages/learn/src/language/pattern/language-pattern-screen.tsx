@@ -153,7 +153,7 @@ export function LanguagePatternScreen({
 
   if (step.kind === "result") {
     return (
-      <MomentAfterCeremony milestone={step.result.ceremony} render={renderCeremony}>
+      <MomentAfterCeremony moments={step.result} render={renderCeremony}>
         <TaskFrame
           exitHref={exitHref}
           exitToApp
