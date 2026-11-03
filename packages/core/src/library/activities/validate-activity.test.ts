@@ -426,6 +426,39 @@ describe(validateActivity, () => {
     expect(fieldsOf(free)?.case.outcomeId).toBe("livre-2");
   });
 
+  it("keeps a case that ends on another outcome than it states a mismatch, even when ids share a prefix", () => {
+    const content = threeWayTree({
+      branches: ["out-other", "out-other", "out"],
+      outcomeId: "out",
+      picked: "B",
+    });
+
+    const result = validateExploreActivity(content);
+
+    expect(result.ok ? [] : result.issues.map((item) => item.code)).toContain("answerMismatch");
+  });
+
+  it("gives a copy an id no node has, within the id limit, and the repaired tree passes again", () => {
+    const long = "o".repeat(40);
+
+    const colliding = validateExploreActivity(
+      threeWayTree({ branches: ["out", "out", "out-2"], outcomeId: "out", picked: "B" }),
+    );
+
+    const bounded = validateExploreActivity(
+      threeWayTree({ branches: [long, long, "other"], outcomeId: long, picked: "B" }),
+    );
+
+    for (const result of [colliding, bounded]) {
+      const fields = result.ok ? (result.content.fields as { nodes: { id: string }[] }) : null;
+      const ids = fields?.nodes.map((node) => node.id) ?? [];
+
+      expect(new Set(ids).size).toBe(ids.length);
+      expect(ids.every((id) => id.length <= 40)).toBe(true);
+      expect(validateExploreActivity({ ...explored("decisionTree"), fields }).ok).toBe(true);
+    }
+  });
+
   it("rejects molecules that can't be built with at most triple bonds or are too big", () => {
     const quadrupleBond = structuredClone(fixtures.moleculeBuilder);
     quadrupleBond.fields = { elements: ["C"], formula: "C2" };
@@ -573,6 +606,38 @@ function sharedOutcomeTree(answers: { branch: string; nodeId: string }[], outcom
         treeOutcome("livre", "Essa regra não impede a atuação"),
       ],
       rootId: "cargo",
+    },
+    template: "decisionTree",
+  };
+}
+
+function threeWayTree({
+  branches,
+  outcomeId,
+  picked,
+}: {
+  branches: [string, string, string];
+  outcomeId: string;
+  picked: "A" | "B" | "C";
+}) {
+  const outcomes = [...new Set(branches)].map((id) =>
+    treeOutcome(id, `Outcome ${id.length}${id.at(-1) ?? ""}`),
+  );
+
+  return {
+    data: { isExample: true },
+    fields: {
+      case: { answers: [{ branch: picked, nodeId: "root" }], description: "A case.", outcomeId },
+      nodes: [
+        {
+          branches: branches.map((next, index) => ({ label: ["A", "B", "C"][index] ?? "A", next })),
+          id: "root",
+          kind: "question" as const,
+          question: "Which one?",
+        },
+        ...outcomes,
+      ],
+      rootId: "root",
     },
     template: "decisionTree",
   };

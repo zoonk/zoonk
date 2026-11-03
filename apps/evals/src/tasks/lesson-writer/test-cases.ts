@@ -628,6 +628,8 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
       - The categorize activity's \`prompt\` says what to sort and by what (the records into the animal groups by their body traits), never how to work the screen: no "arraste", "toque", "clique" or any other gesture, although its brief asks the learner to drag each record
       - The categorize activity sorts the four records into poríferos, cnidários, artrópodes and vertebrados by body traits, as its brief says
+      - The lesson opens on Edson's tide-pool scene with nothing to answer; the guess about his crab comes right after the first explanation, with 4 options and camarão right, and its reveal doesn't explain the criterion yet
+      - The bat-and-dragonfly check comes after the screens that explain arthropods and vertebrates, and no check asks about a group before a screen explains it
       - No screen names the exam, its board or its notice
 
       ${SHARED_EXPECTATIONS}

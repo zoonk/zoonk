@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  STEP_TEXT_LIMITS,
   explanationSchema,
   idSchema,
   labelSchema,
@@ -72,17 +73,33 @@ function walkCase(
   return next ? walkCase(fields, [...path, next]) : null;
 }
 
+function freeId({
+  base,
+  copy = 2,
+  used,
+}: {
+  base: string;
+  copy?: number;
+  used: ReadonlySet<string>;
+}): string {
+  const suffix = `-${copy}`;
+  const id = `${base.slice(0, STEP_TEXT_LIMITS.id - suffix.length)}${suffix}`;
+  return used.has(id) ? freeId({ base, copy: copy + 1, used }) : id;
+}
+
 /**
  * A tree has one way into each node, but writers often send two branches to the same outcome
  * ("this rule doesn't apply"). Each later branch gets its own copy of that outcome, and a case that
- * ends on a copy names it.
+ * ends on a copy of the outcome it states names that copy.
  */
 function splitSharedOutcomes(fields: DecisionTreeFields): DecisionTreeFields {
   const outcomes = new Map(
     fields.nodes.flatMap((node) => (node.kind === "outcome" ? [[node.id, node] as const] : [])),
   );
 
-  const uses = new Map<string, number>();
+  const used = new Set(fields.nodes.map((node) => node.id));
+  const reached = new Set<string>();
+  const copyOf = new Map<string, string>();
   const copies: TreeNode[] = [];
 
   const nodes = fields.nodes.map((node) => {
@@ -92,14 +109,15 @@ function splitSharedOutcomes(fields: DecisionTreeFields): DecisionTreeFields {
 
     const branches = node.branches.map((branch) => {
       const outcome = outcomes.get(branch.next);
-      const count = (uses.get(branch.next) ?? 0) + 1;
-      uses.set(branch.next, count);
 
-      if (!outcome || count === 1) {
+      if (!outcome || !reached.has(branch.next)) {
+        reached.add(branch.next);
         return branch;
       }
 
-      const id = `${branch.next}-${count}`;
+      const id = freeId({ base: branch.next, used });
+      used.add(id);
+      copyOf.set(id, branch.next);
       copies.push({ ...outcome, id });
       return { ...branch, next: id };
     });
@@ -112,11 +130,10 @@ function splitSharedOutcomes(fields: DecisionTreeFields): DecisionTreeFields {
   }
 
   const repaired = { ...fields, nodes: [...nodes, ...copies] };
-  const reached = walkCase(repaired)?.at(-1);
-  const copied = copies.find((copy) => copy.id === reached);
+  const end = walkCase(repaired)?.at(-1);
 
-  return copied && reached?.startsWith(`${fields.case.outcomeId}-`)
-    ? { ...repaired, case: { ...repaired.case, outcomeId: copied.id } }
+  return end && copyOf.get(end) === fields.case.outcomeId
+    ? { ...repaired, case: { ...repaired.case, outcomeId: end } }
     : repaired;
 }
 

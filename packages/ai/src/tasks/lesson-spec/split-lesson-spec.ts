@@ -142,7 +142,6 @@ function createFrameScreen({
   return { activityTemplate: null, brief, kind, skills, visual, visualKind };
 }
 
-/** A new hook shows its scene: a shared lesson's in a picture, a private one's in a table. */
 function createHook({
   brief,
   visualFloor,
@@ -252,6 +251,7 @@ function buildPart({
     canDo: lead?.name ?? spec.canDo,
     description: lead?.description ?? spec.description,
     estimatedMinutes: estimateLessonMinutes(screens.map((screen) => screen.kind)),
+    ...(index > 0 && { laterPart: true }),
     screens,
     skills,
     title: formatTopics({ language, topics: skills.map((skill) => skill.topic) }),

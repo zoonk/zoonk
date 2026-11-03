@@ -53,7 +53,6 @@ function visualField(screen: { visual: LessonVisual | null }) {
   return screen.visual ? { visual: screen.visual } : {};
 }
 
-/** The explore a writer gave, checked as an explored activity; its issues say what a fix must change. */
 export function checkWrittenExplore(explore: { content: string; template: string }) {
   const parsed = parseActivityJson(explore.content);
 

@@ -142,6 +142,20 @@ describe("checkWrittenLesson's flow checks", () => {
     ]);
   });
 
+  it("compares how money is written within one currency, never across two", () => {
+    const dollars = explanation("A coat costs US$ 200 in winter.");
+    const sameDollars = explanation("Gloves cost $ 50 in winter.");
+    const reais = explanation("In São Paulo the coat costs R$ 1.000,00.");
+    const euros = explanation("In Lisbon it costs € 180.");
+
+    expect(flowCodes(withScreens({ 1: dollars, 4: sameDollars }))).toContainEqual([
+      4,
+      "moneyFormat",
+    ]);
+
+    expect(flowCodes(withScreens({ 1: reais, 4: euros }))).not.toContainEqual([4, "moneyFormat"]);
+  });
+
   it("flags an explanation far over its word target, a lower one for new learners", () => {
     const sixty = explanation(`${words(59)}.`);
     const eighty = explanation(`${words(79)}.`);

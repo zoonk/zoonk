@@ -112,18 +112,15 @@ function getWordingProblems({
     screen,
   }));
 
-  const [first, ...others] = findMixedMoneyFormats(lesson.screens);
-
-  const money = others.map((mention) => ({
+  const money = findMixedMoneyFormats(lesson.screens).map(({ first, mention }) => ({
     code: "moneyFormat" as const,
-    problem: `Writes money as "${mention.text}" while screen ${(first?.screen ?? 0) + 1} writes "${first?.text ?? ""}". Use one format on every screen: the same currency mark, and cents on every amount or on none.`,
+    problem: `Writes money as "${mention.text}" while screen ${first.screen + 1} writes "${first.text}". Write a currency one way on every screen: the same mark, and cents on every amount or on none.`,
     screen: mention.screen,
   }));
 
   return [...guesses, ...bold, ...money, ...wordy];
 }
 
-/** How the lesson's screens work together: their visuals, the guess, the checks' bases and wording. */
 export function checkLessonFlow(input: {
   lesson: WrittenLesson;
   /** `readsNoviceRules` for the lesson, which sets its words per explanation. */

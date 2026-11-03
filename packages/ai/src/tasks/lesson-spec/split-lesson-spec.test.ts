@@ -109,7 +109,7 @@ describe(splitLessonSpec, () => {
     expect(lessons.map((lesson) => lesson.canDo)).toStrictEqual(["Use Mean", "Use Mode"]);
   });
 
-  it("gives every new lesson a hook and one application, and only the planner can give a later one its guess", () => {
+  it("gives every new lesson a hook and one application, and only the first must keep the plan's guess", () => {
     const [first, second] = splitLessonSpec({
       language: "en",
       level: "beginner",
@@ -135,8 +135,18 @@ describe(splitLessonSpec, () => {
 
     expect(getLessonSpecIssues({ level: "beginner", spec: first! })).toStrictEqual([]);
 
+    expect(getLessonSpecIssues({ level: "beginner", spec: second! })).toStrictEqual([]);
+
+    const planned = fourSkillSpec();
+
+    const [unguessed] = splitLessonSpec({
+      language: "en",
+      level: "beginner",
+      spec: { ...planned, screens: planned.screens.filter((item) => item.kind !== "guess") },
+    });
+
     expect(
-      getLessonSpecIssues({ level: "beginner", spec: second! }).map((issue) => issue.code),
+      getLessonSpecIssues({ level: "beginner", spec: unguessed! }).map((issue) => issue.code),
     ).toStrictEqual(["guess"]);
   });
 
