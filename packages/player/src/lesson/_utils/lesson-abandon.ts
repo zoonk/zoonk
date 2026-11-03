@@ -7,7 +7,7 @@ function countWrongInARow(state: LessonPlayerState): number {
 
   const verdicts = latestFirst.flatMap((stepId) => {
     const result = state.results[stepId];
-    return result?.checked ? [result.isCorrect] : [];
+    return result?.checked && stepId in state.firstVerdicts ? [result.isCorrect] : [];
   });
 
   const firstRight = verdicts.indexOf(true);

@@ -1,10 +1,11 @@
+import { type ServerResponse } from "node:http";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
 import { type CDPSession, type Page } from "playwright";
 import { defineConfig } from "vitest/config";
-import { type BrowserCommand } from "vitest/node";
+import { type BrowserCommand, type Vite } from "vitest/node";
 
 assertBrowserLaunchAllowed();
 
@@ -61,6 +62,58 @@ const touch: BrowserCommand<[TouchStep[]]> = async ({ page }, steps) => {
   }
 };
 
+const HELD_PICTURES_PATH = "/__held-pictures/";
+
+/** A 3 × 2 grey PNG: a drawn scene's shape, small enough to inline. */
+const SCENE_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAIAAAASFvFNAAAADklEQVR4nGM4AwMMcBYAj4QOWXZs8u4AAAAASUVORK5CYII=",
+  "base64",
+);
+
+type HeldPictures = { answered: Set<string>; waiting: Map<string, ServerResponse[]> };
+
+declare global {
+  /** Vitest loads this file again for the browser server, so the server and the commands share it. */
+  var heldPictures: HeldPictures | undefined;
+}
+
+function heldStore(): HeldPictures {
+  globalThis.heldPictures ??= { answered: new Set(), waiting: new Map() };
+  return globalThis.heldPictures;
+}
+
+function sendPicture(response: ServerResponse) {
+  response.setHeader("Content-Type", "image/png");
+  response.end(SCENE_PNG);
+}
+
+/** Pictures under `HELD_PICTURES_PATH` load only once `answerPicture` answers them, as on a slow network. */
+function heldPictures(): Vite.Plugin {
+  return {
+    configureServer(server) {
+      server.middlewares.use(HELD_PICTURES_PATH, (request, response) => {
+        const name = request.url ?? "";
+        const held = heldStore();
+
+        if (held.answered.has(name)) {
+          sendPicture(response);
+          return;
+        }
+
+        held.waiting.set(name, [...(held.waiting.get(name) ?? []), response]);
+      });
+    },
+    name: "held-pictures",
+  };
+}
+
+const answerPicture: BrowserCommand<[string]> = (_context, name) => {
+  const held = heldStore();
+  held.answered.add(`/${name}`);
+  held.waiting.get(`/${name}`)?.forEach((response) => sendPicture(response));
+  held.waiting.delete(`/${name}`);
+};
+
 const tap: BrowserCommand<[{ x: number; y: number }]> = async ({ page }, { x, y }) => {
   await page.touchscreen.tap(x, y);
 };
@@ -76,7 +129,7 @@ export default defineConfig({
       "streamdown",
     ],
   },
-  plugins: [react()],
+  plugins: [react(), heldPictures()],
   resolve: {
     alias: { "next/image": nextImageShim, "web-haptics/react": webHapticsShim },
     tsconfigPaths: true,
@@ -91,7 +144,7 @@ export default defineConfig({
         extends: true,
         test: {
           browser: {
-            commands: { emulateMedia, tap, touch },
+            commands: { answerPicture, emulateMedia, tap, touch },
             enabled: true,
             headless: true,
             instances: [

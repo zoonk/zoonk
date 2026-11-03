@@ -9,7 +9,6 @@ type MapIdea = LessonMapData["ideas"][number];
 
 const LABEL_CLASS = "text-foreground block text-[15px] leading-5 font-semibold tracking-tight";
 
-/** From the outermost level in; deeper levels keep the last. */
 const LEVEL_CLASSES = [
   "rounded-[14px] p-3",
   "rounded-[11px] p-[11px]",

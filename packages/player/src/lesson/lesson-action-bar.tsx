@@ -116,7 +116,7 @@ export function LessonActionBar() {
           id={LESSON_PRIMARY_ID}
           onClick={() => runPrimary({ actions, screen })}
           size="xl"
-          variant={isReveal ? "outline" : "default"}
+          variant={isReveal ? "secondary" : "default"}
         >
           {primary.busy && <Spinner aria-hidden="true" />}
           <PrimaryLabel label={primary.label} />
