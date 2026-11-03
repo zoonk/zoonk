@@ -144,6 +144,25 @@ const leaf: { language: string; scene: ImageScene } = {
   },
 };
 
+const officeSalary: ImageScene = {
+  focalObject:
+    "a man sitting at an office desk with a laptop, receiving an envelope with banknotes from a coworker's hand",
+  labels: [],
+  layout: "single",
+  motion: null,
+  relation: null,
+  supportingObjects: ["a wall calendar behind him"],
+};
+
+const officeRepairs: ImageScene = {
+  focalObject: "a man sitting at an office desk in front of a monitor, typing on a keyboard",
+  labels: [],
+  layout: "single",
+  motion: null,
+  relation: "a toolbox and an opened computer tower rest on a low table beside the desk",
+  supportingObjects: ["a small side table holding an open computer tower and a toolbox"],
+};
+
 const discount = sceneOf("discount-pt");
 const electronCloud = sceneOf("electron-cloud-en");
 const microwave = sceneOf("microwave-en");
@@ -353,5 +372,17 @@ export const TEST_CASES = [
     id: "numbered-bicycle-tire",
     imageFile: "numbered-bicycle.webp",
     input: { language: "en", scene: numberedBicycle },
+  }),
+  checkCase({
+    expected: false,
+    id: "two-scenes-for-one",
+    imageFile: "flare-two-scenes-salary.webp",
+    input: { language: "pt", scene: officeSalary },
+  }),
+  checkCase({
+    expected: false,
+    id: "repair-counter-for-office",
+    imageFile: "flare-repair-counter.webp",
+    input: { language: "pt", scene: officeRepairs },
   }),
 ];

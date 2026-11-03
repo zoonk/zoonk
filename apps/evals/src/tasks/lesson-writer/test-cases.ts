@@ -8,6 +8,7 @@ import { EXAM_PREP_LESSON, QUESTION_FIRST_EXAM_LESSON } from "./exam-prep-lesson
 import { EXPLORE_LESSON_SPECS } from "./explore-lesson-specs";
 import { LESSON_SPECS } from "./lesson-specs";
 import { MATERIAL_LESSON_SPEC } from "./material-lesson-spec";
+import { NOVICE_LESSON_SPECS } from "./novice-lesson-specs";
 import { SCIENTIFIC_NOTATION_SPEC } from "./number-lesson-spec";
 import { SETUP_LESSON_SPEC } from "./setup-lesson-spec";
 import { SOURCED_LESSONS } from "./sourced-lesson-specs";
@@ -30,7 +31,7 @@ function toInput(input: Omit<LessonWriterInput, "activityTemplates">): LessonWri
 
 const SHARED_EXPECTATIONS = `
   - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)
-  - A \`hookGuess\` is a guess that doesn't count: one \`reveal\` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead
+  - At \`overview\` and \`beginner\` without exams or class material, the hook is a \`hookText\` scene that asks nothing, even when its plan was a guess; at other levels a \`hookGuess\` is a guess that doesn't count: one \`reveal\` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead
   - Calculations written as \`mathCheck\` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting
   - Activities are JSON inside \`content\`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea
   - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its \`prompt\` and its \`alt\` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)
@@ -198,7 +199,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       - MUST be in Brazilian Portuguese, for a beginner learning biology as a hobby, with no exam to prepare for
       - The membrane separates the inside from the outside and controls what enters and leaves; the cytoplasm fills the space between the membrane and the genetic material and is where much of the cell's work happens; the genetic material holds the instructions
       - No screen is a \`typedAnswer\`: every check and the application are answered by picking (code flags a typed answer, since this lesson's learners take no exam that asks written answers)
-      - The application keeps Iara's diagram from the brief, and its options say what she adds, where and why (the cytoplasm, filling the space between the membrane and the genetic material), with the second-membrane trap and a reason on every option
+      - The application keeps Iara's diagram from the brief and asks what she adds and where, with short options (the cytoplasm, filling the space between the membrane and the genetic material) and the why in each option's reason, the second-membrane trap and a reason on every option
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -214,7 +215,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in US English, for a beginner
-      - The hook uses the planned surprise (a price that drops 50% and doesn't come back with a 50% rise) as a guess, with no introduction
+      - The plan's hook is a guess, and a beginner's hook is a scene: it turns the planned surprise (a price that drops 50% and doesn't come back with a 50% rise) into a \`hookText\` of one or two sentences that ends on the question the lesson answers, with nothing to answer and no introduction
       - Percent change is explained as change divided by the starting value, concretely with dollars, before any formula; the formula, if any, is explained piece by piece
       - Worked examples show every step with correct arithmetic, and the check after each one is a similar problem with less help
       - Checks include the classic trap of dividing by the new value, and every option's reason explains why it's tempting and why it's wrong
@@ -393,7 +394,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for beginners preparing for a concurso's Portuguese test
-      - Every question about a picture (the guess, the check and the application) has an \`image\` whose prompt names what the answer depends on, and its text says "a imagem" without describing what the picture shows (no "Na imagem, Otávio está parado…")
+      - The hook is a \`hookText\` scene with its picture, asking nothing; every question about a picture (the checks and the application) has an \`image\` whose prompt names what the answer depends on, and its text says "a imagem" without describing what the picture shows (no "Na imagem, Otávio está parado…")
       - The two scenes of the application are one picture with both side by side, labeled 1 and 2
       - Captions and quoted words are in _italics_, never between « » or << >>
       - Checks ask which caption fits, with the tempting wrong caption the brief names and a reason on every option
@@ -433,7 +434,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese, for beginners
       - The application compares two drawings as one \`image\` with both in it, labeled 1 and 2, and its options name them by those labels; its \`alt\` says what drawing 1 and drawing 2 each show, so a learner who can't see the picture can still answer
-      - The guess and the check don't offer three drawings or charts as options: each shows one chart as a \`visual\` and asks about it (which bar is wrong, whether it matches), or asks in words; no option is labeled as a drawing or chart the screen doesn't show
+      - No check offers three drawings or charts as options: each shows one chart as a \`visual\` and asks about it (which bar is wrong, whether it matches), or asks in words; no option is labeled as a drawing or chart the screen doesn't show
       - The explanation with 2, 5 and 7 shows a bar chart \`visual\` with those values
       - The explanation that compares two versions of the same data (bars standing with cramped names, bars lying with full names) shows them as one \`image\` with both, labeled 1 and 2, instead of only describing them
       - No screen has both an image and a visual, and nothing is drawn with characters
@@ -662,6 +663,66 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       language: "pt",
       level: "intermediate",
       spec: SCIENTIFIC_NOTATION_SPEC,
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for total beginners
+      - The plan's hook is a guess, and a beginner's hook is a scene: a \`hookText\` showing the pond in one or two everyday sentences that end on the question the lesson answers, with nothing to answer and its picture of the pond
+      - Each explanation has at most one term in bold, two or three short sentences: on the screen about espécie, only espécie is bold, and organismo, taught in an earlier lesson, is recalled in plain words
+      - A species is living beings alike enough to reproduce together and have fertile offspring, never just "related living beings"
+      - Every picture is one scene of the same pond, its \`alt\` describing that same scene, the people in it adults
+      - One person at most carries the lesson (the plan names Murilo only in the application)
+      - The summary card is \`nested\` (organismo inside população inside comunidade inside ecossistema, smallest first), each idea with a short label and a sentence that names its level and reads on its own
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-niveis-ecologicos-one-term",
+    userInput: toInput({
+      chapterTitle: "Organização da vida",
+      courseTitle: "Biologia",
+      language: "pt",
+      level: "beginner",
+      spec: NOVICE_LESSON_SPECS["pt-niveis-ecologicos-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for total beginners in accounting
+      - The plan's hook is a guess, and a beginner's hook is a scene: a \`hookText\` about Davi's workshop that ends on the question the lesson answers, with nothing to answer and no term the lesson explains
+      - The first explanation, whose brief packs a definition, a caveat and a formula to explore, is two or three short sentences with one bold term (patrimônio líquido); bens, direitos and obrigações are recalled in plain words, never bold or defined again; the caveat (a book value, not a sale price) stays, briefly
+      - Every number in the worked example, the checks, the explore and the application matches the plan and adds up
+      - Options are short; the why goes in each option's reason
+      - The summary card is a \`hub\` whose sentences each name their subject ("O patrimônio líquido é…"), never a fragment that only reads with its label
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-patrimonio-liquido-dense-brief",
+    userInput: toInput({
+      chapterTitle: "Elementos do patrimônio",
+      courseTitle: "Contabilidade",
+      language: "pt",
+      level: "beginner",
+      spec: NOVICE_LESSON_SPECS["pt-patrimonio-liquido-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for an overview: plain words, light checks
+      - The plan's hook is a guess, and an overview's hook is a scene: a \`hookText\` about Igor's repair work in one or two sentences that ends on the question the lesson answers, with nothing to answer
+      - The check about a weekly payment whose amount changes keeps its learning move and its tempting wrong answer (the amount changing makes it irregular), with short options such as "Sim, é regular" and "Não, é eventual" and the why in each option's reason, never "Não, porque o valor muda" as an option
+      - The application keeps its two choices and their meaning, as short options
+      - The summary card is a \`hub\` whose sentences each name their subject ("Uma receita regular…"), never a fragment such as "Repete-se em intervalos definidos"
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-receitas-reasons-out-of-options",
+    userInput: toInput({
+      chapterTitle: "Entradas e saídas de dinheiro",
+      courseTitle: "Educação Financeira",
+      language: "pt",
+      level: "overview",
+      spec: NOVICE_LESSON_SPECS["pt-receitas-regulares-overview"],
     }),
   },
 ];

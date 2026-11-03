@@ -1,6 +1,6 @@
 import { type ImageSceneInput } from "@zoonk/ai/tasks/images/scene";
 
-export type ImageSceneExpected = { labels: "any" | "none" | "some" };
+export type ImageSceneExpected = { labels: "any" | "none" | "some"; layout?: "single" };
 
 type ImageSceneCase = {
   id: string;
@@ -173,6 +173,38 @@ export const TEST_CASES: ImageSceneCase[] = [
       request: "A lever lifting a heavy rock with the fulcrum close to the rock",
       screenText:
         "Put the fulcrum close to the load and push on the far end: a small effort lifts a heavy rock.",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "One scene at Igor's workplace: Igor receiving his salary envelope, with his repair toolbox beside him, exactly as the alt says. Never two scenes stacked or side by side (an office above a workbench), and nothing the alt doesn't name, such as a toaster or a second place. Igor is an adult. No labels are needed.",
+    expected: { labels: "any", layout: "single" },
+    id: "one-place-not-two-pt",
+    userInput: {
+      alt: "Igor recebe um envelope no trabalho, com uma caixa de ferramentas ao lado.",
+      context: "Educação financeira › Organização das receitas › Receitas regulares e eventuais",
+      language: "pt",
+      request:
+        "Igor no trabalho recebe um envelope de salário de outra pessoa. Ao lado de Igor está sua caixa de ferramentas de conserto. Cena cotidiana, sem texto.",
+      screenText:
+        "Igor recebe seu salário no trabalho. Fora dali, às vezes ele conserta aparelhos e recebe por esses serviços.",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "The request asks for two scenes of Igor's life (his job's pay and selling his bike). A picture shows one scene: the one place the screen is mostly about (his monthly pay at work, or the bike sale), never both stacked or side by side. Igor is an adult. No labels are needed.",
+    expected: { labels: "any", layout: "single" },
+    id: "two-moments-become-one-pt",
+    userInput: {
+      alt: "Igor recebe o pagamento combinado no trabalho.",
+      context: "Educação financeira › Organização das receitas › Receitas regulares e eventuais",
+      language: "pt",
+      request:
+        "Duas cenas lado a lado: na primeira, Igor recebe dinheiro no local de trabalho; na segunda, Igor entrega sua bicicleta a um comprador. Estilo simples e claro, sem texto.",
+      screenText:
+        "Igor recebe um pagamento combinado todo mês e vendeu sua bicicleta uma única vez. Qual entrada ele pode esperar novamente no próximo mês?",
       textAllowed: true,
     },
   },
