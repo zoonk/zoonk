@@ -29,6 +29,15 @@ describe(formatLocalizedNumber, () => {
     expect(formatLocalizedNumber({ compact: true, locale: "en", value: -0 })).toBe("0");
     expect(formatLocalizedNumber({ locale: "en", value: -0.5 })).toBe("−0.5");
   });
+
+  it("writes a ratio as a percent the learner's language's way", () => {
+    const percent = { maximumFractionDigits: 1, percent: true };
+
+    expect(formatLocalizedNumber({ ...percent, locale: "en", value: 0.305 })).toBe("30.5%");
+    expect(formatLocalizedNumber({ ...percent, locale: "tr", value: 0.3 })).toBe("%30");
+    expect(formatLocalizedNumber({ ...percent, locale: "en", value: -0.05 })).toBe("−5%");
+    expect(formatLocalizedNumber({ ...percent, locale: "en", value: -0.0004 })).toBe("0%");
+  });
 });
 
 describe(fractionDigitsFor, () => {

@@ -14,6 +14,7 @@ type FormatOptions = {
   compact?: boolean;
   grouping?: boolean;
   maximumFractionDigits?: number;
+  percent?: boolean;
   signed?: boolean;
   unit?: string;
 };
@@ -73,6 +74,7 @@ export function useFormatNumber() {
       grouping: options.grouping,
       locale,
       maximumFractionDigits: options.maximumFractionDigits ?? fractionDigitsFor(value),
+      percent: options.percent,
       signed: options.signed,
       value,
     });
