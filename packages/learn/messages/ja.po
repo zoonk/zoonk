@@ -5557,16 +5557,6 @@ msgid "Speaking practice comes with Plus: every task of the paper on a call, and
 msgstr "Plusでは、試験のすべてのタスクを会話で練習できます。各タスクの終了後に、公式の評価基準に基づく推定スコアが表示されます。"
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "TSrXx4"
-msgid "Not enough call time this month for this task"
-msgstr "このタスクを行うには、今月の残りの会話時間が足りません"
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "o6YuRt"
-msgid "Not enough call time today for this task"
-msgstr "このタスクを行うには、今日の残りの会話時間が足りません"
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "cNEc28"
 msgid "The task didn't start. Try again in a moment."
 msgstr "タスクを開始できませんでした。少し待ってからもう一度試してください。"

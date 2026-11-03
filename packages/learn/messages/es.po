@@ -5557,16 +5557,6 @@ msgid "Speaking practice comes with Plus: every task of the paper on a call, and
 msgstr "Plus incluye la práctica de expresión oral: todas las tareas de la prueba por llamada y una evaluación orientativa según los criterios oficiales después de cada una."
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "TSrXx4"
-msgid "Not enough call time this month for this task"
-msgstr "No te queda suficiente tiempo de llamada este mes para esta tarea"
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "o6YuRt"
-msgid "Not enough call time today for this task"
-msgstr "No te queda suficiente tiempo de llamada hoy para esta tarea"
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "cNEc28"
 msgid "The task didn't start. Try again in a moment."
 msgstr "La tarea no se inició. Vuelve a intentarlo en un momento."
