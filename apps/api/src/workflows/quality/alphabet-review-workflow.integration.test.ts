@@ -137,7 +137,9 @@ describe(alphabetReviewWorkflow, () => {
         expect.objectContaining({
           alphabet: true,
           analytics: expect.objectContaining({ contentScope: "shared", distinctId: userId }),
-          lesson: expect.objectContaining({ summary: CYRILLIC.summary }),
+          lesson: expect.objectContaining({
+            summary: { ideas: [{ text: "Leia uma letra por vez." }], shape: "hub" },
+          }),
         }),
       );
     }, WAIT);
