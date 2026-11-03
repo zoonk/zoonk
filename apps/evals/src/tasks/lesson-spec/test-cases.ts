@@ -883,7 +883,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for a total beginner in accounting
-      - The hook is a scene that asks nothing, about the lesson's main example (who uses a business's accounting and what for (a bank deciding a loan, the owner deciding a price, the tax office)), and its \`visual\` shows that scene in a picture
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (who uses a business's accounting and what for (a bank deciding a loan, the owner deciding a price, the tax office)), and its \`visual\` shows that scene in a picture
       - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
       - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
 
@@ -939,7 +939,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for a total beginner in accounting
-      - The hook is a scene that asks nothing, about the lesson's main example (a business kept apart from its owner (the shop's cash and the owner's home bill)), and its \`visual\` shows that scene in a picture
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a business kept apart from its owner (the shop's cash and the owner's home bill)), and its \`visual\` shows that scene in a picture
       - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
       - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
 
@@ -995,7 +995,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for a total beginner in accounting
-      - The hook is a scene that asks nothing, about the lesson's main example (a shop's goods on the shelf, its cash and what customers still owe it), and its \`visual\` shows that scene in a picture
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a shop's goods on the shelf, its cash and what customers still owe it), and its \`visual\` shows that scene in a picture
       - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
       - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
 
@@ -1041,7 +1041,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for a total beginner in accounting
-      - The hook is a scene that asks nothing, about the lesson's main example (a business's records side by side: what it has, what it owes and what is left for its owner), and its \`visual\` shows that scene in a picture
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a business's records side by side: what it has, what it owes and what is left for its owner), and its \`visual\` shows that scene in a picture
       - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
       - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
 
