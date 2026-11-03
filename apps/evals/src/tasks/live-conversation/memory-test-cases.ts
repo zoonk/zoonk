@@ -69,6 +69,34 @@ const COWORKER_SCENARIO: Scenario = {
   title: "Help a coworker",
 };
 
+/** The scene writer's `pt-en-a2-weekend-plans` output, unedited, so this call tests a written scene. */
+const WRITTEN_FRIEND_SCENARIO: Scenario = {
+  character: { name: "Emma", place: "Lakeview Coffee", role: "amiga" },
+  characterBrief:
+    "You are Emma, the learner's friend. You know each other and are chatting about weekend plans. You are warm and easygoing. Speak at A2 level, using short sentences, common words, and simple polite requests. The learner wants to invite you for coffee and suggest a day, time, and place. You cannot meet Saturday at 10:00 a.m., but you can meet Sunday at 11:00 a.m. This is the small friendly twist: if the learner suggests Saturday at 10:00 a.m., say that time does not work and offer Sunday at 11:00 a.m. If they suggest another time, explain that Sunday at 11:00 a.m. is the time you can meet this weekend. If the learner suggests Lakeview Coffee, agree to that place. It is at 1234 W Belmont Ave, Chicago, IL 60657. You are happy to get coffee there, and there is nothing special to bring. Do not choose the activity, day, time, or place for the learner before they suggest them. After the learner accepts or declines your alternative, respond naturally and wrap up the conversation warmly.",
+  hints: [
+    "Would you like to get coffee with me?",
+    "How about Saturday at 10 a.m.?",
+    "Let's meet at Lakeview Coffee.",
+    "Sunday at 11 works for me.",
+  ],
+  objectives: [
+    { description: "Convide Emma para tomar um café com você.", label: "Invite Emma for coffee" },
+    {
+      description: "Sugira um dia, horário e lugar para vocês se encontrarem.",
+      label: "Suggest a time and place",
+    },
+    {
+      description: "Aceite ou recuse a sugestão de Emma para domingo às 11 da manhã.",
+      label: "Accept Emma's alternative",
+    },
+  ],
+  openingLine: "Hey, it's Emma! Do you have plans this weekend?",
+  situation:
+    "Você está conversando com sua amiga Emma sobre o fim de semana. Convide-a para tomar um café e combinem um dia, horário e lugar.",
+  title: "Convide uma amiga para um café",
+};
+
 /**
  * Calls whose character gets one thing the learner shared before (`learnerNote`, in the learner's
  * own language, as memory writes it). A friend, coworker or host mentions it; a stranger may only
@@ -209,6 +237,37 @@ export const MEMORY_TEST_CASES: TestCase<LiveConversationExpected, LiveConversat
           "Say yes, you can present, and ask what day and time the meeting is.",
           "Ask where the slides are.",
           "Say thanks, it's all fine, and wish him a good week.",
+        ],
+      },
+    },
+  },
+  {
+    expectations: `Emma, a friend, talks with Júlia (A2, Brazilian Portuguese speaker) in simple US English about weekend plans, in a scene the scene writer made. She knows Júlia, so she asks about her cat Pipoca once, early in the call, briefly and in simple English, then goes back to the plan. She never says how she knows, never quotes the note in Portuguese, and lets Júlia invite her and suggest a time and place, offering Sunday at 11 when Saturday at 10 doesn't work.`,
+    expected: {
+      objectivesMet: [
+        "Invite Emma for coffee",
+        "Suggest a time and place",
+        "Accept Emma's alternative",
+      ],
+    },
+    id: "pt-en-a2-memory-written-friend",
+    userInput: {
+      call: {
+        kind: "unit",
+        learnerLanguage: "pt",
+        learnerNote: "Adotou uma gata chamada Pipoca",
+        level: "A2",
+        scenario: WRITTEN_FRIEND_SCENARIO,
+        targetLanguage: "en",
+      },
+      learner: {
+        about:
+          "Júlia, 27, a Brazilian graphic designer who has lived in Chicago for a year. She adopted a cat named Pipoca.",
+        plan: [
+          "Say you have no plans yet, and invite Emma for coffee, with an A2 mistake (like 'You want drink coffee with me?').",
+          "Suggest Saturday at ten at Lakeview Coffee.",
+          "Say Sunday at eleven is fine.",
+          "Say great, and see you on Sunday.",
         ],
       },
     },
