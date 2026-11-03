@@ -51,36 +51,28 @@ function characterTurn(text: string): CallTurn {
   return { objectivesMet: [], speaker: "character", text };
 }
 
-/** What the character said before the next cue went out ends its turn before that cue. */
-function finishLastTurn(turns: CallTurn[], before: string): CallTurn[] {
-  const last = turns.at(-1);
-
-  if (!before) {
-    return turns;
-  }
-
-  if (last?.speaker !== "character") {
-    return [...turns, characterTurn(before)];
-  }
-
-  return [...turns.slice(0, -1), { ...last, text: `${last.text} ${before}` }];
+/** What the character said after falling quiet and before the next cue went out. */
+function addUnprompted(turns: CallTurn[], before: string): CallTurn[] {
+  return before ? [...turns, { ...characterTurn(before), unprompted: true }] : turns;
 }
 
 async function say({
   context: { cues, live },
   line,
+  note,
   progress,
 }: {
   context: CallContext;
   line: string;
+  note?: LiveCallCue;
   progress: CallProgress;
 }): Promise<CallProgress> {
-  const { before, reply } = await live.exchange(toTypedReplyCue(cues.typedReply, line));
+  const { before, reply } = await live.exchange(toTypedReplyCue(cues.typedReply, line), note);
 
   return {
     ...progress,
     turns: [
-      ...finishLastTurn(progress.turns, before),
+      ...addUnprompted(progress.turns, before),
       { objectivesMet: [], speaker: "learner", text: line },
       characterTurn(reply),
     ],
@@ -156,20 +148,20 @@ async function playStep({
 
   const labels = call.scenario.objectives.map((objective) => objective.label);
   const open = labels.filter((label) => !heard.met.includes(label));
-  const cue = checked ? getObjectivesProgressCue({ met: heard.met, open }) : null;
 
-  if (cue) {
-    live.send(cue);
-  }
+  const note =
+    heard.met.length > progress.met.length
+      ? getObjectivesProgressCue({ met: heard.met, open })
+      : undefined;
 
-  const answered = await say({ context, line: line.text, progress: heard });
+  const answered = await say({ context, line: line.text, note, progress: heard });
 
   if (!heard.allMet && step < learner.plan.length) {
     return playStep({ context, progress: answered, step: step + 1 });
   }
 
   const { before, reply } = await live.exchange(heard.allMet ? cues.goodbyeDone : cues.goodbye);
-  return { ...answered, turns: [...finishLastTurn(answered.turns, before), characterTurn(reply)] };
+  return { ...answered, turns: [...addUnprompted(answered.turns, before), characterTurn(reply)] };
 }
 
 /**

@@ -15,7 +15,7 @@ export const liveConversationTask: Task<
   LiveConversationExpected
 > = {
   description:
-    "Play a practice call's character on GPT-Live with the production instructions and cues, against a text model playing the learner through the app's typed replies, with objectives marked by the production check: code checks the opening, objectives, reply length and that a learner's note is never quoted, then a judge reads the call for role, level, objectives and how the character used the note",
+    "Play a practice call's character on GPT-Live with the production instructions and cues, against a text model playing the learner through the app's typed replies, with objectives marked by the production check: code checks the opening, objectives, reply length, that the character waits while the learner writes and that a learner's note is never quoted, then a judge reads the call for role, level, objectives and how the character used the note",
   generate: async ({ call, learner }) => {
     const { extraCalls, instructions, learnerPrompt, seconds, turns } = await runLiveCall({
       call,

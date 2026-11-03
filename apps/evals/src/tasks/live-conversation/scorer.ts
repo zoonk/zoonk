@@ -106,6 +106,15 @@ function checkTurnLengths({ input, turns }: { input: LiveConversationInput; turn
   ];
 }
 
+function checkUnprompted(turns: CallTurn[]) {
+  const unprompted = turns.filter((turn) => turn.unprompted);
+
+  return {
+    passed: unprompted.length === 0,
+    problem: `The character spoke while the learner was still writing: ${unprompted.map((turn) => `"${turn.text}"`).join(" ")}`,
+  };
+}
+
 function toQuotes(note: string): string[] {
   const words = toWords(note);
 
@@ -135,11 +144,12 @@ function formatTranscript(turns: readonly CallTurn[]): string {
   return turns
     .map((turn) => {
       const speaker = turn.speaker === "character" ? "CHARACTER" : "LEARNER";
+      const unprompted = turn.unprompted ? " (while the learner was still writing)" : "";
 
       const marks =
         turn.objectivesMet.length > 0 ? ` [marked: ${turn.objectivesMet.join(", ")}]` : "";
 
-      return `${speaker}: ${turn.text}${marks}`;
+      return `${speaker}${unprompted}: ${turn.text}${marks}`;
     })
     .join("\n");
 }
@@ -159,6 +169,7 @@ function checkCall({
     checkOpening({ input, turns }),
     ...checkObjectives({ expected, input, turns }),
     ...checkTurnLengths({ input, turns }),
+    checkUnprompted(turns),
     ...checkNoteQuotes({ input, turns }),
   ];
 
@@ -172,7 +183,8 @@ function checkCall({
 
 /**
  * Code checks the call's shape (the opening line, every objective the learner reached marked once
- * and nothing else, short replies at the learner's level, no quote of the learner's note), then a
+ * and nothing else, short replies at the learner's level, no speech into the learner's silence, no
+ * quote of the learner's note), then a
  * judge reads the transcript for role, level and objectives, and for how a note was used.
  */
 export const scoreLiveConversation: TaskScorer<LiveConversationExpected> = ({

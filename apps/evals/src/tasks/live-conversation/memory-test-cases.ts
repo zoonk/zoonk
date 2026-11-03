@@ -170,7 +170,7 @@ export const MEMORY_TEST_CASES: TestCase<LiveConversationExpected, LiveConversat
     },
   },
   {
-    expectations: `An immigration officer at Toronto Pearson talks with Marcos (A2, Brazilian Portuguese speaker) in simple US English. Marcos's football team has nothing to do with his arrival, so the officer leaves the note out entirely: no question about football or Flamengo. He asks why Marcos is in Canada, how long he'll stay and where he'll live.`,
+    expectations: `An immigration officer at Toronto Pearson talks with Marcos (A2, Brazilian Portuguese speaker) in simple US English. Marcos's football team has nothing to do with his arrival, so the officer leaves the note out entirely: no question about football or Flamengo. He asks why Marcos is in Canada, how long he'll stay and where he'll live, and asks nothing new as he wraps up, so he never thanks Marcos for an answer he didn't give.`,
     expected: { objectivesMet: ["Explain your visit", "Say where you'll live"] },
     id: "pt-en-a2-memory-officer",
     userInput: {
@@ -193,7 +193,7 @@ export const MEMORY_TEST_CASES: TestCase<LiveConversationExpected, LiveConversat
     },
   },
   {
-    expectations: `Carmen, a host mother in Mexico City, talks with Sam (A1, US English speaker) in very short, slow, simple Spanish (about 3 to 6 words a sentence). She has exchanged messages with Sam, so she asks about his sister Lucy once, in a few simple Spanish words, then goes back to his arrival. She never says how she knows and never uses English for it. She lets Sam say when he arrives and ask about dinner.`,
+    expectations: `Carmen, a host mother in Mexico City, talks with Sam (A1, US English speaker) in very short, slow, simple Spanish (about 3 to 6 words a sentence), in the present tense with no clause inside another (never "¿Quieres que te recoja?"). She has exchanged messages with Sam, so she asks about his sister Lucy once, in a few simple Spanish words, then goes back to his arrival. She never says how she knows and never uses English for it. She lets Sam say when he arrives and ask about dinner.`,
     expected: { objectivesMet: ["Decir cuándo llegas", "Preguntar por la cena"] },
     id: "en-es-a1-memory-host",
     userInput: {
