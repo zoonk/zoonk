@@ -735,4 +735,78 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       spec: NOVICE_LESSON_SPECS["pt-receitas-regulares-overview"],
     }),
   },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for total beginners
+      - Every wrong option is a mistake a beginner could really make. The plan names "a cor preferida dos clientes" as a tempting answer on the owner's check: no learner would pick that, so the screen offers plausible confusions instead (records that don't show money coming in and going out, such as a customer list)
+      - A wrong option's reason reads naturally: it may speak about the option itself in plain words ("Uma lista de clientes não mostra o dinheiro que entra e sai.") instead of telling "você" what they did
+      - "Autoridade fiscal", "obrigações tributárias" and "tributos" are each explained in everyday words (the government office that checks taxes, the taxes a business must pay) or replaced by everyday words; no screen uses a term it doesn't explain
+      - At most one term in bold per explanation
+      - Map labels never repeat the lesson's title; each names what its idea adds
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-usuarios-contabilidade-plausible-options",
+    userInput: toInput({
+      chapterTitle: "Informação contábil e responsabilidade",
+      courseTitle: "Contabilidade geral",
+      language: "pt",
+      level: "beginner",
+      spec: NOVICE_LESSON_SPECS["pt-usuarios-contabilidade-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for total beginners
+      - "Retirar lucros" and "participação" are explained in everyday words where they first appear (taking out part of what the business earned; the owner's share in the business), never used as if known
+      - The hard cases each get their own clear screen: a personal bill paid by the business with a promise to pay back is a value to receive, a profit withdrawal is not, a personal debt doesn't become the business's
+      - At most one term in bold per explanation
+      - Map labels never repeat the lesson's title ("Entidade contábil"); each names what its idea adds, and every sentence names its subject
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-entidade-contabil-terms-explained",
+    userInput: toInput({
+      chapterTitle: "Informação contábil e responsabilidade",
+      courseTitle: "Contabilidade geral",
+      language: "pt",
+      level: "beginner",
+      spec: NOVICE_LESSON_SPECS["pt-entidade-contabil-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for total beginners
+      - Ativo, passivo and patrimônio líquido were taught in the chapter's earlier lessons: the first explanation recalls them in a few plain words and its table, never three definitions in bold on one screen; the new term (equação patrimonial) is the only one in bold, on its own screen
+      - Every number in the tables, the formula to explore and the checks matches the plan and adds up
+      - Map labels never repeat the lesson's title; each names what its idea adds
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-equacao-patrimonial-one-new-term",
+    userInput: toInput({
+      chapterLessons: [
+        {
+          canDo: "Identificar bens e direitos controlados por uma entidade",
+          order: "before",
+          title: "Bens, direitos e ativos",
+        },
+        {
+          canDo: "Identificar obrigações presentes de uma entidade",
+          order: "before",
+          title: "Obrigações e passivos",
+        },
+        {
+          canDo: "Calcular a participação residual dos proprietários",
+          order: "before",
+          title: "Patrimônio líquido",
+        },
+      ],
+      chapterTitle: "Patrimônio e equação patrimonial",
+      courseTitle: "Contabilidade geral",
+      language: "pt",
+      level: "beginner",
+      spec: NOVICE_LESSON_SPECS["pt-equacao-patrimonial-beginner"],
+    }),
+  },
 ];

@@ -55,7 +55,7 @@ For each screen:
 
 - `kind`: `hook`, `explanation`, `workedExample`, `check`, `activity` or `application`.
 - `skills`: the numbers of the skills the screen is about, where 1 is the first skill you listed. The hook may list none; every other screen lists at least one.
-- `brief`: one or two sentences for the writer saying what the screen shows or asks, with the concrete example, numbers or case to use. For checks, say what the learner does and which tempting wrong answer to include.{{#novice}} At this level, options are short answers and the why goes in their reasons, unless choosing the right explanation is what the check practices: then each option is a short explanation.{{/novice}}
+- `brief`: one or two sentences for the writer saying what the screen shows or asks, with the concrete example, numbers or case to use. For checks, say what the learner does and which tempting wrong answer to include: a mistake learners at this level really make, never one nobody would pick.{{#novice}} At this level, options are short answers and the why goes in their reasons, unless choosing the right explanation is what the check practices: then each option is a short explanation.{{/novice}}
 - `visual`: the picture the screen shows, in one line: what it shows and every part, place, label or detail the screen's words name or its answer depends on ("the brain from the side, with the frontal, parietal, temporal and occipital lobes labeled"). Null when the screen needs no picture, and when it shows a table, a chart, a timeline or a template to explore instead (see "Visuals").
 - `activityTemplate`: the template id on activity screens, and on an explanation screen that shows a template to explore (see "Visuals"); null on every other screen.
 
