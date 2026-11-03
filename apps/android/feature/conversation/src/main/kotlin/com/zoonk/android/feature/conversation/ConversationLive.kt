@@ -371,12 +371,19 @@ private fun CallTurn(
 ) {
     val state =
         when {
-            call.phase != LiveCallPhase.Live -> if (call.reconnecting) TurnState.Reconnecting else TurnState.Calling
+            // The intro says the character answers first: until it does, the call is still ringing.
+            call.phase != LiveCallPhase.Live || !call.answered -> if (call.reconnecting) TurnState.Reconnecting else TurnState.Calling
+
             call.sayingGoodbye && !call.learnerSpeaking -> TurnState.Goodbye
+
             call.characterTalking -> TurnState.Character
+
             call.muted -> TurnState.Muted
+
             call.micBlocked -> TurnState.Typed
+
             call.learnerSpeaking -> TurnState.Listening
+
             else -> TurnState.Yours
         }
     val wrapUp = wrapUpLine(call, name)

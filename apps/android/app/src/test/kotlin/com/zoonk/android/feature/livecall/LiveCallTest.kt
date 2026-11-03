@@ -147,6 +147,18 @@ class LiveCallTest {
         }
 
     @Test
+    fun theCallIsAnsweredOnlyOnceTheCharacterSpeaks() =
+        runTest(dispatcher) {
+            val call = live()
+            wait(0.7.seconds)
+            assertFalse("Connected, but the character hasn't spoken", call.state.value.answered)
+
+            transport.onEvent(characterSays("Hola", 700.0, 1000.0))
+            runCurrent()
+            assertTrue(call.state.value.answered)
+        }
+
+    @Test
     fun aDeniedMicrophoneRunsTheCallOnSilenceAndCantMute() =
         runTest(dispatcher) {
             val call = call()

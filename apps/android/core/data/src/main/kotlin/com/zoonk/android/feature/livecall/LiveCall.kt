@@ -54,6 +54,8 @@ data class LiveCallState(
     val learnerSpeaking: Boolean = false,
     /** Whether the learner has said anything out loud yet. */
     val learnerSpoke: Boolean = false,
+    /** The character has said its first words: the learner was told it answers first, so until then the call is still ringing. */
+    val answered: Boolean = false,
     val elapsedSeconds: Long = 0,
     /** How long the call talks from when it went live; its ending starts then. */
     val talkSeconds: Long = 0,
@@ -320,6 +322,7 @@ class LiveCall(
                 } else {
                     ending?.characterSaid(now, event.startMs)
                     gaps.characterSaid(now)
+                    mutableState.update { it.copy(answered = true) }
                 }
                 heardForCheck(event.speaker, event.startMs)
                 advance()

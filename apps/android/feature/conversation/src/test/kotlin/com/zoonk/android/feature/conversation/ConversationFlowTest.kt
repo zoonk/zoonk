@@ -51,7 +51,7 @@ class ConversationFlowTest {
 
         goLive()
         assertTrue(transport.microphone)
-        compose.onNodeWithText("Your turn").assertExists()
+        compose.onNodeWithText("Calling Lucía…").assertExists()
 
         transport.onEvent(characterSays("¡Hola! ¿Qué le pongo?"))
         transport.onEvent(learnerSays("Un café, por favor.", 1000.0, 3000.0))
