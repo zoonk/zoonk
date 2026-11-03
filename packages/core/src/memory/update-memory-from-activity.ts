@@ -5,6 +5,7 @@ import { findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
+import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { toProvenanceData } from "../library/_utils/library-rows";
 import { isMemoryEnabled } from "./_utils/memory-access";
@@ -132,7 +133,12 @@ export async function proposeMemoryUpdate(
   }
 
   const now = new Date();
-  const zone = getAnswerTimeZone({ goal: null, timeZone: timeZone ?? extraction.timeZone });
+
+  const zone = getAnswerTimeZone({
+    goal: null,
+    timeZone: timeZone ?? extraction.timeZone ?? (await getLearnerTimeZone({ userId })),
+  });
+
   const today = getDateInTimeZone({ date: now, timeZone: zone });
 
   const { facts, provenance } = await proposeFacts({
