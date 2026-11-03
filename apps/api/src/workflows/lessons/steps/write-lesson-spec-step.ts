@@ -2,6 +2,7 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
 import {
   type CourseContentWrite,
   collectCourseContentTags,
@@ -22,7 +23,7 @@ import { saveLessonSpecs } from "@zoonk/core/library/curriculum/save-lesson-spec
 import { getLessonSpecModel } from "@zoonk/core/library/curriculum/scope";
 import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
 import { loadLessonReuse } from "@zoonk/core/library/lessons/reuse";
-import { type CourseLevel, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { isRunActive } from "../../_shared/run-activity";
 import { type LessonStreamStep } from "./lesson-progress-step";
@@ -42,7 +43,7 @@ type PlannedLessonSpecs = {
   analytics: SpecAnalytics;
   homeChapterId: LessonSpecInputs["homeChapterId"];
   lessonId: string;
-  level: CourseLevel;
+  novice: boolean;
   pictures: PlannedPicture[];
   provenance: Parameters<typeof saveLessonSpecs>[0]["provenance"];
   scope: LessonSpecInputs["scope"];
@@ -105,7 +106,7 @@ async function planLesson({
     analytics: context,
     homeChapterId: inputs.homeChapterId,
     lessonId,
-    level: inputs.prompt.level,
+    novice: readsNoviceRules(inputs.prompt),
     pictures: listPlannedPictures(data.lessons),
     provenance,
     scope: inputs.scope,
@@ -149,16 +150,16 @@ export async function planLessonSpecStep(
 
 export async function judgeLessonPictureStep({
   analytics,
-  level,
+  novice,
   picture,
 }: {
   analytics: SpecAnalytics;
-  level: CourseLevel;
+  novice: boolean;
   picture: PlannedPicture;
 }): Promise<JudgedPicture> {
   "use step";
 
-  return judgePlannedPicture({ analytics, level, picture });
+  return judgePlannedPicture({ analytics, novice, picture });
 }
 
 async function saveLessonPlan({

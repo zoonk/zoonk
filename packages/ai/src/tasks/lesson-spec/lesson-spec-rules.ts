@@ -58,6 +58,7 @@ export const LESSON_SIZE = {
   maxUnsplittableMinutes: 6,
   minMinutes: 2,
   minScreens: 5,
+  noviceTeachingBeforeFirstCheck: 2,
 } as const;
 
 const SECONDS_PER_MINUTE = 60;
@@ -84,6 +85,7 @@ type LessonSpecIssueCode =
   | "activityTemplate"
   | "application"
   | "checkGap"
+  | "earlyCheck"
   | "hook"
   | "screenCount"
   | "skillCount"
@@ -166,7 +168,14 @@ function getSizeIssues({ level, spec }: { level: CourseLevel; spec: LessonSpec }
   ].filter((issue) => issue !== false);
 }
 
-function getShapeIssues(spec: LessonSpec) {
+function countTeachingBeforePractice(screens: readonly LessonScreen[]): number {
+  const firstPractice = screens.findIndex((screen) => isPracticeScreen(screen.kind));
+  const before = firstPractice === -1 ? screens : screens.slice(0, firstPractice);
+
+  return before.filter((screen) => isTeachingScreen(screen.kind)).length;
+}
+
+function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec }) {
   const { screens } = spec;
   const hooks = screens.filter((screen) => screen.kind === "hook").length;
   const applications = screens.filter((screen) => screen.kind === "application").length;
@@ -185,6 +194,11 @@ function getShapeIssues(spec: LessonSpec) {
       code: "checkGap" as const,
       detail: `Has ${longestRun} teaching screens in a row; a check comes every 2 or 3 screens.`,
     },
+    novice &&
+      countTeachingBeforePractice(screens) < LESSON_SIZE.noviceTeachingBeforeFirstCheck && {
+        code: "earlyCheck" as const,
+        detail: `The first check comes before ${LESSON_SIZE.noviceTeachingBeforeFirstCheck} explanations or worked examples.`,
+      },
     getSupportModeFromScreens(screens) !== spec.supportMode && {
       code: "supportMode" as const,
       detail: `Says ${spec.supportMode} but the screen after the hook doesn't match.`,
@@ -248,13 +262,19 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
   ];
 }
 
-/** An empty list means the spec passes. */
+/** An empty list means the spec passes. `novice` is `readsNoviceRules` for the lesson. */
 export function getLessonSpecIssues({
   level,
+  novice = false,
   spec,
 }: {
   level: CourseLevel;
+  novice?: boolean;
   spec: LessonSpec;
 }): LessonSpecIssue[] {
-  return [...getSizeIssues({ level, spec }), ...getShapeIssues(spec), ...getSkillIssues(spec)];
+  return [
+    ...getSizeIssues({ level, spec }),
+    ...getShapeIssues({ novice, spec }),
+    ...getSkillIssues(spec),
+  ];
 }

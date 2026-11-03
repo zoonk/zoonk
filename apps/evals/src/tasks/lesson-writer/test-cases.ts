@@ -726,7 +726,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-receitas-reasons-out-of-options",
+    id: "pt-receitas-short-options",
     userInput: toInput({
       chapterTitle: "Entradas e saídas de dinheiro",
       courseTitle: "Educação Financeira",

@@ -56,7 +56,7 @@ function checkLabelCount({ expected, scene }: { expected: ImageSceneExpected; sc
 function checkLayout({ layout, scene }: { layout: ImageScene["layout"]; scene: ImageScene }) {
   return scene.layout === layout
     ? null
-    : `This screen needs one scene (${layout}), but the scene's layout is ${scene.layout}.`;
+    : `This screen needs the ${layout} layout, but the scene's layout is ${scene.layout}.`;
 }
 
 function checkLabelNumbers({

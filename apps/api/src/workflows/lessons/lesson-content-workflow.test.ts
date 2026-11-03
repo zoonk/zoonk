@@ -283,12 +283,12 @@ describe(lessonContentWorkflow, () => {
     );
 
     expect(vi.mocked(judgePicture).mock.calls[1]?.[0]).toMatchObject({
-      level: "overview",
+      novice: true,
       previousPicture: planned[0]?.visual,
     });
   });
 
-  it("saves no spec when the picture judge can't answer, so its step retries", async () => {
+  it("fails the lesson without saving its spec when the picture judge can't answer", async () => {
     const lesson = await outlinedLesson();
     vi.mocked(judgePicture).mockRejectedValue(new Error("Gateway unavailable"));
 
@@ -316,7 +316,7 @@ describe(lessonContentWorkflow, () => {
           analytics: { contentScope: "shared", traceId: "test-run-id" },
           homeChapterId: lesson.homeChapterId,
           lessonId: lesson.id,
-          level: "overview",
+          novice: true,
           pictures: [],
           provenance: { generatedAt: "", model: "", promptVersion: "", runId: "" },
           scope: { generalGoal: null, language: "en", ownerId: null, targetLanguage: null },

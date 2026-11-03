@@ -1,6 +1,9 @@
 import { type ImageSceneInput } from "@zoonk/ai/tasks/images/scene";
 
-export type ImageSceneExpected = { labels: "any" | "none" | "some"; layout?: "single" };
+export type ImageSceneExpected = {
+  labels: "any" | "none" | "some";
+  layout?: "comparison" | "single";
+};
 
 type ImageSceneCase = {
   id: string;
@@ -205,6 +208,22 @@ export const TEST_CASES: ImageSceneCase[] = [
         "Duas cenas lado a lado: na primeira, Igor recebe dinheiro no local de trabalho; na segunda, Igor entrega sua bicicleta a um comprador. Estilo simples e claro, sem texto.",
       screenText:
         "Igor recebe um pagamento combinado todo mês e vendeu sua bicicleta uma única vez. Qual entrada ele pode esperar novamente no próximo mês?",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "The question asks which of two scenes fits a caption, so the picture is one comparison of the two scenes, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box. No text but the labels 1 and 2. Nayara is an adult.",
+    expected: { labels: "some", layout: "comparison" },
+    id: "two-scenes-to-compare-pt",
+    userInput: {
+      alt: "Em 1, Nayara coloca um livro numa caixa vermelha; em 2, ela tira um livro da mesma caixa.",
+      context: "Língua Portuguesa › Interpretação de imagens › Imagens e legendas",
+      language: "pt",
+      request:
+        "Duas cenas lado a lado, rotuladas 1 e 2: em 1 Nayara coloca um livro numa caixa vermelha; em 2 ela tira um livro da mesma caixa.",
+      screenText:
+        "Qual cena, 1 ou 2, combina com a legenda: Nayara coloca um livro na caixa vermelha?",
       textAllowed: true,
     },
   },

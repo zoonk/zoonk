@@ -22,7 +22,7 @@ const TRAY = "A shallow tray of water in the sun.";
 
 const input = {
   lesson: "The chambers of the heart",
-  level: "beginner" as const,
+  novice: true,
   picture: HEART,
   previousPicture: TRAY,
   screen: { brief: "The four chambers and where blood enters.", kind: "explanation" },
@@ -33,7 +33,7 @@ describe(judgePicture, () => {
     vi.clearAllMocks();
   });
 
-  it("keeps a picture above the threshold and drops one below it, asking with the level", async () => {
+  it("keeps a picture above the threshold and drops one below it, asking for new learners", async () => {
     vi.mocked(evaluateQuestions)
       .mockResolvedValueOnce(verdict(0.9))
       .mockResolvedValueOnce(verdict(0.2));
@@ -42,8 +42,8 @@ describe(judgePicture, () => {
     await expect(judgePicture(input)).resolves.toBe(false);
 
     expect(vi.mocked(evaluateQuestions).mock.calls[0]?.[0].input).toStrictEqual({
+      LEARNERS: "new",
       LESSON: "The chambers of the heart",
-      LEVEL: "beginner",
       PICTURE: HEART,
       PREVIOUS_PICTURE: TRAY,
       SCREEN: "explanation: The four chambers and where blood enters.",

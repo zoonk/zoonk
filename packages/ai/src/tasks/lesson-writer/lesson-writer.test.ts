@@ -165,7 +165,6 @@ describe(writeLessonDraft, () => {
     expect(regular.userPrompt).not.toContain("TODAY");
     expect(setup.userPrompt).toMatch(/\nTODAY: \d{4}-\d{2}-\d{2}\n/u);
 
-    // A beginner's lesson opens with a scene, unless its learners prepare for an exam.
     expect(regular.userPrompt).toContain("1. hook, written as: hookGuess or hookText\n");
     expect(beginner.userPrompt).toContain("1. hook, written as: hookText\n");
     expect(beginnerExam.userPrompt).toContain("1. hook, written as: hookGuess or hookText\n");

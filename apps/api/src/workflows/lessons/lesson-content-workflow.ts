@@ -107,10 +107,10 @@ async function planLessonSpec({
     return planned.status;
   }
 
-  const { analytics, level, pictures } = planned;
+  const { analytics, novice, pictures } = planned;
 
   const judged = await Promise.all(
-    pictures.map((picture) => judgeLessonPictureStep({ analytics, level, picture })),
+    pictures.map((picture) => judgeLessonPictureStep({ analytics, novice, picture })),
   );
 
   return deliverCourseContent(saveLessonSpecStep({ judged, planned }));

@@ -53,7 +53,6 @@ function formatSkill(skill: LessonSpecSkill, index: number): string {
   ].join("\n");
 }
 
-/** A beginner's lesson opens with a scene to read, never a guess to answer. */
 function getAllowedKinds({
   kind,
   novice,

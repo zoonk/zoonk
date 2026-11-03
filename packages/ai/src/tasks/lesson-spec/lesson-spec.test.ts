@@ -148,9 +148,9 @@ describe(generateLessonSpec, () => {
       kinds: [
         "hook",
         "explanation",
+        "workedExample",
         "check",
         "explanation",
-        "workedExample",
         "check",
         "application",
       ],

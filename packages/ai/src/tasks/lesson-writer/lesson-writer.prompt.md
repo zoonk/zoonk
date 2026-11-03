@@ -35,7 +35,7 @@ With `EXAMS`, the level says how deep into the subject the lesson goes, and its 
 
 # Screens
 
-## Hook (`hookGuess` or `hookText`)
+## Hook ({{#experienced}}`hookGuess` or {{/experienced}}`hookText`)
 
 The first screen opens with the idea. No introduction, no "In this lesson…", no list of goals, no recap of another lesson, no greeting.
 
@@ -49,7 +49,7 @@ At this level the hook is always a `hookText` and asks nothing the learner answe
 
 ## Explanation (`explanation`)
 
-One idea with one concrete example. `title`: the idea in 2 to 6 words. `text`: {{#experienced}}at most 3 or 4 short sentences, around 350 characters, and never over 600{{/experienced}}{{#novice}}two or three short sentences beside the screen's visual, around 250 characters and never over 400, with at most one term in bold, the one this screen explains; a term an earlier screen or lesson explained is recalled in a few plain words, never in bold or with its full definition again{{/novice}}. Go from something concrete, to the name of the idea, to symbols only when the level needs them, in the order the briefs give (an analogy planned before the notation comes first). Explain how the idea works, not just its name. When the support mode is `questionFirst`, build on the check the learner just answered: start from its question and its right answer, never from how they did. Every learner reads the same screen, including those who picked a wrong option, so it never praises or corrects their pick ("You started with the right question", "You got it").
+One idea with one concrete example. `title`: the idea in 2 to 6 words. `text`: {{#experienced}}at most 3 or 4 short sentences, around 350 characters, and never over 600{{/experienced}}{{#novice}}two or three short sentences, beside the screen's visual when it has one, around 250 characters and never over 400, with at most one term in bold, the one this screen explains; a term an earlier screen or lesson explained is recalled in a few plain words, never in bold or with its full definition again{{/novice}}. Go from something concrete, to the name of the idea, to symbols only when the level needs them, in the order the briefs give (an analogy planned before the notation comes first). Explain how the idea works, not just its name. When the support mode is `questionFirst`, build on the check the learner just answered: start from its question and its right answer, never from how they did. Every learner reads the same screen, including those who picked a wrong option, so it never praises or corrects their pick ("You started with the right question", "You got it").
 
 `explore`: when the plan gives the screen an `Explore template`, the app shows that template under the text with nothing asked, for the learner to look at and play with (a slider and its curve, a process in order, a map, a timeline, a program to run). `template` is that id, and `content` is the template's JSON from `ACTIVITY_TEMPLATES` with only `fields` and `data` (no `prompt`, `check` or `image`), as a string. The text says what to look at or move, and every number, label, step and date in it matches the fields exactly. Null on every other explanation.
 

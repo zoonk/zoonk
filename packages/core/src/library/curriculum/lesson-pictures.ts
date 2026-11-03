@@ -2,7 +2,6 @@ import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
-import { type CourseLevel } from "@zoonk/db";
 
 export type PlannedPicture = {
   lesson: number;
@@ -40,17 +39,17 @@ export function listPlannedPictures(specs: readonly LessonSpec[]): PlannedPictur
 /** Internal workflow bridge: one model call, and it throws when the judge can't answer. */
 export async function judgePlannedPicture({
   analytics,
-  level,
+  novice,
   picture,
 }: {
   analytics?: AiGenerationContext;
-  level: CourseLevel;
+  novice: boolean;
   picture: PlannedPicture;
 }): Promise<JudgedPicture> {
   const teaches = await judgePicture({
     analytics,
     lesson: picture.lessonTitle,
-    level,
+    novice,
     picture: picture.picture,
     previousPicture: picture.previousPicture,
     screen: { brief: picture.brief, kind: picture.kind },
