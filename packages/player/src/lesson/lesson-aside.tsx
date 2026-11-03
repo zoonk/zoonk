@@ -247,7 +247,7 @@ function CompletionAside() {
   }
 
   return (
-    <TaskAside label={t("Lesson map")} title={t("Lesson map")}>
+    <TaskAside label={t("Lesson map")} scrollsByKeyboard title={t("Lesson map")}>
       <LessonMap map={lesson.summary} title={lesson.title} />
     </TaskAside>
   );
