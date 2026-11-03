@@ -180,13 +180,10 @@ export function JourneyClient({
 
   const [claimed, setClaimed] = useState<CertificateFacts | null>(null);
 
+  /** The learner asked for it, so it shows even when another device already claimed it. */
   const claimCertificate = async () => {
     const certificate = await claimCourseCertificateAction(goalId);
-
-    if (certificate?.shownAt === null) {
-      setClaimed(certificate);
-    }
-
+    setClaimed(certificate);
     return certificate !== null;
   };
 
@@ -238,7 +235,15 @@ export function JourneyClient({
         tutor={{ buddy, href: "/buddy" }}
       />
 
-      {claimed && <SessionCertificates certificates={[claimed]} onClose={() => setClaimed(null)} />}
+      {claimed && (
+        <SessionCertificates
+          certificates={[claimed]}
+          onClose={() => {
+            setClaimed(null);
+            router.refresh();
+          }}
+        />
+      )}
     </TopicOutlineProvider>
   );
 }

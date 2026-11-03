@@ -1,10 +1,10 @@
 "use client";
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
-import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { STEP_TITLE_SLOT } from "../_components/step-card";
 import { focusStepTitle } from "../_components/steps";
-import { CeremonyClosingContext } from "../ceremonies/ceremony-closing";
+import { CeremonyClosingContext, useClosedOnReturn } from "../ceremonies/ceremony-closing";
 import { type CeremonyMilestone } from "../ceremonies/use-ceremony-copy";
 
 /** What a result shows full screen before itself: its new certificates, then its one milestone. */
@@ -46,28 +46,6 @@ function AfterCeremony({ children, closed }: { children: React.ReactNode; closed
       {children}
     </div>
   );
-}
-
-/** Hidden this long means the router kept the page for Back; development's double effect run is instant. */
-const SHOWN_AGAIN_MS = 100;
-
-/**
- * The router keeps a page for Back and Forward, but an open dialog stays hidden when it shows the
- * page again (`useHideElement`), so a ceremony left open would hide the result for good.
- */
-function useClosedOnReturn(onReturn: () => void) {
-  const hiddenAt = useRef<number | null>(null);
-  const close = useEffectEvent(onReturn);
-
-  useLayoutEffect(() => {
-    if (hiddenAt.current !== null && performance.now() - hiddenAt.current > SHOWN_AGAIN_MS) {
-      close();
-    }
-
-    return () => {
-      hiddenAt.current = performance.now();
-    };
-  }, []);
 }
 
 export function MomentAfterCeremony({

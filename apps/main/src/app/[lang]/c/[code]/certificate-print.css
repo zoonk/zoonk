@@ -2,12 +2,13 @@
   display: none;
 }
 
-@media print {
-  @page {
-    size: landscape;
-    margin: 0;
-  }
+/* A named page, so other pages keep their own print layout after the router keeps this stylesheet. */
+@page certificate {
+  size: landscape;
+  margin: 0;
+}
 
+@media print {
   body:has(> [data-slot="certificate-print"]) {
     background: white;
   }
@@ -17,6 +18,7 @@
   }
 
   body > [data-slot="certificate-print"] {
+    page: certificate;
     display: block;
     width: 100vw;
     height: 100vh;

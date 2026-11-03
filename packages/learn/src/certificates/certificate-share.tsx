@@ -108,11 +108,21 @@ export function useShareCertificate({
   openDialog: () => void;
 }) {
   const shareText = useShareText();
-  const file = useRef<Promise<File | null> | null>(null);
+  const file = useRef<{ picture: Promise<File | null>; url: string } | null>(null);
 
+  /** A renamed certificate has a new picture, and a failed load is tried again. */
   const prepare = () => {
-    if (prefersSystemShare()) {
-      file.current ??= fetchShareFile(links.imageUrls.post);
+    const url = links.imageUrls.post;
+
+    if (prefersSystemShare() && file.current?.url !== url) {
+      const picture = fetchShareFile(url);
+      file.current = { picture, url };
+
+      void picture.then((loaded) => {
+        if (!loaded && file.current?.picture === picture) {
+          file.current = null;
+        }
+      });
     }
   };
 
@@ -123,7 +133,7 @@ export function useShareCertificate({
     }
 
     prepare();
-    const picture = await file.current;
+    const picture = await file.current?.picture;
     const text = shareText(facts);
     const withFile = picture && navigator.canShare?.({ files: [picture] });
 
