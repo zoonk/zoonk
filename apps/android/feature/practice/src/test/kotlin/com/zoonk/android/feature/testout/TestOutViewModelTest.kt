@@ -88,6 +88,7 @@ class TestOutViewModelTest {
         SubmitChapterTestOut200Response.ChapterTestOutResultValue(
             ChapterTestOutResult(
                 ceremony = null,
+                certificates = emptyList(),
                 reached = MistakePatternPracticeResultReached(energy = null, level = null),
                 changeId = UUID.fromString(CHANGE),
                 correct = 3,

@@ -129,6 +129,10 @@ object AppLink {
                         AppRoute.CompletedLessons
                     }
 
+                    "certificates" -> {
+                        AppRoute.Certificates
+                    }
+
                     "speaking" -> {
                         AppRoute.Speaking(task = query["task"])
                     }
@@ -259,6 +263,8 @@ object AppLink {
                     "explain" -> AppRoute.Explain(goalId = second)
 
                     "plan-link" -> AppRoute.PlanLink(planId = second)
+
+                    "c" -> AppRoute.Certificate(code = second)
 
                     else -> null
                 }

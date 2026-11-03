@@ -98,6 +98,7 @@ class TestOutScreenshots {
                 ) = SubmitChapterTestOut200Response.ChapterTestOutResultValue(
                     ChapterTestOutResult(
                         ceremony = null,
+                        certificates = emptyList(),
                         reached = MistakePatternPracticeResultReached(energy = null, level = null),
                         changeId = UUID.randomUUID().takeIf { passed },
                         correct = if (passed) 3 else 1,
@@ -179,7 +180,7 @@ class TestOutScreenshots {
         rule.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-                ui.outcome?.let { TestOutResult(it, ui, viewModel, AppContainer.preview(rule.activity)) {} }
+                ui.outcome?.let { TestOutResult(it, ui, viewModel, AppContainer.preview(rule.activity), onClose = {}) }
             }
         }
         rule.mainClock.advanceTimeBy(10_000)

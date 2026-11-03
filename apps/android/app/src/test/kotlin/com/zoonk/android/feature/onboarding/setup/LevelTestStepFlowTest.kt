@@ -27,6 +27,7 @@ import com.zoonk.android.feature.audio.AudioOutput
 import com.zoonk.android.feature.audio.PlaybackEnd
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
+import com.zoonk.android.feature.onboarding.DONE_NEXT
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -297,6 +298,55 @@ class LevelTestStepFlowTest {
             listOf(Triple("listening-1", null, true)),
             api.levelTestAnswers.map { Triple(it.questionId, it.answerIndex, it.skipped) },
         )
+    }
+
+    @Test
+    fun theLastAnswerFinishesTheTestSoBuildMyPlanOnlyMovesOn() {
+        show()
+        tap("Start")
+        tap("Every Sunday")
+        tap("Confirm")
+
+        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        assertEquals(1, api.finishedLevelTests)
+        assertEquals(0, done)
+
+        tap("Build my plan")
+
+        assertEquals(1, done)
+        assertEquals(1, api.finishedLevelTests)
+    }
+
+    @Test
+    fun aTestReopenedAfterItEndedFinishesOnlyFromBuildMyPlan() {
+        api.levelTest = levelTestOf(answered = 1, next = DONE_NEXT)
+        show()
+
+        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        assertEquals(0, api.finishedLevelTests)
+
+        tap("Build my plan")
+
+        assertEquals(1, api.finishedLevelTests)
+        assertEquals(1, done)
+    }
+
+    @Test
+    fun aQuestionThatRereadsAsEndedWaitsForBuildMyPlan() {
+        api.levelTest = levelTestOf(answered = 1)
+        show()
+        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
+
+        api.levelTest = levelTestOf(answered = 2, next = DONE_NEXT)
+        rule.runOnIdle { store.levelTests[GOAL_ID].invalidate() }
+
+        rule.onNodeWithText("Your level today").assertIsDisplayed()
+        assertEquals(0, api.finishedLevelTests)
+
+        tap("Build my plan")
+
+        assertEquals(1, api.finishedLevelTests)
+        assertEquals(1, done)
     }
 
     @Test

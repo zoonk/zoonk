@@ -313,7 +313,7 @@ internal fun FocusTestResult(
         }
     }
 
-    MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }) { buddy ->
+    MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }, outcome.certificates, { navigator.open(AppRoute.Login) }) { buddy ->
         TaskScaffold(
             onClose = navigator::closeTask,
             title = { StepDots(count, shown) },

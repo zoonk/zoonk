@@ -53,6 +53,7 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.SpeechState
@@ -61,6 +62,7 @@ import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.VoiceAnswerModel
 import com.zoonk.android.feature.audio.VoiceAnswerRecorder
+import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
@@ -78,9 +80,11 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formattingLocale
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.CertificateFacts
 import com.zoonk.api.models.ChoiceAnswer
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
+import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.TrueFalseLabels
 import java.util.Locale
@@ -88,6 +92,9 @@ import androidx.compose.ui.text.intl.LocaleList as TextLocales
 
 /** The app's speech player for listening questions; none in previews and tests, where the message shows as text. */
 val LocalSetupSpeech = staticCompositionLocalOf<SpeechPlayer?> { null }
+
+/** The placement certificate's row on the last screen, which reads the learner's certificates; none in previews and tests. */
+val LocalPlacementRow = staticCompositionLocalOf<(@Composable (CertificateFacts) -> Unit)?> { null }
 
 /** [language] is the learner's own. There's no way back during its questions; stopping shows the levels so far. */
 @Composable
@@ -161,11 +168,14 @@ fun ColumnScope.LanguageLevelTestStep(
         }
 
         is LevelTestPhase.Speaking -> {
-            LevelTestSpeaking(phase.sentence, targetLanguage, goalId, store, navigator, onSkip = vm::stop)
+            LevelTestSpeaking(phase.sentence, targetLanguage, goalId, grade = vm::speak, navigator, onSkip = vm::stop)
         }
 
         is LevelTestPhase.Done -> {
-            LevelTestDone(phase.levels, pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
+            LevelTestDone(phase.levels, pending = vm.isSaving, failed = vm.finishFailed, onContinue = { vm.buildPlan(onDone) }) {
+                val row = LocalPlacementRow.current
+                vm.placement?.let { placement -> row?.invoke(placement) }
+            }
         }
     }
 }
@@ -405,7 +415,7 @@ private fun ColumnScope.LevelTestSpeaking(
     sentence: LevelTestSentence,
     targetLanguage: String,
     goalId: String,
-    store: OnboardingStore,
+    grade: suspend (VoiceRecording) -> GradeOutcome<LanguageLevelTestSpokenResult>,
     navigator: AppNavigator,
     onSkip: () -> Unit,
 ) {
@@ -428,7 +438,7 @@ private fun ColumnScope.LevelTestSpeaking(
         answer = {},
     ) {
         VoiceAnswerRecorder(
-            grade = { store.speakLevelTest(goalId, it) },
+            grade = grade,
             onGraded = {},
             navigator = navigator,
             key = recorderKey,
@@ -445,6 +455,7 @@ private fun ColumnScope.LevelTestDone(
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
+    placement: @Composable () -> Unit,
 ) {
     Icon(
         painterResource(R.drawable.ic_check_circle),
@@ -456,6 +467,7 @@ private fun ColumnScope.LevelTestDone(
         stringResource(R.string.onboarding_language_test_done_description),
     )
     if (levels.isNotEmpty()) LevelRows(levels)
+    placement()
     OnboardingActions {
         FinishFailed(failed)
         Button(onClick = onContinue, enabled = !pending, modifier = Modifier.fillMaxWidth()) {

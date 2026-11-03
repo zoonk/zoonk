@@ -1,6 +1,7 @@
 package com.zoonk.api
 
 import com.zoonk.api.apis.AccountApi
+import com.zoonk.api.apis.CertificatesApi
 import com.zoonk.api.apis.ChaptersApi
 import com.zoonk.api.apis.ContentGenerationApi
 import com.zoonk.api.apis.CoursesApi
@@ -59,6 +60,7 @@ class ApiServices(
             .build()
 
     val account: AccountApi by lazy { retrofit.create() }
+    val certificates: CertificatesApi by lazy { retrofit.create() }
     val chapters: ChaptersApi by lazy { retrofit.create() }
     val contentGeneration: ContentGenerationApi by lazy { retrofit.create() }
     val courses: CoursesApi by lazy { retrofit.create() }

@@ -86,6 +86,7 @@ fun GoalSetupScreen(
     CompositionLocalProvider(
         LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it) },
         LocalSetupSpeech provides app.speech,
+        LocalPlacementRow provides { placement -> PlacementRow(app, placement, isGuest = signedIn?.isGuest == true, navigator) },
     ) {
         GoalSetupScreen(route, app.onboarding, app.plans, app.mocks, isGuest = signedIn?.isGuest == true, navigator, prepareToday = {
             app.today.today.refresh()

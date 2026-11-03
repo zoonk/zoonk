@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
@@ -25,13 +26,27 @@ data class MomentBuddy(
 /** Shows a milestone's full-screen ceremony and calls `onClose` when the learner leaves it. */
 typealias MomentCeremony = @Composable (milestone: Milestone, onClose: () -> Unit) -> Unit
 
-/** Main's `MomentAfterCeremony`: a finished run's [milestone] ceremony, when it has one, then its moment. */
+/** Shows the certificates a run earned, full screen, and calls `onClose` when the learner moves on. */
+typealias CertificatesMoment = @Composable (certificates: List<CertificateName>, onClose: () -> Unit) -> Unit
+
+/**
+ * Main's `MomentAfterCeremony`: a finished run's [certificates], the rarest first, then its
+ * [milestone] ceremony, when it has them, then its moment.
+ */
 @Composable
 fun MomentAfterCeremony(
     milestone: Milestone?,
     ceremony: MomentCeremony?,
+    certificates: List<CertificateName> = emptyList(),
+    certificatesMoment: CertificatesMoment? = null,
     moment: @Composable () -> Unit,
 ) {
+    var certificatesClosed by rememberSaveable(certificates.map { it.code }) { mutableStateOf(false) }
+    if (certificates.isNotEmpty() && certificatesMoment != null && !certificatesClosed) {
+        certificatesMoment(certificates) { certificatesClosed = true }
+        return
+    }
+
     var closed by rememberSaveable(milestone?.id) { mutableStateOf(false) }
     val open = milestone?.takeUnless { closed || ceremony == null }
     open?.let { ceremony?.invoke(it) { closed = true } }
@@ -39,12 +54,20 @@ fun MomentAfterCeremony(
     if (open == null || open.kind == Milestone.Kind.BADGE) moment()
 }
 
+/** [onCreateAccount] takes a guest to sign up, and back to the certificates' moment. */
 @Composable
 fun MomentAfterCeremony(
     app: AppContainer,
     milestone: Milestone?,
+    certificates: List<CertificateName> = emptyList(),
+    onCreateAccount: (() -> Unit)? = null,
     moment: @Composable (MomentBuddy) -> Unit,
-) = MomentAfterCeremony(milestone, { open, onClose -> SessionCeremony(app, open, onClose) }) { moment(momentBuddy(app)) }
+) = MomentAfterCeremony(
+    milestone = milestone,
+    ceremony = { open, onClose -> SessionCeremony(app, open, onClose) },
+    certificates = certificates,
+    certificatesMoment = { awarded, onClose -> CertificateCeremony(app, awarded, onClose, onCreateAccount, app.timeSource) },
+) { moment(momentBuddy(app)) }
 
 @Composable
 fun momentBuddy(app: AppContainer): MomentBuddy {

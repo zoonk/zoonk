@@ -7,6 +7,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.account.accountEntries
 import com.zoonk.android.feature.buddy.buddyEntries
 import com.zoonk.android.feature.catalog.catalogEntries
+import com.zoonk.android.feature.certificates.certificatesEntries
 import com.zoonk.android.feature.challenge.challengeEntries
 import com.zoonk.android.feature.checkpoint.checkpointEntries
 import com.zoonk.android.feature.completedlessons.completedLessonsEntries
@@ -70,6 +71,7 @@ fun appEntries(
         practiceBlockEntries(app, navigator)
         mistakesEntries(app, navigator)
         completedLessonsEntries(app, navigator)
+        certificatesEntries(app, navigator)
         checkpointEntries(app, navigator)
         challengeEntries(app, navigator)
         testOutEntries(app, navigator)
