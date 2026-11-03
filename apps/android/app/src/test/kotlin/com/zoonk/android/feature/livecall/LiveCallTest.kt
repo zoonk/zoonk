@@ -560,6 +560,28 @@ class LiveCallTest {
         }
 
     @Test
+    fun aCoughAfterTheCheckInStartsAQuietWithItsOwnCheckIn() =
+        runTest(dispatcher) {
+            val call = live()
+            characterTalks(until = 1.seconds)
+            waitUntil(30.seconds)
+            assertEquals(1, transport.checkIns)
+            characterTalks(until = 32.seconds)
+
+            waitUntil(40.seconds)
+            learnerTalks(until = 40.4.seconds)
+            waitUntil(66.seconds)
+            assertEquals(1, transport.checkIns)
+            wait(0.2.seconds)
+            assertEquals("25 s after the microphone went quiet, at 41.2 s", 2, transport.checkIns)
+
+            waitUntil(91.seconds)
+            assertTrue(transport.goodbyes.isEmpty())
+            wait(0.2.seconds)
+            assertEquals(EndingReason.Quiet, call.state.value.ending)
+        }
+
+    @Test
     fun aSteadyNoiseHoldsTheQuietHandlingUntilItStops() =
         runTest(dispatcher) {
             val call = live()
