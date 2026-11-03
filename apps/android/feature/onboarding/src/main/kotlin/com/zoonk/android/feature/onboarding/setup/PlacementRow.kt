@@ -12,8 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.onVisibilityChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -33,8 +37,8 @@ import kotlinx.coroutines.launch
 
 /**
  * Main's placement row under the level test's bars: a quiet row rather than the award moment, since
- * the learner is still setting up. Its picture comes from the learner's list. Showing it counts as
- * seeing the certificate, recorded as the learner leaves the screen.
+ * the learner is still setting up. Its picture comes from the learner's list. Once it was on screen,
+ * the learner leaving the screen counts as seeing the certificate.
  */
 @Composable
 internal fun PlacementRow(
@@ -47,11 +51,12 @@ internal fun PlacementRow(
     val picture = list.value?.find { it.code == placement.code }?.pictureUrl
     val activity = LocalActivity.current
     val name = placement.naming
+    var seen by rememberSaveable(placement.code) { mutableStateOf(false) }
 
     LaunchedEffect(placement.code) { app.certificates.awarded(listOf(placement.code)) }
     DisposableEffect(placement.code) {
         onDispose {
-            if (activity?.isChangingConfigurations != true) app.scope.launch { app.certificates.markShown(placement.code) }
+            if (seen && activity?.isChangingConfigurations != true) app.scope.launch { app.certificates.markShown(placement.code) }
         }
     }
 
@@ -59,6 +64,7 @@ internal fun PlacementRow(
         headlineContent = { Text(stringResource(R.string.certificates_placement_row_title, name.languageWord(), name.level.orEmpty())) },
         modifier =
             Modifier
+                .onVisibilityChanged { visible -> if (visible) seen = true }
                 .clip(MaterialTheme.shapes.medium)
                 .clickable(role = Role.Button) { navigator.open(AppRoute.Certificate(placement.code)) },
         supportingContent = {
