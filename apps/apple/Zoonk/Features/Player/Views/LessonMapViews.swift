@@ -147,7 +147,6 @@ private struct LessonMapIdea: View {
   }
 }
 
-/// The lesson's title at the root and its ideas as branches, in order.
 private struct LessonMapHub: View {
   /// Where a branch's tick meets its first line: about half a lowercase letter above the baseline.
   @ScaledMetric(relativeTo: .body) private var tickRise: CGFloat = 5
@@ -193,7 +192,6 @@ private struct LessonMapHub: View {
   }
 }
 
-/// The spine runs from the root down to the last branch.
 private struct LastTick: PreferenceKey {
   static let defaultValue: Anchor<CGRect>? = nil
 

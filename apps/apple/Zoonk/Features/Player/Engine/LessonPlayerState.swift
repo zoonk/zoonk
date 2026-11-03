@@ -186,6 +186,18 @@ struct LessonPlayerState: Equatable, Sendable {
     return results[previous] != nil || steps[previous]?.isRead == true
   }
 
+  /// A screen's verdict when it counts: a hook's guess is never wrong, and "I don't know yet" and an
+  /// answer that wasn't checked have none.
+  func countedVerdict(_ stepId: String) -> Bool? {
+    guard let result = results[stepId], steps[stepId]?.kind != .hook, !result.isSampleAnswer,
+      result.checked
+    else {
+      return nil
+    }
+
+    return result.isCorrect
+  }
+
   /// The opening guess with nothing picked: its main button is "I don't know yet", which reveals the
   /// answer; a pick makes it "See the answer".
   var revealsWithoutGuess: Bool {

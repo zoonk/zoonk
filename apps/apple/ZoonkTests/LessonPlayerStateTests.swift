@@ -824,6 +824,30 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertFalse(state.revealsWithoutGuess, "\"See the answer\" once something is picked")
   }
 
+  func testARevealThatCountsNothingIsNeverAWrongAnswerInTheAbandonedStreak() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(guessHook), try step(check(id: "check"))])
+    state.startRun(runId: "run", answers: [])
+
+    state.dontKnow("guess")
+    XCTAssertNil(state.countedVerdict("guess"))
+    XCTAssertEqual(wrongInARow(state), 0)
+
+    state.continueLesson()
+    try answer(&state, right: false)
+    XCTAssertEqual(wrongInARow(state), 1, "only the check")
+  }
+
+  private func wrongInARow(_ state: LessonPlayerState) -> Int {
+    guard case .activityAbandoned(_, _, _, let wrongInARow) = AnalyticsEvent.abandonment(of: state)
+    else {
+      XCTFail("a started lesson left before its end is an abandonment")
+      return -1
+    }
+
+    return wrongInARow
+  }
+
   func testIDontKnowYetOnTheOpeningGuessRevealsTheAnswerAndCountsNothing() throws {
     var state = LessonPlayerState(
       lessonId: "lesson", steps: [try step(guessHook), try step(check(id: "check"))])

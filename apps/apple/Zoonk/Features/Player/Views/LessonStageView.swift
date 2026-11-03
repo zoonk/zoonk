@@ -18,15 +18,6 @@ struct LessonStageView: View {
   private static let checkNoteId = "check-note"
   private static let turnId = "turn"
 
-  /// A verdict that counts: a hook's guess is never wrong and "I don't know yet" has none.
-  private func countedVerdict(_ step: LessonStep) -> Bool? {
-    guard let result = state.currentResult, step.kind != .hook, !result.isSampleAnswer else {
-      return nil
-    }
-
-    return result.isCorrect
-  }
-
   /// Main's verdict is a live status region: VoiceOver says it as it arrives, wherever focus is.
   private func announceVerdict() {
     guard let step = state.currentStep, let result = state.currentResult, !step.showsOwnResult
@@ -228,7 +219,7 @@ struct LessonStageView: View {
       }
       .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
-      .sensoryFeedback(trigger: countedVerdict(step)) { _, isCorrect in
+      .sensoryFeedback(trigger: state.countedVerdict(step.id)) { _, isCorrect in
         isCorrect.map { $0 ? .success : .error }
       }
       .onChange(of: state.currentResult?.isCorrect) { _, isCorrect in
