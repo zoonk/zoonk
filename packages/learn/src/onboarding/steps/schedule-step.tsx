@@ -25,7 +25,14 @@ import {
   type ScheduleDraft,
   useSchedule,
 } from "./use-schedule";
-import { WAITING_RUN, getPlanWait, getWaitRun, isPlanMade, isRunStopped } from "./wait-run";
+import {
+  WAITING_RUN,
+  getNoticeStop,
+  getPlanWait,
+  getWaitRun,
+  isPlanMade,
+  isRunStopped,
+} from "./wait-run";
 
 const FULL_COURSE_ID = "onboarding-full-course";
 
@@ -249,7 +256,11 @@ export function ScheduleStep({
   return (
     <PlanWait
       next="timeQuestion"
-      notice={{ document: getExamDocument(goal), lastNotice: false }}
+      notice={{
+        document: getExamDocument(goal),
+        lastNotice: false,
+        stopped: getNoticeStop({ poll: schedule.gate, run }),
+      }}
       readWarmUp={readWarmUp}
       run={getWaitRun({ poll: schedule.gate, run: run ?? WAITING_RUN })}
       wait={wait}

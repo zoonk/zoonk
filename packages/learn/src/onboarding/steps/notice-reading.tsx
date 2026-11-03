@@ -17,8 +17,10 @@ import { useTickCount } from "@zoonk/ui/hooks/tick-count";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
 import { getDetailLine } from "../../generation/_utils/detail-line";
+import { GenerationFailureNotice } from "../../generation/generation-wait";
 import { OnboardingDescription, OnboardingHeading, OnboardingTitle } from "../onboarding-frame";
 import { type PlanNext, PlanReadyHeading } from "./plan-building";
+import { type WaitStop } from "./wait-run";
 
 /** Reading a notice and fitting it into the plan usually takes about four minutes. */
 const READING_MS = 240_000;
@@ -48,33 +50,45 @@ function ReadingDetail({ document }: { document: ExamDocument }) {
   ) : null;
 }
 
+function getReadingStatus({ holding, stop }: { holding: boolean; stop: WaitStop | null }) {
+  if (holding) {
+    return "completed";
+  }
+
+  return stop?.failure === "generation" ? "failed" : "active";
+}
+
 export function NoticeReading({
   document,
   holding,
   lastNotice,
   next,
+  stopped,
 }: {
   document: ExamDocument;
   holding: boolean;
   lastNotice: boolean;
   next: PlanNext;
+  stopped: WaitStop | null;
 }) {
   const t = useExtracted();
   const locale = useAppLocale();
+  const stop = holding ? null : stopped;
+  const reading = !holding && !stop;
 
   const title = lastNotice
     ? t("Reading the last edition's official documents")
     : t("Reading the exam's official documents");
 
   const value = useAnimatedProgress({
-    active: !holding,
+    active: reading,
     estimatedMs: READING_MS,
     progress: holding ? 100 : PLAN_BUILT_PROGRESS,
     target: 100,
   });
 
   return (
-    <GenerationTimeline>
+    <GenerationTimeline data-paused={stop ? "" : undefined}>
       <GenerationTimelineHeader>
         {holding ? (
           <PlanReadyHeading next={next} />
@@ -94,12 +108,16 @@ export function NoticeReading({
           </OnboardingHeading>
         )}
 
-        <GenerationTimelineProgress
-          aria-label={title}
-          locale={locale}
-          value={value}
-          weights={PHASE_WEIGHTS}
-        />
+        {stop ? (
+          <GenerationFailureNotice failure={stop.failure} retry={stop.retry} />
+        ) : (
+          <GenerationTimelineProgress
+            aria-label={title}
+            locale={locale}
+            value={value}
+            weights={PHASE_WEIGHTS}
+          />
+        )}
       </GenerationTimelineHeader>
 
       <GenerationTimelineStatus>{holding ? t("Your plan is ready") : ""}</GenerationTimelineStatus>
@@ -112,12 +130,12 @@ export function NoticeReading({
           </GenerationTimelineStepLabel>
         </GenerationTimelineStep>
 
-        <GenerationTimelineStep status={holding ? "completed" : "active"}>
+        <GenerationTimelineStep status={getReadingStatus({ holding, stop })}>
           <GenerationTimelineStepIndicator />
           <GenerationTimelineStepLabel>
             {t("Reading the official documents")}
           </GenerationTimelineStepLabel>
-          {!holding && <ReadingDetail document={document} />}
+          {reading && <ReadingDetail document={document} />}
         </GenerationTimelineStep>
       </GenerationTimelineSteps>
     </GenerationTimeline>
