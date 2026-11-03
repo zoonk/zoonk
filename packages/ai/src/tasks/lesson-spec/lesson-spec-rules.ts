@@ -178,22 +178,15 @@ function countTeachingBeforePractice(screens: readonly LessonScreen[]): number {
   return before.filter((screen) => isTeachingScreen(screen.kind)).length;
 }
 
-/** How many more explanations or worked examples a new learner's lesson needs a visual on. */
-export function countMissingTeachingVisuals(screens: readonly LessonScreen[]): number {
+function getTeachingVisualIssue(screens: readonly LessonScreen[]) {
   const teaching = screens.filter((screen) => isTeachingScreen(screen.kind));
   const shown = teaching.filter((screen) => screen.visual || screen.activityTemplate).length;
   const needed = Math.ceil(teaching.length / LESSON_SIZE.noviceTeachingScreensPerVisual);
 
-  return Math.max(0, needed - shown);
-}
-
-function getTeachingVisualIssue(screens: readonly LessonScreen[]) {
-  const missing = countMissingTeachingVisuals(screens);
-
   return (
-    missing > 0 && {
+    shown < needed && {
       code: "teachingVisual" as const,
-      detail: `A new learner needs a picture or a template to explore on ${missing} more explanations or worked examples.`,
+      detail: `${shown} of ${teaching.length} explanations and worked examples show a picture or a template to explore; a new learner needs at least ${needed}.`,
     }
   );
 }

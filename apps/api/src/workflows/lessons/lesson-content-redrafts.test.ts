@@ -77,7 +77,7 @@ function writeSteps() {
 describe("lesson content redrafts", () => {
   beforeEach(() => {
     vi.mocked(generateLessonSpec).mockResolvedValue(taskResult(recordedSpec));
-    vi.mocked(judgePicture).mockResolvedValue({ probability: 0.9, teaches: true });
+    vi.mocked(judgePicture).mockResolvedValue(true);
 
     vi.mocked(writeLessonDraft).mockImplementation(async (params) =>
       taskResult(recordedDraft, params.model ?? SOL),

@@ -38,8 +38,8 @@ describe(judgePicture, () => {
       .mockResolvedValueOnce(verdict(0.9))
       .mockResolvedValueOnce(verdict(0.2));
 
-    await expect(judgePicture(input)).resolves.toStrictEqual({ probability: 0.9, teaches: true });
-    await expect(judgePicture(input)).resolves.toStrictEqual({ probability: 0.2, teaches: false });
+    await expect(judgePicture(input)).resolves.toBe(true);
+    await expect(judgePicture(input)).resolves.toBe(false);
 
     expect(vi.mocked(evaluateQuestions).mock.calls[0]?.[0].input).toStrictEqual({
       LEARNERS: "new",

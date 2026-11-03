@@ -77,7 +77,7 @@ function runOwner({ active }: { active: boolean }) {
 describe(lessonContentWorkflow, () => {
   beforeEach(() => {
     vi.mocked(generateLessonSpec).mockResolvedValue(taskResult(recordedSpec));
-    vi.mocked(judgePicture).mockResolvedValue({ probability: 0.9, teaches: true });
+    vi.mocked(judgePicture).mockResolvedValue(true);
     vi.mocked(writeLessonDraft).mockResolvedValue(taskResult(recordedDraft));
 
     vi.mocked(checkLessonQuality).mockResolvedValue(
@@ -262,10 +262,8 @@ describe(lessonContentWorkflow, () => {
       (screen) => screen.kind === "explanation" && screen.visual,
     );
 
-    vi.mocked(judgePicture).mockImplementation(async ({ picture }) =>
-      picture === planned[decorative]?.visual
-        ? { probability: 0.1, teaches: false }
-        : { probability: 0.9, teaches: true },
+    vi.mocked(judgePicture).mockImplementation(
+      async ({ picture }) => picture !== planned[decorative]?.visual,
     );
 
     await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toMatchObject({
