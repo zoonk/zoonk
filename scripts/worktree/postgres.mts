@@ -3,7 +3,7 @@ import { execFile, spawn } from "node:child_process";
 const MAX_OUTPUT_BYTES = 10 * 1024 * 1024;
 
 /** A machine busy with parallel agents can take seconds to open a local connection. */
-export const CONNECT_TIMEOUT_SECONDS = 30;
+const CONNECT_TIMEOUT_SECONDS = 30;
 
 /** Finish sibling subprocesses before releasing the setup lock, including on failure. */
 export async function together<Values extends readonly unknown[] | []>(
