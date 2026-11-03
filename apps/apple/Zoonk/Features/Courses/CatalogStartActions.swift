@@ -81,7 +81,7 @@ struct CatalogStartActions: View {
 
     if let tryLessonID {
       Button {
-        router.open(.lesson(lessonId: tryLessonID))
+        router.open(.lesson(lessonId: tryLessonID, fromCatalog: true))
       } label: {
         Text(
           "Try a lesson", tableName: "Courses",
