@@ -69,8 +69,9 @@ struct LiveCallEnding {
   /// The latest start of the character's words heard after the goodbye cue, before its
   /// acknowledgment came.
   private var heardBeforeAcknowledgmentMs: Double?
-  /// The current unanswered stretch began here; nil once the learner answered.
-  private var silenceFrom: Date?
+  /// The current quiet stretch starts here, when the last sound anyone made stopped: ahead of now
+  /// while someone is still making one.
+  private var silenceFrom: Date
   private var checkedIn = false
   private var isOver = false
 
@@ -91,18 +92,18 @@ struct LiveCallEnding {
     isRecent(lastMicAt, at: now, within: Self.micHangover)
   }
 
-  /// "Take your time." on screen: the learner has left the character unanswered a while.
+  /// "Take your time." on screen: nobody has made a sound for a while.
   func isQuietLong(at now: Date) -> Bool {
-    silenceFrom.map { now.timeIntervalSince($0) >= seconds(timing.quietHintMs) } ?? false
+    now.timeIntervalSince(silenceFrom) >= seconds(timing.quietHintMs)
   }
 
   /// `startMs` places the fragment on the session's timeline, where acknowledgments are too.
   mutating func characterSpoke(at now: Date, startMs: Double) {
     lastCharacterAt = now
 
-    // The character's answer to its own check-in doesn't start a new stretch.
+    // The character's answer to its own check-in doesn't restart the stretch it checks in on.
     if !checkedIn {
-      silenceFrom = now.addingTimeInterval(seconds(timing.characterQuietMs))
+      silenceFrom = max(silenceFrom, now.addingTimeInterval(seconds(timing.characterQuietMs)))
     }
 
     guard cueSentAt != nil else {
@@ -119,29 +120,27 @@ struct LiveCallEnding {
   /// A microphone sample above the speech threshold.
   mutating func learnerSpoke(at now: Date) {
     lastMicAt = now
-    learnerActed(at: now)
+    learnerActed(until: now.addingTimeInterval(Self.micHangover))
   }
 
   /// The learner's words came back as a transcript: they spoke, even when the microphone's level
-  /// missed a soft voice. It arrives late, often after a short answer, so the quiet starts again
-  /// from it, or from the character's stop if that's still ahead.
+  /// missed a soft voice.
   mutating func learnerHeard(at now: Date) {
     lastHeardAt = now
-    learnerActed(at: now)
-    silenceFrom = silenceFrom ?? now
+    learnerActed(until: now)
   }
 
   /// A key typed in the reply field.
   mutating func learnerTyped(at now: Date) {
     lastTypedAt = now
-    learnerActed(at: now)
+    learnerActed(until: now)
   }
 
   /// A typed reply went out.
   mutating func learnerSent(at now: Date) {
     lastSentAt = now
     lastTypedAt = nil
-    learnerActed(at: now)
+    learnerActed(until: now)
   }
 
   mutating func openingAcknowledged(at now: Date) {
@@ -214,7 +213,7 @@ struct LiveCallEnding {
       actions.append(.send(.opening))
     }
 
-    if armed == nil, let silenceFrom {
+    if armed == nil {
       let quiet = now.timeIntervalSince(silenceFrom)
 
       if quiet >= seconds(timing.quietGoodbyeMs) {
@@ -248,13 +247,9 @@ struct LiveCallEnding {
     return true
   }
 
-  /// Only what the learner does once the character stopped answers it: talking over its last words
-  /// doesn't end a stretch that hasn't started.
-  private mutating func learnerActed(at now: Date) {
-    if let silenceFrom, silenceFrom <= now {
-      self.silenceFrom = nil
-    }
-
+  /// What the learner does starts a new stretch, with its own check-in, once it stops.
+  private mutating func learnerActed(until stop: Date) {
+    silenceFrom = max(silenceFrom, stop)
     checkedIn = false
   }
 

@@ -492,6 +492,8 @@ final class LiveCallTests: XCTestCase {
     run.chat(until: 100)
     run.learnerTalks(from: 100, to: 170)
 
+    // Steady noise is never quiet.
+    XCTAssertTrue(run.times(of: .checkIn).isEmpty)
     XCTAssertEqual(run.hangUp?.reason, .some(nil))
     XCTAssertEqual(run.hangUp?.at ?? 0, 165, accuracy: 0.11)
   }
@@ -577,36 +579,63 @@ final class LiveCallTests: XCTestCase {
     assertTimes(run.times(of: .goodbye), [54.5], accuracy: 0.11)
   }
 
-  func testWordsOverTheCharactersReplyDontEndTheStretchBeforeItStarts() {
+  func testACoughThatNeverBecomesATranscriptStartsTheQuietAgain() {
+    var run = EndingRun()
+    run.characterTalks(from: 1, to: 3)
+    run.learnerTalks(from: 20, to: 20.2)
+    // The microphone goes quiet at 21.2 s.
+    run.wait(until: 33.1)
+    XCTAssertFalse(run.isQuietLong)
+    run.wait(until: 33.3)
+    XCTAssertTrue(run.isQuietLong)
+    run.wait(until: 75)
+
+    assertTimes(run.times(of: .checkIn), [46.2], accuracy: 0.11)
+    assertTimes(run.times(of: .goodbye), [71.2], accuracy: 0.11)
+  }
+
+  func testACoughAfterTheCheckInStartsAStretchWithItsOwnCheckIn() {
+    var run = EndingRun()
+    run.characterTalks(from: 1, to: 3)
+    run.wait(until: 31)
+    run.characterTalks(from: 31, to: 33)
+    run.learnerTalks(from: 40, to: 40.2)
+    run.wait(until: 95)
+
+    assertTimes(run.times(of: .checkIn), [29.5, 66.2], accuracy: 0.11)
+    assertTimes(run.times(of: .goodbye), [91.2], accuracy: 0.11)
+  }
+
+  func testTheQuietStartsWhenTheLastSoundStops() {
     var finishing = EndingRun()
     finishing.characterTalks(from: 1, to: 3)
     finishing.learnerTalks(from: 4, to: 6.4)
     finishing.characterTalks(from: 6.5, to: 7.5)
-    // The learner finishes over the reply: the stretch starts once the character stops, at 9 s.
-    finishing.learnerTalks(from: 7.6, to: 7.8)
+    // The learner finishes after the reply: their microphone goes quiet at 9.4 s, after the
+    // character stopped at 9 s.
+    finishing.learnerTalks(from: 7.6, to: 8.4)
     finishing.wait(until: 40)
 
-    assertTimes(finishing.times(of: .checkIn), [34], accuracy: 0.11)
+    assertTimes(finishing.times(of: .checkIn), [34.4], accuracy: 0.11)
 
     var heard = EndingRun()
     heard.characterTalks(from: 1, to: 3)
     heard.learnerTalks(from: 4, to: 6.4)
     heard.characterTalks(from: 6.5, to: 7.5)
-    // Their transcript comes back during the reply: the stretch still starts at 9 s.
+    // Their transcript comes back during the reply: the quiet starts once the character stops.
     heard.learnerHeard(at: 8.2)
     heard.wait(until: 40)
 
     assertTimes(heard.times(of: .checkIn), [34], accuracy: 0.11)
   }
 
-  func testTypingEndsAQuietStretch() {
+  func testTypingStartsTheQuietAgain() {
     var run = EndingRun()
     run.characterTalks(from: 1, to: 3)
     run.learnerTypes(at: 20)
-    run.characterTalks(from: 23, to: 25)
     run.wait(until: 60)
 
-    assertTimes(run.times(of: .checkIn), [51.5], accuracy: 0.11)
+    assertTimes(run.times(of: .checkIn), [45], accuracy: 0.11)
   }
 
   func testNoCheckInOnceTheEndingStarted() {
@@ -677,7 +706,7 @@ final class LiveCallTests: XCTestCase {
     run.characterTalks(from: 1, to: 3)
     run.learnerTalks(from: 5, to: 6)
     run.characterTalks(from: 6.5, to: 7)
-    // After the character stopped, at 8.5 s: the stretch that had started begins again.
+    // It arrives after the character stopped, at 8.5 s, so the quiet starts from it.
     run.learnerHeard(at: 9)
     run.wait(until: 40)
 
