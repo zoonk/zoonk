@@ -25,8 +25,11 @@ import {
 export type { CertificateAccount } from "./certificate-moment-copy";
 
 export type CertificateMomentProps = {
-  /** A guest has no profile to name, so they're offered an account instead. */
-  account: CertificateAccount;
+  /**
+   * A guest has no profile to name, so they're offered an account instead. Null when it isn't known
+   * who's looking, which offers neither.
+   */
+  account: CertificateAccount | null;
   /** A milestone's ceremony follows, so the result stays hidden while this one closes. */
   beforeCeremony?: boolean;
   /** Oldest first, as completion results carry them; the newest is the one on top. */
@@ -154,9 +157,8 @@ export function CertificateMoment({
             <DialogDescription className="text-lead mt-2 max-w-136">{copy.line}</DialogDescription>
 
             <div className="mt-4.5 flex w-full flex-col items-center">
-              {account === "guest" ? (
-                <GuestAction href={signUpHref(top.code)} />
-              ) : (
+              {account === "guest" && <GuestAction href={signUpHref(top.code)} />}
+              {account === "account" && (
                 <OwnerPart
                   facts={top}
                   links={links}
