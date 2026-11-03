@@ -167,6 +167,7 @@ describe(writeLessonDraft, () => {
     // The schema travels in the system prompt, since no provider but OpenAI takes it as a grammar.
     expect(regular.systemPrompt).toContain('"const":"hookGuess"');
 
+    expect(regular.userPrompt).toContain("\nMONEY: $2,400.00 or $2,400\n");
     expect(regular.userPrompt).not.toContain("TODAY");
     expect(setup.userPrompt).toMatch(/\nTODAY: \d{4}-\d{2}-\d{2}\n/u);
 

@@ -866,4 +866,15 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     id: "pt-registros-financeiros-guess-options",
     userInput: budgetLesson("pt-registros-financeiros-beginner"),
   },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for total beginners
+      - Every amount of money on every screen, tables, options, reasons and the activity included, is written one way, one of the two forms MONEY shows: R$ with its thousands separator (R$ 2.400, never R$ 2400) and cents on every amount or on none. A regression to avoid: an earlier draft of this lesson mixed "R$ 3.000,00", "R$ 2400" and "R$ 2.200"
+      - Every number in the tables, the formula to explore and the checks matches the plan and adds up
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-renda-bruta-liquida-money-format",
+    userInput: budgetLesson("pt-renda-bruta-liquida-beginner"),
+  },
 ];

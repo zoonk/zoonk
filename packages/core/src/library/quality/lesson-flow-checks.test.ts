@@ -142,6 +142,16 @@ describe("checkWrittenLesson's flow checks", () => {
     ]);
   });
 
+  it("reads the full-width yen mark Intl writes, so yen written two ways is flagged", () => {
+    const fullWidth = explanation("コートは￥2,000です。");
+    const halfWidth = explanation("手袋は¥500です。");
+
+    expect(flowCodes(withScreens({ 1: fullWidth, 4: halfWidth }))).toContainEqual([
+      4,
+      "moneyFormat",
+    ]);
+  });
+
   it("compares how money is written within one currency, never across two", () => {
     const dollars = explanation("A coat costs US$ 200 in winter.");
     const sameDollars = explanation("Gloves cost $ 50 in winter.");

@@ -1,6 +1,6 @@
 import { formatCast } from "../_utils/cast";
 import { type ChapterLesson, formatChapterLessons } from "../_utils/chapter-lessons";
-import { formatLocalContext } from "../_utils/language-context";
+import { formatLocalContext, formatMoneyContext } from "../_utils/language-context";
 import { formatLessonDocuments } from "../_utils/lesson-documents";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
 import { getPromptLanguageName } from "../_utils/prompt-language";
@@ -134,6 +134,7 @@ export function formatLessonPlan(context: LessonWritingContext): string {
   return `
 LANGUAGE: ${getPromptLanguageName({ language: context.language })}
 ${formatLocalContext(context.language)}
+${formatMoneyContext(context.language)}
 ${formatCast({ language: context.language, seed: `${context.courseTitle}:${spec.title}` })}
 LEVEL: ${context.level}${context.setup ? `\nTODAY: ${getToday()}` : ""}
 COURSE_TITLE: ${context.courseTitle}
