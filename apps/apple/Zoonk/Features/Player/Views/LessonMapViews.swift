@@ -78,8 +78,7 @@ struct LessonMapSection: View {
       } icon: {
         Image(systemName: LessonMapView.symbol)
       }
-      .font(.caption.monospaced())
-      .foregroundStyle(.secondary)
+      .chip()
       .accessibilityAddTraits(.isHeader)
 
       LessonMapView(title: title, summary: summary)

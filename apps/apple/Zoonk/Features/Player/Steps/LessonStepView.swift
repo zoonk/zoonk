@@ -110,13 +110,12 @@ private struct HookStepView: View {
         Text(
           "Just a guess, it doesn't count", tableName: "Player",
           comment:
-            "Chip above the lesson's opening question, which the learner answers before being taught: it's only a guess, and a guess never earns or loses points."
+            "Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored."
         )
       } icon: {
         Image(systemName: "sparkles")
       }
-      .font(.caption.monospaced())
-      .foregroundStyle(.secondary)
+      .chip()
       StepMedia(step: step, visual: content.visual, asks: true, opens: true)
       LessonQuestionText(text: question)
     } else {
@@ -126,7 +125,7 @@ private struct HookStepView: View {
       }
 
       LessonTextBlocks(content.text ?? "")
-        .font(.title2.weight(.semibold))
+        .font(.body)
     }
   }
 
@@ -219,9 +218,12 @@ private struct WorkedExampleStepView: View {
 
   @ViewBuilder
   private var problem: some View {
-    Text("Worked example", tableName: "Player", comment: "Label above a worked example")
-      .font(.caption.monospaced())
-      .foregroundStyle(.secondary)
+    Label {
+      Text("Worked example", tableName: "Player", comment: "Label above a worked example")
+    } icon: {
+      Image(systemName: "list.number")
+    }
+    .chip()
 
     if let title = content.title {
       LessonQuestionText(text: title)
@@ -311,8 +313,7 @@ private struct TypedAnswerStepView: View {
         } icon: {
           Image(systemName: "pencil.line")
         }
-        .font(.caption.monospaced())
-        .foregroundStyle(.secondary)
+        .chip()
       }
 
       LessonQuestionText(text: content.question)

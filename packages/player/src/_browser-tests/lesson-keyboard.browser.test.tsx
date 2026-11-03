@@ -30,6 +30,7 @@ import {
 } from "../preview/preview-steps";
 
 const DESKTOP = { height: 900, width: 1280 };
+const TABLET_WITH_KEYBOARD = { height: 1180, width: 820 };
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const SUMMARY_IDEA = "Electrons live in clouds.";
 
@@ -120,7 +121,7 @@ describe("lesson by keyboard", () => {
   });
 
   it("a focused control keeps Enter, and a menu or a sheet holds the lesson's keys", async () => {
-    await atViewport(DESKTOP, async () => {
+    await atViewport(TABLET_WITH_KEYBOARD, async () => {
       openLesson({ steps: [teachingStep("explanation"), teachingStep("check")] });
       await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
 

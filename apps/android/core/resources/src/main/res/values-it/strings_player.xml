@@ -257,7 +257,7 @@
     <string name="player_comes_back_tomorrow">Ritroverai questo concetto nel ripasso di domani</string>
     <string name="player_comes_back_weekday">Ritroverai questo concetto nel ripasso di %1$s</string>
     <string name="player_comes_back_date">Ritroverai questo concetto in un ripasso il %1$s</string>
-    <!-- Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored. -->
+    <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
     <string name="player_guess_chip">È solo un’ipotesi, non fa punteggio</string>
     <string name="player_answer_options">Opzioni di risposta</string>
     <string name="player_worked_example">Esempio svolto</string>

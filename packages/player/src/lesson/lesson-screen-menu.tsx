@@ -1,6 +1,7 @@
 "use client";
 
 import { TASK_HEADER_ICON_CLASS } from "@zoonk/learn/task-header";
+import { HIDDEN_WITH_TASK_ASIDE_CLASS } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -61,6 +62,12 @@ export function LessonScreenMenu() {
     return null;
   }
 
+  const showsMap = isDone && lesson.summary;
+  const mapClass = cn(!slots.completion && HIDDEN_WITH_TASK_ASIDE_CLASS);
+
+  const reportItem =
+    screen.step && slots.reportMenuItem?.({ contentId: screen.step.id, contentKind: "step" });
+
   return (
     <>
       <DropdownMenu onOpenChange={mapSheet.onMenuOpenChange}>
@@ -85,7 +92,9 @@ export function LessonScreenMenu() {
             </DropdownMenuLabel>
           </DropdownMenuGroup>
 
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator
+            className={cn(showsMap && !screen.canKnowThis && !reportItem && mapClass)}
+          />
 
           {screen.canKnowThis && (
             <DropdownMenuItem onClick={actions.knowThis}>
@@ -94,15 +103,14 @@ export function LessonScreenMenu() {
             </DropdownMenuItem>
           )}
 
-          {isDone && lesson.summary && (
-            <DropdownMenuItem onClick={() => mapSheet.change(true)}>
+          {showsMap && (
+            <DropdownMenuItem className={mapClass} onClick={() => mapSheet.change(true)}>
               <NetworkIcon aria-hidden="true" />
               {t("Lesson map")}
             </DropdownMenuItem>
           )}
 
-          {screen.step &&
-            slots.reportMenuItem?.({ contentId: screen.step.id, contentKind: "step" })}
+          {reportItem}
         </DropdownMenuContent>
       </DropdownMenu>
 

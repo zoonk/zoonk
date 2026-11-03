@@ -526,8 +526,7 @@ private struct LessonNotice: View {
       } icon: {
         Image(systemName: "bolt")
       }
-      .font(.caption.monospaced())
-      .foregroundStyle(.secondary)
+      .chip()
     } else {
       switch state.notice {
       case .answerNotSaved:

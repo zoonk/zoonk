@@ -257,7 +257,7 @@
     <string name="player_comes_back_tomorrow">Esta ideia volta na revisão de amanhã</string>
     <string name="player_comes_back_weekday">Esta ideia volta na revisão de %1$s</string>
     <string name="player_comes_back_date">Esta ideia volta em uma revisão em %1$s</string>
-    <!-- Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored. -->
+    <!-- Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored. -->
     <string name="player_guess_chip">Só um palpite, não vale ponto</string>
     <string name="player_answer_options">Alternativas de resposta</string>
     <string name="player_worked_example">Exemplo resolvido</string>

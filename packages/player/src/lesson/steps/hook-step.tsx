@@ -1,17 +1,12 @@
 "use client";
 
 import { LessonVisual } from "@zoonk/learn/visual";
-import { cn } from "@zoonk/ui/lib/utils";
 import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerChoiceScene, PlayerChoiceScenePrompt } from "../../components/player-choice-scene";
 import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonChoiceOptions } from "../_components/lesson-choice-options";
-import {
-  LessonStepPicture,
-  useHasStepPicture,
-  useIsRequiredPictureDrawing,
-} from "../_components/lesson-pictures";
+import { LessonStepPicture, useIsRequiredPictureDrawing } from "../_components/lesson-pictures";
 import {
   LessonBody,
   LessonContext,
@@ -45,7 +40,7 @@ function HookGuess({
         <LessonEyebrow icon={<SparklesIcon aria-hidden="true" />}>
           {t({
             description:
-              "Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.",
+              "Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored.",
             message: "Just a guess, it doesn't count",
           })}
         </LessonEyebrow>
@@ -71,14 +66,13 @@ function HookGuess({
 
 export function HookStepView(props: LessonStepViewProps<StepOf<"hook">>) {
   const { step } = props;
-  const hasPicture = useHasStepPicture(step);
 
   if (step.content.variant === "guess") {
     return <HookGuess {...props} />;
   }
 
   return (
-    <PlayerReadScene className={cn("gap-5 sm:gap-6", hasPicture && "max-sm:pt-0")}>
+    <PlayerReadScene className="gap-5 sm:gap-6">
       <LessonBody>{step.content.text}</LessonBody>
       <LessonStepPicture className="order-first" hero priority step={step} />
       <LessonVisual visual={step.content.visual} />
