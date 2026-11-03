@@ -2,10 +2,29 @@
 const UNSAFE_FILE_CHARACTERS = /[\p{Cc}"*/:<>?\\|]/gu;
 const NON_ASCII = /[^ -~]/gu;
 const COMBINING_MARKS = /\p{M}/gu;
-const MAX_NAME_LENGTH = 180;
+/** File systems cap a name at 255 bytes; this leaves room for ".png" and a browser's " (1)". */
+const MAX_NAME_BYTES = 240;
 const HEX_RADIX = 16;
 
 const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+const utf8 = new TextEncoder();
+
+function truncateToBytes(text: string): string {
+  let kept = "";
+  let bytes = 0;
+
+  for (const { segment } of graphemes.segment(text)) {
+    bytes += utf8.encode(segment).length;
+
+    if (bytes > MAX_NAME_BYTES) {
+      break;
+    }
+
+    kept += segment;
+  }
+
+  return kept;
+}
 
 function toFileName(parts: readonly (string | null)[]): string {
   const name = parts
@@ -13,12 +32,7 @@ function toFileName(parts: readonly (string | null)[]): string {
     .filter(Boolean)
     .join(" - ");
 
-  const kept = Array.from(graphemes.segment(name), ({ segment }) => segment).slice(
-    0,
-    MAX_NAME_LENGTH,
-  );
-
-  return `${kept.join("").trim()}.png`;
+  return `${truncateToBytes(name).trim()}.png`;
 }
 
 function toAscii(text: string | null): string | null {
