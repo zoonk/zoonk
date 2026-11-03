@@ -8,10 +8,11 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type LiveCallCue } from "./live-call-script";
 import {
-  type CheckTimingEvent,
   NO_CHECK_TIMING,
   REPLY_SETTLED_MS,
-  stepCheckTiming,
+  hearFragment,
+  isCheckDue,
+  readTranscript,
 } from "./objective-check-timing";
 
 /** What a check found, for the transcript as it was at `snapshotAt`. */
@@ -45,35 +46,25 @@ function useObjectiveChecks({
 
   const met = useRef(metLabels);
   const running = useRef(false);
-  const again = useRef(false);
   const timing = useRef(NO_CHECK_TIMING);
   const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const check = useCallback(async () => {
-    if (running.current) {
-      again.current = true;
-      return;
-    }
-
     running.current = true;
-
-    do {
-      again.current = false;
-      const snapshotAt = Date.now();
-      // oxlint-disable-next-line no-await-in-loop -- One check at a time, then one more for turns that ended meanwhile.
-      const found = await checkObjectives(getTurns()).catch(() => null);
-
-      if (found) {
-        if (found.objectivesMet.length > met.current.length) {
-          met.current = found.objectivesMet;
-          setMetLabels(found.objectivesMet);
-        }
-
-        onChecked({ ...found, objectivesMet: met.current, snapshotAt });
-      }
-    } while (again.current);
-
+    const snapshotAt = Date.now();
+    const turns = getTurns();
+    timing.current = readTranscript(timing.current);
+    const found = await checkObjectives(turns).catch(() => null);
     running.current = false;
+
+    if (found) {
+      if (found.objectivesMet.length > met.current.length) {
+        met.current = found.objectivesMet;
+        setMetLabels(found.objectivesMet);
+      }
+
+      onChecked({ ...found, objectivesMet: met.current, snapshotAt });
+    }
   }, [checkObjectives, getTurns, onChecked]);
 
   const clearSettle = useCallback(() => {
@@ -83,35 +74,37 @@ function useObjectiveChecks({
     }
   }, []);
 
+  /** Each fragment waits for the transcript to settle again; a check still running holds the next. */
   const hear = useCallback(
-    (event: CheckTimingEvent) => {
-      const step = stepCheckTiming(timing.current, event);
-      timing.current = step.timing;
+    (fragment: Parameters<typeof hearFragment>[1]) => {
+      timing.current = hearFragment(timing.current, fragment);
+      clearSettle();
 
-      if (step.settle === "cancel") {
-        clearSettle();
-      }
+      const settled = () => {
+        if (running.current) {
+          settle.current = setTimeout(settled, REPLY_SETTLED_MS);
+          return;
+        }
 
-      if (step.settle === "restart") {
-        clearSettle();
+        settle.current = null;
 
-        settle.current = setTimeout(() => {
-          settle.current = null;
-          timing.current = stepCheckTiming(timing.current, { type: "checked" }).timing;
+        if (isCheckDue(timing.current)) {
           void check();
-        }, REPLY_SETTLED_MS);
-      }
+        }
+      };
+
+      settle.current = setTimeout(settled, REPLY_SETTLED_MS);
     },
     [check, clearSettle],
   );
 
   const onLearnerTurn = useCallback(
-    (startMs?: number) => hear({ startMs, type: "learner" }),
+    (startMs?: number) => hear({ speaker: "learner", startMs }),
     [hear],
   );
 
   const onCharacterTurn = useCallback(
-    (startMs: number) => hear({ startMs, type: "character" }),
+    (startMs: number) => hear({ speaker: "character", startMs }),
     [hear],
   );
 

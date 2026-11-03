@@ -1,44 +1,38 @@
 /**
- * When the call's objectives are checked: once an exchange settles, 1.5 s after its last
- * fragment. The learner's transcript comes back 1.3 to 1.8 s after their words, often after the
- * character's answer, so words said before that answer (by `startMs`, the session's timeline)
- * still belong to the exchange it answered.
+ * When the call's objectives are checked: once the transcript has been still for 1.5 s, if it
+ * holds learner words no check read and the character answered them. The learner's words come
+ * back 1.3 to 1.8 s late, often after that answer, so who spoke last is read from the session's
+ * timeline (`startMs`), not from when the words arrived.
  */
 
 export const REPLY_SETTLED_MS = 1500;
 
+type Speaker = "character" | "learner";
+
 export type CheckTiming = {
-  answerStartMs: number | null;
-  /** Learner words no check has read yet. */
-  learnerSpoke: boolean;
+  latest: { speaker: Speaker; startMs: number } | null;
+  learnerUnread: boolean;
 };
 
-export type CheckTimingEvent =
-  | { startMs: number; type: "character" }
-  /** `startMs` is missing for a typed reply. */
-  | { startMs?: number; type: "learner" }
-  | { type: "checked" };
+export const NO_CHECK_TIMING: CheckTiming = { latest: null, learnerUnread: false };
 
-export const NO_CHECK_TIMING: CheckTiming = { answerStartMs: null, learnerSpoke: false };
-
-/** `settle`: wait the settling time again from now, call the waiting check off, or leave it. */
-export function stepCheckTiming(
+/** `startMs` is missing for a typed reply: the latest words when it's sent. */
+export function hearFragment(
   timing: CheckTiming,
-  event: CheckTimingEvent,
-): { settle: "cancel" | "keep" | "restart"; timing: CheckTiming } {
-  if (event.type === "checked") {
-    return { settle: "keep", timing: { ...timing, learnerSpoke: false } };
-  }
+  { speaker, startMs = timing.latest?.startMs ?? 0 }: { speaker: Speaker; startMs?: number },
+): CheckTiming {
+  const isLatest = timing.latest === null || startMs >= timing.latest.startMs;
 
-  if (event.type === "character") {
-    const answered = { ...timing, answerStartMs: event.startMs };
-    return { settle: timing.learnerSpoke ? "restart" : "keep", timing: answered };
-  }
+  return {
+    latest: isLatest ? { speaker, startMs } : timing.latest,
+    learnerUnread: timing.learnerUnread || speaker === "learner",
+  };
+}
 
-  const { answerStartMs } = timing;
+export function readTranscript(timing: CheckTiming): CheckTiming {
+  return { ...timing, learnerUnread: false };
+}
 
-  const late =
-    event.startMs !== undefined && answerStartMs !== null && event.startMs < answerStartMs;
-
-  return { settle: late ? "restart" : "cancel", timing: { ...timing, learnerSpoke: true } };
+export function isCheckDue(timing: CheckTiming) {
+  return timing.learnerUnread && timing.latest?.speaker === "character";
 }
