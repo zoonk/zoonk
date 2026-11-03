@@ -1,8 +1,20 @@
 import { prisma } from "@zoonk/db";
 import { getString } from "@zoonk/utils/json";
 import { type GenericEndpointContext } from "better-auth";
+import { APIError } from "better-auth/api";
 import { type SignInMethod, reportAuthEvent } from "./auth-events";
+import { NAME_MAX_LENGTH, NAME_TOO_LONG_ERROR_CODE } from "./name-rules";
 import { type UserCreateAfterHook } from "./user-create-hooks";
+
+/** Checked on every write of a name, since Better Auth's own update endpoint doesn't go through core. */
+export function rejectLongName(name: unknown) {
+  if (typeof name === "string" && name.length > NAME_MAX_LENGTH) {
+    throw new APIError("BAD_REQUEST", {
+      code: NAME_TOO_LONG_ERROR_CODE,
+      message: `Use ${NAME_MAX_LENGTH} characters or fewer for your name.`,
+    });
+  }
+}
 
 export const ensureUserProgressAfterAuthCreate: UserCreateAfterHook = async (user) => {
   await prisma.userProgress.upsert({

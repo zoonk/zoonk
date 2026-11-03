@@ -8,6 +8,7 @@ import {
   SetupLabel,
   SetupSubmit,
 } from "@/components/setup";
+import { isNameChangeTooLong } from "@zoonk/auth/name-rules";
 import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@zoonk/auth/username-rules";
 import {
   type UsernameStatus,
@@ -99,12 +100,15 @@ export function SetupProfileForm({
   redirectTo: string | null;
 }) {
   const t = useExtracted();
+  const nameErrorId = useId();
   const descriptionId = useId();
+  const [name, setName] = useState(defaultName);
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
   const [isChangingUsername, setIsChangingUsername] = useState(!defaultUsername);
   const boundAction = setupProfileAction.bind(null, redirectTo);
   const [state, formAction] = useActionState(boundAction, { status: "idle" as const });
-  const canSubmit = status === "idle" || status === "available";
+  const isNameTooLong = isNameChangeTooLong({ name, savedName: defaultName });
+  const canSubmit = !isNameTooLong && (status === "idle" || status === "available");
   const showsUsernameField = isChangingUsername || state.status === "usernameTaken";
 
   return (
@@ -112,13 +116,19 @@ export function SetupProfileForm({
       <SetupField>
         <SetupLabel htmlFor="name">{t("Name")}</SetupLabel>
         <SetupInput
+          aria-describedby={isNameTooLong ? nameErrorId : undefined}
+          aria-invalid={isNameTooLong}
           autoComplete="name"
           autoFocus
           defaultValue={defaultName}
           id="name"
           name="name"
+          onChange={(event) => setName(event.target.value)}
           type="text"
         />
+        <SetupError hasError={isNameTooLong} id={nameErrorId}>
+          {t("Use 150 characters or fewer.")}
+        </SetupError>
       </SetupField>
 
       {showsUsernameField ? (
@@ -148,6 +158,10 @@ export function SetupProfileForm({
       ) : (
         <UsernameLine onChange={() => setIsChangingUsername(true)} username={username} />
       )}
+
+      <SetupError hasError={state.status === "nameTooLong"}>
+        {t("Use 150 characters or fewer.")}
+      </SetupError>
 
       <SetupError hasError={state.status === "usernameTaken"}>
         {t("{username} is already taken", { username })}

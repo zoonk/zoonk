@@ -1,12 +1,13 @@
 "use server";
 
 import { getAuthError } from "@zoonk/auth/errors";
+import { NAME_TOO_LONG_ERROR_CODE } from "@zoonk/auth/name-rules";
 import { updateCurrentUser } from "@zoonk/core/users/current";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { logError } from "@zoonk/utils/logger";
 
-type ProfileFormStatus = "error" | "idle" | "success" | "usernameTaken";
+type ProfileFormStatus = "error" | "idle" | "nameTooLong" | "success" | "usernameTaken";
 
 export async function profileFormAction(_prevState: unknown, formData: FormData) {
   const name = parseFormField(formData, "name");
@@ -20,7 +21,13 @@ export async function profileFormAction(_prevState: unknown, formData: FormData)
     updateCurrentUser({ input: { name, username } }),
   );
 
-  if (getAuthError(error)?.code === "USERNAME_IS_ALREADY_TAKEN") {
+  const errorCode = getAuthError(error)?.code;
+
+  if (errorCode === NAME_TOO_LONG_ERROR_CODE) {
+    return { name, status: "nameTooLong" as ProfileFormStatus, username };
+  }
+
+  if (errorCode === "USERNAME_IS_ALREADY_TAKEN") {
     return { name, status: "usernameTaken" as ProfileFormStatus, username };
   }
 
