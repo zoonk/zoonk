@@ -40,6 +40,7 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
   }
 
   const plan = readParam(query[PLAN_PARAM]);
+  const goal = readParam(query[GOAL_PARAM]) ?? "";
 
   return (
     <OnboardingPage
@@ -48,10 +49,10 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
     >
       <StartClient
         // "Start over" comes back here with a new key, so nothing typed before is kept, and
-        // opening another draft shows that one.
-        key={`${readParam(query[START_AGAIN_PARAM]) ?? "start"}:${draft?.id ?? ""}`}
+        // opening another draft or a link with other words shows those.
+        key={`${readParam(query[START_AGAIN_PARAM]) ?? "start"}:${draft?.id ?? ""}:${goal}`}
         canAttach={canAttach}
-        defaultGoal={readParam(query[GOAL_PARAM]) ?? ""}
+        defaultGoal={goal}
         goalLimit={goalLimit}
         initialDraft={draft}
         needsAccount={needsAccount}

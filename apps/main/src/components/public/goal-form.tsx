@@ -2,6 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { GOAL_PARAM } from "@/lib/public/public-hrefs";
+import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import {
   GOAL_FIELD_TEXT_CLASS,
   GoalField,
@@ -41,10 +42,11 @@ export function GoalForm({
   const [hinted, setHinted] = useState(false);
   const send = useSendGoal();
   const [sending, startSending] = useTransition();
+  const reset = useResetWhenDone();
   const line = hinted ? t("Write your goal in the box first, in your own words.") : note;
 
   return (
-    <div className="flex w-full flex-col gap-4">
+    <div className="flex w-full flex-col gap-4" key={reset.key}>
       <GoalField
         action={action}
         aria-busy={sending}
@@ -59,6 +61,7 @@ export function GoalForm({
             setHinted(true);
             fieldRef.current?.focus();
           } else if (!sending) {
+            reset.done();
             startSending(() => send(goal));
           }
         }}

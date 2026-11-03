@@ -130,7 +130,7 @@ test.describe("Onboarding from a typed goal", () => {
   });
 });
 
-test("a learner who starts another goal from Today lands on it, never on the goal before it", async ({
+test("a learner who starts another goal from Today lands on it, never on the goal before it, and the next new goal starts empty", async ({
   browser,
 }) => {
   const user = await createE2EUser(getBaseURL());
@@ -210,10 +210,44 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await expect(page).toHaveURL(/\/today$/u);
   await expect(page.getByRole("main").getByText("Nothing new for today.")).toBeVisible();
 
-  await expect(
-    page.getByRole("button", { name: /^Understand quantum physics.*Switch goal$/u }),
-  ).toBeVisible();
+  const newSwitcher = page.getByRole("button", {
+    name: /^Understand quantum physics.*Switch goal$/u,
+  });
 
+  await expect(newSwitcher).toBeVisible();
   await expect(page.locator("html")).not.toHaveAttribute("data-saw-previous");
+
+  await expectHydrated(newSwitcher);
+  await newSwitcher.click();
+  await page.getByRole("menuitem", { name: "Start a new goal" }).click();
+  await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue("");
+  await page.context().close();
+});
+
+test("a goal a link filled in doesn't fill the box again once it's made", async ({ browser }) => {
+  const user = await createE2EUser(getBaseURL());
+  const words = `i want to understand quantum physics ${randomUUID().slice(0, 8)}`;
+
+  await Promise.all([
+    goalUnderstandingFixture({ goal: words, result: QUANTUM, userId: user.id }),
+    prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    }),
+  ]);
+
+  const page = await openAs(browser, user);
+  await page.goto(`/start?goal=${encodeURIComponent(words)}`);
+
+  const send = page.getByRole("button", { name: "Build my plan" });
+  await expectHydrated(send);
+  await send.click();
+  await page.getByRole("button", { name: "Looks right" }).click();
+  await expect(page).toHaveURL(GOAL_URL);
+
+  const switcher = page.getByRole("button", { name: /^Understand quantum physics.*Switch goal$/u });
+  await expectHydrated(switcher);
+  await switcher.click();
+  await page.getByRole("menuitem", { name: "Start a new goal" }).click();
+  await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue("");
   await page.context().close();
 });
