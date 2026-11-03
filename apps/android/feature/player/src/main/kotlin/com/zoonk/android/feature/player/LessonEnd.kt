@@ -35,6 +35,8 @@ import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.ceremonies.momentBuddy
+import com.zoonk.android.feature.certificates.CertificateName
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
@@ -240,6 +242,12 @@ internal fun LibraryLessonCompletion.ceremonyMilestone(): Milestone? {
     val block = studyBlock ?: return ceremony
     return block.ceremony
 }
+
+/** Its certificates come the same way as its ceremony. */
+internal fun LibraryLessonCompletion.awardedCertificates(): List<CertificateName> =
+    (studyBlock?.certificates ?: certificates).map {
+        it.naming
+    }
 
 /** What the lesson's end says (main's `LessonCompletionMoment`): its title, then the score and the day's moment once saved. */
 @Composable

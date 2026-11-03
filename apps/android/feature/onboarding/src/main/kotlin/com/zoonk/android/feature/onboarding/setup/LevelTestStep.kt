@@ -78,6 +78,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formattingLocale
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.CertificateFacts
 import com.zoonk.api.models.ChoiceAnswer
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
@@ -88,6 +89,9 @@ import androidx.compose.ui.text.intl.LocaleList as TextLocales
 
 /** The app's speech player for listening questions; none in previews and tests, where the message shows as text. */
 val LocalSetupSpeech = staticCompositionLocalOf<SpeechPlayer?> { null }
+
+/** The placement certificate's row on the last screen, which reads the learner's certificates; none in previews and tests. */
+val LocalPlacementRow = staticCompositionLocalOf<(@Composable (CertificateFacts) -> Unit)?> { null }
 
 /** [language] is the learner's own. There's no way back during its questions; stopping shows the levels so far. */
 @Composable
@@ -116,6 +120,7 @@ fun ColumnScope.LanguageLevelTestStep(
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
     val finish = { vm.finish(onDone) }
+    LaunchedEffect(phase) { vm.follow(phase) }
 
     when (phase) {
         LevelTestPhase.Loading -> {
@@ -165,7 +170,10 @@ fun ColumnScope.LanguageLevelTestStep(
         }
 
         is LevelTestPhase.Done -> {
-            LevelTestDone(phase.levels, pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
+            LevelTestDone(phase.levels, pending = vm.isSaving, failed = vm.finishFailed, onContinue = { vm.buildPlan(onDone) }) {
+                val row = LocalPlacementRow.current
+                vm.placement?.let { placement -> row?.invoke(placement) }
+            }
         }
     }
 }
@@ -445,6 +453,7 @@ private fun ColumnScope.LevelTestDone(
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
+    placement: @Composable () -> Unit,
 ) {
     Icon(
         painterResource(R.drawable.ic_check_circle),
@@ -456,6 +465,7 @@ private fun ColumnScope.LevelTestDone(
         stringResource(R.string.onboarding_language_test_done_description),
     )
     if (levels.isNotEmpty()) LevelRows(levels)
+    placement()
     OnboardingActions {
         FinishFailed(failed)
         Button(onClick = onContinue, enabled = !pending, modifier = Modifier.fillMaxWidth()) {

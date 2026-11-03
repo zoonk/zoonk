@@ -33,10 +33,13 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.ceremonies.CertificateCeremony
+import com.zoonk.android.feature.ceremonies.CertificatesMoment
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.ceremonies.momentBuddy
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.livecall.LiveCall
 import com.zoonk.android.feature.livecall.LiveCallFailure
 import com.zoonk.android.feature.livecall.LiveCallPhase
@@ -86,10 +89,11 @@ fun ConversationScreen(
     ConversationEntry(id, app, exits, from = route.from, mock = route.mock)
 }
 
-/** A saved call's milestone ceremony and the day's moment, drawn with the learner's buddy. */
+/** A saved call's certificates, its milestone ceremony and the day's moment, drawn with the learner's buddy. */
 internal class CallMoments(
     val ceremony: MomentCeremony,
     val dayMoment: @Composable (CompletedLanguageConversation) -> Unit,
+    val certificates: CertificatesMoment? = null,
 )
 
 /** With [startWith], the call starts as soon as it's read, from the tap that opened it (a checkpoint's Start). */
@@ -115,10 +119,13 @@ internal fun ConversationEntry(
             )
         }
     val moments =
-        remember(app) {
+        remember(app, exits) {
             CallMoments(
                 ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
                 dayMoment = { completion -> CallDayMoment(app, completion) },
+                certificates = { awarded, onClose ->
+                    CertificateCeremony(app, awarded, onClose, onCreateAccount = { exits.open(AppRoute.Login) }, app.timeSource)
+                },
             )
         }
     ConversationContent(model, app.speech, exits, moments, startWith, fromExam = from == FROM_EXAM, fromMock = mock != null)
@@ -242,7 +249,17 @@ private fun Conversation(
 
     if (result != null) {
         // A call opened after it ended was celebrated then; one just saved shows its milestone's ceremony before its result.
-        MomentAfterCeremony(completed?.ceremony?.takeUnless { fromMock }, moments.ceremony) {
+        MomentAfterCeremony(
+            milestone = completed?.ceremony?.takeUnless { fromMock },
+            ceremony = moments.ceremony,
+            certificates =
+                completed
+                    ?.certificates
+                    ?.takeUnless { fromMock }
+                    .orEmpty()
+                    .map { it.naming },
+            certificatesMoment = moments.certificates,
+        ) {
             val dayMoment: @Composable () -> Unit = { completed?.let { moments.dayMoment(it) } }
             when {
                 conversation.kind == LanguageConversation.Kind.SPEAKING_MOCK -> {

@@ -16,6 +16,7 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.data.performWritten
 import com.zoonk.android.data.value
 import com.zoonk.api.models.ExamChoiceInput
+import com.zoonk.api.models.GoalCertificate
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.Plan
@@ -159,10 +160,10 @@ interface PlanApi {
     ): SkillOutlineGeneration
 
     /** Null until the plan is finished. */
-    suspend fun studyNext(
+    suspend fun finished(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): StudyNext?
+    ): FinishedPlan?
 
     /** Completes the goal and starts its course's next level as the active goal, with its research and writing. */
     suspend fun continueAtNextLevel(
@@ -288,10 +289,10 @@ class LivePlanApi(
         skillId: UUID,
     ) = perform { api.clients(session).learner.createSkillOutlineGeneration(goalId, skillId) }
 
-    override suspend fun studyNext(
+    override suspend fun finished(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = perform { api.clients(session).learner.getGoalMap(goalId) }.next
+    ) = perform { api.clients(session).learner.getGoalMap(goalId) }.let { map -> map.next?.let { FinishedPlan(it, map.certificate) } }
 
     override suspend fun continueAtNextLevel(
         session: AuthenticatedSession,
@@ -304,6 +305,12 @@ class LivePlanApi(
 
     private fun deviceTimeZone() = ZoneId.systemDefault().id
 }
+
+/** What a finished plan's card offers: what to study next, and its course's certificate (`code` null: not claimed yet). */
+data class FinishedPlan(
+    val next: StudyNext,
+    val certificate: GoalCertificate?,
+)
 
 /** The Plan tab's reads, by goal; the subject pages read [syllabus] too. */
 class PlanStore(
@@ -326,8 +333,8 @@ class PlanStore(
         cache.keyed(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId -> session?.let { api.resumeChangesPlan(it, goalId) } }
 
     /** Read only once the plan has ended (`plan.end`): before, there's nothing to study next. */
-    val studyNext: KeyedResources<UUID, StudyNext> =
-        cache.keyed(Audience.SignedIn, READ_DOMAINS) { session, goalId -> session?.let { api.studyNext(it, goalId) } }
+    val finished: KeyedResources<UUID, FinishedPlan> =
+        cache.keyed(Audience.SignedIn, READ_DOMAINS) { session, goalId -> session?.let { api.finished(it, goalId) } }
 
     suspend fun buildingRunId(
         session: AuthenticatedSession,

@@ -35,10 +35,11 @@ interface AccountApi {
 
     suspend fun isUsernameAvailable(username: String): Boolean
 
+    /** Without [username], only the name changes. */
     suspend fun updateProfile(
         session: AuthenticatedSession,
         name: String,
-        username: String,
+        username: String?,
     ): MeResponse
 
     suspend fun exportData(session: AuthenticatedSession): AccountDataExport
@@ -128,7 +129,7 @@ class LiveAccountApi(
     override suspend fun updateProfile(
         session: AuthenticatedSession,
         name: String,
-        username: String,
+        username: String?,
     ): MeResponse = perform { api.clients(session).account.updateCurrentUser(MeUpdate(name = name, username = username)) }
 
     override suspend fun exportData(session: AuthenticatedSession): AccountDataExport =

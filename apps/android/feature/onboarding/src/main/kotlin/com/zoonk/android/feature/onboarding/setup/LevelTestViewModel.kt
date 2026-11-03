@@ -13,6 +13,7 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.api.models.CertificateFacts
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestGeneration
 import kotlinx.coroutines.launch
@@ -56,6 +57,17 @@ internal class LevelTestViewModel(
 
     var finishFailed by mutableStateOf(false)
         private set
+
+    /** The finish ran: its levels place the plan, and Build my plan only moves on. */
+    var finished by mutableStateOf(false)
+        private set
+
+    /** The placement certificate the finish answered with; null when the test earned none. */
+    var placement by mutableStateOf<CertificateFacts?>(null)
+        private set
+
+    /** The learner answered here, so the test ending after one of their answers is finished at once. */
+    private var answering = false
 
     private val test get() = store.levelTests[goalId]
     private var sent: SentTestAnswer? = null
@@ -141,13 +153,29 @@ internal class LevelTestViewModel(
         finish {}
     }
 
+    /**
+     * Main's: the learner's last answer ends the test, which is finished then, so its last screen
+     * shows the placement it earned. A test reopened after it ended waits for Build my plan.
+     */
+    fun follow(phase: LevelTestPhase) {
+        when (phase) {
+            is LevelTestPhase.Question, is LevelTestPhase.Speaking -> answering = true
+            is LevelTestPhase.Done -> if (answering && !finished) finish {}
+            else -> Unit
+        }
+    }
+
+    fun buildPlan(onDone: () -> Unit) = if (finished) onDone() else finish(onDone)
+
     fun finish(onDone: () -> Unit) {
         if (isSaving) return
         isSaving = true
         finishFailed = false
         viewModelScope.launch {
-            when (store.finishLevelTest(goalId)) {
+            when (val outcome = store.finishLevelTest(goalId)) {
                 is WriteOutcome.Done -> {
+                    finished = true
+                    placement = outcome.value?.certificate
                     onDone()
                 }
 

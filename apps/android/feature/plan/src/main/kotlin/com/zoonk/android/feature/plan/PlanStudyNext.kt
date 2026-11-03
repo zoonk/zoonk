@@ -22,26 +22,43 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.api.models.StudyNext
 import com.zoonk.api.models.StudyNextNextLevel
 
-/** Main's `StudyNextSuggestion`: the course's next level, which starts a goal from the tap, and related courses. */
+/**
+ * Main's `StudyNextSuggestion`: the course's certificate, the next level, which starts a goal from
+ * the tap, and related courses.
+ */
 @Composable
 internal fun StudyNextSuggestion(
     next: StudyNext,
     slot: Slot,
 ) {
     val title = stringResource(R.string.plan_finished_title)
-    val start = slot.host.nextLevel
+    val host = slot.host
+    val start = host.nextLevel
     val starting = start == NextLevelStart.Starting || start == NextLevelStart.Started
+    val certificate = host.certificate
 
     Suggestion(label = title, summary = title, layout = slot.layout, mark = SuggestionMark.Done) {
         SuggestionHeader(title)
         if (next.nextLevel != null || next.related.isNotEmpty()) SuggestionDescription(stringResource(R.string.plan_study_next))
-        next.nextLevel?.let { level ->
+        if (certificate != null || next.nextLevel != null) {
             SuggestionActions {
-                SuggestionAction(onClick = slot.host.onContinue, enabled = !starting) {
-                    PendingLabel(starting, stringResource(R.string.plan_continue_at, levelName(level.level)))
+                certificate?.let {
+                    val label = if (it.code == null) R.string.certificates_get else R.string.certificates_view
+                    SuggestionAction(
+                        onClick = host.onCertificate,
+                        enabled = !host.claimingCertificate,
+                        secondary = next.nextLevel != null,
+                    ) {
+                        PendingLabel(host.claimingCertificate, stringResource(label))
+                    }
+                }
+                next.nextLevel?.let { level ->
+                    SuggestionAction(onClick = host.onContinue, enabled = !starting) {
+                        PendingLabel(starting, stringResource(R.string.plan_continue_at, levelName(level.level)))
+                    }
                 }
             }
-            if (start == NextLevelStart.Failed) SuggestionSaveError()
+            if (start == NextLevelStart.Failed || host.claimFailed) SuggestionSaveError()
         }
         if (next.related.isNotEmpty()) {
             val links = slot.links.closing(close)

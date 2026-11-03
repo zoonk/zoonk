@@ -208,7 +208,7 @@ private val CALL_RESULT =
 private fun completed(conversation: LanguageConversation): CompletedLanguageConversation {
     val json = conversationJson(conversation.id, conversation.locked, conversation.kind, CALL_RESULT, met = true)
     return ApiJson.decodeFromString(
-        json.dropLast(1) + ""","ceremony":null,"missionMoment":null,"reached":{"energy":null,"level":null}}""",
+        json.dropLast(1) + ""","ceremony":null,"certificates":[],"missionMoment":null,"reached":{"energy":null,"level":null}}""",
     )
 }
 

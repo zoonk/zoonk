@@ -52,6 +52,7 @@ import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
+import com.zoonk.api.models.GoalCertificate
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
@@ -194,6 +195,10 @@ internal class SlotHost(
     val next: StudyNext? = null,
     val nextLevel: NextLevelStart = NextLevelStart.Idle,
     val onContinue: () -> Unit = {},
+    val certificate: GoalCertificate? = null,
+    val claimingCertificate: Boolean = false,
+    val claimFailed: Boolean = false,
+    val onCertificate: () -> Unit = {},
 )
 
 /** Where the slot moves a keyboard's or screen reader's focus once the control they used gives way, as main's does. */

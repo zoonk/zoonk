@@ -142,7 +142,7 @@ fun TestOutScreen(
     val outcome = ui.outcome
     val sent = ui.sent
     when {
-        outcome != null -> TestOutResult(outcome, ui, viewModel, app, close)
+        outcome != null -> TestOutResult(outcome, ui, viewModel, app, close) { navigator.open(AppRoute.Login) }
         sent != null && !ui.sending -> RecordedTestOut(viewModel, sent, close)
         else -> TestOutBody(viewModel, ui, page, app, navigator, showChapter)
     }
@@ -373,6 +373,7 @@ internal fun TestOutResult(
     viewModel: TestOutViewModel,
     app: AppContainer,
     onClose: () -> Unit,
+    onCreateAccount: (() -> Unit)? = null,
 ) {
     val undone = ui.undo == UndoState.Done
     val detail =
@@ -384,7 +385,7 @@ internal fun TestOutResult(
         }
     val canUndo = outcome.changeId != null && !undone
 
-    MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }) { buddy ->
+    MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }, outcome.certificates, onCreateAccount) { buddy ->
         RunFinished(
             title = stringResource(if (outcome.passed) R.string.testout_passed else R.string.testout_not_passed),
             action = stringResource(R.string.testout_continue),
