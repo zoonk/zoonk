@@ -4,6 +4,7 @@ import { CourseFormat, CourseLevel } from "@zoonk/db";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { z } from "zod";
 import { catalogTryLessonSchema, firstQuestionSchema } from "./catalog-try-lesson";
+import { lessonMapResponseSchema } from "./lesson-map";
 
 const generationStatusSchema = z.enum(["completed", "failed", "pending", "running"]);
 
@@ -278,11 +279,9 @@ export const catalogLessonSchema = z
       .meta({ description: "What the lesson opens with; null until its content is written" }),
     id: z.uuid(),
     language: z.string(),
-    summaryIdeas: z
-      .array(z.string())
-      .meta({
-        description: "What the lesson teaches, each idea in one sentence; empty until it's written",
-      }),
+    summary: lessonMapResponseSchema
+      .nullable()
+      .meta({ description: "What the lesson teaches; null until it's written" }),
     title: z.string(),
   })
   .meta({ id: "CatalogLesson" });

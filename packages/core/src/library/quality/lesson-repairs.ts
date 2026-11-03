@@ -70,9 +70,9 @@ export function repairWrittenLesson({
     ),
     summary: {
       ...lesson.summary,
-      nodes: lesson.summary.nodes.map((node) => ({
-        ...node,
-        idea: repairMarkdown({ layout: "inline", text: node.idea }),
+      ideas: lesson.summary.ideas.map((idea) => ({
+        ...idea,
+        text: repairMarkdown({ layout: "inline", text: idea.text }),
       })),
     },
   };

@@ -97,7 +97,6 @@
     "./tasks/lesson-spec/rules": "./src/tasks/lesson-spec/lesson-spec-rules.ts",
     "./tasks/lesson-writer": "./src/tasks/lesson-writer/lesson-writer.ts",
     "./tasks/lesson-writer/fix": "./src/tasks/lesson-writer/lesson-fix.ts",
-    "./tasks/lesson-writer/map": "./src/tasks/lesson-writer/lesson-map.ts",
     "./tasks/lesson-writer/schema": "./src/tasks/lesson-writer/written-lesson-schema.ts",
     "./tasks/material/answer": "./src/tasks/material/answer-from-material.ts",
     "./tasks/material/cite": "./src/tasks/material/cite-material.ts",

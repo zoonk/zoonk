@@ -1,4 +1,5 @@
 import "server-only";
+import { type LessonMap } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { type StepKind, type TransactionClient } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -203,10 +204,6 @@ async function publishVersion(
   return version;
 }
 
-function toSummary(summary: string[]) {
-  return { ideas: summary.map((text) => ({ text })) };
-}
-
 /** Returns null when the generation claim was lost; otherwise returns the published version. */
 export async function saveLessonContent({
   language,
@@ -218,7 +215,7 @@ export async function saveLessonContent({
   language: string;
   lessonId: string;
   screens: LessonScreenToSave[];
-  summary: string[];
+  summary: LessonMap;
   workflowRunId: string;
 }): Promise<number | null> {
   return publishVersion(lessonId, async (tx) => {
@@ -234,7 +231,7 @@ export async function saveLessonContent({
     const prepared = await lockPreparedScreens(tx, { lessonId, screens });
 
     const claimed = await tx.lesson.updateMany({
-      data: { contentStatus: "completed", heldBackDrafts: [], summary: toSummary(summary) },
+      data: { contentStatus: "completed", heldBackDrafts: [], summary },
       where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
     });
 
@@ -258,7 +255,7 @@ export async function saveLessonVersion({
   lessonId: string;
   replaces: number;
   screens: LessonScreenToSave[];
-  summary: string[];
+  summary: LessonMap;
 }): Promise<number | null> {
   return publishVersion(lessonId, async (tx) => {
     const existing = await tx.step.findFirst({
@@ -278,7 +275,7 @@ export async function saveLessonVersion({
       throw new LessonPublicationLostError();
     }
 
-    await tx.lesson.update({ data: { summary: toSummary(summary) }, where: { id: lessonId } });
+    await tx.lesson.update({ data: { summary }, where: { id: lessonId } });
     return writeScreens(tx, { language, lessonId, screens: prepared });
   });
 }

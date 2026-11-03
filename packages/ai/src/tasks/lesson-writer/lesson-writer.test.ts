@@ -90,7 +90,7 @@ describe(getLessonRewriteModel, () => {
   });
 });
 
-const EMPTY_MAP = { nodes: [], shape: "list" };
+const EMPTY_MAP = { ideas: [], shape: "hub" };
 
 describe(writeLessonDraft, () => {
   it("keeps only its own variants' rules, in place, and the date only for setup", async () => {
@@ -210,8 +210,8 @@ describe(writeLessonDraft, () => {
         },
       ],
       summary: {
-        nodes: [{ idea: "Two recessive alleles show their color.", label: "Recessive alleles" }],
-        shape: "list",
+        ideas: [{ label: "Recessive alleles", text: "Two recessive alleles show their color." }],
+        shape: "hub",
       },
     };
 

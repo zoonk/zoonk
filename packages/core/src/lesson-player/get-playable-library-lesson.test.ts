@@ -111,29 +111,47 @@ describe(getPlayableLibraryLesson, () => {
     );
   });
 
-  it("serves the lesson's summary card for the lesson menu, and none when it has none", async () => {
-    const [withSummary, withoutSummary] = await Promise.all([
+  it("serves the lesson map, saved labels and shape included, and none for a lesson that ends on its own summary", async () => {
+    const steps = TEACHING_LESSON_STEPS.filter((kind) => kind !== "summary");
+
+    const nested = {
+      ideas: [
+        { label: "Organism", text: "An organism is one living thing." },
+        { label: "Population", text: "A population is one species in one place." },
+      ],
+      shape: "nested",
+    };
+
+    const [saved, labeled, endsOnSummary, unwritten] = await Promise.all([
       playableLessonFixture({
         lesson: {
           summary: {
             ideas: [{ text: "Electrons live in clouds." }, { text: "Clouds are fuzzy." }],
           },
         },
+        steps,
       }),
-      playableLessonFixture(),
+      playableLessonFixture({ lesson: { summary: nested }, steps }),
+      playableLessonFixture({ lesson: { summary: { ideas: [{ text: "A recap." }] } } }),
+      playableLessonFixture({ steps }),
     ]);
 
-    const [first, second] = await Promise.all([
-      getPlayableLibraryLesson({ lessonId: withSummary.lesson.id }),
-      getPlayableLibraryLesson({ lessonId: withoutSummary.lesson.id }),
-    ]);
+    const maps = await Promise.all(
+      [saved, labeled, endsOnSummary, unwritten].map(async (fixture) => {
+        const result = await getPlayableLibraryLesson({ lessonId: fixture.lesson.id });
+        return result?.status === "ready" ? result.lesson.summary : "not ready";
+      }),
+    );
 
-    expect(first?.status === "ready" && first.lesson.summaryIdeas).toStrictEqual([
-      "Electrons live in clouds.",
-      "Clouds are fuzzy.",
+    expect(maps).toStrictEqual([
+      {
+        ideas: [{ text: "Electrons live in clouds." }, { text: "Clouds are fuzzy." }],
+        shape: "hub",
+      },
+      nested,
+      null,
+      null,
     ]);
-
-    expect(second?.status === "ready" && second.lesson.summaryIdeas).toStrictEqual([]);
   });
 
   it("serves the shared fixture content of every kind, so tests play valid lessons", async () => {

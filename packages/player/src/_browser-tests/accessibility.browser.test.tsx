@@ -106,7 +106,7 @@ function openHostedLesson() {
       typedAnswer,
       teachingStep("summary"),
     ],
-    { summaryIdeas: playableStepContent.summary.ideas.map((idea) => idea.text) },
+    { summary: { ideas: playableStepContent.summary.ideas, shape: "hub" } },
   );
 
   const graded = buildAdapters(lesson);

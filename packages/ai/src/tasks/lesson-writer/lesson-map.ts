@@ -1,64 +1,43 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { toPlainLine } from "@zoonk/utils/text-repairs";
-import { type LessonMap, type LessonMapShape } from "./written-lesson-schema";
+import { type LessonMap, type WrittenLessonMap } from "./written-lesson-schema";
 
-const MAX_NODES = 5;
-const MAX_LABEL_WORDS = 4;
-
-/** The node counts each shape can be drawn with on a phone. */
-const NODE_RANGE: Readonly<Record<LessonMapShape, { min: number; max: number }>> = {
-  compare: { max: 3, min: 2 },
-  equation: { max: MAX_NODES, min: 3 },
-  hub: { max: MAX_NODES, min: 3 },
-  list: { max: MAX_NODES, min: 1 },
-  nested: { max: MAX_NODES, min: 2 },
-  sequence: { max: MAX_NODES, min: 2 },
-};
-
-function countWords(text: string): number {
-  return text.split(/\s+/u).filter(Boolean).length;
-}
+const MIN_NESTED_LEVELS = 2;
 
 function cleanLabel(label: string): string {
   return toPlainLine(label).replace(/[.:;,]+$/u, "");
 }
 
-function fitsShape({ nodes, shape }: LessonMap): boolean {
-  const range = NODE_RANGE[shape];
+function ideaKey(idea: { label?: string; text: string }): string {
+  return `${normalizeString(idea.label ?? "")}\n${normalizeString(idea.text)}`;
+}
 
-  return (
-    nodes.length >= range.min &&
-    nodes.length <= range.max &&
-    nodes.every((node) => node.label && countWords(node.label) <= MAX_LABEL_WORDS)
-  );
+function drawsNested(ideas: LessonMap["ideas"]): boolean {
+  return ideas.length >= MIN_NESTED_LEVELS && ideas.every((idea) => idea.label);
 }
 
 /**
- * Drops empty and repeated ideas. A map whose nodes don't fit its shape, more than five included, is
- * drawn as a list of its first five, so cutting never takes an equation's result or a sequence's
- * last step.
+ * Never drops a real idea: only empty ones and exact repeats of another idea's label and sentence.
+ * A nested map whose levels aren't all named is drawn as a hub.
  */
-export function normalizeLessonMap(map: LessonMap): LessonMap {
+export function normalizeLessonMap(map: WrittenLessonMap): LessonMap {
   const seen = new Set<string>();
 
-  const nodes = map.nodes
-    .map((node) => ({ idea: node.idea.trim(), label: cleanLabel(node.label) }))
-    .filter((node) => {
-      const key = normalizeString(node.idea);
+  const ideas = map.ideas.flatMap((idea) => {
+    const text = idea.text.trim();
+    const label = cleanLabel(idea.label);
+    const cleaned = label ? { label, text } : { text };
+    const key = ideaKey(cleaned);
 
-      if (!key || seen.has(key)) {
-        return false;
-      }
+    if (!text || seen.has(key)) {
+      return [];
+    }
 
-      seen.add(key);
-      return true;
-    });
+    seen.add(key);
+    return [cleaned];
+  });
 
-  const shape = fitsShape({ nodes, shape: map.shape }) ? map.shape : "list";
+  const shape = map.shape === "nested" && drawsNested(ideas) ? "nested" : "hub";
 
-  return { nodes: nodes.slice(0, MAX_NODES), shape };
-}
-
-export function getLessonMapIdeas(map: LessonMap): string[] {
-  return map.nodes.map((node) => node.idea);
+  return { ideas, shape };
 }

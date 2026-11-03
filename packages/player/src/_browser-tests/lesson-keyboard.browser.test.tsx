@@ -34,7 +34,9 @@ const RIGHT_TYPED = "It shows where the electron is likely to be";
 const SUMMARY_IDEA = "Electrons live in clouds.";
 
 function openLesson({ steps }: { steps: PlayableLibraryStep[] }) {
-  return renderLessonPlayer({ lesson: buildLesson(steps, { summaryIdeas: [SUMMARY_IDEA] }) });
+  return renderLessonPlayer({
+    lesson: buildLesson(steps, { summary: { ideas: [{ text: SUMMARY_IDEA }], shape: "hub" } }),
+  });
 }
 
 function verdict(text: string) {

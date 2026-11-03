@@ -91,7 +91,7 @@ describe("completed lesson version replay", () => {
           provenance: { generatedAt: new Date(), model: "fix", promptVersion: "fix", runId: "fix" },
           skillId: step.skillId,
         })),
-        summary: ["A fixed idea."],
+        summary: { ideas: [{ text: "A fixed idea." }], shape: "hub" },
       });
 
       const laterRunId = await startRun(lessonId);

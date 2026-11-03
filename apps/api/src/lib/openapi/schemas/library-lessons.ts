@@ -9,6 +9,7 @@ import { CourseLevel } from "@zoonk/db";
 import { baseMapViewSchema } from "@zoonk/player/base-map-view";
 import { z } from "zod";
 import { serializedStepSchema } from "./language-exercise";
+import { lessonMapResponseSchema } from "./lesson-map";
 
 const stepBaseShape = {
   id: z.uuid(),
@@ -194,10 +195,11 @@ export const playableLibraryLessonResponseSchema = z
         level: z.enum(CourseLevel),
         skills: z.array(lessonSkillSchema),
         steps: z.array(playableStepSchema),
-        summaryIdeas: z
-          .array(z.string())
+        summary: lessonMapResponseSchema
+          .nullable()
           .meta({
-            description: "The summary card, each idea in one sentence; empty until it's written",
+            description:
+              "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, or before its map is written",
           }),
         targetLanguage: z.string().nullable(),
       }),

@@ -6,7 +6,7 @@ import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../cache/tags";
 import { filterSkippedSteps } from "../language/activities/language-activities";
 import { loadSkippedActivities } from "../language/activities/skipped-activities";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
-import { toSummaryIdeas } from "../library/lessons/_utils/summary-ideas";
+import { readLessonMap } from "../library/lessons/lesson-map";
 import { CURRENT_STEPS } from "../library/lessons/lesson-versions";
 import { getSession } from "../users/get-session";
 import { withLearnerLessonVersions } from "./_utils/learner-lesson-versions";
@@ -74,7 +74,9 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
         level: lesson.level,
         skills: lesson.skills.map((item) => item.skill),
         steps,
-        summaryIdeas: toSummaryIdeas(lesson.summary),
+        summary: steps.some((step) => step.kind === "summary")
+          ? null
+          : readLessonMap(lesson.summary),
         targetLanguage: lesson.targetLanguage,
       },
       status: "ready",

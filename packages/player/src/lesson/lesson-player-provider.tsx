@@ -188,7 +188,7 @@ export function LessonPlayerProvider({
         estimatedMinutes: lesson.estimatedMinutes,
         id: lesson.id,
         language: lesson.language,
-        summaryIdeas: lesson.summaryIdeas,
+        summary: lesson.summary,
         targetLanguage: lesson.targetLanguage,
         title: lesson.title,
       },

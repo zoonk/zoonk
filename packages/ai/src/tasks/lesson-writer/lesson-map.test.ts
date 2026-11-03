@@ -1,58 +1,67 @@
 import { describe, expect, it } from "vitest";
-import { getLessonMapIdeas, normalizeLessonMap } from "./lesson-map";
+import { normalizeLessonMap } from "./lesson-map";
 
-const node = (label: string, idea: string) => ({ idea, label });
+const idea = (label: string, text: string) => ({ label, text });
 
 describe(normalizeLessonMap, () => {
-  it("keeps a map whose nodes fit its shape, with plain labels and trimmed ideas", () => {
+  it("keeps a nested map with plain labels and trimmed sentences", () => {
     const map = normalizeLessonMap({
-      nodes: [
-        node("**Organismo**", " Um ser vivo. "),
-        node("População.", "Uma espécie num lugar."),
-        node("Comunidade", "Todas as populações de um lugar."),
+      ideas: [
+        idea("**Organismo**", " Um ser vivo. "),
+        idea("População.", "Uma espécie num lugar."),
+        idea("Comunidade", "Todas as populações de um lugar."),
       ],
       shape: "nested",
     });
 
     expect(map).toStrictEqual({
-      nodes: [
-        node("Organismo", "Um ser vivo."),
-        node("População", "Uma espécie num lugar."),
-        node("Comunidade", "Todas as populações de um lugar."),
+      ideas: [
+        idea("Organismo", "Um ser vivo."),
+        idea("População", "Uma espécie num lugar."),
+        idea("Comunidade", "Todas as populações de um lugar."),
       ],
       shape: "nested",
     });
   });
 
-  it("drops empty and repeated ideas and keeps the first five", () => {
-    const ideas = ["A.", "B.", "C.", "D.", "E.", "F."];
+  it("keeps every idea, long labels and more than five included", () => {
+    const six = ["A.", "B.", "C.", "D.", "E.", "Result."].map((text, index) =>
+      idea(`Ein ziemlich langer Name ${index}`, text),
+    );
 
+    expect(normalizeLessonMap({ ideas: six, shape: "hub" }).ideas).toStrictEqual(six);
+  });
+
+  it("drops empty ideas and exact repeats, but keeps a sentence two labels share", () => {
     const map = normalizeLessonMap({
-      nodes: [node("Empty", " "), node("A again", "a."), ...ideas.map((idea) => node(idea, idea))],
-      shape: "sequence",
+      ideas: [
+        idea("Empty", " "),
+        idea("Sólido", "Tem volume fixo."),
+        idea("sólido", "tem volume fixo."),
+        idea("Líquido", "Tem volume fixo."),
+      ],
+      shape: "hub",
     });
 
-    expect(getLessonMapIdeas(map)).toStrictEqual(["a.", "B.", "C.", "D.", "E."]);
+    expect(map.ideas).toStrictEqual([
+      idea("Sólido", "Tem volume fixo."),
+      idea("Líquido", "Tem volume fixo."),
+    ]);
   });
 
-  it("draws a map as a list when its nodes don't fit its shape", () => {
-    const owes = node("Dívidas", "O que ela deve.");
-    const twoNodes = [node("Bens", "O que a empresa tem."), owes];
-    const longLabel = [node("Tudo o que a empresa tem hoje", "O que a empresa tem."), owes];
-    const four = ["A.", "B.", "C.", "D."].map((idea) => node(idea, idea));
-
-    expect(normalizeLessonMap({ nodes: twoNodes, shape: "equation" }).shape).toBe("list");
-    expect(normalizeLessonMap({ nodes: twoNodes, shape: "hub" }).shape).toBe("list");
-    expect(normalizeLessonMap({ nodes: four, shape: "compare" }).shape).toBe("list");
-    expect(normalizeLessonMap({ nodes: longLabel, shape: "compare" }).shape).toBe("list");
-    expect(normalizeLessonMap({ nodes: twoNodes, shape: "compare" }).shape).toBe("compare");
+  it("leaves out a label that is only marks", () => {
+    expect(normalizeLessonMap({ ideas: [idea("**", "Uma ideia.")], shape: "hub" })).toStrictEqual({
+      ideas: [{ text: "Uma ideia." }],
+      shape: "hub",
+    });
   });
 
-  it("draws a map with more than five ideas as a list, so no step or result is cut from its shape", () => {
-    const six = ["A.", "B.", "C.", "D.", "E.", "Result."].map((idea) => node(idea, idea));
-    const map = normalizeLessonMap({ nodes: six, shape: "equation" });
+  it("draws a nested map as a hub when a level has no name or there is only one", () => {
+    const named = [idea("Organismo", "Um ser vivo."), idea("População", "Uma espécie.")];
+    const unnamed = [idea("Organismo", "Um ser vivo."), idea("**", "Uma espécie.")];
 
-    expect(map.shape).toBe("list");
-    expect(map.nodes).toHaveLength(5);
+    expect(normalizeLessonMap({ ideas: named, shape: "nested" }).shape).toBe("nested");
+    expect(normalizeLessonMap({ ideas: unnamed, shape: "nested" }).shape).toBe("hub");
+    expect(normalizeLessonMap({ ideas: named.slice(0, 1), shape: "nested" }).shape).toBe("hub");
   });
 });

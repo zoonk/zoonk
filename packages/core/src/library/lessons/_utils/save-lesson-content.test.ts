@@ -14,6 +14,7 @@ import { mistakeListInputSchema } from "../../../mistakes/contract";
 import { listCurrentUserMistakes } from "../../../mistakes/list-current-user-mistakes";
 import { writtenTemperatureLesson } from "../../quality/_test-utils/written-lessons";
 import { toStepContent } from "../../steps/written-screens";
+import { readLessonMap } from "../lesson-map";
 import {
   type LessonScreenToSave,
   saveLessonContent,
@@ -70,7 +71,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [screen(duplicate.id)],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
@@ -112,7 +113,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [{ ...screen(), ...converted, skillId: duplicate.id }],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
@@ -148,7 +149,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [{ ...screen(), ...converted }],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
@@ -166,7 +167,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [screen(), screen(unrelated.id), screen(second.id)],
-      summary: ["A whole contains two halves."],
+      summary: { ideas: [{ text: "A whole contains two halves." }], shape: "hub" },
       workflowRunId,
     });
 
@@ -199,7 +200,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [screen()],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
@@ -254,7 +255,7 @@ describe(saveLessonContent, () => {
         language: "en",
         lessonId: lesson.id,
         screens: [screen()],
-        summary: [],
+        summary: { ideas: [], shape: "hub" },
         workflowRunId,
       }),
     ).rejects.toThrow("no linked skill");
@@ -281,7 +282,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [screen(skill.id)],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
@@ -292,10 +293,56 @@ describe(saveLessonContent, () => {
       lessonId: lesson.id,
       replaces: 1,
       screens: [screen(skill.id)],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
     });
 
     await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion + 2 });
+  });
+
+  it("keeps the whole lesson map, its labels and shape, when publishing and when a new version replaces it", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+
+    const nested = {
+      ideas: [
+        { label: "Organism", text: "An organism is one living thing." },
+        { label: "Population", text: "A population is one species in one place." },
+      ],
+      shape: "nested" as const,
+    };
+
+    const hub = {
+      ideas: [{ label: "Community", text: "A community is every population in one place." }],
+      shape: "hub" as const,
+    };
+
+    const readMap = async () => {
+      const stored = await prisma.lesson.findUniqueOrThrow({
+        select: { summary: true },
+        where: { id: lesson.id },
+      });
+
+      return readLessonMap(stored.summary);
+    };
+
+    await saveLessonContent({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: nested,
+      workflowRunId,
+    });
+
+    await expect(readMap()).resolves.toStrictEqual(nested);
+
+    await saveLessonVersion({
+      language: "en",
+      lessonId: lesson.id,
+      replaces: 1,
+      screens: [screen(skill.id)],
+      summary: hub,
+    });
+
+    await expect(readMap()).resolves.toStrictEqual(hub);
   });
 
   it("repairs skills in replacement versions too", async () => {
@@ -305,7 +352,7 @@ describe(saveLessonContent, () => {
       language: "en",
       lessonId: lesson.id,
       screens: [screen(skill.id)],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
       workflowRunId,
     });
 
@@ -314,7 +361,7 @@ describe(saveLessonContent, () => {
       lessonId: lesson.id,
       replaces: 1,
       screens: [screen()],
-      summary: [],
+      summary: { ideas: [], shape: "hub" },
     });
 
     await expect(

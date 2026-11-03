@@ -1,7 +1,7 @@
 import "server-only";
 import { type MindMapChapter, type MindMapLesson } from "@zoonk/ai/tasks/mind-maps/structure";
 import { type Step, prisma } from "@zoonk/db";
-import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
+import { readLessonMapSentences } from "../../library/lessons/lesson-map";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { safeParseStepContent } from "../../library/steps/contract/step-contract";
 
@@ -65,7 +65,7 @@ export async function loadMindMapSource(chapterId: string): Promise<MindMapChapt
     lessons: chapter.lessons.map(({ lesson }) => ({
       canDo: lesson.canDo,
       screens: lesson.steps.flatMap((step) => toScreen(step)),
-      summary: toSummaryIdeas(lesson.summary),
+      summary: readLessonMapSentences(lesson.summary),
       title: lesson.title,
     })),
     objectives: chapter.objectives,

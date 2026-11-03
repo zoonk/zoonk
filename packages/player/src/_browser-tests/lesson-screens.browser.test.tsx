@@ -32,7 +32,13 @@ describe("lesson screens", () => {
     await atViewport(PHONE, async () => {
       renderLessonPlayer({
         lesson: buildLesson([teachingStep("explanation"), teachingStep("check")], {
-          summaryIdeas: ["Electrons live in clouds.", "The densest part is likeliest."],
+          summary: {
+            ideas: [
+              { text: "Electrons live in clouds." },
+              { text: "The densest part is likeliest." },
+            ],
+            shape: "hub",
+          },
         }),
       });
 
@@ -68,7 +74,7 @@ describe("lesson screens", () => {
     await atViewport(PHONE, async () => {
       renderLessonPlayer({
         lesson: buildLesson([teachingStep("check")], {
-          summaryIdeas: ["Electrons live in clouds."],
+          summary: { ideas: [{ text: "Electrons live in clouds." }], shape: "hub" },
         }),
         slots: {
           completion: () => <h2>Block done</h2>,
@@ -93,7 +99,7 @@ describe("lesson screens", () => {
   it("closes the summary card when a lesson that couldn't save goes back to a screen", async () => {
     await atViewport(PHONE, async () => {
       const lesson = buildLesson([teachingStep("check"), teachingStep("check")], {
-        summaryIdeas: ["Electrons live in clouds."],
+        summary: { ideas: [{ text: "Electrons live in clouds." }], shape: "hub" },
       });
 
       const runId = crypto.randomUUID();

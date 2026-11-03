@@ -12,7 +12,7 @@ const MAX_WORKED_STEPS = 8;
 const MAX_KEY_POINTS = 5;
 const MAX_ACCEPTED_ANSWERS = 5;
 
-const LESSON_MAP_SHAPES = ["hub", "sequence", "nested", "compare", "equation", "list"] as const;
+export const LESSON_MAP_SHAPES = ["hub", "nested"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the kind comes first, then the setup, then the answers. */
 
@@ -121,10 +121,10 @@ const checkScreenWithBasis = checkScreen.extend({ basis });
 const mathCheckScreenWithBasis = mathCheckScreen.extend({ basis });
 const typedAnswerScreenWithBasis = typedAnswerScreen.extend({ basis });
 
-/** The summary card: code checks its size and whether its shape fits (`normalizeLessonMap`). */
+/** The lesson map; code cleans it without cutting ideas (`normalizeLessonMap`). */
 const lessonMapSchema = z.object({
   shape: z.enum(LESSON_MAP_SHAPES),
-  nodes: z.array(z.object({ label: z.string(), idea: z.string() })),
+  ideas: z.array(z.object({ label: z.string(), text: z.string() })),
 });
 
 /* oxlint-enable eslint/sort-keys */
@@ -159,9 +159,18 @@ export const writtenLessonSchema = z.object({
 
 export type WrittenScreen = z.infer<typeof writtenScreenSchema>;
 export type WrittenScreenKind = WrittenScreen["kind"];
-export type WrittenLesson = z.infer<typeof writtenLessonSchema>;
-export type LessonMap = WrittenLesson["summary"];
-export type LessonMapShape = LessonMap["shape"];
+export type WrittenLessonMap = z.infer<typeof lessonMapSchema>;
+
+/** A lesson map as it's saved and drawn; maps saved before labels existed have none. */
+export type LessonMap = {
+  ideas: { label?: string; text: string }[];
+  shape: (typeof LESSON_MAP_SHAPES)[number];
+};
+
+/** The writer's lesson, its map already through `normalizeLessonMap`. */
+export type WrittenLesson = Omit<z.infer<typeof writtenLessonSchema>, "summary"> & {
+  summary: LessonMap;
+};
 
 const WRITTEN_KINDS_BY_SCREEN: Readonly<Record<LessonScreenKind, readonly WrittenScreenKind[]>> = {
   activity: ["activity"],

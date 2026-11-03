@@ -64,7 +64,7 @@ function spec(screenCount: number): LessonSpec {
 
 const lesson: WrittenLesson = {
   screens: [explanation("One"), explanation("Two"), explanation("Three")],
-  summary: { nodes: [{ idea: "The idea.", label: "Idea" }], shape: "list" },
+  summary: { ideas: [{ label: "Idea", text: "The idea." }], shape: "hub" },
 };
 
 function fix(params: { screenCount: number; shortAnswers?: boolean }) {
@@ -128,8 +128,8 @@ describe(fixLessonDraft, () => {
       createGenerateTextResult({
         screens: [{ content: explanation("Four"), screen: 4 }],
         summary: {
-          nodes: [{ idea: " A clearer idea. ", label: "**Clearer** idea." }],
-          shape: "hub",
+          ideas: [{ label: "**Clearer** idea.", text: " A clearer idea. " }],
+          shape: "nested",
         },
       }),
     );
@@ -140,8 +140,8 @@ describe(fixLessonDraft, () => {
     expect(data.lesson.screens.at(-1)).toStrictEqual(explanation("Four"));
 
     expect(data.lesson.summary).toStrictEqual({
-      nodes: [{ idea: "A clearer idea.", label: "Clearer idea" }],
-      shape: "list",
+      ideas: [{ label: "Clearer idea", text: "A clearer idea." }],
+      shape: "hub",
     });
   });
 

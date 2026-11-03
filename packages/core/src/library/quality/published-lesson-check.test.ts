@@ -15,6 +15,7 @@ import { describe, expect, it, vi } from "vitest";
 import { holdPlanLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { writeLessonContent } from "../../_test-utils/write-lesson-content";
 import * as refresh from "../../plans/refresh-goal-plan";
+import { readLessonMap } from "../lessons/lesson-map";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
 import {
@@ -166,17 +167,32 @@ describe(checkPublishedLesson, () => {
     ).resolves.toStrictEqual({ status: "passed" });
 
     expect(checkLessonQuality).toHaveBeenCalledWith(
-      expect.objectContaining({ serviceTier: "flex", writerModel: draft.model }),
+      expect.objectContaining({
+        lesson: expect.objectContaining({ summary: writtenTemperatureLesson().summary }),
+        serviceTier: "flex",
+        writerModel: draft.model,
+      }),
     );
 
     const steps = await listSteps(lesson.id);
     expect(steps.every((step) => step.version === 1 && step.retiredAt === null)).toBe(true);
   });
 
-  it("publishes the fix of what the reviewer found as the next version, keeping the one learners opened", async () => {
-    const { draft, lesson, plan } = await publishLesson({ lesson: writtenWrong() });
+  it("publishes the fix of what the reviewer found as the next version, its map included, keeping the one learners opened", async () => {
+    const map = {
+      ideas: [
+        { label: "Below zero", text: "A temperature below zero sits under the zero mark." },
+        { label: "A rise", text: "A rise moves the mark up, even below zero." },
+      ],
+      shape: "nested" as const,
+    };
+
+    const { draft, lesson, plan } = await publishLesson({
+      lesson: { ...writtenWrong(), summary: map },
+    });
+
     mockReview([wrongRise]);
-    const fix = mockFix({ changedScreens: [4], lesson: writtenRight() });
+    const fix = mockFix({ changedScreens: [4], lesson: { ...writtenRight(), summary: map } });
 
     await expect(
       checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
@@ -194,6 +210,7 @@ describe(checkPublishedLesson, () => {
     const fixed = steps.filter((step) => step.version === 2);
 
     expect(stored.contentStatus).toBe("completed");
+    expect(readLessonMap(stored.summary)).toStrictEqual(map);
     expect(opened).toHaveLength(8);
     expect(opened.every((step) => step.retiredAt !== null)).toBe(true);
     expect(fixed.every((step) => step.retiredAt === null)).toBe(true);

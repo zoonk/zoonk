@@ -1,6 +1,6 @@
 import "server-only";
 import { type Lesson, type PlanItem, prisma } from "@zoonk/db";
-import { toSummaryIdeas } from "../../../library/lessons/_utils/summary-ideas";
+import { readLessonMapSentences } from "../../../library/lessons/lesson-map";
 import { isWorkFinished } from "../../../plans/_utils/work-progress";
 import { findUpNextLessonId } from "../../_utils/up-next-lesson";
 import { type ChapterView } from "../chapter-contract";
@@ -133,7 +133,7 @@ export function buildChapterSummaries({
   );
 
   return lessons.flatMap((lesson) => {
-    const ideas = finished.has(lesson.id) ? toSummaryIdeas(lesson.summary) : [];
+    const ideas = finished.has(lesson.id) ? readLessonMapSentences(lesson.summary) : [];
     return ideas.length > 0 ? [{ ideas, lessonId: lesson.id, title: lesson.title }] : [];
   });
 }

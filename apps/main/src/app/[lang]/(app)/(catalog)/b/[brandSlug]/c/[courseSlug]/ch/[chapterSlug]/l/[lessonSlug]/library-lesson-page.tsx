@@ -39,6 +39,7 @@ export async function LibraryLessonPage({
   const { chapter, course } = route;
   const playerPath = getLessonPlayerPath({ lessonId: lesson.id, locale });
   const titleId = `lesson-title-${lesson.id}`;
+  const ideas = lesson.summary?.ideas.map((idea) => idea.text) ?? [];
   const subject = getSubject(course.categories);
 
   const t = await getExtracted();
@@ -90,7 +91,7 @@ export async function LibraryLessonPage({
                 level: levelLabels[chapter.level],
                 minutes: lesson.estimatedMinutes,
                 name: lesson.title,
-                teaches: lesson.summaryIdeas,
+                teaches: ideas,
                 url: urls.canonical,
               }),
               breadcrumbJsonLd([
@@ -121,7 +122,7 @@ export async function LibraryLessonPage({
               firstScreen
             )}
 
-            <LessonMore ideas={lesson.summaryIdeas} params={params} route={route} />
+            <LessonMore ideas={ideas} params={params} route={route} />
           </article>
 
           <LessonPlanDay route={route} />

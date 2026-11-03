@@ -723,7 +723,7 @@ async function publishLessonCase(): Promise<WriterCase> {
         language: "en",
         lessonId: lesson.id,
         screens: [checkScreen(skill.id)],
-        summary: [],
+        summary: { ideas: [], shape: "hub" },
         workflowRunId,
       }),
   };
@@ -749,7 +749,7 @@ async function mathItemCase(): Promise<WriterCase> {
         language: "en",
         lessonId: lesson.id,
         screens: [{ ...checkScreen(skill.id), ...converted }],
-        summary: [],
+        summary: { ideas: [], shape: "hub" },
         workflowRunId,
       }),
   };
@@ -770,7 +770,7 @@ async function lessonVersionCase(): Promise<WriterCase> {
         lessonId: lesson.id,
         replaces: 1,
         screens: [checkScreen(skill.id)],
-        summary: [],
+        summary: { ideas: [], shape: "hub" },
       }),
   };
 }

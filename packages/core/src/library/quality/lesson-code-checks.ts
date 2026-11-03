@@ -1,6 +1,6 @@
 import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
-import { getLessonMapIdeas } from "@zoonk/ai/tasks/lesson-writer/map";
 import {
+  type LessonMap,
   type WrittenLesson,
   type WrittenScreen,
   getWrittenKinds,
@@ -9,7 +9,7 @@ import { type CourseLevel } from "@zoonk/db";
 import { removeMarkdownTables } from "@zoonk/utils/markdown-table";
 import { normalizeString } from "@zoonk/utils/string";
 import { findOptionPositionReferences } from "../_utils/answer-options";
-import { safeParseStepContent } from "../steps/contract/step-contract";
+import { lessonMapSchema } from "../lessons/lesson-map";
 import { type ConvertedScreen, toStepContent } from "../steps/written-screens";
 import { findArithmeticErrors } from "./_utils/arithmetic";
 import { findLessonPhrases } from "./_utils/lesson-phrases";
@@ -186,15 +186,13 @@ function countSentences(text: string): number {
 
 function getSummaryProblems({
   language,
-  summary,
+  map,
 }: {
   language: string;
-  summary: readonly string[];
+  map: LessonMap;
 }): LessonCheckProblem[] {
-  const parsed = safeParseStepContent("summary", {
-    ideas: summary.map((text) => ({ text: text.trim() })),
-  });
-
+  const parsed = lessonMapSchema.safeParse(map);
+  const summary = map.ideas.map((idea) => idea.text);
   const normalized = summary.map((idea) => normalizeString(idea));
 
   const writing = summary.flatMap((idea) => findTextFlaws({ layout: "inline", text: idea }));
@@ -264,7 +262,7 @@ export function toReviewedLesson({
 }: {
   lesson: WrittenLesson;
   screens: readonly ConvertedScreen[];
-}): { screens: { content: unknown; kind: string }[]; summary: string[] } {
+}): { screens: { content: unknown; kind: string }[]; summary: LessonMap } {
   return {
     screens: lesson.screens.map((written, index) => {
       const converted = screens[index];
@@ -273,7 +271,7 @@ export function toReviewedLesson({
         ? { content: converted.content, kind: converted.kind }
         : { content: written, kind: written.kind };
     }),
-    summary: getLessonMapIdeas(lesson.summary),
+    summary: lesson.summary,
   };
 }
 
@@ -329,7 +327,7 @@ export function checkWrittenLesson({
         spec,
       }),
       ...getRepeatedQuestionProblems(lesson.screens),
-      ...getSummaryProblems({ language, summary: getLessonMapIdeas(lesson.summary) }),
+      ...getSummaryProblems({ language, map: lesson.summary }),
     ],
     screens: checked.map((result) => result.converted),
   };

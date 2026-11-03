@@ -139,5 +139,5 @@ export type LessonPlayerCompletionState = {
 
 export type LessonPlayerLesson = Pick<
   PlayableLibraryLesson,
-  "estimatedMinutes" | "id" | "language" | "steps" | "summaryIdeas" | "title"
+  "estimatedMinutes" | "id" | "language" | "steps" | "summary" | "title"
 >;

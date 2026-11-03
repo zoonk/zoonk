@@ -155,8 +155,8 @@ Text fields use plain sentences with light Markdown: **bold** for the one key te
 
 `summary`: a small map of what the lesson taught, which the app draws on the lesson's last card.
 
-- `shape`: how its ideas relate. `hub` for one central idea with the ideas around it (the central one first), `sequence` for steps or stages in order, `nested` for levels that each sit inside the next (the smallest first), `compare` for two or three things side by side, `equation` for parts that combine into a result (in the order the formula reads, the result last), and `list` when none of these fits.
-- `nodes`: 2 to 5 ideas in that order. `label` names the idea in up to 4 words, with the lesson's own term or case. `idea` states it in one plain sentence.
+- `shape`: `nested` only when each idea is a level that contains the one before it (the smallest first, like an organism, its population, its community); otherwise `hub`, which the app draws under the lesson's title.
+- `ideas`: 2 to 5, in teaching order. `label` names the idea in 1 to 4 words, with the lesson's own term or case. `text` states it in one complete sentence that names its subject, so it reads on its own without the label.
 - Only what the hook, explanations and worked examples stated, in words those screens used, so a learner can study the card on its own. Each idea is exactly as precise as the lesson: a summary that simplifies a rule until it's wrong is worse than none.
 
 # Language

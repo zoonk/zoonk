@@ -83,6 +83,7 @@ describe(writeChallengeLessonContent, () => {
 
     expect(lesson.summary).toStrictEqual({
       ideas: writtenChallengeCaseFixture().summary.map((text) => ({ text })),
+      shape: "hub",
     });
 
     expect(lesson.steps.map((step) => step.kind)).toStrictEqual(["challenge"]);

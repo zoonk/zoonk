@@ -204,21 +204,21 @@ const lesson: WrittenLesson = {
     },
   ],
   summary: {
-    nodes: [
+    ideas: [
       {
-        idea: "Pelo art. 44, I, do Estatuto da Advocacia, a OAB defende interesses da sociedade, como os direitos humanos e a justiça social.",
         label: "Finalidades sociais",
+        text: "Pelo art. 44, I, do Estatuto da Advocacia, a OAB defende interesses da sociedade, como os direitos humanos e a justiça social.",
       },
       {
-        idea: "A OAB pode cobrar a boa aplicação das leis e a rápida administração da justiça, mas essas finalidades não lhe dão poder para julgar recursos.",
         label: "Limites dessas finalidades",
+        text: "A OAB pode cobrar a boa aplicação das leis e a rápida administração da justiça, mas essas finalidades não lhe dão poder para julgar recursos.",
       },
       {
-        idea: "Pelo art. 44, II, a OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil; isso não elimina suas finalidades voltadas à sociedade.",
         label: "Finalidades corporativas",
+        text: "Pelo art. 44, II, a OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil; isso não elimina suas finalidades voltadas à sociedade.",
       },
     ],
-    shape: "list",
+    shape: "hub",
   },
 };
 

@@ -1,7 +1,7 @@
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { describe, expect, it } from "vitest";
 import {
-  listMap,
+  hubMap,
   temperatureSpec,
   writtenTemperatureLesson,
   writtenTypedAnswer,
@@ -462,9 +462,9 @@ describe(checkWrittenLesson, () => {
 
     const lesson = writtenTemperatureLesson();
 
-    expect(
-      codesOf({ ...lesson, summary: listMap(["A rise moves up.", "## Recap"]) }),
-    ).toStrictEqual([[null, "markdown"]]);
+    expect(codesOf({ ...lesson, summary: hubMap(["A rise moves up.", "## Recap"]) })).toStrictEqual(
+      [[null, "markdown"]],
+    );
   });
 
   it("rejects a guess's reveal that points at an option by its place", () => {
@@ -500,15 +500,15 @@ describe(checkWrittenLesson, () => {
     const lesson = writtenTemperatureLesson();
 
     expect(
-      codesOf({ ...lesson, summary: listMap(["A rise moves up.", "A rise moves up."]) }),
+      codesOf({ ...lesson, summary: hubMap(["A rise moves up.", "A rise moves up."]) }),
     ).toContainEqual([null, "summary"]);
 
-    expect(codesOf({ ...lesson, summary: listMap(["One. Two. Three."]) })).toContainEqual([
+    expect(codesOf({ ...lesson, summary: hubMap(["One. Two. Three."]) })).toContainEqual([
       null,
       "summary",
     ]);
 
-    expect(codesOf({ ...lesson, summary: listMap([]) })).toContainEqual([null, "summary"]);
+    expect(codesOf({ ...lesson, summary: hubMap([]) })).toContainEqual([null, "summary"]);
   });
 });
 

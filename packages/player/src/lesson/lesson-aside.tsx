@@ -237,7 +237,7 @@ function ScreenAside({ step }: { step: PlayableLibraryStep }) {
 function CompletionAside() {
   const t = useExtracted();
   const { lesson } = useLessonPlayerConfig();
-  const ideas = lesson.summaryIdeas;
+  const ideas = lesson.summary?.ideas.map((idea) => idea.text) ?? [];
 
   return (
     <TaskAside

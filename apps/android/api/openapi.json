@@ -29552,12 +29552,14 @@
           "language": {
             "type": "string"
           },
-          "summaryIdeas": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "What the lesson teaches, each idea in one sentence; empty until it's written"
+          "summary": {
+            "nullable": true,
+            "description": "What the lesson teaches; null until it's written",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonMap"
+              }
+            ]
           },
           "title": {
             "type": "string"
@@ -29569,7 +29571,7 @@
           "firstScreen",
           "id",
           "language",
-          "summaryIdeas",
+          "summary",
           "title"
         ],
         "additionalProperties": false
@@ -29661,6 +29663,49 @@
         ],
         "additionalProperties": false,
         "description": "A first screen with nothing to show before the lesson"
+      },
+      "LessonMap": {
+        "type": "object",
+        "properties": {
+          "ideas": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "description": "The idea's name in 1 to 4 words; maps written before labels have none",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400,
+                  "description": "The idea in one complete sentence"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "shape": {
+            "type": "string",
+            "enum": [
+              "hub",
+              "nested"
+            ],
+            "description": "`nested`: each idea is a level inside the next, smallest first. `hub`: ideas under the lesson's title"
+          }
+        },
+        "required": [
+          "ideas",
+          "shape"
+        ],
+        "additionalProperties": false,
+        "description": "A small map of what the lesson teaches: its ideas, each in one complete sentence"
       },
       "CatalogSearchResponse": {
         "type": "object",
@@ -40545,12 +40590,14 @@
                       "$ref": "#/components/schemas/PlayableLibraryStep"
                     }
                   },
-                  "summaryIdeas": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "The summary card, each idea in one sentence; empty until it's written"
+                  "summary": {
+                    "nullable": true,
+                    "description": "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, or before its map is written",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/LessonMap"
+                      }
+                    ]
                   },
                   "targetLanguage": {
                     "nullable": true,
@@ -40568,7 +40615,7 @@
                   "level",
                   "skills",
                   "steps",
-                  "summaryIdeas",
+                  "summary",
                   "targetLanguage"
                 ],
                 "additionalProperties": false
@@ -84799,12 +84846,14 @@
                   "$ref": "#/components/schemas/PlayableLibraryStep"
                 }
               },
-              "summaryIdeas": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "The summary card, each idea in one sentence; empty until it's written"
+              "summary": {
+                "nullable": true,
+                "description": "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, or before its map is written",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LessonMap"
+                  }
+                ]
               },
               "targetLanguage": {
                 "nullable": true,
@@ -84822,7 +84871,7 @@
               "level",
               "skills",
               "steps",
-              "summaryIdeas",
+              "summary",
               "targetLanguage"
             ],
             "additionalProperties": false

@@ -112,21 +112,21 @@ export const BASE_LESSONS = {
         },
       ],
       summary: {
-        nodes: [
+        ideas: [
           {
-            idea: "Start with the arch’s shape, then check the details around a church doorway.",
             label: "Arch shape first",
+            text: "Start with the arch’s shape, then check the details around a church doorway.",
           },
           {
-            idea: "Romanesque doorways have round arches, thick walls and small openings; Gothic doorways have pointed arches and thin columns.",
             label: "Romanesque or Gothic",
+            text: "Romanesque doorways have round arches, thick walls and small openings; Gothic doorways have pointed arches and thin columns.",
           },
           {
-            idea: "Baroque doorways often have twisting columns, sweeping curves and rich decoration.",
             label: "Baroque doorways",
+            text: "Baroque doorways often have twisting columns, sweeping curves and rich decoration.",
           },
         ],
-        shape: "list",
+        shape: "hub",
       },
     },
     level: "beginner",
@@ -277,21 +277,21 @@ export const BASE_LESSONS = {
         },
       ],
       summary: {
-        nodes: [
+        ideas: [
           {
-            idea: "O elétron não é uma bolinha seguindo uma órbita: ele pode ser encontrado numa região chamada nuvem eletrônica.",
             label: "Nuvem eletrônica",
+            text: "O elétron não é uma bolinha seguindo uma órbita: ele pode ser encontrado numa região chamada nuvem eletrônica.",
           },
           {
-            idea: "O núcleo atrai o elétron, mas concentrá-lo num espaço minúsculo exige energia.",
             label: "Atração do núcleo",
+            text: "O núcleo atrai o elétron, mas concentrá-lo num espaço minúsculo exige energia.",
           },
           {
-            idea: "Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo, em vez de ficar espremida nele.",
             label: "Menor energia",
+            text: "Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo, em vez de ficar espremida nele.",
           },
         ],
-        shape: "list",
+        shape: "hub",
       },
     },
     level: "overview",
@@ -587,21 +587,21 @@ export const BASE_LESSONS = {
         },
       ],
       summary: {
-        nodes: [
+        ideas: [
           {
-            idea: "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
             label: "Trabalho ou capacidade fixa",
+            text: "Com o trabalho fixo, mais trabalhadores ou máquinas reduzem o tempo; com a capacidade fixa, mais trabalho aumenta o tempo.",
           },
           {
-            idea: "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
             label: "Regra de três simples",
+            text: "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
           },
           {
-            idea: "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção.",
             label: "Regra de três composta",
+            text: "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção.",
           },
         ],
-        shape: "list",
+        shape: "hub",
       },
     },
     level: "intermediate",
@@ -742,11 +742,11 @@ export const BASE_LESSONS = {
         },
       ],
       summary: {
-        nodes: [
-          { idea: "A rise moves up the thermometer, even below zero.", label: "Rising below zero" },
-          { idea: "Count up to zero first, then the degrees above it.", label: "Count up to zero" },
+        ideas: [
+          { label: "Rising below zero", text: "A rise moves up the thermometer, even below zero." },
+          { label: "Count up to zero", text: "Count up to zero first, then the degrees above it." },
         ],
-        shape: "list",
+        shape: "hub",
       },
     },
     level: "beginner",

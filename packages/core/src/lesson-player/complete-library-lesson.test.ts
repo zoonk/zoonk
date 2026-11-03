@@ -151,7 +151,7 @@ describe(completeLibraryLesson, () => {
           provenance: { generatedAt: new Date(), model: "fix", promptVersion: "fix", runId: "fix" },
           skillId: step.skillId,
         })),
-        summary: ["A fixed idea."],
+        summary: { ideas: [{ text: "A fixed idea." }], shape: "hub" },
       });
 
       await expect(
@@ -640,7 +640,7 @@ describe(completeLibraryLesson, () => {
         provenance: { generatedAt: new Date(), model: "fix", promptVersion: "fix", runId: "fix" },
         skillId: step.skillId,
       })),
-      summary: ["A fixed idea."],
+      summary: { ideas: [{ text: "A fixed idea." }], shape: "hub" },
     });
 
     expect(fixed).toBe(2);

@@ -103,7 +103,7 @@ function write({
     language: "en",
     lessonId: lesson.id,
     screens: [screen(invalid)],
-    summary: ["One whole is two halves."],
+    summary: { ideas: [{ text: "One whole is two halves." }], shape: "hub" as const },
   };
 
   if (writer === "publish") {

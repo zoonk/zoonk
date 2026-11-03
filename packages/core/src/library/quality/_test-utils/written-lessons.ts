@@ -104,11 +104,11 @@ const numberLineActivity = {
   prompt: "At 7 am it's −3 °C. By noon it's 8 degrees warmer.",
 };
 
-/** A summary card drawn as a list, each idea labeled by its first words. */
-export function listMap(ideas: readonly string[]): LessonMap {
+/** A hub map, each idea labeled by its first words. */
+export function hubMap(ideas: readonly string[]): LessonMap {
   return {
-    nodes: ideas.map((idea) => ({ idea, label: idea.split(" ").slice(0, 3).join(" ") })),
-    shape: "list",
+    ideas: ideas.map((text) => ({ label: text.split(" ").slice(0, 3).join(" "), text })),
+    shape: "hub",
   };
 }
 
@@ -255,7 +255,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
         visual: null,
       },
     ],
-    summary: listMap([
+    summary: hubMap([
       "A rise moves up the thermometer, even below zero.",
       "Count up to zero first, then the degrees above it.",
     ]),

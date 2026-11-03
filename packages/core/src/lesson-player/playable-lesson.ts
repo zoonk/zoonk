@@ -1,6 +1,7 @@
 import { type CourseLevel } from "@zoonk/db";
 import { type ActivityExpected } from "../library/activities/activity-expected-answer";
 import { type ActivityTolerance } from "../library/activities/activity-schemas";
+import { type LessonMap } from "../library/lessons/lesson-map";
 import { type MaterialCitation } from "../library/sources/material-question-contract";
 import { type SourceCitation } from "../library/sources/source-citation";
 import { type StepContentByKind } from "../library/steps/contract/step-contract";
@@ -95,7 +96,8 @@ export type PlayableLibraryLesson = {
   level: CourseLevel;
   skills: { id: string; name: string }[];
   steps: PlayableLibraryStep[];
-  summaryIdeas: string[];
+  /** The map shown after the lesson's last screen; null for a lesson that ends on its own summary. */
+  summary: LessonMap | null;
   targetLanguage: string | null;
   title: string;
 };

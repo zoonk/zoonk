@@ -10,7 +10,7 @@ Read the lesson plan, the current lesson in `LESSON` and the problems in `PROBLE
 - Return each screen you change in full, with `screen` set to its number (1 is the first screen). Leave out screens you don't change.
 - A screen keeps its place and stays one of the kinds its plan allows. Change a screen's kind only when that's the fix, such as a `check` that asks for a calculation becoming a `mathCheck`.
 - When an activity can't be fixed, write that screen as a `check` that makes the learner use the same idea.
-- Return `summary` only when a problem is about the summary card, or when a fix changes what the lesson teaches. Otherwise return null. A `summary` is the lesson map, as the writer wrote it: a `shape` (`hub`, `sequence`, `nested`, `compare`, `equation` or `list`) and 2 to 5 `nodes`, each a `label` of up to 4 words and its `idea` in one plain sentence.
+- Return `summary` only when a problem is about the summary card, or when a fix changes what the lesson teaches. Otherwise return null. A `summary` is the lesson map, as the writer wrote it: a `shape` (`nested` when each idea is a level that contains the one before it, smallest first; otherwise `hub`) and 2 to 5 `ideas`, each a `label` of 1 to 4 words and its `text` in one complete sentence that names its subject.
 - A fix never adds filler, a new term without its explanation, or an idea outside the plan.
 
 # How screens are written

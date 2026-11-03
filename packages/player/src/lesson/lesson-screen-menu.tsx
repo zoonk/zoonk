@@ -94,7 +94,7 @@ export function LessonScreenMenu() {
             </DropdownMenuItem>
           )}
 
-          {isDone && lesson.summaryIdeas.length > 0 && (
+          {isDone && lesson.summary && (
             <DropdownMenuItem onClick={() => summary.change(true)}>
               <NotebookTextIcon aria-hidden="true" />
               {t("Lesson summary")}
@@ -106,7 +106,11 @@ export function LessonScreenMenu() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <SummarySheet ideas={lesson.summaryIdeas} onOpenChange={summary.change} open={summary.open} />
+      <SummarySheet
+        ideas={lesson.summary?.ideas.map((idea) => idea.text) ?? []}
+        onOpenChange={summary.change}
+        open={summary.open}
+      />
     </>
   );
 }

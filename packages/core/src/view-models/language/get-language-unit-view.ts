@@ -13,7 +13,7 @@ import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
-import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
+import { readLessonMapSentences } from "../../library/lessons/lesson-map";
 import { getSession } from "../../users/get-session";
 import { findUpNextLessonId } from "../_utils/up-next-lesson";
 import { loadGrammarTips, loadUnitMistakes, loadUnitWords } from "./_utils/unit-content";
@@ -139,7 +139,7 @@ export async function getLanguageUnitView({
       : null;
 
   const summaries = chapter.lessons.flatMap(({ lesson }) => {
-    const ideas = done.has(lesson.id) ? toSummaryIdeas(lesson.summary) : [];
+    const ideas = done.has(lesson.id) ? readLessonMapSentences(lesson.summary) : [];
     return ideas.length > 0 ? [{ ideas, lessonId: lesson.id, title: lesson.title }] : [];
   });
 
