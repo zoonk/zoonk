@@ -90,7 +90,7 @@ final class LiveCall {
   @ObservationIgnored private var talkEndsAt: Date?
   @ObservationIgnored private var hardStopAt: Date?
   @ObservationIgnored private var ending: LiveCallEnding?
-  @ObservationIgnored private var replyGaps = LiveCallReplyGaps()
+  @ObservationIgnored private(set) var replyGaps = LiveCallReplyGaps()
   @ObservationIgnored private var delegations = 0
   @ObservationIgnored private var tracked = false
   @ObservationIgnored private var waitingReplies: [String] = []
@@ -551,11 +551,12 @@ final class LiveCall {
       eventId: "\(Self.goodbyeEventPrefix)\(goodbyeCues)")
   }
 
-  /// The character's next words answer the cue, not the learner: they aren't a reply gap.
+  /// The character's next words answer the cue, on any channel, not only the learner: they aren't
+  /// a reply gap. A delegation's answer only lets the character go on answering.
   private func send(_ cue: LiveCallCue, delegationId: String? = nil, eventId: String? = nil) {
     transport?.send(.append(cue, delegationId: delegationId, eventId: eventId))
 
-    if cue.channel != .thinking {
+    if delegationId == nil {
       replyGaps.cueSent()
     }
   }

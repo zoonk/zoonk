@@ -166,6 +166,26 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(transport.cues("goodbye").map(\.channel), [.thinking])
   }
 
+  func testTheAnswerToAGoodbyeSentAsQuietContextIsntAReplyGap() async {
+    let transport = FakeTransport()
+    transport.speaking = true
+    let call = LiveCall(
+      conversation: .fixture(), client: FakeServer(talkSeconds: 1).client(transport))
+
+    await call.start()
+    transport.onEvent?(.started)
+    await waitUpTo(5) { !transport.cues("goodbye").isEmpty }
+    XCTAssertEqual(transport.cues("goodbye").map(\.channel), [.thinking])
+
+    transport.speaking = false
+    try? await Task.sleep(for: .milliseconds(700))
+    transport.onEvent?(
+      .transcript(speaker: .character, delta: "Sorry, I have to go.", startMs: 5000, endMs: 6000))
+
+    // The character answered the cue, not only the learner: no wait to measure.
+    XCTAssertEqual(call.replyGaps.gaps, [])
+  }
+
   func testALateLearnerTranscriptStillGetsTheExchangeChecked() async {
     let transport = FakeTransport()
     let server = FakeServer()
