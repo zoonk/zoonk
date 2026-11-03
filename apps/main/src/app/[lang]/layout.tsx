@@ -18,6 +18,7 @@ import { AuthChangeReload } from "./auth-change-reload";
 import { KeepTypingScript } from "./keep-typing-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
+import { PendingLinkScript } from "./pending-link-script";
 import { SignedInHintScript } from "./signed-in-hint-script";
 import { UsageNoticeScript } from "./usage-notice-script";
 import "../globals.css";
@@ -56,6 +57,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
         <UsageNoticeScript />
         <SidebarStateScript />
         <KeepTypingScript />
+        <PendingLinkScript />
       </head>
       <body className="font-sans antialiased">
         {/* First, so the toast region listens before any page's first effects add a toast (the
