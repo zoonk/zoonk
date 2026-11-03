@@ -65,22 +65,24 @@ function getLikelihood({
 
 type ScoredAnswer = { band: number; correct: boolean | null };
 
-function getPosterior({ answers, start }: { answers: ScoredAnswer[]; start: number }) {
+/** Without a start, every level is as likely as any other before the answers. */
+function getPosterior({ answers, start }: { answers: ScoredAnswer[]; start?: number }) {
   return GRID.map((theta) => {
-    const prior = Math.exp(-((theta - start) ** 2) / (2 * PRIOR_SPREAD ** 2));
+    const prior =
+      start === undefined ? 1 : Math.exp(-((theta - start) ** 2) / (2 * PRIOR_SPREAD ** 2));
 
     return answers.reduce((weight, answer) => weight * getLikelihood({ ...answer, theta }), prior);
   });
 }
 
-function estimateSkillScore({ answers, start }: { answers: ScoredAnswer[]; start: number }) {
-  if (answers.length === 0) {
-    return start;
-  }
-
+function getPosteriorMean({ answers, start }: { answers: ScoredAnswer[]; start?: number }) {
   const weights = getPosterior({ answers, start });
   const total = weights.reduce((sum, weight) => sum + weight, 0);
   return GRID.reduce((sum, theta, index) => sum + theta * (weights[index] ?? 0), 0) / total;
+}
+
+function estimateSkillScore({ answers, start }: { answers: ScoredAnswer[]; start: number }) {
+  return answers.length === 0 ? start : getPosteriorMean({ answers, start });
 }
 
 function getTargetBand({ answers, start }: { answers: ScoredAnswer[]; start: number }) {
@@ -287,8 +289,8 @@ export type LevelTestMeasure = {
   /** Questions answered, skipped ones left out, and the spoken sentence once graded. */
   answered: number;
   /**
-   * The skills the learner answered, each no higher than half a step above its hardest right answer:
-   * the rest of a score comes from the starting level the learner typed, a prior, not a measurement.
+   * The skills the learner answered, scored from the answers alone and no higher than half a step
+   * above the hardest right answer: the test's own scores start from the level the learner typed.
    */
   measured: { score: number; skill: LanguageSkill }[];
   /** Every reading and listening question was asked: the learner didn't finish early. */
@@ -314,9 +316,12 @@ export function getLevelTestMeasure({
   const answeredSkills = QUESTION_SKILLS.flatMap((skill) => {
     const answers = scoreAnswers({ bank, progress, skill });
 
-    return answers.length === 0
-      ? []
-      : [{ score: Math.min(scores[skill], getRightAnswerCeiling(answers)), skill }];
+    if (answers.length === 0) {
+      return [];
+    }
+
+    const fromAnswers = clampCefrScore(getPosteriorMean({ answers }));
+    return [{ score: Math.min(fromAnswers, getRightAnswerCeiling(answers)), skill }];
   });
 
   const spoken =

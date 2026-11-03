@@ -200,8 +200,8 @@ async function testTaker(levelAnswers: StoredAnswer[]) {
 describe("placement certificates", () => {
   it("certifies a finished test's measured level once, and a retry changes nothing", async () => {
     const { goal } = await testTaker([
-      ...answers({ skill: "reading" }),
-      ...answers({ skill: "listening" }),
+      ...answers({ levels: ["A2", "B1", "B1"], skill: "reading" }),
+      ...answers({ levels: ["A2", "B1", "B1"], skill: "listening" }),
     ]);
 
     const finished = await finishLanguageLevelTest(goal.id);
@@ -285,6 +285,27 @@ describe("placement certificates", () => {
       certificate: null,
       status: "ready",
     });
+  });
+
+  it("certifies the same answers the same, whatever level the learner typed", async () => {
+    const levelAnswers = (["reading", "listening"] as const).flatMap((skill) => [
+      ...answers({ levels: ["C1", "C1"], skill }),
+      ...answers({ answerIndex: null, levels: ["B2"], skill }),
+    ]);
+
+    const typedC1 = await testTaker(levelAnswers);
+    await updateGoal({ goalId: typedC1.goal.id, input: { details: { level: "C1" } } });
+    const fromC1 = await finishLanguageLevelTest(typedC1.goal.id);
+
+    const typedC2 = await testTaker(levelAnswers);
+    await updateGoal({ goalId: typedC2.goal.id, input: { details: { level: "C2" } } });
+    const fromC2 = await finishLanguageLevelTest(typedC2.goal.id);
+
+    const certified = (result: typeof fromC1) =>
+      result.status === "ready" ? result.certificate?.measuredLevel : null;
+
+    expect(fromC1).toMatchObject({ certificate: { kind: "placement" } });
+    expect(certified(fromC2)).toBe(certified(fromC1));
   });
 
   it("keeps the stored test when a learner sends their own, and certifies only what it measured", async () => {
