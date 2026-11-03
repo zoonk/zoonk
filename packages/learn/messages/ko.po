@@ -11867,6 +11867,42 @@ msgctxt "Ib7UhK"
 msgid "We already read this document. Upload a different one."
 msgstr "이미 읽은 문서예요. 다른 문서를 업로드해 주세요."
 
+#. Screen reader words for a formula, said after its base: "x cubed".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "JvZTF3"
+msgid "cubed"
+msgstr "세제곱"
+
+#. Screen reader words for a fraction: "1 over 4".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "U6yBXR"
+msgid "{numerator} over {denominator}"
+msgstr "분자 {numerator}, 분모 {denominator}"
+
+#. Screen reader words for an exponent, said after its base: "2 to the power of 10".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "r6b-ph"
+msgid "to the power of {exponent}"
+msgstr "의 {exponent}제곱"
+
+#. Screen reader words for a square root: "square root of 2".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "AikD8O"
+msgid "square root of {radicand}"
+msgstr "{radicand}의 제곱근"
+
+#. Screen reader words for a formula, said after its base: "x squared".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "JpnUIb"
+msgid "squared"
+msgstr "제곱"
+
+#. Screen reader words for an index, said after its base: "x sub 1".
+#: src/rich-text/use-spoken-text.ts
+msgctxt "P4MIjF"
+msgid "sub {index}"
+msgstr "아래 첨자 {index}"
+
 #: src/session/extra-time-button.tsx
 #: src/today/today-extra-time.tsx
 msgctxt "a8JHBW"

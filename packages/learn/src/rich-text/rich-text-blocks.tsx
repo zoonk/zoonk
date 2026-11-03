@@ -3,7 +3,9 @@ import { RichTable } from "../_components/rich-table";
 import { useAppLocale } from "../_utils/locale";
 import { type RichInlineSegment, RichInlineSegments } from "./rich-inline-segments";
 import { type RichBlock, markRichBlocks, parseRichBlocks } from "./rich-text-parser";
+import { speakSegments } from "./rich-text-speech";
 import { typesetNumbers } from "./rich-text-typography";
+import { useMathWords } from "./use-spoken-text";
 
 function typeset({
   locale,
@@ -38,8 +40,18 @@ function typesetBlock({ block, locale }: { block: RichBlock; locale: string }): 
   }
 }
 
-function toPlainText(segments: RichInlineSegment[]): string {
-  return segments.map((segment) => segment.text).join("");
+function RichTableBlock({ block }: { block: Extract<RichBlock, { kind: "table" }> }) {
+  const words = useMathWords();
+
+  return (
+    <RichTable
+      align={block.align}
+      header={block.header}
+      label={block.header.map((cell) => speakSegments({ segments: cell, words })).join(", ")}
+      renderCell={(cell) => <RichInlineSegments segments={cell} />}
+      rows={block.rows}
+    />
+  );
 }
 
 function RichBlockView({
@@ -52,15 +64,7 @@ function RichBlockView({
   paragraphTag: "p" | "h1" | "h2" | "h3" | "label";
 }) {
   if (block.kind === "table") {
-    return (
-      <RichTable
-        align={block.align}
-        header={block.header}
-        label={block.header.map((cell) => toPlainText(cell)).join(", ")}
-        renderCell={(cell) => <RichInlineSegments segments={cell} />}
-        rows={block.rows}
-      />
-    );
+    return <RichTableBlock block={block} />;
   }
 
   if (block.kind === "list") {

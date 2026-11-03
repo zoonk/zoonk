@@ -1,14 +1,7 @@
 import { renderToString } from "katex";
+import { normalizeLatexCommands } from "./latex-source";
 import { collectFormulas } from "./math-formulas";
 import { type MathMarkup, type MathMarkupRenderer, mathMarkupKey } from "./math-key";
-
-/**
- * Structured AI responses can over-escape LaTeX commands (`\\rightarrow`), which KaTeX reads as
- * text.
- */
-function normalizeLatexCommands(text: string) {
-  return text.replaceAll(/\\\\[A-Za-z]+/gu, (escapedCommand) => escapedCommand.slice(1));
-}
 
 /**
  * Errors stay inline: an AI-written formula never crashes the player, and a bad one stays visible

@@ -1,6 +1,7 @@
 "use client";
 
 import { useNoSpeechMessage } from "@zoonk/learn/language/no-speech";
+import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { Button } from "@zoonk/ui/components/button";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
@@ -250,6 +251,7 @@ function ModeSwitch({
 
 export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAnswer">>) {
   const t = useExtracted();
+  const spoken = useSpokenText();
   const { answer, isLocked, onAnswer, step } = props;
   const answerMode = useAnswerMode({ onAnswer, step });
   const { listening } = step;
@@ -280,7 +282,7 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
           <LessonAnswerField
             autoFocusOnPointer={answerMode.micBlocked}
             isLocked={isLocked}
-            label={step.content.prompt}
+            label={spoken.blocks(step.content.prompt)}
             onChange={(value) => onAnswer(value ? { kind: "spokenAnswer", text: value } : null)}
             value={text}
           />

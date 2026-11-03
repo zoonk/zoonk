@@ -1,11 +1,25 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityReason, ActivityReasons } from "../_components/activity-reasons";
 import { type MatchCard } from "./match-pairs-columns";
 
 function textOf(side: readonly MatchCard[], id: string | undefined): string {
   return side.find((card) => card.id === id)?.text ?? "";
+}
+
+function MissedPair({ guess, left, right }: { guess: string; left: string; right: string }) {
+  const t = useExtracted();
+  const guessText = () => <LessonRichText text={guess} />;
+  const leftText = () => <LessonRichText text={left} />;
+  const rightText = () => <LessonRichText text={right} />;
+
+  return t.rich("<left></left> goes with <right></right>, not <guess></guess>.", {
+    guess: guessText,
+    left: leftText,
+    right: rightText,
+  });
 }
 
 export function MatchPairsResults({
@@ -37,11 +51,11 @@ export function MatchPairsResults({
           <ActivityReasons>
             {missed.map((card) => (
               <ActivityReason key={card.id} why={card.why}>
-                {t("{left} goes with {right}, not {guess}.", {
-                  guess: textOf(cards.right, firstTries[card.id]),
-                  left: card.text,
-                  right: textOf(cards.right, expected[card.id]),
-                })}
+                <MissedPair
+                  guess={textOf(cards.right, firstTries[card.id])}
+                  left={card.text}
+                  right={textOf(cards.right, expected[card.id])}
+                />
               </ActivityReason>
             ))}
           </ActivityReasons>
@@ -54,7 +68,7 @@ export function MatchPairsResults({
           <ActivityReasons>
             {traps.map((card) => (
               <ActivityReason key={card.id} why={card.why}>
-                {card.text}
+                <LessonRichText text={card.text} />
               </ActivityReason>
             ))}
           </ActivityReasons>

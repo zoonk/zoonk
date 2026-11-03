@@ -1171,6 +1171,12 @@ msgctxt "ev_E2X"
 msgid "{between} of values fall between {from} and {to}, {below} below and {above} above."
 msgstr "{between} des valeurs se situent entre {from} et {to}, {below} en dessous et {above} au-dessus."
 
+#. A worked answer's wrong step, read with its correction once checked.
+#: src/activities/find-error/find-error-activity.tsx
+msgctxt "UPlDiJ"
+msgid "Step {number}: {text}. Corrected: {correction}"
+msgstr "Étape {number} : {text}. Correction : {correction}"
+
 #: src/activities/find-error/find-error-activity.tsx
 msgctxt "H1sDdt"
 msgid "Step {number}: {text}"
@@ -1866,9 +1872,9 @@ msgid "Missed on the first try"
 msgstr "Manquées au premier essai"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "prxLRA"
-msgid "{left} goes with {right}, not {guess}."
-msgstr "{left} va avec {right}, pas avec {guess}."
+msgctxt "rnH_6_"
+msgid "<left></left> goes with <right></right>, not <guess></guess>."
+msgstr "<left></left> va avec <right></right>, pas avec <guess></guess>."
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "_Hm0lS"
@@ -2783,9 +2789,9 @@ msgid "Right:"
 msgstr "Bonne réponse :"
 
 #: src/activities/step-solver/step-solver-step.tsx
-msgctxt "5nqose"
-msgid "Your first pick: {choice}"
-msgstr "Ton premier choix : {choice}"
+msgctxt "LjV93h"
+msgid "Your first pick: <choice></choice>"
+msgstr "Ton premier choix : <choice></choice>"
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"

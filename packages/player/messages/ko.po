@@ -1171,6 +1171,12 @@ msgctxt "ev_E2X"
 msgid "{between} of values fall between {from} and {to}, {below} below and {above} above."
 msgstr "전체 값 중 {between}는 {from}~{to} 사이에, {below}는 그 아래에, {above}는 그 위에 있어요."
 
+#. A worked answer's wrong step, read with its correction once checked.
+#: src/activities/find-error/find-error-activity.tsx
+msgctxt "UPlDiJ"
+msgid "Step {number}: {text}. Corrected: {correction}"
+msgstr "{number}번째 풀이 과정: {text}. 올바른 풀이: {correction}"
+
 #: src/activities/find-error/find-error-activity.tsx
 msgctxt "H1sDdt"
 msgid "Step {number}: {text}"
@@ -1866,9 +1872,9 @@ msgid "Missed on the first try"
 msgstr "첫 시도에서 틀린 짝"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "prxLRA"
-msgid "{left} goes with {right}, not {guess}."
-msgstr "{left}의 짝은 {right}이고, {guess}은(는) 아니에요."
+msgctxt "rnH_6_"
+msgid "<left></left> goes with <right></right>, not <guess></guess>."
+msgstr "<left></left>의 짝은 <right></right>이고, <guess></guess>은(는) 아니에요."
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "_Hm0lS"
@@ -2783,9 +2789,9 @@ msgid "Right:"
 msgstr "정답:"
 
 #: src/activities/step-solver/step-solver-step.tsx
-msgctxt "5nqose"
-msgid "Your first pick: {choice}"
-msgstr "처음 고른 답: {choice}"
+msgctxt "LjV93h"
+msgid "Your first pick: <choice></choice>"
+msgstr "처음 고른 답: <choice></choice>"
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"
