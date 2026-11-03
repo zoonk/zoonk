@@ -1,6 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
+import { BUDGET_LESSON_SPECS } from "../lesson-writer/budget-lesson-specs";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
 import { type LessonSpecExpected, VISUAL_TEST_CASES } from "./visual-test-cases";
 
@@ -22,6 +23,27 @@ function outlined({ after = [], before = [] }: { after?: string[]; before?: stri
     ...after.map((title) => ({ order: "after" as const, title })),
   ] satisfies ChapterLessons;
 }
+
+function budgetLesson(key: keyof typeof BUDGET_LESSON_SPECS): LessonSpecParams {
+  const spec = BUDGET_LESSON_SPECS[key];
+
+  return {
+    activityTemplates: ACTIVITY_TEMPLATES,
+    chapterTitle: "O dinheiro que entra e sai de casa",
+    courseTitle: "Orçamento doméstico",
+    language: "pt",
+    lessonCanDo: spec.canDo,
+    lessonDescription: spec.description,
+    lessonTitle: spec.title,
+    level: "beginner",
+    skills: spec.skills.map((skill) => skill.name),
+  };
+}
+
+const UNANSWERABLE_GUESS = `
+  - Right after the first explanation, one guess predicts something about the scene's person that a beginner could get wrong, followed by another explanation or worked example
+  - Someone who reads only the guess's question, knowing nothing the lesson teaches, can't answer it: its setup never settles the answer by itself, and the right option is never the only one that echoes the question's words
+`;
 
 export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
@@ -1117,5 +1139,38 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       level: "beginner",
       skills: ["Calcular o ponto de pedido de um ingrediente"],
     },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner organizing the household's money
+      ${UNANSWERABLE_GUESS}
+      - A regression to avoid: an earlier plan asked which of two offers with the same gross pay leaves more money, one withholding R$ 300 and the other nothing, which its own setup answers
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-renda-bruta-liquida-guess",
+    userInput: budgetLesson("pt-renda-bruta-liquida-beginner"),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner organizing the household's money
+      ${UNANSWERABLE_GUESS}
+      - A regression to avoid: an earlier plan gave a salary due on the 20th and a payment due on the 5th and asked how much she could count on by the 10th, which the question's own dates answer
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-fontes-datas-renda-guess",
+    userInput: budgetLesson("pt-fontes-datas-renda-beginner"),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner organizing the household's money
+      ${UNANSWERABLE_GUESS}
+      - A regression to avoid: an earlier plan asked which purchase he might "not find yet" in the account statement, where only the right option said "ainda não" and both others said "já debitado"
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-registros-financeiros-guess",
+    userInput: budgetLesson("pt-registros-financeiros-beginner"),
   },
 ];

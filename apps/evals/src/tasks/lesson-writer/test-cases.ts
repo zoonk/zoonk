@@ -3,6 +3,7 @@ import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { describeActivityTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { GLYCOLYSIS_SLIDES } from "../cite-material/material-fixtures";
 import { ACTIVITY_LESSON_SPECS } from "./activity-lesson-specs";
+import { BUDGET_LESSON_SPECS } from "./budget-lesson-specs";
 import { PRICE_IMPACT_CHAPTER_LESSONS, PRICE_IMPACT_SPEC } from "./chapter-lesson-specs";
 import { EXAM_PREP_LESSON } from "./exam-prep-lesson-spec";
 import { EXPLORE_LESSON_SPECS } from "./explore-lesson-specs";
@@ -39,6 +40,21 @@ const SHARED_EXPECTATIONS = `
   - An explanation's \`explore\` is a template the app draws under the text with nothing asked, its fields as JSON in \`content\`; judge whether its fields are right and match the text
   - A question's \`basis\` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides
   - Don't evaluate JSON formatting
+`;
+
+function budgetLesson(key: keyof typeof BUDGET_LESSON_SPECS): LessonWriterInput {
+  return toInput({
+    chapterTitle: "O dinheiro que entra e sai de casa",
+    courseTitle: "Orçamento doméstico",
+    language: "pt",
+    level: "beginner",
+    spec: BUDGET_LESSON_SPECS[key],
+  });
+}
+
+const UNANSWERABLE_GUESS = `
+  - Someone who reads only the guess's question, knowing nothing the lesson teaches, can't answer it: its setup never settles the answer by itself, and the right option is never the only one that echoes the question's words
+  - The guess keeps its plan's idea, the one the next screen explains, and one wrong option is what a beginner's intuition says
 `;
 
 export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
@@ -815,5 +831,38 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       level: "beginner",
       spec: NOVICE_LESSON_SPECS["pt-equacao-patrimonial-beginner"],
     }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for total beginners
+      ${UNANSWERABLE_GUESS}
+      - The plan's guess answers itself: two offers with the same gross pay, one withholding R$ 300 and the other nothing, asking which leaves more. Writing it as planned fails; the written guess asks about the same idea in a way its own setup doesn't settle
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-renda-bruta-liquida-guess",
+    userInput: budgetLesson("pt-renda-bruta-liquida-beginner"),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for total beginners
+      ${UNANSWERABLE_GUESS}
+      - The plan's guess answers itself: a salary due on the 20th and a payment due on the 5th, asking how much she can count on by the 10th. Writing it as planned fails; the written guess asks about the same idea (when money arrives decides what she can count on) in a way its own dates don't settle
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-fontes-datas-renda-guess",
+    userInput: budgetLesson("pt-fontes-datas-renda-beginner"),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for total beginners
+      ${UNANSWERABLE_GUESS}
+      - The plan's guess gives itself away by its words: it asks which purchase he might not find in the statement "yet", and only the right option says "ainda não" while both others say "já debitado". The written options are worded alike, so the question's words don't point to the right one
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-registros-financeiros-guess",
+    userInput: budgetLesson("pt-registros-financeiros-beginner"),
   },
 ];
