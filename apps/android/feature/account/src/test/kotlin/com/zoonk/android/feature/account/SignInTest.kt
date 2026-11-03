@@ -227,4 +227,38 @@ class SignInTest {
             assertEquals(UsernameStatus.Taken, form.usernameStatus)
             assertTrue((sessions.state.value as SessionState.SignedIn).account.user.needsProfileSetup)
         }
+
+    @Test
+    fun aChangedNameFitsIn150CodePointsAsTheServerCountsThem() {
+        assertFalse(isNameChangeTooLong(" ${"a".repeat(150)} ", savedName = "Learner"))
+        assertFalse(isNameChangeTooLong("𠀀".repeat(150), savedName = "Learner"))
+        assertTrue(isNameChangeTooLong("a".repeat(151), savedName = "Learner"))
+        assertFalse(isNameChangeTooLong(" ${"a".repeat(200)} ", savedName = " ${"a".repeat(200)} "))
+    }
+
+    @Test
+    fun aNameSavedBeforeTheLimitStaysOutOfASaveThatOnlyChangesTheUsername() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            account.signInWithEmailCode("bia@zoonk.test", "123456")
+            val longName = " ${"a".repeat(151)} "
+            val user = (sessions.state.value as SessionState.SignedIn).account.user.copy(name = longName)
+            val form = ProfileFormViewModel(account, user, SavedStateHandle())
+            advanceUntilIdle()
+
+            form.onNameChange("${longName}b")
+            assertTrue(form.isNameTooLong)
+            assertFalse(form.canSave)
+
+            form.onNameChange(longName)
+            form.onUsernameChange("bia_2")
+            advanceUntilIdle()
+            assertFalse(form.isNameTooLong)
+            form.save()
+            advanceUntilIdle()
+
+            assertEquals(listOf(null to "bia_2"), api.saved)
+            assertTrue(form.isSaved)
+        }
 }

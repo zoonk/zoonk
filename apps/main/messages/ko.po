@@ -1259,6 +1259,11 @@ msgid "Your name, username and account."
 msgstr "이름, 사용자 이름, 계정 정보예요."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "150자 이내로 입력해 주세요."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
 msgstr "확인하고 있어요…"

@@ -107,4 +107,19 @@ export const TEST_CASES: TestCase<unknown, ExamSpeakingCardInput>[] = [
       task: "t2",
     }),
   },
+  {
+    expectations: `DELE B1 Task 3 for an English-speaking candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in English, and guiding prompts in Spain Spanish with "usted" (the people, the place, the objects, how the people are related, what they may be talking about). The examiner listens for one to two minutes without interrupting, then asks questions linking the photo to the candidate's own life. Summary and role in English.`,
+    id: "en-es-dele-b1-photo",
+    userInput: cardInput({ exam: "dele", learnerLanguage: "en", level: "B1", task: "t3" }),
+  },
+  {
+    expectations: `Goethe-Zertifikat A2 Part 3 for an English-speaking candidate, with the AI as the other candidate: a situation in German with "Sie" (find a time on the same day to do something together), and a table that is the candidate's own diary page for that day, with times and what is planned at each, leaving some gaps. The partner brief holds a different diary for the same day, written out, so the two must ask, suggest, react and agree on a time both have free; it speaks about half the time in short simple turns. The opening line is the partner starting the planning with a question. Summary and role ("other candidate") in English.`,
+    id: "en-de-goethe-a2-plan-diary",
+    userInput: cardInput({ exam: "goethe", learnerLanguage: "en", level: "A2", task: "t3" }),
+  },
+  {
+    expectations: `DELF A2 Part 3 for an English-speaking candidate: a role-play card whose first instruction, with "vous", states an everyday situation in France (buying, booking or inviting), with the points to sort out as prompts. The examiner plays the other person with the facts it knows (prices in euros, times, conditions) realistic for France, reacts to what the candidate asks and uses greetings and polite forms. The role names that person in English, and the summary is in English.`,
+    id: "en-fr-delf-a2-role-play",
+    userInput: cardInput({ exam: "delf", learnerLanguage: "en", level: "A2", task: "p3" }),
+  },
 ];

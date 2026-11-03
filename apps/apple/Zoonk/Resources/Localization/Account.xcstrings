@@ -9154,6 +9154,65 @@
         }
       }
     },
+    "Use 150 characters or fewer." : {
+      "comment" : "Shown under the profile name field when the typed name is too long",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gib höchstens 150 Zeichen ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa 150 caracteres o menos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilise au maximum 150 caractères."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa al massimo 150 caratteri."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "150文字以内で入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "150자 이내로 입력해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wpisz maksymalnie 150 znaków."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use até 150 caracteres."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En fazla 150 karakter kullan."
+          }
+        }
+      }
+    },
     "Use a different email" : {
       "comment" : "Button that returns to the email entry step",
       "localizations" : {

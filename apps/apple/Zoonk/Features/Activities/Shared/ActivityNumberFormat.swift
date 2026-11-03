@@ -47,18 +47,35 @@ enum ActivityNumberFormat {
     return attachedUnits.contains(unit) ? number + unit : "\(number)\u{00A0}\(unit)"
   }
 
-  /// Main's `formatMoney`: cents only when a small amount has some ($3.50, $200, $103,449),
-  /// unless the caller asks for digits.
+  static func displayDigits(_ value: Double, unit: String? = nil) -> Int {
+    money(unit) == nil ? fractionDigits(value) : moneyDigits(value)
+  }
+
+  /// Rounded by a format style, as `format` rounds: ties to even, so 1.125 reads 1.12.
+  static func roundedForDisplay(_ value: Double, unit: String? = nil) -> Double {
+    let style = FloatingPointFormatStyle<Double>.number.locale(Locale(identifier: "en_US_POSIX"))
+      .precision(.fractionLength(0...displayDigits(value, unit: unit)))
+      .grouping(.never)
+
+    return Double(value.formatted(style)) ?? value
+  }
+
+  /// Main's `moneyFractionDigits`: cents only when a small amount has some ($3.50, $200, $103,449).
+  private static func moneyDigits(_ value: Double) -> Int {
+    abs(value) >= 1000 || isWhole(value, places: 2) ? 0 : 2
+  }
+
+  private static func isWhole(_ value: Double, places: Int) -> Bool {
+    let scale = pow(10, Double(places))
+    return ((value * scale + 0.5).rounded(.down)).truncatingRemainder(dividingBy: scale) == 0
+  }
+
+  /// Main's `formatMoney`, unless the caller asks for digits.
   private static func formatMoney(
     _ value: Double, currency: String, signed: Bool, digits: Int?, compact: Bool, locale: Locale
   ) -> String {
-    let isWhole = { (places: Int) in
-      let scale = pow(10, Double(places))
-      return ((value * scale + 0.5).rounded(.down)).truncatingRemainder(dividingBy: scale) == 0
-    }
-
-    let maximum = digits ?? (abs(value) >= 1000 || isWhole(2) ? 0 : 2)
-    let minimum = isWhole(maximum) ? 0 : min(maximum, 2)
+    let maximum = digits ?? moneyDigits(value)
+    let minimum = isWhole(value, places: maximum) ? 0 : min(maximum, 2)
 
     var style = FloatingPointFormatStyle<Double>.Currency(code: currency, locale: locale)
       .precision(.fractionLength(minimum...max(maximum, minimum)))

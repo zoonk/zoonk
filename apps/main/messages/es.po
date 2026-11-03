@@ -1259,6 +1259,11 @@ msgid "Your name, username and account."
 msgstr "Tu nombre, nombre de usuario y cuenta."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "Usa 150 caracteres o menos."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
 msgstr "Verificando…"

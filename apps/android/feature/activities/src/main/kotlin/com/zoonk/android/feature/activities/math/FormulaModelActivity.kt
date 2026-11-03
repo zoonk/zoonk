@@ -53,6 +53,7 @@ import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf
+import java.util.Locale
 import kotlin.math.abs
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOfValue as FormulaModelContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
@@ -115,7 +116,7 @@ private fun FormulaModelBoard(
     val view = remember(sliders, events) { modelView(fields, axis, charted, sliders, events) }
     val formatOutput = { output: ModelOutput, value: Double? -> value?.let { formatAmount(it, locale, output.unit) }.orEmpty() }
     val formatX = { value: Double -> formatAmount(value, locale, axis.unit) }
-    val readouts = readouts(fields, charted, view, formatOutput)
+    val readouts = readouts(charted, view, formatOutput)
     val update = { nextSliders: ModelValues, nextEvents: ModelValues ->
         sliders = nextSliders
         events = nextEvents
@@ -184,39 +185,38 @@ private fun FormulaModelBoard(
 
 @Composable
 private fun readouts(
-    fields: FormulaFields,
     charted: ModelOutput,
     view: ModelView,
     formatOutput: (ModelOutput, Double?) -> String,
 ): List<Readout> {
     val locale = currentLocale()
-    val baseline = view.readoutBaseline
-    return fields.outputs.map { output ->
-        val value = formulaValue(fields, view.now, output.id)
-        val before = baseline?.let { formulaValue(fields, it.values, output.id) }
+    return view.readouts.map { (output, value, before, change) ->
         val note =
             when {
-                value == null || before == null || value == before -> {
+                change == null -> {
                     null
                 }
 
-                baseline.kind == BaselineKind.WhatIf -> {
-                    stringResource(
-                        R.string.activities_math_formula_before,
-                        formatOutput(output, before),
-                    )
+                view.readoutBaseline?.kind == BaselineKind.WhatIf -> {
+                    stringResource(R.string.activities_math_formula_before, formatOutput(output, before))
                 }
 
                 else -> {
                     stringResource(
                         R.string.activities_math_formula_from_start,
-                        formatAmount(value - before, locale, output.unit, signed = true),
+                        formatChange(change, locale, output.unit),
                     )
                 }
             }
         Readout(output, output.id == charted.id, formatOutput(output, value), note)
     }
 }
+
+private fun formatChange(
+    change: Change,
+    locale: Locale,
+    unit: String?,
+): String = formatAmount(change.amount, locale, unit, maximumFractionDigits = change.digits, signed = true)
 
 @Composable
 private fun description(
@@ -340,7 +340,7 @@ private fun FormulaChart(
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val ring = MaterialTheme.colorScheme.surface
     val right = MaterialTheme.colorScheme.tertiary
-    val delta = view.delta.takeIf { it != 0.0 }?.let { formatAmount(it, locale, charted.unit, signed = true) }
+    val delta = view.delta?.let { formatChange(it, locale, charted.unit) }
     val before = view.chartedBefore
     val now = view.chartedNow
     val density = LocalDensity.current

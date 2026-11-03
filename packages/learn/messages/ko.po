@@ -935,7 +935,6 @@ msgid "{low} to {high}"
 msgstr "{low}~{high}"
 
 #: src/_utils/use-state-label.ts
-#: src/memory/memory-labels.tsx
 msgctxt "BkpBqH"
 msgid "Learning"
 msgstr "학습 중"
@@ -5642,7 +5641,6 @@ msgid "{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}
 msgstr "{stars, plural, =0 {별 3개 중 #개} other {별 3개 중 #개}}"
 
 #: src/language/conversation/call-stars-step.tsx
-#: src/memory/memory-labels.tsx
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "목표"
@@ -6889,24 +6887,35 @@ msgctxt "K3r6DQ"
 msgid "Delete"
 msgstr "삭제"
 
+#: src/memory/memory-labels.tsx
+msgctxt "memoryCategories.XHLYdJ"
+msgid "Goals"
+msgstr "목표"
+
 #. A category of what Zoonk remembers about the learner: their studies, job, school year and the languages they speak.
 #: src/memory/memory-labels.tsx
-msgctxt "XQZA8e"
+msgctxt "memoryCategories.XQZA8e"
 msgid "Background"
 msgstr "기본 정보"
 
 #: src/memory/memory-labels.tsx
-msgctxt "lEdpUM"
+msgctxt "memoryCategories.lEdpUM"
 msgid "Routine"
 msgstr "일상"
 
 #: src/memory/memory-labels.tsx
-msgctxt "PCSt5T"
+msgctxt "memoryCategories.PCSt5T"
 msgid "Preferences"
 msgstr "선호 사항"
 
+#. A category of what Zoonk remembers about the learner: how their studies are going, like mixing up two ideas or reading better than they speak.
 #: src/memory/memory-labels.tsx
-msgctxt "V2qutI"
+msgctxt "memoryCategories.BkpBqH"
+msgid "Learning"
+msgstr "학습"
+
+#: src/memory/memory-labels.tsx
+msgctxt "memoryCategories.V2qutI"
 msgid "Context"
 msgstr "상황"
 
@@ -6968,12 +6977,12 @@ msgstr "메모리를 준비하고 있어요…"
 #: src/memory/memory-screen.tsx
 msgctxt "Ob8gKI"
 msgid "Preparing…"
-msgstr "준비하고 있어요…"
+msgstr "준비 중…"
 
 #: src/memory/memory-screen.tsx
 msgctxt "owirfw"
 msgid "We couldn't prepare the download. Try again."
-msgstr "다운로드를 준비하지 못했어요. 다시 시도해 보세요."
+msgstr "다운로드할 파일을 준비하지 못했어요. 다시 시도해 보세요."
 
 #: src/memory/memory-screen.tsx
 msgctxt "kxonMZ"

@@ -31,6 +31,7 @@
   "account_menu_subscription": "83ebb83159099b2c55422ef4869b574ed54e905586693649ccdc8ca70f487162",
   "account_name": "2c8e140bd39f1c6bc90e1a5ddfebd754aea535a5c4cf7ce10406d99ea009a260",
   "account_name_description": "4ab835256b340d93d46392dcf5c3dd781baa414b34f64b827a6c5fcc93b17b09",
+  "account_name_too_long": "01e4c8dd747ebc30308f533593efea2948480d69f8e326a84c7f1896259c4daa",
   "account_new_code_failed": "297d4920115e715ef9a3e33621c6c0ac84991490e28f47240301069d3e8ff56f",
   "account_new_code_sent": "241fb5d611f2a5e59c48ebefb7978c8f922d36f3d8adef5b1ac0f0e8ad6afce6",
   "account_new_code_wait": "6df439572b577be16773918ad1ab579d943bfe33c3fdac3c2f2bd0f29e3ad365",
@@ -99,6 +100,7 @@
     <string name="account_setup_description">이름과 사용자 이름은 나중에 프로필에서 바꿀 수 있어요.</string>
     <string name="account_name">이름</string>
     <string name="account_name_description">Zoonk와 짝꿍이 부르는 이름이자 인증서에 표시되는 이름이에요.</string>
+    <string name="account_name_too_long">150자 이내로 입력해 주세요.</string>
     <string name="account_username">사용자 이름</string>
     <!-- %1$s is a username. -->
     <string name="account_username_line">내 사용자 이름: @%1$s</string>

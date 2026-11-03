@@ -8,6 +8,8 @@ import { type EvalResult, type TestCase } from "./types";
 
 export const REQUIRED_LANGUAGES = ["en", "pt"] as const;
 
+export type RequiredLanguage = (typeof REQUIRED_LANGUAGES)[number];
+
 export const UNKNOWN_LANGUAGE = "unknown";
 
 const ID_LANGUAGE_PATTERN = /^(?<language>[a-z]{2})-/u;

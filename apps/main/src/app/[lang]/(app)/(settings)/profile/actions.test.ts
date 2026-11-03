@@ -1,3 +1,5 @@
+import { NativeAuthResponseError } from "@zoonk/auth/errors";
+import { NAME_TOO_LONG_ERROR_CODE } from "@zoonk/auth/name-rules";
 import { updateCurrentUser } from "@zoonk/core/users/current";
 import { describe, expect, it, vi } from "vitest";
 import { profileFormAction } from "./actions";
@@ -22,6 +24,16 @@ describe(profileFormAction, () => {
     expect(updateCurrentUser).toHaveBeenCalledExactlyOnceWith({
       input: { name: "Updated learner", username: "updated_learner" },
     });
+  });
+
+  it("names a name the server refused as too long", async () => {
+    vi.mocked(updateCurrentUser).mockRejectedValue(
+      new NativeAuthResponseError({ body: { code: NAME_TOO_LONG_ERROR_CODE }, statusCode: 400 }),
+    );
+
+    const result = await profileFormAction(null, createProfileFormData());
+
+    expect(result.status).toBe("nameTooLong");
   });
 
   it("returns an error when the profile update fails", async () => {

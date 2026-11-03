@@ -63,9 +63,9 @@ class AccountStore(
             null
         }
 
-    /** Null when saved, or when another session took over meanwhile. Without [username], only the name changes. */
+    /** Null when saved, or when another session took over meanwhile. A null field leaves the saved one. */
     suspend fun saveProfile(
-        name: String,
+        name: String?,
         username: String? = null,
     ): AccountFailure? {
         val result =
