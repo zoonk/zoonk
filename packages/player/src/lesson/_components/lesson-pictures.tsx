@@ -162,11 +162,6 @@ export function useIsExploredPictureLost(step: PlayableLibraryStep): boolean {
   return step.kind === "explanation" && labeledDiagramOf(step) !== null && !image && !pending;
 }
 
-export function useHasStepPicture(step: PlayableLibraryStep): boolean {
-  const { image, pending } = useStepPicture(step);
-  return image !== null || pending;
-}
-
 function LessonPicturePending({ alt, frame }: { alt?: string; frame: LessonPictureFrame }) {
   const t = useExtracted();
 
@@ -182,22 +177,10 @@ function LessonPicturePending({ alt, frame }: { alt?: string; frame: LessonPictu
   );
 }
 
-function PictureFrame({
-  children,
-  className,
-  frame,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  frame: LessonPictureFrame;
-}) {
+function PictureFrame({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <div
-      className={cn(
-        "flex w-full justify-start max-sm:justify-center",
-        frame === "hero" && "max-sm:-mx-4 max-sm:w-[calc(100%+2rem)]",
-        className,
-      )}
+      className={cn("flex w-full justify-start max-sm:justify-center", className)}
       data-slot="lesson-picture"
     >
       {children}
@@ -224,7 +207,7 @@ export function LessonStepPicture({
 
   if (image) {
     return (
-      <PictureFrame className={className} frame={frame}>
+      <PictureFrame className={className}>
         <LessonStepImage frame={frame} image={image} priority={priority} />
       </PictureFrame>
     );
@@ -232,7 +215,7 @@ export function LessonStepPicture({
 
   if (pending) {
     return (
-      <PictureFrame className={className} frame={frame}>
+      <PictureFrame className={className}>
         <LessonPicturePending alt={asks ? request?.alt : undefined} frame={frame} />
       </PictureFrame>
     );
