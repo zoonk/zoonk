@@ -31,7 +31,7 @@ function toInput(input: Omit<LessonWriterInput, "activityTemplates">): LessonWri
 
 const SHARED_EXPECTATIONS = `
   - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)
-  - At \`overview\` and \`beginner\` without exams or class material, the hook is a \`hookText\` scene that asks nothing, even when its plan was a guess; at other levels a \`hookGuess\` is a guess that doesn't count: one \`reveal\` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead
+  - At \`overview\` and \`beginner\` without exams or class material, the hook is a \`hookText\` scene with nothing to pick or type, ending on the question the lesson answers, even when its plan was a guess; at other levels a \`hookGuess\` is a guess that doesn't count: one \`reveal\` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead
   - Calculations written as \`mathCheck\` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting
   - Activities are JSON inside \`content\`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea
   - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its \`prompt\` and its \`alt\` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)
