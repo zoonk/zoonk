@@ -1,7 +1,6 @@
 import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { getLessonMapIdeas } from "@zoonk/ai/tasks/lesson-writer/map";
 import {
-  type LessonMap,
   type WrittenLesson,
   type WrittenScreen,
   getWrittenKinds,
@@ -265,7 +264,7 @@ export function toReviewedLesson({
 }: {
   lesson: WrittenLesson;
   screens: readonly ConvertedScreen[];
-}): { screens: { content: unknown; kind: string }[]; summary: LessonMap } {
+}): { screens: { content: unknown; kind: string }[]; summary: string[] } {
   return {
     screens: lesson.screens.map((written, index) => {
       const converted = screens[index];
@@ -274,7 +273,7 @@ export function toReviewedLesson({
         ? { content: converted.content, kind: converted.kind }
         : { content: written, kind: written.kind };
     }),
-    summary: lesson.summary,
+    summary: getLessonMapIdeas(lesson.summary),
   };
 }
 

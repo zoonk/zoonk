@@ -168,7 +168,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
     },
   }),
   pictureCase({
-    decorative: true,
+    decorative: false,
     id: "spec-visual-en-water-cycle-1",
     lesson: "The water cycle",
     level: "beginner",
@@ -284,7 +284,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
     },
   }),
   pictureCase({
-    decorative: true,
+    decorative: false,
     id: "spec-visual-pt-ligacao-covalente-1",
     lesson: "Ligação covalente",
     level: "beginner",
@@ -372,7 +372,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
     },
   }),
   pictureCase({
-    decorative: true,
+    decorative: false,
     id: "spec-visual-pt-camelo-adaptacoes-1",
     lesson: "Adaptações do camelo ao deserto",
     level: "beginner",
@@ -385,7 +385,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
     },
   }),
   pictureCase({
-    decorative: true,
+    decorative: false,
     id: "spec-visual-pt-camelo-adaptacoes-2",
     lesson: "Adaptações do camelo ao deserto",
     level: "beginner",
@@ -657,7 +657,7 @@ export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
     },
   }),
   pictureCase({
-    decorative: true,
+    decorative: false,
     id: "plan-pt-eletron-nucleo-overview-5",
     lesson: "Por que o elétron não cai no núcleo",
     level: "overview",

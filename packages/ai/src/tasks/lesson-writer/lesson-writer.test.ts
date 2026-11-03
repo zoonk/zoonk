@@ -110,21 +110,27 @@ describe(writeLessonDraft, () => {
     const findError = spec([screen("hook"), screen("activity", "findError")]);
     const exams = [{ name: "ENEM", style: "Multiple choice with a text." }];
 
-    const [regular, beginner, spotAi, material, sources, exam, setup, written] = await Promise.all([
-      writeLessonDraft(params),
-      writeLessonDraft({ ...params, level: "beginner" }),
-      writeLessonDraft({ ...params, spec: findError }),
-      writeLessonDraft({ ...params, exams: [], material: "<page>Slides</page>" }),
-      writeLessonDraft({ ...params, sources: "<page>Law</page>" }),
-      writeLessonDraft({ ...params, exams }),
-      writeLessonDraft({ ...params, setup: true }),
-      writeLessonDraft({ ...params, shortAnswers: true }),
-    ]);
+    const [regular, beginner, beginnerExam, spotAi, material, sources, exam, setup, written] =
+      await Promise.all([
+        writeLessonDraft(params),
+        writeLessonDraft({ ...params, level: "beginner" }),
+        writeLessonDraft({ ...params, exams, level: "beginner" }),
+        writeLessonDraft({ ...params, spec: findError }),
+        writeLessonDraft({ ...params, exams: [], material: "<page>Slides</page>" }),
+        writeLessonDraft({ ...params, sources: "<page>Law</page>" }),
+        writeLessonDraft({ ...params, exams }),
+        writeLessonDraft({ ...params, setup: true }),
+        writeLessonDraft({ ...params, shortAnswers: true }),
+      ]);
 
     expect(regular.systemPrompt).toBe("Write the lesson.\nKeep it short.\nCheck it.");
 
     expect(beginner.systemPrompt).toBe(
       "Write the lesson.\nKeep it short.\nShow it before asking.\nCheck it.",
+    );
+
+    expect(beginnerExam.systemPrompt).toBe(
+      "Write the lesson.\nWrite it for the exams.\nKeep it short.\nCheck it.",
     );
 
     expect(spotAi.systemPrompt).toBe(

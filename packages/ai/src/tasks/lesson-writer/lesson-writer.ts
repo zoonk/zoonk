@@ -5,8 +5,8 @@ import { acceptOmittedNulls } from "../../_utils/omitted-nulls";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import { readsNoviceRules } from "../_utils/novice-rules";
 import { selectPromptVariants } from "../_utils/prompt-variants";
-import { isNoviceLevel } from "../curriculum/_utils/course-levels";
 import typedQuestionRules from "../items/item-rules/typed-question.prompt.md";
 import {
   type LessonProblem,
@@ -71,7 +71,7 @@ function buildSystemPrompt(params: WriteLessonDraftParams): string {
     variants: {
       exams: (params.exams?.length ?? 0) > 0,
       material: Boolean(params.material),
-      novice: isNoviceLevel(params.level),
+      novice: readsNoviceRules(params),
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),

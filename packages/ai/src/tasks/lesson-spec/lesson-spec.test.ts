@@ -267,10 +267,11 @@ describe(generateLessonSpec, () => {
 
     const exams = [{ name: "ENEM", style: "Multiple choice with a text." }];
 
-    const [regular, beginner, exam, material, sources, setup, quickExam, written] =
+    const [regular, beginner, beginnerExam, exam, material, sources, setup, quickExam, written] =
       await Promise.all([
         generateLessonSpec(params),
         generateLessonSpec({ ...params, level: "beginner" }),
+        generateLessonSpec({ ...params, exams, level: "beginner" }),
         generateLessonSpec({ ...params, exams }),
         generateLessonSpec({ ...params, exams: [], material: "<page>Slides</page>" }),
         generateLessonSpec({ ...params, sources: "<page>Law</page>" }),
@@ -281,6 +282,11 @@ describe(generateLessonSpec, () => {
 
     expect(regular.systemPrompt).toBe("Plan the lesson.\nCheck the plan.");
     expect(beginner.systemPrompt).toBe("Plan the lesson.\nShow it to a newcomer.\nCheck the plan.");
+
+    expect(beginnerExam.systemPrompt).toBe(
+      "Plan the lesson.\nPlan it for the exams.\nCheck the plan.",
+    );
+
     expect(exam.systemPrompt).toBe("Plan the lesson.\nPlan it for the exams.\nCheck the plan.");
 
     expect(material.systemPrompt).toBe(

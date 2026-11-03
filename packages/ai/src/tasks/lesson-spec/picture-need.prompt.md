@@ -11,7 +11,7 @@ A picture teaches when a learner who only read the screen's words would otherwis
 
 A picture only decorates when:
 
-- It shows something the screen's words don't name.
+- At `overview` and `beginner`, its main subject is something the screen's words don't name.
 - At `intermediate` and `advanced`, the screen's words already say everything it shows: a situation described in a sentence (a glass left in the sun, a dog in a park, two coins on a table, a person holding a phone), a hook whose question doesn't depend on seeing anything.
 - It repeats numbers the words give, as price tags, bars or icons (a $50 tag marked -20%, a bar for 10 next to a bar for 15, rows of coins): numbers are a table or a chart the app draws, never a picture.
 - It's text drawn as an image: a formula, a derivation, code, a terminal, an app's or a website's screen.

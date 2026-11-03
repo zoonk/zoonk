@@ -8,7 +8,7 @@ export const LESSON_WRITER_SCORE_CATEGORIES = defineScoreCategories([
     weight: 30,
   },
   {
-    expectations: `Audit clarity for the stated level. Each screen teaches one idea with a concrete example, in short sentences and everyday language with no academic tone. Every technical term is explained, with an everyday comparison, before it's used, and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several or for textbook tone; at most 6 when a learner at this level couldn't follow.`,
+    expectations: `Audit clarity for the stated level. Each screen teaches one idea with a concrete example, in short sentences and everyday language with no academic tone. Every technical term is explained before it's used (with an everyday comparison where plain words aren't enough), and never two new terms on one screen. Complex ideas are explained completely: no skipped steps, no naming an idea instead of explaining how it works. Score at most 8 for one unexplained term or skipped step; at most 7 for several or for textbook tone; at most 6 when a learner at this level couldn't follow.`,
     id: "clarity",
     label: "Clarity & plain words",
     weight: 25,

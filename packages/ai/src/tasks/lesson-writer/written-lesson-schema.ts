@@ -12,14 +12,7 @@ const MAX_WORKED_STEPS = 8;
 const MAX_KEY_POINTS = 5;
 const MAX_ACCEPTED_ANSWERS = 5;
 
-export const LESSON_MAP_SHAPES = [
-  "hub",
-  "sequence",
-  "nested",
-  "compare",
-  "equation",
-  "list",
-] as const;
+const LESSON_MAP_SHAPES = ["hub", "sequence", "nested", "compare", "equation", "list"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the kind comes first, then the setup, then the answers. */
 

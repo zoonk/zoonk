@@ -47,4 +47,12 @@ describe(normalizeLessonMap, () => {
     expect(normalizeLessonMap({ nodes: longLabel, shape: "compare" }).shape).toBe("list");
     expect(normalizeLessonMap({ nodes: twoNodes, shape: "compare" }).shape).toBe("compare");
   });
+
+  it("draws a map with more than five ideas as a list, so no step or result is cut from its shape", () => {
+    const six = ["A.", "B.", "C.", "D.", "E.", "Result."].map((idea) => node(idea, idea));
+    const map = normalizeLessonMap({ nodes: six, shape: "equation" });
+
+    expect(map.shape).toBe("list");
+    expect(map.nodes).toHaveLength(5);
+  });
 });

@@ -11,7 +11,6 @@ import {
 } from "../../provider-options";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonWritingContext, formatLessonPlan } from "../lesson-writer/format-lesson-plan";
-import { type LessonMap } from "../lesson-writer/written-lesson-schema";
 import { getLessonCheckModels } from "./lesson-check-models";
 import promptTemplate from "./lesson-quality-check.prompt.md";
 
@@ -45,11 +44,7 @@ export type LessonQualityIssueKind = (typeof QUALITY_ISSUE_KINDS)[number];
 /** `screen` is a 0-based index, or null for the whole lesson. */
 export type LessonQualityIssue = z.infer<typeof schema>["issues"][number];
 
-/** Lessons published before the summary became a map keep their ideas as a list. */
-type ReviewedLesson = {
-  screens: { kind: string; content: unknown }[];
-  summary: LessonMap | string[];
-};
+type ReviewedLesson = { screens: { kind: string; content: unknown }[]; summary: string[] };
 
 export type CheckLessonQualityParams = LessonWritingContext & {
   /** A script's first letters, shown as letter cards instead of planned screens. */

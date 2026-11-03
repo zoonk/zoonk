@@ -20,7 +20,7 @@ export const pictureNeedClassifier = {
   question: {
     criteria: {
       false:
-        "It shows what the words don't name, repeats numbers or text, repeats the picture before or gives the answer away, or, at intermediate and advanced, the words already say all it shows or it shows something everyone knows.",
+        "It repeats numbers or text, repeats the picture before or gives the answer away; at overview and beginner its main subject is something the words don't name; at intermediate and advanced the words already say all it shows or it shows something everyone knows.",
       true: "A learner who only read the words would have to imagine what the picture shows, the question is about the picture itself, or, at overview and beginner, it shows the screen's own example.",
     },
     instructions,

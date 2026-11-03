@@ -34,8 +34,9 @@ function fitsShape({ nodes, shape }: LessonMap): boolean {
 }
 
 /**
- * Drops empty and repeated ideas and keeps the first five; a map whose nodes don't fit its shape is
- * drawn as a list, which fits any of them.
+ * Drops empty and repeated ideas. A map whose nodes don't fit its shape, more than five included, is
+ * drawn as a list of its first five, so cutting never takes an equation's result or a sequence's
+ * last step.
  */
 export function normalizeLessonMap(map: LessonMap): LessonMap {
   const seen = new Set<string>();
@@ -51,10 +52,11 @@ export function normalizeLessonMap(map: LessonMap): LessonMap {
 
       seen.add(key);
       return true;
-    })
-    .slice(0, MAX_NODES);
+    });
 
-  return { nodes, shape: fitsShape({ nodes, shape: map.shape }) ? map.shape : "list" };
+  const shape = fitsShape({ nodes, shape: map.shape }) ? map.shape : "list";
+
+  return { nodes: nodes.slice(0, MAX_NODES), shape };
 }
 
 export function getLessonMapIdeas(map: LessonMap): string[] {

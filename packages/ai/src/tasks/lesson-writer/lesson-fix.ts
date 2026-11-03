@@ -5,6 +5,7 @@ import { acceptOmittedNulls } from "../../_utils/omitted-nulls";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import { readsNoviceRules } from "../_utils/novice-rules";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import {
   type LessonProblem,
@@ -96,7 +97,7 @@ export async function fixLessonDraft(params: FixLessonDraftParams) {
 
   const systemPrompt = selectPromptVariants({
     template: fixPrompt,
-    variants: { shortAnswers: Boolean(params.shortAnswers) },
+    variants: { novice: readsNoviceRules(params), shortAnswers: Boolean(params.shortAnswers) },
   });
 
   const userPrompt = `${formatLessonPlan(params)}

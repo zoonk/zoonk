@@ -10,10 +10,11 @@ import { draftAgainWhenFlawed } from "../_utils/draft-again";
 import { formatLocalContext } from "../_utils/language-context";
 import { formatLessonDocuments } from "../_utils/lesson-documents";
 import { type LessonExam, formatLessonExams } from "../_utils/lesson-exams";
+import { readsNoviceRules } from "../_utils/novice-rules";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
-import { type CourseLevel, isNoviceLevel } from "../curriculum/_utils/course-levels";
+import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   LESSON_SCREEN_KINDS,
   type LessonSpec,
@@ -97,13 +98,15 @@ function formatList(items: readonly string[]): string {
 }
 
 function buildSystemPrompt(params: LessonSpecParams): string {
+  const novice = readsNoviceRules(params);
+
   const prompt = selectPromptVariants({
     template: systemPrompt,
     variants: {
       exams: (params.exams?.length ?? 0) > 0,
-      experienced: !isNoviceLevel(params.level),
+      experienced: !novice,
       material: Boolean(params.material),
-      novice: isNoviceLevel(params.level),
+      novice,
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),

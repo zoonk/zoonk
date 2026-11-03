@@ -27,7 +27,7 @@ Only two things change a brief's details, never its idea or its tempting wrong a
 
 # Level
 
-- `overview`: the big idea in plain words, stories and comparisons. No formulas, equations, code or notation. Checks are light and fun.
+- `overview`: the big idea in plain words, shown in everyday scenes. No formulas, equations, code or notation. Checks are light, with options of a few words.
 - `beginner`: words a 12-year-old can follow. A formula only when the idea needs one, after the intuition, explained piece by piece.
 - `intermediate` and `advanced`: precise terms and notation after the intuition, still in short, clear sentences. Notation must be correct and consistent.
 

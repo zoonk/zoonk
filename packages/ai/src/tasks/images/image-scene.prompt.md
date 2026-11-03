@@ -12,7 +12,7 @@ The picture must teach. A learner who looks at it for two seconds should see the
 
 # Fields
 
-- `focalObject`: the one main thing, as a concrete object someone can draw: "an old price tag with its price crossed out", "a cloud of tiny dots, densest around a small red nucleus". When the screen is about a place and the few things in it, it can be one small scene with each of those things: "a pond's muddy bank with five capybaras, three herons in the shallow water and a few floating water hyacinths". Never an abstract word like "value" or "energy" on its own.
+- `focalObject`: the one main thing, as a concrete object someone can draw: "an old price tag with its price crossed out", "a cloud of tiny dots, densest around a small red nucleus". When the screen is about a place and the few things in it, it can be one small scene with each of those things: "a pond's muddy bank with capybaras on it, herons in the shallow water and floating water hyacinths". Never an abstract word like "value" or "energy" on its own.
 - `supportingObjects`: zero to two small objects that make the idea clear. Leave it empty when the focal object is enough.
 - `layout`: `single` for one object, a small scene, a whole with its parts, a cycle or a map; `comparison` for two things compared, one above the other: `focalObject` is the first and the first supporting object the second (two paintings, "Earth and Sun next to an electron and its nucleus"); `sequence` for a before and after or a cause and its effect, linked by one arrow.
 - `relation`: how the objects relate in space or cause, in one short sentence, or null.
