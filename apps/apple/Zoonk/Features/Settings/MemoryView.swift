@@ -23,8 +23,8 @@ struct MemoryView: View {
 
             if memory.enabled {
               Text(
-                "Personal examples and plans that fit your week", tableName: "Settings",
-                comment: "What memory does while it's on")
+                "Personal examples, plans that fit your week and calls that remember your news",
+                tableName: "Settings", comment: "What memory does while it's on")
             } else {
               Text(
                 "Memory is off. Nothing new is learned, and these facts aren't used.",
@@ -297,6 +297,12 @@ extension MemoryFact.Source {
       Text(
         "You told us", tableName: "Settings",
         comment: "Source of a fact the learner told Zoonk themselves (\"us\" is Zoonk)")
+    case .call:
+      Text(
+        "From a call", tableName: "Settings",
+        comment:
+          "Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor."
+      )
     case .chat:
       Text("From a chat", tableName: "Settings", comment: "Source of a fact from a chat")
     case .onboarding:
