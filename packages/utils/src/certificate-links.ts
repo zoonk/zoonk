@@ -40,7 +40,7 @@ export function formatCertificateCode(code: string): string {
 }
 
 /** The name is the only thing on a certificate that changes after it's earned. */
-function getImageVersion(recipientName: string | null): string {
+export function getCertificateImageVersion(recipientName: string | null): string {
   return hashSeed(`${CERTIFICATE_DESIGN_VERSION}:${recipientName ?? ""}`).toString(VERSION_RADIX);
 }
 
@@ -85,7 +85,7 @@ export function getCertificateLinks({
   const path = `/c/${input.code}`;
   const url = new URL(path, origin).toString();
   const locale = getSupportedLocaleFromLanguage(input.language);
-  const version = getImageVersion(input.recipientName);
+  const version = getCertificateImageVersion(input.recipientName);
 
   const imageUrl = (variant: CertificateImageVariant) =>
     new URL(`/${locale}${path}/image/${variant}.png?v=${version}`, origin).toString();

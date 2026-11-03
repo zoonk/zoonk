@@ -2,8 +2,11 @@ import { getCertificateDownloadDisposition } from "@/lib/certificates/certificat
 import { renderCertificateImage } from "@/lib/certificates/certificate-image";
 import { getCertificateFileTitle } from "@/lib/certificates/certificate-view";
 import { getPublicCertificate } from "@zoonk/core/certificates/public";
-import { CERTIFICATE_IMAGE_VARIANTS } from "@zoonk/utils/certificate-links";
-import { type NextRequest } from "next/server";
+import {
+  CERTIFICATE_IMAGE_VARIANTS,
+  getCertificateImageVersion,
+} from "@zoonk/utils/certificate-links";
+import { type NextRequest, NextResponse } from "next/server";
 
 /**
  * Image URLs carry a version of the name, so a rename gets new URLs at once; a day at the CDN bounds
@@ -27,6 +30,16 @@ export async function GET(
 
   if (!variant || !facts) {
     return new Response(null, { status: 404 });
+  }
+
+  const version = getCertificateImageVersion(facts.recipientName);
+
+  // Anyone can work out the version of a name the learner might take later; caching this picture
+  // under it would show the old name once they take it.
+  if (request.nextUrl.searchParams.get("v") !== version) {
+    const current = request.nextUrl.clone();
+    current.searchParams.set("v", version);
+    return NextResponse.redirect(current, { headers: { "Cache-Control": "no-store" } });
   }
 
   const image = await renderCertificateImage({ facts, variant });
