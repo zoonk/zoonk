@@ -12,7 +12,7 @@ import {
 import { type LessonScreenToSave } from "../../lessons/_utils/save-lesson-content";
 import { loadLessonReuse } from "../../lessons/lesson-reuse";
 import { readCurrentLessonVersion } from "../../lessons/lesson-versions";
-import { getStepImageRequest } from "../../media/_utils/step-image-request";
+import { getPictureKey } from "../../media/_utils/step-image-request";
 
 export const BACKGROUND_TIER = chooseServiceTier({ wait: "later" });
 
@@ -114,14 +114,14 @@ export function keepPictures({
 }): LessonScreenToSave[] {
   const pictures = new Map(
     previous.flatMap((step) => {
-      const prompt = getStepImageRequest(step)?.prompt;
-      return prompt && step.mediaAssetId ? [[prompt, step.mediaAssetId] as const] : [];
+      const key = getPictureKey(step);
+      return key && step.mediaAssetId ? [[key, step.mediaAssetId] as const] : [];
     }),
   );
 
   return screens.map((screen) => {
-    const prompt = getStepImageRequest(screen)?.prompt;
-    return { ...screen, mediaAssetId: (prompt && pictures.get(prompt)) ?? null };
+    const key = getPictureKey(screen);
+    return { ...screen, mediaAssetId: (key && pictures.get(key)) ?? null };
   });
 }
 
