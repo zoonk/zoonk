@@ -71,11 +71,33 @@ function LiveCallRun({
   const [saving, setSaving] = useState<SaveState | null>(null);
   const { finish, start } = call;
 
-  // A dropped call's reconnect may still be reserving: the next run must name its connection.
+  // A dropped call's reconnect may still be reserving: the next run must name its connection. Only
+  // the latest restart goes ahead, and none once the call was ended or the screen left.
+  const restarts = useRef(0);
+
   const restart = (next: RunStart) => {
+    restarts.current += 1;
+    const mine = restarts.current;
     const settled = call.continuing ? call.settle() : Promise.resolve();
-    void settled.then(() => onRestart({ earlier: call.getCallSoFar(), startWith: next }));
+
+    void settled.then(() => {
+      if (restarts.current === mine) {
+        onRestart({ earlier: call.getCallSoFar(), startWith: next });
+      }
+    });
   };
+
+  const hangUp = () => {
+    restarts.current += 1;
+    call.hangUp();
+  };
+
+  useEffect(
+    () => () => {
+      restarts.current += 1;
+    },
+    [],
+  );
 
   const save = useCallback(async () => {
     setSaving("saving");
@@ -140,7 +162,7 @@ function LiveCallRun({
             restart("intro");
           }
         }
-      : call.hangUp;
+      : hangUp;
 
   const onStart = (audio: CallAudio | null) =>
     void start({ audio, takeover: startWith === "takeover" });
@@ -157,7 +179,7 @@ function LiveCallRun({
         limit={call.limit}
         microphoneProblem={call.microphoneProblem}
         name={conversation.character.name}
-        onEnd={call.hangUp}
+        onEnd={hangUp}
         onRetry={onRetry}
         onStart={onStart}
         onTakeover={onTakeover}

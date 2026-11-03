@@ -619,39 +619,50 @@ test.describe("Live call server states", () => {
       await page.getByRole("button", { name: "Call again" }).click();
       await expect(dropped).toBeVisible();
 
-      // The learner cancels the second while its reservation is still on its way, then ends the call.
+      // The learner cancels the second while its reservation is still on its way, calls again and
+      // ends the call before it answers: only that reservation is held.
+      const held = { reservation: false };
+
       await page.route(`**/conversation/${call.id}`, async (route) => {
         const args: unknown = JSON.parse(route.request().postData() ?? "null");
         const reserving = Array.isArray(args) && getString(args[0], "conversationId") === call.id;
-        await (reserving ? setTimeout(1500) : Promise.resolve());
+        const hold = reserving && !held.reservation;
+        held.reservation ||= hold;
+        await (hold ? setTimeout(1500) : Promise.resolve());
         await route.fallback();
       });
 
       await page.getByRole("button", { name: "Call again" }).click();
       await page.getByRole("button", { exact: true, name: "Cancel" }).click();
       await expect(dropped).toBeVisible();
-      await expect(page.getByRole("button", { name: "Call again" })).toBeVisible();
+      await page.getByRole("button", { name: "Call again" }).click();
       await page.getByRole("button", { name: "End the call" }).click();
-      await expect.poll(() => actions.complete.length).toBe(1);
-
-      const latest = await connectionFor(call.id);
-      expect(actions.sdp).toHaveLength(2);
-      expect(actions.reserve).toHaveLength(3);
-
-      expect(actions.complete[0]).toStrictEqual({
-        connectionId: latest.id,
-        turns: [
-          { speaker: "character", text: "Hi! Are you calling about the apartment?" },
-          { speaker: "learner", text: "Is it still free?" },
-          { speaker: "character", text: CHARACTER_REPLY },
-        ],
-      });
 
       await expect
         .poll(() => prisma.languageConversation.findUnique({ where: { id: call.id } }), {
           timeout: 20_000,
         })
         .toMatchObject({ status: "completed" });
+
+      const latest = await connectionFor(call.id);
+      await expect(page.getByText("Calling Linda…")).toBeHidden();
+      expect(actions.reserve).toHaveLength(3);
+      expect(actions.sdp).toHaveLength(2);
+
+      await expect(
+        prisma.liveCallConnection.count({ where: { conversationId: call.id } }),
+      ).resolves.toBe(3);
+
+      expect(actions.complete).toStrictEqual([
+        {
+          connectionId: latest.id,
+          turns: [
+            { speaker: "character", text: "Hi! Are you calling about the apartment?" },
+            { speaker: "learner", text: "Is it still free?" },
+            { speaker: "character", text: CHARACTER_REPLY },
+          ],
+        },
+      ]);
     } finally {
       await owned.cleanup();
     }
