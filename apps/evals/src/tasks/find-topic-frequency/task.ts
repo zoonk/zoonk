@@ -1,4 +1,6 @@
+import { getTestCaseLanguage } from "@/lib/case-languages";
 import { createFixedScore } from "@/lib/score";
+import { detectLanguage } from "@/lib/text-language";
 import { type Task, type TaskScorer } from "@/lib/types";
 import {
   type FindTopicFrequencyParams,
@@ -64,6 +66,20 @@ const scoreTopicFrequency: TaskScorer<FindTopicFrequencyExpected> = ({ output, t
 
   if (contradictions.length > 0) {
     return createFixedScore({ conclusion: contradictions.join("; "), score: 6 });
+  }
+
+  const language = getTestCaseLanguage(testCase);
+
+  const otherLanguage = found.subjects.filter((subject) => {
+    const detected = detectLanguage(subject.basis);
+    return detected !== null && detected !== language;
+  });
+
+  if (otherLanguage.length > 0) {
+    return createFixedScore({
+      conclusion: `Basis not in the syllabus's language: ${otherLanguage.map((subject) => subject.basis).join("; ")}`,
+      score: 8,
+    });
   }
 
   const missed = expected.found.filter(
