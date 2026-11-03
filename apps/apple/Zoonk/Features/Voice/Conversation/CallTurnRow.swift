@@ -251,7 +251,10 @@ struct CallAnnouncements: ViewModifier {
       }
   }
 
+  /// Queued after what VoiceOver is reading, not over it.
   private func announce(_ text: String) {
-    AccessibilityNotification.Announcement(text).post()
+    var announcement = AttributedString(text)
+    announcement.accessibilitySpeechAnnouncementPriority = .low
+    AccessibilityNotification.Announcement(announcement).post()
   }
 }

@@ -436,11 +436,11 @@ final class LiveCallTests: XCTestCase {
     run.learnerTalks(from: 115, to: 120.2)
     run.characterTalks(from: 121, to: 121.25)
     run.acknowledge(at: 121.4, startMs: 121_200)
-    run.characterTalks(from: 121.5, to: 123)
     run.wait(until: 130)
 
+    // Nothing came after the acknowledgment: only the words before it can be the goodbye.
     XCTAssertEqual(run.hangUp?.reason, .time)
-    XCTAssertEqual(run.hangUp?.at ?? 0, 126, accuracy: 0.11)
+    XCTAssertEqual(run.hangUp?.at ?? 0, 124.25, accuracy: 0.11)
   }
 
   func testWordsFromBeforeTheCueArentTheGoodbye() {
@@ -474,6 +474,30 @@ final class LiveCallTests: XCTestCase {
     run.wait(until: 125)
 
     assertTimes(run.times(of: .goodbye), [121], accuracy: 0.11)
+  }
+
+  func testReplyGapsSkipTurnsACueAnsweredAndCountUnansweredOnes() {
+    func at(_ seconds: TimeInterval) -> Date {
+      Date(timeIntervalSinceReferenceDate: seconds)
+    }
+
+    var gaps = LiveCallReplyGaps()
+    gaps.learnerSpoke(at: at(1))
+    gaps.learnerSpoke(at: at(2))
+    gaps.characterSpoke(at: at(4.5))
+    // A cue during a turn covers the answer even after the learner paused and went on.
+    gaps.learnerSpoke(at: at(6))
+    gaps.cueSent()
+    gaps.learnerSpoke(at: at(7))
+    gaps.learnerSpoke(at: at(8.5))
+    gaps.characterSpoke(at: at(11))
+    gaps.learnerSpoke(at: at(13))
+    gaps.learnerSpoke(at: at(20))
+    gaps.callEnded(at: at(25))
+
+    XCTAssertEqual(gaps.gaps, [2.5])
+    XCTAssertEqual(gaps.medianMs, 2500)
+    XCTAssertEqual(gaps.unansweredTurns, 2)
   }
 
   func testTheFirstWordsAfterAPauseGetASpace() {

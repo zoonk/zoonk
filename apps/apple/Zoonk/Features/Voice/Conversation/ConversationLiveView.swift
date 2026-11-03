@@ -5,6 +5,8 @@ import SwiftUI
 struct ConversationLiveView: View {
   @Environment(\.isToolbarVertical) private var isToolbarVertical
   @State private var isShowingPhrases = false
+  /// Above the panes: folding or resizing recreates them, and the draft stays.
+  @State private var reply = ""
 
   let call: LiveCall
   let conversation: LanguageConversation
@@ -84,7 +86,7 @@ struct ConversationLiveView: View {
               onRetry: onRetrySave)
           } else {
             CallTurnRow(call: call, conversation: conversation)
-            CallReply(call: call)
+            CallReply(call: call, reply: $reply)
             controls(besideAside: besideAside)
           }
         }
@@ -217,9 +219,8 @@ private struct CallTranscript: View {
 /// What's sent while the call connects goes out once it does. The field never takes focus by
 /// itself: speaking is the main way to answer, and the keyboard would cover the conversation.
 private struct CallReply: View {
-  @State private var reply = ""
-
   let call: LiveCall
+  @Binding var reply: String
 
   var body: some View {
     HStack(spacing: 8) {
@@ -330,6 +331,8 @@ private struct CallHeader: View {
     TimelineView(.periodic(from: .now, by: 1)) { context in
       let elapsed = elapsed(at: context.date)
       let talk = TimeInterval(max(call.talkSeconds, 1))
+      // Full once the ending started, even when every goal was met early.
+      let progress = call.signals.wrapUp == nil ? min(elapsed, talk) : talk
       let time = Text(clock(elapsed))
 
       VStack(spacing: 4) {
@@ -343,7 +346,7 @@ private struct CallHeader: View {
         }
         .opacity(call.liveSince == nil ? 0 : 1)
 
-        ProgressView(value: min(elapsed, talk), total: talk)
+        ProgressView(value: progress, total: talk)
           .frame(width: 96)
       }
       .accessibilityElement(children: .ignore)

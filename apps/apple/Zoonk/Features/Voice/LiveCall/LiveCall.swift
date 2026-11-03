@@ -592,6 +592,8 @@ final class LiveCall {
     }
 
     let wasLive = phase == .live
+    // Nothing a pending objective check answers can end it normally anymore.
+    ending = nil
 
     Task {
       let closed = await release()
@@ -635,7 +637,7 @@ final class LiveCall {
     }
 
     tracked = true
-    replyGaps.callEnded()
+    replyGaps.callEnded(at: .now)
 
     UsageAnalytics.track(
       .callEnded(
@@ -655,7 +657,8 @@ final class LiveCall {
 
     timers = []
     settle?.cancel()
-    signals = Signals()
+    // The bar stays full once the ending started.
+    signals = Signals(wrapUp: signals.wrapUp)
     transport?.silence()
   }
 

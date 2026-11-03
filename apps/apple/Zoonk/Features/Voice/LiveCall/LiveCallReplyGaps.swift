@@ -1,16 +1,19 @@
 import Foundation
 
-/// How long the character took to answer, for the call-ended event. A gap runs from the learner's
-/// microphone going quiet to the character's next transcript fragment arriving: a proxy for the
-/// wait the learner hears, since the text leads the voice a little.
+/// How long the learner waited for the character, for the call-ended event, as main counts it: from
+/// their microphone going quiet to the character's next transcript arriving, a proxy for the wait
+/// they heard. A pause shorter than a slow reply is the learner thinking, so it stays one turn.
 struct LiveCallReplyGaps: Equatable {
   /// A gap longer than this is a slow reply.
   static let slow: TimeInterval = 3
 
   private(set) var gaps: [TimeInterval] = []
-  /// Learner turns no character transcript followed.
+  /// Learner turns the character left unanswered for longer than a slow reply.
   private(set) var unansweredTurns = 0
-  private var learnerQuietSince: Date?
+  /// An app cue went out in this turn: the character's next words answer it, not only the learner.
+  private var cued = false
+  private var voicedAt: Date?
+  private var stoppedAt: Date?
 
   var medianMs: Int? {
     guard !gaps.isEmpty else {
@@ -32,43 +35,51 @@ struct LiveCallReplyGaps: Equatable {
     gaps.count { $0 > Self.slow }
   }
 
+  /// A microphone sample above the speech threshold.
   mutating func learnerSpoke(at now: Date) {
-    countUnanswered(at: now)
-    learnerQuietSince = now
+    settle(at: now)
+
+    if voicedAt == nil {
+      unansweredTurns += isUnanswered(at: now) ? 1 : 0
+      // Speaking again after a pause is the same turn, which keeps a cue sent during it.
+      cued = stoppedAt != nil && cued
+      stoppedAt = nil
+    }
+
+    voicedAt = now
   }
 
-  /// The character's next words answer the app's cue (a typed reply included), not the learner's
-  /// voice.
+  /// A typed reply included.
   mutating func cueSent() {
-    learnerQuietSince = nil
+    cued = true
   }
 
-  /// Words that arrive while the learner is still talking overlap them: no reply yet.
   mutating func characterSpoke(at now: Date) {
-    guard let learnerQuietSince,
-      now.timeIntervalSince(learnerQuietSince) >= LiveCallEnding.micHangover
-    else {
-      return
+    settle(at: now)
+
+    if let stoppedAt, !cued {
+      gaps.append(now.timeIntervalSince(stoppedAt))
     }
 
-    gaps.append(now.timeIntervalSince(learnerQuietSince))
-    self.learnerQuietSince = nil
+    cued = false
+    stoppedAt = nil
   }
 
-  /// A turn still waiting for its answer when the call ends got none.
-  mutating func callEnded() {
-    if learnerQuietSince != nil {
-      unansweredTurns += 1
-    }
-
-    learnerQuietSince = nil
+  mutating func callEnded(at now: Date) {
+    settle(at: now)
+    unansweredTurns += isUnanswered(at: now) ? 1 : 0
   }
 
-  /// Speaking again after a slow reply's wait with nothing from the character starts a new turn.
-  private mutating func countUnanswered(at now: Date) {
-    if let learnerQuietSince, now.timeIntervalSince(learnerQuietSince) > Self.slow {
-      unansweredTurns += 1
+  /// The microphone went quiet at its last voiced sample once the hangover passed.
+  private mutating func settle(at now: Date) {
+    if let voicedAt, now.timeIntervalSince(voicedAt) >= LiveCallEnding.micHangover {
+      stoppedAt = voicedAt
+      self.voicedAt = nil
     }
+  }
+
+  private func isUnanswered(at now: Date) -> Bool {
+    stoppedAt.map { now.timeIntervalSince($0) > Self.slow } ?? false
   }
 
   private func milliseconds(_ seconds: TimeInterval) -> Int {
