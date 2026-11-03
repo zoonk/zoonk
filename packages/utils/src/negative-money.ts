@@ -1,9 +1,7 @@
-import { MONEY_MARK } from "./money-marks";
-
-const AMOUNT = String.raw`\d{1,3}(?:[.,   ]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?`;
+import { MONEY_AMOUNT, MONEY_MARK } from "./money-marks";
 
 const SIGN_AFTER_MARK = new RegExp(
-  String.raw`(?<![\p{L}\p{N}])(?<mark>${MONEY_MARK})(?<gap>\s?)(?<sign>[-−–])(?<amount>${AMOUNT})(?!\d)`,
+  String.raw`(?<![\p{L}\p{N}])(?<mark>${MONEY_MARK})(?<gap>\s?)(?<sign>[-−–])(?<amount>${MONEY_AMOUNT})(?!\d)`,
   "gu",
 );
 

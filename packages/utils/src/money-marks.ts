@@ -35,3 +35,5 @@ function toAlternatives(currencies: ReadonlyMap<string, string>): string {
 
 export const MONEY_MARK = toAlternatives(CURRENCY_MARKS);
 export const MONEY_WORD = toAlternatives(CURRENCY_WORDS);
+
+export const MONEY_AMOUNT = String.raw`\d{1,3}(?:[.,\u00A0\u202F ]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?`;

@@ -1,6 +1,5 @@
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { createMoneyNotationRepair } from "@zoonk/utils/money-notation";
-import { repairNegativeMoney } from "@zoonk/utils/negative-money";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { dropEquivalentOptions } from "../_utils/option-checks";
 import {
@@ -88,8 +87,7 @@ export function repairWrittenLesson({
   language: string;
   lesson: WrittenLesson;
 }): WrittenLesson {
-  const repairNotation = createMoneyNotationRepair({ language, texts: readLessonTexts(lesson) });
-  const repairMoney = (text: string) => repairNotation(repairNegativeMoney({ text }));
+  const repairMoney = createMoneyNotationRepair({ language, texts: readLessonTexts(lesson) });
 
   return {
     ...lesson,
