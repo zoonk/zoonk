@@ -78,6 +78,26 @@ class GenerationEventsTest {
         }
 
     @Test
+    fun eventsCarryTheGoalsWarmUpDeck() =
+        runTest {
+            streams =
+                mapOf(
+                    "0" to
+                        events(
+                            """data: {"status":"completed","step":"warmUpReady","warmUpId":"019a482c-6a00-7000-8000-000000000001"}""" +
+                                "\n\n",
+                        ),
+                )
+
+            val received = api.generationEvents("gen-1", ana).toList()
+
+            assertEquals(
+                listOf(GenerationEvent(status = "completed", step = "warmUpReady", warmUpId = "019a482c-6a00-7000-8000-000000000001")),
+                received,
+            )
+        }
+
+    @Test
     fun eventsGiveUpAfterThreeDropsWithoutAnEvent() =
         runTest {
             streams = mapOf("0" to events(drop = true))

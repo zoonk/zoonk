@@ -39,6 +39,8 @@ data class GenerationRun(
     val clockOffsetMillis: Long? = null,
     /** The newest skill the run's skill graph wrote, while it writes them. */
     val skillName: String? = null,
+    /** The goal's deck of guesses, once the run reports it ready; a restart writes the same goal, so it keeps it. */
+    val warmUpId: String? = null,
 ) {
     enum class Status { Waiting, Following, Ready, Failed }
 }
@@ -91,7 +93,7 @@ class GenerationFollower(
                 val restart = restart ?: return
                 followed?.let(replaced::add)
                 followed = null
-                state.value = GenerationRun()
+                state.value = GenerationRun(warmUpId = state.value.warmUpId)
                 job?.cancel()
                 job =
                     scope.launch {
@@ -228,6 +230,7 @@ class GenerationFollower(
                 stepTimes = run.stepTimes + (event.step to newTimes),
                 clockOffsetMillis = at?.let { offset(it, run.clockOffsetMillis) } ?: run.clockOffsetMillis,
                 skillName = event.skillName ?: run.skillName,
+                warmUpId = event.warmUpId ?: run.warmUpId,
             )
         }
         return Ending.Ready.takeIf { kind.isDone(state.value.steps) }

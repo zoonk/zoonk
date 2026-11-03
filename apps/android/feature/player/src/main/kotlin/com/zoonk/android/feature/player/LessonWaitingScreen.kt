@@ -31,12 +31,17 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonOutline
 import com.zoonk.android.feature.player.steps.count
+import com.zoonk.android.feature.warmup.WarmUpCard
+import com.zoonk.android.feature.warmup.WarmUpStore
+import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.Limit
@@ -57,16 +62,19 @@ private val OPEN_RETRY = 2.seconds
 fun LessonWaitingScreen(
     outline: LessonOutline,
     viewModel: LessonWritingViewModel,
+    warmUps: WarmUpStore,
     exits: LessonPlayerExits,
     readLesson: suspend () -> Unit,
 ) {
     val writing by viewModel.writing.collectAsStateWithLifecycle()
     val run by viewModel.run.collectAsStateWithLifecycle()
     val alternative by viewModel.alternative.collectAsStateWithLifecycle()
+    val warmUpId by viewModel.warmUpId.collectAsStateWithLifecycle()
     var late by remember { mutableStateOf(false) }
     val current = writing
     val waits = current == LessonWriting.Writing || current == LessonWriting.Ready
     val ready = current == LessonWriting.Ready || (current == LessonWriting.Writing && run.status == GenerationRun.Status.Ready)
+    val hold = rememberReadyHold(ready)
 
     LaunchedEffect(waits) {
         if (waits) {
@@ -74,13 +82,12 @@ fun LessonWaitingScreen(
             late = true
         }
     }
-    LaunchedEffect(ready) {
-        if (ready) {
-            viewModel.recordWait()
-            while (true) {
-                readLesson()
-                delay(OPEN_RETRY)
-            }
+    LaunchedEffect(ready) { if (ready) viewModel.recordWait() }
+    val opens = hold.over
+    LaunchedEffect(opens) {
+        while (opens) {
+            readLesson()
+            delay(OPEN_RETRY)
         }
     }
 
@@ -90,28 +97,54 @@ fun LessonWaitingScreen(
         title = outline.title,
         onClose = exits::close,
         bottomBar =
-            if (showsStart) {
-                {
-                    Button(onClick = viewModel::start, enabled = current == LessonWriting.NotStarted, modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            stringResource(
-                                if (current ==
-                                    LessonWriting.Starting
-                                ) {
-                                    R.string.player_starting
-                                } else {
-                                    R.string.player_start_this_lesson
-                                },
-                            ),
-                        )
+            when {
+                showsStart -> {
+                    {
+                        Button(
+                            onClick = viewModel::start,
+                            enabled = current == LessonWriting.NotStarted,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                stringResource(
+                                    if (current ==
+                                        LessonWriting.Starting
+                                    ) {
+                                        R.string.player_starting
+                                    } else {
+                                        R.string.player_start_this_lesson
+                                    },
+                                ),
+                            )
+                        }
                     }
                 }
-            } else {
-                null
+
+                hold.holding -> {
+                    {
+                        Button(
+                            onClick = hold::moveOn,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text(stringResource(R.string.player_start_this_lesson)) }
+                    }
+                }
+
+                else -> {
+                    null
+                }
             },
     ) {
         LessonColumnBeforeFold {
-            Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            if (hold.holding) {
+                Text(
+                    stringResource(R.string.warm_up_lesson_ready),
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            } else {
+                Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            }
 
             when (current) {
                 null -> {
@@ -125,7 +158,14 @@ fun LessonWaitingScreen(
                 LessonWriting.Writing, LessonWriting.Ready -> {
                     val shown = if (current == LessonWriting.Ready) GenerationRun(status = GenerationRun.Status.Ready) else run
                     val failed = shown.status == GenerationRun.Status.Failed
-                    LessonWritingProgress(shown, viewModel::retry, stringResource(R.string.player_writing_note))
+                    Column(Modifier.watchTouches(hold), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                        LessonWritingProgress(
+                            shown,
+                            viewModel::retry,
+                            stringResource(R.string.player_writing_note).takeUnless { hold.holding },
+                        )
+                        WarmUpCard(warmUpId, warmUps, AnalyticsEvent.WarmUpSurface.LessonWait, hold)
+                    }
                     if (late || failed) alternative?.let { Alternative(it, instead = false, exits) }
                 }
 
@@ -165,10 +205,10 @@ fun LessonWaitingScreen(
 fun LessonWritingProgress(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
-    note: String,
+    note: String?,
 ) {
     GenerationWait(GenerationKind.Lesson, run, onRetry)
-    if (run.status != GenerationRun.Status.Failed) {
+    if (note != null && run.status != GenerationRun.Status.Failed) {
         Text(note, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
     }
 }

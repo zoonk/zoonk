@@ -343,5 +343,5 @@ private fun WaitingLesson(
 
     LaunchedEffect((session as? SessionState.SignedIn)?.session) { viewModel.open() }
 
-    LessonWaitingScreen(outline, viewModel, exits, readLesson = resource::refresh)
+    LessonWaitingScreen(outline, viewModel, app.warmUps, exits, readLesson = resource::refresh)
 }
