@@ -6,7 +6,7 @@ import {
   CERTIFICATE_IMAGE_VARIANTS,
   getCertificateImageVersion,
 } from "@zoonk/utils/certificate-links";
-import { type NextRequest, NextResponse } from "next/server";
+import { type NextRequest } from "next/server";
 
 /**
  * Image URLs carry a version of the name, so a rename gets new URLs at once; a day at the CDN bounds
@@ -35,11 +35,16 @@ export async function GET(
   const version = getCertificateImageVersion(facts.recipientName);
 
   // Anyone can work out the version of a name the learner might take later; caching this picture
-  // under it would show the old name once they take it.
+  // under it would show the old name once they take it. The path is relative: behind a proxy the
+  // request's own origin can be an internal one.
   if (request.nextUrl.searchParams.get("v") !== version) {
-    const current = request.nextUrl.clone();
-    current.searchParams.set("v", version);
-    return NextResponse.redirect(current, { headers: { "Cache-Control": "no-store" } });
+    const query = new URLSearchParams(request.nextUrl.searchParams);
+    query.set("v", version);
+
+    return new Response(null, {
+      headers: { "Cache-Control": "no-store", Location: `${request.nextUrl.pathname}?${query}` },
+      status: 307,
+    });
   }
 
   const image = await renderCertificateImage({ facts, variant });

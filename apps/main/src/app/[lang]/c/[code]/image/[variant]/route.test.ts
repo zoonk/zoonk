@@ -48,7 +48,7 @@ describe("certificate image route", () => {
     });
 
     expect(redirect.status).toBe(307);
-    expect(redirect.headers.get("Location")).toBe(current.toString());
+    expect(redirect.headers.get("Location")).toBe(`${current.pathname}${current.search}`);
     expect(redirect.headers.get("Cache-Control")).toBe("no-store");
 
     const picture = await requestImage({ code, url: current });
