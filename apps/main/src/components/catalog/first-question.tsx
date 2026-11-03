@@ -59,7 +59,13 @@ async function QuestionScreen({
     <>
       <p className="text-muted-foreground flex items-center gap-1.5 text-[13px] font-medium">
         <SparklesIcon aria-hidden="true" className="size-3.5 flex-none" />
-        {screen.guess ? t("Guess first. It doesn't count.") : t("Quick question")}
+        {screen.guess
+          ? t({
+              description:
+                "Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.",
+              message: "Just a guess, it doesn't count",
+            })
+          : t("Quick question")}
       </p>
 
       {screen.context && (
