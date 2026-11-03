@@ -199,7 +199,7 @@ export const playableLibraryLessonResponseSchema = z
           .nullable()
           .meta({
             description:
-              "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, or before its map is written",
+              "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
           }),
         targetLanguage: z.string().nullable(),
       }),

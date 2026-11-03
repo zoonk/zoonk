@@ -74,7 +74,7 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
         level: lesson.level,
         skills: lesson.skills.map((item) => item.skill),
         steps,
-        summary: steps.some((step) => step.kind === "summary")
+        summary: steps.some((step) => step.kind === "summary" || step.kind === "challenge")
           ? null
           : readLessonMap(lesson.summary),
         targetLanguage: lesson.targetLanguage,

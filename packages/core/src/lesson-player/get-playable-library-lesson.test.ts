@@ -111,7 +111,7 @@ describe(getPlayableLibraryLesson, () => {
     );
   });
 
-  it("serves the lesson map, saved labels and shape included, and none for a lesson that ends on its own summary", async () => {
+  it("serves the lesson map, saved labels and shape included, and none for a lesson that ends on its own summary or a challenge", async () => {
     const steps = TEACHING_LESSON_STEPS.filter((kind) => kind !== "summary");
 
     const nested = {
@@ -122,7 +122,7 @@ describe(getPlayableLibraryLesson, () => {
       shape: "nested",
     };
 
-    const [saved, labeled, endsOnSummary, unwritten] = await Promise.all([
+    const [saved, labeled, endsOnSummary, unwritten, challenge] = await Promise.all([
       playableLessonFixture({
         lesson: {
           summary: {
@@ -134,10 +134,14 @@ describe(getPlayableLibraryLesson, () => {
       playableLessonFixture({ lesson: { summary: nested }, steps }),
       playableLessonFixture({ lesson: { summary: { ideas: [{ text: "A recap." }] } } }),
       playableLessonFixture({ steps }),
+      playableLessonFixture({
+        lesson: { summary: { ideas: [{ text: "A won case shows the idea." }] } },
+        steps: ["challenge"],
+      }),
     ]);
 
     const maps = await Promise.all(
-      [saved, labeled, endsOnSummary, unwritten].map(async (fixture) => {
+      [saved, labeled, endsOnSummary, unwritten, challenge].map(async (fixture) => {
         const result = await getPlayableLibraryLesson({ lessonId: fixture.lesson.id });
         return result?.status === "ready" ? result.lesson.summary : "not ready";
       }),
@@ -149,6 +153,7 @@ describe(getPlayableLibraryLesson, () => {
         shape: "hub",
       },
       nested,
+      null,
       null,
       null,
     ]);

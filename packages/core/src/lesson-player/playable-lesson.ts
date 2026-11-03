@@ -96,7 +96,10 @@ export type PlayableLibraryLesson = {
   level: CourseLevel;
   skills: { id: string; name: string }[];
   steps: PlayableLibraryStep[];
-  /** The map shown after the lesson's last screen; null for a lesson that ends on its own summary. */
+  /**
+   * The map shown after the lesson's last screen. Null for a lesson that ends on its own summary
+   * and for a challenge, whose result is the moment it earned.
+   */
   summary: LessonMap | null;
   targetLanguage: string | null;
   title: string;
