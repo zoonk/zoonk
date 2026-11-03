@@ -60,6 +60,8 @@ private struct CategorizeCanvas: View {
           comment: "Every card of a sorting activity has a group; a tap on a card moves it"
         )
         .font(.subheadline.weight(.medium))
+        .focusable()
+        .focused($focus, equals: .status)
         .accessibilityFocused($voiceOverFocus, equals: .status)
 
         ForEach(fields.groups) { group in
@@ -344,7 +346,11 @@ private struct CategorizeCanvas: View {
           localized: "\(item) is in \(label).", table: "Activities",
           comment: "VoiceOver, after the last card is sorted or a card is moved"))
 
-      // The group or Undo VoiceOver was on is gone.
+      // The group or Undo that had focus is gone.
+      if focus != nil {
+        focus = .status
+      }
+
       if voiceOverFocus != nil {
         voiceOverFocus = .status
       }
