@@ -48,6 +48,8 @@ import { hasTakenChallenge } from "./taken-challenge";
 export type ComputedPlan = {
   bases: PlanBases;
   built: BuiltPlan;
+  /** Each written lesson's place in the order its courses teach them. */
+  courseRanks: ReadonlyMap<string, number>;
   effect: PlanEffect;
   feasibility: PlanFeasibility;
   inputsKey: string;
@@ -292,6 +294,7 @@ export async function computePlan({
       return bases();
     },
     built,
+    courseRanks: new Map(builtInput.lessons.map((lesson, rank) => [lesson.lessonId, rank])),
     effect: getRunEffect({ built, context, graph: saved, kept: input.phaseEnds, standInLessons }),
     get feasibility() {
       return feasibility();

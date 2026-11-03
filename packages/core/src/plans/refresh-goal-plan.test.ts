@@ -98,6 +98,93 @@ describe(refreshGoalPlan, () => {
     });
   });
 
+  it("lays a chapter's later weeks out in course order again, keeping this week and finished lessons", async () => {
+    const tuesday = new Date("2020-09-29T12:00:00Z");
+    const tuesdayDate = new Date("2020-09-29T00:00:00Z");
+    const endOfWeek = new Date("2020-10-04T00:00:00Z");
+    vi.setSystemTime(tuesday);
+
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ lessons: 12 }, { lessons: 12 }] });
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      settings: { startDate: "2020-09-29" },
+      userId: user.id,
+    });
+
+    await createSetUpGoalPlan({ goalId: goal.id, graph: library.graph });
+    mockSession(user.id);
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: tuesday, status: "done" },
+      where: { planId: plan.id, scheduledFor: { lte: tuesdayDate }, status: "todo" },
+    });
+
+    const lessonItems = () =>
+      prisma.planItem.findMany({
+        orderBy: { position: "asc" },
+        where: { kind: "lesson", lessonId: { not: null }, planId: plan.id },
+      });
+
+    const planned = await lessonItems();
+
+    // What a planner from before course order saved: a chapter's later lesson ahead of an earlier one.
+    const [first, second] = planned.filter(
+      (item) => item.scheduledFor !== null && item.scheduledFor > endOfWeek,
+    );
+
+    if (!first || !second) {
+      throw new Error("The plan needs two lessons after this week.");
+    }
+
+    const lessonFields = ({ facts, lessonId, minutes, skillId, titleSnapshot }: typeof first) => ({
+      facts: facts ?? undefined,
+      lessonId,
+      minutes,
+      skillId,
+      titleSnapshot,
+    });
+
+    await prisma.$transaction([
+      prisma.planItem.update({ data: lessonFields(second), where: { id: first.id } }),
+      prisma.planItem.update({ data: lessonFields(first), where: { id: second.id } }),
+    ]);
+
+    const toPlace = ({ completedAt, lessonId, scheduledFor, status }: typeof first) => ({
+      completedAt,
+      lessonId,
+      scheduledFor,
+      status,
+    });
+
+    const thisWeek = (items: (typeof first)[]) =>
+      items
+        .filter((item) => item.scheduledFor && item.scheduledFor <= endOfWeek)
+        .map((item) => toPlace(item));
+
+    const before = await lessonItems();
+
+    vi.setSystemTime(new Date("2020-09-30T12:00:00Z"));
+    await refreshGoalPlan({ goalId: goal.id });
+
+    const after = await lessonItems();
+    const courseOrder = library.lessons.map((lesson) => lesson.id);
+
+    const laterWeeks = after.flatMap((item) =>
+      item.scheduledFor && item.scheduledFor > endOfWeek
+        ? [courseOrder.indexOf(item.lessonId ?? "")]
+        : [],
+    );
+
+    expect(laterWeeks).toStrictEqual(laterWeeks.toSorted((a, b) => a - b));
+    expect(thisWeek(after)).toStrictEqual(thisWeek(before));
+
+    await expect(refreshGoalPlan({ goalId: goal.id })).resolves.toStrictEqual({
+      status: "unchanged",
+    });
+  });
+
   it("leaves paused goals and unbuilt plans alone", async () => {
     const { goal } = await setup();
     await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });

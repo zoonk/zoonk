@@ -1,6 +1,7 @@
 import { isDeepStrictEqual } from "node:util";
 import { withoutPlannedLessons } from "../planner/core-first";
-import { toIsoDate } from "../planner/plan-calendar";
+import { getSkillArea } from "../planner/graph-areas";
+import { getEndOfWeek, toIsoDate } from "../planner/plan-calendar";
 import { type PlannedItem, getItemKey } from "../planner/plan-items";
 import { type PlanState } from "../planner/plan-state";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
@@ -68,9 +69,52 @@ function hasSameWorkload({ computed, context }: { computed: ComputedPlan; contex
   });
 }
 
+function restoresCourseOrder({
+  computed,
+  context,
+}: {
+  computed: ComputedPlan;
+  context: PlanContext;
+}): boolean {
+  const endOfWeek = getEndOfWeek(context.today);
+  const { graph } = computed.state;
+
+  const areas = new Map(
+    graph.skills.map((skill) => [skill.skillId, getSkillArea({ graph, skill })]),
+  );
+
+  const places = new Map(computed.built.items.map((item, place) => [item.key, place]));
+
+  const laterLessons = context.items.flatMap((item) => {
+    const rank = computed.courseRanks.get(item.lessonId ?? "");
+    const place = places.get(getItemKey(item));
+    const thisWeek = item.scheduledFor !== null && item.scheduledFor <= endOfWeek;
+
+    if (item.kind !== "lesson" || item.status !== "todo" || item.chapterId === null || thisWeek) {
+      return [];
+    }
+
+    if (rank === undefined || place === undefined) {
+      return [];
+    }
+
+    return [{ group: `${item.chapterId}:${areas.get(item.skillId ?? "") ?? ""}`, place, rank }];
+  });
+
+  return [...Map.groupBy(laterLessons, (lesson) => lesson.group).values()].some((lessons) =>
+    lessons.some((ahead, index) =>
+      lessons
+        .slice(index + 1)
+        .some((behind) => ahead.rank > behind.rank && behind.place < ahead.place),
+    ),
+  );
+}
+
 /**
  * Days aren't compared: the same work planned again can land on other days, and moving what the
- * learner saw when nothing changed is churn.
+ * learner saw when nothing changed is churn. The one order compared is a chapter's within an area
+ * after this week: a saved layout holding a lesson there ahead of one the course teaches first,
+ * which the planner now lays out in course order, is laid out again.
  */
 export function isPlanUnchanged({
   computed,
@@ -89,6 +133,7 @@ export function isPlanUnchanged({
     ) &&
     isDeepStrictEqual(state.settings, context.state.settings) &&
     hasSameWorkload({ computed, context }) &&
-    isDeepStrictEqual(listWork(computed.built.items), listWork(toKeyedItems(context)))
+    isDeepStrictEqual(listWork(computed.built.items), listWork(toKeyedItems(context))) &&
+    !restoresCourseOrder({ computed, context })
   );
 }
