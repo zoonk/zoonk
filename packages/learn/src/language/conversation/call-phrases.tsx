@@ -28,10 +28,11 @@ export function Phrases({
     <div className="flex flex-col gap-2">
       {titled && <PageSectionTitle id={titleId}>{t("Phrases you can use")}</PageSectionTitle>}
       <ul aria-labelledby={titled ? titleId : undefined} className={LIST_GROUP_CLASS}>
-        {conversation.hints.map((hint) => (
+        {conversation.hints.map((hint, index) => (
           <li
             className="py-2.5 text-[0.9375rem] leading-snug text-pretty"
-            key={hint}
+            // oxlint-disable-next-line react/no-array-index-key -- Phrases never move, and a generated list may repeat one.
+            key={index}
             lang={conversation.targetLanguage}
           >
             {hint}
