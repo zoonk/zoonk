@@ -2,6 +2,7 @@
 
 import { asksNumberedPicture } from "@zoonk/core/lesson-player/picture-policy";
 import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
+import { DRAWN_PICTURE_SIZE, PICTURE_BOX_CLASS, pictureBoxStyle } from "@zoonk/learn/picture-box";
 import { MediaPending } from "@zoonk/ui/components/media-pending";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -171,8 +172,9 @@ function LessonPicturePending({ alt, frame }: { alt?: string; frame: LessonPictu
 
   return (
     <MediaPending
-      className={cn("aspect-3/2 max-h-(--picture-max-h) w-full", PICTURE_FRAME_CLASS[frame])}
+      className={cn(PICTURE_BOX_CLASS, PICTURE_FRAME_CLASS[frame])}
       icon={<ImageIcon aria-hidden="true" className="size-6" />}
+      style={pictureBoxStyle(DRAWN_PICTURE_SIZE.scene)}
     >
       <p role="status">{t("Drawing the picture…")}</p>
       {alt && <p>{alt}</p>}

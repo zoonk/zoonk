@@ -199,6 +199,8 @@ export function useLessonPlayerActions({
         dispatch({ type: "continue" });
       },
       dontKnow: (stepId) => {
+        writeExampleLines();
+
         if (revealWithoutGuess({ dispatch, step: state.steps[stepId] })) {
           void ensureRun();
           return;

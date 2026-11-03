@@ -191,6 +191,31 @@ describe("the opening guess's action bar", () => {
     expect(segments()).toStrictEqual(["read", "read"]);
   });
 
+  it("starts writing the lesson's examples, as any answer does", async () => {
+    const lesson = buildLesson([teachingStep("hook"), teachingStep("explanation")]);
+
+    const requestExampleLine = vi
+      .fn<NonNullable<LessonPlayerAdapters["requestExampleLine"]>>()
+      .mockResolvedValue({ line: null });
+
+    const getExampleLine = vi
+      .fn<NonNullable<LessonPlayerAdapters["getExampleLine"]>>()
+      .mockResolvedValue({ line: null });
+
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { getExampleLine, requestExampleLine }),
+      lesson,
+    });
+
+    await barButton("I don't know yet").click();
+
+    await expect
+      .element(page.getByRole("status").filter({ hasText: "Here's the answer" }))
+      .toBeVisible();
+
+    expect(requestExampleLine).toHaveBeenCalledExactlyOnceWith({ stepId: lesson.steps[1]?.id });
+  });
+
   it("turns into See the answer while an option is picked, and back when it's unpicked", async () => {
     renderLessonPlayer({
       lesson: buildLesson([teachingStep("hook"), teachingStep("explanation")]),
