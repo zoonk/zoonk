@@ -1,3 +1,4 @@
+import { markCertificateShownAction } from "@/components/learn/certificate-actions";
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { getCourseHref } from "@/data/courses/course-href";
 import { getPathname } from "@/i18n/navigation";
@@ -72,6 +73,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
     answer: (input) => answerLevelTestAction(goalId, input),
     finish: () => finishLevelTestAction(goalId),
     get: () => getLevelTestAction(goalId),
+    markPlacementShown: markCertificateShownAction,
     prepare: () => startLevelTestBankAction(goalId),
     speak: (audio) => {
       const form = new FormData();

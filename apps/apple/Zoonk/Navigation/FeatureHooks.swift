@@ -31,9 +31,6 @@ extension PracticeHooks {
       },
       checkpointCall: { blockId, _ in
         AnyView(ConversationScreen(checkpointBlockId: blockId))
-      },
-      ceremony: { milestone, onClose in
-        AnyView(MilestoneCeremony(milestone: Milestone(milestone), onClose: onClose))
       })
   }
 }

@@ -195,6 +195,7 @@ export function ConversationScreen({
   const [view, setView] = useState<CompletedLanguageConversation>({
     ...conversation,
     ceremony: null,
+    certificates: [],
     missionMoment: null,
     reached: NOTHING_REACHED,
   });
@@ -207,7 +208,7 @@ export function ConversationScreen({
   // oxlint-disable-next-line react/hook-use-state -- Read once as the screen opens, never updated.
   const [openedWithResult] = useState(Boolean(conversation.result));
   const { result } = view;
-  const ceremony = getCeremonyMoment({ milestone: view.ceremony, render: renderCeremony });
+  const ceremony = getCeremonyMoment({ moments: view, render: renderCeremony });
 
   const dayMoment = (
     <DayMoment

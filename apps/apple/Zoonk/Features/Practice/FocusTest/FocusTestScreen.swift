@@ -7,7 +7,6 @@ struct FocusTestScreen: View {
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
-  @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<FocusTestQuestions> = .loading
   @State private var started = false
@@ -20,7 +19,6 @@ struct FocusTestScreen: View {
   @State private var result: Components.Schemas.FocusTestResult?
   @State private var undone = false
   @State private var undoFailed = false
-  @State private var ceremonyClosed = false
 
   private var draftKey: String { "focus-test:\(goalId)" }
 
@@ -28,13 +26,7 @@ struct FocusTestScreen: View {
     NavigationStack {
       Group {
         if let result {
-          if let milestone = result.ceremony?.value1, !ceremonyClosed,
-            let ceremony = hooks.ceremony
-          {
-            ceremony(milestone) { ceremonyClosed = true }
-          } else {
-            resultView(result)
-          }
+          resultView(result)
         } else {
           switch load {
           case .loading:
@@ -64,6 +56,9 @@ struct FocusTestScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
+    .completionMoments(
+      certificates: result?.certificates ?? [], ceremony: result?.ceremony?.value1
+    )
     .task(id: session.authenticatedSession) { await read() }
   }
 

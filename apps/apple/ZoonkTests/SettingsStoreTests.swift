@@ -651,7 +651,7 @@ private final class SwitchingAccountAPI: AccountAPIClient, @unchecked Sendable {
   func synchronizeAppleSubscription(token: String, signedTransaction: String) async throws
     -> AppleSubscriptionSynchronization
   { throw APIError.unavailable }
-  func updateProfile(token: String, name: String, username: String) async throws
+  func updateProfile(token: String, name: String, username: String?) async throws
     -> CurrentAccount
   { throw APIError.unavailable }
 }

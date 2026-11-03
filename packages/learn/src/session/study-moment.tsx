@@ -177,7 +177,7 @@ export function StudyMoment({
       : null;
 
   const content = (
-    <MomentAfterCeremony milestone={moment.ceremony} render={renderCeremony}>
+    <MomentAfterCeremony moments={moment} render={renderCeremony}>
       <TaskBody data-slot="study-moment">
         <MomentHeader title={title}>
           <MomentEarned moment={moment} />

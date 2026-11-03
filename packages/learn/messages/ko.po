@@ -42,6 +42,7 @@ msgstr "제한 시간 변경"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
+#: src/certificates/certificates-screen.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 msgctxt "nC-1Um"
@@ -119,6 +120,8 @@ msgstr "오늘"
 
 #: src/_components/create-account-link.tsx
 #: src/_components/help-limit-notice.tsx
+#: src/certificates/certificate-moment-parts.tsx
+#: src/certificates/certificate-page.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -146,6 +149,7 @@ msgstr "하루 학습 시간"
 #: src/_components/detail-page.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
+#: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
 #: src/language/conversation/conversation-result.tsx
@@ -189,6 +193,9 @@ msgstr "{percent}% 완료"
 
 #: src/_components/details-drawer.tsx
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
@@ -933,6 +940,7 @@ msgid "Glasses"
 msgstr "안경"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -945,6 +953,7 @@ msgid "Cancel"
 msgstr "취소"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-name.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -955,6 +964,8 @@ msgid "Save"
 msgstr "저장"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-details.tsx
+#: src/certificates/certificate-moment-parts.tsx
 #: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-tools.tsx
 msgctxt "BY343C"
@@ -1269,6 +1280,8 @@ msgid "Buddy"
 msgstr "짝꿍"
 
 #: src/buddies/buddy-picker.tsx
+#: src/certificates/certificate-details.tsx
+#: src/certificates/certificate-linkedin.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "이름"
@@ -1442,6 +1455,521 @@ msgstr "{buddy}(이)가 훌쩍 자랐어요!"
 msgctxt "d5UGw8"
 msgid "Wear them"
 msgstr "안경 씌우기"
+
+#: src/certificates/certificate-copy-button.tsx
+msgctxt "p556q3"
+msgid "Copied"
+msgstr "복사 완료"
+
+#: src/certificates/certificate-copy-button.tsx
+#: src/certificates/certificate-details.tsx
+msgctxt "4l6vz1"
+msgid "Copy"
+msgstr "복사"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "CgT-Q3"
+msgid "Levels"
+msgstr "레벨"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "avtgF2"
+msgid "Taken"
+msgstr "응시일"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "완료일"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "mrBiB2"
+msgid "Lessons studied"
+msgstr "학습한 레슨"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "dx3nJs"
+msgid "Passed by test"
+msgstr "테스트로 통과한 레슨"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "KHL8ap"
+msgid "Study time"
+msgstr "학습 시간"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "2mUitd"
+msgid "Answers"
+msgstr "답변 수"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "LbAVCO"
+msgid "Certificate ID"
+msgstr "인증서 ID"
+
+#: src/certificates/certificate-details.tsx
+#: src/onboarding/entry/paste-link.tsx
+msgctxt "JBWS0c"
+msgid "Link"
+msgstr "링크"
+
+#: src/certificates/certificate-details.tsx
+#: src/certificates/certificate-share.tsx
+#: src/plan/use-share-plan.ts
+msgctxt "zU_q1N"
+msgid "Link copied"
+msgstr "링크를 복사했어요"
+
+#: src/certificates/certificate-details.tsx
+#: src/syllabus/subject-aside.tsx
+msgctxt "Lv0zJu"
+msgid "Details"
+msgstr "상세 정보"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "QshKyk"
+msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
+msgstr "링크가 있으면 누구나 이 인증서를 볼 수 있어요. 이 페이지는 검색 결과에 나오지 않아요."
+
+#. A language and a CEFR level, such as "Spanish B1": a certificate's name.
+#: src/certificates/certificate-labels.ts
+msgctxt "ZP9lOu"
+msgid "{language} {level}"
+msgstr "{language} {level}"
+
+#: src/certificates/certificate-labels.ts
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "WSC4bY"
+msgid "Placement result"
+msgstr "레벨 테스트 결과"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "zaINXN"
+msgid "Certificate of completion"
+msgstr "수료증"
+
+#. An approximate study time, such as "about 41 hr".
+#: src/certificates/certificate-labels.ts
+msgctxt "8QINPM"
+msgid "about {duration}"
+msgstr "약 {duration}"
+
+#. The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.
+#: src/certificates/certificate-labels.ts
+msgctxt "LZF2Ia"
+msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
+msgstr "{from, select, overview {개요} beginner {초급} intermediate {중급} other {고급}}부터 {to, select, overview {개요} beginner {초급} intermediate {중급} other {고급}}까지"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "u9fD-O"
+msgid "Placement result for {name}: {certificate}"
+msgstr "{name}님의 레벨 테스트 결과: {certificate}"
+
+#: src/certificates/certificate-labels.ts
+#: src/certificates/placement-row.tsx
+msgctxt "vc8W5b"
+msgid "Placement result: {certificate}"
+msgstr "레벨 테스트 결과: {certificate}"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "ZfBPq3"
+msgid "{name} completed level {level} in {language}"
+msgstr "{name}님이 {level} 레벨의 {language} 과정을 수료했어요"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "7ULGz_"
+msgid "Level {level} in {language}, completed on Zoonk"
+msgstr "{level} 레벨의 {language} 과정을 Zoonk에서 수료했어요"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "do3pHn"
+msgid "{name} completed {course}"
+msgstr "{name}님이 {course} 코스를 수료했어요"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "z9WxBG"
+msgid "{course}, completed on Zoonk"
+msgstr "{course} 코스를 Zoonk에서 수료했어요"
+
+#. A certificate's name on LinkedIn, such as "Spanish B1 placement result": the language and level, then the kind.
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "2i1LGp"
+msgid "{certificate} placement result"
+msgstr "{certificate} 레벨 테스트 결과"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "B-Co6Y"
+msgid "Add to your LinkedIn profile"
+msgstr "LinkedIn 프로필에 추가하기"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "bv21CP"
+msgid "LinkedIn opens its form to add a license or certification. Copy each field into it."
+msgstr "LinkedIn에서 자격증이나 인증서를 추가하는 양식이 열려요. 각 항목을 복사해 양식에 붙여 넣으세요."
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "Gsc9HO"
+msgid "Copy the name"
+msgstr "이름 복사"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "Stmjvy"
+msgid "Copy the issuing organization"
+msgstr "발급 기관 복사"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "chGb2H"
+msgid "Issuing organization"
+msgstr "발급 기관"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "c3mXbd"
+msgid "Issue date"
+msgstr "발급일"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "iIH6lJ"
+msgid "Copy the credential ID"
+msgstr "인증서 ID 복사"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "NMHFhh"
+msgid "Credential ID"
+msgstr "인증서 ID"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "GkUPxx"
+msgid "Copy the credential URL"
+msgstr "인증서 URL 복사"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "bV_-Gb"
+msgid "Credential URL"
+msgstr "인증서 URL"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "CEB03t"
+msgid "Open LinkedIn"
+msgstr "LinkedIn 열기"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "l4zQLP"
+msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs."
+msgstr "이름은 학습자가 Zoonk 계정에 등록한 이름이에요. Zoonk는 신분증을 확인하지 않아요."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "s94wjH"
+msgid "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result."
+msgstr "레벨은 유럽 공통 언어 참조 기준인 CEFR에 맞춰져 있어요. 공식 시험 결과는 아니에요."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "_1AldP"
+msgid "Zoonk's placement test asks 3 reading questions, 3 listening questions and one sentence to say aloud, each adapted to the answers before it. It estimated this level from those {count, plural, one {# answer} other {# answers}}; skills the learner skipped aren't counted."
+msgstr "Zoonk의 레벨 진단에는 읽기 3문제, 듣기 3문제, 소리 내어 말할 문장 하나가 나와요. 각 문제와 문장은 앞선 답변에 맞춰 조정돼요. 이 레벨은 {count, plural, other {#개의 답변}}을 바탕으로 추정했으며, 건너뛴 스킬은 반영하지 않아요."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "X1QrOq"
+msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
+msgstr "Zoonk는 학습자가 레슨과 연습에서 한 답변을 바탕으로 각 스킬(읽기, 듣기, 말하기, 쓰기)을 측정해요. 답변을 통해 레벨이 오른 스킬이 모두 다음 레벨에 도달하면 현재 레벨을 완료한 것으로 봐요. 이 인증서는 해당 스킬이 모두 {level}에 도달했을 때 발급됐어요."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "9Bnhaw"
+msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it."
+msgstr "코스 계획의 모든 레슨을 학습하거나 테스트에 통과하는 방식으로 완료하고, 그 안의 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "wB_Ebz"
+msgid "It's a record of completion on Zoonk, not academic credit."
+msgstr "Zoonk에서 학습을 완료했다는 기록이에요. 학점으로 인정되지는 않아요."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "I9vOlY"
+msgid "What this certificate means"
+msgstr "이 인증서의 의미"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "fAGVcM"
+msgid "Topics covered"
+msgstr "학습한 주제"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "8Rm1i0"
+msgid "Can do"
+msgstr "할 수 있는 일"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "NnlD8J"
+msgid "Learn {course} on Zoonk"
+msgstr "Zoonk에서 {course} 배우기"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "1h_6la"
+msgid "Learn {language} on Zoonk"
+msgstr "Zoonk에서 {language} 배우기"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "hxYqqG"
+msgid "A plan for each day that fits your time, starting from what you already know."
+msgstr "이미 아는 내용을 바탕으로, 매일 학습할 수 있는 시간에 맞춰 계획을 세워 드려요."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "VJA_YD"
+msgid "Start this course"
+msgstr "이 코스 시작하기"
+
+#: src/certificates/certificate-meaning.tsx
+#: src/onboarding/how-it-works.tsx
+msgctxt "npIkqE"
+msgid "Start free, no account needed."
+msgstr "계정 없이 무료로 시작할 수 있어요."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "buj2o3"
+msgid "Your {certificate} certificate is ready."
+msgstr "{certificate} 인증서가 준비됐어요."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "e63c09"
+msgid "{level} complete!"
+msgstr "{level} 완료!"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "BAZS05"
+msgid "Your {certificate} placement result is ready."
+msgstr "{certificate} 레벨 진단 결과가 준비됐어요."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "lopydx"
+msgid "Your certificate for {course} is ready."
+msgstr "{course} 인증서가 준비됐어요."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "SqnwjO"
+msgid "Course complete!"
+msgstr "코스 완료!"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "H8ofJ_"
+msgid "{count, plural, other {# certificates earned}}"
+msgstr "{count, plural, other {인증서 #개 획득}}"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "72XHg-"
+msgid "Your {list} certificates are ready."
+msgstr "{list} 인증서가 준비됐어요."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "5g51Cu"
+msgid "{count, plural, one {Create a free account to keep your certificate and put your name on it.} other {Create a free account to keep your certificates and put your name on them.}}"
+msgstr "{count, plural, other {무료 계정을 만들어 인증서를 보관하고 이름도 넣어 보세요.}}"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "_QSets"
+msgid "They're saved in Certificates."
+msgstr "인증서 목록에 저장했어요."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "m77iCk"
+msgid "It's saved in Certificates."
+msgstr "인증서 목록에 저장했어요."
+
+#: src/certificates/certificate-moment-parts.tsx
+msgctxt "e_2HUM"
+msgid "On your certificate: <strong>{name}</strong>"
+msgstr "인증서 이름: <strong>{name}</strong>님"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "CG1x0d"
+msgid "Name on your certificates"
+msgstr "인증서에 표시되는 이름"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Zeqtwb"
+msgid "Your name, as it should appear"
+msgstr "인증서에 표시할 이름"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "m4c_De"
+msgid "Your full name"
+msgstr "이름(성 포함)"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Vrz1pI"
+msgid "Your certificates and your buddy use this name."
+msgstr "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "F6SpEM"
+msgid "Your certificates and your buddy use this name. You can change it anytime."
+msgstr "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요. 언제든 바꿀 수 있어요."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Qcr1L3"
+msgid "It shows on every certificate and its link. Your buddy calls you by it too."
+msgstr "모든 인증서와 인증서 링크에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요."
+
+#: src/certificates/certificate-page.tsx
+msgctxt "5lbext"
+msgid "Your certificates"
+msgstr "내 인증서"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "QXN1kN"
+msgid "Verified certificate · issued by Zoonk"
+msgstr "검증된 인증서 · Zoonk 발급"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "PDKCn3"
+msgid "Measured by Zoonk's placement test on {date}."
+msgstr "{date}에 Zoonk의 레벨 진단으로 측정한 결과예요."
+
+#: src/certificates/certificate-page.tsx
+msgctxt "faSg-e"
+msgid "Certificate of completion, issued on {date}."
+msgstr "{date}에 발급한 수료증이에요."
+
+#: src/certificates/certificate-page.tsx
+msgctxt "oyh3QA"
+msgid "Create a free account to keep your certificate and put your name on it."
+msgstr "무료 계정을 만들어 인증서를 보관하고 이름도 넣어 보세요."
+
+#: src/certificates/certificate-page.tsx
+msgctxt "CXRlIo"
+msgid "Print"
+msgstr "인쇄"
+
+#: src/certificates/certificate-page.tsx
+#: src/memory/memory-screen.tsx
+#: src/mind-maps/mind-map-card.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "5q3qC0"
+msgid "Download"
+msgstr "다운로드"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "dkg2AU"
+msgid "My {language} placement result on Zoonk: {level}."
+msgstr "Zoonk에서 확인한 내 {language} 레벨 테스트 결과: {level}."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "sfDPEB"
+msgid "I just completed level {level} in {language} on Zoonk."
+msgstr "Zoonk에서 {level} 레벨의 {language} 학습을 막 마쳤어요."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "xgqZIz"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}."
+msgstr "Zoonk에서 {course} 학습을 막 마쳤어요({lessons, plural, =0 {레슨 #개} other {레슨 #개}})."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "_w9o_B"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} and about {minutes, plural, one {# minute} other {# minutes}} of study."
+msgstr "Zoonk에서 {course} 학습을 막 마쳤어요({lessons, plural, =0 {레슨 #개} other {레슨 #개}}, 학습 시간 약 {minutes, plural, other {#분}})."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "WJJ7jr"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} and about {hours, plural, one {# hour} other {# hours}} of study."
+msgstr "Zoonk에서 {course} 학습을 막 마쳤어요({lessons, plural, =0 {레슨 #개} other {레슨 #개}}, 학습 시간 약 {hours, plural, other {#시간}})."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "DquYTO"
+msgid "Text copied. Paste it into your LinkedIn post."
+msgstr "문구를 복사했어요. LinkedIn 게시물에 붙여 넣으세요."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "31QcAi"
+msgid "Text copied. Paste it into your Facebook post."
+msgstr "문구를 복사했어요. Facebook 게시물에 붙여 넣으세요."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "tXB0F9"
+msgid "Share your certificate"
+msgstr "인증서 공유하기"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "Mpsug3"
+msgid "Your post shows this picture and links to your certificate's page."
+msgstr "게시물에 이 이미지와 인증서 페이지 링크가 표시돼요."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "tfBQnN"
+msgid "Suggested text"
+msgstr "추천 문구"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "l2ddvP"
+msgid "Copy the suggested text"
+msgstr "추천 문구 복사하기"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "rIB4Ud"
+msgid "Post on"
+msgstr "게시할 곳"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "lbr3Lq"
+msgid "Copy link"
+msgstr "링크 복사하기"
+
+#: src/certificates/certificate-sharing.tsx
+msgctxt "OKhRC6"
+msgid "Share"
+msgstr "공유하기"
+
+#: src/certificates/certificate-sharing.tsx
+msgctxt "L2bkq_"
+msgid "Add to LinkedIn"
+msgstr "LinkedIn에 추가하기"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "인증서"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "Ek6qb7"
+msgid "Comes when every skill you practice reaches the next level"
+msgstr "연습 중인 모든 스킬이 다음 레벨에 오르면 받을 수 있어요"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "ojltlj"
+msgid "Your certificate comes when you finish the plan"
+msgstr "계획을 마치면 인증서를 받을 수 있어요"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "GyTxyv"
+msgid "No certificates yet"
+msgstr "아직 인증서가 없어요"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "SHp4oN"
+msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
+msgstr "코스를 마치거나 언어 레벨을 완료하면 인증서가 여기에 표시돼요. 무료로 인쇄하고 공유할 수 있어요. 레벨 테스트 결과도 여기에 표시돼요."
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "0X-xfW"
+msgid "Continue learning"
+msgstr "계속 학습하기"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "7yoAJi"
+msgid "{count, plural, one {# certificate} other {# certificates}}"
+msgstr "{count, plural, other {인증서 #개}}"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "svDFL8"
+msgid "Print, download or share your certificates anytime."
+msgstr "인증서를 언제든 인쇄, 다운로드, 공유할 수 있어요."
+
+#: src/certificates/placement-row.tsx
+msgctxt "BnNTsQ"
+msgid "Create a free account to keep it and share it."
+msgstr "무료 계정을 만들면 결과를 보관하고 공유할 수 있어요."
+
+#: src/certificates/placement-row.tsx
+msgctxt "DcP7sL"
+msgid "Saved in your certificates. Share it anytime."
+msgstr "인증서 목록에 저장했어요. 언제든 공유하세요."
 
 #: src/challenge/challenge-call-intro.tsx
 #: src/challenge/challenge-intro.tsx
@@ -4676,6 +5204,16 @@ msgid "<date></date> · exam"
 msgstr "<date></date> · 시험"
 
 #: src/journey/study-next.tsx
+msgctxt "koWpue"
+msgid "View certificate"
+msgstr "인증서 보기"
+
+#: src/journey/study-next.tsx
+msgctxt "n-Px0T"
+msgid "Get your certificate"
+msgstr "인증서 받기"
+
+#: src/journey/study-next.tsx
 msgctxt "rw5sWV"
 msgid "Continue at {level}"
 msgstr "{level} 학습 이어가기"
@@ -6277,13 +6815,6 @@ msgstr "메모리를 준비하고 있어요…"
 msgctxt "Ob8gKI"
 msgid "Preparing…"
 msgstr "준비하고 있어요…"
-
-#: src/memory/memory-screen.tsx
-#: src/mind-maps/mind-map-card.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "5q3qC0"
-msgid "Download"
-msgstr "다운로드"
 
 #: src/memory/memory-screen.tsx
 msgctxt "owirfw"
@@ -8711,11 +9242,6 @@ msgid "Ask"
 msgstr "질문하기"
 
 #: src/onboarding/entry/paste-link.tsx
-msgctxt "JBWS0c"
-msgid "Link"
-msgstr "링크"
-
-#: src/onboarding/entry/paste-link.tsx
 msgctxt "IB_QxY"
 msgid "https://… an article, a class page or a PDF"
 msgstr "https://… 글, 수업 페이지 또는 PDF"
@@ -8866,11 +9392,6 @@ msgstr "일정이 담긴 계획과 첫 레슨 받기"
 msgctxt "HK3ph8"
 msgid "How it works"
 msgstr "이용 방법"
-
-#: src/onboarding/how-it-works.tsx
-msgctxt "npIkqE"
-msgid "Start free, no account needed."
-msgstr "계정 없이 무료로 시작할 수 있어요."
 
 #: src/onboarding/library-course-offer.tsx
 msgctxt "JHbf4S"
@@ -11416,11 +11937,6 @@ msgctxt "w-dRYG"
 msgid "{count, plural, other {# topics from {subjects} are back in your plan: you missed questions on them.}}"
 msgstr "{count, plural, other {주제 #개가 계획에 다시 포함됐어요. {subjects}에서 관련 문제를 틀렸기 때문이에요.}}"
 
-#: src/plan/use-share-plan.ts
-msgctxt "zU_q1N"
-msgid "Link copied"
-msgstr "링크를 복사했어요"
-
 #: src/plan/use-short-list.ts
 msgctxt "WeWUAR"
 msgid "{names} and {count, number} more"
@@ -12510,11 +13026,6 @@ msgstr "이미 알던 것"
 msgctxt "Wfs1md"
 msgid "{count, plural, one {# lesson skipped} other {# lessons skipped}}"
 msgstr "{count, plural, other {레슨 #개 건너뜀}}"
-
-#: src/syllabus/subject-aside.tsx
-msgctxt "Lv0zJu"
-msgid "Details"
-msgstr "상세 정보"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "AGSt8i"

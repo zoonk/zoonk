@@ -237,6 +237,14 @@ msgid "Completed lessons"
 msgstr "Ukończone lekcje"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "Certyfikaty"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
@@ -858,6 +866,11 @@ msgstr "Twój kumpel odpowiada na twoje pytania i dostosowuje plan."
 msgctxt "BV0cQk"
 msgid "Your day"
 msgstr "Twój dzień"
+
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "svDFL8"
+msgid "Print, download or share your certificates anytime."
+msgstr "Certyfikaty możesz w każdej chwili wydrukować, pobrać lub udostępnić."
 
 #: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
 msgctxt "1ZQwwl"
@@ -2410,6 +2423,27 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Usunięto twoje konto."
 
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "kgqbTN"
+msgid "We couldn't find this certificate"
+msgstr "Nie udało nam się znaleźć tego certyfikatu"
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "pFjRPG"
+msgid "Check the link. A certificate's link ends in its 12-character code, like {example}, and works with or without the dashes."
+msgstr "Sprawdź link. Link do certyfikatu kończy się jego 12-znakowym kodem, jak w przykładzie {example}, i działa z myślnikami lub bez nich."
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "15PZTm"
+msgid "Go to Zoonk"
+msgstr "Przejdź do Zoonka"
+
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "4566_7"
+msgid "A certificate issued by Zoonk. Anyone with its link can check it."
+msgstr "Certyfikat wydany przez Zoonk. Każdy, kto ma do niego link, może go sprawdzić."
+
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
 msgctxt "9MidH4"
@@ -3551,11 +3585,11 @@ msgctxt "XmHKKJ"
 msgid "{level} level"
 msgstr "Poziom: {level}"
 
-#. A course certificate's span of levels, such as “Beginner to Advanced”.
+#. The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.
 #: src/lib/certificates/certificate-view.ts
-msgctxt "tXYVJd"
-msgid "{from} to {to}"
-msgstr "{from} – {to}"
+msgctxt "LZF2Ia"
+msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
+msgstr "Od {from, select, overview {przeglądu} beginner {poziomu początkującego} intermediate {poziomu średnio zaawansowanego} other {poziomu zaawansowanego}} do {to, select, overview {przeglądu} beginner {poziomu początkującego} intermediate {poziomu średnio zaawansowanego} other {poziomu zaawansowanego}}"
 
 #. After “Topics covered” when the certificate lists only the first six topics.
 #: src/lib/certificates/certificate-view.ts

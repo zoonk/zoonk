@@ -46,7 +46,10 @@ async function loadStudyNext({ goalId, over }: { goalId: string; over: boolean }
   }
 
   const result = await getFieldMapView({ goalId });
-  return result.status === "ready" ? result.map.next : null;
+
+  return result.status === "ready" && result.map.next
+    ? { certificate: result.map.certificate, view: result.map.next }
+    : null;
 }
 
 function getGoalStatus(goal: { status: string } | null) {
@@ -173,7 +176,7 @@ async function JourneyContent() {
       goalStatus={goalStatus}
       hasMindMaps={hasMindMaps}
       language={language.status === "ready" ? language.progress : null}
-      next={next && { onContinue: continueNextLevelAction.bind(null, goal.id), view: next }}
+      next={next && { ...next, onContinue: continueNextLevelAction.bind(null, goal.id) }}
       plan={plan}
       readAt={readAt}
       resume={resume}

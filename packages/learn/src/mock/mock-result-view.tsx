@@ -252,7 +252,6 @@ function useResultAside({
  */
 function useResultSteps(result: MockResult) {
   const { renderCeremony, runner } = useMockScreen();
-  const { ceremony } = runner.view;
   const mistakes = useMistakeCount();
   const essays = useEssayItems();
   const speaking = useSpeakingItems();
@@ -303,7 +302,7 @@ function useResultSteps(result: MockResult) {
         <MockDayMoment />
       </>
     ),
-    moment: getCeremonyMoment({ milestone: ceremony, render: renderCeremony }),
+    moment: getCeremonyMoment({ moments: runner.view, render: renderCeremony }),
   };
 
   return { aside, items: opening ? [opening, ...rest] : [] };

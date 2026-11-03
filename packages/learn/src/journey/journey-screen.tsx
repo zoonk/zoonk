@@ -1,7 +1,6 @@
 "use client";
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useState } from "react";
@@ -41,10 +40,12 @@ import { NextOnPath } from "./next-on-path";
 import { PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { CompletedLessonsPathRow, MoreSection, PathSection, PhasesSheet } from "./plan-sections";
+import { type StudyNext } from "./study-next";
 
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
 export type { JourneyStanding } from "./journey-hero";
 export type { GoalStatusControl, GoalStatusOutcome } from "./goal-actions";
+export type { StudyNext } from "./study-next";
 
 const WRITING_REFRESH_MS = 10_000;
 
@@ -60,8 +61,6 @@ export type JourneyLinks = JourneyPathLinks & {
   mindMaps: string | null;
   subject: (key: string) => string;
 };
-
-type JourneyNext = { onContinue: () => Promise<boolean>; view: StudyNextView };
 
 type JourneyAlphabet = { link: AlphabetLink; onSkip: () => Promise<boolean> };
 
@@ -162,7 +161,7 @@ function JourneyBody({
   alphabet: JourneyAlphabet | null;
   goalStatus: GoalStatusControl | null;
   links: JourneyLinks;
-  next: JourneyNext | null;
+  next: StudyNext | null;
   openAdjust: boolean | PlanEditorSection;
   standing: JourneyStanding | null;
   syllabus: SyllabusSectionView | null;
@@ -294,7 +293,7 @@ export function JourneyScreen({
   goal: PlanGoal;
   goalStatus?: GoalStatusControl | null;
   links: JourneyLinks;
-  next?: JourneyNext | null;
+  next?: StudyNext | null;
   openAdjust?: boolean | PlanEditorSection;
   openFocus?: boolean;
   openFullCourse?: boolean;

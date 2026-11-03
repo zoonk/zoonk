@@ -266,31 +266,82 @@ struct MilestoneStage: View {
 }
 
 extension View {
-  /// Opens once per milestone wherever it shows, and marks it shown.
-  func milestoneCeremony(_ milestone: Milestone?) -> some View {
-    modifier(MilestoneCeremonyPresenter(milestone: milestone))
+  /// The certificates a result earned, then its milestone, rarest first: each opens once wherever
+  /// it shows, full screen, and is marked shown.
+  func completionMoments(certificates: [CertificateFacts] = [], milestone: Milestone? = nil)
+    -> some View
+  {
+    modifier(
+      CompletionMomentsPresenter(
+        earned: CompletionMoments(certificates: certificates, milestone: milestone)))
+  }
+
+  func completionMoments(_ day: DayResult?) -> some View {
+    completionMoments(certificates: day?.certificates ?? [], milestone: day?.ceremony)
+  }
+
+  /// A result as the generated client decodes it.
+  func completionMoments(
+    certificates: [Components.Schemas.CertificateFacts], ceremony: Components.Schemas.Milestone?
+  ) -> some View {
+    completionMoments(
+      certificates: certificates.isEmpty ? [] : (try? StudyJSON.recode(certificates)) ?? [],
+      milestone: ceremony.map(Milestone.init))
   }
 }
 
-private struct MilestoneCeremonyPresenter: ViewModifier {
+private struct CompletionMoments: Hashable, Identifiable {
+  var certificates: [CertificateFacts]
+  var milestone: Milestone?
+
+  var id: Self { self }
+}
+
+private struct CompletionMomentsPresenter: ViewModifier {
+  @Environment(CertificatesStore.self) private var certificates
   @Environment(StudySessionStore.self) private var sessions
 
-  let milestone: Milestone?
+  let earned: CompletionMoments
 
-  @State private var shown: Milestone?
+  @State private var shown: CompletionMoments?
 
   func body(content: Content) -> some View {
     content
-      .onChange(of: milestone, initial: true) { _, milestone in
-        if let milestone, sessions.claimCeremony(milestone) {
-          shown = milestone
+      .onChange(of: earned, initial: true) { _, earned in
+        let new = CompletionMoments(
+          certificates: certificates.claimMoments(earned.certificates),
+          milestone: earned.milestone.flatMap { sessions.claimCeremony($0) ? $0 : nil })
+
+        if !new.certificates.isEmpty || new.milestone != nil {
+          shown = new
         }
       }
-      .fullScreenCover(item: $shown) { milestone in
-        MilestoneCeremony(milestone: milestone) {
+      .fullScreenCover(item: $shown) { moments in
+        CompletionMomentsView(moments: moments) {
           shown = nil
         }
         .accessibilitySizeStyles()
       }
+  }
+}
+
+private struct CompletionMomentsView: View {
+  @State private var certificatesClosed = false
+
+  let moments: CompletionMoments
+  let onClose: () -> Void
+
+  var body: some View {
+    if !moments.certificates.isEmpty, !certificatesClosed {
+      CertificateCeremony(certificates: moments.certificates) {
+        if moments.milestone == nil {
+          onClose()
+        } else {
+          certificatesClosed = true
+        }
+      }
+    } else if let milestone = moments.milestone {
+      MilestoneCeremony(milestone: milestone, onClose: onClose)
+    }
   }
 }

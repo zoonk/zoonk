@@ -237,6 +237,14 @@ msgid "Completed lessons"
 msgstr "완료한 레슨"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "인증서"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
@@ -858,6 +866,11 @@ msgstr "짝꿍이 질문에 답하고 계획을 조정해 줘요."
 msgctxt "BV0cQk"
 msgid "Your day"
 msgstr "내 하루"
+
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "svDFL8"
+msgid "Print, download or share your certificates anytime."
+msgstr "인증서를 언제든 인쇄, 다운로드, 공유할 수 있어요."
 
 #: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
 msgctxt "1ZQwwl"
@@ -2410,6 +2423,27 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "계정이 삭제됐어요."
 
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "kgqbTN"
+msgid "We couldn't find this certificate"
+msgstr "이 수료증을 찾을 수 없어요"
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "pFjRPG"
+msgid "Check the link. A certificate's link ends in its 12-character code, like {example}, and works with or without the dashes."
+msgstr "링크를 확인해 보세요. 수료증 링크는 {example}처럼 12자리 코드로 끝나요. 하이픈이 있어도 없어도 접속할 수 있어요."
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "15PZTm"
+msgid "Go to Zoonk"
+msgstr "Zoonk로 이동하기"
+
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "4566_7"
+msgid "A certificate issued by Zoonk. Anyone with its link can check it."
+msgstr "Zoonk에서 발급한 수료증이에요. 링크가 있으면 누구나 확인할 수 있어요."
+
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
 msgctxt "9MidH4"
@@ -3551,11 +3585,11 @@ msgctxt "XmHKKJ"
 msgid "{level} level"
 msgstr "{level} 레벨"
 
-#. A course certificate's span of levels, such as “Beginner to Advanced”.
+#. The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.
 #: src/lib/certificates/certificate-view.ts
-msgctxt "tXYVJd"
-msgid "{from} to {to}"
-msgstr "{from}부터 {to}까지"
+msgctxt "LZF2Ia"
+msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
+msgstr "{from, select, overview {개요} beginner {초급} intermediate {중급} other {고급}}부터 {to, select, overview {개요} beginner {초급} intermediate {중급} other {고급}}까지"
 
 #. After “Topics covered” when the certificate lists only the first six topics.
 #: src/lib/certificates/certificate-view.ts

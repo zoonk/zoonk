@@ -20,6 +20,7 @@ enum LoadState<Value: Equatable & Sendable>: Equatable, Sendable {
 /// Mirrors main's cache tags in `packages/core/src/cache/tags.ts`.
 enum DataDomain: Hashable, Sendable {
   case allowance
+  case certificates
   case goals
   case learnerModel
   case learningProfile

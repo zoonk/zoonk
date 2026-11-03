@@ -137,7 +137,7 @@ private struct SessionContent: View {
         Task { await session.refresh() }
       }
     }
-    .milestoneCeremony(playback.moment?.ceremony)
+    .completionMoments(playback.moment?.day)
   }
 }
 

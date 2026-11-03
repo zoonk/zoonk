@@ -2,6 +2,8 @@
 
 import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { retryGenerationAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
+import { claimCourseCertificateAction } from "@/components/learn/certificate-actions";
+import { SessionCertificates } from "@/components/learn/session-ceremony";
 import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
 import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
@@ -11,7 +13,9 @@ import { useStartLanguageConversation } from "@/lib/language/use-start-language-
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
+import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { type LanguageProgressView } from "@zoonk/core/view-models/language/contract";
+import { type FieldMapView } from "@zoonk/core/view-models/map/contract";
 import {
   type GoalStatusControl,
   JourneyBuilding,
@@ -20,9 +24,10 @@ import {
   type JourneyStanding,
   type PlanActions,
   type PlanTutor,
+  type StudyNext,
 } from "@zoonk/learn/journey";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 /** "Try again" starts the run only on the learner's tap. */
 export function JourneyBuildingClient({
@@ -106,9 +111,11 @@ function useLanguageStanding(language: LanguageProgressView | null): JourneyStan
   };
 }
 
+type JourneyNext = Omit<StudyNext, "certificate"> & { certificate: FieldMapView["certificate"] };
+
 type JourneyClientProps = Omit<
   JourneyScreenProps,
-  "actions" | "goalStatus" | "links" | "refresh" | "standing" | "tutor"
+  "actions" | "goalStatus" | "links" | "next" | "refresh" | "standing" | "tutor"
 > & {
   actions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
   completedLessons: boolean;
@@ -116,6 +123,7 @@ type JourneyClientProps = Omit<
   goalStatus: GoalStatusControl["status"];
   hasMindMaps: boolean;
   language: LanguageProgressView | null;
+  next: JourneyNext | null;
   preparation: Extract<JourneyStanding, { kind: "preparation" }> | null;
   readAt: number;
   resume: GoalStatusControl["resume"];
@@ -170,6 +178,15 @@ export function JourneyClient({
   const arrival = useArrivalChoice();
   const outlineActions = useTopicOutlineActions(goalId);
 
+  const [claimed, setClaimed] = useState<CertificateFacts | null>(null);
+
+  /** The learner asked for it, so it shows even when another device already claimed it. */
+  const claimCertificate = async () => {
+    const certificate = await claimCourseCertificateAction(goalId);
+    setClaimed(certificate);
+    return certificate !== null;
+  };
+
   const continueNextLevel = async (onContinue: () => Promise<boolean>) => {
     const started = await onContinue();
 
@@ -200,7 +217,16 @@ export function JourneyClient({
         }}
         goalStatus={status}
         links={getJourneyLinks({ completedLessons, goalKind: props.goal.kind, hasMindMaps })}
-        next={next && { ...next, onContinue: () => continueNextLevel(next.onContinue) }}
+        next={
+          next && {
+            ...next,
+            certificate: next.certificate && {
+              href: next.certificate.code ? `/c/${next.certificate.code}` : null,
+              onClaim: claimCertificate,
+            },
+            onContinue: () => continueNextLevel(next.onContinue),
+          }
+        }
         openAdjust={arrival === ADJUST_TIME ? "time" : arrival === ADJUST_PLAN}
         openFocus={arrival === CHOOSE_FOCUS}
         openFullCourse={arrival === STUDY_EVERYTHING}
@@ -208,6 +234,16 @@ export function JourneyClient({
         standing={languageStanding ?? preparation}
         tutor={{ buddy, href: "/buddy" }}
       />
+
+      {claimed && (
+        <SessionCertificates
+          certificates={[claimed]}
+          onClose={() => {
+            setClaimed(null);
+            router.refresh();
+          }}
+        />
+      )}
     </TopicOutlineProvider>
   );
 }

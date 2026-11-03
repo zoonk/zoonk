@@ -4,7 +4,7 @@ The certificate renderer (`../certificate-image.tsx`) bundles its fonts so a ren
 
 ## Satori (this folder)
 
-Satori draws the certificate's own words. It takes no variable fonts, so each weight is a static instance, and Satori leaves a wide gap after every word it kerns, so the Geist copies have no `GPOS` table.
+Satori draws the certificate's own words. It takes no variable fonts, so each weight is a static instance, and the Satori inside `next/og` leaves a wide gap after every word it kerns ([vercel/next.js#101100](https://github.com/vercel/next.js/issues/101100)), so the Geist copies have no `GPOS` table.
 
 | File                              | From                                                | How                                                                                                      |
 | --------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
