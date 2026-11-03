@@ -4,63 +4,36 @@ This package contains all schemas the DB client for interacting with our databas
 
 ### PostgreSQL Setup
 
-For macOS users, install PostgreSQL 18 using Homebrew:
+Zoonk needs PostgreSQL 18 (migrations call `uuidv7()`) running on this machine. On macOS:
 
 ```bash
 brew install postgresql@18
 brew services start postgresql@18
-```
-
-If `createdb` or `psql` are not available after installation, add PostgreSQL 18 to your shell `PATH`:
-
-```bash
 export PATH="$(brew --prefix postgresql@18)/bin:$PATH"
 ```
 
-Then, create a new database:
+On Ubuntu or a cloud agent, `bash scripts/cloud/setup.sh` installs it with everything else.
 
-```bash
-createdb zoonk
-```
+Then run `pnpm db:setup` from the repository root. It connects as `postgres:postgres@localhost:5432`, creating that role from your OS user's when it's missing (as on Homebrew), and prepares three databases:
 
-#### Testing
+| Database     | Used by                        | When it's new                                           |
+| ------------ | ------------------------------ | ------------------------------------------------------- |
+| `zoonk`      | `pnpm dev`, `pnpm start`       | Migrated, then the regular seed and core's seed (below) |
+| `zoonk_test` | Vitest, as each run's template | Migrated, then the regular seed                         |
+| `zoonk_e2e`  | Playwright                     | Migrated, then the regular seed                         |
 
-Create a separate database for testing:
-
-```bash
-createdb zoonk_test
-```
-
-Our testing setup expects a `postgres` user with a `postgres` password. If you haven't set this up yet, you can do so by running:
-
-```bash
-psql postgres
-```
-
-Then, in the PostgreSQL prompt, run:
-
-```sql
-CREATE ROLE postgres WITH LOGIN SUPERUSER PASSWORD 'postgres';
-```
+Existing ones only get new migrations, so rerun it whenever you like. It never replaces a database it didn't create; the only one it rebuilds is a database its own interrupted run left unfinished.
 
 #### Environment Variables
 
-Prisma generates a client that we use to interact with our database. We generate this client when running `pnpm install` and `pnpm dev` in the root of the monorepo.
+None is required. To use another local server or database, set `DATABASE_URL` (and `DATABASE_URL_UNPOOLED`, which migrations prefer) in this package's `.env` and in each app's `.env`. Tests and E2E use `zoonk_test` and `zoonk_e2e` on the default server unless ignored `.env.test.local` or `.env.e2e.local` files here name others.
 
-For local development, make sure to set up your `.env` file with the correct `DATABASE_URL`. You can copy the example file:
-
-```sh
-cp .env.example .env
-```
-
-You also need to add the `DATABASE_URL` to your `.env` file for every app that uses this package.
+Prisma generates the client we use to talk to the database; `pnpm db:setup`, `pnpm dev` and builds generate it.
 
 #### Prisma Setup
 
-Run the following commands to set up Prisma:
-
 - `pnpm db:generate` to generate Prisma client
-- `pnpm db:migrate` to run migrations and set up the database
+- `pnpm db:migrate` to create a migration from a schema change and apply it
 
 #### Local Curriculum Content
 
@@ -84,19 +57,19 @@ Seeded content stays as the seed wrote it. The seed gives its courses and Librar
 
 ### Worktree Databases
 
-Run `pnpm worktree:setup` from a linked worktree's root. Codex, T3 Code, and Claude Code run this automatically when they create a worktree. Setup copies missing local environment files from the primary checkout, installs dependencies, and generates Prisma. When the primary checkout's database URL points to a loopback PostgreSQL server containing `zoonk`, it also creates:
+Run `pnpm worktree:setup` from a linked worktree's root. Codex, T3 Code, and Claude Code run this automatically when they create a worktree. Setup copies missing local environment files from the primary checkout, installs dependencies, and generates Prisma. When the primary checkout's database URL points to a loopback PostgreSQL server (the default does), it also creates:
 
-| Database             | Initial content                                                                      |
-| -------------------- | ------------------------------------------------------------------------------------ |
-| `zoonk_wt_<id>_dev`  | A consistent snapshot of the local `zoonk` database, then this worktree's migrations |
-| `zoonk_wt_<id>_test` | This worktree's migrations and regular seed data                                     |
-| `zoonk_wt_<id>_e2e`  | This worktree's migrations and regular seed data                                     |
+| Database             | Initial content                                                                                                        |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `zoonk_wt_<id>_dev`  | A consistent snapshot of the local `zoonk` database, then this worktree's migrations; without a `zoonk`, the full seed |
+| `zoonk_wt_<id>_test` | This worktree's migrations and regular seed data                                                                       |
+| `zoonk_wt_<id>_e2e`  | This worktree's migrations and regular seed data                                                                       |
 
 The ID comes from the worktree's absolute path, so branches can be renamed without losing their database. Test databases contain seeded users, organizations, and progress; they do not copy development content. Setup runs the development copy alongside dependency installation and runs independent migrations and seeds in parallel. It prints its elapsed time when all three databases are ready.
 
-Use Node.js 26 with PostgreSQL 18's `psql`, `pg_dump`, and `pg_restore` on `PATH`. On Windows, add PostgreSQL's `bin` directory to `PATH`; when using WSL, install and run these tools inside WSL. The local connection role needs permission to create databases and read the source. An unreachable local PostgreSQL server fails setup with a connection error; start it and rerun setup. Remote source URLs and missing source databases skip isolation. The primary checkout keeps its existing databases.
+Use Node.js 26 with PostgreSQL 18's `psql`, `pg_dump`, and `pg_restore` on `PATH`. On Windows, add PostgreSQL's `bin` directory to `PATH`; when using WSL, install and run these tools inside WSL. The local connection role needs permission to create databases and read the source. An unreachable local PostgreSQL server stops setup with what to do; start it and rerun setup. Remote source URLs skip isolation. The primary checkout keeps its existing databases.
 
-Setup writes development URLs into this worktree's app/package environment files, plus ignored `packages/db/.env.test.local` and `.env.e2e.local` overrides. Vitest, Prisma test commands, Playwright, and E2E builds read the same overrides. CI continues to use its configured URLs. Do not manually change the tracked `.env.test` or `.env.e2e` defaults. Keep using the regular commands, including `pnpm --filter @zoonk/db db:migrate --name <name>`.
+Setup writes development URLs into `packages/db/.env`, into the `.env` of every app that reads the database (creating it when missing, since an app without one would use the primary checkout's `zoonk`), and into any other environment file that already names a database URL, plus ignored `packages/db/.env.test.local` and `.env.e2e.local` overrides. Vitest, Prisma test commands, Playwright, and E2E builds read the same overrides. CI continues to use its configured URLs. Keep using the regular commands, including `pnpm --filter @zoonk/db db:migrate --name <name>`.
 
 The local `zoonk` can be behind the worktree's branch, so setup applies the branch's migrations to the development copy, and `pnpm dev` and `pnpm start` apply new ones before they start; they never migrate `zoonk` itself. Rerunning setup preserves ready databases and existing secrets. It repairs unfinished database initialization without replacing ready worktree data. If an expired database has been removed, rerun setup to recreate it. Setup prevents simultaneous attempts for the same worktree; if one is already running, let it finish before retrying. Different worktrees can initialize independently.
 

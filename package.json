@@ -12,6 +12,7 @@
     "build": "node scripts/dev/queue.mts turbo build",
     "build:e2e": "node scripts/dev/queue.mts turbo build:e2e",
     "db:generate": "turbo db:generate",
+    "db:setup": "node scripts/worktree/setup.mts --skip-install",
     "deploy": "node scripts/deploy/run.mts",
     "deploy:ci-required": "node scripts/deploy/ci-required.mts",
     "deploy:cleanup": "node scripts/deploy/cleanup.mts",
