@@ -190,7 +190,7 @@ private fun Guess(
 
     if (picked == null) {
         Text(
-            stringResource(R.string.player_guess_hint),
+            stringResource(R.string.warm_up_guess_hint),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )

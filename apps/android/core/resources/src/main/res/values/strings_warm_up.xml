@@ -6,6 +6,8 @@
     <string name="warm_up_next">Next guess</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->
     <string name="warm_up_deck_end">That\'s all for now.</string>
+    <!-- Under a warm-up question: a guess never counts -->
+    <string name="warm_up_guess_hint">Getting it wrong now helps you remember later.</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">Your plan is ready</string>
     <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->

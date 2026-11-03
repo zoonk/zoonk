@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "warm_up_deck_end": "53e27c7618542d12676d5c4be9224e44c044b56e4fc98ce54b44e45edbe80ce4",
+  "warm_up_guess_hint": "76766fa9a8dc625c9d3a753120f1177530588382826fc18977a734cde3d0d284",
   "warm_up_lesson_ready": "2ed942825f34ada250b386722c3153317412ec167197be76ea62e0a351bcebe4",
   "warm_up_next": "fd80e21a4b61314d4b261389740e7dd007a096a649fe3695fa4c667418964df1",
   "warm_up_plan_ready": "8d1443a8ceab7eca2ffa3ea4ffa7aff9fa0b300caf01478886974059b1ac9b2b",
@@ -19,6 +20,8 @@
     <string name="warm_up_next">Weiter raten</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->
     <string name="warm_up_deck_end">Das war’s fürs Erste.</string>
+    <!-- Under a warm-up question: a guess never counts -->
+    <string name="warm_up_guess_hint">Auch wenn du jetzt falsch liegst, hilft dir das, dich später zu erinnern.</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">Dein Plan ist fertig</string>
     <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->

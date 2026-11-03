@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "warm_up_deck_end": "7ae75eb216092dc8dbeaafb7ea15da1274dfab3a98059916ea76ab3863744aeb",
+  "warm_up_guess_hint": "479742ae410775a834e5e44f2283a4d2796e8fd81f043c239b356fdc890a1d9a",
   "warm_up_lesson_ready": "1185ac246fb18333ce90aba91911d5d7c9e079e53e633021e118468b176a5c56",
   "warm_up_next": "d0158be36da63d97113f14bc49b8113e74ada446d12eb642389105ea4004e575",
   "warm_up_plan_ready": "2421219dd41f631bde1c1c28349cd70d23bfac2ec9d57e739c2648007f79d587",
@@ -19,6 +20,8 @@
     <string name="warm_up_next">Bir tahmin daha yap</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->
     <string name="warm_up_deck_end">Şimdilik bu kadar.</string>
+    <!-- Under a warm-up question: a guess never counts -->
+    <string name="warm_up_guess_hint">Şimdi yanlış yapman daha sonra hatırlamanı kolaylaştırır.</string>
     <!-- Title of the plan's wait once the plan is ready and the learner is still guessing. -->
     <string name="warm_up_plan_ready">Planın hazır</string>
     <!-- Under "Your plan is ready" on the daily study time question, which comes before the plan shows. -->
