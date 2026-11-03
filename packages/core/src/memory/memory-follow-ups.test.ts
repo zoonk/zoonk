@@ -13,6 +13,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
+import { mockSession } from "../_test-utils/mock-session";
 import { runSessionFollowUps } from "./_test-utils/session-follow-ups";
 import { claimDailyInsight } from "./insights/daily-insight";
 import {
@@ -20,6 +21,7 @@ import {
   proposeCallMemory,
   rememberMemoryCandidate,
 } from "./memory-follow-ups";
+import { updateMemoryFact } from "./update-memory-fact";
 
 const DAY_MS = 86_400_000;
 const NO_PATTERNS: SessionPattern[] = [];
@@ -494,6 +496,50 @@ describe("what a call may change", () => {
     const kept = await prisma.memoryFact.findUniqueOrThrow({ where: { id: corrected.id } });
     expect(kept.status).toBe("active");
   });
+
+  it.each([
+    { action: "replace", intent: "remember", statement: "Estuda engenharia civil" },
+    { action: "remove", intent: "forget", statement: "Parou de estudar engenharia" },
+  ] as const)(
+    "keeps the learner's correction saved while a call's $action waits on the model",
+    async ({ action, intent, statement }) => {
+      const call = await practiceCall();
+
+      const earlier = await memoryFactFixture({
+        category: "background",
+        confidence: 0.9,
+        sourceRef: { id: crypto.randomUUID(), kind: "call" },
+        statement: "Estuda engenharia",
+        userId: call.userId,
+      });
+
+      const reconciling = Promise.withResolvers<null>();
+      const resume = Promise.withResolvers<null>();
+
+      vi.mocked(reconcileMemoryFact).mockImplementation(async ({ existing }) => {
+        const index = existing.findIndex((fact) => fact.statement === earlier.statement);
+        reconciling.resolve(null);
+        await resume.promise;
+
+        return { decision: { action, index } } as Awaited<ReturnType<typeof reconcileMemoryFact>>;
+      });
+
+      const remembering = rememberFromCall({ call, intent, statement });
+
+      await reconciling.promise;
+      mockSession(call.userId);
+      await updateMemoryFact({ factId: earlier.id, input: { statement: "Estuda medicina" } });
+      resume.resolve(null);
+
+      await expect(remembering).resolves.toBeNull();
+
+      await expect(
+        prisma.memoryFact.findMany({ where: { userId: call.userId } }),
+      ).resolves.toMatchObject([
+        { confidence: 1, id: earlier.id, statement: "Estuda medicina", status: "active" },
+      ]);
+    },
+  );
 
   it("updates what an earlier call said", async () => {
     const call = await practiceCall();
