@@ -193,7 +193,10 @@ function getSummaryProblems({
 }): LessonCheckProblem[] {
   const parsed = lessonMapSchema.safeParse(map);
   const summary = map.ideas.map((idea) => idea.text);
-  const normalized = summary.map((idea) => normalizeString(idea));
+
+  const normalized = map.ideas.map(
+    (idea) => `${normalizeString(idea.label ?? "")}\n${normalizeString(idea.text)}`,
+  );
 
   const writing = summary.flatMap((idea) => findTextFlaws({ layout: "inline", text: idea }));
 

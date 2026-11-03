@@ -510,6 +510,20 @@ describe(checkWrittenLesson, () => {
 
     expect(codesOf({ ...lesson, summary: hubMap([]) })).toContainEqual([null, "summary"]);
   });
+
+  it("lets two named ideas share a sentence, as two things with the same trait", () => {
+    const lesson = writtenTemperatureLesson();
+
+    const summary = {
+      ideas: [
+        { label: "Solid", text: "It keeps a fixed volume." },
+        { label: "Liquid", text: "It keeps a fixed volume." },
+      ],
+      shape: "hub" as const,
+    };
+
+    expect(codesOf({ ...lesson, summary })).not.toContainEqual([null, "summary"]);
+  });
 });
 
 describe(checkScreenText, () => {
