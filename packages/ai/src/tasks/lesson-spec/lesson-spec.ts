@@ -20,7 +20,6 @@ import {
   LESSON_SCREEN_KINDS,
   type LessonSpec,
   type LessonSpecIssue,
-  SUPPORT_MODES,
   getLessonSpecIssues,
 } from "./lesson-spec-rules";
 import systemPrompt from "./lesson-spec.prompt.md";
@@ -59,7 +58,6 @@ const lessonSchema = z.object({
   description: z.string(),
   screens: z.array(screenSchema),
   skills: z.array(skillSchema),
-  supportMode: z.enum(SUPPORT_MODES),
   title: z.string(),
 });
 

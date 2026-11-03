@@ -42,7 +42,6 @@ function spec(screens: LessonScreen[], skills = [skill("Calculate a percent chan
     estimatedMinutes: estimateLessonMinutes(screens.map((item) => item.kind)),
     screens,
     skills,
-    supportMode: "explanationFirst",
     title: "Percent change",
   };
 }

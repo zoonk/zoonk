@@ -253,31 +253,3 @@ fun LessonPlayerState.startQuickCheck(now: Long): LessonPlayerState {
         quickCheck = QuickCheck(missed = false, returnPosition = position, returnQueue = queue - LESSON_MAP_STEP_ID),
     ).enterPosition(0, now)
 }
-
-/** With `questionFirst`, the first question of the opening skill comes before its explanations. */
-internal fun orderLessonOpening(
-    queue: List<String>,
-    steps: Map<String, LessonStep>,
-    support: LessonSupport?,
-): List<String> {
-    val start = queue.indexOfFirst { steps[it]?.kind != StepKind.Hook }
-
-    if (support != LessonSupport.QuestionFirst || start == -1) return queue
-
-    val opening = steps[queue[start]]
-
-    if (opening == null || !opening.isExplainingStep) return queue
-
-    val questionIndex =
-        queue.indices.firstOrNull { index ->
-            val step = steps[queue[index]]
-            index > start && step != null && !step.isExplainingStep
-        } ?: return queue
-    val question = steps.getValue(queue[questionIndex])
-    val asksSameSkill = question.isRetryStep && (question.skillId == null || opening.skillId == null || question.skillId == opening.skillId)
-
-    if (!asksSameSkill) return queue
-
-    val rest = queue.filterNot { it == question.id }
-    return rest.take(start) + question.id + rest.drop(start)
-}

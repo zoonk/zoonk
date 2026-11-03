@@ -30,7 +30,6 @@ function rawSpec(screens: RawLessonScreen[]): RawLessonSpec {
         useCase: " Price rises ",
       },
     ],
-    supportMode: "explanationFirst",
     title: " Percent change ",
   };
 }
@@ -55,36 +54,6 @@ describe(normalizeLessonSpec, () => {
     expect(spec.canDo).toBe("Calculate a percent change");
     expect(spec.skills[0]?.topic).toBe("Calculate a percent change");
     expect(spec.estimatedMinutes).toBe(2);
-  });
-
-  it("takes the support mode from the screen after the hook, which the writer builds on", () => {
-    const explained = normalizeLessonSpec({
-      exploreIds,
-      raw: {
-        ...rawSpec([
-          rawScreen({ kind: "hook", skills: [] }),
-          rawScreen({ kind: "explanation" }),
-          rawScreen({ kind: "check" }),
-          rawScreen({ kind: "application" }),
-        ]),
-        supportMode: "questionFirst",
-      },
-      templateIds,
-    });
-
-    const asked = normalizeLessonSpec({
-      exploreIds,
-      raw: rawSpec([
-        rawScreen({ kind: "hook", skills: [] }),
-        rawScreen({ kind: "check" }),
-        rawScreen({ kind: "explanation" }),
-        rawScreen({ kind: "application" }),
-      ]),
-      templateIds,
-    });
-
-    expect(explained.supportMode).toBe("explanationFirst");
-    expect(asked.supportMode).toBe("questionFirst");
   });
 
   it("turns skill numbers into indexes and drops unknown or repeated ones", () => {

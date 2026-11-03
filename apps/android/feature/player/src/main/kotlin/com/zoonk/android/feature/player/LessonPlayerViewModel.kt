@@ -32,7 +32,6 @@ import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
-import com.zoonk.android.feature.player.engine.LessonSupport
 import com.zoonk.android.feature.player.engine.RunAnswer
 import com.zoonk.android.feature.player.engine.abandonEvent
 import com.zoonk.android.feature.player.engine.gradeOnDevice
@@ -85,7 +84,6 @@ import kotlinx.serialization.json.encodeToJsonElement
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
-import com.zoonk.api.models.LessonSupport as ApiLessonSupport
 
 /** [fit] is where a guest's lesson sits in its course; null outside a public chapter. */
 @Immutable
@@ -523,7 +521,7 @@ class LessonPlayerViewModel(
         run: LibraryLessonRun,
     ): LessonPlayerState {
         val started = now()
-        var state = LessonPlayerState.initial(lesson.id, lesson.playedSteps, run.support?.toSupport(), started)
+        var state = LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = started)
         state = reduce(state, run.toStartedAction(), started)
 
         val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
@@ -806,12 +804,6 @@ class LessonPlayerViewModel(
         const val ANSWERS = "answers"
     }
 }
-
-private fun ApiLessonSupport.toSupport() =
-    when (this) {
-        ApiLessonSupport.EXPLANATION_FIRST -> LessonSupport.ExplanationFirst
-        ApiLessonSupport.QUESTION_FIRST -> LessonSupport.QuestionFirst
-    }
 
 private fun LibraryLessonRun.toStartedAction() =
     LessonAction.RunStarted(

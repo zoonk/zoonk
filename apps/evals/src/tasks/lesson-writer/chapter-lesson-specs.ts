@@ -68,7 +68,6 @@ export const PRICE_IMPACT_SPEC: LessonSpec = {
         "When placing a stock order, understand why not every share may trade at the first price shown.",
     },
   ],
-  supportMode: "explanationFirst",
   title: "Large orders and price impact",
 };
 

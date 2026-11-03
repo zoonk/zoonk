@@ -54,7 +54,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Telling how old a church is on a trip.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Reading a church doorway",
   },
   "en-compound-interest-beginner": {
@@ -119,7 +118,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Comparing savings accounts and loans.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Compound interest",
   },
   "en-flower-parts-numbered": {
@@ -177,7 +175,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Knowing where fruit comes from in a garden.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Where seeds come from",
   },
   "en-laundry-care-labels-beginner": {
@@ -235,7 +232,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Washing a new sweater without shrinking it.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Reading a care tag",
   },
   "pt-graficos-de-barras-beginner": {
@@ -303,7 +299,6 @@ export const VISUAL_LESSON_SPECS = {
           "Apresentar contagens de pedidos ou respostas para comparar categorias no trabalho.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Gráficos de barras",
   },
   "pt-imagens-e-legendas-beginner": {
@@ -371,7 +366,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Interpretar charges, anúncios e fotos com legenda em provas de português.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Imagens e legendas",
   },
   "pt-tabela-e-grafico-beginner": {
@@ -444,7 +438,6 @@ export const VISUAL_LESSON_SPECS = {
         useCase: "Ler relatórios e indicadores no trabalho.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Tabela e gráfico de barras",
   },
 } as const satisfies Record<string, LessonSpec>;

@@ -44,8 +44,6 @@ Plan the screens in this order:
 {{/shortAnswers}}
 6. **Application.** The last screen, and exactly one: the lesson's skills applied to a realistic situation the learner can picture, such as their money, their city, their phone or their job. It asks for one more step than the checks did (combine the ideas, pick out what matters or decide), never a check the lesson already asked in a new setting.
 
-`supportMode` is `explanationFirst` at every level: the story leads, the screen after the hook is an explanation, and the guess lets the learner try before the next idea is explained.
-
 For each screen:
 
 - `kind`: `hook`, `explanation`, `guess`, `workedExample`, `check`, `activity` or `application`.
@@ -167,7 +165,7 @@ For each lesson:
 - `title`: the canonical, searchable topic name of the lesson. Keep `LESSON_TITLE` when you return one lesson and it fits.
 - `description`: one plain sentence on what the lesson covers and why it's useful.
 - `canDo`: what the learner can do afterwards, as a short action worded in `VERB_FORM`, up to 12 words.
-- `supportMode`, `skills` and `screens` as described above.
+- `skills` and `screens` as described above.
 
 # Final check
 

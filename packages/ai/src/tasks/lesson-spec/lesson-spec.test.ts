@@ -62,7 +62,6 @@ function oneSkillLesson({ kinds, title }: { kinds: string[]; title: string }) {
       ...(index < 2 ? { visual: "A thermometer below zero", visualKind: "picture" } : {}),
     })),
     skills: [rawSkill("Temperature")],
-    supportMode: "explanationFirst",
     title,
   };
 }
@@ -92,7 +91,6 @@ describe(generateLessonSpec, () => {
               rawScreen("application", [1, 2, 3, 4]),
             ],
             skills: ["Mean", "Median", "Mode", "Range"].map((topic) => rawSkill(topic)),
-            supportMode: "explanationFirst",
             title: "Summarizing a data set",
           },
         ],
@@ -209,7 +207,6 @@ describe(generateLessonSpec, () => {
         rawScreen("application", [1, 2]),
       ],
       skills: ["Estrutura", "Enzima"].map((topic) => rawSkill(topic)),
-      supportMode: "explanationFirst",
       title: "Proteínas e enzimas",
     };
 
@@ -253,7 +250,6 @@ describe(generateLessonSpec, () => {
             description: "Temperatures.",
             screens: [rawScreen("hook", []), rawScreen("explanation", [1])],
             skills: [rawSkill("Temperature")],
-            supportMode: "explanationFirst",
             title: "Temperatures",
           },
         ],

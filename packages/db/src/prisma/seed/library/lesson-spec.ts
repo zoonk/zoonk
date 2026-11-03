@@ -80,7 +80,6 @@ export function buildLessonSpec({
       topic: skill.name.in(language),
       useCase: skill.useCase?.in(language) ?? "",
     })),
-    supportMode: lesson.supportMode ?? "explanationFirst",
     title: lesson.title.in(language),
   };
 }

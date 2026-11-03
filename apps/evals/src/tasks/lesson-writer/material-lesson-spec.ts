@@ -58,6 +58,5 @@ export const MATERIAL_LESSON_SPEC: LessonSpec = {
       useCase: "Questões de prova que pedem o saldo de ATP de cada etapa",
     },
   ],
-  supportMode: "explanationFirst",
   title: "Saldo de ATP da glicólise",
 };

@@ -832,7 +832,6 @@ export const BASE_LESSONS = {
           useCase: "Reading a weather forecast.",
         },
       ],
-      supportMode: "explanationFirst",
       title: "Temperature changes across zero",
     },
   },

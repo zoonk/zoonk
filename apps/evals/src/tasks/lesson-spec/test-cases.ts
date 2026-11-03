@@ -7,7 +7,7 @@ import { type LessonSpecExpected, VISUAL_TEST_CASES } from "./visual-test-cases"
 const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = listPlannerTemplates();
 
 const SHARED_EXPECTATIONS = `
-  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens
+  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens
   - Estimated minutes are computed by code from the screen kinds; don't grade the number itself
   - Don't evaluate JSON formatting
 `;
@@ -107,7 +107,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Intermediate lesson on direct and inverse rule of three, a topic most learners at this level partly know, so question first is a good fit
+      - Intermediate lesson on direct and inverse rule of three, a topic most learners at this level partly know; the plan still explains before its first check
       - Must teach how to tell direct from inverse proportion before setting up the rule of three, with a worked example of each (inverse ones are the common trap)
       - Compound rule of three may be split into its own lesson or kept only if the lesson still fits; either is fine if the plan is coherent
       - Applications should look like real problems (workers and days, recipes, fuel and distance)

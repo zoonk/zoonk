@@ -225,7 +225,6 @@
     "./lesson-player/progress": "./src/lesson-player/get-lesson-progress.ts",
     "./lesson-player/run": "./src/lesson-player/lesson-run.ts",
     "./lesson-player/start": "./src/lesson-player/start-library-lesson.ts",
-    "./lesson-player/support": "./src/lesson-player/get-lesson-support.ts",
     "./lesson-questions/answer-lifecycle": "./src/lesson-questions/answer-lifecycle.ts",
     "./lesson-questions/app-links": "./src/lesson-questions/tutor-app-links.ts",
     "./lesson-questions/contract": "./src/lesson-questions/contract.ts",

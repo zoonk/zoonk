@@ -27,11 +27,9 @@ function screen(kind: LessonScreenKind, skills: number[], brief: string = kind):
 function spec({
   screens,
   skills,
-  supportMode = "explanationFirst",
 }: {
   screens: LessonScreen[];
   skills: LessonSpecSkill[];
-  supportMode?: LessonSpec["supportMode"];
 }): LessonSpec {
   return {
     canDo: "Summarize a data set",
@@ -39,7 +37,6 @@ function spec({
     estimatedMinutes: estimateLessonMinutes(screens.map((item) => item.kind)),
     screens,
     skills,
-    supportMode,
     title: "Original title",
   };
 }
@@ -273,27 +270,6 @@ describe(splitLessonSpec, () => {
 
     expect(lessons.map((lesson) => lesson.title)).toStrictEqual(["Mean", "Median and Mode"]);
     expect(lessons.map((lesson) => lesson.screens.length)).toStrictEqual([7, 8]);
-  });
-
-  it("derives the support mode of each new lesson from its first screens", () => {
-    const skills = ["Mean", "Median", "Mode", "Range"].map((topic) => skill(topic));
-
-    const screens = [
-      screen("hook", []),
-      ...skills.flatMap((_, index) => [screen("check", [index]), screen("explanation", [index])]),
-      screen("application", [0, 1, 2, 3]),
-    ];
-
-    const lessons = splitLessonSpec({
-      language: "en",
-      level: "beginner",
-      spec: spec({ screens, skills, supportMode: "questionFirst" }),
-    });
-
-    expect(lessons.map((lesson) => lesson.supportMode)).toStrictEqual([
-      "questionFirst",
-      "questionFirst",
-    ]);
   });
 
   it("never cuts a single skill in half, even when it is too long", () => {

@@ -63,7 +63,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Choosing chords that fit the mood of a song you play.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Major or minor?",
   },
   "en-pea-crosses-chance": {
@@ -137,7 +136,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Not overreacting when a real batch misses the prediction a little.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "From Punnett squares to real seeds",
   },
   "en-python-range-beginner": {
@@ -204,7 +202,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Looping over pages, days or items without skipping the last one.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Count with range() in Python",
   },
   "en-tree-key-beginner": {
@@ -271,7 +268,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Naming trees on a walk or in a park from one leaf.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Name a tree from one leaf",
   },
   "en-ux-goals-spot-ai": {
@@ -346,7 +342,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Reviewing a brief or an AI assistant's summary before a design sprint.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Writing UX goals",
   },
   "pt-camaras-do-coracao-beginner": {
@@ -423,7 +418,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Entender por que um defeito num lado do coração afeta os pulmões ou o corpo.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "As quatro câmaras do coração",
   },
   "pt-demanda-ovos-deslocamento": {
@@ -489,7 +483,6 @@ export const ACTIVITY_LESSON_SPECS = {
         useCase: "Entender por que o preço de um alimento dispara ou cai no mercado.",
       },
     ],
-    supportMode: "explanationFirst",
     title: "Quando a curva se desloca",
   },
 } satisfies Record<string, LessonSpec>;

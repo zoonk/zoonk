@@ -124,10 +124,11 @@ function isSameProgress(a: Record<string, boolean>, b: Record<string, boolean>):
 }
 
 function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): LessonPlayerState {
-  const fresh = createInitialState(
-    { hasMap: state.hasMap, id: state.lessonId, steps: Object.values(state.steps) },
-    state.support,
-  );
+  const fresh = createInitialState({
+    hasMap: state.hasMap,
+    id: state.lessonId,
+    steps: Object.values(state.steps),
+  });
 
   const writingRestore = state.notice === "writingSkipped" ? state.writingRestore : null;
 

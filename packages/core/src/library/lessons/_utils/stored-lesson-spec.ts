@@ -2,7 +2,6 @@ import {
   LESSON_SCREEN_KINDS,
   type LessonScreen,
   type LessonSpec,
-  SUPPORT_MODES,
 } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { LESSON_VISUAL_KINDS } from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { z } from "zod";
@@ -54,7 +53,6 @@ const storedLessonSpecSchema: z.ZodType<LessonSpec> = z.object({
       }),
     )
     .min(1),
-  supportMode: z.enum(SUPPORT_MODES),
   title: z.string(),
 });
 

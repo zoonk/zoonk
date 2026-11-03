@@ -298,6 +298,5 @@ export const scientificNotationLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "explanationFirst",
   title: t("Writing very big and very small numbers", "Escrevendo números enormes e minúsculos"),
 };

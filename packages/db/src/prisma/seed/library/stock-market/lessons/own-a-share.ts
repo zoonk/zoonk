@@ -357,6 +357,5 @@ export const ownAShareLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "explanationFirst",
   title: t("What you own when you buy a share", "O que você tem quando compra uma ação"),
 };

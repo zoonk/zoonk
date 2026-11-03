@@ -322,6 +322,5 @@ export const percentDiscountLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "questionFirst",
   title: t("Percentages and discounts", "Porcentagem e descontos"),
 };

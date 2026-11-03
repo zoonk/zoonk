@@ -18,11 +18,6 @@ export const LESSON_SCREEN_KINDS = [
 
 export type LessonScreenKind = (typeof LESSON_SCREEN_KINDS)[number];
 
-/** New ideas start with the explanation; ideas most learners partly know start with a question. */
-export const SUPPORT_MODES = ["explanationFirst", "questionFirst"] as const;
-
-export type SupportMode = (typeof SUPPORT_MODES)[number];
-
 export type LessonSpecSkill = {
   name: string;
   /** The lesson's title when a split gives this skill its own lesson. */
@@ -50,7 +45,6 @@ export type LessonSpec = {
   title: string;
   description: string;
   canDo: string;
-  supportMode: SupportMode;
   skills: LessonSpecSkill[];
   screens: LessonScreen[];
   /** Computed from the screen plan, never written by a model. */
@@ -67,6 +61,7 @@ export const LESSON_SIZE = {
   minMinutes: 2,
   minScreens: 5,
   noviceTeachingBeforeFirstCheck: 2,
+  teachingBeforeFirstCheck: 1,
 } as const;
 
 const SECONDS_PER_MINUTE = 60;
@@ -101,7 +96,6 @@ type LessonSpecIssueCode =
   | "screenCount"
   | "skillCount"
   | "skillReference"
-  | "supportMode"
   | "teachingVisual"
   | "tooLong"
   | "unpracticedSkill"
@@ -140,11 +134,6 @@ export function fitsLesson({ level, spec }: { level: CourseLevel; spec: LessonSp
   );
 }
 
-export function getSupportModeFromScreens(screens: readonly LessonScreen[]): SupportMode {
-  const first = screens.find((screen) => screen.kind !== "hook");
-  return first && isPracticeScreen(first.kind) ? "questionFirst" : "explanationFirst";
-}
-
 /** The guess isn't practice, so teaching around it counts as one run. */
 function getLongestTeachingRun(screens: readonly LessonScreen[]): number {
   return screens.reduce(
@@ -181,16 +170,32 @@ function getSizeIssues({ level, spec }: { level: CourseLevel; spec: LessonSpec }
   ].filter((issue) => issue !== false);
 }
 
-/** Context comes before questions at every level; new learners get one more screen of it. */
-function getTeachingBeforeFirstCheck(novice: boolean): number {
-  return novice ? LESSON_SIZE.noviceTeachingBeforeFirstCheck : 1;
-}
-
 function countTeachingBeforePractice(screens: readonly LessonScreen[]): number {
   const firstPractice = screens.findIndex((screen) => isPracticeScreen(screen.kind));
   const before = firstPractice === -1 ? screens : screens.slice(0, firstPractice);
 
   return before.filter((screen) => isTeachingScreen(screen.kind)).length;
+}
+
+function getEarlyCheckIssue({
+  novice,
+  screens,
+}: {
+  novice: boolean;
+  screens: readonly LessonScreen[];
+}) {
+  const teaching = countTeachingBeforePractice(screens);
+
+  const needed = novice
+    ? LESSON_SIZE.noviceTeachingBeforeFirstCheck
+    : LESSON_SIZE.teachingBeforeFirstCheck;
+
+  return (
+    teaching < needed && {
+      code: "earlyCheck" as const,
+      detail: `Has ${teaching} explanations or worked examples before the first check; this lesson needs ${needed}.`,
+    }
+  );
 }
 
 /**
@@ -239,14 +244,7 @@ function getShapeIssues({
       code: "checkGap" as const,
       detail: `Has ${longestRun} teaching screens in a row; a check comes every 2 or 3 screens.`,
     },
-    countTeachingBeforePractice(screens) < getTeachingBeforeFirstCheck(novice) && {
-      code: "earlyCheck" as const,
-      detail: `The first check comes before ${getTeachingBeforeFirstCheck(novice)} explanations or worked examples.`,
-    },
-    getSupportModeFromScreens(screens) !== spec.supportMode && {
-      code: "supportMode" as const,
-      detail: `Says ${spec.supportMode} but the screen after the hook doesn't match.`,
-    },
+    getEarlyCheckIssue({ novice, screens }),
     screens.some((screen) => screen.kind === "activity" && !screen.activityTemplate) && {
       code: "activityTemplate" as const,
       detail: "An activity screen has no template from the catalog.",

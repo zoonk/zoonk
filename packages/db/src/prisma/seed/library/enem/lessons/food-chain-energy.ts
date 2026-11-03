@@ -291,6 +291,5 @@ export const foodChainEnergyLesson: SeedLesson = {
       kind: "summary",
     },
   ],
-  supportMode: "explanationFirst",
   title: t("Energy in food chains", "Energia nas cadeias alimentares"),
 };
