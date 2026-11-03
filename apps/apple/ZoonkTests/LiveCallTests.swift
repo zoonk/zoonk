@@ -418,7 +418,7 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(summary?.usedHelp, true)
   }
 
-  func testANewCallStartsFromNothing() async {
+  func testANewCallStartsFromNothingButTheGoalsMet() async {
     var soFar = CallSoFar.newCall(.fixture())
     soFar.turns = [.init(speaker: .learner, text: "Hello", startMs: 0, endMs: 1000)]
     soFar.metLabels = ["Is it free?"]
@@ -431,9 +431,8 @@ final class LiveCallTests: XCTestCase {
 
     XCTAssertEqual(server.redeemedTurns, [[]])
     XCTAssertTrue(call.turns.isEmpty)
-    XCTAssertEqual(call.metLabels, [])
+    XCTAssertEqual(call.metLabels, ["Is it free?"])
     XCTAssertFalse(call.usedHelp)
-    XCTAssertEqual(call.elapsed(at: .now), 0, accuracy: 1)
   }
 
   func testHelpUsedBeforeTheSetupCountsForTheNewCall() async {

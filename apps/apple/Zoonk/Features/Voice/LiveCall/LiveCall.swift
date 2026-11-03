@@ -82,7 +82,8 @@ final class LiveCall {
   private(set) var reconnecting = false
   private(set) var liveSince: Date?
   private var endedAt: Date?
-  /// The call's clock, set back by the talk time its earlier connections used.
+  /// A new call's clock starts when it goes live; a continued one's goes on from the talk time its
+  /// earlier connections used.
   private var clockStart: Date?
   private(set) var signals = Signals()
   /// Earlier connections' turns: this connection's fragments never join them.
@@ -224,14 +225,17 @@ final class LiveCall {
       return
     }
 
-    if !setup.continuesCall {
-      carry(.newCall(conversation))
-    }
-
     // The times the server said were left, from now: the device's clock can be off.
     let now = Date.now
+
+    if setup.continuesCall {
+      clockStart = now.addingTimeInterval(-TimeInterval(callSeconds - setup.talkSeconds))
+    } else {
+      // The server keeps the goals already met.
+      carry(.init(metLabels: metLabels))
+    }
+
     talkSeconds = setup.talkSeconds
-    clockStart = now.addingTimeInterval(-TimeInterval(max(0, callSeconds - setup.talkSeconds)))
     talkEndsAt = now.addingTimeInterval(TimeInterval(setup.talkSeconds))
     hardStopAt = now.addingTimeInterval(TimeInterval(setup.seconds))
     script = setup.script
@@ -492,6 +496,7 @@ final class LiveCall {
 
     let now = Date.now
     liveSince = now
+    clockStart = clockStart ?? now
     phase = .live
     reconnecting = false
     ending = LiveCallEnding(
