@@ -71,13 +71,13 @@ const COWORKER_SCENARIO: Scenario = {
 
 /**
  * Calls whose character gets one thing the learner shared before (`learnerNote`, in the learner's
- * own language, as memory writes it). A friend, coworker or host may mention it; a stranger may
- * only ask; an officer has no reason to. The simulated learner knows the fact but only talks about
+ * own language, as memory writes it). A friend, coworker or host mentions it; a stranger may only
+ * ask; an officer has no reason to. The simulated learner knows the fact but only talks about
  * it when asked. The landlord call is the `pt-en-a2-renting` case plus a note.
  */
 export const MEMORY_TEST_CASES: TestCase<LiveConversationExpected, LiveConversationInput>[] = [
   {
-    expectations: `Emma, Marcos's friend from his English class, calls him (A2, Brazilian Portuguese speaker) in simple US English to plan Saturday. She knows him, so she may mention his job interview on Friday once, briefly and in simple English (wishing him luck or asking if he's ready), then go back to planning. She never says how she knows, never quotes the note in Portuguese, and lets him choose the plan and agree on a time.`,
+    expectations: `Emma, Marcos's friend from his English class, calls him (A2, Brazilian Portuguese speaker) in simple US English to plan Saturday. She knows him, so she mentions his job interview on Friday once, briefly and in simple English, then goes back to planning. She can't know whether Friday has passed, so she asks in a way that fits either (how it's going), never as if it already happened ("How was your interview?") or is still ahead ("Good luck on Friday!"). She never says how she knows, never quotes the note in Portuguese, and lets him choose the plan and agree on a time.`,
     expected: { objectivesMet: ["Choose a plan", "Agree on a time"] },
     id: "pt-en-a2-memory-friend",
     userInput: {
@@ -101,7 +101,7 @@ export const MEMORY_TEST_CASES: TestCase<LiveConversationExpected, LiveConversat
     },
   },
   {
-    expectations: `Linda, a Toronto landlord, talks with Marcos (A2, Brazilian Portuguese speaker) for the first time, in simple US English. She runs the call exactly as without a note (availability, rent, deposit, Saturday viewing) and lets him book the viewing. She has never met him, so she never acts as if she knows about his dog: at most she asks one natural question such as whether he has pets, and she never names the dog before he does.`,
+    expectations: `Linda, a Toronto landlord, talks with Marcos (A2, Brazilian Portuguese speaker) for the first time, in simple US English. She runs the call exactly as without a note (availability, rent, deposit, Saturday viewing) and lets him book the viewing. She has never met him, so she never acts as if she knows about his dog: at most she asks one general question such as whether he has pets, early in the call rather than as it wraps up, and she never names a dog before he does.`,
     expected: { objectivesMet: ["Is it available?", "Ask about the deposit", "Book a viewing"] },
     id: "pt-en-a2-memory-landlord",
     userInput: {
@@ -165,7 +165,7 @@ export const MEMORY_TEST_CASES: TestCase<LiveConversationExpected, LiveConversat
     },
   },
   {
-    expectations: `Carmen, a host mother in Mexico City, talks with Sam (A1, US English speaker) in very short, slow, simple Spanish (about 3 to 6 words a sentence). She has exchanged messages with Sam, so she may ask about his sister Lucy once, in a few simple Spanish words, then go back to his arrival. She never says how she knows and never uses English for it. She lets Sam say when he arrives and ask about dinner.`,
+    expectations: `Carmen, a host mother in Mexico City, talks with Sam (A1, US English speaker) in very short, slow, simple Spanish (about 3 to 6 words a sentence). She has exchanged messages with Sam, so she asks about his sister Lucy once, in a few simple Spanish words, then goes back to his arrival. She never says how she knows and never uses English for it. She lets Sam say when he arrives and ask about dinner.`,
     expected: { objectivesMet: ["Decir cuándo llegas", "Preguntar por la cena"] },
     id: "en-es-a1-memory-host",
     userInput: {
@@ -190,7 +190,7 @@ export const MEMORY_TEST_CASES: TestCase<LiveConversationExpected, LiveConversat
     },
   },
   {
-    expectations: `Rafael, Tom's coworker, calls him (B1, US English speaker) in Brazilian Portuguese to ask him to present at Wednesday's client meeting. They work together, so he may mention Tom's half marathon training once, briefly (asking how the training is going), but the favor stays the point of the call. He never says how he knows, gives the details from his notes when Tom asks and lets Tom agree.`,
+    expectations: `Rafael, Tom's coworker, calls him (B1, US English speaker) in Brazilian Portuguese to ask him to present at Wednesday's client meeting. They work together, so he mentions Tom's half marathon training once, briefly (asking how the training is going), but the favor stays the point of the call. He never says how he knows, gives the details from his notes when Tom asks and lets Tom agree.`,
     expected: { objectivesMet: ["Aceitar a apresentação", "Confirmar os detalhes"] },
     id: "en-pt-b1-memory-coworker",
     userInput: {

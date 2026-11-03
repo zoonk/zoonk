@@ -113,9 +113,8 @@ describe(buildLiveConversationInstructions, () => {
     expect(withNote).not.toContain("{{");
     expect(withNote).toContain("written in Português Brasileiro");
     expect(withNote).toContain('"Vai se mudar para Toronto em março com o cachorro."');
-    expect(withNote).toContain("never act as if you know it");
+    expect(withNote).toContain("Something the learner shared before");
     expect(withoutNote).not.toContain("Something the learner shared before");
-    expect(withoutNote).not.toContain("never act as if you know it");
     expect(withoutNote).toMatch(/bring the conversation back\.\n\nThese phrases/u);
   });
 
