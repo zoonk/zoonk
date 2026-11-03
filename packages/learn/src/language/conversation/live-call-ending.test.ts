@@ -321,6 +321,40 @@ describe("what the objective check ends", () => {
     expect(hangUp).toBeUndefined();
     expect(progress.map((entry) => entry.at)).toStrictEqual([13_000]);
   });
+
+  const mutualGoodbye: CallEndingEvent = {
+    allMet: false,
+    at: 13_000,
+    goodbye: true,
+    progress: false,
+    snapshotAt: 11_500,
+    type: "checked",
+  };
+
+  it("skips the goodbye cue when both said goodbye after the talk time ran out", () => {
+    const { goodbyes, hangUp } = play({
+      events: [...exchange, mutualGoodbye],
+      talkSeconds: 10,
+      until: 25_000,
+    });
+
+    expect(goodbyes).toHaveLength(0);
+    expect(hangUp).toStrictEqual({ at: 13_000, reason: "time", type: "hangUp" });
+  });
+
+  it("changes nothing once the goodbye cue went out", () => {
+    const withCheck = play({ events: [...exchange, mutualGoodbye], talkSeconds: 6, until: 20_000 });
+    const withoutCheck = play({ events: exchange, talkSeconds: 6, until: 20_000 });
+
+    expect(withCheck.goodbyes[0]).toStrictEqual({
+      at: 6000,
+      cue: "goodbye",
+      id: "goodbye-1",
+      type: "goodbye",
+    });
+
+    expect(withCheck.log).toStrictEqual(withoutCheck.log);
+  });
 });
 
 describe("a quiet learner", () => {

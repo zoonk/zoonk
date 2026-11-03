@@ -262,13 +262,18 @@ function acknowledge(
 }
 
 function check(state: CallEndingState, event: Extract<CallEndingEvent, { type: "checked" }>): Step {
+  const learnerMovedOn = state.learnerAt !== null && state.learnerAt > event.snapshotAt;
+  const saidGoodbye = event.goodbye && !learnerMovedOn;
+
+  // Both already said goodbye before the cue went out: the cue would make the character say it again.
   if (state.reason) {
-    return { commands: [], state };
+    return {
+      commands: [],
+      state: saidGoodbye && !state.goodbye ? { ...state, saidGoodbye: true } : state,
+    };
   }
 
-  const learnerMovedOn = state.learnerAt !== null && state.learnerAt > event.snapshotAt;
-
-  if (event.goodbye && !learnerMovedOn) {
+  if (saidGoodbye) {
     return { commands: [], state: arm(state, "goodbye", event.at) };
   }
 
