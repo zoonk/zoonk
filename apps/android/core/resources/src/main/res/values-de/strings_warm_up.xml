@@ -8,7 +8,7 @@
   "warm_up_plan_ready_one_question": "983997493295d5a9e54b27330d5556b969ebbbe84ad50ac74686b01945b4a552",
   "warm_up_plan_ready_whenever": "71011903bc301d55f200e35830bbeebefb10ef416f3b9f1d369e989377ee493e",
   "warm_up_questions_ready": "6887754276ed34810197007789fe8a12fec87239190e56132248931ea6ad9cda",
-  "warm_up_questions_ready_description": "c8c0abfd6b50fb0cc8833fe6c956eab9adced1c3c2b05775833b4433539ce5c3",
+  "warm_up_questions_ready_description": "2b4046f74e817d73d7194bdeb9e5dbded247b0392a057128825b02a29241da51",
   "warm_up_title": "064f8c118c260d0e8fa7f7d4a0ffa2337ab64184f7febebcea1fcb4643e01f98"
 }
 -->
@@ -27,7 +27,8 @@
     <string name="warm_up_plan_ready_whenever">Schau ihn dir an, wenn du so weit bist.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Deine Fragen sind fertig</string>
-    <string name="warm_up_questions_ready_description">Leg los, wann du möchtest.</string>
-    <!-- Replaces a lesson's description on its wait once it's written and the learner is still guessing. -->
+    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
+    <string name="warm_up_questions_ready_description">Leg los, sobald du bereit bist.</string>
+    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
     <string name="warm_up_lesson_ready">Deine Lektion ist fertig. Leg los, wann du möchtest.</string>
 </resources>

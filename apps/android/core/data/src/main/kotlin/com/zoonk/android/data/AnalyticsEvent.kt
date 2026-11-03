@@ -7,7 +7,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.subscription.BillingPeriod
-import com.zoonk.api.models.Goal
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.Milestone
 import java.util.UUID
@@ -113,15 +112,10 @@ sealed class AnalyticsEvent(
             ),
         )
 
-    /** [goalKind] is null where the screen doesn't know its goal, and the learner's active goal's stands in. */
     data class WarmUpShown(
         val surface: WarmUpSurface,
-        val goalKind: Goal.Kind?,
         val cardCount: Int,
-    ) : AnalyticsEvent(
-            "Warm-Up Shown",
-            listOfNotNull("surface" to surface.value, goalKind?.let { "goal_kind" to it.value }, "card_count" to cardCount).toMap(),
-        )
+    ) : AnalyticsEvent("Warm-Up Shown", mapOf("surface" to surface.value, "card_count" to cardCount))
 
     /** [position] counts from 1 in the deck. */
     data class WarmUpAnswered(

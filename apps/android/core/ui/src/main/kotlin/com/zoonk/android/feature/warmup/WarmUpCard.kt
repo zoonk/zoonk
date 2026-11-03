@@ -45,14 +45,14 @@ import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.api.models.Goal
 import com.zoonk.api.models.WarmUpDeck
 import com.zoonk.api.models.WarmUpDeckCardsInner
 import com.zoonk.api.models.WarmUpDeckCardsInnerOptionsInner
 
 /**
  * Main's `WarmUpCard`: under a wait's timeline, a quick question about the learner's subject. One tap shows the right
- * answer and why, then the next card, until the work is ready; nothing shows until the deck has loaded.
+ * answer and why, then the next card, until the work is ready; nothing shows until the deck has loaded, or when the
+ * learner already guessed every card.
  */
 @Composable
 fun WarmUpCard(
@@ -61,15 +61,11 @@ fun WarmUpCard(
     surface: AnalyticsEvent.WarmUpSurface,
     hold: ReadyHold,
     modifier: Modifier = Modifier,
-    goalKind: Goal.Kind? = null,
 ) {
     warmUpId ?: return
     val state by warmUps.decks[warmUpId].collectShown()
     val deck = state.value ?: return
-    key(warmUpId) {
-        TrackShown(AnalyticsEvent.WarmUpShown(surface, goalKind, deck.cards.size))
-        DeckCard(deck, warmUpId, warmUps, surface, hold, modifier)
-    }
+    key(warmUpId) { DeckCard(deck, warmUpId, warmUps, surface, hold, modifier) }
 }
 
 @Composable
@@ -81,14 +77,15 @@ private fun DeckCard(
     hold: ReadyHold,
     modifier: Modifier,
 ) {
-    val tracker = LocalEventTracker.current
     var index by rememberSaveable { mutableIntStateOf(warmUps.next(warmUpId)) }
+    val card = deck.cards.getOrNull(index) ?: return
+    TrackShown(AnalyticsEvent.WarmUpShown(surface, deck.cards.size))
+    val tracker = LocalEventTracker.current
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
     var tapped by remember { mutableStateOf<Tap?>(null) }
     val reveal = remember { BringIntoViewRequester() }
     val nextGuess = remember { FocusRequester() }
     val firstAnswer = remember { FocusRequester() }
-    val card = deck.cards.getOrNull(index)
     val goesOn = picked != null && !hold.holding && warmUps.next(warmUpId) < deck.cards.size
 
     LaunchedEffect(tapped) {
@@ -109,31 +106,27 @@ private fun DeckCard(
     OutlinedCard(modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Title()
-            if (card == null) {
-                DeckEnd()
-            } else {
-                Guess(card, picked, reveal, firstAnswer) { option ->
-                    picked = option.id
-                    tapped = Tap.Answer
-                    warmUps.answered(warmUpId, index)
-                    hold.guess()
-                    tracker.track(AnalyticsEvent.WarmUpAnswered(surface, card.id, index + 1, option.correct))
+            Guess(card, picked, reveal, firstAnswer) { option ->
+                picked = option.id
+                tapped = Tap.Answer
+                warmUps.answered(warmUpId, index)
+                hold.guess()
+                tracker.track(AnalyticsEvent.WarmUpAnswered(surface, card.id, index + 1, option.correct))
+            }
+            when {
+                goesOn -> {
+                    OutlinedButton(
+                        onClick = {
+                            index = warmUps.next(warmUpId)
+                            picked = null
+                            tapped = Tap.Next
+                        },
+                        modifier = Modifier.focusRequester(nextGuess),
+                    ) { Text(stringResource(R.string.warm_up_next)) }
                 }
-                when {
-                    goesOn -> {
-                        OutlinedButton(
-                            onClick = {
-                                index = warmUps.next(warmUpId)
-                                picked = null
-                                tapped = Tap.Next
-                            },
-                            modifier = Modifier.focusRequester(nextGuess),
-                        ) { Text(stringResource(R.string.warm_up_next)) }
-                    }
 
-                    picked != null && !hold.holding -> {
-                        DeckEnd()
-                    }
+                picked != null && !hold.holding -> {
+                    DeckEnd()
                 }
             }
         }

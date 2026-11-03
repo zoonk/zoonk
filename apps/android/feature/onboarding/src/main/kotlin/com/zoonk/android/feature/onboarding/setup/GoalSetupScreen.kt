@@ -265,7 +265,7 @@ private fun ColumnScope.SetupStep(
 
     CompositionLocalProvider(
         LocalPlanStart provides planStart,
-        LocalSetupWarmUp provides warmUps?.let { SetupWarmUp(it, view.goal.kind) },
+        LocalSetupWarmUp provides warmUps,
     ) {
         QuestionStep(
             step,

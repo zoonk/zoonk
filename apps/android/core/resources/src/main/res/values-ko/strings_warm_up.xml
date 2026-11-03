@@ -8,7 +8,7 @@
   "warm_up_plan_ready_one_question": "ea6529bbf03573824d1237bbb4ce86fe667bf94c3c3119034be57d014c7349b4",
   "warm_up_plan_ready_whenever": "3f41b727071dc937f1b8f5357c15a6fd5c15f6f7e25900d6b912951f49089a38",
   "warm_up_questions_ready": "7cdaced74dbd0b36e871668b26b8e8ef42cc4afdaa4439452623de7b89900b30",
-  "warm_up_questions_ready_description": "0509f2521ff684e80499b3f572e52bbaf3011f49475d81f315d0629021edf954",
+  "warm_up_questions_ready_description": "75aab2d1555b51c69fe2c416632c00f8dae47b89de514f6c7d13039fa88cea91",
   "warm_up_title": "b1c00f6f22f73cbc24f722281863e77c0d6c2fa6982c35813558a721f96bb269"
 }
 -->
@@ -27,7 +27,8 @@
     <string name="warm_up_plan_ready_whenever">준비되면 언제든 확인해 보세요.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">문제가 준비됐어요</string>
-    <string name="warm_up_questions_ready_description">원할 때 언제든 시작해 보세요.</string>
-    <!-- Replaces a lesson's description on its wait once it's written and the learner is still guessing. -->
+    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
+    <string name="warm_up_questions_ready_description">준비되면 시작해 보세요.</string>
+    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
     <string name="warm_up_lesson_ready">레슨이 준비됐어요. 원할 때 언제든 시작해 보세요.</string>
 </resources>

@@ -184,17 +184,22 @@ private fun ColumnScope.ScheduleTime(
     val answered = if (dated) coverGate else timeAdvice.last?.let { PlanGate(it.ready, it.readingNotice) } ?: coverGate
     val gate = answered ?: PlanGate(planReadiness.ready, planReadiness.readingNotice)
     val gateAnswer = if (dated) covering else timeAdvice
-    val hold = rememberReadyHold(ready = !waitsForPlan(gate, answered != null, run))
+    val gateFailed = gateAnswer.status == PollStatus.Failed
+    val waits = waitsForPlan(gate, answered != null, run)
+    if (waits && gate.readingNotice && !gateFailed && !run.isStopped) {
+        NoticeReading(if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE, lastEdition = false)
+        return
+    }
+
+    // After the return above, so it lives only with the build's wait: a guess there doesn't hold the question after an
+    // exam's documents are read.
+    val hold = rememberReadyHold(ready = !waits)
     if (!hold.over) {
-        val gateFailed = gateAnswer.status == PollStatus.Failed
-        val document = if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE
         PlanBuilding(
             run.withPoll(gateFailed),
             if (gateFailed) gateAnswer.restart else LocalPlanStart.current?.onRetry,
             hold = hold,
-            readyDescription = R.string.warm_up_plan_ready_one_question,
-            readyAction = R.string.onboarding_continue,
-            reading = NoticeRead(document, lastEdition = false).takeIf { gate.readingNotice && !gateFailed && !run.isStopped },
+            next = PlanNext.TimeQuestion,
         )
         return
     }

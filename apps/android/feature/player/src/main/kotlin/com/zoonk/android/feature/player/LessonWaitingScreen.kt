@@ -96,6 +96,7 @@ fun LessonWaitingScreen(
     LessonFrame(
         title = outline.title,
         onClose = exits::close,
+        modifier = if (waits) Modifier.watchTouches(hold) else Modifier,
         bottomBar =
             when {
                 showsStart -> {
@@ -135,16 +136,7 @@ fun LessonWaitingScreen(
             },
     ) {
         LessonColumnBeforeFold {
-            if (hold.holding) {
-                Text(
-                    stringResource(R.string.warm_up_lesson_ready),
-                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            } else {
-                Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
-            }
+            Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
 
             when (current) {
                 null -> {
@@ -158,15 +150,15 @@ fun LessonWaitingScreen(
                 LessonWriting.Writing, LessonWriting.Ready -> {
                     val shown = if (current == LessonWriting.Ready) GenerationRun(status = GenerationRun.Status.Ready) else run
                     val failed = shown.status == GenerationRun.Status.Failed
-                    Column(Modifier.watchTouches(hold), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                         LessonWritingProgress(
                             shown,
                             viewModel::retry,
-                            stringResource(R.string.player_writing_note).takeUnless { hold.holding },
+                            stringResource(if (hold.holding) R.string.warm_up_lesson_ready else R.string.player_writing_note),
                         )
                         WarmUpCard(warmUpId, warmUps, AnalyticsEvent.WarmUpSurface.LessonWait, hold)
                     }
-                    if (late || failed) alternative?.let { Alternative(it, instead = false, exits) }
+                    if (!hold.holding && (late || failed)) alternative?.let { Alternative(it, instead = false, exits) }
                 }
 
                 LessonWriting.Failed -> {
@@ -209,7 +201,12 @@ fun LessonWritingProgress(
 ) {
     GenerationWait(GenerationKind.Lesson, run, onRetry)
     if (note != null && run.status != GenerationRun.Status.Failed) {
-        Text(note, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            note,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 

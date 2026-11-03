@@ -8,7 +8,7 @@
   "warm_up_plan_ready_one_question": "34fd26b6c23697b5fd845a37056214382cd0fa961cfadbf53688bd9da18b0445",
   "warm_up_plan_ready_whenever": "897677cf56baa4a28bb5eb0868315bd5aaad416adf2fc6e9ff77f84d23ebbdd5",
   "warm_up_questions_ready": "2c5b21d79d858aae9f041eab7bec1fad1384ea7ed0ff2a0f9700c842a5154abe",
-  "warm_up_questions_ready_description": "ea82992cb0ac994441c0c39c3042bbf5dea48be74e8b2c6d03b5e9733fd1058d",
+  "warm_up_questions_ready_description": "cd8e656e5097b126d05e39d8b04f91ee4348b07be652294cd1177266a2340a04",
   "warm_up_title": "b9bcbaf7e624ab25726ff60b65303de8e7012d6ab43c9637aae9e00ac775bc5f"
 }
 -->
@@ -27,7 +27,8 @@
     <string name="warm_up_plan_ready_whenever">好きなときに見られます。</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">問題の準備ができました</string>
-    <string name="warm_up_questions_ready_description">好きなときに始められます。</string>
-    <!-- Replaces a lesson's description on its wait once it's written and the learner is still guessing. -->
+    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
+    <string name="warm_up_questions_ready_description">準備ができたら、いつでも始められます。</string>
+    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
     <string name="warm_up_lesson_ready">レッスンができました。好きなときに始められます。</string>
 </resources>
