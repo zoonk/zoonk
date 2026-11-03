@@ -3,7 +3,9 @@ package com.zoonk.android.feature.certificates
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CertificateImageUrls
+import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -36,6 +38,23 @@ class CertificateStoreTest {
             assertEquals(2, api.reads)
         }
 
+    @Test
+    fun upNextKeepsActiveCoursesWithLessonsAndLanguagesAsMainDoes() {
+        val upNext =
+            certificateUpNext(
+                listOf(
+                    goal("Python", kind = "learn", lessons = 3 to 12),
+                    goal("Spanish", kind = "language"),
+                    goal("SAT", kind = "exam", lessons = 0 to 0),
+                    goal("Guitar", kind = "learn", status = "paused", lessons = 1 to 4),
+                    goal("Rust", kind = "learn", status = "completed", lessons = 4 to 4),
+                    goal("Why is the sky blue?", kind = "explain"),
+                ),
+            )
+
+        assertEquals(listOf("Python" to 0.25, "Spanish" to null), upNext.map { it.goal.title to it.progress })
+    }
+
     private fun TestScope.store(api: CertificatesApi): CertificateStore {
         val scope = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
         return CertificateStore(api, AppCache(FakeSession(ana), scope))
@@ -61,6 +80,28 @@ private class FakeCertificatesApi(
         session: AuthenticatedSession,
         goalId: UUID,
     ) = held.first()
+
+    override suspend fun goals(session: AuthenticatedSession) = emptyList<Goal>()
+}
+
+private fun goal(
+    title: String,
+    kind: String,
+    status: String = "active",
+    lessons: Pair<Int, Int>? = null,
+): Goal {
+    val plan =
+        lessons?.let { (done, total) ->
+            """{"currentPhase":null,"endDate":null,"lessonsDone":$done,"lessonsTotal":$total,"phaseCount":1,"ready":true}"""
+        }
+    return ApiJson.decodeFromString(
+        """
+        {"createdAt":"2026-11-03T00:00:00.000Z","dailyMinutes":20,"details":{},"examBlueprintId":null,
+         "id":"${UUID.randomUUID()}","isActive":false,"kind":"$kind","language":"en","plan":${plan ?: "null"},
+         "primaryCourseId":null,"prompt":"$title","status":"$status","studyDays":[1,2,3],"studyTime":null,
+         "targetDate":null,"targetLanguage":null,"timezone":null,"title":"$title"}
+        """.trimIndent(),
+    )
 }
 
 private fun owned(code: String): OwnedCertificate {

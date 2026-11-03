@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -45,14 +46,17 @@ import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
-import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.launch
 
@@ -155,20 +159,16 @@ private fun CertificateRow(
 }
 
 /**
- * Main's empty page: how certificates are earned, Continue learning, and under "Up next" each goal
- * that earns one and how, without another read.
+ * Main's empty page: how certificates are earned, Continue learning, and under "Up next" each active
+ * goal that earns one and how: a course's share of lessons done, or what a language level asks.
  */
 @Composable
 private fun Empty(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val summary by app.learnerSummary.summary.collectShown()
-    val goals =
-        summary.value
-            ?.goals
-            .orEmpty()
-            .filter { it.status == LearnerSummaryGoal.Status.ACTIVE && it.kind != LearnerSummaryGoal.Kind.EXPLAIN }
+    val goals by app.certificates.goals.collectShown()
+    val upNext = certificateUpNext(goals.value.orEmpty())
 
     Column(Modifier.padding(top = 24.dp)) {
         EmptyState(
@@ -182,28 +182,35 @@ private fun Empty(
             },
         )
 
-        if (goals.isNotEmpty()) {
+        if (upNext.isNotEmpty()) {
             SectionHeader(stringResource(R.string.certificates_up_next), Modifier.padding(top = 32.dp, bottom = 8.dp))
             Column(Modifier.bleed(LIST_ITEM_INSET)) {
-                goals.forEachIndexed { index, goal ->
+                upNext.forEachIndexed { index, item ->
                     if (index > 0) HorizontalDivider()
-                    ListItem(
-                        headlineContent = { Text(goal.title) },
-                        supportingContent = {
-                            Text(
-                                stringResource(
-                                    if (goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) {
-                                        R.string.certificates_up_next_language
-                                    } else {
-                                        R.string.certificates_up_next_course
-                                    },
-                                ),
-                            )
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    )
+                    UpNextRow(item)
                 }
             }
         }
     }
+}
+
+@Composable
+private fun UpNextRow(item: CertificateUpNext) {
+    val progress = item.progress
+    ListItem(
+        headlineContent = { Text(item.goal.title) },
+        supportingContent = {
+            Text(stringResource(if (progress == null) R.string.certificates_up_next_language else R.string.certificates_up_next_course))
+        },
+        trailingContent =
+            progress?.let { share ->
+                {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Meter(share.toFloat(), Modifier.width(64.dp))
+                        Text(formatPercent(share, currentLocale()), style = MaterialTheme.typography.labelLarge.withTabularFigures())
+                    }
+                }
+            },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+    )
 }
