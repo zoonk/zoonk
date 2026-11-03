@@ -1749,7 +1749,7 @@ msgstr "이 {duration} 모의고사를 {date} 계획에 넣을 시간이 없어�
 #: src/today/today-plan-change.tsx
 msgctxt "JkS37H"
 msgid "Undo"
-msgstr "되돌리기"
+msgstr "실행 취소"
 
 #: src/challenge/challenge-moved-screen.tsx
 msgctxt "smtXcI"
