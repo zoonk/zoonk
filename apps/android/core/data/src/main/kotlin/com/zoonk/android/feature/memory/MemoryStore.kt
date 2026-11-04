@@ -114,9 +114,11 @@ class MemoryStore(
         return change
     }
 
-    /** Undoing restores facts the page doesn't have, so it reads memory again. */
+    /** Undoing restores facts the page doesn't have, and a refused one means memory changed since, so either reads memory again. */
     suspend fun undo(changes: List<MemoryChangeReference>): MutationResult<Unit> =
-        cache.mutate(invalidating = setOf(DataDomain.Memory)) { session -> api.undo(session, changes) }
+        cache.mutate(invalidating = setOf(DataDomain.Memory)) { session -> api.undo(session, changes) }.also {
+            if (it is MutationResult.Failed) memory.invalidate()
+        }
 
     suspend fun export(): String? =
         when (val result = cache.mutate { session -> api.export(session) }) {

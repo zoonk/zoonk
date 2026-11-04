@@ -176,15 +176,22 @@ class MemoryStoreTest {
             )
         }
 
-    /** Only the API's conflict ends Undo; a dropped connection keeps it for another tap. */
+    /** Only the API's conflict ends Undo, and shows memory as it is now; a dropped connection keeps Undo for another tap. */
     @Test
     fun anUndoThatChangedSinceEndsButOneThatDidNotReachTheServerCanBeTriedAgain() =
         runTest {
             val store = loadedStore()
             val change = listOf(MemoryChangeReference(null, FACT_ID))
 
+            api.current = api.current.copy(enabled = false)
             api.failure = ApiException(ApiError.Unavailable, "MEMORY_CHANGE_ALREADY_UNDONE", 409)
             assertEquals(MemoryUndo.Changed, store.undo(change).memoryUndo())
+            store.memory.load()
+            advanceUntilIdle()
+            assertFalse(
+                store.memory.state.value.value!!
+                    .enabled,
+            )
 
             api.failure = ApiException(ApiError.Network)
             assertEquals(MemoryUndo.Failed, store.undo(change).memoryUndo())
