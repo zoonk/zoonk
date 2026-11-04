@@ -183,6 +183,7 @@ const CALL_CASES: ExtractionCase[] = [
       facts: [
         {
           categories: ["context", "goals", "routine"],
+          dates: ["october 17"],
           expiresOn: ["2026-10-17", "2026-10-18"],
           keywords: ["naples", "napoli"],
         },
@@ -295,11 +296,12 @@ const CALL_CASES: ExtractionCase[] = [
         { categories: ["context"], keywords: ["cachorr", "cao", "thor"] },
         {
           categories: ["context", "goals", "routine"],
+          dates: ["2 de outubro"],
           expiresOn: ["2026-10-02"],
-          keywords: ["2 de out", "2/10", "02/10"],
+          keywords: ["entrevista"],
         },
       ],
-      forbidden: ["sexta", "friday", "sabado", "apartamento", "deposito"],
+      forbidden: ["sabado", "apartamento", "deposito"],
       maxFacts: 2,
     },
     id: "pt-call-dated-interview",
@@ -337,6 +339,134 @@ const CALL_CASES: ExtractionCase[] = [
       learner("Hello. Sorry, my English is not good. I want two pizza... pepperoni."),
       character("Two pepperoni pizzas, no problem."),
       learner("How much is it? ... Ok, thank you, bye."),
+    ],
+  }),
+  callCase({
+    expected: {
+      facts: [
+        {
+          categories: ["context", "goals", "routine"],
+          expiresOn: [
+            "2026-09-28",
+            "2026-09-29",
+            "2026-09-30",
+            "2026-10-01",
+            "2026-10-02",
+            "2026-10-03",
+            "2026-10-04",
+          ],
+          keywords: ["contrato", "aluguel", "locacao", "lease"],
+        },
+      ],
+      forbidden: ["semana que vem", "proxima semana", "parque", "cafe", "emma"],
+      maxFacts: 3,
+    },
+    id: "pt-call-lease-next-week",
+    language: "pt",
+    objectives: [
+      "Dizer que o fim de semana foi bom e contar uma coisa que fez",
+      "Perguntar o que ela fez no fim de semana",
+      "Convidá-la para um café no sábado às 10",
+    ],
+    situation: "Emma, sua vizinha do andar de cima, liga para conversar.",
+    targetLanguage: "en",
+    turns: [
+      character("Hey, it's Emma from upstairs. How was your weekend?"),
+      learner("It was good, thanks. I went to a park with my wife on Sunday."),
+      character("Oh, nice! That sounds really relaxing. How's it going with your move to Toronto?"),
+      learner("It’s going good, we sign the lease next week. What did you do on your weekend?"),
+      character(
+        "That sounds great. I went to the farmers market on Sunday, and watched a movie at home Saturday night.",
+      ),
+      learner("That sounds nice! Do you want to have coffee with me on Saturday at 10?"),
+      character("I'd love to, but I have plans then. Could we do Saturday at 11 instead?"),
+      learner("Sure, Saturday at 11 is good for me. See you then!"),
+      character("Great, see you then."),
+      learner("Bye, Emma! See you Saturday."),
+    ],
+  }),
+  callCase({
+    expected: {
+      facts: [
+        {
+          categories: ["context", "goals", "routine"],
+          dates: ["1 de outubro", "1º de outubro", "primeiro de outubro"],
+          expiresOn: ["2026-10-01"],
+          keywords: ["contrato", "aluguel", "locacao", "lease"],
+        },
+      ],
+      forbidden: ["quinta", "parque", "cafe", "emma"],
+      maxFacts: 3,
+    },
+    id: "pt-call-lease-thursday",
+    language: "pt",
+    objectives: [
+      "Dizer que o fim de semana foi bom e contar uma coisa que fez",
+      "Perguntar o que ela fez no fim de semana",
+      "Convidá-la para um café no sábado às 10",
+    ],
+    situation: "Emma, sua vizinha do andar de cima, liga para conversar.",
+    targetLanguage: "en",
+    turns: [
+      character("Hey, it's Emma from upstairs. How was your weekend?"),
+      learner("It was good, thanks. I went to a park with my wife on Sunday."),
+      character("Oh, nice! That sounds really relaxing. How's it going with your move to Toronto?"),
+      learner("It’s going good, we sign the lease on Thursday. What did you do on your weekend?"),
+      character(
+        "That sounds great. I went to the farmers market on Sunday, and watched a movie at home Saturday night.",
+      ),
+      learner("That sounds nice! Do you want to have coffee with me on Saturday at 10?"),
+      character("I'd love to, but I have plans then. Could we do Saturday at 11 instead?"),
+      learner("Sure, Saturday at 11 is good for me. See you then!"),
+    ],
+  }),
+  callCase({
+    expected: {
+      facts: [
+        {
+          categories: ["context", "goals", "routine"],
+          dates: ["marco de 2027", "marco 2027"],
+          keywords: ["toronto"],
+        },
+        {
+          categories: ["context", "goals", "routine"],
+          expiresOn: [
+            "2026-09-28",
+            "2026-09-29",
+            "2026-09-30",
+            "2026-10-01",
+            "2026-10-02",
+            "2026-10-03",
+            "2026-10-04",
+          ],
+          keywords: ["contrato", "aluguel", "locacao", "lease"],
+        },
+      ],
+      forbidden: ["semana que vem", "proxima semana", "parque", "cafe", "emma"],
+      maxFacts: 3,
+    },
+    id: "pt-call-lease-volunteered",
+    language: "pt",
+    objectives: [
+      "Dizer que o fim de semana foi bom e contar uma coisa que fez",
+      "Perguntar o que ela fez no fim de semana",
+      "Convidá-la para um café no sábado às 10",
+    ],
+    situation: "Emma, sua vizinha do andar de cima, liga para conversar.",
+    targetLanguage: "en",
+    turns: [
+      character("Hey, it's Emma from upstairs. How was your weekend?"),
+      learner(
+        "It was good, thanks. I went to a park with my wife on Sunday. Oh, and we move to Toronto in March! We sign the lease next week.",
+      ),
+      character("Oh wow, Toronto! Congratulations!"),
+      learner("Thanks! What did you do on your weekend?"),
+      character(
+        "I went to the farmers market on Sunday, and watched a movie at home Saturday night.",
+      ),
+      learner("That sounds nice! Do you want to have coffee with me on Saturday at 10?"),
+      character("I'd love to, but I have plans then. Could we do Saturday at 11 instead?"),
+      learner("Sure, Saturday at 11 is good for me. See you then!"),
     ],
   }),
 ];
