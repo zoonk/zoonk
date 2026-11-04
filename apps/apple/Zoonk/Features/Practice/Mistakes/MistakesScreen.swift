@@ -8,6 +8,12 @@ struct MistakesScreen: View {
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
 
+  private var goalTitle: String? {
+    summary.summary.value.flatMap { learner in
+      learner.goals.first { $0.id == learner.activeGoalID }?.title
+    }
+  }
+
   private func mistakes(fixed: Bool) -> Resource<Components.Schemas.MistakeList> {
     practice.mistakes(goalId: goalId, fixed: fixed)
   }
@@ -34,6 +40,10 @@ struct MistakesScreen: View {
           listTitle(fixed: false, counts: open.value?.counts)
         }
 
+        Section {
+          PageHeader(title, eyebrow: goalTitle.map { Text(verbatim: $0) })
+        }
+
         header(shown.value)
 
         if !isBeside {
@@ -50,10 +60,17 @@ struct MistakesScreen: View {
       .loads(shown)
     }
 
-    .navigationTitle(
-      Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
+    .navigationTitle(title)
+    .barTitleAfterHero(
+      String(
+        localized: "Mistakes notebook", table: "Practice",
+        comment: "Title of the mistakes notebook.")
     )
     .modifier(LoadsPattern(pattern: pattern))
+  }
+
+  private var title: Text {
+    Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
   }
 
   private func header(_ list: Components.Schemas.MistakeList?) -> some View {
