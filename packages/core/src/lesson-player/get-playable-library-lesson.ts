@@ -193,7 +193,7 @@ export async function getPlayableLibraryLesson({
     return {
       lesson: {
         ...lesson,
-        steps: filterSkippedSteps({ activities: skippedActivities, steps: lesson.steps }),
+        steps: filterSkippedSteps({ activities: skippedActivities ?? [], steps: lesson.steps }),
       },
       status: "ready",
     };

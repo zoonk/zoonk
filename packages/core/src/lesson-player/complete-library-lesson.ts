@@ -14,7 +14,11 @@ import { getCompletionEnergyContext } from "../stats/completion-energy";
 import { upsertDailyProgress } from "../stats/daily-progress";
 import { finishLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
-import { loadCompletionSteps, recordSkippedWritingSteps } from "./_utils/completion-steps";
+import {
+  findOptionalStepIds,
+  loadCompletionSteps,
+  recordSkippedWritingSteps,
+} from "./_utils/completion-steps";
 import { trackLessonCompleted } from "./_utils/lesson-events";
 import { isOwnExplanation } from "./_utils/lesson-rows";
 import { findLessonRun, hasFinishedLessonBefore, toSittings } from "./_utils/lesson-runs";
@@ -271,7 +275,7 @@ export async function completeLibraryLesson({
 
   const tally = tallyLessonRun({
     attempts,
-    optionalStepIds: completionSteps.optionalStepIds,
+    optionalStepIds: findOptionalStepIds({ answers: attempts, completionSteps }),
     steps: completionSteps.steps,
   });
 
