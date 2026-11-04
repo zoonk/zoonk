@@ -85,7 +85,6 @@ struct RichTextBlocks: View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Text(ordered ? "\(index + 1)." : "•")
             .monospacedDigit()
-            .foregroundStyle(.secondary)
             .accessibilityHidden(true)
 
           Text(
