@@ -25,9 +25,17 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
@@ -37,12 +45,14 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonk
 
 /*
  * Main's field (`Input`, `Textarea` under a `Label`): the label above the field, never floating inside
- * it, a 1dp `input` line with `rounded-lg` corners, 40dp tall on one line, and an ink ring while
+ * it, a 1dp `input` line with `rounded-lg` corners, 44dp tall on one line, and an ink ring while
  * focused (thicker with more contrast): Material's outlined colors already draw the line in `outline`
- * (`input`) and the ring in `primary` (ink). Built as Material builds its own outlined field, from
+ * (`input`) and the ring in `primary` (ink). An invalid field draws main's `destructive` mark with its
+ * soft 3dp ring, while its message keeps Material's `error` (`destructive-text`) words. Built as Material builds its own outlined field, from
  * `BasicTextField` and Material's decoration and container, so IME, autofill, selection, supporting
  * text and TalkBack behave as Material's; the label is part of the field, so TalkBack reads it as the
  * field's label and a tap on it focuses the field. Material's own fields are reported by the
@@ -236,7 +246,11 @@ private fun LabeledField(
     }
 }
 
-/** A 1dp `input` line; focused, an ink ring of 2dp, 3dp with more contrast (main's `contrast-more:` focus). */
+/**
+ * A 1dp `input` line; focused, an ink ring of 2dp, 3dp with more contrast (main's `contrast-more:`
+ * focus). Invalid, main's `aria-invalid:` look: the line in `destructive` (half strength in dark) with
+ * a 3dp ring of it outside (20%, 40% in dark), both solid with more contrast.
+ */
 @Composable
 private fun FieldContainer(
     enabled: Boolean,
@@ -244,21 +258,47 @@ private fun FieldContainer(
     interactionSource: MutableInteractionSource,
     colors: TextFieldColors,
 ) {
+    val moreContrast = LocalMoreContrast.current
+    val dark = MaterialTheme.colorScheme.background.luminance() < HALF
+    val mark = MaterialTheme.zoonk.destructive
+    val line = if (dark && !moreContrast) mark.copy(alpha = 0.5f) else mark
+    val ring = if (moreContrast) Color.Transparent else mark.copy(alpha = if (dark) 0.4f else 0.2f)
+    val radius = with(LocalDensity.current) { ZoonkRadius.lg.toPx() }
+
     OutlinedTextFieldDefaults.Container(
         enabled = enabled,
         isError = isError,
         interactionSource = interactionSource,
-        colors = colors,
+        modifier =
+            if (isError && enabled) {
+                Modifier.drawBehind {
+                    val width = INVALID_RING.toPx()
+                    drawRoundRect(
+                        color = ring,
+                        topLeft = Offset(-width / 2, -width / 2),
+                        size = Size(size.width + width, size.height + width),
+                        cornerRadius = CornerRadius(radius + width / 2),
+                        style = Stroke(width),
+                    )
+                }
+            } else {
+                Modifier
+            },
+        colors = colors.copy(errorIndicatorColor = line),
         shape = FIELD_SHAPE,
-        focusedBorderThickness = if (LocalMoreContrast.current) 3.dp else 2.dp,
+        focusedBorderThickness = if (moreContrast) 3.dp else 2.dp,
         unfocusedBorderThickness = 1.dp,
     )
 }
 
 private val FIELD_SHAPE = RoundedCornerShape(ZoonkRadius.lg)
 
-/** Main's `h-10 px-3`: 40dp on one line of 24sp text. */
-private val FIELD_PADDING = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+/** Main's `h-11 px-3`: 44dp on one line of 24sp text. */
+private val FIELD_PADDING = PaddingValues(horizontal = 12.dp, vertical = 10.dp)
+
+/** Main's `aria-invalid:ring-[3px]`, outside the field's line. */
+private val INVALID_RING = 3.dp
+private const val HALF = 0.5f
 
 private val LABEL_GAP = 8.dp
 private const val DISABLED_ALPHA = 0.38f
