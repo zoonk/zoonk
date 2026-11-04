@@ -12,7 +12,17 @@ struct TodayScreen: View {
 
   @ViewBuilder
   private var content: some View {
-    if session.authenticatedSession == nil {
+    if session.state == .signedOut(sessionEnded: true) {
+      // The plan is still in the account, so this leads back to it instead of a first goal built
+      // again as a guest.
+      SignInGate(sessionEnded: true)
+        .described(
+          by: LocalizedStringResource(
+            "Each day's lessons, reviews and practice for your goal.", table: "Today",
+            comment: "What Today is for, above the way to log back in after a session ended")
+        )
+        .lonePage()
+    } else if session.authenticatedSession == nil {
       // Signed out, Today is the app's front door, as main's home page is the web's.
       TodayStartGoal()
         .onAppear {

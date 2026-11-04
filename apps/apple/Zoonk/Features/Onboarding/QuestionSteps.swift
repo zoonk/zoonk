@@ -536,7 +536,7 @@ private struct DateQuestion: View {
               date
             } set: {
               self.date = $0
-            }, in: range,
+            }, in: GoalDate.range(today: today),
             displayedComponents: .date
           ) {
             Text("Date", tableName: "Onboarding", comment: "Label of the goal's date picker")
@@ -664,14 +664,6 @@ private struct DateQuestion: View {
       picksOtherDate = true
     }
   }
-
-  /// After the goal's today, and no later than a plan reaches (3,650 days).
-  private var range: ClosedRange<Date> {
-    let calendar = Calendar.isoLocal
-    let goalToday = UnderstoodRows.day(today) ?? calendar.startOfDay(for: .now)
-    let tomorrow = calendar.date(byAdding: .day, value: 1, to: goalToday) ?? goalToday
-    return tomorrow...(calendar.date(byAdding: .day, value: 3650, to: goalToday) ?? goalToday)
-  }
 }
 
 /// Why the goal's date can't be planned as it stands, as core says.
@@ -706,12 +698,20 @@ enum GoalDate {
     }
   }
 
-  /// Core counts the goal's days in its zone, UTC without one, so the date screen does too.
+  /// Core counts a goal's or draft's days in its zone, UTC without one, so date pickers do too.
   static func today(now: Date, timeZone: String?) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = timeZone.flatMap(TimeZone.init(identifier:)) ?? .gmt
     let parts = calendar.dateComponents([.year, .month, .day], from: now)
     return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
+  }
+
+  /// The deadlines core accepts: after `today`, and no later than a plan reaches (3,650 days).
+  static func range(today: String) -> ClosedRange<Date> {
+    let calendar = Calendar.isoLocal
+    let goalToday = UnderstoodRows.day(today) ?? calendar.startOfDay(for: .now)
+    let tomorrow = calendar.date(byAdding: .day, value: 1, to: goalToday) ?? goalToday
+    return tomorrow...(calendar.date(byAdding: .day, value: 3650, to: goalToday) ?? goalToday)
   }
 }
 

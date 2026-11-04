@@ -11,16 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,9 +50,11 @@ import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
+import com.zoonk.android.feature.onboarding.setup.TargetDatePicker
+import com.zoonk.android.feature.onboarding.setup.goalZone
+import com.zoonk.android.feature.onboarding.setup.targetDateBounds
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.DatePickerDialog
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -73,16 +72,15 @@ import com.zoonk.api.models.OnboardingDraftEditOneOf2
 import com.zoonk.api.models.OnboardingDraftEditOneOf3
 import com.zoonk.api.models.UnderstoodGoal
 import kotlinx.datetime.toKotlinLocalDate
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.ZoneOffset
 
 @Composable
 internal fun ColumnScope.UnderstoodScreen(
     goal: String,
     understanding: GoalUnderstandingOneOf,
     activeGoalLimit: Long?,
+    timeZone: String,
     material: List<String>,
     isCreating: Boolean,
     error: GoalError?,
@@ -134,6 +132,7 @@ internal fun ColumnScope.UnderstoodScreen(
                 val key = "$index:${row.editable?.key ?: row.id}"
                 FactRow(
                     row = row,
+                    timeZone = timeZone,
                     editValue = editValue(understood, row),
                     editing = edits.editing == key,
                     saving = edits.saving != null,
@@ -145,7 +144,7 @@ internal fun ColumnScope.UnderstoodScreen(
         }
     }
 
-    if (locked.isNotEmpty()) LockedGoals(locked, rows, onSeePlus.takeIf { plusLimit == null })
+    if (locked.isNotEmpty()) LockedGoals(locked, rows, timeZone, onSeePlus.takeIf { plusLimit == null })
 
     if (plusLimit != null) {
         GoalLimitWall(plusLimit, onSeePlus, onOpenPlan)
@@ -166,6 +165,7 @@ internal fun ColumnScope.UnderstoodScreen(
 private fun LockedGoals(
     goals: List<UnderstoodGoal>,
     rows: UnderstoodRows,
+    timeZone: String,
     onSeePlus: (() -> Unit)?,
 ) {
     goals.forEach { goal ->
@@ -174,6 +174,7 @@ private fun LockedGoals(
                 if (place > 0) HorizontalDivider()
                 FactRow(
                     row = row.copy(editable = null, suggestedDate = null, choiceDates = emptyList()),
+                    timeZone = timeZone,
                     editValue = "",
                     editing = false,
                     saving = false,
@@ -238,6 +239,7 @@ internal class FactEdits(
 @Composable
 private fun FactRow(
     row: UnderstoodRow,
+    timeZone: String,
     editValue: String,
     editing: Boolean,
     saving: Boolean,
@@ -248,6 +250,8 @@ private fun FactRow(
     val save: (String) -> Unit = { value -> if (!saving) onSave(value) }
     val label = if (editing) row.editLabel ?: row.label else row.label
     val editor = row.editable?.kind
+    val today = LocalDate.now(goalZone(timeZone))
+    val offered = targetDateBounds(today)
 
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.Top) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -273,14 +277,15 @@ private fun FactRow(
                 TextEditor(label, editValue, saving, onCancel = { onEdit(false) }, onSave = save)
             } else {
                 RowNote(row)
-                row.suggestedDate?.let { date ->
+                row.suggestedDate?.takeIf { it in offered }?.let { date ->
                     OutlinedButton(onClick = { save(date.toString()) }, enabled = !saving, modifier = Modifier.padding(top = 6.dp)) {
                         Text(stringResource(R.string.onboarding_use_this_date))
                     }
                 }
-                if (row.choiceDates.isNotEmpty()) {
+                val choiceDates = row.choiceDates.filter { it in offered }
+                if (choiceDates.isNotEmpty()) {
                     FlowRow(modifier = Modifier.padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        row.choiceDates.forEach { date ->
+                        choiceDates.forEach { date ->
                             OutlinedButton(onClick = { save(date.toString()) }, enabled = !saving) {
                                 Text(formatDate(date, currentLocale(), DateStyle.Short))
                             }
@@ -311,7 +316,12 @@ private fun FactRow(
     }
 
     if (editing && editor == EditorKind.Date) {
-        DateEditor(initial = editValue, onDismiss = { onEdit(false) }, onPick = save)
+        TargetDatePicker(
+            today = today,
+            initial = runCatching { LocalDate.parse(editValue) }.getOrNull(),
+            onDismiss = { onEdit(false) },
+            onPick = { save(it.toString()) },
+        )
     }
     if (editing && editor == EditorKind.Time) {
         TimeEditor(initial = editValue, onDismiss = { onEdit(false) }, onPick = save)
@@ -373,53 +383,6 @@ private fun TextEditor(
         }
     }
     LaunchedEffect(Unit) { focus.requestFocus() }
-}
-
-/** From today on, as core refuses an earlier date. */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DateEditor(
-    initial: String,
-    onDismiss: () -> Unit,
-    onPick: (String) -> Unit,
-) {
-    val today = LocalDate.now()
-    val start = runCatching { LocalDate.parse(initial) }.getOrNull()?.takeIf { it >= today }
-    val state =
-        rememberDatePickerState(
-            initialSelectedDateMillis = start?.atStartOfDay(ZoneOffset.UTC)?.toInstant()?.toEpochMilli(),
-            yearRange = today.year..today.year + MAX_YEARS_AHEAD,
-            selectableDates =
-                object : SelectableDates {
-                    override fun isSelectableDate(utcTimeMillis: Long) =
-                        !Instant
-                            .ofEpochMilli(utcTimeMillis)
-                            .atZone(ZoneOffset.UTC)
-                            .toLocalDate()
-                            .isBefore(today)
-                },
-        )
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    state.selectedDateMillis?.let {
-                        onPick(
-                            Instant
-                                .ofEpochMilli(it)
-                                .atZone(ZoneOffset.UTC)
-                                .toLocalDate()
-                                .toString(),
-                        )
-                    }
-                    onDismiss()
-                },
-                enabled = state.selectedDateMillis != null,
-            ) { Text(stringResource(R.string.onboarding_save)) }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.onboarding_cancel)) } },
-    ) { DatePicker(state) }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -514,5 +477,4 @@ private fun draftEdit(
     }
 
 private const val MAX_SOURCE_TITLE_LENGTH = 40
-private const val MAX_YEARS_AHEAD = 10
 private const val DEFAULT_STUDY_HOUR = 19
