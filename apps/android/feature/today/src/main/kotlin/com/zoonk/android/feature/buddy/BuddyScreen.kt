@@ -198,6 +198,7 @@ fun BuddyPage(
             seePlus = { navigator.open(AppRoute.Subscription) },
             open = navigator::open,
             startCall = app.conversations,
+            openBlock = app.studyOpener::openMission,
         )
 
     PageWithSupportingPane(

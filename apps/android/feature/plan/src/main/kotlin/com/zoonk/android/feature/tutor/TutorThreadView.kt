@@ -54,6 +54,8 @@ import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.catalog.toUuidOrNull
 import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.memory.MemoryUndo
 import com.zoonk.android.feature.memory.MemoryUpdated
@@ -73,6 +75,7 @@ import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.UUID
 
 class TutorRoutes(
     val createAccount: () -> Unit,
@@ -80,6 +83,8 @@ class TutorRoutes(
     val seePlus: () -> Unit,
     val open: (AppRoute) -> Unit,
     val startCall: CallStarter,
+    /** A step of the day an answer links: its route, null when it isn't free to start anymore. */
+    val openBlock: suspend (UUID) -> MutationResult<AppRoute?>,
 )
 
 @Composable
@@ -394,7 +399,7 @@ private fun Answer(
         }
 
         turn.status == TutorTurn.Status.Failed -> {
-            turn.answer?.let { AnswerText(it, linksChecked, routes.open) }
+            turn.answer?.let { AnswerText(it, linksChecked, routes.open, routes.openBlock) }
             if (failure?.helpLimit != null) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
@@ -412,7 +417,7 @@ private fun Answer(
         }
 
         answer != null -> {
-            AnswerText(answer, linksChecked, routes.open)
+            AnswerText(answer, linksChecked, routes.open, routes.openBlock)
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
 
@@ -451,17 +456,44 @@ private fun Thinking() {
 private val TutorFailure?.isGeneric: Boolean
     get() = this == null || this == TutorFailure.Failed || this == TutorFailure.Invalid
 
-/** Unchecked links read as their words. A checked one opens Zoonk's page in the app, or a website after asking. */
+private enum class BlockLinkNotice { Closed, Failed }
+
+/**
+ * Unchecked links read as their words. A checked one opens Zoonk's page in the app, or a website
+ * after asking. With [openBlock], a step of the day opens as main's mission link does, one tap at a
+ * time, and says so under the answer when it didn't.
+ */
 @Composable
 fun AnswerText(
     answer: String,
     linksChecked: Boolean,
     onOpenRoute: (AppRoute) -> Unit,
+    openBlock: (suspend (UUID) -> MutationResult<AppRoute?>)? = null,
 ) {
+    val coroutines = rememberCoroutineScope()
     var asked by remember { mutableStateOf<String?>(null) }
+    var opening by remember { mutableStateOf(false) }
+    var notice by remember { mutableStateOf<BlockLinkNotice?>(null) }
     val open: (String) -> Unit = { url ->
         val route = AppLink.parse(url)
-        if (route != null) {
+        val blockId = (route as? AppRoute.Session)?.takeIf { it.sessionId == null && it.goalId == null }?.blockId?.toUuidOrNull()
+        if (blockId != null && openBlock != null) {
+            if (!opening) {
+                opening = true
+                notice = null
+                coroutines.launch {
+                    try {
+                        when (val result = openBlock(blockId)) {
+                            is MutationResult.Done -> result.value?.let(onOpenRoute) ?: run { notice = BlockLinkNotice.Closed }
+                            is MutationResult.Failed -> notice = BlockLinkNotice.Failed
+                            MutationResult.Obsolete -> Unit
+                        }
+                    } finally {
+                        opening = false
+                    }
+                }
+            }
+        } else if (route != null) {
             onOpenRoute(route)
         } else if (url.isWebAddress) {
             asked = url
@@ -473,6 +505,15 @@ fun AnswerText(
         onOpenLink = open.takeIf { linksChecked },
         style = MaterialTheme.typography.bodyLarge,
     )
+
+    notice?.let {
+        Text(
+            text = stringResource(if (it == BlockLinkNotice.Closed) R.string.tutor_step_closed else R.string.tutor_step_open_failed),
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            color = if (it == BlockLinkNotice.Closed) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
 
     asked?.let { url -> ExternalLink(url, onDismiss = { asked = null }) }
 }

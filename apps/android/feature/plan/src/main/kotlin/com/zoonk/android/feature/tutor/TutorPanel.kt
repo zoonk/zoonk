@@ -284,6 +284,7 @@ internal fun TutorSheet(
             seePlus = { open(AppRoute.Subscription) },
             open = open,
             startCall = app.conversations,
+            openBlock = app.studyOpener::openMission,
         )
     val tall = currentWindowAdaptiveInfoV2().windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
     // The sheet already sits above the keyboard, so typing takes all the height that's left.

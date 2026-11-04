@@ -130,7 +130,15 @@ class TutorScreenshots {
                 TutorStore(api, cache, session, { true }) { _, _, _ -> MutationResult.Obsolete },
                 SavedStateHandle(),
             )
-        val routes = TutorRoutes(createAccount = {}, signIn = {}, seePlus = {}, open = {}, startCall = callStarter { CallStart.Failed })
+        val routes =
+            TutorRoutes(
+                createAccount = {},
+                signIn = {},
+                seePlus = {},
+                open = {},
+                startCall = callStarter { CallStart.Failed },
+                openBlock = { MutationResult.Obsolete },
+            )
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark) { Surface { TutorPanel(vm, TutorAccess.Ask, TutorIdentity("Zu", BuddyLook()), routes) } }
