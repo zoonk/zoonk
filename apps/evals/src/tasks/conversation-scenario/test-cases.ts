@@ -185,7 +185,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord never says "sen" to the caller: a line that addresses them, in the opening line or the hints, uses "siz" ("Size nasıl yardımcı olabilirim?"), and the brief tells the voice model to use "siz". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    expectations: `US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord never says "sen" to the caller: a line that addresses them, in the opening line or the hints, uses "siz" ("Size nasıl yardımcı olabilirim?"), and the brief tells the voice model to use "siz". An opening with no second-person form, such as "Nasıl yardımcı olabilirim?", is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
     id: "en-tr-a2-renting",
     userInput: {
       canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],

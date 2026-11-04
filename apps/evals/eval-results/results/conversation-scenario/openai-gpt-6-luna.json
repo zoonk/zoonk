@@ -1069,35 +1069,35 @@
       "categoryScores": [
         {
           "categoryId": "unitFit",
-          "reasoning": "The apartment inquiry is an everyday, safe service interaction covering availability, costs, inclusions, and a viewing. Zeynep is a plausible local name, and the location and Turkish-lira amounts are plausible. However, the explicit requirement to call a landlord is not met: the situation and role identify a rental agent. The stranger relationship itself is appropriate, so the relationship cap does not apply.",
-          "score": 7,
+          "reasoning": "This is a realistic first-contact rental call with a common Turkish name, a plausible location, Turkish-lira prices, and relevant questions. It makes no inappropriate assumptions about the learner. However, a rental agent does not fulfill the explicit requirement to call a landlord. The relationship-based cap does not apply because the character is still an appropriate service stranger.",
+          "score": 8,
           "label": "Fits the unit and real life",
           "weight": 25
         },
         {
           "categoryId": "level",
-          "reasoning": "The opening identifies Zeynep, greets the caller, and invites conversation without revealing answers. It and the hints use short, accessible A2 Turkish and polite address. However, the final hint only asks for availability; it does not fully support the objective's required suggestion and agreement.",
+          "reasoning": "The opening identifies Zeynep, greets the caller, and invites conversation without revealing objective answers. It explicitly uses polite Size, and the brief requires siz forms. The Turkish is short and appropriate for A2. However, the hints do not fully support the final objective: asking when to come is not the same as proposing and confirming a viewing time.",
           "score": 8,
           "label": "At the learner's level",
           "weight": 20
         },
         {
           "categoryId": "objectives",
-          "reasoning": "There are four speech-checkable objectives in a natural order, achievable in a short call. Labels begin with verbs and contain two to five words. Descriptions disclose neither the prices nor the available slots, learner choices, or twist.",
+          "reasoning": "There are four logically ordered, speech-checkable objectives that fit a short call. Labels contain two to five words and begin with verbs. Descriptions reveal neither prices nor available times, impose no specific learner choice, and do not disclose the twist.",
           "score": 10,
           "label": "Objectives",
           "weight": 25
         },
         {
           "categoryId": "brief",
-          "reasoning": "The English brief supplies personality, concrete costs and inclusions, an address, viewing slots, A2 guidance, explicit siz usage, and a closing procedure. It also prevents unsolicited completion of the learner's goals. The small scheduling twist is suitable in principle, but its instructions overlap when the learner's first suggestion is outside the listed slots; the conditions should be made mutually exclusive.",
+          "reasoning": "The English brief supplies personality, concrete rent and deposit amounts, inclusions and exclusions, an address, viewing slots, A2 instructions, polite address, and a clear wrap-up. It also prevents the character from volunteering the learner's answers. The twist instructions have a small branching ambiguity: the first proposed time is to be described as newly booked, while an unlisted proposed time receives a different availability response.",
           "score": 8,
           "label": "Character brief",
           "weight": 15
         },
         {
           "categoryId": "languages",
-          "reasoning": "The title, situation, role, and objective descriptions are natural English; the place, opening, labels, and hints are Turkish. The brief is English. Turkish currency and time notation are appropriate, and there are no emojis or em dashes.",
+          "reasoning": "Title, situation, role, and objective descriptions are in natural US English. Place, opening, labels, and hints are in Turkish, and the brief is in English. Turkish monetary and time notation is appropriate. There are no emojis or em dashes.",
           "score": 10,
           "label": "Right language per field",
           "weight": 15
@@ -1108,30 +1108,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3226,
-          "outputTokens": 971,
-          "reasoningTokens": 331
+          "inputTokens": 3238,
+          "outputTokens": 1064,
+          "reasoningTokens": 401
         }
       },
       "steps": [
         {
-          "conclusion": "The scenario casts Zeynep as a rental agent rather than the landlord explicitly required by the expectations. The call otherwise fits the renting unit and uses appropriate polite siz forms.",
+          "conclusion": "The scenario casts Zeynep as a rental agent rather than the landlord explicitly requested. The call otherwise fits the apartment-rental unit, but the character's role should be changed to landlord.",
           "kind": "majorErrors",
-          "score": 7
+          "score": 8
         },
         {
-          "conclusion": "The viewing hint asks when the learner can come but does not support suggesting or agreeing on a time, as the final objective requires. The brief also gives overlapping instructions for the first proposed viewing time: claim that exact time was just booked, or, if it is outside the listed slots, say it is unavailable and offer both slots.",
+          "conclusion": "The final hint only asks when the learner can visit. It does not model suggesting a time or agreeing to one, although the final objective requires both.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "Clarify that the booking twist applies only when the learner proposes one of the listed slots. Currently, the instruction to say the first proposed time has just been booked overlaps with the separate instruction for an unlisted time.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9
         }
       ],
       "testCase": {
-        "expectations": "US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord never says \"sen\" to the caller: a line that addresses them, in the opening line or the hints, uses \"siz\" (\"Size nasıl yardımcı olabilirim?\"), and the brief tells the voice model to use \"siz\". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.",
+        "expectations": "US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord never says \"sen\" to the caller: a line that addresses them, in the opening line or the hints, uses \"siz\" (\"Size nasıl yardımcı olabilirim?\"), and the brief tells the voice model to use \"siz\". An opening with no second-person form, such as \"Nasıl yardımcı olabilirim?\", is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.",
         "id": "en-tr-a2-renting-1",
         "userInput": {
           "canDo": [

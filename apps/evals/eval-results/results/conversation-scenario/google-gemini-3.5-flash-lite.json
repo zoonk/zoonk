@@ -1069,36 +1069,36 @@
       "categoryScores": [
         {
           "categoryId": "unitFit",
-          "reasoning": "This is an appropriate first-contact landlord call covering rent, deposit, and a viewing. Mehmet is a common Turkish name, the street is a plausible setting, and the prices use Turkish lira. The scenario does not assume personal facts beyond the rental-call premise. No relationship or scope cap applies.",
+          "reasoning": "This is an appropriate first call to a landlord about rent, a deposit, and a viewing. Mehmet is a common Turkish name, the place is short, and both amounts are in Turkish lira. The situation makes no unsupported assumptions about the learner beyond the apartment-search premise. No relationship or scope cap applies.",
           "score": 9,
           "label": "Fits the unit and real life",
           "weight": 25
         },
         {
           "categoryId": "level",
-          "reasoning": "The opening and hints are short and broadly suitable for A2. The opening greets, names the place, and invites speech without revealing an objective answer, so no opening cap applies. However, its apartment-as-speaker introduction is unnatural, the last hint has awkward phrasing, and the opening lacks the explicitly requested Size form.",
-          "score": 7,
+          "reasoning": "The opening and hints are short and broadly suitable for A2. The opening greets and names the place without answering an objective or addressing anyone by name, so no opening-line cap applies. However, the final scheduling hint needs a grammatical adjustment to be a natural, ready-to-use sentence.",
+          "score": 8,
           "label": "At the learner's level",
           "weight": 20
         },
         {
           "categoryId": "objectives",
-          "reasoning": "There are three speech-checkable objectives in a sensible order, achievable in a short call. Their descriptions reveal neither prices nor the scheduling twist and preserve the learner’s choice. However, none of the labels starts with a verb as required, and “Görünüm için gün al” incorrectly expresses the apartment-viewing goal. No description-related cap applies.",
+          "reasoning": "There are three speech-checkable objectives in a sensible order, achievable in a short call. Their descriptions disclose neither the prices nor the scheduling twist. However, none of the labels starts with a verb as required, and “Görünüm için gün al” incorrectly uses the word for appearance to describe arranging a viewing.",
           "score": 7,
           "label": "Objectives",
           "weight": 25
         },
         {
           "categoryId": "brief",
-          "reasoning": "The English brief supplies personality, concrete rent and deposit amounts, included-cost information, viewing times, A2 and siz instructions, and a closing procedure. Required objective facts are present, so the missing-facts cap does not apply. Its Saturday availability and rejection instructions conflict, making the otherwise simple twist unnecessarily unreliable.",
+          "reasoning": "The English brief supplies personality, concrete rent and deposit amounts, utility information, viewing times, a simple twist, a closing instruction, and explicit A2 and siz guidance. Required objective facts are present, so the missing-facts cap does not apply. Its contradictory Saturday availability nevertheless needs correction to support consistent conversation.",
           "score": 7,
           "label": "Character brief",
           "weight": 15
         },
         {
           "categoryId": "languages",
-          "reasoning": "All fields use their assigned languages, and there are no emojis or em dashes. The English fields are concise and natural. Turkish wording needs correction in the viewing label and final hint, but there is no wrong-language field triggering the score cap.",
-          "score": 8,
+          "reasoning": "Every field uses its required language, with English metadata and brief and Turkish labels, place, opening, and hints. There are no emojis or em dashes. The brief explicitly requires siz, and no line uses sen. No wrong-language cap applies, but the mistranslated viewing label, unnatural self-introduction, and awkward final hint reduce linguistic quality.",
+          "score": 7,
           "label": "Right language per field",
           "weight": 15
         }
@@ -1108,30 +1108,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3024,
-          "outputTokens": 1170,
-          "reasoningTokens": 440
+          "inputTokens": 3036,
+          "outputTokens": 1093,
+          "reasoningTokens": 395
         }
       },
       "steps": [
         {
-          "conclusion": "The viewing objective uses “Görünüm,” meaning appearance or view, rather than an apartment viewing, making its label misleading. The opening also omits the explicitly required “siz” form when addressing the caller: “Size nasıl yardımcı olabilirim?” would satisfy that requirement. The brief correctly instructs the model to use siz and contains no sen.",
+          "conclusion": "The viewing objective uses “Görünüm,” meaning appearance rather than an apartment viewing, so its Turkish label misstates the task. The character brief also gives conflicting instructions: Saturday at 14.00 is available, but any request for Saturday must be refused. This can produce inconsistent scheduling information.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "The brief inconsistently says Saturday is available but instructs Mehmet to say it is full whenever the learner asks for Saturday. All objective labels end with a verb rather than starting with one as required. The opening identifies the apartment rather than naturally introducing the landlord, and the final hint would be more natural as “Pazar günü saat on bir uygun mu?”",
+          "conclusion": "All three objective labels fail the explicit requirement to start with a verb. The opening identifies the apartment as the speaker rather than naturally introducing its landlord, although it does name the place. The final hint is awkward Turkish: “Pazar günü saat on bir uygun mu?” would be more natural.",
           "kind": "minorErrors",
-          "score": 7
+          "score": 8
         },
         {
-          "conclusion": "Add a short hint such as “Kiraya neler dahil?” to support the unit’s included-costs skill using facts already supplied in the brief. Introduce Mehmet directly in the opening and describe Saturday as unavailable from the outset to make the viewing twist coherent.",
+          "conclusion": "Have Mehmet introduce himself directly, and add a short hint for asking what the rent includes. Give one consistent viewing schedule, with a clearly unavailable slot and an available alternative.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord never says \"sen\" to the caller: a line that addresses them, in the opening line or the hints, uses \"siz\" (\"Size nasıl yardımcı olabilirim?\"), and the brief tells the voice model to use \"siz\". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.",
+        "expectations": "US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord never says \"sen\" to the caller: a line that addresses them, in the opening line or the hints, uses \"siz\" (\"Size nasıl yardımcı olabilirim?\"), and the brief tells the voice model to use \"siz\". An opening with no second-person form, such as \"Nasıl yardımcı olabilirim?\", is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.",
         "id": "en-tr-a2-renting-1",
         "userInput": {
           "canDo": [
