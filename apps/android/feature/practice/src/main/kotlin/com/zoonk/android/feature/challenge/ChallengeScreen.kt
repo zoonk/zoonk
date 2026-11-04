@@ -59,11 +59,11 @@ import com.zoonk.android.feature.plan.lessonsText
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
-import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
@@ -110,7 +110,7 @@ fun ChallengeScreen(
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = (session as? SessionState.SignedIn)?.session
     if (planItemId == null) {
-        RunNotFound(navigator::closeTask)
+        TaskNotFound(navigator)
         return
     }
     if (signedIn == null) {
