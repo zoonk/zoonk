@@ -87,9 +87,13 @@ describe("lesson draft durability", () => {
   );
 
   it("retries only the picture judgment that failed, never planning the lesson again", async () => {
-    const pictures = (recordedSpec.lessons[0]?.screens ?? []).flatMap((screen) =>
-      screen.visual && screen.kind !== "hook" ? [screen.visual] : [],
-    );
+    const pictures = [
+      ...new Set(
+        (recordedSpec.lessons[0]?.screens ?? []).flatMap((screen) =>
+          screen.visual ? [screen.visual] : [],
+        ),
+      ),
+    ];
 
     const [failing] = pictures;
     vi.mocked(generateLessonSpec).mockReset().mockResolvedValue(taskResult(recordedSpec));
