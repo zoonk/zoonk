@@ -63,6 +63,7 @@ import com.zoonk.android.feature.audio.VoiceAnswerRecorder
 import com.zoonk.android.feature.audio.VoiceRecorder
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
+import com.zoonk.android.feature.missions.BrainPowerReward
 import com.zoonk.android.navigation.PlaceIcon
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.AnswerResult
@@ -420,6 +421,12 @@ private fun Meters() {
         Labeled("Lesson progress, 40%") { Meter(0.4f) }
         Labeled("Energy, 70%") { Meter(0.7f, color = MaterialTheme.zoonk.energy) }
         Labeled("Brain Power to the next level") { Meter(0.3f, color = MaterialTheme.zoonk.brain) }
+        Labeled("Today's missions reward, then earned") {
+            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                BrainPowerReward("50", earned = false, brainPower = null)
+                BrainPowerReward("50", earned = true, brainPower = null)
+            }
+        }
         Labeled("Today's blocks: two done, one in progress") {
             MeterParts(
                 listOf(
