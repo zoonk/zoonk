@@ -28,10 +28,13 @@ import quickLessonPrompt from "./quick-lesson.prompt.md";
 import { splitLessonSpec } from "./split-lesson-spec";
 
 /**
- * Terra matched Sol on the lesson-spec eval at under half the cost (30 Oct 2026); Haiku and Luna
- * scored lower (7 Oct 2026).
+ * The plan decides which screens show a visual. On 8 lessons across subjects and levels (4 Nov 2026),
+ * with the same writer, Sol's plans scored 8.38 against Terra's 8.13, Opus's 8.00, Sonnet's 7.86
+ * and Flash's 7.74, and 8.54 on visuals against Terra's 6.08: readers missed a visual on 5 to 14%
+ * of screens instead of 18 to 31%, with 1 to 2% decorative. It costs about $0.06 a plan, Terra
+ * $0.03. A learner's own lesson is planned by its scope's model (Luna).
  */
-const defaultModel = "openai/gpt-6.1-terra";
+const defaultModel = "openai/gpt-6.1-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
 
 const skillSchema = z.object({
