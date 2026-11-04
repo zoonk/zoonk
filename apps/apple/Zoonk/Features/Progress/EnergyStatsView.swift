@@ -45,8 +45,7 @@ private struct EnergyTiles: View {
         label: Text(
           "At 100%", tableName: "Progress",
           comment: "Tile: how many days the learner's Energy was full"),
-        value: energy.insights.map { bigQuantity(dayCount($0.fullEnergyDays)) }
-          ?? Text(verbatim: "–"),
+        quantity: energy.insights.map { dayCount($0.fullEnergyDays) } ?? "–",
         systemImage: "battery.100percent", tone: .energy,
         detail: Text(
           "Days with full Energy", tableName: "Progress",

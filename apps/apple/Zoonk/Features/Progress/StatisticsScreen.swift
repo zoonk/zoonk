@@ -163,7 +163,8 @@ private struct OverviewTiles: View {
       TileLink(section: .activity) {
         StatTile(
           label: Text(
-            "Days studied", tableName: "Progress", comment: "Tile: how many days the learner studied"),
+            "Days studied", tableName: "Progress",
+            comment: "Tile: how many days the learner studied"),
           value: Text(activity.learningDays, format: .number),
           systemImage: "chart.bar.fill", tone: .success,
           detail: Text(

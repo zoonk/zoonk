@@ -46,7 +46,7 @@ private struct ScoreTiles: View {
 
       StatTile(
         label: Text("Period", tableName: "Progress", comment: "Tile: the days Score counts"),
-        value: bigQuantity(dayCount(90)),
+        quantity: dayCount(90),
         systemImage: "calendar",
         detail: Text(
           "Back from today", tableName: "Progress",

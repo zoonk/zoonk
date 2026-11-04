@@ -223,24 +223,7 @@ extension ProgressWeekday {
   }
 }
 
+/// `BigQuantity`'s split for a larger readout that sets its own role (onboarding's time a day).
 func bigQuantity(_ text: String) -> Text {
-  var attributed = AttributedString()
-  var remainder = Substring(text)
-  let number = /[~≈+\-−]?\d[\d.,:]*(?:[\u{00A0}\u{202F}]?%)?/
-
-  while let match = remainder.firstMatch(of: number) {
-    var unit = AttributedString(remainder[remainder.startIndex..<match.range.lowerBound])
-    unit.font = .subheadline.weight(.medium)
-    unit.foregroundColor = .mutedForeground
-    attributed += unit
-    attributed += AttributedString(remainder[match.range])
-    remainder = remainder[match.range.upperBound...]
-  }
-
-  var tail = AttributedString(remainder)
-  tail.font = .subheadline.weight(.medium)
-  tail.foregroundColor = .mutedForeground
-  attributed += tail
-
-  return Text(attributed)
+  BigQuantity.text(text, unitFont: TypeStyle.button.attributeFont)
 }
