@@ -1,8 +1,9 @@
 import "server-only";
-import { readGoalClaimEvents } from "../../../learner/_utils/goal-claim-events";
+import { readClaimEvents } from "../../../learner/facts/claim-events";
 import { readOwnedGoal } from "../../../learner/facts/owned-goal";
 import { readSavedPlan } from "../../../learner/facts/saved-plan";
 import { readTaughtStandInSkills } from "../../../learner/facts/taught-stand-in-skills";
+import { toIdKey } from "../../../library/_utils/shared-rows";
 import { readExamBlueprint } from "../../../library/exams/read-exam-blueprint";
 import { tagViewGoalReads } from "../../_utils/resolve-view-goal";
 import { loadSyllabusInput } from "./load-syllabus";
@@ -26,7 +27,7 @@ export async function readSyllabusInput(userId: string, goalId: string) {
   return loadSyllabusInput(goal, {
     blueprint:
       goal.kind === "exam" && goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
-    readClaims: (skillIds) => readGoalClaimEvents({ goalId, savedPlan, skillIds, userId }),
+    readClaims: (skillIds) => readClaimEvents(userId, goalId, toIdKey(skillIds)),
     savedPlan,
     taughtStandIns: readTaughtStandInSkills(userId, goalId),
   });

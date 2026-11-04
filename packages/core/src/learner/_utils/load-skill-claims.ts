@@ -180,21 +180,31 @@ export async function loadClaimEvents({
   goalId,
   plan,
   skillIds,
+  undone,
   userId,
 }: {
   goalId: string;
   plan?: ClaimPlan | null;
   skillIds: readonly string[];
+  /** A GET's request-wide undone test-outs for the whole goal; without them, they're read fresh. */
+  undone?: Promise<ClaimEvent[]>;
   userId: string;
 }): Promise<ClaimEvent[]> {
-  const [planEvents, passedOver, undone, answers] = await Promise.all([
-    loadPlanEvents({ goalId, known: plan, skillIds: new Set(skillIds) }),
-    loadPassedOverClaims({ goalId, known: plan, skillIds: new Set(skillIds) }),
-    loadUndoneTestOuts({ goalId, skillIds: new Set(skillIds) }),
+  const asked = new Set(skillIds);
+
+  const [planEvents, passedOver, undoneEvents, answers] = await Promise.all([
+    loadPlanEvents({ goalId, known: plan, skillIds: asked }),
+    loadPassedOverClaims({ goalId, known: plan, skillIds: asked }),
+    undone ?? loadUndoneTestOuts(goalId),
     loadAnswerEvents({ skillIds, userId }),
   ]);
 
-  return [...planEvents, ...passedOver, ...undone, ...answers];
+  return [
+    ...planEvents,
+    ...passedOver,
+    ...undoneEvents.filter((event) => asked.has(event.skillId)),
+    ...answers,
+  ];
 }
 
 export async function loadSkillEvidence({

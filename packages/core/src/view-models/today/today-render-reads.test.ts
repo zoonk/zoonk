@@ -12,6 +12,7 @@ import { getAllowance } from "../../entitlements/get-allowance";
 import { type readClaimEvents } from "../../learner/facts/claim-events";
 import { type readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { type readSavedPlan } from "../../learner/facts/saved-plan";
+import { type readUndoneTestOuts } from "../../learner/facts/undone-test-outs";
 import { type readUsageTotals } from "../../learner/facts/usage-totals";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import {
@@ -39,6 +40,15 @@ vi.mock("../../learner/facts/claim-events", async (importOriginal) => {
   ]);
 
   return { ...actual, readClaimEvents: keepRequestReads(actual.readClaimEvents) };
+});
+
+vi.mock("../../learner/facts/undone-test-outs", async (importOriginal) => {
+  const [actual, { keepRequestReads }] = await Promise.all([
+    importOriginal<{ readUndoneTestOuts: typeof readUndoneTestOuts }>(),
+    import("../../_test-utils/keep-request-reads"),
+  ]);
+
+  return { ...actual, readUndoneTestOuts: keepRequestReads(actual.readUndoneTestOuts) };
 });
 
 vi.mock("../../learner/facts/saved-plan", async (importOriginal) => {
@@ -102,7 +112,7 @@ describe("Today's render reads", () => {
   });
 
   it.each(["as planned", "with an area skipped", "after a skill merge"] as const)(
-    "reads an unopened day's claim events once for its practice and the syllabus %s",
+    "reads an unopened day's undone test-outs once, and each skill set's answers once, %s",
     async (variant) => {
       const user = await userFixture();
 
@@ -184,8 +194,9 @@ describe("Today's render reads", () => {
 
       expect(answers.result.map((result) => result.status)).toStrictEqual(["ready", "ready"]);
 
+      // Skipping an area or merging a skill gives practice other skills than the syllabus: one more read.
       expect({ answers: answers.rows, undone: undone.rows }).toStrictEqual({
-        answers: items.length,
+        answers: variant === "as planned" ? items.length : items.length * 2 - 1,
         undone: 1,
       });
     },
