@@ -8,6 +8,7 @@ import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { MindMapLimitNotice } from "../_components/help-limit-notice";
+import { StatusRegion } from "../_components/status-region";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { toMindMapSrc } from "./_utils/mind-map-urls";
@@ -167,9 +168,11 @@ function MapRequestTile({
             : t("We couldn't reach the server.")}
         </p>
       )}
-      {limit && !capped && (
-        <MindMapLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
-      )}
+      <StatusRegion>
+        {limit && !capped && !isPending && (
+          <MindMapLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
+        )}
+      </StatusRegion>
     </li>
   );
 }

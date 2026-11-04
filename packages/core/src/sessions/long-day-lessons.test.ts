@@ -5,6 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseRows } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { readSavedPlan } from "../learner/facts/saved-plan";
 import { MAX_DAILY_MINUTES } from "../plans/daily-minutes";
 import { getLearningShare } from "../plans/planner/plan-phases";
 import { getTodayView } from "../view-models/today/get-today-view";
@@ -101,7 +102,13 @@ describe("a long study day", () => {
     });
 
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-    const selection = await readSavedDayPlan({ goal: saved, now: SESSION_NOW, timeZone: "UTC" });
+
+    const selection = await readSavedDayPlan({
+      goal: saved,
+      now: SESSION_NOW,
+      saved: await readSavedPlan(user.id, goal.id),
+      timeZone: "UTC",
+    });
 
     if (!selection) {
       throw new Error("Expected the saved plan's day");

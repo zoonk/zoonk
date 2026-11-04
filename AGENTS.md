@@ -28,7 +28,7 @@
 
 ## Agent orchestration
 
-Delegate a big task, or one that spans several areas (code, design, UX, accessibility), to subagents specialized in each, following the [orchestration guide](.agents/guides/orchestration.md). It also covers several agents sharing one machine. If you work in a worktree made for your task, commit, stop its servers and remove it before you hand back ([details](.agents/guides/orchestration.md#sharing-one-machine)).
+Delegate a big task, or one that spans several areas (code, design, UX, accessibility), to subagents specialized in each, following the [orchestration guide](.agents/guides/orchestration.md). It also covers several agents sharing one machine. Before you hand back, commit and stop the servers you started. If you own the task's PR, push and keep your worktree: review fixes and follow-ups happen there, and the harness removes it once the PR merges. A subagent or lane removes the worktree made for its slice ([details](.agents/guides/orchestration.md#sharing-one-machine)).
 
 ## Architecture shared by all workspaces
 

@@ -255,7 +255,9 @@ export function OTPForm({
 
       <OTPActions>
         {isCodeGone ? (
+          // The code box turns off with the code, so focus moves on to what the learner does next.
           <Button
+            autoFocus
             className="w-full font-[560]"
             disabled={resendCode.status === "sending"}
             focusableWhenDisabled

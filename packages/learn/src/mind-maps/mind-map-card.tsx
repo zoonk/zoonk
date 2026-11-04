@@ -12,6 +12,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { type MindMapLimit, MindMapLimitNotice } from "../_components/help-limit-notice";
 import { KindDot } from "../_components/kind-tile";
+import { StatusRegion } from "../_components/status-region";
 import { Surface } from "../_components/surface";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -173,7 +174,11 @@ function MindMapRequestCard({
         </Button>
       )}
 
-      {limit && <MindMapLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />}
+      <StatusRegion>
+        {limit && !isPending && (
+          <MindMapLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
+        )}
+      </StatusRegion>
     </div>
   );
 }

@@ -31,13 +31,20 @@ function isEditableTarget(target: EventTarget | null): boolean {
   return target instanceof HTMLElement && target.isContentEditable;
 }
 
-/** Enter does nothing in a select or in a one-line field outside a form, so there it runs the screen's main action. */
+/**
+ * Enter does nothing in a select, a read-only field or a one-line field outside a form, so there it
+ * runs the screen's main action.
+ */
 function isEnterFree(target: EventTarget | null): boolean {
   if (target instanceof HTMLSelectElement) {
     return true;
   }
 
-  return target instanceof HTMLInputElement && target.form === null;
+  if (target instanceof HTMLTextAreaElement) {
+    return target.readOnly;
+  }
+
+  return target instanceof HTMLInputElement && (target.readOnly || target.form === null);
 }
 
 function shortcutTarget(event: KeyboardEvent): Element | null {

@@ -20,7 +20,6 @@
   "mock_flagged_count": "d37894aee603a8ecea55358b494fd51410cdc1cd53158b980d574a632b6536e1",
   "mock_full_day": "db0c1e0e54d13f5dd562a92f762dda47f9d28520225cf941632d5b0addcce217",
   "mock_full_day_number": "ee80f95d68170df66d40437b8fffa3032d2a75a57a3cdc556d7ccd35eaf86538",
-  "mock_go_to_today": "8fe6594e0a84f81eaaa43075665f5adae8ecffa54773147cafcca5feb552ed90",
   "mock_grading": "2fab8b0e0d5171735c23c06fe100fd68c2ef59c91274b478745ef617b1c7d1ec",
   "mock_half_day": "5725cc1cdc415f9335d406febf34aa7d4ef56e5049a354946c442ae02a0db876",
   "mock_half_day_number": "3ef872a7fcc194366a90ceb095ab8a9c5c9e7786f827748ac4f41a359edc3908",
@@ -54,8 +53,6 @@
   "mock_next": "5acbf216b383d47af8cd48391191286c1570cdb431cf6b0913d45753bcd858e6",
   "mock_next_named": "b1132c4ae736e121ac950be7f672eca6a2a075eb13971fd09564418f4c53ba73",
   "mock_next_section": "953ee7b107af6dd2e8eb6dac7679fd57bac86728f9378c0468518e66a00c59dd",
-  "mock_not_found_description": "a385b8a037a0e95b0b6a94ee0304b17a93c4980430a8e9799a62ebbbc2c6d6b4",
-  "mock_not_found_title": "65768bd6551a3d9d796827d4b6ee3a133a8dc3ff3860b4d948d03ef166b7fb51",
   "mock_not_saved_retrying": "ce9cc2c42a51722e7532c1aa3df04205e191d292b54cbfcdbb8a4f913b8c476b",
   "mock_place": "1982a8fba9c61fe3b24030e3bfb432df40a7747d72c94fde219c2775ce23a73a",
   "mock_progress_label": "f718a74efe747e04ab176be13ef626c7a6693c3cffa7e94dbd841e4fdadae9d0",
@@ -139,9 +136,6 @@
     <string name="mock_label">Simulazione d’esame</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
     <string name="mock_label_shape">Simulazione · %1$s</string>
-    <string name="mock_not_found_title">Non abbiamo trovato questa pagina</string>
-    <string name="mock_not_found_description">Il link potrebbe essere vecchio o contenere un errore di battitura.</string>
-    <string name="mock_go_to_today">Vai a Oggi</string>
     <!-- What screen readers call the section's countdown. -->
     <string name="mock_time_left_label">Tempo rimasto</string>
     <!-- Under the section's countdown, such as "1:24:09". -->

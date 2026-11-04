@@ -46,7 +46,6 @@ import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PendingLabel
-import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.DateStyle
@@ -247,21 +246,6 @@ fun RunLoadFailed(
     onRetry: () -> Unit,
 ) {
     TaskScaffold(onClose = onClose) { padding -> LoadFailedMessage(onRetry = onRetry, modifier = Modifier.padding(padding)) }
-}
-
-@Composable
-fun RunNotFound(
-    onClose: () -> Unit,
-    description: String = stringResource(R.string.practice_not_found_description),
-) {
-    TaskScaffold(onClose = onClose) { padding ->
-        StatusMessage(
-            icon = R.drawable.ic_school,
-            title = stringResource(R.string.practice_not_found_title),
-            description = description,
-            modifier = Modifier.padding(padding),
-        ) { Button(onClick = onClose) { Text(stringResource(R.string.practice_close)) } }
-    }
 }
 
 /** A recording set's place and task; its player comes with the listening milestone. */
