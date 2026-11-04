@@ -247,11 +247,10 @@ private struct StepSolverWork: View {
     let share = maxValue == 0 ? 0.04 : max(abs(step.value) / maxValue, 0.04)
 
     VStack(alignment: .leading, spacing: 4) {
-      HStack(spacing: 8) {
+      ShareRow(share: 0.6 * share) {
         Capsule()
           .fill(Color.vizAccent)
           .frame(height: barHeight)
-          .containerRelativeFrame(.horizontal) { width, _ in width * 0.6 * share }
 
         Text(ActivityNumberFormat.format(step.value, unit: step.unit))
           .typeStyle(.body.weight(.semibold).monospaced())

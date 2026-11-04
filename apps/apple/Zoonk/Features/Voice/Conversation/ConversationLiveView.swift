@@ -191,20 +191,20 @@ private struct CallTranscript: View {
 
         if turn.speaker == .learner {
           // Main's `LearnerBubble`: its tail corner points at the learner's side.
-          Text(text)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-              Color.muted,
-              in: UnevenRoundedRectangle(
-                topLeadingRadius: Radius.option, bottomLeadingRadius: Radius.option,
-                bottomTrailingRadius: 4, topTrailingRadius: Radius.option, style: .continuous)
-            )
-            .containerRelativeFrame(.horizontal, alignment: .trailing) { width, _ in width * 0.8 }
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .accessibilityLabel(
-              Text(
-                "You: \(text)", tableName: "Voice", comment: "VoiceOver: the learner's words"))
+          ShareRow(share: 0.8, edge: .trailing) {
+            Text(text)
+              .padding(.horizontal, 12)
+              .padding(.vertical, 8)
+              .background(
+                Color.muted,
+                in: UnevenRoundedRectangle(
+                  topLeadingRadius: Radius.option, bottomLeadingRadius: Radius.option,
+                  bottomTrailingRadius: 4, topTrailingRadius: Radius.option, style: .continuous)
+              )
+              .accessibilityLabel(
+                Text(
+                  "You: \(text)", tableName: "Voice", comment: "VoiceOver: the learner's words"))
+          }
         } else {
           Text(text)
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -288,6 +288,10 @@
       VStack(alignment: .leading, spacing: 12) {
         Meter(value: 0.36)
         Meter(value: 0.7, fill: .brain)
+        HStack(spacing: 24) {
+          BrainPowerReward(points: 50, earned: false)
+          BrainPowerReward(points: 50, earned: true)
+        }
         Meter(value: 40, total: 100, fill: .energy)
         MeterParts(parts: [
           .init(fill: .color(.success)), .init(weight: 2, fill: .current),

@@ -32,10 +32,13 @@ export function BrainPowerReward({
         className="hit-area focus-visible:ring-ring/50 relative flex shrink-0 flex-col items-end gap-1 rounded-md outline-none focus-visible:ring-[3px]"
         data-slot="brain-power-reward"
       >
+        {/* Earned, the chip is `brain-text`: the page's color on `brain` is under AA in light. */}
         <span
           className={cn(
             "flex items-center gap-1 font-mono text-base leading-none font-semibold tabular-nums",
-            earned ? "bg-brain text-background rounded-md py-1 pr-1.5 pl-1" : "text-brain-text",
+            earned
+              ? "bg-brain-text text-background rounded-md py-1 pr-1.5 pl-1"
+              : "text-brain-text",
           )}
         >
           {earned ? (
