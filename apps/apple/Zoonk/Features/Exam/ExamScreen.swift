@@ -539,10 +539,16 @@ private struct ExamMocksSection: View {
           Button {
             router.open(.mock(blockId: mock.id))
           } label: {
-            IconLabeledContent {
+            ListRow(
+              mockTitle(MockLabels.title(number: mock.number), isNext: isNext),
+              description: Text(
+                "\(mock.answered) of \(mock.questions) answered", tableName: "Exam",
+                comment: "A running mock's progress")
+            ) {
+              StatusMark(status: isNext ? .next : .todo)
+            } trailing: {
               if let deadline = mock.deadline, deadline > .now {
                 Text(timerInterval: Date.now...deadline, countsDown: true)
-                  .monospacedDigit()
               } else if mock.deadline == nil {
                 Text(
                   "All parts handed in", tableName: "Exam",
@@ -550,36 +556,32 @@ private struct ExamMocksSection: View {
               } else {
                 Text("Time's up", tableName: "Exam", comment: "A running mock's time ran out")
               }
-            } title: {
-              mockTitle(MockLabels.title(number: mock.number), isNext: isNext)
-              Text(
-                "\(mock.answered) of \(mock.questions) answered", tableName: "Exam",
-                comment: "A running mock's progress")
-            } icon: {
-              StatusMark(status: isNext ? .next : .todo)
             }
             .disclosureChevron()
           }
+          .currentRow(isNext)
         }
 
         if let next = exam.nextMock {
           Button {
             router.open(.challenge(planItemId: next.planItemId, sessionId: nil))
           } label: {
-            IconLabeledContent {
+            ListRow(
+              mockTitle(
+                MockLabels.daySize(fullLength: next.fullLength, day: nil),
+                isNext: exam.runningMocks.isEmpty),
+              description: Text(
+                "\(next.questions) questions", tableName: "Exam", comment: "Next mock size")
+            ) {
+              StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
+            } trailing: {
               if let date = next.date.flatMap(studyDate) {
                 Text(date.formatted(.studyDay.weekday(.abbreviated).month(.abbreviated).day()))
               }
-            } title: {
-              mockTitle(
-                MockLabels.daySize(fullLength: next.fullLength, day: nil),
-                isNext: exam.runningMocks.isEmpty)
-              Text("\(next.questions) questions", tableName: "Exam", comment: "Next mock size")
-            } icon: {
-              StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             }
             .disclosureChevron()
           }
+          .currentRow(exam.runningMocks.isEmpty)
         }
 
         ForEach(exam.mocks) { mock in
@@ -610,9 +612,8 @@ private struct ExamMocksSection: View {
 }
 
 /// The blue mark says which mock is next; VoiceOver hears it in the title.
-private func mockTitle(_ title: String, isNext: Bool) -> some View {
+private func mockTitle(_ title: String, isNext: Bool) -> Text {
   Text(title)
-    .foregroundStyle(.primary)
     .accessibilityLabel(
       isNext
         ? Text(
@@ -623,26 +624,22 @@ private func mockTitle(_ title: String, isNext: Bool) -> some View {
 private struct ExamProgressSection: View {
   let exam: ExamView
 
+  @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
+
   var body: some View {
     if let progress = exam.progress, let latest = latestMock(progress) {
       Section {
-        IconLabeledContent {
-          Text((Double(latest.percent) / 100).formatted(.percent)).monospacedDigit()
-        } title: {
-          Text("Latest mock", tableName: "Exam", comment: "The latest mock's score")
-          Text(latestDetail(progress, latest: latest))
-        } icon: {
-          Image(systemName: "timer")
-        }
+        StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
+          StatTile(
+            label: Text("Latest mock", tableName: "Exam", comment: "The latest mock's score"),
+            quantity: (Double(latest.percent) / 100).formatted(.percent), systemImage: "timer",
+            detail: Text(latestDetail(progress, latest: latest)))
 
-        if let best = bestArea(progress) {
-          IconLabeledContent {
-            Text((Double(best.percent) / 100).formatted(.percent)).monospacedDigit()
-          } title: {
-            Text("Best area", tableName: "Exam", comment: "The subject that went best")
-            Text(best.name)
-          } icon: {
-            Image(systemName: "trophy").foregroundStyle(.success)
+          if let best = bestArea(progress) {
+            StatTile(
+              label: Text("Best area", tableName: "Exam", comment: "The subject that went best"),
+              quantity: (Double(best.percent) / 100).formatted(.percent), systemImage: "trophy",
+              tone: .success, detail: Text(best.name))
           }
         }
 

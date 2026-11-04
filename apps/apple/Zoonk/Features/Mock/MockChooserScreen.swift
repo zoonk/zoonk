@@ -93,7 +93,8 @@ struct PlacementMockScreen: View {
             .barTitleAfterHero(
               String(
                 localized: "A mock exam to find your level", table: "Mock",
-                comment: "Placement mock title"))
+                comment: "Placement mock title")
+            )
             .taskClose {
               Button(role: .close) { dismiss() }
             }
@@ -696,16 +697,15 @@ struct MockSummaryRow: View {
     Button {
       router.open(.mock(blockId: blockId))
     } label: {
-      IconLabeledContent {
-        Text(score).monospacedDigit()
-      } title: {
-        Text(MockLabels.title(number: mock.number))
-          .foregroundStyle(.primary)
-        Text(
+      ListRow(
+        Text(MockLabels.title(number: mock.number)),
+        description: Text(
           [shape, mock.finishedAt.formatted(.dateTime.month(.abbreviated).day())]
             .compactMap { $0 }.joinedFacts())
-      } icon: {
+      ) {
         StatusMark(status: .done)
+      } trailing: {
+        Text(score)
       }
       .disclosureChevron()
     }
