@@ -1,12 +1,11 @@
 import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { readGoalClaimEvents } from "../../learner/_utils/goal-claim-events";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { readClaimEvents } from "../../learner/facts/claim-events";
 import { readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readUsageTotals } from "../../learner/facts/usage-totals";
-import { toIdKey } from "../../library/_utils/shared-rows";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { type DayView } from "../day-view";
 import { loadUnstartedDayView } from "./load-unstarted-day";
@@ -71,7 +70,7 @@ export async function readStudyDay({
     localDate,
     now,
     readClaims: (skillIds: readonly string[]) =>
-      readClaimEvents(userId, goal.id, toIdKey(skillIds)),
+      readGoalClaimEvents({ goalId: goal.id, savedPlan, skillIds, userId }),
     timeZone,
     userId,
   };

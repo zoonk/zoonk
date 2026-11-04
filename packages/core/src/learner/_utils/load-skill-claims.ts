@@ -163,7 +163,6 @@ export async function loadDatedClaims({
   userId,
 }: {
   goalId: string;
-  /** A GET's request-wide claim events; without it, they're read fresh. */
   readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
   skillIds: readonly string[];
   userId: string;

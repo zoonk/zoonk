@@ -17,7 +17,6 @@ export type UsageCounts = {
 
 type KindUsage = Omit<UsageCounts, "activeGoals" | "spentTodayMicros">;
 
-/** Every kind's usage, so a page checking several kinds or the whole allowance reads it once. */
 export type UsageTotals = {
   activeGoals: number;
   kinds: ReadonlyMap<UsageKind, KindUsage>;

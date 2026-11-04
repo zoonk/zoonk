@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
+import { layOutPlanFixture, planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -12,6 +12,7 @@ import { type readClaimEvents } from "../../learner/facts/claim-events";
 import { type readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { type readSavedPlan } from "../../learner/facts/saved-plan";
 import { type readUsageTotals } from "../../learner/facts/usage-totals";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
 import {
   SESSION_NOW,
   daysAgo,
@@ -99,46 +100,78 @@ describe("Today's render reads", () => {
     expect(reads.rows).toBe(skills.length);
   });
 
-  it("reads an unopened day's claim answers once for its practice and the syllabus", async () => {
-    const user = await userFixture();
+  it.each([false, true])(
+    "reads an unopened day's claim events once for its practice and the syllabus (an area skipped: %s)",
+    async (skipsArea) => {
+      const user = await userFixture();
 
-    const { goal, plan, skills } = await sessionGoalFixture({
-      goal: { kind: "exam" },
-      userId: user.id,
-    });
+      const { goal, plan, skills } = await sessionGoalFixture({
+        goal: { kind: "exam" },
+        userId: user.id,
+      });
 
-    const items = await prisma.item.findMany({
-      distinct: ["skillId"],
-      select: { id: true, skillId: true },
-      where: { skillId: { in: skills.map((skill) => skill.id) } },
-    });
+      const items = await prisma.item.findMany({
+        distinct: ["skillId"],
+        select: { id: true, skillId: true },
+        where: { skillId: { in: skills.map((skill) => skill.id) } },
+      });
 
-    await Promise.all([
-      layOutPlanFixture(plan.id),
-      ...items.map((item) =>
-        attemptFixture({
-          answeredAt: daysAgo(4),
-          itemId: item.id,
-          skillId: item.skillId,
-          userId: user.id,
+      await layOutPlanFixture(plan.id);
+
+      const { graph } = await prisma.plan.findUniqueOrThrow({
+        select: { graph: true },
+        where: { id: plan.id },
+      });
+
+      await Promise.all([
+        prisma.plan.update({
+          data: {
+            graph: {
+              skills: parsePlanGraph(graph).skills.map((skill, index) => ({
+                ...skill,
+                area: index === 0 ? "Speaking" : "Reading",
+              })),
+            },
+            settings: { skippedAreas: skipsArea ? ["Speaking"] : [] },
+          },
+          where: { id: plan.id },
         }),
-      ),
-    ]);
+        planChangeFixture({ kind: "testedOut", planId: plan.id, status: "undone" }),
+        ...items.map((item) =>
+          attemptFixture({
+            answeredAt: daysAgo(4),
+            itemId: item.id,
+            skillId: item.skillId,
+            userId: user.id,
+          }),
+        ),
+      ]);
 
-    mockSession(user.id);
+      mockSession(user.id);
 
-    const reads = await countDatabaseRows(
-      () =>
-        Promise.all([
-          getTodayView({ goalId: goal.id, timeZone: "UTC" }),
-          getSyllabusView({ goalId: goal.id }),
-        ]),
-      '"public"."attempts"."item_id" IS NOT NULL AND "public"."attempts"."skill_id" IN',
-    );
+      const undone = await countDatabaseRows(
+        () =>
+          countDatabaseRows(
+            () =>
+              Promise.all([
+                getTodayView({ goalId: goal.id, timeZone: "UTC" }),
+                getSyllabusView({ goalId: goal.id }),
+              ]),
+            '"public"."attempts"."item_id" IS NOT NULL AND "public"."attempts"."skill_id" IN',
+          ),
+        '"public"."plan_changes"."created_at", "public"."plan_changes"."payload" FROM',
+      );
 
-    expect(reads.result.map((result) => result.status)).toStrictEqual(["ready", "ready"]);
-    expect(reads.rows).toBe(items.length);
-  });
+      const answers = undone.result;
+
+      expect(answers.result.map((result) => result.status)).toStrictEqual(["ready", "ready"]);
+
+      expect({ answers: answers.rows, undone: undone.rows }).toStrictEqual({
+        answers: items.length,
+        undone: 1,
+      });
+    },
+  );
 
   it("counts usage once for an unopened day's missions and the allowance", async () => {
     const user = await userFixture();

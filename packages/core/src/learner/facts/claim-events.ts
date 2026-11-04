@@ -5,10 +5,7 @@ import { loadClaimEvents } from "../_utils/load-skill-claims";
 import { type ClaimEvent } from "../_utils/skill-claims";
 import { readSavedPlan } from "./saved-plan";
 
-/**
- * GET-only fact after ownership authorization; writes call `loadClaimEvents` fresh. Pass the skills
- * through `toIdKey`, so readers asking about the same skills share one read.
- */
+/** GET-only fact after ownership authorization; read it through `readGoalClaimEvents`. */
 export async function readClaimEvents(
   userId: string,
   goalId: string,

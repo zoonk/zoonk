@@ -120,7 +120,6 @@ export async function loadReviewsAndClaims({
   claims: Omit<Parameters<typeof loadPracticeClaims>[0], "readClaims">;
   /** The day's session has no practice (see `ExamPrepAccess.trialEnded`). */
   practiceLocked: boolean;
-  /** A GET's request-wide claim events; without it, they're read fresh. */
   readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
   review: Parameters<typeof loadReviewCapsules>[0];
 }) {
