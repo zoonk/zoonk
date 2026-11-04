@@ -125,12 +125,14 @@ class TutorViewModel internal constructor(
 
         viewModelScope.launch {
             try {
-                when (val result = openMission(blockId)) {
+                val result = openMission(blockId)
+                if (!leadsWhereTapped) return@launch
+                when (result) {
                     is MutationResult.Done -> {
                         val route = result.value
                         if (route == null) {
                             blockNotice = BlockNotice(turnId, closed = true)
-                        } else if (leadsWhereTapped) {
+                        } else {
                             openedBlocks.trySend(route)
                         }
                     }
@@ -160,7 +162,7 @@ class TutorViewModel internal constructor(
     /** Where an answer's step link leads once it opened, even after the answer scrolled away or the screen was made again. */
     val blockRoutes: Flow<AppRoute> = openedBlocks.receiveAsFlow()
 
-    /** The learner left the conversation, so a step link's open still on its way leads nowhere when it lands. */
+    /** The learner left the conversation, so a step link's open still on its way leads and says nothing when it lands. */
     fun leave() {
         leadsWhereTapped = false
         blockNotice = null

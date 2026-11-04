@@ -124,6 +124,14 @@ class TutorViewModelTest {
             answer.complete(MutationResult.Done(AppRoute.Exam))
             advanceUntilIdle()
             assertEquals("a step that opens after the learner left leads nowhere", listOf<AppRoute>(AppRoute.Today), routes)
+
+            answer = CompletableDeferred()
+            vm.openBlock("turn-2", BLOCK)
+            advanceUntilIdle()
+            vm.leave()
+            answer.complete(MutationResult.Failed(ApiError.Network))
+            advanceUntilIdle()
+            assertNull("nor says anything once they come back", vm.blockNotice)
         }
 
     @Test
