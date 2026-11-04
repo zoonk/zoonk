@@ -557,7 +557,7 @@ private fun SummaryBar(
     val extraTime = summary.extraTime.takeIf { !facts.stopped && it.available && toRewards == null }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (failed == SessionAction.KeepGoing) SummaryError()
+        if (failed == SessionAction.KeepGoing) SummaryError(stringResource(R.string.today_open_failed))
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
@@ -589,7 +589,7 @@ private fun SummaryBar(
                     },
                 )
             }
-            if (failed == SessionAction.ExtraTime) SummaryError()
+            if (failed == SessionAction.ExtraTime) SummaryError(stringResource(R.string.today_save_failed))
         }
         if (facts.guest) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalArrangement = Arrangement.Center) {
@@ -606,9 +606,9 @@ private fun SummaryBar(
 }
 
 @Composable
-private fun SummaryError() {
+private fun SummaryError(text: String) {
     Text(
-        stringResource(R.string.today_open_failed),
+        text,
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
