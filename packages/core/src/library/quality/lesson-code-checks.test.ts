@@ -187,6 +187,19 @@ describe(checkWrittenLesson, () => {
       6,
       "plannedVisual",
     ]);
+
+    const optionPictures = {
+      ...question,
+      options: question.options.map((option, index) => ({
+        ...option,
+        picture: { alt: `Thermometer ${index + 1}`, prompt: `A thermometer, number ${index + 1}` },
+      })),
+    };
+
+    expect(codesOf(withScreen(6, optionPictures), { spec: planned })).not.toContainEqual([
+      6,
+      "plannedVisual",
+    ]);
   });
 
   it("keeps the numbered picture a question asks about, even where the plan drew none", () => {

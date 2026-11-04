@@ -39,10 +39,17 @@ function showsDrawing({ screen, specScreen }: VisualInput): boolean {
   return "visual" in screen && screen.visual?.kind === specScreen.visualKind;
 }
 
+function showsPicture({ screen }: VisualInput): boolean {
+  return (
+    ("image" in screen && screen.image !== null) ||
+    (screen.kind === "check" && screen.options.every((option) => option.picture))
+  );
+}
+
 const SHOWS_PLANNED: Readonly<Record<LessonVisualKind, (input: VisualInput) => boolean>> = {
   chart: showsDrawing,
   none: () => true,
-  picture: ({ screen }) => "image" in screen && screen.image !== null,
+  picture: showsPicture,
   table: ({ screen }) => showsTable(screen),
   template: ({ explores, screen }) => screen.kind !== "explanation" || explores,
   timeline: showsDrawing,
