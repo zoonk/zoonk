@@ -2,7 +2,6 @@
 
 import { MAX_LESSON_QUESTION_LENGTH } from "@zoonk/core/lesson-questions/contract";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
-import { isFocusLost } from "@zoonk/learn/is-focus-lost";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import {
   InputGroup,
@@ -15,7 +14,7 @@ import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type KeyboardEvent, type Ref, useEffect, useId, useRef } from "react";
+import { type KeyboardEvent, type Ref, useId, useLayoutEffect, useRef } from "react";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import {
   QuestionErrorAction,
@@ -149,8 +148,10 @@ function getComposerAvailability({
 function ComposerLimit({ limit, variant }: { limit: HelpLimit; variant: ComposerVariant }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (isFocusLost(document.activeElement)) {
+  // A layout effect: it runs before the sheet's popup takes focus for the removed composer, and
+  // after that the popup leaves focus where it is.
+  useLayoutEffect(() => {
+    if (document.activeElement === document.body) {
       ref.current?.focus({ preventScroll: true });
     }
   }, []);
