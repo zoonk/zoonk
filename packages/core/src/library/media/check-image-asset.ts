@@ -14,7 +14,6 @@ import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../../cache/tag
 import { readStoredImage } from "../../images/read-stored-image";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
-import { CURRENT_STEPS } from "../lessons/lesson-versions";
 import { drawImage, reviewImage } from "./_utils/draw-image";
 import { type ImageAnalytics } from "./_utils/draw-library-image";
 import { uploadImageFile } from "./_utils/save-image-asset";
@@ -28,7 +27,7 @@ export type PictureRedraw = Awaited<ReturnType<typeof uploadImageFile>> & {
 
 export type ImageAssetCheck =
   | { status: "missing" | "passed" }
-  | { status: "rejected"; findings: string[]; opensLesson: boolean };
+  | { status: "rejected"; findings: string[] };
 
 async function findAsset(assetId: string) {
   const asset = await prisma.mediaAsset.findUnique({
@@ -85,20 +84,6 @@ async function findLessonTags(assetId: string): Promise<string[]> {
   return steps.map((step) => getLibraryLessonCacheTag(step.lessonId));
 }
 
-async function opensLesson(assetId: string): Promise<boolean> {
-  const scene = await prisma.step.findFirst({
-    select: { id: true },
-    where: {
-      ...CURRENT_STEPS,
-      content: { equals: "text", path: ["variant"] },
-      kind: "hook",
-      mediaAssetId: assetId,
-    },
-  });
-
-  return scene !== null;
-}
-
 /** Internal workflow bridge: checks the stored picture, or its `redraw` before it's shown. */
 export async function checkImageAsset({
   alt,
@@ -131,7 +116,7 @@ export async function checkImageAsset({
     return { status: "passed" };
   }
 
-  return { findings: review.problems, opensLesson: await opensLesson(assetId), status: "rejected" };
+  return { findings: review.problems, status: "rejected" };
 }
 
 /**

@@ -27,41 +27,29 @@ const screens = [
   pictured("explanation"),
   plain("guess"),
   pictured("explanation"),
-  plain("check"),
+  pictured("check"),
   pictured("explanation"),
   plain("check"),
   plain("application"),
 ];
 
-function kindsAfterDropping(
-  dropped: number[],
-  visualFloor: "drawn" | "pictures",
-  planned: LessonScreen[] = screens,
-) {
+function kindsAfterDropping(dropped: number[], planned: LessonScreen[] = screens) {
   const [spec] = dropDecorativePictures({
     judged: dropped.map((screen) => ({ lesson: 0, screen, teaches: false })),
     specs: [lessonOf(planned)],
-    visualFloor,
   });
 
   return spec?.screens.map((screen) => [screen.visualKind, screen.visual]);
 }
 
 describe(dropDecorativePictures, () => {
-  it("draws a table in place of every decorative picture on a shared lesson's teaching screens", () => {
-    const kinds = kindsAfterDropping([1, 3], "pictures");
+  it("leaves a screen whose picture only decorates with nothing, never a table in its place", () => {
+    const kinds = kindsAfterDropping([0, 1, 4]);
 
-    expect(kinds?.[1]).toStrictEqual(["table", null]);
-    expect(kinds?.[3]).toStrictEqual(["table", null]);
-  });
-
-  it("drops a private lesson's decorative picture where its floor is met, and draws a table where not", () => {
-    expect(kindsAfterDropping([3], "drawn")?.[3]).toStrictEqual(["none", null]);
-
-    const kinds = kindsAfterDropping([1, 3], "drawn");
-
-    expect(kinds?.[1]).toStrictEqual(["table", null]);
-    expect(kinds?.[3]).toStrictEqual(["none", null]);
+    expect(kinds?.[0]).toStrictEqual(["none", null]);
+    expect(kinds?.[1]).toStrictEqual(["none", null]);
+    expect(kinds?.[3]).toStrictEqual(["picture", "A explanation"]);
+    expect(kinds?.[4]).toStrictEqual(["none", null]);
   });
 
   it("judges a picture shown on several screens once, and drops it from all of them", () => {
@@ -70,20 +58,24 @@ describe(dropDecorativePictures, () => {
 
     expect(
       listPlannedPictures({ specs: [lessonOf(shared)] }).map((item) => item.screen),
-    ).toStrictEqual([1, 5]);
+    ).toStrictEqual([0, 1, 5]);
 
-    const kinds = kindsAfterDropping([1], "pictures", shared);
-
-    expect(kinds?.slice(1, 4)).toStrictEqual([
-      ["table", null],
-      ["table", null],
-      ["table", null],
+    expect(kindsAfterDropping([1], shared)?.slice(1, 4)).toStrictEqual([
+      ["none", null],
+      ["none", null],
+      ["none", null],
     ]);
   });
 
-  it("never judges the scene's picture, so every lesson opens on its moment", () => {
+  it("judges every planned picture, the scene's and a question's included", () => {
     expect(
-      listPlannedPictures({ specs: [lessonOf(screens)] }).map((item) => item.screen),
-    ).toStrictEqual([1, 3, 5]);
+      listPlannedPictures({ specs: [lessonOf(screens)] }).map((item) => [item.screen, item.kind]),
+    ).toStrictEqual([
+      [0, "hook"],
+      [1, "explanation"],
+      [3, "explanation"],
+      [4, "check"],
+      [5, "explanation"],
+    ]);
   });
 });

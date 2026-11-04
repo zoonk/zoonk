@@ -181,7 +181,7 @@ describe(normalizeLessonSpec, () => {
     ]);
   });
 
-  it("shows a scene planned with nothing in a picture of its moment, and keeps a planned one", () => {
+  it("keeps a scene planned with nothing bare, and a planned visual as planned", () => {
     const moment = "Lia finds the soda can burst in the freezer. How can cold break metal?";
 
     const [bare, table] = [
@@ -191,7 +191,7 @@ describe(normalizeLessonSpec, () => {
       (hook) => normalizeLessonSpec({ exploreIds, raw: rawSpec([hook]), templateIds }).screens[0],
     );
 
-    expect([bare?.visualKind, bare?.visual]).toStrictEqual(["picture", moment]);
+    expect([bare?.visualKind, bare?.visual]).toStrictEqual(["none", null]);
     expect([table?.visualKind, table?.visual]).toStrictEqual(["table", null]);
   });
 });

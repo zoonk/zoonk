@@ -2,8 +2,6 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
-import { readsNoviceRules } from "@zoonk/ai/tasks/novice-rules";
-import { type VisualFloor, getVisualFloor } from "@zoonk/ai/tasks/visual-floor";
 import {
   type CourseContentWrite,
   collectCourseContentTags,
@@ -43,12 +41,10 @@ type PlannedLessonSpecs = {
   analytics: SpecAnalytics;
   homeChapterId: LessonSpecInputs["homeChapterId"];
   lessonId: string;
-  novice: boolean;
   pictures: PlannedPicture[];
   provenance: Parameters<typeof saveLessonSpecs>[0]["provenance"];
   scope: LessonSpecInputs["scope"];
   specs: LessonSpec[];
-  visualFloor: VisualFloor;
   workflowRunId: string;
 };
 
@@ -98,20 +94,15 @@ async function planLesson({
     serviceTier: chooseServiceTier({ wait }),
   });
 
-  const novice = readsNoviceRules(inputs.prompt);
-  const visualFloor = getVisualFloor(inputs.prompt);
-
   return {
     analytics: context,
     homeChapterId: inputs.homeChapterId,
     lessonId,
-    novice,
     pictures: listPlannedPictures({ specs: data.lessons }),
     provenance,
     scope: inputs.scope,
     specs: data.lessons,
     status: "planned",
-    visualFloor,
     workflowRunId,
   };
 }
@@ -150,16 +141,14 @@ export async function planLessonSpecStep(
 
 export async function judgeLessonPictureStep({
   analytics,
-  novice,
   picture,
 }: {
   analytics: SpecAnalytics;
-  novice: boolean;
   picture: PlannedPicture;
 }): Promise<JudgedPicture> {
   "use step";
 
-  return judgePlannedPicture({ analytics, novice, picture });
+  return judgePlannedPicture({ analytics, picture });
 }
 
 async function saveLessonPlan({
@@ -185,11 +174,7 @@ async function saveLessonPlan({
     lessonId: planned.lessonId,
     provenance: planned.provenance,
     scope: planned.scope,
-    specs: dropDecorativePictures({
-      judged,
-      specs: planned.specs,
-      visualFloor: planned.visualFloor,
-    }),
+    specs: dropDecorativePictures({ judged, specs: planned.specs }),
     workflowRunId: planned.workflowRunId,
   });
 

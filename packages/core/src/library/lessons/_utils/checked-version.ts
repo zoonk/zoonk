@@ -11,7 +11,7 @@ import {
   type LessonWritingContext,
   runLessonQualityGate,
 } from "../../quality/lesson-quality-gate";
-import { pictureBareTeachingScreens, repairWrittenLesson } from "../../quality/lesson-repairs";
+import { repairWrittenLesson } from "../../quality/lesson-repairs";
 import { formatMaterialPages } from "../../sources/material-pages";
 import { addQuestionBases } from "../../steps/question-bases";
 import { type ConvertedScreen } from "../../steps/written-screens";
@@ -197,13 +197,8 @@ export async function fixVersionDraft({
     spec: gate.context.spec,
   });
 
-  const lesson =
-    gate.reuse === "personal"
-      ? repaired
-      : pictureBareTeachingScreens({ lesson: repaired, spec: gate.context.spec });
-
   return {
-    lesson,
+    lesson: repaired,
     provenanceByScreen: fix.data.lesson.screens.map(
       (_, index) =>
         (changed.has(index) ? fix.provenance : draft.provenanceByScreen[index]) ?? fix.provenance,

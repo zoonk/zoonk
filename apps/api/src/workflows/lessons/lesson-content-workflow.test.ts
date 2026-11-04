@@ -255,7 +255,7 @@ describe(lessonContentWorkflow, () => {
     ]);
   });
 
-  it("judges each planned picture but a new learner's hook once, saving the spec without decorative ones", async () => {
+  it("judges each planned picture once, the scene's included, saving the spec without decorative ones", async () => {
     const lesson = await outlinedLesson();
     const planned = recordedSpec.lessons[0]?.screens ?? [];
 
@@ -267,39 +267,37 @@ describe(lessonContentWorkflow, () => {
       async ({ picture }) => picture !== planned[decorative]?.visual,
     );
 
-    vi.mocked(fixLessonDraft).mockResolvedValue(
-      taskResult({ changedScreens: [], lesson: recordedDraft }),
-    );
-
     await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toMatchObject({
       status: "ready",
     });
 
-    expect(vi.mocked(fixLessonDraft).mock.calls[0]?.[0].problems).toStrictEqual([
-      expect.objectContaining({ screen: decorative, source: "code" }),
+    expect(fixLessonDraft).not.toHaveBeenCalled();
+
+    const [stored, decorativeStep] = await Promise.all([
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      prisma.step.findFirstOrThrow({ where: { lessonId: lesson.id, position: decorative } }),
     ]);
 
-    const stored = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
+    expect(decorativeStep.content).not.toHaveProperty("image");
 
     const visuals = (stored.spec as RecordedSpec["lessons"][number]).screens.map(
       (screen) => screen.visual,
     );
 
-    const judged = planned.filter((screen) => screen.visual && screen.kind !== "hook");
+    const judged = planned.filter((screen) => screen.visual);
     expect(judgePicture).toHaveBeenCalledTimes(judged.length);
 
-    expect(judgePicture).not.toHaveBeenCalledWith(
-      expect.objectContaining({ picture: planned[0]?.visual }),
+    expect(judgePicture).toHaveBeenCalledWith(
+      expect.objectContaining({ picture: planned[0]?.visual, previousPicture: null }),
     );
 
     expect(visuals).toStrictEqual(
       planned.map((screen, index) => (index === decorative ? null : screen.visual)),
     );
 
-    expect(vi.mocked(judgePicture).mock.calls[0]?.[0]).toMatchObject({
-      novice: true,
-      previousPicture: planned[0]?.visual,
-    });
+    expect(judgePicture).toHaveBeenCalledWith(
+      expect.objectContaining({ picture: planned[1]?.visual, previousPicture: planned[0]?.visual }),
+    );
   });
 
   it("fails the lesson without saving its spec when the picture judge can't answer", async () => {
@@ -330,12 +328,10 @@ describe(lessonContentWorkflow, () => {
           analytics: { contentScope: "shared", traceId: "test-run-id" },
           homeChapterId: lesson.homeChapterId,
           lessonId: lesson.id,
-          novice: true,
           pictures: [],
           provenance: { generatedAt: "", model: "", promptVersion: "", runId: "" },
           scope: { generalGoal: null, language: "en", ownerId: null, targetLanguage: null },
           specs: [],
-          visualFloor: "pictures",
           workflowRunId: "test-run-id",
         },
       }),

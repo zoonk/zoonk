@@ -14,7 +14,6 @@ import { readsNoviceRules } from "../_utils/novice-rules";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
-import { type VisualFloor, getVisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   LESSON_SCREEN_KINDS,
@@ -23,7 +22,7 @@ import {
   getLessonSpecIssues,
 } from "./lesson-spec-rules";
 import systemPrompt from "./lesson-spec.prompt.md";
-import { LESSON_VISUAL_KINDS, fillTeachingVisuals } from "./lesson-visuals";
+import { LESSON_VISUAL_KINDS } from "./lesson-visuals";
 import { normalizeLessonSpec } from "./normalize-lesson-spec";
 import quickLessonPrompt from "./quick-lesson.prompt.md";
 import { splitLessonSpec } from "./split-lesson-spec";
@@ -102,17 +101,14 @@ function formatList(items: readonly string[]): string {
 
 function buildSystemPrompt(params: LessonSpecParams): string {
   const novice = readsNoviceRules(params);
-  const visualFloor = getVisualFloor(params);
 
   const prompt = selectPromptVariants({
     template: systemPrompt,
     variants: {
       exams: (params.exams?.length ?? 0) > 0,
-      experienced: !novice,
       material: Boolean(params.material),
       novice,
-      pictures: visualFloor === "pictures",
-      private: visualFloor === "drawn",
+      private: Boolean(params.isPrivate || params.material),
       setup: Boolean(params.setup),
       shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
@@ -182,12 +178,7 @@ async function planLesson(params: LessonSpecParams) {
   const lessons = params.quick
     ? specs.slice(0, 1)
     : specs.flatMap((spec) =>
-        splitLessonSpec({
-          language: params.language,
-          level: params.level,
-          spec,
-          visualFloor: getVisualFloor(params),
-        }),
+        splitLessonSpec({ language: params.language, level: params.level, spec }),
       );
 
   const data: LessonSpecResult = { lessons };
@@ -205,7 +196,6 @@ const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
   "guess",
   "hook",
   "skillReference",
-  "teachingVisual",
   "unpracticedSkill",
   "untaughtSkill",
   "workedExample",
@@ -215,36 +205,24 @@ function countShapeIssues({
   data,
   level,
   novice,
-  visualFloor,
 }: {
   data: LessonSpecResult;
   level: CourseLevel;
   novice: boolean;
-  visualFloor: VisualFloor;
 }): number {
   return data.lessons
-    .flatMap((spec) => getLessonSpecIssues({ level, novice, spec, visualFloor }))
+    .flatMap((spec) => getLessonSpecIssues({ level, novice, spec }))
     .filter((issue) => REPLAN_ISSUES.has(issue.code)).length;
 }
 
 /**
  * A lesson that doesn't fit comes back as several. A plan that breaks a shape rule is planned once
- * more, and the one with fewer broken rules is kept; teaching screens still bare get a visual.
+ * more, and the one with fewer broken rules is kept.
  */
 export async function generateLessonSpec(params: LessonSpecParams) {
-  const visualFloor = getVisualFloor(params);
-
-  const planned = await draftAgainWhenFlawed({
+  return draftAgainWhenFlawed({
     countProblems: ({ data }) =>
-      countShapeIssues({
-        data,
-        level: params.level,
-        novice: readsNoviceRules(params),
-        visualFloor,
-      }),
+      countShapeIssues({ data, level: params.level, novice: readsNoviceRules(params) }),
     draft: () => planLesson(params),
   });
-
-  const lessons = planned.data.lessons.map((spec) => fillTeachingVisuals({ spec, visualFloor }));
-  return { ...planned, data: { lessons } };
 }

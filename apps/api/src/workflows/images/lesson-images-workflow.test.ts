@@ -169,7 +169,7 @@ describe(lessonImagesWorkflow, () => {
     await expect(lessonPictures(lesson.id)).resolves.toStrictEqual([{ mediaAssetId: null }]);
   });
 
-  it("keeps the redraw of a lesson's opening scene without checking it again", async () => {
+  it("checks the redraw of a lesson's opening scene like any picture's", async () => {
     const lesson = await libraryLessonFixture();
     const alt = `Fábio corta a mão numa lata ${randomUUID()}`;
 
@@ -187,21 +187,14 @@ describe(lessonImagesWorkflow, () => {
 
     await lessonImagesWorkflow({ lessonId: lesson.id });
 
-    const redraw = await vi.mocked(uploadImage).mock.results[1]?.value;
-
-    const [scene] = await prisma.step.findMany({
-      include: { mediaAsset: true },
-      where: { lessonId: lesson.id },
-    });
-
-    expect(checkLessonImage).toHaveBeenCalledOnce();
+    expect(checkLessonImage).toHaveBeenCalledTimes(2);
     expect(generateLessonImage).toHaveBeenCalledTimes(2);
 
     expect(generateImageScene).toHaveBeenLastCalledWith(
       expect.objectContaining({ alt, findings: ["wrong object"] }),
     );
 
-    expect(scene?.mediaAsset?.url).toBe(redraw?.data);
+    await expect(lessonPictures(lesson.id)).resolves.toStrictEqual([{ mediaAssetId: null }]);
   });
 
   it("waits for the images run already drawing the lesson, then draws only what it left", async () => {

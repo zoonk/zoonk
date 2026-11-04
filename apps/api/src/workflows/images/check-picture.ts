@@ -10,9 +10,8 @@ import {
 export type PictureCheckStatus = "missing" | "passed" | "removed" | "replaced";
 
 /**
- * A rejected picture is planned again from what its check found and drawn once more. A lesson's
- * opening scene keeps that redraw unchecked, since every lesson opens on a picture; any other
- * picture keeps it only if it passes its own check, and is taken out of use otherwise.
+ * A rejected picture is planned again from what its check found and drawn once more, and keeps that
+ * redraw only if it passes its own check; otherwise it's taken out of use.
  */
 export async function checkPicture({
   alt,
@@ -33,13 +32,11 @@ export async function checkPicture({
   const scene = await planPictureAgainStep({ alt, analytics, assetId, findings });
   const redraw = await redrawPictureStep({ analytics, assetId, findings, scene });
 
-  if (!check.opensLesson) {
-    const recheck = await checkPictureStep({ alt, analytics, assetId, redraw });
+  const recheck = await checkPictureStep({ alt, analytics, assetId, redraw });
 
-    if (recheck.status !== "passed") {
-      await removePictureStep(assetId);
-      return "removed";
-    }
+  if (recheck.status !== "passed") {
+    await removePictureStep(assetId);
+    return "removed";
   }
 
   await replacePictureStep({ assetId, redraw });

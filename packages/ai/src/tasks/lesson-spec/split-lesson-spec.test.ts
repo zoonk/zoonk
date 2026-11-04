@@ -119,11 +119,7 @@ describe(splitLessonSpec, () => {
     expect(first?.screens[0]).toStrictEqual(screen("hook", [0], "original hook"));
     expect(first?.screens.at(-1)).toStrictEqual(screen("application", [0, 1], "Median at work"));
 
-    expect(second?.screens[0]).toStrictEqual({
-      ...screen("hook", [0], "Mode at work"),
-      visual: "Mode at work",
-      visualKind: "picture",
-    });
+    expect(second?.screens[0]).toStrictEqual(screen("hook", [0], "Mode at work"));
 
     expect(second?.screens.at(-1)).toStrictEqual(
       screen("application", [0, 1], "original application"),
@@ -155,7 +151,7 @@ describe(splitLessonSpec, () => {
     ).toStrictEqual(["guess"]);
   });
 
-  it("opens a later part on its own scene, in a picture when shared and a table when private", () => {
+  it("opens a later part on its own scene, with no visual unless the plan gives one", () => {
     const planned = fourSkillSpec();
 
     const [first, second] = splitLessonSpec({
@@ -167,34 +163,10 @@ describe(splitLessonSpec, () => {
           index === 0 ? { ...item, visual: "The original scene", visualKind: "picture" } : item,
         ),
       },
-      visualFloor: "pictures",
     });
 
     expect(first?.screens[0]?.visual).toBe("The original scene");
-
-    expect(second?.screens[0]).toStrictEqual({
-      ...screen("hook", [0], "Mode at work"),
-      visual: "Mode at work",
-      visualKind: "picture",
-    });
-
-    const [, privateSecond] = splitLessonSpec({
-      language: "en",
-      level: "beginner",
-      spec: planned,
-      visualFloor: "drawn",
-    });
-
-    expect(privateSecond?.screens[0]?.visualKind).toBe("table");
-
-    const advanced = splitLessonSpec({
-      language: "en",
-      level: "advanced",
-      spec: planned,
-      visualFloor: "pictures",
-    });
-
-    expect(advanced.map((part) => part.screens[0]?.visualKind)).toStrictEqual(["none", "picture"]);
+    expect(second?.screens[0]).toStrictEqual(screen("hook", [0], "Mode at work"));
   });
 
   it("drops a guess from a part where nothing is taught before it", () => {

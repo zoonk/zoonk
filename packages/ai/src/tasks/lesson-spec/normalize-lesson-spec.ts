@@ -6,7 +6,7 @@ import {
   type LessonSpecSkill,
   estimateLessonMinutes,
 } from "./lesson-spec-rules";
-import { type LessonVisualKind, withSceneVisual } from "./lesson-visuals";
+import { type LessonVisualKind } from "./lesson-visuals";
 
 /** Skills are numbered from 1 in the order the lesson lists them. */
 type RawLessonScreen = {
@@ -104,7 +104,7 @@ function toVisual({
 }): ScreenVisual {
   const nothing: ScreenVisual = { activityTemplate: null, visual: null, visualKind: "none" };
 
-  // An activity draws itself; its picture is one its template asks for, such as a decision tree's case.
+  // An activity draws itself; its picture is one its template asks for.
   if (kind === "activity") {
     return { activityTemplate, visual: picture || null, visualKind: "template" };
   }
@@ -134,7 +134,7 @@ function normalizeScreen({
 }: TemplateSets & { screen: RawLessonScreen; skillCount: number }): LessonScreen {
   const activity = normalizeActivity({ exploreIds, screen, templateIds });
 
-  return withSceneVisual({
+  return {
     ...activity,
     ...toVisual({
       activityTemplate: activity.activityTemplate,
@@ -144,7 +144,7 @@ function normalizeScreen({
     }),
     brief: screen.brief.trim(),
     skills: toSkillIndexes({ kind: screen.kind, numbers: screen.skills, skillCount }),
-  });
+  };
 }
 
 export function normalizeLessonSpec({

@@ -33,13 +33,13 @@ function savedSpec(hook: Record<string, unknown>) {
 }
 
 describe(parseStoredLessonSpec, () => {
-  it("opens a plan saved with a bare scene, as material lessons were, on a picture of its moment", () => {
+  it("reads a saved scene's visual as planned, and a plan saved before visual kinds as text only", () => {
     const [legacy, bare, table] = [{}, { visualKind: "none" }, { visualKind: "table" }].map(
       (hook) => parseStoredLessonSpec(savedSpec(hook))?.screens,
     );
 
-    expect([legacy?.[0]?.visualKind, legacy?.[0]?.visual]).toStrictEqual(["picture", moment]);
-    expect([bare?.[0]?.visualKind, bare?.[0]?.visual]).toStrictEqual(["picture", moment]);
+    expect([legacy?.[0]?.visualKind, legacy?.[0]?.visual]).toStrictEqual(["none", null]);
+    expect([bare?.[0]?.visualKind, bare?.[0]?.visual]).toStrictEqual(["none", null]);
     expect([table?.[0]?.visualKind, table?.[0]?.visual]).toStrictEqual(["table", null]);
     expect(legacy?.[1]?.visualKind).toBe("none");
   });

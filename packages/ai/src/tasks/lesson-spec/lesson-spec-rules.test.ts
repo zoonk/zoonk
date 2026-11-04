@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { type VisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   type LessonScreen,
@@ -31,10 +30,6 @@ function screen(
   };
 }
 
-function picture(item: LessonScreen, index: number): LessonScreen {
-  return { ...item, visual: `Picture ${index}`, visualKind: "picture" };
-}
-
 function spec(screens: LessonScreen[], skills = [skill("Calculate a percent change")]): LessonSpec {
   return {
     canDo: "Calculate a percent change",
@@ -57,19 +52,8 @@ const validScreens = [
   screen("application"),
 ];
 
-const illustratedScreens = validScreens.map((item, index) =>
-  [0, 1, 3, 5].includes(index) ? picture(item, index) : item,
-);
-
-function getCodes(
-  lesson: LessonSpec,
-  level: CourseLevel = "beginner",
-  novice = false,
-  visualFloor: VisualFloor | undefined = novice ? "pictures" : undefined,
-) {
-  return getLessonSpecIssues({ level, novice, spec: lesson, visualFloor }).map(
-    (issue) => issue.code,
-  );
+function getCodes(lesson: LessonSpec, level: CourseLevel = "beginner", novice = false) {
+  return getLessonSpecIssues({ level, novice, spec: lesson }).map((issue) => issue.code);
 }
 
 describe(estimateLessonMinutes, () => {
@@ -201,89 +185,12 @@ describe(getLessonSpecIssues, () => {
     ).toContain("earlyCheck");
 
     expect(getCodes(oneScreenFirst, "advanced")).not.toContain("earlyCheck");
-    expect(getCodes(spec(illustratedScreens), "beginner", true)).toStrictEqual([]);
+    expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([]);
   });
 
-  it("asks a shared lesson for a visual on every teaching screen", () => {
-    const longLesson = [
-      picture(screen("hook", []), 0),
-      screen("explanation"),
-      screen("guess"),
-      screen("explanation"),
-      screen("check"),
-      screen("explanation"),
-      screen("explanation"),
-      screen("explanation"),
-      screen("check"),
-      screen("explanation"),
-      screen("explanation"),
-      screen("application"),
-    ];
-
-    const showing = (shown: number[]) =>
-      spec(longLesson.map((item, index) => (shown.includes(index) ? picture(item, index) : item)));
-
-    const everyOne = [1, 3, 5, 6, 7, 9, 10];
-
-    expect(getCodes(showing(everyOne.slice(1)), "beginner", true)).toStrictEqual([
-      "teachingVisual",
-    ]);
-
-    expect(getCodes(showing(everyOne.slice(1)), "advanced", false, "pictures")).toStrictEqual([
-      "teachingVisual",
-    ]);
-
-    expect(getCodes(showing(everyOne), "beginner", true)).toStrictEqual([]);
-  });
-
-  it("counts any visual toward the floor: every teaching screen when shared, one in two for one learner", () => {
-    const drawn = validScreens.map((item, index) => {
-      if (index === 0 || index === 1) {
-        return { ...item, visualKind: "table" as const };
-      }
-
-      if (index === 5) {
-        return { ...item, activityTemplate: "formulaModel", visualKind: "template" as const };
-      }
-
-      return index === 3 ? { ...item, visualKind: "chart" as const } : item;
-    });
-
-    const pictured = validScreens.map((item, index) =>
-      [0, 3, 5].includes(index) ? picture(item, index) : item,
-    );
-
-    const halfDrawn = drawn.map((item, index) =>
-      index === 5 ? { ...item, activityTemplate: null, visualKind: "none" as const } : item,
-    );
-
-    expect(getCodes(spec(drawn), "beginner", true)).toStrictEqual([]);
-    expect(getCodes(spec(halfDrawn), "beginner", true, "drawn")).toStrictEqual([]);
-    expect(getCodes(spec(halfDrawn), "beginner", true)).toStrictEqual(["teachingVisual"]);
-    expect(getCodes(spec(pictured), "beginner", true, "drawn")).toStrictEqual([]);
-  });
-
-  it("asks every lesson for visuals on its teaching screens", () => {
-    expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual(["teachingVisual"]);
-
-    expect(getCodes(spec(validScreens), "intermediate", false, "pictures")).toStrictEqual([
-      "teachingVisual",
-    ]);
-
-    expect(getCodes(spec(validScreens), "beginner", true, "drawn")).toStrictEqual([
-      "teachingVisual",
-    ]);
-
-    const explored = validScreens.map((item, index) =>
-      index === 1 || index === 5 ? picture(item, index) : item,
-    );
-
-    explored[3] = screen("explanation", [0], {
-      activityTemplate: "formulaModel",
-      visualKind: "template",
-    });
-
-    expect(getCodes(spec(explored), "beginner", true)).toStrictEqual([]);
+  it("asks no lesson for a visual on its screens", () => {
+    expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual([]);
+    expect(getCodes(spec(validScreens), "advanced")).toStrictEqual([]);
   });
 
   it("places exactly one guess right after the first explanation, followed by another", () => {

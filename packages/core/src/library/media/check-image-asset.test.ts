@@ -46,26 +46,6 @@ async function shownPicture() {
   return { asset, item, step };
 }
 
-async function openingScenePicture() {
-  const [asset, lesson] = await Promise.all([
-    mediaAssetFixture({ scene: testScene({ focalObject: `a ${randomUUID()} skin section` }) }),
-    libraryLessonFixture(),
-  ]);
-
-  await libraryStepFixture({
-    content: {
-      image: { alt, prompt: "A hand with a small cut" },
-      text: "Fábio corta a mão.",
-      variant: "text",
-    },
-    kind: "hook",
-    lessonId: lesson.id,
-    mediaAssetId: asset.id,
-  });
-
-  return asset;
-}
-
 function redrawOf(scene = testScene({ focalObject: `a ${randomUUID()} hand` })): PictureRedraw {
   return {
     height: 32,
@@ -105,19 +85,12 @@ describe(checkImageAsset, () => {
     expect(checkLessonImage).toHaveBeenCalledWith(expect.objectContaining({ serviceTier: "flex" }));
   });
 
-  it("returns what the check found and whether the picture opens a lesson", async () => {
-    const [{ asset: shown }, scene] = await Promise.all([shownPicture(), openingScenePicture()]);
-    mockImageChecks([false, false]);
+  it("returns what the check found", async () => {
+    const { asset } = await shownPicture();
+    mockImageChecks([false]);
 
-    await expect(checkImageAsset({ assetId: shown.id })).resolves.toStrictEqual({
+    await expect(checkImageAsset({ assetId: asset.id })).resolves.toStrictEqual({
       findings: ["shows a different object"],
-      opensLesson: false,
-      status: "rejected",
-    });
-
-    await expect(checkImageAsset({ alt, assetId: scene.id })).resolves.toStrictEqual({
-      findings: ["shows a different object"],
-      opensLesson: true,
       status: "rejected",
     });
   });

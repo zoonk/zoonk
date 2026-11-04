@@ -1,4 +1,3 @@
-import { type VisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
   LESSON_SIZE,
@@ -10,7 +9,6 @@ import {
   fitsLesson,
   getMaxLessonMinutes,
 } from "./lesson-spec-rules";
-import { type LessonVisualKind } from "./lesson-visuals";
 
 type SkillSegment = { screens: LessonScreen[]; skill: number };
 
@@ -130,30 +128,12 @@ function createFrameScreen({
   brief,
   kind,
   skills,
-  visual = null,
-  visualKind = "none",
 }: {
   brief: string;
   kind: LessonScreenKind;
   skills: number[];
-  visual?: string | null;
-  visualKind?: LessonVisualKind;
 }): LessonScreen {
-  return { activityTemplate: null, brief, kind, skills, visual, visualKind };
-}
-
-function createHook({
-  brief,
-  visualFloor,
-}: {
-  brief: string;
-  visualFloor: VisualFloor;
-}): LessonScreen {
-  const hook = { brief, kind: "hook" as const, skills: [0] };
-
-  return visualFloor === "drawn"
-    ? createFrameScreen({ ...hook, visualKind: "table" })
-    : createFrameScreen({ ...hook, visual: brief, visualKind: "picture" });
+  return { activityTemplate: null, brief, kind, skills, visual: null, visualKind: "none" };
 }
 
 /** The first lesson keeps the original hook and the last the original application. */
@@ -163,11 +143,9 @@ function getFrame({
   remap,
   skills,
   spec,
-  visualFloor,
 }: {
   isFirst: boolean;
   isLast: boolean;
-  visualFloor: VisualFloor;
   remap: ReadonlyMap<number, number>;
   skills: readonly LessonSpecSkill[];
   spec: LessonSpec;
@@ -189,7 +167,7 @@ function getFrame({
         }),
     hook: hook
       ? remapScreen({ fallback: [0], remap, screen: hook })
-      : createHook({ brief: skills[0]?.useCase ?? "", visualFloor }),
+      : createFrameScreen({ brief: skills[0]?.useCase ?? "", kind: "hook", skills: [0] }),
   };
 }
 
@@ -214,14 +192,12 @@ function buildPart({
   language,
   spec,
   total,
-  visualFloor,
 }: {
   group: readonly SkillSegment[];
   index: number;
   language: string;
   spec: LessonSpec;
   total: number;
-  visualFloor: VisualFloor;
 }): LessonSpec {
   const originalIndexes = group.map((segment) => segment.skill);
   const remap = new Map(originalIndexes.map((original, position) => [original, position]));
@@ -233,7 +209,6 @@ function buildPart({
     remap,
     skills,
     spec,
-    visualFloor,
   });
 
   const body = withoutEarlyGuess(
@@ -264,12 +239,10 @@ export function splitLessonSpec({
   language,
   level,
   spec,
-  visualFloor = "pictures",
 }: {
   language: string;
   level: CourseLevel;
   spec: LessonSpec;
-  visualFloor?: VisualFloor;
 }): LessonSpec[] {
   if (spec.skills.length <= 1 || fitsLesson({ level, spec })) {
     return [spec];
@@ -282,6 +255,6 @@ export function splitLessonSpec({
   }
 
   return groups.map((group, index) =>
-    buildPart({ group, index, language, spec, total: groups.length, visualFloor }),
+    buildPart({ group, index, language, spec, total: groups.length }),
   );
 }

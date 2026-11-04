@@ -196,25 +196,19 @@ describe(generateLessonSpec, () => {
     expect(generateText).toHaveBeenCalledTimes(5);
   });
 
-  it("gives teaching screens both plans left bare a visual: a picture each when shared, tables to one in two when private", async () => {
+  it("keeps teaching screens planned with nothing bare, without planning again", async () => {
     const bare = oneSkillLesson({
       kinds: ["hook", "explanation", "guess", "explanation", "check", "application"],
       title: "Bare",
     });
 
-    const screens = bare.screens.map((screen, index) =>
-      index === 1 || index === 3 ? { ...screen, visual: null, visualKind: "none" } : screen,
+    const screens = bare.screens.map((screen) => ({ ...screen, visual: null, visualKind: "none" }));
+
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({ lessons: [{ ...bare, screens }] }),
     );
 
-    const plan = createGenerateTextResult({ lessons: [{ ...bare, screens }] });
-
-    vi.mocked(generateText)
-      .mockResolvedValueOnce(plan)
-      .mockResolvedValueOnce(plan)
-      .mockResolvedValueOnce(plan)
-      .mockResolvedValueOnce(plan);
-
-    const params = {
+    const { data } = await generateLessonSpec({
       activityTemplates: [],
       chapterTitle: "Temperature",
       courseTitle: "Weather",
@@ -222,18 +216,13 @@ describe(generateLessonSpec, () => {
       lessonDescription: "Temperatures below zero.",
       lessonTitle: "Below zero",
       level: "beginner",
-    } satisfies Parameters<typeof generateLessonSpec>[0];
+    });
 
-    const sharedPlan = await generateLessonSpec(params);
-    const privatePlan = await generateLessonSpec({ ...params, isPrivate: true });
-    const [shared] = sharedPlan.data.lessons;
-    const [own] = privatePlan.data.lessons;
+    expect(generateText).toHaveBeenCalledOnce();
 
-    expect(generateText).toHaveBeenCalledTimes(4);
-    expect(shared?.screens[1]).toMatchObject({ visual: "explanation", visualKind: "picture" });
-    expect(shared?.screens[3]).toMatchObject({ visual: "explanation", visualKind: "picture" });
-    expect(own?.screens[1]).toMatchObject({ visual: null, visualKind: "table" });
-    expect(own?.screens[3]).toMatchObject({ visual: null, visualKind: "none" });
+    expect(data.lessons[0]?.screens.map((screen) => screen.visualKind)).toStrictEqual(
+      screens.map(() => "none"),
+    );
   });
 
   it("plans a quick lesson as one lesson, never split, with the quick lesson rules only for it", async () => {

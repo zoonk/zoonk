@@ -1,6 +1,5 @@
-import { type VisualFloor } from "../_utils/visual-floor";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
-import { type LessonVisualKind, getVisualFloorIssues, isTeachingScreen } from "./lesson-visuals";
+import { type LessonVisualKind } from "./lesson-visuals";
 
 /**
  * `application` becomes a check (or an activity) set in a realistic situation. `guess` is the
@@ -80,6 +79,8 @@ const SCREEN_SECONDS: Record<LessonScreenKind, number> = {
   workedExample: 45,
 };
 
+const TEACHING_KINDS: ReadonlySet<LessonScreenKind> = new Set(["explanation", "workedExample"]);
+
 const PRACTICE_KINDS: ReadonlySet<LessonScreenKind> = new Set(["check", "activity", "application"]);
 
 const SKILL_TEACHING_KINDS: ReadonlySet<LessonScreenKind> = new Set([
@@ -98,13 +99,16 @@ type LessonSpecIssueCode =
   | "screenCount"
   | "skillCount"
   | "skillReference"
-  | "teachingVisual"
   | "tooLong"
   | "unpracticedSkill"
   | "untaughtSkill"
   | "workedExample";
 
 export type LessonSpecIssue = { code: LessonSpecIssueCode; detail: string };
+
+function isTeachingScreen(kind: LessonScreenKind): boolean {
+  return TEACHING_KINDS.has(kind);
+}
 
 function isPracticeScreen(kind: LessonScreenKind): boolean {
   return PRACTICE_KINDS.has(kind);
@@ -219,15 +223,7 @@ function getGuessIssue({ laterPart, screens }: LessonSpec) {
   );
 }
 
-function getShapeIssues({
-  novice,
-  spec,
-  visualFloor,
-}: {
-  novice: boolean;
-  spec: LessonSpec;
-  visualFloor?: VisualFloor;
-}) {
+function getShapeIssues({ novice, spec }: { novice: boolean; spec: LessonSpec }) {
   const { screens } = spec;
   const hooks = screens.filter((screen) => screen.kind === "hook").length;
   const applications = screens.filter((screen) => screen.kind === "application").length;
@@ -252,7 +248,6 @@ function getShapeIssues({
       detail: "An activity screen has no template from the catalog.",
     },
     getGuessIssue(spec),
-    ...(visualFloor ? getVisualFloorIssues({ screens, visualFloor }) : []),
   ].filter((issue) => issue !== false);
 }
 
@@ -308,24 +303,19 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
   ];
 }
 
-/**
- * `novice` is `readsNoviceRules` for the lesson, and `visualFloor` is `getVisualFloor`, whose floor
- * is checked when given.
- */
+/** `novice` is `readsNoviceRules` for the lesson. */
 export function getLessonSpecIssues({
   level,
   novice = false,
   spec,
-  visualFloor,
 }: {
   level: CourseLevel;
   novice?: boolean;
   spec: LessonSpec;
-  visualFloor?: VisualFloor;
 }): LessonSpecIssue[] {
   return [
     ...getSizeIssues({ level, spec }),
-    ...getShapeIssues({ novice, spec, visualFloor }),
+    ...getShapeIssues({ novice, spec }),
     ...getSkillIssues(spec),
   ];
 }
