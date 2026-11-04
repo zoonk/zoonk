@@ -4,7 +4,7 @@ struct TutorTurnView: View {
   let turn: TutorTurn
   let conversation: TutorConversation
   let buddyName: String
-  let showsAbout: Bool
+  let isPage: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
@@ -30,7 +30,7 @@ struct TutorTurnView: View {
 
   private var question: some View {
     VStack(alignment: .trailing, spacing: 4) {
-      if showsAbout {
+      if !isPage {
         turn.about.label
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
@@ -79,6 +79,7 @@ struct TutorTurnView: View {
       VStack(alignment: .leading, spacing: 12) {
         if let text = turn.answer {
           TutorAnswerText(text: text, linksEnabled: false, buddyName: buddyName)
+            .typeStyle(words)
         }
 
         if let failure, failure.isLimit {
@@ -107,7 +108,9 @@ struct TutorTurnView: View {
         VStack(alignment: .leading, spacing: 12) {
           TutorAnswerText(
             text: text, linksEnabled: turn.linksVerified && turn.status == .completed,
-            buddyName: buddyName)
+            buddyName: buddyName
+          )
+          .typeStyle(words)
 
           if turn.status == .running && !isStreamingHere {
             checkAgain
@@ -115,10 +118,12 @@ struct TutorTurnView: View {
         }
       } else if turn.status == .completed {
         Text("No answer available.", tableName: "Tutor", comment: "A buddy answer that has no text")
+          .typeStyle(words)
           .foregroundStyle(.mutedForeground)
       } else {
         VStack(alignment: .leading, spacing: 12) {
           Text("Thinking…", tableName: "Tutor", comment: "The buddy is writing its answer")
+            .typeStyle(words)
             .foregroundStyle(.mutedForeground)
             .accessibilityAddTraits(.updatesFrequently)
 
@@ -128,6 +133,10 @@ struct TutorTurnView: View {
         }
       }
     }
+  }
+
+  private var words: TypeStyle {
+    isPage ? .message : .body
   }
 
   private var checkAgain: some View {

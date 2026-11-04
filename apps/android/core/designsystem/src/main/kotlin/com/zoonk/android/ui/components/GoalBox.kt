@@ -65,7 +65,8 @@ const val MAX_GOAL_LENGTH = 2000
  * Main's goal box (the landing's and `/start`'s): "I want to …" and Build my plan in one panel.
  * [onSubmit] gets the trimmed words; an empty box asks for them unless [canSubmitEmpty] (material and
  * an intent are already chosen). [leading] holds the attach button; [placeholder] is a page's own
- * example, as the catalog's is. Enter sends, as main's box does.
+ * example, as the catalog's is. [hiddenLabel] drops the visible "I want to" for a label only TalkBack
+ * reads, as main's buddy box does. Enter sends, as main's box does.
  */
 @Composable
 fun GoalBox(
@@ -79,6 +80,7 @@ fun GoalBox(
     focusRequester: FocusRequester = remember { FocusRequester() },
     leading: (@Composable () -> Unit)? = null,
     placeholder: String? = null,
+    hiddenLabel: String? = null,
 ) {
     var isAskingForWords by rememberSaveable { mutableStateOf(false) }
 
@@ -100,7 +102,7 @@ fun GoalBox(
     }
 
     val line = if (isAskingForWords) stringResource(R.string.goal_box_write_first) else note
-    val label = stringResource(R.string.goal_box_label)
+    val label = hiddenLabel ?: stringResource(R.string.goal_box_label)
     val colors = MaterialTheme.colorScheme
     val words = MaterialTheme.zoonkType.lead.copy(color = colors.onSurface, lineHeight = GOAL_LINE_HEIGHT)
     val interaction = remember { MutableInteractionSource() }
@@ -116,19 +118,7 @@ fun GoalBox(
                 .border(if (focused) ring else 1.dp, if (focused) colors.primary else colors.outline, shape)
                 .padding(6.dp),
         ) {
-            LabelBeside(
-                label = {
-                    Text(
-                        label,
-                        Modifier
-                            .clearAndSetSemantics {}
-                            .clickable(interactionSource = null, indication = null) { focusRequester.requestFocus() }
-                            .padding(vertical = WORDS_PADDING),
-                        style = words.copy(fontWeight = FontWeight.Medium),
-                    )
-                },
-                modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-            ) {
+            val textField: @Composable () -> Unit = {
                 BasicTextField(
                     value = value,
                     onValueChange = { typed ->
@@ -168,6 +158,25 @@ fun GoalBox(
                         }
                     },
                 )
+            }
+
+            if (hiddenLabel == null) {
+                LabelBeside(
+                    label = {
+                        Text(
+                            label,
+                            Modifier
+                                .clearAndSetSemantics {}
+                                .clickable(interactionSource = null, indication = null) { focusRequester.requestFocus() }
+                                .padding(vertical = WORDS_PADDING),
+                            style = words.copy(fontWeight = FontWeight.Medium),
+                        )
+                    },
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                    field = textField,
+                )
+            } else {
+                Box(Modifier.padding(start = 10.dp, end = 10.dp)) { textField() }
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {

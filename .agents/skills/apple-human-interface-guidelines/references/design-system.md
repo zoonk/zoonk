@@ -54,7 +54,8 @@ App text takes one of main's type roles with `.typeStyle(_:)`: Geist for words a
 | `text-lead`                                                          | `.lead` in `.mutedForeground`                                          |
 | A lesson's question; its running text (`LessonBody`)                 | `.question`; `.lessonText`                                             |
 | A long answer the learner writes (an essay's box)                    | `.writing`                                                             |
-| Reading: the buddy's words, a question's context                     | `.reading`                                                             |
+| Reading: a question's context                                        | `.reading`                                                             |
+| The buddy's words on its page (a panel's are `.body`)                | `.message`                                                             |
 | Body, and any text without a role                                    | `.body`                                                                |
 | `ListRowTitle`, Today's queue rows included                          | `.rowTitle` (`ListRow` sets it)                                        |
 | `ListRowDescription`, meta                                           | `.meta` in `.mutedForeground`                                          |

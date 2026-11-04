@@ -152,7 +152,7 @@ private struct TutorConversationView<Header: View>: View {
           }
 
           TutorTurnView(
-            turn: turn, conversation: conversation, buddyName: buddyName, showsAbout: !isPage)
+            turn: turn, conversation: conversation, buddyName: buddyName, isPage: isPage)
         }
         .id(turn.id)
       }
