@@ -32,6 +32,8 @@ import com.zoonk.android.feature.account.AccountAvatar
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.characters.BuddyKind
+import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
@@ -180,8 +182,9 @@ fun SettingsScreen(
 private fun preferencesSummary(summary: LearnerSummary?): String {
     val locale = currentLocale()
     val language = locale.getDisplayLanguage(locale).replaceFirstChar { it.titlecase(locale) }
-    val buddy = summary?.buddy?.name
-    return if (buddy.isNullOrBlank()) language else stringResource(R.string.settings_preferences_summary, buddy, language)
+    // Main's `BuddyTabName`: the buddy's own name, or its kind's when the learner gave it none.
+    val buddy = summary?.buddy?.let { buddyName(BuddyKind.of(it.kind.value), it.name) }
+    return if (buddy == null) language else stringResource(R.string.settings_preferences_summary, buddy, language)
 }
 
 /**
