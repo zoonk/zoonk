@@ -1605,7 +1605,7 @@ msgstr "{language} {level}"
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "WSC4bY"
 msgid "Placement result"
-msgstr "Seviye belirleme sonucu"
+msgstr "Seviye tespit testi sonucu"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "zaINXN"
@@ -1627,13 +1627,13 @@ msgstr "{from, select, overview {Genel bakıştan} beginner {Başlangıçtan} in
 #: src/certificates/certificate-labels.ts
 msgctxt "u9fD-O"
 msgid "Placement result for {name}: {certificate}"
-msgstr "{name} için seviye belirleme sonucu: {certificate}"
+msgstr "{name} için seviye tespit testi sonucu: {certificate}"
 
 #: src/certificates/certificate-labels.ts
 #: src/certificates/placement-row.tsx
 msgctxt "vc8W5b"
 msgid "Placement result: {certificate}"
-msgstr "Seviye belirleme sonucu: {certificate}"
+msgstr "Seviye tespit testi sonucu: {certificate}"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "ZfBPq3"
@@ -1659,7 +1659,7 @@ msgstr "{course}, Zoonk’ta tamamlandı"
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "2i1LGp"
 msgid "{certificate} placement result"
-msgstr "{certificate} seviye belirleme sonucu"
+msgstr "{certificate} seviye tespit testi sonucu"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "B-Co6Y"
@@ -1735,7 +1735,7 @@ msgstr "Seviyeler, CEFR (Common European Framework of Reference for Languages) i
 #: src/certificates/certificate-meaning.tsx
 msgctxt "_1AldP"
 msgid "Zoonk's placement test asks 3 reading questions, 3 listening questions and one sentence to say aloud, each adapted to the answers before it. It estimated this level from those {count, plural, one {# answer} other {# answers}}; skills the learner skipped aren't counted."
-msgstr "Zoonk’un seviye belirleme testi, önceki cevaplara göre uyarlanan 3 okuma sorusu, 3 dinleme sorusu ve sesli söylenecek bir cümle içerir. Seviye, bu {count, plural, other {# cevaba}} göre tahmin edildi; öğrencinin atladığı beceriler hesaba katılmaz."
+msgstr "Zoonk’un seviye tespit testinde 3 okuma sorusu, 3 dinleme sorusu ve sesli söylenecek bir cümle bulunur; her biri önceki cevaplara göre uyarlanır. Bu seviye, verilen {count, plural, other {# cevaba}} göre tahmin edildi; atlanan beceriler hesaba katılmaz."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "X1QrOq"
@@ -1806,7 +1806,7 @@ msgstr "{level} tamamlandı!"
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "BAZS05"
 msgid "Your {certificate} placement result is ready."
-msgstr "{certificate} seviye belirleme sonucun hazır."
+msgstr "{certificate} seviye tespit testi sonucun hazır."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "lopydx"
@@ -1896,7 +1896,7 @@ msgstr "Doğrulanmış sertifika · Zoonk tarafından verildi"
 #: src/certificates/certificate-page.tsx
 msgctxt "PDKCn3"
 msgid "Measured by Zoonk's placement test on {date}."
-msgstr "{date} tarihinde Zoonk’un seviye belirleme testiyle ölçüldü."
+msgstr "{date} tarihinde Zoonk’un seviye tespit testiyle ölçüldü."
 
 #: src/certificates/certificate-page.tsx
 msgctxt "faSg-e"
@@ -1924,7 +1924,7 @@ msgstr "İndir"
 #: src/certificates/certificate-share.tsx
 msgctxt "dkg2AU"
 msgid "My {language} placement result on Zoonk: {level}."
-msgstr "Zoonk’taki {language} seviye belirleme sonucum: {level}."
+msgstr "Zoonk’taki {language} seviye tespit testi sonucum: {level}."
 
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
@@ -2024,7 +2024,7 @@ msgstr "Henüz sertifikan yok"
 #: src/certificates/certificates-screen.tsx
 msgctxt "SHp4oN"
 msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
-msgstr "Bir kursu veya dil seviyesini tamamladığında sertifikan burada görünür. Ücretsiz olarak yazdırıp paylaşabilirsin. Seviye belirleme testi sonucun da burada görünür."
+msgstr "Bir kursu veya dil seviyesini tamamladığında, ücretsiz yazdırıp paylaşabileceğin sertifikan burada görünür. Seviye tespit testinin sonucu da burada görünür."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"

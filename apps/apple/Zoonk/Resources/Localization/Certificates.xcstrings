@@ -126,7 +126,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@ seviye belirleme sonucu"
+            "value" : "%1$@ %2$@ seviye tespit testi sonucu"
           }
         }
       }
@@ -1668,7 +1668,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bir kursu veya dil seviyesini tamamladığında sertifikan burada görünür. Ücretsiz olarak yazdırıp paylaşabilirsin. Seviye belirleme testi sonucun da burada görünür."
+            "value" : "Bir kursu veya dil seviyesini tamamladığında, ücretsiz yazdırıp paylaşabileceğin sertifikan burada görünür. Seviye tespit testinin sonucu da burada görünür."
           }
         }
       }
@@ -2764,7 +2764,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk’taki %1$@ seviye belirleme sonucum: %2$@."
+            "value" : "Zoonk’taki %1$@ seviye tespit testi sonucum: %2$@."
           }
         }
       }
@@ -3118,7 +3118,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seviye belirleme sonucu"
+            "value" : "Seviye tespit testi sonucu"
           }
         }
       }
@@ -3183,7 +3183,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ için seviye belirleme sonucu: %2$@ %3$@"
+            "value" : "%1$@ için seviye tespit testi sonucu: %2$@ %3$@"
           }
         }
       }
@@ -3248,7 +3248,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seviye belirleme sonucu: %1$@ %2$@"
+            "value" : "Seviye tespit testi sonucu: %1$@ %2$@"
           }
         }
       }

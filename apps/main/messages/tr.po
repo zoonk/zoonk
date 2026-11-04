@@ -3556,7 +3556,7 @@ msgstr "Adın"
 #: src/lib/certificates/certificate-view.ts
 msgctxt "WSC4bY"
 msgid "Placement result"
-msgstr "Seviye belirleme sonucu"
+msgstr "Seviye tespit testi sonucu"
 
 #. The kind of document, above the learner's name on a certificate.
 #: src/lib/certificates/certificate-view.ts
@@ -3586,7 +3586,7 @@ msgstr "{count, plural, other {# cevaba göre tahmin edildi.}} Bu resmî bir sı
 #: src/lib/certificates/certificate-view.ts
 msgctxt "fPhAJC"
 msgid "Measured by Zoonk's placement test · aligned with the CEFR"
-msgstr "Zoonk’un seviye belirleme testiyle ölçüldü · CEFR ile uyumlu"
+msgstr "Zoonk’un seviye tespit testiyle ölçüldü · CEFR ile uyumlu"
 
 #. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
 #: src/lib/certificates/certificate-view.ts
