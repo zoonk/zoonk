@@ -1,7 +1,7 @@
 "use client";
 
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
-import { type RefObject, useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useLearnAnalytics } from "../../learn-context";
 import { type CallHangUpReason } from "./live-call-ending";
 import {
@@ -41,11 +41,11 @@ const KINDS = {
  * count too. A call refused before it was reserved had no connection and sends nothing.
  */
 export function useCallReport({
+  getConnectionTurns,
   kind,
-  turnsRef,
 }: {
+  getConnectionTurns: () => TranscriptTurn[];
   kind: LanguageConversationView["kind"];
-  turnsRef: RefObject<TranscriptTurn[]>;
 }) {
   const analytics = useLearnAnalytics();
   const gaps = useRef(NO_REPLY_GAPS);
@@ -76,7 +76,7 @@ export function useCallReport({
 
       sent.current = true;
       const at = Date.now();
-      const turns = toConversationTurns(turnsRef.current);
+      const turns = toConversationTurns(getConnectionTurns());
 
       analytics.track({
         name: "Call Ended",
@@ -91,7 +91,7 @@ export function useCallReport({
         },
       });
     },
-    [analytics, kind, turnsRef],
+    [analytics, getConnectionTurns, kind],
   );
 
   return useMemo(() => ({ live, record, reserved, send }), [live, record, reserved, send]);

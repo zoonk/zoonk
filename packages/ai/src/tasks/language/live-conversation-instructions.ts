@@ -58,22 +58,12 @@ type LiveConversationLanguages = { targetLanguage: string; learnerLanguage: stri
 
 export type LiveConversationInstructionsParams = LiveConversationRole &
   LiveConversationLanguages & {
+    continuesCall: boolean;
     scenario: GenerateConversationScenarioSchema;
     level: CefrLevel;
     /** A memory fact a role-play character may bring up. Other roles leave it out. */
     learnerNote?: string;
   };
-
-const EXAM_TASK_TEMPLATES = {
-  examiner: selectPromptVariants({
-    template: examTaskTemplate,
-    variants: { examiner: true, partner: false },
-  }),
-  partner: selectPromptVariants({
-    template: examTaskTemplate,
-    variants: { examiner: false, partner: true },
-  }),
-} as const;
 
 /**
  * An examiner keeps the exam's standard wording at every level, as the real one does; the other
@@ -87,27 +77,33 @@ function getExamTaskLevelRules({ examTask, level }: { examTask: ExamTaskRole; le
   return `Keep the exam's standard wording at every level: the candidate is preparing for ${examTask.title}.`;
 }
 
-function getRoleRules(params: LiveConversationRole & { learnerNote?: string; level: CefrLevel }) {
+function getRoleRules(params: LiveConversationRole & { learnerNote?: string; level: CefrLevel }): {
+  levelRules: string;
+  template: string;
+  variants: Readonly<Record<string, boolean>>;
+} {
   if (params.kind === "unit") {
     return {
       levelRules: LEVEL_RULES[params.level],
-      template: selectPromptVariants({
-        template: rolePlayTemplate,
-        variants: { learnerNote: Boolean(params.learnerNote) },
-      }),
+      template: rolePlayTemplate,
+      variants: { learnerNote: Boolean(params.learnerNote) },
     };
   }
 
   if (params.kind === "examTask") {
+    const { role } = params.examTask.task;
+
     return {
       levelRules: getExamTaskLevelRules({ examTask: params.examTask, level: params.level }),
-      template: EXAM_TASK_TEMPLATES[params.examTask.task.role],
+      template: examTaskTemplate,
+      variants: { examiner: role === "examiner", partner: role === "partner" },
     };
   }
 
   return {
     levelRules: SPEAKING_MOCK_LEVEL_RULES[params.exam](params.level),
     template: SPEAKING_MOCK_TEMPLATES[params.exam],
+    variants: {},
   };
 }
 
@@ -178,7 +174,7 @@ export function getLiveConversationLanguageName(
 export function buildLiveConversationInstructions(
   params: LiveConversationInstructionsParams,
 ): string {
-  const { learnerLanguage, scenario, targetLanguage } = params;
+  const { continuesCall, learnerLanguage, scenario, targetLanguage } = params;
 
   const { userLanguageName } = getLanguagePromptContext({
     targetLanguage,
@@ -186,23 +182,32 @@ export function buildLiveConversationInstructions(
   });
 
   const targetLanguageName = getLiveConversationLanguageName(params);
-  const { levelRules, template: roleTemplate } = getRoleRules(params);
+  const { levelRules, template: roleTemplate, variants } = getRoleRules(params);
 
-  const role = fillTemplate(roleTemplate, {
-    ...getExamTaskValues(params),
-    CHARACTER_BRIEF: scenario.characterBrief,
-    CHARACTER_NAME: scenario.character.name,
-    CHARACTER_PLACE: scenario.character.place,
-    CHARACTER_ROLE: scenario.character.role,
-    HINTS: scenario.hints.map((hint) => `- "${hint}"`).join("\n"),
-    LEARNER_NOTE: params.learnerNote ?? "",
-    OPENING_LINE: scenario.openingLine,
-    SITUATION: scenario.situation,
-    TITLE: scenario.title,
-  });
+  const role = fillTemplate(
+    selectPromptVariants({
+      template: roleTemplate,
+      variants: { ...variants, starting: !continuesCall },
+    }),
+    {
+      ...getExamTaskValues(params),
+      CHARACTER_BRIEF: scenario.characterBrief,
+      CHARACTER_NAME: scenario.character.name,
+      CHARACTER_PLACE: scenario.character.place,
+      CHARACTER_ROLE: scenario.character.role,
+      HINTS: scenario.hints.map((hint) => `- "${hint}"`).join("\n"),
+      LEARNER_NOTE: params.learnerNote ?? "",
+      OPENING_LINE: scenario.openingLine,
+      SITUATION: scenario.situation,
+      TITLE: scenario.title,
+    },
+  );
 
   const instructions = fillTemplate(
-    template.replace("{{ROLE}}", () => role.trim()),
+    selectPromptVariants({ template, variants: { resuming: continuesCall } }).replace(
+      "{{ROLE}}",
+      () => role.trim(),
+    ),
     {
       LEARNER_LANGUAGE: userLanguageName,
       LEVEL_RULES: levelRules,

@@ -14,6 +14,7 @@ import com.zoonk.android.feature.livecall.CallReservation
 import com.zoonk.android.feature.livecall.LiveServerEvent
 import com.zoonk.android.feature.livecall.characterSays
 import com.zoonk.android.feature.livecall.learnerSays
+import com.zoonk.android.feature.livecall.setup
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
@@ -80,6 +81,61 @@ class ConversationScreenshots {
         harness.goLive(compose)
         harness.transport.onLost()
         shot("problem-dropped-phone")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectPaused() = reconnectRefused(CallReservation.CallsPaused, "paused")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectInProgress() = reconnectRefused(CallReservation.CallInProgress, "in-progress")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectLimited() = reconnectRefused(CallReservation.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)), "limit")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectPlusRequired() = reconnectRefused(CallReservation.PlusRequired, "plus")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-mdpi")
+    fun reconnectInProgressTablet() = reconnectRefused(CallReservation.CallInProgress, "in-progress-tablet")
+
+    private fun reconnectRefused(
+        refusal: CallReservation,
+        name: String,
+    ) {
+        val harness = ConversationHarness()
+        harness.client.reservations = ArrayDeque(listOf(CallReservation.Ready(setup()), refusal))
+        harness.show(compose)
+        harness.goLive(compose)
+        harness.transport.onEvent(characterSays("¡Hola! Bienvenido al Café Central. ¿Qué le pongo?"))
+        harness.transport.onLost()
+        compose.onNodeWithText("Call again").performClick()
+        shot("reconnect-$name")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun calledAgain() {
+        val harness = ConversationHarness()
+        harness.client.reservations =
+            ArrayDeque(listOf(CallReservation.Ready(setup()), CallReservation.Ready(setup(talkSeconds = 120, continuesCall = true))))
+        harness.show(compose)
+        harness.goLive(compose)
+        harness.transport.onEvent(characterSays("¡Hola! Bienvenido al Café Central. ¿Qué le pongo?"))
+        harness.transport.onEvent(learnerSays("Hola, quería un café con leche, por favor.", 1000.0, 3200.0))
+        harness.transport.onEvent(characterSays("Muy bien. ¿Algo más?"))
+        shot("again-0-before-drop-phone")
+        harness.transport.onLost()
+        shot("again-1-dropped-phone")
+        compose.onNodeWithText("Call again").performClick()
+        shot("again-2-calling-phone")
+        harness.transport.onEvent(LiveServerEvent.Started)
+        harness.transport.onEvent(characterSays("Perdone, se cortó. Un café con leche, entonces. ¿Algo más?"))
+        shot("again-3-live-phone")
     }
 
     private fun walk(
