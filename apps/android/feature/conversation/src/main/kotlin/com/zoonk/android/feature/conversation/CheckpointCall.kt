@@ -159,7 +159,7 @@ internal fun CheckpointCallContent(
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
             CallFrame(title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }, onClose = exits::close) {
-                item(key = "loading") { PageLoading(Modifier.callItem()) }
+                item(key = "loading") { PageLoading(Modifier.fillParentMaxSize()) }
             }
         }
 

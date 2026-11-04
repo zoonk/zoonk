@@ -165,7 +165,7 @@ internal fun ConversationContent(
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
             CallFrame(title = {}, onClose = exits::close) {
-                item(key = "loading") { PageLoading(Modifier.callItem()) }
+                item(key = "loading") { PageLoading(Modifier.fillParentMaxSize()) }
             }
         }
 

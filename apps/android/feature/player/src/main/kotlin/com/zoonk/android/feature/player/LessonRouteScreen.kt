@@ -90,7 +90,7 @@ fun LessonRouteScreen(
 
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            LessonFrame(title = null, onClose = exits::close) { PageLoading() }
+            LessonFrame(title = null, onClose = exits::close, scrolls = false) { PageLoading() }
         }
 
         is LoadState.Failed -> {
