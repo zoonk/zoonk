@@ -55,6 +55,91 @@ function choiceOption(name: string, topic: string) {
 }
 
 describe(normalizeSkillGraph, () => {
+  it("keeps the first subject course even if the model calls it supporting", () => {
+    const source = rawGraph([
+      rawSkill({ course: "physics", key: "phenomena" }),
+      rawSkill({ key: "algebra" }),
+      rawSkill({ course: "physics", key: "application", phase: 2, prerequisites: ["algebra"] }),
+    ]);
+
+    const graph = normalizeSkillGraph({
+      ...source,
+      courses: source.courses.map((course) => ({ ...course, supporting: true })),
+    });
+
+    expect(graph.skills.map((skill) => [skill.key, skill.phase])).toStrictEqual([
+      ["phenomena", 1],
+      ["algebra", 2],
+      ["application", 2],
+    ]);
+
+    expect(graph.courses.every((course) => !("supporting" in course))).toBe(true);
+  });
+
+  it("removes a supporting-only phase without losing its skills", () => {
+    const source = rawGraph([
+      rawSkill({ course: "physics", key: "phenomena", phase: 2 }),
+      rawSkill({ key: "algebra" }),
+      rawSkill({ course: "physics", key: "application", phase: 3, prerequisites: ["algebra"] }),
+    ]);
+
+    const graph = normalizeSkillGraph({
+      ...source,
+      courses: source.courses.map((course) => ({ ...course, supporting: course.key === "math" })),
+    });
+
+    expect(graph.phases.map((phase) => phase.title)).toStrictEqual([
+      "Classical physics",
+      "Empty phase",
+    ]);
+
+    expect(graph.skills.map((skill) => [skill.key, skill.phase])).toStrictEqual([
+      ["phenomena", 1],
+      ["algebra", 2],
+      ["application", 2],
+    ]);
+  });
+
+  it("defers supporting skills to the first subject capability that uses them", () => {
+    const source = rawGraph([
+      rawSkill({ course: "physics", key: "phenomena" }),
+      rawSkill({ key: "algebra" }),
+      rawSkill({ key: "optimization", prerequisites: ["algebra"] }),
+      rawSkill({ key: "probability", prerequisites: ["algebra"] }),
+      rawSkill({ key: "calculus", prerequisites: ["algebra"] }),
+      rawSkill({ course: "physics", key: "amplitudes", prerequisites: ["probability"] }),
+      rawSkill({
+        course: "physics",
+        key: "formal-models",
+        phase: 2,
+        prerequisites: ["optimization", "calculus", "amplitudes"],
+      }),
+    ]);
+
+    const courses = source.courses.map((course) => ({
+      ...course,
+      supporting: course.key === "math",
+    }));
+
+    const graph = normalizeSkillGraph({ ...source, courses });
+
+    expect(graph.skills.map((skill) => [skill.key, skill.phase])).toStrictEqual([
+      ["phenomena", 1],
+      ["algebra", 1],
+      ["probability", 1],
+      ["amplitudes", 1],
+      ["optimization", 2],
+      ["calculus", 2],
+      ["formal-models", 2],
+    ]);
+
+    expect(graph.estimatedHours).toBe(7);
+
+    expect(graph.skills.map((skill) => skill.key).toSorted()).toStrictEqual(
+      source.skills.map((skill) => skill.key).toSorted(),
+    );
+  });
+
   it("merges duplicate skills by key or name and keeps edges pointing at the survivor", () => {
     const graph = normalizeSkillGraph(
       rawGraph([

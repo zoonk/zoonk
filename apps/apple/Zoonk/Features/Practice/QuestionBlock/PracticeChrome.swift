@@ -412,30 +412,34 @@ struct PracticeLoadFailureView: View {
   let retry: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        if error == .network {
-          Text(
-            "You're offline", tableName: "Practice",
-            comment: "Title when a practice screen can't load offline.")
-        } else {
-          Text(
-            "This didn't load", tableName: "Practice",
-            comment: "Title when a practice screen can't load.")
+    if error == .notFound {
+      NotFoundView()
+    } else {
+      ContentUnavailableView {
+        Label {
+          if error == .network {
+            Text(
+              "You're offline", tableName: "Practice",
+              comment: "Title when a practice screen can't load offline.")
+          } else {
+            Text(
+              "This didn't load", tableName: "Practice",
+              comment: "Title when a practice screen can't load.")
+          }
+        } icon: {
+          Image(systemName: error == .network ? "wifi.slash" : "exclamationmark.triangle")
         }
-      } icon: {
-        Image(systemName: error == .network ? "wifi.slash" : "exclamationmark.triangle")
+      } description: {
+        Text(
+          "Check your connection and try again.", tableName: "Practice",
+          comment: "Description when a practice screen can't load.")
+      } actions: {
+        Button(action: retry) {
+          Text("Try again", tableName: "Practice", comment: "Loads a practice screen again.")
+        }
+        .buttonStyle(.bordered)
       }
-    } description: {
-      Text(
-        "Check your connection and try again.", tableName: "Practice",
-        comment: "Description when a practice screen can't load.")
-    } actions: {
-      Button(action: retry) {
-        Text("Try again", tableName: "Practice", comment: "Loads a practice screen again.")
-      }
-      .buttonStyle(.bordered)
+      .lonePage()
     }
-    .lonePage()
   }
 }

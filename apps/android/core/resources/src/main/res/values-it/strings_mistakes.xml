@@ -13,7 +13,6 @@
   "mistakes_empty_open": "eaef3eece99aa5f8f373efb84763fe2a594791b701b56f0e7cc0393b6045e4f5",
   "mistakes_fixed_count": "cbdb02ebfba5dd088d6ddd3e89385c0a377d646b09d72342df807434ff49e2e5",
   "mistakes_more_failed": "f14cbfa9e84bb4ff9a1e53669a8b36787fa33876af27d279d68e76988b6509b4",
-  "mistakes_not_found_description": "14952acd20bc5a88dd1c2868ffb2ccaf0e303f86351b412ac74c1f514d40e6a8",
   "mistakes_notebook_title": "6a19e87d36aa8f8e2622bef4cac0349f0dc48209b69b3f50342098a9adaae185",
   "mistakes_nothing_description": "28c32fb9910e0242ffc7e49eb7e13271f03e243dd9935d6d92a64d33e528d1f5",
   "mistakes_nothing_title": "bd6a11325eaab387a133fff53d3d4f1b37a065edb19bdf5966e2e1bef10f30e8",
@@ -43,7 +42,6 @@
         <item quantity="many">%d errori corretti</item>
         <item quantity="other">%d errori corretti</item>
     </plurals>
-    <string name="mistakes_not_found_description">Potrebbero essere stati corretti o rimossi.</string>
     <string name="mistakes_nothing_title">Ancora niente su cui esercitarti</string>
     <string name="mistakes_nothing_description">Puoi esercitarti sugli errori a partire dal giorno dopo averli fatti.</string>
     <string name="mistakes_notebook_title">Quaderno degli errori</string>

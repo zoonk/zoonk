@@ -6693,6 +6693,65 @@
         }
       }
     },
+    "We couldn't open this step. Try again." : {
+      "comment" : "Under a buddy answer whose link to a step of the day didn't open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten diesen Schritt nicht öffnen. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos abrir este paso. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’ouvrir cette étape. Réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti ad aprire questo passaggio. Riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このステップを開けませんでした。もう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 단계를 열지 못했어요. 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się przejść do tego kroku. Spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não conseguiu abrir este passo. Tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu adımı açamadık. Tekrar dene."
+          }
+        }
+      }
+    },
     "We couldn't save your answer. Try again." : {
       "comment" : "Answering a plan change the buddy proposed failed",
       "localizations" : {

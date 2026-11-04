@@ -1,7 +1,7 @@
 import SwiftUI
 
 extension PracticeHooks {
-  static func routed(by router: AppRouter) -> PracticeHooks {
+  static func routed(by router: AppRouter, voice: VoiceServices) -> PracticeHooks {
     PracticeHooks(
       navigate: { destination in
         switch destination {
@@ -33,9 +33,11 @@ extension PracticeHooks {
               missed: target.missed),
             quote: target.question))
       },
-      checkpointCall: { blockId, _ in
-        AnyView(ConversationScreen(checkpointBlockId: blockId))
-      },
+      checkpointCall: PracticeCheckpointCall(
+        read: { blockId, token in
+          try await voice.liveCalls.checkpointCall(blockId: blockId, token: token)
+        },
+        screen: { blockId in AnyView(ConversationScreen(checkpointBlockId: blockId)) }),
       ceremony: { milestone, onClose in
         AnyView(MilestoneCeremony(milestone: Milestone(milestone), onClose: onClose))
       })
@@ -77,7 +79,7 @@ extension TutorPlaces {
       case .mission(let opens):
         switch opens {
         case .case1(let block):
-          router.open(blockID: block.blockId)
+          Task { await router.open(blockID: block.blockId) }
         case .case7(let area):
           router.open(.chapter(chapterId: area.areaId))
         case .case2:

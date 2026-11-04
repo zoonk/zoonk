@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -60,7 +59,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.mainActionWidth
@@ -88,7 +87,7 @@ fun ExamScreen(
         when {
             summary is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { app.learnerSummary.summary.refresh() } })
             summary.value == null -> ExamLoading()
-            else -> ExamNotFound(navigator)
+            else -> NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) })
         }
     }
 }
@@ -127,10 +126,23 @@ internal fun GoalExam(
         PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = refresh, modifier = Modifier.fillMaxSize()) {
             val current = state
             when {
-                loaded != null -> ExamPage(loaded, options.value, viewModel, app, navigator, listState)
-                current is LoadState.Failed && current.error != ApiError.NotFound -> LoadFailedMessage(onRetry = refresh)
-                current is LoadState.Failed || current is LoadState.Empty -> ExamNotFound(navigator)
-                else -> ExamLoading()
+                loaded != null -> {
+                    ExamPage(loaded, options.value, viewModel, app, navigator, listState)
+                }
+
+                current is LoadState.Failed && current.error != ApiError.NotFound -> {
+                    LoadFailedMessage(onRetry = refresh)
+                }
+
+                current is LoadState.Failed || current is LoadState.Empty -> {
+                    NotFoundMessage(
+                        onGoHome = { navigator.showRoot(AppTab.Today) },
+                    )
+                }
+
+                else -> {
+                    ExamLoading()
+                }
             }
         }
     }
@@ -155,18 +167,6 @@ private fun ExamFrame(
 @Composable
 private fun ExamLoading() {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-}
-
-/** The goal in the switcher isn't an exam (main's not-found page in the frame). */
-@Composable
-private fun ExamNotFound(navigator: AppNavigator) {
-    StatusMessage(
-        icon = R.drawable.ic_search_off,
-        title = stringResource(R.string.exam_not_found_title),
-        description = stringResource(R.string.exam_not_found_description),
-    ) {
-        Button(onClick = { navigator.showRoot(AppTab.Today) }) { Text(stringResource(R.string.exam_go_to_today)) }
-    }
 }
 
 /**

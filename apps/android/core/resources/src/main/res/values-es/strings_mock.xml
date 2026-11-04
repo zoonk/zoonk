@@ -20,7 +20,6 @@
   "mock_flagged_count": "5168990bf6b4f77e13d018619ef20502ef5e1cbbb670597aafd2b25baa85781e",
   "mock_full_day": "aba5208147c0ead68f1cfdeed240286a1c09fcb08afbb8f1a343ee42d89d87fc",
   "mock_full_day_number": "230468a22a922be0a9e9bda577fb5ee6c52691fb31e271b5e1cfd65f2de828cb",
-  "mock_go_to_today": "97bb4e8018aae09427fb0a79f5a5129b6960cfa1c892bebfbd707d0559cf0f64",
   "mock_grading": "b8095fab361bc0e8abf96f3f7d3733370c935cf92efede21c86701af35ef7781",
   "mock_half_day": "c9aa60a1f9257f221eb24352183e4b6809eae865fdda2d7600ce664d9a6e9ede",
   "mock_half_day_number": "bff670142d83ce648546de0f983ac03fc43b83b1242a0d287f9150a2de1b724f",
@@ -54,8 +53,6 @@
   "mock_next": "aa576fbce6dca6734f5c8d469049686539f01d855ce026d736d3985b45bbfb55",
   "mock_next_named": "9904de3c8f18c8c05149969dea521ca098ef6c5561e21c35795cd211b3180211",
   "mock_next_section": "b5db20232403377ed300a790a1f6c31254537dae31f6558ef55540fb54b867fd",
-  "mock_not_found_description": "e872145d6b5d729171309f8fd5bf197ab7f6ebfa133b5684c655a77b2ab46bd1",
-  "mock_not_found_title": "e7a15fb4c11c517b72acfe3b74359cd0c2e98a9a8d2cd058f5e6d09d87d212f3",
   "mock_not_saved_retrying": "2416c58a2756729a04309eba3fe9fbe7b7c123f19e53ac2e52f7a227c3b3690a",
   "mock_place": "3c62648fa7cdc44e34015b2293ac8325bfbb48b1e822a7c6586aed1ebcb86a22",
   "mock_progress_label": "b6cbf22d9e1486fb12a7c99ef358f520323098370a3a5c6ccc1f448e686390b3",
@@ -139,9 +136,6 @@
     <string name="mock_label">Simulacro de examen</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
     <string name="mock_label_shape">Simulacro · %1$s</string>
-    <string name="mock_not_found_title">No pudimos encontrar esta página</string>
-    <string name="mock_not_found_description">El enlace puede estar desactualizado o mal escrito.</string>
-    <string name="mock_go_to_today">Ir a Hoy</string>
     <!-- What screen readers call the section's countdown. -->
     <string name="mock_time_left_label">Tiempo restante</string>
     <!-- Under the section's countdown, such as "1:24:09". -->

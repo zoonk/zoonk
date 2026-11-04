@@ -122,6 +122,7 @@ struct ZoonkApp: App {
 
 private struct AppWindow: View {
   @Environment(SessionStore.self) private var session
+  @Environment(VoiceServices.self) private var voice
   @State private var router: AppRouter
   @SceneStorage(TestOutScreen.openResultKey) private var openTestOutResult: URL?
   @State private var restoresTestOutResult = true
@@ -141,7 +142,7 @@ private struct AppWindow: View {
       // Made from the router the window keeps: `init` runs again on every update of the app.
       .environment(router)
       .environment(\.lessonPlayerRoutes, .routed(by: router))
-      .environment(\.practiceHooks, .routed(by: router))
+      .environment(\.practiceHooks, .routed(by: router, voice: voice))
       .environment(\.tutorPlaces, .routed(by: router))
       .onOpenURL { url in
         if !router.open(url: url) {

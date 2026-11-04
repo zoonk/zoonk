@@ -7942,6 +7942,65 @@
         }
       }
     },
+    "Each day's lessons, reviews and practice for your goal." : {
+      "comment" : "What Today is for, above the way to log back in after a session ended",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tägliche Lektionen, Wiederholungen und Übungen für dein Ziel."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las lecciones, los repasos y la práctica de cada día para alcanzar tu objetivo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les leçons, révisions et entraînements du jour pour ton objectif."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lezioni, ripassi ed esercizi quotidiani per raggiungere il tuo obiettivo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標に向けて、毎日レッスンや復習、練習に取り組めます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표에 맞춘 매일의 레슨과 복습, 연습을 확인해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lekcje, powtórki i ćwiczenia na każdy dzień, by osiągnąć cel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As aulas, revisões e práticas de cada dia para seu objetivo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedefin için günlük dersler, tekrarlar ve alıştırmalar."
+          }
+        }
+      }
+    },
     "Earlier unfinished work · %@" : {
       "comment" : "Lessons left from earlier days, with how many",
       "localizations" : {

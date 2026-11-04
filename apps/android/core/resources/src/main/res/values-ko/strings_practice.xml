@@ -3,7 +3,6 @@
 {
   "practice_already_answered": "4362b9ff579957e8eff5748053f24f439607f00e56b27a3a42906c9014015f7e",
   "practice_check": "cfd41d1ae4beb7fa6c6fc08f6989a1932aad31594d32b2a35c4251e4795d409d",
-  "practice_close": "d0ffd13b0e7187cbffad9fec9b28ee7c69a9fce023c0ef934586eecc03e1fd7e",
   "practice_continue": "da13e3dd6965d849db62bd46de1099218078a3364683e7b3f26db8abac2fb254",
   "practice_count": "1cb11f09c6d3e5240895ddae539b2b459136de1dd519cb981638ae6d578b45e5",
   "practice_done_review": "2e8e0b4e3c4cf93cdf235d5d1f0253bc434c55061adfe6143de659b0db7d5643",
@@ -18,8 +17,6 @@
   "practice_net_tally": "66732a0b7a12322ee2ff9fa204c0c15392b517c17600bf1bd0d3000471fbddb1",
   "practice_net_wrong": "355ad1ffd5f1217667ce64b1914f4aaacaff13ead53f83463966af9e58e09deb",
   "practice_next": "5f03a455487d7af03dc5a112100cf4e94170bfdcceb230cb932f339b9bf56cd7",
-  "practice_not_found_description": "be51d92ef26dafdc910e706670b9bf24d5d06b3c6885932b1f0622c967040d54",
-  "practice_not_found_title": "47bce236f490cb951bd50507329c8f99d6758221beeaf18fac8508072af34b21",
   "practice_pause_failed": "0b39b76377c1e52b4eb3108a93a8f76e80d3e3b1cbd2d81039d5dc86a6a6be32",
   "practice_pause_stop": "3f5c54990ffb3414bb69cd90169992029c1707c22d1e5bad9ef92a880f565b01",
   "practice_pause_text": "3b923785d2e80ff38d4b9ad90076633ff6ccc3612a0c4cea15f6d3bdacc882da",
@@ -76,7 +73,4 @@
     <string name="practice_pause_failed">학습을 중단하지 못했어요. 다시 시도해 보세요.</string>
     <string name="practice_done_title">연습 완료</string>
     <string name="practice_done_review">복습 완료</string>
-    <string name="practice_not_found_title">이제 이 문제를 볼 수 없어요</string>
-    <string name="practice_not_found_description">이미 끝났거나 다른 곳으로 옮겨졌을 수 있어요. 오늘 화면에서 다음 학습을 확인하세요.</string>
-    <string name="practice_close">닫기</string>
 </resources>

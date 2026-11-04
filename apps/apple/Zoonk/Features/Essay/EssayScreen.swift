@@ -15,14 +15,7 @@ struct EssayScreen: View {
         case .idle, .loading:
           ProgressView()
         case .empty, .failed(.notFound):
-          ContentUnavailableView {
-            Label {
-              Text("This essay isn't here", tableName: "Essay", comment: "A missing essay block")
-            } icon: {
-              Image(systemName: "text.document")
-            }
-          }
-          .lonePage()
+          NotFoundView()
         case .failed:
           ContentUnavailableView {
             Label {
