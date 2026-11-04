@@ -85,17 +85,23 @@ struct ChallengeStepView: View {
         .foregroundStyle(.secondary)
 
       ForEach(Array(content.team.enumerated()), id: \.offset) { _, slot in
-        Label {
+        let name = name(for: slot.id)
+
+        AccessibilityStack(spacing: 10, stackedSpacing: 8) {
+          avatar(name, slot: slot)
+
           VStack(alignment: .leading) {
-            Text(name(for: slot.id))
-              .font(.subheadline.weight(.medium))
-            Text(slot.expertise)
-              .font(.footnote)
-              .foregroundStyle(.secondary)
+            Text(name)
+              .font(.subheadline.weight(.semibold))
+
+            if !slot.ai {
+              Text(named(slot.role))
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            }
           }
-        } icon: {
-          Image(systemName: slot.ai ? "sparkles" : "person.crop.circle")
         }
+        .accessibilityElement(children: .combine)
       }
 
       Group {
