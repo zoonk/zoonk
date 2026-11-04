@@ -138,7 +138,6 @@
   "today_see_you_next_session": "c3795f196ebb73513891a222b8e4e7a9736749fcf3d09da0f028a7816bfec9f1",
   "today_see_you_tomorrow": "2496c43e185a85c78c22dc5d20149fbef19c910f0fac3b3c647bdd0a3bd37ca5",
   "today_see_your_plan": "62ee8faa0cafebfcff3d0fc1cfa829cfb7b9e6fba07353f60e783397d829fa55",
-  "today_session_ended_description": "0e698528262a5cc26454d287eda25adc076de8373a75a1cbd5119e35a7fda873",
   "today_setting_up": "6ebf5cdfd41efebca4c2ed4a2ed9273e661d962b928b774f93c02f596004aa5e",
   "today_setting_up_detail": "193a19c0dcac36cb5414eb253837b3bdc3a5bf2d75039e67562dbadfc2a97780",
   "today_setting_up_goal": "47216a8768cd14d2622e0befec2d4d1d32aa726f31cf357aa853f4d76ce7a8d4",
@@ -348,7 +347,6 @@
     <string name="today_building_plan_detail">Genellikle bir iki dakika sürer. İlk günün hazır olur olmaz burada açılır.</string>
     <string name="today_quick_explanation">Kısa açıklama</string>
     <string name="today_continue_explanation">Açıklamaya devam et</string>
-    <string name="today_session_ended_description">Hedefin için günlük dersler, tekrarlar ve alıştırmalar.</string>
     <string name="today_week_title">Bu hafta</string>
     <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
     <plurals name="today_week_days">

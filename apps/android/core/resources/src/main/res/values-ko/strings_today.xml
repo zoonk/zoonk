@@ -138,7 +138,6 @@
   "today_see_you_next_session": "010fd846e9dbc485a676671566cff236c0328486df6dd18e7df8426c7b1eea55",
   "today_see_you_tomorrow": "e218634359536846dc87c82edd8242107b1b912d405945302487597ae871ff7e",
   "today_see_your_plan": "aaf7e577a4f9b9e29179b62f635b84c5e10fe85cef60fa7a7a1726c9660cc2da",
-  "today_session_ended_description": "35d3161197ab0742ab2226ac15d7f90da064bd10e0c92024224d249e53604e1f",
   "today_setting_up": "93f3364c3d897c8480fb917f021a57cb8ffd254bdf45f5faeff391cca7be4ef5",
   "today_setting_up_detail": "d7149b1707015b8da63ebe21b4d56672980114c2cca81b7a4c9bdabbad428d81",
   "today_setting_up_goal": "353ef9c7fd5e4be827c13cc4103e16817a5907736d4340f579a5cb8aee045fdb",
@@ -338,7 +337,6 @@
     <string name="today_building_plan_detail">보통 1~2분 걸려요. 준비되면 여기서 바로 첫날 학습을 시작할 수 있어요.</string>
     <string name="today_quick_explanation">간단한 설명</string>
     <string name="today_continue_explanation">설명 이어서 보기</string>
-    <string name="today_session_ended_description">목표에 맞춘 매일의 레슨과 복습, 연습을 확인해요.</string>
     <string name="today_week_title">이번 주</string>
     <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
     <plurals name="today_week_days">

@@ -138,7 +138,6 @@
   "today_see_you_next_session": "668cc0c2246ce156e5e9ae1d87d8b8ad27cd48ade8b9342113511483a4286553",
   "today_see_you_tomorrow": "02366b43a9313335c6b62d77b104048f6fb3db9b223ace047aaf307c39d2de04",
   "today_see_your_plan": "b6f3c43e522a3b7da35a9dcfa665a1966f7b629bc6b4409d5804afd00a4313ed",
-  "today_session_ended_description": "4f8e1f277bfb09cd19624b21538432bc1dc0d0b4b100dd283c0add00536964df",
   "today_setting_up": "faca81016526ae45980b55e45615f884190938c381562ec0345ebd3d2f91d225",
   "today_setting_up_detail": "e82e88096b8c415be497594a0b5d3e8e43dbdc3bbc8708eeee8e4585a3274df3",
   "today_setting_up_goal": "649219d1cfc1c7668c5c904e6907721bafa889fc76280f6a0c1e976aba7a5130",
@@ -348,7 +347,6 @@
     <string name="today_building_plan_detail">Das dauert meistens ein bis zwei Minuten. Sobald dein erster Tag bereit ist, öffnet er sich hier.</string>
     <string name="today_quick_explanation">Kurze Erklärung</string>
     <string name="today_continue_explanation">Erklärung fortsetzen</string>
-    <string name="today_session_ended_description">Die täglichen Lektionen, Wiederholungen und Übungen für dein Ziel.</string>
     <string name="today_week_title">Diese Woche</string>
     <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
     <plurals name="today_week_days">
