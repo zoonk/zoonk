@@ -12,6 +12,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { useAppLocale } from "../_utils/locale";
 import { type NumericEntry, parseEntryAnswer } from "./_utils/numeric-entry";
+import { useAnswerFocus } from "./use-answer-focus";
 
 type NumericUnit = { position: "prefix" | "suffix"; symbol: string };
 
@@ -93,6 +94,7 @@ export function NumericAnswerField({
   const [inputId, unitId, hintId, ruleId] = [useId(), useId(), useId(), useId()];
   const [text, setText] = useState(defaultText);
   const [invalid, setInvalid] = useState(false);
+  const { answerSent, fieldRef } = useAnswerFocus(result);
   const hasRule = entry !== null && entry.kind !== "number";
 
   const showsRule = hasRule && !invalid;
@@ -104,6 +106,10 @@ export function NumericAnswerField({
   });
 
   function submit() {
+    if (locked) {
+      return;
+    }
+
     const value = parseEntryAnswer({ entry, locale, text });
 
     if (value === null) {
@@ -111,6 +117,7 @@ export function NumericAnswerField({
       return;
     }
 
+    answerSent();
     onSubmit(value);
   }
 
@@ -138,8 +145,7 @@ export function NumericAnswerField({
           aria-invalid={invalid || undefined}
           autoComplete="off"
           autoFocus
-          className="text-lg tabular-nums disabled:opacity-100 md:text-lg"
-          disabled={locked}
+          className="text-lg tabular-nums md:text-lg"
           enterKeyHint="done"
           id={inputId}
           // A phone's decimal keypad has no slash, so a fraction box opens the full keyboard.
@@ -149,6 +155,8 @@ export function NumericAnswerField({
             setInvalid(false);
             onChange?.(parseEntryAnswer({ entry, locale, text: event.target.value }));
           }}
+          readOnly={locked}
+          ref={fieldRef}
           spellCheck={false}
           value={text}
         />

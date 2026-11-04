@@ -5,6 +5,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/componen
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { useAnswerFocus } from "./use-answer-focus";
 
 export function TypedAnswerField({
   children,
@@ -22,6 +23,7 @@ export function TypedAnswerField({
   const t = useExtracted();
   const inputId = useId();
   const [text, setText] = useState("");
+  const { answerSent, fieldRef } = useAnswerFocus(result);
 
   return (
     <form
@@ -31,6 +33,7 @@ export function TypedAnswerField({
         event.preventDefault();
 
         if (text.trim() && !locked) {
+          answerSent();
           onSubmit(text.trim());
         }
       }}
@@ -48,8 +51,7 @@ export function TypedAnswerField({
           autoComplete="off"
           autoCorrect="off"
           autoFocus
-          className="text-lg disabled:opacity-100 md:text-lg"
-          disabled={locked}
+          className="text-lg md:text-lg"
           enterKeyHint="done"
           id={inputId}
           maxLength={MAX_SESSION_TYPED_ANSWER_LENGTH}
@@ -57,6 +59,8 @@ export function TypedAnswerField({
             setText(event.target.value);
             onChange?.(event.target.value.trim());
           }}
+          readOnly={locked}
+          ref={fieldRef}
           spellCheck={false}
           value={text}
         />

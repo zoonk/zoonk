@@ -112,7 +112,7 @@ export function PlanDate() {
         onSubmit={(event) => {
           event.preventDefault();
 
-          if (canSave) {
+          if (canSave && !isPending) {
             void setDate(value);
           }
         }}
@@ -120,11 +120,11 @@ export function PlanDate() {
         <Input
           aria-describedby={note ? noteId : undefined}
           className="max-w-48"
-          disabled={isPending}
           id={inputId}
           max={bounds.max}
           min={bounds.min}
           onChange={(event) => setValue(event.target.value)}
+          readOnly={isPending}
           type="date"
           value={value}
         />
