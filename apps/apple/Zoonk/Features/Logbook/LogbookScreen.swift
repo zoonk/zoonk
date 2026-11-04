@@ -516,6 +516,8 @@ private struct TurnaroundChart: View {
 private struct WeekRings: View {
   let recap: WeeklyRecap
 
+  @ScaledMetric(relativeTo: .title3) private var ringSize = 36.0
+
   var body: some View {
     let start = studyDate(recap.weekStart)
 
@@ -525,15 +527,17 @@ private struct WeekRings: View {
         let key = date?.formatted(.iso8601.year().month().day()) ?? ""
         let studied = recap.week.daysStudied.contains(key)
 
-        VStack(spacing: 4) {
-          Image(systemName: studied ? "checkmark.circle.fill" : "circle")
-            .typeStyle(.section.weight(.regular))
-            .foregroundStyle(
-              studied ? AnyShapeStyle(.success) : AnyShapeStyle(Color(.foreground).opacity(0.2)))
+        VStack(spacing: 6) {
+          GoalRing(share: studied ? 1 : 0, size: ringSize) {
+            if studied {
+              Image(systemName: "checkmark")
+                .foregroundStyle(.success)
+            }
+          }
 
           Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
-            .typeStyle(.small)
-            .foregroundStyle(.mutedForeground)
+            .typeStyle(.small.monospaced())
+            .foregroundStyle(studied ? Color(.foreground) : .faint)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
