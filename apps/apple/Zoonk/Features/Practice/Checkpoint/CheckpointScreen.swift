@@ -369,9 +369,7 @@ private struct CheckpointResultView: View {
             title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed),
             detail: CheckpointCopy.resultDetail(
               kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons))
-        }
-      } response: {
-        if checkpoint.endedWithoutQuestions != true {
+
           PracticeResultNumbers(
             correct: correct, total: total,
             // A win's Brain Power is its rewards' first row, as on main.
@@ -392,7 +390,11 @@ private struct CheckpointResultView: View {
             CheckpointRewards(
               checkpoint: checkpoint,
               brainPower: state.completion?.ownBrainPower ?? checkpoint.reward.brainPower)
-          } else if let next = checkpoint.nextPhase?.value1 {
+          }
+        }
+      } response: {
+        if checkpoint.endedWithoutQuestions != true {
+          if !won, let next = checkpoint.nextPhase?.value1 {
             Label {
               Text(
                 "The next phase, \(next.name), is already open.", tableName: "Practice",
