@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -65,6 +66,8 @@ import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CatalogFirstQuestion
 import com.zoonk.api.models.CatalogTryLesson
 import com.zoonk.api.models.LearnerSummary
@@ -362,10 +365,17 @@ internal fun TryLessonCard(
 
     OutlinedCard(modifier.widthIn(max = COLUMN_WIDTH)) {
         Column(Modifier.padding(20.dp)) {
+            // Main's `text-label`: uppercase for the eye, as written for TalkBack.
+            val title = stringResource(R.string.catalog_try_title, formatMinutes(minutes.toInt(), locale))
             Text(
-                text = stringResource(R.string.catalog_try_title, formatMinutes(minutes.toInt(), locale)),
-                modifier = Modifier.semantics { heading() },
-                style = MaterialTheme.typography.labelLarge,
+                text = title.uppercase(locale),
+                modifier =
+                    Modifier.clearAndSetSemantics {
+                        heading()
+                        text = AnnotatedString(title)
+                    },
+                color = MaterialTheme.zoonk.faint,
+                style = MaterialTheme.zoonkType.label,
             )
             Spacer(Modifier.size(4.dp))
             Text(
