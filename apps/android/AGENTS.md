@@ -60,6 +60,7 @@ Every read the app shows goes through one pattern in `data/`, so screens are ins
 ## Localization contract
 
 - Author app-owned UI copy in English in `core/resources/src/main/res/values/`: one `strings_<feature>.xml` per feature, with every name prefixed by its feature (`today_blocks_left`) because Android merges all files into one namespace, and shared words in `strings.xml`. Use `stringResource` or `pluralStringResource`, positional placeholders, and locale-aware formatting; avoid inline UI text and concatenated sentences. Use `translatable="false"` for intentional fixed product names.
+- Text the app sends or parses (an `HH:mm` time, a date, an id) never goes through the device's locale, whose digits may not be ASCII: use `java.time`'s ISO text or `Locale.ROOT`. Lint's `ImplicitLocaleFormat` reports Kotlin's `format` without a locale.
 - Join a line of facts with `factsLine()`, never by hand with `" · "`.
 - `@zoonk/utils/locale` owns the supported locale list; `@zoonk/i18n` owns shared translation configuration and style guides. Preserve generated Android locale configuration and system language selection rather than adding a parallel locale store or picker.
 - After adding, changing, or deleting English resources, run `pnpm --filter android i18n` from the repository root. Eloqnt owns target XML and fingerprint comments, following the [translation rules](../../.agents/guides/translations.md); do not bypass freshness checks. See [localization details](README.md#localization) for targeted retranslation.
