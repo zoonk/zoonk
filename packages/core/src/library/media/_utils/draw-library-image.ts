@@ -5,7 +5,7 @@ import { type ImageCanvas, getImagePalette } from "@zoonk/ai/tasks/images/style"
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { resolveLibraryIdentity } from "../../identity/resolve-library-identity";
-import { drawImage } from "./draw-checked-image";
+import { drawImage } from "./draw-image";
 import { canStorePicture } from "./picture-store";
 import { saveImageAsset } from "./save-image-asset";
 
@@ -81,7 +81,7 @@ export async function drawLibraryImage({
   }
 
   const palette = getImagePalette(category);
-  const drawn = await drawImage({ analytics, canvas, language, palette, scene });
+  const drawn = await drawImage({ analytics, attempts: 2, canvas, language, palette, scene });
 
   if (!drawn) {
     return null;

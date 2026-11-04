@@ -1,7 +1,7 @@
-import { checkPictureStep } from "./steps/picture-check-steps";
+import { checkPicture } from "./check-picture";
 
 export type PictureChecksInput = {
-  analytics?: Parameters<typeof checkPictureStep>[0]["analytics"];
+  analytics?: Parameters<typeof checkPicture>[0]["analytics"];
   assetIds: string[];
 };
 
@@ -14,12 +14,10 @@ export async function pictureChecksWorkflow({
   "use workflow";
 
   const checks = await Promise.allSettled(
-    assetIds.map((assetId) => checkPictureStep({ analytics, assetId })),
+    assetIds.map((assetId) => checkPicture({ analytics, assetId })),
   );
 
-  const statuses = checks.map((check) =>
-    check.status === "fulfilled" ? check.value.status : null,
-  );
+  const statuses = checks.map((check) => (check.status === "fulfilled" ? check.value : null));
 
   return {
     passed: statuses.filter((status) => status === "passed").length,

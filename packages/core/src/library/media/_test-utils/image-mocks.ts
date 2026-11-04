@@ -55,19 +55,11 @@ const testImageProvenance = {
   usage: {},
 };
 
-function plannedScene(scene: ImageScene) {
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Core reads only the scene.
-  return { data: scene } as Awaited<ReturnType<typeof generateImageScene>>;
-}
-
 export function mockImageScene(scene: ImageScene) {
-  return vi.mocked(generateImageScene).mockResolvedValue(plannedScene(scene));
-}
-
-export function mockImageScenes(scenes: readonly ImageScene[]) {
-  const mock = vi.mocked(generateImageScene);
-  scenes.forEach((scene) => mock.mockResolvedValueOnce(plannedScene(scene)));
-  return mock;
+  return vi.mocked(generateImageScene).mockResolvedValue(
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Core reads only the scene.
+    { data: scene } as Awaited<ReturnType<typeof generateImageScene>>,
+  );
 }
 
 type DrawnImageResult = Awaited<ReturnType<typeof generateLessonImage>>;

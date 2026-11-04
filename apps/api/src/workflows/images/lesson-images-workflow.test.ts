@@ -34,6 +34,8 @@ function markedScreens({ lessonId, prompts }: { lessonId: string; prompts: strin
   );
 }
 
+const rejectedCheck = { data: { ...passedCheck.data, passed: false, problems: ["wrong object"] } };
+
 function lessonPictures(lessonId: string) {
   return prisma.step.findMany({
     orderBy: { position: "asc" },
@@ -84,7 +86,7 @@ describe(lessonImagesWorkflow, () => {
       isRejected(scene) &&
       vi.mocked(checkLessonImage).mock.calls.filter(([params]) => isRejected(params.scene))
         .length === 1
-        ? ({ data: { ...passedCheck.data, passed: false, problems: ["wrong object"] } } as never)
+        ? (rejectedCheck as never)
         : (passedCheck as never),
     );
 
@@ -127,6 +129,57 @@ describe(lessonImagesWorkflow, () => {
     expect(uploadImage).toHaveBeenCalledTimes(3);
     expect(steps[0]?.mediaAsset?.url).toBe(redraw?.data);
     expect(steps[1]?.mediaAsset?.url).not.toBe(redraw?.data);
+  });
+
+  it("takes a picture out of use when its one redraw fails its check too", async () => {
+    const lesson = await libraryLessonFixture();
+    await markedScreens({ lessonId: lesson.id, prompts: [`kidney ${randomUUID()}`] });
+    vi.mocked(checkLessonImage).mockResolvedValue(rejectedCheck as never);
+
+    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      failed: 0,
+      generated: 1,
+      reused: 0,
+    });
+
+    expect(generateLessonImage).toHaveBeenCalledTimes(2);
+    expect(checkLessonImage).toHaveBeenCalledTimes(2);
+    await expect(lessonPictures(lesson.id)).resolves.toStrictEqual([{ mediaAssetId: null }]);
+  });
+
+  it("keeps the redraw of a lesson's opening scene without checking it again", async () => {
+    const lesson = await libraryLessonFixture();
+    const alt = `Fábio corta a mão numa lata ${randomUUID()}`;
+
+    await libraryStepFixture({
+      content: {
+        image: { alt, prompt: "A hand with a small cut" },
+        text: "Fábio corta a mão.",
+        variant: "text",
+      },
+      kind: "hook",
+      lessonId: lesson.id,
+    });
+
+    vi.mocked(checkLessonImage).mockResolvedValue(rejectedCheck as never);
+
+    await lessonImagesWorkflow({ lessonId: lesson.id });
+
+    const redraw = await vi.mocked(uploadImage).mock.results[1]?.value;
+
+    const [scene] = await prisma.step.findMany({
+      include: { mediaAsset: true },
+      where: { lessonId: lesson.id },
+    });
+
+    expect(checkLessonImage).toHaveBeenCalledOnce();
+    expect(generateLessonImage).toHaveBeenCalledTimes(2);
+
+    expect(generateImageScene).toHaveBeenLastCalledWith(
+      expect.objectContaining({ alt, findings: ["wrong object"] }),
+    );
+
+    expect(scene?.mediaAsset?.url).toBe(redraw?.data);
   });
 
   it("reuses a picture of the same scene and draws the rest", async () => {

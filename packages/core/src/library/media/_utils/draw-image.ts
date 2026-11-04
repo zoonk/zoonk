@@ -7,11 +7,7 @@ import { logInfo } from "@zoonk/utils/logger";
 import { isNearSolidImage } from "../../../images/image-quality";
 import { type LibraryProvenance } from "../../_utils/library-rows";
 
-const DEFAULT_ATTEMPTS = 2;
-
 type ImageAnalytics = LessonImageParams["analytics"];
-
-export type DrawImageInput = Omit<LessonImageParams, "model" | "quality"> & { attempts?: number };
 
 export type DrawnImage = { image: Uint8Array; provenance: LibraryProvenance };
 
@@ -68,10 +64,13 @@ export async function reviewImage({
   return { problems: verdict.problems, usable: verdict.passed };
 }
 
+/** Null when every attempt drew a blank frame. */
 export async function drawImage({
-  attempts = DEFAULT_ATTEMPTS,
+  attempts,
   ...input
-}: DrawImageInput): Promise<DrawnImage | null> {
+}: Omit<LessonImageParams, "model" | "quality"> & {
+  attempts: number;
+}): Promise<DrawnImage | null> {
   if (attempts <= 0) {
     return null;
   }
@@ -85,42 +84,4 @@ export async function drawImage({
 
   logInfo("[images] Generated image is a blank frame", { scene: input.scene });
   return drawImage({ ...input, attempts: attempts - 1, corrections: [BLANK_FRAME] });
-}
-
-export async function drawCheckedImage({
-  alt,
-  attempts = DEFAULT_ATTEMPTS,
-  serviceTier,
-  ...input
-}: DrawImageInput & {
-  alt?: string | null;
-  serviceTier?: ServiceTier;
-}): Promise<DrawnImage | null> {
-  if (attempts <= 0) {
-    return null;
-  }
-
-  const { data, provenance } = await generateLessonImage(input);
-  const image = { data: data.image.uint8Array, mediaType: data.image.mediaType };
-
-  const review = await reviewImage({
-    alt,
-    analytics: input.analytics,
-    image,
-    language: input.language,
-    scene: input.scene,
-    serviceTier,
-  });
-
-  if (review.usable) {
-    return { image: image.data, provenance };
-  }
-
-  return drawCheckedImage({
-    ...input,
-    alt,
-    attempts: attempts - 1,
-    corrections: review.problems,
-    serviceTier,
-  });
 }

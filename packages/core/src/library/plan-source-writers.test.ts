@@ -26,7 +26,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
-import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
+import { storeBlobUploads } from "../_test-utils/blob-uploads";
 import { waitForBlockedStatement } from "../_test-utils/learner-lock";
 import {
   ENGLISH,
@@ -70,15 +70,7 @@ import {
 import { createLibraryLesson } from "./lessons/create-library-lesson";
 import { placeChapterLessons } from "./lessons/place-chapter-lessons";
 import { voiceListeningSet } from "./listening/voice-listening-set";
-import {
-  drawTestImage,
-  mockDrawnImages,
-  mockImageChecks,
-  mockImageScene,
-  resetImageModels,
-  testScene,
-} from "./media/_test-utils/image-mocks";
-import { checkImageAsset } from "./media/check-image-asset";
+import { removeImageAsset } from "./media/check-image-asset";
 import { temperatureSpec, writtenTemperatureLesson } from "./quality/_test-utils/written-lessons";
 import { setAsidePublishedLesson } from "./quality/published-lesson-check";
 import { replaceFlaggedDrills } from "./review-flags/rewrite-flagged-drills";
@@ -1221,28 +1213,16 @@ async function drillsCase(): Promise<WriterCase> {
 }
 
 async function pictureCase(): Promise<WriterCase> {
-  const [asset, skill, image] = await Promise.all([
-    mediaAssetFixture({ scene: testScene({ focalObject: `a ${randomUUID()} map` }) }),
-    skillFixture(),
-    drawTestImage(),
-  ]);
-
+  const [asset, skill] = await Promise.all([mediaAssetFixture(), skillFixture()]);
   const question = await itemFixture({ mediaAssetId: asset.id, skillId: skill.id });
   const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
-
-  serveStoredFile({ data: new Uint8Array(image), mediaType: "image/webp" });
-  storeBlobUploads();
-  resetImageModels();
-  mockImageChecks([false, false, false]);
-  mockImageScene(testScene());
-  mockDrawnImages([image, image]);
 
   return {
     expectWritten: () =>
       expect(prisma.item.findUnique({ where: { id: question.id } })).resolves.toBeNull(),
     plan,
     root: skillRoot(skill.id),
-    write: () => checkImageAsset({ assetId: asset.id }),
+    write: () => removeImageAsset({ assetId: asset.id }),
   };
 }
 
@@ -1568,7 +1548,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/lessons/create-library-lesson.ts": { createLibraryLesson: newLessonCase },
   "library/lessons/place-chapter-lessons.ts": { placeChapterLessons: placeLessonsCase },
   "library/listening/voice-listening-set.ts": { voiceListeningSet: listeningCase },
-  "library/media/check-image-asset.ts": { checkImageAsset: pictureCase },
+  "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
   "library/quality/published-lesson-check.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
 };

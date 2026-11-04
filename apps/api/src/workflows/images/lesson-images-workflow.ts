@@ -1,4 +1,5 @@
 import { getWorkflowMetadata } from "workflow";
+import { checkPicture } from "./check-picture";
 import {
   type ImageAnalytics,
   createStepImageStep,
@@ -6,7 +7,6 @@ import {
   listLessonImageStepsStep,
   listLessonOptionPicturesStep,
 } from "./steps/lesson-image-steps";
-import { checkPictureStep } from "./steps/picture-check-steps";
 
 export type LessonImagesInput = { lessonId: string; analytics?: ImageAnalytics };
 
@@ -49,7 +49,7 @@ export async function lessonImagesWorkflow({
     outcomes.flatMap((outcome) =>
       outcome.status === "fulfilled" && outcome.value.status === "generated"
         ? [
-            checkPictureStep({
+            checkPicture({
               alt: outcome.value.alt,
               analytics: context,
               assetId: outcome.value.mediaAssetId,
