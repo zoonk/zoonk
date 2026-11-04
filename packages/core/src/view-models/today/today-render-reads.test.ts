@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture, planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -100,9 +101,9 @@ describe("Today's render reads", () => {
     expect(reads.rows).toBe(skills.length);
   });
 
-  it.each([false, true])(
-    "reads an unopened day's claim events once for its practice and the syllabus (an area skipped: %s)",
-    async (skipsArea) => {
+  it.each(["as planned", "with an area skipped", "after a skill merge"] as const)(
+    "reads an unopened day's claim events once for its practice and the syllabus %s",
+    async (variant) => {
       const user = await userFixture();
 
       const { goal, plan, skills } = await sessionGoalFixture({
@@ -110,13 +111,30 @@ describe("Today's render reads", () => {
         userId: user.id,
       });
 
+      await layOutPlanFixture(plan.id);
+
+      const survivor = variant === "after a skill merge" ? await skillFixture() : null;
+
+      if (survivor) {
+        const move = { data: { skillId: survivor.id }, where: { skillId: skills[0]?.id } };
+
+        await Promise.all([
+          prisma.skill.update({
+            data: { mergedIntoId: survivor.id },
+            where: { id: skills[0]?.id },
+          }),
+          prisma.planItem.updateMany(move),
+          prisma.item.updateMany(move),
+        ]);
+      }
+
       const items = await prisma.item.findMany({
         distinct: ["skillId"],
         select: { id: true, skillId: true },
-        where: { skillId: { in: skills.map((skill) => skill.id) } },
+        where: {
+          skillId: { in: [...skills.map((skill) => skill.id), ...(survivor ? [survivor.id] : [])] },
+        },
       });
-
-      await layOutPlanFixture(plan.id);
 
       const { graph } = await prisma.plan.findUniqueOrThrow({
         select: { graph: true },
@@ -132,7 +150,7 @@ describe("Today's render reads", () => {
                 area: index === 0 ? "Speaking" : "Reading",
               })),
             },
-            settings: { skippedAreas: skipsArea ? ["Speaking"] : [] },
+            settings: { skippedAreas: variant === "with an area skipped" ? ["Speaking"] : [] },
           },
           where: { id: plan.id },
         }),

@@ -7,7 +7,8 @@ import { type ClaimEvent } from "./skill-claims";
 
 /**
  * GET-only, after ownership authorization; writes call `loadClaimEvents` fresh. Every reader shares
- * one read of the plan's skills (plus any others it asks about), however few it needs.
+ * one read of the plan's skills (its graph's and, after a merge, its items' survivors, plus any
+ * others it asks about), however few it needs.
  */
 export async function readGoalClaimEvents({
   goalId,
@@ -16,11 +17,15 @@ export async function readGoalClaimEvents({
   userId,
 }: {
   goalId: string;
-  savedPlan: Pick<SavedPlan, "graph"> | null;
+  savedPlan: Pick<SavedPlan, "graph" | "items"> | null;
   skillIds: readonly string[];
   userId: string;
 }): Promise<ClaimEvent[]> {
-  const planSkillIds = parsePlanGraph(savedPlan?.graph).skills.map((skill) => skill.skillId);
+  const planSkillIds = [
+    ...parsePlanGraph(savedPlan?.graph).skills.map((skill) => skill.skillId),
+    ...(savedPlan?.items.map((item) => item.skillId) ?? []),
+  ];
+
   const events = await readClaimEvents(userId, goalId, toIdKey([...planSkillIds, ...skillIds]));
   const wanted = new Set(skillIds);
 
