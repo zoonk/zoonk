@@ -15,6 +15,7 @@ struct ChallengeScreen: View {
   @State private var isStarting = false
   @State private var isStartSlow = false
   @State private var isWriting = false
+  @State private var writeLimit: HelpLimit?
   @State private var startProblem: LocalizedStringResource?
   @State private var isMoving = false
   @State private var moveProblem: LocalizedStringResource?
@@ -63,6 +64,7 @@ struct ChallengeScreen: View {
       }
     }
     .task(id: session.authenticatedSession) { await read() }
+    .clearsRefusal { writeLimit = nil }
     // Writing the questions shows its own wait, and the start after it is timed afresh.
     .task(id: isStarting && !isWriting) {
       isStartSlow = false
@@ -288,24 +290,31 @@ struct ChallengeScreen: View {
             : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
     } else if challenge.status == .ready || challenge.status == .started {
-      PracticeActionRow {
-        if challenge.canMove, moved == nil {
-          PracticeSecondaryButton(
-            title: LocalizedStringResource(
-              "Move to Monday", table: "Practice",
-              comment: "Moves the weekly challenge to next Monday."),
-            isDisabled: isMoving || isStarting
-          ) { run { await move() } }
-        }
+      if let writeLimit {
+        HelpLimitNotice(limit: writeLimit)
+          .frame(maxWidth: .infinity, alignment: .leading)
+      }
 
-        PracticeMainButton(
-          title: challenge.mock
-            ? LocalizedStringResource(
-              "Start the mock exam", table: "Practice", comment: "Starts a mock exam challenge.")
-            : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
-          isBusy: isStarting || isWriting,
-          isDisabled: challenge.dailyLimitReached
-        ) { run { await start(afterWriting: false) } }
+      if writeLimit?.isShortBreak ?? true {
+        PracticeActionRow {
+          if challenge.canMove, moved == nil {
+            PracticeSecondaryButton(
+              title: LocalizedStringResource(
+                "Move to Monday", table: "Practice",
+                comment: "Moves the weekly challenge to next Monday."),
+              isDisabled: isMoving || isStarting
+            ) { run { await move() } }
+          }
+
+          PracticeMainButton(
+            title: challenge.mock
+              ? LocalizedStringResource(
+                "Start the mock exam", table: "Practice", comment: "Starts a mock exam challenge.")
+              : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
+            isBusy: isStarting || isWriting,
+            isDisabled: challenge.dailyLimitReached
+          ) { run { await start(afterWriting: false) } }
+        }
       }
     } else if challenge.canMove, moved == nil {
       PracticeSecondaryButton(
@@ -651,6 +660,7 @@ struct ChallengeScreen: View {
   private func start(afterWriting: Bool) async {
     isStarting = true
     startProblem = nil
+    writeLimit = nil
     defer { isStarting = false }
 
     let planItemId = itemId
@@ -704,6 +714,8 @@ struct ChallengeScreen: View {
       guard !Task.isCancelled else { return }
       isWriting = false
       await start(afterWriting: true)
+    case .refused(.limit(let limit)):
+      writeLimit = limit
     case .refused:
       await read()
     case .failed:

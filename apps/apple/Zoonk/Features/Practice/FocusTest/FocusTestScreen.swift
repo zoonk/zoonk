@@ -50,7 +50,9 @@ struct FocusTestScreen: View {
                 hint: { $0.area ?? "" },
                 upcomingTotal: test.needsItems.isEmpty
                   ? nil : test.areas.count * test.questionsPerArea,
-                upcomingEnded: writingEnded, isPending: isSubmitting, failed: submitFailed
+                upcomingEnded: writingEnded,
+                upcomingLimit: (writeFailure as? PracticeAPIError)?.helpLimit,
+                isPending: isSubmitting, failed: submitFailed
               ) { answers in Task { await submit(answers) } }
             } else {
               intro(test)
@@ -67,6 +69,7 @@ struct FocusTestScreen: View {
       }
     }
     .task(id: session.authenticatedSession) { await read() }
+    .clearsRefusal { writeFailure = nil }
   }
 
   private func intro(_ test: FocusTestQuestions) -> some View {
@@ -241,10 +244,10 @@ struct FocusTestScreen: View {
       if case .loaded(let updated) = load, !updated.needsItems.isEmpty { writingEnded = true }
     case .refused(let refusal):
       writingEnded = true
-      if questions.isEmpty { writeFailure = refusal }
+      writeFailure = refusal
     case .failed(let error):
       writingEnded = true
-      if questions.isEmpty { writeFailure = error }
+      writeFailure = error
     case .obsolete:
       break
     }

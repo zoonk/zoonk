@@ -95,6 +95,7 @@ struct TestOutScreen: View {
     }
     .onDisappear { openResult = nil }
     .task(id: "\(session.authenticatedSession?.bearerToken ?? ""):\(goalId ?? "")") { await read() }
+    .clearsRefusal { writeFailure = nil }
   }
 
   private func preparing(failure: (any Error)?) -> some View {
