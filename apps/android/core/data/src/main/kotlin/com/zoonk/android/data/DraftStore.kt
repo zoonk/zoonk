@@ -42,15 +42,17 @@ data class LearnerDrafts(
     val entries: Map<String, JsonElement> = emptyMap(),
 )
 
-/** [moveFrom] is a guest whose drafts move into [next]'s; any other previous account's are deleted. */
+/** [moveFrom] is a guest whose drafts move into [next]'s; [forget] is an account nobody can sign in to again. */
 data class DraftsChange(
     val next: String?,
     val moveFrom: String? = null,
+    val forget: String? = null,
 )
 
 /**
- * Keeps only the current account's file on device and writes it on [io]. A handle stays bound to
- * the account whose session opened it, so a late save from one learner never reaches the next.
+ * Keeps each account's file on device until it's forgotten, so signing in again finds the drafts, as
+ * main and Apple keep unsent work, and writes it on [io]. A handle stays bound to the account whose
+ * session opened it, so a late save from one learner never reaches the next.
  */
 class DraftStore(
     private val directory: File,
@@ -69,23 +71,23 @@ class DraftStore(
     ): DraftHandle<T> = DraftHandle(this, session.accountId, key, serializer)
 
     /**
-     * Runs [transition] under the lock handles wait on, then moves the files: the same account keeps
-     * its file and handles, a guest's upgrade flushes and merges into the account's (the guest's
-     * entries winning), and any other change closes and deletes the old file.
+     * Runs [transition] under the lock handles wait on, then switches files: the same account keeps
+     * its handles, the previous account's pending saves land in its file, a guest's upgrade merges
+     * into the account's (the guest's entries winning), and a forgotten account's file is deleted.
      */
     suspend fun follow(transition: suspend () -> DraftsChange?) {
         lock.withLock {
             val change = transition() ?: return
             val previous = current
-            if (previous?.accountId == change.next) return
+            if (previous?.accountId == change.next && change.forget == null) return
             // [transition] already published the session, so a caller cancelled now must not leave it without drafts.
             withContext(NonCancellable) {
                 current = null
-                previous?.close(flush = previous.accountId == change.moveFrom)
+                previous?.close(flush = previous.accountId != change.forget)
                 withContext(io) {
                     directory.mkdirs()
                     if (change.next != null && change.moveFrom != null) merge(change.moveFrom, into = change.next)
-                    directory.listFiles()?.filter { it.name != change.next?.let(::fileName) }?.forEach { it.delete() }
+                    listOfNotNull(change.moveFrom, change.forget).forEach { File(directory, fileName(it)).delete() }
                 }
                 current = change.next?.let { AccountDrafts(it) }
             }

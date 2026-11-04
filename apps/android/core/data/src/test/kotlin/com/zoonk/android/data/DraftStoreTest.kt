@@ -70,7 +70,7 @@ class DraftStoreTest {
             late.save(EssayDraft("Ana's late save"))
             advanceUntilIdle()
 
-            assertNull(entries(ANA))
+            assertEquals("""{"entries":{"essay:1":{"text":"Ana's first draft"}}}""", entries(ANA))
             assertEquals("""{"entries":{"essay:1":{"text":"Bia's essay"}}}""", entries(BIA))
             assertNull(essay.value.first())
         }
@@ -86,6 +86,22 @@ class DraftStoreTest {
             sessions.signIn { "token-a2" }
             advanceUntilIdle()
             assertEquals("""{"entries":{"essay:1":{"text":"kept"}}}""", entries(ANA))
+        }
+
+    @Test
+    fun aLearnerSignedOutOrSwitchedAwayFindsTheirDraftOnSigningInAgain() =
+        runTest {
+            val drafts = drafts()
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn { "token-a" }
+            drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).saveDebounced(EssayDraft("typed"))
+            advanceTimeBy(100)
+            sessions.signOut()
+            sessions.signIn { "token-a2" }
+            sessions.expire(sessions.current!!)
+            sessions.signIn { "token-b" }
+            sessions.signIn { "token-a" }
+            assertEquals(EssayDraft("typed"), drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).value.first())
         }
 
     @Test
@@ -134,13 +150,11 @@ class DraftStoreTest {
             sessions.signIn { "token-a" }
             drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).save(EssayDraft("Ana's"))
             sessions.signIn { "token-b" }
-            advanceUntilIdle()
-            assertNull(entries(ANA))
             assertNull(drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).value.first())
         }
 
     @Test
-    fun aSaveAfterSignOutIsDroppedAndRecreatesNoFile() =
+    fun aSaveAfterSignOutIsDropped() =
         runTest {
             val drafts = drafts()
             val sessions = sessions(drafts).apply { restore() }
@@ -150,6 +164,21 @@ class DraftStoreTest {
             sessions.signOut()
             essay.save(EssayDraft("after sign-out"))
             essay.saveDebounced(EssayDraft("debounced after sign-out"))
+            advanceUntilIdle()
+            assertEquals("""{"entries":{"essay:1":{"text":"before"}}}""", entries(ANA))
+        }
+
+    @Test
+    fun aLeavingGuestsAndADeletedAccountsDraftsAreDeleted() =
+        runTest {
+            val drafts = drafts()
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn(asGuest = true) { "guest" }
+            drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).save(EssayDraft("guest's"))
+            sessions.signOut()
+            sessions.signIn { "token-a" }
+            drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).save(EssayDraft("Ana's"))
+            sessions.forgetDeletedAccount(sessions.current!!)
             advanceUntilIdle()
             assertTrue(
                 folder.root
