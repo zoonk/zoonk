@@ -41,7 +41,9 @@ export async function lessonImagesWorkflow({
   ]);
 
   const outcomes = await Promise.allSettled([
-    ...stepIds.map((stepId) => createStepImageStep({ analytics: context, stepId })),
+    ...stepIds.map((stepId) =>
+      createStepImageStep({ analytics: context, runId: workflowRunId, stepId }),
+    ),
     ...options.map((option) => createStepOptionPictureStep({ analytics: context, ...option })),
   ]);
 

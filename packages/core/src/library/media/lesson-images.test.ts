@@ -37,6 +37,8 @@ import {
   listLessonOptionPictures,
 } from "./lesson-images";
 
+const RUN = "wrun_images";
+
 const image = { alt: "A price tag before and after a discount", prompt: "A discounted price tag" };
 
 type Picture = typeof image;
@@ -220,7 +222,11 @@ describe(createStepImage, () => {
     mockSearchTerms([]);
     const draw = mockDrawnImages([await drawTestImage()]);
     vi.mocked(put).mockRejectedValueOnce(new Error("Blob unavailable"));
-    await expect(createStepImage({ stepId: step.id })).resolves.toStrictEqual({ status: "failed" });
+
+    await expect(createStepImage({ runId: RUN, stepId: step.id })).resolves.toStrictEqual({
+      status: "failed",
+    });
+
     expect(draw).toHaveBeenCalledOnce();
   });
 
@@ -237,7 +243,7 @@ describe(createStepImage, () => {
     mockSearchTerms([]);
     const drawSpy = mockDrawnImages([await drawTestImage()]);
 
-    const outcome = await createStepImage({ stepId: step.id });
+    const outcome = await createStepImage({ runId: RUN, stepId: step.id });
 
     expect(outcome).toMatchObject({ status: "generated" });
 
@@ -263,7 +269,10 @@ describe(createStepImage, () => {
     });
 
     expect(revalidateTag).toHaveBeenCalledWith(getLibraryLessonCacheTag(lesson.id), { expire: 0 });
-    await expect(createStepImage({ stepId: step.id })).resolves.toStrictEqual({ status: "none" });
+
+    await expect(createStepImage({ runId: RUN, stepId: step.id })).resolves.toStrictEqual({
+      status: "none",
+    });
 
     expect(drawSpy).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ palette: expect.objectContaining({ key: "science" }) }),
@@ -287,7 +296,7 @@ describe(createStepImage, () => {
     mockImageScene(scene);
     const drawSpy = mockDrawnImages([]);
 
-    await expect(createStepImage({ stepId: step.id })).resolves.toStrictEqual({
+    await expect(createStepImage({ runId: RUN, stepId: step.id })).resolves.toStrictEqual({
       mediaAssetId: existing.id,
       status: "reused",
     });
@@ -301,7 +310,10 @@ describe(createStepImage, () => {
 
     const linked = await prisma.step.findUniqueOrThrow({ where: { id: step.id } });
     expect(linked.pictureAvailableAt?.getTime()).toBeGreaterThan(existing.createdAt.getTime());
-    await expect(createStepImage({ stepId: step.id })).resolves.toStrictEqual({ status: "none" });
+
+    await expect(createStepImage({ runId: RUN, stepId: step.id })).resolves.toStrictEqual({
+      status: "none",
+    });
 
     await expect(prisma.step.findUniqueOrThrow({ where: { id: step.id } })).resolves.toMatchObject({
       pictureAvailableAt: linked.pictureAvailableAt,
@@ -332,7 +344,7 @@ describe(createStepImage, () => {
     mockImageScene(testScene({ focalObject: `a ${randomUUID()} heart` }));
     const drawSpy = mockDrawnImages([await drawTestImage()]);
 
-    const outcome = await createStepImage({ stepId: first.id });
+    const outcome = await createStepImage({ runId: RUN, stepId: first.id });
     expect(outcome).toMatchObject({ status: "generated" });
     expect(drawSpy).toHaveBeenCalledOnce();
 
@@ -345,6 +357,40 @@ describe(createStepImage, () => {
     const assetId = "mediaAssetId" in outcome ? outcome.mediaAssetId : null;
 
     expect(steps.map((step) => step.mediaAssetId)).toStrictEqual([assetId, assetId, null, assetId]);
+  });
+
+  it("draws a picture once when two runs ask for it at once, linking the winner's drawing to both screens", async () => {
+    const lesson = await libraryLessonFixture();
+    const heart = explanation(pictureOf("heart from the front"));
+
+    const [first, second] = await Promise.all([
+      libraryStepFixture({ content: heart, lessonId: lesson.id, position: 0 }),
+      libraryStepFixture({ content: heart, lessonId: lesson.id, position: 1 }),
+    ]);
+
+    mockSearchTerms([]);
+    mockImageScene(testScene({ focalObject: `a ${randomUUID()} heart` }));
+    const drawSpy = mockDrawnImages([await drawTestImage(), await drawTestImage()]);
+
+    const outcomes = await Promise.all([
+      createStepImage({ runId: "wrun_content", stepId: first.id }),
+      createStepImage({ runId: "wrun_check", stepId: first.id }),
+    ]);
+
+    expect(drawSpy).toHaveBeenCalledOnce();
+
+    expect(outcomes.map((outcome) => outcome.status).toSorted()).toStrictEqual([
+      "generated",
+      "none",
+    ]);
+
+    const linked = await prisma.step.findMany({
+      select: { mediaAssetId: true },
+      where: { id: { in: [first.id, second.id] } },
+    });
+
+    expect(new Set(linked.map((step) => step.mediaAssetId)).size).toBe(1);
+    expect(linked[0]?.mediaAssetId).toStrictEqual(expect.any(String));
   });
 
   it("links a drawing only within its screen's version, so a retired screen's job leaves the new version alone", async () => {
@@ -362,7 +408,7 @@ describe(createStepImage, () => {
     mockImageScene(testScene({ focalObject: `a ${randomUUID()} heart` }));
     mockDrawnImages([await drawTestImage()]);
 
-    const outcome = await createStepImage({ stepId: retired.id });
+    const outcome = await createStepImage({ runId: RUN, stepId: retired.id });
     const assetId = "mediaAssetId" in outcome ? outcome.mediaAssetId : null;
 
     const linked = await prisma.step.findMany({
@@ -397,7 +443,7 @@ describe(createStepImage, () => {
     mockImageScene(testScene({ focalObject: `a ${randomUUID()} coin` }));
     const drawSpy = mockDrawnImages([await drawBlankImage(), await drawTestImage()]);
 
-    await expect(createStepImage({ stepId: retried.id })).resolves.toMatchObject({
+    await expect(createStepImage({ runId: RUN, stepId: retried.id })).resolves.toMatchObject({
       status: "generated",
     });
 
@@ -412,7 +458,7 @@ describe(createStepImage, () => {
     mockImageScene(testScene({ focalObject: `a ${randomUUID()} bill` }));
     mockDrawnImages([await drawBlankImage(), await drawBlankImage()]);
 
-    await expect(createStepImage({ stepId: abandoned.id })).resolves.toStrictEqual({
+    await expect(createStepImage({ runId: RUN, stepId: abandoned.id })).resolves.toStrictEqual({
       status: "failed",
     });
 
@@ -441,7 +487,7 @@ describe(createStepImage, () => {
     mockImageScene(privateScene);
     mockDrawnImages([await drawTestImage()]);
 
-    await createStepImage({ stepId: privateStep.id });
+    await createStepImage({ runId: RUN, stepId: privateStep.id });
 
     const linked = await prisma.step.findUniqueOrThrow({
       include: { mediaAsset: true },
@@ -465,7 +511,7 @@ describe(createStepImage, () => {
     mockSearchTerms([]);
     mockDrawnImages([await drawTestImage()]);
 
-    await createStepImage({ stepId: languageStep.id });
+    await createStepImage({ runId: RUN, stepId: languageStep.id });
 
     expect(sceneSpy).toHaveBeenCalledWith(
       expect.objectContaining({ language: "pt", textAllowed: false }),
@@ -498,7 +544,9 @@ describe(createStepImage, () => {
     const sceneSpy = mockImageScene(testScene({ focalObject: `our ${randomUUID()} notes` }));
     const drawSpy = mockDrawnImages([await drawTestImage()]);
 
-    await expect(createStepImage({ stepId: step.id })).resolves.toStrictEqual({ status: "failed" });
+    await expect(createStepImage({ runId: RUN, stepId: step.id })).resolves.toStrictEqual({
+      status: "failed",
+    });
 
     await expect(
       createStepOptionPicture({ optionId: "gothic", stepId: question.id }),
@@ -613,7 +661,7 @@ describe("pictures questions are asked about", () => {
     mockSearchTerms([]);
     mockDrawnImages([await drawTestImage()]);
 
-    await expect(createStepImage({ stepId: step.id })).resolves.toMatchObject({
+    await expect(createStepImage({ runId: RUN, stepId: step.id })).resolves.toMatchObject({
       status: "generated",
     });
 
