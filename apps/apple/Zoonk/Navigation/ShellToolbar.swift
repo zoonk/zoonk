@@ -388,7 +388,9 @@ private struct GoalSwitcher: View {
             break
           }
 
-          pendingGoalId = nil
+          if pendingGoalId == goal.id {
+            pendingGoalId = nil
+          }
         }
       })
   }

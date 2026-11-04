@@ -50,6 +50,28 @@ final class LearnerSummaryStoreTests: XCTestCase {
     XCTAssertEqual(requestCount, 2)
   }
 
+  func testASwitchTheLearnerReplacedSaysNothingWhenItFails() async {
+    let api = LearnerSummaryAPIStub(nextChanges: [.distantFuture, .distantFuture])
+    let store = LearnerSummaryStore(
+      api: api,
+      cache: AppCache(session: .preview(account: .summaryTestAccount)))
+
+    await store.summary.load()
+    await api.holdSwitch(to: "replaced", failingWith: .unavailable)
+    let replaced = Task { await store.switchGoal(to: "replaced") }
+    await api.waitForHeldSwitch()
+    let latest = await store.switchGoal(to: "latest")
+    await api.releaseHeldSwitch()
+    let replacedResult = await replaced.value
+
+    guard case .done = latest else {
+      return XCTFail("Expected the latest switch to save, got \(latest)")
+    }
+    guard case .obsolete = replacedResult else {
+      return XCTFail("Expected the replaced switch to say nothing, got \(replacedResult)")
+    }
+  }
+
   func testSignedOutLearnerHasNoSummaryRequest() async {
     let api = LearnerSummaryAPIStub(nextChanges: [.distantFuture])
     let store = LearnerSummaryStore(api: api, cache: AppCache(session: .preview()))
@@ -65,6 +87,8 @@ final class LearnerSummaryStoreTests: XCTestCase {
 private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
   private var nextChanges: [Date]
   private let switchError: APIError?
+  private var heldSwitch: (goalID: String, error: APIError)?
+  private var heldSwitchRelease: CheckedContinuation<Void, Never>?
   private(set) var requestCount = 0
 
   init(nextChanges: [Date], switchError: APIError? = nil) {
@@ -95,9 +119,28 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
   }
 
   func switchGoal(token: String, goalID: String) async throws {
+    if let heldSwitch, heldSwitch.goalID == goalID {
+      await withCheckedContinuation { heldSwitchRelease = $0 }
+      throw heldSwitch.error
+    }
+
     if let switchError {
       throw switchError
     }
+  }
+
+  func holdSwitch(to goalID: String, failingWith error: APIError) {
+    heldSwitch = (goalID, error)
+  }
+
+  func waitForHeldSwitch() async {
+    while heldSwitchRelease == nil {
+      await Task.yield()
+    }
+  }
+
+  func releaseHeldSwitch() {
+    heldSwitchRelease?.resume()
   }
 }
 
