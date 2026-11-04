@@ -1,8 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { getString } from "@zoonk/utils/json";
 import { betterAuth } from "better-auth/minimal";
 import { describe, expect, it, vi } from "vitest";
 import { captureAccountDeletionCleanup } from "../account-deletion";
+import { BETTER_AUTH_BASE_PATH } from "../config";
 import {
   createTestEmail,
   guestAuth,
@@ -72,6 +74,49 @@ async function signInAsBrandOwner() {
 }
 
 const BRAND_ADDRESS_LOCKED = { body: { code: "BRAND_ADDRESS_LOCKED" }, statusCode: 403 };
+
+async function signUpProfileLearner() {
+  const signUp = await organizationAuth.api.signUpEmail({
+    body: { email: `profile-${randomUUID()}@example.test`, name: "Ana", password: "pass1234" },
+    returnHeaders: true,
+  });
+
+  const cookie = signUp.headers
+    .getSetCookie()
+    .map((setCookie) => setCookie.split(";")[0])
+    .join("; ");
+
+  return { headers: new Headers({ cookie }), userId: signUp.response.user.id };
+}
+
+const INVALID_PROFILE_UPDATE = { code: "INVALID_PROFILE_UPDATE", status: 400 };
+
+async function updateUser({
+  auth = organizationAuth,
+  body,
+  headers,
+}: {
+  auth?: typeof organizationAuth | typeof guestAuth;
+  body: unknown;
+  headers: Headers;
+}) {
+  const requestHeaders = new Headers(headers);
+  requestHeaders.set("content-type", "application/json");
+  requestHeaders.set("origin", "http://localhost:3000");
+
+  const response = await auth.handler(
+    new Request(`http://localhost:3000${BETTER_AUTH_BASE_PATH}/update-user`, {
+      body: JSON.stringify(body),
+      headers: requestHeaders,
+      method: "POST",
+    }),
+  );
+
+  const text = await response.text();
+  const answer: unknown = text ? JSON.parse(text) : null;
+
+  return { code: getString(answer, "code"), status: response.status };
+}
 
 describe("access guards", () => {
   it("asks guests to create an account before checkout", async () => {
@@ -155,6 +200,70 @@ describe("access guards", () => {
       logo: "https://example.test/logo.png",
       name: "Renamed brand",
       slug: organization.slug,
+    });
+  });
+
+  it("changes a learner's name and username only to text", async () => {
+    const { headers, userId } = await signUpProfileLearner();
+
+    const refusals = await Promise.all(
+      [{ username: { set: "admin" } }, { name: { set: "a".repeat(5000) } }].map((body) =>
+        updateUser({ body, headers }),
+      ),
+    );
+
+    expect(refusals).toStrictEqual([INVALID_PROFILE_UPDATE, INVALID_PROFILE_UPDATE]);
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { id: userId } })).resolves.toMatchObject({
+      name: "Ana",
+      username: null,
+    });
+  });
+
+  it("changes no other account field", async () => {
+    const [learner, stripeLearner] = await Promise.all([
+      signUpProfileLearner(),
+      signUpLearner({ email: createTestEmail() }),
+    ]);
+
+    const refusals = await Promise.all([
+      updateUser({ body: { displayUsername: "admin" }, headers: learner.headers }),
+      updateUser({ body: { image: "https://example.test/a.png" }, headers: learner.headers }),
+      updateUser({
+        auth: guestAuth,
+        body: { stripeCustomerId: "cus_someone_else" },
+        headers: stripeLearner.headers,
+      }),
+    ]);
+
+    expect(refusals).toStrictEqual([
+      INVALID_PROFILE_UPDATE,
+      INVALID_PROFILE_UPDATE,
+      INVALID_PROFILE_UPDATE,
+    ]);
+
+    await expect(
+      prisma.user.findMany({
+        select: { displayUsername: true, image: true, stripeCustomerId: true },
+        where: { id: { in: [learner.userId, stripeLearner.userId] } },
+      }),
+    ).resolves.toStrictEqual([
+      { displayUsername: null, image: null, stripeCustomerId: null },
+      { displayUsername: null, image: null, stripeCustomerId: null },
+    ]);
+  });
+
+  it("still changes a learner's name and username", async () => {
+    const { headers, userId } = await signUpProfileLearner();
+    const username = `ana_${randomUUID().slice(0, 8)}`;
+
+    await expect(
+      updateUser({ body: { name: "Ana Lima", username: username.toUpperCase() }, headers }),
+    ).resolves.toMatchObject({ status: 200 });
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { id: userId } })).resolves.toMatchObject({
+      name: "Ana Lima",
+      username,
     });
   });
 

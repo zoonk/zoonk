@@ -10,9 +10,13 @@ A fact is not lasting when it describes a moment or a one-off ("is tired today",
 
 ## Sensitive
 
-A fact is sensitive when it reveals physical or mental health (including conditions, diagnoses, medication, pregnancy and disabilities), religion or beliefs, political opinions, sexual life or orientation, gender identity, ethnic or racial origin, union membership, a criminal record, immigration status, detailed finances such as debts or income, or private details about another person.
+A fact is sensitive when its own words reveal physical or mental health (including conditions, diagnoses, medication, pregnancy and disabilities), religion or beliefs, political opinions, sexual life or orientation, gender identity, ethnic or racial origin, union membership, a criminal record, immigration status, detailed finances such as debts or income, or private details about another person.
+
+Memory keeps the fact, not its evidence. Evidence that mentions something sensitive doesn't make a fact sensitive when the fact leaves it out: "since my knee surgery I can't drive, so I cycle to work" can give "Cycles to work", which isn't sensitive.
 
 Everyday facts are not sensitive: studies, school, job title, schedule, hobbies, the city they live in, languages they speak, learning preferences, what they find hard to learn.
+
+Sensitive and lasting are separate questions. A sensitive fact is lasting when it stays true for weeks, such as a condition, a faith or a political view, and not lasting when it's about a moment.
 
 ## Explicitly asked
 

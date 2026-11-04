@@ -3,7 +3,6 @@ package com.zoonk.android.ui.format
 import android.icu.math.BigDecimal
 import android.icu.text.CompactDecimalFormat
 import android.icu.text.DecimalFormat
-import android.icu.text.DecimalFormatSymbols
 import android.icu.text.NumberFormat
 import android.icu.text.PluralRules
 import android.icu.util.Currency
@@ -79,11 +78,7 @@ fun formatMoney(
             format.format(abs(value))
         }
 
-    return when {
-        value < 0 -> MINUS_SIGN + text
-        signed && value > 0 -> DecimalFormatSymbols.getInstance(ULocale.forLocale(locale)).plusSign + text
-        else -> text
-    }
+    return withSign(text, value, locale, signed)
 }
 
 /** A number answer with its unit, as main's `formatMathAnswer` writes it: money in its currency, tiny values to two significant digits. */
@@ -105,7 +100,7 @@ fun formatMathAnswer(
             }
             roundingMode = BigDecimal.ROUND_HALF_UP
         }
-    val number = format.format(size).let { if (value < 0) MINUS_SIGN + it else it }
+    val number = withSign(format.format(size), value, locale)
     return withUnit(number, unit)
 }
 
@@ -163,8 +158,7 @@ private fun formatCompact(
             this.minimumFractionDigits = minimumFractionDigits
             roundingMode = BigDecimal.ROUND_HALF_UP
         }
-    val text = format.format(abs(value))
-    return if (value < 0) MINUS_SIGN + text else text
+    return withSign(format.format(abs(value)), value, locale)
 }
 
 private fun currencyFormat(

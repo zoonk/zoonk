@@ -106,8 +106,11 @@ model LanguageConversation {
   titleSnapshot       String                     @map("title_snapshot")
   liveModel           String?                    @map("live_model")
   objectivesMet       String[]                   @default([]) @map("objectives_met")
-  /// How many of the call's turns its live goal checks have read; each reads only newer ones.
+  /// How many turns of `checkedConnectionId`'s transcript its live goal checks have read; each reads
+  /// only newer ones. A new connection counts from its first turn: a call that starts over, or a
+  /// client that reloaded, sends fewer turns than the connection before.
   checkedTurns        Int                        @default(0) @map("checked_turns") @db.SmallInt
+  checkedConnectionId String?                    @map("checked_connection_id") @db.Uuid
   /// Live goal checks so far; a call gets a few per minute of it.
   objectiveChecks     Int                        @default(0) @map("objective_checks") @db.SmallInt
   usedHelp            Boolean                    @default(false) @map("used_help")

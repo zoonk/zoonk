@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type APIResponse, request } from "@playwright/test";
+import { NAME_MAX_LENGTH } from "@zoonk/auth/name-rules";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { appleAccountFixture } from "@zoonk/testing/fixtures/accounts";
@@ -160,7 +161,7 @@ test.describe("Current User API", () => {
     const uniqueId = randomUUID().slice(0, 8);
     const takenUsername = `taken_me_${uniqueId}`;
 
-    const [{ apiContext, email, userId, username }, taken] = await Promise.all([
+    const [{ apiContext, email, name, userId, username }, taken] = await Promise.all([
       createBearerApiContext({ baseURL, uniqueId }),
       userFixture(),
     ]);
@@ -174,6 +175,7 @@ test.describe("Current User API", () => {
       apiContext.patch("/v1/me", { data: { username: takenUsername } }),
       apiContext.patch("/v1/me", { data: {} }),
       apiContext.patch("/v1/me", { data: { role: "admin" } }),
+      apiContext.patch("/v1/me", { data: { name: "a".repeat(NAME_MAX_LENGTH + 1) } }),
       ...["", "ab", "a".repeat(31), "invalid-name"].map((invalidUsername) =>
         apiContext.patch("/v1/me", { data: { username: invalidUsername } }),
       ),
@@ -187,6 +189,7 @@ test.describe("Current User API", () => {
     ]);
 
     await expect(prisma.user.findUniqueOrThrow({ where: { id: userId } })).resolves.toMatchObject({
+      name,
       username,
     });
 

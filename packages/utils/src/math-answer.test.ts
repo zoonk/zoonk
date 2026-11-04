@@ -30,6 +30,11 @@ describe(formatMathAnswer, () => {
       `0.00012${NBSP}m`,
     );
   });
+
+  it("writes an answer of zero without a minus sign", () => {
+    expect(formatMathAnswer({ language: "en", unit: null, value: -0 })).toBe("0");
+    expect(formatMathAnswer({ language: "en", unit: "m", value: -0 })).toBe(`0${NBSP}m`);
+  });
 });
 
 describe(getUnitPosition, () => {
@@ -93,6 +98,12 @@ describe(formatMoney, () => {
     expect(formatMoney({ currency: "USD", locale: "en", signed: true, value: -500 })).toBe("−$500");
 
     expect(formatMoney({ currency: "USD", locale: "en", signed: true, value: 500 })).toBe("+$500");
+  });
+
+  it("writes an amount that reads as zero without a minus sign", () => {
+    expect(formatMoney({ currency: "USD", locale: "en", value: -0 })).toBe("$0");
+    expect(formatMoney({ currency: "USD", locale: "en", value: -0.001 })).toBe("$0");
+    expect(formatMoney({ compact: true, currency: "USD", locale: "en", value: -0 })).toBe("$0");
   });
 });
 

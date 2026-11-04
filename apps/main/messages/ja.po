@@ -1243,6 +1243,11 @@ msgid "Your name, username and account."
 msgstr "名前、ユーザー名、アカウントの設定です。"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "150文字以内で入力してください。"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
 msgstr "確認しています…"

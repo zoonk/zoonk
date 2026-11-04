@@ -73,6 +73,17 @@ final class ChartsActivitiesTests: XCTestCase {
       ActivityNumberFormat.format(1_200_000, digits: 1, compact: true, locale: english), "1.2M")
   }
 
+  func testANumberThatReadsAsZeroTakesNoSign() {
+    let english = Locale(identifier: "en_US")
+
+    XCTAssertEqual(ActivityNumberFormat.format(-9.81 * 0, locale: english), "0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.0001, digits: 2, locale: english), "0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.0, compact: true, locale: english), "0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.001, unit: "$", locale: english), "$0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.5, locale: english), "\u{2212}0.5")
+    XCTAssertEqual(ActivityNumberFormat.format(-.infinity, locale: english), "\u{2212}∞")
+  }
+
   func testMeasuresChartSpans() throws {
     let fields: ChartReaderFields = try decode(
       """

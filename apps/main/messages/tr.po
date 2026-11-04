@@ -1243,6 +1243,11 @@ msgid "Your name, username and account."
 msgstr "Adın, kullanıcı adın ve hesabın."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "En fazla 150 karakter kullan."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
 msgstr "Kontrol ediyoruz…"

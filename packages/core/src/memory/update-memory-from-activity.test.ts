@@ -7,7 +7,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { proposeOnboardingMemory, rememberMemoryCandidate } from "./memory-follow-ups";
 import { gateMemoryCandidate } from "./remember-candidate";
@@ -73,6 +73,10 @@ describe(updateMemoryFromActivity, () => {
     vi.mocked(reconcileMemoryFact).mockResolvedValue(null);
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("adds a new fact from a chat with its source, confidence and provenance", async () => {
     const user = await userFixture();
     mockExtraction([extracted({ expiresOn: "2099-11-08" })]);
@@ -112,6 +116,32 @@ describe(updateMemoryFromActivity, () => {
         statement: "Wants Law",
       }),
     });
+  });
+
+  it("reads a chat's relative dates from the learner's day, not UTC's", async () => {
+    vi.useFakeTimers({ now: new Date("2026-09-27T02:00:00.000Z"), toFake: ["Date"] });
+    const user = await userFixture();
+    await goalFixture({ timezone: "America/Sao_Paulo", userId: user.id });
+    mockExtraction([]);
+
+    await updateMemoryFromActivity({ source: chat(user.id).source, userId: user.id });
+
+    expect(extractMemoryFacts).toHaveBeenCalledWith(
+      expect.objectContaining({ today: "2026-09-26" }),
+    );
+  });
+
+  it("keeps the time zone the source gives over the active goal's", async () => {
+    vi.useFakeTimers({ now: new Date("2026-09-27T02:00:00.000Z"), toFake: ["Date"] });
+    const user = await userFixture();
+    await goalFixture({ timezone: "America/Sao_Paulo", userId: user.id });
+    mockExtraction([]);
+
+    await updateMemoryFromActivity({ ...chat(user.id), timeZone: "Asia/Tokyo" });
+
+    expect(extractMemoryFacts).toHaveBeenCalledWith(
+      expect.objectContaining({ today: "2026-09-27" }),
+    );
   });
 
   it("replaces the fact a new one updates, and undo puts the old one back", async () => {

@@ -7,7 +7,7 @@ import {
   type TranscriptTurn,
   addTranscriptFragment,
   addTypedReply,
-  getSpokenSeconds,
+  getSpokenMs,
   toConversationTurns,
 } from "./live-call-transcript";
 
@@ -61,7 +61,7 @@ describe(addTranscriptFragment, () => {
   });
 });
 
-describe(getSpokenSeconds, () => {
+describe(getSpokenMs, () => {
   it("adds up the learner's spoken turns, not typed ones or the character's", () => {
     const turns = addTranscriptFragment(addTypedReply(buildCall(), "Saturday?"), {
       delta: "Thanks, bye!",
@@ -70,22 +70,24 @@ describe(getSpokenSeconds, () => {
       startMs: 13_000,
     });
 
-    expect(getSpokenSeconds(turns)).toBe(4);
+    expect(getSpokenMs(turns)).toBe(4100);
   });
 });
 
 describe(toConversationTurns, () => {
-  it("drops empty turns and keeps saved turns within the limits", () => {
+  it("drops empty turns and keeps the newest turns within the limits", () => {
     const turns = [
-      ...addTypedReply([], "   "),
-      ...Array.from({ length: MAX_CONVERSATION_TURNS + 10 }, () =>
-        addTypedReply([], "x".repeat(MAX_CONVERSATION_TURN_LENGTH + 100)),
+      ...Array.from({ length: MAX_CONVERSATION_TURNS + 10 }, (_, index) =>
+        addTypedReply([], `${index} ${"x".repeat(MAX_CONVERSATION_TURN_LENGTH)}`),
       ).flat(),
+      ...addTypedReply([], "   "),
     ];
 
     const saved = toConversationTurns(turns);
+    const indexes = saved.map((turn) => turn.text.split(" ", 1)[0]);
 
     expect(saved).toHaveLength(MAX_CONVERSATION_TURNS);
     expect(saved[0]?.text).toHaveLength(MAX_CONVERSATION_TURN_LENGTH);
+    expect([indexes.at(0), indexes.at(-1)]).toStrictEqual(["10", `${MAX_CONVERSATION_TURNS + 9}`]);
   });
 });
