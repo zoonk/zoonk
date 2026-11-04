@@ -48,7 +48,8 @@ struct BuddyGoalStart: View {
               Button(example) {
                 goal = example
               }
-              .buttonStyle(.suggestionChip)
+              .buttonStyle(.outline)
+              .controlSize(.mini)
             }
           }
         }
