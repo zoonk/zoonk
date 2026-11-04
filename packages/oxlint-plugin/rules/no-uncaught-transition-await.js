@@ -11,7 +11,15 @@ const TRANSPARENT = new Set([
 ]);
 
 const TRANSITION_HOOK = /^use\w*Transition$/u;
-const HOOK = /^use[A-Z]/u;
+
+/** React's own hooks whose second element runs at once and returns nothing. */
+const REACT_DISPATCH_HOOKS = new Set([
+  "useActionState",
+  "useOptimistic",
+  "useReducer",
+  "useState",
+  "useTransition",
+]);
 
 function isTransitionStart(callee, starters) {
   if (callee.type === "Identifier") {
@@ -73,8 +81,7 @@ function getLocalFunction(node, scan) {
   return FUNCTIONS.has(fn?.type) ? fn : null;
 }
 
-/** A setter from a React hook (`const [, setX] = useState()`) runs at once and returns nothing. */
-function isHookSetter(callee, scan) {
+function isReactDispatch(callee, scan) {
   if (callee.type !== "Identifier") {
     return false;
   }
@@ -84,9 +91,11 @@ function isHookSetter(callee, scan) {
   return (
     definition?.type === "VariableDeclarator" &&
     definition.id.type === "ArrayPattern" &&
+    definition.id.elements[1]?.type === "Identifier" &&
+    definition.id.elements[1].name === callee.name &&
     definition.init?.type === "CallExpression" &&
     definition.init.callee.type === "Identifier" &&
-    HOOK.test(definition.init.callee.name)
+    REACT_DISPATCH_HOOKS.has(definition.init.callee.name)
   );
 }
 
@@ -109,7 +118,7 @@ function callSettles(call, scan) {
   const [first, second] = call.arguments;
 
   if (method === "finally") {
-    return callSettles(call.callee.object, scan) && handlerSettles(first, scan);
+    return valueSettles(call.callee.object, scan) && handlerSettles(first, scan);
   }
 
   if (method === "catch") {
@@ -122,7 +131,7 @@ function callSettles(call, scan) {
 
   if (
     (call.callee.type === "Identifier" && call.callee.name === "safeAsync") ||
-    isHookSetter(call.callee, scan)
+    isReactDispatch(call.callee, scan)
   ) {
     return true;
   }
@@ -157,11 +166,33 @@ function valueSettles(node, scan, { returned = false } = {}) {
     return settles(node.expressions.at(-1));
   }
 
+  if (node.type === "Identifier") {
+    return storedValueSettles(node, scan, { returned });
+  }
+
   return (
     node.type !== "CallExpression" ||
     (returned && isGlobal(node.callee, scan)) ||
     callSettles(node, scan)
   );
+}
+
+/** A promise kept in a `const` (`const pending = save()`) is checked where it was made. */
+function storedValueSettles(node, scan, { returned }) {
+  const definition = findDeclaration({ node, sourceCode: scan.sourceCode });
+
+  if (definition?.type !== "VariableDeclarator" || definition.id.type !== "Identifier") {
+    return true;
+  }
+
+  if (scan.visiting.has(definition)) {
+    return true;
+  }
+
+  scan.visiting.add(definition);
+  const settles = valueSettles(definition.init, scan, { returned });
+  scan.visiting.delete(definition);
+  return settles;
 }
 
 function getChildren(node) {

@@ -152,13 +152,35 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
   return { countAnswer, mockOffer, phase, setPhase, showReady, start };
 }
 
+async function saveFinish({
+  actions,
+  fromScratch,
+  goalId,
+  stopMockId,
+}: {
+  actions: OnboardingActions;
+  fromScratch: boolean;
+  goalId: string;
+  stopMockId: string | null;
+}): Promise<boolean> {
+  if (stopMockId) {
+    await safeAsync(() => actions.stopPlacementMock(stopMockId));
+  }
+
+  const { data: finished } = await safeAsync(() =>
+    actions.finishPlacement({ fromScratch, goalId }),
+  );
+
+  return Boolean(finished);
+}
+
 export function PlacementStep({
   actions,
   areaCount,
   goalId,
   mockHrefs,
   onDone,
-  onFailed,
+  onFinishFailed,
   run,
   subject,
 }: {
@@ -167,7 +189,8 @@ export function PlacementStep({
   goalId: string;
   mockHrefs: { mock: (mockId: string) => string; start: string };
   onDone: () => void;
-  onFailed: () => void;
+  /** Says a finish that didn't save, until the learner's next try. */
+  onFinishFailed: (failed: boolean) => void;
   run: GenerationRun | null;
   subject: string;
 }) {
@@ -185,18 +208,12 @@ export function PlacementStep({
 
   const finish = (fromScratch: boolean, stopMockId: string | null = null) =>
     startTransition(async () => {
-      if (stopMockId) {
-        await safeAsync(() => actions.stopPlacementMock(stopMockId));
-      }
+      onFinishFailed(false);
 
-      const { data: finished } = await safeAsync(() =>
-        actions.finishPlacement({ fromScratch, goalId }),
-      );
-
-      if (finished) {
+      if (await saveFinish({ actions, fromScratch, goalId, stopMockId })) {
         onDone();
       } else {
-        onFailed();
+        onFinishFailed(true);
       }
     });
 
@@ -227,6 +244,8 @@ export function PlacementStep({
     (question: PlacementQuestion, answered: number) =>
     (choice: PlacementAnswer, durationMs: number) =>
       startTransition(async () => {
+        onFinishFailed(false);
+
         const outcome = await actions
           .answerPlacement({ answer: choice, durationMs, goalId, itemId: question.itemId })
           .catch((): PlacementOutcome => ({ status: "failed" }));
@@ -256,7 +275,10 @@ export function PlacementStep({
           areaCount={areaCount}
           mock={mockOffer && { ...mockOffer, href: mockHrefs.start }}
           onScratch={() => finish(true)}
-          onStart={() => startStarting(start)}
+          onStart={() => {
+            onFinishFailed(false);
+            startStarting(start);
+          }}
           pending={isPending}
           starting={isStarting}
           subject={subject}
