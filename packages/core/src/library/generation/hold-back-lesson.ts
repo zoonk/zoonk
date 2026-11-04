@@ -8,7 +8,7 @@ import { toPlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { getSeenChange } from "../../plans/planner/plan-effect";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
-import { oweFinishedDaySettlements } from "../../sessions/_utils/owe-finished-day-settlements";
+import { oweStartedDaySettlements } from "../../sessions/_utils/owe-started-day-settlements";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type HeldBackDraft, MAX_LESSON_DRAFTS, parseHeldBackDrafts } from "./held-back-drafts";
 
@@ -82,7 +82,7 @@ export async function moveOnWithoutLesson(
     },
   });
 
-  await oweFinishedDaySettlements(
+  await oweStartedDaySettlements(
     tx,
     blocks.map((block) => block.sessionId),
   );

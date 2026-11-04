@@ -1,7 +1,7 @@
 import "server-only";
 import { type StudySessionStatus, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { oweFinishedDaySettlements } from "./owe-finished-day-settlements";
+import { oweStartedDaySettlements } from "./owe-started-day-settlements";
 
 /** Ended days retain their history; only running or future days follow changes. */
 const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
@@ -80,7 +80,7 @@ export async function skipTestedOutBlocks({
       return unchanged(null);
     }
 
-    await oweFinishedDaySettlements(
+    await oweStartedDaySettlements(
       tx,
       blocks.map((block) => block.sessionId),
     );

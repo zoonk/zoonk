@@ -4,10 +4,11 @@ import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 
 /**
- * Call in the transaction that skips or removes blocks. A started day it leaves with nothing open
- * is finished, but only a settlement completes it.
+ * Call in the transaction that skips or removes blocks. Every started day it touches owes a
+ * settlement, which completes the day if nothing is left open: a write taking the day's other blocks
+ * at the same time isn't visible here, only under the day's lock.
  */
-export async function oweFinishedDaySettlements(
+export async function oweStartedDaySettlements(
   tx: TransactionClient,
   sessionIds: readonly string[],
 ): Promise<void> {
@@ -15,17 +16,13 @@ export async function oweFinishedDaySettlements(
     return;
   }
 
-  const finished = await tx.studySession.findMany({
+  const started = await tx.studySession.findMany({
     select: { goal: { select: { timezone: true } }, id: true, userId: true },
-    where: {
-      blocks: { none: { status: { in: ["active", "pending"] } } },
-      id: { in: [...sessionIds] },
-      status: "active",
-    },
+    where: { id: { in: [...sessionIds] }, startedAt: { not: null }, status: "active" },
   });
 
   await Promise.all(
-    finished.map((session) =>
+    started.map((session) =>
       oweFollowUps({
         db: tx,
         followUps: [

@@ -12,6 +12,49 @@ import * as refresh from "../../plans/refresh-goal-plan";
 import { runOwedSettlements } from "../../sessions/_test-utils/owed-settlements";
 import { holdBackLessonDraft } from "./hold-back-lesson";
 
+/** A day whose only block is a private lesson, which its first held-back draft sets aside. */
+async function dayWithPrivateLesson({ startedAt }: { startedAt: Date | null }) {
+  const user = await userFixture();
+  const workflowRunId = randomUUID();
+
+  const lesson = await libraryLessonFixture({
+    contentRunId: workflowRunId,
+    contentStatus: "running",
+    ownerId: user.id,
+  });
+
+  const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+  const plan = await planFixture({ goalId: goal.id });
+
+  // Queuing a block makes a day active before anyone starts it.
+  const session = await studySessionFixture({
+    goalId: goal.id,
+    startedAt,
+    status: "active",
+    userId: user.id,
+  });
+
+  await Promise.all([
+    planItemFixture({ lessonId: lesson.id, planId: plan.id }),
+    studySessionBlockFixture({
+      lessonId: lesson.id,
+      sessionId: session.id,
+      startedAt,
+      status: startedAt ? "active" : "pending",
+    }),
+  ]);
+
+  const setAside = () =>
+    holdBackLessonDraft({
+      lessonId: lesson.id,
+      model: "test/fixture",
+      problems: [{ problem: "The answer is incorrect.", screen: 0 }],
+      workflowRunId,
+    });
+
+  return { session, setAside, user };
+}
+
 describe(holdBackLessonDraft, () => {
   afterEach(() => vi.restoreAllMocks());
 
@@ -109,54 +152,24 @@ describe(holdBackLessonDraft, () => {
   });
 
   it("completes a started day whose last open lesson it sets aside", async () => {
-    const user = await userFixture();
-    const workflowRunId = randomUUID();
+    const { session, setAside, user } = await dayWithPrivateLesson({ startedAt: new Date() });
 
-    const lesson = await libraryLessonFixture({
-      contentRunId: workflowRunId,
-      contentStatus: "running",
-      ownerId: user.id,
-    });
-
-    const goal = await goalFixture({ timezone: "UTC", userId: user.id });
-    const plan = await planFixture({ goalId: goal.id });
-
-    const session = await studySessionFixture({
-      goalId: goal.id,
-      startedAt: new Date(),
-      status: "active",
-      userId: user.id,
-    });
-
-    await Promise.all([
-      planItemFixture({ lessonId: lesson.id, planId: plan.id }),
-      studySessionBlockFixture({
-        completedAt: new Date(),
-        position: 0,
-        sessionId: session.id,
-        status: "completed",
-      }),
-      studySessionBlockFixture({
-        lessonId: lesson.id,
-        position: 1,
-        sessionId: session.id,
-        status: "active",
-      }),
-    ]);
-
-    await expect(
-      holdBackLessonDraft({
-        lessonId: lesson.id,
-        model: "test/fixture",
-        problems: [{ problem: "The answer is incorrect.", screen: 0 }],
-        workflowRunId,
-      }),
-    ).resolves.toStrictEqual({ setAside: true });
-
+    await expect(setAside()).resolves.toStrictEqual({ setAside: true });
     await runOwedSettlements(user.id);
 
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
     ).resolves.toMatchObject({ endedAt: expect.any(Date), status: "completed" });
+  });
+
+  it("leaves open a day with queued work that nobody started", async () => {
+    const { session, setAside, user } = await dayWithPrivateLesson({ startedAt: null });
+
+    await expect(setAside()).resolves.toStrictEqual({ setAside: true });
+    await runOwedSettlements(user.id);
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+    ).resolves.toMatchObject({ endedAt: null, status: "active" });
   });
 });

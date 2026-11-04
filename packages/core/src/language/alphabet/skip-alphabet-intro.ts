@@ -7,7 +7,7 @@ import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getAlphabetIdentityKey } from "../../library/language/alphabet/alphabet-identity";
 import { ALPHABET_INTRO_DETAIL } from "../../library/language/alphabet/alphabet-intro";
-import { oweFinishedDaySettlements } from "../../sessions/_utils/owe-finished-day-settlements";
+import { oweStartedDaySettlements } from "../../sessions/_utils/owe-started-day-settlements";
 
 export type SkipAlphabetIntroResult = {
   status: "notFound" | "notLanguage" | "skipped" | "unauthorized";
@@ -97,7 +97,7 @@ export async function skipAlphabetIntro(goalId: string): Promise<SkipAlphabetInt
           },
         });
 
-        await oweFinishedDaySettlements(
+        await oweStartedDaySettlements(
           tx,
           blocks.map((block) => block.sessionId),
         );
