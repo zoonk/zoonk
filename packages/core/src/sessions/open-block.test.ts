@@ -9,6 +9,11 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  LEARNER_LOCK,
+  holdLearnerLock,
+  waitForBlockedStatement,
+} from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
 import { openStudyBlock } from "./open-block";
@@ -331,6 +336,31 @@ describe("the learner opens a study block", () => {
       opening: { kind: "changed" },
       status: "ready",
     });
+  });
+
+  it("a mission whose block a plan change removes while it opens opens nothing", async () => {
+    const user = await userFixture();
+    const { goal } = await sessionGoalFixture({ userId: user.id });
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+    const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
+    mockSession(user.id);
+
+    const planChange = holdLearnerLock({
+      beforeCommit: (tx) => tx.studySessionBlock.delete({ where: { id: block.id } }),
+      userId: user.id,
+    });
+
+    const pid = await planChange.pid;
+    const opened = mission(block);
+
+    try {
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
+    } finally {
+      planChange.release();
+      await planChange.done;
+    }
+
+    await expect(opened).resolves.toStrictEqual({ opening: { kind: "changed" }, status: "ready" });
   });
 
   it("a mission from a day that's over opens nothing, even a step left unstarted", async () => {

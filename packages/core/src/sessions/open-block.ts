@@ -151,7 +151,7 @@ async function openTappedBlock({
 
 /**
  * A mission opens only a block of today still free to start; anything else, a block a plan change
- * removed included, reads the host again.
+ * removed included (before or while it opens), reads the host again.
  */
 async function openMission({
   target,
@@ -187,11 +187,12 @@ async function openMission({
     userId: day.userId,
   });
 
-  return opened.status === "ready" &&
+  const finished =
+    opened.status === "ready" &&
     opened.opening.kind === "session" &&
-    opened.opening.blockId === null
-    ? openingResult({ kind: "changed" })
-    : opened;
+    opened.opening.blockId === null;
+
+  return finished || opened.status === "notFound" ? openingResult({ kind: "changed" }) : opened;
 }
 
 /**
