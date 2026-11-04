@@ -75,6 +75,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.ListenButton
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.audio.RecordButton
@@ -89,9 +90,16 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberRecordTap
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.withoutFailure
+import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.ceremonies.MomentCeremony
+import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.ceremonies.momentBuddy
 import com.zoonk.android.feature.player.lessonColumnWidth
 import com.zoonk.android.feature.player.segmentParts
 import com.zoonk.android.feature.questions.ItemLine
+import com.zoonk.android.feature.session.DayMoment
+import com.zoonk.android.feature.session.ReachedFacts
+import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DropdownMenu
@@ -116,6 +124,7 @@ import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
+import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.PronunciationAnswerGrade
 import com.zoonk.api.models.PronunciationRoundResult
 import java.time.ZoneId
@@ -140,7 +149,17 @@ fun PronunciationScreen(
         return
     }
 
-    key(owner, goalId) { PronunciationTask(goalId, owner, app.pronunciation, app.speech, navigator) }
+    key(owner, goalId) {
+        PronunciationTask(
+            goalId,
+            owner,
+            app.pronunciation,
+            app.speech,
+            navigator,
+            buddy = summary.value?.buddy,
+            ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
+        )
+    }
 }
 
 /**
@@ -154,13 +173,15 @@ internal fun PronunciationTask(
     store: PronunciationStore,
     speech: SpeechPlayer,
     navigator: AppNavigator,
+    buddy: LearnerSummaryBuddy?,
+    ceremony: MomentCeremony,
 ) {
     val context = LocalContext.current
     val model = viewModel(key = "pronunciation:$owner:$goalId") { PronunciationViewModel(context) }
     val round = model.round
 
     if (round != null) {
-        PronunciationRoundScreen(round, model, speech, navigator)
+        PronunciationRoundScreen(round, model, speech, navigator, buddy, ceremony)
         return
     }
 
@@ -198,10 +219,20 @@ internal fun PronunciationRoundScreen(
     model: PronunciationViewModel,
     speech: SpeechPlayer,
     navigator: AppNavigator,
+    buddy: LearnerSummaryBuddy?,
+    ceremony: MomentCeremony,
 ) {
     when (val step = round.step) {
-        is RoundStep.Result -> RoundEnd(round, step.result, navigator::closeTask)
-        is RoundStep.Word -> WordStep(round, step, model, speech, navigator)
+        is RoundStep.Result -> {
+            MomentAfterCeremony(
+                step.result?.ceremony,
+                ceremony,
+            ) { RoundEnd(round, step.result, buddy, navigator::closeTask) }
+        }
+
+        is RoundStep.Word -> {
+            WordStep(round, step, model, speech, navigator)
+        }
     }
 }
 
@@ -615,11 +646,11 @@ private fun SaveFailed(onRetry: () -> Unit) {
     }
 }
 
-/** The day's moment and its ceremony come with the session's (L3), as on the lesson's end. */
 @Composable
 private fun RoundEnd(
     round: PronunciationRound,
     result: PronunciationRoundResult?,
+    buddy: LearnerSummaryBuddy?,
     onDone: () -> Unit,
 ) {
     val noWords = round.words.isEmpty()
@@ -636,37 +667,56 @@ private fun RoundEnd(
         },
     ) { padding ->
         ResultPages(
-            modifier = Modifier.padding(padding).semantics { liveRegion = LiveRegionMode.Polite },
+            modifier = Modifier.padding(padding),
             withMoment = true,
             columnModifier = Modifier.lessonColumnWidth(),
             done = {
-                if (noWords) {
-                    Text(
-                        stringResource(R.string.pronunciation_no_words),
-                        Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                } else {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                    if (noWords) {
                         Text(
-                            stringResource(title),
+                            stringResource(R.string.pronunciation_no_words),
                             Modifier.semantics { heading() },
                             style = MaterialTheme.typography.headlineSmall,
                         )
-                        Text(
-                            stringResource(R.string.pronunciation_accent),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
-                    result?.let {
-                        MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
+                    } else {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                stringResource(title),
+                                Modifier.semantics { heading() },
+                                style = MaterialTheme.typography.headlineSmall,
+                            )
+                            Text(
+                                stringResource(R.string.pronunciation_accent),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                        result?.let {
+                            MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
+                        }
                     }
                 }
+                result?.let { RoundMoment(it, buddy) }
             },
             next = {},
         )
     }
+}
+
+@Composable
+private fun RoundMoment(
+    result: PronunciationRoundResult,
+    buddy: LearnerSummaryBuddy?,
+) {
+    val moment = buddy.momentBuddy()
+
+    DayMoment(
+        missions = result.missionMoment?.missionMomentFacts(),
+        reached = ReachedFacts(result.reached.level, result.reached.energy),
+        ceremony = result.ceremony?.kind,
+        buddy = moment.look,
+        buddyName = moment.name,
+    )
 }
 
 /** Enter presses the screen's main action and Escape leaves, as in the lesson player. */

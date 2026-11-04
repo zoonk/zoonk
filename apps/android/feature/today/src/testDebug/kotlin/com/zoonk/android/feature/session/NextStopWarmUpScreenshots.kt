@@ -114,8 +114,26 @@ class NextStopWarmUpScreenshots {
 
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookWithWorkMeanwhile() =
-        capture("book-meanwhile", fold = true, alternative = step(2, kind = StudyBlock.Kind.PRACTICE).copy(title = "Pollen and nectar"))
+    fun bookWithWorkMeanwhile() = capture("book-meanwhile", fold = true, alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactWithWorkMeanwhile() = capture("compact-meanwhile", alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedWithWorkMeanwhile() = capture("expanded-meanwhile", alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookWithWorkMeanwhile() = capture("small-book-meanwhile", fold = true, alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookWithWorkMeanwhileAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("book-meanwhile-font200", fold = true, alternative = MEANWHILE, stop = true)
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
@@ -185,6 +203,7 @@ class NextStopWarmUpScreenshots {
         fold: Boolean = false,
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
         alternative: DayStep? = null,
+        stop: Boolean = false,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
@@ -234,7 +253,7 @@ class NextStopWarmUpScreenshots {
                         notWritten = null,
                         alternative = alternative,
                         refresh = { shown = shown.copy(screen = StudyBlock.Screen.LESSON) },
-                        onStop = null,
+                        onStop = if (stop) ({}) else null,
                         navigator = rememberAppNavigator(),
                         warmUps = warmUps,
                     )
@@ -263,5 +282,6 @@ class NextStopWarmUpScreenshots {
 
     private companion object {
         val LESSON: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2f00")
+        val MEANWHILE = step(2, kind = StudyBlock.Kind.PRACTICE).copy(title = "Pollen and nectar")
     }
 }

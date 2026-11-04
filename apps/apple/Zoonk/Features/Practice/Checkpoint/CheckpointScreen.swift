@@ -366,12 +366,8 @@ private struct CheckpointResultView: View {
           }
 
           PracticeResultTitle(
-            title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed),
-            detail: CheckpointCopy.resultDetail(
-              kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons))
-        }
-      } response: {
-        if checkpoint.endedWithoutQuestions != true {
+            title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed))
+
           PracticeResultNumbers(
             correct: correct, total: total,
             // A win's Brain Power is its rewards' first row, as on main.
@@ -387,12 +383,26 @@ private struct CheckpointResultView: View {
                 ]
               } ?? [],
             day: state.completion.flatMap { try? StudyJSON.recode($0, as: BlockMoment.self) }?.day)
-
+        }
+      } response: {
+        if checkpoint.endedWithoutQuestions != true {
           if won {
             CheckpointRewards(
               checkpoint: checkpoint,
               brainPower: state.completion?.ownBrainPower ?? checkpoint.reward.brainPower)
-          } else if let next = checkpoint.nextPhase?.value1 {
+          }
+
+          if let retry = CheckpointCopy.retryLine(
+            kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons)
+          {
+            Label {
+              Text(retry)
+            } icon: {
+              Image(systemName: "arrow.counterclockwise")
+            }
+          }
+
+          if !won, let next = checkpoint.nextPhase?.value1 {
             Label {
               Text(
                 "The next phase, \(next.name), is already open.", tableName: "Practice",
@@ -563,7 +573,7 @@ enum CheckpointCopy {
         "Not this time", table: "Practice", comment: "A lost phase challenge.")
   }
 
-  static func resultDetail(
+  static func retryLine(
     kind: Components.Schemas.Checkpoint.KindPayload, passed: Bool, lessons: Int
   )
     -> LocalizedStringResource?

@@ -131,8 +131,8 @@ private fun timeMachineText(
 
 /**
  * A run's result in place of its questions: the title first and saving while [saving], so nothing
- * moves when the score arrives. Where the screen splits ([ResultPages]) the title leads and
- * [content], the numbers and the day's moment, faces it above the way on.
+ * moves when the score arrives, then [content], the numbers and the day's moment. Where the screen
+ * splits ([ResultPages]) all of it takes the page before the split, and the way on the page after.
  */
 @Composable
 private fun RunDone(
@@ -165,9 +165,11 @@ private fun RunDone(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge,
                 )
+            } else {
+                content()
             }
         },
-        next = { if (!saving) content() },
+        next = {},
     )
 }
 
