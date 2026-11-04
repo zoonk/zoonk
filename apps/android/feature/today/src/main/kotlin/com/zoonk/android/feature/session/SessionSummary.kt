@@ -619,9 +619,8 @@ private fun SummaryBar(
 }
 
 /**
- * Main's `SHARED_ROW_ACTION_CLASS`: the stopped session's two choices share a line, each as wide as
- * its label plus an even share of the rest, and each takes a line of its own when the labels don't
- * fit side by side. A `FlowRow` weight would split the line evenly and wrap the longer label.
+ * Main's `SHARED_ROW_ACTION_CLASS` grows each button from its label's width; a `FlowRow` weight would
+ * split the line evenly and wrap the longer label.
  */
 @Composable
 private fun SharedRow(

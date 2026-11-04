@@ -50,7 +50,6 @@ fun StepPagerActions(
     }
 }
 
-/** Main's `StepsBackButton`. */
 @Composable
 fun StepBackButton(onClick: () -> Unit) {
     OutlinedIconButton(onClick = onClick) {
