@@ -321,6 +321,39 @@ describe("the learner opens a study block", () => {
     });
   });
 
+  it("a mission whose block a plan change removed opens nothing", async () => {
+    const { session } = await goalDaySession();
+    const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
+
+    await prisma.studySessionBlock.delete({ where: { id: block.id } });
+
+    await expect(mission(block)).resolves.toStrictEqual({
+      opening: { kind: "changed" },
+      status: "ready",
+    });
+  });
+
+  it("a mission from a day that's over opens nothing, even a step left unstarted", async () => {
+    const user = await userFixture();
+    const { goal } = await sessionGoalFixture({ userId: user.id });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: new Date("2026-09-20T00:00:00Z"),
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
+    mockSession(user.id);
+
+    await expect(mission(block)).resolves.toStrictEqual({
+      opening: { kind: "changed" },
+      status: "ready",
+    });
+
+    await expect(readBlock(block)).resolves.toMatchObject({ status: "pending" });
+  });
+
   it("opens nothing for a signed-out visitor or another learner's block", async () => {
     const { session } = await learnerSession();
     const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
@@ -330,7 +363,10 @@ describe("the learner opens a study block", () => {
 
     await expect(tap(block)).resolves.toStrictEqual({ status: "notFound" });
 
-    await expect(mission(block)).resolves.toStrictEqual({ status: "notFound" });
+    await expect(mission(block)).resolves.toStrictEqual({
+      opening: { kind: "changed" },
+      status: "ready",
+    });
 
     await expect(
       openStudyBlock({ target: { kind: "next", sessionId: session.id }, timeZone: "UTC" }),
@@ -338,6 +374,7 @@ describe("the learner opens a study block", () => {
 
     mockSession(null);
     await expect(tap(block)).resolves.toStrictEqual({ status: "unauthorized" });
+    await expect(mission(block)).resolves.toStrictEqual({ status: "unauthorized" });
     await expect(readBlock(block)).resolves.toMatchObject({ status: "pending" });
   });
 

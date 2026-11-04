@@ -22412,7 +22412,7 @@
     },
     "/study-block-openings": {
       "post": {
-        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; the daily time limit or earlier work goes back to Today; and Continue never begins a mock the learner didn't see (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
+        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card or buddy answer's link (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; the daily time limit or earlier work goes back to Today; Continue never begins a mock the learner didn't see, and a mission opens only a block of today still free to start (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
         "operationId": "openStudyBlock",
         "security": [
           {
@@ -28475,7 +28475,7 @@
           "kind"
         ],
         "additionalProperties": false,
-        "description": "A mission card's block. It opens only while the block is still free to start; otherwise nothing opens (`changed`)"
+        "description": "A block a mission card or a buddy answer links. It opens only while it's still free to start on today's session; otherwise nothing opens (`changed`), a block that's finished, from a day that's over or gone after a plan change included"
       },
       "StudyAnswerInput": {
         "type": "object",
@@ -87957,7 +87957,7 @@
           "kind"
         ],
         "additionalProperties": false,
-        "description": "Nothing opened: what the learner saw changed (a mock they didn't see, a mission no longer free to start). Read the screen again so they see the change first"
+        "description": "Nothing opened: what the learner saw changed (a mock they didn't see, a mission or buddy answer's block no longer free to start). Read the screen again so they see the change first; a buddy answer, which can't show it, says the step isn't available anymore"
       },
       "StudySession": {
         "type": "object",
