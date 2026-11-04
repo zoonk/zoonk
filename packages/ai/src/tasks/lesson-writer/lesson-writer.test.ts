@@ -78,23 +78,23 @@ function option(text: string, isCorrect: boolean) {
   return { isCorrect, reason: "Why.", text };
 }
 
-const SONNET = "anthropic/claude-sonnet-5.5";
+const OPUS = "anthropic/claude-opus-5.5";
 const TERRA = "openai/gpt-6.1-terra";
 const ARGON = "google/gemini-4-argon";
 const REUSES: CallReuse[] = ["bounded", "library", "personal"];
 
 describe(getLessonWriterModel, () => {
-  it("writes lessons other learners read with Sonnet and a learner's own with Terra", () => {
+  it("writes lessons other learners read with Opus and a learner's own with Terra", () => {
     expect(REUSES.map((reuse) => getLessonWriterModel({ reuse }))).toStrictEqual([
-      SONNET,
-      SONNET,
+      OPUS,
+      OPUS,
       TERRA,
     ]);
   });
 
   it("gives every writer the chain may serve a reviewer from another family", () => {
     for (const reuse of REUSES) {
-      for (const writerModel of [getLessonWriterModel({ reuse }), SONNET, TERRA, ARGON]) {
+      for (const writerModel of [getLessonWriterModel({ reuse }), OPUS, TERRA, ARGON]) {
         const { model } = getLessonCheckModels({ reuse, writerModel });
         expect(getModelFamily(model)).not.toBe(getModelFamily(writerModel));
       }
@@ -105,7 +105,7 @@ describe(getLessonWriterModel, () => {
 describe(getLessonRewriteModel, () => {
   it("picks the writer chain's first model from a family whose drafts weren't held back", () => {
     expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "openai/gpt-6.1-terra"])).toBe(
-      "anthropic/claude-sonnet-5.5",
+      "anthropic/claude-opus-5.5",
     );
 
     expect(getLessonRewriteModel(["google/gemini-4-argon", "google/gemini-4-argon"])).toBe(
@@ -113,7 +113,7 @@ describe(getLessonRewriteModel, () => {
     );
 
     // A fallback wrote one of them: both families are left out.
-    expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "anthropic/claude-sonnet-5.5"])).toBe(
+    expect(getLessonRewriteModel(["openai/gpt-6.1-terra", "anthropic/claude-opus-5.5"])).toBe(
       "google/gemini-4-argon",
     );
   });
@@ -221,16 +221,16 @@ describe(writeLessonDraft, () => {
       spec: spec([screen("hook"), screen("check")]),
     } satisfies Parameters<typeof writeLessonDraft>[0];
 
-    await writeLessonDraft({ ...params, model: "anthropic/claude-sonnet-5.5" });
-    const sonnet = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
+    await writeLessonDraft({ ...params, model: "anthropic/claude-opus-5.5" });
+    const opus = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
 
     await writeLessonDraft(params);
     const terra = vi.mocked(generateText).mock.lastCall?.[0].providerOptions?.gateway;
 
-    expect(sonnet).toMatchObject({ models: ["openai/gpt-6.1-terra", "google/gemini-4-argon"] });
+    expect(opus).toMatchObject({ models: ["openai/gpt-6.1-terra", "google/gemini-4-argon"] });
 
     expect(terra).toMatchObject({
-      models: ["anthropic/claude-sonnet-5.5", "google/gemini-4-argon"],
+      models: ["anthropic/claude-opus-5.5", "google/gemini-4-argon"],
     });
   });
 

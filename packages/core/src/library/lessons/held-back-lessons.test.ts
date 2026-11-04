@@ -21,7 +21,7 @@ import { claimLibraryGeneration } from "../claims/generation-claim";
 import { temperatureSpec, writtenTemperatureLesson } from "../quality/_test-utils/written-lessons";
 
 const SOL = "openai/gpt-6-sol";
-const SONNET = "anthropic/claude-sonnet-5.5";
+const OPUS = "anthropic/claude-opus-5.5";
 
 function taskResult<T>(data: T, model: string) {
   return {
@@ -151,7 +151,7 @@ describe("held-back lessons", () => {
 
     expect(vi.mocked(writeLessonDraft).mock.calls[1]?.[0]).toMatchObject({
       heldBackProblems: [expect.objectContaining({ screen: 4 })],
-      model: SONNET,
+      model: OPUS,
     });
 
     await expect(readLesson(lesson.id)).resolves.toMatchObject({
@@ -159,11 +159,11 @@ describe("held-back lessons", () => {
       setAsideAt: null,
     });
 
-    mockDraft({ heldBack: true, model: SONNET });
+    mockDraft({ heldBack: true, model: OPUS });
     await redraft({ lessonId: lesson.id, workflowRunId });
 
     const lastDraft = vi.mocked(writeLessonDraft).mock.calls[2]?.[0];
-    expect(lastDraft?.model).toBe(SONNET);
+    expect(lastDraft?.model).toBe(OPUS);
     expect(lastDraft?.heldBackProblems).toHaveLength(2);
 
     expect(checkLessonQuality).not.toHaveBeenCalled();

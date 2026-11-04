@@ -32,24 +32,23 @@ const systemPrompt = rulesTemplate.replace("{{TYPED_QUESTION}}", () =>
 const lessonOutput = schemaInPrompt(writtenLessonSchema, { repair: fitWrittenBounds });
 
 /**
- * In a benchmark where no judge scored its own family (3 Nov 2026, 24 cases), Sonnet 5.5 matched or
- * beat Opus 5.5, with fewer factual slips, at two thirds of its cost, and both wrote more engaging
- * lessons than Terra at 7 and 10 times its cost and about twice its time. `getLessonWriterModel`
- * picks the first writer; each model falls back to the others, all from other families, so an
- * outage at one provider doesn't stop lessons.
+ * `getLessonWriterModel` picks the first writer; each model falls back to the others, all from other
+ * families, so an outage at one provider doesn't stop lessons.
  */
 const WRITER_MODELS = [
   "openai/gpt-6.1-terra",
-  "anthropic/claude-sonnet-5.5",
+  "anthropic/claude-opus-5.5",
   "google/gemini-4-argon",
 ] as const;
 
 const [defaultModel, sharedLessonModel] = WRITER_MODELS;
 
 /**
- * Sonnet 5.5 writes a lesson other learners will read: it beat Terra on held-out cases by 1.55
- * points, 2.25 on "Engaging, not a textbook" (3 Nov 2026), at about 7 times the cost, which a shared
- * lesson spreads across its readers. A lesson for one learner stays with Terra.
+ * Opus 5.5 writes a lesson other learners will read. On 8 lessons across subjects and levels (4 Nov
+ * 2026), the judge from neither family scored it 8.97, Sonnet 8.54, Sol 8.36 and Terra 8.28, and
+ * readers flagged the fewest sentences to reread or that didn't sound spoken, at about $0.21 a
+ * lesson, which a shared lesson spreads across its readers. Terra tied Sol for a lesson one learner
+ * reads, at half its price.
  */
 export function getLessonWriterModel({ reuse }: { reuse: CallReuse }): string {
   return reuse === "personal" ? defaultModel : sharedLessonModel;

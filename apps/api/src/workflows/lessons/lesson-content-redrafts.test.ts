@@ -25,7 +25,7 @@ const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 
 const ARGON = "google/gemini-4-argon";
 const SOL = "openai/gpt-6-sol";
-const SONNET = "anthropic/claude-sonnet-5.5";
+const OPUS = "anthropic/claude-opus-5.5";
 const TERRA = "openai/gpt-6.1-terra";
 
 const heldBack: RecordedDraft = {
@@ -104,7 +104,7 @@ describe("lesson content redrafts", () => {
 
     expect(vi.mocked(writeLessonDraft).mock.calls[1]?.[0]).toMatchObject({
       heldBackProblems: [expect.objectContaining({ screen: 2 })],
-      model: SONNET,
+      model: OPUS,
     });
 
     expect(writeSteps()).toStrictEqual(["started", "completed", "started", "completed"]);
@@ -123,8 +123,8 @@ describe("lesson content redrafts", () => {
     ).resolves.toStrictEqual({ lessonId: lesson.id, status: "heldBack" });
 
     expect(vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.model)).toStrictEqual([
-      SONNET,
-      SONNET,
+      OPUS,
+      OPUS,
       TERRA,
     ]);
 
@@ -177,7 +177,7 @@ describe("lesson content redrafts", () => {
     ).resolves.toMatchObject({ status: "heldBack" });
 
     expect(vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.model)).toStrictEqual([
-      SONNET,
+      OPUS,
       ARGON,
     ]);
   });
