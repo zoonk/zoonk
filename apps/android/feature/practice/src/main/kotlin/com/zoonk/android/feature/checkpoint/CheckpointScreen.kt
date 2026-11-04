@@ -760,10 +760,6 @@ internal fun DuelResult(
                             modifier = Modifier.semantics { heading() },
                             style = MaterialTheme.typography.headlineSmall,
                         )
-                    }
-                },
-                next = {
-                    if (outcome != null) {
                         val passMark =
                             duel.state.completion
                                 ?.checkpoint
@@ -780,9 +776,12 @@ internal fun DuelResult(
                                 ),
                         )
                         duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
-                        if (!wide && !rows.isEmpty) ResultDetails(duel, rows, won)
-                        if (wide && answers.isNotEmpty()) Review(duel, answers, app)
+                        if (!wide && won) Rewards(rows, checkpoint.phase)
                     }
+                },
+                next = {
+                    if (outcome != null && !wide && !rows.isEmpty) WhatsNext(duel, rows, won)
+                    if (outcome != null && wide && answers.isNotEmpty()) Review(duel, answers, app)
                 },
             )
         }
@@ -803,7 +802,17 @@ private fun ResultDetails(
     rows: ResultRows,
     won: Boolean,
 ) {
-    if (won) WonDetails(rows, duel.read.checkpoint.phase) else NotWonDetails(rows, duel.state.reinforcementLessons)
+    if (won) Rewards(rows, duel.read.checkpoint.phase)
+    WhatsNext(duel, rows, won)
+}
+
+@Composable
+private fun WhatsNext(
+    duel: Duel,
+    rows: ResultRows,
+    won: Boolean,
+) {
+    if (won) NextPhase(rows) else NotWonDetails(rows, duel.state.reinforcementLessons)
 }
 
 @Composable
@@ -823,22 +832,25 @@ private fun Section(
 }
 
 @Composable
-private fun WonDetails(
+private fun Rewards(
     rows: ResultRows,
     phase: CheckpointPhase?,
 ) {
-    if (rows.phaseComplete || rows.badge) {
-        Section(stringResource(R.string.checkpoint_rewards)) {
-            if (rows.phaseComplete) {
-                DetailRow(
-                    R.drawable.ic_flag,
-                    phase?.let { stringResource(R.string.checkpoint_phase_complete, (it.index + 1).toString()) }
-                        ?: stringResource(R.string.checkpoint_phase_complete_plain),
-                )
-            }
-            if (rows.badge) DetailRow(R.drawable.ic_search_check, stringResource(R.string.checkpoint_badge))
+    if (!rows.phaseComplete && !rows.badge) return
+    Section(stringResource(R.string.checkpoint_rewards)) {
+        if (rows.phaseComplete) {
+            DetailRow(
+                R.drawable.ic_flag,
+                phase?.let { stringResource(R.string.checkpoint_phase_complete, (it.index + 1).toString()) }
+                    ?: stringResource(R.string.checkpoint_phase_complete_plain),
+            )
         }
+        if (rows.badge) DetailRow(R.drawable.ic_search_check, stringResource(R.string.checkpoint_badge))
     }
+}
+
+@Composable
+private fun NextPhase(rows: ResultRows) {
     rows.nextPhase?.let { next ->
         Section(stringResource(R.string.checkpoint_next_phase)) { DetailRow(R.drawable.ic_arrow_forward, phaseLabel(next)) }
     }
