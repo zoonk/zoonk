@@ -29,9 +29,9 @@ struct UnitCircleFields: Decodable, Hashable, Sendable {
     let radians = degrees * .pi / 180
 
     switch trig {
-    case .sin: return sin(radians)
-    case .cos: return cos(radians)
-    case .tan: return abs(cos(radians)) < 1e-9 ? nil : tan(radians)
+    case .sin: return ActivityExpression.sine(radians)
+    case .cos: return ActivityExpression.cosine(radians)
+    case .tan: return abs(cos(radians)) < 1e-9 ? nil : ActivityExpression.tangent(radians)
     }
   }
 }

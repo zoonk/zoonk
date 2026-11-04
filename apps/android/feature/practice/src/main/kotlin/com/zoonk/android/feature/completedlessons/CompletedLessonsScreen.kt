@@ -47,9 +47,9 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.CompletedLesson
@@ -149,51 +149,49 @@ internal fun CompletedLessons(
 
     val days = list.`data`.groupBy { it.finishedOn.toJavaLocalDate() }
 
-    PageWithSupportingPane(supportingPane = null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
-            LazyColumn(Modifier.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
-                item(key = "title", contentType = "title") {
-                    // Main's page header: the goal's name over the page's title.
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        eyebrow?.let { Eyebrow(it) }
-                        Text(
-                            stringResource(R.string.navigation_completed_lessons),
-                            Modifier.pageTitle(),
-                            style = MaterialTheme.typography.headlineMedium,
-                        )
-                    }
+    BeforeFold { beforeFold ->
+        LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
+            item(key = "title", contentType = "title") {
+                // Main's page header: the goal's name over the page's title.
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    eyebrow?.let { Eyebrow(it) }
+                    Text(
+                        stringResource(R.string.navigation_completed_lessons),
+                        Modifier.pageTitle(),
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
                 }
+            }
 
-                if (days.isEmpty()) {
-                    item(key = "empty", contentType = "empty") {
-                        EmptyState(
-                            icon = R.drawable.ic_history,
-                            title = stringResource(R.string.completed_lessons_empty_title),
-                            description = stringResource(R.string.completed_lessons_empty_description),
-                            modifier = Modifier.padding(top = 24.dp),
-                        )
-                    }
+            if (days.isEmpty()) {
+                item(key = "empty", contentType = "empty") {
+                    EmptyState(
+                        icon = R.drawable.ic_history,
+                        title = stringResource(R.string.completed_lessons_empty_title),
+                        description = stringResource(R.string.completed_lessons_empty_description),
+                        modifier = Modifier.padding(top = 24.dp),
+                    )
                 }
+            }
 
-                days.forEach { (day, lessons) ->
-                    item(key = "day-$day", contentType = "day") {
-                        SectionHeader(dayTitle(day, today), Modifier.padding(top = 24.dp, bottom = 8.dp))
-                    }
-                    itemsIndexed(lessons, key = { _, lesson -> lesson.lessonId }, contentType = { _, _ -> "lesson" }) { index, lesson ->
-                        LessonRow(lesson, first = index == 0, onOpen)
-                    }
+            days.forEach { (day, lessons) ->
+                item(key = "day-$day", contentType = "day") {
+                    SectionHeader(dayTitle(day, today), Modifier.padding(top = 24.dp, bottom = 8.dp))
                 }
+                itemsIndexed(lessons, key = { _, lesson -> lesson.lessonId }, contentType = { _, _ -> "lesson" }) { index, lesson ->
+                    LessonRow(lesson, first = index == 0, onOpen)
+                }
+            }
 
-                if (nextCursor != null) {
-                    item(key = "more", contentType = "more") {
-                        LoadMoreFooter(
-                            isLoading = loadingMore,
-                            failed = moreFailed,
-                            loadingLabel = stringResource(R.string.completed_lessons_loading_more),
-                            failedText = stringResource(R.string.completed_lessons_load_more_failed),
-                            onRetry = more,
-                        )
-                    }
+            if (nextCursor != null) {
+                item(key = "more", contentType = "more") {
+                    LoadMoreFooter(
+                        isLoading = loadingMore,
+                        failed = moreFailed,
+                        loadingLabel = stringResource(R.string.completed_lessons_loading_more),
+                        failedText = stringResource(R.string.completed_lessons_load_more_failed),
+                        onRetry = more,
+                    )
                 }
             }
         }

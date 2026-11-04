@@ -9,6 +9,7 @@ struct ProfileEditorView: View {
   @State private var username: String
   @State private var isChangingUsername = false
   @State private var usernameCheck: UsernameCheck?
+  @State private var isSaved = false
   @FocusState private var focusedField: Field?
 
   private enum Field {
@@ -26,7 +27,7 @@ struct ProfileEditorView: View {
     self.isRequiredSetup = isRequiredSetup
     self.deleteAccount = deleteAccount
     _name = State(initialValue: account.user.name)
-    _username = State(initialValue: account.user.displayUsername ?? account.user.username ?? "")
+    _username = State(initialValue: account.user.username ?? "")
   }
 
   var body: some View {
@@ -152,6 +153,18 @@ struct ProfileEditorView: View {
         Section {
           AccountFailureMessage(failure: session.failure)
         }
+      } else if isSaved {
+        Section {
+          Label {
+            Text(
+              "Saved.", tableName: "Account",
+              comment: "The profile saved and its editor stays open beside the settings")
+          } icon: {
+            Image(systemName: "checkmark.circle")
+          }
+          .typeStyle(.note)
+          .foregroundStyle(.successText)
+        }
       }
 
       if isRequiredSetup {
@@ -237,6 +250,8 @@ struct ProfileEditorView: View {
         isChangingUsername = true
       }
     }
+    .onChange(of: name) { isSaved = false }
+    .onChange(of: username) { isSaved = false }
     .toolbar {
       if !isRequiredSetup {
         ToolbarItem(placement: .confirmationAction) {
@@ -329,11 +344,19 @@ struct ProfileEditorView: View {
   }
 
   private func save() {
+    isSaved = false
+
     Task {
       let didUpdate = await session.updateProfile(
         name: normalizedName, username: normalizedUsername)
 
-      if didUpdate && !isRequiredSetup && !isBesideTheList {
+      guard didUpdate, !isRequiredSetup else {
+        return
+      }
+
+      if isBesideTheList {
+        isSaved = true
+      } else {
         dismiss()
       }
     }
@@ -371,7 +394,6 @@ struct ProfileEditorView: View {
           deletion: AccountDeletionRequirements(hasAppleAccount: false),
           subscription: nil),
         user: AccountUser(
-          displayUsername: "zoonk_user",
           email: "hello@zoonk.com",
           id: UUID().uuidString,
           image: nil,

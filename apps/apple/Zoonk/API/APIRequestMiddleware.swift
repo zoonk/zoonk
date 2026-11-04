@@ -14,7 +14,11 @@ struct APIRequestMiddleware: ClientMiddleware {
       @concurrent @Sendable (HTTPRequest, HTTPBody?, URL) async throws -> (HTTPResponse, HTTPBody?)
   ) async throws -> (HTTPResponse, HTTPBody?) {
     var request = request
-    request.headerFields[.acceptLanguage] = Locale.preferredLanguages.first ?? "en"
+    // The language the app shows, so the API answers in it, not the device's first language,
+    // which the app may not have. Where a request has no IP country (local runs), the API reads
+    // the country from the region.
+    let region = Locale.current.region.map { "-\($0.identifier)" } ?? ""
+    request.headerFields[.acceptLanguage] = currentCourseCatalogLanguage() + region
 
     if let token {
       request.headerFields[.authorization] = "Bearer \(token)"

@@ -20,17 +20,7 @@ enum StatTone {
   }
 }
 
-struct StatTile<Icon: View>: View {
-  /// A tile's value: words or a number as given, or a quantity whose words ("hr", "days", "Brain
-  /// Power") shrink beside its numbers, as main's `StatTile` draws a value with digits.
-  enum Value {
-    case text(Text)
-    case quantity(String)
-  }
-
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  @Environment(\.legibilityWeight) private var legibilityWeight
-
+struct StatTile<Icon: View, Value: View>: View {
   let label: Text
   let value: Value
   var tone = StatTone.neutral
@@ -38,8 +28,8 @@ struct StatTile<Icon: View>: View {
   var detail: Text?
   /// From 0 to 1.
   var meter: Double?
-  var spokenValue: Text?
   var meterFill: Color = .brain
+  let spokenValue: Text
 
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
@@ -54,7 +44,7 @@ struct StatTile<Icon: View>: View {
       .typeStyle(.label)
       .foregroundStyle(.faint)
 
-      valueText
+      value
         .typeStyle(.readout)
         .foregroundStyle(tone == .brain ? Color.brainText : Color(.foreground))
 
@@ -79,74 +69,74 @@ struct StatTile<Icon: View>: View {
     .accessibilityValue(accessibilityValue)
   }
 
-  private var valueText: Text {
-    switch value {
-    case .text(let text):
-      text
-    case .quantity(let quantity):
-      BigQuantity.text(
-        quantity,
-        unitFont: BigQuantity.unitFont(
-          dynamicTypeSize: dynamicTypeSize, legibilityWeight: legibilityWeight))
-    }
-  }
-
   private var accessibilityValue: Text {
-    let number: Text =
-      switch value {
-      case .text(let text): spokenValue ?? text
-      case .quantity(let quantity): spokenValue ?? Text(verbatim: quantity)
-      }
-
     guard let detail else {
-      return number
+      return spokenValue
     }
 
     return Text(
-      "\(number), \(detail)", tableName: "Progress",
+      "\(spokenValue), \(detail)", tableName: "Progress",
       comment: "Spoken value of a stat tile: its number, then the line under it")
   }
 }
 
-extension StatTile {
+extension StatTile where Value == Text {
   init(
     label: Text, value: Text, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
     detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil,
     meterFill: Color = .brain
   ) {
     self.init(
-      label: label, value: .text(value), tone: tone, icon: icon, detail: detail, meter: meter,
-      spokenValue: spokenValue, meterFill: meterFill)
-  }
-
-  init(
-    label: Text, quantity: String, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
-    detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil
-  ) {
-    self.init(
-      label: label, value: .quantity(quantity), tone: tone, icon: icon, detail: detail,
-      meter: meter, spokenValue: spokenValue)
+      label: label, value: value, tone: tone, icon: icon, detail: detail, meter: meter,
+      meterFill: meterFill, spokenValue: spokenValue ?? value)
   }
 }
 
-extension StatTile where Icon == Image {
+extension StatTile where Icon == Image, Value == Text {
   init(
     label: Text, value: Text, systemImage: String, tone: StatTone = .neutral, detail: Text? = nil,
     meter: Double? = nil, spokenValue: Text? = nil
   ) {
     self.init(
-      label: label, value: .text(value), tone: tone, icon: { Image(systemName: systemImage) },
-      detail: detail, meter: meter, spokenValue: spokenValue)
+      label: label, value: value, tone: tone, icon: { Image(systemName: systemImage) },
+      detail: detail,
+      meter: meter, spokenValue: spokenValue)
   }
+}
 
+struct StatQuantity: View {
+  let quantity: String
+
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
+  var body: some View {
+    BigQuantity.text(
+      quantity,
+      unitFont: BigQuantity.unitFont(
+        dynamicTypeSize: dynamicTypeSize, legibilityWeight: legibilityWeight))
+  }
+}
+
+extension StatTile where Value == StatQuantity {
+  init(
+    label: Text, quantity: String, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
+    detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil
+  ) {
+    self.init(
+      label: label, value: StatQuantity(quantity: quantity), tone: tone, icon: icon,
+      detail: detail, meter: meter, spokenValue: spokenValue ?? Text(verbatim: quantity))
+  }
+}
+
+extension StatTile where Icon == Image, Value == StatQuantity {
   init(
     label: Text, quantity: String, systemImage: String, tone: StatTone = .neutral,
     detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil
   ) {
     self.init(
-      label: label, value: .quantity(quantity), tone: tone,
-      icon: { Image(systemName: systemImage) }, detail: detail, meter: meter,
-      spokenValue: spokenValue)
+      label: label, quantity: quantity, tone: tone, icon: { Image(systemName: systemImage) },
+      detail: detail, meter: meter, spokenValue: spokenValue)
   }
 }
 

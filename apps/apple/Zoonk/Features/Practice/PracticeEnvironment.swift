@@ -14,7 +14,9 @@ enum PracticeDestination: Equatable, Sendable {
   case mistakePractice(skillId: String?)
   case mock(blockId: String, sessionId: String?)
   case pattern(patternId: String)
+  case plan
   case subscription
+  case today
 }
 
 struct PracticeAskTarget: Equatable, Sendable {

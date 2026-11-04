@@ -7,8 +7,9 @@ import {
   CollapsibleTrigger,
 } from "@zoonk/ui/components/collapsible";
 import { ChevronDownIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
+import { useMockNumber } from "./mock-labels";
 import { ResultSection } from "./mock-result-section";
 
 type Topic = MockResult["topics"][number];
@@ -20,13 +21,10 @@ function byShare(first: Topic, second: Topic): number {
 
 function useRightOf() {
   const t = useExtracted();
-  const format = useFormatter();
+  const number = useMockNumber();
 
   return ({ correct, total }: { correct: number; total: number }) =>
-    t("{correct} of {total}", {
-      correct: format.number(correct, { maximumFractionDigits: 2 }),
-      total: String(total),
-    });
+    t("{correct} of {total}", { correct: number(correct), total: String(total) });
 }
 
 export function useMockRange() {

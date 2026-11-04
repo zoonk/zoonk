@@ -84,7 +84,6 @@ private struct BuddyContent: View {
   @State private var isWearing = false
   @State private var goalDraft = ""
   @State private var faceCue: ActCue<BuddyAct>?
-  @State private var placeAfterDay: TutorPlace?
 
   private var name: String {
     buddyName(kind: status.buddy.kind, name: status.buddy.name)
@@ -129,7 +128,7 @@ private struct BuddyContent: View {
     ) {
       menuItems
     }
-    .sheet(isPresented: $isDayShown, onDismiss: openPlaceAfterDay) {
+    .sheet(isPresented: $isDayShown) {
       let day = dayView(showsTitle: false)
 
       NavigationStack {
@@ -146,15 +145,7 @@ private struct BuddyContent: View {
           }
       }
       .presentationDetents([.medium, .large])
-      // A phone's day is a sheet: it gives way to the place it opens (a mission, what the
-      // buddy remembers, the week), which would otherwise open under it.
-      .environment(
-        \.tutorPlaces,
-        TutorPlaces { place in
-          placeAfterDay = place
-          isDayShown = false
-        }
-      )
+      .closesOnNavigation()
       .zoonkStyles()
     }
     .sheet(isPresented: $isEditing) {
@@ -210,13 +201,6 @@ private struct BuddyContent: View {
 
         isWearing = true
       }, showsTitle: showsTitle)
-  }
-
-  private func openPlaceAfterDay() {
-    if let place = placeAfterDay {
-      placeAfterDay = nil
-      places.open(place)
-    }
   }
 
   private func thread(opensDay: Bool) -> some View {

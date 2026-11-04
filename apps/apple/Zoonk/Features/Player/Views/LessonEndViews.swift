@@ -521,7 +521,7 @@ struct LessonWaitingView: View {
     if let warmUpID {
       ZoonkList {
         Section {
-          unavailable
+          notice
         }
         .listRowBackground(Color.clear)
 
@@ -533,6 +533,15 @@ struct LessonWaitingView: View {
         label: Text(
           "Start this lesson", tableName: "Player",
           comment: "Opens a goal's first lesson, written while the learner guessed on its wait"))
+    } else {
+      notice
+    }
+  }
+
+  @ViewBuilder
+  private var notice: some View {
+    if holding == nil, case .refused(let refusal) = writing {
+      LessonUnavailableView(refusal: refusal, retry: write)
     } else {
       unavailable
     }
@@ -560,9 +569,7 @@ struct LessonWaitingView: View {
         .buttonStyle(.mainAction)
       case (nil, .writing), (nil, .written):
         ProgressView()
-      case (nil, .refused(let refusal)):
-        LessonHelpLimitNote(refusal: refusal)
-      case (nil, .setAside):
+      case (nil, .refused), (nil, .setAside):
         EmptyView()
       }
     }

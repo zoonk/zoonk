@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { getLanguagePromptContext, getPromptLanguageName } from "./prompt-language";
+import {
+  fillPromptLanguages,
+  getLanguagePromptContext,
+  getPromptLanguageName,
+} from "./prompt-language";
 
 describe(getPromptLanguageName, () => {
   it("falls back to localized language names for languages outside the app locale set", () => {
@@ -14,5 +18,18 @@ describe(getLanguagePromptContext, () => {
       targetLanguageName: "Árabe",
       userLanguageName: "Português Brasileiro",
     });
+  });
+});
+
+describe(fillPromptLanguages, () => {
+  it("names both languages wherever the prompt mentions them", () => {
+    expect(
+      fillPromptLanguages({
+        learnerLanguage: "en",
+        targetLanguage: "es",
+        template:
+          "Talk in {{TARGET_LANGUAGE}}. Title in {{LEARNER_LANGUAGE}}, label in {{TARGET_LANGUAGE}}.",
+      }),
+    ).toBe("Talk in Español de México. Title in US English, label in Español de México.");
   });
 });

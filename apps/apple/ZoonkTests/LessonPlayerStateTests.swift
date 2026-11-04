@@ -311,6 +311,38 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.completion?.status, .failed)
   }
 
+  func testResyncBringsBackAQuestionWhosePictureCameAfterItWasLeftOut() throws {
+    let lost = check(id: "numbered").replacingOccurrences(
+      of: "\"imagePending\": false",
+      with: #""imagePending": true, "picture": {"alt": "A flower", "required": true}"#)
+    let drawn = try step(
+      check(id: "numbered").replacingOccurrences(
+        of: "\"image\": null",
+        with:
+          #""image": {"id": "img", "url": "https://example.com/a.png", "alt": "A flower", "width": 4, "height": 3}"#
+      ))
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(check(id: "check")), try step(lost), try step(summary)])
+    state.startRun(runId: "run", answers: [])
+    state.leaveOutLostPictures(openedAt: Date.now.addingTimeInterval(-10 * 60))
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+
+    let saved = [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)]
+    var optional = state
+    optional.resync(answers: saved, optionalStepIds: ["numbered"], lesson: [drawn])
+    XCTAssertEqual(optional.completion?.status, .failed, "the run no longer needs it")
+
+    state.resync(answers: saved, lesson: [drawn])
+
+    XCTAssertEqual(state.currentStep?.id, "numbered")
+    XCTAssertEqual(state.currentStep?.image?.url, "https://example.com/a.png")
+    XCTAssertEqual(state.notice, .pictureReady)
+    XCTAssertEqual(state.phase, .playing)
+  }
+
   func testLateConfirmationOfAnEarlierAttemptChangesNothing() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
     state.continueLesson()

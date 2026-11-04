@@ -72,6 +72,7 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -254,23 +255,25 @@ internal fun MockWriting(
     run: GenerationRun,
     onRetry: () -> Unit,
 ) {
-    Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopStart) {
-        GenerationWait(
-            kind = GenerationKind.MockQuestions,
-            run = run,
-            onRetry = onRetry,
-            modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(detailPagePadding()),
-        ) {
-            Text(
-                stringResource(R.string.mock_chooser_preparing),
-                Modifier.semantics { heading() },
-                style = MaterialTheme.typography.headlineSmall,
-            )
-            Text(
-                stringResource(R.string.mock_chooser_preparing_detail),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+    BeforeFold { beforeFold ->
+        Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopStart) {
+            GenerationWait(
+                kind = GenerationKind.MockQuestions,
+                run = run,
+                onRetry = onRetry,
+                modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(detailPagePadding()),
+            ) {
+                Text(
+                    stringResource(R.string.mock_chooser_preparing),
+                    Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                Text(
+                    stringResource(R.string.mock_chooser_preparing_detail),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
         }
     }
 }
