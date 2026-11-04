@@ -17416,7 +17416,7 @@
       }
     },
     "We couldn't open your next lessons. Try again." : {
-      "comment" : "Adding the plan's next lessons, or practice, to the day failed",
+      "comment" : "Adding the plan's next lessons to the day failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {

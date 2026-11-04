@@ -330,13 +330,13 @@ struct TodayMainAction: View {
 
   private var failure: LocalizedStringResource {
     switch kind {
-    case .prepareLessons:
+    case .prepareLessons, .practice:
       LocalizedStringResource(
         "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
-    case .keepLearning, .practice:
+    case .keepLearning:
       LocalizedStringResource(
         "We couldn't open your next lessons. Try again.", table: "Today",
-        comment: "Adding the plan's next lessons, or practice, to the day failed")
+        comment: "Adding the plan's next lessons to the day failed")
     case .continueSession, .seePlan, .startSession, .summary:
       LocalizedStringResource(
         "We couldn't open the next step. Try again.", table: "Today",
