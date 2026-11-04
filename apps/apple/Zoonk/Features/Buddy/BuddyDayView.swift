@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct BuddyDayView: View {
+  @Environment(BuddyStore.self) private var buddy
   @Environment(\.isCoveredByTask) private var isCovered
   @Environment(\.tutorPlaces) private var places
   @Environment(TodayStore.self) private var todayStore
@@ -137,9 +138,11 @@ struct BuddyDayView: View {
 
     tapTask = Task {
       let result = await todayStore.open(blockID: blockID)
-      opening = nil
 
       switch result {
+      // Busy until the card shows what changed, which the open's own invalidation doesn't wait for.
+      case .done(.changed) where !Task.isCancelled:
+        await buddy.status.refresh()
       case .done(let destination) where !Task.isCancelled:
         places.open(.missionStep(destination))
       case .failed:
@@ -147,6 +150,8 @@ struct BuddyDayView: View {
       case .done, .obsolete:
         break
       }
+
+      opening = nil
     }
   }
 
