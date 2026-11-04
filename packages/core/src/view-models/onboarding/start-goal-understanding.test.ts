@@ -210,6 +210,7 @@ describe(startGoalUnderstanding, () => {
         id: expect.any(String),
         prompt: goal,
         status: "understanding",
+        timeZone: "Europe/Berlin",
         understanding: null,
       },
       status: "understanding",
@@ -219,7 +220,7 @@ describe(startGoalUnderstanding, () => {
 
     await expect(
       prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draftId } }),
-    ).resolves.toMatchObject({ language: "pt", runId: null, timeZone: "Europe/Berlin" });
+    ).resolves.toMatchObject({ language: "pt", runId: null });
   });
 
   it("asks a guest whose one goal is taken to create an account before anything is read", async () => {

@@ -164,16 +164,17 @@ struct TutorMemoryUpdate: View {
   let turnID: String
   let conversation: TutorConversation
 
-  @State private var result: Bool?
-
   var body: some View {
+    let undo = conversation.memoryUndos[turnID]
+
     VStack(alignment: .leading, spacing: 6) {
-      if let result {
-        result
-          ? Text(undone)
-          : Text(undoFailed)
-            .foregroundStyle(.destructive)
-      } else {
+      switch undo {
+      case .undone:
+        Text(undone)
+      case .failed:
+        Text(undoFailed)
+          .foregroundStyle(.destructive)
+      case .undoing, nil:
         Label {
           Text(Self.line(changes))
         } icon: {
@@ -182,24 +183,26 @@ struct TutorMemoryUpdate: View {
 
         Button {
           Task {
-            switch await conversation.undoMemory(of: turnID) {
-            case .done:
-              result = true
-            case .failed:
-              result = false
-            case .obsolete:
-              break
-            }
+            await conversation.undoMemory(of: turnID)
           }
         } label: {
           Text("Undo", tableName: "Tutor", comment: "Undoes what the buddy remembered")
         }
         .buttonStyle(.borderless)
+        .disabled(undo == .undoing)
       }
     }
     .font(.footnote)
     .foregroundStyle(.secondary)
-    .announcesStatus(result.map { $0 ? undone : undoFailed })
+    .announcesStatus(announcement(undo))
+  }
+
+  private func announcement(_ undo: TutorMemoryUndo?) -> String? {
+    switch undo {
+    case .undone: undone
+    case .failed: undoFailed
+    case .undoing, nil: nil
+    }
   }
 
   private var undone: String {

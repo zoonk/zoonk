@@ -544,7 +544,7 @@ struct LessonWaitingView: View {
     if let warmUpID {
       List {
         Section {
-          unavailable
+          notice
         }
         .listRowBackground(Color.clear)
 
@@ -556,6 +556,20 @@ struct LessonWaitingView: View {
         label: Text(
           "Start this lesson", tableName: "Player",
           comment: "Opens a goal's first lesson, written while the learner guessed on its wait"))
+    } else {
+      notice
+    }
+  }
+
+  private var notice: some View {
+    noticeContent
+      .announcesStatus(notWrittenLine)
+  }
+
+  @ViewBuilder
+  private var noticeContent: some View {
+    if holding == nil, case .refused(let refusal) = writing {
+      LessonUnavailableView(refusal: refusal, retry: write)
     } else {
       unavailable
     }
@@ -583,13 +597,10 @@ struct LessonWaitingView: View {
         .buttonStyle(.mainAction)
       case (nil, .writing), (nil, .written):
         ProgressView()
-      case (nil, .refused(let refusal)):
-        LessonHelpLimitNote(refusal: refusal)
-      case (nil, .setAside):
+      case (nil, .refused), (nil, .setAside):
         EmptyView()
       }
     }
-    .announcesStatus(notWrittenLine)
   }
 
   private var notWrittenLine: String? {
@@ -598,8 +609,7 @@ struct LessonWaitingView: View {
     }
 
     return switch writing {
-    case .refused(let refusal):
-      [String(localized: description), LessonHelpLimitNote.message(refusal)].joinedSentences()
+    case .refused(let refusal): LessonUnavailableView(refusal: refusal) {}.said
     case .setAside: String(localized: description)
     default: nil
     }

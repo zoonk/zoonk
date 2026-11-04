@@ -8,6 +8,8 @@ struct ChallengeStepView: View {
   let store: LessonPlayerStore
   let part: LessonStepPart
 
+  @ScaledMetric(relativeTo: .subheadline) private var avatarSize = 36.0
+
   var body: some View {
     let progress = ChallengeProgress(
       content: content, picks: state.challengePicks(step.id), shown: state.revealed[step.id] ?? 0)
@@ -20,6 +22,7 @@ struct ChallengeStepView: View {
     case (.deciding(_, _, let decisions, _), .screen), (.ended(_, _, let decisions), .screen):
       played(decisions, upcoming: upcoming(progress))
     case (.deciding(let node, let confirmed, _, let pending), .turn):
+      LessonQuestionText(text: named(node.prompt))
       LessonOptionList(
         options: node.choices.map { LessonOption(id: $0.id, text: named($0.text)) },
         selectedId: pending,
@@ -31,6 +34,8 @@ struct ChallengeStepView: View {
     case (.ended(let ending, _, let decisions), .turn):
       if let result = state.currentResult {
         debrief(ending: ending, decisions: decisions, isCorrect: result.isCorrect)
+      } else {
+        outcome(ending)
       }
     }
   }
@@ -71,17 +76,23 @@ struct ChallengeStepView: View {
         .foregroundStyle(.secondary)
 
       ForEach(Array(content.team.enumerated()), id: \.offset) { _, slot in
-        Label {
+        let name = name(for: slot.id)
+
+        AccessibilityStack(spacing: 10, stackedSpacing: 8) {
+          avatar(name, slot: slot)
+
           VStack(alignment: .leading) {
-            Text(name(for: slot.id))
-              .font(.subheadline.weight(.medium))
-            Text(slot.expertise)
-              .font(.footnote)
-              .foregroundStyle(.secondary)
+            Text(name)
+              .font(.subheadline.weight(.semibold))
+
+            if !slot.ai {
+              Text(named(slot.role))
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            }
           }
-        } icon: {
-          Image(systemName: slot.ai ? "sparkles" : "person.crop.circle")
         }
+        .accessibilityElement(children: .combine)
       }
 
       Group {
@@ -112,9 +123,8 @@ struct ChallengeStepView: View {
 
       if let upcoming {
         ForEach(Array(upcoming.messages.enumerated()), id: \.offset) { _, message in
-          bubble(message)
+          self.message(message)
         }
-        LessonQuestionText(text: named(upcoming.prompt))
       }
     }
     .onChange(of: decisions.count) { previous, count in
@@ -142,7 +152,7 @@ struct ChallengeStepView: View {
     }
 
     let moved = ChallengeWalk.meters(content, decisions: decisions).filter { $0.change != 0 }.map {
-      "\(named($0.meter.label)) \($0.change.formatted(.number.sign(strategy: .always())))"
+      "\(named($0.meter.label)) \(Self.moveWords($0.change))"
     }
     let jump =
       latest.choice.timeJump.map {
@@ -175,44 +185,84 @@ struct ChallengeStepView: View {
       table: "Player", comment: "VoiceOver: who said a message in a challenge, then what they said")
   }
 
+  @ViewBuilder
   private func meters(_ decisions: [ChallengeWalk.Decision]) -> some View {
-    VStack(alignment: .leading, spacing: 8) {
-      ForEach(ChallengeWalk.meters(content, decisions: decisions), id: \.meter.id) { meter in
-        Gauge(value: Double(meter.value), in: 0...100) {
-          HStack {
-            Text(named(meter.meter.label))
-            Spacer()
-            if meter.change != 0 {
-              Text(meter.change, format: .number.sign(strategy: .always()))
-                .foregroundStyle(
-                  isGood(meter.meter, change: meter.change) ? .success : .destructive)
+    if !content.meters.isEmpty {
+      GroupBox {
+        VStack(alignment: .leading, spacing: 12) {
+          ForEach(ChallengeWalk.meters(content, decisions: decisions), id: \.meter.id) { meter in
+            Gauge(value: Double(meter.value), in: 0...100) {
+              AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 2) {
+                Text(named(meter.meter.label))
+                  .frame(maxWidth: .infinity, alignment: .leading)
+
+                if !decisions.isEmpty {
+                  move(meter.change, of: meter.meter)
+                }
+              }
+              .font(.subheadline)
             }
+            .gaugeStyle(.linearCapacity)
+            .tint(.secondary)
           }
-          .font(.footnote)
         }
-        .gaugeStyle(.linearCapacity)
-        .tint(.success)
       }
     }
   }
 
-  private func isGood(_ meter: ChallengeContent.Meter, change: Int) -> Bool {
-    meter.goodWhen == .high ? change > 0 : change < 0
+  @ViewBuilder
+  private func move(_ change: Int, of meter: ChallengeContent.Meter) -> some View {
+    if change == 0 {
+      Text(Self.moveWords(change))
+        .foregroundStyle(.secondary)
+    } else {
+      let isUp = change > 0
+      let isBig = abs(change) >= 25
+
+      Label {
+        Text(Self.moveWords(change))
+      } icon: {
+        Image(
+          systemName: isBig
+            ? (isUp ? "chevron.up.2" : "chevron.down.2") : (isUp ? "arrow.up" : "arrow.down"))
+      }
+      .fontWeight(.medium)
+      .foregroundStyle(isUp == (meter.goodWhen == .high) ? Color.success : .warning)
+    }
+  }
+
+  private static func moveWords(_ change: Int) -> String {
+    switch (change > 0, abs(change) >= 25) {
+    case _ where change == 0:
+      String(
+        localized: "no change", table: "Player",
+        comment: "Beside a challenge meter the last decision didn't move")
+    case (true, true):
+      String(localized: "much higher", table: "Player", comment: "A challenge meter went up a lot")
+    case (true, false):
+      String(
+        localized: "a bit higher", table: "Player", comment: "A challenge meter went up a little")
+    case (false, true):
+      String(
+        localized: "much lower", table: "Player", comment: "A challenge meter went down a lot")
+    case (false, false):
+      String(
+        localized: "a bit lower", table: "Player", comment: "A challenge meter went down a little")
+    }
   }
 
   @ViewBuilder
   private func conversation(_ decisions: [ChallengeWalk.Decision]) -> some View {
     ForEach(Array(decisions.enumerated()), id: \.offset) { _, decision in
       ForEach(Array(decision.node.messages.enumerated()), id: \.offset) { _, message in
-        bubble(message)
+        self.message(message)
       }
-      LessonRichText(named(decision.choice.text))
-        .font(.subheadline.weight(.medium))
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .trailing)
-        .background(Color.accentColor.opacity(0.15), in: .rect(cornerRadius: 16))
+      VStack(alignment: .trailing, spacing: 8) {
+        pick(decision.choice.text)
+        effects(decision.choice)
+      }
       ForEach(Array(decision.choice.replies.enumerated()), id: \.offset) { _, reply in
-        bubble(reply)
+        message(reply)
       }
       if let jump = decision.choice.timeJump {
         Label(named(jump.label), systemImage: "clock.arrow.circlepath")
@@ -222,18 +272,107 @@ struct ChallengeStepView: View {
     }
   }
 
-  private func bubble(_ message: ChallengeContent.Message) -> some View {
-    VStack(alignment: .leading, spacing: 2) {
-      Text(name(for: message.from))
-        .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
-      LessonRichText(named(message.text))
-        .font(.subheadline)
+  private func message(_ message: ChallengeContent.Message) -> some View {
+    let slot = content.team.first { $0.id == message.from }
+    let name = name(for: message.from)
+
+    return AccessibilityStack(alignment: .top, spacing: 12, stackedSpacing: 8) {
+      avatar(name, slot: slot)
+
+      VStack(alignment: .leading, spacing: 2) {
+        speaker(name, role: slot.flatMap { $0.ai ? nil : named($0.role) })
+        LessonRichText(named(message.text))
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
     }
-    .padding(12)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
     .accessibilityElement(children: .combine)
+  }
+
+  private func avatar(_ name: String, slot: ChallengeContent.TeamSlot?) -> some View {
+    let isAI = slot?.ai == true
+
+    return Group {
+      if isAI {
+        Image(systemName: "sparkles")
+      } else {
+        Text(name.prefix(1).uppercased())
+      }
+    }
+    .font(.subheadline.weight(.semibold))
+    .foregroundStyle(isAI ? Color(.systemBackground) : .primary)
+    .frame(width: avatarSize, height: avatarSize)
+    .background(isAI ? Color.primary : Color(.tertiarySystemFill), in: .circle)
+    .accessibilityHidden(true)
+  }
+
+  private func speaker(_ name: String, role: String?) -> Text {
+    var line = AttributedString(name)
+    line.font = .subheadline.weight(.semibold)
+
+    if let role {
+      var rest = AttributedString("\u{00A0}· \(role)")
+      rest.foregroundColor = .secondary
+      line += rest
+    }
+
+    return Text(line)
+      .font(.subheadline)
+  }
+
+  private func pick(_ text: String) -> some View {
+    let pick = LessonRichText.typeset(named(text))
+
+    return Text(pick)
+      .foregroundStyle(Color(.systemBackground))
+      .padding(.horizontal, 16)
+      .padding(.vertical, 10)
+      .background(.primary, in: .rect(cornerRadius: 16, style: .continuous))
+      .padding(.leading, 40)
+      .frame(maxWidth: .infinity, alignment: .trailing)
+      .accessibilityLabel(
+        Text(
+          "You: \(pick.quoted(spoken: true))", tableName: "Player",
+          comment: "VoiceOver: the learner's pick in a challenge's conversation"))
+  }
+
+  /// VoiceOver skips these, as on main: the meters above say the last move.
+  @ViewBuilder
+  private func effects(_ choice: ChallengeContent.Choice) -> some View {
+    let moved = choice.effects.compactMap { effect in
+      content.meters.first { $0.id == effect.meter && effect.change != 0 }
+        .map { (meter: $0, change: effect.change) }
+    }
+
+    if !moved.isEmpty {
+      FlowLayout(spacing: 16, rowAlignment: .trailing, rowSpacing: 4) {
+        ForEach(Array(moved.enumerated()), id: \.offset) { _, effect in
+          HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Text(named(effect.meter.label))
+              .foregroundStyle(.secondary)
+            move(effect.change, of: effect.meter)
+          }
+        }
+      }
+      .font(.caption)
+      .accessibilityHidden(true)
+    }
+  }
+
+  private func outcome(_ ending: ChallengeContent.Ending) -> some View {
+    GroupBox {
+      VStack(alignment: .leading, spacing: 8) {
+        Text(
+          "What happened", tableName: "Player",
+          comment: "Above how a challenge's path ended, before the learner checks it"
+        )
+        .font(.caption.weight(.medium))
+        .textCase(.uppercase)
+        .foregroundStyle(.secondary)
+        .accessibilityAddTraits(.isHeader)
+        LessonRichText(named(ending.outcome))
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+    }
   }
 
   private func debrief(

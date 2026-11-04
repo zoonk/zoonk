@@ -239,18 +239,19 @@ private struct MemoryUpdatedNotice: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text(
-        "\(Text("Memory updated:", tableName: "Settings", comment: "Starts the line saying a fact was deleted").fontWeight(.medium).foregroundStyle(.primary)) \(Text(fact.statement).strikethrough())",
-        tableName: "Settings", comment: "A deleted fact, struck through after “Memory updated:”")
-
       switch status {
-      case .idle:
+      case .idle, .undoing:
+        Text(
+          "\(Text("Memory updated:", tableName: "Settings", comment: "Starts the line saying a fact was deleted").fontWeight(.medium).foregroundStyle(.primary)) \(Text(fact.statement).strikethrough())",
+          tableName: "Settings", comment: "A deleted fact, struck through after “Memory updated:”")
+
         Button(action: undo) {
           Text("Undo", tableName: "Settings", comment: "Brings a deleted fact back")
             .underline()
         }
         .buttonStyle(.borderless)
         .foregroundStyle(.primary)
+        .disabled(status == .undoing)
       case .undone:
         Text(undone)
       case .failed:
