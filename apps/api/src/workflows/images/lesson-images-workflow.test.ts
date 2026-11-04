@@ -12,6 +12,9 @@ import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/l
 import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { buildImageReuseKey } from "@zoonk/utils/identity-key";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { sleep } from "workflow";
+import { getRun } from "workflow/api";
+import { mockHookConflict } from "../../../mocks/workflow";
 import { TEST_IMAGE, imageProvenance, passedCheck, sceneFor } from "./_test-utils/image-results";
 import { lessonImagesWorkflow } from "./lesson-images-workflow";
 
@@ -180,6 +183,46 @@ describe(lessonImagesWorkflow, () => {
     );
 
     expect(scene?.mediaAsset?.url).toBe(redraw?.data);
+  });
+
+  it("waits for the images run already drawing the lesson, then draws only what it left", async () => {
+    const lesson = await libraryLessonFixture();
+
+    const [drawnByOther, left] = await markedScreens({
+      lessonId: lesson.id,
+      prompts: [`atlas ${randomUUID()}`, `sextant ${randomUUID()}`],
+    });
+
+    const running = { exists: Promise.resolve(true), status: Promise.resolve("running") };
+    vi.mocked(getRun).mockReturnValue(running as never);
+    mockHookConflict({ returnValue: Promise.resolve(null), runId: "drawing-run" });
+
+    vi.mocked(sleep).mockImplementationOnce(async () => {
+      const asset = await mediaAssetFixture();
+
+      await prisma.step.update({
+        data: { mediaAssetId: asset.id },
+        where: { id: drawnByOther?.id },
+      });
+
+      vi.mocked(getRun).mockReturnValue({
+        ...running,
+        status: Promise.resolve("completed"),
+      } as never);
+    });
+
+    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      failed: 0,
+      generated: 1,
+      reused: 0,
+    });
+
+    expect(sleep).toHaveBeenCalledOnce();
+    expect(generateLessonImage).toHaveBeenCalledOnce();
+
+    await expect(prisma.step.findUniqueOrThrow({ where: { id: left?.id } })).resolves.toMatchObject(
+      { mediaAssetId: expect.any(String) },
+    );
   });
 
   it("reuses a picture of the same scene and draws the rest", async () => {
