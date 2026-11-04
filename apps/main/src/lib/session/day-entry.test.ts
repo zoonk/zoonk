@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type DayEntry, findDayTap, getEntryExpiry } from "./day-entry";
+import { type DayEntry, findDayTap, getEntryExpiry, hasLeftEntry } from "./day-entry";
 
 const NOW = Date.parse("2026-10-15T12:00:00.000Z");
 const DAY_ENDS_AT = Date.parse("2026-10-16T00:00:00.000Z");
@@ -34,6 +34,7 @@ function entry(overrides: Partial<DayEntry> = {}): DayEntry {
     id: 1,
     next: true,
     result: null,
+    shown: false,
     step: {
       blockId: null,
       position: 0,
@@ -132,5 +133,25 @@ describe(findDayTap, () => {
     );
 
     expect(findDayTap({ ...scope, day: { ...day, blocks: done }, entry: entry() })).toBeNull();
+  });
+});
+
+describe(hasLeftEntry, () => {
+  const TODAY = "/today";
+  const tapped = { at: HREF, entry: entry(), generation: 3, origin: TODAY };
+
+  it("keeps a tap while the learner is on its screen, or still on their way there", () => {
+    expect(hasLeftEntry(tapped)).toBe(false);
+    expect(hasLeftEntry({ ...tapped, at: TODAY })).toBe(false);
+    expect(hasLeftEntry({ ...tapped, entry: entry({ shown: true }) })).toBe(false);
+  });
+
+  it("lets go once they're back where they tapped after the step showed", () => {
+    expect(hasLeftEntry({ ...tapped, at: TODAY, entry: entry({ shown: true }) })).toBe(true);
+  });
+
+  it("lets go once they're anywhere else, or someone else", () => {
+    expect(hasLeftEntry({ ...tapped, at: "/plan" })).toBe(true);
+    expect(hasLeftEntry({ ...tapped, generation: 4 })).toBe(true);
   });
 });

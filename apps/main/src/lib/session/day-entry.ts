@@ -40,9 +40,28 @@ export type DayEntry = {
   id: number;
   next: boolean;
   result: TapResult | null;
+  shown: boolean;
   step: TapStep;
   tappedAt: number;
 };
+
+/**
+ * Whether the learner left the screen a tap opens: they're anywhere else, or back where they tapped
+ * once the step showed there. Until it shows, the screen they tapped on is still on its way to it.
+ */
+export function hasLeftEntry({
+  at,
+  entry,
+  generation,
+  origin,
+}: {
+  at: string;
+  entry: Pick<DayEntry, "generation" | "href" | "shown">;
+  generation: number;
+  origin: string;
+}): boolean {
+  return entry.generation !== generation || (at !== entry.href && (entry.shown || at !== origin));
+}
 
 /** While its POST is out it never lets go, so a slow reply still moves the screen on. */
 export function getEntryExpiry({

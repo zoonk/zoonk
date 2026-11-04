@@ -4,9 +4,9 @@ import { usePathname } from "@/i18n/navigation";
 import { getLearnerGeneration } from "@/lib/learner/learner-store";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { useSearchParams } from "next/navigation";
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { type DayEntry, findDayTap } from "./day-entry";
-import { getDayEntry, subscribeToDayEntry } from "./day-entry-registry";
+import { getDayEntry, markDayEntryShown, subscribeToDayEntry } from "./day-entry-registry";
 
 export function useDayEntry(): DayEntry | null {
   return useSyncExternalStore(subscribeToDayEntry, getDayEntry, () => null);
@@ -32,5 +32,14 @@ export function useDayTap<Step extends { position: number; status: string }>(day
 }) {
   const entry = useDayEntry();
   const scope = useEntryScope();
-  return findDayTap({ ...scope, day, entry });
+  const tapped = findDayTap({ ...scope, day, entry });
+  const shownId = tapped && entry ? entry.id : null;
+
+  useEffect(() => {
+    if (shownId !== null) {
+      markDayEntryShown(shownId);
+    }
+  }, [shownId]);
+
+  return tapped;
 }
