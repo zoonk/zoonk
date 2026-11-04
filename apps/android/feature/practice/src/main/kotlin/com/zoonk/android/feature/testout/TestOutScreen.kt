@@ -245,7 +245,7 @@ internal fun TestOutPreparing(
     val focus =
         rememberPressFocus(
             when {
-                waiting -> if (ui.startFailed || run.status == GenerationRun.Status.Failed) "failed" else "wait"
+                waiting -> "wait"
                 locked -> "plus"
                 ui.refused != null -> "limit"
                 else -> "start"
@@ -256,7 +256,7 @@ internal fun TestOutPreparing(
         viewModel.start()
     }
     val retryWriting = {
-        focus.press()
+        focus.pressInHolder()
         viewModel.retryWriting()
     }
 

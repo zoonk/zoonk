@@ -23,7 +23,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
@@ -115,7 +114,7 @@ internal fun MockChooser(
         rememberPressFocus(
             when {
                 loaded == null -> null
-                writing -> if (run.status == GenerationRun.Status.Failed) "failed" else "wait"
+                writing -> "wait"
                 loaded.access != MockOptions.Access.OPEN -> "plus"
                 else -> "start"
             },
@@ -123,7 +122,7 @@ internal fun MockChooser(
             reveal = { listState.scrollToItem(0) },
         )
     val retry = {
-        focus.press()
+        focus.pressInHolder()
         viewModel.retry()
     }
 
@@ -142,8 +141,8 @@ internal fun MockChooser(
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
             loaded == null -> ChooserLoading()
             writing -> MockWriting(run, onRetry = retry, titleFocus = focus.requester)
-            placement -> PlacementChooser(loaded, viewModel, navigator, listState, focus.requester, focus.press)
-            else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus.press)
+            placement -> PlacementChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
+            else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
         }
     }
 }

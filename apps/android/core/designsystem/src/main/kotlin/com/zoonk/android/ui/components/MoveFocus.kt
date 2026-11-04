@@ -35,17 +35,28 @@ fun rememberMoveFocus(): (FocusRequester) -> Unit {
     return remember(moves) { { requester -> if (moves()) requester.requestFocus() } }
 }
 
-/** Put [requester] on whatever holds the pressed control's place, and call [press] from the controls that start. */
-class PressFocus(
+/** Put [requester] on whatever holds the pressed control's place. */
+class PressFocus internal constructor(
     val requester: FocusRequester,
-    val press: () -> Unit,
-)
+    private val arm: () -> Unit,
+    private val moveNow: () -> Unit,
+) {
+    /** From a control that gives way to the next holder, such as Start. */
+    fun press() = arm()
+
+    /** From Try again inside the holder: it goes as the wait resumes, so focus moves to the holder now. */
+    fun pressInHolder() {
+        arm()
+        moveNow()
+    }
+}
 
 /**
- * After the learner presses Start or Try again, each change of [holder] (the control itself, a
- * notice or the wait in its place) moves focus there, as [rememberMoveFocus] does, so it never
- * drops with the control they pressed. A null [holder] is a screen of its own, which leaves focus
- * alone. [reveal] brings an off-screen holder into view first.
+ * After a press, each change of [holder] (the control itself, a notice or the wait in its place)
+ * moves focus there, as [rememberMoveFocus] does, so it never drops with the control the learner
+ * pressed. [holder] names the node, not its state: the wait and its failure are one holder, so a run
+ * that fails on its own leaves focus where the learner put it. A null [holder] is a screen of its
+ * own, which leaves focus alone. [reveal] brings an off-screen holder into view first.
  */
 @Composable
 fun rememberPressFocus(
@@ -63,5 +74,7 @@ fun rememberPressFocus(
         }
     }
 
-    return remember(requester) { PressFocus(requester) { pressed = true } }
+    return remember(requester, moves) {
+        PressFocus(requester, arm = { pressed = true }, moveNow = { if (moves()) requester.requestFocus() })
+    }
 }

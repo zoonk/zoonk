@@ -127,13 +127,12 @@ fun FocusTestScreen(
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     val loaded by viewModel.test.collectShown()
-    val run by viewModel.run.collectAsStateWithLifecycle()
     val focus =
         rememberPressFocus(
             when {
                 ui.outcome != null || (ui.started && ui.questions.isNotEmpty()) -> null
-                ui.started && ui.writing -> if (run.status == GenerationRun.Status.Failed) "failed" else "wait"
-                ui.startFailed -> "failed"
+                ui.started && ui.writing -> "wait"
+                ui.startFailed -> "startFailed"
                 ui.refused != null -> "limit"
                 else -> "start"
             },
@@ -152,7 +151,7 @@ fun FocusTestScreen(
             when {
                 ui.started && ui.questions.isNotEmpty() -> FocusTestQuestions(read.value, ui, viewModel, app, navigator, close)
                 ui.started && ui.writing -> FocusTestWriting(viewModel, close, focus)
-                else -> FocusTestIntro(read.value, ui, viewModel, navigator, focus.requester, focus.press)
+                else -> FocusTestIntro(read.value, ui, viewModel, navigator, focus.requester, focus::press)
             }
         }
 
@@ -247,7 +246,7 @@ private fun FocusTestWriting(
 ) {
     val run by viewModel.run.collectAsStateWithLifecycle()
     val retry = {
-        focus.press()
+        focus.pressInHolder()
         viewModel.retryWriting()
     }
     FocusTestWaitScreen(run, retry.takeIf { viewModel.canRestart }, onClose, focus.requester)
