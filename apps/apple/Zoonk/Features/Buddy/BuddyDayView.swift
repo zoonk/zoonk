@@ -140,6 +140,9 @@ struct BuddyDayView: View {
       opening = nil
 
       switch result {
+      // Opening read Buddy's status again, so the learner sees what changed where they tapped.
+      case .done(.changed):
+        break
       case .done(let destination) where !Task.isCancelled:
         places.open(.missionStep(destination))
       case .failed:
