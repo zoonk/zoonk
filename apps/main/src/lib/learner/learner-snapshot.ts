@@ -67,7 +67,7 @@ export function isTapLearner({ held, tapped }: { held: LearnerId; tapped: Learne
 export type LearnerStore = {
   changeTimer: ReturnType<typeof setTimeout> | undefined;
   generation: number;
-  inFlight: { generation: number; promise: Promise<void> } | null;
+  inFlight: { generation: number; promise: Promise<void>; replaced: () => void } | null;
   installed: boolean;
   listeners: Set<() => void>;
   readAt: number;

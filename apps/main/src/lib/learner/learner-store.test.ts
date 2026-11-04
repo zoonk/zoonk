@@ -225,6 +225,24 @@ describe("learner a tap was made for", () => {
     expect(answer).toHaveBeenCalledWith(true);
   });
 
+  it("follows the newest check when a newer one replaced the read out at the tap", async () => {
+    const { page } = stubPage({ seeded: false });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    page.seeded = true;
+    store.ensureLearnerSummary();
+    const stillHere = store.learnerStaying("first");
+
+    const answer = answerOf(stillHere);
+    vi.advanceTimersByTime(SEED_WAIT_MS);
+    reads[1]?.resolve(answerFor(summaryOf("first")));
+    await settle();
+
+    expect(answer).toHaveBeenCalledWith(true);
+  });
+
   it("has left once the browser learns no one holds the session, when no one was known at the tap", async () => {
     stubPage({ seeded: true });
     const reads = stubSummaryReads();
