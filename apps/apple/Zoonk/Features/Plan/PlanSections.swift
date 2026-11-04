@@ -165,7 +165,7 @@ private struct RoadmapCompact: View {
               "\(currentIndex + 1) of \(phases.count)", tableName: "Plan",
               comment: "The learner's phase number of the plan's phases, under the roadmap"
             )
-            .monospacedDigit()
+            .typeStyle(.data)
           }
         } else {
           Text(
@@ -182,25 +182,29 @@ private struct RoadmapCompact: View {
             .imageScale(.small)
         }
       }
-      .typeStyle(.body)
+      .typeStyle(.meta)
     }
     .accessibilityElement(children: .combine)
   }
 
   private func position(phase: PlanPhase) -> Text {
     let today = context.plan.today
+    let title = Text(phase.title)
+      .typeWeight(.medium, legibility: legibilityWeight)
+      .foregroundStyle(Color(.foreground))
 
     guard let start = phase.startDate, let end = phase.endDate, start <= today else {
-      return Text(phase.title).typeWeight(.medium, legibility: legibilityWeight)
+      return title
     }
 
     let day = PlanDate.days(from: start, to: today) + 1
     let days = PlanDate.days(from: start, to: end) + 1
 
     return Text(
-      "\(Text(phase.title).typeWeight(.medium, legibility: legibilityWeight))\u{00A0}· day \(day) of \(days)",
-      tableName: "Plan",
-      comment: "Where the learner is: the phase's name, then its day of the phase's days")
+      "\(title)\u{00A0}· day \(day) of \(days)", tableName: "Plan",
+      comment: "Where the learner is: the phase's name, then its day of the phase's days"
+    )
+    .foregroundStyle(.mutedForeground)
   }
 }
 

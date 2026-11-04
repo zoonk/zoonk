@@ -58,15 +58,15 @@ struct StatTile<Icon: View>: View {
         .typeStyle(.readout)
         .foregroundStyle(tone == .brain ? Color.brainText : Color(.foreground))
 
+      if let meter {
+        Meter(value: meter, fill: meterFill)
+          .padding(.vertical, 2)
+      }
+
       if let detail {
         detail
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
-      }
-
-      if let meter {
-        Meter(value: meter, fill: meterFill)
-          .padding(.top, 4)
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

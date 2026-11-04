@@ -23,12 +23,10 @@ struct PlanPathSection: View {
 
       if let course {
         NavigationLink(value: AppRoute.course(courseId: course.courseId, title: course.title)) {
-          Label {
+          PlanPathLink(systemImage: "books.vertical") {
             Text(
               "See the full course", tableName: "Plan",
               comment: "Opens the Library course the plan is built from")
-          } icon: {
-            Image(systemName: "books.vertical")
           }
         }
       }
@@ -586,15 +584,28 @@ private struct PlanCompletedLessonsRow: View {
       learner.summary.value?.places.completedLessons == true
     {
       NavigationLink(value: AppRoute.completedLessons) {
-        ListRow(
+        PlanPathLink(systemImage: "clock.arrow.circlepath") {
           Text(
             "Completed lessons", tableName: "Plan",
             comment: "Opens the page of the lessons the learner finished")
-        ) {
-          Image(systemName: "clock.arrow.circlepath")
         }
       }
     }
+  }
+}
+
+/// Main's `PathLinkRow`: a quiet way out of the path, in the secondary color.
+private struct PlanPathLink: View {
+  let systemImage: String
+  @ViewBuilder let title: Text
+
+  var body: some View {
+    Label {
+      title
+    } icon: {
+      Image(systemName: systemImage)
+    }
+    .foregroundStyle(.mutedForeground)
   }
 }
 
