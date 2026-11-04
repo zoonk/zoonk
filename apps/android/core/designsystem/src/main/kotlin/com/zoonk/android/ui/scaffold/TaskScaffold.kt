@@ -49,8 +49,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.LocalWideLayout
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.SnackbarHost
+import com.zoonk.android.ui.components.readWideLayout
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
 data class TaskExitConfirmation(
@@ -158,13 +160,15 @@ fun TaskScaffold(
 
     // The screen's modifier (focus, keys) and its frame stay in one place when an aside comes or goes, as it does across a fold.
     Box(Modifier.pageFocus(focus).then(modifier)) {
-        PageWithSupportingPane(
-            supportingPane = aside?.let { { TaskAsideRail(it) } },
-            panesTouch = true,
-            halfWidth = aside?.half == true,
-        ) { beside ->
-            // An aside's footer beside the task holds its actions, so the aside shows its snackbars over them.
-            CompositionLocalProvider(LocalTaskAsideBeside provides beside) { frame(!beside || aside?.footer == null) }
+        CompositionLocalProvider(LocalWideLayout provides readWideLayout()) {
+            PageWithSupportingPane(
+                supportingPane = aside?.let { { TaskAsideRail(it) } },
+                panesTouch = true,
+                halfWidth = aside?.half == true,
+            ) { beside ->
+                // An aside's footer beside the task holds its actions, so the aside shows its snackbars over them.
+                CompositionLocalProvider(LocalTaskAsideBeside provides beside) { frame(!beside || aside?.footer == null) }
+            }
         }
     }
 

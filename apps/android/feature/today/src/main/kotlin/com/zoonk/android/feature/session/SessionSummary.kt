@@ -57,7 +57,7 @@ import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.celebrates
-import com.zoonk.android.ui.components.isWideWindow
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
@@ -70,7 +70,6 @@ import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
-import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.zoonk
@@ -119,8 +118,7 @@ internal fun SessionSummary(
 
     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
         val pages = spreadFold(maxWidth, span) != null
-        // Across a fold the summary keeps to a page, even where its text is too large for two.
-        val wide = pageFold(maxWidth, span) == null && isWideWindow()
+        val wide = isWideLayout()
         val stepped = !pages && !wide && !facts.stopped && summary.hasRewardsBeyondBrainPower()
         val rewardsShown = stepped && onRewards
 

@@ -3,7 +3,6 @@ package com.zoonk.android.feature.session
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,7 +39,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
@@ -75,6 +72,9 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
@@ -345,11 +345,6 @@ internal fun NextStop(
     val startFocus = remember { FocusRequester() }
     var screenFocused by remember { mutableStateOf(false) }
     val instead = alternative?.takeIf { !ready && goalId != null }
-    // Main stacks the actions full width below its large breakpoint once an alternative joins them.
-    val stacked =
-        instead != null &&
-            !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-    val actionWidth = if (stacked) Modifier.fillMaxWidth() else Modifier
 
     LaunchedEffect(step.position, waiting, step.screen) {
         when {
@@ -387,21 +382,18 @@ internal fun NextStop(
         bottomBar =
             if (startsFor != null || instead != null || onStop != null || viewModel.failed != null) {
                 {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    TaskActionBar {
                         when (viewModel.failed) {
                             SessionAction.Start -> ErrorLine(stringResource(R.string.today_open_failed))
                             SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
                             else -> Unit
                         }
-                        FlowRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
+                        TaskActions { main ->
                             onStop?.let {
+                                // Main stacks the actions on a narrow layout once an alternative joins them.
                                 OutlinedButton(
                                     onClick = it,
-                                    modifier = actionWidth,
+                                    modifier = if (instead != null) Modifier.taskOption() else Modifier,
                                     enabled = !busy,
                                 ) { Text(stringResource(R.string.session_next_stop)) }
                             }
@@ -409,7 +401,7 @@ internal fun NextStop(
                                 LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
                                 Button(
                                     onClick = { viewModel.start(day, step, goal) },
-                                    Modifier.focusRequester(startFocus),
+                                    main.focusRequester(startFocus),
                                     enabled = !busy,
                                 ) {
                                     Text(stringResource(R.string.session_next_start))
@@ -418,7 +410,7 @@ internal fun NextStop(
                             instead?.let { other ->
                                 Button(
                                     onClick = { goalId?.let { viewModel.start(day, other, it) } },
-                                    modifier = actionWidth,
+                                    modifier = main,
                                     enabled = !busy,
                                 ) {
                                     Text(

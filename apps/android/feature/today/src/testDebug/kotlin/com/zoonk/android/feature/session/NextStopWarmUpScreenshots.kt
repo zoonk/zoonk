@@ -113,12 +113,32 @@ class NextStopWarmUpScreenshots {
 
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookWithWorkMeanwhile() =
-        capture("book-meanwhile", fold = true, alternative = step(2, kind = StudyBlock.Kind.PRACTICE).copy(title = "Pollen and nectar"))
+    fun bookWithWorkMeanwhile() = capture("book-meanwhile", fold = true, alternative = meanwhile())
+
+    private fun meanwhile() = step(2, kind = StudyBlock.Kind.PRACTICE).copy(title = "Pollen and nectar")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactWithWorkMeanwhileAndStop() = capture("compact-meanwhile-stop", alternative = meanwhile(), stoppable = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedWithWorkMeanwhileAndStop() = capture("expanded-meanwhile-stop", alternative = meanwhile(), stoppable = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookWithWorkMeanwhileAndStop() = capture("book-meanwhile-stop", fold = true, alternative = meanwhile(), stoppable = true)
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun compactStop() = captureStop("compact")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactStopAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureStop("compact-font200")
+    }
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
@@ -191,6 +211,7 @@ class NextStopWarmUpScreenshots {
         fold: Boolean = false,
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
         alternative: DayStep? = null,
+        stoppable: Boolean = false,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
@@ -240,7 +261,7 @@ class NextStopWarmUpScreenshots {
                         notWritten = null,
                         alternative = alternative,
                         refresh = { shown = shown.copy(screen = StudyBlock.Screen.LESSON) },
-                        onStop = null,
+                        onStop = if (stoppable) ({}) else null,
                         navigator = rememberAppNavigator(),
                         warmUps = warmUps,
                     )
