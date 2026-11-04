@@ -14,6 +14,15 @@ const mistakeCauseInputSchema = z.object({
 export const followUpSchema = z.discriminatedUnion("kind", [
   z.object({ input: z.object({ sessionId: z.uuid() }), kind: z.literal("prepareSession") }),
   z.object({
+    input: z.object({
+      blockId: z.uuid(),
+      sessionId: z.uuid(),
+      source: z.object({ id: z.string(), kind: z.string() }).optional(),
+      timeZone: z.string(),
+    }),
+    kind: z.literal("settleSessionDay"),
+  }),
+  z.object({
     input: z.object({ goalId: z.uuid(), lessonsAskedAt: z.number().nullable() }),
     kind: z.literal("prepareGoalLessons"),
   }),

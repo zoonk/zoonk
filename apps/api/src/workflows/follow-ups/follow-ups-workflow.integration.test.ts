@@ -6,6 +6,10 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
@@ -184,6 +188,42 @@ describe(followUpsWorkflow, () => {
     }, WAIT);
 
     await expect(countOwed(user.id)).resolves.toBe(0);
+  });
+
+  it("completes the day a finished block left unsettled", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      startedAt: new Date(),
+      status: "active",
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({
+      completedAt: new Date(),
+      kind: "practice",
+      sessionId: session.id,
+      status: "completed",
+    });
+
+    await prisma.followUp.create({
+      data: {
+        input: { blockId: block.id, sessionId: session.id, timeZone: "UTC" },
+        key: block.id,
+        kind: "settleSessionDay",
+        userId: user.id,
+      },
+    });
+
+    await runFollowUps(user.id);
+
+    await vi.waitFor(async () => {
+      await expect(
+        prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+      ).resolves.toMatchObject({ endedAt: expect.any(Date), status: "completed" });
+    }, WAIT);
   });
 
   it("retries a failed model call in its step until the work is done", async () => {

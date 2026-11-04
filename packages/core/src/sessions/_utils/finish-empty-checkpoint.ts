@@ -5,6 +5,7 @@ import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { readBlockPayload } from "../block-payload";
 import { type FinishStudyBlockResult } from "../finish-study-block";
 import { getMissionBonus } from "../missions";
+import { oweDaySettlement } from "../settle-owed-session-day";
 import { pausedBlockTiming } from "./block-timing";
 import { getNextBlockId, getSessionBar } from "./session-view";
 import { settleSessionDay } from "./settle-session-day";
@@ -51,6 +52,8 @@ export async function finishEmptyCheckpoint({
         if (count === 0) {
           throw new EmptyCheckpointUnchangedError("The empty checkpoint was already settled");
         }
+
+        await oweDaySettlement(tx, { block, timeZone, userId });
       }),
     );
 
