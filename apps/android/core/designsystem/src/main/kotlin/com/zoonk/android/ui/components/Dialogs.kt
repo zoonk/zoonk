@@ -98,7 +98,9 @@ fun TimePickerDialog(
 
 /**
  * A dialog over the whole window, drawn behind the system bars. Its window has bars of its own,
- * set up edge to edge as the activity's are, with icons that follow the light or dark theme.
+ * set up edge to edge as the activity's are, with icons that follow the light or dark theme. It
+ * covers the window's snackbars: [content] shows them with a [SnackbarHost] where its layout has
+ * room, or they wait until it closes.
  */
 @Composable
 fun FullScreenDialog(
@@ -116,7 +118,7 @@ fun FullScreenDialog(
                 isAppearanceLightNavigationBars = light
             }
         }
-        content()
+        SnackbarLayerOver(content)
     }
 }
 

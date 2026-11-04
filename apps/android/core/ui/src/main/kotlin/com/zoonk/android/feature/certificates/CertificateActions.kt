@@ -107,14 +107,14 @@ class CertificateActions internal constructor(
         }
     }
 
-    /** [copied] confirms it below Android 13, which confirms a copy on its own. */
+    /** [confirmation] confirms it below Android 13, which confirms a copy on its own. */
     fun copy(
         text: String,
-        @StringRes copied: Int = R.string.certificates_copied,
+        @StringRes confirmation: Int? = null,
     ) {
         scope.launch {
             clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(text, text)))
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) app.snackbars.show(copied)
+            if (confirmation != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) app.snackbars.show(confirmation)
         }
     }
 

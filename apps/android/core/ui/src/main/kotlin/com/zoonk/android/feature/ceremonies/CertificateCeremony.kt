@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -76,6 +77,7 @@ import com.zoonk.android.feature.certificates.words
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
+import com.zoonk.android.ui.components.SnackbarHost
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
@@ -173,7 +175,10 @@ fun CertificateCeremony(
     }
 }
 
-/** A page of the moment, its [content] centered and scrolling, with [footer] pinned under it. */
+/**
+ * A page of the moment, its [content] centered and scrolling, with [footer] pinned under it and the
+ * window's snackbars above the footer.
+ */
 @Composable
 private fun StagePage(
     scroll: ScrollState,
@@ -181,17 +186,19 @@ private fun StagePage(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
-        Column(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .verticalScroll(scroll)
-                    .padding(horizontal = 16.dp, vertical = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            content = content,
-        )
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scroll)
+                        .padding(horizontal = 16.dp, vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                content = content,
+            )
+            if (footer != null) SnackbarHost(LocalSnackbarHostState.current, Modifier.align(Alignment.BottomCenter))
+        }
         footer?.invoke()
     }
 }
