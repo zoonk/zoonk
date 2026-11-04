@@ -567,7 +567,8 @@ private struct ComingLessonsRow: View {
         if failed {
           FailureLine(
             message: LocalizedStringResource(
-              "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved"))
+              "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
+          )
         }
       }
 
