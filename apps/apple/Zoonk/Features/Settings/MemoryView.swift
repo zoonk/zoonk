@@ -234,7 +234,7 @@ private struct MemoryFactRow: View {
 
 private struct MemoryUpdatedNotice: View {
   let fact: MemoryFact
-  let status: SettingsStore.UndoStatus
+  let status: MemoryUndo?
   let undo: () -> Void
 
   var body: some View {
@@ -244,16 +244,24 @@ private struct MemoryUpdatedNotice: View {
         tableName: "Settings", comment: "A deleted fact, struck through after “Memory updated:”")
 
       switch status {
-      case .idle:
+      case .failed, .undoing, nil:
         Button(action: undo) {
           Text("Undo", tableName: "Settings", comment: "Brings a deleted fact back")
             .underline()
         }
         .buttonStyle(.borderless)
         .foregroundStyle(.primary)
+        .disabled(status == .undoing)
+
+        if status == .failed {
+          FailureLine(
+            message: LocalizedStringResource(
+              "Couldn't undo. Try again.", table: "Settings",
+              comment: "A deleted fact didn't come back, and Undo stays to try again"))
+        }
       case .undone:
         Text("Change undone", tableName: "Settings", comment: "Says a deleted fact came back")
-      case .failed:
+      case .changedSince:
         Text(
           "Couldn't undo. It changed since.", tableName: "Settings",
           comment: "Says a deleted fact couldn't come back"

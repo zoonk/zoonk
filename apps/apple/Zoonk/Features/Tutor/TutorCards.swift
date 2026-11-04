@@ -164,19 +164,20 @@ struct TutorMemoryUpdate: View {
   let turnID: String
   let conversation: TutorConversation
 
-  @State private var result: Bool?
-
   var body: some View {
+    let undo = conversation.memoryUndos[turnID]
+
     VStack(alignment: .leading, spacing: 6) {
-      if let result {
-        result
-          ? Text("Change undone", tableName: "Tutor", comment: "A memory change was undone")
-          : Text(
-            "Couldn't undo. It changed since.", tableName: "Tutor",
-            comment: "Undoing a memory change failed"
-          )
-          .foregroundStyle(.destructive)
-      } else {
+      switch undo {
+      case .undone:
+        Text("Change undone", tableName: "Tutor", comment: "A memory change was undone")
+      case .changedSince:
+        Text(
+          "Couldn't undo. It changed since.", tableName: "Tutor",
+          comment: "Undoing a memory change failed"
+        )
+        .foregroundStyle(.destructive)
+      case .failed, .undoing, nil:
         Label {
           Text(
             "Memory updated: \(statement)", tableName: "Tutor",
@@ -186,20 +187,19 @@ struct TutorMemoryUpdate: View {
         }
 
         Button {
-          Task {
-            switch await conversation.undoMemory(of: turnID) {
-            case .done:
-              result = true
-            case .failed:
-              result = false
-            case .obsolete:
-              break
-            }
-          }
+          Task { await conversation.undoMemory(of: turnID) }
         } label: {
           Text("Undo", tableName: "Tutor", comment: "Undoes what the buddy remembered")
         }
         .buttonStyle(.borderless)
+        .disabled(undo == .undoing)
+
+        if undo == .failed {
+          FailureLine(
+            message: LocalizedStringResource(
+              "Couldn't undo. Try again.", table: "Tutor",
+              comment: "Undoing a memory change didn't go through, and Undo stays to try again"))
+        }
       }
     }
     .font(.footnote)

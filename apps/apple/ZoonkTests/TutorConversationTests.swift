@@ -409,6 +409,41 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertThrowsError(try event(#"{"type":"error","errorText":"boom"}"#))
   }
 
+  func testAMemoryUndoThatDidNotGoThroughCanBeTriedAgain() async {
+    let api = TutorAPIStub(answers: [[.memory([.likesMaps]), .text("Noted."), .finish]])
+    api.undoResults = [.failure(APIError.network), .success(true)]
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+    conversation.draft = "I like maps"
+    await conversation.send()
+    let turnID = conversation.turns[0].id
+
+    await conversation.undoMemory(of: turnID)
+
+    XCTAssertEqual(conversation.memoryUndos[turnID], .failed)
+
+    await conversation.undoMemory(of: turnID)
+
+    XCTAssertEqual(conversation.memoryUndos[turnID], .undone)
+    XCTAssertEqual(api.undoCount, 2)
+  }
+
+  func testAMemoryUndoThatChangedSinceIsNotSentAgain() async {
+    let api = TutorAPIStub(answers: [[.memory([.likesMaps]), .text("Noted."), .finish]])
+    api.undoResults = [.success(false)]
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+    conversation.draft = "I like maps"
+    await conversation.send()
+    let turnID = conversation.turns[0].id
+
+    await conversation.undoMemory(of: turnID)
+    await conversation.undoMemory(of: turnID)
+
+    XCTAssertEqual(conversation.memoryUndos[turnID], .changedSince)
+    XCTAssertEqual(api.undoCount, 1)
+  }
+
   private func makeConversation(api: TutorAPIStub) -> TutorConversation {
     TutorStore(api: api, cache: AppCache(session: .preview(account: .tutorTestAccount)))
       .conversation(.plan(goalId: "goal"))
@@ -427,6 +462,8 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   var beforeAsk: (@MainActor () async -> Void)?
   var beforeQuestion: (@MainActor () async -> Void)?
   var beforeAnswer: (@MainActor () async -> Void)?
+  var undoResults: [Result<Bool, Error>] = []
+  private(set) var undoCount = 0
   private(set) var requestIDs: [String] = []
   private(set) var suggestions: [String?] = []
   private var asked = 0
@@ -503,7 +540,15 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
     return change
   }
 
-  func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws {}
+  func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws -> Bool {
+    undoCount += 1
+    return try undoResults.isEmpty ? true : undoResults.removeFirst().get()
+  }
+}
+
+extension TutorMemoryChange {
+  fileprivate static let likesMaps = TutorMemoryChange(
+    action: .added, fact: .init(id: "fact", statement: "Likes maps"), previous: nil)
 }
 
 extension TutorTurn {
