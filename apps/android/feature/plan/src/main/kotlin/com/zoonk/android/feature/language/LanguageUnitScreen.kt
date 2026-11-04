@@ -80,6 +80,7 @@ import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TestOutRow
 import com.zoonk.android.ui.components.TestOutScope
@@ -180,7 +181,7 @@ private fun UnitEntry(
                 }
 
                 else -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                    PageLoading()
                 }
             }
         }

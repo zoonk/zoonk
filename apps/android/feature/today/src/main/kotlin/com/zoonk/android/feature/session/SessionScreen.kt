@@ -74,6 +74,7 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
@@ -579,15 +580,7 @@ private fun ErrorLine(text: String) {
 
 @Composable
 private fun SessionLoading(onClose: () -> Unit) {
-    TaskScaffold(onClose = onClose) { padding ->
-        Column(
-            Modifier.padding(padding).fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            CircularProgressIndicator()
-        }
-    }
+    TaskScaffold(onClose = onClose) { padding -> PageLoading(Modifier.padding(padding)) }
 }
 
 /** Main's `findAlternativeStudyBlock`: other work to do while [step]'s lesson waits, never work that waits itself. */

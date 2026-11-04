@@ -49,6 +49,7 @@ import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.search.SearchAction
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
@@ -116,7 +117,7 @@ internal fun <T : Any> CatalogPage(
             ) { twoPages ->
                 when (state) {
                     LoadState.Idle, LoadState.Loading -> {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                        PageLoading()
                     }
 
                     is LoadState.Failed -> {

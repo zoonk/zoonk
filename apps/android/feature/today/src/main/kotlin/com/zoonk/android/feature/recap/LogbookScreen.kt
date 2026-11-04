@@ -62,6 +62,7 @@ import com.zoonk.android.ui.components.GoalRing
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
@@ -112,7 +113,7 @@ fun LogbookScreen(
     val close = { navigator.showRoot(AppTab.Buddy) }
 
     if (goalId == null) {
-        TaskScaffold(onClose = close) { padding -> Loading(padding) }
+        TaskScaffold(onClose = close) { padding -> PageLoading(Modifier.padding(padding)) }
         return
     }
 
@@ -135,14 +136,9 @@ fun LogbookScreen(
         }
 
         LoadState.Idle, LoadState.Loading -> {
-            TaskScaffold(onClose = close) { padding -> Loading(padding) }
+            TaskScaffold(onClose = close) { padding -> PageLoading(Modifier.padding(padding)) }
         }
     }
-}
-
-@Composable
-private fun Loading(padding: PaddingValues) {
-    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
 }
 
 private enum class RecapStep { Week, Turnaround, Learned, Next }

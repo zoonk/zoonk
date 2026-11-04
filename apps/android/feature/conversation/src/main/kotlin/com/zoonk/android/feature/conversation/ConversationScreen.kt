@@ -51,6 +51,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.api.models.CompletedLanguageConversation
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationIntro
@@ -167,7 +168,7 @@ internal fun ConversationContent(
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
             CallFrame(title = {}, onClose = exits::close) {
-                item(key = "loading") { Box(Modifier.callItem(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
+                item(key = "loading") { PageLoading(Modifier.callItem()) }
             }
         }
 
