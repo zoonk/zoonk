@@ -64,6 +64,7 @@ import com.zoonk.api.models.LibraryLessonRun
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -471,16 +472,23 @@ class LessonPlayerViewModel(
     }
 
     private fun startRun() {
-        val lesson = lesson ?: return
+        val opened = lesson ?: return
         dispatch(LessonAction.RunStarting)
         starting =
             work.launch {
+                // The run keeps the screens it starts with, and the copy shown on opening may predate a plan change or
+                // a rewrite, so a stale one is read again first, as Apple's player does. Offline, the copy plays.
+                val read = store.lesson(lessonId)
+                val reading = async { read.load() }
                 val outcome =
                     if (sendUnsent()) {
                         start(runId = null) ?: return@launch
                     } else {
                         StartOutcome.Refused(LessonRefusal.Failed)
                     }
+                reading.await()
+                val lesson = (read.state.value.value as? LessonLoad.Ready)?.lesson ?: opened
+                this@LessonPlayerViewModel.lesson = lesson
                 when (outcome) {
                     is StartOutcome.Started -> {
                         val state = playFrom(lesson, outcome.run)
