@@ -77,6 +77,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -729,11 +730,6 @@ private val MistakeCause?.icon: Int
 private fun List<Mistake>.skillName(): String = first().skill?.name ?: stringResource(R.string.mistakes_other_questions)
 
 private fun List<Mistake>.groupKey(): String = first().skill?.id?.toString() ?: "none"
-
-@Composable
-private fun PageLoading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-}
 
 private val ITEM_GAP = 24.dp
 private val INBOX_WIDTH = 840.dp

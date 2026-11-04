@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -50,6 +49,7 @@ import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.search.SearchAction
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -116,7 +116,7 @@ internal fun <T : Any> CatalogPage(
             ) { twoPages ->
                 when (state) {
                     LoadState.Idle, LoadState.Loading -> {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                        PageLoading()
                     }
 
                     is LoadState.Failed -> {

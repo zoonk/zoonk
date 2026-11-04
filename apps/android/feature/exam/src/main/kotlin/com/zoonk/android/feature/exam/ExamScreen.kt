@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -28,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -60,6 +58,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -87,7 +86,7 @@ fun ExamScreen(
     ExamFrame(navigator, title = null) {
         when {
             summary is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { app.learnerSummary.summary.refresh() } })
-            summary.value == null -> ExamLoading()
+            summary.value == null -> PageLoading()
             else -> ExamNotFound(navigator)
         }
     }
@@ -130,7 +129,7 @@ internal fun GoalExam(
                 loaded != null -> ExamPage(loaded, options.value, viewModel, app, navigator, listState)
                 current is LoadState.Failed && current.error != ApiError.NotFound -> LoadFailedMessage(onRetry = refresh)
                 current is LoadState.Failed || current is LoadState.Empty -> ExamNotFound(navigator)
-                else -> ExamLoading()
+                else -> PageLoading()
             }
         }
     }
@@ -150,11 +149,6 @@ private fun ExamFrame(
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) { content() }
     }
-}
-
-@Composable
-private fun ExamLoading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
 }
 
 /** The goal in the switcher isn't an exam (main's not-found page in the frame). */

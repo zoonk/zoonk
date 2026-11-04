@@ -4,14 +4,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -51,6 +49,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.markSize
@@ -285,14 +284,7 @@ internal fun WithPlanGoal(
         goal != null -> content(goal)
         state.value != null || state == LoadState.Empty -> frame { NotFoundMessage(goHome, Modifier.padding(it)) }
         state is LoadState.Failed -> frame { LoadFailedMessage(onRetry = { scope.launch { summary.refresh() } }, Modifier.padding(it)) }
-        else -> frame { PageLoading(it) }
-    }
-}
-
-@Composable
-internal fun PageLoading(padding: PaddingValues) {
-    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
+        else -> frame { PageLoading(Modifier.padding(it)) }
     }
 }
 

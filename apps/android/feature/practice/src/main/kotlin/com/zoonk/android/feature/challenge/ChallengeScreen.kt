@@ -272,6 +272,7 @@ internal fun ChallengeMoved(
     val day = formatDate(moved.date.toJavaLocalDate(), currentLocale(), DateStyle.WeekdayDay)
     TaskScaffold(
         onClose = navigator::closeTask,
+        lonePage = true,
         bottomBar = {
             TaskActionBar {
                 MoveFailed(ui)
