@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -13,6 +12,7 @@ import androidx.compose.ui.test.performClick
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.MistakePattern
 import org.junit.Assume.assumeTrue
@@ -59,7 +59,7 @@ class PatternScreenshots {
         play()
         rule.waitForIdle()
         val root = if (sheet) rule.onNode(isDialog()) else rule.onRoot()
-        val bitmap = root.captureToImage().asAndroidBitmap()
+        val bitmap = root.captureRender().asAndroidBitmap()
         File(
             folder,
             "pattern-$name.png",

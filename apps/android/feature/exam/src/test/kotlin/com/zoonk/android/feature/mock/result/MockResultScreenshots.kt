@@ -6,7 +6,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -31,6 +30,7 @@ import com.zoonk.android.feature.mock.runner.RUN_BLOCK
 import com.zoonk.android.feature.mock.runner.runningMock
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.MockExam
 import kotlinx.coroutines.CompletableDeferred
@@ -93,7 +93,7 @@ class MockResultScreenshots {
         show(enem())
         compose.onNodeWithText("See the 2 questions").performClick()
         compose.waitForIdle()
-        write("result-phone-review-sheet", compose.onNode(isDialog()).captureToImage().asAndroidBitmap())
+        write("result-phone-review-sheet", compose.onNode(isDialog()).captureRender().asAndroidBitmap())
     }
 
     @Test
@@ -301,7 +301,7 @@ class MockResultScreenshots {
             compose.waitForIdle()
         }
         compose.waitForIdle()
-        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun write(

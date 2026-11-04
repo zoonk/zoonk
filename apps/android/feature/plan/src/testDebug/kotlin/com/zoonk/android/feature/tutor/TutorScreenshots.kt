@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Surface
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -22,6 +21,7 @@ import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.feature.plan.effect
 import com.zoonk.android.feature.plan.planChange
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.TutorToolOffer
@@ -143,7 +143,7 @@ class TutorScreenshots {
         file.outputStream().use {
             compose
                 .onRoot()
-                .captureToImage()
+                .captureRender()
                 .asAndroidBitmap()
                 .compress(Bitmap.CompressFormat.PNG, 100, it)
         }

@@ -12601,6 +12601,65 @@
         }
       }
     },
+    "Still starting. This is taking longer than usual." : {
+      "comment" : "Starting a challenge is taking longer than usual.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Start läuft noch. Das dauert länger als üblich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún se está iniciando. Está tardando más de lo normal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le démarrage est en cours. Cela prend plus de temps que d’habitude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo ancora avviando la sfida. Ci stiamo mettendo più tempo del solito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ開始の準備をしています。いつもより時間がかかっています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 시작을 준비하고 있어요. 평소보다 오래 걸리고 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadal uruchamiamy wyzwanie. Trwa to dłużej niż zwykle."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda está iniciando. Está demorando mais que o normal."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hâlâ başlatmaya çalışıyoruz. Bu, normalden uzun sürüyor."
+          }
+        }
+      }
+    },
     "Stop for today" : {
       "comment" : "Stops today's session from the pause suggestion.",
       "localizations" : {

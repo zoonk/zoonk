@@ -432,23 +432,12 @@ private func goalLine(_ goal: LearnerGoal) -> String {
 }
 
 private func daysLeft(until targetDate: String?) -> Int? {
-  guard let targetDate,
-    let date = try? Date(targetDate, strategy: .iso8601.year().month().day())
-  else {
+  guard let targetDate else {
     return nil
   }
 
-  var calendar = Calendar(identifier: .gregorian)
-  calendar.timeZone = .gmt
-  let today = calendar.date(
-    from: Calendar.current.dateComponents([.year, .month, .day], from: .now))
-  guard let today,
-    let days = calendar.dateComponents([.day], from: today, to: date).day, days >= 0
-  else {
-    return nil
-  }
-
-  return days
+  let days = PlanDate.days(from: isoDay(.now), to: targetDate)
+  return days >= 0 ? days : nil
 }
 
 extension EnvironmentValues {

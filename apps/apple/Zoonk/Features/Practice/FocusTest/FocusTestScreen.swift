@@ -39,6 +39,8 @@ struct FocusTestScreen: View {
           switch load {
           case .loading:
             ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+          case .failed(.notFound):
+            PracticeRedirect { hooks.navigate(.plan) }
           case .failed(let error):
             PracticeLoadFailureView(error: error) { Task { await read() } }
           case .loaded(let test):
@@ -198,7 +200,11 @@ struct FocusTestScreen: View {
       questions += test.questions.filter { !known.contains($0.itemId) }
       load = .loaded(test)
     } catch let error as APIError {
-      if error == .unauthorized { await session.expire(identity) }
+      if error == .unauthorized {
+        await session.expire(identity)
+      } else if session.authenticatedSession != identity {
+        return
+      }
       load = .failed(error)
     } catch {
       load = .failed(.unavailable)
