@@ -259,6 +259,8 @@ private fun MindMapRequest(
             }
         }
 
-        if (limit != null) MindMapLimit(limit, navigator)
+        if (limit != null && local?.pending != true) {
+            MindMapLimit(limit, navigator, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+        }
     }
 }

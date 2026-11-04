@@ -48,7 +48,6 @@ import com.zoonk.android.feature.practice.RunFinished
 import com.zoonk.android.feature.practice.RunIntro
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
-import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.UndoAction
 import com.zoonk.android.feature.practice.UndoState
@@ -58,6 +57,7 @@ import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
@@ -89,7 +89,7 @@ fun TestOutScreen(
     val learner = summary.value
 
     if (chapterId == null) {
-        RunNotFound(close)
+        TaskNotFound(navigator)
         return
     }
     if (signedIn == null || learner == null) {
@@ -211,14 +211,14 @@ private fun TestOutBody(
 
         is LoadState.Failed -> {
             if (read.error == ApiError.NotFound) {
-                RunNotFound(close)
+                TaskNotFound(navigator)
             } else {
                 RunLoadFailed(close, onRetry = { scope.launch { viewModel.testOut.refresh() } })
             }
         }
 
         LoadState.Empty -> {
-            RunNotFound(close)
+            TaskNotFound(navigator)
         }
 
         else -> {

@@ -8,9 +8,9 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { loadUndoneTestOuts } from "./undone-test-outs";
+import { loadClaimEvents } from "../../learner/_utils/load-skill-claims";
 
-describe(loadUndoneTestOuts, () => {
+describe("undone test-outs in claim events", () => {
   it("dates the skills of each undone test-out from the test-out, and no applied one's", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -57,10 +57,13 @@ describe(loadUndoneTestOuts, () => {
       }),
     ]);
 
-    const events = await loadUndoneTestOuts({
+    const claims = await loadClaimEvents({
       goalId: goal.id,
-      skillIds: new Set([organelles.id, membrane.id, nucleus.id]),
+      skillIds: [organelles.id, membrane.id, nucleus.id],
+      userId: user.id,
     });
+
+    const events = claims.filter((event) => event.kind === "undone");
 
     expect(events).toStrictEqual(
       expect.arrayContaining([

@@ -392,7 +392,7 @@ private fun FarTopicRequest(
         }
     }
 
-    if (limit != null) {
+    if (limit != null && !open.asking) {
         LimitNotice(
             limit = limit,
             subject = LimitSubject.Outlines,
@@ -404,6 +404,7 @@ private fun FarTopicRequest(
                 topics.close()
                 navigator.open(AppRoute.Subscription)
             },
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         )
     }
 }

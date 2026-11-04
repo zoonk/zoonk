@@ -9,6 +9,7 @@ struct ChallengeStepView: View {
   let part: LessonStepPart
 
   @Environment(\.legibilityWeight) private var legibilityWeight
+  @Environment(\.stacksContent) private var stacksContent
 
   @ScaledMetric(relativeTo: .subheadline) private var avatarSize = 36.0
 
@@ -63,17 +64,25 @@ struct ChallengeStepView: View {
 
       LessonQuestionText(text: named(content.title))
 
-      VStack(alignment: .leading, spacing: 4) {
-        Text("Your mission", tableName: "Player", comment: "Above a challenge's mission")
-          .typeStyle(.meta.weight(.medium))
-          .foregroundStyle(.mutedForeground)
+      VStack(alignment: .leading, spacing: 8) {
+        panelLabel(
+          Text("Your mission", tableName: "Player", comment: "Above a challenge's mission")
+        )
+        .accessibilityAddTraits(.isHeader)
         LessonRichText(named(content.mission))
           .typeStyle(.section.weight(.regular))
-      }
 
-      if let deadline = content.deadline {
-        Label(named(deadline), systemImage: "clock")
-          .foregroundStyle(.mutedForeground)
+        if let deadline = content.deadline {
+          Label(named(deadline), systemImage: "clock")
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+      .padding(16)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .panel()
+
+      ForEach(Array(content.panels.enumerated()), id: \.offset) { _, panel in
+        self.panel(panel)
       }
 
       Text("Your team", tableName: "Player", comment: "Above the people in a challenge")
@@ -139,6 +148,7 @@ struct ChallengeStepView: View {
           .accessibilityElement(children: .combine)
         }
       }
+      .padding(16)
       .panel()
     }
   }
@@ -191,11 +201,73 @@ struct ChallengeStepView: View {
         message(reply)
       }
       if let jump = decision.choice.timeJump {
-        Label(named(jump.label), systemImage: "clock.arrow.circlepath")
-          .typeStyle(.note)
+        timeJump(jump)
+      }
+    }
+  }
+
+  private func timeJump(_ jump: ChallengeContent.Choice.TimeJump) -> some View {
+    VStack(spacing: 12) {
+      HStack(spacing: 12) {
+        VStack { Divider() }
+        Label(named(jump.label), systemImage: "calendar.badge.clock")
+          .foregroundStyle(.mutedForeground)
+          .multilineTextAlignment(.center)
+          .layoutPriority(1)
+        VStack { Divider() }
+      }
+
+      if let panel = jump.panel {
+        self.panel(panel)
+      }
+    }
+  }
+
+  private func panel(_ panel: ChallengeContent.Panel) -> some View {
+    let columns = stacksContent || panel.metrics.count < 2 ? 1 : 2
+
+    return VStack(alignment: .leading, spacing: 12) {
+      if let title = panel.title {
+        panelLabel(Text(named(title)))
+      }
+
+      LazyVGrid(
+        columns: Array(
+          repeating: GridItem(.flexible(), spacing: 16, alignment: .topLeading), count: columns),
+        alignment: .leading, spacing: 16
+      ) {
+        ForEach(Array(panel.metrics.enumerated()), id: \.offset) { _, metric in
+          VStack(alignment: .leading, spacing: 2) {
+            Text(named(metric.label))
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
+            Text(metric.value)
+              .typeStyle(.readout)
+            if let note = metric.note {
+              Text(named(note))
+                .typeStyle(.meta)
+                .foregroundStyle(.mutedForeground)
+            }
+          }
+          .accessibilityElement(children: .combine)
+        }
+      }
+
+      if let note = panel.note {
+        LessonRichText(named(note))
+          .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
       }
     }
+    .padding(16)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .panel()
+  }
+
+  private func panelLabel(_ text: Text) -> some View {
+    text
+      .typeStyle(.label)
+      .foregroundStyle(.faint)
   }
 
   private func message(_ message: ChallengeContent.Message) -> some View {
@@ -286,15 +358,15 @@ struct ChallengeStepView: View {
 
   private func outcome(_ ending: ChallengeContent.Ending) -> some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text(
-        "What happened", tableName: "Player",
-        comment: "Above how a challenge's path ended, before the learner checks it"
+      panelLabel(
+        Text(
+          "What happened", tableName: "Player",
+          comment: "Above how a challenge's path ended, before the learner checks it")
       )
-      .typeStyle(.label)
-      .foregroundStyle(.faint)
       .accessibilityAddTraits(.isHeader)
       LessonRichText(named(ending.outcome))
     }
+    .padding(16)
     .frame(maxWidth: .infinity, alignment: .leading)
     .panel()
   }

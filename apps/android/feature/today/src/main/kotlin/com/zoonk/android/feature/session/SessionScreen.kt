@@ -59,6 +59,7 @@ import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
@@ -67,7 +68,6 @@ import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
@@ -204,7 +204,7 @@ private fun SavedDay(
         }
 
         LoadState.Empty -> {
-            TaskScaffold(onClose = navigator::closeTask) { padding -> NotFoundMessage(navigator::closeTask, Modifier.padding(padding)) }
+            TaskNotFound(navigator)
         }
 
         else -> {

@@ -58,11 +58,11 @@ import com.zoonk.android.feature.plan.lessonsText
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
-import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
@@ -110,7 +110,7 @@ fun ChallengeScreen(
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = (session as? SessionState.SignedIn)?.session
     if (planItemId == null) {
-        RunNotFound(navigator::closeTask)
+        TaskNotFound(navigator)
         return
     }
     if (signedIn == null) {
@@ -330,7 +330,7 @@ private fun IntroScreen(
             Intro(challenge)
             if (!taskAsideBeside()) aside?.content?.invoke(true)
             // A card this size scrolls with the intro; the bar under it keeps only its action.
-            if (plusRequired(challenge, ui)) PlusRequiredNotice(challenge)
+            if (plusRequired(challenge, ui)) PlusRequiredNotice(challenge, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
         }
     }
 }
@@ -812,7 +812,13 @@ private fun StartActions(
     val vm = actions.viewModel
     val refused = ui.refused
     if (refused != null) {
-        LimitNotice(refused, LimitSubject.Help, onCreateAccount = actions::createAccount, onSeePlus = actions::seePlus)
+        LimitNotice(
+            refused,
+            LimitSubject.Help,
+            onCreateAccount = actions::createAccount,
+            onSeePlus = actions::seePlus,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        )
         return
     }
     when {
@@ -853,19 +859,23 @@ private fun plusRequired(
 ) = ui.problem == StartProblem.PlusRequired || challenge.status == Challenge.Status.PLUS_REQUIRED
 
 @Composable
-private fun PlusRequiredNotice(challenge: Challenge) {
+private fun PlusRequiredNotice(
+    challenge: Challenge,
+    modifier: Modifier = Modifier,
+) {
     when {
         challenge.mock -> {
-            PlusNotice(onSeePlus = null, description = stringResource(R.string.challenge_mock_plus))
+            PlusNotice(onSeePlus = null, modifier = modifier, description = stringResource(R.string.challenge_mock_plus))
         }
 
         challenge.call != null -> {
-            PlusNotice(onSeePlus = null, description = stringResource(R.string.challenge_call_plus))
+            PlusNotice(onSeePlus = null, modifier = modifier, description = stringResource(R.string.challenge_call_plus))
         }
 
         else -> {
             PlusNotice(
                 onSeePlus = null,
+                modifier = modifier,
                 title = stringResource(R.string.subscription_free_week_over_title),
                 description = stringResource(R.string.subscription_free_week_over_description),
             )

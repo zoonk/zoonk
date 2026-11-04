@@ -69,15 +69,8 @@ private struct MockStage: View {
       ProgressView()
         .navigationTitle(untitledMock)
     case .empty, .failed(.notFound):
-      ContentUnavailableView {
-        Label {
-          Text("This mock exam isn't here", tableName: "Mock", comment: "A mock that doesn't exist")
-        } icon: {
-          Image(systemName: "timer")
-        }
-      }
-      .lonePage()
-      .navigationTitle(untitledMock)
+      NotFoundView()
+        .navigationTitle(untitledMock)
     case .failed:
       ContentUnavailableView {
         Label {

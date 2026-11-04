@@ -13,11 +13,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.semantics.CollectionInfo
 import androidx.compose.ui.semantics.CollectionItemInfo
@@ -37,7 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.core.os.ConfigurationCompat
+import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -136,10 +134,6 @@ private val MARKER_WIDTH = 20.dp
 private val MARKER_GAP = 4.dp
 
 private const val CODE_SIZE = 0.85f
-
-@Composable
-@ReadOnlyComposable
-private fun currentLocale(): Locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0] ?: Locale.ROOT
 
 @Composable
 fun rememberMathWords(): MathWords {

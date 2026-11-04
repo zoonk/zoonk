@@ -108,7 +108,7 @@ fun CatalogScreen(
     catalog: CatalogStore = app.catalog,
 ) {
     val locale = currentLocale()
-    val language = catalogLanguage(locale)
+    val language = locale.language
     var category by rememberSaveable { mutableStateOf(route.category?.takeIf { Subject.of(it).label != null }) }
     val list = CourseList(language, category)
     val courses = catalog.courses[list]

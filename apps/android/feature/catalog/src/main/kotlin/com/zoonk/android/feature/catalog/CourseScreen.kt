@@ -172,7 +172,7 @@ private fun CourseHero(
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
-    val language = catalogLanguage(locale)
+    val language = locale.language
     val edition =
         course.editions.firstOrNull { it.language.substringBefore('-') == language }?.takeIf {
             course.language.substringBefore('-') !=
