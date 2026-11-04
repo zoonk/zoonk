@@ -1,11 +1,16 @@
 import Foundation
 import SwiftUI
 
-/// Mirrors main's `formatDuration`.
-func progressLearningTime(_ totalSeconds: Int, locale: Locale = .autoupdatingCurrent) -> String {
+/// Mirrors main's `formatDuration`, which writes durations in the app's language rather than the
+/// device's region, so "3 hr 38 min" reads the same on every platform (a British region would say
+/// "3 hrs"). A no-break space keeps each number with its unit.
+func progressLearningTime(_ totalSeconds: Int, locale: Locale = .courseLanguage) -> String {
+  let isJapanese = locale.language.languageCode == .japanese
+
   func unit(_ value: Int, _ unit: UnitDuration) -> String {
     Measurement(value: Double(value), unit: unit)
       .formatted(.measurement(width: .abbreviated, usage: .asProvided).locale(locale))
+      .replacingOccurrences(of: " ", with: isJapanese ? "" : "\u{00A0}")
   }
 
   let seconds = max(totalSeconds, 0)
@@ -27,7 +32,7 @@ func progressLearningTime(_ totalSeconds: Int, locale: Locale = .autoupdatingCur
   let hours = unit(totalMinutes / 60, .hours)
   let minutes = totalMinutes % 60
   // Foundation spaces Japanese units ("1時間 30分"), but Japanese writes them together ("1時間30分").
-  let separator = locale.language.languageCode == .japanese ? "" : " "
+  let separator = isJapanese ? "" : " "
   return minutes == 0 ? hours : "\(hours)\(separator)\(unit(minutes, .minutes))"
 }
 
