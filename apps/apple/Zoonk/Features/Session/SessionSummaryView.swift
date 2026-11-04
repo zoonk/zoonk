@@ -11,8 +11,16 @@ struct SessionSummaryView: View {
   let stopped: Bool
 
   @State private var action: Task<Void, Never>?
-  @State private var isAddingTime = false
-  @State private var failed = false
+  @State private var isBusy = false
+  @State private var failed: SummaryAction?
+
+  /// The least Finish keeps beside a stopped session's two choices (main's `lg:min-w-40`), so on a
+  /// phone it fills a line of its own.
+  @ScaledMetric(relativeTo: .body) private var finishMinimumWidth = 160.0
+
+  private enum SummaryAction {
+    case keepGoing, extraTime
+  }
 
   var body: some View {
     let summary = store.summary(id: sessionID)
@@ -61,12 +69,18 @@ struct SessionSummaryView: View {
         List {
           onward(summary)
         }
+        // A stopped session that raised no skill leaves it empty, and an empty list draws the plain
+        // background.
+        .scrollContentBackground(.hidden)
+        .background(Color(.systemGroupedBackground))
+        .safeAreaBar(edge: .bottom) { actionBar(summary) }
       } single: {
         List {
           dayResult(summary)
           onward(summary)
         }
         .celebratesOnce(id: visit)
+        .safeAreaBar(edge: .bottom) { actionBar(summary).keepsOffFold() }
       }
     }
   }
@@ -125,78 +139,161 @@ struct SessionSummaryView: View {
         Text("Tomorrow", tableName: "Session", comment: "Tomorrow's lesson")
       }
     }
+  }
 
-    Section {
-      VStack(spacing: 12) {
-        Button {
-          router.dismissTask()
-        } label: {
-          Text("Finish", tableName: "Session", comment: "Closes the summary")
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-
-        if stopped, let next = store.session(id: sessionID).value?.nextBlock {
-          Button {
-            keepGoing(next)
-          } label: {
-            Text("Keep going", tableName: "Session", comment: "Goes on with a stopped session")
-              .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.bordered)
-          .controlSize(.large)
-          .disabled(isAddingTime)
-        }
-
-        if summary.mistakesSaved > 0 {
-          Button {
-            router.open(.mistakes)
-          } label: {
-            Text("See mistakes", tableName: "Session", comment: "Opens the mistakes notebook")
-              .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.bordered)
-          .controlSize(.large)
-          .disabled(isAddingTime)
-        }
-
-        if summary.finished && summary.extraTime.available {
-          Button {
-            keepLearning()
-          } label: {
-            HStack {
-              if isAddingTime {
-                ProgressView()
-              }
-
-              if summary.extraTime.lessons.isEmpty {
-                Text(
-                  "Study \(summary.extraTime.minutes) more minutes", tableName: "Session",
-                  comment: "Adds practice once the day is done")
-              } else {
-                Text("Keep learning", tableName: "Session", comment: "Adds the next lessons")
-              }
-            }
-            .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.bordered)
-          .controlSize(.large)
-          .disabled(isAddingTime)
-        }
-
-        if failed {
+  /// Main's `SummaryButtons` and `SummaryOptions`.
+  private func actionBar(_ summary: SessionSummary) -> some View {
+    VStack(spacing: 12) {
+      if failed == .keepGoing {
+        failure(
           Text(
             "We couldn't open the next step. Try again.", tableName: "Session",
-            comment: "Adding time failed"
-          )
-          .font(.footnote)
-          .foregroundStyle(.destructive)
+            comment: "Keep going failed"))
+      }
+
+      actions(summary)
+
+      if !stopped, summary.extraTime.available {
+        extraTimeButton(summary.extraTime)
+
+        if failed == .extraTime {
+          failure(
+            Text(
+              "That didn't save. Try again.", tableName: "Session",
+              comment: "Adding more time failed"))
         }
       }
     }
-    .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .controlSize(.large)
+    .frame(maxWidth: 680)
+    .frame(maxWidth: .infinity)
+    .scenePadding()
+  }
+
+  /// See mistakes and Keep going sit before Finish, which takes the rest of the line. A stopped
+  /// session with mistakes has both: they share a line above Finish where it would keep less than
+  /// `finishMinimumWidth` beside them, and take a line each where their labels don't fit side by
+  /// side.
+  @ViewBuilder
+  private func actions(_ summary: SessionSummary) -> some View {
+    let next = stopped ? store.session(id: sessionID).value?.nextBlock : nil
+    let seesMistakes = summary.mistakesSaved > 0
+
+    if seesMistakes, let next {
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: 12) {
+          seeMistakesButton(sharesLine: false)
+          keepGoingButton(next, sharesLine: false)
+          finishButton
+            .frame(minWidth: finishMinimumWidth)
+        }
+
+        VStack(spacing: 12) {
+          HStack(spacing: 12) {
+            seeMistakesButton(sharesLine: true)
+            keepGoingButton(next, sharesLine: true)
+          }
+
+          finishButton
+        }
+
+        VStack(spacing: 12) {
+          seeMistakesButton(sharesLine: false)
+          keepGoingButton(next, sharesLine: false)
+          finishButton
+        }
+        .buttonSizing(.flexible)
+      }
+    } else {
+      ButtonRow(spacing: 12) {
+        if seesMistakes {
+          seeMistakesButton(sharesLine: false)
+        }
+
+        if let next {
+          keepGoingButton(next, sharesLine: false)
+        }
+
+        finishButton
+      }
+    }
+  }
+
+  private var finishButton: some View {
+    Button {
+      router.dismissTask()
+    } label: {
+      Text("Finish", tableName: "Session", comment: "Closes the summary")
+        .frame(maxWidth: .infinity)
+    }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
+  }
+
+  private func seeMistakesButton(sharesLine: Bool) -> some View {
+    Button {
+      router.open(.mistakes)
+    } label: {
+      choiceLabel(
+        Text("See mistakes", tableName: "Session", comment: "Opens the mistakes notebook"),
+        sharesLine: sharesLine)
+    }
+    .buttonStyle(.bordered)
+    .disabled(isBusy)
+  }
+
+  private func keepGoingButton(_ next: StudyBlock, sharesLine: Bool) -> some View {
+    Button {
+      keepGoing(next)
+    } label: {
+      choiceLabel(
+        Text("Keep going", tableName: "Session", comment: "Goes on with a stopped session"),
+        sharesLine: sharesLine)
+    }
+    .buttonStyle(.bordered)
+    .disabled(isBusy)
+  }
+
+  /// Main's `SHARED_ROW_ACTION_CLASS`: the two split a shared line evenly, and neither cuts its label
+  /// short.
+  @ViewBuilder
+  private func choiceLabel(_ label: Text, sharesLine: Bool) -> some View {
+    if sharesLine {
+      label
+        .fixedSize()
+        .frame(maxWidth: .infinity)
+    } else {
+      label
+    }
+  }
+
+  private func extraTimeButton(_ extraTime: StudyDay.ExtraTime) -> some View {
+    Button {
+      keepLearning()
+    } label: {
+      HStack {
+        if isBusy {
+          ProgressView()
+        }
+
+        if extraTime.lessons.isEmpty {
+          Text(
+            "Study \(extraTime.minutes) more minutes", tableName: "Session",
+            comment: "Adds practice once the day is done")
+        } else {
+          Text("Keep learning", tableName: "Session", comment: "Adds the next lessons")
+        }
+      }
+      .frame(maxWidth: .infinity)
+    }
+    .buttonStyle(.borderless)
+    .disabled(isBusy)
+  }
+
+  private func failure(_ message: Text) -> some View {
+    message
+      .font(.footnote)
+      .foregroundStyle(.destructive)
   }
 
   private func title(_ summary: SessionSummary) -> Text {
@@ -213,12 +310,12 @@ struct SessionSummaryView: View {
 
   /// Main's "Keep going" opens the next block, as the next stop's button does.
   private func keepGoing(_ next: StudyBlock) {
-    isAddingTime = true
-    failed = false
+    isBusy = true
+    failed = nil
 
     action = Task {
       let result = await today.open(next, as: .next, sessionID: sessionID)
-      isAddingTime = false
+      isBusy = false
 
       switch result {
       case .done(.session), .done(.lessonWait):
@@ -228,7 +325,7 @@ struct SessionSummaryView: View {
         router.playback.resume(sessionID: sessionID)
         router.openStudy(destination)
       case .failed:
-        failed = true
+        failed = .keepGoing
       case .done, .obsolete:
         break
       }
@@ -236,18 +333,18 @@ struct SessionSummaryView: View {
   }
 
   private func keepLearning() {
-    isAddingTime = true
-    failed = false
+    isBusy = true
+    failed = nil
 
     action = Task {
       let result = await today.addExtraTime(sessionID: sessionID)
-      isAddingTime = false
+      isBusy = false
 
       switch result {
       case .done(let destination) where !Task.isCancelled:
         router.openStudy(destination)
       case .failed:
-        failed = true
+        failed = .extraTime
       case .done, .obsolete:
         break
       }
