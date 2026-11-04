@@ -9,7 +9,7 @@ import {
   type SpeakingMockExam,
 } from "./exam-speaking-exams";
 import examTaskTemplate from "./live-conversation-exam-task.prompt.md";
-import template from "./live-conversation-instructions.prompt.md";
+import instructionsTemplate from "./live-conversation-instructions.prompt.md";
 import rolePlayTemplate from "./live-conversation-role-play.prompt.md";
 import toeflMockTemplate from "./live-conversation-speaking-mock-toefl.prompt.md";
 import speakingMockTemplate from "./live-conversation-speaking-mock.prompt.md";
@@ -64,6 +64,12 @@ export type LiveConversationInstructionsParams = LiveConversationRole &
     learnerNote?: string;
   };
 
+/** An exam's examiner and other candidate follow the exam's own turn lengths instead. */
+const INSTRUCTION_TEMPLATES = {
+  exam: selectPromptVariants({ template: instructionsTemplate, variants: { rolePlay: false } }),
+  rolePlay: selectPromptVariants({ template: instructionsTemplate, variants: { rolePlay: true } }),
+} as const;
+
 const EXAM_TASK_TEMPLATES = {
   examiner: selectPromptVariants({
     template: examTaskTemplate,
@@ -116,7 +122,7 @@ function getRoleRules(params: LiveConversationRole & { learnerNote?: string; lev
  */
 export const LIVE_CONVERSATION_PROMPT_VERSION = getPromptVersion({
   systemPrompt: [
-    template,
+    instructionsTemplate,
     rolePlayTemplate,
     examTaskTemplate,
     ...Object.values(SPEAKING_MOCK_TEMPLATES),
@@ -200,6 +206,8 @@ export function buildLiveConversationInstructions(
     SITUATION: scenario.situation,
     TITLE: scenario.title,
   });
+
+  const template = INSTRUCTION_TEMPLATES[params.kind === "unit" ? "rolePlay" : "exam"];
 
   const instructions = fillTemplate(
     template.replace("{{ROLE}}", () => role.trim()),
