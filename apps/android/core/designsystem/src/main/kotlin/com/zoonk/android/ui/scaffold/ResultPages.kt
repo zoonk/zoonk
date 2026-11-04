@@ -28,9 +28,11 @@ import com.zoonk.android.ui.components.CelebrationScope
 
 /**
  * A result as the shared foldables rule lays it out, as two pages where [spreadFold] splits the
- * screen and one column elsewhere. [done] goes before the split: the title, its detail, the saving
- * or failed line and the numbers. [next] goes after it, above the docked way on: the day's moment
- * and what's next. A result with nothing for [next] still splits rather than spanning the fold.
+ * screen and one column elsewhere, the one column reading [done] then [next]. [done] goes before
+ * the split: what was done and how it went (the title, its detail, the saving or failed line, the
+ * numbers and what they break down into, and what it earned, such as the day's moment). [next] goes
+ * after it, above the docked way on: what's next. A result with nothing for [next] still splits,
+ * its page after the split holding only the way on, rather than spanning the fold.
  * Every page reads in [columnModifier], the caller's own column width, so a screen keeps its edges
  * without a split. [withMoment] is whether the moment is on screen yet, which waits for the save.
  */
