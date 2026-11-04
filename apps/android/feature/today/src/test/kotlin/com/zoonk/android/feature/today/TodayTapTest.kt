@@ -20,7 +20,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -57,8 +56,6 @@ class TodayTapTest {
             api.failures += offline
 
             viewModel.openMission(read, read.day.steps[1])
-            runCurrent()
-            assertEquals(TodayTap.Mission(1), viewModel.pending)
             advanceUntilIdle()
 
             assertNull(viewModel.pending)

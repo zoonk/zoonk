@@ -19,6 +19,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.memory.MemoryUndo
+import com.zoonk.android.feature.memory.memoryUndo
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
