@@ -96,12 +96,7 @@ function StartProblem() {
 
 function StartButton() {
   const t = useExtracted();
-  const routes = useLearnRoutes();
-  const { challenge, move, start, writing } = useChallengeScreen();
-
-  if (writing?.kind === "refused") {
-    return <HelpLimitNotice limit={writing.limit} linkComponent={LearnLink} routes={routes} />;
-  }
+  const { challenge, move, start } = useChallengeScreen();
 
   return (
     <>
@@ -207,15 +202,6 @@ function PlusRequiredNotice() {
   return <FreeWeekOverNotice cta={false} />;
 }
 
-function PlusRequiredFooter() {
-  return (
-    <>
-      <PlusRequiredNotice />
-      <SeePlusAction />
-    </>
-  );
-}
-
 function WaitReasonLine({ reason }: { reason: "challenge" | "lessons" }) {
   return (
     <StatusLine icon={<CalendarClockIcon className="size-4" />}>
@@ -226,11 +212,12 @@ function WaitReasonLine({ reason }: { reason: "challenge" | "lessons" }) {
 
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
   const t = useExtracted();
-  const { challenge, hrefs, start } = useChallengeScreen();
+  const routes = useLearnRoutes();
+  const { challenge, hrefs, start, writing } = useChallengeScreen();
   const movable = useMovable();
 
   if (start.problem === "plusRequired") {
-    return { actions: <PlusRequiredFooter />, line: null };
+    return { actions: <SeePlusAction />, line: <PlusRequiredNotice /> };
   }
 
   switch (challenge.status) {
@@ -263,6 +250,13 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
         };
       }
 
+      if (challenge.status === "ready" && writing?.kind === "refused") {
+        return {
+          actions: null,
+          line: <HelpLimitNotice limit={writing.limit} linkComponent={LearnLink} routes={routes} />,
+        };
+      }
+
       return {
         actions: challenge.status === "ready" ? <StartButton /> : <ResumeButton />,
         line: null,
@@ -282,7 +276,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     case "done":
       return { actions: <OpenLink>{t("See how it went")}</OpenLink>, line: null };
     case "plusRequired":
-      return { actions: <PlusRequiredFooter />, line: null };
+      return { actions: <SeePlusAction />, line: <PlusRequiredNotice /> };
     case "waiting":
       return { actions: null, line: <WaitingLine /> };
     case "queued":
