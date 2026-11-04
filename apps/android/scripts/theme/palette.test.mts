@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { oklchToRgb, readModes, readTailwindPalette, resolveColor, toArgbHex } from "./palette.mts";
+import { oklchToRgb, toArgbHex, toDisplayP3 } from "./color.mts";
+import { readModes, readTailwindPalette, resolveColor } from "./palette.mts";
 
 const globals = `
 @source "../apps/**/*.{ts,tsx}";
@@ -42,6 +43,49 @@ describe(oklchToRgb, () => {
     );
 
     expect(toArgbHex(oklchToRgb({ chroma: 0, hue: 0, lightness: 0.922 }))).toBe("0xFFE5E5E5");
+  });
+});
+
+describe(toDisplayP3, () => {
+  const precision = 6;
+
+  it.each([
+    {
+      expected: { blue: 0.9886237, green: 0.4912186, red: 0.2664224 },
+      name: "Tailwind blue-500",
+      oklch: { chroma: 0.214, hue: 259.815, lightness: 0.623 },
+    },
+    {
+      expected: { blue: 0.3743069, green: 0.7747542, red: 0.3087344 },
+      name: "Tailwind green-500",
+      oklch: { chroma: 0.219, hue: 149.579, lightness: 0.723 },
+    },
+  ])(
+    "preserves $name outside sRGB using the CSS Color 4 reference values",
+    ({ expected, oklch }) => {
+      const extended = oklchToRgb({ ...oklch, clipToSrgb: false });
+      const p3 = toDisplayP3(extended);
+
+      expect(p3.red).toBeCloseTo(expected.red, precision);
+      expect(p3.green).toBeCloseTo(expected.green, precision);
+      expect(p3.blue).toBeCloseTo(expected.blue, precision);
+      expect(p3).not.toStrictEqual(toDisplayP3(oklchToRgb(oklch)));
+    },
+  );
+
+  it("preserves every neutral channel and alpha across the sRGB range", () => {
+    const steps = 100;
+    const alpha = 0.5;
+
+    for (const step of Array.from({ length: steps + 1 }, (_, index) => index)) {
+      const channel = step / steps;
+      const p3 = toDisplayP3({ alpha, blue: channel, green: channel, red: channel });
+
+      expect(p3.red).toBeCloseTo(channel, precision);
+      expect(p3.green).toBeCloseTo(channel, precision);
+      expect(p3.blue).toBeCloseTo(channel, precision);
+      expect(p3.alpha).toBe(alpha);
+    }
   });
 });
 

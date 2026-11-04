@@ -1,4 +1,5 @@
-import { type Lookup, type Mode, parseCss, resolveColor, toArgbHex, tokensAt } from "./palette.mts";
+import { type Rgba } from "./color.mts";
+import { type Lookup, type Mode, parseCss, resolveColor, tokensAt } from "./palette.mts";
 
 /** Main's `[data-subject]` roles, which each subject's hue and chroma fill in. */
 const SUBJECT_TOKENS = ["subject", "subject-text", "subject-tint"] as const;
@@ -67,13 +68,10 @@ export function readSubjects(globalsCss: string): Map<string, Record<Mode, Map<s
 export function subjectPalette({
   subject,
   ...lookup
-}: Lookup & { subject: Map<string, string> }): Map<string, string> {
+}: Lookup & { subject: Map<string, string> }): Map<string, Rgba> {
   const tokens = new Map([...lookup.tokens, ...subject]);
 
   return new Map(
-    SUBJECT_TOKENS.map((token) => [
-      token,
-      toArgbHex(resolveColor({ name: token, palette: lookup.palette, tokens })),
-    ]),
+    SUBJECT_TOKENS.map((token) => [token, resolveColor({ ...lookup, name: token, tokens })]),
   );
 }

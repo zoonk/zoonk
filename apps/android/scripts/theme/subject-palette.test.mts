@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { oklchToRgb, readModes, readTailwindPalette, toArgbHex } from "./palette.mts";
+import { oklchToRgb } from "./color.mts";
+import { readModes, readTailwindPalette } from "./palette.mts";
 import { readSubjects, subjectPalette } from "./subject-palette.mts";
 
 describe(readSubjects, () => {
@@ -78,12 +79,12 @@ describe(readSubjects, () => {
       tokens: modes.lightMoreContrast,
     });
 
-    expect(light.get("subject")).toBe(
-      toArgbHex(oklchToRgb({ chroma: 0.06, hue: 222, lightness: 0.68 })),
+    expect(light.get("subject")).toStrictEqual(
+      oklchToRgb({ chroma: 0.06, hue: 222, lightness: 0.68 }),
     );
 
-    expect(light.get("subject-tint")).not.toBe(light.get("subject"));
-    expect(contrast.get("subject-text")).toBe("0xFF000000");
-    expect(contrast.get("subject-tint")).toBe("0xFFFFFFFF");
+    expect(light.get("subject-tint")).not.toStrictEqual(light.get("subject"));
+    expect(contrast.get("subject-text")).toStrictEqual({ alpha: 1, blue: 0, green: 0, red: 0 });
+    expect(contrast.get("subject-tint")).toStrictEqual({ alpha: 1, blue: 1, green: 1, red: 1 });
   });
 });

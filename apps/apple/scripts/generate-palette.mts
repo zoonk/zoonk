@@ -1,0 +1,97 @@
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { format } from "oxfmt";
+import { type Rgba, toDisplayP3 } from "../../android/scripts/theme/color.mts";
+import { type Mode, modePalette } from "../../android/scripts/theme/palette.mts";
+import { readPalette } from "../../android/scripts/theme/read-palette.mts";
+import { subjectPalette } from "../../android/scripts/theme/subject-palette.mts";
+
+const appleRoot = process.argv[2] ?? fileURLToPath(new URL("../", import.meta.url));
+const output = join(appleRoot, "Zoonk/Resources/Assets.xcassets/Palette");
+const { palette, subjects, tokens } = readPalette();
+
+type Appearance = { appearance: "contrast" | "luminosity"; value: "dark" | "high" };
+
+const MODES: { appearances?: Appearance[]; mode: Mode }[] = [
+  { mode: "light" },
+  { appearances: [{ appearance: "luminosity", value: "dark" }], mode: "dark" },
+  { appearances: [{ appearance: "contrast", value: "high" }], mode: "lightMoreContrast" },
+  {
+    appearances: [
+      { appearance: "luminosity", value: "dark" },
+      { appearance: "contrast", value: "high" },
+    ],
+    mode: "darkMoreContrast",
+  },
+];
+
+function colorsForMode(mode: Mode): Map<string, Rgba> {
+  const lookup = { clipToSrgb: false, palette, tokens: tokens[mode] };
+  const colors = modePalette(lookup);
+
+  for (const [name, modes] of subjects) {
+    for (const [role, color] of subjectPalette({ ...lookup, subject: modes[mode] })) {
+      colors.set(role.replace("subject", `subject-${name}`), color);
+    }
+  }
+
+  return colors;
+}
+
+const modes = MODES.map(({ appearances, mode }) => ({ appearances, colors: colorsForMode(mode) }));
+const info = { author: "xcode", version: 1 };
+const COMPONENT_PRECISION = 6;
+
+function components(color: Rgba): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(toDisplayP3(color)).map(([name, value]) => [
+      name,
+      value.toFixed(COMPONENT_PRECISION),
+    ]),
+  );
+}
+
+rmSync(output, { force: true, recursive: true });
+mkdirSync(output, { recursive: true });
+
+async function writeContents(folder: string, contents: unknown): Promise<void> {
+  const file = join(folder, "Contents.json");
+
+  const result = await format(file, JSON.stringify(contents), {
+    objectWrap: "collapse",
+    printWidth: 100,
+  });
+
+  if (result.errors.length > 0) {
+    throw new Error(`Unable to format ${file}: ${JSON.stringify(result.errors)}`);
+  }
+
+  writeFileSync(file, result.code);
+}
+
+function writeColorset(name: string): Promise<void> {
+  const folder = join(output, `${name}.colorset`);
+
+  const colors = modes.map(({ appearances, colors: values }) => {
+    const color = values.get(name);
+
+    if (!color) {
+      throw new Error(`Missing ${name} in palette`);
+    }
+
+    return {
+      ...(appearances && { appearances }),
+      color: { "color-space": "display-p3", components: components(color) },
+      idiom: "universal",
+    };
+  });
+
+  mkdirSync(folder, { recursive: true });
+  return writeContents(folder, { colors, info });
+}
+
+await Promise.all([
+  writeContents(output, { info }),
+  ...Array.from(modes[0]?.colors.keys() ?? [], writeColorset),
+]);

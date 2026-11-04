@@ -1,4 +1,4 @@
-type Rgba = { alpha: number; blue: number; green: number; red: number };
+import { type Rgba, oklchToRgb, over, parseHex } from "./color.mts";
 
 export type CssBlock = { children: CssBlock[]; declarations: Map<string, string>; prelude: string };
 
@@ -13,6 +13,7 @@ export const PALETTE_TOKENS = [
   "primary-foreground",
   "muted",
   "muted-foreground",
+  "faint",
   "surface-3",
   "border",
   "input",
@@ -57,99 +58,11 @@ const OKLCH =
 
 const COLOR_MIX = /^color-mix\(in srgb,\s*(?<color>.+?)\s+(?<share>[\d.]+)%,\s*transparent\)$/u;
 const VARIABLE = /^var\(--(?<name>[\w-]+)\)$/u;
-const HEX = /^#(?<hex>[\da-f]{3}|[\da-f]{6})$/iu;
 
-/** OKLab to LMS and LMS to linear sRGB (Björn Ottosson's matrices, as CSS Color 4 defines them). */
-const OKLAB_TO_LMS = {
-  long: { a: 0.3963377774, b: 0.2158037573 },
-  medium: { a: -0.1055613458, b: -0.0638541728 },
-  short: { a: -0.0894841775, b: -1.291485548 },
-};
-
-const LMS_TO_SRGB = {
-  blue: { long: -0.0041960863, medium: -0.7034186147, short: 1.707614701 },
-  green: { long: -1.2684380046, medium: 2.6097574011, short: -0.3413193965 },
-  red: { long: 4.0767416621, medium: -3.3077115913, short: 0.2309699292 },
-};
-
-const SRGB = {
-  exponent: 2.4,
-  linearLimit: 0.0031308,
-  linearSlope: 12.92,
-  offset: 0.055,
-  scale: 1.055,
-};
-
-const DEGREES_PER_HALF_TURN = 180;
-const CHANNEL_MAX = 255;
-const HEX_RADIX = 16;
 const PERCENT = 100;
 
 function parseNumber(text: string): number {
   return text.endsWith("%") ? Number(text.slice(0, -1)) / PERCENT : Number(text);
-}
-
-function toGamma(linear: number): number {
-  const channel = Math.min(1, Math.max(0, linear));
-
-  return channel <= SRGB.linearLimit
-    ? SRGB.linearSlope * channel
-    : SRGB.scale * channel ** (1 / SRGB.exponent) - SRGB.offset;
-}
-
-/** Clipped per channel, the way browsers draw an out-of-gamut color on an sRGB screen. */
-export function oklchToRgb({
-  chroma,
-  hue,
-  lightness,
-}: {
-  chroma: number;
-  hue: number;
-  lightness: number;
-}): Rgba {
-  const angle = (hue * Math.PI) / DEGREES_PER_HALF_TURN;
-  const a = chroma * Math.cos(angle);
-  const b = chroma * Math.sin(angle);
-
-  const cone = (weights: { a: number; b: number }) =>
-    (lightness + weights.a * a + weights.b * b) ** 3;
-
-  const long = cone(OKLAB_TO_LMS.long);
-  const medium = cone(OKLAB_TO_LMS.medium);
-  const short = cone(OKLAB_TO_LMS.short);
-
-  const channel = (weights: { long: number; medium: number; short: number }) =>
-    toGamma(weights.long * long + weights.medium * medium + weights.short * short);
-
-  return {
-    alpha: 1,
-    blue: channel(LMS_TO_SRGB.blue),
-    green: channel(LMS_TO_SRGB.green),
-    red: channel(LMS_TO_SRGB.red),
-  };
-}
-
-/** Lays a see-through color over an opaque one, in gamma-encoded sRGB as browsers composite. */
-function over(top: Rgba, bottom: Rgba): Rgba {
-  const mix = (front: number, back: number) => front * top.alpha + back * (1 - top.alpha);
-
-  return {
-    alpha: 1,
-    blue: mix(top.blue, bottom.blue),
-    green: mix(top.green, bottom.green),
-    red: mix(top.red, bottom.red),
-  };
-}
-
-function hexChannel(value: number): string {
-  return Math.round(value * CHANNEL_MAX)
-    .toString(HEX_RADIX)
-    .toUpperCase()
-    .padStart(2, "0");
-}
-
-export function toArgbHex(color: Rgba): string {
-  return `0xFF${hexChannel(color.red)}${hexChannel(color.green)}${hexChannel(color.blue)}`;
 }
 
 function stripComments(css: string): string {
@@ -259,7 +172,11 @@ export function readTailwindPalette(themeCss: string): Map<string, string> {
   return palette;
 }
 
-export type Lookup = { palette: Map<string, string>; tokens: Map<string, string> };
+export type Lookup = {
+  clipToSrgb?: boolean;
+  palette: Map<string, string>;
+  tokens: Map<string, string>;
+};
 
 function lookUp(variable: string, { palette, tokens }: Lookup): string {
   // `var(--color-primary)` is Tailwind's name for the `--primary` token.
@@ -273,7 +190,7 @@ function lookUp(variable: string, { palette, tokens }: Lookup): string {
   return value;
 }
 
-function parseOklch(value: string): Rgba | undefined {
+function parseOklch(value: string, clipToSrgb: boolean | undefined): Rgba | undefined {
   const parts = OKLCH.exec(value)?.groups;
 
   if (!parts?.lightness || !parts.chroma || !parts.hue) {
@@ -282,27 +199,12 @@ function parseOklch(value: string): Rgba | undefined {
 
   const color = oklchToRgb({
     chroma: parseNumber(parts.chroma),
+    clipToSrgb,
     hue: parts.hue === "none" ? 0 : parseNumber(parts.hue),
     lightness: parseNumber(parts.lightness),
   });
 
   return { ...color, alpha: parts.alpha ? parseNumber(parts.alpha) : 1 };
-}
-
-function parseHex(value: string): Rgba | undefined {
-  const hex = HEX.exec(value)?.groups?.hex;
-
-  if (!hex) {
-    return undefined;
-  }
-
-  const full = hex.length === 3 ? hex.replaceAll(/./gu, "$&$&") : hex;
-
-  const [red = 0, green = 0, blue = 0] = (full.match(/../gu) ?? []).map(
-    (pair) => Number.parseInt(pair, HEX_RADIX) / CHANNEL_MAX,
-  );
-
-  return { alpha: 1, blue, green, red };
 }
 
 function parseColor(value: string, lookup: Lookup): Rgba {
@@ -322,7 +224,7 @@ function parseColor(value: string, lookup: Lookup): Rgba {
     return { alpha: 0, blue: 0, green: 0, red: 0 };
   }
 
-  const color = parseOklch(value) ?? parseHex(value);
+  const color = parseOklch(value, lookup.clipToSrgb) ?? parseHex(value);
 
   if (!color) {
     throw new Error(`Unsupported color value ${value}`);
@@ -337,17 +239,17 @@ export function resolveColor({ name, ...lookup }: Lookup & { name: string }): Rg
   return over(parseColor(lookUp(name, lookup), lookup), background);
 }
 
-export function modePalette(lookup: Lookup): Map<string, string> {
+export function modePalette(lookup: Lookup): Map<string, Rgba> {
   const background = resolveColor({ ...lookup, name: "background" });
-  const colors = new Map<string, string>();
+  const colors = new Map<string, Rgba>();
 
   for (const name of PALETTE_TOKENS) {
-    colors.set(name, toArgbHex(resolveColor({ ...lookup, name })));
+    colors.set(name, resolveColor({ ...lookup, name }));
   }
 
   for (const [name, tint] of Object.entries(TINTS)) {
     const color = resolveColor({ ...lookup, name: tint.token });
-    colors.set(name, toArgbHex(over({ ...color, alpha: tint.share }, background)));
+    colors.set(name, over({ ...color, alpha: tint.share }, background));
   }
 
   return colors;
