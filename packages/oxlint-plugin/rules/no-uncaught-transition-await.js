@@ -1,7 +1,17 @@
 import { defineRule } from "@oxlint/plugins";
 
 const FUNCTIONS = new Set(["ArrowFunctionExpression", "FunctionDeclaration", "FunctionExpression"]);
+
+const TRANSPARENT = new Set([
+  "ChainExpression",
+  "ParenthesizedExpression",
+  "TSAsExpression",
+  "TSNonNullExpression",
+  "TSSatisfiesExpression",
+]);
+
 const TRANSITION_HOOK = /^use\w*Transition$/u;
+const HOOK = /^use[A-Z]/u;
 
 function isTransitionStart(callee, starters) {
   if (callee.type === "Identifier") {
@@ -21,22 +31,137 @@ function getMethod(call) {
     : null;
 }
 
-function findLocalAsyncFunction({ callee, sourceCode }) {
-  if (callee.type !== "Identifier") {
-    return null;
-  }
+/** Only a declaration in this file: a parameter's or an import's value isn't known here. */
+function findDeclaration({ node, sourceCode }) {
+  for (let scope = sourceCode.getScope(node); scope; scope = scope.upper) {
+    const definition = scope.set.get(node.name)?.defs[0];
 
-  for (let scope = sourceCode.getScope(callee); scope; scope = scope.upper) {
-    const variable = scope.set.get(callee.name);
-
-    if (variable) {
-      const definition = variable.defs[0]?.node;
-      const fn = definition?.type === "VariableDeclarator" ? definition.init : definition;
-      return fn && FUNCTIONS.has(fn.type) && fn.async ? fn : null;
+    if (definition) {
+      return ["FunctionName", "Variable"].includes(definition.type) ? definition.node : null;
     }
   }
 
   return null;
+}
+
+/** A built-in such as `Boolean`, declared nowhere in the file. */
+function isGlobal(node, scan) {
+  if (node?.type !== "Identifier") {
+    return false;
+  }
+
+  for (let scope = scan.sourceCode.getScope(node); scope; scope = scope.upper) {
+    if (scope.set.get(node.name)?.defs.length) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function getLocalFunction(node, scan) {
+  if (FUNCTIONS.has(node?.type)) {
+    return node;
+  }
+
+  if (node?.type !== "Identifier") {
+    return null;
+  }
+
+  const definition = findDeclaration({ node, sourceCode: scan.sourceCode });
+  const fn = definition?.type === "VariableDeclarator" ? definition.init : definition;
+  return FUNCTIONS.has(fn?.type) ? fn : null;
+}
+
+/** A setter from a React hook (`const [, setX] = useState()`) runs at once and returns nothing. */
+function isHookSetter(callee, scan) {
+  if (callee.type !== "Identifier") {
+    return false;
+  }
+
+  const definition = findDeclaration({ node: callee, sourceCode: scan.sourceCode });
+
+  return (
+    definition?.type === "VariableDeclarator" &&
+    definition.id.type === "ArrayPattern" &&
+    definition.init?.type === "CallExpression" &&
+    definition.init.callee.type === "Identifier" &&
+    HOOK.test(definition.init.callee.name)
+  );
+}
+
+function localFunctionSettles(node, scan) {
+  const fn = getLocalFunction(node, scan);
+  return fn !== null && functionSettles(fn, scan);
+}
+
+/** A built-in handler (`.then(Boolean, …)`) runs at once. */
+function handlerSettles(node, scan) {
+  return isGlobal(node, scan) || localFunctionSettles(node, scan);
+}
+
+/**
+ * `safeAsync(...)`, `.catch(handler)`, `.then(onFulfilled, onRejected)` and `.finally(handler)`
+ * settle when their handlers do; so does a call to a function in this file that settles.
+ */
+function callSettles(call, scan) {
+  const method = getMethod(call);
+  const [first, second] = call.arguments;
+
+  if (method === "finally") {
+    return callSettles(call.callee.object, scan) && handlerSettles(first, scan);
+  }
+
+  if (method === "catch") {
+    return handlerSettles(first, scan);
+  }
+
+  if (method === "then") {
+    return call.arguments.length > 1 && handlerSettles(first, scan) && handlerSettles(second, scan);
+  }
+
+  if (
+    (call.callee.type === "Identifier" && call.callee.name === "safeAsync") ||
+    isHookSetter(call.callee, scan)
+  ) {
+    return true;
+  }
+
+  return localFunctionSettles(call.callee, scan);
+}
+
+/**
+ * Whether an awaited or returned value can't be a promise that rejects. A returned built-in call
+ * (`return Boolean(data)`) is a value; an awaited one (`await fetch(url)`) is still checked.
+ */
+function valueSettles(node, scan, { returned = false } = {}) {
+  if (!node) {
+    return true;
+  }
+
+  const settles = (child) => valueSettles(child, scan, { returned });
+
+  if (TRANSPARENT.has(node.type)) {
+    return settles(node.expression);
+  }
+
+  if (node.type === "ConditionalExpression") {
+    return settles(node.consequent) && settles(node.alternate);
+  }
+
+  if (node.type === "LogicalExpression") {
+    return settles(node.left) && settles(node.right);
+  }
+
+  if (node.type === "SequenceExpression") {
+    return settles(node.expressions.at(-1));
+  }
+
+  return (
+    node.type !== "CallExpression" ||
+    (returned && isGlobal(node.callee, scan)) ||
+    callSettles(node, scan)
+  );
 }
 
 function getChildren(node) {
@@ -51,66 +176,50 @@ function getChildren(node) {
   });
 }
 
-/**
- * `safeAsync(...)`, `.catch(...)`, `.then(onFulfilled, onRejected)` and an async function in this
- * file whose own awaits all settle don't reject.
- */
-function settles(node, scan) {
-  if (node?.type !== "CallExpression") {
-    return false;
-  }
-
-  const method = getMethod(node);
-
-  if (method === "finally") {
-    return settles(node.callee.object, scan);
-  }
-
-  if (
-    (node.callee.type === "Identifier" && node.callee.name === "safeAsync") ||
-    method === "catch" ||
-    (method === "then" && node.arguments.length > 1)
-  ) {
-    return true;
-  }
-
-  const local = findLocalAsyncFunction({ callee: node.callee, sourceCode: scan.sourceCode });
-
-  if (!local) {
-    return false;
-  }
-
-  // A function awaiting itself settles when the rest of it does.
-  if (scan.visiting.has(local)) {
-    return true;
-  }
-
-  scan.visiting.add(local);
-  const uncaught = findUncaughtAwaits(local.body, { caught: false, scan });
-  scan.visiting.delete(local);
-  return uncaught.length === 0;
-}
-
-function findUncaughtAwaits(node, { caught, scan }) {
+/** Awaits and throws a `catch` doesn't stop, and returned promises, which no `catch` stops. */
+function findRejections(node, { caught, scan }) {
   if (FUNCTIONS.has(node.type)) {
     return [];
   }
 
   if (node.type === "TryStatement") {
     return [
-      ...findUncaughtAwaits(node.block, { caught: caught || Boolean(node.handler), scan }),
-      ...(node.handler ? findUncaughtAwaits(node.handler, { caught, scan }) : []),
-      ...(node.finalizer ? findUncaughtAwaits(node.finalizer, { caught, scan }) : []),
+      ...findRejections(node.block, { caught: caught || Boolean(node.handler), scan }),
+      ...(node.handler ? findRejections(node.handler, { caught, scan }) : []),
+      ...(node.finalizer ? findRejections(node.finalizer, { caught, scan }) : []),
     ];
   }
 
-  const own =
-    node.type === "AwaitExpression" && !caught && !settles(node.argument, scan) ? [node] : [];
+  const rejects =
+    (node.type === "AwaitExpression" && !caught && !valueSettles(node.argument, scan)) ||
+    (node.type === "ThrowStatement" && !caught) ||
+    (node.type === "ReturnStatement" && !valueSettles(node.argument, scan, { returned: true }));
 
   return [
-    ...own,
-    ...getChildren(node).flatMap((child) => findUncaughtAwaits(child, { caught, scan })),
+    ...(rejects ? [node] : []),
+    ...getChildren(node).flatMap((child) => findRejections(child, { caught, scan })),
   ];
+}
+
+function findFunctionRejections(fn, scan) {
+  const returned =
+    fn.body.type === "BlockStatement" || valueSettles(fn.body, scan, { returned: true })
+      ? []
+      : [fn.body];
+
+  return [...returned, ...findRejections(fn.body, { caught: false, scan })];
+}
+
+function functionSettles(fn, scan) {
+  // A function that calls itself settles when the rest of it does.
+  if (scan.visiting.has(fn)) {
+    return true;
+  }
+
+  scan.visiting.add(fn);
+  const settles = findFunctionRejections(fn, scan).length === 0;
+  scan.visiting.delete(fn);
+  return settles;
 }
 
 export default defineRule({
@@ -143,16 +252,17 @@ export default defineRule({
           return;
         }
 
-        const [callback] = node.arguments;
+        const scan = { sourceCode: context.sourceCode, visiting: new Set() };
+        const callback = getLocalFunction(node.arguments[0], scan);
 
-        if (!callback || !FUNCTIONS.has(callback.type) || !callback.async) {
+        if (!callback?.async) {
           return;
         }
 
-        const scan = { sourceCode: context.sourceCode, visiting: new Set() };
+        scan.visiting.add(callback);
 
-        for (const uncaught of findUncaughtAwaits(callback.body, { caught: false, scan })) {
-          context.report({ messageId: "uncaughtTransitionAwait", node: uncaught });
+        for (const rejection of findFunctionRejections(callback, scan)) {
+          context.report({ messageId: "uncaughtTransitionAwait", node: rejection });
         }
       },
     };
@@ -161,7 +271,7 @@ export default defineRule({
   meta: {
     docs: {
       description:
-        "Require every await inside an async transition or action state to handle its rejection",
+        "Require an async transition or action state to settle every promise it awaits or returns",
     },
     messages: {
       uncaughtTransitionAwait:

@@ -158,6 +158,7 @@ export function PlacementStep({
   goalId,
   mockHrefs,
   onDone,
+  onFailed,
   run,
   subject,
 }: {
@@ -166,6 +167,7 @@ export function PlacementStep({
   goalId: string;
   mockHrefs: { mock: (mockId: string) => string; start: string };
   onDone: () => void;
+  onFailed: () => void;
   run: GenerationRun | null;
   subject: string;
 }) {
@@ -187,8 +189,15 @@ export function PlacementStep({
         await safeAsync(() => actions.stopPlacementMock(stopMockId));
       }
 
-      await safeAsync(() => actions.finishPlacement({ fromScratch, goalId }));
-      onDone();
+      const { data: finished } = await safeAsync(() =>
+        actions.finishPlacement({ fromScratch, goalId }),
+      );
+
+      if (finished) {
+        onDone();
+      } else {
+        onFailed();
+      }
     });
 
   const show = (outcome: PlacementOutcome) => {

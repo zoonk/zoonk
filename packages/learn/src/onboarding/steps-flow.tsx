@@ -222,6 +222,7 @@ export function StepsFlow({
               isGuest={isGuest}
               onAnswer={answer}
               onPlacementDone={() => answer({ question: "placement" })}
+              onPlacementFailed={() => setFailed({ dayTooShort: null, step: "placement" })}
               pending={
                 isPending && sending !== null && (sending.open || sending.step === state.current)
               }
