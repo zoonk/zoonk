@@ -83,7 +83,8 @@ internal class TitleFocus {
     /** The page's heading is in view below its top bar, so the bar needn't name the page too. */
     fun headingInView(): Boolean = heading.shown && headingBottom > barBottom
 
-    fun shownTitle(): TitleTarget? = listOf(heading, bar).firstOrNull { it.shown }
+    /** The heading while it's in view; once it scrolls under the bar, the bar's title, which names the page then. */
+    fun shownTitle(): TitleTarget? = if (headingInView()) heading else listOf(bar, heading).firstOrNull { it.shown }
 }
 
 internal class TitleTarget {
