@@ -5,12 +5,12 @@ import {
 } from "@repo/packages/learn/src/buddies/buddy-screen.tsx";
 import { type LessonTutorConfig } from "@repo/packages/player/src/lesson/tutor/lesson-tutor-context.ts";
 import { TutorConversation } from "@repo/packages/player/src/questions/tutor-conversation.tsx";
-import { calculateBeltLevel } from "@repo/packages/utils/src/belt-level.ts";
 import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
 // The buddy tab (/buddy) on a phone: Zu's conversation with "I want to study less this week",
 // Zu's answer, and the real "Change to your plan" card (proposed, or applied with Undo).
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useEffect, useMemo } from "react";
+import { buddyGrowth } from "../goals/buddy-energy";
 import { CAREER_GOAL_ID, S, TabShell, type ViewProps } from "./common";
 
 const TODAY_ISO = "2026-11-03";
@@ -24,10 +24,8 @@ const REPLY = {
 const BRAIN_POWER = 410;
 
 function buddyStatus(): BuddyStatusView {
-  const belt = calculateBeltLevel(BRAIN_POWER);
-
   return {
-    belt: { ...belt, totalBrainPower: BRAIN_POWER },
+    ...buddyGrowth(BRAIN_POWER),
     buddy: { glasses: "round", kind: "zu", name: null, picked: true },
     energy: { current: 72, state: "awake", studiedToday: false },
     firstSteps: null,
@@ -39,8 +37,6 @@ function buddyStatus(): BuddyStatusView {
       { current: 0, earned: false, glasses: "retro", target: 1 },
       { current: 0, earned: false, glasses: "monocle", target: 1 },
     ],
-    nextStage: { belt: "yellow", brainPowerToGo: 590, stage: "young" },
-    stage: "baby",
     thisWeek: { fixes: 0, newIdeas: 6, reviews: 2 },
     today: {
       fullMeal: { bonus: 10, earned: false },

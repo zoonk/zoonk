@@ -1,7 +1,6 @@
 import { BuddyScreen, useBuddyTutor } from "@repo/packages/learn/src/buddies/buddy-screen.tsx";
 import { TutorConversation } from "@repo/packages/player/src/questions/tutor-conversation.tsx";
-import { calculateBeltLevel } from "@repo/packages/utils/src/belt-level.ts";
-import { getNextBelt } from "@repo/packages/utils/src/belt-level.ts";
+import { calculateBeltLevel, getBeltStartBrainPower } from "@repo/packages/utils/src/belt-level.ts";
 import {
   getBuddyEnergyState,
   getBuddyStage,
@@ -15,6 +14,21 @@ import { AppFrame, NOOP, NOOP_ASYNC } from "./shell";
 
 export const DEFAULT_BP = 4340;
 
+/** The belt, stage and next growth the app derives in packages/core/src/milestones/get-buddy-status.ts. */
+export function buddyGrowth(bp: number) {
+  const belt = calculateBeltLevel(bp);
+  const next = getNextBuddyStage(belt.color);
+
+  return {
+    belt: { ...belt, totalBrainPower: bp },
+    nextStage: next && {
+      ...next,
+      brainPowerToGo: Math.max(0, getBeltStartBrainPower(next.belt) - bp),
+    },
+    stage: getBuddyStage(belt.color),
+  };
+}
+
 export function buddyStatus({
   bp = DEFAULT_BP,
   energy,
@@ -26,12 +40,8 @@ export function buddyStatus({
   lang: Lang;
   studied: boolean;
 }) {
-  const belt = calculateBeltLevel(bp);
-  const next = getNextBuddyStage(belt.color);
-  const nextBelt = next ? getNextBelt(bp) : null;
-
   return {
-    belt: { ...belt, totalBrainPower: bp },
+    ...buddyGrowth(bp),
     buddy: { glasses: "round", kind: "zu", name: story[lang].buddyName, picked: true },
     energy: {
       current: energy,
@@ -47,12 +57,6 @@ export function buddyStatus({
       { current: 1, earned: false, glasses: "retro", target: 3 },
       { current: 0, earned: false, glasses: "monocle", target: 1 },
     ],
-    nextStage: next && {
-      belt: next.belt,
-      brainPowerToGo: nextBelt?.brainPowerToGo ?? 0,
-      stage: next.stage,
-    },
-    stage: getBuddyStage(belt.color),
     thisWeek: { fixes: 3, newIdeas: 6, reviews: 4 },
     today: {
       fullMeal: { bonus: 20, earned: false },
