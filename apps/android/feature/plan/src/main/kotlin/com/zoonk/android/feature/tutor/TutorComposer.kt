@@ -3,7 +3,9 @@ package com.zoonk.android.feature.tutor
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -86,6 +88,8 @@ internal fun TutorComposer(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    // Main's 48dp composer, under Material's 56dp field.
+                    .heightIn(min = COMPOSER_HEIGHT)
                     .focusRequester(focus)
                     .onPreviewKeyEvent { event ->
                         val send = event.key == Key.Enter && !event.isShiftPressed
@@ -97,6 +101,7 @@ internal fun TutorComposer(
             inputTransformation = InputTransformation.maxLength(MAX_QUESTION_LENGTH),
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = MAX_LINES),
             shape = RoundedCornerShape(ZoonkRadius.xl),
+            contentPadding = PaddingValues(start = 14.dp, end = 12.dp, top = 12.dp, bottom = 12.dp),
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Send),
             onKeyboardAction = { if (canSend) vm.send() },
         )
@@ -150,6 +155,7 @@ private fun SendButton(
     }
 }
 
+private val COMPOSER_HEIGHT = 48.dp
 private val SEND_SIZE = 30.dp
 private val SEND_ICON = 16.dp
 private const val MAX_QUESTION_LENGTH = 2000
