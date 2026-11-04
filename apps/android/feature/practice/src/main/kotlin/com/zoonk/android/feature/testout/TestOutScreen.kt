@@ -21,7 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -292,6 +294,7 @@ private fun StartActions(
                 LimitSubject.Help,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
                 onSeePlus = { navigator.open(AppRoute.Subscription) },
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
             )
         }
 
