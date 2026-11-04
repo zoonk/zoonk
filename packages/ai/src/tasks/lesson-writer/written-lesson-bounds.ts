@@ -13,7 +13,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /** Ends at the last whole word that fits, so a description loses its tail, never half a word. */
-function shorten(text: string, max: number): string {
+export function shortenAtWord(text: string, max: number): string {
   if (text.length <= max) {
     return text;
   }
@@ -32,9 +32,11 @@ function fitPicture(picture: unknown): unknown {
 
   return {
     ...picture,
-    ...(typeof picture.alt === "string" && { alt: shorten(picture.alt, MAX_IMAGE_ALT_LENGTH) }),
+    ...(typeof picture.alt === "string" && {
+      alt: shortenAtWord(picture.alt, MAX_IMAGE_ALT_LENGTH),
+    }),
     ...(typeof picture.prompt === "string" && {
-      prompt: shorten(picture.prompt, MAX_IMAGE_PROMPT_LENGTH),
+      prompt: shortenAtWord(picture.prompt, MAX_IMAGE_PROMPT_LENGTH),
     }),
   };
 }

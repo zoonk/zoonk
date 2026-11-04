@@ -11,7 +11,7 @@ import {
   type LessonWritingContext,
   runLessonQualityGate,
 } from "../../quality/lesson-quality-gate";
-import { repairWrittenLesson } from "../../quality/lesson-repairs";
+import { pictureBareTeachingScreens, repairWrittenLesson } from "../../quality/lesson-repairs";
 import { formatMaterialPages } from "../../sources/material-pages";
 import { addQuestionBases } from "../../steps/question-bases";
 import { type ConvertedScreen } from "../../steps/written-screens";
@@ -191,11 +191,16 @@ export async function fixVersionDraft({
 
   const changed = new Set(fix.data.changedScreens);
 
-  const lesson = repairWrittenLesson({
+  const repaired = repairWrittenLesson({
     language: gate.context.language,
     lesson: fix.data.lesson,
     spec: gate.context.spec,
   });
+
+  const lesson =
+    gate.reuse === "personal"
+      ? repaired
+      : pictureBareTeachingScreens({ lesson: repaired, spec: gate.context.spec });
 
   return {
     lesson,

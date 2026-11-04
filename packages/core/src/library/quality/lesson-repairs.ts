@@ -1,10 +1,14 @@
+import { MAX_IMAGE_ALT_LENGTH, MAX_IMAGE_PROMPT_LENGTH } from "@zoonk/ai/tasks/images/request";
 import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
-import { findSharedPicture } from "@zoonk/ai/tasks/lesson-spec/visuals";
+import { findSharedPicture, isTeachingScreen } from "@zoonk/ai/tasks/lesson-spec/visuals";
+import { shortenAtWord } from "@zoonk/ai/tasks/lesson-writer/bounds";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
+import { findMarkdownTables } from "@zoonk/utils/markdown-table";
 import { repairNegativeMoney } from "@zoonk/utils/negative-money";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { dropEquivalentOptions } from "../_utils/option-checks";
-import { mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
+import { checkWrittenExplore } from "../steps/written-screens";
+import { getScreenTexts, mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
 
 const MIN_OPTIONS = 2;
 
@@ -118,4 +122,57 @@ export function repairWrittenLesson({
       })),
     },
   };
+}
+
+type TeachingScreen = Extract<WrittenScreen, { kind: "explanation" | "workedExample" }>;
+
+function showsNothing(screen: TeachingScreen): boolean {
+  const tables = getScreenTexts(screen).flatMap((piece) => findMarkdownTables(piece.text));
+  const explore = screen.kind === "explanation" ? screen.explore : null;
+
+  return (
+    screen.image === null &&
+    screen.visual === null &&
+    tables.length === 0 &&
+    !(explore && checkWrittenExplore(explore).ok)
+  );
+}
+
+/**
+ * A shared lesson's teaching screen still missing its planned visual after the fix pass gets a
+ * picture of what its plan describes, as a bare plan screen does, so the lesson publishes with a
+ * visual on every step instead of being held back and, after repeated drafts, set aside unwritten.
+ */
+export function pictureBareTeachingScreens({
+  lesson,
+  spec,
+}: {
+  lesson: WrittenLesson;
+  spec: LessonSpec;
+}): WrittenLesson {
+  const screens = lesson.screens.map((screen, index) => {
+    const specScreen = spec.screens[index];
+
+    const teaching = screen.kind === "explanation" || screen.kind === "workedExample";
+
+    const planned =
+      specScreen && isTeachingScreen(specScreen.kind) && specScreen.visualKind !== "none";
+
+    if (!specScreen || !planned || !teaching || !showsNothing(screen)) {
+      return screen;
+    }
+
+    const described = specScreen.visual ?? specScreen.brief;
+
+    const image = {
+      alt: shortenAtWord(described, MAX_IMAGE_ALT_LENGTH),
+      prompt: shortenAtWord(described, MAX_IMAGE_PROMPT_LENGTH),
+    };
+
+    return screen.kind === "explanation"
+      ? { ...screen, explore: null, image }
+      : { ...screen, image };
+  });
+
+  return { ...lesson, screens };
 }

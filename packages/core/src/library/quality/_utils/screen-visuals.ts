@@ -29,7 +29,11 @@ export function canHaveImage({
   screen: WrittenScreen;
   specScreen: LessonScreen;
 }): boolean {
-  if (specScreen.visual !== null || asksAboutItsPictures(screen)) {
+  if (
+    specScreen.visualKind !== "none" ||
+    specScreen.visual !== null ||
+    asksAboutItsPictures(screen)
+  ) {
     return true;
   }
 

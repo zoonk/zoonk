@@ -1,7 +1,8 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { describe, expect, it } from "vitest";
 import { hubMap, temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
-import { repairWrittenLesson } from "./lesson-repairs";
+import { checkWrittenLesson } from "./lesson-code-checks";
+import { pictureBareTeachingScreens, repairWrittenLesson } from "./lesson-repairs";
 
 function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
   return {
@@ -230,5 +231,49 @@ describe(repairWrittenLesson, () => {
     expect(repairWrittenLesson({ language: "en", lesson: written, spec }).screens[1]).toStrictEqual(
       written.screens[1],
     );
+  });
+});
+
+describe(pictureBareTeachingScreens, () => {
+  it("gives a teaching screen still bare a picture of what its plan describes, which the step keeps", () => {
+    const lesson = writtenTemperatureLesson();
+    const brief = "The mark climbs from −3 °C past zero to 2 °C.";
+
+    const planned = {
+      ...spec,
+      screens: spec.screens.map((screen, index) =>
+        index === 4 ? { ...screen, brief, visualKind: "table" as const } : screen,
+      ),
+    };
+
+    const bare = lesson.screens[4];
+
+    if (bare?.kind !== "explanation") {
+      throw new Error("Screen 5 is an explanation.");
+    }
+
+    const written = {
+      ...lesson,
+      screens: lesson.screens.map((screen, index) =>
+        index === 4 ? { ...bare, explore: null, image: null, visual: null } : screen,
+      ),
+    };
+
+    const repaired = pictureBareTeachingScreens({ lesson: written, spec: planned });
+
+    expect(repaired.screens[4]).toMatchObject({ image: { alt: brief, prompt: brief } });
+    expect(repaired.screens[1]).toStrictEqual(written.screens[1]);
+    expect(repaired.screens[3]).toStrictEqual(written.screens[3]);
+
+    const converted = checkWrittenLesson({
+      language: "en",
+      lesson: repaired,
+      level: "beginner",
+      spec: planned,
+    }).screens[4];
+
+    expect(converted?.ok && converted.content).toMatchObject({
+      image: { alt: brief, prompt: brief },
+    });
   });
 });
