@@ -90,9 +90,8 @@ private struct TutorConversationView<Header: View>: View {
       reveal(asking)
 
       if asking != nil {
-        AccessibilityNotification.Announcement(
-          String(localized: "Thinking…", table: "Tutor", comment: "The buddy is writing its answer")
-        ).post()
+        announcePolitely(
+          String(localized: "Thinking…", table: "Tutor", comment: "The buddy is writing its answer"))
       }
     }
   }

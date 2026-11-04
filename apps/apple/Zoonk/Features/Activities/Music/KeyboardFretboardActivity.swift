@@ -36,7 +36,7 @@ private struct KeyboardFretboardCanvas: View {
     .onChange(of: cantListen) { LessonTodayChoices.standard.setChosenToday(.cantListen, $1) }
     .onChange(of: audio.isUnavailable) { _, isUnavailable in
       if isUnavailable, fields.isByEar, context.phase == .answering, !cantListen {
-        announceActivityChange(SoundAsText.spoken(fields.target.spelling))
+        announcePolitely(SoundAsText.spoken(fields.target.spelling))
       }
     }
     .onDisappear { audio.close() }
@@ -409,7 +409,7 @@ private struct SoundAsText: View {
         cantListen.toggle()
 
         if cantListen {
-          announceActivityChange(Self.spoken(notes))
+          announcePolitely(Self.spoken(notes))
         }
       } label: {
         if cantListen {
