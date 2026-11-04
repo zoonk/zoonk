@@ -34,17 +34,11 @@ function setDetail({
 /** null restores exam dates; a learner deadline overrides them. */
 function reviseTargetDate({
   goal,
-  today,
   value,
 }: {
   goal: UnderstoodGoalView;
-  today: string;
   value: string | null;
-}): UnderstoodGoalView | null {
-  if (value !== null && value < today) {
-    return null;
-  }
-
+}): UnderstoodGoalView {
   const draft = withoutKey(goal.draft, "targetDate");
   return { ...goal, draft: value === null ? draft : { ...draft, targetDate: value } };
 }
@@ -52,17 +46,15 @@ function reviseTargetDate({
 function reviseGoal({
   edit,
   goal,
-  today,
 }: {
   edit: GoalEdit;
   goal: UnderstoodGoalView;
-  today: string;
 }): UnderstoodGoalView | null {
   switch (edit.field) {
     case "title":
       return { ...goal, draft: { ...goal.draft, title: edit.value } };
     case "targetDate":
-      return reviseTargetDate({ goal, today, value: edit.value });
+      return reviseTargetDate({ goal, value: edit.value });
     case "institution":
     case "reason":
     case "role":
@@ -99,15 +91,12 @@ function reviseStudyTime({
   };
 }
 
-/** Recomputes dependent fields; returns null for an inapplicable fix or past date. */
+/** Recomputes dependent fields; returns null for an inapplicable fix. */
 export async function reviseUnderstanding({
   edit,
-  today,
   understanding,
 }: {
   edit: OnboardingDraftEdit;
-  /** The learner's own today, so past days are refused. */
-  today: string;
   understanding: GoalsUnderstanding;
 }): Promise<GoalsUnderstanding | null> {
   if (edit.field === "studyTime") {
@@ -115,7 +104,7 @@ export async function reviseUnderstanding({
   }
 
   const goal = understanding.goals[edit.goal];
-  const revised = goal ? reviseGoal({ edit, goal, today }) : null;
+  const revised = goal ? reviseGoal({ edit, goal }) : null;
 
   if (!revised) {
     return null;

@@ -1,7 +1,7 @@
 import SwiftUI
 
 extension PracticeHooks {
-  static func routed(by router: AppRouter) -> PracticeHooks {
+  static func routed(by router: AppRouter, voice: VoiceServices) -> PracticeHooks {
     PracticeHooks(
       navigate: { destination in
         switch destination {
@@ -33,9 +33,11 @@ extension PracticeHooks {
               missed: target.missed),
             quote: target.question))
       },
-      checkpointCall: { blockId, _ in
-        AnyView(ConversationScreen(checkpointBlockId: blockId))
-      },
+      checkpointCall: PracticeCheckpointCall(
+        read: { blockId, token in
+          try await voice.liveCalls.checkpointCall(blockId: blockId, token: token)
+        },
+        screen: { blockId in AnyView(ConversationScreen(checkpointBlockId: blockId)) }),
       ceremony: { milestone, onClose in
         AnyView(MilestoneCeremony(milestone: Milestone(milestone), onClose: onClose))
       })

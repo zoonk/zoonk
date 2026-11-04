@@ -63,9 +63,9 @@ struct ConversationIntro<Footer: View>: View {
   @ViewBuilder let footer: Footer
 
   var body: some View {
-    PaneSplit(isSpread: true) {
+    PaneSplit {
       ZoonkList {
-        situation
+        about
       }
     } secondary: {
       ZoonkList {
@@ -74,7 +74,7 @@ struct ConversationIntro<Footer: View>: View {
       .safeAreaBar(edge: .bottom) { startBar }
     } single: {
       ZoonkList {
-        situation
+        about
         task
       }
       .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
@@ -82,7 +82,7 @@ struct ConversationIntro<Footer: View>: View {
   }
 
   @ViewBuilder
-  private var situation: some View {
+  private var about: some View {
     let length = Duration.seconds(intro.minutes * 60).formatted(
       .units(allowed: [.minutes], width: .abbreviated))
 
@@ -117,21 +117,21 @@ struct ConversationIntro<Footer: View>: View {
     Section {
       CharacterRow(intro: intro, isTalking: false)
     }
+
+    if let examTask = intro.speakingTask {
+      if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
+        ExamPrepTimer(cardId: conversationId, task: examTask.task)
+      }
+    } else if intro.callsCharacter {
+      HowTheCallWorks(intro: intro)
+    }
   }
 
   @ViewBuilder
   private var task: some View {
     if let examTask = intro.speakingTask {
-      if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
-        ExamPrepTimer(cardId: conversationId, task: examTask.task)
-      }
-
       ExamTaskCard(task: examTask)
     } else {
-      if intro.callsCharacter {
-        HowTheCallWorks(intro: intro)
-      }
-
       Section {
         ForEach(intro.objectives, id: \.label) { objective in
           VStack(alignment: .leading, spacing: 2) {

@@ -9228,65 +9228,6 @@
         }
       }
     },
-    "Open the challenge" : {
-      "comment" : "Opens a checkpoint's challenge intro to start it.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Herausforderung öffnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir el desafío"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvrir le défi"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apri la sfida"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "チャレンジを開く"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "챌린지 열기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otwórz wyzwanie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir o desafio"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meydan okumayı aç"
-          }
-        }
-      }
-    },
     "Open the lesson" : {
       "comment" : "Opens the lesson that teaches a mistake's idea.",
       "localizations" : {
@@ -13777,65 +13718,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu branşların puana etkisi büyük ve en çok bunlarda yanlış yaptın. Planın artık bu branşları daha ayrıntılı ele alıyor ve diğer tüm konular da planında kalıyor."
-          }
-        }
-      }
-    },
-    "This challenge isn't ready yet." : {
-      "comment" : "A challenge that can't start on this device yet.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Herausforderung ist noch nicht bereit."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este desafío aún no está listo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce défi n’est pas encore disponible."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questa sfida non è ancora pronta."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このチャレンジはまだ始められません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 챌린지는 아직 준비되지 않았어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To wyzwanie nie jest jeszcze gotowe."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este desafio ainda não está disponível."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu meydan okuma henüz hazır değil."
           }
         }
       }
