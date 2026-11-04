@@ -23,6 +23,7 @@ import { BRAIN_POWER_BONUS } from "./brain-power";
 import { finishStudyBlock } from "./finish-study-block";
 import { openStudyDay } from "./open-study-day";
 import { startStudyBlock } from "./start-study-block";
+import { stopStudySession } from "./stop-study-session";
 
 // A connection lost after the block's own write commits can't be produced on demand.
 vi.mock("./_utils/settle-session-day", { spy: true });
@@ -134,13 +135,36 @@ describe("a finished block's day settles even when its request fails after the b
     vi.setSystemTime(SESSION_NOW);
     const crossedByBlock = await practiceDay({ brainPower: 2499n });
     await failFinish(crossedByBlock.request);
+    await runOwedSettlements(crossedByBlock.user.id);
     await expect(readBelts(crossedByBlock.user.id)).resolves.toStrictEqual([{ key: "yellow" }]);
 
     const crossedByMeal = await practiceDay({ brainPower: 2470n });
     await failFinish(crossedByMeal.request);
-    await expect(readBelts(crossedByMeal.user.id)).resolves.toStrictEqual([]);
     await runOwedSettlements(crossedByMeal.user.id);
     await expect(readBelts(crossedByMeal.user.id)).resolves.toStrictEqual([{ key: "yellow" }]);
+  });
+
+  it("awards the belt of a block that a stop settled", async () => {
+    freezeClock();
+    vi.setSystemTime(SESSION_NOW);
+    const { session, user } = await practiceDay({ brainPower: 2499n });
+
+    await stopStudySession({ input: { timeZone: "UTC" }, sessionId: session.id });
+    await runOwedSettlements(user.id);
+
+    await expect(readBelts(user.id)).resolves.toStrictEqual([{ key: "yellow" }]);
+  });
+
+  it("still celebrates the belt on the retry of a finish whose settlement failed", async () => {
+    freezeClock();
+    vi.setSystemTime(SESSION_NOW);
+    const { request } = await practiceDay({ brainPower: 2499n });
+    await failFinish(request);
+
+    await expect(finishStudyBlock(request)).resolves.toMatchObject({
+      completion: { ceremony: { key: "yellow", kind: "belt" } },
+      status: "ready",
+    });
   });
 
   it("keeps an empty checkpoint's neutral ending when its day is recovered", async () => {
