@@ -7,7 +7,7 @@
     "i18n": "node scripts/i18n/translate.mts",
     "i18n:accept": "node scripts/i18n/accept.mts",
     "i18n:lint": "node scripts/i18n/check-catalogs.mts && eloqnt lint --strict",
-    "palette": "node scripts/theme/generate-palette.mts",
+    "palette": "node scripts/generate-palette.mts",
     "sandbox": "node scripts/sandbox/generate-sandbox-page.mts",
     "symbol": "node scripts/icons/add-symbol.mts",
     "test": "vitest run",
