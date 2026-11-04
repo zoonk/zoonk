@@ -265,12 +265,14 @@ struct PracticeQuestionsPreparingView: View {
           ProgressView().padding(.top, 8)
         }
 
-        if let failure {
+        if let failure, !isPlusRequired {
           Text(failureText(failure)).font(.subheadline).foregroundStyle(.destructive)
         }
       }
     } actions: {
-      if failure as? PracticeAPIError == .plusRequired {
+      if isPlusRequired {
+        FreeWeekOverNotice(showsSeePlus: false)
+
         PracticeMainButton(
           title: LocalizedStringResource(
             "See Plus", table: "Practice",
@@ -288,11 +290,12 @@ struct PracticeQuestionsPreparingView: View {
     }
   }
 
+  private var isPlusRequired: Bool {
+    failure as? PracticeAPIError == .plusRequired
+  }
+
   private func failureText(_ failure: any Error) -> LocalizedStringResource {
     switch failure as? PracticeAPIError {
-    case .plusRequired:
-      LocalizedStringResource(
-        "This test comes with Plus.", table: "Practice", comment: "A test that needs Plus.")
     case .limitReached:
       LocalizedStringResource(
         "You've used today's AI help. Try again tomorrow.", table: "Practice",

@@ -180,12 +180,6 @@ struct ChallengeScreen: View {
         .foregroundStyle(.brain)
       }
 
-      if challenge.locked || challenge.status == .plusRequired {
-        PracticeCallout(systemImage: "lock.fill") {
-          Text(plusLine(challenge))
-        }
-      }
-
       if challenge.dailyLimitReached {
         PracticeCallout(systemImage: "hourglass") {
           Text(usedUpLine(challenge))
@@ -267,6 +261,8 @@ struct ChallengeScreen: View {
   @ViewBuilder
   private func actions(_ challenge: Components.Schemas.Challenge) -> some View {
     if challenge.locked || challenge.status == .plusRequired {
+      plusNotice(challenge)
+
       PracticeMainButton(
         title: LocalizedStringResource(
           "See Plus", table: "Practice",
@@ -530,17 +526,23 @@ struct ChallengeScreen: View {
     return facts
   }
 
-  private func plusLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
-    if challenge.call != nil {
-      return LocalizedStringResource(
-        "Challenge calls come with Plus. Your plan keeps going without them.", table: "Practice",
-        comment: "A challenge call is Plus-only.")
+  @ViewBuilder
+  private func plusNotice(_ challenge: Components.Schemas.Challenge) -> some View {
+    if challenge.mock {
+      PlusNotice(
+        description: Text(
+          "Mock exams come with Plus: whenever you want, and every week in your plan.",
+          tableName: "Practice", comment: "A mock exam challenge is Plus-only."),
+        showsSeePlus: false)
+    } else if challenge.call != nil {
+      PlusNotice(
+        description: Text(
+          "Challenge calls come with Plus. Your plan keeps going without them.",
+          tableName: "Practice", comment: "A challenge call is Plus-only."),
+        showsSeePlus: false)
+    } else {
+      FreeWeekOverNotice(showsSeePlus: false)
     }
-
-    return LocalizedStringResource(
-      "Mock exams come with Plus: whenever you want, and every week in your plan.",
-      table: "Practice",
-      comment: "A mock exam challenge is Plus-only.")
   }
 
   /// Past the daily time limit the week's challenge doesn't come back on its own, so it asks to move
