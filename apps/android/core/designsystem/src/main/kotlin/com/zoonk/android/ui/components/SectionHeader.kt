@@ -23,7 +23,7 @@ fun SectionHeader(
         Text(
             text = title,
             modifier = modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.zoonkType.sectionTitle,
         )
         return
     }
@@ -44,7 +44,7 @@ fun SectionHeader(
     modifier: Modifier = Modifier,
     trailing: @Composable () -> Unit,
 ) {
-    HeadingRow(title, MaterialTheme.typography.titleSmall, modifier, Alignment.CenterVertically, trailing = trailing)
+    HeadingRow(title, MaterialTheme.zoonkType.sectionTitle, modifier, Alignment.CenterVertically, trailing = trailing)
 }
 
 /** Main's `PageSectionLabel`: a quiet label naming a group inside a section, still a heading for TalkBack. */

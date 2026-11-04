@@ -32,6 +32,7 @@ import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
@@ -61,6 +62,7 @@ internal fun PlanHeader(
                 OutlinedButton(
                     onClick = it,
                     Modifier.weight(1f, fill = false),
+                    size = ButtonSize.Small,
                 ) { Text(stringResource(R.string.plan_adjust_plan)) }
             }
             PlanMenu(page, links, resume, isSaving, onSetStatus, report)

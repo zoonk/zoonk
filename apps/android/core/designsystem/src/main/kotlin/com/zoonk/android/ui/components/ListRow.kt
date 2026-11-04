@@ -68,7 +68,7 @@ fun ListRow(
         }
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
     val metaStyle = MaterialTheme.zoonkType.data
-    val titleStyle = MaterialTheme.zoonkType.rowTitle
+    val titleStyle = MaterialTheme.typography.titleSmall
     val supportingStyle = MaterialTheme.typography.bodySmall
 
     ListItem(

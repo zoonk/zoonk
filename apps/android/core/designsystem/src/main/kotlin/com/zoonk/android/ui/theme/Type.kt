@@ -75,10 +75,10 @@ internal val ZoonkMaterialTypography =
             headlineSmall = headlineSmall.role(24f, 600, 30f, -0.04f),
             // `text-section`, and a top app bar's title.
             titleLarge = titleLarge.role(20f, 600, 26f, -0.02f),
-            // A block's title at reading size.
-            titleMedium = titleMedium.role(16f, 600, 24f, -0.01f),
-            // `PageSectionTitle`.
-            titleSmall = titleSmall.role(14f, 600, 20f, -0.01f),
+            // A card's or a block's title at reading size, at Material's weight.
+            titleMedium = titleMedium.role(16f, 500, 24f),
+            // A row's title (`ListRowTitle`), and what titles a card or an item.
+            titleSmall = titleSmall.role(14f, 500, 20f),
             // Reading: the buddy's words, a question's context, Today's queue.
             bodyLarge = bodyLarge.role(16f, 400, 24f),
             // The app's body (`text-sm`).
@@ -97,8 +97,8 @@ internal val ZoonkMaterialTypography =
 /** Main's roles that no Material slot carries. Read through [MaterialTheme.zoonkType]. */
 @Immutable
 data class ZoonkTypography(
-    /** `ListRowTitle`. */
-    val rowTitle: TextStyle,
+    /** `PageSectionTitle` (`SectionHeader`). */
+    val sectionTitle: TextStyle,
     /** `ListRowTrailing`, `PageSectionDetail`: data that lines up, in `onSurfaceVariant`. */
     val data: TextStyle,
     /** `PageEyebrow`, uppercase (the `Eyebrow` composable writes it so), in `faint`. */
@@ -116,7 +116,7 @@ data class ZoonkTypography(
 internal val ZoonkTypeRoles =
     with(material) {
         ZoonkTypography(
-            rowTitle = bodyMedium.role(14f, 500, 19.25f),
+            sectionTitle = titleSmall.role(14f, 600, 20f, -0.01f),
             data = labelMedium.role(12f, 400, 16f, family = GeistMono),
             eyebrow = labelSmall.role(11.5f, 400, 16f, family = GeistMono),
             label = labelSmall.role(11.5f, 550, 16f, 0.04f),
@@ -167,7 +167,7 @@ internal fun ZoonkTypography.wrappedFor(language: String): ZoonkTypography =
         this
     } else {
         copy(
-            rowTitle = rowTitle.byPhrase(),
+            sectionTitle = sectionTitle.byPhrase(),
             lead = lead.byPhrase(),
             lessonText = lessonText.byPhrase(),
             question = question.byPhrase(),
