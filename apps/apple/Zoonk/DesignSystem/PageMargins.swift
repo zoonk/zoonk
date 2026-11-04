@@ -8,15 +8,15 @@ extension View {
     modifier(PageMargins())
   }
 
-  /// A list's bottom bar, its controls lined up with the list's sections and kept off the fold.
+  /// A bottom bar whose controls line up with the sections of the lists under it that keep
+  /// `pageMargins()`, kept off the fold.
   func pageBar<Bar: View>(@ViewBuilder _ bar: () -> Bar) -> some View {
-    pageMargins()
-      .safeAreaBar(edge: .bottom) {
-        bar()
-          .padding(.horizontal, pageMargin)
-          .keepsOffFold()
-          .scenePadding(.vertical)
-      }
+    safeAreaBar(edge: .bottom) {
+      bar()
+        .padding(.horizontal, pageMargin)
+        .keepsOffFold()
+        .scenePadding(.vertical)
+    }
   }
 }
 
