@@ -1,15 +1,31 @@
 import SwiftUI
 
+/// Says when the sound couldn't start, so silence isn't mistaken for a broken key.
 struct MusicCanvas<Content: View>: View {
+  let audio: MusicAudio
   @ViewBuilder let content: Content
 
   var body: some View {
+    let soundNote =
+      audio.isUnavailable
+      ? String(
+        localized: "The sound couldn't play. You can still see every note.",
+        table: "ActivitiesMusic", comment: "Under an instrument when the device couldn't play sound")
+      : nil
+
     VStack(alignment: .leading, spacing: 12) {
       content
+
+      if let soundNote {
+        Text(soundNote)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+      }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
     .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 20, style: .continuous))
+    .announcesStatus(soundNote)
   }
 }
 
@@ -29,22 +45,6 @@ struct MusicSoundButton: View {
     .buttonStyle(.bordered)
     .buttonBorderShape(.capsule)
     .disabled(isDisabled)
-  }
-}
-
-/// Says when the sound couldn't start, so silence isn't mistaken for a broken key.
-struct MusicSoundNote: View {
-  let audio: MusicAudio
-
-  var body: some View {
-    if audio.isUnavailable {
-      Text(
-        "The sound couldn't play. You can still see every note.", tableName: "ActivitiesMusic",
-        comment: "Under an instrument when the device couldn't play sound"
-      )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
-    }
   }
 }
 

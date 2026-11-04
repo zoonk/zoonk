@@ -111,8 +111,13 @@ struct ChallengeStepView: View {
   }
 
   private func meters(_ decisions: [ChallengeWalk.Decision]) -> some View {
-    VStack(alignment: .leading, spacing: 8) {
-      ForEach(ChallengeWalk.meters(content, decisions: decisions), id: \.meter.id) { meter in
+    let meters = ChallengeWalk.meters(content, decisions: decisions)
+    let moved = meters.filter { $0.change != 0 }.map {
+      "\(named($0.meter.label)) \($0.change.formatted(.number.sign(strategy: .always())))"
+    }
+
+    return VStack(alignment: .leading, spacing: 8) {
+      ForEach(meters, id: \.meter.id) { meter in
         Gauge(value: Double(meter.value), in: 0...100) {
           HStack {
             Text(named(meter.meter.label))
@@ -129,6 +134,7 @@ struct ChallengeStepView: View {
         .tint(.success)
       }
     }
+    .announcesStatus(moved.isEmpty ? nil : moved.formatted(.list(type: .and)))
   }
 
   private func isGood(_ meter: ChallengeContent.Meter, change: Int) -> Bool {

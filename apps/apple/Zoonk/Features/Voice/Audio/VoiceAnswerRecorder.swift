@@ -35,6 +35,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
         status
       }
+      .announcesStatus(announcement)
       .onDisappear {
         recorder.cancel()
         grading?.cancel()
@@ -52,6 +53,20 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
         .foregroundStyle(issue == .failed && !recorder.isRecording ? .destructive : .secondary)
         .accessibilityAddTraits(.updatesFrequently)
     }
+  }
+
+  /// Announcing the take's start would speak into the microphone, and the hint before it is there
+  /// from the start.
+  private var announcement: String? {
+    if recorder.isRecording {
+      return nil
+    }
+
+    if case .limit(let limit) = issue {
+      return limit.message
+    }
+
+    return checking || issue != nil ? hint : nil
   }
 
   private var hint: String? {

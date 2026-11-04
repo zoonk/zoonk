@@ -487,28 +487,39 @@ struct LessonHelpLimitNote: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
+      Text(Self.message(refusal))
+
       switch refusal {
-      case .slowDown:
-        Text("Take a short break", tableName: "Player", comment: "Fair use spaces AI help out")
       case .limitReached(.guest, _):
-        Text(
-          "Save your progress to keep going", tableName: "Player",
-          comment: "A guest used their AI help")
         SignUpButton()
       case .limitReached(.free, _):
-        Text(
-          "You used today's AI help. Plus gives you more.", tableName: "Player",
-          comment: "A free learner used the day's AI help")
         SeePlusButton()
           .buttonStyle(.bordered)
       default:
-        Text(
-          "You've used today's AI help. It's back tomorrow.", tableName: "Player",
-          comment: "A learner used the day's AI help")
+        EmptyView()
       }
     }
     .font(.subheadline)
     .foregroundStyle(.secondary)
+  }
+
+  static func message(_ refusal: LessonRunRefusal) -> String {
+    switch refusal {
+    case .slowDown:
+      String(localized: "Take a short break", table: "Player", comment: "Fair use spaces AI help out")
+    case .limitReached(.guest, _):
+      String(
+        localized: "Save your progress to keep going", table: "Player",
+        comment: "A guest used their AI help")
+    case .limitReached(.free, _):
+      String(
+        localized: "You used today's AI help. Plus gives you more.", table: "Player",
+        comment: "A free learner used the day's AI help")
+    default:
+      String(
+        localized: "You've used today's AI help. It's back tomorrow.", table: "Player",
+        comment: "A learner used the day's AI help")
+    }
   }
 }
 

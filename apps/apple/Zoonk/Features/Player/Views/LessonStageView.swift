@@ -217,6 +217,7 @@ struct LessonStageView: View {
       // A screen whose answer starts over (a missed question coming straight back) is made anew,
       // as another screen would be, so its canvas starts over too.
       .id(visit(step))
+      .announcesBuddyOffer(.misses, isShown: state.struggleOffer != nil && !step.showsOwnResult)
       .onChange(of: shownPrompt(step), initial: true) { _, shown in
         store.promptAudio.enter(prompt: shown.url, audio: audio)
       }
@@ -287,9 +288,7 @@ private struct LessonCheckNote: View {
   var body: some View {
     if state.notice == .selfCorrect {
       Label {
-        Text(
-          "Not quite. Look again and fix it yourself, then check.", tableName: "Player",
-          comment: "A wrong language answer the learner can fix once")
+        Text(LessonPlayerState.Notice.selfCorrect.line)
       } icon: {
         Image(systemName: "pencil")
       }
@@ -297,14 +296,48 @@ private struct LessonCheckNote: View {
       .foregroundStyle(.destructive)
     }
 
-    if state.checkFailed {
-      Text(
-        "We couldn't check your answer this time. Try again.", tableName: "Player",
-        comment: "The server couldn't grade a written or spoken answer"
-      )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+    if let checkFailedLine = state.checkFailedLine {
+      Text(checkFailedLine)
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
     }
+  }
+}
+
+extension LessonPlayerState.Notice {
+  var line: String {
+    switch self {
+    case .selfCorrect:
+      String(
+        localized: "Not quite. Look again and fix it yourself, then check.", table: "Player",
+        comment: "A wrong language answer the learner can fix once")
+    case .answerNotSaved:
+      String(
+        localized: "Your answer here didn't save. Answer it again to finish the lesson.",
+        table: "Player",
+        comment: "The lesson came back to a screen whose answer was never saved")
+    case .writingSkipped:
+      String(
+        localized: "No more writing today.", table: "Player",
+        comment: "\"Can't write now\" left the lesson's writing out")
+    }
+  }
+}
+
+extension LessonPlayerState {
+  /// What the stage's notice says; a quick check shows its progress there instead.
+  var noticeLine: String? {
+    quickCheckProgress == nil ? notice?.line : nil
+  }
+
+  var checkFailedLine: String? {
+    guard checkFailed else {
+      return nil
+    }
+
+    return String(
+      localized: "We couldn't check your answer this time. Try again.", table: "Player",
+      comment: "The server couldn't grade a written or spoken answer")
   }
 }
 
@@ -521,10 +554,7 @@ private struct LessonNotice: View {
       switch state.notice {
       case .answerNotSaved:
         Label {
-          Text(
-            "Your answer here didn't save. Answer it again to finish the lesson.",
-            tableName: "Player",
-            comment: "The lesson came back to a screen whose answer was never saved")
+          Text(LessonPlayerState.Notice.answerNotSaved.line)
         } icon: {
           Image(systemName: "icloud.slash")
         }
@@ -533,9 +563,7 @@ private struct LessonNotice: View {
       case .writingSkipped:
         HStack(alignment: .firstTextBaseline) {
           Label {
-            Text(
-              "No more writing today.", tableName: "Player",
-              comment: "\"Can't write now\" left the lesson's writing out")
+            Text(LessonPlayerState.Notice.writingSkipped.line)
           } icon: {
             Image(systemName: "pencil.slash")
           }

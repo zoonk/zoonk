@@ -344,6 +344,7 @@ private struct CodeRunnerOutput: View {
         }
       }
     }
+    .announcesStatus(isStale ? nil : run.flatMap(stopMessage))
   }
 
   private func cell(
@@ -408,7 +409,7 @@ private struct CodeRunnerOutput: View {
   private func stopNotice(_ run: CodeProgramRun) -> some View {
     if let message = stopMessage(run) {
       Label {
-        message
+        Text(message)
       } icon: {
         Image(systemName: "xmark.circle")
       }
@@ -417,7 +418,7 @@ private struct CodeRunnerOutput: View {
     }
   }
 
-  private func stopMessage(_ run: CodeProgramRun) -> Text? {
+  private func stopMessage(_ run: CodeProgramRun) -> String? {
     switch run.stop {
     case .error:
       guard let error = run.error else {
@@ -425,20 +426,21 @@ private struct CodeRunnerOutput: View {
       }
 
       guard let line = run.errorLine else {
-        return Text(verbatim: error)
+        return error
       }
 
-      return Text(
-        "Line \(line): \(error)", tableName: "ActivitiesCode",
+      return String(
+        localized: "Line \(line): \(error)", table: "ActivitiesCode",
         comment: "A program's error and the line it happened on")
     case .timeout:
-      return Text(
-        "Stopped after \(language.timeLimitSeconds) seconds. Is there a loop that never ends?",
-        tableName: "ActivitiesCode", comment: "A program ran out of time")
+      return String(
+        localized:
+          "Stopped after \(language.timeLimitSeconds) seconds. Is there a loop that never ends?",
+        table: "ActivitiesCode", comment: "A program ran out of time")
     case .tooMuchOutput:
-      return Text(
-        "Stopped because it printed too much. Is there a loop that never ends?",
-        tableName: "ActivitiesCode", comment: "A program printed past the output limit")
+      return String(
+        localized: "Stopped because it printed too much. Is there a loop that never ends?",
+        table: "ActivitiesCode", comment: "A program printed past the output limit")
     case .done, .unavailable:
       return nil
     }

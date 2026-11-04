@@ -141,7 +141,7 @@ struct LessonAskBuddyOffer: View {
   var body: some View {
     if tutor.panel != nil, !isDismissed {
       VStack(alignment: .leading, spacing: 8) {
-        message
+        Text(Self.message(reason, buddyName: buddyName))
           .font(.subheadline)
 
         ButtonRow {
@@ -171,24 +171,23 @@ struct LessonAskBuddyOffer: View {
     learnerSummary?.summary.value?.buddyDisplayName
   }
 
-  @ViewBuilder
-  private var message: some View {
+  static func message(_ reason: Reason, buddyName: String?) -> String {
     switch (reason, buddyName) {
     case (.misses, let name?):
-      Text(
-        "This one is tricky. \(name) can explain it another way.", tableName: "Player",
+      String(
+        localized: "This one is tricky. \(name) can explain it another way.", table: "Player",
         comment: "Offer to ask the buddy after two misses")
     case (.misses, nil):
-      Text(
-        "This one is tricky. Your buddy can explain it another way.", tableName: "Player",
+      String(
+        localized: "This one is tricky. Your buddy can explain it another way.", table: "Player",
         comment: "Offer to ask the buddy after two misses")
     case (.pause, let name?):
-      Text(
-        "Taking your time? \(name) can explain it another way.", tableName: "Player",
+      String(
+        localized: "Taking your time? \(name) can explain it another way.", table: "Player",
         comment: "Offer to ask the buddy after a long pause")
     case (.pause, nil):
-      Text(
-        "Taking your time? Your buddy can explain it another way.", tableName: "Player",
+      String(
+        localized: "Taking your time? Your buddy can explain it another way.", table: "Player",
         comment: "Offer to ask the buddy after a long pause")
     }
   }
@@ -203,6 +202,28 @@ struct LessonAskBuddyOffer: View {
   }
 }
 
+extension View {
+  /// Reads the offer out as it shows up, from a view that stays while it comes and goes.
+  func announcesBuddyOffer(_ reason: LessonAskBuddyOffer.Reason, isShown: Bool) -> some View {
+    modifier(BuddyOfferAnnouncement(reason: reason, isShown: isShown))
+  }
+}
+
+private struct BuddyOfferAnnouncement: ViewModifier {
+  @Environment(\.lessonTutor) private var tutor
+  @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
+
+  let reason: LessonAskBuddyOffer.Reason
+  let isShown: Bool
+
+  func body(content: Content) -> some View {
+    content.announcesStatus(
+      isShown && tutor.panel != nil
+        ? LessonAskBuddyOffer.message(
+          reason, buddyName: learnerSummary?.summary.value?.buddyDisplayName) : nil)
+  }
+}
+
 struct LessonPauseOffer: View {
   @Environment(\.scenePhase) private var scenePhase
   @State private var isStuck = false
@@ -210,13 +231,16 @@ struct LessonPauseOffer: View {
   let step: LessonStep
   let store: LessonPlayerStore
 
+  private var isShown: Bool { isStuck && store.state?.quickCheck == nil }
+
   var body: some View {
     // A stack rather than a group, so the timer runs while nothing shows yet.
     VStack(alignment: .leading, spacing: 0) {
-      if isStuck, store.state?.quickCheck == nil {
+      if isShown {
         LessonAskBuddyOffer(reason: .pause, store: store)
       }
     }
+    .announcesBuddyOffer(.pause, isShown: isShown)
     .task(id: PauseKey(stepId: step.id, isActive: scenePhase == .active, touches: store.touches)) {
       guard !isStuck, scenePhase == .active, let delay = step.strugglePause else {
         return
