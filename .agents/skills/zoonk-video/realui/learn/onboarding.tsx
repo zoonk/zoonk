@@ -208,6 +208,7 @@ function ScheduleView({ lang, state }: ViewProps) {
           goal={goal}
           onAnswer={noop}
           onChangeDate={noop}
+          onPlanReadyChange={noop}
           pending={false}
           planReadiness={{ readingNotice: false, ready: true }}
           recommendedMinutes={60}
@@ -297,6 +298,7 @@ function RevealView({ lang }: ViewProps) {
             initialPlan={revealed}
             isGuest={false}
             libraryCourse={null}
+            onPlanReadyChange={noop}
             planActions={PLAN_ACTIONS as any}
             planLinkHref={(id) => `/plans/${id}`}
             refreshPages={noop}

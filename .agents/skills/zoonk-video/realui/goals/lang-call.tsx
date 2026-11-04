@@ -112,6 +112,15 @@ export function CallLive({ lang }: { lang: Lang }) {
     sendText: NOOP,
     start: NOOP_ASYNC,
     toggleMute: NOOP,
+    turn: {
+      characterSpeaking: false,
+      greeted: true,
+      learnerSpeaking: false,
+      quietHint: false,
+      reason: null,
+      saidGoodbye: false,
+      spokeOutLoud: true,
+    },
     turns: call.lines.map(([who, text]: [string, string]) => ({
       speaker: who === "me" ? "learner" : "character",
       text,

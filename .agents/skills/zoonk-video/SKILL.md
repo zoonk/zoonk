@@ -37,7 +37,7 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
    - Delegate groups of screens to helpers when there are many. Each helper owns its own views file.
 5. **Scenes.** Write the film in `<work-dir>/films/<film>/`, with the example as the template.
    - Every line of copy goes in `copy.js`, per language.
-   - Timing uses the bar grid of the soundtrack. Pace follows [story](references/story.md#pace).
+   - Timing uses the bar grid of the soundtrack. Composition and pace follow [story](references/story.md#composition).
    - Render storyboard stills (`render.mjs --stills all --every 2`) and review them as contact sheets before any full render.
 6. **Sound.** Follow [audio](references/audio.md).
    - Narration goes through AI Gateway in the same voice for both languages. Each line is fitted to its scene, transcribed back and judged.
@@ -70,6 +70,7 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
 - **Locales:**
   - Keep every line of copy in `copy.js` and every learner value in `realui/story.ts`, per locale; scenes and views only read keys.
   - Headlines break only at `<br>` and shrink to fit (`K.fit`), so Portuguese never wraps by surprise.
+- **One focal point:** in 16:9 a beat is the headline alone, then the phone alone, framed on the part the voice describes; never text beside the phone. See [composition](references/story.md#composition).
 - **Pace:**
   - Hold each line for about 0.28 s per word plus 0.6 s.
   - No empty frames at cuts.

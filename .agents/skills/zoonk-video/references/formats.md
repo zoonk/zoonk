@@ -37,4 +37,4 @@ These numbers come from platform docs and creator research, gathered in November
 
 ## Reading time
 
-A super stays up for about 0.28 s per word plus 0.6 s (minimum about 1.8 s), with sublines of 10 words or fewer. That gives a deliberate pace without dragging. The first cut used 0.35 s plus 1 s and the owner found it sluggish.
+A super stays up for about 0.28 s per word plus 0.6 s (minimum about 1.8 s), with sublines of 10 words or fewer. That gives a deliberate pace without dragging. The first cut used 0.35 s plus 1 s and the owner found it sluggish. In 16:9, a headline the voice speaks over holds less ([composition](story.md#composition)).

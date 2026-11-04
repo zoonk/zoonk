@@ -3,10 +3,8 @@ __build((Z) => {
   const { div, tl, icon } = Z;
   const C = Z.C;
   const B = Z.BAR;
-  const TX = 150;
-  const TW = 760;
-  const PX = 1390;
-  const PY = 545;
+  const PX = 960;
+  const PY = 540;
   const PS = 1.12;
   let cur = 0;
   const seg = (bars) => {
@@ -14,57 +12,89 @@ __build((Z) => {
     cur += bars * B;
     return [a, cur];
   };
-  const phoneAt = (L, o = {}) => {
-    const p = K.phone(L, { x: o.x ?? PX, y: o.y ?? PY });
-    gsap.set(p.phone, { scale: o.scale ?? PS });
-    return p;
+  // Screen point sy (CSS px from the app's top) to the phone translate that centers it at zoom z.
+  const fy = (sy, z) => -(62 + sy - 434) * z;
+  // The phone sits in a full-frame rig, so focus (blur, fade) and camera (scale, y) animate separately.
+  const rigAt = (L) => {
+    const rig = div("abs", L);
+    rig.style.cssText = "left:0;top:0;width:1920px;height:1080px";
+    const p = K.phone(rig, { x: PX, y: PY });
+    gsap.set(p.phone, { scale: PS });
+    gsap.set(rig, { autoAlpha: 0 });
+    return { ...p, rig };
   };
-  const left = (L, pair, tIn, tOut, o = {}) =>
-    K.say2(
+  const cam = (p, t, sy, z, dur = 0.9) =>
+    dur === 0
+      ? tl.set(p.phone, { scale: z, y: fy(sy, z) }, t)
+      : tl.to(p.phone, { scale: z, y: fy(sy, z), duration: dur, ease: "swing" }, t);
+  // One focal point at a time: the headline alone in the middle, then the phone alone, framed on `at`.
+  // A scene's first beat waits out the previous scene's fade (`lead` 0 after a hard cut). Returns when the phone is back.
+  const beat = (L, p, title, t0, o = {}) => {
+    const words = `${title} ${o.sub ?? ""}`.replace(/<br>/g, " ").trim().split(/\s+/).length;
+    const hold = Math.min(2.0, Math.max(1.5, 1.1 + 0.12 * words));
+    const start = t0 + (o.lead ?? (o.first ? 0.25 : 0.05));
+    const back = start + hold;
+    if (!o.first)
+      tl.to(
+        p.rig,
+        { autoAlpha: 0, scale: 0.96, filter: "blur(14px)", duration: 0.4, ease: "power2.in" },
+        t0 - 0.35,
+      );
+    const r = K.say(
       L,
       {
-        x: TX,
-        y: o.y ?? 520,
-        w: o.w ?? TW,
-        title: pair[0],
-        sub: pair[1],
-        size: o.size ?? 88,
-        subSize: 38,
+        x: 160,
+        y: 540,
+        w: 1600,
+        align: "center",
+        title,
+        size: 104,
+        stagger: 0.045,
+        sub: o.sub,
+        subSize: 40,
+        subW: 1000,
       },
-      tIn,
-      tOut,
+      start,
+      back,
     );
-  // Camera on the phone: zoom so screen point (sx, sy) sits at the phone's resting center.
-  const focus = (p, t, scale, sy, dur = 1.0) =>
-    tl.to(
-      p.phone,
-      { scale, y: (434 - (sy + 62)) * scale - (434 - 434), duration: dur, ease: "swing" },
-      t,
+    K.fit(r.h, 1600);
+    if (o.at) cam(p, back - 0.05, o.at[0], o.at[1], 0);
+    tl.fromTo(
+      p.rig,
+      { autoAlpha: 0, scale: 0.94, filter: "blur(14px)" },
+      {
+        autoAlpha: 1,
+        scale: 1,
+        filter: "blur(0px)",
+        duration: 0.75,
+        ease: "zo",
+        immediateRender: false,
+      },
+      back,
     );
-  // Phone translate that centers screen point sy (CSS px from the app's top) at a given zoom.
-  const fy = (sy, sc) => -(62 + sy - 434) * sc;
+    if (o.first) Z.sfx("whoosh", back);
+    return back;
+  };
   const T = {
     en: {
       build: [293, 323],
       dontKnow: [96, 680],
       mean: [129, 202],
       check: [195, 756],
-      apply: [110, 584],
+      apply: [110, 607],
       speaker: [168, 93],
-      chip: [120, 508],
+      chip: [120, 600],
     },
     pt: {
       build: [286, 347],
       dontKnow: [88, 680],
       mean: [90, 202],
       check: [195, 756],
-      apply: [110, 584],
+      apply: [110, 607],
       speaker: [100, 93],
-      chip: [150, 508],
+      chip: [150, 618],
     },
   }[Z.lang];
-  const unfocus = (p, t, dur = 0.9) =>
-    tl.to(p.phone, { scale: PS, y: 0, duration: dur, ease: "swing" }, t);
 
   // 1. Cold open + the gap
   {
@@ -177,22 +207,15 @@ __build((Z) => {
   // 3. How it works: one phone
   {
     const [t0] = seg(0);
-    const [a0, a1] = seg(2);
-    const [b0, b1] = seg(2);
-    const [c0, c1] = seg(2.5);
-    const [d0, d1] = seg(2);
+    const [a0] = seg(2);
+    const [b0] = seg(2);
+    const [c0] = seg(2.5);
+    const [d0] = seg(2);
     const [e0, e1] = seg(2.5);
     const L = K.scene(t0, e1, { fadeIn: 0 });
-    const p = phoneAt(L);
-    K.phoneIn(p, t0 - 0.05, { y: 120, dur: 0.8 });
+    const p = rigAt(L);
     const s = p.screen;
-    left(L, C.tellGoal, a0 + 0.15, a1);
-    left(L, C.checks, b0 + 0.1, b1);
-    left(L, C.time, c0 + 0.1, c1);
-    left(L, C.follow, d0 + 0.1, d1);
-    left(L, C.missed, e0 + 0.1);
-    const typing = K.seq(s, "typing", a0 + 0.5, a0 + 3.6);
-    const understood = K.still(s, "understood");
+    const typing = K.seq(s, "typing", a0 + 1.7, a0 + 4.0);
     const diag = K.still(s, "diagnostic");
     const diagPicked = K.still(s, "diagnostic-picked");
     const sched = K.still(s, "schedule");
@@ -201,29 +224,35 @@ __build((Z) => {
     const t2d = K.still(s, "today-done2");
     const t3d = K.still(s, "today-done3");
     const changed = K.still(s, "today-changed");
-    K.tapAt(s, T.build[0], T.build[1], a0 + 3.95);
     K.track([
       { at: a0, el: typing },
-      { at: b0, el: understood, trans: "push" },
-      { at: b0 + 1.5, el: diag, trans: "push" },
-      { at: b0 + 3.2, el: diagPicked, trans: "fade" },
-      { at: c0, el: sched, trans: "push" },
-      { at: d0, el: t0d, trans: "push" },
-      { at: d0 + 1.3, el: t1d, trans: "fade" },
-      { at: d0 + 2.3, el: t2d, trans: "fade" },
-      { at: d0 + 3.3, el: t3d, trans: "fade" },
-      { at: e0, el: changed, trans: "push" },
+      { at: b0 + 0.2, el: diag, trans: "cut" },
+      { at: b0 + 3.75, el: diagPicked, trans: "fade" },
+      { at: c0 + 0.2, el: sched, trans: "cut" },
+      { at: d0 + 0.2, el: t0d, trans: "cut" },
+      { at: d0 + 2.2, el: t1d, trans: "fade" },
+      { at: d0 + 2.9, el: t2d, trans: "fade" },
+      { at: d0 + 3.6, el: t3d, trans: "fade" },
+      { at: e0 + 0.2, el: changed, trans: "cut" },
     ]);
-    [d0 + 1.3, d0 + 2.3, d0 + 3.3].forEach((x) => Z.sfx("check", x));
-    K.tapAt(s, T.dontKnow[0], T.dontKnow[1], b0 + 3.15);
-    K.ring(s, 10, 413, 370, 88, c0 + 1.5);
-    Z.sfx("tick", c0 + 1.5);
-    // camera
-    tl.to(p.phone, { scale: 1.3, y: fy(300, 1.3), duration: 2.6, ease: "swing" }, a0 + 0.6);
-    unfocus(p, a0 + 3.8, 0.8);
-    tl.to(p.phone, { scale: 1.55, y: fy(440, 1.55), duration: 1.0, ease: "swing" }, c0 + 0.6);
-    unfocus(p, c1 - 0.6, 0.8);
-    tl.to(p.phone, { scale: 1.3, y: fy(470, 1.3), duration: 1.0, ease: "swing" }, e0 + 0.6);
+
+    beat(L, p, C.tellGoal, a0, { first: true, lead: 0.05, at: [280, 1.9] });
+    K.tapAt(s, T.build[0], T.build[1], a0 + 4.3);
+
+    beat(L, p, C.checks, b0, { at: [270, 1.9] });
+    cam(p, b0 + 2.85, 520, 1.9, 0.7);
+    K.tapAt(s, T.dontKnow[0], T.dontKnow[1], b0 + 3.7);
+
+    const cIn = beat(L, p, C.time, c0, { at: [330, 1.9] });
+    cam(p, cIn + 1.0, 450, 2.4, 1.2);
+    K.ring(s, 10, 413, 370, 88, cIn + 1.7, d0 - 0.3);
+    Z.sfx("tick", cIn + 1.7);
+
+    beat(L, p, C.follow, d0, { at: [300, 1.8] });
+    [d0 + 2.2, d0 + 2.9, d0 + 3.6].forEach((x) => Z.sfx("check", x));
+
+    const eIn = beat(L, p, C.missed, e0, { at: [250, 1.9] });
+    cam(p, eIn + 1.7, 560, 1.9, 1.0);
   }
 
   // 4. Whatever you're working toward
@@ -247,51 +276,43 @@ __build((Z) => {
 
   // 5. Exams
   {
-    const [a0, a1] = seg(2);
-    const [b0, b1] = seg(2);
-    const [c0, c1] = seg(1.25);
+    const [a0] = seg(2);
+    const [b0] = seg(2);
+    const [c0] = seg(1.25);
     const [d0, d1] = seg(1.25);
     const L = K.scene(a0, d1);
-    const p = phoneAt(L);
-    K.phoneIn(p, a0 - 0.05, { y: 120, dur: 0.8 });
+    const p = rigAt(L);
     const s = p.screen;
-    left(L, C.exam, a0 + 0.15, a1);
-    left(L, C.mock, b0 + 0.1, b1);
-    left(L, C.examExtra, c0 + 0.1, c1);
-    left(L, C.mistakes, d0 + 0.1);
-    const plan = K.still(s, "exam-plan");
+    const pt = Z.lang === "pt";
     const subj = K.still(s, "exam-subject");
     const run = K.still(s, "mock-run");
     const res = K.still(s, "mock-result");
-    const extra = K.still(s, Z.lang === "pt" ? "essay" : "speaking-band");
-    const mist = K.still(s, Z.lang === "pt" ? "mistakes" : "mistakes-open2");
+    const extra = K.still(s, pt ? "essay" : "speaking-band");
+    const mist = K.still(s, pt ? "mistakes" : "mistakes-open2");
     K.track([
-      { at: a0, el: plan },
-      { at: a0 + 2.4, el: subj, trans: "push" },
-      { at: b0, el: run, trans: "push" },
-      { at: b0 + 2.2, el: res, trans: "push" },
+      { at: a0, el: subj },
+      { at: b0 + 0.2, el: run, trans: "cut" },
+      { at: b0 + 3.5, el: res, trans: "push" },
       { at: c0, el: extra, trans: "push" },
       { at: d0, el: mist, trans: "push" },
     ]);
-    Z.sfx("chime", b0 + 2.5);
-    tl.to(p.phone, { scale: 1.22, y: 20, duration: 4.8, ease: "none" }, a0 + 0.4);
-    unfocus(p, b0, 0.6);
+    const aIn = beat(L, p, C.exam, a0, { first: true, at: [260, 1.8] });
+    cam(p, aIn + 0.9, 500, 1.8, 1.6);
+    beat(L, p, C.mock, b0, { at: [230, 1.85] });
+    Z.sfx("chime", b0 + 3.8);
+    cam(p, c0, pt ? 250 : 230, 1.85, 0.6);
+    cam(p, d0, pt ? 480 : 540, 1.85, 0.7);
   }
 
   // 6. Languages
   {
-    const [a0, a1] = seg(1.5);
+    const [a0] = seg(1.5);
     const [b0, b1] = seg(1.5);
-    const [c0, c1] = seg(2);
+    const [c0] = seg(2);
     const [d0, d1] = seg(1.5);
     const L = K.scene(a0, d1);
-    const p = phoneAt(L);
-    K.phoneIn(p, a0 - 0.05, { y: 120, dur: 0.8 });
+    const p = rigAt(L);
     const s = p.screen;
-    left(L, C.language, a0 + 0.15, a1);
-    left(L, C.word, b0 + 0.1, b1);
-    left(L, C.call, c0 + 0.1, c1);
-    left(L, C.pattern, d0 + 0.1);
     const unit = K.still(s, "language-unit");
     const word = K.seq(s, "word", b0, b1);
     const call = K.still(s, "call");
@@ -300,45 +321,49 @@ __build((Z) => {
     K.track([
       { at: a0, el: unit },
       { at: b0, el: word, trans: "push" },
-      { at: c0, el: call, trans: "push" },
-      { at: c0 + 2.6, el: fb, trans: "up" },
+      { at: c0 + 0.2, el: call, trans: "cut" },
+      { at: c0 + 3.5, el: fb, trans: "up" },
       { at: d0, el: pat, trans: "push" },
     ]);
-    K.tapAt(s, T.speaker[0], T.speaker[1], b0 + 2.75, { sound: false });
-    Z.sfx(Z.lang === "pt" ? "word-stay" : "word-quedarse", b0 + 2.85);
-    tl.to(p.phone, { scale: 1.6, y: fy(180, 1.6), duration: 0.9, ease: "swing" }, b0 + 0.4);
-    unfocus(p, c0, 0.6);
-    [c0 + 0.6, c0 + 1.4].forEach((x) => Z.sfx("bubble", x));
+    beat(L, p, C.language, a0, { first: true, at: [300, 1.8] });
+    cam(p, b0 + 0.1, 180, 2.2, 0.8);
+    K.tapAt(s, T.speaker[0], T.speaker[1], b0 + 2.35, { sound: false });
+    Z.sfx(Z.lang === "pt" ? "word-stay" : "word-quedarse", b0 + 2.45);
+    const cIn = beat(L, p, C.call, c0, { at: [380, 1.6] });
+    [cIn + 0.3, cIn + 0.9].forEach((x) => Z.sfx("bubble", x));
+    cam(p, c0 + 3.5, 250, 1.8, 0.6);
+    cam(p, d0 + 0.1, 200, 2.0, 0.7);
   }
 
   // 7. Career
   {
     const [t0, t1] = seg(2);
     const L = K.scene(t0, t1);
-    const p = phoneAt(L);
-    K.phoneIn(p, t0 - 0.05, { y: 120, dur: 0.8 });
-    left(L, C.career, t0 + 0.15);
+    const p = rigAt(L);
     const mods = K.still(p.screen, "plan-career-modules");
     const tools = K.still(p.screen, "tools-setup");
     K.track([
       { at: t0, el: mods },
-      { at: t0 + 2.6, el: tools, trans: "up" },
+      { at: t0 + 3.2, el: tools, trans: "up" },
     ]);
+    const tIn = beat(L, p, C.career, t0, { first: true, at: [380, 1.7] });
+    cam(p, tIn + 0.6, 450, 2.2, 1.0);
+    cam(p, t0 + 3.2, 420, 1.9, 0.6);
   }
 
   // 8. Learn anything
   {
     const [t0, t1] = seg(2);
     const L = K.scene(t0, t1);
-    const p = phoneAt(L);
-    K.phoneIn(p, t0 - 0.05, { y: 120, dur: 0.8 });
-    left(L, C.learn, t0 + 0.15);
+    const p = rigAt(L);
     const plan = K.still(p.screen, "plan-learn");
     const adj = K.still(p.screen, "plan-learn-adjust");
     K.track([
       { at: t0, el: plan },
-      { at: t0 + 2.2, el: adj, trans: "up" },
+      { at: t0 + 3.1, el: adj, trans: "up" },
     ]);
+    beat(L, p, C.learn, t0, { first: true, at: [330, 1.8] });
+    cam(p, t0 + 3.1, 400, 1.9, 0.6);
   }
 
   // 9. Lessons
@@ -360,58 +385,29 @@ __build((Z) => {
       t0 + 0.1,
     );
 
-    // Activity carousel
+    // Learn by doing: the activities play in one phone, each pushed in as the voice names it.
     [t0, t1] = seg(4);
     L = K.scene(t0, t1);
-    K.say2(
-      L,
-      {
-        x: 0,
-        y: 150,
-        w: 1920,
-        align: "center",
-        title: C.doing[0],
-        size: 80,
-        sub: C.doing[1],
-        subSize: 36,
-        subW: 1000,
-        anchor: "top",
-        gap: 14,
-      },
-      t0 + 0.1,
+    let p = rigAt(L);
+    const acts = ["map", "projectile", "code", "piano", "timeline"];
+    const starts = [2.25, 3.55, 4.85, 6.35, 7.75].map((x) => t0 + x);
+    const plays = acts.map((a, i) =>
+      K.seq(p.screen, a, starts[i] + 0.05, i + 1 < acts.length ? starts[i + 1] : t1 - 0.2),
     );
-    const acts = ["timeline", "map", "projectile", "polls", "code", "piano"];
-    const gap = 520;
-    const row = div("abs", L);
-    row.style.cssText = "left:0;top:0;width:100%;height:100%";
-    const slot = (t1 - t0 - 0.6) / acts.length;
-    acts.forEach((a, i) => {
-      const ph = K.phone(row, { x: 960 + i * gap, y: 690 });
-      gsap.set(ph.phone, { scale: 0.86 });
-      const from = t0 + 0.3 + i * slot;
-      const sq = K.seq(ph.screen, a, from + 0.15, from + slot - 0.1);
-      gsap.set(sq, { autoAlpha: 1 });
-    });
-    tl.fromTo(
-      row,
-      { x: 0 },
-      { x: -gap * (acts.length - 1), duration: t1 - t0 - 1.0, ease: "power1.inOut" },
-      t0 + 0.5,
-    );
-    for (let i = 0; i < acts.length; i++) Z.sfx("swipe", t0 + 0.3 + i * slot);
+    K.track(plays.map((el, i) => ({ at: i ? starts[i] : t0, el, trans: i ? "push" : "cut" })));
+    beat(L, p, C.doing[0], t0, { first: true, sub: C.doing[1], at: [400, 1.3] });
 
     // Wrong answer explained
     [t0, t1] = seg(2);
     L = K.scene(t0, t1);
-    const p = phoneAt(L);
-    K.phoneIn(p, t0 - 0.05, { y: 120, dur: 0.8 });
-    left(L, C.wrong, t0 + 0.15);
-    const avg = K.seq(p.screen, "averages", t0 + 0.4, t0 + 3.4);
+    p = rigAt(L);
+    const avg = K.seq(p.screen, "averages", t0 + 1.5, t0 + 4.4);
     K.track([{ at: t0, el: avg }]);
-    K.tapAt(p.screen, T.mean[0], T.mean[1], t0 + 1.3);
-    K.tapAt(p.screen, T.check[0], T.check[1], t0 + 2.2);
-    Z.sfx("wrong", t0 + 2.5);
-    tl.to(p.phone, { scale: 1.35, y: fy(330, 1.35), duration: 1.0, ease: "swing" }, t0 + 2.8);
+    beat(L, p, C.wrong, t0, { first: true, at: [470, 1.4] });
+    K.tapAt(p.screen, T.mean[0], T.mean[1], t0 + 2.35);
+    K.tapAt(p.screen, T.check[0], T.check[1], t0 + 3.25);
+    Z.sfx("wrong", t0 + 3.55);
+    cam(p, t0 + 3.75, 330, 2.1, 0.75);
   }
 
   // 10. Zu
@@ -443,92 +439,74 @@ __build((Z) => {
       t0 + 0.3,
     );
 
-    [t0, t1] = seg(2);
-    L = K.scene(t0, t1);
-    let p = phoneAt(L);
-    K.phoneIn(p, t0 - 0.05, { y: 120, dur: 0.8 });
-    left(L, C.help, t0 + 0.15);
-    const tut = K.seq(p.screen, "tutor", t0 + 0.2, t1 - 0.3, { from: 1 });
-    K.track([{ at: t0, el: tut }]);
-    K.tapAt(p.screen, T.chip[0], T.chip[1], t0 + 1.25);
-    tl.to(p.phone, { scale: 1.3, y: fy(520, 1.3), duration: 1.0, ease: "swing" }, t0 + 1.6);
-
-    [t0, t1] = seg(1);
-    L = K.scene(t0, t1);
-    p = phoneAt(L);
-    gsap.set(p.phone, { autoAlpha: 1 });
-    left(L, C.reviews, t0 + 0.1, undefined, { size: 76 });
-    const done = K.seq(p.screen, "complete", t0, t0 + 1.6, { from: 1 });
-    K.track([{ at: t0, el: done }]);
+    // Help, then the lesson's end in the same phone
+    [t0] = seg(2);
+    const [r0, r1] = seg(1);
+    L = K.scene(t0, r1);
+    let p = rigAt(L);
+    const tut = K.seq(p.screen, "tutor", t0 + 2.4, r0 - 0.2, { from: 1 });
+    const done = K.seq(p.screen, "complete", r0 + 0.3, r0 + 1.9, { from: 1 });
+    K.track([
+      { at: t0, el: tut },
+      { at: r0, el: done, trans: "push" },
+    ]);
+    const hIn = beat(L, p, C.help, t0, { first: true, at: [400, 1.6] });
+    K.tapAt(p.screen, T.chip[0], T.chip[1], t0 + 2.64);
+    cam(p, hIn + 1.2, 500, 1.9, 1.0);
+    cam(p, r0, 180, 2.0, 0.6);
 
     [t0, t1] = seg(2);
     L = K.scene(t0, t1);
-    p = phoneAt(L);
-    K.phoneIn(p, t0 - 0.05, { y: 120, dur: 0.8 });
-    left(L, C.change, t0 + 0.15);
+    p = rigAt(L);
     const zt = K.still(p.screen, "zu-tab");
     const za = K.still(p.screen, "zu-tab-applied");
     K.track([
       { at: t0, el: zt },
-      { at: t0 + 3.0, el: za, trans: "fade" },
+      { at: t0 + 3.6, el: za, trans: "fade" },
     ]);
-    K.tapAt(p.screen, T.apply[0], T.apply[1], t0 + 2.9);
-    Z.sfx("chime", t0 + 3.1);
-    tl.to(p.phone, { scale: 1.35, y: fy(470, 1.35), duration: 1.2, ease: "swing" }, t0 + 1.2);
+    const zIn = beat(L, p, C.change, t0, { first: true, at: [360, 1.7] });
+    cam(p, zIn + 0.7, 520, 2.0, 1.0);
+    K.tapAt(p.screen, T.apply[0], T.apply[1], t0 + 3.5);
+    Z.sfx("chime", t0 + 3.7);
   }
 
   // 11. Progress
   {
     let [t0, t1] = seg(2);
     let L = K.scene(t0, t1);
-    let p = phoneAt(L);
-    K.phoneIn(p, t0 - 0.05, { y: 120, dur: 0.8 });
-    left(L, C.energy, t0 + 0.15, undefined, { size: 84 });
+    let p = rigAt(L);
     const nap = K.still(p.screen, "energy-napping-sheet");
     const glow = K.still(p.screen, "energy-glowing-sheet");
     K.track([
       { at: t0, el: nap },
-      { at: t0 + 2.6, el: glow, trans: "fade" },
+      { at: t0 + 3.0, el: glow, trans: "fade" },
     ]);
+    beat(L, p, C.energy, t0, { first: true, at: [400, 1.9] });
 
     [t0, t1] = seg(2);
     L = K.scene(t0, t1);
-    p = phoneAt(L);
-    K.phoneIn(p, t0 - 0.05, { y: 120, dur: 0.8 });
-    left(L, C.brain, t0 + 0.15, undefined, { y: 380, size: 84 });
+    p = rigAt(L);
     const lv = K.still(p.screen, "level");
-    K.track([{ at: t0, el: lv }]);
-    const grow = div("abs row", L);
-    grow.style.cssText = `left:${TX}px;top:640px;gap:30px;align-items:flex-end`;
-    grow.innerHTML = [
-      ["zu-baby-happy", 140],
-      ["zu-young-happy", 180],
-      ["zu-adult-proud", 220],
-    ]
-      .map(([n, sz]) => `<div>${K.zu(n, sz)}</div>`)
-      .join("");
-    [...grow.children].forEach((g, i) => {
-      tl.fromTo(
-        g,
-        { autoAlpha: 0, scale: 0.6, y: 30 },
-        { autoAlpha: 1, scale: 1, y: 0, duration: 0.7, ease: "spring" },
-        t0 + 1.4 + i * 0.45,
-      );
-      Z.sfx("pop", t0 + 1.4 + i * 0.45);
-    });
+    const grew = K.still(p.screen, "buddy-grew");
+    K.track([
+      { at: t0, el: lv },
+      { at: t0 + 2.8, el: grew, trans: "push" },
+    ]);
+    beat(L, p, C.brain, t0, { first: true, at: [360, 1.7] });
+    cam(p, t0 + 2.8, 360, 1.75, 0.55);
+    Z.sfx("pop", t0 + 3.05);
 
     [t0, t1] = seg(2);
     L = K.scene(t0, t1);
-    p = phoneAt(L);
-    K.phoneIn(p, t0 - 0.05, { y: 120, dur: 0.8 });
-    left(L, C.trickster, t0 + 0.15);
+    p = rigAt(L);
     const ci = K.still(p.screen, "checkpoint-intro");
     const cw = K.still(p.screen, "checkpoint-won");
     K.track([
       { at: t0, el: ci },
-      { at: t0 + 2.6, el: cw, trans: "push" },
+      { at: t0 + 3.2, el: cw, trans: "push" },
     ]);
-    Z.sfx("chime", t0 + 2.8);
+    beat(L, p, C.trickster, t0, { first: true, at: [260, 1.8] });
+    Z.sfx("chime", t0 + 3.4);
   }
 
   // 12. Payoff
@@ -572,6 +550,7 @@ __build((Z) => {
     Z.reveal(one, t0 + 2.6, { stagger: 0.05, dur: 0.6 });
 
     [t0, t1] = seg(1.5);
+    t0 += 0.3;
     L = K.scene(t0, t1, { fadeIn: 0.3 });
     const big = div("abs hero", L);
     big.style.cssText += ";left:0;right:0;top:400px;font-size:100px";
