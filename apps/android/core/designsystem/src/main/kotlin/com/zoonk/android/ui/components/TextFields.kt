@@ -25,6 +25,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.layout.Layout
@@ -128,7 +129,10 @@ fun OutlinedTextField(
     }
 }
 
-/** A field over a [TextFieldState], such as a composer that limits its length; Material's label sits above it. */
+/**
+ * A field over a [TextFieldState], such as a composer that limits its length; Material's label sits
+ * above it. A composer passes main's composer panel [shape].
+ */
 @Composable
 fun OutlinedTextField(
     state: TextFieldState,
@@ -146,6 +150,7 @@ fun OutlinedTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onKeyboardAction: KeyboardActionHandler? = null,
     lineLimits: TextFieldLineLimits = TextFieldLineLimits.Default,
+    shape: Shape = FIELD_SHAPE,
     interactionSource: MutableInteractionSource? = null,
 ) = androidx.compose.material3.OutlinedTextField(
     state = state,
@@ -164,7 +169,7 @@ fun OutlinedTextField(
     keyboardOptions = keyboardOptions,
     onKeyboardAction = onKeyboardAction,
     lineLimits = lineLimits,
-    shape = FIELD_SHAPE,
+    shape = shape,
     colors = OutlinedTextFieldDefaults.colors(),
     contentPadding = FIELD_PADDING,
     interactionSource = interactionSource,

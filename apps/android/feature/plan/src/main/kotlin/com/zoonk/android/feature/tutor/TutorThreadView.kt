@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -68,6 +69,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.MarkdownText
 import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.StudyMission
 import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.launch
@@ -180,7 +182,7 @@ private fun Turns(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         firstDay?.let { day -> item(key = "first-day", contentType = "day") { DayLabel(day, today) } }
-        page?.let { item(key = "greeting", contentType = "greeting") { TutorGreeting(identity, it.greeting, it.greetingAction) } }
+        page?.let { item(key = "greeting", contentType = "greeting") { TutorGreeting(it.greeting, it.greetingAction) } }
         pending()
         if (thread.hasMore) {
             item(key = "earlier", contentType = "earlier") { EarlierQuestions(state, vm::loadEarlier) }
@@ -194,7 +196,7 @@ private fun Turns(
                 routes = routes,
                 others = thread.turns.count { it.isInProgress && it.id != turn.id },
                 day = newDay(days[index], days.getOrNull(index - 1))?.let { { DayLabel(it, today) } },
-                showsAbout = page == null,
+                inPanel = page == null,
             )
         }
         // The server's turn takes this one's place, laid out the same, so nothing moves when it arrives.
@@ -204,7 +206,7 @@ private fun Turns(
                 TurnLayout(
                     sending.question,
                     sending.about.takeIf { page == null },
-                    identity,
+                    identity.takeIf { page == null },
                     day?.let { { DayLabel(it, today) } },
                 ) { Thinking() }
             }
@@ -251,19 +253,15 @@ private fun DayLabel(
     )
 }
 
-/** The buddy's hello, which opens its conversations: as an answer would sit, beside its face. */
+/** The buddy's hello, which opens its page: its words across the page, as its answers there. */
 @Composable
 fun TutorGreeting(
-    identity: TutorIdentity,
     text: String,
     action: (@Composable () -> Unit)? = null,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
-        Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(text, style = MaterialTheme.typography.bodyLarge)
-            action?.invoke()
-        }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(text, style = MaterialTheme.typography.bodyLarge)
+        action?.invoke()
     }
 }
 
@@ -300,9 +298,9 @@ private fun TurnView(
     routes: TutorRoutes,
     others: Int,
     day: (@Composable () -> Unit)? = null,
-    showsAbout: Boolean = true,
+    inPanel: Boolean = true,
 ) {
-    TurnLayout(turn.question, turn.about.takeIf { showsAbout }, identity, day) {
+    TurnLayout(turn.question, turn.about.takeIf { inPanel }, identity.takeIf { inPanel }, day) {
         // A finished or failed answer is read out once; while it streams nothing is, word by word.
         val finished = turn.status == TutorTurn.Status.Completed || turn.status == TutorTurn.Status.Failed
         Column(
@@ -333,12 +331,12 @@ private fun TurnView(
     }
 }
 
-/** The learner's question, then the buddy's [answer] beside its face. */
+/** The learner's question, then the buddy's [answer]: beside its face in a panel, across the page on the buddy's page. */
 @Composable
 private fun TurnLayout(
     question: String,
     about: TutorTurn.About?,
-    identity: TutorIdentity,
+    identity: TutorIdentity?,
     day: (@Composable () -> Unit)?,
     answer: @Composable ColumnScope.() -> Unit,
 ) {
@@ -358,16 +356,20 @@ private fun TurnLayout(
             }
             Surface(
                 modifier = Modifier.widthIn(max = BUBBLE_MAX_WIDTH),
-                shape = MaterialTheme.shapes.large,
+                shape = BUBBLE_SHAPE,
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
-                Text(question, Modifier.padding(horizontal = 14.dp, vertical = 10.dp), style = MaterialTheme.typography.bodyLarge)
+                Text(question, Modifier.padding(horizontal = 12.dp, vertical = 8.dp), style = MaterialTheme.typography.bodyLarge)
             }
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
-            Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp), content = answer)
+        if (identity == null) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp), content = answer)
+        } else {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
+                Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp), content = answer)
+            }
         }
     }
 }
@@ -625,6 +627,10 @@ private fun ConversationLoading(modifier: Modifier = Modifier) {
 
 private const val SENDING = "sending"
 private val AVATAR_SIZE = 32.dp
+
+/** Main's `LearnerBubble`: its corner nearest the learner's side tucked in. */
+private val BUBBLE_SHAPE =
+    RoundedCornerShape(topStart = ZoonkRadius.option, topEnd = ZoonkRadius.option, bottomEnd = 4.dp, bottomStart = ZoonkRadius.option)
 private val EMPTY_AVATAR_SIZE = 48.dp
 private val BUBBLE_MAX_WIDTH = 480.dp
 private val LOADING_HEIGHT = 96.dp
