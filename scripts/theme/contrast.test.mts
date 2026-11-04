@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type Rgba } from "./color.mts";
+import { type Rgba, over } from "./color.mts";
 import { type Mode, modePalette, resolveColor } from "./palette.mts";
 import { readPalette } from "./read-palette.mts";
 import { subjectPalette } from "./subject-palette.mts";
@@ -121,26 +121,106 @@ describe("colored text accessibility", () => {
   });
 });
 
-/** Words on a solid fill of a color, as every platform draws them. */
-const FILLED_WORDS = [
-  { fill: "brain-text", text: "background", where: "the earned missions reward" },
+/**
+ * The heaviest tint words sit on is a fifth of a color (a destructive button's hover, a SQL result's
+ * row, a failing sample). A tint takes one of these colors, never a `-text` role, so a meaning's
+ * words stay AA on any of them over any surface, in every mode: across hues and on `muted` too. A
+ * subject's name sits only on its own tint, checked above.
+ */
+const WORD_TINT_SHARE = 0.2;
+
+const TINT_COLORS = [
+  "success",
+  "destructive",
+  "warning",
+  "brain",
+  "energy",
+  "viz-accent",
+  "viz-secondary",
+  "viz-highlight",
+  "kind-review",
+  "kind-mock",
+  "kind-conversation",
+  "kind-mind-map",
+];
+
+const tintedPairs = modes.flatMap((mode) => {
+  const colors = modeColors(mode);
+
+  return [...colors.keys()]
+    .filter((name) => name.endsWith("-text") && !name.startsWith("subject-"))
+    .flatMap((text) =>
+      surfaces.flatMap((surface) =>
+        TINT_COLORS.map((tint) => ({
+          mode,
+          ratio: contrastRatio({
+            background: over(
+              { ...pick(colors, tint), alpha: WORD_TINT_SHARE },
+              pick(colors, surface),
+            ),
+            foreground: pick(colors, text),
+          }),
+          surface,
+          text,
+          tint,
+        })),
+      ),
+    );
+});
+
+describe("colored text on any tint", () => {
+  it.each(tintedPairs)(
+    "$mode: $text on a fifth of $tint over $surface meets WCAG AA",
+    ({ ratio }) => {
+      expect(ratio).toBeGreaterThanOrEqual(MINIMUM_TEXT_CONTRAST);
+    },
+  );
+});
+
+/** Fills past that rule, and neutral words on a tint, each as a screen draws it. */
+const FILLS: { fill: string; modes?: Mode[]; share: number; text: string; where: string }[] = [
+  { fill: "brain-text", share: 1, text: "background", where: "the earned missions reward" },
+  {
+    fill: "destructive",
+    modes: ["dark", "darkMoreContrast"],
+    share: 0.3,
+    text: "destructive-text",
+    where: "a destructive button's hover in dark",
+  },
+  {
+    fill: "success",
+    share: 0.1,
+    text: "muted-foreground",
+    where: "NULL in a SQL result's missing row",
+  },
+  {
+    fill: "destructive",
+    share: 0.1,
+    text: "muted-foreground",
+    where: "NULL in a SQL result's extra row",
+  },
 ];
 
 const filledPairs = modes.flatMap((mode) => {
   const colors = modeColors(mode);
 
-  return FILLED_WORDS.map(({ fill, text, where }) => ({
-    fill,
-    minimum: coloredMinimum(mode),
-    mode,
-    ratio: contrastRatio({ background: pick(colors, fill), foreground: pick(colors, text) }),
-    text,
-    where,
-  }));
+  return FILLS.filter((entry) => !entry.modes || entry.modes.includes(mode)).flatMap(
+    ({ fill, share, text, where }) =>
+      ["background", "card"].map((surface) => ({
+        minimum: coloredMinimum(mode),
+        mode,
+        ratio: contrastRatio({
+          background: over({ ...pick(colors, fill), alpha: share }, pick(colors, surface)),
+          foreground: pick(colors, text),
+        }),
+        surface,
+        where,
+      })),
+  );
 });
 
-describe("words on a colored fill", () => {
-  it.each(filledPairs)("$mode: $where's $text on $fill meets $minimum:1", ({ minimum, ratio }) => {
+describe("words on a fill", () => {
+  it.each(filledPairs)("$mode: $where over $surface meets $minimum:1", ({ minimum, ratio }) => {
     expect(ratio).toBeGreaterThanOrEqual(minimum);
   });
 });
