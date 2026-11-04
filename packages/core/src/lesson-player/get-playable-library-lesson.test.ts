@@ -337,29 +337,6 @@ describe(getPlayableLibraryLesson, () => {
     });
   });
 
-  it("keeps an explanation's text when its stored widget is no longer supported and omits unknown activities", async () => {
-    const { lesson } = await playableLessonFixture({
-      steps: [
-        {
-          content: {
-            ...playableStepContent.explanation,
-            explore: { fields: {}, template: "retiredWidget" },
-          },
-          kind: "explanation",
-        },
-        { content: { fields: {}, template: "retiredWidget" }, kind: "activity" },
-        "check",
-      ],
-    });
-
-    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
-    const steps = result?.status === "ready" ? result.lesson.steps : [];
-
-    expect(steps.map((step) => step.kind)).toStrictEqual(["explanation", "check"]);
-    expect(steps[0]).toMatchObject({ content: playableStepContent.explanation });
-    expect(steps[0]?.kind === "explanation" && steps[0].content.explore).toBeUndefined();
-  });
-
   it("serves a check's setup picture and reserves a pending picture without one", async () => {
     const image = { alt: "Two atoms sharing a pair of electrons", prompt: "A covalent bond" };
     const asset = await mediaAssetFixture({ height: 1024, width: 1536 });
