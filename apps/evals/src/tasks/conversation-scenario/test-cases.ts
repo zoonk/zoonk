@@ -55,6 +55,18 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
+    expectations: `US English speaker practicing US English at A2, at a restaurant. A face-to-face order or a call to a restaurant, with a US name and dollars. Opening line and hints short and simple (A2). Every field is in US English: title, situation, role, objective labels and descriptions, opening line and hints. The title is a 3 to 6 word goal starting with a verb ("Order dinner at a diner").`,
+    id: "en-en-a2-restaurant",
+    userInput: {
+      canDo: ["Ask for a table", "Order food and drinks", "Ask for the bill"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "en",
+      unitDescription: "Ask for a table, order and pay at a restaurant",
+      unitTitle: "At a restaurant",
+    },
+  },
+  {
     expectations: `Brazilian learner of US English at B1, at the doctor. A call to a clinic receptionist to book an appointment and explain symptoms and since when, with a small twist (the first time is taken). Opening line and hints at B1 (up to about 15 words, connectors). Title, situation and descriptions in Brazilian Portuguese.`,
     id: "pt-en-b1-doctor",
     userInput: {

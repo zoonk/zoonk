@@ -1,5 +1,6 @@
 import "server-only";
 import { type CefrLevel } from "@zoonk/utils/cefr";
+import { isSameLanguage } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { type z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
@@ -7,6 +8,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { fillPromptLanguages } from "../_utils/prompt-language";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import { scenarioSchema } from "./_utils/scenario-schema";
 import promptTemplate from "./conversation-scenario.prompt.md";
 
@@ -29,6 +31,15 @@ export type GenerateConversationScenarioParams = {
   analytics?: AiGenerationContext;
 };
 
+function buildSystemPrompt(params: GenerateConversationScenarioParams): string {
+  const template = selectPromptVariants({
+    template: promptTemplate,
+    variants: { bilingual: !isSameLanguage(params) },
+  });
+
+  return fillPromptLanguages({ ...params, template });
+}
+
 function buildUserPrompt(params: GenerateConversationScenarioParams): string {
   return `
     LEVEL: ${params.level}
@@ -43,7 +54,7 @@ ${formatLocalContext(params.targetLanguage, { register: false })}
 
 export async function generateConversationScenario(params: GenerateConversationScenarioParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
-  const systemPrompt = fillPromptLanguages({ ...params, template: promptTemplate });
+  const systemPrompt = buildSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

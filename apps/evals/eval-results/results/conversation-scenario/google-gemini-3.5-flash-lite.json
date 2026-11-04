@@ -636,6 +636,80 @@
           "unitTitle": "Joining a gym"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The table request, food order, and check request directly match the unit. Liam is a plausible service worker, the diner name is short, and the dollar prices are realistic. However, the on-site situation and instruction to end a call leave the interaction mode slightly unclear.",
+          "score": 8,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets the learner, names the diner, and invites a response without completing an objective. It addresses no one by name. All three hints are short, complete, natural sentences suitable for A2 and directly cover the objectives.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives follow a natural restaurant sequence and are achievable in a short role-play. Each is checkable from speech, and every label starts with a verb and contains two to five words. The descriptions clearly specify what the learner should say.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, A2 speaking guidance, table availability, menu prices, and closing instructions without doing the learner's tasks. However, it contains no small twist and does not explicitly guide Liam's response to the final check request. The facts needed for the stated objectives are otherwise present, so the missing-facts cap does not apply.",
+          "score": 8,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "Every field is natural US English, including the use of 'check' and dollar prices. The title is a six-word goal beginning with a verb. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2480,
+          "outputTokens": 742,
+          "reasoningTokens": 186
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The character brief omits the required small, A2-friendly twist. The interaction mode is also slightly inconsistent: the situation places the learner inside the diner, while the brief says to wrap up a call.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Give Liam an explicit response when the learner requests the check, including a concrete bill amount, and connect the closing to that final objective.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker practicing US English at A2, at a restaurant. A face-to-face order or a call to a restaurant, with a US name and dollars. Opening line and hints short and simple (A2). Every field is in US English: title, situation, role, objective labels and descriptions, opening line and hints. The title is a 3 to 6 word goal starting with a verb (\"Order dinner at a diner\").",
+        "id": "en-en-a2-restaurant-1",
+        "userInput": {
+          "canDo": ["Ask for a table", "Order food and drinks", "Ask for the bill"],
+          "learnerLanguage": "en",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "Ask for a table, order and pay at a restaurant",
+          "unitTitle": "At a restaurant"
+        }
+      }
     }
   ],
   "taskId": "conversation-scenario"
