@@ -144,7 +144,10 @@ struct ChallengeStepView: View {
     let moved = ChallengeWalk.meters(content, decisions: decisions).filter { $0.change != 0 }.map {
       "\(named($0.meter.label)) \($0.change.formatted(.number.sign(strategy: .always())))"
     }
-    let jump = latest.choice.timeJump.map { [named($0.label)] } ?? []
+    let jump =
+      latest.choice.timeJump.map {
+        [([named($0.label)] + ($0.panel.map(panelLines) ?? [])).joined(separator: "\n")]
+      } ?? []
     let lines = latest.choice.replies.map(said) + jump + (upcoming?.messages ?? []).map(said)
 
     let parts = [
@@ -153,6 +156,16 @@ struct ChallengeStepView: View {
     ].compactMap(\.self)
 
     return parts.isEmpty ? nil : parts.joined(separator: "\n")
+  }
+
+  /// In the order main and Android read a panel, with the team's names filled in everywhere but a
+  /// metric's value, as they do.
+  private func panelLines(_ panel: ChallengeContent.Panel) -> [String] {
+    [panel.title.map(named)].compactMap(\.self)
+      + panel.metrics.flatMap {
+        [named($0.label), $0.value] + [$0.note.map(named)].compactMap(\.self)
+      }
+      + [panel.note.map(named)].compactMap(\.self)
   }
 
   private func said(_ message: ChallengeContent.Message) -> String {
