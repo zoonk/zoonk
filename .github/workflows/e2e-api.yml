@@ -10,7 +10,7 @@ on:
         required: false
         default: ""
   pull_request:
-    branches: [main]
+    branches: [main, ci/actions-cache-lab]
     types: [opened, synchronize, reopened]
 
 permissions:

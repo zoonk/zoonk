@@ -9,8 +9,10 @@ on:
         type: string
         required: false
         default: ""
+  push:
+    branches: [ci/actions-cache-lab]
   pull_request:
-    branches: [main]
+    branches: [main, ci/actions-cache-lab]
     types: [opened, synchronize, reopened]
 
 permissions:
@@ -124,14 +126,14 @@ jobs:
       # then passed. A pull request's own entries serve only its later runs, and in the repository's
       # shared cache storage they evict main's, which every pull request restores.
       - name: Save Main's build cache
-        if: always() && matrix.gates && github.ref == 'refs/heads/main' && hashFiles('apps/main/.next-e2e/e2e-build-complete') != ''
+        if: always() && matrix.gates && github.ref == 'refs/heads/ci/actions-cache-lab' && hashFiles('apps/main/.next-e2e/e2e-build-complete') != ''
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/main/.next-e2e/cache
           key: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
 
       - name: Save the API's build cache
-        if: always() && matrix.gates && github.ref == 'refs/heads/main' && hashFiles('apps/api/.next-e2e/e2e-build-complete') != ''
+        if: always() && matrix.gates && github.ref == 'refs/heads/ci/actions-cache-lab' && hashFiles('apps/api/.next-e2e/e2e-build-complete') != ''
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/api/.next-e2e/cache
