@@ -1,4 +1,5 @@
 import "server-only";
+import { type PracticeMistake } from "../../mistakes/mistake-practice-eligibility";
 import { type loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { type MissionDocument } from "../missions/catalog";
 import { loadDayMissionFacts } from "../missions/day-facts";
@@ -20,6 +21,7 @@ export type PlannedStudyDay = {
 /** Uses the supplied selected plan; preview and persistence must never re-plan independently. */
 export async function planStudyDay(
   context: SessionDayContext & {
+    readMistakes?: () => Promise<PracticeMistake[]>;
     readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
     selection: SelectedDayPlan;
   },

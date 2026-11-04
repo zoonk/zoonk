@@ -2,6 +2,7 @@ import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readPracticeMistakes } from "../../learner/facts/practice-mistakes";
 import { readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { type DayView } from "../day-view";
@@ -64,6 +65,7 @@ export async function readStudyDay({
 
   const day = await planStudyDay({
     ...context,
+    readMistakes: () => readPracticeMistakes(userId, goal.id),
     readPreparation: () => readPreparationInputs(userId, goal.id),
     selection,
   });

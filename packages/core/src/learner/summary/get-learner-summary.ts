@@ -229,13 +229,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
       timeZone,
     }),
     activeGoal
-      ? countReadyMistakes({
-          goal: activeGoal,
-          goalId: activeGoal.id,
-          timeZone,
-          today: localDate,
-          userId,
-        })
+      ? countReadyMistakes({ goalId: activeGoal.id, timeZone, today: localDate, userId })
       : 0,
     findWaitingGoals({ goals, tier, today: toIsoDate(localDate), userId }),
   ]);
