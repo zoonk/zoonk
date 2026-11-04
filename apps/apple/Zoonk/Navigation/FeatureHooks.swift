@@ -73,7 +73,7 @@ extension TutorPlaces {
       case .mission(let opens):
         switch opens {
         case .case1(let block):
-          router.open(blockID: block.blockId)
+          Task { await router.open(blockID: block.blockId) }
         case .case7(let area):
           router.open(.chapter(chapterId: area.areaId))
         case .case2:

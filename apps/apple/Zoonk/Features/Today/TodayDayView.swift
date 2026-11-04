@@ -364,29 +364,28 @@ struct TodayDayView: View {
 
 extension AppRouter {
   /// A mission's block no longer free to start shows Today as it stands. Nothing opens when it
-  /// couldn't, or once the learner moved on.
+  /// couldn't, or once the learner moved on, which comes back `obsolete` so nothing says it failed.
   static func openingTodayBlocks(today: TodayStore) -> BlockOpener {
     { blockID, router in
       let tab = router.selectedTab
       let shown = (router.tasks, router.path(for: tab).wrappedValue)
+      let result = await today.open(blockID: blockID)
 
-      Task {
-        let result = await today.open(blockID: blockID)
-
-        guard router.selectedTab == tab, shown == (router.tasks, router.path(for: tab).wrappedValue)
-        else {
-          return
-        }
-
-        switch result {
-        case .done(.changed):
-          router.showRoot(of: .today)
-        case .done(let destination):
-          router.openStudy(destination)
-        case .failed, .obsolete:
-          break
-        }
+      guard router.selectedTab == tab, shown == (router.tasks, router.path(for: tab).wrappedValue)
+      else {
+        return .obsolete
       }
+
+      switch result {
+      case .done(.changed):
+        router.showRoot(of: .today)
+      case .done(let destination):
+        router.openStudy(destination)
+      case .failed, .obsolete:
+        break
+      }
+
+      return result
     }
   }
 
