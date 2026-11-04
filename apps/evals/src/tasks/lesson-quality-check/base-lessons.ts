@@ -410,6 +410,7 @@ const RECORDED = {
             "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo.",
           correctReason:
             "Com {impressoras} impressoras fixas, o tempo cresce na mesma razão que a produção: de {etiquetas} para {meta} etiquetas. O prazo total é {result} horas.",
+          image: null,
           kind: "mathCheck",
           math: {
             answer: 5,
@@ -491,6 +492,7 @@ const RECORDED = {
             "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",
           correctReason:
             "Você multiplica o tempo pela razão entre {pecasNovas} e {pecasAntigas} peças e pela razão inversa entre {maquinasNovas} e {maquinasAntigas} máquinas. O resultado é {result} horas.",
+          image: null,
           kind: "mathCheck",
           math: {
             answer: 4,
@@ -542,6 +544,7 @@ const RECORDED = {
             "Na padaria do bairro, {fornosAntigos} fornos iguais assam {paesAntigos} pães em {horas} horas, no mesmo ritmo.",
           correctReason:
             "Na padaria, mais pães aumentam o tempo na mesma razão, enquanto mais fornos o reduzem na razão inversa. O novo prazo é {result} horas.",
+          image: null,
           kind: "mathCheck",
           math: {
             answer: 5,
@@ -655,6 +658,7 @@ const RECORDED = {
           basis: null,
           context: null,
           correctReason: "You start at {start} °C and move {rise} degrees up.",
+          image: null,
           kind: "mathCheck",
           math: {
             answer: 3,

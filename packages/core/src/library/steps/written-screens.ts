@@ -239,7 +239,11 @@ export function toStepContent(screen: WrittenScreen, options: ConvertOptions): C
     const converted = toMathCheckContent({ input: screen, language: options.language });
 
     return converted.ok
-      ? toValidatedStep({ content: converted.content, kind: "check", mathItem: converted.item })
+      ? toValidatedStep({
+          content: { ...converted.content, ...imageField(screen, options.allowImage) },
+          kind: "check",
+          mathItem: converted.item,
+        })
       : converted;
   }
 

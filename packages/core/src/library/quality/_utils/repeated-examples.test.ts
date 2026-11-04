@@ -52,6 +52,7 @@ function mathCheck(values: Record<string, number>): WrittenScreen {
     basis: null,
     context: "Uma ação custa {buy} para comprar e {sell} para vender.",
     correctReason: "Você paga {buy} e recebe {sell}.",
+    image: null,
     kind: "mathCheck",
     math: {
       answer: 0,

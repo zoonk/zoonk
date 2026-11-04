@@ -92,6 +92,7 @@ const mathCheckScreen = z.object({
   math: GENERATED_ITEM_SCHEMAS.numeric.shape.math,
   /** Why the right answer is right, with `{name}` placeholders instead of computed numbers. */
   correctReason: z.string(),
+  image: imageRequestSchema,
 });
 
 const typedAnswerScreen = z.object({

@@ -176,6 +176,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
         basis: { quote: "A rise always moves **up** the thermometer.", screen: 2 },
         context: null,
         correctReason: "You start at {start} °C and move {rise} degrees up.",
+        image: null,
         kind: "mathCheck",
         math: {
           answer: 3,

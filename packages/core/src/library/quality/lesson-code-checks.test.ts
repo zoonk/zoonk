@@ -202,6 +202,36 @@ describe(checkWrittenLesson, () => {
     ]);
   });
 
+  it("keeps the picture the plan gives a question that calculates, and flags one that shows none", () => {
+    const question = writtenTemperatureLesson().screens[3];
+
+    if (question?.kind !== "mathCheck") {
+      throw new Error("Screen 4 is a math check.");
+    }
+
+    const spec = temperatureSpec();
+
+    const planned = {
+      ...spec,
+      screens: spec.screens.map((screen, index) =>
+        index === 3
+          ? { ...screen, visual: "A thermometer and its scale.", visualKind: "picture" as const }
+          : screen,
+      ),
+    };
+
+    const image = { alt: "A thermometer with a scale.", prompt: "A thermometer with a scale." };
+    const pictured = check(withScreen(3, { ...question, image }), { spec: planned });
+
+    expect(pictured.problems).toStrictEqual([]);
+    expect(pictured.screens[3]?.ok && pictured.screens[3].content).toMatchObject({ image });
+
+    expect(codesOf(writtenTemperatureLesson(), { spec: planned })).toContainEqual([
+      3,
+      "plannedVisual",
+    ]);
+  });
+
   it("keeps the numbered picture a question asks about, even where the plan drew none", () => {
     const application = writtenTemperatureLesson().screens[7];
 

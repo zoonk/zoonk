@@ -6,7 +6,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { checkWrittenExplore } from "../../steps/written-screens";
 import { getScreenTexts } from "./screen-texts";
 
-const DRAWN_ON_THEIR_OWN = new Set<WrittenScreen["kind"]>(["activity", "mathCheck", "typedAnswer"]);
+const DRAWN_ON_THEIR_OWN = new Set<WrittenScreen["kind"]>(["activity", "typedAnswer"]);
 
 const TEACHING_KINDS = new Set<WrittenScreen["kind"]>(["explanation", "workedExample"]);
 
