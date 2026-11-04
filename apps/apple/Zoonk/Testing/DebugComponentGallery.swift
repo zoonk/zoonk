@@ -48,6 +48,7 @@
           GallerySection(id: "meters", title: "Meters") { Meters() }
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
+          GallerySection(id: "fields", title: "Fields") { Fields() }
         }
         .navigationTitle(Text(verbatim: "Design system"))
         .barTitleAfterHero("Design system")
@@ -162,6 +163,39 @@
           .tint(.success)
       }
       .padding(.vertical, 8)
+    }
+  }
+
+  private struct Fields: View {
+    @State private var name = "Ana Souza"
+    @State private var email = "ana@"
+    @State private var message = ""
+
+    var body: some View {
+      FormField(title: Text(verbatim: "Name")) {
+        TextField(String("Name"), text: $name)
+      } hint: {
+        Text(verbatim: "How Zoonk and your buddy call you")
+      }
+
+      FormField(title: Text(verbatim: "Email"), isInvalid: true) {
+        TextField(String("Email"), text: $email)
+      } hint: {
+        Text(verbatim: "Enter a valid email address")
+          .foregroundStyle(.destructiveText)
+      }
+
+      FormField(title: Text(verbatim: "Focused"), isFocused: true) {
+        TextField(String("Focused"), text: $name)
+      }
+
+      FormField(title: Text(verbatim: "Message")) {
+        MultilineTextField(
+          text: $message, prompt: Text(verbatim: "What happened?"),
+          label: Text(verbatim: "Message")
+        )
+        .lineLimit(3...5)
+      }
     }
   }
 
