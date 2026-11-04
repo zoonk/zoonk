@@ -467,9 +467,12 @@ struct MistakeAnswerRow: View {
   let text: String
   let isRight: Bool
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     AccessibilityStack(alignment: .firstTextBaseline, spacing: 12) {
-      Text(ItemTextBlock.inline(text)).frame(maxWidth: .infinity, alignment: .leading)
+      Text(ItemTextBlock.inline(text), legibility: legibilityWeight).frame(
+        maxWidth: .infinity, alignment: .leading)
       Text(
         isRight
           ? LocalizedStringResource(

@@ -23,14 +23,14 @@ struct RichInline {
 
   /// For quoting it inside another `Text`, which drops a quoted Text's own label: draw it, then
   /// give the whole line a label that quotes it spoken.
-  func quoted(spoken: Bool) -> Text {
-    spoken ? Text(verbatim: said) : Text(text)
+  func quoted(spoken: Bool, legibility: LegibilityWeight?) -> Text {
+    spoken ? Text(verbatim: said) : Text(text, legibility: legibility)
   }
 }
 
 extension Text {
-  init(_ inline: RichInline) {
-    let text = Text(inline.text)
+  init(_ inline: RichInline, legibility: LegibilityWeight?) {
+    let text = Text(inline.text, legibility: legibility)
     self = inline.spoken.map { text.accessibilityLabel($0) } ?? text
   }
 }
@@ -42,6 +42,8 @@ struct RichTextBlocks: View {
   /// A quote of the text, in its markup, to highlight where it first shows.
   let mark: String?
   let inline: (String) -> RichInline
+
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   init(
     _ text: String, mark: String? = nil, inline: @escaping (String) -> RichInline
@@ -63,8 +65,10 @@ struct RichTextBlocks: View {
 
         switch block {
         case .paragraph(let lines):
-          Text(highlighting(inline(lines.joined(separator: "\n")), mark))
-            .fixedSize(horizontal: false, vertical: true)
+          Text(
+            highlighting(inline(lines.joined(separator: "\n")), mark), legibility: legibilityWeight
+          )
+          .fixedSize(horizontal: false, vertical: true)
         case .list(let items, let ordered):
           list(items, ordered: ordered, mark: mark)
         case .table(let header, let rows):
@@ -84,8 +88,11 @@ struct RichTextBlocks: View {
             .foregroundStyle(.secondary)
             .accessibilityHidden(true)
 
-          Text(highlighting(inline(item), mark?.item == index ? mark : nil))
-            .fixedSize(horizontal: false, vertical: true)
+          Text(
+            highlighting(inline(item), mark?.item == index ? mark : nil),
+            legibility: legibilityWeight
+          )
+          .fixedSize(horizontal: false, vertical: true)
         }
       }
     }
@@ -106,7 +113,7 @@ struct RichTextBlocks: View {
       Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 8) {
         GridRow {
           ForEach(Array(header.enumerated()), id: \.offset) { _, cell in
-            Text(inline(cell)).typeStyle(.body.weight(.semibold))
+            Text(inline(cell), legibility: legibilityWeight).typeStyle(.body.weight(.semibold))
           }
         }
 
@@ -115,7 +122,7 @@ struct RichTextBlocks: View {
         ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
           GridRow {
             ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
-              Text(inline(cell)).typeStyle(.body)
+              Text(inline(cell), legibility: legibilityWeight).typeStyle(.body)
             }
           }
         }

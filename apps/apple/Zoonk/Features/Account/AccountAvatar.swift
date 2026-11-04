@@ -54,7 +54,7 @@ struct AccountAvatar: View {
   private var fallback: some View {
     if let user {
       Text(getInitial(user: user))
-        .typeStyle(TypeStyle(size: size * 0.42, relativeTo: .body, weight: 600))
+        .typeStyle(TypeStyle(size: size * 0.42, relativeTo: .body, weight: .semibold))
         // The circle already grows with Dynamic Type, so its letter only follows the circle.
         .dynamicTypeSize(.large)
         .foregroundStyle(.mutedForeground)

@@ -486,7 +486,8 @@ private struct SamplingSimulationView: View {
         HStack {
           Text(verbatim: sizeLabel).typeStyle(.body)
           Spacer()
-          Text(verbatim: ActivityNumberFormat.format(Double(size))).typeStyle(.body.weight(.medium).monospaced())
+          Text(verbatim: ActivityNumberFormat.format(Double(size))).typeStyle(
+            .body.weight(.medium).monospaced())
         }
         .accessibilityHidden(true)
 

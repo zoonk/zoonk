@@ -74,6 +74,8 @@ struct ChoiceItemView: View {
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     let correct = result?.correctAnswer?.picks ?? []
     let shownPicks = result?.answer.picks ?? picks
@@ -92,7 +94,7 @@ struct ChoiceItemView: View {
             result: optionResult(index, correct: correct, picked: shownPicks),
             isLocked: isLocked,
             action: { pick(index) },
-            label: { Text(ItemTextBlock.inline(option)) })
+            label: { Text(ItemTextBlock.inline(option), legibility: legibilityWeight) })
         }
       }
     }
@@ -281,6 +283,8 @@ struct MatchPairsItemView: View {
   @Binding var draft: PracticeAnswer?
   @State private var selected: Int?
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     let current = matches
 
@@ -292,7 +296,7 @@ struct MatchPairsItemView: View {
             isLocked: isLocked,
             tag: current[index] == nil ? nil : AnyView(PairBadge(number: index + 1)),
             action: { pickLeft(index, current: current) },
-            label: { Text(ItemTextBlock.inline(entry)) })
+            label: { Text(ItemTextBlock.inline(entry), legibility: legibilityWeight) })
         }
       }
       .accessibilityElement(children: .contain)
@@ -307,7 +311,7 @@ struct MatchPairsItemView: View {
             isLocked: isLocked || (selected == nil && owner == nil),
             tag: owner.map { AnyView(PairBadge(number: $0 + 1)) },
             action: { pickRight(index, current: current) },
-            label: { Text(ItemTextBlock.inline(entry)) }
+            label: { Text(ItemTextBlock.inline(entry), legibility: legibilityWeight) }
           )
           .accessibilityValue(matchedValue(owner))
         }
@@ -390,6 +394,8 @@ struct OrderItemView: View {
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     let placed: [Int] = if case .order(let given) = result?.answer { given } else { order }
 
@@ -411,7 +417,7 @@ struct OrderItemView: View {
           isLocked: isLocked,
           tag: place.map { AnyView(PairBadge(number: $0 + 1)) },
           action: { tap(index) },
-          label: { Text(ItemTextBlock.inline(step)) }
+          label: { Text(ItemTextBlock.inline(step), legibility: legibilityWeight) }
         )
         .accessibilityValue(placeValue(place))
       }

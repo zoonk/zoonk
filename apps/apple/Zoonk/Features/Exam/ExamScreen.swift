@@ -1101,7 +1101,8 @@ private struct ExamScoringSection: View {
         if let passMarks = exam.passMarks {
           Label {
             VStack(alignment: .leading, spacing: 4) {
-              Text("To pass", tableName: "Exam", comment: "What it takes to pass").typeStyle(.body.weight(.semibold))
+              Text("To pass", tableName: "Exam", comment: "What it takes to pass").typeStyle(
+                .body.weight(.semibold))
               ForEach(passMarks.texts, id: \.self) { text in
                 Text(text).foregroundStyle(.mutedForeground)
               }

@@ -22,6 +22,8 @@ private struct CategorizeCanvas: View {
   let context: ActivityCanvasContext
   private let items: [CategorizeFields.Item]
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   @ActivityState private var sorting: CategorizeSorting
   @FocusState private var focus: Focus?
   @AccessibilityFocusState private var voiceOverFocus: Focus?
@@ -298,7 +300,7 @@ private struct CategorizeCanvas: View {
           Button {
             move(item, to: other)
           } label: {
-            Text(LessonRichText.typeset(other.label))
+            Text(LessonRichText.typeset(other.label), legibility: legibilityWeight)
           }
         }
       } header: {
