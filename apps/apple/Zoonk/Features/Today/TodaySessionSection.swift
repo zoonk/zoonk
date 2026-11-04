@@ -638,11 +638,18 @@ private struct FoldRow: View {
 }
 
 private struct TodayDayStatus: View {
+  private enum Link {
+    case changeLimit
+    case summary
+  }
+
+  @Environment(AppRouter.self) private var router
+
   let view: TodayView
   private let sentence: String
   private let clause: String?
   private let systemImage: String
-  private var changesLimit = false
+  private var link: Link?
 
   init?(view: TodayView, writingStalled: Bool) {
     self.view = view
@@ -662,7 +669,7 @@ private struct TodayDayStatus: View {
     if let limit = session.limitStatus {
       let time = studyDuration(minutes: session.dailyLimit?.limitMinutes ?? 0)
       systemImage = "hourglass"
-      changesLimit = true
+      link = .changeLimit
 
       switch limit {
       case .reached:
@@ -697,6 +704,7 @@ private struct TodayDayStatus: View {
         : String(
           localized: "Today's session is complete.", table: "Today", comment: "Day done")
       clause = Self.seeYou(session.week)
+      link = keepLearning ? .summary : nil
     case .waiting where writingStalled:
       systemImage = "clock"
       sentence = String(
@@ -769,8 +777,20 @@ private struct TodayDayStatus: View {
             .foregroundStyle(.secondary)
         }
 
-        if changesLimit {
+        switch link {
+        case .changeLimit:
           ChangeLimitButton()
+        case .summary:
+          Button {
+            router.open(.session)
+          } label: {
+            Text("See today's summary", tableName: "Today", comment: "Opens today's summary")
+              .fontWeight(.semibold)
+              .multilineTextAlignment(.leading)
+          }
+          .buttonStyle(.borderless)
+        case nil:
+          EmptyView()
         }
       }
     } icon: {
