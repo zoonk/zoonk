@@ -64,11 +64,11 @@ export async function loadCompletionSteps({
   }
 
   return {
+    hasLanguagePlan: skippedActivities !== null,
     optionalStepIds: new Set([
       ...getLatePictureStepIds({ rows: lesson.steps, runStartedAt }),
       ...skippedWritingStepIds,
     ]),
-    hasLanguagePlan: skippedActivities !== null,
     steps,
   };
 }
