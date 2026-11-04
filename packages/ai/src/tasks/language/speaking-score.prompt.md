@@ -57,4 +57,4 @@ The exam rates pronunciation by how easily a listener understands the candidate.
 
 One entry per criterion in `CRITERIA`, under its key and in that order, each with `evidence`, `bandLow`, `bandHigh` and `tip`, then `focus`.
 
-Before you answer, check that every `evidence` and `tip` is written in `LEARNER_LANGUAGE`, with only the quotes and examples in `TARGET_LANGUAGE`.
+Before you answer, check that every quote you present as the candidate's words appears word for word in a `CANDIDATE` line, and that every `evidence` and `tip` is written in `LEARNER_LANGUAGE`, with only the quotes and examples in `TARGET_LANGUAGE`.
