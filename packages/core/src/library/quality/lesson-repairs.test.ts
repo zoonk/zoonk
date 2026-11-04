@@ -307,4 +307,35 @@ describe(pictureBareTeachingScreens, () => {
 
     expect(pictureBareTeachingScreens({ lesson: written, spec: planned })).toStrictEqual(written);
   });
+
+  it("pictures a screen whose table has no data rows, since it shows an empty comparison", () => {
+    const lesson = writtenTemperatureLesson();
+    const brief = "The mark climbs from −3 °C past zero to 2 °C.";
+
+    const planned = {
+      ...spec,
+      screens: spec.screens.map((screen, index) =>
+        index === 4 ? { ...screen, brief, visualKind: "table" as const } : screen,
+      ),
+    };
+
+    const bare = lesson.screens[4];
+
+    if (bare?.kind !== "explanation") {
+      throw new Error("Screen 5 is an explanation.");
+    }
+
+    const empty = "By noon the mark has climbed past zero.\n\n| Before | After |\n| ---: | ---: |";
+
+    const written = {
+      ...lesson,
+      screens: lesson.screens.map((screen, index) =>
+        index === 4 ? { ...bare, explore: null, image: null, text: empty, visual: null } : screen,
+      ),
+    };
+
+    const repaired = pictureBareTeachingScreens({ lesson: written, spec: planned });
+
+    expect(repaired.screens[4]).toMatchObject({ image: { alt: brief, prompt: brief } });
+  });
 });

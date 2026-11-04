@@ -10,8 +10,12 @@ const DRAWN_ON_THEIR_OWN = new Set<WrittenScreen["kind"]>(["activity", "mathChec
 
 const TEACHING_KINDS = new Set<WrittenScreen["kind"]>(["explanation", "workedExample"]);
 
-export function findScreenTables(screen: WrittenScreen): MarkdownTable[] {
+function findScreenTables(screen: WrittenScreen): MarkdownTable[] {
   return getScreenTexts(screen).flatMap((piece) => findMarkdownTables(piece.text));
+}
+
+export function showsTable(screen: WrittenScreen): boolean {
+  return findScreenTables(screen).some((table) => table.rows.length > 0);
 }
 
 function readTables(screen: WrittenScreen): string[] {
@@ -39,7 +43,7 @@ const SHOWS_PLANNED: Readonly<Record<LessonVisualKind, (input: VisualInput) => b
   chart: showsDrawing,
   none: () => true,
   picture: ({ screen }) => "image" in screen && screen.image !== null,
-  table: ({ screen }) => findScreenTables(screen).length > 0,
+  table: ({ screen }) => showsTable(screen),
   template: ({ explores, screen }) => screen.kind !== "explanation" || explores,
   timeline: showsDrawing,
 };

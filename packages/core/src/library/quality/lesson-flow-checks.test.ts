@@ -331,6 +331,18 @@ describe("checkWrittenLesson's flow checks", () => {
     expect(flowCodes(repeated)).toContainEqual([4, "repeatedVisual"]);
   });
 
+  it("asks for the planned table when the screen's table has no data rows", () => {
+    const empty = withScreens({
+      4: explanation(
+        "By noon the mark has climbed past zero.\n\n| Before | After |\n| ---: | ---: |",
+      ),
+    });
+
+    expect(flowCodes(empty, planned({ 4: { visualKind: "table" } }))).toStrictEqual([
+      [4, "plannedVisual"],
+    ]);
+  });
+
   it("takes a one-row table comparing before and after as the planned table", () => {
     const comparison = withScreens({
       4: explanation(
