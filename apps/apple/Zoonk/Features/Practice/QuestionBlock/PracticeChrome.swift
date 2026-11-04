@@ -395,6 +395,18 @@ enum PracticeLoad<Value> {
   case loading
 }
 
+/// Opens another place instead of a screen with nothing to show, as main redirects. Only while it's
+/// on screen, so a read that ends after the learner left never moves them.
+struct PracticeRedirect: View {
+  let open: () -> Void
+
+  var body: some View {
+    ProgressView()
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .onAppear(perform: open)
+  }
+}
+
 struct PracticeLoadFailureView: View {
   let error: APIError
   let retry: () -> Void
