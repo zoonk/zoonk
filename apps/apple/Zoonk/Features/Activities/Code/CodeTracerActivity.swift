@@ -215,7 +215,7 @@ private struct CodeTracerCanvas: View {
 
       VStack(alignment: .leading, spacing: 2) {
         Text(verbatim: name)
-          .font(.caption.monospaced())
+          .typeStyle(.data)
           .foregroundStyle(changed ? AnyShapeStyle(.vizHighlight) : AnyShapeStyle(.mutedForeground))
 
         HStack(alignment: .firstTextBaseline, spacing: 4) {
@@ -224,18 +224,18 @@ private struct CodeTracerCanvas: View {
               "\(previous) →", tableName: "ActivitiesCode",
               comment: "A variable's value before it changed"
             )
-            .font(.caption.monospaced())
+            .typeStyle(.data)
             .foregroundStyle(.vizHighlight)
           }
 
           if let value {
             Text(verbatim: value)
-              .font(.body.monospaced().weight(.semibold))
+              .typeStyle(.body.weight(.semibold).monospaced())
           } else {
             Text(
               "not set", tableName: "ActivitiesCode", comment: "A variable before a program sets it"
             )
-            .font(.body)
+            .typeStyle(.body)
             .foregroundStyle(.mutedForeground)
           }
         }
@@ -251,8 +251,7 @@ private struct CodeTracerCanvas: View {
   private var controls: some View {
     HStack {
       position
-        .font(.caption.weight(.medium))
-        .monospacedDigit()
+        .typeStyle(.meta.weight(.medium).monospaced())
         .foregroundStyle(.mutedForeground)
 
       Spacer()
@@ -311,7 +310,7 @@ private struct CodeTracerCanvas: View {
 
     return VStack(alignment: .leading, spacing: 8) {
       LessonRichText(pause.question)
-        .font(.body.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
       LazyVGrid(
         columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: columns), spacing: 8
@@ -326,7 +325,7 @@ private struct CodeTracerCanvas: View {
               pairs.allSatisfy { predictions[$0] != nil } ? .assignment(predictions) : nil)
           } label: {
             Text(verbatim: option.text)
-              .font(.body.monospaced())
+              .typeStyle(.body.monospaced())
           }
           .buttonStyle(
             ActivityTileStyle(mark: isSelected ? .selected : .plain, isCompact: columns > 1)
@@ -377,14 +376,14 @@ private struct CodeTracerCanvas: View {
                     comment: "A wrong prediction in a code trace, then the traced value")
                 }
               }
-              .fontWeight(.medium)
+              .typeWeight(.medium)
             }
           } icon: {
             Image(systemName: isRight ? "checkmark" : "xmark")
               .fontWeight(.semibold)
               .foregroundStyle(isRight ? Color.success : .destructive)
           }
-          .font(.subheadline)
+          .typeStyle(.body)
           .accessibilityElement(children: .combine)
         }
       }

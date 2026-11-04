@@ -32,7 +32,7 @@ struct TutorTurnView: View {
     VStack(alignment: .trailing, spacing: 4) {
       if showsAbout {
         turn.about.label
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
       }
 
@@ -78,14 +78,14 @@ struct TutorTurnView: View {
             "This one wasn't answered.", tableName: "Tutor",
             comment: "A question the learner's limit stopped"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         } else {
           (failure.map(answerFailureMessage)
             ?? Text(
               "We couldn't finish this answer.", tableName: "Tutor",
               comment: "A buddy answer failed"))
-            .font(.subheadline)
+            .typeStyle(.body)
             .foregroundStyle(.destructiveText)
 
           TutorRemedyButton(failure: failure ?? .failed) {
@@ -184,11 +184,11 @@ struct TutorAnswerText: View {
       Text(block.text)
     case .heading:
       Text(block.text)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
         .accessibilityAddTraits(.isHeader)
     case .code:
       Text(block.text)
-        .font(.callout.monospaced())
+        .typeStyle(.reading.monospaced())
     case .listItem(let marker):
       HStack(alignment: .firstTextBaseline, spacing: 8) {
         Text(verbatim: marker)

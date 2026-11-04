@@ -14,7 +14,7 @@ struct LessonSpokenWordsView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text("What we heard", tableName: "Player", comment: "Above a spoken answer's words as heard")
-        .font(.caption.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.mutedForeground)
 
       FlowLayout(spacing: 6) {
@@ -39,7 +39,7 @@ struct LessonSpokenWordsView: View {
           }
         }
       }
-      .font(.title3)
+      .typeStyle(.section.weight(.regular))
 
       if heard.wordsToPractice.indices.contains(selected) {
         practice(heard.wordsToPractice[selected])
@@ -68,7 +68,7 @@ struct LessonSpokenWordsView: View {
 
       if let tip = word.tip {
         LessonRichText(tip)
-          .font(.subheadline)
+          .typeStyle(.body)
       }
     }
     .padding(.leading, 12)
@@ -83,7 +83,7 @@ struct LessonSpokenWordsView: View {
   private func name(_ word: SpokenHeard.PracticeWord) -> some View {
     HStack(alignment: .firstTextBaseline, spacing: 8) {
       Text(word.text)
-        .fontWeight(.semibold)
+        .typeWeight(.semibold)
         .typesettingLanguage(.init(identifier: language))
 
       if let respelling = word.respelling {
@@ -91,7 +91,7 @@ struct LessonSpokenWordsView: View {
           "sounds like \(respelling)", tableName: "Player",
           comment: "How a word to practice sounds, spelled for the learner"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
     }

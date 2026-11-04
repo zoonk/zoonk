@@ -13,10 +13,10 @@ struct TodayUpNextSection: View {
           KindMark(kind: .lesson)
             .frame(minWidth: 20)
           Text(lesson.title)
-            .font(index == 0 ? .body.weight(.semibold) : .body)
+            .typeStyle(index == 0 ? .reading.weight(.semibold) : .reading)
           Spacer(minLength: 8)
           Text(studyDuration(minutes: lesson.minutes))
-            .font(.footnote.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
         }
 
@@ -245,7 +245,7 @@ struct TodayPlanChangeSection: View {
           "We couldn't save your answer. Try again.", tableName: "Today",
           comment: "Answering a plan change failed"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.destructiveText)
       }
     }
@@ -626,7 +626,7 @@ private struct WeekChallengeRow: View {
             "\(day)\u{00A0}· every topic, your weakest first", tableName: "Today",
             comment: "When a free plan's full review is and what it asks"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
       } icon: {
@@ -651,9 +651,8 @@ private struct WeekChallengeRow: View {
           ? Text("Mock exam", tableName: "Today", comment: "The week's mock")
           : Text("Weekly challenge", tableName: "Today", comment: "The week's challenge")
         Text(facts)
-          .font(.subheadline)
+          .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
-          .monospacedDigit()
       }
     } icon: {
       KindMark(kind: challenge.kind == "mock" ? .mock : .challenge)
@@ -694,7 +693,7 @@ private struct WeekDayMark: View {
         .frame(width: ringSize, height: ringSize)
 
       Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
-        .font(.caption2.weight(day.isToday ? .bold : .regular))
+        .typeStyle(.small.weight(day.isToday ? .bold : .regular))
         .foregroundStyle(day.isToday ? Color(.foreground) : .mutedForeground)
     }
     .accessibilityElement(children: .ignore)
@@ -725,7 +724,7 @@ private struct WeekDayMark: View {
         }
 
         mark
-          .font(.caption2.weight(.bold))
+          .typeStyle(.small.bold())
       }
       .padding(lineWidth / 2)
     }
@@ -906,13 +905,12 @@ struct TodayProgressSection: View {
           VStack(alignment: .leading, spacing: 2) {
             if let value {
               Text(value)
-                .font(.title.weight(.semibold))
-                .monospacedDigit()
+                .typeStyle(.readout)
             }
 
             if let detail {
               detail
-                .font(.subheadline)
+                .typeStyle(.note)
                 .foregroundStyle(.mutedForeground)
             }
           }
@@ -925,7 +923,7 @@ struct TodayProgressSection: View {
             Image(systemName: "chevron.right")
           }
           .labelStyle(.titleOnly)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -1016,7 +1014,7 @@ struct TodayPracticeSection: View {
                   comment:
                     "The speaking paper's exam and level, as in B1 Preliminary tasks on a call"
                 )
-                .font(.footnote)
+                .typeStyle(.note)
                 .foregroundStyle(.mutedForeground)
               }
             } icon: {
@@ -1041,7 +1039,7 @@ struct TodayPracticeSection: View {
           VStack(alignment: .leading, spacing: 2) {
             Text("Mistakes notebook", tableName: "Today", comment: "Opens the mistakes notebook")
             Text("Redo what you got wrong", tableName: "Today", comment: "The notebook's line")
-              .font(.footnote)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
         } icon: {
@@ -1060,7 +1058,7 @@ struct TodayPracticeSection: View {
                 "Go back to any lesson you've finished", tableName: "Today",
                 comment: "The completed lessons page's line"
               )
-              .font(.footnote)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
             }
           } icon: {
@@ -1129,7 +1127,7 @@ struct TodayLanguagePracticeSection: View {
         VStack(alignment: .leading, spacing: 2) {
           title
           detail
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
       } icon: {
@@ -1195,7 +1193,7 @@ private struct TodayMockRow: View {
 
         if let detail {
           detail
-            .font(.footnote)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
       }

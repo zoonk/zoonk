@@ -104,18 +104,18 @@ private struct ChapterLandingList: View {
         } icon: {
           SubjectGlyph(subject: course?.course.subject)
         }
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
 
         Text(chapter.title)
-          .font(.largeTitle.bold())
+          .typeStyle(.heroTitle)
           .fixedSize(horizontal: false, vertical: true)
           .accessibilityAddTraits(.isHeader)
           .heroTitle()
 
         if let description = catalogText(detail.chapter?.description ?? chapter.description) {
           Text(description)
-            .font(.title3)
+            .typeStyle(.section.weight(.regular))
             .foregroundStyle(.mutedForeground)
         }
 
@@ -172,7 +172,7 @@ private struct ChapterLandingList: View {
               comment: "A course page's last call")
           }
         }
-        .font(.title2.weight(.semibold))
+        .typeStyle(.section)
         .accessibilityAddTraits(.isHeader)
 
         Group {
@@ -245,7 +245,7 @@ private struct ChapterStrip: View {
           "Chapter \(number.formatted()) of \(counted.count.formatted())\u{00A0}· \(group?.label ?? "")",
           tableName: "Courses", comment: "Where a chapter sits in its course, and its level"
         )
-        .font(.footnote.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
       }
       .padding(.vertical, 4)
@@ -254,7 +254,7 @@ private struct ChapterStrip: View {
         Text("This chapter", tableName: "Courses", comment: "Marks the open chapter in its course")
       } label: {
         Text(here.title)
-          .fontWeight(.semibold)
+          .typeWeight(.semibold)
       }
 
       ForEach(outline.dropFirst(index + 1).prefix(Self.next)) { chapter in
@@ -322,7 +322,7 @@ private struct ChapterLessonsSection: View {
           } label: {
             HStack(alignment: .firstTextBaseline, spacing: 12) {
               Text(offset + 1, format: .number)
-                .font(.footnote.monospacedDigit())
+                .typeStyle(.data)
                 .foregroundStyle(.faint)
               Text(lesson.displayTitle())
                 .foregroundStyle(.primary)

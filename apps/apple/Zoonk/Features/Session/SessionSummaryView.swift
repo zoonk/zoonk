@@ -78,7 +78,7 @@ struct SessionSummaryView: View {
         SummaryBuddy(look: learner.summary.value?.buddy ?? BuddyLook())
 
         title(summary)
-          .font(.largeTitle.bold())
+          .typeStyle(.heroTitle)
           .accessibilityAddTraits(.isHeader)
 
         if stopped, summary.minutes >= 1 {
@@ -191,7 +191,7 @@ struct SessionSummaryView: View {
             "We couldn't open the next step. Try again.", tableName: "Session",
             comment: "Adding time failed"
           )
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.destructiveText)
         }
       }
@@ -413,11 +413,11 @@ private struct EarnedToday: View {
         if summary.brainPower > 0 {
           HStack(alignment: .firstTextBaseline, spacing: 6) {
             EarnedNumber(value: summary.brainPower)
-              .font(.largeTitle.weight(.semibold))
+              .typeStyle(.heroTitle)
               .foregroundStyle(.brainText)
 
             Text("Brain Power", tableName: "Session", comment: "Brain Power earned")
-              .font(.subheadline.weight(.medium))
+              .typeStyle(.note.weight(.medium))
               .foregroundStyle(.mutedForeground)
           }
           .accessibilityElement(children: .combine)

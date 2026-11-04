@@ -231,7 +231,7 @@ private struct GuitarOnlyBoard: View {
           tableName: "ActivitiesMusic",
           comment: "Which frets of the guitar neck show, like “Frets 1 to 4”"
         )
-        .font(.subheadline.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
 
         Spacer()
@@ -317,10 +317,10 @@ private struct KeyboardFretboardHeader: View {
   private var titles: some View {
     VStack(alignment: .leading, spacing: 2) {
       title
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       Text(notes.isEmpty ? noNotes : notes.map(MusicLabels.display).joined(separator: ", "))
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
         .accessibilityLabel(
           notes.isEmpty
@@ -400,7 +400,7 @@ private struct SoundAsText: View {
         comment:
           "The notes a sound to find by ear plays, in order, for a learner who can't listen, like “The sound plays: G, C”"
       )
-      .font(.subheadline)
+      .typeStyle(.body)
       .accessibilityLabel(Self.spoken(notes))
     }
 
@@ -451,7 +451,7 @@ private struct GuitarMirror: View {
         Divider()
 
         (caption ?? defaultCaption)
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
 
         if let voicing {
@@ -464,7 +464,7 @@ private struct GuitarMirror: View {
             "These notes don't fit in one hand shape on the guitar.", tableName: "ActivitiesMusic",
             comment: "Under the piano when the pressed notes can't be played as one guitar shape"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
       }

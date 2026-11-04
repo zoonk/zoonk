@@ -262,7 +262,7 @@ private struct BuddyContent: View {
           "We couldn't save your buddy. Try again.", tableName: "Buddy",
           comment: "Saving the buddy failed"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.destructiveText)
       }
 
@@ -392,7 +392,7 @@ private struct BuddyContent: View {
       DisclosureChevron()
     }
     .labelStyle(.titleAndIcon)
-    .font(.subheadline.monospacedDigit())
+    .typeStyle(.data)
     .foregroundStyle(.mutedForeground)
     .contentShape(.rect)
   }

@@ -101,7 +101,7 @@ struct PlanAlphabetRow: View {
                 comment: "The alphabet lesson can be practiced anytime")
             }
           }
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
       } icon: {

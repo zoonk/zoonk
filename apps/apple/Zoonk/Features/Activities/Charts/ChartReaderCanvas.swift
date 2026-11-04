@@ -80,7 +80,7 @@ struct ChartReaderCanvas: View {
   var body: some View {
     ChartsCanvas {
       Text(verbatim: fields.yLabel)
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
       chart
         .accessibilityRepresentation { Text(verbatim: summary) }
@@ -90,7 +90,7 @@ struct ChartReaderCanvas: View {
       Text(
         "Tap a span to measure it", tableName: "ActivitiesCharts", comment: "Above a chart's spans"
       )
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
 
       LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 8)], spacing: 8) {
@@ -106,7 +106,7 @@ struct ChartReaderCanvas: View {
                 let text = measureText(span)
               {
                 Text(verbatim: text)
-                  .fontWeight(.semibold)
+                  .typeWeight(.semibold)
                   .foregroundStyle(.vizSecondary)
               }
             }
@@ -154,7 +154,7 @@ struct ChartReaderCanvas: View {
           .opacity(0)
           .annotation(position: .top, spacing: 4) {
             Text(verbatim: text)
-              .font(.caption.weight(.semibold).monospacedDigit())
+              .typeStyle(.meta.weight(.semibold).monospaced())
               .foregroundStyle(.vizSecondary)
           }
         }

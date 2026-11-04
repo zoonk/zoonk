@@ -103,7 +103,7 @@ struct CourseOutlineSections: View {
     Section {
       if let estimate, !chapters.isEmpty, learner.showsExampleNumbers {
         planLine(estimate)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       }
 
@@ -214,14 +214,14 @@ private struct CourseLevelOutline: View {
         VStack(alignment: .leading, spacing: 2) {
           LabeledContent {
             Text(aside)
-              .font(.footnote.monospacedDigit())
+              .typeStyle(.data)
           } label: {
             LevelTitle(level: band.level, isHere: learner.isHere(level: band.level))
           }
 
           if !isExpanded.wrappedValue {
             Text(band.chapters.prefix(Self.named).map(\.title).joinedFacts())
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
         }
@@ -271,7 +271,7 @@ private struct UnwrittenLevel: View {
           comment:
             "Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level."
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
       .accessibilityElement(children: .combine)
@@ -299,7 +299,7 @@ private struct LevelTitle: View {
 
   private var title: some View {
     Text(level.localizedTitle)
-      .font(.headline)
+      .typeStyle(.body.weight(.semibold))
   }
 
   @ViewBuilder
@@ -324,7 +324,7 @@ private struct YouAreHere: View {
         "You are here", tableName: "Courses",
         comment: "On a course's outline, marks the chapter or level the learner's plan is at")
     }
-    .font(.footnote)
+    .typeStyle(.note)
     .foregroundStyle(.successText)
   }
 }
@@ -367,15 +367,15 @@ private struct CourseAreaOutline: View {
                   "\(areaChapters.count) chapters", tableName: "Courses",
                   comment: "How many chapters a course or an exam area has"
                 )
-                .font(.footnote.monospacedDigit())
+                .typeStyle(.data)
               } label: {
                 Text(name)
-                  .font(.headline)
+                  .typeStyle(.body.weight(.semibold))
               }
 
               if learner.showsExampleNumbers {
                 Text(areaFit(name: name, chapters: areaChapters))
-                  .font(.subheadline)
+                  .typeStyle(.note)
                   .foregroundStyle(.mutedForeground)
               }
             }
@@ -556,12 +556,12 @@ private struct OutlineChapterRow: View {
   var body: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       Text(chapter.position + 1, format: .number)
-        .font(.footnote.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.faint)
 
       VStack(alignment: .leading, spacing: 4) {
         Text(chapter.title)
-          .font(.body.weight(.semibold))
+          .typeStyle(.body.weight(.semibold))
 
         if isHere || mark != nil {
           HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -571,7 +571,7 @@ private struct OutlineChapterRow: View {
 
             if let mark {
               Text(mark)
-                .font(.footnote.monospacedDigit())
+                .typeStyle(.data)
                 .foregroundStyle(.mutedForeground)
             }
           }
@@ -579,7 +579,7 @@ private struct OutlineChapterRow: View {
 
         if !chapter.lessons.isEmpty {
           Text(chapter.lessons.map(\.title).joinedFacts())
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
       }

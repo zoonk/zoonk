@@ -15,6 +15,8 @@ private struct TimelineCanvas: View {
   let fields: TimelineFields
   let context: ActivityCanvasContext
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   @ActivityState("placements") private var placements: [TimelineScale.Placement] = []
   @ActivityState("isRevealed") private var isRevealed = false
 
@@ -100,7 +102,7 @@ private struct TimelineCanvas: View {
     return VStack(alignment: .leading, spacing: 6) {
       HStack(alignment: .firstTextBaseline) {
         LessonRichText(event.label)
-          .fontWeight(.medium)
+          .typeWeight(.medium)
         Spacer(minLength: 8)
         if let symbol = mark.symbol {
           Image(systemName: symbol)
@@ -120,7 +122,7 @@ private struct TimelineCanvas: View {
             Text(verbatim: formatYear(event.year))
           }
         }
-        .font(.subheadline.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
       } else {
         Slider(
@@ -133,14 +135,14 @@ private struct TimelineCanvas: View {
         ) {
           Text(verbatim: LessonRichText.spoken(event.label))
         } minimumValueLabel: {
-          Text(formatYear(fields.start)).font(.caption2.monospacedDigit())
+          Text(formatYear(fields.start)).typeStyle(.small.monospaced())
         } maximumValueLabel: {
-          Text(formatYear(fields.end)).font(.caption2.monospacedDigit())
+          Text(formatYear(fields.end)).typeStyle(.small.monospaced())
         }
         .accessibilityValue(Text(verbatim: formatYear(guess)))
 
         Text(formatYear(guess))
-          .font(.subheadline.weight(.semibold).monospacedDigit())
+          .typeStyle(.body.weight(.semibold).monospaced())
           .accessibilityHidden(true)
       }
     }
@@ -222,7 +224,7 @@ private struct TimelineCanvas: View {
           gap(from: earlier, to: later, spoken: false)
             .accessibilityLabel(gap(from: earlier, to: later, spoken: true))
         }
-        .font(.subheadline)
+        .typeStyle(.body)
       }
     }
   }
@@ -243,12 +245,12 @@ private struct TimelineCanvas: View {
       ? Text(
         "\(years) years", tableName: "Activities", comment: "A number of years between two dates"
       )
-      .fontWeight(.semibold)
+      .typeWeight(.semibold, legibility: legibilityWeight)
       : Text(
         "about \(rounded) years", tableName: "Activities",
         comment: "A rounded number of years between two dates"
       )
-      .fontWeight(.semibold)
+      .typeWeight(.semibold, legibility: legibilityWeight)
   }
 
   private func formatYear(_ year: Int) -> String {
@@ -308,8 +310,8 @@ private struct TimelineAxis: View {
       // others, so a narrow axis (a phone, a pane of the open iPhone Duo) never overlaps them.
       let ticks = TimelineScale.ticks(start: fields.start, end: fields.end).map { tick in
         let label = context.resolve(
-          Text(formatYear(tick)).font(.caption2.monospacedDigit()).foregroundStyle(.mutedForeground)
-        )
+          Text(formatYear(tick)).font(TypeStyle.small.monospaced().font(in: context.environment))
+            .foregroundStyle(.mutedForeground))
         let anchor: UnitPoint =
           x(tick) < size.width * 0.15
           ? .topLeading : x(tick) > size.width * 0.85 ? .topTrailing : .top
@@ -357,8 +359,9 @@ private struct TimelineAxis: View {
           x(mark.year) < size.width / 3
           ? .leading : x(mark.year) > size.width * 2 / 3 ? .trailing : .center
         context.draw(
-          Text(LessonRichText.typeset(mark.label).text).font(.caption).foregroundStyle(
-            color == .mutedForeground ? .mutedForeground : .primary),
+          Text(LessonRichText.typeset(mark.label).text)
+            .font(TypeStyle.meta.font(in: context.environment)).foregroundStyle(
+              color == .mutedForeground ? .mutedForeground : .primary),
           at: CGPoint(x: x(mark.year), y: y), anchor: anchor)
       }
     }

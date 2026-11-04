@@ -42,7 +42,7 @@ struct PatternTesterCanvas: View {
   var body: some View {
     ChartsCanvas {
       LessonRichText(fields.task, literalNumbers: isRegex)
-        .font(.subheadline)
+        .typeStyle(.body)
 
       field
 
@@ -57,7 +57,7 @@ struct PatternTesterCanvas: View {
           "\(summary.passing) of \(summary.total) examples pass.", tableName: "ActivitiesCharts",
           comment: "How many examples a pattern gets right"
         )
-        .font(.subheadline.weight(.medium).monospacedDigit())
+        .typeStyle(.body.weight(.medium).monospaced())
       }
 
       if context.phase != .explore {
@@ -74,10 +74,10 @@ struct PatternTesterCanvas: View {
               "A formula that works", tableName: "ActivitiesCharts",
               comment: "Above a working formula after the check")
           Text(verbatim: isRegex ? "/\(fields.solution)/" : "=\(fields.solution)")
-            .font(.body.monospaced())
+            .typeStyle(.body.monospaced())
             .textSelection(.enabled)
         }
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
     }
@@ -121,7 +121,7 @@ struct PatternTesterCanvas: View {
           Text(verbatim: "/").foregroundStyle(.mutedForeground)
         }
       }
-      .font(.title3.monospaced())
+      .typeStyle(.section.weight(.regular).monospaced())
       .padding(.horizontal)
       .frame(minHeight: 52)
       .background(.background, in: .rect(cornerRadius: 12, style: .continuous))
@@ -129,7 +129,7 @@ struct PatternTesterCanvas: View {
         RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Color.border)
       }
     }
-    .font(.subheadline.weight(.medium))
+    .typeStyle(.body.weight(.medium))
   }
 
   private var snippetList: [Snippet] {
@@ -232,7 +232,7 @@ struct PatternTesterCanvas: View {
             insert(snippet)
           } label: {
             Text(verbatim: snippet.label)
-              .font(.body.monospaced())
+              .typeStyle(.body.monospaced())
               .frame(minWidth: 28, minHeight: 28)
           }
           .buttonStyle(.outline)
@@ -258,7 +258,7 @@ struct PatternTesterCanvas: View {
           "This pattern can't run. Check that brackets close, and don't repeat a group that already repeats inside.",
           tableName: "ActivitiesCharts", comment: "A regex that doesn't compile or is unsafe"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.destructiveText)
       }
 
@@ -280,14 +280,14 @@ struct PatternTesterCanvas: View {
     _ title: Text, samples: [String], results: [PatternSampleResult]?, shouldMatch: Bool
   ) -> some View {
     VStack(alignment: .leading, spacing: 6) {
-      title.font(.footnote.weight(.medium)).foregroundStyle(.mutedForeground)
+      title.typeStyle(.note.weight(.medium)).foregroundStyle(.mutedForeground)
 
       ForEach(Array(samples.enumerated()), id: \.offset) { index, sample in
         let result = results?[index]
 
         HStack {
           highlighted(sample, match: result?.match)
-            .font(.body.monospaced())
+            .typeStyle(.body.monospaced())
           Spacer()
           if let result {
             status(result.passes, shouldMatch: shouldMatch)
@@ -343,7 +343,7 @@ struct PatternTesterCanvas: View {
     } icon: {
       Image(systemName: passes ? "checkmark" : "xmark")
     }
-    .font(.footnote.weight(.medium))
+    .typeStyle(.note.weight(.medium))
     .foregroundStyle(passes ? Color.successText : .destructiveText)
   }
 
@@ -363,7 +363,7 @@ struct PatternTesterCanvas: View {
           "Your result", tableName: "ActivitiesCharts",
           comment: "Column of the learner's formula result")
       }
-      .font(.footnote.weight(.medium))
+      .typeStyle(.note.weight(.medium))
       .foregroundStyle(.mutedForeground)
 
       ForEach(Array(formula.examples.enumerated()), id: \.offset) { index, example in
@@ -373,7 +373,7 @@ struct PatternTesterCanvas: View {
           ForEach(example.inputs, id: \.name) { input in
             Text(verbatim: ActivityNumberFormat.format(input.value))
           }
-          Text(verbatim: ActivityNumberFormat.format(example.output)).fontWeight(.medium)
+          Text(verbatim: ActivityNumberFormat.format(example.output)).typeWeight(.medium)
           HStack(spacing: 4) {
             Text(verbatim: result?.value.map { ActivityNumberFormat.format($0) } ?? "–")
             if let result {
@@ -390,7 +390,7 @@ struct PatternTesterCanvas: View {
             }
           }
         }
-        .font(.subheadline.monospacedDigit())
+        .typeStyle(.body.monospaced())
       }
     }
     .accessibilityElement(children: .contain)
@@ -409,8 +409,8 @@ struct PatternTesterCanvas: View {
         ForEach(visible, id: \.self) { hint in
           VStack(alignment: .leading, spacing: 2) {
             LessonRichText(hint.mistake, literalNumbers: isRegex)
-              .font(.footnote.weight(.semibold))
-            LessonRichText(hint.hint, literalNumbers: isRegex).font(.footnote)
+              .typeStyle(.note.weight(.semibold))
+            LessonRichText(hint.hint, literalNumbers: isRegex).typeStyle(.note)
           }
           .frame(maxWidth: .infinity, alignment: .leading)
           .padding(12)

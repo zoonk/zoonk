@@ -113,16 +113,16 @@ struct ScoreTrendChart: View {
         .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
           VStack(alignment: .leading, spacing: 2) {
             Text(weekLabel(selected.date))
-              .font(.caption.monospacedDigit())
+              .typeStyle(.data)
               .foregroundStyle(.mutedForeground)
             Text(metricPercent(selected.point.performance.score))
-              .font(.subheadline.weight(.medium).monospacedDigit())
+              .typeStyle(.note.weight(.medium).monospaced())
               .foregroundStyle(.successText)
             Text(
               "\(selected.point.performance.totalAnswers) answers", tableName: "Progress",
               comment: "A count of answers"
             )
-            .font(.caption)
+            .typeStyle(.meta)
             .foregroundStyle(.mutedForeground)
           }
           .padding(.horizontal, 12)

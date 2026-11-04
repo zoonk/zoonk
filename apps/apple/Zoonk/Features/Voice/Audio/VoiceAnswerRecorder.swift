@@ -48,7 +48,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
       HelpLimitNotice(limit: limit)
     } else if let hint {
       Text(hint)
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(
           issue == .failed && !recorder.isRecording ? .destructiveText : .mutedForeground
         )

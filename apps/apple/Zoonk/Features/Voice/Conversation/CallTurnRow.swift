@@ -13,11 +13,11 @@ struct CallTurnRow: View {
 
       VStack(alignment: .leading, spacing: 2) {
         title
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         if let detail {
           detail
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
       }
@@ -40,7 +40,7 @@ struct CallTurnRow: View {
       ProgressView()
     case .goodbye, .characterTalking:
       Text(name.prefix(1).uppercased())
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.note.weight(.medium))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.muted, in: .circle)
         .overlay {

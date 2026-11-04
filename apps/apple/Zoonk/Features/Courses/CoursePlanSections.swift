@@ -219,7 +219,7 @@ private struct PlanFirstDay: View {
           "+ \(folded.count) more lessons\u{00A0}· \(studyDuration(minutes: Int(minutes(of: folded).rounded())))",
           tableName: "Courses", comment: "The rest of an example plan's first day, folded"
         )
-        .font(.footnote.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
       }
     } header: {

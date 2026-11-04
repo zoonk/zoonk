@@ -11,7 +11,7 @@ struct LessonVerdictView: View {
     VStack(alignment: .leading, spacing: 8) {
       Label {
         Text(verdict.title)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
       } icon: {
         Image(systemName: verdict.symbol)
       }
@@ -35,7 +35,7 @@ struct LessonVerdictView: View {
             tableName: "Player",
             comment: "A typed answer that wasn't graded, before the sample answer"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
 
@@ -51,7 +51,7 @@ struct LessonVerdictView: View {
 
       ForEach(result.corrections, id: \.self) { correction in
         Text("\(Text(correction.wrong).strikethrough()) → \(Text(correction.right).bold())")
-          .font(.subheadline)
+          .typeStyle(.body)
       }
 
       if let keyPoints = result.keyPoints, !keyPoints.isEmpty {
@@ -60,19 +60,19 @@ struct LessonVerdictView: View {
 
       if let feedback = result.feedback, !feedback.isEmpty {
         LessonTextBlocks(feedback)
-          .font(.subheadline)
+          .typeStyle(.body)
       }
 
       if let correctReason {
         correctAnswerLine
 
         LessonTextBlocks(correctReason)
-          .font(.subheadline)
+          .typeStyle(.body)
       }
 
       if case .language(_, let wordHints?) = step.content {
         LessonWordHints(hints: wordHints)
-          .font(.subheadline)
+          .typeStyle(.body)
       }
 
       if case .typedAnswer = step.content, !result.isCorrect, result.checked, !result.isSampleAnswer
@@ -82,7 +82,7 @@ struct LessonVerdictView: View {
 
       if hyperdriveStreak != nil || note != nil {
         notes
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -167,10 +167,10 @@ private struct LabeledText: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 2) {
       label
-        .font(.caption.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.mutedForeground)
       LessonRichText(text)
-        .font(.body.weight(.medium))
+        .typeStyle(.body.weight(.medium))
     }
   }
 }
@@ -184,7 +184,7 @@ private struct LessonKeyPointsView: View {
         "\(keyPoints.filter(\.met).count) of \(keyPoints.count) key points", tableName: "Player",
         comment: "How many key points a typed answer stated"
       )
-      .font(.caption.weight(.medium))
+      .typeStyle(.meta.weight(.medium))
       .foregroundStyle(.mutedForeground)
 
       ForEach(keyPoints, id: \.self) { point in
@@ -194,7 +194,7 @@ private struct LessonKeyPointsView: View {
           Image(systemName: point.met ? "checkmark.circle" : "circle.dashed")
             .foregroundStyle(point.met ? .success : .mutedForeground)
         }
-        .font(.subheadline)
+        .typeStyle(.note)
         .accessibilityLabel(
           point.met
             ? Text(
@@ -223,10 +223,10 @@ private struct LessonExplainAnswerView: View {
           "Why that answer misses", tableName: "Player",
           comment: "Title above why a typed answer is wrong"
         )
-        .font(.caption.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.mutedForeground)
         LessonTextBlocks(explanation)
-          .font(.subheadline)
+          .typeStyle(.note)
       }
     } else {
       VStack(alignment: .leading, spacing: 8) {
@@ -259,7 +259,7 @@ private struct LessonExplainAnswerView: View {
             "We couldn't explain it right now. Try again in a moment.", tableName: "Player",
             comment: "The explanation of a typed answer failed"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         case .refused(let refusal):
           LessonHelpLimitNote(refusal: refusal)

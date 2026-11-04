@@ -99,13 +99,13 @@ struct StatsCalendar: View {
     VStack(alignment: .leading, spacing: 12) {
       ViewThatFits(in: .horizontal) {
         HStack(alignment: .firstTextBaseline) {
-          title.font(.headline)
+          title.typeStyle(.body.weight(.semibold))
           Spacer(minLength: 16)
           legend
         }
 
         VStack(alignment: .leading, spacing: 4) {
-          title.font(.headline)
+          title.typeStyle(.body.weight(.semibold))
           legend
         }
       }
@@ -125,7 +125,7 @@ struct StatsCalendar: View {
 
       if days.indices.contains(activeIndex) {
         Text(days[activeIndex].label)
-          .font(.footnote.monospacedDigit())
+          .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
           .accessibilityHidden(true)
       }
@@ -156,7 +156,7 @@ struct StatsCalendar: View {
 
       high.fixedSize()
     }
-    .font(.caption2)
+    .typeStyle(.small)
     .foregroundStyle(.mutedForeground)
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(legendLabel)
@@ -181,7 +181,7 @@ struct StatsCalendar: View {
 
       for (week, text, isLast) in monthLabels {
         let label = context.resolve(
-          Text(text).font(.caption2.monospacedDigit()).foregroundStyle(Color.faint))
+          Text(text).font(TypeStyle.small.monospaced().font(in: context.environment)).foregroundStyle(Color.faint))
         let x = ringInset + Double(week) * step + (isLast ? cell : 0)
         context.draw(label, at: CGPoint(x: x, y: 0), anchor: isLast ? .topTrailing : .topLeading)
       }

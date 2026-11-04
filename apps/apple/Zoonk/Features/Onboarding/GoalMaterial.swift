@@ -41,7 +41,7 @@ struct GoalMaterialSections: View {
             "Study your own material", tableName: "Onboarding",
             comment: "Title of the way a guest gets an account to add material"
           )
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
           Text(
             "Create a free account to add a PDF, a photo of your notes or any text to your goal.",
@@ -410,7 +410,7 @@ struct MaterialQuestionsView: View {
       ForEach(turns) { turn in
         Section {
           Text(turn.question)
-            .fontWeight(.medium)
+            .typeWeight(.medium)
 
           switch turn.answer {
           case .success(let answer):
@@ -423,7 +423,7 @@ struct MaterialQuestionsView: View {
               } icon: {
                 Image(systemName: "doc.text")
               }
-              .font(.footnote)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
             }
           case .failure(let error):

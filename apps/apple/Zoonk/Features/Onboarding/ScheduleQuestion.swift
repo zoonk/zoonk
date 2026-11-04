@@ -324,11 +324,10 @@ struct ScheduleQuestion: View {
     } label: {
       HStack(alignment: .firstTextBaseline, spacing: 8) {
         bigQuantity(duration(minutes))
-          .font(.largeTitle.weight(.semibold))
-          .monospacedDigit()
+          .typeStyle(.momentReadout)
           .multilineTextAlignment(.leading)
         Image(systemName: "chevron.down")
-          .font(.title3.weight(.semibold))
+          .typeStyle(.section)
           .foregroundStyle(.mutedForeground)
       }
       .foregroundStyle(isStale(shown) ? .mutedForeground : .primary)
@@ -386,7 +385,7 @@ struct ScheduleQuestion: View {
         .frame(minHeight: 44)
         .contentShape(.rect)
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .buttonStyle(.borderless)
   }
 

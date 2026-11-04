@@ -211,7 +211,7 @@ private struct PronunciationRoundView: View {
         HelpLimitNotice(limit: limit)
       } else {
         Text(statusLine(notice))
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(
             notice == .failed ? AnyShapeStyle(.destructiveText) : AnyShapeStyle(.mutedForeground))
       }
@@ -313,7 +313,7 @@ private struct PronunciationRoundView: View {
       Text(
         "We couldn't save your answers.", tableName: "Voice", comment: "Finishing the round failed"
       )
-      .font(.subheadline)
+      .typeStyle(.body)
       .foregroundStyle(.destructiveText)
 
       Spacer()
@@ -337,7 +337,7 @@ private struct RoundMeter: View {
         "Word \(round.index + 1) of \(round.words.count)", tableName: "Voice",
         comment: "Where the learner is in the round"
       )
-      .font(.caption.monospacedDigit())
+      .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
 
       MeterParts(
@@ -368,14 +368,14 @@ private struct GradeNote: View {
         } icon: {
           Image(systemName: "checkmark.circle.fill")
         }
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
         .foregroundStyle(.successText)
       } else {
         Text(
           "We heard “\(grade.transcript)”", tableName: "Voice",
           comment: "What the grader heard when a word didn't sound right"
         )
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
       }
 
       Group {
@@ -389,7 +389,7 @@ private struct GradeNote: View {
             comment: "A word that's learned")
         }
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
@@ -450,7 +450,7 @@ private struct PronunciationResultView: View {
             Text("Practice done", tableName: "Voice", comment: "A finished round")
           }
         }
-        .font(.title2.weight(.semibold))
+        .typeStyle(.section)
 
         Text(
           "An accent never blocks you. Words that still sound different come back tomorrow.",

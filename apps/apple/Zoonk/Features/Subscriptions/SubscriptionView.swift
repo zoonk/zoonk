@@ -365,14 +365,14 @@ private struct SubscriptionMarketingContent: View {
           tableName: "Account",
           comment: "Headline on the Zoonk Plus subscription screen"
         )
-        .font(.largeTitle.bold())
+        .typeStyle(.heroTitle)
 
         Text(
           "Every goal\u{00A0}· every lesson",
           tableName: "Account",
           comment: "What Zoonk Plus includes, in one line"
         )
-        .font(.title3)
+        .typeStyle(.section.weight(.regular))
         .foregroundStyle(.mutedForeground)
       }
 
@@ -481,7 +481,7 @@ struct PlusStatusView: View {
         VStack(alignment: .leading, spacing: 6) {
           HStack(spacing: 8) {
             Text("Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name")
-              .font(.title.bold())
+              .typeStyle(.pageTitle)
 
             Group {
               isEnding
@@ -659,7 +659,7 @@ private struct UnpaidPlusView: View {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text("Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name")
-            .font(.title.bold())
+            .typeStyle(.pageTitle)
 
           if let dateLine = web.dateLine {
             dateLine
@@ -915,7 +915,7 @@ private struct FreePlanCard: View {
                 comment: "Free plan: lessons a month"),
             ].joinedFacts()
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
 
@@ -955,7 +955,7 @@ private struct FreePlanCard: View {
 
   private func note(_ text: Text) -> some View {
     text
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
   }
 
@@ -979,14 +979,14 @@ private struct PlusQuestions: View {
     VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
         Text("Common questions", tableName: "Account", comment: "Title of the pricing questions")
-          .font(.title3.bold())
+          .typeStyle(.section)
 
         Text(
           "Still unsure? \(AttributedString.supportEmail)", tableName: "Account",
           comment:
             "Under the pricing questions' title; the argument is the email address to write to"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
 
@@ -1121,7 +1121,7 @@ private struct PlusQuestions: View {
     } icon: {
       Image(systemName: "circle.fill")
         .imageScale(.small)
-        .font(.caption2)
+        .typeStyle(.small)
         .accessibilityHidden(true)
     }
     .foregroundStyle(.mutedForeground)

@@ -71,7 +71,7 @@ struct LessonQuestionText: View {
 
   var body: some View {
     LessonRichText(text)
-      .font(.title2.weight(.semibold))
+      .typeStyle(.question)
       .dimsOnceChecked()
       .fixedSize(horizontal: false, vertical: true)
       .accessibilityAddTraits(.isHeader)
@@ -138,7 +138,7 @@ struct LessonPictureView: View {
       } icon: {
         Image(systemName: "photo")
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding()
@@ -199,7 +199,7 @@ struct LessonPicturePlaceholder: View {
       description
       ScrollView { description }
     }
-    .font(.subheadline)
+    .typeStyle(.note)
     .foregroundStyle(.mutedForeground)
     .multilineTextAlignment(.center)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -210,7 +210,7 @@ struct LessonPicturePlaceholder: View {
   private var description: some View {
     VStack(spacing: 8) {
       Image(systemName: "photo")
-        .font(.title2)
+        .typeStyle(.section.weight(.regular))
         .accessibilityHidden(true)
 
       if saysItIsDrawing {
@@ -310,7 +310,7 @@ private struct LessonChartView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text(chart.title)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       Chart(points) { point in
         if chart.chart == .bar {
@@ -336,7 +336,7 @@ private struct LessonChartView: View {
 
       if let source = chart.source {
         Text(source)
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -365,20 +365,20 @@ private struct LessonTimelineView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(timeline.title)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       ForEach(Array(timeline.events.enumerated()), id: \.offset) { _, event in
         HStack(alignment: .firstTextBaseline, spacing: 12) {
           Text(event.date)
-            .font(.subheadline.monospacedDigit().weight(.semibold))
+            .typeStyle(.body.weight(.semibold).monospaced())
             .foregroundStyle(.successText)
 
           VStack(alignment: .leading, spacing: 2) {
             Text(event.label)
-              .font(.subheadline.weight(.medium))
+              .typeStyle(.body.weight(.medium))
             if let detail = event.detail {
               Text(detail)
-                .font(.subheadline)
+                .typeStyle(.note)
                 .foregroundStyle(.mutedForeground)
             }
           }
@@ -398,7 +398,7 @@ struct LessonCitationView: View {
       let source = CitationLabel.material(title: title, page: page, unit: unit)
 
       Label(source, systemImage: "doc.text")
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
         .accessibilityLabel(
           Text(
@@ -414,7 +414,7 @@ struct LessonCitationView: View {
       } icon: {
         Image(systemName: "doc.questionmark")
       }
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
   }

@@ -79,10 +79,10 @@ private struct ArgumentBuilderCanvas: View {
       VStack(alignment: .leading, spacing: 8) {
         VStack(alignment: .leading, spacing: 2) {
           Text("Claim", tableName: "Activities", comment: "The claim an argument is built for")
-            .font(.caption.weight(.semibold))
+            .typeStyle(.meta.weight(.semibold))
             .foregroundStyle(.mutedForeground)
           LessonRichText(fields.claim)
-            .fontWeight(.medium)
+            .typeWeight(.medium)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
@@ -159,7 +159,7 @@ private struct ArgumentBuilderCanvas: View {
     return VStack(alignment: .leading, spacing: 6) {
       HStack {
         label
-          .font(.caption.weight(.semibold))
+          .typeStyle(.meta.weight(.semibold))
           .foregroundStyle(isOpen || filled != nil ? Color(.foreground) : .mutedForeground)
 
         Spacer()
@@ -178,7 +178,7 @@ private struct ArgumentBuilderCanvas: View {
           } icon: {
             Image(systemName: verdict.symbol ?? "")
           }
-          .font(.caption.weight(.semibold))
+          .typeStyle(.meta.weight(.semibold))
           .foregroundStyle(isStrong == true ? Color.successText : Color.destructiveText)
         } else if filled != nil {
           Button {
@@ -208,12 +208,12 @@ private struct ArgumentBuilderCanvas: View {
         filled
         if isChecked, let why {
           LessonRichText(why)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
       } else {
         hint
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -258,7 +258,7 @@ private struct ArgumentBuilderCanvas: View {
   {
     VStack(alignment: .leading, spacing: 8) {
       title
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
       ForEach(items, id: \.0) { id, content, text in
         Button {
@@ -339,11 +339,11 @@ private struct ArgumentBuilderCanvas: View {
   private func reviewCard(title: Text, content: AnyView, why: String) -> some View {
     VStack(alignment: .leading, spacing: 6) {
       title
-        .font(.caption.weight(.semibold))
+        .typeStyle(.meta.weight(.semibold))
         .foregroundStyle(Color.successText)
       content
       LessonRichText(why)
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -361,7 +361,7 @@ private struct QuoteText: View {
     VStack(alignment: .leading, spacing: 4) {
       Text(LessonRichText.typeset("“\(text)”"))
       Text(citation)
-        .font(.caption)
+        .typeStyle(.meta)
         .foregroundStyle(.mutedForeground)
     }
   }

@@ -13,9 +13,9 @@ struct BuddyDayView: View {
       if showsTitle {
         VStack(alignment: .leading, spacing: 2) {
           title
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
           subtitle
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
         .listRowBackground(Color.clear)
@@ -119,7 +119,7 @@ struct BuddyDayView: View {
               .accessibilityHidden(true)
 
             status.energyLine(name: name)
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
         }
@@ -137,7 +137,7 @@ struct BuddyDayView: View {
             "Energy starts with your first lesson and grows as you learn.", tableName: "Buddy",
             comment: "Energy before the first lesson"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
       }

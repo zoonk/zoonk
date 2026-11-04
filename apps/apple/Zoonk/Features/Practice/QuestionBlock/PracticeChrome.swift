@@ -286,7 +286,7 @@ struct PracticeSaveError: View {
         "Your answer wasn't saved. Check your connection.", tableName: "Practice",
         comment: "Shown over a run's actions when an answer or the finish didn't reach the server."
       )
-      .font(.subheadline)
+      .typeStyle(.body)
       .foregroundStyle(.destructiveText)
 
       Spacer()
@@ -324,7 +324,7 @@ struct PracticeResultTitle: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
-      Text(title).font(.largeTitle.bold())
+      Text(title).typeStyle(.heroTitle)
       if let detail {
         Text(detail).foregroundStyle(.mutedForeground)
       }
@@ -362,7 +362,7 @@ struct PracticeResultNumbers: View {
       }
 
       ForEach(facts, id: \.self) { fact in
-        Text(fact).font(.subheadline).foregroundStyle(.mutedForeground)
+        Text(fact).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       if let day, !day.isEmpty {
@@ -380,8 +380,8 @@ private struct Readout: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 2) {
-      value.font(.title.monospacedDigit().weight(.semibold)).foregroundStyle(tint)
-      label.font(.footnote).foregroundStyle(.mutedForeground)
+      value.typeStyle(.readout).foregroundStyle(tint)
+      label.typeStyle(.note).foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
   }

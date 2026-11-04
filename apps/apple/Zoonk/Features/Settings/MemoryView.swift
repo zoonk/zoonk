@@ -192,7 +192,7 @@ private struct MemoryFactRow: View {
           tableName: "Settings",
           comment: "Where a remembered fact came from and its day, as in “From a chat · Oct 11”"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
 
@@ -238,6 +238,8 @@ private struct MemoryFactRow: View {
 }
 
 private struct MemoryUpdatedNotice: View {
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   let fact: MemoryFact
   let status: SettingsStore.UndoStatus
   let undo: () -> Void
@@ -245,7 +247,7 @@ private struct MemoryUpdatedNotice: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text(
-        "\(Text("Memory updated:", tableName: "Settings", comment: "Starts the line saying a fact was deleted").fontWeight(.medium).foregroundStyle(.primary)) \(Text(fact.statement).strikethrough())",
+        "\(Text("Memory updated:", tableName: "Settings", comment: "Starts the line saying a fact was deleted").typeWeight(.medium, legibility: legibilityWeight).foregroundStyle(.primary)) \(Text(fact.statement).strikethrough())",
         tableName: "Settings", comment: "A deleted fact, struck through after “Memory updated:”")
 
       switch status {
@@ -266,7 +268,7 @@ private struct MemoryUpdatedNotice: View {
         .foregroundStyle(.destructiveText)
       }
     }
-    .font(.footnote)
+    .typeStyle(.note)
     .padding(.top, 4)
     .accessibilityElement(children: .combine)
   }

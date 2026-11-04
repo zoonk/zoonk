@@ -38,7 +38,7 @@ struct CitationNote: View {
 
   private var source: some View {
     Text(citation.text)
-      .font(.caption.weight(.medium))
+      .typeStyle(.meta.weight(.medium))
       .foregroundStyle(.mutedForeground)
   }
 
@@ -80,7 +80,7 @@ struct SourcesChip: View {
       // Measured without a width, the automatic style drops the title, so `CitationNote`'s
       // `ViewThatFits` would squeeze the chip beside the citation instead of below it.
       .labelStyle(.titleAndIcon)
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
     .buttonStyle(.outline)
@@ -106,10 +106,10 @@ private struct SourceDetails: View {
       VStack(alignment: .leading, spacing: 12) {
         VStack(alignment: .leading, spacing: 4) {
           Text(title)
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
 
           checked
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
 
@@ -123,7 +123,7 @@ private struct SourceDetails: View {
               Image(systemName: "arrow.up.right.square")
             }
           }
-          .font(.subheadline.weight(.medium))
+          .typeStyle(.body.weight(.medium))
         }
       }
       .padding()

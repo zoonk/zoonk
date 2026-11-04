@@ -25,11 +25,11 @@ struct ExamSpeakingSections: View {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text(task.task.name)
-            .font(.title3.weight(.semibold))
+            .typeStyle(.section)
             .typesettingLanguage(.init(identifier: language))
           ForEach(notes(feedback), id: \.self) { note in
             Text(note)
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
         }
@@ -77,9 +77,9 @@ struct ExamSpeakingSections: View {
         Section {
           VStack(alignment: .leading, spacing: 4) {
             Text(speakingCriterionName(focus.criterion.key, officialName: focus.criterion.name))
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             Text(focus.criterion.name)
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
               .typesettingLanguage(.init(identifier: language))
           }
@@ -94,7 +94,7 @@ struct ExamSpeakingSections: View {
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text("This task has no estimate", tableName: "Voice", comment: "An ungraded exam task")
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
           Text(
             "Try the task again when you're ready.", tableName: "Voice",
             comment: "Under an ungraded exam task"
@@ -151,9 +151,9 @@ struct ExamSpeakingSections: View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       VStack(alignment: .leading, spacing: 2) {
         Text(speakingCriterionName(criterion.key, officialName: criterion.name))
-          .fontWeight(.medium)
+          .typeWeight(.medium)
         Text(criterion.name)
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
           .typesettingLanguage(.init(identifier: language))
       }
@@ -166,7 +166,7 @@ struct ExamSpeakingSections: View {
   private func estimate(_ grade: Grade, isFocus: Bool) -> some View {
     VStack(alignment: .trailing, spacing: 4) {
       Text(SpeakingEstimateText.text(grade.estimate))
-        .fontWeight(.medium)
+        .typeWeight(.medium)
         .monospacedDigit()
       Group {
         switch grade.standing {
@@ -186,7 +186,7 @@ struct ExamSpeakingSections: View {
           .foregroundStyle(.mutedForeground)
         }
       }
-      .font(.caption)
+      .typeStyle(.meta)
       if isFocus {
         Text("Focus", tableName: "Voice", comment: "The criterion to work on first").chip()
       }
@@ -211,9 +211,9 @@ struct SpeakingMockSections: View {
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text(band(low: mock.overall.low, high: mock.overall.high))
-            .font(.largeTitle.weight(.semibold).monospacedDigit())
+            .typeStyle(.momentReadout)
           Text(mock.scale)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
         .padding(.vertical, 4)
@@ -234,7 +234,7 @@ struct SpeakingMockSections: View {
               } label: {
                 LabeledContent {
                   Text(band(low: grade.low, high: grade.high))
-                    .fontWeight(.medium)
+                    .typeWeight(.medium)
                     .monospacedDigit()
                 } label: {
                   name(key, isFocus: key == mock.focus)
@@ -264,7 +264,7 @@ struct SpeakingMockSections: View {
         if let focus = mock.grades.first(where: { $0.key == mock.focus }) {
           Section {
             Text(speakingCriterionName(focus.key, officialName: nil))
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             SpeakingGradeDetails(evidence: focus.evidence, tip: focus.tip)
           } header: {
             SectionTitle(
@@ -278,7 +278,7 @@ struct SpeakingMockSections: View {
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text("This mock has no score", tableName: "Voice", comment: "An ungraded speaking mock")
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
           Text(
             "Try another one when you're ready.", tableName: "Voice",
             comment: "Under an ungraded speaking mock"
@@ -334,7 +334,7 @@ struct SpeakingMockSections: View {
   private func name(_ key: String, isFocus: Bool) -> some View {
     HStack(spacing: 8) {
       Text(speakingCriterionName(key, officialName: nil))
-        .fontWeight(.medium)
+        .typeWeight(.medium)
       if isFocus {
         Text("Focus", tableName: "Voice", comment: "The criterion to work on first").chip()
       }
@@ -355,13 +355,13 @@ private struct SpeakingGradeDetails: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       Text(evidence)
-        .font(.subheadline)
+        .typeStyle(.body)
       Label {
         Text(tip)
       } icon: {
         Image(systemName: "lightbulb")
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
   }

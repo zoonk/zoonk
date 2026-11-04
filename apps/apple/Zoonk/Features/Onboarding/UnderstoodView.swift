@@ -374,7 +374,7 @@ private struct UnderstoodRowView: View {
           "That didn't save. Try again.", tableName: "Onboarding",
           comment: "A change couldn't be saved"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.destructiveText)
       }
     }
@@ -395,21 +395,21 @@ private struct UnderstoodRowView: View {
       HStack(alignment: .firstTextBaseline) {
         VStack(alignment: .leading, spacing: 4) {
           Text(row.label)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
 
           HStack(alignment: .firstTextBaseline) {
             Text(row.value)
             if let badge = row.badge {
               Text(badge)
-                .font(.caption)
+                .typeStyle(.meta)
                 .foregroundStyle(.mutedForeground)
             }
           }
 
           if let note = row.note {
             Text(note)
-              .font(.footnote)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
 
@@ -423,7 +423,7 @@ private struct UnderstoodRowView: View {
                 Image(systemName: "arrow.up.right")
               }
               .labelStyle(TrailingIconLabelStyle())
-              .font(.footnote)
+              .typeStyle(.note)
             }
             .foregroundStyle(.mutedForeground)
           }
@@ -487,7 +487,7 @@ private struct RowEditor: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text(row.label)
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
 
       switch field.editor {
@@ -516,7 +516,7 @@ private struct RowEditor: View {
           "That didn't save. Try again.", tableName: "Onboarding",
           comment: "A change couldn't be saved"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.destructiveText)
       }
 
@@ -599,11 +599,11 @@ private struct OutcomeHeader: View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
         Image(systemName: systemImage)
-          .font(.title2)
+          .typeStyle(.section.weight(.regular))
           .foregroundStyle(.mutedForeground)
           .accessibilityHidden(true)
         title
-          .font(.title2.bold())
+          .typeStyle(.section)
           .accessibilityAddTraits(.isHeader)
         description
           .foregroundStyle(.mutedForeground)

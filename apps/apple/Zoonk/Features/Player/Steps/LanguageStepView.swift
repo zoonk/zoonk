@@ -227,14 +227,14 @@ private struct VocabularyView: View {
         VStack(alignment: .leading, spacing: 4) {
           AccessibilityStack(spacing: 8) {
             Text(word.word)
-              .font(.largeTitle.weight(.semibold))
+              .typeStyle(.heroTitle)
             LessonAudioButton(url: exercise.promptAudio, style: .inline)
           }
           if let romanization = word.romanization {
             Text(romanization).foregroundStyle(.mutedForeground)
           }
           if let pronunciation = word.pronunciation {
-            Text(pronunciation).font(.callout).foregroundStyle(.mutedForeground)
+            Text(pronunciation).typeStyle(.reading).foregroundStyle(.mutedForeground)
           }
         }
 
@@ -252,7 +252,7 @@ private struct VocabularyView: View {
   @ViewBuilder
   private func meaning(_ word: LanguageExercise.Word) -> some View {
     Text(word.translation)
-      .font(.title3)
+      .typeStyle(.section.weight(.regular))
 
     if let wordHints {
       LessonWordHints(hints: wordHints)
@@ -269,7 +269,7 @@ struct LessonWordHints: View {
     if let note = hints.note {
       VStack(alignment: .leading, spacing: 2) {
         Text("Usage:", tableName: "Player", comment: "Before a word's usage note")
-          .font(.caption.weight(.medium)).foregroundStyle(.mutedForeground)
+          .typeStyle(.meta.weight(.medium)).foregroundStyle(.mutedForeground)
         Text(note)
       }
     }
@@ -279,7 +279,7 @@ struct LessonWordHints: View {
         Text(
           "Pronunciation tip:", tableName: "Player", comment: "Before a word's pronunciation tip"
         )
-        .font(.caption.weight(.medium)).foregroundStyle(.mutedForeground)
+        .typeStyle(.meta.weight(.medium)).foregroundStyle(.mutedForeground)
         Text(tip)
       }
     }
@@ -297,14 +297,14 @@ private struct AlphabetView: View {
 
     HStack(alignment: .center, spacing: 16) {
       Text(content.symbol ?? "")
-        .font(.system(.largeTitle, design: .default).weight(.semibold))
+        .typeStyle(.heroTitle)
         .dynamicTypeSize(...DynamicTypeSize.accessibility5)
         .scaleEffect(1.6, anchor: .leading)
         .padding(.trailing, 24)
       AccessibilityStack(spacing: 8) {
         VStack(alignment: .leading, spacing: 4) {
           if let readingAid = content.readingAid {
-            Text(readingAid).font(.title3.weight(.medium))
+            Text(readingAid).typeStyle(.section.weight(.medium))
           }
           if let pronunciation = content.pronunciation {
             Text(pronunciation).foregroundStyle(.mutedForeground)
@@ -318,8 +318,8 @@ private struct AlphabetView: View {
       HStack(spacing: 16) {
         ForEach(forms, id: \.self) { form in
           VStack {
-            Text(form.symbol).font(.title)
-            Text(form.label).font(.caption).foregroundStyle(.mutedForeground)
+            Text(form.symbol).typeStyle(.pageTitle.weight(.regular))
+            Text(form.label).typeStyle(.meta).foregroundStyle(.mutedForeground)
           }
           .accessibilityElement(children: .combine)
         }
@@ -452,7 +452,7 @@ private struct FillBlankView: View {
       ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
         if !segment.isEmpty {
           Text(segment.trimmingCharacters(in: .whitespaces))
-            .font(.title3)
+            .typeStyle(.section.weight(.regular))
             .dimsOnceChecked()
         }
 
@@ -514,7 +514,7 @@ private struct FillBlankView: View {
 
   private func blankWord(_ word: String, line: Color) -> some View {
     Text(word.isEmpty ? "      " : word)
-      .font(.title3.weight(.medium))
+      .typeStyle(.section.weight(.medium))
       .padding(.horizontal, 6)
       .overlay(alignment: .bottom) {
         Rectangle().frame(height: 2).foregroundStyle(line)
@@ -699,7 +699,7 @@ private struct ReadingPromptText: View {
         }
       }
     }
-    .font(.title2.weight(.semibold))
+    .typeStyle(.question)
     .dimsOnceChecked()
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(prompt)
@@ -741,7 +741,7 @@ private struct HintedWord: View {
     .buttonStyle(.plain)
     .popover(isPresented: $isShown, arrowEdge: .top) {
       Text(translation)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
         .foregroundStyle(.primary)
         .padding(.horizontal)
         .padding(.vertical, 10)
@@ -902,7 +902,7 @@ private struct MatchColumnsView: View {
         "All pairs matched. Press Check to continue.", tableName: "Player",
         comment: "Every pair of a match exercise is matched"
       )
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
   }

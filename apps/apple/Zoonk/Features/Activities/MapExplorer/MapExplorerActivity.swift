@@ -11,7 +11,7 @@ extension ActivityRenderer {
           "This map can't be shown. Continue to the next screen.", tableName: "Activities",
           comment: "A map activity whose map isn't available"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
     }
@@ -75,7 +75,7 @@ private struct MapExplorerCanvas: View {
             }
           }
         }
-        .font(.caption)
+        .typeStyle(.meta)
         .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
       }
@@ -93,9 +93,9 @@ private struct MapExplorerCanvas: View {
               "\(selected + 1). \(place.label)", tableName: "Activities",
               comment: "A map place's number, then its name"
             )
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
             LessonRichText(place.reveals)
-              .font(.subheadline)
+              .typeStyle(.body)
           }
           .accessibilityElement(children: .combine)
         } else {
@@ -106,7 +106,7 @@ private struct MapExplorerCanvas: View {
           } icon: {
             Image(systemName: "hand.tap")
           }
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
       }
@@ -186,7 +186,7 @@ private struct MapExplorerCanvas: View {
       announceActivityChange(LessonRichText.spoken(place.reveals))
     } label: {
       Text(number, format: .number)
-        .font(.subheadline.weight(.semibold).monospacedDigit())
+        .typeStyle(.body.weight(.semibold).monospaced())
         .foregroundStyle(isSelected ? Color(.systemBackground) : ActivityBaseMap.Tone.pin)
         .frame(width: 32, height: 32)
         .background(
@@ -256,7 +256,9 @@ private struct MapShapes: View {
       for label in map.labels {
         let point = CGPoint(x: label.x, y: label.y).applying(transform)
         let text = MapWords.label(key: label.key, text: label.text)
-          .font(label.kind == .street ? .caption2.weight(.medium) : .caption.weight(.semibold))
+          .font(
+            (label.kind == .street ? TypeStyle.small.weight(.medium) : .meta.weight(.semibold))
+              .font(in: context.environment))
         var labelContext = context
         labelContext.translateBy(x: point.x, y: point.y)
         labelContext.rotate(by: .degrees(label.angle))

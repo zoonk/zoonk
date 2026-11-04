@@ -53,7 +53,7 @@ struct LineCrossingCanvas: View {
 
     ChartsCanvas {
       LessonRichText(fields.change)
-        .font(.subheadline)
+        .typeStyle(.body)
 
       chart(after: after, changes: changeText(yChange: yChange, xChange: xChange))
 
@@ -62,26 +62,26 @@ struct LineCrossingCanvas: View {
           changeRow(fields.yLabel, change: yChange, isVertical: true)
           changeRow(fields.xLabel, change: xChange, isVertical: false)
         }
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .accessibilityHidden(true)
       } else {
         Text(
           "Drag a line by its handle.", tableName: "ActivitiesCharts",
           comment: "How to move a line on a two-line chart"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
 
       if showsAnswer, let shifted = fields.lines.first(where: { $0.id == fields.shift.line }) {
         VStack(alignment: .leading, spacing: 4) {
           Text(verbatim: movedText(shifted, offset: realOffset))
-            .font(.subheadline.weight(.semibold))
+            .typeStyle(.body.weight(.semibold))
             .foregroundStyle(.vizHighlight)
 
           if case .interaction = context.check, let feedback = wrongMoveFeedback {
             LessonRichText(feedback)
-              .font(.subheadline)
+              .typeStyle(.body)
           }
         }
       }
@@ -120,7 +120,7 @@ struct LineCrossingCanvas: View {
           .opacity(0)
           .annotation(position: .topLeading, spacing: 2) {
             Text(verbatim: field.label)
-              .font(.caption.weight(.semibold))
+              .typeStyle(.meta.weight(.semibold))
               .foregroundStyle(index == 0 ? Color.vizAccent : Color.vizSecondary)
               .chartsLabelHalo()
           }

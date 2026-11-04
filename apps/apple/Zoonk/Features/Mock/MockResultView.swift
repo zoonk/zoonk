@@ -264,12 +264,12 @@ private struct MockScoreSections: View {
           "\(MockLabels.title(number: view.number)) done", tableName: "Mock",
           comment: "Over a mock's score"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
         Text(score.value)
-          .font(.largeTitle.weight(.semibold).monospacedDigit())
+          .typeStyle(.momentReadout)
         Text(detail)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         if let delta {
           Label {
@@ -278,7 +278,7 @@ private struct MockScoreSections: View {
             Image(
               systemName: delta.up ? "chart.line.uptrend.xyaxis" : "chart.line.downtrend.xyaxis")
           }
-          .font(.caption.monospacedDigit())
+          .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
         }
       }
@@ -372,7 +372,7 @@ private struct MockScoreSections: View {
     if let note = scoreNote {
       Section {
         Text(note)
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -691,7 +691,7 @@ private struct MockInsightsSection: View {
   ) -> some View {
     Label {
       VStack(alignment: .leading, spacing: 4) {
-        title.font(.headline)
+        title.typeStyle(.body.weight(.semibold))
         content().foregroundStyle(.mutedForeground)
       }
     } icon: {
@@ -712,7 +712,7 @@ private struct MockEssaySections: View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
         Text(essay.question)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
         status
       }
     } header: {
@@ -787,7 +787,7 @@ private struct MockSpeakingSection: View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
         Text(estimateTitle)
-          .font(.title2.weight(.semibold).monospacedDigit())
+          .typeStyle(.readout)
         Group {
           Text(estimateDetail)
           if paper.estimate.typed, paper.estimate.points != nil {
@@ -799,7 +799,7 @@ private struct MockSpeakingSection: View {
             Text(passRule)
           }
         }
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
       .padding(.vertical, 4)
@@ -915,7 +915,7 @@ private struct MockPreparationRow: View {
         verbatim:
           "\(preparation.before.formatted(.percent.precision(.fractionLength(0)))) → \(preparation.after.formatted(.percent.precision(.fractionLength(0))))"
       )
-      .font(.title2.weight(.semibold).monospacedDigit())
+      .typeStyle(.readout)
       Meter(value: preparation.after, total: 1, fill: .success)
       Text(
         preparation.after > preparation.before
@@ -926,7 +926,7 @@ private struct MockPreparationRow: View {
             localized: "The mock exam showed what's still missing.", table: "Mock",
             comment: "Preparation went down")
       )
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
   }
@@ -975,7 +975,7 @@ private struct MockPlanSection: View {
             "You got everything right in \(skip.topics.count) topics", tableName: "Mock",
             comment: "The mock showed topics the learner knows"
           )
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           Text(skip.topics.prefix(3).formatted(.list(type: .and)))
             .foregroundStyle(.mutedForeground)
           if skip.topics.count > 3 {
@@ -990,7 +990,7 @@ private struct MockPlanSection: View {
           .foregroundStyle(.mutedForeground)
         } else if let focus = adapt.focus {
           Text("Focus more on \(focus.area)?", tableName: "Mock", comment: "Offer to focus an area")
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
         }
 
         if let focus = adapt.focus {
@@ -1118,7 +1118,7 @@ private struct MockReviewSection: View {
         DisclosureGroup(isExpanded: $opened.contains("review:\(item.id)")) {
           VStack(alignment: .leading, spacing: 8) {
             if let context = item.context {
-              ItemText(context).font(.callout).foregroundStyle(.mutedForeground)
+              ItemText(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
             ItemText(item.question)
             if item.outcome == .blank {
@@ -1146,7 +1146,7 @@ private struct MockReviewSection: View {
               .foregroundStyle(.mutedForeground)
             }
             if let explanation = item.explanation {
-              ItemText(explanation).font(.callout).foregroundStyle(.mutedForeground)
+              ItemText(explanation).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
             if let citation = item.citation {
               CitationNote(citation: citation)
@@ -1162,7 +1162,7 @@ private struct MockReviewSection: View {
                 Text("Question \(item.number)", tableName: "Mock", comment: "A question by number")
               }
             }
-            .font(.caption.monospaced())
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
             Text(ItemTextBlock.plain(item.question))
               .lineLimit(2)

@@ -153,7 +153,7 @@ private struct PlanExamChoiceSection: View {
             "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
         )
         Text.examPickLimit(choice.take)
-          .fontWeight(.regular)
+          .typeWeight(.regular)
       }
     } footer: {
       SectionFooter {
@@ -199,7 +199,7 @@ private struct PlanFocusSection: View {
             Text(
               "Your answers choose for you", tableName: "Plan", comment: "What the focus test does"
             )
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
           }
         }
@@ -659,7 +659,7 @@ private struct PlanToolChoiceSheet: View {
     VStack(alignment: .leading, spacing: 2) {
       title
       detail
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
     }
   }

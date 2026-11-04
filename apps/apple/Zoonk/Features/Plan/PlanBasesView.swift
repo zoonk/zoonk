@@ -182,7 +182,7 @@ struct PlanBasesView: View {
 
             if let footnote = footnote(previewed) {
               Text(footnote)
-                .font(.footnote)
+                .typeStyle(.note)
                 .foregroundStyle(.mutedForeground)
             }
           }

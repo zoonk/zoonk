@@ -183,7 +183,7 @@ private struct AreaGrid: View {
               .overlay { Rectangle().strokeBorder(Color.vizAccent, lineWidth: 1) }
               .overlay {
                 Text(verbatim: ActivityNumberFormat.format(columnPart * rowPart))
-                  .font(.caption.weight(.semibold).monospacedDigit())
+                  .typeStyle(.meta.weight(.semibold).monospaced())
                   .minimumScaleFactor(0.5)
                   .lineLimit(1)
                   .padding(2)
@@ -195,14 +195,14 @@ private struct AreaGrid: View {
 
         ForEach(Array(width.parts.enumerated()), id: \.offset) { index, part in
           Text(verbatim: ActivityNumberFormat.format(part))
-            .font(.caption.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
             .position(x: (xs[index] + xs[index + 1]) / 2, y: frame.minY - 14)
         }
 
         ForEach(Array(height.parts.enumerated()), id: \.offset) { index, part in
           Text(verbatim: ActivityNumberFormat.format(part))
-            .font(.caption.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
             .position(x: frame.minX - 20, y: (ys[index] + ys[index + 1]) / 2)
         }
@@ -255,7 +255,7 @@ private struct AreaBar: View {
 
       ZStack(alignment: .topLeading) {
         Text(verbatim: ActivityNumberFormat.format(bar.total))
-          .font(.caption.weight(.medium).monospacedDigit())
+          .typeStyle(.meta.weight(.medium).monospaced())
           .foregroundStyle(.mutedForeground)
           .position(x: frame.midX, y: frame.minY - 16)
 
@@ -265,7 +265,7 @@ private struct AreaBar: View {
             .overlay { Rectangle().strokeBorder(Color.vizAccent, lineWidth: 1) }
             .overlay {
               Text(verbatim: ActivityNumberFormat.format(part))
-                .font(.caption.weight(.semibold).monospacedDigit())
+                .typeStyle(.meta.weight(.semibold).monospaced())
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
             }

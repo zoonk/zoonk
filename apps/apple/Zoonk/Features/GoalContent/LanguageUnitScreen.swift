@@ -226,12 +226,12 @@ private struct LanguageUnitContent: View {
       VStack(alignment: .leading, spacing: 6) {
         if let eyebrow {
           eyebrow
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
 
         Text(unit.unit.title)
-          .font(.title2.weight(.semibold))
+          .typeStyle(.section)
           .heroTitle()
 
         if let description = unit.unit.description, !description.isEmpty {
@@ -380,7 +380,7 @@ private struct LanguageUnitContent: View {
               "Take the test and skip the unit", tableName: "Plan",
               comment: "What the unit's test-out does"
             )
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
           }
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -394,11 +394,11 @@ private struct LanguageUnitContent: View {
         ForEach(unit.mistakes) { mistake in
           VStack(alignment: .leading, spacing: 8) {
             skillName(mistake.skill)
-              .font(.caption.weight(.medium))
+              .typeStyle(.meta.weight(.medium))
               .foregroundStyle(.mutedForeground)
 
             ItemText(mistake.question)
-              .font(.subheadline.weight(.medium))
+              .typeStyle(.body.weight(.medium))
 
             if let answer = mistake.answer {
               MistakeAnswerRow(text: answer, isRight: false)
@@ -410,7 +410,7 @@ private struct LanguageUnitContent: View {
 
             if let explanation = mistake.explanation {
               ItemText(explanation)
-                .font(.subheadline)
+                .typeStyle(.note)
                 .foregroundStyle(.mutedForeground)
             }
           }
@@ -467,7 +467,7 @@ private struct LanguageUnitContent: View {
         title
           .foregroundStyle(.primary)
         detail
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
           .lineLimit(1)
       }
@@ -530,7 +530,7 @@ struct PracticeCallSection: View {
             "It's the same for everyone right now. Try again later.", tableName: "Plan",
             comment: "Explains paused practice calls"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
       } else {

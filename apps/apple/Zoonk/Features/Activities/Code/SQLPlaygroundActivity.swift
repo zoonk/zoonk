@@ -139,7 +139,7 @@ private struct SQLPlaygroundCanvas: View {
 
       if let queryRun, !isStale, let message = errorMessage(queryRun) {
         message
-          .font(.subheadline.monospaced())
+          .typeStyle(.body.monospaced())
           .foregroundStyle(.destructiveText)
       }
 
@@ -182,14 +182,14 @@ private struct SQLPlaygroundCanvas: View {
   private var editor: some View {
     VStack(alignment: .leading, spacing: 8) {
       editorLabel
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .accessibilityHidden(true)
 
       MultilineTextField(
         text: $query, selection: $selection, prompt: Text(verbatim: "SELECT"), label: editorLabel
       )
       .lineLimit(3...)
-      .font(.body.monospaced())
+      .typeStyle(.body.monospaced())
       .textFieldStyle(.plain)
       .fieldBorder()
       .textInputAutocapitalization(.never)
@@ -224,7 +224,7 @@ private struct SQLPlaygroundCanvas: View {
             insert(snippet)
           } label: {
             Text(verbatim: snippet.trimmingCharacters(in: .whitespaces))
-              .font(.footnote.monospaced())
+              .typeStyle(.data)
           }
           .buttonStyle(.outline)
         }
@@ -261,7 +261,7 @@ private struct SQLPlaygroundCanvas: View {
             comment: "How many rows a query returned")
         }
       }
-      .font(.subheadline.weight(.medium))
+      .typeStyle(.body.weight(.medium))
 
       if !result.columns.isEmpty {
         SQLRowsTable(
@@ -297,7 +297,7 @@ private struct SQLPlaygroundCanvas: View {
               "Expected result", tableName: "ActivitiesCode", comment: "Rows a query should return")
           }
         }
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
         SQLRowsTable(
           caption: Text(
@@ -320,11 +320,11 @@ private struct SQLPlaygroundCanvas: View {
           "A query that works", tableName: "ActivitiesCode",
           comment: "The lesson's own query, after the check"
         )
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
         GroupBox {
           Text(CodeHighlight.text(of: verifiedSolution, language: .sql))
-            .font(.subheadline.monospaced())
+            .typeStyle(.body.monospaced())
             .textSelection(.enabled)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -427,10 +427,10 @@ private struct SQLTableViewer: View {
             .foregroundStyle(.mutedForeground)
 
           Text(verbatim: table.name)
-            .font(.subheadline.monospaced().weight(.semibold))
+            .typeStyle(.body.weight(.semibold).monospaced())
 
           Text(verbatim: table.columns.map(\.name).joined(separator: ", "))
-            .font(.caption.monospaced())
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -439,7 +439,7 @@ private struct SQLTableViewer: View {
             "\(table.rows.count) rows", tableName: "ActivitiesCode",
             comment: "How many rows a SQL table has"
           )
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
         }
       }
@@ -476,7 +476,7 @@ private struct SQLRowsTable: View {
         ForEach(Array(columns.enumerated()), id: \.offset) { _, column in
           Text(verbatim: column)
             .fixedSize()
-            .font(.caption.monospaced())
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
@@ -505,7 +505,7 @@ private struct SQLRowsTable: View {
         .accessibilityLabel(rowLabel(row, mark: mark))
       }
     }
-    .font(.subheadline)
+    .typeStyle(.body)
   }
 
   private func markColor(_ mark: Mark) -> Color {

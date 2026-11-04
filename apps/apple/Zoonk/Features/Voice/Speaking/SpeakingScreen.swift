@@ -110,22 +110,22 @@ private struct SpeakingPaperView: View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
         Text("Exam-style speaking", tableName: "Voice", comment: "Eyebrow over the exam's name")
-          .font(.caption.monospaced())
+          .typeStyle(.data)
           .foregroundStyle(.faint)
         Text(paper.title)
-          .font(.title2.weight(.semibold))
+          .typeStyle(.section)
         Text(
           "\(paper.tasks.count) tasks\u{00A0}· \(minutesText(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
           tableName: "Voice",
           comment: "How many tasks the speaking paper has and how long it is"
         )
-        .font(.subheadline.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
         Text(
           "\(paper.title) is an official exam. Practice its speaking tasks whether or not you plan to take it.",
           tableName: "Voice", comment: "The exam is official; practicing doesn't mean taking it"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
       .listRowBackground(Color.clear)
@@ -148,12 +148,12 @@ private struct SpeakingPaperView: View {
         Label {
           VStack(alignment: .leading, spacing: 2) {
             Text("Calls are paused", tableName: "Voice", comment: "Calls are off for everyone")
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             Text(
               "It's the same for everyone right now. Try again later.", tableName: "Voice",
               comment: "Calls are paused for everyone"
             )
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
           }
         } icon: {
@@ -212,10 +212,10 @@ private struct SpeakingPaperView: View {
 
       VStack(alignment: .leading, spacing: 2) {
         Text(task.name)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         Text(facts(task))
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -233,13 +233,13 @@ private struct SpeakingPaperView: View {
           "Rated on \(task.criteria.map { speakingCriterionName($0.key, officialName: $0.name) }.formatted(.list(type: .and)))",
           tableName: "Voice", comment: "The official criteria a speaking task is rated on"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
 
       if let lastTry = task.lastTry {
         Text(lastTryText(lastTry, level: paper.level.rawValue))
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       }
 
@@ -282,7 +282,7 @@ private struct SpeakingPaperView: View {
       // Only the open task starts, so a failure is said right under its button.
       if let startFailure {
         startFailureText(startFailure)
-          .font(.subheadline)
+          .typeStyle(.body)
           .foregroundStyle(.destructiveText)
       }
     }

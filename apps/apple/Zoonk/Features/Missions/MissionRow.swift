@@ -243,8 +243,7 @@ struct MissionRow: View {
 
       if !mission.isDone, !detail.isEmpty {
         Text(verbatim: detail.joinedFacts())
-          .font(.footnote)
-          .monospacedDigit()
+          .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -254,7 +253,7 @@ struct MissionRow: View {
   private var trailing: some View {
     if justDone != nil {
       Text("Just done", tableName: "Today", comment: "A mission the result just completed")
-        .font(.caption.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.successText)
     }
 

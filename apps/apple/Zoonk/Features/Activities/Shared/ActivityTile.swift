@@ -30,7 +30,7 @@ struct ActivityTileStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     content(configuration)
-      .font(.subheadline.weight(mark == .selected || mark == .wrong ? .semibold : .regular))
+      .typeStyle(.body.weight(mark == .selected || mark == .wrong ? .semibold : .regular))
       .foregroundStyle(foreground)
       .padding(.horizontal, isCompact ? 4 : 12)
       .padding(.vertical, isCompact ? 6 : 10)
@@ -47,7 +47,7 @@ struct ActivityTileStyle: ButtonStyle {
         .overlay(alignment: .topTrailing) {
           if let symbol = mark.symbol {
             Image(systemName: symbol)
-              .font(.caption2.weight(.bold))
+              .typeStyle(.small.bold())
               .accessibilityHidden(true)
           }
         }
@@ -103,7 +103,7 @@ struct ActivityReasonList: View {
               .foregroundStyle(.mutedForeground)
           }
         }
-        .font(.subheadline)
+        .typeStyle(.note)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .panel(cornerRadius: 12)
@@ -122,9 +122,8 @@ struct ActivityCaption: View {
 
   var body: some View {
     text
-      .font(.footnote)
+      .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
-      .monospacedDigit()
   }
 }
 

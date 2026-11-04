@@ -129,7 +129,7 @@ private struct CauseEffectCanvas: View {
                 comment: "How to link causes and effects")
             }
           }
-          .font(.subheadline.weight(.medium))
+          .typeStyle(.body.weight(.medium))
 
           Spacer(minLength: 8)
 
@@ -150,7 +150,7 @@ private struct CauseEffectCanvas: View {
 
       if !isLocked, let notice {
         LessonRichText(notice)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       }
 
@@ -168,7 +168,7 @@ private struct CauseEffectCanvas: View {
       VStack(alignment: .leading, spacing: 2) {
         if let year = node.year {
           Text(year, format: .number.grouping(.never))
-            .font(.caption.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
         }
         LessonRichText(node.label)
@@ -327,7 +327,7 @@ private struct CauseEffectCanvas: View {
 
       VStack(alignment: .leading, spacing: 2) {
         LessonRichText("\(fields.label(link.from)) → \(fields.label(link.to))")
-          .fontWeight(.medium)
+          .typeWeight(.medium)
           .accessibilityLabel(
             Text(
               "\(LessonRichText.spoken(fields.label(link.from))) led to \(LessonRichText.spoken(fields.label(link.to)))",
@@ -374,7 +374,7 @@ private struct CauseEffectCanvas: View {
         .foregroundStyle(.mutedForeground)
       }
     }
-    .font(.subheadline)
+    .typeStyle(.note)
     .padding(12)
     .panel(cornerRadius: 12)
     .overlay {

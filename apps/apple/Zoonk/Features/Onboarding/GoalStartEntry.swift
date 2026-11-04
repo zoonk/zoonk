@@ -248,7 +248,7 @@ struct GoalExamplesSection: View {
             Text(example.label)
               .foregroundStyle(.primary)
             Text(example.kind)
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
         }

@@ -80,7 +80,7 @@ private struct CourseCategoryButton: View {
 
         title
       }
-      .font(.subheadline.weight(.semibold))
+      .typeStyle(.body.weight(.semibold))
     }
   }
 

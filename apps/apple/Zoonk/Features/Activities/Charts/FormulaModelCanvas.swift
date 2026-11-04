@@ -80,7 +80,7 @@ struct FormulaModelCanvas: View {
           tableName: "ActivitiesCharts",
           comment: "An output at a marked value, like Savings at 10 years: $1,600"
         )
-        .font(.footnote.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.vizHighlight)
         .accessibilityHidden(true)
       }
@@ -106,10 +106,10 @@ struct FormulaModelCanvas: View {
     ) {
       ForEach(readouts) { item in
         VStack(alignment: .leading, spacing: 2) {
-          Text(verbatim: item.label).font(.footnote).foregroundStyle(.mutedForeground)
+          Text(verbatim: item.label).typeStyle(.note).foregroundStyle(.mutedForeground)
           ChartsReadout(text: item.value, style: item.isPrimary ? .vizAccent : .primary)
           if let note = item.note {
-            Text(verbatim: note).font(.caption.monospacedDigit()).foregroundStyle(.mutedForeground)
+            Text(verbatim: note).typeStyle(.data).foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -169,7 +169,7 @@ struct FormulaModelCanvas: View {
         ) {
           if let label = change.label {
             Text(verbatim: label)
-              .font(.caption.weight(.semibold).monospacedDigit())
+              .typeStyle(.meta.weight(.semibold).monospaced())
               .foregroundStyle(.vizHighlight)
           }
         }
@@ -198,7 +198,7 @@ struct FormulaModelCanvas: View {
           .foregroundStyle(.success)
           .annotation(position: .top, spacing: 4) {
             Text(verbatim: expected.label)
-              .font(.caption.weight(.semibold).monospacedDigit())
+              .typeStyle(.meta.weight(.semibold).monospaced())
               .foregroundStyle(.successText)
               .chartsLabelHalo()
           }
@@ -268,7 +268,7 @@ struct FormulaModelCanvas: View {
             comment: "Legend of the dashed curve where sliders started")
       }
     }
-    .font(.caption)
+    .typeStyle(.meta)
     .foregroundStyle(.mutedForeground)
     .accessibilityHidden(true)
   }
@@ -281,10 +281,10 @@ struct FormulaModelCanvas: View {
 
     return VStack(alignment: .leading, spacing: 4) {
       HStack(alignment: .firstTextBaseline) {
-        Text(verbatim: variable.label).font(.subheadline)
+        Text(verbatim: variable.label).typeStyle(.body)
         Spacer()
         Text(verbatim: ActivityNumberFormat.format(value, unit: variable.unit))
-          .font(.subheadline.weight(.medium).monospacedDigit())
+          .typeStyle(.body.weight(.medium).monospaced())
       }
       .accessibilityHidden(true)
 
@@ -303,12 +303,12 @@ struct FormulaModelCanvas: View {
         Text(verbatim: variable.label)
       } minimumValueLabel: {
         Text(verbatim: ActivityNumberFormat.format(variable.min, unit: variable.unit))
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
           .accessibilityHidden(true)
       } maximumValueLabel: {
         Text(verbatim: ActivityNumberFormat.format(variable.max, unit: variable.unit))
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
           .accessibilityHidden(true)
       }

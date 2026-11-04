@@ -230,7 +230,7 @@ struct DroppedCallView: View {
   private func why(_ title: Text, _ text: Text?) -> some View {
     VStack(spacing: 4) {
       title
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
         .foregroundStyle(.primary)
 
       text

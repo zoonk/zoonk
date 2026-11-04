@@ -73,22 +73,22 @@ private struct EarlierQuestionRow: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       source
-        .font(.caption)
+        .typeStyle(.meta)
         .foregroundStyle(.mutedForeground)
 
       Text(question.question)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       if let answer = question.answer {
         TutorAnswerText(text: answer, linksEnabled: false, buddyName: "")
-          .font(.subheadline)
+          .typeStyle(.body)
           .accessibilityLabel(Text(answer))
       } else {
         Text(
           "No answer was saved.", tableName: "Buddy",
           comment: "An earlier question without its answer"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
     }

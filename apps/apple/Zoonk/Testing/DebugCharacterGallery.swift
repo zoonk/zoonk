@@ -77,7 +77,7 @@
                 VStack {
                   BuddyCharacter(look: BuddyLook(kind: kind, belt: .red), expression: expression)
                     .frame(height: 72)
-                  Text(verbatim: "\(expression)").font(.caption2)
+                  Text(verbatim: "\(expression)").typeStyle(.small)
                 }
               }
             }

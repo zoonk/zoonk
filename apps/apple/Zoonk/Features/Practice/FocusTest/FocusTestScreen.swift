@@ -107,15 +107,15 @@ struct FocusTestScreen: View {
           "Your plan is back as it was", tableName: "Practice",
           comment: "After undoing a focus test's change."
         )
-        .font(.largeTitle.bold())
+        .typeStyle(.heroTitle)
       } else if !chosen.isEmpty {
         VStack(alignment: .leading, spacing: 6) {
           Text(
             "Your new focus", tableName: "Practice",
             comment: "Eyebrow over a focus test's chosen subjects."
           )
-          .font(.subheadline.weight(.medium)).foregroundStyle(.mutedForeground)
-          Text(chosen.formatted(.list(type: .and))).font(.largeTitle.bold())
+          .typeStyle(.note.weight(.medium)).foregroundStyle(.mutedForeground)
+          Text(chosen.formatted(.list(type: .and))).typeStyle(.heroTitle)
           Group {
             if chosen.count == 1 {
               Text(
@@ -136,7 +136,7 @@ struct FocusTestScreen: View {
           "How you did", tableName: "Practice",
           comment: "Heading over a focus test's results by subject."
         )
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
         ForEach(result.areas, id: \.name) { area in
           HStack(spacing: 12) {
@@ -147,7 +147,7 @@ struct FocusTestScreen: View {
                   width: 14, height: 4)
               }
             }
-            Text("\(area.correct)/\(area.total)").font(.subheadline.monospacedDigit())
+            Text("\(area.correct)/\(area.total)").typeStyle(.data)
               .foregroundStyle(.mutedForeground)
           }
           .accessibilityElement(children: .combine)
@@ -161,7 +161,7 @@ struct FocusTestScreen: View {
           "We couldn't undo it. Try again.", tableName: "Practice",
           comment: "Undoing a focus test's change failed."
         )
-        .font(.subheadline).foregroundStyle(.destructiveText)
+        .typeStyle(.body).foregroundStyle(.destructiveText)
       }
     } actions: {
       if let changeId = result.changeId, !undone {

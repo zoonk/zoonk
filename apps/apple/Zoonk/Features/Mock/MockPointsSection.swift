@@ -13,7 +13,7 @@ struct MockPointsSection: View {
         } icon: {
           Image(systemName: verdict.met ? "checkmark" : "xmark")
         }
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .foregroundStyle(verdict.met ? AnyShapeStyle(.primary) : AnyShapeStyle(.destructiveText))
       }
 

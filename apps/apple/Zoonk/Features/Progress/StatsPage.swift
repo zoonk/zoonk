@@ -160,7 +160,7 @@ struct StatsBlock<Trailing: View, Content: View>: View {
     VStack(alignment: .leading, spacing: 12) {
       HStack(alignment: .firstTextBaseline) {
         title
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           .accessibilityAddTraits(.isHeader)
 
         Spacer(minLength: 12)

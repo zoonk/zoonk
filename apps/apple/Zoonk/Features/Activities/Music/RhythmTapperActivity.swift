@@ -146,7 +146,7 @@ private struct RhythmStatus: View {
           comment: "How many times the rhythm repeats")
       }
     }
-    .font(.subheadline.monospacedDigit())
+    .typeStyle(.data)
     .foregroundStyle(.mutedForeground)
     .accessibilityElement(children: .combine)
   }
@@ -199,7 +199,7 @@ private struct RhythmGrid: View {
           }
 
           Text(beat + 1, format: .number)
-            .font(.caption.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -209,7 +209,7 @@ private struct RhythmGrid: View {
         HStack(spacing: 16) { legend }
         VStack(alignment: .leading, spacing: 4) { legend }
       }
-      .font(.caption)
+      .typeStyle(.meta)
       .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .ignore)
@@ -283,7 +283,7 @@ private struct RhythmControls: View {
         }
       }
       .buttonStyle(.borderless)
-      .font(.subheadline)
+      .typeStyle(.body)
     }
   }
 
@@ -342,7 +342,7 @@ private struct RhythmFeedback: View {
           comment: "Rhythm result: the learner's taps on the screen that matched no beat")
       }
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .accessibilityElement(children: .combine)
   }
 
@@ -391,11 +391,11 @@ private struct RhythmCalibrationView: View {
             "Set up your sound", tableName: "ActivitiesMusic",
             comment: "Title of the rhythm sound check"
           )
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           .accessibilityAddTraits(.isHeader)
 
           status(phase)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
 

@@ -37,7 +37,7 @@ struct ExamMomentSection<Action: View>: View {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 4) {
-            Text(copy.title).font(.headline)
+            Text(copy.title).typeStyle(.body.weight(.semibold))
             if moment.stage != .afterExam, let day = moment.day, let date = studyDate(day.date) {
               Text(
                 verbatim: [
@@ -45,7 +45,7 @@ struct ExamMomentSection<Action: View>: View {
                   day.startTime.flatMap(examTimeOfDay),
                 ].compactMap(\.self).joinedFacts()
               )
-              .font(.subheadline.monospacedDigit())
+              .typeStyle(.data)
             }
             Text(copy.body)
               .foregroundStyle(.mutedForeground)
@@ -64,7 +64,7 @@ struct ExamMomentSection<Action: View>: View {
           } label: {
             Text("For exam day", tableName: "Exam", comment: "Title of the exam day's checklist")
           }
-          .font(.subheadline)
+          .typeStyle(.body)
         }
 
         ForEach(moment.checklist, id: \.self) { item in

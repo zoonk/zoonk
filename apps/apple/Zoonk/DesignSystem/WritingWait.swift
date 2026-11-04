@@ -9,7 +9,7 @@ struct WritingWait: View {
       VStack(alignment: .leading, spacing: 2) {
         title
         hint
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
       }
     } icon: {

@@ -20,7 +20,7 @@ struct AnswerOption<Label: View>: View {
       HStack(alignment: .firstTextBaseline, spacing: 12) {
         if let marker {
           Text(marker, format: .number)
-            .font(.footnote.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
             .accessibilityHidden(true)
         }
@@ -36,7 +36,7 @@ struct AnswerOption<Label: View>: View {
 
           if let result {
             Text(resultLabel(result))
-              .font(.caption.weight(.semibold))
+              .typeStyle(.meta.weight(.semibold))
               .foregroundStyle(result == .right ? Color.successText : Color.destructiveText)
           }
         }
@@ -69,7 +69,7 @@ struct AnswerOptionStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-      .font(.body.weight(.medium))
+      .typeStyle(.button)
       .foregroundStyle(Color(.foreground))
       .padding(.horizontal, 14)
       .padding(.vertical, 12)

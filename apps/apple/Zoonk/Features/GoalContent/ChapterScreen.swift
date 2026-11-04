@@ -142,16 +142,16 @@ private struct ChapterContent: View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
         eyebrow
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
 
         Text(chapter.chapter.title)
-          .font(.title2.weight(.semibold))
+          .typeStyle(.section)
           .heroTitle()
 
         if !lessons.isEmpty {
           facts(done: done)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
 
@@ -227,7 +227,7 @@ private struct ChapterContent: View {
                 "Take the test and skip the chapter", tableName: "Plan",
                 comment: "What the chapter's test-out does"
               )
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -253,7 +253,7 @@ private struct ChapterContent: View {
 
           if let practiceNote {
             practiceNote
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
         }
@@ -449,11 +449,11 @@ struct LessonSummaries: View {
     ForEach(summaries) { summary in
       VStack(alignment: .leading, spacing: 4) {
         Text(summary.title)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         ForEach(summary.ideas, id: \.self) { idea in
           Text((try? AttributedString(markdown: idea)) ?? AttributedString(idea))
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
       }

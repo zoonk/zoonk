@@ -168,7 +168,7 @@ private struct TutorConversationView<Header: View>: View {
             "Couldn't load earlier messages. Try again.", tableName: "Tutor",
             comment: "Earlier messages of the conversation couldn't be read"
           )
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.destructiveText)
         }
 
@@ -211,9 +211,8 @@ private struct TutorDayLabel: View {
 
   var body: some View {
     tutorDayLabel(date)
-      .font(.caption.weight(.medium))
+      .typeStyle(.label)
       .foregroundStyle(.mutedForeground)
-      .textCase(.uppercase)
       .frame(maxWidth: .infinity)
       .accessibilityAddTraits(.isHeader)
   }

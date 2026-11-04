@@ -165,7 +165,7 @@ private struct CourseCell: View {
 
         if let lead = firstSentence(course.description) {
           Text(lead)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
         }
@@ -174,7 +174,7 @@ private struct CourseCell: View {
           lessonCount: course.lessonCount, minutes: course.estimatedMinutes)
         {
           Text(length)
-            .font(.footnote.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
             .padding(.top, 2)
         }
@@ -187,7 +187,7 @@ private struct CourseCell: View {
 
   private var title: some View {
     Text(course.title)
-      .font(.body.weight(.semibold))
+      .typeStyle(.body.weight(.semibold))
       .foregroundStyle(.primary)
       .fixedSize(horizontal: false, vertical: true)
       // VoiceOver names the course before its flag and subject, which a column draws over it.
@@ -223,7 +223,7 @@ struct CourseGridLoadMoreView: View {
               systemName: failure == .network
                 ? "wifi.exclamationmark" : "exclamationmark.triangle")
           }
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
 
           Button {

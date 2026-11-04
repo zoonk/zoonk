@@ -22,7 +22,7 @@ struct CodeLine<Content: View>: View {
       content
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    .font(.subheadline.monospaced())
+    .typeStyle(.body.monospaced())
     .padding(.horizontal, 6)
     .padding(.vertical, 3)
     .background(background, in: .rect(cornerRadius: 6))
@@ -67,7 +67,7 @@ struct CodeRunBar: View {
           "\(runtimeName) didn't load. Check your connection and try again.",
           tableName: "ActivitiesCode", comment: "A code runtime (Python) failed to download"
         )
-        .font(.subheadline)
+        .typeStyle(.body)
         .foregroundStyle(.destructiveText)
 
         Button(action: retry) {

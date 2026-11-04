@@ -59,7 +59,7 @@ private struct SetPlace: View {
           comment: "Where a question sits among the questions about the same text.")
       }
     }
-    .font(.caption.weight(.medium))
+    .typeStyle(.meta.weight(.medium))
     .foregroundStyle(.mutedForeground)
   }
 }
@@ -81,12 +81,12 @@ private struct SetTextView: View {
       SetPlace(set: set)
 
       if let title = set.title {
-        Text(title).font(.headline)
+        Text(title).typeStyle(.body.weight(.semibold))
       }
 
       if let text = set.text {
         ItemText(text)
-          .font(.callout)
+          .typeStyle(.reading)
           .lineLimit(expanded ? nil : 4)
       }
 
@@ -115,7 +115,7 @@ private struct SetTextView: View {
       }
 
       if let source = set.source {
-        Text(source).font(.caption).foregroundStyle(.mutedForeground)
+        Text(source).typeStyle(.meta).foregroundStyle(.mutedForeground)
       }
     }
     .padding(.leading, 14)
@@ -133,7 +133,7 @@ struct ItemSupportView: View {
 
   var body: some View {
     if let context {
-      ItemText(context).font(.callout).foregroundStyle(.mutedForeground)
+      ItemText(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
     }
 
     if let image, let url = URL(string: image.url) {
@@ -163,7 +163,7 @@ struct PracticeVisualView: View {
     switch visual {
     case .chart(let chart):
       VStack(alignment: .leading, spacing: 8) {
-        Text(chart.title).font(.subheadline.weight(.semibold))
+        Text(chart.title).typeStyle(.body.weight(.semibold))
 
         Chart {
           ForEach(chart.series, id: \.name) { series in
@@ -191,20 +191,20 @@ struct PracticeVisualView: View {
         .frame(minHeight: 200)
 
         if let source = chart.source {
-          Text(source).font(.caption).foregroundStyle(.mutedForeground)
+          Text(source).typeStyle(.meta).foregroundStyle(.mutedForeground)
         }
       }
     case .timeline(let timeline):
       VStack(alignment: .leading, spacing: 8) {
-        Text(timeline.title).font(.subheadline.weight(.semibold))
+        Text(timeline.title).typeStyle(.body.weight(.semibold))
 
         ForEach(Array(timeline.events.enumerated()), id: \.offset) { _, event in
           HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(event.date).font(.footnote.monospacedDigit()).foregroundStyle(.mutedForeground)
+            Text(event.date).typeStyle(.data).foregroundStyle(.mutedForeground)
             VStack(alignment: .leading, spacing: 2) {
-              Text(event.label).font(.callout.weight(.medium))
+              Text(event.label).typeStyle(.reading.weight(.medium))
               if let detail = event.detail {
-                Text(detail).font(.footnote).foregroundStyle(.mutedForeground)
+                Text(detail).typeStyle(.note).foregroundStyle(.mutedForeground)
               }
             }
           }
@@ -295,7 +295,7 @@ private struct RecordingProgress: View {
           "\(clock(elapsed)) of \(clock(length))", tableName: "Practice",
           comment: "How far a recording has played, as in “0:42 of 3:19”."
         )
-        .font(.caption.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
       }
       .accessibilityElement(children: .combine)
@@ -329,15 +329,15 @@ private struct ListeningPlayerView: View {
 
     VStack(alignment: .leading, spacing: 12) {
       if let title = listening.title {
-        Text(title).font(.headline)
+        Text(title).typeStyle(.body.weight(.semibold))
       }
 
       if let task = listening.task {
-        ItemText(task).font(.callout)
+        ItemText(task).typeStyle(.reading)
       }
 
       Text(rule(answered: answered, playsLeft: playsLeft, isPlaying: isPlaying))
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
 
       Button(action: play) {
@@ -365,7 +365,7 @@ private struct ListeningPlayerView: View {
           "The recording didn't load. Check your connection and try again.", tableName: "Practice",
           comment: "Shown when a set's recording fails to load."
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.destructiveText)
       }
 
@@ -374,8 +374,7 @@ private struct ListeningPlayerView: View {
           VStack(alignment: .leading, spacing: 6) {
             ForEach(Array(questions.prompts.enumerated()), id: \.offset) { index, prompt in
               Text("\(index + 1). \(ItemTextBlock.plain(prompt))")
-                .font(.footnote)
-                .fontWeight(index == questions.current ? .medium : .regular)
+                .typeStyle(.note.weight(index == questions.current ? .medium : .regular))
                 .foregroundStyle(index == questions.current ? Color(.foreground) : .mutedForeground)
             }
           }
@@ -386,7 +385,7 @@ private struct ListeningPlayerView: View {
             "Questions on this recording (\(questions.prompts.count))", tableName: "Practice",
             comment: "Folds the list of every question about a recording, to read before it plays."
           )
-          .font(.subheadline.weight(.medium))
+          .typeStyle(.body.weight(.medium))
         }
       }
 
@@ -396,9 +395,9 @@ private struct ListeningPlayerView: View {
             ForEach(Array(transcript.enumerated()), id: \.offset) { index, turn in
               VStack(alignment: .leading, spacing: 2) {
                 if index == 0 || transcript[index - 1].speaker != turn.speaker {
-                  Text(turn.speaker).font(.footnote.weight(.semibold))
+                  Text(turn.speaker).typeStyle(.note.weight(.semibold))
                 }
-                Text(turn.text).font(.footnote)
+                Text(turn.text).typeStyle(.note)
               }
             }
           }
@@ -406,7 +405,7 @@ private struct ListeningPlayerView: View {
           .padding(.top, 6)
         } label: {
           Text("Transcript", tableName: "Practice", comment: "Folds who said what in a recording.")
-            .font(.subheadline.weight(.medium))
+            .typeStyle(.body.weight(.medium))
         }
       }
     }

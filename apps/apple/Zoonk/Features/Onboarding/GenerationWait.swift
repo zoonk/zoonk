@@ -495,7 +495,7 @@ struct GenerationFailureSection: View {
       Label {
         VStack(alignment: .leading, spacing: 4) {
           title
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
           description
         }
       } icon: {

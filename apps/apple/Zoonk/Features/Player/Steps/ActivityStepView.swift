@@ -102,7 +102,7 @@ struct ActivityStepView: View {
     switch content.check {
     case .choice(let question, let options, _, _):
       LessonRichText(question)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
       LessonOptionList(
         options: options.map { LessonOption(id: $0.id, text: $0.text, isCorrect: $0.isCorrect) },
         selectedId: answer?.optionId,
@@ -111,7 +111,7 @@ struct ActivityStepView: View {
       ) { context.select(.activity(.choice(optionId: $0))) }
     case .numeric(let question, let expected, let tolerance, let unit, _, _, _):
       LessonRichText(question)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
       NumericAnswerField(
         value: answer?.number, expected: expected, tolerance: tolerance, unit: unit,
         isLocked: context.isLocked
@@ -141,7 +141,7 @@ struct ActivityDataNote: View {
           comment: "Where a model's numbers come from")
       }
     }
-    .font(.caption)
+    .typeStyle(.meta)
     .foregroundStyle(.mutedForeground)
   }
 
@@ -184,7 +184,7 @@ private struct NumericAnswerField: View {
       }
       .keyboardType(.decimalPad)
       .disabled(isLocked)
-      .font(.title3.monospacedDigit())
+      .typeStyle(.readout.weight(.regular))
       .accessibilityHint(Text(verbatim: unit ?? ""))
 
       if let unit, !unitLeads {

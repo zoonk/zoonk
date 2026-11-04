@@ -152,7 +152,7 @@ struct QuestionBlockView: View {
           "Every question is answered", tableName: "Practice",
           comment: "Title of a block opened again with every answer in."
         )
-        .font(.title2.bold())
+        .typeStyle(.section)
         Text(
           "Finish to see how it went.", tableName: "Practice",
           comment: "Under the title of a block opened again with every answer in."
@@ -284,7 +284,7 @@ struct QuestionBlockView: View {
         "You already answered this question.", tableName: "Practice",
         comment: "Shown when an answer was saved before."
       )
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
       PracticeMainButton(title: continueTitle) { onRefresh() }
     case .finishReady:
@@ -425,14 +425,14 @@ private struct NetScoreLine: View {
         ]
         .joinedFacts()
       )
-      .font(.footnote.monospacedDigit())
+      .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
 
       Text(
         "A wrong answer cancels a right one. Not sure? Leave it blank.", tableName: "Practice",
         comment: "Why a net-scored block offers 'Leave blank'."
       )
-      .font(.caption)
+      .typeStyle(.meta)
       .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
@@ -486,7 +486,7 @@ private struct PauseSuggestionView: View {
           "We couldn't stop the session. Try again.", tableName: "Practice",
           comment: "Stopping the session failed."
         )
-        .font(.subheadline)
+        .typeStyle(.body)
         .foregroundStyle(.destructiveText)
       }
     }

@@ -127,6 +127,7 @@ extension LevelProgress {
 
 private struct BeltProgression: View {
   @Environment(\.horizontalSizeClass) private var sizeClass
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let level: LevelProgress
 
@@ -177,14 +178,14 @@ private struct BeltProgression: View {
   private var beltName: some View {
     VStack(alignment: .leading, spacing: 2) {
       Text(level.belt.localizedTitle)
-        .font(.title3.weight(.semibold))
+        .typeStyle(.section)
 
       Text(
-        "Level \(Text(level.level, format: .number).foregroundStyle(.primary).fontWeight(.medium)) of \(10)",
+        "Level \(Text(level.level, format: .number).foregroundStyle(.primary).typeWeight(.medium, legibility: legibilityWeight)) of \(10)",
         tableName: "Progress",
         comment: "The learner's level within their belt, of the belt's 10 levels"
       )
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
@@ -201,8 +202,7 @@ private struct NextBeltView: View {
         Text(
           "Next belt", tableName: "Progress", comment: "Label over the belt the learner earns next"
         )
-        .font(.caption.weight(.medium))
-        .textCase(.uppercase)
+        .typeStyle(.label)
         .foregroundStyle(.mutedForeground)
 
         HStack(spacing: 8) {
@@ -213,14 +213,13 @@ private struct NextBeltView: View {
             tableName: "Progress",
             comment: "The next belt and the total Brain Power where it starts")
         }
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
         Text(
           "\(next.brainPowerToGo) to go", tableName: "Progress",
           comment: "How much more Brain Power the next belt takes"
         )
-        .font(.caption)
-        .monospacedDigit()
+        .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
       }
       .multilineTextAlignment(alignment == .trailing ? .trailing : .leading)
@@ -231,7 +230,7 @@ private struct NextBeltView: View {
       } icon: {
         StatusMark(status: .done)
       }
-      .font(.subheadline.weight(.medium))
+      .typeStyle(.body.weight(.medium))
     }
   }
 }

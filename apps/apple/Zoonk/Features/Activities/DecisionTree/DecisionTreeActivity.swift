@@ -42,7 +42,7 @@ private struct DecisionTreeCanvas: View {
           "The case", tableName: "Activities",
           comment: "Above the case a decision tree is walked for"
         )
-        .font(.caption.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.mutedForeground)
         LessonRichText(fields.case.description)
       }
@@ -60,10 +60,10 @@ private struct DecisionTreeCanvas: View {
             "Still possible", tableName: "Activities",
             comment: "Above the outcomes a decision tree can still reach"
           )
-          .font(.caption.weight(.medium))
+          .typeStyle(.meta.weight(.medium))
           .foregroundStyle(.mutedForeground)
           Text(possible.map(\.label).joinedFacts())
-            .font(.subheadline)
+            .typeStyle(.note)
         }
         .accessibilityElement(children: .combine)
       }
@@ -80,7 +80,7 @@ private struct DecisionTreeCanvas: View {
               Text(step.branch)
                 .chip()
             }
-            .font(.subheadline)
+            .typeStyle(.body)
             .accessibilityElement(children: .combine)
           }
         }
@@ -91,11 +91,11 @@ private struct DecisionTreeCanvas: View {
         VStack(alignment: .leading, spacing: 10) {
           HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text(steps.count + 1, format: .number)
-              .font(.subheadline.weight(.semibold).monospacedDigit())
+              .typeStyle(.note.weight(.semibold).monospaced())
               .foregroundStyle(.mutedForeground)
               .accessibilityHidden(true)
             LessonRichText(node.question)
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
               .accessibilityAddTraits(.isHeader)
           }
 
@@ -120,10 +120,10 @@ private struct DecisionTreeCanvas: View {
             "The key leads to", tableName: "Activities",
             comment: "Above the outcome a decision tree walk reached"
           )
-          .font(.caption.weight(.semibold))
+          .typeStyle(.meta.weight(.semibold))
           .foregroundStyle(.mutedForeground)
           Text(node.label)
-            .font(.title3.weight(.semibold))
+            .typeStyle(.section)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
@@ -179,7 +179,7 @@ private struct DecisionTreeCanvas: View {
         "The walk for this case", tableName: "Activities",
         comment: "Above the right walk of a decision tree"
       )
-      .font(.subheadline.weight(.semibold))
+      .typeStyle(.body.weight(.semibold))
 
       ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
         HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -197,7 +197,7 @@ private struct DecisionTreeCanvas: View {
           VStack(alignment: .leading, spacing: 2) {
             LessonRichText(step.question)
             Text(step.branch)
-              .fontWeight(.semibold)
+              .typeWeight(.semibold)
             if index == missedAt, let learnerBranch = learnerSteps[safe: index]?.branch {
               Text(
                 "You chose \(learnerBranch)", tableName: "Activities",
@@ -207,7 +207,7 @@ private struct DecisionTreeCanvas: View {
             }
           }
         }
-        .font(.subheadline)
+        .typeStyle(.body)
         .accessibilityElement(children: .combine)
       }
 
@@ -216,7 +216,7 @@ private struct DecisionTreeCanvas: View {
           "It leads to \(node.label).", tableName: "Activities",
           comment: "After the check: the outcome the right walk of a decision tree reaches"
         )
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
       }
     }
   }

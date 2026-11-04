@@ -27,7 +27,7 @@ struct MemoryInsightCard: View {
             "We couldn't save your answer. Try again.", tableName: "Buddy",
             comment: "Answering an insight failed"
           )
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.destructiveText)
         }
       }

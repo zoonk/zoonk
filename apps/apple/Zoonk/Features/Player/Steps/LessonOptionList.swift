@@ -67,7 +67,7 @@ struct LessonOptionList: View {
 
         if let detail = option.detail {
           Text(detail)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
       }
@@ -188,7 +188,7 @@ struct LessonOptionStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-      .font(.body.weight(.medium))
+      .typeStyle(.button)
       .foregroundStyle(foreground)
       .multilineTextAlignment(.leading)
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -228,7 +228,7 @@ struct LessonWordTile: View {
         Text(word)
         if let romanization {
           Text(romanization)
-            .font(.caption)
+            .typeStyle(.meta)
             .foregroundStyle(.mutedForeground)
         }
       }

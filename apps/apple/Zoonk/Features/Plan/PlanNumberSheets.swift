@@ -110,7 +110,7 @@ struct PlanPaceSheet: View {
               ? String(localized: "Paused", table: "Plan", comment: "Pace of a paused goal")
               : planStatusText(status)
           )
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
           if resting {
             Text(
@@ -181,7 +181,7 @@ private struct PlanWeekRings: View {
       ForEach(plan.week.days) { day in
         VStack(spacing: 6) {
           Text(PlanDate.weekday(day.date))
-            .font(.caption2.weight(.medium))
+            .typeStyle(.small.weight(.medium))
             .textCase(.uppercase)
             .foregroundStyle(day.state == .today ? Color(.foreground) : .mutedForeground)
 

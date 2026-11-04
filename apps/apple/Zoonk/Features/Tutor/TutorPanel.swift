@@ -45,17 +45,17 @@ struct TutorPanel: View {
       VStack(alignment: .leading, spacing: 8) {
         if isPane {
           title
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
             .accessibilityAddTraits(.isHeader)
         }
 
         scope.panelDescription
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
 
         if let quote {
           Text(quoteLine(quote))
-            .font(.footnote)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
             .lineLimit(3)
             .padding(.leading, 10)

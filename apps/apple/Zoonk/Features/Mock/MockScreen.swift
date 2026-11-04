@@ -142,9 +142,9 @@ struct MockClock: View {
   var body: some View {
     VStack(spacing: 0) {
       Text(timerInterval: Date.now...max(deadline, .now), countsDown: true)
-        .font(.headline.monospacedDigit())
+        .typeStyle(.body.weight(.semibold).monospaced())
       Text("time left", tableName: "Mock", comment: "Under the mock's clock")
-        .font(.caption2)
+        .typeStyle(.small)
         .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
     }
@@ -202,7 +202,7 @@ struct MockStepStatus: View {
         .foregroundStyle(.mutedForeground)
       }
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 }
@@ -354,7 +354,7 @@ private struct MockBreakView: View {
       Section {
         VStack(alignment: .leading, spacing: 8) {
           Text(timerInterval: Date.now...max(until, .now), countsDown: true)
-            .font(.largeTitle.weight(.semibold).monospacedDigit())
+            .typeStyle(.momentReadout)
             .accessibilityLabel(
               Text("Break time left", tableName: "Mock", comment: "The break's clock"))
           Text(
@@ -523,7 +523,7 @@ private struct MockSpeakingView: View {
     HStack {
       VStack(alignment: .leading, spacing: 2) {
         Text("Task \(number)", tableName: "Mock", comment: "A speaking task's number")
-          .font(.caption.monospaced())
+          .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
         Text(task.name)
       }

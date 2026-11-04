@@ -273,7 +273,7 @@ private struct NextStopView: View {
           "\(day.blocks.filter(\.isFinished).count) of \(day.blocks.count) done",
           tableName: "Session", comment: "How far the day's session is"
         )
-        .font(.subheadline.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
 
         MeterParts(parts: day.meterParts)
@@ -354,7 +354,7 @@ private struct NextStopView: View {
             "We couldn't open the next step. Try again.", tableName: "Session",
             comment: "Opening or stopping failed"
           )
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.destructiveText)
         }
       }
@@ -603,12 +603,12 @@ private struct MomentSummary: View {
             "Done", tableName: "Session", comment: "A block just finished, before its name loads")
         }
       }
-      .font(.title2.bold())
+      .typeStyle(.section)
       .accessibilityAddTraits(.isHeader)
 
       if moment.ownBrainPower > 0 {
         Text("+\(moment.ownBrainPower) Brain Power", tableName: "Session", comment: "Earned")
-          .font(.headline.monospacedDigit())
+          .typeStyle(.body.weight(.semibold).monospaced())
           .foregroundStyle(.brainText)
       }
 

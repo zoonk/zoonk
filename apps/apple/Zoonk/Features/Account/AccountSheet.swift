@@ -329,7 +329,7 @@ private struct SettingsHubView: View {
                 Text(account.user.preferredName)
 
                 Text(account.user.email)
-                  .font(.subheadline)
+                  .typeStyle(.note)
                   .foregroundStyle(.mutedForeground)
               }
             }

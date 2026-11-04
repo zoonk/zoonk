@@ -81,12 +81,13 @@ struct ButtonRow<Content: View>: View {
 
 extension View {
   /// The styles that don't reach into a presentation, so the app's root and the root of each
-  /// presented screen apply them: the button shape and label style for accessibility sizes, and
-  /// `GroupBox` as a panel.
+  /// presented screen apply them: the button shape and label style for accessibility sizes,
+  /// `GroupBox` as a panel, and the type role of text without one.
   func zoonkStyles() -> some View {
     modifier(AccessibilityButtonShape())
       .labelStyle(StackingLabelStyle())
       .groupBoxStyle(.panel)
+      .typeStyle(.body)
   }
 }
 

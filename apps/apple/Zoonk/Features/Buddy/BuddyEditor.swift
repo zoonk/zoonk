@@ -69,7 +69,7 @@ struct BuddyEditor: View {
 
           if !isEarned {
             glasses.howToEarn
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
         }
@@ -109,7 +109,7 @@ struct BuddyPickerSections: View {
             VStack(alignment: .leading) {
               Text(buddyName(kind: kind, name: nil))
               kind.tagline
-                .font(.subheadline)
+                .typeStyle(.note)
                 .foregroundStyle(.secondary)
             }
           } icon: {
@@ -172,12 +172,12 @@ struct BuddyGlassesPicker: View {
           } label: {
             HStack(spacing: 12) {
               BuddyFace(kind: status.buddy.kind, glasses: option.glasses.worn)
-                .font(.title)
+                .typeStyle(.pageTitle.weight(.regular))
                 .opacity(option.earned ? 1 : 0.4)
 
               VStack(alignment: .leading, spacing: 4) {
                 option.glasses.name
-                  .font(.headline)
+                  .typeStyle(.body.weight(.semibold))
 
                 if !option.earned {
                   lockedDetail(option)
@@ -205,12 +205,12 @@ struct BuddyGlassesPicker: View {
         ToolbarItem(placement: .principal) {
           VStack {
             Text("Glasses", tableName: "Buddy", comment: "Title of the buddy's glasses")
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             Text(
               "Pick a pair you've earned to wear it.", tableName: "Buddy",
               comment: "What the glasses list does"
             )
-            .font(.caption)
+            .typeStyle(.meta)
             .foregroundStyle(.secondary)
           }
         }
@@ -248,7 +248,7 @@ struct BuddyGlassesPicker: View {
           option.glasses.howToEarn
         }
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
 
       if counted, option.target > 0 {

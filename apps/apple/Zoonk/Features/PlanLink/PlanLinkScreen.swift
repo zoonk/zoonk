@@ -92,7 +92,7 @@ struct PlanLinkScreen: View {
             "A study plan someone shared with you", tableName: "PlanLink",
             comment: "Eyebrow over a shared plan's subject"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
           Group {
             if let subject = outline.subject?.title {
@@ -102,7 +102,7 @@ struct PlanLinkScreen: View {
                 "A study plan", tableName: "PlanLink", comment: "A shared plan without a subject")
             }
           }
-          .font(.title2.bold())
+          .typeStyle(.section)
           .accessibilityAddTraits(.isHeader)
 
           if let description = outline.subject?.description {
@@ -114,7 +114,7 @@ struct PlanLinkScreen: View {
             "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know.",
             tableName: "PlanLink", comment: "What starting from a shared plan does"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
         .listRowBackground(Color.clear)

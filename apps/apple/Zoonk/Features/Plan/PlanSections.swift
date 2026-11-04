@@ -110,7 +110,7 @@ private struct RoadmapPhaseRow: View {
     PlanPathRow {
       Label {
         Text(phase.title)
-          .fontWeight(.medium)
+          .typeWeight(.medium)
       } icon: {
         StatusMark(status: phase.mark)
       }
@@ -125,8 +125,7 @@ private struct RoadmapPhaseRow: View {
           EmptyView()
         }
       }
-      .font(.subheadline)
-      .monospacedDigit()
+      .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
@@ -139,6 +138,8 @@ private struct RoadmapPhaseRow: View {
 }
 
 private struct RoadmapCompact: View {
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   let context: PlanContext
   let opens: Bool
 
@@ -181,7 +182,7 @@ private struct RoadmapCompact: View {
             .imageScale(.small)
         }
       }
-      .font(.subheadline)
+      .typeStyle(.body)
     }
     .accessibilityElement(children: .combine)
   }
@@ -190,14 +191,14 @@ private struct RoadmapCompact: View {
     let today = context.plan.today
 
     guard let start = phase.startDate, let end = phase.endDate, start <= today else {
-      return Text(phase.title).fontWeight(.medium)
+      return Text(phase.title).typeWeight(.medium, legibility: legibilityWeight)
     }
 
     let day = PlanDate.days(from: start, to: today) + 1
     let days = PlanDate.days(from: start, to: end) + 1
 
     return Text(
-      "\(Text(phase.title).fontWeight(.medium))\u{00A0}· day \(day) of \(days)", tableName: "Plan",
+      "\(Text(phase.title).typeWeight(.medium, legibility: legibilityWeight))\u{00A0}· day \(day) of \(days)", tableName: "Plan",
       comment: "Where the learner is: the phase's name, then its day of the phase's days")
   }
 }
@@ -233,16 +234,15 @@ struct PlanNumbersSection: View {
     Button(action: open) {
       VStack(alignment: .leading, spacing: 2) {
         Text(number.label)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
 
         Text(number.value)
-          .font(.title2.weight(.semibold))
-          .monospacedDigit()
+          .typeStyle(.readout)
 
         if let detail = number.detail {
           Text(detail)
-            .font(.footnote)
+            .typeStyle(.note)
             .foregroundStyle(
               number.detailIsGain ? AnyShapeStyle(.successText) : AnyShapeStyle(.mutedForeground))
         }

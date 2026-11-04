@@ -106,7 +106,7 @@ struct RichTextBlocks: View {
       Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 8) {
         GridRow {
           ForEach(Array(header.enumerated()), id: \.offset) { _, cell in
-            Text(inline(cell)).font(.subheadline.weight(.semibold))
+            Text(inline(cell)).typeStyle(.body.weight(.semibold))
           }
         }
 
@@ -115,7 +115,7 @@ struct RichTextBlocks: View {
         ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
           GridRow {
             ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
-              Text(inline(cell)).font(.subheadline)
+              Text(inline(cell)).typeStyle(.body)
             }
           }
         }

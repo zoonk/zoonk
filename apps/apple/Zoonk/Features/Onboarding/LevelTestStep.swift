@@ -512,7 +512,7 @@ private struct ListeningMessage: View {
         Image(systemName: "headphones")
           .accessibilityHidden(true)
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
     }
   }
@@ -526,7 +526,7 @@ private struct ListeningMessage: View {
         "The voice message is on its way…", tableName: "Onboarding",
         comment: "While a level test listening question's recording is still being made")
     }
-    .font(.subheadline)
+    .typeStyle(.note)
     .foregroundStyle(.mutedForeground)
     .multilineTextAlignment(.center)
     .frame(maxWidth: .infinity)
@@ -544,7 +544,7 @@ private struct ListeningMessage: View {
           "The audio didn't play.", tableName: "Onboarding",
           comment: "A level test listening question's message failed to play"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
 
@@ -591,12 +591,12 @@ private struct LevelTestSpeaking: View {
       Text(
         "Say it out loud", tableName: "Onboarding", comment: "Title of the level test's sentence"
       )
-      .font(.title2.bold())
+      .typeStyle(.section)
       .accessibilityAddTraits(.isHeader)
 
       VStack(alignment: .leading, spacing: 4) {
         Text(sentence.sentence)
-          .font(.title3.weight(.semibold))
+          .typeStyle(.section)
         Text(sentence.translation)
           .foregroundStyle(.mutedForeground)
       }

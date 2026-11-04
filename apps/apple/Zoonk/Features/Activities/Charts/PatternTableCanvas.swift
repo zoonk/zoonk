@@ -114,9 +114,9 @@ struct PatternTableCanvas: View {
         ForEach(Array(fields.rows.enumerated()), id: \.offset) { index, row in
           GridRow(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 0) {
-              Text(verbatim: row.label).font(.subheadline.weight(.medium))
+              Text(verbatim: row.label).typeStyle(.note.weight(.medium))
               if let meaning = row.labelMeaning {
-                Text(verbatim: meaning).font(.caption).foregroundStyle(.mutedForeground)
+                Text(verbatim: meaning).typeStyle(.meta).foregroundStyle(.mutedForeground)
               }
             }
 
@@ -140,7 +140,7 @@ struct PatternTableCanvas: View {
           "Which ending does \(row.label) take?", tableName: "ActivitiesCharts",
           comment: "Above a pattern table's endings, like Which ending does nosotros take?"
         )
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 88), spacing: 8)], spacing: 8) {
           ForEach(fields.choices, id: \.self) { choice in
@@ -166,9 +166,9 @@ struct PatternTableCanvas: View {
 
   private func header(_ word: String, meaning: String?) -> some View {
     VStack(alignment: .leading, spacing: 0) {
-      Text(verbatim: word).font(.headline)
+      Text(verbatim: word).typeStyle(.body.weight(.semibold))
       if let meaning {
-        Text(verbatim: meaning).font(.caption).foregroundStyle(.mutedForeground)
+        Text(verbatim: meaning).typeStyle(.meta).foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -181,7 +181,7 @@ struct PatternTableCanvas: View {
     return Text(
       "\(Text(verbatim: parts.0))\(Text(verbatim: parts.1).foregroundStyle(.vizAccent).bold())"
     )
-    .font(.body)
+    .typeStyle(.body)
   }
 
   private func openBlank(_ index: Int, row: PatternTableFields.Row) -> some View {
@@ -242,7 +242,7 @@ struct PatternTableCanvas: View {
               comment: "The right form after a miss, for VoiceOver"))
       }
     }
-    .fontWeight(.medium)
+    .typeWeight(.medium)
   }
 
   private func choose(_ ending: String) {

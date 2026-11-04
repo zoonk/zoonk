@@ -40,18 +40,16 @@ struct StatTile<Icon: View>: View {
         label
           .lineLimit(2)
       }
-      .font(.caption.weight(.medium))
-      .textCase(.uppercase)
+      .typeStyle(.label)
       .foregroundStyle(.mutedForeground)
 
       value
-        .font(.title2.weight(.semibold))
-        .monospacedDigit()
+        .typeStyle(.readout)
         .foregroundStyle(tone == .brain ? Color.brainText : Color(.foreground))
 
       if let detail {
         detail
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
       }
 
@@ -167,7 +165,7 @@ struct StatsLine: View {
 
   var body: some View {
     text
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
       .frame(maxWidth: 560, alignment: .leading)
   }

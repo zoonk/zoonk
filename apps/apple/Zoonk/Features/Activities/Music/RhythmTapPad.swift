@@ -17,16 +17,16 @@ struct RhythmTapPad: View {
   var body: some View {
     VStack(spacing: 4) {
       Image(systemName: "hand.tap")
-        .font(.title)
+        .typeStyle(.pageTitle.weight(.regular))
       title
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       if GCKeyboard.coalesced != nil {
         Text(
           "or press Space", tableName: "ActivitiesMusic",
           comment: "Under the rhythm pad, with a hardware keyboard"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       }
     }

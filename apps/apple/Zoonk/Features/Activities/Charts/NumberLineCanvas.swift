@@ -81,7 +81,7 @@ struct NumberLineCanvas: View {
             comment: "A number line's label with its unit, like Temperature in °C")
         } ?? fields.label
       )
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
 
       chart
@@ -114,7 +114,7 @@ struct NumberLineCanvas: View {
         .opacity(0)
         .annotation(position: .top, spacing: 2) {
           Text(verbatim: jump.label)
-            .font(.caption.weight(.semibold).monospacedDigit())
+            .typeStyle(.meta.weight(.semibold).monospaced())
             .foregroundStyle(isChecked ? Color.vizHighlight : Color.vizAccent)
         }
       }
@@ -145,7 +145,7 @@ struct NumberLineCanvas: View {
         {
           AxisValueLabel(verticalSpacing: 16) {
             Text(verbatim: ActivityNumberFormat.format(tick))
-              .fontWeight(tick == 0 ? .semibold : .regular)
+              .typeWeight(tick == 0 ? .semibold : .regular)
           }
         }
       }

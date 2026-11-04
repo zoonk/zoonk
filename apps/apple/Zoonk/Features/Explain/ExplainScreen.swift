@@ -81,15 +81,15 @@ private struct ExplanationView: View {
             tableName: "Explain",
             comment: "Eyebrow over a quick explanation's title: its kind and length"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
           Text(explanation.title)
-            .font(.title2.bold())
+            .typeStyle(.section)
             .accessibilityAddTraits(.isHeader)
           Text(
             "No plan to set up.", tableName: "Explain", comment: "Under a quick explanation's title"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
         .listRowBackground(Color.clear)
@@ -244,7 +244,7 @@ private struct ExplanationView: View {
                 comment: "Under the in-depth row")
             }
           }
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
       }

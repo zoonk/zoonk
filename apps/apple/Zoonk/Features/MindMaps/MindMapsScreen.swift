@@ -40,14 +40,14 @@ struct MindMapsScreen: View {
               "Chapters you finished", tableName: "MindMaps",
               comment: "Heading of the chapters with mind maps"
             )
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Text(
               "\(maps.chapters.count) chapters", tableName: "MindMaps",
               comment: "How many chapters have mind maps"
             )
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
           }
 
@@ -131,11 +131,11 @@ private struct MindMapTile: View {
           comment: "Spoken label of a map's picture"))
 
       Text("Chapter \(map.position)", tableName: "MindMaps", comment: "A chapter's number")
-        .font(.caption.monospaced())
+        .typeStyle(.data)
         .foregroundStyle(.faint)
 
       Text(map.title)
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .lineLimit(2)
 
       if drawing {
@@ -144,18 +144,18 @@ private struct MindMapTile: View {
         } icon: {
           ProgressView()
         }
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       } else if map.status == .available || map.status == .failed {
         if let failure = store.failures[map.chapterId] {
           failureText(failure)
-            .font(.footnote)
+            .typeStyle(.note)
             .foregroundStyle(.destructiveText)
         } else if map.status == .failed {
           Text(
             "It couldn't be made this time.", tableName: "MindMaps", comment: "A map that failed"
           )
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
 
@@ -190,7 +190,7 @@ private struct MindMapTile: View {
       }
     } else {
       KindMark(kind: .mindMap)
-        .font(.largeTitle)
+        .typeStyle(.heroTitle.weight(.regular))
     }
   }
 
