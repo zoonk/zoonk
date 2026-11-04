@@ -343,10 +343,12 @@ extension PracticeFeedbackPanel where Notes == EmptyView {
 struct WorkedStepsView: View {
   let steps: [String]
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
-        Text(ItemTextBlock.inline(step))
+        Text(ItemTextBlock.inline(step), legibility: legibilityWeight)
           .typeStyle(.reading.monospaced().weight(index == steps.count - 1 ? .semibold : .regular))
           .foregroundStyle(index == steps.count - 1 ? Color(.foreground) : .mutedForeground)
       }

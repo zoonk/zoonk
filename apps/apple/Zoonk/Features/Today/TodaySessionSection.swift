@@ -11,6 +11,7 @@ struct TodayDisclosures {
 
 struct TodaySessionSection: View {
   @Environment(AppRouter.self) private var router
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let view: TodayView
   let busy: TodayDayView.Tap?
@@ -171,8 +172,10 @@ struct TodaySessionSection: View {
           router.open(.testOut(chapterId: chapterID))
         } label: {
           Text(
-            "Already know this? **Take the test**", tableName: "Today",
-            comment: "Skips the next lesson's chapter with its test"
+            AttributedString(
+              localized: "Already know this? **Take the test**", table: "Today",
+              comment: "Skips the next lesson's chapter with its test"),
+            legibility: legibilityWeight
           )
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
@@ -509,6 +512,8 @@ private struct ComingLessonsRow: View {
   let failed: Bool
   let prepare: () -> Void
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     switch coming {
     case .toPrepare:
@@ -536,8 +541,10 @@ private struct ComingLessonsRow: View {
           switch coming {
           case .toPrepare:
             Text(
-              "Not written yet. **Get today's lessons**", tableName: "Today",
-              comment: "Asks for the day's next lessons, which nobody is writing")
+              AttributedString(
+                localized: "Not written yet. **Get today's lessons**", table: "Today",
+                comment: "Asks for the day's next lessons, which nobody is writing"),
+              legibility: legibilityWeight)
           case .beingWritten where writingStalled:
             Text(
               "Taking longer than usual", tableName: "Today",

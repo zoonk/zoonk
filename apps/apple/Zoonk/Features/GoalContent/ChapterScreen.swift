@@ -445,6 +445,8 @@ private struct ChapterReferenceSection: View {
 struct LessonSummaries: View {
   let summaries: [GoalChapter.Summary]
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     ForEach(summaries) { summary in
       VStack(alignment: .leading, spacing: 4) {
@@ -452,9 +454,12 @@ struct LessonSummaries: View {
           .typeStyle(.body.weight(.semibold))
 
         ForEach(summary.ideas, id: \.self) { idea in
-          Text((try? AttributedString(markdown: idea)) ?? AttributedString(idea))
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          Text(
+            (try? AttributedString(markdown: idea)) ?? AttributedString(idea),
+            legibility: legibilityWeight
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
         }
       }
     }

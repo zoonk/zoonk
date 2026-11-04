@@ -4,6 +4,8 @@ struct LessonRecapView: View {
   let recap: LessonRecap
   @Binding var isExpanded: Bool
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     DisclosureGroup(isExpanded: $isExpanded) {
       VStack(alignment: .leading, spacing: 12) {
@@ -65,7 +67,7 @@ struct LessonRecapView: View {
           LessonTextBlocks(solved.text, mark: recap.mark)
 
           if let math = solved.math {
-            Text(LessonMath.typeset(math))
+            Text(LessonMath.typeset(math), legibility: legibilityWeight)
           }
         }
       }
