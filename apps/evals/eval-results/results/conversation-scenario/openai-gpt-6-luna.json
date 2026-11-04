@@ -600,6 +600,76 @@
           "unitTitle": "Joining a gym"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The scenario directly practices requesting a table, ordering, and paying. Emma is a plausible unfamiliar server, the diner name is short, and menu prices are realistic US dollar amounts. No relationship or learner-assumption cap applies. However, the Chicago tax rate is inaccurate, and the telephone-style opening does not quite match the in-person arrival.",
+          "score": 8,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening and hints use short, accessible A2 language. The opening identifies both the place and speaker, invites a response, and neither names the learner nor completes an objective. All four hints are complete, usable sentences covering the objectives.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The four objectives follow a natural sequence and are achievable in a short exchange. Each is checkable from the learner's speech, has a two-to-five-word verb-led label, and includes a clear description.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The brief supplies personality, level guidance, table availability, menu prices, payment information, a simple seating twist, and a clear ending without completing the learner's goals. Required facts are present, so the missing-facts cap does not apply. The inaccurate Chicago tax rate nevertheless makes the payment guidance less trustworthy.",
+          "score": 8,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "Every field is in US English, including the brief. The title is a six-word goal beginning with a verb, and the labels and descriptions are concise. There are no emojis or em dashes and no wrong-language fields.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2632,
+          "outputTokens": 990,
+          "reasoningTokens": 439
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The brief specifies 8% sales tax, which is too low for a restaurant in Chicago. The $18.36 calculation is correct using that rate, but the local tax premise is inaccurate. Also, the opening sounds like a telephone greeting, while the situation describes arriving in person.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "US English speaker practicing US English at A2, at a restaurant. A face-to-face order or a call to a restaurant, with a US name and dollars. Opening line and hints short and simple (A2). Every field is in US English: title, situation, role, objective labels and descriptions, opening line and hints. The title is a 3 to 6 word goal starting with a verb (\"Order dinner at a diner\").",
+        "id": "en-en-a2-restaurant-1",
+        "userInput": {
+          "canDo": ["Ask for a table", "Order food and drinks", "Ask for the bill"],
+          "learnerLanguage": "en",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "Ask for a table, order and pay at a restaurant",
+          "unitTitle": "At a restaurant"
+        }
+      }
     }
   ],
   "taskId": "conversation-scenario"
