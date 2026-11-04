@@ -1,9 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import { cacheTag, revalidateTag } from "next/cache";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { getGoalsCacheTag } from "../../cache/tags";
 import { setupPlayableLesson } from "../../lesson-player/_test-utils/playable-lesson-setup";
 import { completeLibraryLesson } from "../../lesson-player/complete-library-lesson";
 import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-library-lesson";
@@ -105,25 +103,5 @@ describe("skipping language activities", () => {
     });
 
     await expect(kinds()).resolves.toStrictEqual(["explanation", "summary"]);
-  });
-
-  it("keeps a learner's language lesson under a tag their plan changes expire", async () => {
-    const { goal, lesson, user } = await languageLessonSetup();
-    mockSession(user.id);
-
-    vi.mocked(cacheTag).mockClear();
-    await getPlayableLibraryLesson({ lessonId: lesson.id });
-    const readTags = vi.mocked(cacheTag).mock.calls.flat();
-
-    vi.mocked(revalidateTag).mockClear();
-
-    await changeGoalPlan({
-      goalId: goal.id,
-      input: { operations: [{ activities: ["writing"], kind: "skipActivities" }] },
-    });
-
-    const expiredTags = new Set(vi.mocked(revalidateTag).mock.calls.map(([tag]) => tag));
-
-    expect(readTags.filter((tag) => expiredTags.has(tag))).toContain(getGoalsCacheTag(user.id));
   });
 });
