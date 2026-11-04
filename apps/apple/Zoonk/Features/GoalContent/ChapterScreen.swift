@@ -143,7 +143,7 @@ private struct ChapterContent: View {
       VStack(alignment: .leading, spacing: 6) {
         eyebrow
           .typeStyle(.eyebrow)
-          .foregroundStyle(.mutedForeground)
+          .foregroundStyle(.faint)
 
         Text(chapter.chapter.title)
           .typeStyle(.pageTitle)
@@ -188,6 +188,7 @@ private struct ChapterContent: View {
           } label: {
             LessonRow(lesson: lesson, number: index + 1)
           }
+          .currentRow(lesson.state == .next)
         }
       } header: {
         SectionTitle(
@@ -340,22 +341,22 @@ struct LessonRow: View {
   let number: Int
 
   var body: some View {
-    PlanPathRow {
-      Label {
-        HStack {
-          Text(verbatim: "\(number). \(lesson.title)")
-            .foregroundStyle(.primary)
-
-          if lesson.plusRequired {
-            PlusMark()
-          }
+    ListRow(
+      Text(lesson.title)
+        .foregroundStyle(lesson.state == .done ? .mutedForeground : Color(.foreground)),
+      number: number
+    ) {
+      StatusMark(status: status)
+    } trailing: {
+      HStack(spacing: 8) {
+        if lesson.plusRequired {
+          PlusMark()
         }
-      } icon: {
-        StatusMark(status: status)
+
+        if lesson.minutes > 0 {
+          Text(planDurationText(minutes: Double(lesson.minutes)))
+        }
       }
-    } value: {
-      Text(planDurationText(minutes: Double(lesson.minutes)))
-        .monospacedDigit()
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(state)

@@ -5,6 +5,8 @@ import SwiftUI
 /// and press.
 struct ListRow<Leading: View, Trailing: View>: View {
   let title: Text
+  /// Main's `ListRowNumberedTitle`: a place in a list before the title, quiet and mono.
+  var number: Int?
   var description: Text?
   @ViewBuilder let leading: Leading
   @ViewBuilder let trailing: Trailing
@@ -13,10 +15,11 @@ struct ListRow<Leading: View, Trailing: View>: View {
   @ScaledMetric(relativeTo: .subheadline) private var markWidth = 20.0
 
   init(
-    _ title: Text, description: Text? = nil, @ViewBuilder leading: () -> Leading,
-    @ViewBuilder trailing: () -> Trailing
+    _ title: Text, number: Int? = nil, description: Text? = nil,
+    @ViewBuilder leading: () -> Leading, @ViewBuilder trailing: () -> Trailing
   ) {
     self.title = title
+    self.number = number
     self.description = description
     self.leading = leading()
     self.trailing = trailing()
@@ -31,9 +34,16 @@ struct ListRow<Leading: View, Trailing: View>: View {
       }
     } content: {
       VStack(alignment: .leading, spacing: 1) {
-        title
-          .typeStyle(.rowTitle)
-          .foregroundStyle(Color(.foreground))
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
+          if let number {
+            Text(verbatim: "\(number).")
+              .typeStyle(.data)
+              .foregroundStyle(.mutedForeground)
+              .accessibilityHidden(true)
+          }
+
+          titleText
+        }
 
         if let description {
           description
@@ -45,6 +55,17 @@ struct ListRow<Leading: View, Trailing: View>: View {
       trailing
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
+    }
+  }
+
+  @ViewBuilder private var titleText: some View {
+    let text = title.typeStyle(.rowTitle).foregroundStyle(Color(.foreground))
+
+    if let number {
+      // One phrase, "3. Title", rather than the number and the title read apart.
+      text.accessibilityLabel(Text("\(Text(verbatim: "\(number).")) \(title)"))
+    } else {
+      text
     }
   }
 }
