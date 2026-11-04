@@ -156,7 +156,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   const t = useExtracted();
   const locale = useAppLocale();
   const contentFeedback = useContentFeedback();
-  const saveError = t("That didn't save. Try again.");
+  const switchFailed = t("We couldn't switch goals. Try again.");
   const [, startGoalSwitch] = useGoalSwitchTransition();
   const continueSession = useContinueFromPalette();
 
@@ -209,10 +209,12 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
 
     if (item.kind === "goal") {
       startGoalSwitch(async () => {
-        const { error } = await safeAsync(async () => shown.learner?.onSwitchGoal(item.goalId));
+        const { data: switched } = await safeAsync(
+          async () => shown.learner?.onSwitchGoal(item.goalId) ?? false,
+        );
 
-        if (error) {
-          showErrorToast(saveError);
+        if (!switched) {
+          showErrorToast(switchFailed);
         }
       });
 

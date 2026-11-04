@@ -347,9 +347,9 @@ msgstr "Dein nächster Schritt konnte nicht geöffnet werden. Versuch es noch ei
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 #: src/components/catalog/course-progress.tsx
-msgctxt "DxPDlc"
-msgid "That didn't save. Try again."
-msgstr "Das wurde nicht gespeichert. Versuch es noch einmal."
+msgctxt "JIzivc"
+msgid "We couldn't switch goals. Try again."
+msgstr "Wir konnten das Ziel nicht wechseln. Versuch es noch einmal."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "60v8Pt"

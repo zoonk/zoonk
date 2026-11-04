@@ -178,13 +178,16 @@ export function GoalSwitcher({
   exploreHref: string;
   goals: SwitcherGoal[];
   newGoalHref: string;
-  onSelect: (goalId: string) => Promise<void>;
-  onStartWaiting: (waitingGoalId: string) => Promise<void>;
+  /** Resolves to whether the goal is now the active one. */
+  onSelect: (goalId: string) => Promise<boolean>;
+  /** Resolves to whether the waiting goal started. */
+  onStartWaiting: (waitingGoalId: string) => Promise<boolean>;
   placement?: SwitcherPlacement;
   waitingGoals: WaitingGoal[];
 }) {
   const t = useExtracted("goalSwitcher");
-  const saveError = t("That didn't save. Try again.");
+  const switchFailed = t("We couldn't switch goals. Try again.");
+  const startFailed = t("We couldn't start this goal. Try again.");
   const [isPending, startTransition] = useGoalSwitchTransition();
   const followed = goals.filter((goal) => goal.kind !== "explain");
   const explanations = goals.filter((goal) => goal.kind === "explain");
@@ -202,11 +205,11 @@ export function GoalSwitcher({
 
     startTransition(async () => {
       setSelectedId(goalId);
-      const { error } = await safeAsync(() => onSelect(goalId));
+      const { data: switched } = await safeAsync(() => onSelect(goalId));
 
       // Said in a toast: the menu has closed by then.
-      if (error) {
-        showErrorToast(saveError);
+      if (!switched) {
+        showErrorToast(switchFailed);
       }
     });
   };
@@ -253,10 +256,10 @@ export function GoalSwitcher({
                 key={goal.id}
                 onStart={(waitingGoalId) =>
                   startTransition(async () => {
-                    const { error } = await safeAsync(() => onStartWaiting(waitingGoalId));
+                    const { data: started } = await safeAsync(() => onStartWaiting(waitingGoalId));
 
-                    if (error) {
-                      showErrorToast(saveError);
+                    if (!started) {
+                      showErrorToast(startFailed);
                     }
                   })
                 }

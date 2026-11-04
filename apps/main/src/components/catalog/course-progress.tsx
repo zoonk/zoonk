@@ -132,7 +132,7 @@ function useCourseGoal(courseId: string): LearnerSummaryGoal | null {
 export function CourseContinueLink({ courseId }: { courseId: string }) {
   const t = useExtracted();
   const router = useRouter();
-  const saveError = t("That didn't save. Try again.");
+  const switchFailed = t("We couldn't switch goals. Try again.");
   const goal = useCourseGoal(courseId);
   const [isPending, startTransition] = useTransition();
 
@@ -161,10 +161,10 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
 
   const continueGoal = () => {
     startTransition(async () => {
-      const { error } = await safeAsync(() => switchGoal(goal.id));
+      const { data: switched } = await safeAsync(() => switchGoal(goal.id));
 
-      if (error) {
-        showErrorToast(saveError);
+      if (!switched) {
+        showErrorToast(switchFailed);
         return;
       }
 

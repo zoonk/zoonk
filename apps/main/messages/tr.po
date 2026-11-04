@@ -347,9 +347,9 @@ msgstr "Sıradaki adımını açamadık. Tekrar dene."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 #: src/components/catalog/course-progress.tsx
-msgctxt "DxPDlc"
-msgid "That didn't save. Try again."
-msgstr "Kaydedilemedi. Tekrar dene."
+msgctxt "JIzivc"
+msgid "We couldn't switch goals. Try again."
+msgstr "Hedefini değiştiremedik. Tekrar dene."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "60v8Pt"
