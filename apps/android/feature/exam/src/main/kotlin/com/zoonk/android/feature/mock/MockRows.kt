@@ -27,6 +27,8 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -121,11 +123,12 @@ fun MockEntryButton(
     options: MockOptions,
     onOpen: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
+    size: ButtonSize = LocalButtonSize.current,
 ) {
     val route = mockEntryRoute(options) ?: return
     val running = options.running != null
 
-    Button(onClick = { onOpen(route) }, modifier = modifier, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+    Button(onClick = { onOpen(route) }, modifier = modifier, size = size, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
         Icon(painterResource(R.drawable.ic_timer), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
         Text(
             text = stringResource(if (running) R.string.mock_continue else R.string.mock_take),

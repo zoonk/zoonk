@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +34,7 @@ import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
@@ -118,9 +118,7 @@ private fun PlanMenu(
     val buddy = page.summary.buddy
 
     Box {
-        IconButton(onClick = { expanded = true }) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.plan_options))
-        }
+        OptionsButton(onClick = { expanded = true }, contentDescription = stringResource(R.string.plan_options))
         MenuItems(
             expanded,
             page,

@@ -102,7 +102,7 @@ internal fun SubjectCoverage(
             )
             CoverageBar(studied = preparation)
             Column {
-                Text(stringResource(R.string.goalcontent_mastery), style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.goalcontent_mastery), style = MaterialTheme.typography.labelSmall)
                 val mastery = subject.mastery
                 Text(
                     text =
@@ -116,7 +116,7 @@ internal fun SubjectCoverage(
                             )
                         },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = factsStyle(),
+                    style = MaterialTheme.typography.bodySmall.withTabularFigures(),
                 )
             }
         }

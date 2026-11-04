@@ -26,7 +26,6 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -92,6 +91,8 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.LanguageUnit
 import com.zoonk.api.models.LanguageUnitLessonsInner
@@ -132,7 +133,6 @@ private fun UnitEntry(
     val isRefreshing by resource.isRefreshing.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val heroScrolledAway by remember(listState) { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     val unit = load.value
     val actions = remember(navigator) { UnitActions(open = navigator::open, start = app.conversations) }
     // Main reads the selected goal's plan, so a unit of another goal opened from a link marks nothing.
@@ -150,7 +150,7 @@ private fun UnitEntry(
 
     UnitFrame(
         navigator = navigator,
-        title = unit?.unit?.title?.takeIf { heroScrolledAway },
+        title = unit?.unit?.title,
         actions = {
             if (unit != null) {
                 TutorAskButton(TutorScope.Chapter(chapterId.toString()), app, navigator, worded = false)
@@ -294,8 +294,8 @@ private fun UnitHero(
     Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Eyebrow(eyebrow)
-            Text(info.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
-            facts?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+            Text(info.title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
+            facts?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
         }
         next?.let { lesson ->
             Button(onClick = { onOpen(lesson.id) }, modifier = if (fullWidthAction) Modifier.fillMaxWidth() else Modifier) {
