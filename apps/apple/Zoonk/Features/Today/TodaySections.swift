@@ -13,7 +13,7 @@ struct TodayUpNextSection: View {
           KindMark(kind: .lesson)
             .frame(minWidth: 20)
           Text(lesson.title)
-            .typeStyle(index == 0 ? .reading.weight(.semibold) : .reading)
+            .typeStyle(.rowTitle)
           Spacer(minLength: 8)
           Text(studyDuration(minutes: lesson.minutes))
             .typeStyle(.data)
@@ -700,33 +700,16 @@ private struct WeekDayMark: View {
     .accessibilityLabel(label(weekday: date?.formatted(.studyDay.weekday(.wide)) ?? day.date))
   }
 
-  /// Main's `DayRing`: filled by the share of the day's goal studied, its track dashed for a study
-  /// day gone by without study, and a dash for a day outside the plan.
+  /// Main's `DayRing`: a dash for a day outside the plan.
   @ViewBuilder
   private var ring: some View {
     if !day.studied && (day.kind == "beforeStart" || day.kind == "afterEnd") && !day.isToday {
       Image(systemName: "minus")
         .foregroundStyle(Color(.foreground).opacity(0.2))
     } else {
-      let lineWidth = ringSize / 12
-
-      ZStack {
-        Circle()
-          .stroke(
-            .primary.opacity(trackOpacity),
-            style: StrokeStyle(lineWidth: lineWidth, dash: isMissed ? [lineWidth, lineWidth] : []))
-
-        if day.share > 0 {
-          Circle()
-            .trim(from: 0, to: day.share)
-            .stroke(.success, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-            .rotationEffect(.degrees(-90))
-        }
-
+      GoalRing(share: day.share, track: track, size: ringSize) {
         mark
-          .typeStyle(.small.bold())
       }
-      .padding(lineWidth / 2)
     }
   }
 
@@ -747,12 +730,16 @@ private struct WeekDayMark: View {
     day.kind == "study" && !day.studied && !day.isToday && day.date < localDate
   }
 
-  private var trackOpacity: Double {
-    if day.isToday || isMissed {
-      return 0.25
+  private var track: GoalRingTrack {
+    if day.isToday {
+      return .today
     }
 
-    return day.kind == "rest" ? 0.06 : 0.1
+    if isMissed {
+      return .missed
+    }
+
+    return day.kind == "rest" ? .rest : .standard
   }
 
   /// A mock the learner's plan doesn't include leaves its day to a full review of every topic.

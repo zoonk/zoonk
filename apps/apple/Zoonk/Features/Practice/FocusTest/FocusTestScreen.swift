@@ -174,7 +174,7 @@ struct FocusTestScreen: View {
           )
           .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.glass)
+        .buttonStyle(.outline)
         .controlSize(.large)
       }
 

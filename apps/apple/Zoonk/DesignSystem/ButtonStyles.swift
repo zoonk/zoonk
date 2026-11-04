@@ -3,7 +3,8 @@ import SwiftUI
 /// Main's buttons on a native `Button`, which keeps its role, keyboard shortcut, VoiceOver and
 /// pointer behavior. `controlSize` picks main's sizes: `.large` for a screen's action (44pt),
 /// `.regular` (36pt), `.small` beside text (30pt). A destructive role draws main's destructive
-/// button in any of them. Glass stays on floating controls and toolbar items.
+/// button in any of them; `.icon` on any of them is main's square icon button (`size="icon"`). Glass
+/// stays on floating controls and toolbar items.
 struct ZoonkButtonStyle: ButtonStyle {
   enum Variant {
     /// Ink fill: one per area.
@@ -15,9 +16,13 @@ struct ZoonkButtonStyle: ButtonStyle {
   }
 
   let variant: Variant
+  var isIcon = false
+
+  /// Main's `size="icon"`: a square as tall as the size, for a label that is only an icon.
+  var icon: ZoonkButtonStyle { ZoonkButtonStyle(variant: variant, isIcon: true) }
 
   func makeBody(configuration: Configuration) -> some View {
-    ZoonkButton(configuration: configuration, variant: variant)
+    ZoonkButton(configuration: configuration, variant: variant, isIcon: isIcon)
   }
 }
 
@@ -36,19 +41,20 @@ private struct ZoonkButton: View {
 
   let configuration: ButtonStyleConfiguration
   let variant: ZoonkButtonStyle.Variant
+  let isIcon: Bool
 
   var body: some View {
     let shape = RoundedRectangle(
-      cornerRadius: isSmall ? Radius.md : Radius.lg, style: .continuous)
+      cornerRadius: isSmall && !isIcon ? Radius.md : Radius.lg, style: .continuous)
 
     configuration.label
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
-      .padding(.horizontal, horizontalPadding)
-      .padding(.vertical, 6)
-      .frame(minHeight: height)
-      .frame(maxWidth: sizing == .flexible ? .infinity : nil)
+      .padding(.horizontal, isIcon ? 0 : horizontalPadding)
+      .padding(.vertical, isIcon ? 0 : 6)
+      .frame(minWidth: isIcon ? height : nil, minHeight: height)
+      .frame(maxWidth: sizing == .flexible && !isIcon ? .infinity : nil)
       .background(fill, in: shape)
       .overlay {
         if variant == .outline && !isDestructive {

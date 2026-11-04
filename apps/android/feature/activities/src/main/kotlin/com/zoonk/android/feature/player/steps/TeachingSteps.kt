@@ -389,7 +389,7 @@ internal fun CheckView(
                             ) { crowded = true }
                         }
                     } else {
-                        { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) }
+                        { RichInlineText(text = it.text) }
                     },
             )
 
@@ -708,7 +708,7 @@ fun ChoiceOptions(
     keysAtTop: Boolean = false,
     keepsEveryOption: Boolean = false,
     label: String = stringResource(R.string.player_answer_options),
-    optionContent: @Composable (ChoiceOption) -> Unit = { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) },
+    optionContent: @Composable (ChoiceOption) -> Unit = { RichInlineText(text = it.text) },
 ) {
     val shown =
         options.mapIndexedNotNull { index, option ->

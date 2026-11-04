@@ -154,7 +154,7 @@ struct TestOutScreen: View {
           )
           .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.glass)
+        .buttonStyle(.outline)
         .controlSize(.large)
         .disabled(undo == .pending)
       }

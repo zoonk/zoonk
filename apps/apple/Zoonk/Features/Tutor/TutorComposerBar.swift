@@ -57,8 +57,9 @@ struct TutorComposerBar: View {
         send()
         return .handled
       }
-      .padding(.leading, 16)
-      .padding(.vertical, 12)
+      .typeStyle(.reading)
+      .padding(.vertical, 4)
+      .frame(minHeight: 30)
 
       Button(action: send) {
         Label {
@@ -69,30 +70,30 @@ struct TutorComposerBar: View {
         }
         .labelStyle(.iconOnly)
       }
-      .buttonStyle(.mainAction)
-      .buttonBorderShape(.circle)
+      .buttonStyle(.mainAction.icon)
+      .controlSize(.small)
       .keyboardShortcut(.return, modifiers: .command)
       .disabled(!conversation.canSendDraft)
-      .padding(6)
     }
-    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 24, style: .continuous))
+    .padding(.leading, 14)
+    .padding([.vertical, .trailing], 9)
+    .composerPanel(isFocused: isFocused)
   }
 
   private var suggestionChips: some View {
-    ScrollView(.horizontal) {
-      HStack(spacing: 8) {
-        ForEach(suggestions) { suggestion in
-          Button {
-            Task { await conversation.send(suggestion) }
-          } label: {
-            Text(suggestion.label)
-          }
-          .buttonStyle(.suggestionChip)
-          .disabled(!conversation.canAsk)
+    FlowLayout(spacing: 8) {
+      ForEach(suggestions) { suggestion in
+        Button {
+          Task { await conversation.send(suggestion) }
+        } label: {
+          Text(suggestion.label)
+            .multilineTextAlignment(.leading)
         }
+        .buttonStyle(.outline)
+        .controlSize(.regular)
+        .disabled(!conversation.canAsk)
       }
     }
-    .scrollIndicators(.hidden)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text("Suggestions", tableName: "Tutor", comment: "Questions to the buddy sent with one tap"))
@@ -118,6 +119,18 @@ struct TutorComposerBar: View {
     }
 
     Task { await conversation.send() }
+  }
+}
+
+extension View {
+  /// Main's composer and goal box: a `card` panel with the input line at `xl` corners, the line
+  /// in ink while it has focus.
+  func composerPanel(isFocused: Bool) -> some View {
+    background(Color(.card), in: RoundedRectangle(cornerRadius: Radius.xl, style: .continuous))
+      .overlay {
+        RoundedRectangle(cornerRadius: Radius.xl, style: .continuous)
+          .strokeBorder(isFocused ? Color(.foreground) : .input, lineWidth: isFocused ? 2 : 1)
+      }
   }
 }
 

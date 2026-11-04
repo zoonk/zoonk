@@ -84,7 +84,7 @@ fun OrderQuestion(
                     enabled = !locked,
                     role = Role.Checkbox,
                     tag = { if (place != -1) PlaceTag(place, result) },
-                ) { ItemLine(step, style = MaterialTheme.typography.bodyLarge) }
+                ) { ItemLine(step) }
             }
         }
     }

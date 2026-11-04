@@ -106,11 +106,11 @@ private struct HookStepView: View {
   @ViewBuilder
   private var screen: some View {
     if content.asksGuess, let question = content.question {
-      Text(
-        "Guess first", tableName: "Player", comment: "Above a hook's question: a guess never counts"
-      )
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
+      LessonEyebrow(
+        title: Text(
+          "Guess first", tableName: "Player",
+          comment: "Above a hook's question: a guess never counts"),
+        systemImage: "sparkles")
       LessonQuestionText(text: question)
       StepMedia(step: step, visual: content.visual, asks: true)
     } else {
@@ -134,6 +134,14 @@ private struct HookStepView: View {
         isLocked: context.isLocked || context.waitsForPicture,
         isGuess: true
       ) { context.select(.hookGuess(optionId: $0)) }
+
+      if context.result == nil {
+        Text(
+          "Getting it wrong now helps you remember later.", tableName: "Player",
+          comment: "Under a hook's options: a guess never counts"
+        )
+        .foregroundStyle(.mutedForeground)
+      }
     } else if isPaneSplit {
       StepMedia(step: step, visual: content.visual, hero: true)
     }
@@ -214,9 +222,9 @@ private struct WorkedExampleStepView: View {
 
   @ViewBuilder
   private var problem: some View {
-    Text("Worked example", tableName: "Player", comment: "Label above a worked example")
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
+    LessonEyebrow(
+      title: Text("Worked example", tableName: "Player", comment: "Label above a worked example"),
+      systemImage: "list.number")
 
     if let title = content.title {
       LessonQuestionText(text: title)
@@ -299,15 +307,11 @@ private struct TypedAnswerStepView: View {
       }
 
       if content.isOwnWords {
-        Label {
-          Text(
+        LessonEyebrow(
+          title: Text(
             "In your own words", tableName: "Player",
-            comment: "Above a question answered in a few sentences")
-        } icon: {
-          Image(systemName: "pencil.line")
-        }
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
+            comment: "Above a question answered in a few sentences"),
+          systemImage: "pencil.line")
       }
 
       LessonQuestionText(text: content.question)
@@ -350,13 +354,13 @@ struct LessonAnswerField: View {
       isFocused.wrappedValue = false
       check?()
     }
-    .lineLimit(isNumber ? 1...1 : 3...8)
+    .lineLimit(isNumber ? 1...1 : 4...8)
     .keyboardType(isNumber ? .numbersAndPunctuation : .default)
     .submitLabel(.done)
     .focused(isFocused)
     .disabled(isLocked)
-    .padding()
-    .panel(cornerRadius: 16)
+    .typeStyle(isNumber ? .reading.monospacedDigit() : .reading)
+    .fieldBorder(isFocused: isFocused.wrappedValue, minHeight: isNumber ? 48 : 40)
   }
 }
 

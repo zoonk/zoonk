@@ -110,7 +110,7 @@ struct BuddyPickerSections: View {
               Text(buddyName(kind: kind, name: nil))
               kind.tagline
                 .typeStyle(.note)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           } icon: {
             BuddyFace(kind: kind, glasses: glasses)
@@ -211,7 +211,7 @@ struct BuddyGlassesPicker: View {
               comment: "What the glasses list does"
             )
             .typeStyle(.meta)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
 

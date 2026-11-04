@@ -2,10 +2,15 @@ import SwiftUI
 
 extension View {
   /// Main's input around a `TextField` or `TextEditor` drawn outside a list row: the stronger line,
-  /// 44pt tall, and a thicker ink line while it has focus. An invalid field draws main's
-  /// `destructive` mark with a soft 3pt ring around it; its message keeps `destructiveText`.
-  func fieldBorder(isFocused: Bool = false, isInvalid: Bool = false) -> some View {
-    modifier(FieldBorder(isFocused: isFocused, isInvalid: isInvalid))
+  /// 44pt tall (an answer's field is taller), and a thicker ink line while it has focus. An invalid
+  /// field draws main's `destructive` mark with a soft 3pt ring around it; its message keeps
+  /// `destructiveText`. A checked answer's field takes its verdict's line instead.
+  func fieldBorder(
+    isFocused: Bool = false, isInvalid: Bool = false, isRight: Bool? = nil, minHeight: CGFloat = 44
+  ) -> some View {
+    modifier(
+      FieldBorder(
+        isFocused: isFocused, isInvalid: isInvalid, isRight: isRight, minHeight: minHeight))
   }
 }
 
@@ -15,6 +20,8 @@ private struct FieldBorder: ViewModifier {
 
   let isFocused: Bool
   let isInvalid: Bool
+  let isRight: Bool?
+  let minHeight: CGFloat
 
   func body(content: Content) -> some View {
     let shape = RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
@@ -22,12 +29,12 @@ private struct FieldBorder: ViewModifier {
     content
       .padding(.horizontal, 12)
       .padding(.vertical, 8)
-      .frame(minHeight: 44)
+      .frame(minHeight: minHeight)
       .overlay {
-        shape.strokeBorder(line, lineWidth: isFocused ? 2 : 1)
+        shape.strokeBorder(line, lineWidth: isFocused && isRight == nil ? 2 : 1)
       }
       .background {
-        if isInvalid && contrast != .increased {
+        if isInvalid && isRight == nil && contrast != .increased {
           shape
             .inset(by: -1.5)
             .stroke(Color.destructive.opacity(colorScheme == .dark ? 0.4 : 0.2), lineWidth: 3)
@@ -37,6 +44,10 @@ private struct FieldBorder: ViewModifier {
 
   /// Main's `aria-invalid:` line is half strength in dark; with more contrast every line is solid.
   private var line: Color {
+    if let isRight {
+      return isRight ? .success : .destructive
+    }
+
     if isInvalid {
       return colorScheme == .dark && contrast != .increased
         ? Color.destructive.opacity(0.5) : .destructive

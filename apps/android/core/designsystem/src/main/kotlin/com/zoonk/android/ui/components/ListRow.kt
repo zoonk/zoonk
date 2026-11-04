@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -56,7 +57,8 @@ import com.zoonk.android.ui.theme.zoonkType
  * such as a switch or a button (main's `SettingRow`). [leading] is a mark at least a line tall, or a
  * larger picture (an avatar). Rows reach the list's edges and inset their own content by
  * [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
- * spans the list.
+ * spans the list. [verticalAlignment] `Top` keeps the mark on the title's first line when lines
+ * under it run long (main's `items-start`).
  */
 @Composable
 fun ListRow(
@@ -72,6 +74,7 @@ fun ListRow(
     supporting: (@Composable () -> Unit)? = null,
     meta: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
 ) {
     val openWords = expanded?.let { stringResource(if (it) R.string.disclosure_expanded else R.string.disclosure_collapsed) }
     val state =
@@ -110,15 +113,21 @@ fun ListRow(
                 .indication(interaction, ripple())
                 .padding(start = HIGHLIGHT_OUTSET + indent, end = HIGHLIGHT_OUTSET, top = WORDS_PADDING, bottom = WORDS_PADDING),
         horizontalArrangement = Arrangement.spacedBy(LEADING_GAP),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = verticalAlignment,
     ) {
-        CompositionLocalProvider(LocalContentColor provides quiet) {
-            leading?.let {
-                Box(
-                    Modifier.sizeIn(minWidth = markSize(), minHeight = markSize()),
-                    contentAlignment = Alignment.Center,
-                ) { it() }
+        val firstLine =
+            with(LocalDensity.current) {
+                MaterialTheme.typography.titleSmall.lineHeight
+                    .toDp()
             }
+        val markBox =
+            if (verticalAlignment == Alignment.Top) {
+                Modifier.widthIn(min = markSize()).heightIn(min = firstLine)
+            } else {
+                Modifier.sizeIn(minWidth = markSize(), minHeight = markSize())
+            }
+        CompositionLocalProvider(LocalContentColor provides quiet) {
+            leading?.let { Box(markBox, contentAlignment = Alignment.Center) { it() } }
         }
 
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {

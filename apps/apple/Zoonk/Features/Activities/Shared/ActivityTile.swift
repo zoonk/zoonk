@@ -106,7 +106,7 @@ struct ActivityReasonList: View {
         .typeStyle(.note)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .panel(cornerRadius: 12)
+        .panel(cornerRadius: Radius.option)
         .accessibilityElement(children: .combine)
       }
     }

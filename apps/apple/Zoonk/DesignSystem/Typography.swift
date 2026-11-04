@@ -25,6 +25,8 @@ struct TypeStyle: Hashable, Sendable {
   var isTabular = false
   var isItalic = false
   var isUppercase = false
+  /// As a multiple of the size, main's `leading-*`; without it lines keep Geist's own height.
+  var lineHeight: Double?
 }
 
 extension TypeStyle {
@@ -40,11 +42,15 @@ extension TypeStyle {
   static let question = TypeStyle(
     size: 19, relativeTo: .title3, weight: .semibold, tracking: -0.02)
   /// A lesson's running text.
-  static let lessonText = TypeStyle(size: 18, relativeTo: .body, weight: .regular)
+  static let lessonText = TypeStyle(
+    size: 18, relativeTo: .body, weight: .regular, lineHeight: 1.625)
   /// Main's `text-lead`, in the secondary color.
   static let lead = TypeStyle(size: 17, relativeTo: .body, weight: .regular, tracking: -0.01)
-  /// Running text read for itself: the buddy's words, a question's context, Today's queue.
+  /// Running text read for itself: the buddy's words, a question's context.
   static let reading = TypeStyle(size: 16, relativeTo: .callout, weight: .regular)
+  /// A long answer the learner writes, main's essay box: reading size with relaxed lines.
+  static let writing = TypeStyle(
+    size: 16, relativeTo: .callout, weight: .regular, lineHeight: 1.625)
   /// A screen's action.
   static let button = TypeStyle(size: 15, relativeTo: .subheadline, weight: .medium)
   /// Text in the app; text without a role takes it.
@@ -61,12 +67,16 @@ extension TypeStyle {
   static let meta = TypeStyle(size: 12, relativeTo: .caption, weight: .regular)
   /// Minutes, counts, dates and a row's trailing value.
   static let data = meta.monospaced()
-  /// Over a page's title, in the secondary color.
+  /// Over a page's title, in the faint color.
   static let eyebrow = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: .regular, face: .mono, isUppercase: true)
   /// Uppercase, inside a panel only.
   static let label = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: .medium, tracking: 0.04, isUppercase: true)
+  /// A checked answer's verdict, main's `FeedbackVerdict` (550), in its tone's word color.
+  static let verdict = TypeStyle(size: 15, relativeTo: .subheadline, weight: .medium)
+  /// The word on a checked answer option, main's `ANSWER_TAG_CLASS` (550).
+  static let tag = TypeStyle(size: 11.5, relativeTo: .caption2, weight: .medium)
   /// A chip's word, main's `CHIP_CLASS`.
   static let chip = TypeStyle(size: 11.5, relativeTo: .caption2, weight: .medium)
   /// Plot labels and marks too small for `meta`.
@@ -208,11 +218,35 @@ private struct TypeStyleModifier: ViewModifier {
   func body(content: Content) -> some View {
     let pointSize = style.pointSize(dynamicTypeSize)
 
-    content
+    let styled =
+      content
       .font(style.font(pointSize: pointSize, legibility: legibilityWeight))
       .tracking(style.tracking * pointSize)
       .textCase(style.isUppercase ? .uppercase : textCase)
       .environment(\.typeStyle, style)
+
+    if let lineHeight = style.lineHeight {
+      styled.lineSpacing(max(0, (lineHeight - style.face.ownLineHeight) * pointSize))
+    } else {
+      styled
+    }
+  }
+}
+
+extension TypeStyle.Face {
+  /// A line's own height as a multiple of the size, as text lays it out.
+  fileprivate var ownLineHeight: Double {
+    switch self {
+    case .sans: Self.sansLineHeight
+    case .mono: Self.monoLineHeight
+    }
+  }
+
+  private static let sansLineHeight = lineHeight(of: "Geist-Regular")
+  private static let monoLineHeight = lineHeight(of: "GeistMono-Regular")
+
+  private static func lineHeight(of postScriptName: String) -> Double {
+    (UIFont(name: postScriptName, size: 100)?.lineHeight ?? 121) / 100
   }
 }
 

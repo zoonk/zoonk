@@ -97,7 +97,7 @@ fun TrueFalseQuestion(
                         result = result,
                         onClick = { onAnswer(if (shown == side) null else side.answer) },
                         enabled = !locked,
-                    ) { Text(text = sideLabel(side, words), style = MaterialTheme.typography.bodyLarge) }
+                    ) { Text(text = sideLabel(side, words)) }
                 }
             }
         }

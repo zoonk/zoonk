@@ -45,19 +45,15 @@ struct ChallengeStepView: View {
 
   private var intro: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Label {
-        content.variant == .whatIf
+      LessonEyebrow(
+        title: content.variant == .whatIf
           ? Text(
             "What if\u{00A0}· \(named(content.setting))", tableName: "Player",
             comment: "Above a what-if scenario's title")
           : Text(
             "Challenge\u{00A0}· \(named(content.setting))", tableName: "Player",
-            comment: "Above a challenge's title")
-      } icon: {
-        Image(systemName: "target")
-      }
-      .typeStyle(.note.weight(.medium))
-      .foregroundStyle(.mutedForeground)
+            comment: "Above a challenge's title"),
+        systemImage: "target")
 
       LessonQuestionText(text: named(content.title))
 
@@ -142,10 +138,13 @@ struct ChallengeStepView: View {
         bubble(message)
       }
       LessonRichText(named(decision.choice.text))
-        .typeStyle(.body.weight(.medium))
-        .padding(12)
+        .typeStyle(.reading)
+        .foregroundStyle(Color(.primaryForeground))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color(.primary), in: .rect(cornerRadius: Radius.xl, style: .continuous))
+        .containerRelativeFrame(.horizontal, alignment: .trailing) { width, _ in width * 0.85 }
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .background(Color.accentColor.opacity(0.15), in: .rect(cornerRadius: 16))
       ForEach(Array(decision.choice.replies.enumerated()), id: \.offset) { _, reply in
         bubble(reply)
       }
@@ -160,14 +159,11 @@ struct ChallengeStepView: View {
   private func bubble(_ message: ChallengeContent.Message) -> some View {
     VStack(alignment: .leading, spacing: 2) {
       Text(name(for: message.from))
-        .typeStyle(.meta.weight(.medium))
-        .foregroundStyle(.mutedForeground)
+        .typeStyle(.body.weight(.semibold))
       LessonRichText(named(message.text))
-        .typeStyle(.note)
+        .typeStyle(.reading)
     }
-    .padding(12)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .panel(cornerRadius: 16)
     .accessibilityElement(children: .combine)
   }
 
@@ -194,60 +190,77 @@ struct ChallengeStepView: View {
       LessonRichText(named(ending.outcome))
         .foregroundStyle(.mutedForeground)
 
-      if !good.isEmpty {
-        notesSection(
-          Text("Nicely done", tableName: "Player", comment: "Above what went well in a challenge"),
-          notes: good,
-          tint: .successText)
-      }
+      if !good.isEmpty || !improve.isEmpty {
+        VStack(alignment: .leading, spacing: 16) {
+          if !good.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+              Text(
+                "Nicely done", tableName: "Player", comment: "Above what went well in a challenge"
+              )
+              .typeStyle(.label)
+              .foregroundStyle(.successText)
+              .accessibilityAddTraits(.isHeader)
+              ForEach(Array(good.enumerated()), id: \.offset) { _, note in
+                Label {
+                  LessonRichText(named(note.text))
+                } icon: {
+                  Image(systemName: "checkmark")
+                    .foregroundStyle(.successText)
+                }
+              }
+            }
+          }
 
-      if !improve.isEmpty {
-        notesSection(
-          Text(
-            "To improve", tableName: "Player", comment: "Above what to improve after a challenge"),
-          notes: improve, tint: .warningText)
+          if !good.isEmpty, !improve.isEmpty {
+            Divider()
+          }
+
+          if !improve.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+              Text(
+                "To improve", tableName: "Player",
+                comment: "Above what to improve after a challenge"
+              )
+              .typeStyle(.label)
+              .foregroundStyle(.warningText)
+              .accessibilityAddTraits(.isHeader)
+              ForEach(Array(improve.enumerated()), id: \.offset) { _, note in
+                VStack(alignment: .leading, spacing: 8) {
+                  LessonRichText(named(note.text))
+                  if let example = note.example {
+                    LessonRichText(named(example))
+                      .padding(.horizontal, 12)
+                      .padding(.vertical, 8)
+                      .background(
+                        Color.warning.opacity(0.1),
+                        in: .rect(cornerRadius: Radius.xl, style: .continuous))
+                  }
+                }
+              }
+            }
+          }
+        }
+        .typeStyle(.reading)
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .overlay(
+          RoundedRectangle(cornerRadius: Radius.xl, style: .continuous).strokeBorder(.border))
       }
 
       if !content.skills.isEmpty {
         Text(
           "Skills practiced", tableName: "Player", comment: "Above the skills a challenge trains"
         )
-        .typeStyle(.meta.weight(.medium))
+        .typeStyle(.note.weight(.medium))
         .foregroundStyle(.mutedForeground)
         FlowLayout(spacing: 8) {
           ForEach(content.skills) { skill in
             Text(skill.name)
-              .typeStyle(.note)
-              .padding(.horizontal, 10)
-              .padding(.vertical, 4)
-              .background(Color(.background), in: .capsule)
+              .chip(wraps: true)
           }
         }
       }
     }
-  }
-
-  private func notesSection(_ title: Text, notes: [ChallengeContent.Choice.Note], tint: Color)
-    -> some View
-  {
-    VStack(alignment: .leading, spacing: 8) {
-      title
-        .typeStyle(.body.weight(.semibold))
-        .foregroundStyle(tint)
-      ForEach(Array(notes.enumerated()), id: \.offset) { _, note in
-        VStack(alignment: .leading, spacing: 2) {
-          LessonRichText(named(note.text))
-          if let example = note.example {
-            LessonRichText(named(example))
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-      }
-    }
-    .padding()
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .background(tint.opacity(0.15), in: .rect(cornerRadius: 20))
   }
 
   private func name(for slotId: String) -> String {

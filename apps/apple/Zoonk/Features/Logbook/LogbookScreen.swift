@@ -152,6 +152,7 @@ private struct LogbookSteps: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(AppRouter.self) private var router
   @State private var current = LogbookStep.week
+  @ScaledMetric(relativeTo: .body) private var tileWidth = 150.0
   @AccessibilityFocusState private var focusedStep: LogbookStep?
 
   let recap: WeeklyRecap
@@ -328,22 +329,18 @@ private struct LogbookSteps: View {
 
     if !recap.isQuiet {
       Section {
-        IconLabeledContent {
-          Text(studyDuration(minutes: recap.week.minutes))
-            .monospacedDigit()
-        } title: {
-          Text("Time", tableName: "Session", comment: "The week's study time")
-        } icon: {
-          Image(systemName: "clock")
+        StatTileGrid(columns: [2, 1], minimumWidth: tileWidth) {
+          StatTile(
+            label: Text("Time", tableName: "Session", comment: "The week's study time"),
+            value: Text(studyDuration(minutes: recap.week.minutes)),
+            systemImage: "clock")
+          StatTile(
+            label: Text("Questions", tableName: "Session", comment: "The week's questions"),
+            value: Text(recap.week.questions, format: .number),
+            systemImage: "checklist")
         }
-
-        IconLabeledContent {
-          Text(recap.week.questions, format: .number)
-        } title: {
-          Text("Questions", tableName: "Session", comment: "The week's questions")
-        } icon: {
-          Image(systemName: "checklist")
-        }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
       }
     }
   }
@@ -354,17 +351,18 @@ private struct LogbookSteps: View {
     VStack(alignment: .leading, spacing: 6) {
       if let eyebrow {
         eyebrow
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          .typeStyle(.eyebrow)
+          .foregroundStyle(.faint)
       }
 
       title
-        .typeStyle(.heroTitle)
+        .typeStyle(.pageTitle)
         .accessibilityAddTraits(.isHeader)
         .accessibilityFocused($focusedStep, equals: step)
 
       if let detail {
         detail
+          .typeStyle(.reading)
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -440,17 +438,13 @@ private struct LogbookSteps: View {
     if recap.comparison.minutes > 0 {
       return Text(
         "\(studyDuration(minutes: recap.comparison.minutes)) more than the week before!",
-        tableName: "Session", comment: "More time than last week"
-      )
-      .foregroundStyle(.successText)
+        tableName: "Session", comment: "More time than last week")
     }
 
     if recap.comparison.questions > 0 {
       return Text(
         "\(recap.comparison.questions) more questions than the week before!",
-        tableName: "Session", comment: "More questions than last week"
-      )
-      .foregroundStyle(.successText)
+        tableName: "Session", comment: "More questions than last week")
     }
 
     return nil
@@ -522,6 +516,8 @@ private struct TurnaroundChart: View {
 private struct WeekRings: View {
   let recap: WeeklyRecap
 
+  @ScaledMetric(relativeTo: .title3) private var ringSize = 36.0
+
   var body: some View {
     let start = studyDate(recap.weekStart)
 
@@ -531,15 +527,17 @@ private struct WeekRings: View {
         let key = date?.formatted(.iso8601.year().month().day()) ?? ""
         let studied = recap.week.daysStudied.contains(key)
 
-        VStack(spacing: 4) {
-          Image(systemName: studied ? "checkmark.circle.fill" : "circle")
-            .typeStyle(.section.weight(.regular))
-            .foregroundStyle(
-              studied ? AnyShapeStyle(.success) : AnyShapeStyle(Color(.foreground).opacity(0.2)))
+        VStack(spacing: 6) {
+          GoalRing(share: studied ? 1 : 0, size: ringSize) {
+            if studied {
+              Image(systemName: "checkmark")
+                .foregroundStyle(.success)
+            }
+          }
 
           Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
-            .typeStyle(.small)
-            .foregroundStyle(.mutedForeground)
+            .typeStyle(.small.monospaced())
+            .foregroundStyle(studied ? Color(.foreground) : .faint)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)

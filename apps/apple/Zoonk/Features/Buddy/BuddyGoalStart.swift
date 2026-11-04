@@ -9,6 +9,8 @@ struct BuddyGoalStart: View {
   let name: String
   @Binding var goal: String
 
+  @FocusState private var isFocused: Bool
+
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 16) {
@@ -46,7 +48,8 @@ struct BuddyGoalStart: View {
               Button(example) {
                 goal = example
               }
-              .buttonStyle(.suggestionChip)
+              .buttonStyle(.outline)
+              .controlSize(.mini)
             }
           }
         }
@@ -65,6 +68,7 @@ struct BuddyGoalStart: View {
             onSubmit: start
           )
           .lineLimit(1...4)
+          .focused($isFocused)
           .submitLabel(.go)
           .padding(isStacked ? .horizontal : .leading, 16)
           .padding(.vertical, 12)
@@ -77,7 +81,7 @@ struct BuddyGoalStart: View {
           .disabled(trimmedGoal.isEmpty)
           .padding(6)
         }
-        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 24, style: .continuous))
+        .composerPanel(isFocused: isFocused)
       }
       .scenePadding(.horizontal)
       .padding(.vertical, 8)

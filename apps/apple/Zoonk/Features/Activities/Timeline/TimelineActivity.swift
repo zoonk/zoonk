@@ -147,7 +147,7 @@ private struct TimelineCanvas: View {
       }
     }
     .padding(12)
-    .background(background(mark), in: .rect(cornerRadius: 12))
+    .background(background(mark), in: .rect(cornerRadius: Radius.option))
     .accessibilityElement(children: showsTruth ? .combine : .contain)
   }
 

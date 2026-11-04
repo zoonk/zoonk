@@ -92,7 +92,7 @@ private struct ProcessOrderCanvas: View {
     .buttonStyle(ActivityTileStyle(mark: isSelected ? .selected : .plain))
     .overlay {
       if targetedId == step.id {
-        RoundedRectangle(cornerRadius: 12).strokeBorder(.primary, lineWidth: 2)
+        RoundedRectangle(cornerRadius: Radius.option).strokeBorder(.primary, lineWidth: 2)
       }
     }
     .draggable(ActivityDragItem(id: step.id))
@@ -187,7 +187,7 @@ private struct ProcessOrderCanvas: View {
         }
         .typeStyle(.body)
         .padding(12)
-        .background(background(mark), in: .rect(cornerRadius: 12))
+        .background(background(mark), in: .rect(cornerRadius: Radius.option))
         .accessibilityElement(children: .combine)
         .accessibilityValue(mark.verdict ?? Text(verbatim: ""))
       }

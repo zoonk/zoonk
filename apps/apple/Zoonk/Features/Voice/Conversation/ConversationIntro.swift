@@ -416,7 +416,7 @@ private struct ExamTaskCard: View {
           Color.muted
             .aspectRatio(4 / 3, contentMode: .fit)
         }
-        .clipShape(.rect(cornerRadius: 8, style: .continuous))
+        .clipShape(.rect(cornerRadius: Radius.md, style: .continuous))
         .accessibilityLabel(photo.alt)
       }
     } header: {

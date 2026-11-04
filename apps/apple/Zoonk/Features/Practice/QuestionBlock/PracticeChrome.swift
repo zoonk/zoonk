@@ -1,59 +1,19 @@
 import SwiftUI
 
-enum PracticeSegment: Equatable {
-  case ahead
-  case current
-  /// A placement question or a statement left blank: not graded right or wrong.
-  case read
-  case right
-  case wrong
-}
-
-struct PracticeSegmentsBar: View {
-  let segments: [PracticeSegment]
-  let index: Int
-
-  var body: some View {
-    HStack(spacing: 3) {
-      ForEach(Array(segments.enumerated()), id: \.offset) { _, segment in
-        mark(segment)
-          .frame(height: 4)
-      }
-    }
-    .accessibilityElement()
-    .accessibilityLabel(
-      Text(
-        "Question \(min(index + 1, segments.count)) of \(segments.count)", tableName: "Practice",
-        comment: "VoiceOver label of a run's progress: the question in view and how many there are."
-      ))
-  }
-
-  @ViewBuilder
-  private func mark(_ segment: PracticeSegment) -> some View {
-    switch segment {
-    case .right: Capsule().fill(.success)
-    case .wrong: Capsule().fill(.destructive)
-    case .read: Capsule().fill(Color(.foreground).opacity(0.25))
-    case .current: Capsule().strokeBorder(.success, lineWidth: 1)
-    case .ahead: Capsule().fill(Color.surface3)
-    }
-  }
-}
-
 enum PracticeLayout {
   static let readableWidth: CGFloat = 680
 }
 
 struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   @Environment(\.practiceActionsHidden) private var actionsHidden
-  private let segments: [PracticeSegment]?
+  private let segments: [TaskSegment]?
   private let index: Int
   private let stimulus: () -> Stimulus
   private let response: () -> Response
   private let actions: () -> Actions
 
   init(
-    segments: [PracticeSegment]? = nil, index: Int = 0,
+    segments: [TaskSegment]? = nil, index: Int = 0,
     @ViewBuilder stimulus: @escaping () -> Stimulus,
     @ViewBuilder response: @escaping () -> Response,
     @ViewBuilder actions: @escaping () -> Actions
@@ -80,11 +40,17 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
 
   @ViewBuilder private var segmentsBar: some View {
     if let segments, !segments.isEmpty {
-      PracticeSegmentsBar(segments: segments, index: index)
-        .frame(maxWidth: PracticeLayout.readableWidth)
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .frame(maxWidth: .infinity)
+      TaskSegments(
+        segments: segments,
+        label: Text(
+          "Question \(min(index + 1, segments.count)) of \(segments.count)", tableName: "Practice",
+          comment:
+            "VoiceOver label of a run's progress: the question in view and how many there are.")
+      )
+      .frame(maxWidth: PracticeLayout.readableWidth)
+      .padding(.horizontal)
+      .padding(.vertical, 8)
+      .frame(maxWidth: .infinity)
     }
   }
 
@@ -104,7 +70,7 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
 /// An intro or a note: it leads, and the trailing page keeps only the way on.
 extension PracticeTaskLayout where Response == EmptyView {
   init(
-    segments: [PracticeSegment]? = nil, index: Int = 0,
+    segments: [TaskSegment]? = nil, index: Int = 0,
     @ViewBuilder content: @escaping () -> Stimulus,
     @ViewBuilder actions: @escaping () -> Actions
   ) {
@@ -271,7 +237,7 @@ struct PracticeSecondaryButton: View {
     // Beside the main action it keeps its own width, so its label stays on one line; the row
     // stacks instead when that doesn't fit.
     .fixedSize(horizontal: sideBySide, vertical: false)
-    .buttonStyle(.glass)
+    .buttonStyle(.outline)
     .controlSize(.large)
     .disabled(isDisabled)
   }
@@ -343,21 +309,24 @@ struct PracticeResultNumbers: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
-      HStack(spacing: 24) {
+      FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
         if let correct, let total, total > 0 {
-          Readout(
-            value: Text("\(correct)/\(total)"),
-            label: Text(
+          MomentReadout {
+            Text("\(correct)/\(total)")
+          } words: {
+            Text(
               "Right", tableName: "Practice",
-              comment: "Readout label: right answers out of the total."))
+              comment: "Readout label: right answers out of the total.")
+          }
         }
 
         if brainPower > 0 {
-          Readout(
-            value: Text(brainPower, format: .number.sign(strategy: .always())),
-            label: Text(
-              "Brain Power", tableName: "Practice", comment: "Readout label: Brain Power earned."),
-            tint: .brainText)
+          MomentReadout(tint: .brainText) {
+            EarnedNumber(value: brainPower)
+          } words: {
+            Text(
+              "Brain Power", tableName: "Practice", comment: "Readout label: Brain Power earned.")
+          }
         }
       }
 
@@ -370,20 +339,6 @@ struct PracticeResultNumbers: View {
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-  }
-}
-
-private struct Readout: View {
-  let value: Text
-  let label: Text
-  var tint: Color = .primary
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 2) {
-      value.typeStyle(.readout).foregroundStyle(tint)
-      label.typeStyle(.note).foregroundStyle(.mutedForeground)
-    }
-    .accessibilityElement(children: .combine)
   }
 }
 

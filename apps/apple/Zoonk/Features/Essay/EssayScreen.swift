@@ -70,6 +70,7 @@ private struct EssayContent: View {
   @State private var finishFailed = false
   @State private var confirmsLeave = false
   @State private var openCriteria: Set<String> = []
+  @FocusState private var isBoxFocused: Bool
 
   let essay: EssayView
 
@@ -280,7 +281,11 @@ private struct EssayContent: View {
 
     Section {
       TextEditor(text: $writer.text)
+        .typeStyle(.writing)
         .frame(minHeight: 280)
+        .scrollContentBackground(.hidden)
+        .focused($isBoxFocused)
+        .fieldBorder(isFocused: isBoxFocused)
         .accessibilityLabel(Text(boxLabel))
         .accessibilityHint(EssayWords.hint(words))
     } header: {

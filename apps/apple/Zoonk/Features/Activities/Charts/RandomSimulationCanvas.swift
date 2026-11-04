@@ -662,6 +662,6 @@ private struct SamplingSimulationView: View {
     }
     .padding()
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(.background, in: .rect(cornerRadius: 12, style: .continuous))
+    .background(.background, in: .rect(cornerRadius: Radius.option, style: .continuous))
   }
 }

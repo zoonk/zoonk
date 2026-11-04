@@ -178,7 +178,7 @@ private struct CauseEffectCanvas: View {
     .disabled(isLocked)
     .overlay {
       if isCandidate || targetedId == node.id {
-        RoundedRectangle(cornerRadius: 12)
+        RoundedRectangle(cornerRadius: Radius.option)
           .strokeBorder(
             .primary.opacity(targetedId == node.id ? 1 : 0.4),
             style: StrokeStyle(lineWidth: 2, dash: targetedId == node.id ? [] : [5, 4]))
@@ -376,10 +376,10 @@ private struct CauseEffectCanvas: View {
     }
     .typeStyle(.note)
     .padding(12)
-    .panel(cornerRadius: 12)
+    .panel(cornerRadius: Radius.option)
     .overlay {
       if state == .missed {
-        RoundedRectangle(cornerRadius: 12)
+        RoundedRectangle(cornerRadius: Radius.option)
           .strokeBorder(Color.success, style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
       }
     }
