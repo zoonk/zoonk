@@ -14,6 +14,8 @@ struct EssayScreen: View {
         switch essay.state {
         case .idle, .loading:
           ProgressView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .lonePage()
         case .empty, .failed(.notFound):
           ContentUnavailableView {
             Label {
@@ -135,6 +137,7 @@ private struct EssayContent: View {
           }
         }
         .safeAreaBar(edge: .bottom) { actionBar }
+        .lonePage()
       }
     }
     .toolbar {

@@ -78,10 +78,12 @@ private struct LessonPlayerContent: View {
       VerticalToolbarReader { hasVerticalBar in
         content
           .safeAreaBar(edge: .top) {
-            // A vertical bar (iPhone Duo) has no room for the progress bar, so it tops the screen.
+            // A vertical bar (iPhone Duo) has no room for the progress bar, so it tops the page
+            // before the hinge, as a practice run's does.
             if hasVerticalBar, let progress {
               progressBar(progress)
                 .scenePadding(.horizontal)
+                .keepsBeforeHinge()
             }
           }
           .navigationTitle(title)
