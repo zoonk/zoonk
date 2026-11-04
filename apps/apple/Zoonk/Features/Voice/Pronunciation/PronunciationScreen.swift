@@ -422,12 +422,12 @@ private struct PronunciationResultView: View {
       PaneSplit {
         List {
           summary
-        }
-      } secondary: {
-        List {
           dayMoment
         }
-        .safeAreaBar(edge: .bottom) { doneButton }
+      } secondary: {
+        Color.clear
+          .safeAreaBar(edge: .bottom) { doneButton }
+          .background(Color(.systemGroupedBackground))
       } single: {
         List {
           summary
