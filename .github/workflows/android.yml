@@ -53,10 +53,10 @@ jobs:
         name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
+          # Only main writes the Gradle cache (setup-gradle's default): other branches' entries can't
+          # be restored anywhere else, and in the repository's shared 10 GB they evict main's, which
+          # every pull request restores.
           cache-provider: enhanced
-          # Pull requests only restore main's Gradle cache: the repository's caches share 10 GB, and
-          # entries of their own would evict main's, so pull requests would start cold.
-          cache-read-only: ${{ github.event_name == 'pull_request' }}
 
       - name: Compile shared inputs
         run: make -C apps/android build BUILD_TASKS=compileReleaseKotlin
