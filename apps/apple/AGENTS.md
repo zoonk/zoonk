@@ -54,6 +54,7 @@ Every read a screen shows and every write goes through `Zoonk/Data`, so screens 
 - A string with a count uses String Catalog plural variations (`variations.plural` with `one` and `other` on the English entry), so no screen says "1 questions". Give each count its own string (join "3 right · 1 wrong" from two). Portuguese's `one` covers 0 and a catalog can't carry an exact 0 through translation, so a count that can be 0 gets its own literal string for it ("0 fixed"). A sentence that never shows the number ("this goal waits" / "these goals wait") gets one literal string for one and one for more, since the build rejects a plural without the number. Positions and fractions ("Question 2 of 5", "8/10") need none.
 - Join facts on one line with `joinedFacts()`, or `\u{00A0}· ` between them in a format string.
 - Treat dates, times, durations, and measurements as semantic values. Choose calendar and time-zone behavior intentionally, use native formatters, and test meaningful boundaries across locales.
+- Unit and UI tests run in English (United States) whatever language the simulator, or the app on it, is set to: the scheme's test action sets it. A test of another locale passes that locale to the code it tests. The UI tests' accessibility audit still flags text on a simulator whose own language isn't English, so run them on one set to English.
 
 ## Performance
 
