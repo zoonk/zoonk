@@ -39,7 +39,7 @@ fun windowAdaptiveInfo(): WindowAdaptiveInfo {
             WindowSizeClass.BREAKPOINTS_V2.computeWindowSizeClass(size.width.toDp().value, size.height.toDp().value)
         }
 
-    return WindowAdaptiveInfo(sizeClass, LocalWindowPosture.current)
+    return WindowAdaptiveInfo(sizeClass, LocalWindowPosture.current ?: Posture())
 }
 
 /**
@@ -53,17 +53,22 @@ internal fun ReadWindowPosture(content: @Composable () -> Unit) {
     val readings = remember(tracker) { tracker.windowLayoutInfo(context).map<WindowLayoutInfo, Posture?> { it.posture() } }
     val posture by readings.collectAsState(remember(tracker) { tracker.currentPosture(context) })
 
-    if (posture == null) HoldDrawing()
-    CompositionLocalProvider(LocalWindowPosture provides (posture ?: Posture()), content = content)
+    CompositionLocalProvider(LocalWindowPosture provides posture) {
+        HoldUntilFoldsRead()
+        content()
+    }
 }
 
 /**
- * Keeps the window from drawing while this is composed, so the splash, or the frame before a
- * rotation or a fold, stays on screen instead of a frame laid out without the fold. WindowManager
- * doesn't promise a first reading on every device, so it skips [HELD_FRAMES] frames at most.
+ * Keeps this window from drawing until the folds are read, so the splash, the frame before a
+ * rotation or a fold, or a dialog or sheet restored with its screen, never shows a frame laid out
+ * without the fold. WindowManager doesn't promise a first reading on every device, so it skips
+ * [HELD_FRAMES] frames at most. A dialog or a sheet calls it inside its own window.
  */
 @Composable
-private fun HoldDrawing() {
+internal fun HoldUntilFoldsRead() {
+    if (LocalWindowPosture.current != null) return
+
     val view = LocalView.current
     DisposableEffect(view) {
         val observer = view.viewTreeObserver
@@ -74,7 +79,8 @@ private fun HoldDrawing() {
     }
 }
 
-private val LocalWindowPosture = compositionLocalOf { Posture() }
+/** Null until the first reading arrives. */
+private val LocalWindowPosture = compositionLocalOf<Posture?> { Posture() }
 
 /** About half a second at 60 Hz. */
 internal const val HELD_FRAMES = 30

@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
+import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import kotlin.math.roundToInt
@@ -126,6 +127,7 @@ private fun dialogPlace(): DialogPlace {
  */
 @Composable
 private fun WindowAt(place: DialogPlace) {
+    HoldUntilFoldsRead()
     val window = (LocalView.current.parent as? DialogWindowProvider)?.window ?: return
     val density = LocalDensity.current
 
