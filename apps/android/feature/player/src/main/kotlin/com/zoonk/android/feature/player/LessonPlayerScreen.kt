@@ -135,6 +135,7 @@ import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.LearnerSummaryBuddy
@@ -506,20 +507,30 @@ private fun Segments(
     val parts = segmentParts(segments)
     val label = stringResource(R.string.player_progress)
     val done = if (state.phase == LessonPhase.Completed) state.queue.size else state.position
+    var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    LessonColumn(
-        Modifier.padding(bottom = 8.dp).semantics {
-            contentDescription = label
-            progressBarRangeInfo =
-                ProgressBarRangeInfo(
-                    done.toFloat(),
-                    0f..state.queue.size
-                        .coerceAtLeast(1)
-                        .toFloat(),
-                )
-        },
-    ) {
-        MeterParts(parts)
+    BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
+        // A refused run's gate keeps to the page before a fold, not a wide window's split, and the progress keeps over it.
+        val fold = if (state.run is LessonRun.Refused) pageFold(maxWidth, span) else spreadFold(maxWidth, span)
+
+        Box(
+            (if (fold == null) Modifier.fillMaxWidth() else Modifier.width(fold.start))
+                .wrapContentWidth(if (fold == null) Alignment.CenterHorizontally else Alignment.End)
+                .lessonColumnWidth()
+                .padding(bottom = 8.dp)
+                .semantics {
+                    contentDescription = label
+                    progressBarRangeInfo =
+                        ProgressBarRangeInfo(
+                            done.toFloat(),
+                            0f..state.queue.size
+                                .coerceAtLeast(1)
+                                .toFloat(),
+                        )
+                },
+        ) {
+            MeterParts(parts)
+        }
     }
 }
 

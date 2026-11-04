@@ -282,6 +282,18 @@ class LessonSpreadScreenshots {
     @Config(qualifiers = PHONE)
     fun phoneReadingWithPicture() = capture("phone-reading-picture", picturedExplanation(), open = false)
 
+    @Test
+    @Config(qualifiers = GALAXY_FOLD)
+    fun galaxyFoldProgress() = capture("galaxy-fold-progress", checkStep("quiz"))
+
+    @Test
+    @Config(qualifiers = GALAXY_FOLD)
+    fun galaxyFoldProgressRightToLeft() = capture("galaxy-fold-progress-rtl", checkStep("quiz"), layoutDirection = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = "w700dp-h840dp-xhdpi")
+    fun mediumProgress() = capture("medium-progress", checkStep("quiz"), open = false)
+
     private fun chart(): StepVisual =
         ApiJson.decodeFromString<StepVisual>(
             """
@@ -303,6 +315,7 @@ class LessonSpreadScreenshots {
         const val SOUND = "https://cdn.zoonk.test/sound.mp3"
         const val BOOK = "w852dp-h883dp-xhdpi"
         const val PHONE = "w411dp-h891dp-xxhdpi"
+        const val GALAXY_FOLD = "w707dp-h823dp-xhdpi"
 
         /** A Pixel Tablet, which has no fold. */
         const val TABLET = "w1280dp-h800dp-land-xhdpi"
