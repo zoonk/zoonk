@@ -2,7 +2,7 @@ import "server-only";
 import { type LibraryVisibility, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
-import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../cache/tags";
+import { getGoalsCacheTag, getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../cache/tags";
 import { filterSkippedSteps } from "../language/activities/language-activities";
 import { loadSkippedActivities } from "../language/activities/skipped-activities";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
@@ -185,6 +185,9 @@ export async function getPlayableLibraryLesson({
   }
 
   if (cached.result.status === "ready" && session) {
+    // The learner's goal and plan decide which screens they skip and which versions they see.
+    cacheTag(getGoalsCacheTag(session.user.id));
+
     const [lesson, skippedActivities] = await Promise.all([
       withLearnerLessonVersions({ lesson: cached.result.lesson, userId: session.user.id }),
       loadLessonSkippedActivities({ lesson: cached.result.lesson, userId: session.user.id }),
