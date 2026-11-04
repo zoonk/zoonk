@@ -512,6 +512,12 @@ msgctxt "KPL2U8"
 msgid "Step {current, number} of {total, number}"
 msgstr "ステップ{current, number}（全{total, number}ステップ）"
 
+#: src/_components/step-open-failed.tsx
+#: src/session/next-stop.tsx
+msgctxt "xpHtfD"
+msgid "We couldn't open this step. Try again."
+msgstr "このステップを開けませんでした。もう一度お試しください。"
+
 #: src/_components/steps.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
@@ -12172,11 +12178,6 @@ msgstr "代わりに：{title}"
 msgctxt "ZqQr3A"
 msgid "While you wait: {title}"
 msgstr "待っている間に：{title}"
-
-#: src/session/next-stop.tsx
-msgctxt "xpHtfD"
-msgid "We couldn't open this step. Try again."
-msgstr "このステップを開けませんでした。もう一度お試しください。"
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx

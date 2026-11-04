@@ -512,6 +512,12 @@ msgctxt "KPL2U8"
 msgid "Step {current, number} of {total, number}"
 msgstr "Krok {current, number} z {total, number}"
 
+#: src/_components/step-open-failed.tsx
+#: src/session/next-stop.tsx
+msgctxt "xpHtfD"
+msgid "We couldn't open this step. Try again."
+msgstr "Nie udało się przejść do tego kroku. Spróbuj ponownie."
+
 #: src/_components/steps.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
@@ -12172,11 +12178,6 @@ msgstr "Wybierz zamiast tego: {title}"
 msgctxt "ZqQr3A"
 msgid "While you wait: {title}"
 msgstr "W międzyczasie wybierz: {title}"
-
-#: src/session/next-stop.tsx
-msgctxt "xpHtfD"
-msgid "We couldn't open this step. Try again."
-msgstr "Nie udało się przejść do tego kroku. Spróbuj ponownie."
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx

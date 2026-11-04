@@ -1,8 +1,10 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
+import { StepOpenFailed } from "../_components/step-open-failed";
 import { LearnLink } from "../learn-link";
 import { type DayStep } from "../session/session-types";
 import { useBlockTitle } from "../session/use-block-copy";
@@ -29,15 +31,20 @@ export function RowOpen({
   const t = useExtracted();
   const title = useBlockTitle();
   const [pending, startTransition] = useTransition();
+  const [failed, setFailed] = useState(false);
 
   const open = () => {
+    setFailed(false);
+
     startTransition(async () => {
-      await actions.openBlock(block);
+      const { data: opened } = await safeAsync(() => actions.openBlock(block));
+      setFailed(!opened);
     });
   };
 
   return (
-    <button
+    <>
+      <button
       aria-busy={pending || undefined}
       aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
       className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
@@ -45,9 +52,12 @@ export function RowOpen({
       disabled={pending}
       onClick={open}
       type="button"
-    >
-      {children}
-    </button>
+      >
+        {children}
+      </button>
+
+      {failed && <StepOpenFailed />}
+    </>
   );
 }
 

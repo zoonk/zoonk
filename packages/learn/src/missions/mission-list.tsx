@@ -12,6 +12,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
+import { StepOpenFailed } from "../_components/step-open-failed";
 import { type useMissionOpen } from "./mission-links";
 
 export function ProgressCount({ done, total }: { done: number; total: number }) {
@@ -76,13 +77,17 @@ export function MissionListRow({
   }
 
   return (
-    <ListRowButton
-      aria-busy={target.pending || undefined}
-      className="aria-busy:opacity-60"
-      disabled={target.pending}
-      onClick={target.open}
-    >
-      {content}
-    </ListRowButton>
+    <>
+      <ListRowButton
+        aria-busy={target.pending || undefined}
+        className="aria-busy:opacity-60"
+        disabled={target.pending}
+        onClick={target.open}
+      >
+        {content}
+      </ListRowButton>
+
+      {target.failed && <StepOpenFailed className="-mt-1.5 pb-2.75 pl-6" />}
+    </>
   );
 }

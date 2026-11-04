@@ -2,7 +2,8 @@
 
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type DayMission, type Mission } from "@zoonk/core/sessions/missions";
-import { useTransition } from "react";
+import { safeAsync } from "@zoonk/utils/error";
+import { useState, useTransition } from "react";
 
 export type MissionView = Mission | DayMission;
 
@@ -31,7 +32,7 @@ export type MissionLinks = {
 /** A page that picks something when opened (the notebook's practice) isn't prefetched. */
 type MissionOpen =
   | { href: string; onOpen?: () => void; prefetch: boolean }
-  | { open: () => void; pending: boolean };
+  | { failed: boolean; open: () => void; pending: boolean };
 
 function getBlockOpen({
   links,
@@ -56,6 +57,7 @@ export function useMissionOpen({
   opens: MissionOpens | undefined;
 }): MissionOpen | null {
   const [pending, startTransition] = useTransition();
+  const [failed, setFailed] = useState(false);
   const { askBuddy, hrefs } = links;
   const page = (href: string, prefetch = true) => ({ href, onOpen: links.openPage, prefetch });
 
@@ -69,16 +71,21 @@ export function useMissionOpen({
 
       return open
         ? {
-            open: () =>
+            failed,
+            open: () => {
+              setFailed(false);
+
               startTransition(async () => {
-                await open();
-              }),
+                const { data: opened } = await safeAsync(open);
+                setFailed(!opened);
+              });
+            },
             pending,
           }
         : null;
     }
     case "buddy":
-      return askBuddy ? { open: askBuddy, pending: false } : page(hrefs.buddy);
+      return askBuddy ? { failed: false, open: askBuddy, pending: false } : page(hrefs.buddy);
     case "areaPractice":
       return page(hrefs.areaPractice(opens.areaId));
     case "call":
