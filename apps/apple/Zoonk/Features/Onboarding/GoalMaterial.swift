@@ -480,7 +480,7 @@ struct MaterialQuestionsView: View {
         .disabled(trimmed.isEmpty || isAsking)
       }
       .padding(6)
-      .goalBox(isFocused: isFocused)
+      .inputPanel(isFocused: isFocused)
       .padding()
       .keepsOffFold()
       .background(.bar)

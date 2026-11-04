@@ -9,6 +9,29 @@ extension View {
     return background(.card, in: shape)
       .overlay(shape.strokeBorder(.border))
   }
+
+  /// Main's goal box and composer: a panel with the field's `input` line, in ink while its words
+  /// have focus, thicker with more contrast.
+  func inputPanel(isFocused: Bool) -> some View {
+    modifier(InputPanel(isFocused: isFocused))
+  }
+}
+
+private struct InputPanel: ViewModifier {
+  @Environment(\.colorSchemeContrast) private var contrast
+
+  let isFocused: Bool
+
+  func body(content: Content) -> some View {
+    let shape = RoundedRectangle(cornerRadius: Radius.xl, style: .continuous)
+    let focusWidth: CGFloat = contrast == .increased ? 3 : 2
+
+    content
+      .background(.card, in: shape)
+      .overlay(
+        shape.strokeBorder(
+          isFocused ? Color(.foreground) : .input, lineWidth: isFocused ? focusWidth : 1))
+  }
 }
 
 /// A `GroupBox` as main's `NoticeCard`: its label as a row's title over the content, on a panel.

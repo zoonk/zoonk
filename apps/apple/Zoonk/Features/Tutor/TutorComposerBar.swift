@@ -77,7 +77,7 @@ struct TutorComposerBar: View {
     }
     .padding(.leading, 14)
     .padding([.vertical, .trailing], 9)
-    .composerPanel(isFocused: isFocused)
+    .inputPanel(isFocused: isFocused)
   }
 
   private var suggestionChips: some View {
@@ -119,18 +119,6 @@ struct TutorComposerBar: View {
     }
 
     Task { await conversation.send() }
-  }
-}
-
-extension View {
-  /// Main's composer and goal box: a `card` panel with the input line at `xl` corners, the line
-  /// in ink while it has focus.
-  func composerPanel(isFocused: Bool) -> some View {
-    background(Color(.card), in: RoundedRectangle(cornerRadius: Radius.xl, style: .continuous))
-      .overlay {
-        RoundedRectangle(cornerRadius: Radius.xl, style: .continuous)
-          .strokeBorder(isFocused ? Color(.foreground) : .input, lineWidth: isFocused ? 2 : 1)
-      }
   }
 }
 

@@ -147,7 +147,7 @@ struct GoalEntrySections<Attachment: View>: View {
         .frame(maxWidth: .infinity, alignment: .trailing)
       }
       .padding(6)
-      .goalBox(isFocused: isFocused)
+      .inputPanel(isFocused: isFocused)
       .keepsOffFold()
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
@@ -327,31 +327,6 @@ struct GoalExamplesSection: View {
             "The kind of an example goal: a short explanation of one question, and its length")
       ),
     ]
-  }
-}
-
-extension View {
-  /// Main's goal box, also around the box for questions on material: `card` with the field's
-  /// line, `xl` corners, the line in ink while the words have focus.
-  func goalBox(isFocused: Bool) -> some View {
-    modifier(GoalBoxFrame(isFocused: isFocused))
-  }
-}
-
-private struct GoalBoxFrame: ViewModifier {
-  let isFocused: Bool
-
-  @Environment(\.colorSchemeContrast) private var contrast
-
-  func body(content: Content) -> some View {
-    let shape = RoundedRectangle(cornerRadius: Radius.xl, style: .continuous)
-    let focusWidth: CGFloat = contrast == .increased ? 3 : 2
-
-    content
-      .background(.card, in: shape)
-      .overlay(
-        shape.strokeBorder(
-          isFocused ? Color(.foreground) : .input, lineWidth: isFocused ? focusWidth : 1))
   }
 }
 
