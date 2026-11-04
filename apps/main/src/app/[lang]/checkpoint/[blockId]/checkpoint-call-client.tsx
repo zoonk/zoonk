@@ -2,7 +2,8 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
+import { isSameLearner } from "@/lib/learner/learner-snapshot";
+import { getLearnerId } from "@/lib/learner/learner-store";
 import { runWhenIdle } from "@/lib/run-when-idle";
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/checkpoint-call-contract";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
@@ -81,10 +82,10 @@ export function CheckpointCallPreviewClient({
       onStart={async (audio) => {
         tappedAudio.current = audio;
         const mine = generation.current;
-        const learnerGeneration = getLearnerGeneration();
+        const learner = getLearnerId();
 
         const isCurrent = () =>
-          mine === generation.current && learnerGeneration === getLearnerGeneration();
+          mine === generation.current && isSameLearner(learner, getLearnerId());
 
         const client = loadConversationClient();
         const started = await startCheckpointCallAction(blockId);
