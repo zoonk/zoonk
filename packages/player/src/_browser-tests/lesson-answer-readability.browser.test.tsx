@@ -9,11 +9,12 @@ const ANSWER = "Compartilhado entre os dois átomos, no par de elétrons";
 
 describe("checked answer readability", () => {
   it.each([
-    { fontSize: "200%", width: 390 },
-    { fontSize: "400%", width: 320 },
+    { fontSize: "150%", keepsWordsWhole: true, width: 390 },
+    { fontSize: "200%", keepsWordsWhole: true, width: 390 },
+    { fontSize: "400%", keepsWordsWhole: false, width: 320 },
   ])(
     "keeps the answer and tag readable at $fontSize on a $width px phone",
-    async ({ fontSize: enlargedFontSize, width }) => {
+    async ({ fontSize: enlargedFontSize, keepsWordsWhole, width }) => {
       await atViewport({ height: 844, width }, async () => {
         const fontSize = document.documentElement.style.fontSize;
 
@@ -67,6 +68,28 @@ describe("checked answer readability", () => {
 
             expect(overlaps).toBe(false);
           }
+
+          const splitWords: string[] = [];
+
+          if (keepsWordsWhole) {
+            const text = document.createTreeWalker(answer, NodeFilter.SHOW_TEXT).nextNode();
+
+            if (!text) {
+              throw new Error("The selected answer must contain text.");
+            }
+
+            for (const word of ANSWER.matchAll(/\S+/gu)) {
+              range.setStart(text, word.index);
+              range.setEnd(text, word.index + word[0].length);
+              const lines = new Set([...range.getClientRects()].map((line) => line.top));
+
+              if (lines.size > 1) {
+                splitWords.push(word[0]);
+              }
+            }
+          }
+
+          expect(splitWords).toStrictEqual([]);
 
           const option = selected.element();
           expect(option.scrollWidth).toBeLessThanOrEqual(option.clientWidth);

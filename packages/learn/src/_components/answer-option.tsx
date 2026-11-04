@@ -122,7 +122,7 @@ export function AnswerOption({
         <span
           className={cn(
             "flex min-w-0 flex-col",
-            layout === "stacked" ? "flex-1" : "grow basis-1/2",
+            layout === "stacked" ? "flex-1" : "grow basis-[min-content]",
           )}
         >
           <SpokenMath>{children}</SpokenMath>
