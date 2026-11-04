@@ -10,7 +10,7 @@ Main's design system (`apps/playground/src/design-system/`, values in `packages/
 - **Never color alone.** A word, a symbol or a shape says the same thing.
 - **Soft in the standard schemes, strict with more contrast.** Lines (`outline`, `outlineVariant`) and colored words are soft by design; the more-contrast schemes make them strong. Don't darken a role to fix one screen.
 
-When `globals.css` changes, regenerate both apps: `pnpm --filter android palette && make -C apps/android format` and `pnpm --filter apple palette` (the generators share `scripts/theme/`, whose tests fail when a committed output is stale).
+When `globals.css` changes, regenerate both apps with `pnpm palette` from the repository root (the generators share `scripts/theme/`, whose tests fail when a committed output is stale).
 
 ## Color roles
 

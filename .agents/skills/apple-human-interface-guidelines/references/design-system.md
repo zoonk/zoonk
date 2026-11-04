@@ -7,7 +7,7 @@ The app's code for this lives in `apps/apple/Zoonk/DesignSystem/`: the generated
 ## Ground rules
 
 - **Minimum iOS 26.** Liquid Glass, `.glass` button styles, `ConcentricRectangle` and `safeAreaBar` need no `#available` checks.
-- **One source.** `pnpm --filter apple palette` writes every color role (`Resources/Assets.xcassets/Palette`, Display P3, with light, dark and both Increase Contrast appearances), the `AccentColor` and `Radius.swift` from `globals.css`; Android's generator shares its math in `scripts/theme/`. Never edit those outputs by hand: change `globals.css` and regenerate both apps ([README](../../../../apps/apple/README.md#design-tokens)).
+- **One source.** `pnpm palette` regenerates both apps from `globals.css`: here every color role (`Resources/Assets.xcassets/Palette`, Display P3, with light, dark and both Increase Contrast appearances), the `AccentColor` and `Radius.swift`, and Android's theme with them (the generators share `scripts/theme/`). Never edit those outputs by hand: change `globals.css` and run it ([README](../../../../apps/apple/README.md#design-tokens)).
 - **The tint is ink.** `AccentColor` is main's `primary`, and `ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME` applies it. Links, the selected tab, spinners and the system's own controls are ink, as on main. Don't set `.tint` on screens, except for toggles (see Components).
 - **Color means something or stays neutral.** Before you color something, find its role below. If none fits, use `Color(.foreground)`, `.mutedForeground` or `.faint`.
 - **Never color alone.** A word, an SF Symbol or a shape says the same thing.

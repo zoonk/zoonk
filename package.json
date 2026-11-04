@@ -43,6 +43,7 @@
     "lint:fix": "oxlint --fix --deny-warnings",
     "openapi:check": "pnpm --filter api openapi:check",
     "openapi:generate": "pnpm --filter api openapi:generate",
+    "palette": "pnpm --filter android --filter apple palette",
     "perf:build-metrics": "node scripts/perf/check-build-metrics.mts",
     "perf:check": "node scripts/perf/check-static-routes.mts",
     "pr:capture": "node scripts/pr/capture.mts",

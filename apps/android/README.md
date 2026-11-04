@@ -60,9 +60,9 @@ Read [AGENTS.md](AGENTS.md) for architecture, platform, and contribution constra
 
 ## Design system
 
-The theme (`ui/theme`), shared pieces (`ui/components`), formatters (`ui/format`), all in `:core:designsystem`, icons and the debug gallery follow the [design-system reference](../../.agents/skills/android-material-guidelines/references/design-system.md): what each Zoonk meaning maps to, how to regenerate the palette from `globals.css` (`pnpm --filter android palette`), add a Material Symbol (`pnpm --filter android symbol <name>`) and capture the gallery's review screenshots.
+The theme (`ui/theme`), shared pieces (`ui/components`), formatters (`ui/format`), all in `:core:designsystem`, icons and the debug gallery follow the [design-system reference](../../.agents/skills/android-material-guidelines/references/design-system.md): what each Zoonk meaning maps to, how to regenerate the palette from `globals.css` (`pnpm palette`), add a Material Symbol (`pnpm --filter android symbol <name>`) and capture the gallery's review screenshots.
 
-`pnpm --filter android palette` generates `ZoonkPalette.kt`, `ZoonkRadius.kt` and the window-color resources from `globals.css`; run `pnpm --filter apple palette` with it, since both apps read the same values. The app's writer is `scripts/generate-palette.mts`; it shares the parser and color and radius math in [`scripts/theme/`](../../scripts/theme) with Apple. Run `pnpm test:deploy scripts/theme/` from the repository root to check generation drift and neutral-text contrast.
+`pnpm palette` from the repository root regenerates both apps from `globals.css`, since they read the same values: here `ZoonkPalette.kt`, `ZoonkRadius.kt` and the window-color resources. This app's writer is `scripts/generate-palette.mts` (`pnpm --filter android palette` runs it alone); it shares the parser and color and radius math in [`scripts/theme/`](../../scripts/theme) with Apple. Run `pnpm test:deploy scripts/theme/` from the repository root to check generation drift and neutral-text contrast.
 
 ## Localization
 
