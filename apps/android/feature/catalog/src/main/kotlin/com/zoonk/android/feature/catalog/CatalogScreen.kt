@@ -27,10 +27,9 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -73,9 +72,11 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.GoalBox
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LoadMoreFooter
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.Subject
 import com.zoonk.android.ui.components.SubjectGlyph
 import com.zoonk.android.ui.components.SubjectLabel
@@ -85,7 +86,7 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageDirective
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CourseCategoryCounts
 import com.zoonk.api.models.CourseResult
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -143,7 +144,14 @@ fun CatalogScreen(
                     list = list,
                     state = state,
                     gridState = gridState,
-                    header = { CatalogHeader(goal, { goal = it }, onGoal = { navigator.open(AppRoute.StartGoal(goal = it)) }) },
+                    header = {
+                        CatalogHeader(
+                            title ?: stringResource(R.string.catalog_title),
+                            goal,
+                            { goal = it },
+                            onGoal = { navigator.open(AppRoute.StartGoal(goal = it)) },
+                        )
+                    },
                     chips = if (withChips) ({ CategoryChips(categories, onSelect = { category = it }) }) else null,
                     onRetry = { scope.launch { courses.refresh() } },
                     modifier = modifier,
@@ -241,36 +249,37 @@ private fun CategoryList(
 ) {
     val description = stringResource(R.string.catalog_categories)
     val locale = currentLocale()
-    val selected = MaterialTheme.colorScheme.surfaceContainerHigh
 
+    // Main's category list: the category shown on `muted`, each with its number of courses.
     Column(modifier.padding(vertical = 12.dp).selectableGroup().semantics { contentDescription = description }) {
         categories.forEach { link ->
-            ListItem(
-                headlineContent = { Text(link.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                leadingContent = link.key?.let { { SubjectGlyph(Subject.of(it)) } },
-                trailingContent = {
-                    Text(formatNumber(link.count.toDouble(), locale), style = MaterialTheme.typography.labelMedium.withTabularFigures())
-                },
-                colors = ListItemDefaults.colors(containerColor = if (link.selected) selected else MaterialTheme.colorScheme.surface),
+            ListRow(
+                headline = { Text(link.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 modifier = Modifier.selectable(selected = link.selected, role = Role.Tab) { onSelect(link.key) },
+                highlighted = link.selected,
+                leading = link.key?.let { { SubjectGlyph(Subject.of(it)) } },
+                meta = { Text(formatNumber(link.count.toDouble(), locale)) },
             )
         }
     }
 }
 
-/** The goal is the screen's, so what the learner typed stays when a fold moves the courses to their own page. */
+/**
+ * Main's catalog header: the page's title and its line, then the goal box. The goal is the screen's,
+ * so what the learner typed stays when a fold moves the courses to their own page.
+ */
 @Composable
 private fun CatalogHeader(
+    title: String,
     goal: String,
     onGoalChange: (String) -> Unit,
     onGoal: (String) -> Unit,
 ) {
-    Column(Modifier.padding(vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text(
-            stringResource(R.string.catalog_subtitle),
+    Column(Modifier.padding(top = 8.dp, bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        PageHeader(
+            title = title,
+            supporting = stringResource(R.string.catalog_subtitle),
             modifier = Modifier.padding(horizontal = 16.dp).widthIn(max = COLUMN_WIDTH),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyLarge,
         )
 
         GoalBox(
@@ -283,7 +292,11 @@ private fun CatalogHeader(
     }
 }
 
-/** Main pins the chips under the bar on phones, so another category is in reach however far the list scrolls. */
+/**
+ * Main pins the chips under the bar on phones, so another category is in reach however far the list
+ * scrolls. Material's filter chips, drawn as main's small buttons: the category shown in ink, the
+ * others outlined.
+ */
 @Composable
 private fun CategoryChips(
     categories: List<CategoryLink>,
@@ -309,21 +322,22 @@ private fun CategoryChips(
                 FilterChip(
                     selected = link.selected,
                     onClick = { onSelect(link.key) },
-                    label = { Text(link.label) },
-                    leadingIcon =
-                        when {
-                            link.selected -> {
-                                { Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(18.dp)) }
-                            }
-
-                            link.key != null -> {
-                                { SubjectGlyph(Subject.of(link.key)) }
-                            }
-
-                            else -> {
-                                null
-                            }
-                        },
+                    label = { Text(link.label, style = MaterialTheme.typography.labelMedium) },
+                    leadingIcon = link.key?.let { { SubjectGlyph(Subject.of(it)) } },
+                    colors =
+                        FilterChipDefaults.filterChipColors(
+                            labelColor = MaterialTheme.colorScheme.onSurface,
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                        ),
+                    border =
+                        FilterChipDefaults.filterChipBorder(
+                            enabled = true,
+                            selected = link.selected,
+                            borderColor = MaterialTheme.colorScheme.outline,
+                            selectedBorderColor = MaterialTheme.colorScheme.primary,
+                            selectedBorderWidth = 1.dp,
+                        ),
                 )
             }
         }
@@ -486,7 +500,7 @@ private fun CourseCell(
                             formatTotalDuration(course.estimatedMinutes.toDouble(), locale),
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                        style = MaterialTheme.zoonkType.data,
                     )
                 }
             }

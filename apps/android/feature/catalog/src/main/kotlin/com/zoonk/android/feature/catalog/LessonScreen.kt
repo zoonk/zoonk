@@ -48,6 +48,8 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CatalogLesson
 import com.zoonk.api.models.CatalogLessonFirstScreen
 import kotlinx.coroutines.launch
@@ -106,13 +108,13 @@ private fun lessonBlocks(
                         Spacer(Modifier.size(8.dp))
                         Text(
                             outlineLesson.title,
-                            modifier = layout.headline.semantics { heading() },
-                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier.pageTitle(),
+                            style = MaterialTheme.typography.displaySmall,
                         )
 
                         page?.description?.let {
                             Spacer(Modifier.size(12.dp))
-                            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+                            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.lead)
                         }
 
                         Spacer(Modifier.size(32.dp))

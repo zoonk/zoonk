@@ -541,7 +541,7 @@ internal fun SectionTitle(
     facts: String? = null,
 ) {
     FlowRow(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
         if (facts != null) {
             Text(
                 facts,

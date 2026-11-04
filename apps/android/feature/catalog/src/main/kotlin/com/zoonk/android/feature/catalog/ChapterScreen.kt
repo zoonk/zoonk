@@ -46,7 +46,9 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CatalogTryLesson
 import com.zoonk.api.models.CourseChapter
 import com.zoonk.api.models.FeedbackSubmissionContext
@@ -121,15 +123,11 @@ private fun chapterBlocks(
                         Spacer(Modifier.size(8.dp))
                         Text(
                             chapter.title,
-                            modifier = layout.headline.semantics { heading() },
-                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier.pageTitle(),
+                            style = MaterialTheme.typography.displaySmall,
                         )
-                        Spacer(Modifier.size(16.dp))
-                        Text(
-                            chapter.description,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
+                        Spacer(Modifier.size(12.dp))
+                        Text(chapter.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.lead)
                         Spacer(Modifier.size(16.dp))
                         PlanLine(startsHere = startChapterId != null)
                         Spacer(Modifier.size(24.dp))
