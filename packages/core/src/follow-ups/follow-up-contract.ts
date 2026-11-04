@@ -17,8 +17,8 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     input: z.object({
       /** The block whose finish owes it. */
       blockId: z.uuid().optional(),
-      /** A block a write skipped or removed, when no block finished. */
-      removedBlockId: z.uuid().optional(),
+      /** Unique to a write that skipped or removed blocks, when no block finished. */
+      removalId: z.uuid().optional(),
       rewardMissions: z.boolean().optional(),
       sessionId: z.uuid(),
       source: z.object({ id: z.string(), kind: z.string() }).optional(),

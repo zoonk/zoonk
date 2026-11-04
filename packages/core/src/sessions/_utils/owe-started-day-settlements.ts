@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { type StudySessionBlock, type TransactionClient } from "@zoonk/db";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
@@ -6,8 +7,9 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 /**
  * Call in the transaction that skips or removes blocks. Every started day it touches owes a
  * settlement, which completes the day if nothing is left open: a write taking the day's other blocks
- * at the same time isn't visible here, only under the day's lock. Each write's settlement is keyed by
- * a block it took, since the API drops a settlement whose key is already running.
+ * at the same time isn't visible here, only under the day's lock. Each write's settlement gets a key
+ * of its own: the API drops a settlement whose key is already running, and that run may have read the
+ * day before this write.
  */
 export async function oweStartedDaySettlements(
   tx: TransactionClient,
@@ -33,7 +35,7 @@ export async function oweStartedDaySettlements(
         followUps: [
           {
             input: {
-              removedBlockId: removed.find((block) => block.sessionId === session.id)?.id,
+              removalId: randomUUID(),
               sessionId: session.id,
               timeZone: getAnswerTimeZone({ goal: session.goal }),
             },
