@@ -86,7 +86,7 @@ private struct ArgumentBuilderCanvas: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color.vizAccent.opacity(0.15), in: .rect(cornerRadius: 12))
+        .background(Color.vizAccent.opacity(0.15), in: .rect(cornerRadius: Radius.option))
         .accessibilityElement(children: .combine)
 
         slot(
@@ -219,9 +219,11 @@ private struct ArgumentBuilderCanvas: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(12)
-    .background(slotFill(verdict: verdict, isFilled: filled != nil), in: .rect(cornerRadius: 12))
+    .background(
+      slotFill(verdict: verdict, isFilled: filled != nil), in: .rect(cornerRadius: Radius.option)
+    )
     .overlay {
-      RoundedRectangle(cornerRadius: 12)
+      RoundedRectangle(cornerRadius: Radius.option)
         .strokeBorder(
           slotStroke(verdict: verdict, isOpen: isOpen, isTargeted: targetedPart == part),
           style: StrokeStyle(lineWidth: 2, dash: filled == nil ? [5, 4] : []))
@@ -348,7 +350,7 @@ private struct ArgumentBuilderCanvas: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(12)
-    .panel(cornerRadius: 12)
+    .panel(cornerRadius: Radius.option)
     .accessibilityElement(children: .combine)
   }
 }

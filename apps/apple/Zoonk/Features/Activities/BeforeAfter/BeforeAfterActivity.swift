@@ -146,7 +146,7 @@ private struct BeforeAfterCanvas: View {
     .padding()
     .background(
       isAfter ? Color.vizAccent.opacity(0.15) : Color.card,
-      in: .rect(cornerRadius: 16)
+      in: .rect(cornerRadius: Radius.xl)
     )
     .accessibilityElement(children: .contain)
   }

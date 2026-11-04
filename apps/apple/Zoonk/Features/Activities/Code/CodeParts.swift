@@ -25,7 +25,7 @@ struct CodeLine<Content: View>: View {
     .typeStyle(.body.monospaced())
     .padding(.horizontal, 6)
     .padding(.vertical, 3)
-    .background(background, in: .rect(cornerRadius: 6))
+    .background(background, in: .rect(cornerRadius: Radius.sm))
     .overlay(alignment: .leading) {
       if tone == .current {
         Rectangle().fill(.vizHighlight).frame(width: 3)

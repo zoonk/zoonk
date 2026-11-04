@@ -120,7 +120,7 @@ private struct DialogueCanvas: View {
       .padding(.vertical, 10)
       .background(
         isThem ? Color.card : Color.vizAccent.opacity(0.15),
-        in: .rect(cornerRadius: 16)
+        in: .rect(cornerRadius: Radius.xl)
       )
       .accessibilityElement(children: .combine)
       .accessibilityLabel(

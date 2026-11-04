@@ -461,9 +461,9 @@ private struct SQLRowsTable: View {
     ScrollView(.horizontal) {
       grid
         .overlay {
-          RoundedRectangle(cornerRadius: 10).strokeBorder(.border)
+          RoundedRectangle(cornerRadius: Radius.lg).strokeBorder(.border)
         }
-        .clipShape(.rect(cornerRadius: 10))
+        .clipShape(.rect(cornerRadius: Radius.lg))
     }
     .scrollBounceBehavior(.basedOnSize)
     .accessibilityElement(children: .contain)

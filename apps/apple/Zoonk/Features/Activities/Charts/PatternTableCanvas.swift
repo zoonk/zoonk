@@ -208,7 +208,7 @@ struct PatternTableCanvas: View {
       .frame(minHeight: 44)
       .padding(.horizontal, 8)
       .overlay {
-        RoundedRectangle(cornerRadius: 10, style: .continuous)
+        RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
           .strokeBorder(isActive ? Color.vizAccent : .clear, lineWidth: 2)
       }
       .contentShape(.rect)
