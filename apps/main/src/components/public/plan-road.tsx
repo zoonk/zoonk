@@ -3,16 +3,14 @@ import { KindDot } from "@zoonk/learn/kind-tile";
 import { METER_PARTS_CLASS } from "@zoonk/learn/meter";
 import {
   AXIS_CLASS,
-  AXIS_END_CLASS,
-  AXIS_POINT_CLASS,
   AXIS_TEXT_CLASS,
+  AxisLabel,
   BAND_CHECK_CLASS,
   BAND_CLASS,
   BAND_COLUMN_CLASS,
   BAND_NAME_CLASS,
   BAND_ROWS_CLASS,
   BAND_STATE_CLASS,
-  getAxisPointStyle,
   getBandColumnsStyle,
 } from "@zoonk/learn/roadmap-styles";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -105,7 +103,6 @@ function RoadLane({ band, isLast }: { band: RoadBand; isLast: boolean }) {
   );
 }
 
-/** A label that wouldn't fit beside its neighbors is left out, as the Plan does. */
 function RoadAxis({
   band,
   end,
@@ -120,24 +117,21 @@ function RoadAxis({
   return (
     <span className={AXIS_CLASS}>
       {band.todayShare !== undefined && (
-        <span className={AXIS_POINT_CLASS} style={getAxisPointStyle(band.todayShare)}>
+        <AxisLabel share={band.todayShare}>
           <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>{todayLabel}</span>
-        </span>
+        </AxisLabel>
       )}
 
       {band.startLabel && (
-        <span
-          className={cn(
-            AXIS_TEXT_CLASS,
-            isLast ? "@max-[10rem]/phase:hidden" : "@max-[4.5rem]/phase:hidden",
-          )}
-        >
-          {band.startLabel}
-        </span>
+        <AxisLabel className={cn(isLast && "@max-[10rem]/phase:hidden")} share={0}>
+          <span className={AXIS_TEXT_CLASS}>{band.startLabel}</span>
+        </AxisLabel>
       )}
 
       {isLast && (
-        <span className={cn(AXIS_END_CLASS, AXIS_TEXT_CLASS, "text-foreground")}>{end}</span>
+        <AxisLabel after={band.todayShare !== undefined || Boolean(band.startLabel)} share={1}>
+          <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>{end}</span>
+        </AxisLabel>
       )}
     </span>
   );

@@ -35,9 +35,9 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -55,10 +55,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -74,7 +77,6 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -546,11 +548,11 @@ private fun PhaseAxis(
     hasOverrun: Boolean,
     width: Dp,
 ) {
-    val style = MaterialTheme.typography.labelSmall.withTabularFigures()
+    val style = MaterialTheme.typography.labelSmall.withTabularFigures().copy(lineBreak = LineBreak.Heading)
     val faint = MaterialTheme.colorScheme.onSurfaceVariant
     val ink = MaterialTheme.colorScheme.onSurface
     val overrunSide = overrun?.let { if (it.share < MIDDLE_SHARE) Anchor.Start else Anchor.End }
-    val start = phase.start?.takeIf { labelled && overrunSide != Anchor.Start && width >= if (isLast) 160.dp else 72.dp }
+    val start = phase.start?.takeIf { labelled && overrunSide != Anchor.Start && (!isLast || width >= 160.dp) }
     val finishShown = isLast && overrunSide != Anchor.End
     val finishWords = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
     val examFinish =
@@ -563,70 +565,79 @@ private fun PhaseAxis(
                 it.text
             }
         }
-
-    val todayAt = todayShare?.takeIf { overrun == null }
     val overrunEnd = phase.end?.takeIf { hasOverrun }
-    val end =
-        when {
-            !finishShown -> null
-            overrunEnd != null -> formatPlanDate(overrunEnd, page.today, currentLocale()) to faint
-            examFinish != null -> examFinish to ink
-            else -> null
-        }
+    val labels =
+        listOfNotNull(
+            todayShare?.takeIf { overrun == null }?.let { AxisLabel(stringResource(R.string.plan_today), ink, it) },
+            start?.let {
+                AxisLabel(formatPlanDate(it, page.today, currentLocale(), month = phase.kind == PlanPhase.Kind.LEARN), faint, 0f)
+            },
+            overrun?.let { at -> examFinish?.let { AxisLabel(it, ink, at.share) } },
+            when {
+                !finishShown -> null
+                overrunEnd != null -> AxisLabel(formatPlanDate(overrunEnd, page.today, currentLocale()), faint, 1f)
+                examFinish != null -> AxisLabel(examFinish, ink, 1f)
+                else -> null
+            },
+        )
 
     Layout(
         content = {
-            if (todayAt != null) {
-                Text(stringResource(R.string.plan_today), Modifier.layoutId(AxisLabel.Today), style = style, color = ink, maxLines = 1)
-            }
-            if (overrun != null && examFinish != null) {
-                Text(examFinish, Modifier.layoutId(AxisLabel.Overrun), style = style, color = ink, maxLines = 1)
-            }
-            if (start != null) {
+            labels.forEach {
                 Text(
-                    formatPlanDate(start, page.today, currentLocale(), month = phase.kind == PlanPhase.Kind.LEARN),
-                    Modifier.layoutId(AxisLabel.Start),
+                    it.text,
                     style = style,
-                    color = faint,
-                    maxLines = 1,
+                    color = it.color,
+                    textAlign = if (it.share < MIDDLE_SHARE) TextAlign.Start else TextAlign.End,
                 )
             }
-            end?.let { (text, color) -> Text(text, Modifier.layoutId(AxisLabel.End), style = style, color = color, maxLines = 1) }
         },
         modifier = Modifier.fillMaxWidth().clearAndSetSemantics {},
     ) { measurables, constraints ->
-        val labels = measurables.associate { it.layoutId to it.measure(Constraints()) }
         val width = constraints.maxWidth
-        val line = max(AXIS_LINE.roundToPx(), labels.values.maxOfOrNull { it.height } ?: 0)
-        val today = labels[AxisLabel.Today]
-        val todayX = today?.let { sideX(todayAt ?: 0f, it.width, width).coerceIn(min(0, width - it.width), width - it.width) } ?: 0
-        val start = labels[AxisLabel.Start]
-        val end = labels[AxisLabel.End]
-        val lineEnd = maxOf(today?.let { todayX + it.width } ?: 0, start?.width ?: 0)
-        val endY = if (end != null && lineEnd > 0 && lineEnd + AXIS_GAP.roundToPx() > width - end.width) line else 0
+        val placeables = measurables.map { it.measure(Constraints(maxWidth = width)) }
+        val places = axisLabelPlaces(labels.map { it.share }, placeables.map { IntSize(it.width, it.height) }, width, AXIS_GAP.roundToPx())
+        val height = placeables.indices.maxOfOrNull { places[it].y + placeables[it].height } ?: 0
 
-        layout(width, line + endY) {
-            today?.placeRelative(todayX, 0)
-            labels[AxisLabel.Overrun]?.let { label -> overrun?.let { label.placeRelative(sideX(it.share, label.width, width), 0) } }
-            start?.placeRelative(0, 0)
-            end?.let { it.placeRelative(width - it.width, endY) }
+        layout(width, max(AXIS_LINE.roundToPx(), height)) {
+            placeables.forEachIndexed { index, placeable -> placeable.placeRelative(places[index]) }
         }
     }
 }
 
-private enum class AxisLabel { Today, Overrun, Start, End }
+private class AxisLabel(
+    val text: String,
+    val color: Color,
+    val share: Float,
+)
+
+/** Main's `AxisLabel`, for labels in point order, each measured no wider than the phase. */
+internal fun axisLabelPlaces(
+    shares: List<Float>,
+    sizes: List<IntSize>,
+    width: Int,
+    gap: Int,
+): List<IntOffset> {
+    var top = 0
+    var lineHeight = 0
+    var lineEnd: Int? = null
+
+    return shares.zip(sizes) { share, size ->
+        val point = (width * share).roundToInt()
+        val x = (if (share < MIDDLE_SHARE) point else point - size.width).coerceIn(0, max(0, width - size.width))
+        val end = lineEnd
+        if (end != null && x < end + gap) {
+            top += lineHeight
+            lineHeight = 0
+        }
+        lineHeight = max(lineHeight, size.height)
+        lineEnd = x + size.width
+        IntOffset(x, top)
+    }
+}
 
 private val AXIS_LINE = 16.dp
 private val AXIS_GAP = 8.dp
-
-private fun sideX(
-    share: Float,
-    labelWidth: Int,
-    width: Int,
-): Int {
-    val x = (width * share).roundToInt()
-    return if (share < MIDDLE_SHARE) x else x - labelWidth
-}
 
 private const val MIDDLE_SHARE = 0.5f
 

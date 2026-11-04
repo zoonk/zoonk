@@ -106,7 +106,7 @@
     "./progress-cells": "./src/_components/progress-cells.tsx",
     "./plus-lock": "./src/_components/plus-lock.tsx",
     "./rich-table": "./src/_components/rich-table.tsx",
-    "./roadmap-styles": "./src/journey/roadmap-styles.ts",
+    "./roadmap-styles": "./src/journey/roadmap-styles.tsx",
     "./provider": "./src/learn-provider.tsx",
     "./trickster-art": "./src/checkpoints/trickster-art.tsx",
     "./save-error": "./src/_components/save-error.tsx",
