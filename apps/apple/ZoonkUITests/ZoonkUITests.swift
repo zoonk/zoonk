@@ -33,7 +33,6 @@ private let uiTestAccountJSON = """
       "subscription": null
     },
     "user": {
-      "displayUsername": "ui_test_user",
       "email": "ui-test@zoonk.test",
       "id": "7846d3f5-b9c4-4ded-b283-35f70a48af86",
       "image": null,

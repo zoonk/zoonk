@@ -12,6 +12,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -41,7 +45,10 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class MockChooserScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -97,7 +104,16 @@ class MockChooserScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1000dp-xxhdpi")
-    fun writing() {
+    fun writing() = writing("chooser-writing")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun writingUnfolded() = writing("chooser-writing-fold", fold = true)
+
+    private fun writing(
+        name: String,
+        fold: Boolean = false,
+    ) {
         compose.mainClock.autoAdvance = false
         compose.setContent {
             ZoonkTheme {
@@ -113,8 +129,22 @@ class MockChooserScreenshots {
                 }
             }
         }
+        if (fold) {
+            compose.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(
+                            compose.activity,
+                            state = FoldingFeature.State.FLAT,
+                            orientation = FoldingFeature.Orientation.VERTICAL,
+                        ),
+                    ),
+                ),
+            )
+        }
         compose.mainClock.advanceTimeBy(WRITING_FOR)
-        write("chooser-writing", compose.onRoot().captureToImage().asAndroidBitmap())
+        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
     }
 
     private val starts = FakeMockStartApi()

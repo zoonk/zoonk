@@ -73,6 +73,7 @@ import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.Explanation
@@ -112,13 +113,15 @@ fun ExplainScreen(
 
         is LoadState.Failed, LoadState.Empty -> {
             TaskScaffold(onClose = navigator::closeTask) { padding ->
-                Column(
-                    Modifier.fillMaxSize().padding(padding).padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(stringResource(R.string.explain_load_failed), style = MaterialTheme.typography.titleMedium)
-                    Button(onClick = { scope.launch { resource.refresh() } }) { Text(stringResource(R.string.explain_try_again)) }
+                BeforeFold(Modifier.padding(padding)) { beforeFold ->
+                    Column(
+                        beforeFold.fillMaxSize().padding(24.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(stringResource(R.string.explain_load_failed), style = MaterialTheme.typography.titleMedium)
+                        Button(onClick = { scope.launch { resource.refresh() } }) { Text(stringResource(R.string.explain_try_again)) }
+                    }
                 }
             }
         }

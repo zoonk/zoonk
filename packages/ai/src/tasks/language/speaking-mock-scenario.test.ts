@@ -5,7 +5,11 @@ import { generateSpeakingMockScenario } from "./speaking-mock-scenario";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./speaking-mock-scenario.prompt.md", () => ({ default: "Write a speaking mock." }));
+
+vi.mock("./speaking-mock-scenario.prompt.md", () => ({
+  default: "{{TARGET_LANGUAGE}}, {{LEARNER_LANGUAGE}}.",
+}));
+
 vi.mock("./speaking-mock-scenario-ielts.prompt.md", () => ({ default: "IELTS's three parts." }));
 vi.mock("./speaking-mock-scenario-toefl.prompt.md", () => ({ default: "TOEFL's two tasks." }));
 vi.mock("./conversation-scenario.prompt.md", () => ({ default: "Write a role play." }));
@@ -34,7 +38,7 @@ describe(generateSpeakingMockScenario, () => {
     vi.mocked(generateText).mockResolvedValue(createGenerateTextResult(SCENARIO));
   });
 
-  it("sends the shared mock rules and only the mocked exam's parts", async () => {
+  it("sends the shared mock rules, naming the languages, and only the mocked exam's parts", async () => {
     const toefl = await generateSpeakingMockScenario({
       exam: "toefl",
       learnerLanguage: "pt",
@@ -44,7 +48,7 @@ describe(generateSpeakingMockScenario, () => {
     });
 
     expect(toefl.data).toStrictEqual(SCENARIO);
-    expect(toefl.systemPrompt).toBe("Write a speaking mock.\nTOEFL's two tasks.");
+    expect(toefl.systemPrompt).toBe("US English, Português Brasileiro.\nTOEFL's two tasks.");
     expect(toefl.userPrompt).toContain("MINUTES: 5");
 
     const ielts = await generateSpeakingMockScenario({
@@ -55,10 +59,10 @@ describe(generateSpeakingMockScenario, () => {
       targetLanguage: "en",
     });
 
-    expect(ielts.systemPrompt).toBe("Write a speaking mock.\nIELTS's three parts.");
+    expect(ielts.systemPrompt).toBe("US English, US English.\nIELTS's three parts.");
 
     expect(vi.mocked(generateText).mock.calls[1]?.[0]).toMatchObject({
-      instructions: "Write a speaking mock.\nIELTS's three parts.",
+      instructions: ielts.systemPrompt,
     });
   });
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
+import { safeAsync } from "@zoonk/utils/error";
 import { LibraryIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -43,7 +44,8 @@ function ContinueAtNextLevel({
 
   const start = () => {
     startTransition(async () => {
-      setFailed(!(await onContinue()));
+      const { data: started } = await safeAsync(onContinue);
+      setFailed(!started);
     });
   };
 
