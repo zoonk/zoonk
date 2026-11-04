@@ -289,28 +289,32 @@ struct ChallengeScreen: View {
             ? .mock(blockId: blockId, sessionId: sessionId)
             : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
-    } else if let writeLimit {
-      HelpLimitNotice(limit: writeLimit)
-        .frame(maxWidth: .infinity, alignment: .leading)
     } else if challenge.status == .ready || challenge.status == .started {
-      PracticeActionRow {
-        if challenge.canMove, moved == nil {
-          PracticeSecondaryButton(
-            title: LocalizedStringResource(
-              "Move to Monday", table: "Practice",
-              comment: "Moves the weekly challenge to next Monday."),
-            isDisabled: isMoving || isStarting
-          ) { run { await move() } }
-        }
+      if let writeLimit {
+        HelpLimitNotice(limit: writeLimit)
+          .frame(maxWidth: .infinity, alignment: .leading)
+      }
 
-        PracticeMainButton(
-          title: challenge.mock
-            ? LocalizedStringResource(
-              "Start the mock exam", table: "Practice", comment: "Starts a mock exam challenge.")
-            : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
-          isBusy: isStarting || isWriting,
-          isDisabled: challenge.dailyLimitReached
-        ) { run { await start(afterWriting: false) } }
+      if writeLimit?.isShortBreak ?? true {
+        PracticeActionRow {
+          if challenge.canMove, moved == nil {
+            PracticeSecondaryButton(
+              title: LocalizedStringResource(
+                "Move to Monday", table: "Practice",
+                comment: "Moves the weekly challenge to next Monday."),
+              isDisabled: isMoving || isStarting
+            ) { run { await move() } }
+          }
+
+          PracticeMainButton(
+            title: challenge.mock
+              ? LocalizedStringResource(
+                "Start the mock exam", table: "Practice", comment: "Starts a mock exam challenge.")
+              : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
+            isBusy: isStarting || isWriting,
+            isDisabled: challenge.dailyLimitReached
+          ) { run { await start(afterWriting: false) } }
+        }
       }
     } else if challenge.canMove, moved == nil {
       PracticeSecondaryButton(
@@ -656,6 +660,7 @@ struct ChallengeScreen: View {
   private func start(afterWriting: Bool) async {
     isStarting = true
     startProblem = nil
+    writeLimit = nil
     defer { isStarting = false }
 
     let planItemId = itemId

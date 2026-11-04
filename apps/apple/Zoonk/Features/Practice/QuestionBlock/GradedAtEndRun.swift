@@ -284,15 +284,19 @@ struct PracticeQuestionsPreparingView: View {
         ) {
           hooks.navigate(.subscription)
         }
-      } else if let limit {
-        HelpLimitNotice(limit: limit)
-          .frame(maxWidth: .infinity, alignment: .leading)
-      } else if !isWriting {
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "Start the test", table: "Practice",
-            comment: "Asks for a test's questions and starts it."),
-          action: start)
+      } else {
+        if let limit {
+          HelpLimitNotice(limit: limit)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
+        if !isWriting, limit?.isShortBreak ?? true {
+          PracticeMainButton(
+            title: LocalizedStringResource(
+              "Start the test", table: "Practice",
+              comment: "Asks for a test's questions and starts it."),
+            action: start)
+        }
       }
     }
   }
