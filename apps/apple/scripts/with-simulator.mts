@@ -89,8 +89,17 @@ function bootSimulator(device: Simulator) {
   throw new Error(`Couldn't boot ${device.name}: ${boot.stderr.trim()}`);
 }
 
-/** Undefined when the simulator is someone else's, or booting it would pass the limit. */
-function tryLeasing(device: Simulator): Lease | undefined {
+/**
+ * Undefined when the simulator is someone else's, or booting it would pass the limit. A booted one
+ * nobody leased is someone else's, unless a killed run left it marked or a hold names it.
+ */
+function tryLeasing({
+  device,
+  isNamed,
+}: {
+  device: Simulator;
+  isNamed: boolean;
+}): Lease | undefined {
   const descriptor = tryLocking(device);
 
   if (descriptor === undefined) {
@@ -102,7 +111,7 @@ function tryLeasing(device: Simulator): Lease | undefined {
   const isBooted = booted.some(({ udid }) => udid === device.udid);
   const isLeftBehind = fstatSync(descriptor).size > 0;
 
-  if (isBooted ? isLeftBehind : booted.length < MAX_BOOTED_SIMULATORS) {
+  if (isBooted ? isNamed || isLeftBehind : booted.length < MAX_BOOTED_SIMULATORS) {
     claim(descriptor);
 
     if (isBooted || bootSimulator(device)) {
@@ -118,18 +127,27 @@ function tryLeasing(device: Simulator): Lease | undefined {
  * Two runs can't share a simulator: the app hosts the tests and runs once per simulator, and
  * xcodebuild shuts down a simulator it booted as soon as its own run ends. So each run leases its
  * own: one a killed run left booted, or a shut-down one it boots itself, which xcodebuild then
- * leaves alone. A booted simulator no run leased is someone else's. Runs choose one at a time so
- * none boots past the limit.
+ * leaves alone. A booted simulator nobody leased is someone else's. Runs and holds choose one at a
+ * time so none boots past the limit.
  */
-function leaseSimulator() {
+function leaseSimulator(named?: string) {
   const choosing = openLocked({ flags: 0, name: "choosing" });
 
   try {
-    // iPhone 17 last: `pnpm iphone` and older checkouts' `make test` pick it by name.
     const { devices } = getNewestSimulators({ catalog: listSimulators(), family: "iphone" });
 
-    for (const device of devices.toReversed()) {
-      const lease = tryLeasing(device);
+    // iPhone 17 last: `pnpm iphone` and older checkouts' `make test` pick it by name.
+    const candidates = named
+      ? devices.filter(({ name, udid }) => named === name || named === udid)
+      : devices.toReversed();
+
+    if (candidates.length === 0) {
+      const names = devices.map(({ name }) => name).join(", ");
+      throw new Error(`${named} isn't one of Xcode's own iPhone simulators: ${names}.`);
+    }
+
+    for (const device of candidates) {
+      const lease = tryLeasing({ device, isNamed: Boolean(named) });
 
       if (lease) {
         return lease;
@@ -142,14 +160,33 @@ function leaseSimulator() {
   }
 }
 
+function describeWait({ booted, named }: { booted: Simulator[]; named?: string }) {
+  const names = booted.map((device) => device.name).join(", ");
+
+  if (named) {
+    return (
+      `Waiting for ${named} while a test run or another hold has it, or until fewer than ` +
+      `${MAX_BOOTED_SIMULATORS} simulators are booted (booted now: ${names}).\n`
+    );
+  }
+
+  return (
+    `Waiting for a simulator. Each test run boots a shut-down iPhone of its own, with at most ` +
+    `${MAX_BOOTED_SIMULATORS} booted at once, and booted now: ${names}. Shut down one you're ` +
+    `done with, or set TEST_DESTINATION='platform=iOS Simulator,id=<udid>' to test on yours.\n`
+  );
+}
+
 /** Gives the queue turn back while it waits, so waiting runs don't hold every slot. */
 async function startRun({
   isWaiting,
+  named,
 }: {
   isWaiting: boolean;
+  named?: string;
 }): Promise<{ lease: Lease; turn: QueueTurn | undefined }> {
   const turn = await waitForTurn();
-  const attempt = leaseSimulator();
+  const attempt = leaseSimulator(named);
 
   if ("descriptor" in attempt) {
     return { lease: attempt, turn };
@@ -158,41 +195,64 @@ async function startRun({
   turn?.release();
 
   if (!isWaiting) {
-    const names = attempt.booted.map((device) => device.name).join(", ");
-
-    process.stderr.write(
-      `Waiting for a simulator. Each test run boots a shut-down iPhone of its own, with at most ` +
-        `${MAX_BOOTED_SIMULATORS} booted at once, and booted now: ${names}. Shut down one you're ` +
-        `done with, or set TEST_DESTINATION='platform=iOS Simulator,id=<udid>' to test on yours.\n`,
-    );
+    process.stderr.write(describeWait({ booted: attempt.booted, named }));
   }
 
   await sleep(POLL_MS);
-  return startRun({ isWaiting: true });
+  return startRun({ isWaiting: true, named });
+}
+
+async function test({ args, command }: { args: string[]; command: string }) {
+  const { lease, turn } = await startRun({ isWaiting: false });
+  process.stdout.write(`Testing on ${lease.device.name} (${lease.device.udid}).\n`);
+
+  try {
+    applyCommandExit(
+      await runForegroundCommand({
+        args: [...args, "-destination", `id=${lease.device.udid}`],
+        command,
+        currentDirectory: process.cwd(),
+        environment: { ...process.env, ...turn?.environment },
+        // xcodebuild holds the lease too, so it stays taken while tests run even if this script dies.
+        stdio: ["inherit", "inherit", "inherit", lease.descriptor],
+      }),
+    );
+  } finally {
+    spawnSync("xcrun", ["simctl", "shutdown", lease.device.udid], { stdio: "inherit" });
+    release(lease.descriptor);
+    turn?.release();
+  }
+}
+
+/**
+ * For a simulator someone drives by hand, such as in a walk. Unlike a test run's, it stays booted
+ * once released, still theirs: test runs leave a booted simulator nobody leased alone.
+ */
+async function hold(named: string) {
+  const { lease, turn } = await startRun({ isWaiting: false, named });
+  turn?.release();
+  process.stdout.write(`Holding ${lease.device.name} (${lease.device.udid}) until stopped.\n`);
+  // oxlint-disable-next-line no-empty-function -- a timer keeps Node running; signal listeners don't
+  const keepAlive = setInterval(() => {}, POLL_MS);
+
+  await new Promise((resolve) => {
+    for (const signal of ["SIGHUP", "SIGINT", "SIGTERM"]) {
+      process.once(signal, resolve);
+    }
+  });
+
+  clearInterval(keepAlive);
+  release(lease.descriptor);
 }
 
 const [command, ...commandArguments] = process.argv.slice(2);
 
-if (!command) {
-  throw new Error("Usage: with-simulator.mts <xcodebuild command>");
-}
-
-const { lease, turn } = await startRun({ isWaiting: false });
-process.stdout.write(`Testing on ${lease.device.name} (${lease.device.udid}).\n`);
-
-try {
-  applyCommandExit(
-    await runForegroundCommand({
-      args: [...commandArguments, "-destination", `id=${lease.device.udid}`],
-      command,
-      currentDirectory: process.cwd(),
-      environment: { ...process.env, ...turn?.environment },
-      // xcodebuild holds the lease too, so it stays taken while tests run even if this script dies.
-      stdio: ["inherit", "inherit", "inherit", lease.descriptor],
-    }),
+if (command === "--hold" && commandArguments[0]) {
+  await hold(commandArguments[0]);
+} else if (command && command !== "--hold") {
+  await test({ args: commandArguments, command });
+} else {
+  throw new Error(
+    "Usage: with-simulator.mts <xcodebuild command> | --hold <simulator name or udid>",
   );
-} finally {
-  spawnSync("xcrun", ["simctl", "shutdown", lease.device.udid], { stdio: "inherit" });
-  release(lease.descriptor);
-  turn?.release();
 }

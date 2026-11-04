@@ -33,7 +33,7 @@ export function getLeasePath(name: string) {
   return path.join(leaseDirectory, name);
 }
 
-/** Whether a test run is using the simulator, or was killed while it did: its lease names the run. */
+/** Whether a test run or a hold is using the simulator, or a killed run left it: its lease names it. */
 export function isLeased(udid: string) {
   return (statSync(getLeasePath(udid), { throwIfNoEntry: false })?.size ?? 0) > 0;
 }
