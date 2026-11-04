@@ -8,7 +8,10 @@ struct ChapterScreen: View {
   let chapterId: String
 
   var body: some View {
-    if let goal = learner.summary.value?.shownGoal {
+    // A language's chapters are its units: drawn here too, as main does, so a link never redirects.
+    if let goal = learner.summary.value?.shownGoal, goal.kind == .language {
+      LanguageUnitScreen(chapterId: chapterId)
+    } else if let goal = learner.summary.value?.shownGoal {
       let chapter = store.chapter(goalId: goal.id, chapterId: chapterId)
 
       Group {

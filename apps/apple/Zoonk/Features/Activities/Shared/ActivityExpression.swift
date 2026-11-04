@@ -7,6 +7,38 @@ enum ActivityExpression {
   private static let maxLength = 300
   private static let maxDepth = 32
 
+  /// Core's `withoutRoundingError`: no double is exactly 0.1 or π, so (0.1 + 0.2) − 0.3 leaves
+  /// 5.6e-17 and sin(π) 1.2e-16 where the answer is 0. A sum within one unit in the last place of
+  /// its larger input, or a sine within one of its angle, is within its inputs' rounding, so it
+  /// can't be told from 0.
+  private static func withoutRoundingError(_ value: Double, inputSize: Double) -> Double {
+    value.magnitude <= Double.ulpOfOne * inputSize ? 0 : value
+  }
+
+  private static func sum(_ left: Double, _ right: Double) -> Double {
+    withoutRoundingError(left + right, inputSize: max(left.magnitude, right.magnitude))
+  }
+
+  /// Core's `MAX_ROUNDED_ANGLE`: past this, the cutoff an angle's rounding allows would keep
+  /// growing until it zeroed real values, like sin(1e16) ≈ 0.78.
+  private static let maxRoundedAngle = 1e9
+
+  private static func trig(_ value: Double, radians: Double) -> Double {
+    withoutRoundingError(value, inputSize: min(radians.magnitude, maxRoundedAngle))
+  }
+
+  static func sine(_ radians: Double) -> Double {
+    trig(sin(radians), radians: radians)
+  }
+
+  static func cosine(_ radians: Double) -> Double {
+    trig(cos(radians), radians: radians)
+  }
+
+  static func tangent(_ radians: Double) -> Double {
+    trig(tan(radians), radians: radians)
+  }
+
   static func evaluate(_ source: String, variables: [String: Double] = [:]) -> Double? {
     guard source.count <= maxLength, let tokens = tokenize(source) else {
       return nil
@@ -18,7 +50,8 @@ enum ActivityExpression {
       return nil
     }
 
-    return value
+    // Core's +0 for a zero result, since -sin(π) would otherwise read "−0".
+    return value == 0 ? 0 : value
   }
 
   private enum Token: Equatable {
@@ -38,7 +71,7 @@ enum ActivityExpression {
         index = source.index(after: index)
       } else if character.isASCII, character.isNumber || character == "." {
         guard let match = source[index...].prefixMatch(of: /(?:\d+\.?\d*|\.\d+)(?:[Ee][+-]?\d+)?/),
-          let value = Double(match.output)
+          let value = Double(match.output), value.isFinite
         else {
           return nil
         }
@@ -84,13 +117,15 @@ enum ActivityExpression {
       while true {
         if take("+") {
           guard let right = multiplicative(depth: depth) else { return nil }
-          value += right
+          value = ActivityExpression.sum(value, right)
         } else if take("-") {
           guard let right = multiplicative(depth: depth) else { return nil }
-          value -= right
+          value = ActivityExpression.sum(value, -right)
         } else {
           return value
         }
+
+        guard value.isFinite else { return nil }
       }
     }
 
@@ -107,6 +142,8 @@ enum ActivityExpression {
         } else {
           return value
         }
+
+        guard value.isFinite else { return nil }
       }
     }
 
@@ -157,7 +194,9 @@ enum ActivityExpression {
       switch name {
       case "e": M_E
       case "pi": Double.pi
-      default: ActivityExpression.functions[name.lowercased()] == nil ? variables[name] : nil
+      default:
+        ActivityExpression.functions[name.lowercased()] == nil
+          ? variables[name].flatMap { $0.isFinite ? $0 : nil } : nil
       }
     }
 
@@ -202,7 +241,7 @@ enum ActivityExpression {
     "atan": .unary(atan),
     "cbrt": .unary(cbrt),
     "ceil": .unary { $0.rounded(.up) },
-    "cos": .unary(cos),
+    "cos": .unary(cosine),
     "deg": .unary { $0 * 180 / .pi },
     "exp": .unary(exp),
     "floor": .unary { $0.rounded(.down) },
@@ -225,8 +264,8 @@ enum ActivityExpression {
       return (arguments[0] * factor + 0.5).rounded(.down) / factor
     },
     "sign": .unary { $0 == 0 ? 0 : $0 > 0 ? 1 : -1 },
-    "sin": .unary(sin),
+    "sin": .unary(sine),
     "sqrt": .unary(sqrt),
-    "tan": .unary(tan),
+    "tan": .unary(tangent),
   ]
 }

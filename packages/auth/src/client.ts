@@ -43,6 +43,6 @@ export const authClient = createAuthClient({
       schema: inferOrgAdditionalFields<typeof auth>(),
     }),
     stripeClient({ subscription: true }),
-    usernameClient(),
+    usernameClient({ displayUsername: false }),
   ],
 });
