@@ -23,7 +23,7 @@ Keep it everyday and safe: no emergencies, conflict, money trouble or sensitive 
 
 # Fields
 
-- `title`: in {{LEARNER_LANGUAGE}}, the goal of the call in 3 to 6 words, starting with a verb ("Call to book a viewing", written in {{LEARNER_LANGUAGE}}).
+- `title`: in {{LEARNER_LANGUAGE}}, never in {{TARGET_LANGUAGE}}, the goal of the call in 3 to 6 words, starting with a verb ("Call to book a viewing", written in {{LEARNER_LANGUAGE}}).
 - `situation`: in {{LEARNER_LANGUAGE}}, 1 or 2 sentences to the learner as "you": who you're talking to and what you want ("You saw an ad for an apartment on Queen Street. Call the landlord, Sarah, to ask about the rent and book a viewing."; "Your colleague Jake calls to hear about your weekend.", written in {{LEARNER_LANGUAGE}}).
 - `character.name`: a common first name where {{TARGET_LANGUAGE}} is spoken.
 - `character.role`: in {{LEARNER_LANGUAGE}}, a short noun for who they are ("landlord", "receptionist", written in {{LEARNER_LANGUAGE}}).
