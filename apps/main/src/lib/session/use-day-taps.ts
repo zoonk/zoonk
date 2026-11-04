@@ -76,7 +76,10 @@ function requestTap({
   return noteAppWrite(action).then(toDestinationResult, (): TapResult => ({ kind: "failed" }));
 }
 
-/** Nothing here starts AI work on its own: only a tapped step's start does. */
+/**
+ * Nothing here starts AI work on its own: only a tapped step's start does. A tap that stops because
+ * the learner left resolves true: the screen they left has nothing to report, even when they return.
+ */
 export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void }) {
   const router = useRouter();
   const go = useGoToStudyDestination({ refresh });
@@ -153,14 +156,21 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
           router.push(href);
         }
 
-        void answer.then((result) => updateDayEntry(entry.id, { result }));
+        void answer.then((result) => {
+          if (result.kind === "failed" && !stillHere()) {
+            endDayEntry(entry.id);
+          } else {
+            updateDayEntry(entry.id, { result });
+          }
+        });
+
         return true;
       }
 
       const result = await answer;
 
       if (!isStill({ generation, origin })) {
-        return false;
+        return true;
       }
 
       if (result.kind !== "failed") {
@@ -183,7 +193,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         stillHere: () => isStill(scope),
       });
 
-      return outcome.status === "opened" && isStill(scope) ? outcome.sessionId : null;
+      return outcome.status === "opened" ? outcome.sessionId : null;
     },
     [openInput, sessionId],
   );
@@ -193,6 +203,10 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
       const scope = { generation: getLearnerGeneration(), origin: getCurrentLocation() };
       const opened = await openKept(scope);
 
+      if (!isStill(scope)) {
+        return true;
+      }
+
       if (!opened) {
         return false;
       }
@@ -201,11 +215,15 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         addExtraStudyBlockAction({ sessionId: opened, timeZone: getLocalTimeZone() }),
       );
 
-      return isStill(scope) ? applyHere(toDestinationResult(destination)) : false;
+      return isStill(scope) ? applyHere(toDestinationResult(destination)) : true;
     },
     catchUp: async () => {
       const scope = { generation: getLearnerGeneration(), origin: getCurrentLocation() };
       const opened = await openKept(scope);
+
+      if (!isStill(scope)) {
+        return true;
+      }
 
       if (!opened) {
         return false;

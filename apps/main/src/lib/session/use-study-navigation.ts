@@ -136,7 +136,11 @@ function useOpenUnwrittenLesson() {
       const stillHere = () =>
         openedFrom === getCurrentLocation() && generation === getLearnerGeneration();
 
-      if (answer.status === "failed" || !stillHere()) {
+      if (!stillHere()) {
+        return true;
+      }
+
+      if (answer.status === "failed") {
         return false;
       }
 
@@ -149,7 +153,7 @@ function useOpenUnwrittenLesson() {
         );
 
         if (!stillHere()) {
-          return false;
+          return true;
         }
 
         if (written?.kind === "lesson") {
@@ -177,6 +181,10 @@ function useOpenUnwrittenLesson() {
   );
 }
 
+/**
+ * Resolves to false when it couldn't open, and true otherwise, also when the learner left before the
+ * answer: a tap they left has nothing to report.
+ */
 export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = {}) {
   const router = useRouter();
   const openSession = useOpenSession();
@@ -233,7 +241,7 @@ function useOpenDestination({ refresh }: { refresh?: () => void } = {}) {
       const openedFrom = getCurrentLocation();
       const destination = await action();
 
-      return openedFrom === getCurrentLocation() ? go(destination) : false;
+      return openedFrom === getCurrentLocation() ? go(destination) : true;
     },
     [go],
   );
@@ -261,8 +269,6 @@ export function useMissionLinks(
         pronunciation: `/pronunciation?goal=${goalId}`,
       },
       openBlock: async (blockId) => {
-        const openedFrom = getCurrentLocation();
-
         const opened = await navigate(() =>
           noteAppWrite(
             openStudyBlockAction({
@@ -272,7 +278,7 @@ export function useMissionLinks(
           ),
         );
 
-        if (!opened && openedFrom === getCurrentLocation()) {
+        if (!opened) {
           reread();
         }
 

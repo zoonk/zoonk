@@ -9,7 +9,11 @@ export type MissionView = Mission | DayMission;
 
 type MissionOpens = NonNullable<MissionView["opens"]>;
 
-/** `openBlock` and `openStep` resolve to whether they opened. Opening never starts AI work. */
+/**
+ * `openBlock` and `openStep` resolve to false when they couldn't open, and true otherwise, also when
+ * the learner left before the answer: a tap they left has nothing to report. Opening never starts AI
+ * work.
+ */
 export type MissionLinks = {
   askBuddy?: () => void;
   hrefs: {
