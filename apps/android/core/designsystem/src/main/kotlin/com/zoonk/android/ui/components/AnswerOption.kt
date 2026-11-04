@@ -31,6 +31,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlin.math.max
 
@@ -67,7 +68,7 @@ fun AnswerOption(
     content: @Composable () -> Unit,
 ) {
     val tone = answerTone(picked, result)
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
 
     Row(
         modifier =
@@ -105,7 +106,7 @@ private fun NumberKey(
             modifier
                 .clearAndSetSemantics {}
                 .defaultMinSize(minWidth = 22.dp, minHeight = 22.dp)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(6.dp)),
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(ZoonkRadius.sm)),
         contentAlignment = Alignment.Center,
     ) {
         // A glyph keeps the digit's size and baseline, so its key lines up with the option's words.

@@ -15,7 +15,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +39,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.GoalBox
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.BuddyStatus

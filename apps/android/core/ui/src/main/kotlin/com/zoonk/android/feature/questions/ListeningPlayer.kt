@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -43,6 +42,7 @@ import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.SpeechState
 import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -305,7 +305,7 @@ private fun Fold(
     val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        FilledTonalButton(onClick = onToggle, modifier = Modifier.semantics { stateDescription = state }) {
+        OutlinedButton(onClick = onToggle, modifier = Modifier.semantics { stateDescription = state }) {
             Text(label)
             Icon(
                 painterResource(R.drawable.ic_expand_more),

@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -68,11 +67,13 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
 import kotlinx.coroutines.launch
@@ -292,7 +293,7 @@ internal fun MindMapsEmpty(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        FilledTonalButton(
+        OutlinedButton(
             onClick = { if (next != null) actions.openChapter(next.chapterId) else actions.keepStudying() },
             modifier = Modifier.padding(top = 8.dp),
         ) {
@@ -429,7 +430,7 @@ private fun RequestTile(
                 }
             } else {
                 val spoken = stringResource(if (failure) R.string.mindmaps_try_again_spoken else R.string.mindmaps_create_spoken, map.title)
-                FilledTonalButton(
+                OutlinedButton(
                     onClick = { if (failure) actions.retry(map.chapterId) else actions.create(map.chapterId) },
                     modifier = Modifier.semantics { contentDescription = spoken },
                     enabled = local?.pending != true && !blocked,
@@ -455,7 +456,7 @@ private fun RequestTile(
     }
 }
 
-private val TILE_CORNER = 12.dp
+private val TILE_CORNER = ZoonkRadius.option
 private val TILE_SHAPE = RoundedCornerShape(TILE_CORNER)
 private val TILE_MIN = 208.dp
 

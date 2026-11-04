@@ -42,7 +42,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -65,6 +64,8 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.fractionDigitsFor
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.ActivityExpectedAnswer
 import com.zoonk.api.models.ActivityExpectedRows
 import kotlinx.coroutines.launch
@@ -183,7 +184,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
                 },
                 Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace),
+                style = MaterialTheme.typography.bodyMedium.copy(fontFamily = GeistMono),
             )
         }
 
@@ -196,10 +197,10 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
 @Composable
 private fun SqlTableViewer(table: SqlTable) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     var open by rememberSaveable(table.name) { mutableStateOf(table.rows.size <= OPEN_ROW_LIMIT) }
     val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
-    val mono = FontFamily.Monospace
+    val mono = GeistMono
 
     Column(
         Modifier
@@ -269,9 +270,9 @@ private fun SqlRowsTable(
     rowStates: List<RowState>? = null,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val body = MaterialTheme.typography.bodyMedium
-    val header = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace)
+    val header = MaterialTheme.typography.labelSmall.copy(fontFamily = GeistMono)
     val texts = rows.map { row -> row.map { cellText(it) } }
     val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
@@ -430,7 +431,7 @@ private fun SqlReview(
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 val label = stringResource(R.string.activities_code_query_that_works)
                 ActivityCanvasLabel(label)
-                val shape = RoundedCornerShape(12.dp)
+                val shape = RoundedCornerShape(ZoonkRadius.option)
                 Column(
                     Modifier
                         .fillMaxWidth()

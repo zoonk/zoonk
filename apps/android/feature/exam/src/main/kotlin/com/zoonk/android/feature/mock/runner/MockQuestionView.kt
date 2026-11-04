@@ -65,6 +65,7 @@ import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.MockExam
@@ -314,7 +315,7 @@ internal fun QuestionCell(
     val flagged = draft?.flagged == true
     val current = index == run.position
     val enabled = run.moves.canOpen(index)
-    val shape = RoundedCornerShape(if (compact) 6.dp else 10.dp)
+    val shape = RoundedCornerShape(if (compact) ZoonkRadius.sm else 10.dp)
     val name =
         if (question.essay) {
             stringResource(

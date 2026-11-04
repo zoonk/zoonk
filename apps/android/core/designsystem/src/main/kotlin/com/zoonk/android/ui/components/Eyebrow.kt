@@ -7,16 +7,28 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.LocaleList
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 
-/** Main's `PageEyebrow`: the small line above a page's title. */
+/** Main's `PageEyebrow`: the small line above a page's title, uppercase for the eye and as written for TalkBack. */
 @Composable
 fun Eyebrow(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
 ) {
-    Text(text = text, modifier = modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+    Text(
+        text = text.toUpperCase(LocaleList.current),
+        modifier = modifier.clearAndSetSemantics { this.text = text },
+        color = MaterialTheme.zoonk.faint,
+        style = MaterialTheme.zoonkType.eyebrow,
+    )
 }
 
 @Composable
@@ -35,6 +47,10 @@ fun SuccessEyebrow(
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
         DoneMark()
-        Text(text = text, color = MaterialTheme.colorScheme.onTertiaryContainer, style = MaterialTheme.typography.titleSmall)
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+        )
     }
 }

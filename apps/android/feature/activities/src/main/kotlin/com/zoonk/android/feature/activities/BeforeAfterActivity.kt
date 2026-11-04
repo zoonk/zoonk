@@ -50,6 +50,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.ZoonkMotion
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf34Fields
@@ -127,7 +128,7 @@ private fun BeforeAfterActivity(props: ActivityProps) {
                             style = Stroke(width, pathEffect = PathEffect.dashPathEffect(floatArrayOf(6.dp.toPx(), 4.dp.toPx()))),
                         )
                     },
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(ZoonkRadius.option),
                 border = null,
             ) {
                 Icon(
@@ -161,7 +162,7 @@ private fun StateCard(
     Column(
         modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(ZoonkRadius.option))
             .background(if (isAfter) accent.copy(alpha = SOFT) else MaterialTheme.colorScheme.surface)
             .semantics { contentDescription = state.label }
             .padding(16.dp),

@@ -20,15 +20,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,7 +44,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -64,10 +60,14 @@ import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.MarkdownText
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.api.models.StudyMission
 import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.launch
@@ -281,7 +281,7 @@ private fun EarlierQuestions(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        FilledTonalButton(onClick = onLoad, enabled = !state.loadingEarlier) {
+        OutlinedButton(onClick = onLoad, enabled = !state.loadingEarlier) {
             if (state.loadingEarlier) {
                 CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -388,7 +388,7 @@ private fun Answer(
 
     when {
         turn.status == TutorTurn.Status.Pending && !streaming -> {
-            FilledTonalButton(onClick = { vm.retryAnswer(turn.id) }, enabled = !busy && others == 0) {
+            OutlinedButton(onClick = { vm.retryAnswer(turn.id) }, enabled = !busy && others == 0) {
                 Text(stringResource(R.string.tutor_get_answer))
             }
         }
@@ -493,7 +493,7 @@ private fun ExternalLink(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(R.string.tutor_link_description))
                 Surface(shape = MaterialTheme.shapes.small, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-                    Text(url, Modifier.padding(12.dp), fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall)
+                    Text(url, Modifier.padding(12.dp), fontFamily = GeistMono, style = MaterialTheme.typography.bodySmall)
                 }
             }
         },
@@ -514,7 +514,7 @@ private fun CheckAgain(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    FilledTonalButton(onClick = onClick, enabled = enabled) {
+    OutlinedButton(onClick = onClick, enabled = enabled) {
         Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
         Text(stringResource(R.string.tutor_check_again), Modifier.padding(start = ButtonDefaults.IconSpacing))
     }
@@ -531,17 +531,17 @@ internal fun FailureAction(
 ) {
     when {
         failure == TutorFailure.SignedOut -> {
-            FilledTonalButton(onClick = routes.signIn, modifier = modifier) { Text(stringResource(R.string.tutor_sign_in)) }
+            OutlinedButton(onClick = routes.signIn, modifier = modifier) { Text(stringResource(R.string.tutor_sign_in)) }
         }
 
         failure == TutorFailure.PlusRequired -> {
-            FilledTonalButton(onClick = routes.seePlus, modifier = modifier) { Text(stringResource(R.string.tutor_view_plans)) }
+            OutlinedButton(onClick = routes.seePlus, modifier = modifier) { Text(stringResource(R.string.tutor_view_plans)) }
         }
 
         failure?.helpLimit != null || failure == TutorFailure.Gone -> {}
 
         else -> {
-            FilledTonalButton(onClick = onRetry, modifier = modifier, enabled = enabled) {
+            OutlinedButton(onClick = onRetry, modifier = modifier, enabled = enabled) {
                 Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
                 Text(stringResource(R.string.tutor_try_again), Modifier.padding(start = ButtonDefaults.IconSpacing))
             }
@@ -571,7 +571,7 @@ private fun EmptyThread(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 suggestions.forEach { suggestion ->
-                    FilledTonalButton(onClick = { onSelect(suggestion) }, enabled = canAsk) { Text(suggestion.label) }
+                    OutlinedButton(onClick = { onSelect(suggestion) }, enabled = canAsk) { Text(suggestion.label) }
                 }
             }
         }

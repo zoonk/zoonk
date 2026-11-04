@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -43,8 +41,10 @@ import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.ChapterMindMap
@@ -248,7 +248,7 @@ private fun MindMapRequest(
                 strokeWidth = 2.dp,
             )
         } else {
-            FilledTonalButton(
+            OutlinedButton(
                 onClick = if (failure) actions.retry else actions.create,
                 enabled = local?.pending != true && !capped,
             ) {

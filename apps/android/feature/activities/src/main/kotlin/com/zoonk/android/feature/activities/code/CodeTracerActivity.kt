@@ -33,7 +33,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -48,6 +47,8 @@ import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.assignmentPairs
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf17Fields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf17Value as CodeTracerContent
@@ -175,7 +176,7 @@ private fun CodeTracerActivity(props: ActivityProps) {
 private fun TracerVariables(values: List<WatchedValue>) {
     val colors = MaterialTheme.colorScheme
     val highlight = MaterialTheme.zoonk.vizHighlight
-    val mono = FontFamily.Monospace
+    val mono = GeistMono
     val label = stringResource(R.string.activities_code_variables)
     Row(
         Modifier
@@ -189,7 +190,7 @@ private fun TracerVariables(values: List<WatchedValue>) {
                 Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(ZoonkRadius.option))
                     .then(if (item.changed) Modifier.background(highlight.copy(alpha = SOFT_ALPHA)) else Modifier)
                     .semantics(mergeDescendants = true) {}
                     .padding(horizontal = 8.dp, vertical = 6.dp),
@@ -233,7 +234,7 @@ private fun TracerPanel(
     onForward: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(16.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.xl)
     Column(
         Modifier
             .fillMaxWidth()
@@ -292,7 +293,7 @@ private fun Prediction(
                 enabled = !isLocked,
                 role = Role.RadioButton,
             ) {
-                Text(option.text, fontFamily = FontFamily.Monospace)
+                Text(option.text, fontFamily = GeistMono)
             }
         }
         Text(

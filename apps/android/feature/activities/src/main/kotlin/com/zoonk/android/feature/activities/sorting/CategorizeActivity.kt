@@ -19,7 +19,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -69,11 +68,13 @@ import com.zoonk.android.feature.activities.seededShuffle
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.DropdownMenu
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.parseRichInline
 import com.zoonk.android.ui.richtext.richText
 import com.zoonk.android.ui.richtext.toOneLine
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf26FieldsGroupsInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf26FieldsItemsInner
@@ -307,7 +308,7 @@ private fun CardInHand(
     dragDrop: ActivityDragDropState,
     enabled: Boolean,
 ) {
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     Row(
         Modifier
             .fillMaxWidth()
@@ -385,7 +386,7 @@ private fun PreviewChip(
     modifier: Modifier = Modifier,
     muted: Boolean = false,
 ) {
-    val shape = RoundedCornerShape(6.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.sm)
     val style = MaterialTheme.typography.labelMedium
     RichInlineText(
         text,
@@ -416,7 +417,7 @@ private fun SortedGroup(
     modifier: Modifier,
     row: @Composable (Item) -> Unit,
 ) {
-    val shape = RoundedCornerShape(12.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.option)
     val tone = answerTone(picked = over, result = null)
     Column(
         modifier
@@ -441,7 +442,7 @@ private fun SortedGroup(
                 style = MaterialTheme.typography.bodyMedium,
             )
         } else {
-            val listShape = RoundedCornerShape(8.dp)
+            val listShape = RoundedCornerShape(ZoonkRadius.md)
             Column(
                 Modifier
                     .padding(top = 12.dp)
@@ -470,7 +471,7 @@ private fun MovableRow(
     modifier: Modifier = Modifier,
 ) {
     var open by remember { mutableStateOf(false) }
-    val shape = RoundedCornerShape(8.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.md)
     // A row draws no surface of its own inside its list, and the lift draws the row's own drawing, so it takes the card's while lifted.
     val lifted =
         if (dragDrop.isLifted(item.id)) {

@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.Color
 /** Only meanings no Material role carries; add one only with its token in `globals.css`. */
 @Immutable
 data class ZoonkColors(
+    /** Quieter than `onSurfaceVariant`: an eyebrow, a stat's label, a list's numbers. */
+    val faint: Color,
     /** Brain Power and nothing else. */
     val brain: Color,
     val brainText: Color,
@@ -44,6 +46,7 @@ data class ZoonkColors(
 
 internal fun ZoonkPalette.zoonkColors() =
     ZoonkColors(
+        faint = faint,
         brain = brain,
         brainText = brainText,
         warning = warning,

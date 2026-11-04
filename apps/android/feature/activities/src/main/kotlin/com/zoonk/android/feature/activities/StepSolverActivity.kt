@@ -46,6 +46,7 @@ import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf4FieldsStepsInner
@@ -252,7 +253,7 @@ private fun StepWork(
     Column(
         Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(ZoonkRadius.option))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -268,7 +269,7 @@ private fun StepWork(
                         .fillMaxWidth(
                             share.toFloat(),
                         ).height(28.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(ZoonkRadius.md))
                         .background(accent.copy(alpha = SOFT)),
                 )
             }

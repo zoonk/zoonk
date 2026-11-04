@@ -18,7 +18,7 @@ import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import java.util.UUID
 
 @Immutable
@@ -88,7 +88,7 @@ private fun LessonRow(
                     stringResource(R.string.lessons_position, formatNumber(position.toDouble(), locale)),
                     Modifier.alignByBaseline(),
                     color = muted,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                    style = MaterialTheme.zoonkType.data,
                 )
                 Text(lesson.title, Modifier.alignByBaseline(), color = if (lesson.done) muted else Color.Unspecified)
             }

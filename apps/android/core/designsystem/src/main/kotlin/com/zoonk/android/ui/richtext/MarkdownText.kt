@@ -33,7 +33,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -44,6 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.withTabularFigures
 import org.commonmark.ext.gfm.strikethrough.Strikethrough
 import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
@@ -312,7 +312,7 @@ private fun CodeBlock(code: String) {
             .fadingHorizontalScroll(rememberScrollState())
             .padding(CODE_PADDING),
     ) {
-        Text(code.trimEnd('\n'), style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace), softWrap = false)
+        Text(code.trimEnd('\n'), style = MaterialTheme.typography.bodyMedium.copy(fontFamily = GeistMono), softWrap = false)
     }
 }
 
@@ -430,7 +430,7 @@ private class InlineWriter(
             }
 
             is Code -> {
-                builder.withStyle(SpanStyle(fontFamily = FontFamily.Monospace, fontSize = CODE_SIZE.em, background = codeBackground)) {
+                builder.withStyle(SpanStyle(fontFamily = GeistMono, fontSize = CODE_SIZE.em, background = codeBackground)) {
                     append(node.literal)
                 }
             }

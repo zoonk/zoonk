@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +34,9 @@ import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageTitleRow
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -58,7 +58,7 @@ internal fun PlanHeader(
         PlanEyebrow(page)
         PageTitleRow(stringResource(R.string.plan_title), verticalAlignment = Alignment.CenterVertically) {
             onAdjust?.let {
-                FilledTonalButton(
+                OutlinedButton(
                     onClick = it,
                     Modifier.weight(1f, fill = false),
                 ) { Text(stringResource(R.string.plan_adjust_plan)) }

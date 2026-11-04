@@ -25,12 +25,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -79,10 +77,13 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.interaction
 import com.zoonk.android.feature.player.model.ActivityAnswer
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ActivityExpected
@@ -283,7 +284,7 @@ private fun RowScope.StepCell(
     result: TapStatus?,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(6.dp)
+    val shape = RoundedCornerShape(ZoonkRadius.sm)
 
     Column(
         Modifier.weight(1f).padding(start = STEP_GAP),
@@ -350,7 +351,7 @@ private fun RhythmTapPad(
         Modifier
             .fillMaxWidth()
             .heightIn(min = 128.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(ZoonkRadius.xl))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .indication(source, ripple())
             .focusRequester(focus)

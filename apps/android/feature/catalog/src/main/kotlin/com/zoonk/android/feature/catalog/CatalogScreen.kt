@@ -26,7 +26,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -76,6 +75,7 @@ import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LoadMoreFooter
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.Subject
 import com.zoonk.android.ui.components.SubjectGlyph
 import com.zoonk.android.ui.components.SubjectLabel
@@ -402,7 +402,7 @@ private fun CourseGrid(
                         action =
                             list.category?.let {
                                 {
-                                    FilledTonalButton(onClick = { navigator.open(AppRoute.StartGoal()) }) {
+                                    OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) {
                                         Icon(painterResource(R.drawable.ic_add), contentDescription = null, Modifier.size(18.dp))
                                         Spacer(Modifier.size(8.dp))
                                         Text(stringResource(R.string.catalog_start_goal))

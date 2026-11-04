@@ -1,12 +1,12 @@
 package com.zoonk.android.feature.catalog
 
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.StatusMessage
 
 /** A course, chapter or lesson that no longer exists is a not-found page inside the frame, as on main. */

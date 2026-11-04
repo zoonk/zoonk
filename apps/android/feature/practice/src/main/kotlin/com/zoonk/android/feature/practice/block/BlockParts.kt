@@ -2,7 +2,6 @@ package com.zoonk.android.feature.practice.block
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +18,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.player.SessionStep
 import com.zoonk.android.feature.practice.NoteText
 import com.zoonk.android.feature.questions.NoteRow
+import com.zoonk.android.ui.components.OutlinedButton
 
 @Composable
 internal fun PauseSuggestion(viewModel: QuestionBlockViewModel) {
@@ -26,7 +26,7 @@ internal fun PauseSuggestion(viewModel: QuestionBlockViewModel) {
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         NoteRow(R.drawable.ic_local_cafe) { NoteText(stringResource(R.string.practice_pause_text)) }
-        FilledTonalButton(onClick = viewModel::stopSession, enabled = !move.busy) {
+        OutlinedButton(onClick = viewModel::stopSession, enabled = !move.busy) {
             Text(stringResource(R.string.practice_pause_stop))
         }
         if (move.failed == SessionStep.Stop) {

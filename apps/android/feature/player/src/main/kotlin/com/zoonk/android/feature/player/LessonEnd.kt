@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -46,6 +44,7 @@ import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -54,6 +53,7 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.components.taskOption
@@ -160,7 +160,7 @@ private fun ColumnScope.PlusActions(exits: LessonPlayerExits) {
     Button(onClick = {
         exits.open(AppRoute.Subscription)
     }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_see_plus)) }
-    FilledTonalButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
+    OutlinedButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
 }
 
 @Composable
@@ -204,7 +204,7 @@ private fun Limited(
                 stringResource(R.string.player_plus_limit_title),
                 stringResource(R.string.player_plus_limit_description),
             ) {
-                FilledTonalButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
+                OutlinedButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
             }
         }
     }
@@ -405,7 +405,7 @@ fun CompletionActions(
 
     if (status == CompletionStatus.Saved && ending.guest) {
         TaskActions { width ->
-            FilledTonalButton(onClick = { exits.replace(AppRoute.Login) }, modifier = Modifier.taskOption()) {
+            OutlinedButton(onClick = { exits.replace(AppRoute.Login) }, modifier = Modifier.taskOption()) {
                 Text(stringResource(R.string.player_create_account_to_save))
             }
             Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }
@@ -415,7 +415,7 @@ fun CompletionActions(
 
     TaskActions { width ->
         if (status == CompletionStatus.Saved && ending.nextLessonId != null) {
-            FilledTonalButton(onClick = exits::close, modifier = width) { Text(stringResource(back)) }
+            OutlinedButton(onClick = exits::close, modifier = width) { Text(stringResource(back)) }
         }
         Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }
     }

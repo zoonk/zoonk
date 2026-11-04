@@ -24,7 +24,6 @@ import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,6 +59,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.rankBar
 import com.zoonk.android.ui.format.DateStyle
@@ -71,6 +71,7 @@ import com.zoonk.android.ui.format.formatHourRange
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.CurrentUserActivityResponseActivity
@@ -488,7 +489,7 @@ private fun LevelStripes(
         Row(
             Modifier
                 .fillMaxWidth()
-                .background(belt.rankBar, RoundedCornerShape(6.dp))
+                .background(belt.rankBar, RoundedCornerShape(ZoonkRadius.sm))
                 .padding(horizontal = 8.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {

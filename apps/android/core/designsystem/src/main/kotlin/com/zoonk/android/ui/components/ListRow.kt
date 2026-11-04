@@ -36,11 +36,12 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 
 /**
- * Material's list item, as every list draws its rows: [highlighted] is the learner's place, and a row
- * with [expanded] opens what's under it, TalkBack hearing whether it's open after [stateDescription].
+ * Material's list item in main's row type (`ListRowTitle`, `ListRowDescription`, mono `ListRowTrailing`),
+ * as every list draws its rows: [highlighted] is the learner's place, and a row with [expanded] opens
+ * what's under it, TalkBack hearing whether it's open after [stateDescription].
  * [meta] (numbers, a date, the Plus mark) ends the headline and moves under it when the words would
  * get too little room. Rows reach the list's edges and inset their own content; a nested row moves its
  * mark and words in by [indent], so its highlight still spans the list.
@@ -66,15 +67,21 @@ fun ListRow(
             else -> stateDescription ?: openWords
         }
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
-    val metaStyle = MaterialTheme.typography.labelMedium.withTabularFigures()
+    val metaStyle = MaterialTheme.zoonkType.data
+    val titleStyle = MaterialTheme.zoonkType.rowTitle
+    val supportingStyle = MaterialTheme.typography.bodySmall
 
     ListItem(
         headlineContent = {
-            if (meta == null) {
-                headline()
-            } else {
-                TitleAndMeta(meta = { CompositionLocalProvider(LocalContentColor provides quiet) { ProvideTextStyle(metaStyle, meta) } }) {
+            ProvideTextStyle(titleStyle) {
+                if (meta == null) {
                     headline()
+                } else {
+                    TitleAndMeta(
+                        meta = { CompositionLocalProvider(LocalContentColor provides quiet) { ProvideTextStyle(metaStyle, meta) } },
+                    ) {
+                        headline()
+                    }
                 }
             }
         },
@@ -105,7 +112,7 @@ fun ListRow(
                     ) { it() }
                 }
             },
-        supportingContent = supporting,
+        supportingContent = supporting?.let { { ProvideTextStyle(supportingStyle, it) } },
         trailingContent =
             expanded?.let {
                 {

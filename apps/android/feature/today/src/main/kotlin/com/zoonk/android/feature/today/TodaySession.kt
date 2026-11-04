@@ -20,7 +20,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
@@ -77,6 +76,7 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.DateStyle

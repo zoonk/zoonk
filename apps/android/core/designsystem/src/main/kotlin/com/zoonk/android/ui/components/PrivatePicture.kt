@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.PrivateImages
+import com.zoonk.android.ui.theme.ZoonkRadius
 
 /** Private pictures load with the signed-in session, provided once at the app's root through [LocalPrivatePictures]. */
 class PrivatePictures(
@@ -77,7 +78,7 @@ fun PrivatePicture(
             modifier
                 .heightIn(max = maxHeight)
                 .aspectRatio(ratio)
-                .clip(RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(ZoonkRadius.xl))
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh),
         contentScale = ContentScale.Fit,
         onError = { failed = true },

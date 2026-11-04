@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,7 +58,9 @@ import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.feature.tutor.tutorIdentity
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
 
@@ -289,7 +289,7 @@ internal fun GuestGateView(
                         if (blocked) {
                             Button(onClick = onLogIn, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.gate_log_in)) }
                         } else {
-                            FilledTonalButton(onClick = onLogIn, modifier = Modifier.weight(1f)) {
+                            OutlinedButton(onClick = onLogIn, modifier = Modifier.weight(1f)) {
                                 Text(stringResource(R.string.gate_log_in))
                             }
                             Button(onClick = onRetry, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.player_try_again)) }

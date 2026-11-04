@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf30Value as DecisionTreeContent
 
@@ -132,7 +133,7 @@ private fun DecisionTreeActivity(props: ActivityProps) {
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(ZoonkRadius.option))
                     .background(accent.copy(alpha = SOFT))
                     .semantics { liveRegion = LiveRegionMode.Polite }
                     .padding(horizontal = 14.dp, vertical = 12.dp),
@@ -224,7 +225,7 @@ private fun StepMark(mark: AnswerMark?) {
 @Composable
 private fun Panel(content: @Composable () -> Unit) {
     Surface(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(ZoonkRadius.option),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = Modifier.fillMaxWidth(),

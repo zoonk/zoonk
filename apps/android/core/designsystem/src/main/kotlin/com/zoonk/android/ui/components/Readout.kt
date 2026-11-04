@@ -14,7 +14,8 @@ import com.zoonk.android.ui.theme.withTabularFigures
 
 /**
  * A quantity the eye lands on (main's `BigQuantity`): its numbers in [style], semibold with
- * tabular figures, and its words ("min left", "/ 5 hr") smaller in `onSurfaceVariant`.
+ * tabular figures, a percent sign included, and its words ("min left", "/ 5 hr") smaller in
+ * `onSurfaceVariant`.
  */
 @Composable
 fun Readout(
@@ -57,7 +58,14 @@ private fun numberEnd(
     ) {
         end++
     }
-    return end
+    return when {
+        text.getOrNull(end) == '%' -> end + 1
+        text.getOrNull(end) in PERCENT_SPACES && text.getOrNull(end + 1) == '%' -> end + 2
+        else -> end
+    }
 }
 
 private val SEPARATORS = setOf(',', '.', ' ', ' ', '\'', '٬', '٫')
+
+/** The spaces some languages put before "%" ("70 %"), as main's `splitQuantity` reads them. */
+private val PERCENT_SPACES = setOf('\u00A0', '\u202F')

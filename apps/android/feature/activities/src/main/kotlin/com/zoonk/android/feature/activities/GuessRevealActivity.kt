@@ -18,6 +18,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf5Fields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf5FieldsTruthOneOfWorkingsInner
@@ -55,7 +56,7 @@ private fun GuessWorkings(workings: List<PlayableLibraryStepAnyOfContentOneOf5Fi
     val locale = currentLocale()
 
     Surface(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(ZoonkRadius.option),
         color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {

@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -53,9 +51,11 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatMinutes
@@ -320,7 +320,7 @@ internal fun StartActions(
             }
 
             if (secondary) {
-                FilledTonalButton(
+                OutlinedButton(
                     onClick = start,
                     enabled = !saving,
                     contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
@@ -332,7 +332,7 @@ internal fun StartActions(
             }
 
             if (onTryLesson != null) {
-                FilledTonalButton(onClick = onTryLesson) { Text(stringResource(R.string.catalog_try_lesson)) }
+                OutlinedButton(onClick = onTryLesson) { Text(stringResource(R.string.catalog_try_lesson)) }
             }
         }
 
@@ -464,7 +464,7 @@ private fun ContinueLesson(
             style = MaterialTheme.typography.bodyLarge,
         )
         Spacer(Modifier.size(20.dp))
-        if (secondary) FilledTonalButton(onClick = onContinue) { Text(label) } else Button(onClick = onContinue) { Text(label) }
+        if (secondary) OutlinedButton(onClick = onContinue) { Text(label) } else Button(onClick = onContinue) { Text(label) }
     }
 }
 
