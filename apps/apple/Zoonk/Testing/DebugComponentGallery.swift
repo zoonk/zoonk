@@ -36,8 +36,7 @@
             supporting: Text(verbatim: "Every role and shared piece, as main's /design.")
           ) {
             Text(verbatim: "43 min")
-              .font(.title2.weight(.semibold))
-              .monospacedDigit()
+              .typeStyle(.readout)
           }
 
           GallerySection(id: "colors", title: "Color roles") { ColorRoleSwatches() }
@@ -100,7 +99,7 @@
               )
               .frame(height: 36)
             Text(verbatim: name)
-              .font(.caption2)
+              .typeStyle(.small)
               .foregroundStyle(.mutedForeground)
               .lineLimit(1)
               .minimumScaleFactor(0.7)
@@ -127,7 +126,7 @@
             Text(verbatim: "Look here").foregroundStyle(.warningText)
             Text(verbatim: "Brain Power").foregroundStyle(.brainText)
           }
-          .font(.footnote)
+          .typeStyle(.note)
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)

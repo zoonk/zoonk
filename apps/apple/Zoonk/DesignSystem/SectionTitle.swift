@@ -23,7 +23,7 @@ struct SectionTitle<Trailing: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
 
       trailing
-        .font(.caption.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
     }
     .textCase(nil)
@@ -33,7 +33,7 @@ struct SectionTitle<Trailing: View>: View {
 extension View {
   /// `SectionTitle`'s look for a header that isn't one text, such as a `Label` with its icon.
   func sectionTitleStyle() -> some View {
-    font(.subheadline.weight(.semibold))
+    typeStyle(.sectionTitle)
       .foregroundStyle(Color(.foreground))
       .textCase(nil)
   }
@@ -52,7 +52,7 @@ struct SectionFooter<Content: View>: View {
 
   var body: some View {
     content
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
       // A plain list draws a footer like a row, between hairlines main doesn't have.
       .listRowSeparator(.hidden)

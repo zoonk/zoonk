@@ -16,7 +16,7 @@ struct PanelGroupBoxStyle: GroupBoxStyle {
   func makeBody(configuration: Configuration) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       configuration.label
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.rowTitle)
 
       configuration.content
     }

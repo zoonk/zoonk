@@ -32,18 +32,18 @@ struct ListRow<Leading: View, Trailing: View>: View {
     } content: {
       VStack(alignment: .leading, spacing: 1) {
         title
-          .font(.subheadline.weight(.medium))
+          .typeStyle(.rowTitle)
           .foregroundStyle(Color(.foreground))
 
         if let description {
           description
-            .font(.caption)
+            .typeStyle(.meta)
             .foregroundStyle(.mutedForeground)
         }
       }
     } end: {
       trailing
-        .font(.caption.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
     }
   }

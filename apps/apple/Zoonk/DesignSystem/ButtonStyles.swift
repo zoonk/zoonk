@@ -42,7 +42,7 @@ private struct ZoonkButton: View {
       cornerRadius: isSmall ? Radius.md : Radius.lg, style: .continuous)
 
     configuration.label
-      .font(isSmall ? .footnote.weight(.medium) : .subheadline.weight(.medium))
+      .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
       .padding(.horizontal, horizontalPadding)

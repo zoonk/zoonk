@@ -62,6 +62,8 @@ extension TypeStyle {
   /// Uppercase, inside a panel only.
   static let label = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: 550, tracking: 0.04, isUppercase: true)
+  /// A chip's word, main's `CHIP_CLASS`.
+  static let chip = TypeStyle(size: 11.5, relativeTo: .caption2, weight: 500)
   /// Plot labels and marks too small for `meta`.
   static let small = TypeStyle(size: 11, relativeTo: .caption2, weight: 400)
   /// A block's one big number, its unit beside it in `.body` and the secondary color.

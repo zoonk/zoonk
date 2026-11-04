@@ -99,7 +99,7 @@ struct CourseSubjectLabel: View {
     let colors = SubjectColors(subject)
 
     Text(subject.localizedTitle)
-      .font(.caption.weight(.medium))
+      .typeStyle(.chip)
       .foregroundStyle(colors.text)
       .padding(.horizontal, 8)
       .padding(.vertical, 3)

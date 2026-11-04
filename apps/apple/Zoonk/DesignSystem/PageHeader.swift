@@ -24,14 +24,13 @@ struct PageHeader<Trailing: View>: View {
     VStack(alignment: .leading, spacing: 4) {
       if let eyebrow {
         eyebrow
-          .font(.caption2.monospaced())
-          .textCase(.uppercase)
+          .typeStyle(.eyebrow)
           .foregroundStyle(.mutedForeground)
       }
 
       AccessibilityStack(alignment: .lastTextBaseline, spacing: 12) {
         title
-          .font(.title.weight(.semibold))
+          .typeStyle(.pageTitle)
           .foregroundStyle(Color(.foreground))
           .accessibilityAddTraits(.isHeader)
           .heroTitle()
@@ -42,7 +41,7 @@ struct PageHeader<Trailing: View>: View {
 
       if let supporting {
         supporting
-          .font(.subheadline)
+          .typeStyle(.body)
           .foregroundStyle(.mutedForeground)
       }
     }
