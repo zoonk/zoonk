@@ -140,6 +140,7 @@ struct ChallengeStepView: View {
               .font(.subheadline)
             }
             .gaugeStyle(.linearCapacity)
+            .tint(.secondary)
           }
         }
       }
@@ -276,7 +277,7 @@ struct ChallengeStepView: View {
     }
 
     if !moved.isEmpty {
-      FlowLayout(spacing: 16, rowAlignment: .trailing) {
+      FlowLayout(spacing: 16, rowAlignment: .trailing, rowSpacing: 4) {
         ForEach(Array(moved.enumerated()), id: \.offset) { _, effect in
           HStack(alignment: .firstTextBaseline, spacing: 6) {
             Text(named(effect.meter.label))

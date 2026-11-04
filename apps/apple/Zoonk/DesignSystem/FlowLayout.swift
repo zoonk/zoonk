@@ -8,11 +8,14 @@ struct FlowLayout: Layout {
   var alignment: VerticalAlignment = .center
   /// Where a row shorter than the width sits.
   var rowAlignment: HorizontalAlignment = .leading
+  /// Between rows, when it differs from `spacing`.
+  var rowSpacing: CGFloat?
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
     let rows = arrange(subviews, width: proposal.width ?? .infinity)
     let width = rows.map { $0.width }.max() ?? 0
-    let height = rows.reduce(0) { $0 + $1.height } + spacing * CGFloat(max(rows.count - 1, 0))
+    let height =
+      rows.reduce(0) { $0 + $1.height } + (rowSpacing ?? spacing) * CGFloat(max(rows.count - 1, 0))
     return CGSize(width: min(width, proposal.width ?? width), height: height)
   }
 
@@ -32,7 +35,7 @@ struct FlowLayout: Layout {
         x += item.size.width + spacing
       }
 
-      y += row.height + spacing
+      y += row.height + (rowSpacing ?? spacing)
     }
   }
 
