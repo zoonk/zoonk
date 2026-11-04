@@ -14,4 +14,6 @@ dependencies {
 
     testFixturesImplementation(project(":core:data"))
     testFixturesImplementation(testFixtures(project(":core:data")))
+
+    testImplementation(libs.androidx.window.testing)
 }
