@@ -118,8 +118,7 @@ struct LessonScreenHelp: View {
             comment: "Opens the buddy to ask about the screen in the learner's own words")
         }
       }
-      .buttonStyle(.suggestionChip)
-      .typeStyle(.body)
+      .buttonStyle(.outline)
     }
     .accessibilityElement(children: .contain)
   }

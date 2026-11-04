@@ -8,6 +8,12 @@ struct MistakesScreen: View {
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
 
+  private var goalTitle: String? {
+    summary.summary.value.flatMap { learner in
+      learner.goals.first { $0.id == learner.activeGoalID }?.title
+    }
+  }
+
   private func mistakes(fixed: Bool) -> Resource<Components.Schemas.MistakeList> {
     practice.mistakes(goalId: goalId, fixed: fixed)
   }
@@ -34,7 +40,10 @@ struct MistakesScreen: View {
           listTitle(fixed: false, counts: open.value?.counts)
         }
 
-        header(shown.value)
+        Section {
+          PageHeader(title, eyebrow: goalTitle.map { Text(verbatim: $0) })
+          header(shown.value)
+        }
 
         if !isBeside {
           picker(counts: shown.value?.counts)
@@ -50,19 +59,25 @@ struct MistakesScreen: View {
       .loads(shown)
     }
 
-    .navigationTitle(
-      Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
+    .navigationTitle(title)
+    .barTitleAfterHero(
+      String(
+        localized: "Mistakes notebook", table: "Practice",
+        comment: "Title of the mistakes notebook.")
     )
     .modifier(LoadsPattern(pattern: pattern))
   }
 
+  private var title: Text {
+    Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
+  }
+
   private func header(_ list: Components.Schemas.MistakeList?) -> some View {
-    Section {
-      NotebookHeader(list: list) { hooks.navigate(.mistakePractice(skillId: nil)) }
-    }
-    .listRowBackground(Color.clear)
-    // The row's own side margins: at the cell's edge, a wrapped line's first letter was clipped.
-    .listRowInsets(.vertical, 8)
+    NotebookHeader(list: list) { hooks.navigate(.mistakePractice(skillId: nil)) }
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
+      // The row's own side margins: at the cell's edge, a wrapped line's first letter was clipped.
+      .listRowInsets(.vertical, 8)
   }
 
   private func picker(counts: Components.Schemas.MistakeList.CountsPayload?) -> some View {

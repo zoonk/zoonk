@@ -54,7 +54,8 @@ import com.zoonk.android.ui.theme.zoonkType
  * it's open after [stateDescription]. [meta] (numbers, a date, the Plus mark) ends the headline and
  * moves under it when the words would get too little room. Rows reach the list's edges and inset their
  * own content by [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its
- * highlight still spans the list.
+ * highlight still spans the list. [verticalAlignment] `Top` keeps the mark on the title's first line
+ * when lines under it run long (main's `items-start`).
  */
 @Composable
 fun ListRow(
@@ -69,6 +70,7 @@ fun ListRow(
     leading: (@Composable () -> Unit)? = null,
     supporting: (@Composable () -> Unit)? = null,
     meta: (@Composable () -> Unit)? = null,
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
 ) {
     val openWords = expanded?.let { stringResource(if (it) R.string.disclosure_expanded else R.string.disclosure_collapsed) }
     val state =
@@ -107,10 +109,16 @@ fun ListRow(
                 .indication(interaction, ripple())
                 .padding(start = HIGHLIGHT_OUTSET + indent, end = HIGHLIGHT_OUTSET, top = WORDS_PADDING, bottom = WORDS_PADDING),
         horizontalArrangement = Arrangement.spacedBy(LEADING_GAP),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = verticalAlignment,
     ) {
+        val firstLine =
+            with(LocalDensity.current) {
+                MaterialTheme.typography.titleSmall.lineHeight
+                    .toDp()
+            }
+        val markBox = if (verticalAlignment == Alignment.Top) Modifier.width(markSize()).height(firstLine) else Modifier.size(markSize())
         CompositionLocalProvider(LocalContentColor provides quiet) {
-            leading?.let { Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { it() } }
+            leading?.let { Box(markBox, contentAlignment = Alignment.Center) { it() } }
         }
 
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {

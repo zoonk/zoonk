@@ -25,7 +25,7 @@ struct PageHeader<Trailing: View>: View {
       if let eyebrow {
         eyebrow
           .typeStyle(.eyebrow)
-          .foregroundStyle(.mutedForeground)
+          .foregroundStyle(.faint)
       }
 
       AccessibilityStack(alignment: .lastTextBaseline, spacing: 12) {

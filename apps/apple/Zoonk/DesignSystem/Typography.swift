@@ -46,7 +46,7 @@ extension TypeStyle {
     size: 18, relativeTo: .body, weight: .regular, lineHeight: 1.625)
   /// Main's `text-lead`, in the secondary color.
   static let lead = TypeStyle(size: 17, relativeTo: .body, weight: .regular, tracking: -0.01)
-  /// Running text read for itself: the buddy's words, a question's context, Today's queue.
+  /// Running text read for itself: the buddy's words, a question's context.
   static let reading = TypeStyle(size: 16, relativeTo: .callout, weight: .regular)
   /// A long answer the learner writes, main's essay box: reading size with relaxed lines.
   static let writing = TypeStyle(
@@ -67,7 +67,7 @@ extension TypeStyle {
   static let meta = TypeStyle(size: 12, relativeTo: .caption, weight: .regular)
   /// Minutes, counts, dates and a row's trailing value.
   static let data = meta.monospaced()
-  /// Over a page's title, in the secondary color.
+  /// Over a page's title, in the faint color.
   static let eyebrow = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: .regular, face: .mono, isUppercase: true)
   /// Uppercase, inside a panel only.

@@ -3,7 +3,8 @@ import SwiftUI
 /// Main's buttons on a native `Button`, which keeps its role, keyboard shortcut, VoiceOver and
 /// pointer behavior. `controlSize` picks main's sizes: `.large` for a screen's action (44pt),
 /// `.regular` (36pt), `.small` beside text (30pt). A destructive role draws main's destructive
-/// button in any of them. Glass stays on floating controls and toolbar items.
+/// button in any of them; `.icon` on any of them is main's square icon button (`size="icon"`). Glass
+/// stays on floating controls and toolbar items.
 struct ZoonkButtonStyle: ButtonStyle {
   enum Variant {
     /// Ink fill: one per area.
@@ -44,14 +45,14 @@ private struct ZoonkButton: View {
 
   var body: some View {
     let shape = RoundedRectangle(
-      cornerRadius: isSmall ? Radius.md : Radius.lg, style: .continuous)
+      cornerRadius: isSmall && !isIcon ? Radius.md : Radius.lg, style: .continuous)
 
     configuration.label
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
       .padding(.horizontal, isIcon ? 0 : horizontalPadding)
-      .padding(.vertical, 6)
+      .padding(.vertical, isIcon ? 0 : 6)
       .frame(minWidth: isIcon ? height : nil, minHeight: height)
       .frame(maxWidth: sizing == .flexible && !isIcon ? .infinity : nil)
       .background(fill, in: shape)

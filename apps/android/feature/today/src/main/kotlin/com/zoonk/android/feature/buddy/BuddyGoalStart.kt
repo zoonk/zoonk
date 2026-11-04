@@ -34,7 +34,6 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.tutor.TutorGreeting
-import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.buddyName
@@ -87,7 +86,7 @@ internal fun BuddyGoalStart(
             ) {
                 Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(20.dp)) {
                     BuddyHeader(look, face = null, name = name, status = status)
-                    TutorGreeting(TutorIdentity(name, look), stringResource(R.string.buddy_page_goal_greeting, name))
+                    TutorGreeting(stringResource(R.string.buddy_page_goal_greeting, name))
                     if (earlier.value != null) {
                         TextButton(onClick = { navigator.open(AppRoute.EarlierQuestions) }) {
                             Icon(painterResource(R.drawable.ic_history), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))

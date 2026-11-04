@@ -1,23 +1,15 @@
 package com.zoonk.android.feature.today
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -27,11 +19,14 @@ import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.KindDot
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LanguageTodaySpeaking
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.MockOption
@@ -82,22 +77,28 @@ fun TodayPracticeRows(
     val tomorrow = mistakes?.tomorrow?.toInt() ?: 0
     if (mock == null && speaking == null && ready + tomorrow == 0 && !completedLessons) return
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            stringResource(R.string.today_practice_anytime),
-            modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Column {
-            mock?.let { MockRow(it, navigate) }
-            speaking?.let { SpeakingRow(it, navigate) }
-            if (ready + tomorrow > 0) MistakesRow(ready, tomorrow, navigate)
+    val rows =
+        buildList<@Composable () -> Unit> {
+            mock?.let { add { MockRow(it, navigate) } }
+            speaking?.let { add { SpeakingRow(it, navigate) } }
+            if (ready + tomorrow > 0) add { MistakesRow(ready, tomorrow, navigate) }
             if (completedLessons) {
-                PracticeRow(
-                    kind = LearnKind.Lesson,
-                    title = stringResource(R.string.navigation_completed_lessons),
-                    description = stringResource(R.string.today_completed_lessons_detail),
-                ) { navigate(AppRoute.CompletedLessons) }
+                add {
+                    PracticeRow(
+                        kind = LearnKind.Lesson,
+                        title = stringResource(R.string.navigation_completed_lessons),
+                        description = stringResource(R.string.today_completed_lessons_detail),
+                    ) { navigate(AppRoute.CompletedLessons) }
+                }
+            }
+        }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(stringResource(R.string.today_practice_anytime))
+        Column {
+            rows.forEachIndexed { index, row ->
+                if (index > 0) HorizontalDivider()
+                row()
             }
         }
     }
@@ -180,8 +181,6 @@ private fun MistakesRow(
             Text(
                 text = formatNumber(count.toDouble(), currentLocale()),
                 modifier = Modifier.semantics { contentDescription = countLabel },
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge.withTabularFigures(),
             )
         },
     ) { navigate(AppRoute.Mistakes) }
@@ -192,24 +191,15 @@ private fun PracticeRow(
     kind: LearnKind,
     title: String,
     description: String,
-    trailing: @Composable () -> Unit = {},
+    trailing: (@Composable () -> Unit)? = null,
     onClick: () -> Unit,
 ) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable(role = Role.Button, onClick = onClick)
-                .heightIn(min = 48.dp)
-                .padding(vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        RowMark { KindDot(kind) }
-        Column(Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.titleSmall)
-            Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-        }
-        trailing()
-    }
+    ListRow(
+        headline = { Text(title) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET),
+        onClick = onClick,
+        leading = { KindDot(kind) },
+        supporting = { Text(description) },
+        meta = trailing,
+    )
 }

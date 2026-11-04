@@ -3,7 +3,6 @@ package com.zoonk.android.feature.session
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -76,7 +75,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
@@ -522,7 +521,7 @@ private fun StepFacts(step: DayStep) {
     Text(
         facts.factsLine(),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+        style = MaterialTheme.zoonkType.data,
     )
 }
 

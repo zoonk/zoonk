@@ -10,7 +10,7 @@ struct WritingWait: View {
         title
         hint
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     } icon: {
       ProgressView()
