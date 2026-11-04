@@ -188,19 +188,18 @@ internal fun Logbook(
             },
         ) { padding ->
             if (pages) {
-                Box(Modifier.padding(padding)) {
-                    ResultPages(
-                        withMoment = false,
-                        columnModifier = Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = 24.dp),
-                        done = { RecapStepContent(RecapStep.Week, recap, learnerName) },
-                        next = {
-                            steps.drop(1).forEachIndexed { position, step ->
-                                if (position > 0) HorizontalDivider()
-                                RecapStepContent(step, recap, learnerName)
-                            }
-                        },
-                    )
-                }
+                ResultPages(
+                    modifier = Modifier.padding(padding),
+                    withMoment = false,
+                    columnModifier = Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = 24.dp),
+                    done = { RecapStepContent(RecapStep.Week, recap, learnerName) },
+                    next = {
+                        steps.drop(1).forEachIndexed { position, step ->
+                            if (position > 0) HorizontalDivider()
+                            RecapStepContent(step, recap, learnerName)
+                        }
+                    },
+                )
             } else {
                 Box(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll), contentAlignment = Alignment.TopCenter) {
                     // A step changed by Continue or Back is announced, as main moves focus to its title.

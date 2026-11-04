@@ -734,58 +734,57 @@ internal fun DuelResult(
             aside = outcome?.takeIf { !rows.isEmpty && !folded }?.let { TaskAside { ResultDetails(duel, rows, won) } },
         ) { padding ->
             val wide = taskAsideBeside()
-            Box(Modifier.padding(padding)) {
-                ResultPages(
-                    withMoment = duel.state.completion != null,
-                    columnModifier = Modifier.runColumn(),
-                    done = {
-                        if (outcome == null) {
-                            QuestionsRemoved(eyebrow = null)
-                        } else {
-                            // A result opened again shows how it ended, still: the moment played when it was won or lost.
-                            if (duel.read.isBoss) {
-                                CelebrationScope(
-                                    play = duel.state.completion != null,
-                                ) { TricksterArt(Modifier.size(104.dp), beaten = won, reacts = true) }
-                            }
-                            Text(
-                                text =
-                                    stringResource(
-                                        when {
-                                            !duel.read.isBoss -> R.string.checkpoint_weekly_done
-                                            won -> R.string.checkpoint_beat
-                                            else -> R.string.checkpoint_not_this_time
-                                        },
-                                    ),
-                                modifier = Modifier.semantics { heading() },
-                                style = MaterialTheme.typography.headlineSmall,
-                            )
+            ResultPages(
+                modifier = Modifier.padding(padding),
+                withMoment = duel.state.completion != null,
+                columnModifier = Modifier.runColumn(),
+                done = {
+                    if (outcome == null) {
+                        QuestionsRemoved(eyebrow = null)
+                    } else {
+                        // A result opened again shows how it ended, still: the moment played when it was won or lost.
+                        if (duel.read.isBoss) {
+                            CelebrationScope(
+                                play = duel.state.completion != null,
+                            ) { TricksterArt(Modifier.size(104.dp), beaten = won, reacts = true) }
                         }
-                    },
-                    next = {
-                        if (outcome != null) {
-                            val passMark =
-                                duel.state.completion
-                                    ?.checkpoint
-                                    ?.passMark
-                                    ?.toInt()
-                            MomentReadouts(
-                                brainPower = earnedBrainPower(duel, won),
-                                score = MomentScore(outcome.total, outcome.correct),
-                                facts =
-                                    listOfNotNull(
-                                        passMark?.takeIf { !won }?.let {
-                                            pluralStringResource(R.plurals.checkpoint_right_to_win_of, it, it, duel.read.questions.size)
-                                        },
-                                    ),
-                            )
-                            duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
-                            if (!wide && !rows.isEmpty) ResultDetails(duel, rows, won)
-                            if (wide && answers.isNotEmpty()) Review(duel, answers, app)
-                        }
-                    },
-                )
-            }
+                        Text(
+                            text =
+                                stringResource(
+                                    when {
+                                        !duel.read.isBoss -> R.string.checkpoint_weekly_done
+                                        won -> R.string.checkpoint_beat
+                                        else -> R.string.checkpoint_not_this_time
+                                    },
+                                ),
+                            modifier = Modifier.semantics { heading() },
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                    }
+                },
+                next = {
+                    if (outcome != null) {
+                        val passMark =
+                            duel.state.completion
+                                ?.checkpoint
+                                ?.passMark
+                                ?.toInt()
+                        MomentReadouts(
+                            brainPower = earnedBrainPower(duel, won),
+                            score = MomentScore(outcome.total, outcome.correct),
+                            facts =
+                                listOfNotNull(
+                                    passMark?.takeIf { !won }?.let {
+                                        pluralStringResource(R.plurals.checkpoint_right_to_win_of, it, it, duel.read.questions.size)
+                                    },
+                                ),
+                        )
+                        duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
+                        if (!wide && !rows.isEmpty) ResultDetails(duel, rows, won)
+                        if (wide && answers.isNotEmpty()) Review(duel, answers, app)
+                    }
+                },
+            )
         }
     }
 

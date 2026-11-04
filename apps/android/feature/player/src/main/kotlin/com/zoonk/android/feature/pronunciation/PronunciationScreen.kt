@@ -634,38 +634,37 @@ private fun RoundEnd(
             }
         },
     ) { padding ->
-        Box(Modifier.padding(padding).semantics { liveRegion = LiveRegionMode.Polite }) {
-            ResultPages(
-                withMoment = true,
-                columnModifier = Modifier.lessonColumnWidth(),
-                done = {
-                    if (noWords) {
+        ResultPages(
+            modifier = Modifier.padding(padding).semantics { liveRegion = LiveRegionMode.Polite },
+            withMoment = true,
+            columnModifier = Modifier.lessonColumnWidth(),
+            done = {
+                if (noWords) {
+                    Text(
+                        stringResource(R.string.pronunciation_no_words),
+                        Modifier.semantics { heading() },
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                } else {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            stringResource(R.string.pronunciation_no_words),
+                            stringResource(title),
                             Modifier.semantics { heading() },
                             style = MaterialTheme.typography.headlineSmall,
                         )
-                    } else {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Text(
-                                stringResource(title),
-                                Modifier.semantics { heading() },
-                                style = MaterialTheme.typography.headlineSmall,
-                            )
-                            Text(
-                                stringResource(R.string.pronunciation_accent),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
-                        }
-                        result?.let {
-                            MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
-                        }
+                        Text(
+                            stringResource(R.string.pronunciation_accent),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
                     }
-                },
-                next = {},
-            )
-        }
+                    result?.let {
+                        MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
+                    }
+                }
+            },
+            next = {},
+        )
     }
 }
 

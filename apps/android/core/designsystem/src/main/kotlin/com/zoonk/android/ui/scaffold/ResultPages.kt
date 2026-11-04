@@ -36,6 +36,7 @@ import com.zoonk.android.ui.components.CelebrationScope
  */
 @Composable
 fun ResultPages(
+    modifier: Modifier = Modifier,
     withMoment: Boolean,
     columnModifier: Modifier,
     done: @Composable ColumnScope.() -> Unit,
@@ -52,7 +53,7 @@ fun ResultPages(
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     CelebrationScope(play = plays) {
-        BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
+        BoxWithConstraints(modifier.fillMaxSize().onPageSpan { span = it }) {
             val fold = spreadFold(maxWidth, span)
 
             if (fold == null) {

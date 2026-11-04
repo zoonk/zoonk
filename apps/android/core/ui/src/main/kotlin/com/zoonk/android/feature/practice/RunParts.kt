@@ -138,9 +138,11 @@ private fun RunDone(
     title: String,
     saving: Boolean,
     detail: String?,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     ResultPages(
+        modifier = modifier,
         withMoment = !saving,
         columnModifier = Modifier.runColumn(),
         done = {
@@ -234,7 +236,7 @@ fun RunFinished(
                 }
             }
         },
-    ) { padding -> Box(Modifier.padding(padding)) { RunDone(title, saving, detail, content) } }
+    ) { padding -> RunDone(title, saving, detail, modifier = Modifier.padding(padding), content = content) }
 }
 
 @Composable

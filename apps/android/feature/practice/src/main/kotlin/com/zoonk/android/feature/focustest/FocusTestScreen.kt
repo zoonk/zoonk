@@ -2,7 +2,6 @@ package com.zoonk.android.feature.focustest
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -348,31 +347,30 @@ internal fun FocusTestResult(
                     }
                 },
             ) { padding ->
-                Box(Modifier.padding(padding)) {
-                    ResultPages(
-                        withMoment = true,
-                        columnModifier = Modifier.runColumn(),
-                        done = {
-                            if (chosen.isNotEmpty() && (whole || shown == 1)) {
-                                FocusStep(chosen, undone = ui.undo == UndoState.Done, stepTitle)
+                ResultPages(
+                    modifier = Modifier.padding(padding),
+                    withMoment = true,
+                    columnModifier = Modifier.runColumn(),
+                    done = {
+                        if (chosen.isNotEmpty() && (whole || shown == 1)) {
+                            FocusStep(chosen, undone = ui.undo == UndoState.Done, stepTitle)
+                        }
+                    },
+                    next = {
+                        if (whole || shown == 0) {
+                            CelebrationScope(play = ui.celebrate && !leftFirst) {
+                                AreasStep(outcome, stepTitle)
+                                DayMoment(
+                                    missions = null,
+                                    reached = outcome.reached,
+                                    ceremony = outcome.ceremony?.kind,
+                                    buddy = buddy.look,
+                                    buddyName = buddy.name,
+                                )
                             }
-                        },
-                        next = {
-                            if (whole || shown == 0) {
-                                CelebrationScope(play = ui.celebrate && !leftFirst) {
-                                    AreasStep(outcome, stepTitle)
-                                    DayMoment(
-                                        missions = null,
-                                        reached = outcome.reached,
-                                        ceremony = outcome.ceremony?.kind,
-                                        buddy = buddy.look,
-                                        buddyName = buddy.name,
-                                    )
-                                }
-                            }
-                        },
-                    )
-                }
+                        }
+                    },
+                )
             }
         }
     }

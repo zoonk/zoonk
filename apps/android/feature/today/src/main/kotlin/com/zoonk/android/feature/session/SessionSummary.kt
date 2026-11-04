@@ -2,7 +2,6 @@ package com.zoonk.android.feature.session
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -154,18 +153,17 @@ internal fun SessionSummary(
             },
         ) { padding ->
             if (pages) {
-                Box(Modifier.padding(padding)) {
-                    ResultPages(
-                        withMoment = true,
-                        columnModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        done = {
-                            DoneTitle(summary, facts)
-                            SessionNumbers(summary, facts, brainPowerTile = false)
-                            EarnedToday(summary, facts, buddy, buddyName)
-                        },
-                        next = { Onward(summary, facts) },
-                    )
-                }
+                ResultPages(
+                    modifier = Modifier.padding(padding),
+                    withMoment = true,
+                    columnModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    done = {
+                        DoneTitle(summary, facts)
+                        SessionNumbers(summary, facts, brainPowerTile = false)
+                        EarnedToday(summary, facts, buddy, buddyName)
+                    },
+                    next = { Onward(summary, facts) },
+                )
             } else {
                 Column(
                     modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(scroll),
