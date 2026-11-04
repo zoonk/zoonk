@@ -38,7 +38,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.IntState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -121,7 +120,6 @@ import com.zoonk.android.feature.player.steps.keyPick
 import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalPrivatePictures
@@ -174,66 +172,6 @@ internal fun LessonColumnBeforeFold(content: @Composable ColumnScope.() -> Unit)
 }
 
 /**
- * A lesson's end as the shared foldables rule lays out a result: what was [done], then what's [next]
- * beside the way on. [withMoment] is whether its moment is on screen yet, which waits for the save.
- */
-@Composable
-internal fun LessonEndPages(
-    withMoment: Boolean,
-    done: @Composable ColumnScope.() -> Unit,
-    next: @Composable ColumnScope.() -> Unit,
-) {
-    // The moment plays once: made again after a fold or a rotation, the end shows it as it finished.
-    var played by rememberSaveable { mutableStateOf(false) }
-    val plays = remember { !played }
-    SideEffect { if (withMoment) played = true }
-    // The one column keeps its own scroll, so folding back finds it where the learner left it.
-    val scroll = rememberScrollState()
-    val doneScroll = rememberScrollState()
-    val nextScroll = rememberScrollState()
-    var span by remember { mutableStateOf<PageSpan?>(null) }
-
-    CelebrationScope(play = plays) {
-        BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
-            val fold = spreadFold(maxWidth, span)
-
-            if (fold == null) {
-                EndPage(Modifier.fillMaxSize(), scroll, Alignment.CenterHorizontally) {
-                    done()
-                    next()
-                }
-            } else {
-                EndPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, doneScroll, Alignment.End, done)
-                EndPage(
-                    Modifier.fillMaxSize().padding(start = fold.end).semantics { isTraversalGroup = true },
-                    nextScroll,
-                    Alignment.Start,
-                    next,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun EndPage(
-    modifier: Modifier,
-    scroll: ScrollState,
-    align: Alignment.Horizontal,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Column(
-        modifier
-            .verticalScroll(scroll)
-            .padding(vertical = 24.dp)
-            .wrapContentWidth(align)
-            .lessonColumnWidth(),
-        verticalArrangement = Arrangement.spacedBy(COLUMN_SPACING),
-        content = content,
-    )
-}
-
-/**
  * A [LessonColumn] as tall as the view at least: the part with the [FillsView] id stretches over
  * the height the other parts leave, never shorter than its own content. An empty part takes no gap,
  * so a page whose screen draws nothing on it starts level with the page beside it. A page of a
@@ -267,7 +205,7 @@ private fun StepColumn(
     }
 }
 
-private fun Modifier.lessonColumnWidth() = widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = COLUMN_PADDING)
+internal fun Modifier.lessonColumnWidth() = widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = COLUMN_PADDING)
 
 private val COLUMN_WIDTH = 640.dp
 private val COLUMN_PADDING = 20.dp

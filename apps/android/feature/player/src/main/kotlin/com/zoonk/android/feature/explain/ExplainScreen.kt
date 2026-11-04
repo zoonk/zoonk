@@ -54,13 +54,13 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.player.LessonColumn
 import com.zoonk.android.feature.player.LessonColumnBeforeFold
-import com.zoonk.android.feature.player.LessonEndPages
 import com.zoonk.android.feature.player.LessonEndSlot
 import com.zoonk.android.feature.player.LessonPlayerExits
 import com.zoonk.android.feature.player.LessonReadouts
 import com.zoonk.android.feature.player.PlayingLesson
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonPlayerState
+import com.zoonk.android.feature.player.lessonColumnWidth
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toPlayableLesson
 import com.zoonk.android.navigation.AppNavigator
@@ -73,6 +73,7 @@ import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.Explanation
@@ -433,8 +434,9 @@ internal fun ExplainEnding(
     // The course to go further is linked a few seconds after the explanation can be read.
     LaunchedEffect(Unit) { if (explanation.goFurther.course == null) readAgain() }
 
-    LessonEndPages(
+    ResultPages(
         withMoment = !saving,
+        columnModifier = Modifier.lessonColumnWidth(),
         done = {
             ExplainHeading(explanation.title) {
                 SuccessEyebrow(stringResource(R.string.explain_now_you_know))

@@ -104,6 +104,10 @@ class LessonPlayerScreenshots {
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun book() = capture("book", fold = true)
 
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("small-book", fold = true)
+
     private val steps =
         listOf(
             hookGuessStep("hook"),

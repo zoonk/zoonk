@@ -62,6 +62,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LearnerSummaryBuddy
@@ -252,8 +253,9 @@ fun LessonCompletionView(
     val title = stringResource(if (completion.testedOut) R.string.player_already_knew else R.string.player_lesson_complete)
 
     if (completion.status == CompletionStatus.Ready) {
-        LessonEndPages(
+        ResultPages(
             withMoment = false,
+            columnModifier = Modifier.lessonColumnWidth(),
             done = {
                 Text(
                     stringResource(R.string.player_nothing_left_title),
@@ -271,8 +273,9 @@ fun LessonCompletionView(
         return
     }
 
-    LessonEndPages(
+    ResultPages(
         withMoment = completion.status == CompletionStatus.Saved,
+        columnModifier = Modifier.lessonColumnWidth(),
         done = {
             Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)

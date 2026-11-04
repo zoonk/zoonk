@@ -14,6 +14,10 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -86,7 +90,10 @@ private fun explanation(
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class ExplainScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -113,6 +120,14 @@ class ExplainScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = capture("tablet")
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("small-book", fold = true)
+
     private val written =
         explanation(
             outline = OUTLINE,
@@ -136,6 +151,7 @@ class ExplainScreenshots {
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        fold: Boolean = false,
     ) {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
@@ -189,6 +205,21 @@ class ExplainScreenshots {
         screens.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
+            // Each screen composes anew, and the publisher only tells what's listening when it publishes.
+            if (fold) {
+                folds.overrideWindowLayoutInfo(
+                    TestWindowLayoutInfo(
+                        listOf(
+                            FoldingFeature(
+                                compose.activity,
+                                state = FoldingFeature.State.FLAT,
+                                orientation = FoldingFeature.Orientation.VERTICAL,
+                            ),
+                        ),
+                    ),
+                )
+                compose.waitForIdle()
+            }
             write("explain-${screens[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
     }
