@@ -1,9 +1,12 @@
 import SwiftUI
 
-/// A `NavigationLink` row draws its own; a button row that opens somewhere draws this one.
+/// A `NavigationLink` row draws its own; a button row that opens somewhere draws this one, and a
+/// row that shows what's under it points it down while that is open.
 struct DisclosureChevron: View {
+  var pointsDown = false
+
   var body: some View {
-    Image(systemName: "chevron.forward")
+    Image(systemName: pointsDown ? "chevron.down" : "chevron.forward")
       .typeStyle(.note.weight(.semibold))
       .foregroundStyle(Color.mutedForeground.opacity(0.6))
       .accessibilityHidden(true)

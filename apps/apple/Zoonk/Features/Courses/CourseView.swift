@@ -164,7 +164,7 @@ private struct CourseHeroSection: View {
 
         if let promise {
           Text(promise)
-            .typeStyle(.section.weight(.regular))
+            .typeStyle(.lead)
             .foregroundStyle(.mutedForeground)
         }
 

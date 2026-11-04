@@ -205,7 +205,7 @@ private struct CourseLevelOutline: View {
     let isExpanded = $disclosures.isExpanded(key, otherwise: isOpen)
 
     Section {
-      DisclosureGroup(isExpanded: isExpanded) {
+      OutlineDisclosure(isExpanded: isExpanded) {
         OutlineChapterRows(
           chapters: band.chapters, course: course, learner: learner,
           disclosures: $disclosures, key: key,
@@ -252,6 +252,39 @@ private struct CourseLevelOutline: View {
         localized: "weeks \(first)–\(last)", table: "Courses",
         comment: "The weeks a level takes in a plan")
     return "\(count)\u{00A0}· \(span)"
+  }
+}
+
+/// A `DisclosureGroup` in a list indents what it opens, where main's outline keeps its chapters on
+/// the page margin; so the label row opens and closes the rows after it.
+private struct OutlineDisclosure<Label: View, Content: View>: View {
+  @Binding var isExpanded: Bool
+  @ViewBuilder let content: Content
+  @ViewBuilder let label: Label
+
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  var body: some View {
+    Button {
+      withAnimation(reduceMotion ? nil : .default) {
+        isExpanded.toggle()
+      }
+    } label: {
+      HStack(spacing: 12) {
+        label
+          .frame(maxWidth: .infinity, alignment: .leading)
+
+        DisclosureChevron(pointsDown: isExpanded)
+      }
+    }
+    .accessibilityValue(
+      isExpanded
+        ? Text("Expanded", tableName: "Courses", comment: "VoiceOver: a level's chapters are shown")
+        : Text("Collapsed", tableName: "Courses", comment: "VoiceOver: a level's chapters are hidden"))
+
+    if isExpanded {
+      content
+    }
   }
 }
 
@@ -358,7 +391,7 @@ private struct CourseAreaOutline: View {
         let areaChapters = chapters.filter { places[$0.id]?.area == name }
 
         Section {
-          DisclosureGroup(isExpanded: $disclosures.isExpanded("area:\(name)", otherwise: false)) {
+          OutlineDisclosure(isExpanded: $disclosures.isExpanded("area:\(name)", otherwise: false)) {
             areaRows(chapters: areaChapters, key: "area:\(name)")
           } label: {
             VStack(alignment: .leading, spacing: 2) {
