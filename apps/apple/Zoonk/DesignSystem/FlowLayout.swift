@@ -6,6 +6,8 @@ struct FlowLayout: Layout {
   /// How the items of a row line up: `.firstTextBaseline` keeps a sentence's pieces on one line
   /// when one of them wraps.
   var alignment: VerticalAlignment = .center
+  /// Where a row shorter than the width sits.
+  var rowAlignment: HorizontalAlignment = .leading
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
     let rows = arrange(subviews, width: proposal.width ?? .infinity)
@@ -20,7 +22,9 @@ struct FlowLayout: Layout {
     var y = bounds.minY
 
     for row in arrange(subviews, width: bounds.width) {
-      var x = bounds.minX
+      let room = bounds.width - row.width
+      var x =
+        bounds.minX + (rowAlignment == .trailing ? room : rowAlignment == .center ? room / 2 : 0)
 
       for item in row.items {
         subviews[item.index].place(
