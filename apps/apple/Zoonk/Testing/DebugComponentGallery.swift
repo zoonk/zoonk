@@ -153,7 +153,7 @@
           Button(String("Remove"), role: .destructive) {}.buttonStyle(.outline)
         }
 
-        HStack(spacing: 8) {
+        ButtonRow(spacing: 8) {
           Button(String("View")) {}.buttonStyle(.outline).controlSize(.small)
           Button(String("Save")) {}.buttonStyle(.mainAction).controlSize(.small)
           Button(String("Disabled")) {}.buttonStyle(.mainAction).controlSize(.small).disabled(true)
