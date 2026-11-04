@@ -43,7 +43,7 @@ function BuddyConversation({
 }) {
   const content = useBuddyTutor();
   const router = useRouter();
-  const appLinks = useTutorAppLinks(goalId);
+  const appLinks = useTutorAppLinks();
 
   const tutor = useTutorConfig({ appLinks, buddy: null, canAsk });
 

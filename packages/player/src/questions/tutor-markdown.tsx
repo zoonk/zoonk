@@ -12,9 +12,10 @@ import {
 } from "@zoonk/ui/components/alert-dialog";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { ExternalLinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ComponentProps, type MouseEvent, createContext, use } from "react";
+import { type ComponentProps, type MouseEvent, createContext, use, useMemo, useState } from "react";
 import {
   type Components,
   type ExtraProps,
@@ -84,10 +85,13 @@ const LESSON_QUESTION_LINK_SAFETY = {
   renderModal: renderExternalLinkConfirmation,
 } as const;
 
-/** Set `verified` only after the saved answer's links have been checked against their allowlist. */
+/**
+ * Set `verified` only after the saved answer's links have been checked against their allowlist.
+ * `openBlock` resolves to `closed` when nothing opened because the step isn't free to start anymore.
+ */
 export type TutorAnswerLinks = {
   Link: PlayerLinkComponent;
-  openBlock?: (blockId: string) => void;
+  openBlock?: (blockId: string) => Promise<"closed" | null>;
   verified: boolean;
 };
 
@@ -100,7 +104,9 @@ function isPlainClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
 
-const TutorAnswerLinksContext = createContext<TutorAnswerLinks | null>(null);
+const TutorAnswerLinksContext = createContext<
+  (TutorAnswerLinks & { setClosed: (closed: boolean) => void }) | null
+>(null);
 
 function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
   const links = use(TutorAnswerLinksContext);
@@ -109,16 +115,21 @@ function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
     return children;
   }
 
-  const { Link, openBlock } = links;
+  const { Link, openBlock, setClosed } = links;
   const blockId = readTutorBlockLink(href);
 
   const onClick =
     blockId && openBlock
-      ? (event: MouseEvent<HTMLAnchorElement>) => {
-          if (isPlainClick(event)) {
-            event.preventDefault();
-            openBlock(blockId);
+      ? async (event: MouseEvent<HTMLAnchorElement>) => {
+          if (!isPlainClick(event)) {
+            return;
           }
+
+          event.preventDefault();
+          setClosed(false);
+
+          const { data: opening } = await safeAsync(() => openBlock(blockId));
+          setClosed(opening === "closed");
         }
       : undefined;
 
@@ -151,10 +162,13 @@ export function TutorMarkdown({
   isAnimating: boolean;
   isStreaming: boolean;
 }) {
+  const t = useExtracted();
   const plugins = useMarkdownPlugins({ isStreaming, text: answer });
+  const [closed, setClosed] = useState(false);
+  const links = useMemo(() => (appLinks ? { ...appLinks, setClosed } : null), [appLinks]);
 
   return (
-    <TutorAnswerLinksContext value={appLinks ?? null}>
+    <TutorAnswerLinksContext value={links}>
       <Streamdown
         animated={isAnimating}
         className={TUTOR_MARKDOWN_CLASS}
@@ -170,6 +184,18 @@ export function TutorMarkdown({
       >
         {answer}
       </Streamdown>
+
+      <div role="status">
+        {closed && (
+          <p className="text-muted-foreground mt-2 text-sm">
+            {t({
+              description:
+                "Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since",
+              message: "This step isn't available anymore.",
+            })}
+          </p>
+        )}
+      </div>
     </TutorAnswerLinksContext>
   );
 }

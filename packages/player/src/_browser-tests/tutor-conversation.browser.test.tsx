@@ -66,7 +66,7 @@ function renderConversation({
   initialThread?: LessonQuestionThreadPage;
   onAnswered?: () => void;
   onAsked?: () => void;
-  openBlock?: (blockId: string) => void;
+  openBlock?: (blockId: string) => Promise<"closed" | null>;
 } = {}) {
   render(
     <TutorConversation
@@ -315,7 +315,7 @@ describe("the buddy's conversation", () => {
     const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
     const stream = tutorAnswerStream();
     api.next("answer", () => Promise.resolve(stream.response));
-    const openBlock = vi.fn();
+    const openBlock = vi.fn(() => Promise.resolve(null));
 
     renderConversation({ openBlock });
     await ask("Which lesson first?");
@@ -342,12 +342,44 @@ describe("the buddy's conversation", () => {
     expect(openBlock).toHaveBeenCalledExactlyOnceWith(BLOCK_ID);
   });
 
+  it("says so when an earlier answer's step isn't free to start anymore, until a tap opens one", async () => {
+    const api = stubTutorApi({});
+
+    const openBlock = vi.fn<(blockId: string) => Promise<"closed" | null>>(() =>
+      Promise.resolve("closed"),
+    );
+
+    api.questions = [
+      api.question({
+        answer: `Start with [Atoms](/session?block=${BLOCK_ID}).`,
+        question: "Which lesson first?",
+        status: "completed",
+      }),
+    ];
+
+    renderConversation({
+      initialThread: { hasMore: false, nextCursor: null, questions: api.questions },
+      openBlock,
+    });
+
+    const lesson = page.getByRole("link", { name: "Atoms" });
+    const status = page.getByRole("status").filter({ hasText: "isn't available" });
+
+    await lesson.click();
+    await expect.element(status).toHaveTextContent("This step isn't available anymore.");
+
+    openBlock.mockResolvedValueOnce(null);
+    await lesson.click();
+    await expect.element(status).not.toBeInTheDocument();
+    expect(openBlock).toHaveBeenCalledTimes(2);
+  });
+
   it("keeps every link as words in an answer whose saved text never came", async () => {
     const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
     const stream = tutorAnswerStream();
     api.next("answer", () => Promise.resolve(stream.response));
 
-    renderConversation({ openBlock: vi.fn() });
+    renderConversation({ openBlock: vi.fn(() => Promise.resolve(null)) });
     await ask("Where are my mistakes?");
 
     stream.write("Open [your mistakes notebook](/mistakes).");
