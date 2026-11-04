@@ -96,13 +96,20 @@ struct LessonVerdictView: View {
 
   @ViewBuilder
   private var correctAnswerLine: some View {
-    if !result.isCorrect, let correctAnswer = result.correctAnswer, step.kind != .typedAnswer {
+    if !result.isCorrect, let correctAnswer = result.correctAnswer,
+      !Self.marksItsAnswer.contains(step.kind)
+    {
       LabeledText(
         label: Text(
           "Correct answer", tableName: "Player", comment: "Before the right answer after a miss"),
         text: correctAnswer)
     }
   }
+
+  /// Steps whose options already mark the right one, and a typed answer, which shows its sample.
+  private static let marksItsAnswer: Set<LessonStepKind> = [
+    .typedAnswer, .hook, .check, .multipleChoice, .translation,
+  ]
 
   /// Main's activity feedback: after a missed choice, the picked option's reason, then the right
   /// option with its own.
