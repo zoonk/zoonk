@@ -12,10 +12,10 @@ struct MissionsSummary: View {
 
     if earned {
       if left.isEmpty {
-        HStack {
+        AccessibilityStack(spacing: 8) {
           Text("Missions done", tableName: "Today", comment: "Today's missions are done")
             .typeStyle(.body.weight(.medium))
-          Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
           BrainPowerReward(points: bonus, earned: true)
         }
       } else {
@@ -27,17 +27,15 @@ struct MissionsSummary: View {
       }
     } else {
       VStack(alignment: .leading, spacing: 12) {
-        HStack(spacing: 10) {
+        MarkedRow(alignment: .center, stackedSpacing: 8) {
           MissionsRing(done: missions.count - left.count, total: missions.count) {
             let buddy = learner.summary.value?.buddy ?? BuddyLook()
             BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
           }
-
+        } content: {
           remaining(left)
             .typeStyle(.body.monospaced())
-
-          Spacer()
-
+        } end: {
           BrainPowerReward(points: bonus, earned: false)
         }
 
