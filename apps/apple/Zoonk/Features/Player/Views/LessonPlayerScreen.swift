@@ -24,7 +24,8 @@ final class LessonPlayerDependencies {
     }
 
     let api = api
-    let lesson = cache.resource(audience: .viewer) { session in
+    // A language lesson leaves out the activities its goal's plan skips, so it follows the learner's goals.
+    let lesson = cache.resource(audience: .viewer, domains: [.goals]) { session in
       try await api.getLesson(id: id, token: session?.bearerToken)
     }
     lessons[id] = lesson
