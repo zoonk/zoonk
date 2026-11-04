@@ -109,7 +109,7 @@ private struct SessionContent: View {
         .lonePage()
       default:
         if let moment = playback.moment {
-          List {
+          ZoonkList {
             Section {
               MomentSummary(moment: moment, title: nil)
             }
@@ -124,7 +124,6 @@ private struct SessionContent: View {
             }
             .listRowBackground(Color.clear)
           }
-          .zoonkList()
         } else {
           ProgressView()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -217,27 +216,24 @@ private struct NextStopView: View {
       comment: "Opens a goal's first lesson, written while the learner guessed on its wait")
 
     return PaneSplit {
-      List {
+      ZoonkList {
         daySoFar
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         upNext
         warmUpCard(deckID)
         actions(isHeld: held != nil)
       }
-      .zoonkList()
       .warmUpDeck(deckID)
       .warmUpHoldBar(held, label: startLabel)
     } single: {
-      List {
+      ZoonkList {
         daySoFar
         upNext
         warmUpCard(deckID)
         actions(isHeld: held != nil)
       }
-      .zoonkList()
       .warmUpDeck(deckID)
       .warmUpHoldBar(held, label: startLabel)
     }

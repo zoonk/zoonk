@@ -7,7 +7,7 @@ struct PlanStandingSheet: View {
   let syllabus: GoalSyllabus?
 
   var body: some View {
-    List {
+    ZoonkList {
       if context.goal.kind == .exam,
         let preparation = store.standing(goalId: context.goal.id).value?.preparation
       {
@@ -72,7 +72,6 @@ struct PlanStandingSheet: View {
         }
       }
     }
-    .zoonkList()
     .navigationTitle(title)
     .toolbarTitleDisplayMode(.inline)
     .toolbar {
@@ -103,7 +102,7 @@ struct PlanPaceSheet: View {
       context.isPaused && ![.finished, .pastDate, .challengesLeft].contains(status.kind)
     let fix = resting ? nil : planPaceFix(plan, isExam: context.goal.kind == .exam)
 
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text(
@@ -161,7 +160,6 @@ struct PlanPaceSheet: View {
         }
       }
     }
-    .zoonkList()
     .navigationTitle(Text("Your pace", tableName: "Plan", comment: "Title of the pace sheet"))
     .toolbarTitleDisplayMode(.inline)
     .toolbar {

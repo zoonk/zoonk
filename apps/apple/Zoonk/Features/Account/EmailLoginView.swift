@@ -8,7 +8,7 @@ struct EmailLoginView: View {
   @State private var hasSentCode = false
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         TextField(
           text: $email,
@@ -106,7 +106,6 @@ struct EmailLoginView: View {
         }
       }
     }
-    .zoonkList()
     .navigationTitle(
       Text("Email sign-in", tableName: "Account", comment: "Email login navigation title")
     )

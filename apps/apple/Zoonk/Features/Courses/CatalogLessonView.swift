@@ -42,7 +42,7 @@ private struct CatalogLessonList: View {
   let value: CatalogLesson
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 12) {
           Text(lesson.chapter.courseTitle)
@@ -183,6 +183,5 @@ private struct CatalogLessonList: View {
           Text("In this course", tableName: "Courses", comment: "Header of a lesson's place"))
       }
     }
-    .zoonkList()
   }
 }

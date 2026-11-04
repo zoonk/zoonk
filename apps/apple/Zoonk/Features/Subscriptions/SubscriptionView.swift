@@ -476,7 +476,7 @@ struct PlusStatusView: View {
   }
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           HStack(spacing: 8) {
@@ -526,7 +526,6 @@ struct PlusStatusView: View {
         }
       }
     }
-    .zoonkList()
     .loads(settings.webPlus, refreshable: false)
     .refreshable {
       await reloadPlan()
@@ -656,7 +655,7 @@ private struct UnpaidPlusView: View {
   let web: WebPlus
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text("Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name")
@@ -672,7 +671,6 @@ private struct UnpaidPlusView: View {
 
       WebPlusSection(web: web, beside: false)
     }
-    .zoonkList()
     .navigationTitle(Text.zoonkPlus)
     .toolbarTitleDisplayMode(.inline)
   }

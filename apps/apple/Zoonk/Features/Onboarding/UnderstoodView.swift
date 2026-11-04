@@ -114,7 +114,7 @@ private struct UnderstoodCard: View {
   }
 
   var body: some View {
-    List {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Here's what I understood", tableName: "Onboarding",
@@ -200,7 +200,6 @@ private struct UnderstoodCard: View {
         }
       }
     }
-    .zoonkList()
   }
 
   private var startable: Range<Int> {
@@ -622,7 +621,7 @@ private struct ExplainOutcome: View {
   let onStart: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "lightbulb",
         title: Text(question),
@@ -649,7 +648,6 @@ private struct ExplainOutcome: View {
           onContinue: onStart)
       }
     }
-    .zoonkList()
   }
 }
 
@@ -667,7 +665,7 @@ private struct InstrumentOutcome: View {
   @State private var joinFailed = false
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "guitars",
         title: Text(
@@ -736,7 +734,6 @@ private struct InstrumentOutcome: View {
         }
       }
     }
-    .zoonkList()
   }
 
   private func join() async {
@@ -758,7 +755,7 @@ private struct DeclinedOutcome: View {
   let onRetry: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "hand.raised",
         title: Text(
@@ -776,7 +773,6 @@ private struct DeclinedOutcome: View {
           comment: "Goes back to write a different goal"),
         onContinue: onRetry)
     }
-    .zoonkList()
   }
 }
 
@@ -785,7 +781,7 @@ private struct UnclearOutcome: View {
   let onRetry: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "questionmark.bubble",
         title: Text(
@@ -802,6 +798,5 @@ private struct UnclearOutcome: View {
           comment: "Goes back to write the goal with more detail"),
         onContinue: onRetry)
     }
-    .zoonkList()
   }
 }

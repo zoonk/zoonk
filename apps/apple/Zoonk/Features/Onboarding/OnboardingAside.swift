@@ -46,7 +46,7 @@ private struct HowItWorks: View {
   @Environment(LearnerSummaryStore.self) private var learner
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         step(
           1,
@@ -79,7 +79,6 @@ private struct HowItWorks: View {
         }
       }
     }
-    .zoonkList()
   }
 
   private func step(_ number: Int, _ title: Text, isCurrent: Bool = false) -> some View {

@@ -53,21 +53,18 @@ private struct CourseLandingList: View {
 
   var body: some View {
     PaneSplit {
-      List {
+      ZoonkList {
         pitch
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         contents
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         pitch
         contents
       }
-      .zoonkList()
     }
   }
 

@@ -43,7 +43,7 @@ struct PlanBasesView: View {
     let open = bases.items.filter { !$0.studied }
     let changed = open.filter { choices[$0.skillId] != $0.choice }
 
-    List {
+    ZoonkList {
       Section {
         Picker(
           selection: Binding(
@@ -196,7 +196,6 @@ struct PlanBasesView: View {
         }
       }
     }
-    .zoonkList()
     .navigationTitle(
       Text("Prerequisites", tableName: "Plan", comment: "Title of the prerequisites")
     )

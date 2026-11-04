@@ -9,7 +9,7 @@ struct BuddyDayView: View {
   var showsTitle = false
 
   var body: some View {
-    List {
+    ZoonkList {
       if showsTitle {
         VStack(alignment: .leading, spacing: 2) {
           title
@@ -85,7 +85,6 @@ struct BuddyDayView: View {
       }
       .foregroundStyle(.primary)
     }
-    .zoonkList()
   }
 
   var title: Text {

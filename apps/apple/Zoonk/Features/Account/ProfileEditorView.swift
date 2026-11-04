@@ -24,7 +24,7 @@ struct ProfileEditorView: View {
   }
 
   var body: some View {
-    List {
+    ZoonkList {
       if isRequiredSetup {
         StepHeader(
           title: setupTitle,
@@ -180,7 +180,6 @@ struct ProfileEditorView: View {
         }
       }
     }
-    .zoonkList()
     .disabled(session.isWorking)
     .navigationTitle(
       isRequiredSetup

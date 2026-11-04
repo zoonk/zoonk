@@ -16,24 +16,21 @@ struct SearchScreen: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         groupSections(leadingGroups)
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         groupSections(trailingGroups)
         catalogSection
         groupSections(trailingFallback)
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         groupSections(groups)
         catalogSection
         groupSections(fallback.map { [$0] } ?? [])
       }
-      .zoonkList()
     }
     .navigationTitle(Text(AppTab.search.title))
     // On a phone the tab bar doesn't turn the search tab into a field, so it stays under the

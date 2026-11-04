@@ -99,7 +99,7 @@ struct AccountDeletionView: View {
   }
 
   private var deletionForm: some View {
-    List {
+    ZoonkList {
       Section {
         Label {
           Text(
@@ -168,7 +168,6 @@ struct AccountDeletionView: View {
         }
       }
     }
-    .zoonkList()
   }
 
   @ViewBuilder

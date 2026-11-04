@@ -5,7 +5,7 @@ struct EarlierQuestionsScreen: View {
   @Environment(BuddyStore.self) private var store
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         switch store.earlierQuestions.state {
         case .idle, .loading:
@@ -60,7 +60,6 @@ struct EarlierQuestionsScreen: View {
           ))
       }
     }
-    .zoonkList()
     .navigationTitle(
       Text("Earlier questions", tableName: "Buddy", comment: "Title of the earlier questions page")
     )

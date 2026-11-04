@@ -98,10 +98,9 @@ private struct PlanPathSheet: View {
     rows.show = { outline = $0 }
 
     return NavigationStack {
-      List {
+      ZoonkList {
         PlanPathRows(context: rows, brief: true)
       }
-      .zoonkList()
       .navigationTitle(
         Text("Your path", tableName: "Plan", comment: "Title of the plan's phases")
       )

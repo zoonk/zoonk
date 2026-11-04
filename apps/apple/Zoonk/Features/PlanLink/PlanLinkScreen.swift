@@ -85,7 +85,7 @@ struct PlanLinkScreen: View {
   private func plan(_ link: Components.Schemas.PlanLink) -> some View {
     let outline = link.outline
 
-    return List {
+    return ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text(
@@ -185,7 +185,6 @@ struct PlanLinkScreen: View {
         }
       }
     }
-    .zoonkList()
   }
 
   private func start() {

@@ -47,10 +47,9 @@ private struct ReviewList<Content: View>: View {
     let top = shown.contains(reviewHeader) ? nil : review.first { shown.contains($0.id) }?.id
 
     ScrollViewReader { proxy in
-      List {
+      ZoonkList {
         content
       }
-      .zoonkList()
       .environment(\.reviewRows, rows)
       // At its first size, and again as unfolding resizes it, which scrolls it away.
       .onGeometryChange(for: CGSize.self) {
@@ -85,14 +84,13 @@ struct MockResultView: View {
     let diagnosisAfterFold = isAtHinge && view.review.isEmpty
 
     PaneSplit {
-      List {
+      ZoonkList {
         scoreSections
         if !diagnosisAfterFold {
           diagnosisSections
         }
         partSections
       }
-      .zoonkList()
     } secondary: {
       ReviewList(review: view.review, place: $choices.reviewPlace) {
         if diagnosisAfterFold {

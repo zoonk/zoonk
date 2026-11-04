@@ -77,25 +77,22 @@ private struct ExamList: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         moment
         ExamProgressSection(exam: exam)
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         ExamMocksSection(exam: exam, options: options)
         about
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         moment
         ExamMocksSection(exam: exam, options: options)
         ExamProgressSection(exam: exam)
         about
       }
-      .zoonkList()
     }
     .onDisappear {
       callStart.cancel()

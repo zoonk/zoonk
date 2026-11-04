@@ -166,27 +166,24 @@ private struct MockChooser: View {
 
   var body: some View {
     PaneSplit {
-      List {
+      ZoonkList {
         intro
         choices(notesUnder: false)
         plusSection
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         pickedSections
         lastMockSection
       }
-      .zoonkList()
       .safeAreaBar(edge: .bottom) { startBar }
     } single: {
-      List {
+      ZoonkList {
         intro
         choices(notesUnder: true)
         plusSection
         lastMockSection
       }
-      .zoonkList()
       .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
     }
   }

@@ -73,7 +73,7 @@ private struct ExplanationView: View {
   }
 
   private var content: some View {
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text(
@@ -156,7 +156,6 @@ private struct ExplanationView: View {
         }
       }
     }
-    .zoonkList()
   }
 
   @ViewBuilder

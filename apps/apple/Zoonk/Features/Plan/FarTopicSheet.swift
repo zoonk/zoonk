@@ -22,10 +22,9 @@ struct FarTopicSheet: View {
     let outline = store.outline(goalId: goal.id, skillId: skillId)
 
     NavigationStack {
-      List {
+      ZoonkList {
         content(outline)
       }
-      .zoonkList()
       .navigationTitle(Text(title))
       .toolbarTitleDisplayMode(.inline)
       .toolbar {

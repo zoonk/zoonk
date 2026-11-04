@@ -36,7 +36,7 @@ struct AdjustPlanSheet: View {
   var body: some View {
     NavigationStack {
       ScrollViewReader { proxy in
-        List {
+        ZoonkList {
           PlanEditorLatestSection(editor: editor, plan: plan)
 
           PlanDateSection(
@@ -59,7 +59,6 @@ struct AdjustPlanSheet: View {
 
           AdjustPlanSections(editor: editor, goal: goal, plan: plan)
         }
-        .zoonkList()
         .disabled(editor.isSaving)
         .onAppear {
           if section == .everything {

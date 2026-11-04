@@ -317,7 +317,7 @@ private struct SettingsHubView: View {
   let sendFeedback: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       if !isGuest {
         Section {
           AccountSectionLink(destination: .profile, sectionOpen: sectionOpen) {
@@ -411,7 +411,6 @@ private struct SettingsHubView: View {
         }
       }
     }
-    .zoonkList()
     .loads(settings.preferences, settings.memory, refreshable: false)
   }
 

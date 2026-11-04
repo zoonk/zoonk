@@ -8,7 +8,7 @@ struct PreferencesView: View {
   @State private var isEditingBuddy = false
 
   var body: some View {
-    List {
+    ZoonkList {
       if let preferences = settings.preferences.value {
         Section {
           IconLabeledContent {
@@ -119,7 +119,6 @@ struct PreferencesView: View {
         SettingsSaveError()
       }
     }
-    .zoonkList()
     .navigationTitle(
       Text("Preferences", tableName: "Account", comment: "Title of the Preferences page")
     )

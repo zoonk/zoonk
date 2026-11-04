@@ -562,7 +562,7 @@ private struct PlanToolChoiceSheet: View {
 
   var body: some View {
     NavigationStack {
-      List {
+      ZoonkList {
         if isWriting {
           WritingWait(
             title: Text(
@@ -583,7 +583,6 @@ private struct PlanToolChoiceSheet: View {
           }
         }
       }
-      .zoonkList()
       .navigationTitle(
         Text("How will you use it?", tableName: "Plan", comment: "Title of the tool choice")
       )

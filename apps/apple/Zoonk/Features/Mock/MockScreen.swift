@@ -350,7 +350,7 @@ private struct MockBreakView: View {
   let until: Date
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 8) {
           Text(timerInterval: Date.now...max(until, .now), countsDown: true)
@@ -383,7 +383,6 @@ private struct MockBreakView: View {
         }
       }
     }
-    .zoonkList()
     .navigationTitle(Text("Break", tableName: "Mock", comment: "A break between mock sections"))
     .task(id: until) {
       // When the break ends, the server already started the next section: this shows it.
@@ -422,7 +421,7 @@ private struct MockSpeakingView: View {
   }
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         if let speaking = view.speaking {
           ForEach(Array(speaking.tasks.enumerated()), id: \.element.id) { index, task in
@@ -459,7 +458,6 @@ private struct MockSpeakingView: View {
         }
       }
     }
-    .zoonkList()
     .navigationTitle(MockLabels.title(number: view.number))
     .toolbar {
       ToolbarItem(placement: .principal) { MockClock(deadline: current.deadline) }

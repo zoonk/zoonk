@@ -353,7 +353,7 @@ private struct LevelTestIntro: View {
   @Environment(\.openURL) private var openURL
 
   var body: some View {
-    List {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Let's see your level in \(Locale.current.languageName(targetLanguage))",
@@ -405,7 +405,6 @@ private struct LevelTestIntro: View {
         }
       }
     }
-    .zoonkList()
     .onboardingColumn()
     .environment(\.isSavingAnswer, isStarting)
   }
@@ -626,7 +625,7 @@ private struct LevelTestDone: View {
   let onContinue: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Your level today", tableName: "Onboarding", comment: "Title after the level test"),
@@ -668,7 +667,6 @@ private struct LevelTestDone: View {
         ),
         onContinue: onContinue)
     }
-    .zoonkList()
     .onboardingColumn()
   }
 

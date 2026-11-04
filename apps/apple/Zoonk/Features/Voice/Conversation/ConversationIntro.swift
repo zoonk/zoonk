@@ -64,22 +64,19 @@ struct ConversationIntro<Footer: View>: View {
 
   var body: some View {
     PaneSplit(isSpread: true) {
-      List {
+      ZoonkList {
         situation
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         task
       }
-      .zoonkList()
       .safeAreaBar(edge: .bottom) { startBar }
     } single: {
-      List {
+      ZoonkList {
         situation
         task
       }
-      .zoonkList()
       .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
     }
   }

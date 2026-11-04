@@ -153,23 +153,21 @@ private struct PlanContent: View {
       show: { sheet = $0 })
 
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         header
         PlanRoadmapSection(context: context, structure: structure)
         structureSections(context: context, structure: structure)
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         PlanNumbersSection(context: context, syllabus: syllabus)
         PlanSuggestionSection(context: context)
         NextOnPathSection(context: context)
         PlanMoreSection(goal: goal)
         PlanSettingsSection(context: context)
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         header
         PlanRoadmapSection(context: context, structure: structure)
         PlanNumbersSection(context: context, syllabus: syllabus)
@@ -179,7 +177,6 @@ private struct PlanContent: View {
         PlanMoreSection(goal: goal)
         PlanSettingsSection(context: context)
       }
-      .zoonkList()
     }
     .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     .modifier(PlanToolbar(context: context))

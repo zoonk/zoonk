@@ -89,23 +89,20 @@ private struct SpeakingPaperView: View {
 
   private func list(_ paper: Components.Schemas.SpeakingPaper) -> some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         exam(paper)
         access(paper)
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         tasks(paper)
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         exam(paper)
         access(paper)
         tasks(paper)
       }
-      .zoonkList()
     }
   }
 

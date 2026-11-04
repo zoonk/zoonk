@@ -198,21 +198,18 @@ private struct LanguageUnitContent: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         unitAndLessons
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         practice
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         unitAndLessons
         practice
       }
-      .zoonkList()
     }
     .onDisappear {
       callStart.cancel()

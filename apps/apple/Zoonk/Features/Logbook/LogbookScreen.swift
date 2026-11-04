@@ -161,12 +161,11 @@ private struct LogbookSteps: View {
     let steps = recap.steps
 
     PaneSplit {
-      List {
+      ZoonkList {
         page(.week)
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         ForEach(steps.filter { $0 != .week }, id: \.self) { step in
           page(step)
         }
@@ -178,14 +177,12 @@ private struct LogbookSteps: View {
         .listRowBackground(Color.clear)
         .listRowInsets(.vertical, 0)
       }
-      .zoonkList()
     } single: {
       TabView(selection: $current) {
         ForEach(steps, id: \.self) { step in
-          List {
+          ZoonkList {
             page(step)
           }
-          .zoonkList()
           .tag(step)
         }
       }

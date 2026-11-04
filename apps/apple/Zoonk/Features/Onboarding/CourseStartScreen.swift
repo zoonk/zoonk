@@ -42,7 +42,7 @@ struct CourseStartScreen: View {
   private var form: some View {
     let course = catalog.course(id: courseId)
 
-    return List {
+    return ZoonkList {
       if let chapterId {
         StepHeader(
           subject: course.value?.course.title,
@@ -88,7 +88,6 @@ struct CourseStartScreen: View {
           onContinue: start)
       }
     }
-    .zoonkList()
     .loads(course, refreshable: false)
     .onDisappear {
       startTask?.cancel()

@@ -12,7 +12,7 @@ struct PlanBuildingView: View {
   let onReady: () async -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         ForEach(run.phases) { phase in
           Label {
@@ -75,7 +75,6 @@ struct PlanBuildingView: View {
         }
       }
     }
-    .zoonkList()
     .task(id: run.generationId ?? goal.id) {
       await follow()
     }

@@ -6,7 +6,7 @@ struct MemoryView: View {
   @State private var statement = ""
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         Text(
           "What Zoonk remembers to give you examples and plans that fit your life.",
@@ -103,7 +103,6 @@ struct MemoryView: View {
         }
       }
     }
-    .zoonkList()
     .navigationTitle(Text("Memory", tableName: "Settings", comment: "Title of the Memory page"))
     .overlay {
       SettingsLoadingState(state: settings.memory.state) {

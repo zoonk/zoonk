@@ -420,22 +420,19 @@ private struct PronunciationResultView: View {
       .lonePage()
     } else {
       PaneSplit {
-        List {
+        ZoonkList {
           summary
         }
-        .zoonkList()
       } secondary: {
-        List {
+        ZoonkList {
           dayMoment
         }
-        .zoonkList()
         .safeAreaBar(edge: .bottom) { doneButton }
       } single: {
-        List {
+        ZoonkList {
           summary
           dayMoment
         }
-        .zoonkList()
         .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
       }
       .milestoneCeremony(day?.ceremony)

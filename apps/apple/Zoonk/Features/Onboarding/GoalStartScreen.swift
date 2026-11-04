@@ -141,7 +141,7 @@ private struct GoalStartFlow: View {
       }
     } else {
       NavigationStack(path: $path) {
-        List {
+        ZoonkList {
           StepHeader(
             title: Text(
               "What do you want to achieve?", tableName: "Onboarding",
@@ -158,7 +158,6 @@ private struct GoalStartFlow: View {
               GoalMaterialSections(material: $material, intent: $intent)
             })
         }
-        .zoonkList()
         .onboardingColumn()
         .closesTask()
         .barName(title)
@@ -206,12 +205,11 @@ private struct GoalStartFlow: View {
   private var draftPage: some View {
     switch draft {
     case .opening(let id):
-      List {
+      ZoonkList {
         ProgressView()
           .frame(maxWidth: .infinity)
           .listRowBackground(Color.clear)
       }
-      .zoonkList()
       .task(id: id) {
         await open(id)
       }
@@ -325,7 +323,7 @@ private struct DraftView: View {
 
   /// Starting it again is new work, so it waits for the learner's tap.
   private var failed: some View {
-    List {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Understanding your goal", tableName: "Onboarding",
@@ -342,7 +340,6 @@ private struct DraftView: View {
         GoalErrorSection(error: retryError)
       }
     }
-    .zoonkList()
   }
 
   private func retry() async {

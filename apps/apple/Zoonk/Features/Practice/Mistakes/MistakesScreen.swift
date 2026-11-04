@@ -20,17 +20,16 @@ struct MistakesScreen: View {
     // The list to fix keeps its rows, and what's open in them, as the fixed list comes and goes.
     // Side by side, the two need no picker between them.
     PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
-      List {
+      ZoonkList {
         listTitle(fixed: true, counts: fixed.value?.counts)
         MistakeListSections(resource: fixed, goalId: goalId, fixed: true)
       }
-      .zoonkList()
       .loads(fixed)
     } content: { isBeside in
       let showsFixedHere = showsFixed && !isBeside
       let shown = showsFixedHere ? fixed : open
 
-      List {
+      ZoonkList {
         if isBeside {
           listTitle(fixed: false, counts: open.value?.counts)
         }
@@ -47,7 +46,6 @@ struct MistakesScreen: View {
 
         MistakeListSections(resource: shown, goalId: goalId, fixed: showsFixedHere)
       }
-      .zoonkList()
       .readableColumn(isBeside ? .infinity : PracticeLayout.readableWidth, alignment: .leading)
       .loads(shown)
     }

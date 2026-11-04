@@ -53,25 +53,22 @@ private struct ChapterLandingList: View {
   var body: some View {
     // As on main's wide page: the lessons under the chapter, what it teaches beside them.
     PaneSplit {
-      List {
+      ZoonkList {
         header
         lessons
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         strip
         learnAndStart
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         header
         strip
         lessons
         learnAndStart
       }
-      .zoonkList()
     }
   }
 

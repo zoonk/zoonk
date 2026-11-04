@@ -96,25 +96,22 @@ private struct SubjectContent: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         header
         chaptersSection
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         numbers
         topics
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         header
         numbers
         topics
         chaptersSection
       }
-      .zoonkList()
     }
   }
 

@@ -82,16 +82,14 @@ private struct TodayStartGoal: View {
   var body: some View {
     // The box keeps what's typed or pasted in it, and an open editor, as the examples come and go.
     PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
-      List {
+      ZoonkList {
         GoalStartEntry(part: .examples, goal: $goal)
       }
-      .zoonkList()
     } content: { isBeside in
-      List {
+      ZoonkList {
         resume
         GoalStartEntry(part: isBeside ? .form : .whole, goal: $goal)
       }
-      .zoonkList()
     }
     .loads(onboarding.resume, refreshable: false)
     .navigationSubtitle(Text(Date.now, format: .dateTime.weekday(.abbreviated).month().day()))
@@ -153,10 +151,9 @@ private struct TodaySuggestedGoal: View {
   let suggestion: SuggestedGoal
 
   var body: some View {
-    List {
+    ZoonkList {
       SuggestedGoalSection(suggestion: suggestion)
     }
-    .zoonkList()
     .navigationSubtitle(
       Text("Welcome back", tableName: "Today", comment: "Greets a learner back with no goal"))
   }

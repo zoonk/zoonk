@@ -10,7 +10,7 @@ struct AllCoursesView: View {
   @Binding var category: CourseCategory?
 
   var body: some View {
-    List {
+    ZoonkList {
       // In the page, not the bar's subtitle: that has one line, which cuts this sentence on iPhone.
       Section {
         Text(
@@ -39,7 +39,6 @@ struct AllCoursesView: View {
 
       CatalogCourses(category: category, isAtHinge: leadingPageMargin != nil)
     }
-    .zoonkList()
     // Section margins count from the list's whole bounds, which run under the vertical bar.
     .onGeometryChange(for: CGFloat?.self) { proxy in
       PaneSpace(proxy).hinge.map {

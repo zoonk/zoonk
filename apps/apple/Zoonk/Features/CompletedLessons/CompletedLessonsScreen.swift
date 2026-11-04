@@ -27,7 +27,7 @@ struct CompletedLessonsScreen: View {
   private func content(_ lessons: Resource<CompletedLessonsPage>, goalId: String) -> some View {
     switch lessons.state {
     case .loaded(let page):
-      List {
+      ZoonkList {
         ForEach(days(page.lessons)) { day in
           Section {
             ForEach(day.lessons) { lesson in
@@ -52,7 +52,6 @@ struct CompletedLessonsScreen: View {
           }
         }
       }
-      .zoonkList()
       .lonePage()
     case .empty:
       ContentUnavailableView {

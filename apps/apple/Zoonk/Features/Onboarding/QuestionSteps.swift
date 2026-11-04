@@ -74,7 +74,7 @@ struct QuestionForm<Content: View>: View {
   @ViewBuilder let content: Content
 
   var body: some View {
-    List {
+    ZoonkList {
       content
 
       if failed {
@@ -87,7 +87,6 @@ struct QuestionForm<Content: View>: View {
         }
       }
     }
-    .zoonkList()
     .disabled(isSaving)
     .environment(\.isSavingAnswer, isSaving)
   }

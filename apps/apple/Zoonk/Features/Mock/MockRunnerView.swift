@@ -534,7 +534,7 @@ private struct MockAnswerSheet: View {
   }
 
   private var sheet: some View {
-    List {
+    ZoonkList {
       if isBeside {
         Text("Answer sheet", tableName: "Mock", comment: "The answer sheet")
           .font(.headline)
@@ -580,7 +580,6 @@ private struct MockAnswerSheet: View {
         }
       }
     }
-    .zoonkList()
     .safeAreaBar(edge: .bottom) {
       Button(action: onHandIn) {
         Text("Hand in", tableName: "Mock", comment: "Hands in from the answer sheet")

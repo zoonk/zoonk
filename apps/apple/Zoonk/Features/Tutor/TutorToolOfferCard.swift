@@ -87,7 +87,7 @@ struct TutorToolOfferCard: View {
         let conversation: LanguageUnit.Conversation = try? PracticeJSON.recode(call.call)
       {
         NavigationStack {
-          List {
+          ZoonkList {
             PracticeCallSection(
               conversation: conversation, chapterId: call.chapterId, goalId: call.goalId,
               minutes: $callMinutes, start: callStart
@@ -96,7 +96,6 @@ struct TutorToolOfferCard: View {
               isCallOpen = false
             }
           }
-          .zoonkList()
           .navigationTitle(Text(call.unitTitle))
           .navigationBarTitleDisplayMode(.inline)
           .toolbar {

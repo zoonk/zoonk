@@ -170,7 +170,7 @@ struct PlacementStep: View {
   }
 
   private func mockRunning(_ mockID: String) -> some View {
-    List {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Your mock exam is waiting", tableName: "Onboarding",
@@ -191,7 +191,6 @@ struct PlacementStep: View {
         onContinue: { router.open(.mock(blockId: mockID)) },
         onSkip: { stopMock(mockID) })
     }
-    .zoonkList()
     .onboardingColumn()
   }
 
@@ -217,7 +216,7 @@ struct PlacementStep: View {
   }
 
   private var intro: some View {
-    List {
+    ZoonkList {
       StepHeader(
         subject: subject,
         title: Text(
@@ -249,7 +248,6 @@ struct PlacementStep: View {
         finish(fromScratch: true)
       }
     }
-    .zoonkList()
     .onboardingColumn()
     .disabled(isSaving || isStarting)
     .environment(\.isSavingAnswer, isStarting)
@@ -260,7 +258,7 @@ struct PlacementStep: View {
     comment: "Title of placement's wait once its questions are ready, for a learner still guessing")
 
   private func waiting(holding: WarmUpHolding?) -> some View {
-    List {
+    ZoonkList {
       if holding == nil {
         StepHeader(
           title: Text(
@@ -319,7 +317,6 @@ struct PlacementStep: View {
         }
       }
     }
-    .zoonkList()
     .warmUpDeck(warmUpID)
     .warmUpHoldBar(
       holding,
@@ -333,7 +330,7 @@ struct PlacementStep: View {
   }
 
   private func outcome(title: Text, description: Text) -> some View {
-    List {
+    ZoonkList {
       StepHeader(title: title, description: description)
 
       saveFailure
@@ -345,7 +342,6 @@ struct PlacementStep: View {
         finish(fromScratch: false)
       }
     }
-    .zoonkList()
     .onboardingColumn()
     .disabled(isSaving)
   }

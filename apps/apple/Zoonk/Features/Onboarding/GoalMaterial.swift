@@ -398,7 +398,7 @@ struct MaterialQuestionsView: View {
   private static let maxLength = 500
 
   var body: some View {
-    List {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Ask about your material", tableName: "Onboarding",
@@ -443,7 +443,6 @@ struct MaterialQuestionsView: View {
         .foregroundStyle(.mutedForeground)
       }
     }
-    .zoonkList()
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(

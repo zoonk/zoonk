@@ -381,7 +381,7 @@ struct NoticeReadingView: View {
   @State private var warmUpID: String?
 
   var body: some View {
-    List {
+    ZoonkList {
       StepHeader(title: title, description: description)
 
       Section {
@@ -414,7 +414,6 @@ struct NoticeReadingView: View {
         WarmUpSection(deckID: warmUpID)
       }
     }
-    .zoonkList()
     .warmUpDeck(warmUpID)
     .warmUpHoldBar(holding, label: next.holdLabel)
     .task(id: generationID) {
@@ -494,21 +493,18 @@ private struct PlanReveal: View {
     let structure = syllabus.value.flatMap { $0.hasSubjectPages ? $0 : nil }
 
     PaneSplit {
-      List {
+      ZoonkList {
         heroSections(goal: goal)
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         detailSections(context: context, syllabus: syllabus.value, structure: structure)
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         heroSections(goal: goal)
         detailSections(context: context, syllabus: syllabus.value, structure: structure)
       }
-      .zoonkList()
       .onboardingColumn()
     }
     .loads(syllabus, refreshable: false)
@@ -900,7 +896,7 @@ private struct SyllabusTopicsSheet: View {
 
   var body: some View {
     NavigationStack {
-      List {
+      ZoonkList {
         ForEach(syllabus.subjects) { subject in
           if subject.topics.isEmpty {
             label(subject)
@@ -916,7 +912,6 @@ private struct SyllabusTopicsSheet: View {
           }
         }
       }
-      .zoonkList()
       .navigationTitle(
         Text("What you'll study", tableName: "Onboarding", comment: "Title of the topics sheet")
       )

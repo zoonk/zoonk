@@ -87,46 +87,40 @@ private struct EssayContent: View {
     Group {
       if writer.isWriting {
         PaneSplit(isSpread: true) {
-          List {
+          ZoonkList {
             promptSections
           }
-          .zoonkList()
         } secondary: {
-          List {
+          ZoonkList {
             writeSections
           }
-          .zoonkList()
           .safeAreaBar(edge: .bottom) { actionBar }
         } single: {
-          List {
+          ZoonkList {
             promptSections
             writeSections
           }
-          .zoonkList()
           .safeAreaBar(edge: .bottom) { actionBar }
         }
       } else if let grade = essay.drafts.first?.grade {
         PaneSplit {
-          List {
+          ZoonkList {
             EssayGradeSections(grade: grade, isClosed: writer.isClosed)
           }
-          .zoonkList()
         } secondary: {
-          List {
+          ZoonkList {
             EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
-          .zoonkList()
           .safeAreaBar(edge: .bottom) { actionBar }
         } single: {
-          List {
+          ZoonkList {
             EssayGradeSections(grade: grade, isClosed: writer.isClosed)
             EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
-          .zoonkList()
           .safeAreaBar(edge: .bottom) { actionBar }
         }
       } else {
-        List {
+        ZoonkList {
           Section {
             ItemText(essay.question)
               .font(.headline)
@@ -139,7 +133,6 @@ private struct EssayContent: View {
             }
           }
         }
-        .zoonkList()
         .safeAreaBar(edge: .bottom) { actionBar }
       }
     }

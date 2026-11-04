@@ -20,7 +20,7 @@ struct ConversationResultView: View {
   let onStartedAgain: (String) -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       if let result = conversation.result {
         header(result)
 
@@ -47,7 +47,6 @@ struct ConversationResultView: View {
         DayMomentSections(result: day)
       }
     }
-    .zoonkList()
     .milestoneCeremony(day?.ceremony)
     .onDisappear { again?.cancel() }
     .safeAreaBar(edge: .bottom) {

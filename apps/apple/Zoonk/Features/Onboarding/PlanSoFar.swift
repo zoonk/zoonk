@@ -5,7 +5,7 @@ struct PlanSoFar: View {
   let facts: [PlanFact]
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         ForEach(facts) { fact in
           VStack(alignment: .leading, spacing: 2) {
@@ -38,7 +38,6 @@ struct PlanSoFar: View {
             comment: "Heading over what the learner's answers have set for their plan"))
       }
     }
-    .zoonkList()
   }
 }
 

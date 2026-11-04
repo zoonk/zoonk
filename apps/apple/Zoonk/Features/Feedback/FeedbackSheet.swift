@@ -158,7 +158,7 @@ private struct FeedbackForm: View {
   }
 
   private var form: some View {
-    List {
+    ZoonkList {
       if !isReport {
         Section {
           Text(
@@ -250,7 +250,6 @@ private struct FeedbackForm: View {
         }
       }
     }
-    .zoonkList()
     .disabled(store.state == .submitting)
     .onChange(of: store.email) { _, _ in
       store.clearFailure()

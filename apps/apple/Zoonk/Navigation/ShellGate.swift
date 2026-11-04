@@ -141,12 +141,11 @@ struct ShellGate<Content: View>: View {
   /// what's typed in it as they come and go.
   private var goalBox: some View {
     PaneBeside(atHingeOnly: true, paneEdge: .trailing, primaryShare: 0.55) {
-      List {
+      ZoonkList {
         GoalStartEntry(part: .examples, goal: $goal)
       }
-      .zoonkList()
     } content: { _ in
-      List {
+      ZoonkList {
         Section {
           Text(
             "Tell us what you want to learn, and we'll plan every day until you get there.",
@@ -159,7 +158,6 @@ struct ShellGate<Content: View>: View {
 
         GoalStartEntry(part: .box, goal: $goal)
       }
-      .zoonkList()
     }
   }
 }

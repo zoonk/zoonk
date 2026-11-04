@@ -110,7 +110,7 @@ private struct MindMapOutlineView: View {
   let outline: ChapterMindMap.Outline
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         Text(outline.centralIdea)
           .font(.headline)
@@ -141,7 +141,6 @@ private struct MindMapOutlineView: View {
         }
       }
     }
-    .zoonkList()
   }
 }
 

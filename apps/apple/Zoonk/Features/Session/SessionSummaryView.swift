@@ -53,22 +53,19 @@ struct SessionSummaryView: View {
 
     return SummaryVisit(visit: visit) {
       PaneSplit {
-        List {
+        ZoonkList {
           dayResult(summary)
         }
-        .zoonkList()
         .celebratesOnce(id: visit)
       } secondary: {
-        List {
+        ZoonkList {
           onward(summary)
         }
-        .zoonkList()
       } single: {
-        List {
+        ZoonkList {
           dayResult(summary)
           onward(summary)
         }
-        .zoonkList()
         .celebratesOnce(id: visit)
       }
     }

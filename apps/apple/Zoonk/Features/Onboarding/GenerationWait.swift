@@ -237,7 +237,7 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
     let runID = followedID ?? generationID
     let deckID = self.deckID
 
-    List {
+    ZoonkList {
       StepHeader(title: Text(title), description: Text(shownDescription))
 
       leading()
@@ -283,7 +283,6 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
         WarmUpSection(deckID: deckID)
       }
     }
-    .zoonkList()
     .warmUpDeck(deckID)
     .task(id: Following(id: runID, connection: connection)) {
       failure = nil

@@ -30,7 +30,7 @@
 
     var body: some View {
       ScrollViewReader { proxy in
-        List {
+        ZoonkList {
           PageHeader(
             Text(verbatim: "Design system"), eyebrow: Text(verbatim: "Tue, Nov 3 · Debug"),
             supporting: Text(verbatim: "Every role and shared piece, as main's /design.")
@@ -50,7 +50,6 @@
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
         }
-        .zoonkList()
         .navigationTitle(Text(verbatim: "Design system"))
         .barTitleAfterHero("Design system")
         .onAppear {

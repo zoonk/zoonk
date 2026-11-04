@@ -112,25 +112,22 @@ private struct ChapterContent: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         header
         lessonsSection
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         practiceSection
         referenceSection
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         header
         lessonsSection
         practiceSection
         referenceSection
       }
-      .zoonkList()
     }
     .onDisappear {
       practiceTask?.cancel()

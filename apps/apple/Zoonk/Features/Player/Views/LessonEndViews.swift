@@ -449,10 +449,11 @@ struct LessonSummarySheet: View {
 
   var body: some View {
     NavigationStack {
-      List(Array(ideas.enumerated()), id: \.offset) { _, idea in
-        LessonRichText(idea)
+      ZoonkList {
+        ForEach(Array(ideas.enumerated()), id: \.offset) { _, idea in
+          LessonRichText(idea)
+        }
       }
-      .zoonkList()
       .navigationTitle(
         Text("Lesson summary", tableName: "Player", comment: "Opens the lesson's summary card")
       )
@@ -527,7 +528,7 @@ struct LessonWaitingView: View {
 
   var body: some View {
     if let warmUpID {
-      List {
+      ZoonkList {
         Section {
           unavailable
         }
@@ -535,7 +536,6 @@ struct LessonWaitingView: View {
 
         WarmUpSection(deckID: warmUpID)
       }
-      .zoonkList()
       .warmUpDeck(warmUpID)
       .warmUpHoldBar(
         holding,

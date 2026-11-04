@@ -20,7 +20,7 @@ struct BuddyEditor: View {
 
   var body: some View {
     NavigationStack {
-      List {
+      ZoonkList {
         BuddyPickerSections(kind: $choice.kind, name: $name, glasses: choice.glasses)
 
         Section {
@@ -31,7 +31,6 @@ struct BuddyEditor: View {
           SectionTitle(Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses"))
         }
       }
-      .zoonkList()
       .navigationTitle(
         Text("Your buddy", tableName: "Buddy", comment: "Title of the buddy editor")
       )
@@ -152,7 +151,7 @@ struct BuddyGlassesPicker: View {
 
   var body: some View {
     NavigationStack {
-      List {
+      ZoonkList {
         if store.saveFailed {
           Text(
             "We couldn't save your buddy. Try again.", tableName: "Buddy",
@@ -200,7 +199,6 @@ struct BuddyGlassesPicker: View {
           .accessibilityAddTraits(isWorn ? .isSelected : [])
         }
       }
-      .zoonkList()
       .navigationTitle(Text("Glasses", tableName: "Buddy", comment: "Title of the buddy's glasses"))
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {

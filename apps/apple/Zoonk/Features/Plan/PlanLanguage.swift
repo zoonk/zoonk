@@ -44,7 +44,7 @@ struct LanguageLevelSheet: View {
   let standing: LanguageStanding
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         LabeledContent {
           Text(standing.levelText)
@@ -63,7 +63,6 @@ struct LanguageLevelSheet: View {
         }
       }
     }
-    .zoonkList()
     .navigationTitle(
       Text("Your level", tableName: "Plan", comment: "Title of the language level sheet")
     )

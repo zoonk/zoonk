@@ -34,30 +34,26 @@ struct TodayDayView: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         header
         // It asks for a decision, so it leads the day where the day has room beside it.
         notice
         day
       }
-      .zoonkList()
     } secondary: {
-      List {
+      ZoonkList {
         aside
         TodayPracticeSection(view: view, language: language)
       }
-      .zoonkList()
     } single: {
-      List {
+      ZoonkList {
         header
         day
         notice
         aside
         TodayPracticeSection(view: view, language: language)
       }
-      .zoonkList()
     }
-
     .onAppear(perform: startVisit)
     .onChange(of: isCovered) {
       if !isCovered {
