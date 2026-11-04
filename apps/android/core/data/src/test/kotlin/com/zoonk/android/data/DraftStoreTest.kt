@@ -2,6 +2,7 @@ package com.zoonk.android.data
 
 import androidx.datastore.core.Serializer
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -24,6 +25,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.concurrent.CountDownLatch
@@ -284,6 +286,44 @@ class DraftStoreTest {
             io.close()
 
             assertTrue(landed)
+        }
+
+    @Test
+    fun aDraftTheDiskRefusesStaysOnScreenAndTheNextSaveLands() =
+        runTest {
+            var full = true
+            val disk =
+                object : Serializer<LearnerDrafts> {
+                    private val wrapped = DraftStore.LearnerDraftsSerializer
+                    override val defaultValue = wrapped.defaultValue
+
+                    override suspend fun readFrom(input: InputStream) = wrapped.readFrom(input)
+
+                    override suspend fun writeTo(
+                        t: LearnerDrafts,
+                        output: OutputStream,
+                    ) {
+                        if (full) throw IOException("No space left on device")
+                        wrapped.writeTo(t, output)
+                    }
+                }
+            val crashes = mutableListOf<Throwable>()
+            val app =
+                CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler) + CoroutineExceptionHandler { _, e -> crashes += e })
+            val drafts = DraftStore(folder.root, app, io = StandardTestDispatcher(testScheduler), serializer = disk)
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn { "token-a" }
+            val essay = drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer())
+            essay.save(EssayDraft("refused"))
+            essay.saveDebounced(EssayDraft("refused later"))
+            advanceTimeBy(100)
+            essay.flush()
+            essay.saveDebounced(EssayDraft("refused by the timer"))
+            advanceUntilIdle()
+            full = false
+            essay.save(EssayDraft("written"))
+            assertEquals(emptyList<Throwable>(), crashes)
+            assertEquals(EssayDraft("written"), essay.value.first())
         }
 
     @Test

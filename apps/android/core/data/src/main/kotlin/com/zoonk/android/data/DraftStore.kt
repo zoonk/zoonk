@@ -31,6 +31,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import java.io.File
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.concurrent.ConcurrentHashMap
@@ -169,6 +170,8 @@ class DraftStore(
             } catch (e: CancellationException) {
                 // A closed file drops the write; only the caller's own cancellation propagates.
                 currentCoroutineContext().ensureActive()
+            } catch (e: IOException) {
+                // A disk that refuses a draft leaves it on screen for a later save; it never crashes the app.
             }
         }
 
