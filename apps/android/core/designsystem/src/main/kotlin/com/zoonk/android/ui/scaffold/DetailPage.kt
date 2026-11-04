@@ -81,12 +81,11 @@ fun detailPagePadding(): PaddingValues {
     return PaddingValues(horizontal = if (compact) 16.dp else 24.dp, vertical = 24.dp)
 }
 
-/** A page's main action fills the row on phones, as main's does under `md`, and keeps its own width beyond. */
+/** A page's main action fills the row on a phone and on a book's page ([isOnBookPage]), as main's does under `md`, and keeps its own width beyond. */
 @Composable
 fun Modifier.mainActionWidth(): Modifier =
-    if (currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(
-            WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-        )
+    if (currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) &&
+        !isOnBookPage()
     ) {
         this
     } else {

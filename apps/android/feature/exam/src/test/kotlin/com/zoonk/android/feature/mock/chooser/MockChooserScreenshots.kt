@@ -83,6 +83,18 @@ class MockChooserScreenshots {
     fun phoneWithoutPlus() = capture("chooser-phone-free", options = """$OPTIONS,"access":"plusRequired"""")
 
     @Test
+    @Config(qualifiers = "w700dp-h1400dp-xhdpi")
+    fun medium() = capture("chooser-medium")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("chooser-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("chooser-small-book", fold = true)
+
+    @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun expanded() = capture("chooser-expanded")
 
@@ -129,20 +141,7 @@ class MockChooserScreenshots {
                 }
             }
         }
-        if (fold) {
-            compose.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(
-                            compose.activity,
-                            state = FoldingFeature.State.FLAT,
-                            orientation = FoldingFeature.Orientation.VERTICAL,
-                        ),
-                    ),
-                ),
-            )
-        }
+        if (fold) unfold()
         compose.mainClock.advanceTimeBy(WRITING_FOR)
         write(name, compose.onRoot().captureToImage().asAndroidBitmap())
     }
@@ -155,6 +154,7 @@ class MockChooserScreenshots {
         moreContrast: Boolean = false,
         placement: Boolean = false,
         options: String = OPTIONS,
+        fold: Boolean = false,
         act: () -> Unit = {},
     ) {
         val mocks = FakeMockApi(mockOptions(options))
@@ -182,11 +182,29 @@ class MockChooserScreenshots {
                 }
             }
         }
+        if (fold) unfold()
         compose.waitForIdle()
         act()
         compose.waitForIdle()
         write(name, compose.onRoot().captureToImage().asAndroidBitmap())
     }
+
+    /** Opens the book flat, telling again what the fold composed, as a device tells every new reader. */
+    private fun unfold() =
+        repeat(2) {
+            compose.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(
+                            compose.activity,
+                            state = FoldingFeature.State.FLAT,
+                            orientation = FoldingFeature.Orientation.VERTICAL,
+                        ),
+                    ),
+                ),
+            )
+        }
 
     private fun write(
         name: String,

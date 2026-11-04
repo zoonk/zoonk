@@ -8,6 +8,10 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -38,7 +42,10 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class MistakesNotebookScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -99,7 +106,11 @@ class MistakesNotebookScreenshots {
             """{"pattern":{"id":"00000000-0000-4000-8000-0000000000f1","kind":"pattern","title":"Ser and estar with places"}}""",
         )
 
-    private fun show(name: String) {
+    private fun show(
+        name: String,
+        dark: Boolean = false,
+        fold: Boolean = false,
+    ) {
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val api =
             object : NotebookApi {
@@ -117,7 +128,8 @@ class MistakesNotebookScreenshots {
             }
         val store =
             MistakesNotebookStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { "UTC" }
-        rule.setContent { ZoonkTheme { Surface { Notebook(goalId, "ENEM 2026", store, rememberAppNavigator()) } } }
+        rule.setContent { ZoonkTheme(darkTheme = dark) { Surface { Notebook(goalId, "ENEM 2026", store, rememberAppNavigator()) } } }
+        if (fold) unfold()
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
@@ -136,6 +148,49 @@ class MistakesNotebookScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "w700dp-h1000dp-xhdpi")
+    fun medium() = show("medium")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = show("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = show("small-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDark() = show("book-dark", dark = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookLargeFont() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("book-font200", fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookLargeFont() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("small-book-font200", fold = true)
+    }
+
+    @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = show("tablet")
+
+    /** Opens the book flat, telling again what the fold composed, as a device tells every new reader. */
+    private fun unfold() =
+        repeat(2) {
+            rule.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
+                    ),
+                ),
+            )
+        }
 }
