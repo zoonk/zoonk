@@ -13,6 +13,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
+import java.util.Locale
 import kotlin.coroutines.cancellation.CancellationException
 
 class ApiRuntimeTest {
@@ -65,14 +66,24 @@ class ApiRuntimeTest {
             perform { api.clients(null).sessions.deleteCurrentSession() }
             assertEquals("Bearer token-a", server.takeRequest().headers["Authorization"])
             assertEquals("Bearer token-b", server.takeRequest().headers["Authorization"])
-            val signedOut = server.takeRequest()
-            assertNull(signedOut.headers["Authorization"])
-            assertEquals(
-                java.util.Locale
-                    .getDefault()
-                    .toLanguageTag(),
-                signedOut.headers["Accept-Language"],
-            )
+            assertNull(server.takeRequest().headers["Authorization"])
+        }
+
+    @Test
+    fun requestsAskForTheLanguageTheAppShows() =
+        runTest {
+            val device = Locale.getDefault()
+            try {
+                // The API would answer Catalan in Spanish, while the app shows English.
+                for ((locale, shown) in listOf("pt-BR" to "pt-BR", "ca-ES" to "en-ES", "pt" to "pt")) {
+                    Locale.setDefault(Locale.forLanguageTag(locale))
+                    server.enqueue(MockResponse.Builder().code(204).build())
+                    perform { api.clients(null).sessions.deleteCurrentSession() }
+                    assertEquals(shown, server.takeRequest().headers["Accept-Language"])
+                }
+            } finally {
+                Locale.setDefault(device)
+            }
         }
 
     @Test

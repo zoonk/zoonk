@@ -84,6 +84,7 @@ function GoalCard({
   goal,
   onEdit,
   onSave,
+  timeZone,
 }: {
   edited: Field | null;
   editing: Field | null;
@@ -91,6 +92,7 @@ function GoalCard({
   goal: UnderstoodGoalView;
   onEdit: (field: Field | null) => void;
   onSave: (input: { field: EditableField; value: string }) => Promise<boolean>;
+  timeZone: string;
 }) {
   const rowsFor = useUnderstoodRows();
 
@@ -110,6 +112,7 @@ function GoalCard({
           onEdit={(isEditing) => onEdit(isEditing ? (row.editable?.key ?? null) : null)}
           onSave={async (value) => (row.editable ? onSave({ field: row.editable, value }) : false)}
           row={row}
+          timeZone={timeZone}
         />
       ))}
     </ul>
@@ -201,6 +204,7 @@ export function UnderstoodScreen({
           key={index}
           onEdit={(field) => edit(field ? { field, goal: index } : null)}
           onSave={({ field, value }) => onRevise(toDraftEdit({ field, goal: index, value }))}
+          timeZone={draft.timeZone}
         />
       ))}
 

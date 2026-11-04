@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -24,6 +23,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.practice.studyFeedback
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Checkpoint
 import com.zoonk.api.models.StudyAnswerFeedback
@@ -109,7 +109,7 @@ class CheckpointScreenshots {
         }
         play()
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
@@ -280,7 +280,7 @@ class CheckpointScreenshots {
         val duel = Duel(read.read(), DuelState.of(read).finished(completion))
         rule.setContent { ZoonkTheme { DuelResult(duel, viewModel, AppContainer.preview(rule.activity), ZU) } }
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
