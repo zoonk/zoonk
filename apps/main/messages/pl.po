@@ -346,6 +346,12 @@ msgid "Couldn't open your next step. Try again."
 msgstr "Nie udało się przejść do kolejnego kroku. Spróbuj ponownie."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/components/catalog/course-progress.tsx
+msgctxt "DxPDlc"
+msgid "That didn't save. Try again."
+msgstr "Nie udało się zapisać. Spróbuj ponownie."
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "60v8Pt"
 msgid "Search or ask"
 msgstr "Szukaj lub zapytaj"
