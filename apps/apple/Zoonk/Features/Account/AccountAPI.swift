@@ -38,7 +38,8 @@ protocol AccountAPIClient {
     token: String,
     signedTransaction: String
   ) async throws -> AppleSubscriptionSynchronization
-  func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount
+  /// A nil name keeps the saved one.
+  func updateProfile(token: String, name: String?, username: String) async throws -> CurrentAccount
   /// The account's username, or an available one made from its email; nil when none is free.
   func getUsernameSuggestion(token: String) async throws -> String?
   /// Advisory: saving the profile can still find it taken.
@@ -224,7 +225,8 @@ struct AccountAPI {
     }
   }
 
-  func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
+  func updateProfile(token: String, name: String?, username: String) async throws -> CurrentAccount
+  {
     let output = try await perform(token: token) { client in
       try await client.updateCurrentUser(
         .init(body: .json(.init(name: name, username: username))))
@@ -511,7 +513,6 @@ struct AccountAPI {
             periodEnd: $0.periodEnd)
         }),
       user: AccountUser(
-        displayUsername: response.user.displayUsername,
         email: response.user.email,
         id: response.user.id,
         image: response.user.image,

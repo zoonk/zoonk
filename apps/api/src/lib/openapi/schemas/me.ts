@@ -1,4 +1,5 @@
 import { emailAccountDeletionCredentialsSchema } from "@zoonk/auth/email-deletion-contract";
+import { NAME_MAX_LENGTH } from "@zoonk/auth/name-rules";
 import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract";
 import { z } from "zod";
 import { usernameCandidateSchema } from "./usernames";
@@ -9,7 +10,16 @@ function hasProfileUpdate(data: { name?: string; username?: string }) {
 
 export const meUpdateSchema = z
   .object({
-    name: z.string().trim().min(1).optional().meta({ description: "Display name" }),
+    name: z
+      .string()
+      .trim()
+      .min(1)
+      .max(NAME_MAX_LENGTH)
+      .optional()
+      .meta({
+        description:
+          "Display name. Send it only to change it: a name saved before the length limit stays until it changes",
+      }),
     username: usernameCandidateSchema
       .optional()
       .meta({ description: "Username shown in profile URLs and mentions" }),
@@ -46,7 +56,6 @@ const meUserSchema = z
       .boolean()
       .meta({ description: "Whether product analytics are disabled for this account" }),
     createdAt: z.iso.datetime().meta({ description: "User creation timestamp" }),
-    displayUsername: z.string().nullable().meta({ description: "Display username" }),
     email: z.email().meta({ description: "Email address" }),
     emailVerified: z.boolean().meta({ description: "Whether the email has been verified" }),
     id: z.uuid().meta({ description: "User ID" }),

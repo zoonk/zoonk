@@ -248,6 +248,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
 
     const response = await checkObjectives(
       request(`/v1/language-conversations/${conversationId}/objective-checks`, {
+        connectionId: setup.connectionId,
         turns: [
           { speaker: "learner", text: "Is it free?" },
           { speaker: "character", text: "Yes, it is." },

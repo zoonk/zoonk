@@ -20,7 +20,7 @@ struct ProfileEditorView: View {
     self.isRequiredSetup = isRequiredSetup
     self.deleteAccount = deleteAccount
     _name = State(initialValue: account.user.name)
-    _username = State(initialValue: account.user.displayUsername ?? account.user.username ?? "")
+    _username = State(initialValue: account.user.username ?? "")
   }
 
   var body: some View {
@@ -47,7 +47,13 @@ struct ProfileEditorView: View {
       } header: {
         Text("Name", tableName: "Account", comment: "Profile name field label")
       } footer: {
-        if !isRequiredSetup {
+        if isNameTooLong {
+          Text(
+            "Use 150 characters or fewer.", tableName: "Account",
+            comment: "Shown under the profile name field when the typed name is too long"
+          )
+          .foregroundStyle(.destructive)
+        } else if !isRequiredSetup {
           Text(
             "How Zoonk and your buddy call you", tableName: "Account",
             comment: "What the profile name is for")
@@ -311,8 +317,12 @@ struct ProfileEditorView: View {
       set: { username = $0.lowercased() })
   }
 
+  private var isNameTooLong: Bool {
+    ProfileName.isChangeTooLong(normalizedName, saved: account.user.name)
+  }
+
   private var isValid: Bool {
-    !normalizedName.isEmpty && UsernameStatus.isWellFormed(normalizedUsername)
+    !normalizedName.isEmpty && !isNameTooLong && UsernameStatus.isWellFormed(normalizedUsername)
       && usernameStatus.canSave
   }
 }
@@ -325,7 +335,6 @@ struct ProfileEditorView: View {
           deletion: AccountDeletionRequirements(hasAppleAccount: false),
           subscription: nil),
         user: AccountUser(
-          displayUsername: "zoonk_user",
           email: "hello@zoonk.com",
           id: UUID().uuidString,
           image: nil,

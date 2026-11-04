@@ -169,6 +169,29 @@
       "testCase": {
         "expected": {
           "facts": [
+            { "categories": ["background"], "keywords": ["nurse"] },
+            { "categories": ["routine"], "keywords": ["morning"] }
+          ],
+          "maxFacts": 3
+        },
+        "id": "en-chat-job-and-routine-1",
+        "userInput": {
+          "input": "Learner: I work night shifts as a nurse, so I can only study in the mornings.\nTutor: Got it, let's keep sessions short.",
+          "language": "en",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
             {
               "categories": ["context", "preferences"],
               "intent": "forget",
@@ -202,6 +225,148 @@
           "input": "Learner: I'm moving to Italy in June next year, can the examples be about life there?",
           "language": "en",
           "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "categories": ["context", "background", "routine"],
+              "dates": ["october 2", "october 9"],
+              "keywords": ["tokyo", "japan"]
+            }
+          ],
+          "forbidden": ["next friday", "this friday", "next week"],
+          "maxFacts": 3
+        },
+        "id": "en-chat-relative-day-1",
+        "userInput": {
+          "input": "Learner: I fly to Tokyo next Friday for a three-month work assignment, can the examples be about Japan?",
+          "language": "en",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [{ "categories": ["routine"], "keywords": ["tuesday"] }],
+          "forbidden": ["phoenix"],
+          "maxFacts": 2
+        },
+        "id": "en-chat-sensitive-reason-1",
+        "userInput": {
+          "input": "Learner: I can't study on Tuesday evenings, that's when I go to Phoenix, my addiction recovery group.",
+          "language": "en",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [{ "categories": ["routine", "context"], "keywords": ["saturday"] }],
+          "forbidden": ["september", "october"],
+          "maxFacts": 2
+        },
+        "id": "en-chat-recurring-day-1",
+        "userInput": {
+          "input": "Learner: I volunteer at an animal shelter every Saturday morning, so weekends are tight.",
+          "language": "en",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "categories": ["background", "context", "routine", "goals"],
+              "dates": ["marco de 2027", "marco 2027"],
+              "keywords": ["ciencia de dados"]
+            }
+          ],
+          "maxFacts": 3
+        },
+        "id": "pt-chat-relative-year-1",
+        "userInput": {
+          "input": "Learner: em março eu começo uma pós em ciência de dados, com aulas à noite.",
+          "language": "pt",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "categories": ["background", "context"], "keywords": ["estagio", "publicidade"] },
+            { "categories": ["routine"], "keywords": ["almoco"] }
+          ],
+          "forbidden": ["semana que vem", "proxima semana"],
+          "maxFacts": 3
+        },
+        "id": "pt-chat-relative-week-1",
+        "userInput": {
+          "input": "Learner: semana que vem eu começo um estágio numa agência de publicidade, aí só vou conseguir estudar no horário do almoço.",
+          "language": "pt",
+          "source": "chat",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "categories": ["goals", "context"], "dates": ["october"], "keywords": ["montreal"] }
+          ],
+          "forbidden": ["next month"],
+          "maxFacts": 3
+        },
+        "id": "en-onboarding-relative-month-1",
+        "userInput": {
+          "input": "In their words: We move to Montreal next month and I need French for daily life there.\nGoal: French for daily life",
+          "language": "en",
+          "source": "onboarding",
           "today": "2026-09-26"
         }
       }
@@ -626,6 +791,7 @@
           "facts": [
             {
               "categories": ["context", "goals", "routine"],
+              "dates": ["october 17"],
               "expiresOn": ["2026-10-17", "2026-10-18"],
               "keywords": ["naples", "napoli"]
             }
@@ -844,11 +1010,12 @@
             { "categories": ["context"], "keywords": ["cachorr", "cao", "thor"] },
             {
               "categories": ["context", "goals", "routine"],
+              "dates": ["2 de outubro"],
               "expiresOn": ["2026-10-02"],
-              "keywords": ["2 de out", "2/10", "02/10"]
+              "keywords": ["entrevista"]
             }
           ],
-          "forbidden": ["sexta", "friday", "sabado", "apartamento", "deposito"],
+          "forbidden": ["sabado", "apartamento", "deposito"],
           "maxFacts": 2
         },
         "id": "pt-call-dated-interview-1",
@@ -890,41 +1057,6 @@
     },
     {
       "steps": [
-        {
-          "conclusion": "Missing a remember background fact with nurse.",
-          "kind": "majorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Missing a remember background fact with nurse.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Missing a remember background fact with nurse.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "categories": ["background"], "keywords": ["nurse"] },
-            { "categories": ["routine"], "keywords": ["morning"] }
-          ],
-          "maxFacts": 3
-        },
-        "id": "en-chat-job-and-routine-1",
-        "userInput": {
-          "input": "Learner: I work night shifts as a nurse, so I can only study in the mornings.\nTutor: Got it, let's keep sessions short.",
-          "language": "en",
-          "source": "chat",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
@@ -953,6 +1085,222 @@
             },
             { "speaker": "character", "text": "Two pepperoni pizzas, no problem." },
             { "speaker": "learner", "text": "How much is it? ... Ok, thank you, bye." }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "categories": ["context", "goals", "routine"],
+              "expiresOn": [
+                "2026-09-28",
+                "2026-09-29",
+                "2026-09-30",
+                "2026-10-01",
+                "2026-10-02",
+                "2026-10-03",
+                "2026-10-04"
+              ],
+              "keywords": ["contrato", "aluguel", "locacao", "lease"]
+            }
+          ],
+          "forbidden": ["semana que vem", "proxima semana", "parque", "cafe", "emma"],
+          "maxFacts": 3
+        },
+        "id": "pt-call-lease-next-week-1",
+        "userInput": {
+          "language": "pt",
+          "scenario": {
+            "objectives": [
+              "Dizer que o fim de semana foi bom e contar uma coisa que fez",
+              "Perguntar o que ela fez no fim de semana",
+              "Convidá-la para um café no sábado às 10"
+            ],
+            "situation": "Emma, sua vizinha do andar de cima, liga para conversar."
+          },
+          "source": "call",
+          "targetLanguage": "en",
+          "today": "2026-09-26",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Hey, it's Emma from upstairs. How was your weekend?"
+            },
+            {
+              "speaker": "learner",
+              "text": "It was good, thanks. I went to a park with my wife on Sunday."
+            },
+            {
+              "speaker": "character",
+              "text": "Oh, nice! That sounds really relaxing. How's it going with your move to Toronto?"
+            },
+            {
+              "speaker": "learner",
+              "text": "It’s going good, we sign the lease next week. What did you do on your weekend?"
+            },
+            {
+              "speaker": "character",
+              "text": "That sounds great. I went to the farmers market on Sunday, and watched a movie at home Saturday night."
+            },
+            {
+              "speaker": "learner",
+              "text": "That sounds nice! Do you want to have coffee with me on Saturday at 10?"
+            },
+            {
+              "speaker": "character",
+              "text": "I'd love to, but I have plans then. Could we do Saturday at 11 instead?"
+            },
+            { "speaker": "learner", "text": "Sure, Saturday at 11 is good for me. See you then!" },
+            { "speaker": "character", "text": "Great, see you then." },
+            { "speaker": "learner", "text": "Bye, Emma! See you Saturday." }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "categories": ["context", "goals", "routine"],
+              "dates": ["1 de outubro", "1º de outubro", "primeiro de outubro"],
+              "expiresOn": ["2026-10-01"],
+              "keywords": ["contrato", "aluguel", "locacao", "lease"]
+            }
+          ],
+          "forbidden": ["quinta", "parque", "cafe", "emma"],
+          "maxFacts": 3
+        },
+        "id": "pt-call-lease-thursday-1",
+        "userInput": {
+          "language": "pt",
+          "scenario": {
+            "objectives": [
+              "Dizer que o fim de semana foi bom e contar uma coisa que fez",
+              "Perguntar o que ela fez no fim de semana",
+              "Convidá-la para um café no sábado às 10"
+            ],
+            "situation": "Emma, sua vizinha do andar de cima, liga para conversar."
+          },
+          "source": "call",
+          "targetLanguage": "en",
+          "today": "2026-09-26",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Hey, it's Emma from upstairs. How was your weekend?"
+            },
+            {
+              "speaker": "learner",
+              "text": "It was good, thanks. I went to a park with my wife on Sunday."
+            },
+            {
+              "speaker": "character",
+              "text": "Oh, nice! That sounds really relaxing. How's it going with your move to Toronto?"
+            },
+            {
+              "speaker": "learner",
+              "text": "It’s going good, we sign the lease on Thursday. What did you do on your weekend?"
+            },
+            {
+              "speaker": "character",
+              "text": "That sounds great. I went to the farmers market on Sunday, and watched a movie at home Saturday night."
+            },
+            {
+              "speaker": "learner",
+              "text": "That sounds nice! Do you want to have coffee with me on Saturday at 10?"
+            },
+            {
+              "speaker": "character",
+              "text": "I'd love to, but I have plans then. Could we do Saturday at 11 instead?"
+            },
+            { "speaker": "learner", "text": "Sure, Saturday at 11 is good for me. See you then!" }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "categories": ["context", "goals", "routine"],
+              "dates": ["marco de 2027", "marco 2027"],
+              "keywords": ["toronto"]
+            },
+            {
+              "categories": ["context", "goals", "routine"],
+              "expiresOn": [
+                "2026-09-28",
+                "2026-09-29",
+                "2026-09-30",
+                "2026-10-01",
+                "2026-10-02",
+                "2026-10-03",
+                "2026-10-04"
+              ],
+              "keywords": ["contrato", "aluguel", "locacao", "lease"]
+            }
+          ],
+          "forbidden": ["semana que vem", "proxima semana", "parque", "cafe", "emma"],
+          "maxFacts": 3
+        },
+        "id": "pt-call-lease-volunteered-1",
+        "userInput": {
+          "language": "pt",
+          "scenario": {
+            "objectives": [
+              "Dizer que o fim de semana foi bom e contar uma coisa que fez",
+              "Perguntar o que ela fez no fim de semana",
+              "Convidá-la para um café no sábado às 10"
+            ],
+            "situation": "Emma, sua vizinha do andar de cima, liga para conversar."
+          },
+          "source": "call",
+          "targetLanguage": "en",
+          "today": "2026-09-26",
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Hey, it's Emma from upstairs. How was your weekend?"
+            },
+            {
+              "speaker": "learner",
+              "text": "It was good, thanks. I went to a park with my wife on Sunday. Oh, and we move to Toronto in March! We sign the lease next week."
+            },
+            { "speaker": "character", "text": "Oh wow, Toronto! Congratulations!" },
+            { "speaker": "learner", "text": "Thanks! What did you do on your weekend?" },
+            {
+              "speaker": "character",
+              "text": "I went to the farmers market on Sunday, and watched a movie at home Saturday night."
+            },
+            {
+              "speaker": "learner",
+              "text": "That sounds nice! Do you want to have coffee with me on Saturday at 10?"
+            },
+            {
+              "speaker": "character",
+              "text": "I'd love to, but I have plans then. Could we do Saturday at 11 instead?"
+            },
+            { "speaker": "learner", "text": "Sure, Saturday at 11 is good for me. See you then!" }
           ]
         }
       }

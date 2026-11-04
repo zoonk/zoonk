@@ -71,7 +71,7 @@ async function applyDecision({
 }): Promise<MemoryChange | null> {
   if (action.action === "add") {
     const added = await addMemoryFact({ fact, userId });
-    return { action: "added", fact: toMemoryFactView(added), previous: null };
+    return added ? { action: "added", fact: toMemoryFactView(added), previous: null } : null;
   }
 
   const target = action.action === "ignore" ? undefined : related[action.index];

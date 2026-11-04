@@ -22,4 +22,18 @@ export const TEST_CASES: FindChoiceOptionsCase[] = [
     id: "pt-fuvest-1a-fase",
     userInput: { board: "Fuvest", exam: "Fuvest, 1ª fase", today: TODAY },
   },
+  {
+    expected: { options: 4 },
+    id: "en-sat",
+    userInput: { board: "College Board", exam: "SAT", today: TODAY },
+  },
+  {
+    expected: { options: 5 },
+    id: "en-sqe1",
+    userInput: {
+      board: "SRA",
+      exam: "SQE1 (Solicitors Qualifying Examination, part 1)",
+      today: TODAY,
+    },
+  },
 ];

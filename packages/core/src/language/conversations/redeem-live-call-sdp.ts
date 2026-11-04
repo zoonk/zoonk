@@ -16,7 +16,7 @@ import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { getLiveCallCostMicros } from "../../entitlements/limits";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { readCallNote } from "../../memory/call-fact";
-import { buildLiveCall } from "./_utils/conversation-view";
+import { getLiveCallBuilder } from "./_utils/conversation-view";
 import { getEndingCharge, isWithinConnectWindow } from "./_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
 import { settleLiveCall } from "./_utils/settle-live-call";
@@ -97,9 +97,9 @@ async function prepareCreation({
       return unchanged({ status: "notFound" as const });
     }
 
-    const call = buildLiveCall({ learnerNote, row: conversation });
+    const buildCall = getLiveCallBuilder({ learnerNote, row: conversation });
 
-    if (!call || conversation.reviewRunId !== null) {
+    if (!buildCall || conversation.reviewRunId !== null) {
       return unchanged({ status: "conversationEnded" as const });
     }
 
@@ -125,10 +125,12 @@ async function prepareCreation({
       where: { id: connection.id },
     });
 
+    const { instructions, script } = buildCall(starting.continuesCall);
+
     return {
       connection: { ...starting, userId },
-      greeting: call.script.cues.opening.text,
-      instructions: call.instructions,
+      greeting: script.cues.opening.text,
+      instructions,
       status: "prepared" as const,
       voice: getLiveConversationVoice(conversation.targetLanguage),
     };
@@ -243,6 +245,9 @@ export async function redeemLiveCallSdp({
       greeting: prepared.greeting,
       instructions: prepared.instructions,
       sdp: input.sdp,
+      turns: connection.continuesCall
+        ? (input.sessionConfig?.providerOptions?.zoonk?.turns ?? [])
+        : [],
       voice: prepared.voice,
     }),
   );

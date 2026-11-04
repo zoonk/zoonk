@@ -73,6 +73,17 @@ final class ChartsActivitiesTests: XCTestCase {
       ActivityNumberFormat.format(1_200_000, digits: 1, compact: true, locale: english), "1.2M")
   }
 
+  func testANumberThatReadsAsZeroTakesNoSign() {
+    let english = Locale(identifier: "en_US")
+
+    XCTAssertEqual(ActivityNumberFormat.format(-9.81 * 0, locale: english), "0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.0001, digits: 2, locale: english), "0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.0, compact: true, locale: english), "0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.001, unit: "$", locale: english), "$0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.5, locale: english), "\u{2212}0.5")
+    XCTAssertEqual(ActivityNumberFormat.format(-.infinity, locale: english), "\u{2212}∞")
+  }
+
   func testMeasuresChartSpans() throws {
     let fields: ChartReaderFields = try decode(
       """
@@ -202,8 +213,58 @@ final class ChartsActivitiesTests: XCTestCase {
     let view = FormulaModelView(
       fields: scenario, axis: scenario.variables[0], charted: scenario.outputs[0],
       sliders: ["price": 3], events: ["rentUp": 1])
-    XCTAssertEqual(view.delta, -500)
+    XCTAssertEqual(view.delta, .init(amount: -500, digits: 1))
     XCTAssertEqual(view.baseline?.kind, .whatIf)
+  }
+
+  /// sin(2 × 60°) is sin(2 × 30°), so at 60° the ball lands where it started, apart from a
+  /// double's last digit; the mirror what-if lands there too.
+  func testFormulaModelReadsChangesOffTheShownReadouts() throws {
+    let fields: FormulaModelFields = try decode(
+      """
+      {"events":[{"label":"Mirror the angle","name":"mirror"}],
+       "outputs":[{"formula":"speed^2 * sin(rad(2 * angle + 60 * mirror)) / 9.81","id":"distance","label":"Lands at","unit":"m"}],
+       "variables":[{"initial":30,"label":"Launch angle","max":90,"min":0,"name":"angle","step":1,"unit":"°"},
+                    {"initial":20,"label":"Speed","max":30,"min":5,"name":"speed","step":1,"unit":"m/s"}]}
+      """)
+    let view = { (angle: Double, mirror: Double) in
+      FormulaModelView(
+        fields: fields, axis: fields.variables[0], charted: fields.outputs[0],
+        sliders: ["angle": angle, "speed": 20], events: ["mirror": mirror])
+    }
+
+    XCTAssertNil(view(60, 0).readouts()[0].note)
+    XCTAssertNil(view(30, 1).delta)
+    XCTAssertNil(view(30, 1).readouts()[0].note)
+
+    let farthest = try XCTUnwrap(view(45, 0).readouts()[0].note)
+    XCTAssertTrue(farthest.hasPrefix(ActivityNumberFormat.format(5.5, unit: "m", signed: true)))
+
+    let straightUp = try XCTUnwrap(view(90, 0).readouts()[0].note)
+    XCTAssertTrue(straightUp.hasPrefix(ActivityNumberFormat.format(-35.3, unit: "m", signed: true)))
+  }
+
+  /// The readouts round ties to even, so 1.12 and 1.125 both read 1.12; a change keeps the two
+  /// decimals both readouts show even once it passes 10.
+  func testFormulaModelWritesAChangeAsItsReadoutsRound() throws {
+    let line = { (initial: Double) throws -> FormulaModelFields in
+      try self.decode(
+        """
+        {"outputs":[{"formula":"x","id":"x","label":"Position","unit":"m"}],
+         "variables":[{"initial":\(initial),"label":"Position","max":10,"min":-10,"name":"x","step":0.005}]}
+        """)
+    }
+    let view = { (fields: FormulaModelFields, x: Double) in
+      FormulaModelView(
+        fields: fields, axis: fields.variables[0], charted: fields.outputs[0], sliders: ["x": x],
+        events: [:])
+    }
+
+    XCTAssertNil(view(try line(1.12), 1.125).readouts()[0].note)
+
+    let across = try XCTUnwrap(view(try line(-9.99), 9.99).readouts()[0].note)
+    XCTAssertTrue(
+      across.hasPrefix(ActivityNumberFormat.format(19.98, unit: "m", signed: true, digits: 2)))
   }
 
   func testFormulaModelDrawsAVisibleChangeAndDropsItsLabelOnceChecked() throws {
@@ -406,6 +467,8 @@ final class ChartsActivitiesTests: XCTestCase {
       {"angleUnit":"degrees","frame":"A seat.","show":["sin","tan"],"startAngle":0}
       """)
     XCTAssertEqual(fields.value(.sin, degrees: 30)!, 0.5, accuracy: 1e-12)
+    XCTAssertEqual(fields.value(.sin, degrees: 360), 0, "Not what rounding π leaves")
+    XCTAssertEqual(fields.value(.tan, degrees: 180), 0)
     XCTAssertNil(fields.value(.cos, degrees: 30), "Not shown")
     XCTAssertNil(fields.value(.tan, degrees: 90), "Undefined")
   }

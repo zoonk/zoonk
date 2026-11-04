@@ -254,6 +254,63 @@
       }
     },
     {
+      "classification": { "expected": "keep", "predicted": "keep" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "decision": "keep" },
+        "id": "en-keep-routine-with-sensitive-evidence-1",
+        "userInput": {
+          "candidate": {
+            "category": "routine",
+            "evidence": "as a Catholic I don't study on Sundays",
+            "statement": "Doesn't study on Sundays"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "keep", "predicted": "keep" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "decision": "keep" },
+        "id": "pt-keep-routine-with-sensitive-evidence-1",
+        "userInput": {
+          "candidate": {
+            "category": "routine",
+            "evidence": "toda quarta à noite eu tenho culto na igreja",
+            "statement": "Fica ocupado nas noites de quarta"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "sensitive", "predicted": "sensitive" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "decision": "sensitive" },
+        "id": "en-sensitive-routine-names-it-1",
+        "userInput": {
+          "candidate": {
+            "category": "routine",
+            "evidence": "Tuesday evenings are my AA meetings, so not then",
+            "statement": "Goes to AA meetings on Tuesday evenings"
+          }
+        }
+      }
+    },
+    {
       "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
@@ -368,15 +425,11 @@
       }
     },
     {
-      "classification": { "expected": "sensitive", "predicted": "notLasting" },
+      "classification": { "expected": "sensitive", "predicted": "sensitive" },
       "steps": [
-        { "conclusion": "Expected sensitive; got notLasting.", "kind": "majorErrors", "score": 7 },
-        { "conclusion": "Expected sensitive; got notLasting.", "kind": "minorErrors", "score": 7 },
-        {
-          "conclusion": "Expected sensitive; got notLasting.",
-          "kind": "potentialImprovements",
-          "score": 7
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expected": { "decision": "sensitive" },
@@ -671,29 +724,6 @@
             "category": "goals",
             "evidence": "quero mais biologia e química no plano, física pode ser menos",
             "statement": "Quer priorizar Biologia e Química"
-          }
-        }
-      }
-    },
-    {
-      "classification": { "expected": "keep", "predicted": "sensitive" },
-      "steps": [
-        { "conclusion": "Expected keep; got sensitive.", "kind": "majorErrors", "score": 7 },
-        { "conclusion": "Expected keep; got sensitive.", "kind": "minorErrors", "score": 7 },
-        {
-          "conclusion": "Expected keep; got sensitive.",
-          "kind": "potentialImprovements",
-          "score": 7
-        }
-      ],
-      "testCase": {
-        "expected": { "decision": "keep" },
-        "id": "en-keep-routine-with-sensitive-evidence-1",
-        "userInput": {
-          "candidate": {
-            "category": "routine",
-            "evidence": "as a Catholic I don't study on Sundays",
-            "statement": "Doesn't study on Sundays"
           }
         }
       }

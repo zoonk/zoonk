@@ -21,7 +21,7 @@
   "settings_download_data": "d4ec600954eb9e072b053bf8a3ff5d32b29e4b59cada8db5d17783ec00a2701e",
   "settings_download_data_description": "e8fdc8712b47a26ffc940d67a08d3157987f535bcf1bbfbf02f5d1eb84fe4f46",
   "settings_download_failed": "8049bd1335a05adec0586bf4131e032a39701f1cc970dd642829dbdb2b4bff59",
-  "settings_download_preparing": "c70f9f5319d7ee63fd47cfabb2c7cc4a5eb7ddf78daf805287c90715c4fcef1a",
+  "settings_download_preparing": "800622314cf4c0ef8591f8dd06c06f62bbc34a91e8d2cdfada7749b1454c1107",
   "settings_licenses": "88faf8ac61a4bca320672d1aa30b601cd42f6d7997b1c16860f8bc5d71e9e192",
   "settings_licenses_read": "05b805a7c999c8caa32345d0b590b2d7d06f9e8d8fd1c8f780a36893218105a8",
   "settings_licenses_website": "c52688637b890e701c6d750072b8f001b40e8d0ad84535bb5a235b973b5f82c5",
@@ -69,7 +69,7 @@
     <string name="settings_download_data">Meine Daten herunterladen</string>
     <string name="settings_download_data_description">Alles, was Zoonk über dich speichert, in einer Datei</string>
     <string name="settings_download">Herunterladen</string>
-    <string name="settings_download_preparing">Wird vorbereitet…</string>
+    <string name="settings_download_preparing">Wir bereiten alles vor…</string>
     <string name="settings_download_failed">Wir konnten den Download nicht vorbereiten. Versuch es noch einmal.</string>
     <string name="settings_delete_account">Konto löschen</string>
     <string name="settings_delete_my_account">Mein Konto löschen</string>

@@ -9,6 +9,7 @@ import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.SessionSource
+import com.zoonk.android.feature.livecall.CallSoFar
 import com.zoonk.android.feature.livecall.LiveCall
 import com.zoonk.android.feature.livecall.LiveCallPhase
 import com.zoonk.android.feature.livecall.LiveCallTask
@@ -30,12 +31,13 @@ enum class CallSave { Saving, Closing, Failed, Ended, TakenOver }
 
 /**
  * One call attempt at a time (main's `LiveCallRun`): starting again leaves the last one, which the
- * server hangs up. Leaving the screen does the same, so a call never outlives its screen.
+ * server hangs up, and continues what it said. Leaving the screen does the same, so a call never
+ * outlives its screen.
  */
 class ConversationViewModel(
     private val conversationId: UUID,
     private val store: ConversationStore,
-    private val newCall: (LiveCallTask) -> LiveCall,
+    private val newCall: (LiveCallTask, CallSoFar) -> LiveCall,
     private val ongoing: OngoingCalls,
     private val timeZone: () -> String,
     private val prep: PrepTimes,
@@ -62,9 +64,6 @@ class ConversationViewModel(
     var call by mutableStateOf<LiveCall?>(null)
         private set
 
-    var usedHelp by mutableStateOf(false)
-        private set
-
     var save by mutableStateOf<CallSave?>(null)
         private set
 
@@ -78,18 +77,22 @@ class ConversationViewModel(
         microphone: Boolean,
         takeover: Boolean = false,
     ) {
-        call?.leave()
-        usedHelp = false
+        val left = call
+        left?.leave()
         save = null
-        val next = newCall(conversation.callTask)
-        call = next
-        next.start(microphone, takeover)
-        // The notification's Hang up does what End does: a call that hasn't connected goes back to its intro.
-        ongoing.keep(next, conversation.character.name) {
-            if (next.state.value.phase == LiveCallPhase.Connecting) showIntro() else next.hangUp()
-        }
-        // A dropped call the learner then ends is saved too.
         viewModelScope.launch {
+            // A dropped call's reconnect may still be reserving: the next start must name its connection.
+            left?.settle()
+            // Ended meanwhile, it's being saved under that connection: no other may start.
+            if (call !== left || left?.state?.value?.phase == LiveCallPhase.Ended) return@launch
+            val next = newCall(conversation.callTask, left?.soFar ?: CallSoFar())
+            call = next
+            next.start(microphone, takeover)
+            // The notification's Hang up does what End does.
+            ongoing.keep(next, conversation.character.name) {
+                if (next.state.value.phase == LiveCallPhase.Connecting) cancel() else next.hangUp()
+            }
+            // A dropped call the learner then ends is saved too.
             next.state.first { it.phase == LiveCallPhase.Ended }
             if (call === next) scope.launch { save(next) }
         }
@@ -107,16 +110,16 @@ class ConversationViewModel(
         start(conversation, microphone)
     }
 
-    /** Back to the intro, as ending a call that hasn't connected does. */
-    fun showIntro() {
-        call?.leave()
+    /**
+     * Ending a call that hasn't connected, or a refused microphone, goes back to the intro, unless a
+     * dropped call is left to save: it stays dropped, to end or call again.
+     */
+    fun cancel() {
+        val current = call
+        current?.leave()
+        if (current?.hasCallToSave == true) return
         call = null
-        usedHelp = false
         save = null
-    }
-
-    fun help() {
-        usedHelp = true
     }
 
     fun startPrep() {
@@ -170,7 +173,14 @@ class ConversationViewModel(
             save = CallSave.Closing
             return
         }
-        val input = LanguageConversationCompletionInput(summary.connectionId, summary.spokenSeconds, summary.turns, usedHelp, timeZone())
+        val input =
+            LanguageConversationCompletionInput(
+                summary.connectionId,
+                summary.spokenSeconds,
+                summary.turns,
+                summary.usedHelp,
+                timeZone(),
+            )
         save =
             when (val completion = store.complete(conversationId, input)) {
                 is CallCompletion.Completed -> {
@@ -209,8 +219,12 @@ val LanguageConversation.callTask: LiveCallTask
                 },
             objectives = objectives.map { it.label },
             met = objectives.filter { it.met }.map { it.label },
+            talkSeconds = talkSeconds,
             examCues = examTask?.cues,
         )
+
+/** The whole call's talk time; a connection after a drop gets what's left of it. */
+internal val LanguageConversation.talkSeconds get() = minutes * 60
 
 /** The preparation clock's start per card, kept on the device for the signed-in learner (main keeps it in device storage). */
 interface PrepTimes {

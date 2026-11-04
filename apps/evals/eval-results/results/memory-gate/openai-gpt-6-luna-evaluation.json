@@ -273,6 +273,44 @@
       }
     },
     {
+      "classification": { "expected": "keep", "predicted": "keep" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "decision": "keep" },
+        "id": "pt-keep-routine-with-sensitive-evidence-1",
+        "userInput": {
+          "candidate": {
+            "category": "routine",
+            "evidence": "toda quarta à noite eu tenho culto na igreja",
+            "statement": "Fica ocupado nas noites de quarta"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "sensitive", "predicted": "sensitive" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "decision": "sensitive" },
+        "id": "en-sensitive-routine-names-it-1",
+        "userInput": {
+          "candidate": {
+            "category": "routine",
+            "evidence": "Tuesday evenings are my AA meetings, so not then",
+            "statement": "Goes to AA meetings on Tuesday evenings"
+          }
+        }
+      }
+    },
+    {
       "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },

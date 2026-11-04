@@ -65,7 +65,7 @@ class AccountStore(
 
     /** Null when saved, or when another session took over meanwhile. */
     suspend fun saveProfile(
-        name: String,
+        name: String?,
         username: String,
     ): AccountFailure? {
         val result =

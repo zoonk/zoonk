@@ -3,7 +3,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 
 export async function isMemoryEnabled(
   userId: string,
-  client: Pick<TransactionClient, "userLearningProfile"> = prisma,
+  client: TransactionClient = prisma,
 ): Promise<boolean> {
   const profile = await client.userLearningProfile.findUnique({
     select: { memoryEnabled: true },

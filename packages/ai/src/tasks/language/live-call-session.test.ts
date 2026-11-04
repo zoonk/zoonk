@@ -13,6 +13,7 @@ const SESSION = {
   greeting: "Greet the caller now.",
   instructions: "Be Linda.",
   sdp: "v=0\r\n",
+  turns: [],
   voice: "marin",
 };
 
@@ -75,6 +76,45 @@ describe(createLiveCallSession, () => {
     expect(session.client.data_channel.allowed_server_events).toContainEqual({
       type: "session.commentary.appended",
     });
+  });
+
+  it("starts a continued call with the call so far as the learner's and the character's messages, before the greeting", async () => {
+    respond(
+      201,
+      JSON.stringify({
+        session: { id: "live_123" },
+        transport: { sdp: "v=0\r\ns=answer\r\n", type: "webrtc" },
+      }),
+    );
+
+    await createLiveCallSession({
+      ...SESSION,
+      turns: [
+        { speaker: "character", text: "Hi, this is Linda." },
+        { speaker: "learner", text: "Is the room free?" },
+      ],
+    });
+
+    const [, init] = vi.mocked(blockTestProviderFetch).mock.calls[0] ?? [];
+    const { session } = await new Response(init?.body).json();
+
+    expect(session.input).toStrictEqual([
+      {
+        content: [{ text: "Hi, this is Linda.", type: "output_text" }],
+        role: "assistant",
+        type: "message",
+      },
+      {
+        content: [{ text: "Is the room free?", type: "input_text" }],
+        role: "user",
+        type: "message",
+      },
+      {
+        content: [{ text: "Greet the caller now.", type: "input_text" }],
+        role: "developer",
+        type: "message",
+      },
+    ]);
   });
 
   it.each([400, 401, 403, 404, 413, 415, 422, 429])(

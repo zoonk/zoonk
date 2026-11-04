@@ -129,4 +129,49 @@ export const TEST_CASES: FindTopicFrequencyCase[] = [
       today: "2026-10-30",
     },
   },
+  {
+    expected: {
+      found: ["Biology"],
+      notHigh: ["Biology and Human Welfare"],
+      notLow: ["Genetics and Evolution", "Human Physiology"],
+    },
+    id: "en-neet-biology",
+    userInput: {
+      board: "NTA",
+      exam: "NEET (UG)",
+      subjects: [
+        {
+          name: "Biology",
+          topics: [
+            "Diversity in Living World",
+            "Structural Organisation in Animals and Plants",
+            "Cell Structure and Function",
+            "Plant Physiology",
+            "Human Physiology",
+            "Reproduction",
+            "Genetics and Evolution",
+            "Biology and Human Welfare",
+            "Biotechnology and Its Applications",
+            "Ecology and Environment",
+          ],
+        },
+      ],
+      today: TODAY,
+    },
+  },
+  {
+    expected: { found: [], notHigh: [], notLow: [], onlyFound: true },
+    id: "en-nextgen-bar-new-exam",
+    userInput: {
+      board: "NCBE",
+      exam: "NextGen Uniform Bar Examination",
+      subjects: [
+        {
+          name: "Torts",
+          topics: ["Intentional torts", "Negligence", "Strict liability", "Products liability"],
+        },
+      ],
+      today: "2026-10-30",
+    },
+  },
 ];

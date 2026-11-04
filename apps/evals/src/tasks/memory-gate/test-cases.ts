@@ -131,6 +131,24 @@ export const TEST_CASES: GateCase[] = [
     id: "en-keep-routine-with-sensitive-evidence",
   }),
   gateCase({
+    candidate: {
+      category: "routine",
+      evidence: "toda quarta à noite eu tenho culto na igreja",
+      statement: "Fica ocupado nas noites de quarta",
+    },
+    decision: "keep",
+    id: "pt-keep-routine-with-sensitive-evidence",
+  }),
+  gateCase({
+    candidate: {
+      category: "routine",
+      evidence: "Tuesday evenings are my AA meetings, so not then",
+      statement: "Goes to AA meetings on Tuesday evenings",
+    },
+    decision: "sensitive",
+    id: "en-sensitive-routine-names-it",
+  }),
+  gateCase({
     candidate: { category: "context", evidence: "I'm so tired today", statement: "Is tired today" },
     decision: "notLasting",
     id: "en-transient-tired",

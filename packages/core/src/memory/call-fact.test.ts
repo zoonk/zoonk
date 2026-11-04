@@ -170,7 +170,7 @@ describe(findFactForCall, () => {
 describe("a call's memory note", () => {
   afterEach(cleanupTestCalls);
 
-  it("gives a practice call's character the fact picked at its start, on every connection", async () => {
+  it("gives a practice call's character the fact picked at its start, also when a dropped call continues", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
 
@@ -198,10 +198,18 @@ describe("a call's memory note", () => {
     expect(lastInstructions()).toContain('"Vai se mudar para Toronto em fevereiro"');
 
     await memoryFactFixture({ statement: "Tem uma entrevista na sexta", userId: user.id });
-    await connectTestCall(conversationId);
+    const reconnected = await connectTestCall(conversationId);
 
+    expect(reconnected.status === "ready" && reconnected.setup.continuesCall).toBe(true);
+    expect(lastInstructions()).toContain("The call dropped and the learner called you back.");
     expect(lastInstructions()).toContain('"Vai se mudar para Toronto em fevereiro"');
     expect(lastInstructions()).not.toContain("Tem uma entrevista na sexta");
+
+    await deleteMemoryFact(move.id);
+    await connectTestCall(conversationId);
+
+    expect(lastInstructions()).toContain("The call dropped and the learner called you back.");
+    expect(lastInstructions()).not.toContain("Toronto");
   });
 
   it("gives the fact to only one of two practice calls started at once", async () => {

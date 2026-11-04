@@ -591,7 +591,6 @@ extension CurrentAccount {
       deletion: AccountDeletionRequirements(hasAppleAccount: false),
       subscription: nil),
     user: AccountUser(
-      displayUsername: "learner",
       email: "learner@zoonk.test",
       id: "settings-test-user",
       image: nil,
@@ -623,7 +622,7 @@ private final class SwitchingAccountAPI: AccountAPIClient, @unchecked Sendable {
       account: AccountAccess(
         deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
       user: AccountUser(
-        displayUsername: userID, email: "\(userID)@zoonk.test", id: userID, image: nil,
+        email: "\(userID)@zoonk.test", id: userID, image: nil,
         name: userID, username: userID))
   }
 
@@ -651,7 +650,7 @@ private final class SwitchingAccountAPI: AccountAPIClient, @unchecked Sendable {
   func synchronizeAppleSubscription(token: String, signedTransaction: String) async throws
     -> AppleSubscriptionSynchronization
   { throw APIError.unavailable }
-  func updateProfile(token: String, name: String, username: String) async throws
+  func updateProfile(token: String, name: String?, username: String) async throws
     -> CurrentAccount
   { throw APIError.unavailable }
 }

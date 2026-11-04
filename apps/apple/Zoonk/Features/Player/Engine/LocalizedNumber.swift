@@ -57,19 +57,6 @@ private func replacingFirst(_ separator: String, in text: String) -> String {
 /// The most decimals a number shows, as `Intl.NumberFormat` allows.
 private let maxFractionDigits = 20
 
-/// Mirrors main's `formatLocalizedNumber`: rounded for display only, since grading uses the full
-/// value.
-func formatLocalizedNumber(
-  _ value: Double, fractionDigits: Int, locale: Locale, grouping: Bool = false
-) -> String {
-  let digits = min(max(fractionDigits, 0), maxFractionDigits)
-  let formatted = value.formatted(
-    .number.precision(.fractionLength(0...digits)).grouping(grouping ? .automatic : .never)
-      .locale(locale))
-
-  return formatted.hasPrefix("-") ? "\u{2212}" + formatted.dropFirst() : formatted
-}
-
 /// Mirrors main's `fractionDigitsFor`, so a readout never shows float noise and a tiny value never
 /// rounds to 0.
 func fractionDigitsFor(_ value: Double) -> Int {
