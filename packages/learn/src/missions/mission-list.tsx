@@ -87,7 +87,7 @@ export function MissionListRow({
         {content}
       </ListRowButton>
 
-      {target.failed && <StepOpenFailed className="-mt-1.5 pb-2.75 pl-6" />}
+      {target.failed && <StepOpenFailed className="-mt-0.5 pb-2.75 pl-6" />}
     </>
   );
 }
