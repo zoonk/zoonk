@@ -311,7 +311,7 @@ internal fun FocusTestResult(
 
     MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }) { buddy ->
         BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-            // Where the result splits, both steps show at once: the new focus before the fold, how the learner did after it.
+            // Where the result splits, both steps show at once: how the learner did before the fold, the new focus after it.
             val whole = spreadFold(maxWidth, span) != null
             val count = if (whole || chosen.isEmpty()) 1 else 2
             val shown = index.coerceIn(0, count - 1)
@@ -352,11 +352,6 @@ internal fun FocusTestResult(
                     withMoment = true,
                     columnModifier = Modifier.runColumn(),
                     done = {
-                        if (chosen.isNotEmpty() && (whole || shown == 1)) {
-                            FocusStep(chosen, undone = ui.undo == UndoState.Done, stepTitle)
-                        }
-                    },
-                    next = {
                         if (whole || shown == 0) {
                             CelebrationScope(play = ui.celebrate && !leftFirst) {
                                 AreasStep(outcome, stepTitle)
@@ -368,6 +363,11 @@ internal fun FocusTestResult(
                                     buddyName = buddy.name,
                                 )
                             }
+                        }
+                    },
+                    next = {
+                        if (chosen.isNotEmpty() && (whole || shown == 1)) {
+                            FocusStep(chosen, undone = ui.undo == UndoState.Done, stepTitle)
                         }
                     },
                 )
