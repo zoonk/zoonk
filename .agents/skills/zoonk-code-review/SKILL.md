@@ -19,7 +19,7 @@ Follow the root instructions for fixing confirmed bugs during reviews. An explic
 
 Reconstruct the intended behavior independently of the implementation’s explanation. Identify the assumptions required for the design to work, then investigate reachable conditions that could invalidate them. Trace those assumptions across callers, shared state, and component boundaries; individually correct parts do not establish correct composition. A constructed reproduction proves that case occurs under its supplied conditions; verify that those conditions are possible in this product.
 
-A follow-up review must reassess the assumptions and coverage supporting the earlier conclusion. Reuse valid evidence, but investigate what the earlier review did not establish. Review fixes with the same scrutiny as the original change, including their effects on surrounding behavior.
+A follow-up review covers the fixes and the behavior they affect, including any earlier conclusion whose assumptions a fix changed. Reuse valid evidence, and review fixes with the same scrutiny as the original change.
 
 Classify concerns before reporting:
 
