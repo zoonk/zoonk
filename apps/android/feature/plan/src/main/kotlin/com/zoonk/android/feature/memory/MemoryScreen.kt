@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
@@ -51,7 +52,6 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageHeader
@@ -226,10 +226,15 @@ private fun FactRow(
         supporting = { Text(stringResource(R.string.memory_fact_source, sourceName(fact), factDate(fact))) },
         trailing = {
             Box {
-                OptionsButton(
-                    onClick = { isMenuOpen = true },
-                    contentDescription = stringResource(R.string.memory_fact_options, fact.statement),
-                )
+                // Main's quiet "⋯" (a ghost icon button), not the outlined one beside a page's title.
+                IconButton(onClick = { isMenuOpen = true }) {
+                    Icon(
+                        painterResource(R.drawable.ic_more_horiz),
+                        contentDescription = stringResource(R.string.memory_fact_options, fact.statement),
+                        modifier = Modifier.size(ICON),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 DropdownMenu(expanded = isMenuOpen, onDismissRequest = { isMenuOpen = false }) {
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.memory_edit)) },
