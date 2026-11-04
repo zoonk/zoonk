@@ -18,11 +18,15 @@ import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.ui.scaffold.spreadShows
 
-/** Main's `TaskActionBar`: as wide as the task's column on a narrow layout, across it on a wide one ([isWideLayout]), its lines at the end. */
+/**
+ * Main's `TaskActionBar`: as wide as the task's column on a narrow layout, across it on a wide one
+ * ([isWideLayout]), its lines at the end. A spread docks it on the page after its split, where it
+ * leans toward the split as that page's column does, so it stays under what it acts on.
+ */
 @Composable
 fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
     val wide = isWideLayout()
-    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxWidth(), contentAlignment = if (spreadShows()) Alignment.TopStart else Alignment.Center) {
         Column(
             if (wide) Modifier.fillMaxWidth() else Modifier.widthIn(max = TASK_COLUMN_WIDTH).fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
