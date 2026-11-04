@@ -60,7 +60,7 @@ enum PlanSlotItem: Hashable {
   }
 }
 
-/// One thing at a time: "Not now" moves on to the next for as long as the app runs.
+/// One thing at a time, paged as main's slot is: "Not now" puts one off for as long as the app runs.
 struct PlanSuggestionSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
@@ -72,19 +72,72 @@ struct PlanSuggestionSection: View {
     let items = PlanSlotItem.items(
       plan: context.plan, isPaused: context.isPaused, isExam: context.goal.kind == .exam
     ).filter { !state.dismissed.contains($0) }
+    let index = min(state.position, max(items.count - 1, 0))
 
-    if let item = items.first {
+    if items.indices.contains(index) {
       Section {
-        slot(item)
+        slot(items[index])
           .padding(.vertical, 4)
-      } footer: {
+      } header: {
+        // Above the card, so paging to a taller or shorter one never moves it under the finger.
         if items.count > 1 {
-          Text(
-            "1 of \(items.count)", tableName: "Plan",
-            comment: "The suggestion shown of the Plan's suggestions")
+          pager(index: index, count: items.count)
         }
       }
       .disabled(state.isWorking)
+    }
+  }
+
+  private func pager(index: Int, count: Int) -> some View {
+    HStack(spacing: 0) {
+      Spacer()
+
+      pageButton(
+        Text(
+          "Previous", tableName: "Plan",
+          comment: "Goes back to the previous of the Plan's suggestions"),
+        systemImage: "chevron.left"
+      ) {
+        move(to: index - 1, count: count)
+      }
+
+      Text(
+        "\(index + 1) of \(count)", tableName: "Plan",
+        comment: "The suggestion shown of the Plan's suggestions"
+      )
+      .font(.footnote)
+      .foregroundStyle(.secondary)
+      .monospacedDigit()
+
+      pageButton(
+        Text("Next", tableName: "Plan", comment: "Goes on to the next of the Plan's suggestions"),
+        systemImage: "chevron.right"
+      ) {
+        move(to: index + 1, count: count)
+      }
+    }
+  }
+
+  private func pageButton(
+    _ title: Text, systemImage: String, action: @escaping () -> Void
+  ) -> some View {
+    Button(action: action) {
+      Label {
+        title
+      } icon: {
+        Image(systemName: systemImage)
+          .font(.body)
+          .frame(minWidth: 44, minHeight: 44)
+          .contentShape(.rect)
+      }
+      .labelStyle(.iconOnly)
+    }
+    .buttonStyle(.borderless)
+  }
+
+  private func move(to index: Int, count: Int) {
+    store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
+      $0.position = (index + count) % count
     }
   }
 
