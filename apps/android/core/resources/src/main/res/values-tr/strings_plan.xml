@@ -153,7 +153,7 @@
   "plan_change_phase_dates_room": "23968f23023529afe3f2593181c0f4ece08caf25952ad7e2bca1a855d353538c",
   "plan_change_phase_end_row": "6ec4d689d55bd2d2095d49539d43b657d8effab00ebd2b4919ce4acc5bc20f70",
   "plan_change_phase_ends": "15a415f92ed3305ed355e422c41c305259d8fdb41cd07c0649cf9490b25d765d",
-  "plan_change_placement_changed": "46d6428e3357d2ff8257dd4453d7c2feb21b4c3ac32e3ad16c2097fa9b466e0b",
+  "plan_change_placement_changed": "dced2c8cc8d01a5587d1c7d7251c843ba15b2f4ca027e7ab86295547c49bda3a",
   "plan_change_plan_ends": "8a51dbb842df73af187865e5250fd84ad5b18ae79044c0c9f301bb539f5ff497",
   "plan_change_read_guide": "9719a88af1a2e404213aa95fffca8853553abd224a56d55250ccadb438313f1d",
   "plan_change_read_guide_around": "2f390ae107c1e8f6c95cb9fc9c0e2aeb572f0175286b51b7cd4c3af774ca6ddd",
@@ -1113,7 +1113,7 @@
     </plurals>
     <string name="plan_change_now_in_plan">Artık planında: %1$s.</string>
     <string name="plan_change_out_of_plan">Planının dışında: %1$s.</string>
-    <string name="plan_change_placement_changed">Seviye belirlemede verdiğin cevaplar, hedef tarihine kadar neleri tamamlayabileceğini değiştirdi.</string>
+    <string name="plan_change_placement_changed">Seviye tespit testindeki cevaplarına göre hedef tarihine kadar tamamlayabileceklerin değişti.</string>
     <string name="plan_change_phase_dates_late_many">Bazı dersler planlanandan uzun sürüyor. Bu yüzden bu aşamaların sonundaki meydan okumalar artık derslerden önce geliyor. Tarihlerini ertelemek, önce dersleri bitirmene zaman tanıyor.</string>
     <plurals name="plan_change_phase_dates_late_one">
         <item quantity="one">Bazı dersler planlanandan uzun sürdüğü için %1$s aşamasının sonundaki meydan okuma artık bu derslerden önceye denk geliyor. Aşamanın bitişini %2$d gün ertelemek, önce bu dersleri tamamlamana zaman tanıyor.</item>
