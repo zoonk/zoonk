@@ -119,7 +119,7 @@ describe("a finished block's day settles even when its request fails after the b
   it("ends a day recovered after it's over without settling its missions against a later day", async () => {
     freezeClock();
     vi.setSystemTime(SESSION_NOW);
-    const { request, session, user } = await practiceDay();
+    const { goal, request, session, user } = await practiceDay();
     await failFinish(request);
 
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
@@ -127,7 +127,15 @@ describe("a finished block's day settles even when its request fails after the b
 
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
-    ).resolves.toMatchObject({ fullMealAt: null, missions: PRACTICE_MISSION, status: "completed" });
+    ).resolves.toMatchObject({
+      endedAt: SESSION_NOW,
+      fullMealAt: null,
+      missions: PRACTICE_MISSION,
+      status: "completed",
+    });
+
+    const today = await openStudyDay({ goalId: goal.id, shownDate: "2026-10-01", timeZone: "UTC" });
+    expect(today.status === "opened" && today.session.id).not.toBe(session.id);
   });
 
   it("awards the belts a block and its recovered full meal crossed", async () => {
