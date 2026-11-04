@@ -4,7 +4,6 @@
   "activities_badge_before_after": "aa141bf61d10a8f97eeec90602300f769e8915fe4bb2528801ad582492c64ddc",
   "activities_badge_estimate_first": "35648e932f6cfba58a247acae3b28863bd79fb2624bfba376e0cb21e415fbab7",
   "activities_badge_find_error": "d01dede584ea84496f01997658a3d7db719e65950868fdb0e94dc321b56ef872",
-  "activities_badge_follow_questions": "962321629c08af3fa0cf9b487bc5960a06b818bdceff2394cbffd41d8f38094b",
   "activities_badge_read_chart": "2f948a408d2075da25f0ca9b9e3c937f877d64d57c306dcb5f4844dfe0a60819",
   "activities_badge_reply": "5b74c9b826ccc16d155c83ba5c9b20d573261ad449fe6503790b287a572a32a3",
   "activities_badge_spot_pattern": "ce3e31dc9268dc703657e2a5b0920426c0f14205b25ab6cd0fbb17513a4a0578",
@@ -58,23 +57,13 @@
   "activities_sortable_move_up": "5a53d12a4013f6e46bf1bfb8e95ef076f537c7ae945a27c81604e5b95afefd18",
   "activities_sortable_over": "71fb60bf84b4b434dc490e84776d4f650d877e052bc0d20f9141c47555ac0a25",
   "activities_sortable_picked_up": "0f02f68549d7dddfa01b188bb8bf91c80cf18b98758a643cc4c07e09a05e1261",
-  "activities_sortable_stopped": "15b76a952938644c9a5dd2e583563e749067bfe41a8e75c6de55e59951d73f5e",
-  "activities_tree_case": "edc2bd1c5a4b09d47510960f6a571a526f7b208108b5a739ee1664860312d2b3",
-  "activities_tree_it_leads_to": "f06e37531d7791453070da1551b73f7888dd23558045433a67ed82f762ea38c0",
-  "activities_tree_leads_to": "9620f246396bd90d0998d71c086590ba872be648b37c2dd0a5aa204d52d14547",
-  "activities_tree_still_possible": "d801aa0fe90d3d6d6de01d7ddd9330b98f08d3ec5e7eafe505b977e71652680c",
-  "activities_tree_undo": "bc52fd36b32193e8e06c5564eca98b017087e4d30da3971af30e32d22f1a1283",
-  "activities_tree_walk": "5638a917174ba5c3172cd34dcf23b53b74e910a1621b6d4444032d11e455ae7a",
-  "activities_tree_you_chose": "aa72e95e7e545d96c4680c2578aec15ffb28be2671a980ae32ffceb2b6af24f2",
-  "activities_tree_your_answers": "e61468c6767747d176a51297861402bfc66c807ece94f775786cd9ca06fb746e"
+  "activities_sortable_stopped": "15b76a952938644c9a5dd2e583563e749067bfe41a8e75c6de55e59951d73f5e"
 }
 -->
 <resources>
     <string name="activities_badge_estimate_first">Estime d’abord</string>
     <string name="activities_badge_read_chart">Lis le graphique</string>
     <string name="activities_badge_before_after">Compare avant et après</string>
-    <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
-    <string name="activities_badge_follow_questions">Suis les questions</string>
     <string name="activities_badge_find_error">Trouve l’erreur</string>
     <string name="activities_badge_step_by_step">Avance étape par étape</string>
     <string name="activities_badge_spot_pattern">Repère la régularité</string>
@@ -112,18 +101,6 @@
     <string name="activities_chart_spans">Intervalles à mesurer</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s par %2$s</string>
-    <!-- The panel with the case the learner follows through the questions. -->
-    <string name="activities_tree_case">Le cas</string>
-    <!-- The outcomes the learner's answers can still reach from here. -->
-    <string name="activities_tree_still_possible">Encore possible</string>
-    <string name="activities_tree_your_answers">Tes réponses</string>
-    <string name="activities_tree_leads_to">Tes réponses mènent à</string>
-    <string name="activities_tree_undo">Annuler</string>
-    <string name="activities_tree_walk">Le cheminement pour ce cas</string>
-    <!-- The branch the learner took where the key went another way, like "You chose Single". -->
-    <string name="activities_tree_you_chose">Tu as choisi %1$s</string>
-    <!-- The outcome the right walk reaches, like "It leads to Pine." -->
-    <string name="activities_tree_it_leads_to">Cela mène à %1$s.</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
     <string name="activities_find_error_ai_asked">Quelqu’un a posé une question à un assistant IA</string>
     <string name="activities_find_error_problem">Problème</string>

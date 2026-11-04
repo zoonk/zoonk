@@ -42,8 +42,8 @@ import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.android.feature.player.steps.GhostAction
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf31Fields
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf31Value as KeyboardFretboardContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf30Fields
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf30Value as KeyboardFretboardContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
 
 val keyboardFretboardRenderer =
@@ -68,8 +68,8 @@ private class Board(
     val target = NoteTarget.of(fields.target)
     val start = fields.start?.let(NoteTarget::of)
     val byEar = fields.byEar == true
-    val showsGuitar = PlayableLibraryStepAnyOfContentOneOf31Fields.Instruments.GUITAR in fields.instruments
-    val showsPiano = PlayableLibraryStepAnyOfContentOneOf31Fields.Instruments.PIANO in fields.instruments
+    val showsGuitar = PlayableLibraryStepAnyOfContentOneOf30Fields.Instruments.GUITAR in fields.instruments
+    val showsPiano = PlayableLibraryStepAnyOfContentOneOf30Fields.Instruments.PIANO in fields.instruments
     val isInteraction = (props.content as KeyboardFretboardContent).value.check is InteractionCheckValue
 
     /** A target found by ear shows once answered, even when the question only asked to name it. */

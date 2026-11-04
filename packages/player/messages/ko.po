@@ -67,11 +67,6 @@ msgid "Find the error"
 msgstr "오류 찾기"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "nC6XLx"
-msgid "Follow the questions"
-msgstr "문제 따라 풀기"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "XsJOM5"
 msgid "Hands on"
 msgstr "직접 해 보기"
@@ -618,7 +613,6 @@ msgstr "양쪽을 각각 {count}묶음으로 똑같이 나누기"
 
 #: src/activities/balance/balance-controls.tsx
 #: src/activities/categorize/categorize-sorting.tsx
-#: src/activities/decision-tree/decision-tree-activity.tsx
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "JkS37H"
 msgid "Undo"
@@ -1071,51 +1065,6 @@ msgstr "{number}번 칸에는 어떤 유전자형이 들어가나요?"
 msgctxt "_Z7gdQ"
 msgid "What goes in square {number}?"
 msgstr "{number}번 칸에는 무엇이 들어가나요?"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "rUq4jt"
-msgid "The case"
-msgstr "사례"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "8LkSSl"
-msgid "Still possible"
-msgstr "아직 가능한 결과"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "5m07cc"
-msgid "Your answers"
-msgstr "내 답변"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "aI6870"
-msgid "Your answers lead to"
-msgstr "답변에 따른 결과"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "PTXFe3"
-msgid "You reached {outcome} after {count, plural, =0 {# questions} one {# question} other {# questions}}."
-msgstr "{outcome}에 도달하기까지 {count, plural, =0 {문제 #개} other {#개의 문제}}에 답했어요."
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "MtII9q"
-msgid "Question {number}. Still possible: {outcomes}."
-msgstr "{number}번 문제예요. 아직 가능한 결과: {outcomes}."
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "GSaFJS"
-msgid "The walk for this case"
-msgstr "이 사례의 판단 과정"
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "mJLCHX"
-msgid "You chose {branch}"
-msgstr "선택한 답변: {branch}"
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "eU5-OH"
-msgid "It leads to {outcome}."
-msgstr "{outcome}에 도달해요."
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"

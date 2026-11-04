@@ -38,7 +38,6 @@ import com.zoonk.android.feature.activities.code.codeRunnerRenderer
 import com.zoonk.android.feature.activities.code.codeTracerRenderer
 import com.zoonk.android.feature.activities.code.patternTesterRenderer
 import com.zoonk.android.feature.activities.code.sqlPlaygroundRenderer
-import com.zoonk.android.feature.activities.decisionTreeRenderer
 import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
 import com.zoonk.android.feature.activities.findErrorRenderer
 import com.zoonk.android.feature.activities.geometry.geometryBoardRenderer
@@ -120,7 +119,6 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "codeRunner" to codeRunnerRenderer,
         "codeTracer" to codeTracerRenderer,
         "combinationGrid" to combinationGridRenderer,
-        "decisionTree" to decisionTreeRenderer,
         "dialogueSimulator" to dialogueSimulatorRenderer,
         "distributionExplorer" to distributionExplorerRenderer,
         "findError" to findErrorRenderer,

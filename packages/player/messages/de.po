@@ -67,11 +67,6 @@ msgid "Find the error"
 msgstr "Finde den Fehler"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "nC6XLx"
-msgid "Follow the questions"
-msgstr "Folge den Fragen"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "XsJOM5"
 msgid "Hands on"
 msgstr "Leg selbst los"
@@ -618,7 +613,6 @@ msgstr "Beide Seiten in {count} gleich große Gruppen teilen"
 
 #: src/activities/balance/balance-controls.tsx
 #: src/activities/categorize/categorize-sorting.tsx
-#: src/activities/decision-tree/decision-tree-activity.tsx
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "JkS37H"
 msgid "Undo"
@@ -1071,51 +1065,6 @@ msgstr "Welcher Genotyp gehört in Feld {number}?"
 msgctxt "_Z7gdQ"
 msgid "What goes in square {number}?"
 msgstr "Was gehört in Feld {number}?"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "rUq4jt"
-msgid "The case"
-msgstr "Der Fall"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "8LkSSl"
-msgid "Still possible"
-msgstr "Noch möglich"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "5m07cc"
-msgid "Your answers"
-msgstr "Deine Antworten"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "aI6870"
-msgid "Your answers lead to"
-msgstr "Deine Antworten führen zu"
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "PTXFe3"
-msgid "You reached {outcome} after {count, plural, =0 {# questions} one {# question} other {# questions}}."
-msgstr "Du bist bei {outcome} nach {count, plural, =0 {# Fragen} one {# Frage} other {# Fragen}} angekommen."
-
-#: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "MtII9q"
-msgid "Question {number}. Still possible: {outcomes}."
-msgstr "Frage {number}. Noch möglich: {outcomes}."
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "GSaFJS"
-msgid "The walk for this case"
-msgstr "Der Weg durch diesen Fall"
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "mJLCHX"
-msgid "You chose {branch}"
-msgstr "Du hast {branch} gewählt"
-
-#: src/activities/decision-tree/decision-tree-review.tsx
-msgctxt "eU5-OH"
-msgid "It leads to {outcome}."
-msgstr "Dieser Weg führt zu {outcome}."
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"

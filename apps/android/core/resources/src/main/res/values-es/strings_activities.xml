@@ -4,7 +4,6 @@
   "activities_badge_before_after": "66651e1b49163c0ab77322cb4af3c819b635eef765a571e117389a5f740f9078",
   "activities_badge_estimate_first": "ccae6ae3ace1e778ea1e207c8143f7c712e9b271b22d1060fd96e68186dc5cbf",
   "activities_badge_find_error": "4d2ff11e3c85011d466d02625030036b186918ff8a746742d9d38a60749aed31",
-  "activities_badge_follow_questions": "cead1647e2b0591b853db63259e475ab9a58705b978c69ca927f4f7c66809e3e",
   "activities_badge_read_chart": "f810eccb61c526a4a230dedd54a1c0c228dd40794280d22bf21dfd77eaab914d",
   "activities_badge_reply": "20e14c63f889309e5432f1713ddf937fe29be2ac92f8194a0559c88c1be15bc5",
   "activities_badge_spot_pattern": "71a16cd44a6d14eaec853041239c460e1f676b694e2527cda1eaf1a7328647f4",
@@ -58,23 +57,13 @@
   "activities_sortable_move_up": "d716e4fd041056e5c0b66d69c3b5b74594675f61d56c40e479a1eea2f4c99489",
   "activities_sortable_over": "8a32dcebcfe54b5a0d76f2a493ca964d6aecd17d284d01444ea6f8441b088e73",
   "activities_sortable_picked_up": "8afeebcf35a42fbad673c5350b7f1793ca7ed15702dd04bba95ded4030e91c15",
-  "activities_sortable_stopped": "268988b9d4dad733141fd30fc82aa3d2c2b0fd4394615c7984a65df1b2b607af",
-  "activities_tree_case": "6a7b175d82a1b113b6aa7d4113fd1b42d34d60f1b422a6e7205b8d60a10c100f",
-  "activities_tree_it_leads_to": "a6f6ed394b3206d92b83d6bb69c305c5d81681d546457a3e83cd088c835186b9",
-  "activities_tree_leads_to": "4e8aaed566f389cf750cd2a858b8d64debbeab1c7fffe129a3488bc7204d0261",
-  "activities_tree_still_possible": "a1b1eedd031052f76e64e66f838247e6fa28e83a422a4129ab0db7b5aaedb2ea",
-  "activities_tree_undo": "e075560c089e9a40092adfc23555b01ec2f7eb00013dfb830209766d48d3b36d",
-  "activities_tree_walk": "0d254b50962f587286dca9457927e0669d2250c8502c50306050ce8a99736df4",
-  "activities_tree_you_chose": "b56c8ce6f67c591125d409010a86ee2c94fa07ed5643eb3a2dae3ac83ace40a1",
-  "activities_tree_your_answers": "b0984ca5e9aea94496d620fcefb72f80f381b21c85d51914d2504248ba606bcb"
+  "activities_sortable_stopped": "268988b9d4dad733141fd30fc82aa3d2c2b0fd4394615c7984a65df1b2b607af"
 }
 -->
 <resources>
     <string name="activities_badge_estimate_first">Estima primero</string>
     <string name="activities_badge_read_chart">Lee la gráfica</string>
     <string name="activities_badge_before_after">Antes y después</string>
-    <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
-    <string name="activities_badge_follow_questions">Sigue las preguntas</string>
     <string name="activities_badge_find_error">Encuentra el error</string>
     <string name="activities_badge_step_by_step">Paso a paso</string>
     <string name="activities_badge_spot_pattern">Encuentra el patrón</string>
@@ -112,18 +101,6 @@
     <string name="activities_chart_spans">Intervalos para medir</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s por %2$s</string>
-    <!-- The panel with the case the learner follows through the questions. -->
-    <string name="activities_tree_case">El caso</string>
-    <!-- The outcomes the learner's answers can still reach from here. -->
-    <string name="activities_tree_still_possible">Aún posibles</string>
-    <string name="activities_tree_your_answers">Tus respuestas</string>
-    <string name="activities_tree_leads_to">Tus respuestas llevan a</string>
-    <string name="activities_tree_undo">Deshacer</string>
-    <string name="activities_tree_walk">El recorrido para este caso</string>
-    <!-- The branch the learner took where the key went another way, like "You chose Single". -->
-    <string name="activities_tree_you_chose">Elegiste %1$s</string>
-    <!-- The outcome the right walk reaches, like "It leads to Pine." -->
-    <string name="activities_tree_it_leads_to">Lleva a %1$s.</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
     <string name="activities_find_error_ai_asked">Alguien le preguntó a un asistente de IA</string>
     <string name="activities_find_error_problem">Problema</string>

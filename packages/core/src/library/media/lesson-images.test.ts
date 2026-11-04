@@ -4,7 +4,6 @@ import { checkLessonImage } from "@zoonk/ai/tasks/images/check";
 import { describeImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { IMAGE_STYLE_VERSION } from "@zoonk/ai/tasks/images/style";
 import { prisma } from "@zoonk/db";
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -187,22 +186,6 @@ describe(listLessonImageSteps, () => {
       steps[0]?.id,
       steps[2]?.id,
     ]);
-  });
-});
-
-describe("activity pictures", () => {
-  it("lists the picture a decision tree's case asks for", async () => {
-    const lesson = await libraryLessonFixture();
-    const leaf = { alt: "A leaf with toothed edges and veins in pairs", prompt: "A beech leaf" };
-
-    const step = await libraryStepFixture({
-      content: { ...activityContentFixtures.decisionTree, image: leaf },
-      kind: "activity",
-      lessonId: lesson.id,
-      position: 0,
-    });
-
-    await expect(listLessonImageSteps({ lessonId: lesson.id })).resolves.toStrictEqual([step.id]);
   });
 });
 

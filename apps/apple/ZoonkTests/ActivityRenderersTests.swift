@@ -359,35 +359,6 @@ final class ActivityRenderersTests: XCTestCase {
        "nodes":[{"id":"dust","label":"Dust storms","year":1934},{"id":"plow","label":"Prairie plowed","year":1920},{"id":"drought","label":"Drought","year":1931}]}}
     """#
 
-  private let decisionTreeJSON = #"""
-    {"template":"decisionTree","prompt":"Name the tree.","check":{"kind":"interaction","explanation":"x"},
-     "fields":{"case":{"answers":[{"branch":"Needles","nodeId":"q1"},{"branch":"In bundles","nodeId":"q2"}],"description":"Needles in bundles.","outcomeId":"pine"},
-       "nodes":[{"branches":[{"label":"Needles","next":"q2"},{"label":"Broad leaves","next":"oak"}],"id":"q1","kind":"question","question":"What are the leaves like?"},
-                {"branches":[{"label":"In bundles","next":"pine"},{"label":"Single","next":"spruce"}],"id":"q2","kind":"question","question":"How do the needles grow?"},
-                {"id":"pine","kind":"outcome","label":"Pine"},{"id":"spruce","kind":"outcome","label":"Spruce"},{"id":"oak","kind":"outcome","label":"Oak"}],
-       "rootId":"q1"}}
-    """#
-
-  func testDecisionTreeTheCaseWalkIsRightAndAWrongBranchIsShown() throws {
-    let content = try content(decisionTreeJSON)
-    let fields = try content.fields(as: DecisionTreeFields.self)
-
-    XCTAssertEqual(DecisionTreeWalk.casePath(fields), ["q1", "q2", "pine"])
-    XCTAssertTrue(grade(.decisionTree, content, .order(["q1", "q2", "pine"])))
-    XCTAssertFalse(grade(.decisionTree, content, .order(["q1", "q2", "spruce"])))
-    XCTAssertEqual(
-      DecisionTreeWalk.firstDivergence(
-        expected: ["q1", "q2", "pine"], walked: ["q1", "q2", "spruce"]), 2)
-    XCTAssertNil(
-      DecisionTreeWalk.firstDivergence(
-        expected: ["q1", "q2", "pine"], walked: ["q1", "q2", "pine"]))
-    XCTAssertEqual(
-      DecisionTreeWalk.steps(fields, path: ["q1", "q2", "spruce"]).map(\.branch),
-      ["Needles", "Single"])
-    XCTAssertEqual(
-      DecisionTreeWalk.reachableOutcomes(fields, from: "q2").map(\.label), ["Pine", "Spruce"])
-  }
-
   func testCombinationGridGenotypesMatchInEitherOrder() throws {
     let content = try content(
       #"{"template":"combinationGrid","prompt":"Fill it.","check":{"kind":"interaction","explanation":"x"},"fields":{"columns":{"label":"White parent","values":["p","p"]},"rows":{"label":"Purple parent","values":["P","p"]},"rule":"alleles","title":"Flower color","traits":{"dominant":"Purple","recessive":"White"}}}"#
