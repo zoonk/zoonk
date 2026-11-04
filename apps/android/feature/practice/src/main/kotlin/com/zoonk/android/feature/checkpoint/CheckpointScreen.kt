@@ -99,8 +99,6 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
-import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
@@ -108,6 +106,8 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -459,37 +459,17 @@ private fun DuelSegments(
     question: Question?,
 ) {
     val removed = state.verdicts.filterKeys { id -> read.questions.none { it.itemId == id } }.values
-    val fills =
-        removed.map { if (it) Verdict.Right else Verdict.Wrong } +
+    val segments =
+        removed.map { if (it) TaskSegment.Right else TaskSegment.Wrong } +
             read.questions.map { candidate ->
-                state.verdicts[candidate.itemId]?.let { if (it) Verdict.Right else Verdict.Wrong }
-                    ?: if (candidate.itemId == question?.itemId) Verdict.Current else Verdict.Ahead
+                state.verdicts[candidate.itemId]?.let { if (it) TaskSegment.Right else TaskSegment.Wrong }
+                    ?: if (candidate.itemId == question?.itemId) TaskSegment.Current else TaskSegment.Ahead
             }
-    val position = (fills.indexOf(Verdict.Current).takeIf { it >= 0 } ?: state.verdicts.size - 1) + 1
-    val label = stringResource(R.string.practice_progress, position.coerceIn(1, fills.size), fills.size)
+    val position = (segments.indexOf(TaskSegment.Current).takeIf { it >= 0 } ?: state.verdicts.size - 1) + 1
+    val label = stringResource(R.string.practice_progress, position.coerceIn(1, segments.size), segments.size)
 
-    Box(
-        Modifier.semantics {
-            contentDescription = label
-            progressBarRangeInfo = ProgressBarRangeInfo(state.verdicts.size.toFloat(), 0f..fills.size.toFloat())
-        },
-    ) {
-        MeterParts(
-            fills.map {
-                MeterPart(
-                    when (it) {
-                        Verdict.Right -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.tertiary)
-                        Verdict.Wrong -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.error)
-                        Verdict.Current -> MeterPart.Fill.Place()
-                        Verdict.Ahead -> MeterPart.Fill.Track
-                    },
-                )
-            },
-        )
-    }
+    TaskSegments(segments, contentDescription = label, done = state.verdicts.size)
 }
-
-private enum class Verdict { Right, Wrong, Current, Ahead }
 
 /** On a phone the shield stands in for the question segments: each right answer breaks a plate. */
 @Composable

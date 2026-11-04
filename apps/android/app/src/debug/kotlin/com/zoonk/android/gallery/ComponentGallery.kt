@@ -77,6 +77,15 @@ import com.zoonk.android.ui.components.DestructiveButton
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.FeedbackNote
+import com.zoonk.android.ui.components.FeedbackPanel
+import com.zoonk.android.ui.components.FeedbackTone
+import com.zoonk.android.ui.components.FeedbackVerdict
+import com.zoonk.android.ui.components.GoalBox
+import com.zoonk.android.ui.components.GoalExample
+import com.zoonk.android.ui.components.GoalExamples
+import com.zoonk.android.ui.components.GoalRing
+import com.zoonk.android.ui.components.GoalRingTrack
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LabelChip
@@ -88,12 +97,18 @@ import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.ListDivider
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.MomentReadouts
+import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageTitleRow
@@ -108,6 +123,8 @@ import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMark
+import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.format.DateStyle
@@ -318,6 +335,11 @@ private fun Buttons() {
             TextButton(onClick = {}, enabled = false) { Text("Skip") }
             DestructiveButton(onClick = {}, enabled = false) { Text("Delete") }
         }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            OutlinedIconButton(onClick = {}) { Icon(painterResource(R.drawable.ic_contact_support), contentDescription = "Ask") }
+            OptionsButton(onClick = {}, contentDescription = "More options")
+            OptionsButton(onClick = {}, contentDescription = "More options", size = ButtonSize.Large)
+        }
     }
 }
 
@@ -337,6 +359,12 @@ private fun Fields() {
         OutlinedTextField(value = "", onValueChange = {}, label = "Message", placeholder = { Text("What happened?") }, minLines = 3)
         OutlinedTextField(value = "Read only", onValueChange = {}, label = "Disabled", enabled = false, singleLine = true)
         OutlinedTextField(value = "", onValueChange = {}, placeholder = { Text("Without a label") }, singleLine = true)
+        GoalBox(value = "", onValueChange = {}, onSubmit = {})
+        GoalBox(value = "Speak Spanish for a job interview", onValueChange = {}, onSubmit = {})
+        GoalExamples(
+            listOf(GoalExample("Pass the ENEM", "Exam"), GoalExample("Understand quantum physics", "Learn a topic")),
+            onPick = {},
+        )
     }
 }
 
@@ -439,9 +467,16 @@ private fun Meters() {
             )
         }
         Labeled("A lesson's answers") {
-            MeterParts(
-                listOf(done, done, done, MeterPart.Fill.Solid(colors.error), done, MeterPart.Fill.Track, MeterPart.Fill.Track)
-                    .map { MeterPart(it) },
+            TaskSegments(
+                listOf(
+                    TaskSegment.Right,
+                    TaskSegment.Wrong,
+                    TaskSegment.Read,
+                    TaskSegment.Done,
+                    TaskSegment.Current,
+                    TaskSegment.Ahead,
+                    TaskSegment.Ahead,
+                ),
             )
         }
         Labeled("A skill's level, B1") { LevelBar(2.0) }
@@ -455,6 +490,16 @@ private fun Meters() {
                 ),
             )
         }
+        Labeled("A week's goal rings") {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                GoalRing(1f) { DoneMark() }
+                GoalRing(0.4f, track = GoalRingTrack.Today)
+                GoalRing(0f, track = GoalRingTrack.Missed)
+                GoalRing(0f, track = GoalRingTrack.Rest)
+                GoalRing(0f)
+            }
+        }
+        MomentReadouts(brainPower = 120, score = MomentScore(answered = 10, correct = 8), facts = listOf("5 min"))
     }
 }
 
@@ -478,21 +523,23 @@ private fun StatusMarks() {
             MarkStatus.Next to "The periodic table",
             MarkStatus.Todo to "Chemical bonds",
         ).forEach { (status, title) ->
-            ListItem(
-                headlineContent = { Text(title) },
-                leadingContent = { StatusMark(status) },
-                colors =
-                    ListItemDefaults.colors(
-                        containerColor =
-                            if (status == MarkStatus.Next) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent,
-                    ),
+            ListRow(
+                headline = { Text(title) },
+                highlighted = status == MarkStatus.Next,
+                leading = { StatusMark(status) },
+                meta = { Text("5 min") },
             )
+            ListDivider()
         }
-        ListItem(
-            headlineContent = { Text("Acids and bases") },
-            leadingContent = { ProgressMark(0.4f) },
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        ListRow(
+            headline = { Text("Acids and bases") },
+            leading = { ProgressMark(0.4f) },
+            supporting = { Text("2 of 5 lessons") },
+            expanded = false,
+            onClick = {},
         )
+        ListDivider()
+        ListRow(headline = { Text("Daily reminder") }, trailing = { Switch(checked = true, onCheckedChange = {}) })
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             DoneMark()
             Text("Done mark alone", style = MaterialTheme.typography.bodyMedium)
@@ -542,6 +589,17 @@ private fun Answers() {
         AnswerSample("3", "Golgi apparatus", picked = false, result = AnswerResult.Right)
         AnswerSample("4", "Nucleus", picked = true, result = AnswerResult.Wrong)
         AnswerSample("1", "A guess", picked = true, result = AnswerResult.Guess)
+        listOf(
+            FeedbackTone.Right to "Correct",
+            FeedbackTone.Neutral to "Not graded",
+            FeedbackTone.Almost to "Almost",
+            FeedbackTone.Wrong to "Not quite",
+        ).forEach { (tone, verdict) ->
+            FeedbackPanel(label = "Feedback") {
+                FeedbackVerdict(verdict, tone, end = "3 right in a row")
+                if (tone == FeedbackTone.Wrong) FeedbackNote("You'll see this one again tomorrow.")
+            }
+        }
     }
 }
 

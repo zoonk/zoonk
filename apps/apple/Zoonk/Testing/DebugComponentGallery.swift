@@ -159,6 +159,13 @@
           Button(String("Off")) {}.buttonStyle(.outline).controlSize(.small).disabled(true)
         }
 
+        ButtonRow(spacing: 8) {
+          Button(String("Send"), systemImage: "arrow.up") {}
+            .labelStyle(.iconOnly).buttonStyle(.mainAction.icon).controlSize(.small)
+          Button(String("Ask"), systemImage: "questionmark.bubble") {}
+            .labelStyle(.iconOnly).buttonStyle(.outline.icon)
+        }
+
         Toggle(String("A switch"), isOn: .constant(true))
           .tint(.success)
       }
@@ -196,17 +203,34 @@
         )
         .lineLimit(3...5)
       }
+
+      ForEach([false, true], id: \.self) { isFocused in
+        HStack {
+          Text(verbatim: isFocused ? "Speak Spanish for a job interview" : "I want to learn…")
+            .foregroundStyle(isFocused ? Color(.foreground) : .faint)
+            .frame(maxWidth: .infinity, alignment: .leading)
+          Button(String("Build my plan")) {}.buttonStyle(.mainAction)
+        }
+        .padding(.leading, 16)
+        .padding(6)
+        .inputPanel(isFocused: isFocused)
+      }
     }
   }
 
   private struct Chips: View {
     var body: some View {
-      FlowLayout(spacing: 8) {
-        Text(verbatim: "Plus").chip()
-        Text(verbatim: "1 week").chip()
-        ForEach(CourseCategory.allCases, id: \.self) { subject in
-          CourseSubjectLabel(subject: subject)
+      VStack(alignment: .leading, spacing: 8) {
+        FlowLayout(spacing: 8) {
+          Text(verbatim: "Plus").chip()
+          Text(verbatim: "1 week").chip()
+          ForEach(CourseCategory.allCases, id: \.self) { subject in
+            CourseSubjectLabel(subject: subject)
+          }
         }
+
+        Text(verbatim: "A sentence in a chip, such as a lesson screen's eyebrow, takes more lines")
+          .chip(wraps: true)
       }
       .padding(.vertical, 8)
     }
@@ -235,6 +259,16 @@
           KindMark(kind: .mistakes)
         } trailing: {
           Text(verbatim: "3 min")
+        }
+
+        ListRow(Text(verbatim: "Juros compostos"), number: 3) {
+        } trailing: {
+          DisclosureChevron()
+        }
+
+        ListRow(Text(verbatim: "Unit 2 · Porcentagem")) {
+        } trailing: {
+          DisclosureChevron(pointsDown: true)
         }
 
         NavigationLink {
@@ -280,6 +314,18 @@
           label: Text(verbatim: "Brain Power"), value: Text(verbatim: "1,240"),
           systemImage: "brain", tone: .brain)
       }
+
+      ForEach(
+        [
+          ("Correct", FeedbackTone.right), ("Not graded", .neutral), ("Almost", .almost),
+          ("Not quite", .wrong),
+        ], id: \.0
+      ) { title, tone in
+        FeedbackVerdict(Text(verbatim: title), tone: tone) {
+          Text(verbatim: "3 right in a row")
+        }
+        .feedbackPanel()
+      }
     }
   }
 
@@ -298,6 +344,33 @@
           .init(weight: 3, fill: .track), .init(fill: .color(LearnKind.review.color)),
           .init(weight: 4, fill: .color(LearnKind.conversation.color)),
         ])
+        TaskSegments(
+          segments: [.right, .wrong, .read, .current, .ahead, .ahead],
+          label: Text(verbatim: "Lesson progress"))
+
+        BigQuantity("38 min left")
+
+        FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
+          MomentReadout {
+            Text(verbatim: "8/10")
+          } words: {
+            Text(verbatim: "Right")
+          }
+          MomentReadout(tint: .brainText) {
+            Text(verbatim: "+120")
+          } words: {
+            Text(verbatim: "Brain Power")
+          }
+        }
+
+        HStack(spacing: 12) {
+          GoalRing(share: 1, size: 26) {
+            Image(systemName: "checkmark").foregroundStyle(.success)
+          }
+          GoalRing(share: 0.4, track: .today, size: 26) {}
+          GoalRing(share: 0, track: .missed, size: 26) {}
+          GoalRing(share: 0, track: .rest, size: 26) {}
+        }
       }
       .padding(.vertical, 8)
     }
@@ -338,6 +411,9 @@
         }
         AnswerOption(marker: 4, isPicked: true, result: .wrong, isLocked: true, action: {}) {
           Text(verbatim: "Checked wrong")
+        }
+        AnswerOption(marker: 5, isPicked: true, result: .guess, isLocked: true, action: {}) {
+          Text(verbatim: "A guess, checked")
         }
       }
       .padding(.vertical, 8)

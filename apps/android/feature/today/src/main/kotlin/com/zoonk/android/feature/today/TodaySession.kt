@@ -114,7 +114,7 @@ internal fun LazyListScope.todaySession(
     freshStartItem(model)
 
     if (day.steps.size >= 2) {
-        item(key = "segments", contentType = "segments") { DaySegments(model, Modifier.pageItem().padding(top = 20.dp)) }
+        item(key = "segments", contentType = "segments") { DayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
     }
 
     if (wide && day.steps.isNotEmpty()) {
@@ -683,8 +683,9 @@ private fun FoldRow(
     }
 }
 
+/** Main's `DayProgress`: the day's blocks by their minutes, the ones ahead in their kind's color. */
 @Composable
-private fun DaySegments(
+private fun DayProgress(
     model: TodayDayModel,
     modifier: Modifier,
 ) {

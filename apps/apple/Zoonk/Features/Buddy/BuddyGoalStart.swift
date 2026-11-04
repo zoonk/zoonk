@@ -81,7 +81,7 @@ struct BuddyGoalStart: View {
           .disabled(trimmedGoal.isEmpty)
           .padding(6)
         }
-        .composerPanel(isFocused: isFocused)
+        .inputPanel(isFocused: isFocused)
       }
       .scenePadding(.horizontal)
       .padding(.vertical, 8)

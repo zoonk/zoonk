@@ -79,7 +79,6 @@ import com.zoonk.android.feature.audio.rememberRecordTap
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.withoutFailure
 import com.zoonk.android.feature.player.LessonColumn
-import com.zoonk.android.feature.player.segmentParts
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -90,12 +89,12 @@ import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -293,7 +292,7 @@ private fun RoundMeter(round: PronunciationRound) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
-        MeterParts(segmentParts(round.segments))
+        TaskSegments(round.segments)
     }
 }
 

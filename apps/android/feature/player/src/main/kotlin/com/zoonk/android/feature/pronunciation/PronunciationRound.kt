@@ -12,7 +12,7 @@ import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceIssue
 import com.zoonk.android.feature.audio.VoiceRecorder
 import com.zoonk.android.feature.audio.VoiceRecording
-import com.zoonk.android.feature.player.engine.Segment
+import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.api.models.PronunciationAnswerGrade
 import com.zoonk.api.models.PronunciationReviews
 import com.zoonk.api.models.PronunciationRoundResult
@@ -47,8 +47,8 @@ class PronunciationRound(
     var step: RoundStep by mutableStateOf(if (words.isEmpty()) RoundStep.Result(null) else RoundStep.Word(0))
         private set
 
-    /** Each word's [Segment.Right], [Segment.Wrong] or, when skipped, [Segment.Read]. */
-    var outcomes by mutableStateOf(emptyMap<Int, Segment>())
+    /** Each word's [TaskSegment.Right], [TaskSegment.Wrong] or, when skipped, [TaskSegment.Read]. */
+    var outcomes by mutableStateOf(emptyMap<Int, TaskSegment>())
         private set
 
     var pending by mutableStateOf(false)
@@ -61,8 +61,8 @@ class PronunciationRound(
 
     val index: Int get() = (step as? RoundStep.Word)?.index ?: words.size
 
-    val segments: List<Segment>
-        get() = words.indices.map { outcomes[it] ?: if (it == index) Segment.Current else Segment.Ahead }
+    val segments: List<TaskSegment>
+        get() = words.indices.map { outcomes[it] ?: if (it == index) TaskSegment.Current else TaskSegment.Ahead }
 
     /** Bumped by Try again and the next word, so only a take recorded for the attempt in view answers it. */
     var attempt = 0
@@ -85,7 +85,7 @@ class PronunciationRound(
                 when (val outcome = answer(words[index].id.toString(), roundId, recording)) {
                     is GradeOutcome.Graded -> {
                         hasAnswers = true
-                        outcomes = outcomes + (index to if (outcome.value.isCorrect) Segment.Right else Segment.Wrong)
+                        outcomes = outcomes + (index to if (outcome.value.isCorrect) TaskSegment.Right else TaskSegment.Wrong)
                         RoundStep.Word(index, grade = outcome.value)
                     }
 
@@ -119,7 +119,7 @@ class PronunciationRound(
 
     suspend fun next() {
         val index = (step as? RoundStep.Word)?.index ?: return
-        if (index !in outcomes) outcomes = outcomes + (index to Segment.Read)
+        if (index !in outcomes) outcomes = outcomes + (index to TaskSegment.Read)
         attempt++
         if (index + 1 < words.size) {
             step = RoundStep.Word(index + 1)
