@@ -175,6 +175,7 @@ fun ZoonkApp(
 
     CompositionLocalProvider(
         LocalSnackbarHostState provides snackbars,
+        LocalSnackbarLayer provides remember { SnackbarLayer() },
         LocalPrivatePictures provides pictures,
         LocalUriHandler provides links,
         LocalTabRootBar provides rememberTabRootBar(app, navigator),
