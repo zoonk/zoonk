@@ -77,6 +77,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.zoonk
@@ -302,6 +303,7 @@ private fun SidePanel(
     val width = pageFold(window)?.let { minOf(PANEL_WIDTH, window - it.end) } ?: PANEL_WIDTH
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
+        HoldUntilFoldsRead()
         (LocalView.current.parent as? DialogWindowProvider)?.window?.setDimAmount(PANEL_DIM)
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterEnd) {
             Box(

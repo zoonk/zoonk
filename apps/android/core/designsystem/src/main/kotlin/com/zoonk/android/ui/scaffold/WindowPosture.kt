@@ -63,10 +63,11 @@ internal fun ReadWindowPosture(content: @Composable () -> Unit) {
  * Keeps this window from drawing until the folds are read, so the splash, the frame before a
  * rotation or a fold, or a dialog or sheet restored with its screen, never shows a frame laid out
  * without the fold. WindowManager doesn't promise a first reading on every device, so it skips
- * [HELD_FRAMES] frames at most. A dialog or a sheet calls it inside its own window.
+ * [HELD_FRAMES] frames at most. A dialog of its own calls it first thing inside its window, as the
+ * design system's dialogs and sheets do.
  */
 @Composable
-internal fun HoldUntilFoldsRead() {
+fun HoldUntilFoldsRead() {
     if (LocalWindowPosture.current != null) return
 
     val view = LocalView.current
