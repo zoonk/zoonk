@@ -10,9 +10,10 @@ extension View {
   }
 
   /// The learner's row, as main's `aria-current`: `muted` behind it, reaching a little past the
-  /// column's edges.
+  /// column's edges, without the hairlines that would cross it.
   func currentRow(_ isCurrent: Bool = true) -> some View {
     listRowBackground(isCurrent ? RowHighlight() : nil)
+      .listRowSeparator(isCurrent ? .hidden : .automatic)
   }
 }
 

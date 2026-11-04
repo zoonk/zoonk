@@ -9,6 +9,9 @@ struct ListRow<Leading: View, Trailing: View>: View {
   @ViewBuilder let leading: Leading
   @ViewBuilder let trailing: Trailing
 
+  /// Marks differ in width, so titles start in one column.
+  @ScaledMetric(relativeTo: .subheadline) private var markWidth = 20.0
+
   init(
     _ title: Text, description: Text? = nil, @ViewBuilder leading: () -> Leading,
     @ViewBuilder trailing: () -> Trailing
@@ -21,8 +24,11 @@ struct ListRow<Leading: View, Trailing: View>: View {
 
   var body: some View {
     MarkedRow(stackedSpacing: 4) {
-      leading
-        .foregroundStyle(.mutedForeground)
+      if Leading.self != EmptyView.self {
+        leading
+          .foregroundStyle(.mutedForeground)
+          .frame(minWidth: markWidth)
+      }
     } content: {
       VStack(alignment: .leading, spacing: 1) {
         title
