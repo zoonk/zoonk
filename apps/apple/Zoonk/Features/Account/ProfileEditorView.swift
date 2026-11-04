@@ -9,6 +9,12 @@ struct ProfileEditorView: View {
   @State private var username: String
   @State private var isChangingUsername = false
   @State private var usernameCheck: UsernameCheck?
+  @FocusState private var focusedField: Field?
+
+  private enum Field {
+    case name
+    case username
+  }
 
   let account: CurrentAccount
   let isRequiredSetup: Bool
@@ -33,21 +39,33 @@ struct ProfileEditorView: View {
             comment: "Explains that the setup's name and username can change later"))
       }
 
-      Section {
-        TextField(
-          text: $name,
-          prompt: Text(
-            "Your name",
-            tableName: "Account",
-            comment: "Placeholder for the profile name field")
-        ) {
-          Text("Name", tableName: "Account", comment: "Profile name field label")
+      if !isRequiredSetup {
+        Section {
+          PageHeader(
+            Text("Profile", tableName: "Account", comment: "Profile editor navigation title"),
+            supporting: Text(
+              "Your name, username and account.", tableName: "Account",
+              comment: "Under the Profile page's title: what the page changes"))
         }
-        .textContentType(.name)
-      } header: {
-        SectionTitle(Text("Name", tableName: "Account", comment: "Profile name field label"))
-      } footer: {
-        SectionFooter {
+      }
+
+      Section {
+        FormField(
+          title: Text("Name", tableName: "Account", comment: "Profile name field label"),
+          isFocused: focusedField == .name, isInvalid: isNameTooLong
+        ) {
+          TextField(
+            text: $name,
+            prompt: Text(
+              "Your name",
+              tableName: "Account",
+              comment: "Placeholder for the profile name field")
+          ) {
+            Text("Name", tableName: "Account", comment: "Profile name field label")
+          }
+          .textContentType(.name)
+          .focused($focusedField, equals: .name)
+        } hint: {
           if isNameTooLong {
             Text(
               "Use 150 characters or fewer.", tableName: "Account",
@@ -60,38 +78,36 @@ struct ProfileEditorView: View {
               comment: "What the profile name is for")
           }
         }
-      }
 
-      if showsUsernameField {
-        Section {
-          HStack(spacing: 2) {
-            Text(verbatim: "@")
-              .foregroundStyle(.mutedForeground)
-              .accessibilityHidden(true)
+        if showsUsernameField {
+          FormField(
+            title: Text("Username", tableName: "Account", comment: "Profile username field label"),
+            isFocused: focusedField == .username,
+            isInvalid: usernameStatus == .taken || usernameStatus == .invalid
+          ) {
+            HStack(spacing: 2) {
+              Text(verbatim: "@")
+                .foregroundStyle(.mutedForeground)
+                .accessibilityHidden(true)
 
-            TextField(
-              text: normalizedUsernameBinding,
-              prompt: Text(
-                "username",
-                tableName: "Account",
-                comment: "Placeholder for the username field")
-            ) {
-              Text("Username", tableName: "Account", comment: "Profile username field label")
+              TextField(
+                text: normalizedUsernameBinding,
+                prompt: Text(
+                  "username",
+                  tableName: "Account",
+                  comment: "Placeholder for the username field")
+              ) {
+                Text("Username", tableName: "Account", comment: "Profile username field label")
+              }
+              .textInputAutocapitalization(.never)
+              .autocorrectionDisabled()
+              .textContentType(.username)
+              .focused($focusedField, equals: .username)
             }
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled()
-            .textContentType(.username)
-          }
-        } header: {
-          SectionTitle(
-            Text("Username", tableName: "Account", comment: "Profile username field label"))
-        } footer: {
-          SectionFooter {
+          } hint: {
             usernameHint
           }
-        }
-      } else {
-        Section {
+        } else {
           HStack {
             if username.isEmpty {
               ProgressView()
@@ -116,11 +132,11 @@ struct ProfileEditorView: View {
 
       if !isRequiredSetup {
         Section {
-          LabeledContent {
+          ListRow(Text("Email", tableName: "Account", comment: "Read-only profile email label")) {
+            EmptyView()
+          } trailing: {
             Text(account.user.email)
-              .foregroundStyle(.mutedForeground)
-          } label: {
-            Text("Email", tableName: "Account", comment: "Read-only profile email label")
+              .typeStyle(.meta)
           }
         } header: {
           SectionTitle(
@@ -165,7 +181,9 @@ struct ProfileEditorView: View {
           Button(role: .destructive, action: deleteAccount) {
             Text(
               "Delete my account", tableName: "Account",
-              comment: "Opens permanent account deletion")
+              comment: "Opens permanent account deletion"
+            )
+            .typeStyle(.rowTitle)
           }
           .foregroundStyle(.destructiveText)
         } header: {
@@ -188,6 +206,9 @@ struct ProfileEditorView: View {
     )
     .toolbarTitleDisplayMode(.inline)
     .toolbar(removing: isRequiredSetup ? .title : nil)
+    .barTitleAfterHero(
+      isRequiredSetup
+        ? "" : String(localized: "Profile", table: "Account", comment: "Profile editor navigation title"))
     .task {
       guard isRequiredSetup, username.isEmpty else {
         return
