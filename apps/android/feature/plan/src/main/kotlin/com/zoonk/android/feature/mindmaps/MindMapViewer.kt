@@ -73,6 +73,7 @@ import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.MindMapImage
 import com.zoonk.api.models.MindMapOutline
@@ -191,12 +192,15 @@ internal fun MindMapViewer(
                         onFrame = { frame = it },
                         modifier = Modifier.weight(1f).fillMaxWidth(),
                     )
-                    ZoomControls(
-                        scale = view.scale,
-                        onZoomOut = { view = view.zoomAt(frame, Offset.Zero, view.scale / PanZoom.ZOOM_STEP) },
-                        onFit = { view = PanZoom.FIT },
-                        onZoomIn = { view = view.zoomAt(frame, Offset.Zero, view.scale * PanZoom.ZOOM_STEP) },
-                    )
+                    BeforeFold { beforeFold ->
+                        ZoomControls(
+                            scale = view.scale,
+                            onZoomOut = { view = view.zoomAt(frame, Offset.Zero, view.scale / PanZoom.ZOOM_STEP) },
+                            onFit = { view = PanZoom.FIT },
+                            onZoomIn = { view = view.zoomAt(frame, Offset.Zero, view.scale * PanZoom.ZOOM_STEP) },
+                            modifier = beforeFold,
+                        )
+                    }
                 }
 
                 if (outlineBeside) {
@@ -312,9 +316,10 @@ private fun ZoomControls(
     onZoomOut: () -> Unit,
     onFit: () -> Unit,
     onZoomIn: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {

@@ -16,11 +16,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -49,7 +55,10 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class MindMapScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -80,24 +89,77 @@ class MindMapScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun expanded() = capture("expanded")
 
+    @Test
+    @Config(qualifiers = BOOK)
+    fun book() = capture("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDarkMoreContrast() = capture("book-dark-more-contrast", dark = true, moreContrast = true, fold = true)
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("book-font200", fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookRightToLeft() = capture("book-rtl", fold = true, layoutDirection = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun galaxyFold() = capture("galaxy-fold", fold = true)
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookBesideTheRail() = capture("book-rail", fold = true, rail = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun galaxyFoldBesideTheRail() = capture("galaxy-fold-rail", fold = true, rail = true)
+
     private fun capture(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        fold: Boolean = false,
+        layoutDirection: LayoutDirection? = null,
+        rail: Boolean = false,
     ) {
         var index by mutableIntStateOf(0)
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 val context = LocalContext.current
                 val pictures = remember { PrivatePictures(AppContainer.preview(context).images, SESSION) }
-                CompositionLocalProvider(LocalPrivatePictures provides pictures) {
-                    Surface { key(index) { SCREENS[index].second() } }
+                CompositionLocalProvider(
+                    LocalPrivatePictures provides pictures,
+                    LocalLayoutDirection provides (layoutDirection ?: LocalLayoutDirection.current),
+                ) {
+                    // The shell lays a pushed page beside Material's 80dp navigation rail.
+                    Surface(Modifier.padding(start = if (rail) 80.dp else 0.dp)) { key(index) { SCREENS[index].second() } }
                 }
             }
         }
         SCREENS.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
+            // Each screen reads the window afresh, and the publisher doesn't replay a fold to a late reader.
+            if (fold) {
+                folds.overrideWindowLayoutInfo(
+                    TestWindowLayoutInfo(
+                        listOf(
+                            FoldingFeature(
+                                compose.activity,
+                                state = FoldingFeature.State.FLAT,
+                                orientation = FoldingFeature.Orientation.VERTICAL,
+                            ),
+                        ),
+                    ),
+                )
+                compose.waitForIdle()
+            }
             write("${SCREENS[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
     }
@@ -112,6 +174,7 @@ class MindMapScreenshots {
     }
 
     private companion object {
+        const val BOOK = "w852dp-h883dp-xhdpi"
         val SESSION = AuthenticatedSession("ana", "token-a", "local-a")
         val FREE_CAP = Limit.Reached(LimitTier.Free, LimitPeriod.Day)
         val NO_ACTIONS = MindMapsActions({}, {}, {}, {}, {}, {})

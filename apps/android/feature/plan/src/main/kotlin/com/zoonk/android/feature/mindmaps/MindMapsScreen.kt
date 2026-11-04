@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -31,8 +33,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +54,9 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -72,7 +79,11 @@ import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
 import kotlinx.coroutines.launch
@@ -185,28 +196,34 @@ internal fun MindMapsPage(
     val drawn = mindMaps.chapters.count { it.status == GoalMindMap.Status.READY }
     val capped = cap != null && drawn < mindMaps.chapters.size
 
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+
     PageScaffold(onBack = actions.back, title = { if (titleAway) Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize()) {
+        BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
             val direction = LocalLayoutDirection.current
+            val start = padding.calculateStartPadding(direction) + MARGIN
+            val grid = tileGrid(maxWidth, pageFold(maxWidth, span), start)
             LazyVerticalGrid(
-                columns = if (maxWidth < WIDE_FROM) GridCells.Fixed(2) else GridCells.Adaptive(TILE_MIN),
+                columns = grid.columns,
                 state = gridState,
                 contentPadding =
                     PaddingValues(
-                        start = padding.calculateStartPadding(direction) + 16.dp,
+                        start = start,
                         top = padding.calculateTopPadding() + 8.dp,
-                        end = padding.calculateEndPadding(direction) + 16.dp,
+                        end = padding.calculateEndPadding(direction) + MARGIN,
                         bottom = padding.calculateBottomPadding() + 32.dp,
                     ),
-                horizontalArrangement = Arrangement.spacedBy(if (maxWidth < WIDE_FROM) 12.dp else 16.dp),
+                horizontalArrangement = grid.arrangement,
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                fullWidth("hero") { MindMapsHero(mindMaps, drawn, if (capped) cap else null, navigator) }
+                fullWidth("hero", grid.beforeFold) { MindMapsHero(mindMaps, drawn, if (capped) cap else null, navigator) }
 
-                if (groups.isEmpty()) fullWidth("empty") { MindMapsEmpty(mindMaps, actions, Modifier.padding(top = 12.dp)) }
+                if (groups.isEmpty()) {
+                    fullWidth("empty", grid.beforeFold) { MindMapsEmpty(mindMaps, actions, Modifier.padding(top = 12.dp)) }
+                }
 
                 groups.forEach { group ->
-                    fullWidth("group-${group.key}") { GroupTitle(group) }
+                    fullWidth("group-${group.key}", grid.beforeFold) { GroupTitle(group) }
                     items(group.maps.size, key = { group.maps[it].chapterId }, contentType = { "tile" }) { index ->
                         val map = group.maps[index]
                         val local = requests[map.chapterId]
@@ -232,9 +249,77 @@ internal fun List<MindMapGroup>.gridIndexOf(subject: String?): Int? {
 
 private fun LazyGridScope.fullWidth(
     key: String,
+    modifier: Modifier,
     content: @Composable () -> Unit,
 ) {
-    item(key = key, span = { GridItemSpan(maxLineSpan) }, contentType = key) { content() }
+    item(key = key, span = { GridItemSpan(maxLineSpan) }, contentType = key) { Box(modifier) { content() } }
+}
+
+/** How the tiles lay out, and where what spans the grid keeps to: the page before a fold. */
+private class TileGrid(
+    val columns: GridCells,
+    val arrangement: Arrangement.Horizontal,
+    val beforeFold: Modifier,
+)
+
+/**
+ * Main's grid on a page [width] wide whose grid starts [start] from its edge. Across a book's [fold] each page holds the
+ * tiles a row a phone would, as many and as wide on both, with the fold between them, so folding moves nothing.
+ */
+private fun tileGrid(
+    width: Dp,
+    fold: PageFold?,
+    start: Dp,
+): TileGrid {
+    if (fold == null) {
+        val columns = if (width < WIDE_FROM) GridCells.Fixed(2) else GridCells.Adaptive(TILE_MIN)
+        return TileGrid(columns, Arrangement.spacedBy(tileSpacing(width)), Modifier)
+    }
+
+    val leading = fold.start - start - MARGIN
+    val page = minOf(fold.start, width - fold.end)
+    val spacing = tileSpacing(page)
+    val perPage = if (page < WIDE_FROM) 2 else ((page - MARGIN * 2 + spacing) / (TILE_MIN + spacing)).toInt().coerceAtLeast(1)
+    val around = AroundFold(leading, gap = fold.end - fold.start + MARGIN * 2, perPage, spacing)
+
+    return TileGrid(around, around, Modifier.wrapContentWidth(Alignment.Start).width(leading))
+}
+
+private fun tileSpacing(width: Dp): Dp = if (width < WIDE_FROM) 12.dp else 16.dp
+
+/**
+ * [perPage] tiles a page on each side of a fold, all as wide, the ones before it ending at [leading] and the ones after
+ * it starting [gap] later. A page wider than the other keeps its extra room at its outer edge, so the rows line up.
+ */
+private data class AroundFold(
+    private val leading: Dp,
+    private val gap: Dp,
+    private val perPage: Int,
+    override val spacing: Dp,
+) : GridCells,
+    Arrangement.Horizontal {
+    override fun Density.calculateCrossAxisCellSizes(
+        availableSize: Int,
+        spacing: Int,
+    ): List<Int> {
+        val before = leading.roundToPx()
+        val room = minOf(before, availableSize - before - gap.roundToPx())
+        return List(perPage * 2) { ((room - spacing * (perPage - 1)) / perPage).coerceAtLeast(0) }
+    }
+
+    override fun Density.arrange(
+        totalSize: Int,
+        sizes: IntArray,
+        layoutDirection: LayoutDirection,
+        outPositions: IntArray,
+    ) {
+        val step = sizes.first() + spacing.roundToPx()
+        val beforeFold = leading.roundToPx() - perPage * step + spacing.roundToPx()
+        val afterFold = leading.roundToPx() + gap.roundToPx()
+        sizes.indices.forEach { index ->
+            outPositions[index] = if (index < perPage) beforeFold + index * step else afterFold + (index - perPage) * step
+        }
+    }
 }
 
 @Composable
@@ -458,6 +543,7 @@ private fun RequestTile(
 private val TILE_CORNER = 12.dp
 private val TILE_SHAPE = RoundedCornerShape(TILE_CORNER)
 private val TILE_MIN = 208.dp
+private val MARGIN = 16.dp
 
 /** Main's `sm`: two tiles a row on a phone, then as many 13rem tiles as fit. */
 private val WIDE_FROM = 600.dp
