@@ -664,7 +664,9 @@ private fun RoundEnd(
             title = { Text(stringResource(R.string.pronunciation_title)) },
             bottomBar = {
                 TaskActionBar {
-                    TaskActions { width -> Button(onClick = onDone, modifier = width) { Text(stringResource(R.string.pronunciation_done)) } }
+                    TaskActions { width ->
+                        Button(onClick = onDone, modifier = width) { Text(stringResource(R.string.pronunciation_done)) }
+                    }
                 }
             },
         ) { padding ->

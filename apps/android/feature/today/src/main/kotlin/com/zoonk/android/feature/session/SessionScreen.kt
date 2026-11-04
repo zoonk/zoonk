@@ -425,7 +425,13 @@ internal fun NextStop(
                                         ) {
                                             Text(
                                                 stringResource(
-                                                    if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
+                                                    if (refusal !=
+                                                        null
+                                                    ) {
+                                                        R.string.session_next_instead
+                                                    } else {
+                                                        R.string.session_next_while_waiting
+                                                    },
                                                     blockTitle(other),
                                                 ),
                                             )
@@ -506,7 +512,15 @@ internal fun NextStop(
                                     } else {
                                         LessonWritingProgress(
                                             run = if (lesson == NextStopLesson.Writing) run else GenerationRun(),
-                                            onRetry = { if (run.failure == GenerationFailure.Connection) viewModel.reconnect() else retry() },
+                                            onRetry = {
+                                                if (run.failure ==
+                                                    GenerationFailure.Connection
+                                                ) {
+                                                    viewModel.reconnect()
+                                                } else {
+                                                    retry()
+                                                }
+                                            },
                                             note = stringResource(R.string.session_next_writing_note),
                                         )
                                     }
