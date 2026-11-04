@@ -547,6 +547,8 @@ final class LiveCallTests: XCTestCase {
     var run = EndingRun()
     run.chat(until: 50)
     run.characterTalks(from: 55, to: 58)
+    // A transcript can land after the character answered: it isn't the learner's turn.
+    run.learnerHeard(at: 59.5)
     run.noteArrives(at: 60)
     run.learnerTalks(from: 66, to: 68)
     run.wait(until: 70)

@@ -276,8 +276,9 @@ struct LiveCallEnding {
       return false
     }
 
+    // A transcript of their words can arrive after the character already answered them.
     let hasFloor =
-      isLearnerTalking(at: now)
+      isLearnerSpeaking(at: now)
       || isRecent(lastSentAt, at: now, within: seconds(timing.characterQuietMs))
 
     guard cueSentAt != nil || hasFloor else {

@@ -172,8 +172,9 @@ function stepProgress(state: CallEndingState, at: number): Step {
     return { commands: [], state: { ...state, progressDue: false } };
   }
 
+  // A transcript of their words can arrive after the character already answered them.
   const learnerHasFloor =
-    isLearnerSpeaking(state, at) || isRecent(at, state.sentAt, state.timing.characterQuietMs);
+    state.learnerSpeaking || isRecent(at, state.sentAt, state.timing.characterQuietMs);
 
   return learnerHasFloor
     ? { commands: [{ type: "progress" }], state: { ...state, progressDue: false } }

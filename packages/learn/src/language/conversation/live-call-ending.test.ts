@@ -354,6 +354,8 @@ describe("what the objective check ends", () => {
     const { log } = play({
       events: [
         ...exchange,
+        // A transcript can land after the character answered: it isn't the learner's turn.
+        { at: 11_000, type: "learnerHeard" },
         {
           allMet: false,
           at: 11_500,

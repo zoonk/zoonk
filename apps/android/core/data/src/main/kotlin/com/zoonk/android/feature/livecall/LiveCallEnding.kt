@@ -176,7 +176,8 @@ class LiveCallEnding(
             return null
         }
         val sentJustNow = lastSentAt?.let { now - it < timing.characterQuietMs } == true
-        if (!learnerTalking(now) && !sentJustNow) return null
+        // A transcript of their words can arrive after the character already answered them.
+        if (!learnerSpeaking(now) && !sentJustNow) return null
         noteDue = false
         return Step.SendNote
     }
