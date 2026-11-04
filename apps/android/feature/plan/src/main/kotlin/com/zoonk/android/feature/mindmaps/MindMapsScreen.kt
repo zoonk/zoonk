@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -535,6 +536,8 @@ private fun RequestTile(
                     onClick = { if (failure) actions.retry(map.chapterId) else actions.create(map.chapterId) },
                     modifier = Modifier.semantics { contentDescription = spoken },
                     enabled = local?.pending != true && !blocked,
+                    // Material's pill, which a label wrapped by large text would round into a circle that cuts off its corners.
+                    shape = RoundedCornerShape(ButtonDefaults.MinHeight / 2),
                 ) {
                     PendingLabel(
                         local?.pending == true,
