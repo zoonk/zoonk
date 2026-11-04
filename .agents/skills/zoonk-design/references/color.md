@@ -46,7 +46,13 @@ Everything else is neutral: titles, body and labels, panels and rows, tabs, navi
 
 ## Native apps
 
-Apple and Android take the same meanings, not the web's values: each meaning uses the closest platform color (Apple's system colors, Android's Material color roles), so dark mode and increased contrast come from the OS. The tint of prominent buttons and toggles is the label color (black in light, white in dark), so Apple's accent and Android's Material `primary` are that ink, except Apple's toggles, which take the progress blue: their knob is always white, so an ink switch hides it in dark mode. Android uses Zoonk's scheme rather than wallpaper dynamic color (it would bring the wallpaper's hue in). A meaning with no platform color gets one custom color with light, dark and high-contrast values. Picks are ink, progress and the learner's place blue, wrong pink-red, Brain Power violet, kinds their hues on icons. The [Apple](../../apple-human-interface-guidelines/SKILL.md) and [Android](../../android-material-guidelines/SKILL.md) skills give the mapping.
+Apple and Android take the same values as the web, generated from `globals.css` in all four modes: `pnpm --filter apple palette` writes the iOS colorsets (light, dark and both Increase Contrast appearances) and `pnpm --filter android palette` writes Android's four schemes, sharing the math in `scripts/theme/`, whose tests fail when a committed output drifts from `globals.css` or a neutral text role drops under AA. After changing a color in `globals.css`, run both. Increase Contrast on iOS and a contrast level of 0.5 or more on Android pick the `prefers-contrast: more` values, so the browser and the app change together.
+
+- **The same roles, the same split.** Neutrals (the page, `card`, `muted`, `surface-3`, `border`, `input`, the three text steps) and every meaning above are roles in each app. A mark, fill or icon takes the base role (`success`) and words take its `-text` role, as on the web.
+- **The tint is ink** (`primary`): Apple's `AccentColor` and Android's Material `primary`, so the main action, links, the selected tab and checked controls are ink. Apple's toggles are the exception and take `success`: their knob is always white, so an ink switch hides it in dark mode.
+- **No platform colors in content.** Content never uses iOS's `.secondary`, `.tertiary`, system grays, fills or hues, or Android's wallpaper dynamic color: they'd lose the meanings, and light mode's `.secondary` is under AA on white. System colors stay inside the chrome the system draws (bars, alerts, menus, pickers, the keyboard).
+
+The [Apple](../../apple-human-interface-guidelines/references/design-system.md#color-roles) and [Android](../../android-material-guidelines/references/design-system.md#color-roles) mappings name each role in code.
 
 ## Sources
 
