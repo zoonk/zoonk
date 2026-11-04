@@ -23,7 +23,7 @@ struct BigQuantity: View {
 
   /// The quantity as one `Text` for a view that sets the readout role and its color itself, such as
   /// a stat tile: its numbers take the role, its words `unitFont` in the secondary color.
-  static func text(_ text: String, unitFont: Font) -> Text {
+  nonisolated static func text(_ text: String, unitFont: Font) -> Text {
     parts(text).reduce(Text(verbatim: "")) { line, part in
       part.isNumber
         ? Text("\(line)\(Text(verbatim: part.text))")

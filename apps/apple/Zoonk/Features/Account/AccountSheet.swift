@@ -378,7 +378,8 @@ private struct SettingsHubView: View {
 
         Link(destination: AccountLinks.support) {
           ListRow(
-            Text("Help", tableName: "Account", comment: "Settings row that opens Zoonk's help pages"))
+            Text(
+              "Help", tableName: "Account", comment: "Settings row that opens Zoonk's help pages"))
         }
         .foregroundStyle(.primary)
 

@@ -136,7 +136,8 @@ struct PreferencesView: View {
       Text("Preferences", tableName: "Account", comment: "Title of the Preferences page")
     )
     .barTitleAfterHero(
-      String(localized: "Preferences", table: "Account", comment: "Title of the Preferences page"))
+      String(localized: "Preferences", table: "Account", comment: "Title of the Preferences page")
+    )
     .overlay {
       SettingsLoadingState(state: settings.preferences.state) {
         Task {

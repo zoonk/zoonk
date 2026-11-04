@@ -200,19 +200,19 @@ private struct FeedbackForm: View {
             comment: "Message field label in the feedback form."),
           isFocused: focusedField == .message
         ) {
-        MultilineTextField(
-          text: $store.message,
-          prompt: Text(
-            "How can we help you?",
-            tableName: "Feedback",
-            comment: "Placeholder in the feedback message field."),
-          label: Text(
-            "Message",
-            tableName: "Feedback",
-            comment: "Message field label in the feedback form.")
-        )
-        .focused($focusedField, equals: .message)
-        .lineLimit(5...10)
+          MultilineTextField(
+            text: $store.message,
+            prompt: Text(
+              "How can we help you?",
+              tableName: "Feedback",
+              comment: "Placeholder in the feedback message field."),
+            label: Text(
+              "Message",
+              tableName: "Feedback",
+              comment: "Message field label in the feedback form.")
+          )
+          .focused($focusedField, equals: .message)
+          .lineLimit(5...10)
         }
       } footer: {
         SectionFooter {

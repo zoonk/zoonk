@@ -208,7 +208,9 @@ struct ProfileEditorView: View {
     .toolbar(removing: isRequiredSetup ? .title : nil)
     .barTitleAfterHero(
       isRequiredSetup
-        ? "" : String(localized: "Profile", table: "Account", comment: "Profile editor navigation title"))
+        ? ""
+        : String(localized: "Profile", table: "Account", comment: "Profile editor navigation title")
+    )
     .task {
       guard isRequiredSetup, username.isEmpty else {
         return

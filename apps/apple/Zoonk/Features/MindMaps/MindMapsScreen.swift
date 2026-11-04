@@ -16,7 +16,8 @@ struct MindMapsScreen: View {
           Text("Mind maps", tableName: "MindMaps", comment: "Title of the mind maps page")
         )
         .barTitleAfterHero(
-          String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page"))
+          String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
+        )
         .loads(list)
     }
   }
@@ -39,8 +40,9 @@ struct MindMapsScreen: View {
         VStack(alignment: .leading, spacing: 12) {
           PageHeader(
             Text("Mind maps", tableName: "MindMaps", comment: "Title of the mind maps page"),
-            eyebrow: Text(goal.title))
-            .padding(.bottom, 12)
+            eyebrow: Text(goal.title)
+          )
+          .padding(.bottom, 12)
 
           SectionTitle(
             Text(
