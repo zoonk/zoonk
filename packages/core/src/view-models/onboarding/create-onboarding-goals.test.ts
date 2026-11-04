@@ -10,8 +10,7 @@ import { getLearnerToday } from "./_utils/understanding-view";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
 
-/** Kiritimati's today is a day ahead of most zones, as a card read last night or elsewhere is. */
-const timeZone = "Pacific/Kiritimati";
+const dayAheadZone = "Pacific/Kiritimati";
 
 function learnGoal(details: GoalDraft["details"]): GoalDraft {
   return {
@@ -19,7 +18,7 @@ function learnGoal(details: GoalDraft["details"]): GoalDraft {
     kind: "learn",
     language: "en",
     prompt: "Learn chess",
-    targetDate: getLearnerToday(timeZone),
+    targetDate: getLearnerToday(dayAheadZone),
     title: "Learn chess",
   };
 }
@@ -32,7 +31,7 @@ describe(createOnboardingGoals, () => {
     const created = await createOnboardingGoals({
       dailyMinutes: 15,
       goals: [learnGoal({ onboardingId: randomUUID() })],
-      timeZone,
+      timeZone: dayAheadZone,
     });
 
     expect(created).toMatchObject({ goals: [{ targetDate: null }], status: "created" });
@@ -71,7 +70,7 @@ describe(createOnboardingGoals, () => {
     const refusal = await createOnboardingGoals({
       dailyMinutes: 15,
       goals: [learnGoal({})],
-      timeZone,
+      timeZone: dayAheadZone,
     }).catch((error: unknown) => (isInputRangeError(error) ? error.issues : error));
 
     expect(refusal).toMatchObject([{ params: { bound: "earliest" } }]);
