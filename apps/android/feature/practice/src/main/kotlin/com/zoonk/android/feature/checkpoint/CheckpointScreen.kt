@@ -5,14 +5,13 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -77,6 +76,7 @@ import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.runAccount
+import com.zoonk.android.feature.practice.runColumn
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerCheck
 import com.zoonk.android.feature.questions.ItemSupport
@@ -113,8 +113,12 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Checkpoint
@@ -708,72 +712,79 @@ internal fun DuelResult(
             ?.answers
             .orEmpty()
     var reviewing by rememberSaveable { mutableStateOf(false) }
+    var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    TaskScaffold(
-        onClose = viewModel::close,
-        title = { LessonTitle(eyebrow(checkpoint)) },
-        bottomBar = {
-            TaskActionBar {
-                TaskActions { width ->
-                    if (answers.isNotEmpty() && !taskAsideBeside()) {
-                        OutlinedButton(onClick = { reviewing = true }) { Text(stringResource(R.string.checkpoint_review)) }
+    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+        // An open book splits the result into its own two pages, with no rail beside it.
+        val folded = pageFold(maxWidth, span) != null
+
+        TaskScaffold(
+            onClose = viewModel::close,
+            title = { LessonTitle(eyebrow(checkpoint)) },
+            bottomBar = {
+                TaskActionBar {
+                    TaskActions { width ->
+                        if (answers.isNotEmpty() && !taskAsideBeside()) {
+                            OutlinedButton(onClick = { reviewing = true }) { Text(stringResource(R.string.checkpoint_review)) }
+                        }
+                        Button(onClick = viewModel::close, modifier = width) { Text(stringResource(R.string.practice_continue)) }
                     }
-                    Button(onClick = viewModel::close, modifier = width) { Text(stringResource(R.string.practice_continue)) }
                 }
-            }
-        },
-        aside = outcome?.takeIf { !rows.isEmpty }?.let { TaskAside { ResultDetails(duel, rows, won) } },
-    ) { padding ->
-        val wide = taskAsideBeside()
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                if (outcome == null) {
-                    QuestionsRemoved(eyebrow = null)
-                    return@Column
-                }
-                // A result opened again shows how it ended, still: the moment played when it was won or lost.
-                if (duel.read.isBoss) {
-                    CelebrationScope(
-                        play = duel.state.completion != null,
-                    ) { TricksterArt(Modifier.size(104.dp), beaten = won, reacts = true) }
-                }
-                Text(
-                    text =
-                        stringResource(
-                            when {
-                                !duel.read.isBoss -> R.string.checkpoint_weekly_done
-                                won -> R.string.checkpoint_beat
-                                else -> R.string.checkpoint_not_this_time
-                            },
-                        ),
-                    modifier = Modifier.semantics { heading() },
-                    style = MaterialTheme.typography.headlineSmall,
+            },
+            aside = outcome?.takeIf { !rows.isEmpty && !folded }?.let { TaskAside { ResultDetails(duel, rows, won) } },
+        ) { padding ->
+            val wide = taskAsideBeside()
+            Box(Modifier.padding(padding)) {
+                ResultPages(
+                    withMoment = duel.state.completion != null,
+                    columnModifier = Modifier.runColumn(),
+                    done = {
+                        if (outcome == null) {
+                            QuestionsRemoved(eyebrow = null)
+                        } else {
+                            // A result opened again shows how it ended, still: the moment played when it was won or lost.
+                            if (duel.read.isBoss) {
+                                CelebrationScope(
+                                    play = duel.state.completion != null,
+                                ) { TricksterArt(Modifier.size(104.dp), beaten = won, reacts = true) }
+                            }
+                            Text(
+                                text =
+                                    stringResource(
+                                        when {
+                                            !duel.read.isBoss -> R.string.checkpoint_weekly_done
+                                            won -> R.string.checkpoint_beat
+                                            else -> R.string.checkpoint_not_this_time
+                                        },
+                                    ),
+                                modifier = Modifier.semantics { heading() },
+                                style = MaterialTheme.typography.headlineSmall,
+                            )
+                        }
+                    },
+                    next = {
+                        if (outcome != null) {
+                            val passMark =
+                                duel.state.completion
+                                    ?.checkpoint
+                                    ?.passMark
+                                    ?.toInt()
+                            MomentReadouts(
+                                brainPower = earnedBrainPower(duel, won),
+                                score = MomentScore(outcome.total, outcome.correct),
+                                facts =
+                                    listOfNotNull(
+                                        passMark?.takeIf { !won }?.let {
+                                            pluralStringResource(R.plurals.checkpoint_right_to_win_of, it, it, duel.read.questions.size)
+                                        },
+                                    ),
+                            )
+                            duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
+                            if (!wide && !rows.isEmpty) ResultDetails(duel, rows, won)
+                            if (wide && answers.isNotEmpty()) Review(duel, answers, app)
+                        }
+                    },
                 )
-                val passMark =
-                    duel.state.completion
-                        ?.checkpoint
-                        ?.passMark
-                        ?.toInt()
-                MomentReadouts(
-                    brainPower = earnedBrainPower(duel, won),
-                    score = MomentScore(outcome.total, outcome.correct),
-                    facts =
-                        listOfNotNull(
-                            passMark?.takeIf { !won }?.let {
-                                pluralStringResource(R.plurals.checkpoint_right_to_win_of, it, it, duel.read.questions.size)
-                            },
-                        ),
-                )
-                duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
-                if (!wide && !rows.isEmpty) ResultDetails(duel, rows, won)
-                if (wide && answers.isNotEmpty()) Review(duel, answers, app)
             }
         }
     }
@@ -948,5 +959,3 @@ private fun ReviewItem(
 }
 
 private fun StudyQuestionAnswer.toAnswer(): Answer? = runCatching { recode<StudyQuestionAnswer, Answer>() }.getOrNull()
-
-private val CONTENT_WIDTH = 640.dp
