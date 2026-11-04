@@ -393,14 +393,15 @@ fun BrainPowerReward(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            val brain = MaterialTheme.zoonk.brain
+            // brainText, since the page's color on brain is under AA in light.
+            val fill = MaterialTheme.zoonk.brainText
             Row(
                 modifier =
                     if (earned) {
                         Modifier
                             .clip(
                                 MaterialTheme.shapes.extraSmall,
-                            ).background(brain)
+                            ).background(fill)
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     } else {
                         Modifier

@@ -40,13 +40,13 @@ Everything else is neutral: titles, body and labels, panels and rows, tabs, navi
 ## Contrast
 
 - Neutral text is AA (4.5:1) on every surface it sits on, in every mode.
-- Colored words sit near 4.5:1 on the page in the regular theme and a little under on their own tints; marks may sit under 3:1. That keeps the theme soft, and it's why color is never the only cue. With more contrast asked for, every color is strict (7:1 and up).
+- Colored words are AA (4.5:1) in the regular theme on every surface they sit on and on their own tint, and so are words on a solid color (the earned reward's chip, `brain-text` under the page's color, since the page's color on `brain` is under AA). Marks may sit under 3:1, which is why color is never the only cue. With more contrast asked for, every color is strict (7:1 and up).
 - The design system's color page measures every token in every mode; check new pairs there instead of copying ratios into documents.
 - With more contrast asked for, a field's line is already the text color at rest, so focus shows by thickness: a band at least 2px wide whose pixels change by 3:1 or more (WCAG 2.4.13), such as the app's 3px field ring.
 
 ## Native apps
 
-Apple and Android take the same values as the web, generated from `globals.css` in all four modes: `pnpm --filter apple palette` writes the iOS colorsets (light, dark and both Increase Contrast appearances) and `pnpm --filter android palette` writes Android's four schemes, sharing the math in `scripts/theme/`, whose tests fail when a committed output drifts from `globals.css` or a neutral text role drops under AA. After changing a color in `globals.css`, run both. Increase Contrast on iOS and a contrast level of 0.5 or more on Android pick the `prefers-contrast: more` values, so the browser and the app change together.
+Apple and Android take the same values as the web, generated from `globals.css` in all four modes: `pnpm --filter apple palette` writes the iOS colorsets (light, dark and both Increase Contrast appearances) and `pnpm --filter android palette` writes Android's four schemes, sharing the math in `scripts/theme/`, whose tests fail when a committed output drifts from `globals.css` or a text role (neutral or colored, on its surfaces, its own tint or the earned reward's chip) drops under its minimum. After changing a color in `globals.css`, run both. Increase Contrast on iOS and a contrast level of 0.5 or more on Android pick the `prefers-contrast: more` values, so the browser and the app change together.
 
 - **The same roles, the same split.** Neutrals (the page, `card`, `muted`, `surface-3`, `border`, `input`, the three text steps) and every meaning above are roles in each app. A mark, fill or icon takes the base role (`success`) and words take its `-text` role, as on the web.
 - **The tint is ink** (`primary`): Apple's `AccentColor` and Android's Material `primary`, so the main action, links, the selected tab and checked controls are ink. Apple's toggles are the exception and take `success`: their knob is always white, so an ink switch hides it in dark mode.

@@ -24,8 +24,9 @@ struct BrainPowerReward: View {
         .padding(.horizontal, earned ? 6 : 0)
         .padding(.vertical, earned ? 2 : 0)
         .background {
+          // `brainText`, since the page's color on `brain` is under AA in light.
           if earned {
-            Capsule().fill(.brain)
+            Capsule().fill(.brainText)
           }
         }
 
