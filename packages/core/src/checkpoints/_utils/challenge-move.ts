@@ -14,6 +14,7 @@ import { type PlanEffect } from "../../plans/planner/plan-effect";
 import { type PlanChangeRefusal } from "../../plans/planner/plan-operations";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { isWeeklyMoveDateAllowed } from "../../plans/planner/weekly-move-date";
+import { oweFinishedDaySettlements } from "../../sessions/_utils/owe-finished-day-settlements";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { type StudySessionTimeZoneInput } from "../../sessions/contract";
 import { isWeeklyChallengeItem } from "./load-weekly-challenge";
@@ -130,7 +131,7 @@ export async function applyChallengeMove({
   planId,
   userId,
 }: {
-  block: Pick<StudySessionBlock, "id"> | null;
+  block: Pick<StudySessionBlock, "id" | "sessionId"> | null;
   from: Date;
   goalId: string;
   input: StudySessionTimeZoneInput;
@@ -165,7 +166,12 @@ export async function applyChallengeMove({
             where: { id: block.id, status: "pending" },
           });
 
-          return changed.count === 0 ? unchanged(null) : null;
+          if (changed.count === 0) {
+            return unchanged(null);
+          }
+
+          await oweFinishedDaySettlements(tx, [block.sessionId]);
+          return null;
         })
       : null,
   ]);

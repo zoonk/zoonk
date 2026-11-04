@@ -7,6 +7,7 @@ import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getAlphabetIdentityKey } from "../../library/language/alphabet/alphabet-identity";
 import { ALPHABET_INTRO_DETAIL } from "../../library/language/alphabet/alphabet-intro";
+import { oweFinishedDaySettlements } from "../../sessions/_utils/owe-finished-day-settlements";
 
 export type SkipAlphabetIntroResult = {
   status: "notFound" | "notLanguage" | "skipped" | "unauthorized";
@@ -52,8 +53,8 @@ export async function skipAlphabetIntro(goalId: string): Promise<SkipAlphabetInt
 
       /** Lock blocks before goals to match queue writers and avoid deadlocks. */
       const blocks = lesson
-        ? await tx.$queryRaw<{ id: string }[]>`
-          SELECT block.id FROM study_session_blocks AS block
+        ? await tx.$queryRaw<{ id: string; sessionId: string }[]>`
+          SELECT block.id, block.session_id AS "sessionId" FROM study_session_blocks AS block
           JOIN study_sessions AS session ON session.id = block.session_id
           WHERE block.lesson_id = ${lesson.id}::uuid AND block.status = 'pending'
             AND session.goal_id = ${goal.id}::uuid AND session.user_id = ${userId}::uuid
@@ -95,6 +96,11 @@ export async function skipAlphabetIntro(goalId: string): Promise<SkipAlphabetInt
             status: "pending",
           },
         });
+
+        await oweFinishedDaySettlements(
+          tx,
+          blocks.map((block) => block.sessionId),
+        );
       }
 
       await tx.goal.update({

@@ -10,19 +10,18 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
-import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { settleConversation } from "../language/conversations/_utils/settle-conversation";
 import { setupPlayableLesson } from "../lesson-player/_test-utils/playable-lesson-setup";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { answerBlockInOrder } from "./_test-utils/answer-block";
+import { runOwedSettlements } from "./_test-utils/owed-settlements";
 import { DAY_MS, SESSION_NOW, SESSION_TODAY } from "./_test-utils/session-goal";
 import { settleSessionDay } from "./_utils/settle-session-day";
 import { toBlockPayload } from "./block-payload";
 import { BRAIN_POWER_BONUS } from "./brain-power";
 import { finishStudyBlock } from "./finish-study-block";
 import { openStudyDay } from "./open-study-day";
-import { settleOwedSessionDay } from "./settle-owed-session-day";
 import { startStudyBlock } from "./start-study-block";
 
 // A connection lost after the block's own write commits can't be produced on demand.
@@ -32,17 +31,6 @@ const PRACTICE_MISSION = {
   picks: [{ anchor: { blockKind: "practice" }, kind: "practice", total: 1 }],
   version: 1,
 };
-
-/** What the API's follow-up run does with each day settlement a finished block owed. */
-async function runOwedSettlements(userId: string) {
-  const owed = await listFollowUps(userId);
-
-  await Promise.all(
-    owed.flatMap((row) =>
-      row.kind === "settleSessionDay" ? [settleOwedSessionDay({ ...row.input, userId })] : [],
-    ),
-  );
-}
 
 function readSessionLedger({ sessionId, userId }: { sessionId: string; userId: string }) {
   return prisma.learningEvent.findFirstOrThrow({

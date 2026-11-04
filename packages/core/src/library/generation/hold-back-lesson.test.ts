@@ -2,9 +2,14 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import * as refresh from "../../plans/refresh-goal-plan";
+import { runOwedSettlements } from "../../sessions/_test-utils/owed-settlements";
 import { holdBackLessonDraft } from "./hold-back-lesson";
 
 describe(holdBackLessonDraft, () => {
@@ -101,5 +106,57 @@ describe(holdBackLessonDraft, () => {
       inputVersion: plan.inputVersion,
       sourceVersion: plan.sourceVersion + 1,
     });
+  });
+
+  it("completes a started day whose last open lesson it sets aside", async () => {
+    const user = await userFixture();
+    const workflowRunId = randomUUID();
+
+    const lesson = await libraryLessonFixture({
+      contentRunId: workflowRunId,
+      contentStatus: "running",
+      ownerId: user.id,
+    });
+
+    const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+    const plan = await planFixture({ goalId: goal.id });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      startedAt: new Date(),
+      status: "active",
+      userId: user.id,
+    });
+
+    await Promise.all([
+      planItemFixture({ lessonId: lesson.id, planId: plan.id }),
+      studySessionBlockFixture({
+        completedAt: new Date(),
+        position: 0,
+        sessionId: session.id,
+        status: "completed",
+      }),
+      studySessionBlockFixture({
+        lessonId: lesson.id,
+        position: 1,
+        sessionId: session.id,
+        status: "active",
+      }),
+    ]);
+
+    await expect(
+      holdBackLessonDraft({
+        lessonId: lesson.id,
+        model: "test/fixture",
+        problems: [{ problem: "The answer is incorrect.", screen: 0 }],
+        workflowRunId,
+      }),
+    ).resolves.toStrictEqual({ setAside: true });
+
+    await runOwedSettlements(user.id);
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+    ).resolves.toMatchObject({ endedAt: expect.any(Date), status: "completed" });
   });
 });

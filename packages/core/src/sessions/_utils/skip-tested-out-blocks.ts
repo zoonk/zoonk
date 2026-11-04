@@ -1,6 +1,7 @@
 import "server-only";
 import { type StudySessionStatus, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { oweFinishedDaySettlements } from "./owe-finished-day-settlements";
 
 /** Ended days retain their history; only running or future days follow changes. */
 const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
@@ -51,8 +52,8 @@ export async function skipTestedOutBlocks({
 
   await writeLearnerChange({ userId: goal.userId }, async (tx) => {
     // Match queue writers' block-lock order rather than relying on UPDATE scan order.
-    const blocks = await tx.$queryRaw<{ id: string }[]>`
-      SELECT block.id FROM study_session_blocks AS block
+    const blocks = await tx.$queryRaw<{ id: string; sessionId: string }[]>`
+      SELECT block.id, block.session_id AS "sessionId" FROM study_session_blocks AS block
       JOIN study_sessions AS session ON session.id = block.session_id
       WHERE block.kind = 'learn' AND block.lesson_id = ANY(${lessonIds}::uuid[])
         AND session.goal_id = ${goalId}::uuid AND session.status IN ('planned', 'active')
@@ -78,5 +79,10 @@ export async function skipTestedOutBlocks({
     if (updated.count === 0) {
       return unchanged(null);
     }
+
+    await oweFinishedDaySettlements(
+      tx,
+      blocks.map((block) => block.sessionId),
+    );
   });
 }
