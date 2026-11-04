@@ -1,9 +1,10 @@
 import SwiftUI
 
 /// Main's `ListRow`: a leading mark, a title over an optional description, and quiet data at its
-/// end. It's a row's content, so a `NavigationLink` or a `Button` around it keeps the row's chevron
-/// and press.
+/// end, which goes under the words once content stacks, as main's and Android's rows wrap it. It's
+/// a row's content, so a `NavigationLink` or a `Button` around it keeps the row's chevron and press.
 struct ListRow<Leading: View, Trailing: View>: View {
+  @Environment(\.stacksContent) private var isStacked
   let title: Text
   /// Main's `ListRowNumberedTitle`: a place in a list before the title, quiet and mono.
   var number: Int?
@@ -26,36 +27,54 @@ struct ListRow<Leading: View, Trailing: View>: View {
   }
 
   var body: some View {
-    MarkedRow(stackedSpacing: 4) {
-      if Leading.self != EmptyView.self {
-        leading
-          .foregroundStyle(.mutedForeground)
-          .frame(minWidth: markWidth)
-      }
-    } content: {
-      VStack(alignment: .leading, spacing: 1) {
-        HStack(alignment: .firstTextBaseline, spacing: 6) {
-          if let number {
-            Text(verbatim: "\(number).")
-              .typeStyle(.data)
-              .foregroundStyle(.mutedForeground)
-              .accessibilityHidden(true)
-          }
-
-          titleText
-        }
-
-        if let description {
-          description
-            .typeStyle(.meta)
+    if isStacked, Leading.self == EmptyView.self {
+      words
+    } else {
+      MarkedRow(stackedSpacing: 4) {
+        if Leading.self != EmptyView.self {
+          leading
             .foregroundStyle(.mutedForeground)
+            .frame(minWidth: markWidth)
+        }
+      } content: {
+        words
+      } end: {
+        if !isStacked {
+          value
         }
       }
-    } end: {
-      trailing
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
     }
+  }
+
+  private var words: some View {
+    VStack(alignment: .leading, spacing: 1) {
+      HStack(alignment: .firstTextBaseline, spacing: 6) {
+        if let number {
+          Text(verbatim: "\(number).")
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
+            .accessibilityHidden(true)
+        }
+
+        titleText
+      }
+
+      if let description {
+        description
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+      }
+
+      if isStacked {
+        value
+      }
+    }
+  }
+
+  private var value: some View {
+    trailing
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
   }
 
   @ViewBuilder private var titleText: some View {

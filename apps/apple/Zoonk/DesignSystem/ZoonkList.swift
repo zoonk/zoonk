@@ -31,6 +31,19 @@ extension View {
     listRowBackground(isCurrent ? RowHighlight(joins: joins) : nil)
       .listRowSeparator(isCurrent ? .hidden : .automatic)
   }
+
+  /// The learner's pick among a few choices, as main's `ChoiceRows`: the answer surface's pick, an
+  /// ink ring on its tint, where the current row's highlight would be.
+  func pickedRow(_ isPicked: Bool) -> some View {
+    listRowBackground(
+      isPicked
+        ? Color.clear.answerSurface(.picked, cornerRadius: Radius.lg)
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+        : nil
+    )
+    .listRowSeparator(isPicked ? .hidden : .automatic)
+  }
 }
 
 private struct RowHighlight: View {

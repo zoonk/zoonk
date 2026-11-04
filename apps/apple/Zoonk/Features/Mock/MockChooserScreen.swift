@@ -151,6 +151,7 @@ private enum ChooserStatus: Equatable {
 private struct MockChooser: View {
   @Environment(ExamStore.self) private var exam
   @Environment(\.stacksContent) private var isStacked
+  @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var picked: String?
   @State private var length: PlacementMockOption.Length?
   @State private var status: ChooserStatus = .choosing
@@ -170,6 +171,9 @@ private struct MockChooser: View {
     length ?? view.placement?.recommended
   }
 
+  /// Main's choice rows put the size under the words on a phone.
+  private var sizeUnderWords: Bool { sizeClass == .compact || isStacked }
+
   var body: some View {
     PaneSplit {
       ZoonkList {
@@ -182,7 +186,6 @@ private struct MockChooser: View {
         pickedSections
         lastMockSection
       }
-      .safeAreaBar(edge: .bottom) { startBar }
     } single: {
       ZoonkList {
         intro
@@ -190,10 +193,11 @@ private struct MockChooser: View {
         plusSection
         lastMockSection
       }
-      .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
     }
   }
 
+  /// Main's `ChooserHeader`: what the last Start found takes the line under the title, and Start
+  /// sits under it, above the choices.
   @ViewBuilder
   private var intro: some View {
     Section {
@@ -202,7 +206,19 @@ private struct MockChooser: View {
           ? Text(
             "A mock exam to find your level", tableName: "Mock", comment: "Placement mock title")
           : Text("Take a mock exam", tableName: "Mock", comment: "Mock chooser title"),
-        eyebrow: Text(view.examName), supporting: detail)
+        eyebrow: Text(view.examName), supporting: line)
+
+      startAction
+
+      if shownStatus == .writing {
+        writing
+      }
+    }
+
+    if case .refused(let limit)? = shownStatus {
+      Section {
+        HelpLimitNotice(limit: limit)
+      }
     }
 
     if let running = view.running, !placement {
@@ -224,12 +240,6 @@ private struct MockChooser: View {
         .foregroundStyle(.primary)
       }
     }
-
-    if isStacked, shownStatus != nil {
-      Section {
-        startStatus
-      }
-    }
   }
 
   @ViewBuilder
@@ -238,7 +248,7 @@ private struct MockChooser: View {
       Section {
         ForEach(lengths.options) { option in
           choiceRow(
-            id: option.length.rawValue, isPicked: option.length == pickedLength,
+            isPicked: option.length == pickedLength,
             title: lengthName(option, recommended: lengths.recommended),
             detail: precision(option),
             trailing: String(
@@ -251,8 +261,6 @@ private struct MockChooser: View {
             length = option.length
           }
         }
-      } header: {
-        SectionTitle(Text("How long", tableName: "Mock", comment: "Placement mock lengths"))
       } footer: {
         SectionFooter {
           Text(
@@ -266,9 +274,6 @@ private struct MockChooser: View {
 
       Section {
         ForEach(examOptions) { optionRow($0) }
-      } header: {
-        SectionTitle(
-          Text("The exam", tableName: "Mock", comment: "Mocks of the whole exam or half of it"))
       } footer: {
         SectionFooter {
           if notesUnder {
@@ -316,33 +321,24 @@ private struct MockChooser: View {
     }
   }
 
-  /// What the last Start led to sits right above it, not at the top of a list the learner may
-  /// have scrolled away from. At accessibility sizes it stays in the list, which scrolls where a bar
-  /// can't.
-  private var startBar: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      if !isStacked {
-        startStatus
-      }
-
-      Group {
-        if isOpen {
-          Button {
-            Task { await start() }
-          } label: {
-            startLabel.frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-          .disabled(busy || (!placement && pickedOption == nil))
-          .keyboardShortcut(.defaultAction)
-        } else {
-          SeePlusButton().buttonStyle(.mainAction).frame(maxWidth: .infinity)
+  @ViewBuilder
+  private var startAction: some View {
+    Group {
+      if isOpen {
+        Button {
+          Task { await start() }
+        } label: {
+          startLabel.frame(maxWidth: .infinity)
         }
+        .buttonStyle(.mainAction)
+        .disabled(busy || (!placement && pickedOption == nil))
+        .keyboardShortcut(.defaultAction)
+      } else {
+        SeePlusButton().buttonStyle(.mainAction).frame(maxWidth: .infinity)
       }
-      .controlSize(.large)
     }
-    .scenePadding(.horizontal)
-    .padding(.vertical, 10)
+    .controlSize(.large)
+    .listRowSeparator(.hidden)
   }
 
   private var detail: Text {
@@ -384,61 +380,60 @@ private struct MockChooser: View {
     }
   }
 
-  @ViewBuilder
-  private var startStatus: some View {
+  /// Main's `ChooserLine`: the page's one line, or what the last Start found in its place.
+  private var line: Text {
     switch shownStatus {
-    case .choosing?, .plusRequired?, nil:
-      EmptyView()
-    case .writing?:
-      Label {
-        VStack(alignment: .leading, spacing: 2) {
-          Text("Preparing your mock exam", tableName: "Mock", comment: "Questions being written")
-            .typeStyle(.body.weight(.semibold))
-          Text(
-            "We're writing questions like the exam's for you. It starts here as soon as they're ready.",
-            tableName: "Mock", comment: "While a mock's questions are written"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-        }
-      } icon: {
-        ProgressView()
-      }
     case .short(_, let examQuestions, let limit, let minutes, let questions)?:
-      VStack(alignment: .leading, spacing: 4) {
-        Text(
+      let ready = String(
+        localized:
           "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
-          tableName: "Mock", comment: "A mock that can ask only part of its questions")
+        table: "Mock", comment: "A mock that can ask only part of its questions")
+      let more =
         switch limit {
         case .day:
-          Text(
-            "More can be written for your mocks tomorrow.", tableName: "Mock",
+          String(
+            localized: "More can be written for your mocks tomorrow.", table: "Mock",
             comment: "Daily question limit")
         case .month:
-          Text(
-            "More can be written for your mocks next month.", tableName: "Mock",
+          String(
+            localized: "More can be written for your mocks next month.", table: "Mock",
             comment: "Monthly question limit")
         case .total, nil:
-          Text(
-            "The question bank doesn't have more new ones for it yet.", tableName: "Mock",
+          String(
+            localized: "The question bank doesn't have more new ones for it yet.", table: "Mock",
             comment: "No more questions")
         }
-      }
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
+      return Text(verbatim: [ready, more].joinedSentences())
     case .notEnoughQuestions?:
-      Text(
+      return Text(
         "There aren't enough questions for this mock yet. Try the full exam or another subject.",
         tableName: "Mock", comment: "Too few questions for a mock"
       )
-      .typeStyle(.body)
       .foregroundStyle(.destructiveText)
     case .failed?:
-      Text("We couldn't start the mock. Try again.", tableName: "Mock", comment: "Start failed")
-        .typeStyle(.body)
-        .foregroundStyle(.destructiveText)
-    case .refused(let limit)?:
-      HelpLimitNotice(limit: limit)
+      return Text(
+        "We couldn't start the mock. Try again.", tableName: "Mock", comment: "Start failed"
+      )
+      .foregroundStyle(.destructiveText)
+    default:
+      return detail
+    }
+  }
+
+  private var writing: some View {
+    Label {
+      VStack(alignment: .leading, spacing: 2) {
+        Text("Preparing your mock exam", tableName: "Mock", comment: "Questions being written")
+          .typeStyle(.body.weight(.semibold))
+        Text(
+          "We're writing questions like the exam's for you. It starts here as soon as they're ready.",
+          tableName: "Mock", comment: "While a mock's questions are written"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+      }
+    } icon: {
+      ProgressView()
     }
   }
 
@@ -553,7 +548,7 @@ private struct MockChooser: View {
 
   private func optionRow(_ option: MockOption) -> some View {
     choiceRow(
-      id: option.id, isPicked: option.id == pickedOption?.id,
+      isPicked: option.id == pickedOption?.id,
       title: MockLabels.optionName(option, severalDays: severalDays),
       detail: optionDetail(option),
       trailing: String(
@@ -571,35 +566,49 @@ private struct MockChooser: View {
     }
   }
 
+  /// Main's `ChoiceRows`: the words, the mock's size under them on a phone or at the row's end,
+  /// and a check on the pick.
   private func choiceRow(
-    id: String, isPicked: Bool, title: String, detail: String?, trailing: String,
+    isPicked: Bool, title: String, detail: String?, trailing: String,
     spokenTrailing: String, action: @escaping () -> Void
   ) -> some View {
-    Button(action: action) {
-      HStack(alignment: .firstTextBaseline) {
+    let size = Text(trailing)
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
+      .accessibilityLabel(spokenTrailing)
+
+    return Button(action: action) {
+      HStack(spacing: 12) {
         VStack(alignment: .leading, spacing: 2) {
           Text(title)
+            .typeStyle(.rowTitle)
+            .foregroundStyle(Color(.foreground))
           if let detail, !detail.isEmpty {
             Text(detail)
-              .typeStyle(.note)
+              .typeStyle(.meta)
               .foregroundStyle(.mutedForeground)
           }
+          if sizeUnderWords {
+            size
+          }
         }
-        Spacer()
-        Text(trailing)
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-          .accessibilityLabel(spokenTrailing)
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+        if !sizeUnderWords {
+          size
+        }
+
         Image(systemName: "checkmark")
           .fontWeight(.semibold)
+          .foregroundStyle(Color(.foreground))
           .opacity(isPicked ? 1 : 0)
           .accessibilityHidden(true)
       }
       .contentShape(.rect)
     }
-    .foregroundStyle(.primary)
     .disabled(busy)
     .accessibilityAddTraits(isPicked ? .isSelected : [])
+    .pickedRow(isPicked)
   }
 
   private func optionDetail(_ option: MockOption) -> String {
