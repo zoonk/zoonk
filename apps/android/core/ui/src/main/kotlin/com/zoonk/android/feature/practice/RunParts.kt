@@ -49,6 +49,8 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import java.time.Instant
@@ -127,21 +129,20 @@ private fun timeMachineText(
 
 /**
  * A run's result in place of its questions: the title first and saving while [saving], so nothing
- * moves when the score arrives.
+ * moves when the score arrives. Where the screen splits ([ResultPages]) the title leads and
+ * [content], the numbers and the day's moment, faces it above the way on.
  */
 @Composable
-internal fun RunDone(
+private fun RunDone(
     title: String,
     saving: Boolean,
-    modifier: Modifier = Modifier,
-    detail: String? = null,
+    detail: String?,
     content: @Composable () -> Unit,
 ) {
-    Box(modifier.fillMaxWidth().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-        Column(
-            Modifier.runColumn().padding(vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-        ) {
+    ResultPages(
+        withMoment = !saving,
+        columnModifier = Modifier.runColumn(),
+        done = {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
                 detail?.let {
@@ -160,26 +161,31 @@ internal fun RunDone(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge,
                 )
-            } else {
-                content()
             }
-        }
-    }
+        },
+        next = { if (!saving) content() },
+    )
 }
 
+/**
+ * A screen of a run with one decision, its action in the docked bar (an intro, a wait, a note): its
+ * column keeps to the page before an unfolded book's fold, and the page after it holds only the way on.
+ */
 @Composable
 fun RunPage(
     modifier: Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+    BeforeFold(modifier) { beforeFold ->
+        Column(
+            beforeFold
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+        }
     }
 }
 
@@ -226,7 +232,7 @@ fun RunFinished(
                 }
             }
         },
-    ) { padding -> RunDone(title, saving, Modifier.fillMaxSize().padding(padding), detail, content) }
+    ) { padding -> Box(Modifier.padding(padding)) { RunDone(title, saving, detail, content) } }
 }
 
 @Composable

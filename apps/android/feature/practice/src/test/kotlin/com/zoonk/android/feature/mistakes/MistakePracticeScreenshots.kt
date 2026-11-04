@@ -12,6 +12,10 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
@@ -43,13 +47,32 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class MistakePracticeScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
 
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
+
+    // The publisher doesn't replay a fold to a screen composed after it, so it tells the shown screen, twice
+    // for a frame that's rebuilt as the fold changes its panes.
+    private fun unfold() {
+        repeat(2) {
+            rule.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
+                    ),
+                ),
+            )
+        }
+        rule.waitForIdle()
+    }
 
     private val lesson =
         JsonObject(
@@ -101,6 +124,7 @@ class MistakePracticeScreenshots {
         dark: Boolean = false,
         vararg questions: JsonObject = arrayOf(planet(), similar),
         play: () -> Unit = {},
+        fold: Boolean = false,
     ) {
         val api =
             FakeMistakesApi(
@@ -125,6 +149,7 @@ class MistakePracticeScreenshots {
         }
         play()
         rule.waitForIdle()
+        if (fold) unfold()
         write(name)
     }
 
@@ -166,10 +191,24 @@ class MistakePracticeScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneDone() {
-        show("phone-done") {
-            check()
-            rule.onNodeWithContentDescription("End practice. What you answered counts.").performClick()
-        }
+        show("phone-done", play = ::finish)
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookDone() {
+        show("mistakes-book-done", fold = true, play = ::finish)
+    }
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookDone() {
+        show("mistakes-small-book-done", fold = true, play = ::finish)
+    }
+
+    private fun finish() {
+        check()
+        rule.onNodeWithContentDescription("End practice. What you answered counts.").performClick()
     }
 
     @Test

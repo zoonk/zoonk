@@ -2,6 +2,8 @@ package com.zoonk.android.feature.focustest
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
@@ -59,6 +61,7 @@ import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.UndoAction
 import com.zoonk.android.feature.practice.UndoState
 import com.zoonk.android.feature.practice.UpcomingQuestions
+import com.zoonk.android.feature.practice.runColumn
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -77,7 +80,11 @@ import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -298,58 +305,73 @@ internal fun FocusTestResult(
     val chosen = outcome.areas.filter { it.chosen }.map { it.label }
     var index by rememberSaveable { mutableIntStateOf(0) }
     var leftFirst by rememberSaveable { mutableStateOf(false) }
-    val count = if (chosen.isEmpty()) 1 else 2
-    val shown = index.coerceIn(0, count - 1)
     val canUndo = outcome.changeId != null && ui.undo != UndoState.Done
     val stepTitle = remember { FocusRequester() }
     val moveFocus = rememberMoveFocus()
-    var announced by rememberSaveable { mutableIntStateOf(shown) }
-
-    // Main's `focusStepTitle`: a new step takes TalkBack to its heading, never the first one.
-    LaunchedEffect(shown) {
-        if (shown != announced) {
-            announced = shown
-            moveFocus(stepTitle)
-        }
-    }
+    var span by remember { mutableStateOf<PageSpan?>(null) }
 
     MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }) { buddy ->
-        TaskScaffold(
-            onClose = navigator::closeTask,
-            title = { StepDots(count, shown) },
-            bottomBar = {
-                TaskActionBar {
-                    StepPagerActions(
-                        count,
-                        shown,
-                        onIndexChange = {
-                            if (shown == 0) leftFirst = true
-                            index = it
-                        },
-                    ) { main ->
-                        Button(
-                            onClick = { navigator.showRoot(AppTab.Plan) },
-                            modifier = main,
-                        ) { Text(stringResource(R.string.focustest_see_plan)) }
-                    }
-                    if (canUndo && shown == count - 1) UndoAction(ui.undo, viewModel::undo)
+        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+            // Where the result splits, both steps show at once: the new focus before the fold, how the learner did after it.
+            val whole = spreadFold(maxWidth, span) != null
+            val count = if (whole || chosen.isEmpty()) 1 else 2
+            val shown = index.coerceIn(0, count - 1)
+            var announced by rememberSaveable { mutableIntStateOf(shown) }
+
+            // Main's `focusStepTitle`: a new step takes TalkBack to its heading, never the first one.
+            LaunchedEffect(shown) {
+                if (shown != announced) {
+                    announced = shown
+                    moveFocus(stepTitle)
                 }
-            },
-        ) { padding ->
-            RunPage(Modifier.padding(padding)) {
-                if (shown == 0) {
-                    CelebrationScope(play = ui.celebrate && !leftFirst) {
-                        AreasStep(outcome, stepTitle)
-                        DayMoment(
-                            missions = null,
-                            reached = outcome.reached,
-                            ceremony = outcome.ceremony?.kind,
-                            buddy = buddy.look,
-                            buddyName = buddy.name,
-                        )
+            }
+
+            TaskScaffold(
+                onClose = navigator::closeTask,
+                title = { StepDots(count, shown) },
+                bottomBar = {
+                    TaskActionBar {
+                        StepPagerActions(
+                            count,
+                            shown,
+                            onIndexChange = {
+                                if (shown == 0) leftFirst = true
+                                index = it
+                            },
+                        ) { main ->
+                            Button(
+                                onClick = { navigator.showRoot(AppTab.Plan) },
+                                modifier = main,
+                            ) { Text(stringResource(R.string.focustest_see_plan)) }
+                        }
+                        if (canUndo && shown == count - 1) UndoAction(ui.undo, viewModel::undo)
                     }
-                } else {
-                    FocusStep(chosen, undone = ui.undo == UndoState.Done, stepTitle)
+                },
+            ) { padding ->
+                Box(Modifier.padding(padding)) {
+                    ResultPages(
+                        withMoment = true,
+                        columnModifier = Modifier.runColumn(),
+                        done = {
+                            if (chosen.isNotEmpty() && (whole || shown == 1)) {
+                                FocusStep(chosen, undone = ui.undo == UndoState.Done, stepTitle)
+                            }
+                        },
+                        next = {
+                            if (whole || shown == 0) {
+                                CelebrationScope(play = ui.celebrate && !leftFirst) {
+                                    AreasStep(outcome, stepTitle)
+                                    DayMoment(
+                                        missions = null,
+                                        reached = outcome.reached,
+                                        ceremony = outcome.ceremony?.kind,
+                                        buddy = buddy.look,
+                                        buddyName = buddy.name,
+                                    )
+                                }
+                            }
+                        },
+                    )
                 }
             }
         }

@@ -2,16 +2,23 @@ package com.zoonk.android.feature.focustest
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
@@ -56,16 +63,35 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class FocusTestScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    @get:Rule
+    @get:Rule(order = 2)
     val drafts = TemporaryFolder()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
 
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
+
+    // The publisher doesn't replay a fold to a screen composed after it, so it tells the shown screen, twice
+    // for a frame that's rebuilt as the fold changes its panes.
+    private fun unfold() {
+        repeat(2) {
+            rule.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
+                    ),
+                ),
+            )
+        }
+        rule.waitForIdle()
+    }
 
     private fun focusTest(written: Int): FocusTest {
         val areas = listOf("Matemática", "Ciências da Natureza", "Linguagens")
@@ -85,7 +111,7 @@ class FocusTestScreenshots {
     private val result: FocusTestResult =
         ApiJson.decodeFromString(
             FocusTestResult.serializer(),
-            """{"ceremony":null,"reached":{"energy":null,"level":null},"changeId":"00000000-0000-4000-8000-0000000000c1",
+            """{"ceremony":null,"reached":{"energy":64,"level":null},"changeId":"00000000-0000-4000-8000-0000000000c1",
             "focusAreas":["Ciências da Natureza","Linguagens"],"areas":[
               {"answers":[true,true],"chosen":false,"correct":2,"label":"Matemática","name":"m","total":2},
               {"answers":[false,true],"chosen":true,"correct":1,"label":"Ciências da Natureza","name":"c","total":2},
@@ -149,6 +175,9 @@ class FocusTestScreenshots {
         secondStep: Boolean = false,
         undo: Boolean = false,
         writing: Generation.Status = Generation.Status.RUNNING,
+        startFailed: Boolean = false,
+        fold: Boolean = false,
+        direction: LayoutDirection = LayoutDirection.Ltr,
     ) {
         val viewModel = viewModel(written, writing)
         runBlocking { viewModel.test.refresh() }
@@ -163,17 +192,20 @@ class FocusTestScreenshots {
         }
         rule.setContent {
             ZoonkTheme {
-                val ui by viewModel.ui.collectAsStateWithLifecycle()
-                val navigator = rememberAppNavigator()
-                val outcome = ui.outcome
-                when {
-                    outcome != null -> FocusTestResult(outcome, ui, viewModel, AppContainer.preview(rule.activity), navigator)
-                    ui.started -> FocusTestQuestions(read, ui, viewModel, AppContainer.preview(rule.activity), navigator) {}
-                    else -> FocusTestIntro(read, ui, viewModel, navigator)
+                CompositionLocalProvider(LocalLayoutDirection provides direction) {
+                    val ui by viewModel.ui.collectAsStateWithLifecycle()
+                    val navigator = rememberAppNavigator()
+                    val outcome = ui.outcome
+                    when {
+                        outcome != null -> FocusTestResult(outcome, ui, viewModel, AppContainer.preview(rule.activity), navigator)
+                        ui.started -> FocusTestQuestions(read, ui, viewModel, AppContainer.preview(rule.activity), navigator) {}
+                        else -> FocusTestIntro(read, ui.copy(startFailed = startFailed), viewModel, navigator)
+                    }
                 }
             }
         }
         rule.mainClock.advanceTimeBy(10_000)
+        if (fold) unfold()
         if (secondStep) rule.onNodeWithText("Continue").performClick()
         if (undo) rule.onNodeWithText("Undo").performClick()
         write(name)
@@ -228,4 +260,43 @@ class FocusTestScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tabletNewFocus() = show("tablet-new-focus", finished = true, secondStep = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookIntro() = show("focustest-book-intro", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookIntro() = show("focustest-small-book-intro", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookStartFailed() = show("focustest-book-start-failed", startFailed = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookHowYouDid() = show("focustest-book-how-you-did", finished = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookHowYouDid() = show("focustest-small-book-how-you-did", finished = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookNewFocusUndone() = show("focustest-small-book-undone", finished = true, undo = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookHowYouDidAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("focustest-book-how-you-did-font200", finished = true, fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookHowYouDidRightToLeft() = show("focustest-book-how-you-did-rtl", finished = true, fold = true, direction = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = "w700dp-h840dp-xhdpi")
+    fun mediumHowYouDid() = show("focustest-medium-how-you-did", finished = true)
 }
