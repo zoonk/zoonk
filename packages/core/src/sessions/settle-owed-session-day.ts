@@ -4,9 +4,11 @@ import { type FollowUp } from "../follow-ups/follow-up-contract";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { awardMilestones } from "../milestones/award-milestones";
+import { getBlockMilestoneAwards } from "./_utils/block-completion";
 import { isCurrentSession } from "./_utils/current-session";
 import { readFullMealReward } from "./_utils/session-snapshot";
 import { settleSessionDay } from "./_utils/settle-session-day";
+import { readBlockPayload } from "./block-payload";
 import { type MissionCompletionSource } from "./missions/settle-missions";
 
 type OwedDay = Extract<FollowUp, { kind: "settleSessionDay" }>["input"];
@@ -49,7 +51,7 @@ type OwedSession = NonNullable<Awaited<ReturnType<typeof findOwedSession>>>;
 function findOwedSession({ sessionId, userId }: { sessionId: string; userId: string }) {
   return prisma.studySession.findFirst({
     select: {
-      blocks: { select: { completedAt: true, startedAt: true } },
+      blocks: { select: { completedAt: true, id: true, payload: true, startedAt: true } },
       endedAt: true,
       goal: { select: { timezone: true } },
       localDate: true,
@@ -96,11 +98,18 @@ export async function settleOwedSessionDay(owed: OwedDay & { userId: string }): 
       ? readFullMealReward(session.startSnapshot)
       : await settleOpenDay({ ...owed, session });
 
-  if (fullMealReward) {
-    await awardMilestones({
-      brainPower: null,
-      brainPowerRewards: [fullMealReward],
-      userId: owed.userId,
-    });
+  const block = session.blocks.find((row) => row.id === owed.blockId);
+  const payload = block ? readBlockPayload(block) : null;
+  const reward = payload?.milestoneReward;
+
+  if (!reward && !fullMealReward) {
+    return;
   }
+
+  // The request awards these only after the day settles; recovery uses the evidence the block kept.
+  await awardMilestones({
+    ...(payload && reward ? getBlockMilestoneAwards({ payload, reward }) : { brainPower: null }),
+    brainPowerRewards: fullMealReward ? [fullMealReward] : [],
+    userId: owed.userId,
+  });
 }

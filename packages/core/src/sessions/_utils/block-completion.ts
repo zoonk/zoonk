@@ -23,6 +23,22 @@ type BlockResult = Pick<
   | "total"
 >;
 
+type MilestoneReward = NonNullable<BlockPayload["milestoneReward"]>;
+
+/** What a block's own reward counts toward milestones. */
+export function getBlockMilestoneAwards({
+  payload,
+  reward,
+}: {
+  payload: BlockPayload;
+  reward: MilestoneReward;
+}): Pick<Parameters<typeof awardMilestones>[0], "badges" | "brainPower"> {
+  return {
+    badges: reward.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
+    brainPower: reward.brainPower,
+  };
+}
+
 /** Retries replay missions without celebrating the same answer rewards again. */
 export async function completeBlockMoment({
   blockId,
@@ -46,6 +62,11 @@ export async function completeBlockMoment({
   timeZone: string;
   userId: string;
 }): Promise<StudyBlockCompletion> {
+  const settled = await settleSessionDay({ blockId, sessionId, source, timeZone, userId });
+  const { missionResult } = settled;
+  const bonus = getMissionBonus(settled.missions);
+  const fullMeal = missionResult.fullMealPaid ? bonus : 0;
+
   const bossWon =
     result.checkpoint && result.checkpoint.kind !== "weekly" && result.checkpoint.passed;
 
@@ -55,27 +76,11 @@ export async function completeBlockMoment({
     brainPower: { after: brainPowerBefore + result.brainPower, before: brainPowerBefore },
   };
 
-  // Before the day settles, so a settlement failure cannot lose them.
-  const earned = await awardMilestones({
-    badges: reward.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
-    brainPower: reward.brainPower,
+  const milestones = await awardMilestones({
+    ...getBlockMilestoneAwards({ payload, reward }),
+    brainPowerRewards: settled.fullMealReward ? [settled.fullMealReward] : [],
     userId,
   });
-
-  const settled = await settleSessionDay({ blockId, sessionId, source, timeZone, userId });
-  const { missionResult } = settled;
-  const bonus = getMissionBonus(settled.missions);
-  const fullMeal = missionResult.fullMealPaid ? bonus : 0;
-
-  const fullMealMilestones = settled.fullMealReward
-    ? await awardMilestones({
-        brainPower: null,
-        brainPowerRewards: [settled.fullMealReward],
-        userId,
-      })
-    : [];
-
-  const milestones = [...earned, ...fullMealMilestones];
 
   const blocks = settled.session.blocks;
 
