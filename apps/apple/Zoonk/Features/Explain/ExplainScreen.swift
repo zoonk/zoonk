@@ -209,6 +209,7 @@ private struct ExplanationView: View {
       } icon: {
         Image(systemName: "checkmark.circle.fill")
       }
+      .sectionTitleStyle()
       .foregroundStyle(.successText)
     }
   }

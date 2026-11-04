@@ -39,7 +39,7 @@ private struct GoalPlanView: View {
       }
     }
     .navigationTitle(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
-    .navigationSubtitle(subtitle(plan.value?.plan) ?? Text(verbatim: ""))
+    .navigationSubtitle(daysLeft(plan.value?.plan) ?? Text(verbatim: ""))
   }
 
   @ViewBuilder
@@ -79,28 +79,28 @@ private struct GoalPlanView: View {
         .lonePage()
     }
   }
+}
 
-  private func subtitle(_ plan: GoalPlan?) -> Text? {
-    guard let plan, let targetDate = plan.schedule.targetDate, targetDate >= plan.today else {
-      return nil
-    }
-
-    let days = PlanDate.days(from: plan.today, to: targetDate)
-
-    if days == 0 {
-      return Text("The day is here", tableName: "Plan", comment: "Plan subtitle on the goal's day")
-    }
-
-    if plan.schedule.targetDateEstimated {
-      return Text(
-        "~\(days) days left", tableName: "Plan",
-        comment: "Plan subtitle: about how many days are left until the goal's estimated date")
-    }
-
-    return Text(
-      "\(days) days left", tableName: "Plan",
-      comment: "Plan subtitle: how many days are left until the goal's date")
+private func daysLeft(_ plan: GoalPlan?) -> Text? {
+  guard let plan, let targetDate = plan.schedule.targetDate, targetDate >= plan.today else {
+    return nil
   }
+
+  let days = PlanDate.days(from: plan.today, to: targetDate)
+
+  if days == 0 {
+    return Text("The day is here", tableName: "Plan", comment: "Plan subtitle on the goal's day")
+  }
+
+  if plan.schedule.targetDateEstimated {
+    return Text(
+      "~\(days) days left", tableName: "Plan",
+      comment: "Plan subtitle: about how many days are left until the goal's estimated date")
+  }
+
+  return Text(
+    "\(days) days left", tableName: "Plan",
+    comment: "Plan subtitle: how many days are left until the goal's date")
 }
 
 /// A plan is built while the questions are still answered, on a time the learner hasn't chosen
@@ -154,6 +154,7 @@ private struct PlanContent: View {
 
     PaneSplit(primaryShare: 0.55) {
       List {
+        header
         PlanRoadmapSection(context: context, structure: structure)
         structureSections(context: context, structure: structure)
       }
@@ -169,6 +170,7 @@ private struct PlanContent: View {
       .zoonkList()
     } single: {
       List {
+        header
         PlanRoadmapSection(context: context, structure: structure)
         PlanNumbersSection(context: context, syllabus: syllabus)
         PlanSuggestionSection(context: context)
@@ -179,6 +181,7 @@ private struct PlanContent: View {
       }
       .zoonkList()
     }
+    .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     .modifier(PlanToolbar(context: context))
     .planSheets($sheet, context: context, syllabus: syllabus)
     .sheet(item: $adjusting) { section in
@@ -188,6 +191,13 @@ private struct PlanContent: View {
     .feedbackSheet(
       isPresented: $isReporting,
       context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true)
+  }
+
+  private var header: some View {
+    Section {
+      PageHeader(
+        Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"), eyebrow: daysLeft(plan))
+    }
   }
 
   @ViewBuilder

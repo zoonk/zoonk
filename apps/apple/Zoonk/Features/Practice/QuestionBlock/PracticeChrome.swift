@@ -33,7 +33,7 @@ struct PracticeSegmentsBar: View {
     switch segment {
     case .right: Capsule().fill(.success)
     case .wrong: Capsule().fill(.destructive)
-    case .read: Capsule().fill(Color(.systemGray3))
+    case .read: Capsule().fill(Color(.foreground).opacity(0.25))
     case .current: Capsule().strokeBorder(.success, lineWidth: 1)
     case .ahead: Capsule().fill(Color.surface3)
     }
@@ -75,7 +75,7 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
     } actions: {
       actionsBar
     }
-    .background(Color(.background))
+    .background(Color(.systemBackground))
   }
 
   @ViewBuilder private var segmentsBar: some View {

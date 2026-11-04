@@ -36,7 +36,7 @@ struct ConversationLiveView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .scenePadding()
       }
-      .background(Color(.background))
+      .background(Color(.systemBackground))
     } single: {
       callColumn(besideAside: false)
     }

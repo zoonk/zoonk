@@ -13,6 +13,7 @@ struct TodaySourceChangeSection: View {
       } icon: {
         Image(systemName: "doc.badge.clock")
       }
+      .sectionTitleStyle()
     }
   }
 }
@@ -64,6 +65,7 @@ struct SuggestedGoalSection: View {
       } icon: {
         Image(systemName: "safari")
       }
+      .sectionTitleStyle()
     } footer: {
       SectionFooter {
         if failed {

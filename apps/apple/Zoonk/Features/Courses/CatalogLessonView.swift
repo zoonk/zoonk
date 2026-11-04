@@ -103,6 +103,7 @@ private struct CatalogLessonList: View {
             Image(systemName: "sparkles")
               .accessibilityHidden(true)
           }
+          .sectionTitleStyle()
         } footer: {
           SectionFooter {
             Text(

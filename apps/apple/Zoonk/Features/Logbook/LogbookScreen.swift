@@ -191,7 +191,7 @@ private struct LogbookSteps: View {
       }
       .tabViewStyle(.page(indexDisplayMode: steps.count > 1 ? .always : .never))
       .indexViewStyle(.page(backgroundDisplayMode: .always))
-      .background(Color(.background))
+      .background(Color(.systemBackground))
       .safeAreaBar(edge: .bottom) {
         action(steps)
           .controlSize(.large)

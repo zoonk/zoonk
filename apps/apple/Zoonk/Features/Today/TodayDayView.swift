@@ -35,6 +35,7 @@ struct TodayDayView: View {
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
       List {
+        header
         // It asks for a decision, so it leads the day where the day has room beside it.
         notice
         day
@@ -48,6 +49,7 @@ struct TodayDayView: View {
       .zoonkList()
     } single: {
       List {
+        header
         day
         notice
         aside
@@ -73,7 +75,7 @@ struct TodayDayView: View {
       TodayAdjustPlanSheet(goalID: view.goal.id, section: section)
         .zoonkStyles()
     }
-    .navigationSubtitle(dayLine)
+    .barTitleAfterHero(String(localized: "Today", table: "Today", comment: "Today tab's title"))
     .task(id: view.session.localDate) {
       await refreshAtDayEnd()
     }
@@ -85,6 +87,12 @@ struct TodayDayView: View {
     }
     .onDisappear {
       tapTask?.cancel()
+    }
+  }
+
+  private var header: some View {
+    Section {
+      PageHeader(Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine)
     }
   }
 

@@ -19,8 +19,7 @@ struct SectionTitle<Trailing: View>: View {
   var body: some View {
     AccessibilityStack(alignment: alignment) {
       title
-        .font(.subheadline.weight(.semibold))
-        .foregroundStyle(Color(.foreground))
+        .sectionTitleStyle()
         .frame(maxWidth: .infinity, alignment: .leading)
 
       trailing
@@ -28,6 +27,15 @@ struct SectionTitle<Trailing: View>: View {
         .foregroundStyle(.mutedForeground)
     }
     .textCase(nil)
+  }
+}
+
+extension View {
+  /// `SectionTitle`'s look for a header that isn't one text, such as a `Label` with its icon.
+  func sectionTitleStyle() -> some View {
+    font(.subheadline.weight(.semibold))
+      .foregroundStyle(Color(.foreground))
+      .textCase(nil)
   }
 }
 

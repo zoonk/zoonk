@@ -41,7 +41,7 @@ struct WarmUpSection: View {
             } icon: {
               Image(systemName: verdict.symbol)
             }
-            .foregroundStyle(verdict.tint)
+            .foregroundStyle(verdict.words)
 
             Text(card.reveal)
           }
@@ -78,6 +78,7 @@ struct WarmUpSection: View {
           Image(systemName: "sparkles")
             .accessibilityHidden(true)
         }
+        .sectionTitleStyle()
       } footer: {
         SectionFooter {
           if picked == nil {

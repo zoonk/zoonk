@@ -2,9 +2,10 @@ import SwiftUI
 
 /// Main's color roles from `globals.css`, which `pnpm --filter apple palette` writes to
 /// `Resources/Assets.xcassets/Palette` with light, dark and both more-contrast appearances. A mark,
-/// fill or icon takes a role; colored words take its `-text` role. The page, ink and their pairs
-/// are `Color(.background)`, `Color(.foreground)`, `Color(.primary)` and `Color(.primaryForeground)`,
-/// since SwiftUI's own `.background`, `.foreground` and `.primary` styles have those names.
+/// fill or icon takes a role; colored words take its `-text` role. Ink and its pairs are
+/// `Color(.foreground)`, `Color(.primary)` and `Color(.primaryForeground)`, since SwiftUI's own
+/// `.foreground` and `.primary` styles have those names. A page is `Color(.systemBackground)`, as
+/// a plain list's rows paint it: main's `background` in light and more contrast, black in dark.
 extension ShapeStyle where Self == Color {
   static var success: Color { Color(.success) }
   static var successText: Color { Color(.successText) }
