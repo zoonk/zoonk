@@ -47,6 +47,11 @@ enum ActivityNumberFormat {
     return attachedUnits.contains(unit) ? number + unit : "\(number)\u{00A0}\(unit)"
   }
 
+  /// Main's `formatLocalizedNumber` with `percent`.
+  static func percent(_ ratio: Double, digits: Int, locale: Locale) -> String {
+    display(ratio, .percent.precision(.fractionLength(0...digits)).locale(locale))
+  }
+
   static func displayDigits(_ value: Double, unit: String? = nil) -> Int {
     money(unit) == nil ? fractionDigits(value) : moneyDigits(value)
   }
