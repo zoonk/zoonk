@@ -12674,6 +12674,11 @@ msgid "Start a goal"
 msgstr "Inizia un obiettivo"
 
 #: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.DxPDlc"
+msgid "That didn't save. Try again."
+msgstr "Il salvataggio non è riuscito. Riprova."
+
+#: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.GuLJJS"
 msgid ", current goal. Switch goal"
 msgstr ", obiettivo attuale. Cambia obiettivo"

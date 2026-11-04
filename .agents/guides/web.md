@@ -14,6 +14,7 @@ This guidance applies to React and Next.js UI across apps and shared packages, i
 - Define repeated accessibility IDs once as `*_ID` constants, shared across files when necessary.
 - Preserve Next.js typed routes with literal hrefs or `as const`; never cast values to `Route`. Custom link wrappers should use a generic `Route<Href> | URL` prop.
 - Use `ClientLink` when a Base UI `render` prop requires a client component.
+- A Server Action rejects in the browser when the learner is offline, a deploy cuts the request or the action throws, and React shows a rejection inside a transition or a form action as the route's error page. Catch it where the transition or form awaits it (`safeAsync`, `.catch`) and show the screen's own failure, or a toast when the menu that started it has closed. `zoonk/no-uncaught-transition-await` checks the awaits in async transitions and `useActionState` callbacks; it can't see a Server Action handed straight to `useActionState` or to a form that runs with JavaScript, so wrap those yourself.
 - In `apps/main` pages whose only dynamic segment is `[lang]`, read the locale with `lang()` from `next/root-params` instead of awaiting `params`. Next.js warms prefetched session shells with `params` still pending but resolves them in the final render, so cached reads after `await params` log "Unexpected cache miss after cache warming".
 
 ## Localization

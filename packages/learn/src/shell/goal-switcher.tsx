@@ -19,7 +19,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { ChevronDownIcon, LayoutGridIcon, LightbulbIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "react";
-import { useChangeSaveErrorMessage } from "../_components/save-error";
 import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
@@ -185,7 +184,7 @@ export function GoalSwitcher({
   waitingGoals: WaitingGoal[];
 }) {
   const t = useExtracted("goalSwitcher");
-  const saveError = useChangeSaveErrorMessage();
+  const saveError = t("That didn't save. Try again.");
   const [isPending, startTransition] = useGoalSwitchTransition();
   const followed = goals.filter((goal) => goal.kind !== "explain");
   const explanations = goals.filter((goal) => goal.kind === "explain");

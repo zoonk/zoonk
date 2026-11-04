@@ -12674,6 +12674,11 @@ msgid "Start a goal"
 msgstr "목표 시작하기"
 
 #: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.DxPDlc"
+msgid "That didn't save. Try again."
+msgstr "저장하지 못했어요. 다시 시도해 보세요."
+
+#: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.GuLJJS"
 msgid ", current goal. Switch goal"
 msgstr ", 현재 목표. 목표 바꾸기"

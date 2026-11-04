@@ -8,7 +8,6 @@ import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
-import { useChangeSaveErrorMessage } from "@zoonk/learn/save-error";
 import { StatusMark } from "@zoonk/learn/status-mark";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -133,7 +132,7 @@ function useCourseGoal(courseId: string): LearnerSummaryGoal | null {
 export function CourseContinueLink({ courseId }: { courseId: string }) {
   const t = useExtracted();
   const router = useRouter();
-  const saveError = useChangeSaveErrorMessage();
+  const saveError = t("That didn't save. Try again.");
   const goal = useCourseGoal(courseId);
   const [isPending, startTransition] = useTransition();
 

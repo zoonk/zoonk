@@ -7,7 +7,6 @@ import { useGoToStudyDestination } from "@/lib/session/use-study-navigation";
 import { useContentFeedback } from "@zoonk/learn/feedback";
 import { useGoalSwitchTransition } from "@zoonk/learn/goal-switcher";
 import { useAppLocale } from "@zoonk/learn/locale";
-import { useChangeSaveErrorMessage } from "@zoonk/learn/save-error";
 import {
   Command,
   CommandDialog,
@@ -157,7 +156,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   const t = useExtracted();
   const locale = useAppLocale();
   const contentFeedback = useContentFeedback();
-  const saveError = useChangeSaveErrorMessage();
+  const saveError = t("That didn't save. Try again.");
   const [, startGoalSwitch] = useGoalSwitchTransition();
   const continueSession = useContinueFromPalette();
 
