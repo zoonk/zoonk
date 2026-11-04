@@ -1,24 +1,31 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
@@ -36,15 +43,18 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
 
 /**
- * Material's list item in main's row type (`ListRowTitle`, `ListRowDescription`, mono `ListRowTrailing`),
- * as every list draws its rows: [highlighted] is the learner's place, and a row with [expanded] opens
- * what's under it, TalkBack hearing whether it's open after [stateDescription].
- * [meta] (numbers, a date, the Plus mark) ends the headline and moves under it when the words would
- * get too little room. Rows reach the list's edges and inset their own content; a nested row moves its
- * mark and words in by [indent], so its highlight still spans the list.
+ * Main's `ListRow`, as every list draws its rows: a mark, the title (`ListRowTitle`) over its
+ * description, and mono data at its end (`ListRowTrailing`), 11dp above and below the words and at
+ * least 48dp tall. [highlighted] is the learner's place, on `muted` with `lg` corners reaching 10dp
+ * past the words, as main's; a row with [expanded] opens what's under it, TalkBack hearing whether
+ * it's open after [stateDescription]. [meta] (numbers, a date, the Plus mark) ends the headline and
+ * moves under it when the words would get too little room. Rows reach the list's edges and inset their
+ * own content by [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its
+ * highlight still spans the list.
  */
 @Composable
 fun ListRow(
@@ -66,30 +76,19 @@ fun ListRow(
             stateDescription != null && openWords != null -> stringResource(R.string.list_row_states, stateDescription, openWords)
             else -> stateDescription ?: openWords
         }
+    val ink = MaterialTheme.colorScheme.onSurface
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
-    val metaStyle = MaterialTheme.zoonkType.data
-    val titleStyle = MaterialTheme.typography.titleSmall
-    val supportingStyle = MaterialTheme.typography.bodySmall
+    val interaction = remember { MutableInteractionSource() }
 
-    ListItem(
-        headlineContent = {
-            ProvideTextStyle(titleStyle) {
-                if (meta == null) {
-                    headline()
-                } else {
-                    TitleAndMeta(
-                        meta = { CompositionLocalProvider(LocalContentColor provides quiet) { ProvideTextStyle(metaStyle, meta) } },
-                    ) {
-                        headline()
-                    }
-                }
-            }
-        },
+    Row(
         modifier =
             modifier
+                .fillMaxWidth()
+                .heightIn(min = MIN_HEIGHT)
+                // The whole row takes the tap; its ripple stays inside the highlight's rounded shape.
                 .then(
                     if (onClick != null) {
-                        Modifier.clickable(enabled = enabled, role = Role.Button, onClick = onClick)
+                        Modifier.clickable(interaction, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
                     } else {
                         Modifier.semantics(mergeDescendants = true) {}
                     },
@@ -102,32 +101,50 @@ fun ListRow(
                         }
                         if (expanded) collapse(action = toggle) else expand(action = toggle)
                     }
-                },
-        leadingContent =
-            leading?.let {
-                {
-                    Box(
-                        Modifier.padding(start = indent).size(markSize()),
-                        contentAlignment = Alignment.Center,
-                    ) { it() }
+                }.padding(horizontal = LIST_ITEM_INSET - HIGHLIGHT_OUTSET, vertical = HIGHLIGHT_INSET)
+                .clip(RoundedCornerShape(ZoonkRadius.lg))
+                .background(if (highlighted) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent)
+                .indication(interaction, ripple())
+                .padding(start = HIGHLIGHT_OUTSET + indent, end = HIGHLIGHT_OUTSET, top = WORDS_PADDING, bottom = WORDS_PADDING),
+        horizontalArrangement = Arrangement.spacedBy(LEADING_GAP),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CompositionLocalProvider(LocalContentColor provides quiet) {
+            leading?.let { Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { it() } }
+        }
+
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
+            CompositionLocalProvider(LocalContentColor provides ink) {
+                ProvideTextStyle(MaterialTheme.typography.titleSmall) {
+                    if (meta == null) {
+                        headline()
+                    } else {
+                        TitleAndMeta(
+                            meta = {
+                                CompositionLocalProvider(LocalContentColor provides quiet) {
+                                    ProvideTextStyle(MaterialTheme.zoonkType.data, meta)
+                                }
+                            },
+                        ) {
+                            headline()
+                        }
+                    }
                 }
-            },
-        supportingContent = supporting?.let { { ProvideTextStyle(supportingStyle, it) } },
-        trailingContent =
-            expanded?.let {
-                {
-                    Icon(
-                        painterResource(R.drawable.ic_expand_more),
-                        contentDescription = null,
-                        modifier = Modifier.rotate(if (it) 180f else 0f),
-                    )
-                }
-            },
-        colors =
-            ListItemDefaults.colors(
-                containerColor = if (highlighted) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent,
-            ),
-    )
+            }
+            supporting?.let {
+                CompositionLocalProvider(LocalContentColor provides quiet) { ProvideTextStyle(MaterialTheme.typography.bodySmall, it) }
+            }
+        }
+
+        expanded?.let {
+            Icon(
+                painterResource(R.drawable.ic_expand_more),
+                contentDescription = null,
+                modifier = Modifier.rotate(if (it) 180f else 0f),
+                tint = quiet,
+            )
+        }
+    }
 }
 
 /** Where a row's words start, past its mark, for what opens under a row to line up with them. */
@@ -202,5 +219,15 @@ fun Modifier.bleed(amount: Dp): Modifier =
         layout(placeable.width - extra, placeable.height) { placeable.placeRelative(-amount.roundToPx(), 0) }
     }
 
-/** Material's room between a list item's leading content and its words. */
-private val LEADING_GAP = 16.dp
+/** Main's `gap-3` between a row's mark and its words. */
+private val LEADING_GAP = 12.dp
+
+/** Main's `min-h-11` row, raised to Android's 48dp touch target. */
+private val MIN_HEIGHT = 48.dp
+
+/** How far the learner's row's `muted` reaches past the words, and how far it stays off the hairlines. */
+private val HIGHLIGHT_OUTSET = 10.dp
+private val HIGHLIGHT_INSET = 2.dp
+
+/** Main's 11dp above and below a row's words, less the highlight's inset. */
+private val WORDS_PADDING = 11.dp - HIGHLIGHT_INSET

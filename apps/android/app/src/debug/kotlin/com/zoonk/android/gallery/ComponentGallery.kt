@@ -34,7 +34,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -94,6 +93,7 @@ import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.ProgressMark
@@ -139,6 +139,7 @@ internal val gallerySections =
         GallerySection("Color roles") { ColorRoles() },
         GallerySection("Type") { TypeRoles() },
         GallerySection("Buttons") { Buttons() },
+        GallerySection("Fields") { Fields() },
         GallerySection("Material components") { MaterialComponents() },
         GallerySection("Navigation") { Navigation() },
         GallerySection("Label chips") { Chips() },
@@ -320,6 +321,25 @@ private fun Buttons() {
 }
 
 @Composable
+private fun Fields() {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        OutlinedTextField(value = "", onValueChange = {}, label = "Email", placeholder = { Text("you@example.com") }, singleLine = true)
+        OutlinedTextField(value = "Ana Souza", onValueChange = {}, label = "Name", singleLine = true)
+        OutlinedTextField(
+            value = "ana@",
+            onValueChange = {},
+            label = "Email",
+            supportingText = { Text("Enter a valid email address") },
+            isError = true,
+            singleLine = true,
+        )
+        OutlinedTextField(value = "", onValueChange = {}, label = "Message", placeholder = { Text("What happened?") }, minLines = 3)
+        OutlinedTextField(value = "Read only", onValueChange = {}, label = "Disabled", enabled = false, singleLine = true)
+        OutlinedTextField(value = "", onValueChange = {}, placeholder = { Text("Without a label") }, singleLine = true)
+    }
+}
+
+@Composable
 private fun MaterialComponents() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -345,14 +365,6 @@ private fun MaterialComponents() {
             FilterChip(selected = false, onClick = {}, label = { Text("Tue") })
             AssistChip(onClick = {}, label = { Text("Explain") })
         }
-        OutlinedTextField(
-            value = "",
-            onValueChange = {},
-            label = { Text("Your goal") },
-            supportingText = { Text("Write what you want to learn") },
-            isError = true,
-            modifier = Modifier.fillMaxWidth(),
-        )
         CircularProgressIndicator(progress = { 0.6f }, color = MaterialTheme.colorScheme.tertiary)
     }
 }

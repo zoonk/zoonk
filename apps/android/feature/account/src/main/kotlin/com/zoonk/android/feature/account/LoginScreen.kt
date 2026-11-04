@@ -30,7 +30,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -70,6 +69,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -186,7 +186,7 @@ fun Methods(
             Modifier
                 .fillMaxWidth()
                 .semantics { contentType = ContentType.EmailAddress },
-        label = { Text(stringResource(R.string.account_email)) },
+        label = stringResource(R.string.account_email),
         placeholder = { Text(stringResource(R.string.account_email_placeholder)) },
         isError = signIn.failure == AccountFailure.InvalidEmail || signIn.failure == AccountFailure.DisposableEmail,
         singleLine = true,
@@ -224,7 +224,7 @@ fun CodeEntry(
                 .fillMaxWidth()
                 .focusRequester(focus)
                 .semantics { contentType = ContentType.SmsOtpCode },
-        label = { Text(stringResource(R.string.account_code_label)) },
+        label = stringResource(R.string.account_code_label),
         isError = signIn.failure != null,
         enabled = !needsNewCode,
         readOnly = work == SignInWork.CheckCode,

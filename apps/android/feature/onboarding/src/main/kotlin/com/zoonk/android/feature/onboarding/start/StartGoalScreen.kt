@@ -26,7 +26,6 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -73,6 +72,7 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.rememberGoalExamples
@@ -509,7 +509,7 @@ private fun ColumnScope.MaterialQuestions(
             value = question,
             onValueChange = { question = it.take(MAX_QUESTION_LENGTH) },
             modifier = Modifier.weight(1f),
-            label = { Text(stringResource(R.string.onboarding_your_question)) },
+            label = stringResource(R.string.onboarding_your_question),
             placeholder = { Text(stringResource(R.string.onboarding_question_placeholder)) },
             maxLines = 6,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),

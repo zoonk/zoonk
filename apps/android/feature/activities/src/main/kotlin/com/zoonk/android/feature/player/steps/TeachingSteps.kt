@@ -24,7 +24,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -85,6 +84,7 @@ import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
@@ -606,7 +606,7 @@ private fun AnswerField(
                         submits
                     },
             readOnly = state.phase != LessonPhase.Playing,
-            label = { Text(stringResource(R.string.player_your_answer)) },
+            label = stringResource(R.string.player_your_answer),
             placeholder = { if (!isNumber) Text(stringResource(R.string.player_write_your_answer)) },
             minLines = if (isNumber) 1 else 3,
             singleLine = isNumber,

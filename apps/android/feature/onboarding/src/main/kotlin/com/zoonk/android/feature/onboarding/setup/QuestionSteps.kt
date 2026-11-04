@@ -20,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
@@ -63,6 +62,7 @@ import com.zoonk.android.ui.characters.BuddyPicker
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DatePickerDialog
 import com.zoonk.android.ui.components.GenerationFailureNotice
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -674,7 +674,7 @@ internal fun ColumnScope.DateStep(
                     }
                 },
             readOnly = true,
-            label = { Text(label) },
+            label = label,
             trailingIcon = { Icon(painterResource(R.drawable.ic_calendar_month), contentDescription = null) },
             interactionSource = presses,
         )
@@ -901,7 +901,7 @@ private fun AnswerField(
         value = value,
         onValueChange = { onValueChange(it.take(MAX_ANSWER_LENGTH)) },
         modifier = Modifier.fillMaxWidth().focusRequester(focus),
-        label = { Text(label) },
+        label = label,
         placeholder = placeholder?.let { { Text(it) } },
         singleLine = true,
         keyboardOptions =

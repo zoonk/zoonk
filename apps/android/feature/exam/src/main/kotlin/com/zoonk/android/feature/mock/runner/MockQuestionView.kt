@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -63,6 +62,7 @@ import com.zoonk.android.feature.questions.isMulti
 import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -251,19 +251,10 @@ private fun EssayAnswer(
         onValueChange = { if (it.length <= MAX_ESSAY_CHARACTERS) viewModel.write(Answer.Text(it)) },
         modifier = Modifier.fillMaxWidth().heightIn(min = ESSAY_HEIGHT),
         readOnly = run.pending,
-        label = {
-            Text(
-                stringResource(
-                    if (run.view.essayRubric ==
-                        MockExam.EssayRubric.ENEM
-                    ) {
-                        R.string.mock_your_essay
-                    } else {
-                        R.string.questions_your_answer
-                    },
-                ),
-            )
-        },
+        label =
+            stringResource(
+                if (run.view.essayRubric == MockExam.EssayRubric.ENEM) R.string.mock_your_essay else R.string.questions_your_answer,
+            ),
         // The field's own line, so TalkBack reads the count with the field, not on every word.
         supportingText = {
             Text(
