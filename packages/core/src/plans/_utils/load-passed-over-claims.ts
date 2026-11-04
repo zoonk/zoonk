@@ -10,11 +10,9 @@ import { parsePlanChangePayload } from "./plan-change-payload";
 export async function loadPassedOverClaims({
   goalId,
   known,
-  skillIds,
 }: {
   goalId: string;
   known?: Pick<Plan, "createdAt" | "graph" | "id" | "settings"> | null;
-  skillIds: ReadonlySet<string>;
 }): Promise<ClaimEvent[]> {
   const plan =
     known === undefined
@@ -36,9 +34,7 @@ export async function loadPassedOverClaims({
     known === undefined ? prisma : "shared",
   );
 
-  const passed = listPassedOver({ graph, prerequisites, settings }).filter((entry) =>
-    skillIds.has(entry.skillId),
-  );
+  const passed = listPassedOver({ graph, prerequisites, settings });
 
   if (passed.length === 0) {
     return [];

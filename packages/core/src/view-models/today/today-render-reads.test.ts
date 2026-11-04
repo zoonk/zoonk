@@ -10,9 +10,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { type readClaimEvents } from "../../learner/facts/claim-events";
+import { type readPlanClaimEvents } from "../../learner/facts/plan-claim-events";
 import { type readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { type readSavedPlan } from "../../learner/facts/saved-plan";
-import { type readUndoneTestOuts } from "../../learner/facts/undone-test-outs";
 import { type readUsageTotals } from "../../learner/facts/usage-totals";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import {
@@ -42,13 +42,13 @@ vi.mock("../../learner/facts/claim-events", async (importOriginal) => {
   return { ...actual, readClaimEvents: keepRequestReads(actual.readClaimEvents) };
 });
 
-vi.mock("../../learner/facts/undone-test-outs", async (importOriginal) => {
+vi.mock("../../learner/facts/plan-claim-events", async (importOriginal) => {
   const [actual, { keepRequestReads }] = await Promise.all([
-    importOriginal<{ readUndoneTestOuts: typeof readUndoneTestOuts }>(),
+    importOriginal<{ readPlanClaimEvents: typeof readPlanClaimEvents }>(),
     import("../../_test-utils/keep-request-reads"),
   ]);
 
-  return { ...actual, readUndoneTestOuts: keepRequestReads(actual.readUndoneTestOuts) };
+  return { ...actual, readPlanClaimEvents: keepRequestReads(actual.readPlanClaimEvents) };
 });
 
 vi.mock("../../learner/facts/saved-plan", async (importOriginal) => {
@@ -112,7 +112,7 @@ describe("Today's render reads", () => {
   });
 
   it.each(["as planned", "with an area skipped", "after a skill merge"] as const)(
-    "reads an unopened day's undone test-outs once, and each skill set's answers once, %s",
+    "reads an unopened day's plan history once, and each skill set's answers once, %s",
     async (variant) => {
       const user = await userFixture();
 
@@ -160,11 +160,15 @@ describe("Today's render reads", () => {
                 area: index === 0 ? "Speaking" : "Reading",
               })),
             },
-            settings: { skippedAreas: variant === "with an area skipped" ? ["Speaking"] : [] },
+            settings: {
+              baseChoices: [{ choice: "skip", skillId: skills[1]?.id }],
+              skippedAreas: variant === "with an area skipped" ? ["Speaking"] : [],
+            },
           },
           where: { id: plan.id },
         }),
         planChangeFixture({ kind: "testedOut", planId: plan.id, status: "undone" }),
+        planChangeFixture({ kind: "setBaseChoices", planId: plan.id, status: "applied" }),
         ...items.map((item) =>
           attemptFixture({
             answeredAt: daysAgo(4),
@@ -177,7 +181,11 @@ describe("Today's render reads", () => {
 
       mockSession(user.id);
 
-      const undone = await countDatabaseRows(
+      const changes = await prisma.planChange.count({
+        where: { planId: plan.id, status: { in: ["applied", "undone"] } },
+      });
+
+      const history = await countDatabaseRows(
         () =>
           countDatabaseRows(
             () =>
@@ -190,14 +198,14 @@ describe("Today's render reads", () => {
         '"public"."plan_changes"."created_at", "public"."plan_changes"."payload" FROM',
       );
 
-      const answers = undone.result;
+      const answers = history.result;
 
       expect(answers.result.map((result) => result.status)).toStrictEqual(["ready", "ready"]);
 
       // Skipping an area or merging a skill gives practice other skills than the syllabus: one more read.
-      expect({ answers: answers.rows, undone: undone.rows }).toStrictEqual({
+      expect({ answers: answers.rows, history: history.rows }).toStrictEqual({
         answers: variant === "as planned" ? items.length : items.length * 2 - 1,
-        undone: 1,
+        history: changes,
       });
     },
   );

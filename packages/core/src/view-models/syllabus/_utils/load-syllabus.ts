@@ -141,12 +141,7 @@ export async function loadSyllabusInput(
       loadChapterTitles(plan.items, from),
       readClaims
         ? readClaims([...graphSkillIds])
-        : loadClaimEvents({
-            goalId: goal.id,
-            plan: savedPlan,
-            skillIds: [...graphSkillIds],
-            userId: goal.userId,
-          }),
+        : loadClaimEvents({ goalId: goal.id, skillIds: [...graphSkillIds], userId: goal.userId }),
       readSkillPrerequisiteMap([...graphSkillIds], from),
       taughtStandIns ??
         listTaughtStandInSkills({

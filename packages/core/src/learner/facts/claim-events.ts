@@ -3,8 +3,7 @@ import { cacheTag } from "next/cache";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
 import { loadClaimEvents } from "../_utils/load-skill-claims";
 import { type ClaimEvent } from "../_utils/skill-claims";
-import { readSavedPlan } from "./saved-plan";
-import { readUndoneTestOuts } from "./undone-test-outs";
+import { readPlanClaimEvents } from "./plan-claim-events";
 
 /**
  * GET-only fact after ownership authorization; writes call `loadClaimEvents` fresh. Pass the skills
@@ -19,13 +18,10 @@ export async function readClaimEvents(
 
   cacheTag(getGoalsCacheTag(userId), getLearnerModelCacheTag(userId));
 
-  const plan = await readSavedPlan(userId, goalId);
-
   return loadClaimEvents({
     goalId,
-    plan,
+    planEvents: readPlanClaimEvents(userId, goalId),
     skillIds,
-    undone: readUndoneTestOuts(userId, goalId),
     userId,
   });
 }
