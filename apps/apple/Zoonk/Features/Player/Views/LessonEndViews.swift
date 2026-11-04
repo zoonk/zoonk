@@ -592,7 +592,6 @@ struct LessonWaitingView: View {
     .announcesStatus(notWrittenLine)
   }
 
-  /// Main's not-written notice, read out when writing this lesson is refused or set aside.
   private var notWrittenLine: String? {
     guard holding == nil else {
       return nil

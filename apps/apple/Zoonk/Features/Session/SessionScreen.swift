@@ -381,7 +381,6 @@ private struct NextStopView: View {
     lessonStatus == "ready" && waitedFor != nil && waitedFor == next?.id
   }
 
-  /// Main's not-written notice, read out when the next lesson turns out not to be written.
   private var notWrittenLine: String? {
     switch writing {
     case .refused(let refusal): LessonUnavailableView(refusal: refusal) {}.said
