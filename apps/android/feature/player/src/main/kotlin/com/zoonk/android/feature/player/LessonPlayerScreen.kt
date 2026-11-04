@@ -137,6 +137,7 @@ import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.screenSplit
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.LearnerSummaryBuddy
@@ -568,20 +569,26 @@ private fun Segments(
     val parts = segmentParts(segments)
     val label = stringResource(R.string.player_progress)
     val done = if (state.phase == LessonPhase.Completed) state.queue.size else state.position
+    var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    LessonColumn(
-        Modifier.padding(bottom = 8.dp).semantics {
-            contentDescription = label
-            progressBarRangeInfo =
-                ProgressBarRangeInfo(
-                    done.toFloat(),
-                    0f..state.queue.size
-                        .coerceAtLeast(1)
-                        .toFloat(),
-                )
-        },
-    ) {
-        MeterParts(parts)
+    // Over the page before a fold or a spread's split, as the bar's title is.
+    BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
+        val split = screenSplit(maxWidth, span)
+
+        LessonColumn(
+            (split?.let { Modifier.width(it.start) } ?: Modifier).padding(bottom = 8.dp).semantics {
+                contentDescription = label
+                progressBarRangeInfo =
+                    ProgressBarRangeInfo(
+                        done.toFloat(),
+                        0f..state.queue.size
+                            .coerceAtLeast(1)
+                            .toFloat(),
+                    )
+            },
+        ) {
+            MeterParts(parts)
+        }
     }
 }
 

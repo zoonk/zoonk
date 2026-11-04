@@ -33,7 +33,7 @@ struct RhythmTapPad: View {
     .frame(maxWidth: .infinity, minHeight: 128)
     .padding()
     .accessibilityHidden(true)
-    .background(Color.muted, in: .rect(cornerRadius: 20, style: .continuous))
+    .background(Color.muted, in: .rect(cornerRadius: Radius.xl, style: .continuous))
     .opacity(isActive ? 1 : 0.6)
     .scaleEffect(isPressed && !reduceMotion ? 0.98 : 1)
     .animation(.snappy(duration: 0.1), value: isPressed)

@@ -48,7 +48,7 @@ private struct DecisionTreeCanvas: View {
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(12)
-      .panel(cornerRadius: 12)
+      .panel(cornerRadius: Radius.option)
       .accessibilityElement(children: .combine)
 
       if case .question? = current {
@@ -127,7 +127,7 @@ private struct DecisionTreeCanvas: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color.vizAccent.opacity(0.15), in: .rect(cornerRadius: 12))
+        .background(Color.vizAccent.opacity(0.15), in: .rect(cornerRadius: Radius.option))
         .accessibilityElement(children: .combine)
       default:
         EmptyView()

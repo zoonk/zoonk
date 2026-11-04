@@ -142,7 +142,7 @@ struct GradedAtEndRun: View {
       question: question, labels: labels, isLocked: isPending || failed, draft: $draft)
   }
 
-  private func segments(total: Int, index: Int) -> [PracticeSegment] {
+  private func segments(total: Int, index: Int) -> [TaskSegment] {
     (0..<total).map { $0 < index ? .read : ($0 == index ? .current : .ahead) }
   }
 

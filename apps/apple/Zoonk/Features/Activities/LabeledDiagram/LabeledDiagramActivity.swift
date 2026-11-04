@@ -199,7 +199,7 @@ private struct LabeledDiagramCanvas: View {
     .disabled(isChecked)
     .overlay {
       if targetedKey == slot.key {
-        RoundedRectangle(cornerRadius: 12).strokeBorder(.primary, lineWidth: 2)
+        RoundedRectangle(cornerRadius: Radius.option).strokeBorder(.primary, lineWidth: 2)
       }
     }
     .dropDestination(for: ActivityDragItem.self) { dropped, _ in

@@ -315,9 +315,10 @@ struct LessonActionBar: View {
   let step: LessonStep
 
   @Environment(\.activityRenderers) private var activityRenderers
+  @Environment(\.lessonTutor) private var tutor
 
   var body: some View {
-    HStack(spacing: 12) {
+    HStack(spacing: 10) {
       if state.canGoBack {
         Button {
           store.goBack()
@@ -330,10 +331,8 @@ struct LessonActionBar: View {
             Image(systemName: "chevron.left")
           }
           .labelStyle(.iconOnly)
-          .frame(minHeight: 32)
         }
-        .buttonStyle(.outline)
-        .buttonBorderShape(.circle)
+        .buttonStyle(.outline.icon)
         .controlSize(.large)
         .keyboardShortcut(.leftArrow, modifiers: [])
       }
@@ -343,6 +342,10 @@ struct LessonActionBar: View {
       }
 
       primaryButton
+
+      if tutor.panel != nil {
+        askButton
+      }
     }
     .frame(maxWidth: 680)
     .frame(maxWidth: .infinity)
@@ -374,6 +377,27 @@ struct LessonActionBar: View {
     .controlSize(.large)
     .disabled(primary.isDisabled)
     .keyboardShortcut(.defaultAction)
+  }
+
+  private var askButton: some View {
+    Button {
+      // Beside the lesson, Ask also closes the panel, as an inspector's button does; elsewhere it
+      // opens it, including one left open beside the lesson before iPhone Duo closed.
+      if store.isAsking, store.isSpread {
+        store.isAsking = false
+      } else {
+        store.ask()
+      }
+    } label: {
+      Label {
+        Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
+      } icon: {
+        Image(systemName: "questionmark.bubble")
+      }
+      .labelStyle(.iconOnly)
+    }
+    .buttonStyle(.outline.icon)
+    .controlSize(.large)
   }
 
   private var activityGrade: ((ActivityStepContent, ActivityAnswer) -> Bool)? {
@@ -508,15 +532,11 @@ private struct LessonNotice: View {
 
   var body: some View {
     if let quickCheck = state.quickCheckProgress {
-      Label {
-        Text(
+      LessonEyebrow(
+        title: Text(
           "Quick check\u{00A0}· \(quickCheck.current) of \(quickCheck.total)", tableName: "Player",
-          comment: "While \"I already know this\" asks the lesson's checks")
-      } icon: {
-        Image(systemName: "bolt")
-      }
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
+          comment: "While \"I already know this\" asks the lesson's checks"),
+        systemImage: "bolt")
     } else {
       switch state.notice {
       case .answerNotSaved:

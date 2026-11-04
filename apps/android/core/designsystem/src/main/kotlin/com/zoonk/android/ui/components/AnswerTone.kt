@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 
 /** A guess never counts (a lesson's "Guess first"), so it isn't a mistake. */
 enum class AnswerResult { Guess, Right, Wrong }
@@ -67,7 +68,7 @@ fun AnswerTag(
             AnswerResult.Wrong -> MaterialTheme.colorScheme.onErrorContainer
         }
 
-    Text(text = text, modifier = modifier, color = color, style = MaterialTheme.typography.labelMedium)
+    Text(text = text, modifier = modifier, color = color, style = MaterialTheme.zoonkType.tag)
 }
 
 private val CHECKED = 1.5.dp

@@ -11743,6 +11743,65 @@
         }
       }
     },
+    "Questions answered in this section" : {
+      "comment" : "VoiceOver label of the bar under a mock's clock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beantwortete Fragen in diesem Abschnitt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntas respondidas en esta sección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questions auxquelles tu as répondu dans cette partie"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Domande a cui hai risposto in questa sezione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このセクションで回答した問題数"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 파트에서 푼 문제"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pytania z odpowiedzią w tej części"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntas respondidas nesta seção"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu oturumda cevaplanan sorular"
+          }
+        }
+      }
+    },
     "Questions answered with a number are asked as multiple choice." : {
       "comment" : "Numeric questions asked as choices",
       "localizations" : {

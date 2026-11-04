@@ -268,7 +268,7 @@ private struct SourceComparisonCanvas: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .panel(cornerRadius: 16)
+    .panel()
   }
 
   private func excerpt(_ source: SourceComparisonFields.Source) -> AttributedString {

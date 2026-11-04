@@ -25,10 +25,11 @@ struct LessonSpokenWordsView: View {
             } label: {
               HeardWordText(word: word)
                 .padding(.horizontal, 4)
-                .background(.destructive.opacity(0.12), in: .rect(cornerRadius: 6))
+                .background(.destructive.opacity(0.12), in: .rect(cornerRadius: Radius.sm))
                 .overlay {
                   if index == selected {
-                    RoundedRectangle(cornerRadius: 6).strokeBorder(.destructive.opacity(0.5))
+                    RoundedRectangle(cornerRadius: Radius.sm).strokeBorder(
+                      .destructive.opacity(0.5))
                   }
                 }
             }

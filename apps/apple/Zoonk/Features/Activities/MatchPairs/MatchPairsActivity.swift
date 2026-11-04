@@ -60,7 +60,7 @@ private struct MatchPairsCanvas: View {
         .typeStyle(.body)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color.destructive.opacity(0.1), in: .rect(cornerRadius: 12))
+        .background(Color.destructive.opacity(0.1), in: .rect(cornerRadius: Radius.option))
       }
 
       if isChecked {
@@ -299,7 +299,7 @@ private struct MatchCardStyle: ButtonStyle {
         .padding(.vertical, 10)
         .frame(minHeight: 44)
         .overlay {
-          RoundedRectangle(cornerRadius: 12)
+          RoundedRectangle(cornerRadius: Radius.option)
             .strokeBorder(Color.border, style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
         }
     } else {

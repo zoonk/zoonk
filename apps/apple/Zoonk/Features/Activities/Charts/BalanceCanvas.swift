@@ -283,7 +283,7 @@ private struct BalanceScale: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 6)
             .frame(minWidth: 30, minHeight: 38)
-            .background(Color.vizSecondary, in: .rect(cornerRadius: 8, style: .continuous))
+            .background(Color.vizSecondary, in: .rect(cornerRadius: Radius.md, style: .continuous))
         }
 
         if pan.units.rounded() == pan.units && pan.units <= 12 {
@@ -297,7 +297,7 @@ private struct BalanceScale: View {
             .typeStyle(.meta.weight(.semibold).monospaced())
             .padding(.horizontal, 8)
             .frame(minHeight: 28)
-            .background(Color.vizHighlight.opacity(0.8), in: .rect(cornerRadius: 6))
+            .background(Color.vizHighlight.opacity(0.8), in: .rect(cornerRadius: Radius.sm))
         }
       }
       .frame(maxWidth: .infinity, alignment: .bottom)

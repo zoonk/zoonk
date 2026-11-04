@@ -112,7 +112,7 @@ private struct MapExplorerCanvas: View {
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(12)
-      .panel(cornerRadius: 12)
+      .panel(cornerRadius: Radius.option)
     }
   }
 
@@ -159,7 +159,7 @@ private struct MapExplorerCanvas: View {
     }
     .frame(width: width, height: height)
     .background(map.sphere == nil ? ActivityBaseMap.Tone.water : .clear)
-    .clipShape(.rect(cornerRadius: 12))
+    .clipShape(.rect(cornerRadius: Radius.option))
   }
 
   private var textAlternative: Text {

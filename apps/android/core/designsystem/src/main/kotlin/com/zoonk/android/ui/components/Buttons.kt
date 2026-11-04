@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -150,19 +151,21 @@ fun TextButton(
     content = { Labeled(size) { content() } },
 )
 
+/** Main's `size="icon"` outline button: `rounded-lg`, never a circle, as tall as a [ButtonSize.Large] action beside it. */
 @Composable
 fun OutlinedIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    shape: Shape = IconButtonDefaults.outlinedShape,
+    size: ButtonSize = LocalButtonSize.current,
+    shape: Shape = RoundedCornerShape(ZoonkRadius.lg),
     colors: IconButtonColors = IconButtonDefaults.outlinedIconButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
     border: BorderStroke? = outlinedBorder(enabled, IconButtonDefaults.outlinedIconButtonBorder(enabled)),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
 ) = androidx.compose.material3.OutlinedIconButton(
     onClick = onClick,
-    modifier = modifier,
+    modifier = if (size == ButtonSize.Large) modifier.size(44.dp) else modifier,
     enabled = enabled,
     shape = shape,
     colors = colors,

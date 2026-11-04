@@ -178,12 +178,12 @@ private struct RhythmGrid: View {
             VStack(spacing: 4) {
               dot(result?.status)
 
-              RoundedRectangle(cornerRadius: 6, style: .continuous)
+              RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
                 .fill(isHit ? Color.vizHighlight : Color(.background))
                 .frame(height: cellHeight)
                 .overlay {
                   if position == RhythmPosition(round: round, step: step) {
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
                       .strokeBorder(.primary, lineWidth: 2)
                   }
                 }
