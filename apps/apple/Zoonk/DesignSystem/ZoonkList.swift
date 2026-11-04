@@ -31,11 +31,17 @@ struct ZoonkList<Content: View>: View {
 
 extension View {
   /// The learner's row, as main's `aria-current`: `muted` behind it, reaching a little past the
-  /// column's edges, without the hairlines that would cross it. `joins` are the edges where it runs
-  /// on into the next row's highlight, for one item drawn as two rows.
-  func currentRow(_ isCurrent: Bool = true, joins: VerticalEdge.Set = []) -> some View {
-    listRowBackground(isCurrent ? RowHighlight(joins: joins) : nil)
-      .listRowSeparator(isCurrent ? .hidden : .automatic)
+  /// column's edges, without the hairlines that would cross it.
+  func currentRow(_ isCurrent: Bool = true) -> some View {
+    listRowBackground(
+      isCurrent
+        ? RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+          .fill(.muted)
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+        : nil
+    )
+    .listRowSeparator(isCurrent ? .hidden : .automatic)
   }
 
   /// The learner's pick among a few choices, as main's `ChoiceRows`: the answer surface's pick, an
@@ -49,23 +55,5 @@ extension View {
         : nil
     )
     .listRowSeparator(isPicked ? .hidden : .automatic)
-  }
-}
-
-private struct RowHighlight: View {
-  let joins: VerticalEdge.Set
-
-  var body: some View {
-    let top = joins.contains(.top) ? 0 : Radius.lg
-    let bottom = joins.contains(.bottom) ? 0 : Radius.lg
-
-    UnevenRoundedRectangle(
-      topLeadingRadius: top, bottomLeadingRadius: bottom, bottomTrailingRadius: bottom,
-      topTrailingRadius: top, style: .continuous
-    )
-    .fill(.muted)
-    .padding(.horizontal, 6)
-    .padding(.top, joins.contains(.top) ? 0 : 2)
-    .padding(.bottom, joins.contains(.bottom) ? 0 : 2)
   }
 }

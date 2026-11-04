@@ -11,7 +11,6 @@ struct TodayDisclosures {
 
 struct TodaySessionSection: View {
   @Environment(AppRouter.self) private var router
-  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let view: TodayView
   let busy: TodayDayView.Tap?
@@ -94,23 +93,25 @@ struct TodaySessionSection: View {
     }
 
     if let next {
-      blockButton(
-        next, isNext: true, highlightJoins: next.canTestOut && next.chapterId != nil ? .bottom : [])
-
       if next.canTestOut, let chapterID = next.chapterId {
-        Button {
-          router.open(.testOut(chapterId: chapterID))
-        } label: {
-          Text(
-            AttributedString(
-              localized: "Already know this? **Take the test**", table: "Today",
-              comment: "Skips the next lesson's chapter with its test"),
-            legibility: legibilityWeight
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        VStack(alignment: .blockTitle, spacing: 0) {
+          blockButton(next, isNext: true)
+
+          Button {
+            router.open(.testOut(chapterId: chapterID))
+          } label: {
+            Text(testOutLine)
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
+              .padding(.top, 6)
+          }
+          // A list row fires every default-style button in it; this one opens only the test.
+          .buttonStyle(.borderless)
         }
-        .currentRow(joins: .top)
+        .currentRow()
+      } else {
+        blockButton(next, isNext: true)
+          .currentRow()
       }
     }
 
@@ -140,9 +141,7 @@ struct TodaySessionSection: View {
   /// A block still to do opens from its row, in whatever order the learner likes; one waiting for
   /// earlier work doesn't.
   @ViewBuilder
-  private func blockButton(
-    _ block: StudyBlock, isNext: Bool, highlightJoins: VerticalEdge.Set = []
-  ) -> some View {
+  private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
       isBusy: busy == .block(block.position) || (isNext && busy == .main))
@@ -155,9 +154,28 @@ struct TodaySessionSection: View {
       }
       .tint(.primary)
       .disabled(busy != nil)
-      .currentRow(isNext, joins: highlightJoins)
     } else {
       row
+    }
+  }
+
+  /// Main's link in the sentence: ink and underlined in its muted words.
+  private var testOutLine: AttributedString {
+    let line = AttributedString(
+      localized: "Already know this? **Take the test**", table: "Today",
+      comment: "Skips the next lesson's chapter with its test")
+
+    return line.runs[\.inlinePresentationIntent].reduce(into: AttributedString()) {
+      result, run in
+      var piece = AttributedString(line[run.1])
+
+      if run.0?.contains(.stronglyEmphasized) == true {
+        piece.inlinePresentationIntent = nil
+        piece.foregroundColor = Color(.foreground)
+        piece.underlineStyle = .single
+      }
+
+      result += piece
     }
   }
 
@@ -414,6 +432,15 @@ private struct DayProgressRow: View {
   }
 }
 
+extension HorizontalAlignment {
+  private enum BlockTitle: AlignmentID {
+    static func defaultValue(in context: ViewDimensions) -> CGFloat { context[.leading] }
+  }
+
+  /// Where a `BlockRow`'s words start after its mark, for a line under them.
+  fileprivate static let blockTitle = HorizontalAlignment(BlockTitle.self)
+}
+
 struct BlockRow: View {
   @Environment(TodayStore.self) private var today
 
@@ -446,6 +473,7 @@ struct BlockRow: View {
 
         trailing
       }
+      .alignmentGuide(.blockTitle) { $0[.leading] }
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(status)
