@@ -89,7 +89,9 @@ private struct MatchPairsCanvas: View {
 
   private func missLine(_ miss: Miss, spoken: Bool) -> Text {
     let explanation =
-      miss.explanation.map { LessonRichText.typeset($0).quoted(spoken: spoken) }
+      miss.explanation.map {
+        LessonRichText.typeset($0).quoted(spoken: spoken, legibility: legibilityWeight)
+      }
       ?? Text(
         "Those two don't go together.", tableName: "Activities",
         comment: "Two picked cards don't match and there's no note on why")

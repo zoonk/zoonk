@@ -181,7 +181,8 @@ struct StatsCalendar: View {
 
       for (week, text, isLast) in monthLabels {
         let label = context.resolve(
-          Text(text).font(TypeStyle.small.monospaced().font(in: context.environment)).foregroundStyle(Color.faint))
+          Text(text).font(TypeStyle.small.monospaced().font(in: context.environment))
+            .foregroundStyle(Color.faint))
         let x = ringInset + Double(week) * step + (isLast ? cell : 0)
         context.draw(label, at: CGPoint(x: x, y: 0), anchor: isLast ? .topTrailing : .topLeading)
       }

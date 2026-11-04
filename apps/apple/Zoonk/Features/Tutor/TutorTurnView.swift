@@ -160,6 +160,7 @@ struct TutorTurnView: View {
 /// links.
 struct TutorAnswerText: View {
   @Environment(AppRouter.self) private var router
+  @Environment(\.legibilityWeight) private var legibilityWeight
   @ScaledMetric private var listIndent = 20.0
 
   let text: String
@@ -189,19 +190,19 @@ struct TutorAnswerText: View {
   private func blockView(_ block: TutorAnswerBlock) -> some View {
     switch block.kind {
     case .paragraph:
-      Text(block.text)
+      Text(block.text, legibility: legibilityWeight)
     case .heading:
-      Text(block.text)
+      Text(block.text, legibility: legibilityWeight)
         .typeStyle(.body.weight(.semibold))
         .accessibilityAddTraits(.isHeader)
     case .code:
-      Text(block.text)
+      Text(block.text, legibility: legibilityWeight)
         .typeStyle(.reading.monospaced())
     case .listItem(let marker):
       HStack(alignment: .firstTextBaseline, spacing: 8) {
         Text(verbatim: marker)
           .monospacedDigit()
-        Text(block.text)
+        Text(block.text, legibility: legibilityWeight)
       }
       .padding(.leading, CGFloat(block.depth) * listIndent)
     }

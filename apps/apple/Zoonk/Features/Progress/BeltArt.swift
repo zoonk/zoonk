@@ -119,7 +119,10 @@ struct BeltDrawing: View {
       let isCurrent = index + 1 == level.level
       let number = context.resolve(
         Text(index + 1, format: .number)
-          .font(TypeStyle.small.weight(isCurrent ? .semibold : .regular).monospaced().font(in: context.environment))
+          .font(
+            TypeStyle.small.weight(isCurrent ? .semibold : .regular).monospaced().font(
+              in: context.environment)
+          )
           .foregroundStyle(isCurrent ? Color(.foreground) : Color.faint))
       context.draw(number, at: CGPoint(x: slot.midX, y: bandHeight + 4), anchor: .top)
     }

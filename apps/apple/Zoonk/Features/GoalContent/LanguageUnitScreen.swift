@@ -190,6 +190,7 @@ struct LanguageUnitScreen: View {
 
 private struct LanguageUnitContent: View {
   @Environment(AppRouter.self) private var router
+  @Environment(\.legibilityWeight) private var legibilityWeight
   /// Above the split: folding iPhone Duo recreates its panes, and the call's picker is in one.
   @State private var callMinutes: Int?
   @State private var callStart = CallStart()
@@ -327,8 +328,11 @@ private struct LanguageUnitContent: View {
       Section {
         ForEach(unit.grammarTips, id: \.self) { tip in
           DisclosureGroup {
-            Text((try? AttributedString(markdown: tip.text)) ?? AttributedString(tip.text))
-              .foregroundStyle(.mutedForeground)
+            Text(
+              (try? AttributedString(markdown: tip.text)) ?? AttributedString(tip.text),
+              legibility: legibilityWeight
+            )
+            .foregroundStyle(.mutedForeground)
           } label: {
             Text(tip.title)
           }
