@@ -43,6 +43,7 @@ const movedPageRedirects = localePrefixes.flatMap((prefix) => [
 ]);
 
 const nextConfig: NextConfig = {
+  agentRules: false,
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
   distDir: isE2E ? ".next-e2e" : ".next",

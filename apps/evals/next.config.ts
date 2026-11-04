@@ -2,6 +2,7 @@ import { tailwindRules } from "@zoonk/ui/turbopack";
 import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  agentRules: false,
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
   experimental: { turbopackRustReactCompiler: true, typedEnv: true },

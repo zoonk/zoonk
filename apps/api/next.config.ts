@@ -80,6 +80,7 @@ const e2eAliases: Record<string, string> = isE2E
   : {};
 
 const nextConfig: NextConfig = {
+  agentRules: false,
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
   distDir: isE2E ? ".next-e2e" : ".next",
