@@ -167,6 +167,7 @@ internal fun Logbook(
         }
     var index by rememberSaveable { mutableIntStateOf(0) }
     val current = steps[index.coerceIn(steps.indices)]
+    val scroll = rememberScrollState()
     var span by remember { mutableStateOf<PageSpan?>(null) }
     val letsGo: @Composable FlowRowScope.(Modifier) -> Unit = { main ->
         Button(onClick = onStart, modifier = main) { Text(stringResource(R.string.recap_lets_go)) }
@@ -201,7 +202,7 @@ internal fun Logbook(
                     )
                 }
             } else {
-                Box(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+                Box(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll), contentAlignment = Alignment.TopCenter) {
                     // A step changed by Continue or Back is announced, as main moves focus to its title.
                     RecapStepContent(
                         current,

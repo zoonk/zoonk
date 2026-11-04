@@ -115,6 +115,7 @@ internal fun SessionSummary(
 ) {
     var onRewards by rememberSaveable { mutableStateOf(false) }
     var leftRewards by rememberSaveable { mutableStateOf(false) }
+    val scroll = rememberScrollState()
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
@@ -167,7 +168,7 @@ internal fun SessionSummary(
                 }
             } else {
                 Column(
-                    modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()),
+                    modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(scroll),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Row(
