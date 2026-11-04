@@ -130,6 +130,43 @@ const PAPER_TEST_CASES: TestCase<SpeakingScoreExpected, SpeakingScoreInput>[] = 
     }),
   },
   {
+    expectations: `A Goethe-Zertifikat B1 candidate above the level (A, band 4, on task fulfilment and coherence; B to A, 3 to 4, elsewhere): a presentation on learning online or in a course that covers all five slides with reasons and examples, links them clearly ("Zuerst", "danach", "anschließend", "zum Schluss") and makes no real errors. At the scale's highest band the evidence says what earns it and invents no gap, as there is no band above. Evidence and tips in Brazilian Portuguese quoting the German word for word, never a translation in quotes. Found on real runs, where a band 4 evidence ended in the grader's notes to itself in English ("Already band4 max. no next band.") after a quote in Portuguese.`,
+    expected: {
+      bandHigh: 4,
+      bandLow: 3,
+      criteria: {
+        coherence: { bandHigh: 4, bandLow: 4 },
+        taskCompletion: { bandHigh: 4, bandLow: 4 },
+      },
+    },
+    id: "pt-de-goethe-b1-presentation-top-band",
+    userInput: examTask({
+      exam: "goethe",
+      learnerLanguage: "pt",
+      level: "B1",
+      spokenSeconds: 230,
+      task: "t2",
+      turns: [
+        examiner("Bitte stellen Sie jetzt Ihr Thema vor."),
+        candidate(
+          "Mein Thema heißt „Online lernen oder im Kurs lernen?“. Zuerst erzähle ich, wie ich selbst Deutsch lerne, danach beschreibe ich die Situation in Brasilien, anschließend vergleiche ich Vor- und Nachteile, und zum Schluss sage ich meine Meinung.",
+        ),
+        candidate(
+          "Ich lerne seit zwei Jahren Deutsch, und zwar hauptsächlich online, weil ich Vollzeit arbeite und abends keine Zeit habe, zu einer Sprachschule zu fahren. Am Wochenende treffe ich mich aber mit einer Gruppe, damit ich auch mit echten Menschen sprechen kann.",
+        ),
+        candidate(
+          "In Brasilien sind Online-Kurse sehr beliebt geworden, besonders seit der Pandemie. Viele Leute wohnen weit weg von großen Städten, deshalb ist das Internet für sie oft die einzige Möglichkeit, eine Fremdsprache zu lernen.",
+        ),
+        candidate(
+          "Ein großer Vorteil ist, dass man flexibel ist und Geld spart. Ein Nachteil ist jedoch, dass man sich selbst motivieren muss und weniger spricht als in einem Kurs, in dem der Lehrer einen direkt korrigiert.",
+        ),
+        candidate(
+          "Meiner Meinung nach ist eine Mischung am besten: Grammatik kann man gut online üben, aber das Sprechen lernt man am leichtesten mit anderen Menschen. Damit bin ich am Ende meiner Präsentation. Vielen Dank fürs Zuhören. Haben Sie noch Fragen?",
+        ),
+      ],
+    }),
+  },
+  {
     expectations: `A B2 First candidate at the level (band 3 on Cambridge's 0 to 5 scale) in the collaborative task with the AI as the other candidate: discusses the prompts about ways to stay healthy, invites the partner's views ("What do you think?"), agrees and disagrees politely and works toward a decision, with a few slips ("more easy", "depends of"). The candidate mentions their strong Brazilian accent; pronunciation is about how easy they are to understand, never the accent. Evidence and tips in Brazilian Portuguese.`,
     expected: { bandHigh: 3, bandLow: 3 },
     id: "pt-en-cambridge-b2-collaborative-accent",

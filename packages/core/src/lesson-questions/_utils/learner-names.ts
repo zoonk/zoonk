@@ -5,7 +5,6 @@ import { prisma } from "@zoonk/db";
 export async function loadLearnerNames(userId: string): Promise<string[]> {
   const user = await prisma.user.findUnique({
     select: {
-      displayUsername: true,
       email: true,
       learningProfile: { select: { buddyName: true } },
       name: true,
@@ -20,11 +19,7 @@ export async function loadLearnerNames(userId: string): Promise<string[]> {
 
   const [emailName] = user.email.split("@");
 
-  return [
-    user.name,
-    user.username,
-    user.displayUsername,
-    emailName,
-    user.learningProfile?.buddyName,
-  ].filter((name): name is string => Boolean(name));
+  return [user.name, user.username, emailName, user.learningProfile?.buddyName].filter(
+    (name): name is string => Boolean(name),
+  );
 }

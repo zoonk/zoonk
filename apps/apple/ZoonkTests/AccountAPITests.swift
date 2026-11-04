@@ -238,7 +238,7 @@ private struct AppleSubscriptionTransport: ClientTransport {
     return (
       HTTPResponse(status: .ok, headerFields: headerFields),
       HTTPBody(
-        #"{"currentAccount":{"account":{"deletion":{"hasAppleAccount":false},"hasActiveSubscription":true,"subscription":{"id":"subscription-id","plan":"plus","provider":"apple","status":"active"}},"user":{"analyticsDisabled":false,"createdAt":"2026-08-15T12:34:56.000Z","displayUsername":null,"email":"learner@zoonk.test","emailVerified":true,"id":"test-user","image":null,"name":"Learner","updatedAt":"2026-08-15T12:34:56.000Z","username":null}},"isActive":true}"#
+        #"{"currentAccount":{"account":{"deletion":{"hasAppleAccount":false},"hasActiveSubscription":true,"subscription":{"id":"subscription-id","plan":"plus","provider":"apple","status":"active"}},"user":{"analyticsDisabled":false,"createdAt":"2026-08-15T12:34:56.000Z","email":"learner@zoonk.test","emailVerified":true,"id":"test-user","image":null,"name":"Learner","updatedAt":"2026-08-15T12:34:56.000Z","username":null}},"isActive":true}"#
       )
     )
   }
