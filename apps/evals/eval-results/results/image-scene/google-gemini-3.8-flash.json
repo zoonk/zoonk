@@ -50,27 +50,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A discount as before and after: an old price tag and a new one, maybe a -25% badge. Labels with the prices help here and must be exactly $80 and $60.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "discount-en-1",
         "userInput": {
           "context": "Personal finance › Percentages › Discounts",
@@ -130,27 +116,17 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The result includes two labels despite the expectation of at most one short label. “nuvem eletrônica” redundantly names the focal cloud; remove it and retain only “núcleo”.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "The electron cloud: dots densest near a small nucleus, fading outward. At most a short label in Portuguese such as 'núcleo'. No orbit drawn as a path.",
-        "expected": {
-          "labels": "any"
-        },
+        "expected": { "labels": "any" },
         "id": "electron-cloud-pt-1",
         "userInput": {
           "context": "Física quântica › O átomo › Por que o elétron não cai no núcleo",
@@ -215,11 +191,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Connect the rotating molecule to a small food cutaway and a visible warming cue, preserving the simple composition while completing the wave → molecular motion → heating relationship.",
           "kind": "potentialImprovements",
@@ -228,9 +200,7 @@
       ],
       "testCase": {
         "expectations": "Cause and effect: a microwave heating food, linked to water molecules spinning. Uses a sequence layout or a clear relation; motion shows spinning.",
-        "expected": {
-          "labels": "any"
-        },
+        "expected": { "labels": "any" },
         "id": "microwave-en-1",
         "userInput": {
           "context": "Everyday physics › Heat › How a microwave heats food",
@@ -290,27 +260,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A language course scene for renting a place: a small house with a 'for rent' sign that uses a symbol. No labels at all, and no words written on the sign.",
-        "expected": {
-          "labels": "none"
-        },
+        "expected": { "labels": "none" },
         "id": "language-house-1",
         "userInput": {
           "context": "Spanish for Brazilians › Finding a place to live",
@@ -375,22 +331,12 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A proportion with a scale or bags of rice: 2 kg for R$ 10 next to 3 kg for R$ 15. Labels, if any, must use exactly these numbers and Brazilian Portuguese.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "rule-of-three-pt-1",
         "userInput": {
           "context": "Matemática básica › Proporções › Regra de três",
@@ -455,11 +401,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Give the books a matching, visible cover design so viewers can immediately recognize them as copies of the same book.",
           "kind": "potentialImprovements",
@@ -468,9 +410,7 @@
       ],
       "testCase": {
         "expectations": "The printing press spreading books: a press and a growing stack or flow of copies. A sequence or motion shows many copies coming from one press. Labels only if short.",
-        "expected": {
-          "labels": "any"
-        },
+        "expected": { "labels": "any" },
         "id": "printing-press-en-1",
         "userInput": {
           "context": "World history › The Renaissance › The printing press",
@@ -530,27 +470,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "question-cell-diagram-pt-1",
         "userInput": {
           "context": "Biologia › Célula › Organelas da célula vegetal",
@@ -610,27 +536,17 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The label targets identify the correct regions, but “pointing to” does not explicitly place each label next to its lobe as requested.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "The whole brain seen from the side with the four lobes the screen names, each labeled in English next to its lobe (frontal, parietal, temporal, occipital). Nothing the screen doesn't name.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "brain-lobes-en-1",
         "userInput": {
           "context": "Human biology › The nervous system › The lobes of the brain",
@@ -690,27 +606,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Two paintings compared side by side, labeled only 1 and 2: a calm, symmetrical Renaissance scene with soft even light, and a dramatic Baroque scene with a strong diagonal and a bright light against deep shadow. No titles, artists or style names written in the picture, since the question asks which is which.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "paintings-comparison-pt-1",
         "userInput": {
           "context": "História da arte › Do Renascimento ao Barroco › Comparando pinturas",
@@ -770,27 +672,17 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The description specifies branching but does not specify thin connecting lines, as requested.",
           "kind": "minorErrors",
           "score": 9
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A syntax tree for 'the cat slept': S at the top splitting into NP and VP, NP over 'the cat' and VP over 'slept', each node a short label joined by thin lines. Labels match the screen exactly.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "syntax-tree-en-1",
         "userInput": {
           "context": "Introduction to linguistics › Syntax › Syntax trees",
@@ -850,27 +742,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "A lever: a long bar on a triangular fulcrum near one end, a heavy rock on the short side and a hand pushing down on the long side, with labels for the fulcrum, the load and the effort.",
-        "expected": {
-          "labels": "some"
-        },
+        "expected": { "labels": "some" },
         "id": "lever-en-1",
         "userInput": {
           "context": "Physics › Simple machines › How a lever multiplies force",
@@ -935,11 +813,7 @@
           "kind": "majorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Explicitly describe Igor as an adult so that the illustration reliably satisfies the age requirement.",
           "kind": "potentialImprovements",
@@ -948,10 +822,7 @@
       ],
       "testCase": {
         "expectations": "One scene at Igor's workplace: Igor receiving his salary envelope, with his repair toolbox beside him, exactly as the alt says. Never two scenes stacked or side by side (an office above a workbench), and nothing the alt doesn't name, such as a toaster or a second place. Igor is an adult. No labels are needed.",
-        "expected": {
-          "labels": "any",
-          "layout": "single"
-        },
+        "expected": { "labels": "any", "layout": "single" },
         "id": "one-place-not-two-pt-1",
         "userInput": {
           "alt": "Igor recebe um envelope no trabalho, com uma caixa de ferramentas ao lado.",
@@ -1012,16 +883,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "The calendar could show the same day checked across two small month pages, making the monthly recurrence more visually explicit than a single checked date.",
           "kind": "potentialImprovements",
@@ -1030,10 +893,7 @@
       ],
       "testCase": {
         "expectations": "The request asks for two scenes of Igor's life (his job's pay and selling his bike). A picture shows one scene: the one place the screen is mostly about (his monthly pay at work, or the bike sale), never both stacked or side by side. Igor is an adult. No labels are needed.",
-        "expected": {
-          "labels": "any",
-          "layout": "single"
-        },
+        "expected": { "labels": "any", "layout": "single" },
         "id": "two-moments-become-one-pt-1",
         "userInput": {
           "alt": "Igor recebe o pagamento combinado no trabalho.",
@@ -1094,28 +954,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "The question asks which of two scenes fits a caption, so the picture is one comparison of the two scenes, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box. No text but the labels 1 and 2. Nayara is an adult.",
-        "expected": {
-          "labels": "some",
-          "layout": "comparison"
-        },
+        "expected": { "labels": "some", "layout": "comparison" },
         "id": "two-scenes-to-compare-pt-1",
         "userInput": {
           "alt": "Em 1, Nayara coloca um livro numa caixa vermelha; em 2, ela tira um livro da mesma caixa.",
@@ -1176,27 +1021,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Only evaporation, the idea on this screen: water rising from a lake or ocean into the air in the sun. It must drop the rest of the water cycle the request lists.",
-        "expected": {
-          "labels": "any"
-        },
+        "expected": { "labels": "any" },
         "id": "overloaded-water-cycle-1",
         "userInput": {
           "context": "Earth science › The water cycle › Evaporation",
@@ -1256,11 +1087,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Both moments are preserved side by side, with the same adult man, but the nighttime desk scene does not establish that he is at home. The daytime scene also leaves the specified morning timing implicit.",
           "kind": "minorErrors",
@@ -1274,10 +1101,7 @@
       ],
       "testCase": {
         "expectations": "ALT names two moments of Fábio's day that the screen doesn't ask the learner to compare: in the morning he hands a product to a customer at a shop counter, and at night he writes the sale in a notebook at home. The picture keeps both, side by side as a comparison, never only one of them. Fábio is an adult. No labels are needed.",
-        "expected": {
-          "labels": "any",
-          "layout": "comparison"
-        },
+        "expected": { "labels": "any", "layout": "comparison" },
         "id": "alt-names-two-moments-pt-1",
         "userInput": {
           "alt": "De manhã, Fábio entrega um produto a um cliente no balcão; à noite, ele anota a venda num caderno em casa.",
@@ -1343,23 +1167,12 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Fábio's hand, seen close, with a small cut on its skin and tiny rod and round microbes entering the cut. The hand is the focal object: ALT names a hand, so a magnified view keeps the hand and never becomes a skin cross-section without it. No text.",
-        "expected": {
-          "labels": "none",
-          "layout": "single"
-        },
+        "expected": { "labels": "none", "layout": "single" },
         "id": "hand-cut-microbes-pt-1",
         "userInput": {
           "alt": "Mão com um pequeno corte na pele e micróbios minúsculos entrando pelo corte.",
@@ -1420,28 +1233,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "The last picture showed a skin cross-section with no hand, so the new plan makes Fábio's hand with its small cut the focal object, with tiny microbes entering the cut, and drops the cross-section. No text.",
-        "expected": {
-          "labels": "none",
-          "layout": "single"
-        },
+        "expected": { "labels": "none", "layout": "single" },
         "id": "hand-cut-microbes-findings-pt-1",
         "userInput": {
           "alt": "Mão com um pequeno corte na pele e micróbios minúsculos entrando pelo corte.",
