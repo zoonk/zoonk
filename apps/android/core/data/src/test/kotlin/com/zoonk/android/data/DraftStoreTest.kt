@@ -1,6 +1,7 @@
 package com.zoonk.android.data
 
 import androidx.datastore.core.Serializer
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -11,6 +12,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -26,6 +28,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
+import kotlin.coroutines.CoroutineContext
 
 @Serializable
 data class EssayDraft(
@@ -105,6 +108,28 @@ class DraftStoreTest {
         }
 
     @Test
+    fun aSaveAlreadyWritingWhenTheLearnerSignsOutLands() =
+        runTest {
+            val io = HeldDispatcher(StandardTestDispatcher(testScheduler))
+            val drafts = DraftStore(folder.root, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)), io = io)
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn { "token-a" }
+            val essay = drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer())
+            essay.save(EssayDraft("earlier"))
+            essay.saveDebounced(EssayDraft("latest"))
+            runCurrent()
+            io.held = true
+            advanceTimeBy(500)
+            runCurrent()
+            val leaving = launch { sessions.signOut() }
+            runCurrent()
+            io.release()
+            leaving.join()
+            sessions.signIn { "token-a" }
+            assertEquals(EssayDraft("latest"), drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).value.first())
+        }
+
+    @Test
     fun aGuestsPendingSaveMovesWithTheGuestToTheAccount() =
         runTest {
             val drafts = drafts()
@@ -179,6 +204,11 @@ class DraftStoreTest {
             sessions.signIn { "token-a" }
             drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).save(EssayDraft("Ana's"))
             sessions.forgetDeletedAccount(sessions.current!!)
+            sessions.signIn { "token-b" }
+            val bia = sessions.current!!
+            drafts.open(bia, "essay:1", EssayDraft.serializer()).save(EssayDraft("Bia's"))
+            sessions.expire(bia)
+            sessions.forgetDeletedAccount(bia)
             advanceUntilIdle()
             assertTrue(
                 folder.root
@@ -271,4 +301,24 @@ class DraftStoreTest {
             assertFalse(mainThread in fileThreads)
             assertTrue(Json.parseToJsonElement(entries(ANA) ?: "{}").toString().isNotEmpty())
         }
+
+    private class HeldDispatcher(
+        private val next: CoroutineDispatcher,
+    ) : CoroutineDispatcher() {
+        var held = false
+        private val queued = mutableListOf<Pair<CoroutineContext, Runnable>>()
+
+        override fun dispatch(
+            context: CoroutineContext,
+            block: Runnable,
+        ) {
+            if (held) queued += context to block else next.dispatch(context, block)
+        }
+
+        fun release() {
+            held = false
+            queued.forEach { (context, block) -> next.dispatch(context, block) }
+            queued.clear()
+        }
+    }
 }

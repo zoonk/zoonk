@@ -79,17 +79,20 @@ class DraftStore(
         lock.withLock {
             val change = transition() ?: return
             val previous = current
-            if (previous?.accountId == change.next && change.forget == null) return
+            val switching = previous?.accountId != change.next
+            if (!switching && change.forget == null) return
             // [transition] already published the session, so a caller cancelled now must not leave it without drafts.
             withContext(NonCancellable) {
-                current = null
-                previous?.close(flush = previous.accountId != change.forget)
+                if (switching) {
+                    current = null
+                    previous?.close(flush = previous.accountId != change.forget)
+                }
                 withContext(io) {
                     directory.mkdirs()
                     if (change.next != null && change.moveFrom != null) merge(change.moveFrom, into = change.next)
                     listOfNotNull(change.moveFrom, change.forget).forEach { File(directory, fileName(it)).delete() }
                 }
-                current = change.next?.let { AccountDrafts(it) }
+                if (switching) current = change.next?.let { AccountDrafts(it) }
             }
         }
     }
@@ -198,7 +201,7 @@ class DraftStore(
             pending.clear()
         }
 
-        /** Whichever of the debounce and a flush removes it from [pending] writes it. */
+        /** Stays in [pending] until its write lands, so a flush that cancels it midway writes it again. */
         private inner class PendingSave(
             val key: String,
             val entry: JsonElement,
@@ -206,7 +209,8 @@ class DraftStore(
             val job =
                 sessionScope.launch(start = CoroutineStart.LAZY) {
                     delay(debounce)
-                    if (pending.remove(key, this@PendingSave)) write(key, entry)
+                    write(key, entry)
+                    pending.remove(key, this@PendingSave)
                 }
         }
     }

@@ -236,7 +236,15 @@ class SessionStore(
 
     override suspend fun expire(session: AuthenticatedSession) = leave(session, sessionEnded = true)
 
-    suspend fun forgetDeletedAccount(session: AuthenticatedSession) = leave(session, sessionEnded = false, deleted = true)
+    /** A request the deletion refused may have signed [session] out already; its drafts go either way. */
+    suspend fun forgetDeletedAccount(session: AuthenticatedSession) =
+        drafts.follow {
+            if (current == session) {
+                signOutLocally(sessionEnded = false, deleted = true)
+            } else {
+                DraftsChange(next = current?.accountId, forget = session.accountId)
+            }
+        }
 
     /** Keeps the session when the server can't end it, unless the server refused its token. */
     suspend fun signOut(): SignOutResult {
@@ -256,11 +264,10 @@ class SessionStore(
     private suspend fun leave(
         session: AuthenticatedSession,
         sessionEnded: Boolean,
-        deleted: Boolean = false,
     ) {
         drafts.follow {
             if (current != session) return@follow null
-            signOutLocally(sessionEnded, deleted)
+            signOutLocally(sessionEnded)
         }
     }
 
