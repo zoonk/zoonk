@@ -12,10 +12,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,6 +38,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.MockOptionsPlacementMock
@@ -108,6 +113,11 @@ internal fun MockChooser(
     val listState = rememberLazyListState()
     val loaded = state.value
     val exit = opened?.let(ChooserExit::ToMock) ?: chooserExit(state, placement, goalId)
+    val replacement = remember { FocusRequester() }
+    val moveFocus = rememberMoveFocus()
+    var requested by rememberSaveable { mutableStateOf(false) }
+    val locked = loaded != null && loaded.access != MockOptions.Access.OPEN
+    val writing = status == ChooserStatus.Writing
 
     LifecycleStartEffect(viewModel) {
         viewModel.onShown(true)
@@ -119,13 +129,23 @@ internal fun MockChooser(
         return
     }
 
+    LaunchedEffect(locked, writing, status) {
+        if (requested && (locked || writing)) {
+            if (locked && !writing) listState.scrollToItem(0)
+            requested = false
+            moveFocus(replacement)
+        } else if (status is ChooserStatus.Refused || status is ChooserStatus.Failed || status is ChooserStatus.Short) {
+            requested = false
+        }
+    }
+
     ChooserFrame(navigator, title = loaded?.let { chooserTitle(placement) }, listState = listState) {
         when {
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
             loaded == null -> ChooserLoading()
-            status == ChooserStatus.Writing -> MockWriting(run, onRetry = viewModel::retry)
-            placement -> PlacementChooser(loaded, viewModel, navigator, listState)
-            else -> PracticeChooser(loaded, viewModel, navigator, listState)
+            writing -> MockWriting(run, onRetry = viewModel::retry, titleFocus = replacement)
+            placement -> PlacementChooser(loaded, viewModel, navigator, listState, replacement) { requested = true }
+            else -> PracticeChooser(loaded, viewModel, navigator, listState, replacement) { requested = true }
         }
     }
 }

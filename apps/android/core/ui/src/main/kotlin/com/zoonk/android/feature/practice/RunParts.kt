@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.practice
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,9 +20,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -188,10 +191,12 @@ fun RunIntro(
     title: String,
     detail: String,
     facts: List<String> = emptyList(),
+    titleFocus: FocusRequester? = null,
 ) {
+    val titleModifier = titleFocus?.let { Modifier.focusRequester(it).focusable() } ?: Modifier
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            Text(text = title, modifier = titleModifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
             Text(text = detail, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
         }
         if (facts.isNotEmpty()) Facts(facts)
@@ -275,7 +280,7 @@ fun ListeningSet(set: ItemSet) {
     }
 }
 
-/** A main action that shows it's working while its write is on its way; it keeps its colors then, as main's, so it doesn't read as unavailable. */
+/** A pending action keeps focus while unavailable, including when its caller disables it during the write. */
 @Composable
 fun BusyButton(
     label: String,
@@ -284,16 +289,11 @@ fun BusyButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    val colors =
-        if (busy) {
-            ButtonDefaults.buttonColors(
-                disabledContainerColor = MaterialTheme.colorScheme.primary,
-                disabledContentColor = MaterialTheme.colorScheme.onPrimary,
-            )
-        } else {
-            ButtonDefaults.buttonColors()
-        }
-    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier, colors = colors) { PendingLabel(busy, label) }
+    Button(
+        onClick = { if (!busy) onClick() },
+        enabled = enabled || busy,
+        modifier = modifier.semantics { if (busy) disabled() },
+    ) { PendingLabel(busy, label) }
 }
 
 /** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */

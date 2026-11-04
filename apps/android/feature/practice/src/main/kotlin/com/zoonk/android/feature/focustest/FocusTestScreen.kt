@@ -125,6 +125,11 @@ fun FocusTestScreen(
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     val loaded by viewModel.test.collectShown()
+    val replacement = remember { FocusRequester() }
+    val moveFocus = rememberMoveFocus()
+    var requested by rememberSaveable { mutableStateOf(false) }
+    val waiting = ui.started && ui.writing && ui.questions.isEmpty()
+
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
 
     ui.outcome?.let {
@@ -135,10 +140,16 @@ fun FocusTestScreen(
     when (val read = loaded) {
         is LoadState.Loaded -> {
             LaunchedEffect(read.value) { viewModel.arrive(read.value) }
+            LaunchedEffect(waiting, ui.startFailed, ui.refused) {
+                if (requested && (waiting || ui.startFailed || ui.refused != null)) {
+                    requested = false
+                    moveFocus(replacement)
+                }
+            }
             when {
                 ui.started && ui.questions.isNotEmpty() -> FocusTestQuestions(read.value, ui, viewModel, app, navigator, close)
-                ui.started && ui.writing -> FocusTestWriting(viewModel, close)
-                else -> FocusTestIntro(read.value, ui, viewModel, navigator)
+                ui.started && ui.writing -> FocusTestWriting(viewModel, close, replacement)
+                else -> FocusTestIntro(read.value, ui, viewModel, navigator, replacement) { requested = true }
             }
         }
 
@@ -163,11 +174,20 @@ internal fun FocusTestIntro(
     ui: FocusTestUi,
     viewModel: FocusTestViewModel,
     navigator: AppNavigator,
+    replacementFocus: FocusRequester? = null,
+    onStart: () -> Unit = {},
 ) {
+    val start = {
+        onStart()
+        viewModel.start(read)
+    }
     if (ui.startFailed) {
-        FocusTestWaitScreen(GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted), {
-            viewModel.start(read)
-        }, navigator::closeTask)
+        FocusTestWaitScreen(
+            GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted),
+            start,
+            navigator::closeTask,
+            replacementFocus,
+        )
         return
     }
     val minutes = maxOf(1, (read.total * SECONDS_PER_QUESTION / SECONDS_PER_MINUTE.toFloat()).roundToInt())
@@ -183,6 +203,10 @@ internal fun FocusTestIntro(
                         LimitSubject.Help,
                         onCreateAccount = { navigator.open(AppRoute.Login) },
                         onSeePlus = { navigator.open(AppRoute.Subscription) },
+                        modifier =
+                            replacementFocus?.let {
+                                Modifier.focusRequester(it).semantics(mergeDescendants = true) {}.focusable()
+                            } ?: Modifier,
                     )
                 } else {
                     TaskActions { width ->
@@ -191,7 +215,7 @@ internal fun FocusTestIntro(
                             busy = ui.starting,
                             enabled = true,
                             modifier = width,
-                        ) { viewModel.start(read) }
+                        ) { start() }
                     }
                 }
             }
@@ -216,9 +240,10 @@ internal fun FocusTestIntro(
 private fun FocusTestWriting(
     viewModel: FocusTestViewModel,
     onClose: () -> Unit,
+    titleFocus: FocusRequester,
 ) {
     val run by viewModel.run.collectAsStateWithLifecycle()
-    FocusTestWaitScreen(run, viewModel::retryWriting.takeIf { viewModel.canRestart }, onClose)
+    FocusTestWaitScreen(run, viewModel::retryWriting.takeIf { viewModel.canRestart }, onClose, titleFocus)
 }
 
 @Composable
@@ -226,11 +251,16 @@ private fun FocusTestWaitScreen(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     onClose: () -> Unit,
+    titleFocus: FocusRequester?,
 ) {
     TaskScaffold(onClose = onClose) { padding ->
         RunPage(Modifier.padding(padding)) {
             GenerationWait(GenerationKind.FocusTestQuestions, run, onRetry) {
-                RunIntro(stringResource(R.string.focustest_writing_title), stringResource(R.string.focustest_writing_detail))
+                RunIntro(
+                    stringResource(R.string.focustest_writing_title),
+                    stringResource(R.string.focustest_writing_detail),
+                    titleFocus = titleFocus,
+                )
             }
         }
     }
