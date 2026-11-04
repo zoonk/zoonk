@@ -2,6 +2,7 @@ package com.zoonk.android.ui.scaffold
 
 import android.view.View
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,6 +17,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertFalse
@@ -83,13 +85,14 @@ class WindowPostureTest {
         assertFalse("the window never drew", drawingHeld())
     }
 
-    /** A dialog or a sheet restored with its screen waits in its own window too. */
+    /** A dialog, a sheet or a menu restored with its screen waits in its own window too. */
     @OptIn(ExperimentalMaterial3Api::class)
     @Test
-    fun dialogsAndSheetsWaitForTheFoldsInTheirOwnWindows() {
+    fun dialogsSheetsAndMenusWaitForTheFoldsInTheirOwnWindows() {
         rule.mainClock.autoAdvance = false
         var dialog: View? = null
         var sheet: View? = null
+        var menu: View? = null
         rule.setContent {
             ZoonkTheme {
                 AlertDialog(onDismissRequest = {}, confirmButton = {
@@ -100,11 +103,18 @@ class WindowPostureTest {
                     val view = LocalView.current
                     SideEffect { sheet = view }
                 }
+                Box {
+                    DropdownMenu(expanded = true, onDismissRequest = {}) {
+                        val view = LocalView.current
+                        SideEffect { menu = view }
+                    }
+                }
             }
         }
 
         assertTrue("the dialog drew before the folds were read", rule.runOnUiThread { dialog!!.viewTreeObserver.dispatchOnPreDraw() })
         assertTrue("the sheet drew before the folds were read", rule.runOnUiThread { sheet!!.viewTreeObserver.dispatchOnPreDraw() })
+        assertTrue("the menu drew before the folds were read", rule.runOnUiThread { menu!!.viewTreeObserver.dispatchOnPreDraw() })
     }
 
     private fun drawingHeld(): Boolean =

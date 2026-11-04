@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 
 /**
@@ -99,6 +100,7 @@ fun DropdownMenu(
                 offset = DpOffset(0.dp, -lift.toDp()),
                 scrollState = scrollState,
             ) {
+                HoldUntilFoldsRead()
                 CompositionLocalProvider(LocalLayoutDirection provides direction) { content() }
             }
         }
