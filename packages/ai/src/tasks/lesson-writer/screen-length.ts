@@ -28,6 +28,14 @@ export function countScreenCharacters(text: string): number {
 }
 
 /**
+ * The text as long as the weighted count makes it, markup kept: each character that counts twice
+ * appears twice, so a raw length limit measures it the same way.
+ */
+export function toWeightedText(text: string): string {
+  return text.replaceAll(DOUBLE_WEIGHT, "$&$&");
+}
+
+/**
  * The cap in the characters a writer in `language` counts: half for a language whose script
  * weighs two, read from the language's own name so it follows the same count.
  */

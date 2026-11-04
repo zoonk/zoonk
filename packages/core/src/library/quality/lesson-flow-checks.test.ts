@@ -166,9 +166,9 @@ describe("checkWrittenLesson's flow checks", () => {
     expect(flowCodes(withScreens({ 1: reais, 4: euros }))).not.toContainEqual([4, "moneyFormat"]);
   });
 
-  it("flags any screen past a tweet's 250 characters at every level, tables aside", () => {
-    const fits = explanation(`${"a".repeat(249)}.`);
-    const over = explanation(`${"a".repeat(250)}.`);
+  it("flags any screen past a tweet's 250 characters at every level, its title included, tables aside", () => {
+    const fits = explanation(`${"a".repeat(241)}.`);
+    const over = explanation(`${"a".repeat(242)}.`);
     const withTable = explanation(`${"a".repeat(200)}.\n\n${TABLE}`);
     const japanese = explanation(`${"水".repeat(125)}。`);
 
@@ -181,6 +181,47 @@ describe("checkWrittenLesson's flow checks", () => {
 
     expect(flowCodes(withScreens({ 4: withTable }))).toStrictEqual([]);
     expect(flowCodes(withScreens({ 4: japanese }))).toStrictEqual([[4, "screenLength"]]);
+  });
+
+  it("measures each option and template text against its own limit, a Japanese character counting twice", () => {
+    const { screens } = writtenTemperatureLesson();
+    const activity = screens[5];
+    const check = screens[6];
+
+    if (activity?.kind !== "activity" || check?.kind !== "check") {
+      throw new Error("Screens 6 and 7 are an activity and a check.");
+    }
+
+    const withOption = (text: string) => ({
+      ...check,
+      options: check.options.map((option, index) => (index === 1 ? { ...option, text } : option)),
+    });
+
+    const content = JSON.parse(activity.content) as { fields: object };
+
+    const withLabel = (label: string) =>
+      JSON.stringify({ ...content, fields: { ...content.fields, label } });
+
+    expect(
+      lengths(
+        withScreens({
+          5: { ...activity, content: withLabel("温度".repeat(10)) },
+          6: withOption("a".repeat(130)),
+        }),
+      ),
+    ).toStrictEqual([]);
+
+    expect(
+      lengths(
+        withScreens({
+          5: { ...activity, content: withLabel("温度".repeat(11)) },
+          6: withOption("水".repeat(81)),
+        }),
+      ),
+    ).toStrictEqual([
+      [5, "screenLength"],
+      [6, "screenLength"],
+    ]);
   });
 
   it("counts a worked example's problem, steps and result together, and a check's context with its question", () => {
@@ -226,15 +267,11 @@ describe("checkWrittenLesson's flow checks", () => {
       ),
     };
 
-    expect(
-      flowCodes(
-        withScreens({ 1: longReveal, 5: { ...activity, content: japanesePrompt }, 6: longReason }),
-      ).filter(([, code]) => code === "screenLength"),
-    ).toStrictEqual([
-      [1, "screenLength"],
-      [5, "screenLength"],
-      [6, "screenLength"],
-    ]);
+    const flagged = lengths(
+      withScreens({ 1: longReveal, 5: { ...activity, content: japanesePrompt }, 6: longReason }),
+    ).map(([screen]) => screen);
+
+    expect(new Set(flagged)).toStrictEqual(new Set([1, 5, 6]));
   });
 
   it("asks for the visual the plan names and never the same table twice in a row", () => {

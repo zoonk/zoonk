@@ -16,6 +16,7 @@ import { findLongSentences } from "./_utils/reading-level";
 import { type RepeatedExample, findRepeatedExamples } from "./_utils/repeated-examples";
 import { findRepeatedQuestions } from "./_utils/repeated-questions";
 import { findAnswerFlaws, findTextFlaws } from "./_utils/screen-flaws";
+import { findOverweightTexts } from "./_utils/screen-length";
 import { getScreenTexts } from "./_utils/screen-texts";
 import { canHaveImage, getScreenVisualProblems } from "./_utils/screen-visuals";
 import { findTermsUsedBeforeExplained } from "./_utils/term-order";
@@ -150,7 +151,7 @@ function checkScreen(input: ScreenCheckInput): {
   const converted = toStepContent(input.screen, { allowImage, language: input.language });
 
   const contentProblems: Problem[] = converted.ok
-    ? []
+    ? findOverweightTexts(converted).map((problem) => ({ code: "screenLength", problem }))
     : converted.problems.map((problem) => ({ code: "invalidContent", problem }));
 
   const problems = [
