@@ -67,6 +67,17 @@ describe(dropDecorativePictures, () => {
     ]);
   });
 
+  it("judges a picture the scene shares with the next screen on that screen, where it teaches", () => {
+    const cell = { ...pictured("explanation"), visual: "A cell and its parts" };
+    const shared = [{ ...pictured("hook"), visual: cell.visual }, cell, ...screens.slice(2)];
+
+    expect(
+      listPlannedPictures({ specs: [lessonOf(shared)] })
+        .slice(0, 1)
+        .map((item) => [item.screen, item.kind, item.brief]),
+    ).toStrictEqual([[0, "explanation", "explanation"]]);
+  });
+
   it("judges every planned picture, the scene's and a question's included", () => {
     expect(
       listPlannedPictures({ specs: [lessonOf(screens)] }).map((item) => [item.screen, item.kind]),

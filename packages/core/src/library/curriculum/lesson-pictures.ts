@@ -1,7 +1,7 @@
 import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
-import { type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { findSharedPicture } from "@zoonk/ai/tasks/lesson-spec/visuals";
 
 export type PlannedPicture = {
@@ -17,17 +17,31 @@ export type PlannedPicture = {
 export type JudgedPicture = Pick<PlannedPicture, "lesson" | "screen"> & { teaches: boolean };
 
 /**
+ * Where a picture shown on several screens in a row is judged: on the screen that first shows it,
+ * unless that's the scene, which only sets up what the next screen explains with it.
+ */
+function findJudgedScreen(
+  screens: readonly LessonScreen[],
+  index: number,
+): LessonScreen | undefined {
+  const sharedWithNext = findSharedPicture(screens, index + 1) === index;
+  return screens[screens[index]?.kind === "hook" && sharedWithNext ? index + 1 : index];
+}
+
+/**
  * Native visuals (tables, charts, timelines) aren't pictures and stay as planned. A picture shown
- * again on the next screens is judged once, on the screen that first shows it.
+ * again on the next screens is judged once, and kept or dropped on all of them.
  */
 export function listPlannedPictures({ specs }: { specs: readonly LessonSpec[] }): PlannedPicture[] {
   return specs.flatMap((spec, lesson) =>
-    spec.screens.flatMap((screen, index) =>
-      screen.visual && findSharedPicture(spec.screens, index) === null
+    spec.screens.flatMap((screen, index) => {
+      const judged = findJudgedScreen(spec.screens, index);
+
+      return screen.visual && judged && findSharedPicture(spec.screens, index) === null
         ? [
             {
-              brief: screen.brief,
-              kind: screen.kind,
+              brief: judged.brief,
+              kind: judged.kind,
               lesson,
               lessonTitle: spec.title,
               picture: screen.visual,
@@ -35,8 +49,8 @@ export function listPlannedPictures({ specs }: { specs: readonly LessonSpec[] })
               screen: index,
             },
           ]
-        : [],
-    ),
+        : [];
+    }),
   );
 }
 
