@@ -60,10 +60,8 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
-import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
-import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
@@ -302,7 +300,7 @@ private fun WeekStep(
                         label = stringResource(R.string.recap_time),
                         value = formatMinutes(recap.week.minutes.toInt(), locale),
                         modifier = modifier,
-                        icon = neutralIcon(R.drawable.ic_schedule),
+                        icon = tileIcon(R.drawable.ic_schedule),
                     )
                 },
                 { modifier ->
@@ -310,18 +308,15 @@ private fun WeekStep(
                         label = stringResource(R.string.recap_questions),
                         value = formatNumber(recap.week.questions.toDouble(), locale),
                         modifier = modifier,
-                        icon = neutralIcon(R.drawable.ic_checklist),
+                        icon = tileIcon(R.drawable.ic_checklist),
                     )
                 },
             ),
     )
 }
 
-@Composable
-private fun neutralIcon(id: Int): @Composable (Modifier) -> Unit {
-    val tint = StatTone.Neutral.color
-    return { modifier -> Icon(painterResource(id), contentDescription = null, modifier = modifier, tint = tint) }
-}
+private fun tileIcon(id: Int): @Composable (Modifier) -> Unit =
+    { modifier -> Icon(painterResource(id), contentDescription = null, modifier = modifier) }
 
 @Composable
 private fun QuietWeekStep(recap: WeeklyRecap) {
