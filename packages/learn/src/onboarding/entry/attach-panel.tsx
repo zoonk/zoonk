@@ -158,8 +158,8 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
           {t("Upload a file")}
           <input
             accept={ACCEPTED_FILES}
+            aria-disabled={isPending || undefined}
             className="sr-only"
-            disabled={isPending}
             id={fileId}
             onChange={(event) => {
               const file = event.target.files?.[0];
@@ -167,6 +167,12 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
 
               if (file) {
                 add(() => attach.file({ file, language }));
+              }
+            }}
+            // Not `disabled`: that would drop keyboard focus to the page while the file uploads.
+            onClick={(event) => {
+              if (isPending) {
+                event.preventDefault();
               }
             }}
             type="file"
