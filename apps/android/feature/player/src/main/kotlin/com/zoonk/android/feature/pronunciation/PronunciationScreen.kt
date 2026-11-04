@@ -695,8 +695,9 @@ private fun RoundEnd(
                         }
                     }
                 }
+                result?.let { RoundMoment(it, buddy) }
             },
-            next = { result?.let { RoundMoment(it, buddy) } },
+            next = {},
         )
     }
 }

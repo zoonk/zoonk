@@ -60,6 +60,7 @@ internal class FakePronunciationApi(
 ) : PronunciationApi {
     private val grades = grades.toMutableList()
     var reviewsFail = false
+    var result = RESULT
 
     override suspend fun reviews(
         session: AuthenticatedSession,
@@ -83,5 +84,5 @@ internal class FakePronunciationApi(
         roundId: String,
         goalId: String,
         timeZone: String,
-    ): PronunciationRoundResult = RESULT
+    ): PronunciationRoundResult = result
 }
