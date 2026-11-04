@@ -43,7 +43,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning Brazilian Portuguese at A1, at a restaurant. A face-to-face order or a call to a restaurant, with a Brazilian name and reais. Opening line and hints very short (A1): "Eu quero...", "A conta, por favor". Brazilian words ("cardápio", not "ementa"). Title, situation, role and every objective description in US English, never Portuguese.`,
+    expectations: `US English speaker learning Brazilian Portuguese at A1, at a restaurant. A phone call to a restaurant, such as booking a table or ordering food for pickup, with goals a call can reach: the learner is never there in person, so nothing asks for the bill at the table. A Brazilian name and reais. Opening line and hints very short (A1): "Eu quero...", "Quanto é?". Brazilian words ("cardápio", not "ementa"). Title, situation, role and every objective description in US English, never Portuguese.`,
     id: "en-pt-a1-restaurant",
     userInput: {
       canDo: ["Ask for a table", "Order food and drinks", "Ask for the bill"],
@@ -55,7 +55,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker practicing US English at A2, at a restaurant. A face-to-face order or a call to a restaurant, with a US name and dollars. Opening line and hints short and simple (A2). Every field is in US English: title, situation, role, objective labels and descriptions, opening line and hints. The title is a 3 to 6 word goal starting with a verb ("Order dinner at a diner").`,
+    expectations: `US English speaker practicing US English at A2, at a restaurant. A phone call to a restaurant, such as booking a table or ordering food for pickup, with goals a call can reach: the learner is never there in person, so nothing asks for the bill at the table. A US name and dollars. Opening line and hints short and simple (A2). Every field is in US English: title, situation, role, objective labels and descriptions, opening line and hints. The title is a 3 to 6 word goal starting with a verb ("Order dinner from a diner").`,
     id: "en-en-a2-restaurant",
     userInput: {
       canDo: ["Ask for a table", "Order food and drinks", "Ask for the bill"],
