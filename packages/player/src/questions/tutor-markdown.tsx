@@ -15,15 +15,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { ExternalLinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import {
-  type ComponentProps,
-  type MouseEvent,
-  createContext,
-  use,
-  useMemo,
-  useState,
-  useTransition,
-} from "react";
+import { type ComponentProps, type MouseEvent, createContext, use, useState } from "react";
 import {
   type Components,
   type ExtraProps,
@@ -115,7 +107,7 @@ const TutorAnswerLinksContext = createContext<
 
 function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
   const links = use(TutorAnswerLinksContext);
-  const [pending, startTransition] = useTransition();
+  const [opening, setOpening] = useState(false);
 
   if (!links?.verified || !href || !isTutorAppPath(href)) {
     return children;
@@ -133,14 +125,17 @@ function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
 
           event.preventDefault();
 
-          if (pending) {
+          if (opening) {
             return;
           }
 
+          setOpening(true);
           setOpenFailed(false);
 
-          startTransition(async () => {
-            const { data: opened } = await safeAsync(() => openBlock(blockId));
+          // Not a transition: React would hold a navigation the learner starts meanwhile until the
+          // open settles, and then the open would win.
+          void safeAsync(() => openBlock(blockId)).then(({ data: opened }) => {
+            setOpening(false);
             setOpenFailed(!opened);
           });
         }
@@ -148,7 +143,7 @@ function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
 
   return (
     <Link
-      aria-busy={pending || undefined}
+      aria-busy={opening || undefined}
       className="aria-busy:opacity-60"
       href={href}
       onClick={onClick}
@@ -160,6 +155,16 @@ function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
 }
 
 const TUTOR_ANSWER_COMPONENTS: Components = { a: TutorAnswerLink };
+
+function BlockOpenFailed() {
+  const t = useExtracted();
+
+  return (
+    <p className="text-destructive-text mt-2 text-sm" role="alert">
+      {t("We couldn't open this step. Try again.")}
+    </p>
+  );
+}
 
 // Streamdown's code and table scrollers carry their own border and background, which the sideways
 // fade would fade with them, so their outer card is the one frame. A table keeps its words whole
@@ -181,10 +186,9 @@ export function TutorMarkdown({
   isAnimating: boolean;
   isStreaming: boolean;
 }) {
-  const t = useExtracted();
   const plugins = useMarkdownPlugins({ isStreaming, text: answer });
   const [openFailed, setOpenFailed] = useState(false);
-  const links = useMemo(() => (appLinks ? { ...appLinks, setOpenFailed } : null), [appLinks]);
+  const links = appLinks ? { ...appLinks, setOpenFailed } : null;
 
   return (
     <TutorAnswerLinksContext value={links}>
@@ -204,11 +208,7 @@ export function TutorMarkdown({
         {answer}
       </Streamdown>
 
-      {openFailed && (
-        <p className="text-destructive-text mt-2 text-sm" role="alert">
-          {t("We couldn't open this step. Try again.")}
-        </p>
-      )}
+      {openFailed && <BlockOpenFailed />}
     </TutorAnswerLinksContext>
   );
 }

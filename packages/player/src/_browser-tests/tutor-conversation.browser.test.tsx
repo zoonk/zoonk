@@ -6,6 +6,7 @@ import {
   type TutorToolOffer,
 } from "@zoonk/core/lesson-questions/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { type ReactNode, useState, useTransition } from "react";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { render } from "../_test-utils/render";
@@ -56,12 +57,14 @@ const OFFERED_CALL: TutorToolOffer = {
 };
 
 function renderConversation({
+  beside,
   draft,
   initialThread,
   onAnswered,
   onAsked,
   openBlock,
 }: {
+  beside?: ReactNode;
   draft?: string;
   initialThread?: LessonQuestionThreadPage;
   onAnswered?: () => void;
@@ -84,6 +87,22 @@ function renderConversation({
       suggestions={[]}
       tutor={buildTutor(openBlock ? { appLinks: { openBlock } } : {})}
     />,
+  );
+
+  if (beside) {
+    render(beside);
+  }
+}
+
+/** Stands for the app's router, whose navigations are transitions. */
+function AppNavigation() {
+  const [shown, setShown] = useState("Buddy");
+  const [, startTransition] = useTransition();
+
+  return (
+    <button onClick={() => startTransition(() => setShown("Statistics"))} type="button">
+      Showing {shown}
+    </button>
   );
 }
 
@@ -377,6 +396,29 @@ describe("the buddy's conversation", () => {
     await lesson.click();
     await expect.element(failure).not.toBeInTheDocument();
     expect(openBlock).toHaveBeenCalledTimes(2);
+  });
+
+  it("lets the learner go elsewhere while a block link opens", async () => {
+    const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
+    const stream = tutorAnswerStream();
+    api.next("answer", () => Promise.resolve(stream.response));
+    const opening = Promise.withResolvers<boolean>();
+
+    renderConversation({ beside: <AppNavigation />, openBlock: () => opening.promise });
+    await ask("Which lesson first?");
+
+    stream.part(LESSON_QUESTION_SAVED_ANSWER_PART, {
+      answer: `Start with [Atoms](/session?block=${BLOCK_ID}).`,
+    });
+
+    stream.finish();
+    stream.close();
+
+    await page.getByRole("link", { name: "Atoms" }).click();
+    await page.getByRole("button", { name: "Showing Buddy" }).click();
+    await expect.element(page.getByRole("button", { name: "Showing Statistics" })).toBeVisible();
+
+    opening.resolve(true);
   });
 
   it("keeps every link as words in an answer whose saved text never came", async () => {
