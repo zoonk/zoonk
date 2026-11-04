@@ -1,11 +1,10 @@
 package com.zoonk.android.data
 
-import com.zoonk.android.feature.catalog.catalogLanguage
+import androidx.core.os.LocaleListCompat
 import com.zoonk.api.ApiServices
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /** [baseUrl] is the API's versioned root, ending in `/v1/`. */
@@ -64,18 +63,18 @@ fun apiHttpClient(configure: OkHttpClient.Builder.() -> Unit = {}): OkHttpClient
         .build()
 
 /**
- * The language the app shows, so the API answers in it. Android sets the default locale to the one the app's
- * resources matched; without a match the app shows English, while the API would pick a related language. Where a
- * request has no IP country (local runs), the API reads the country from the region.
+ * The locale the app shows, so the API answers in its language rather than one related to a device language
+ * Zoonk lacks. Where a request has no IP country (local runs), the API reads the country from its region.
  */
 private val AcceptLanguage =
     Interceptor { chain ->
-        val locale = Locale.getDefault()
+        val locales = LocaleListCompat.getDefault()
+        val shown = shownLocale(List(locales.size()) { locales[it]!! })
         chain.proceed(
             chain
                 .request()
                 .newBuilder()
-                .header("Accept-Language", listOf(catalogLanguage(locale), locale.country).filter(String::isNotEmpty).joinToString("-"))
+                .header("Accept-Language", listOf(shown.language, shown.country).filter(String::isNotEmpty).joinToString("-"))
                 .build(),
         )
     }
