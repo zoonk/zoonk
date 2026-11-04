@@ -10,19 +10,18 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
-import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { settleConversation } from "../language/conversations/_utils/settle-conversation";
 import { setupPlayableLesson } from "../lesson-player/_test-utils/playable-lesson-setup";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { answerBlockInOrder } from "./_test-utils/answer-block";
+import { runOwedSettlements } from "./_test-utils/owed-settlements";
 import { DAY_MS, SESSION_NOW, SESSION_TODAY } from "./_test-utils/session-goal";
 import { settleSessionDay } from "./_utils/settle-session-day";
 import { toBlockPayload } from "./block-payload";
 import { BRAIN_POWER_BONUS } from "./brain-power";
 import { finishStudyBlock } from "./finish-study-block";
 import { openStudyDay } from "./open-study-day";
-import { settleOwedSessionDay } from "./settle-owed-session-day";
 import { startStudyBlock } from "./start-study-block";
 
 // A connection lost after the block's own write commits can't be produced on demand.
@@ -33,15 +32,13 @@ const PRACTICE_MISSION = {
   version: 1,
 };
 
-/** What the API's follow-up run does with each day settlement a finished block owed. */
-async function runOwedSettlements(userId: string) {
-  const owed = await listFollowUps(userId);
+function failFinish(request: Awaited<ReturnType<typeof practiceDay>>["request"]) {
+  vi.mocked(settleSessionDay).mockRejectedValueOnce(new Error("Connection lost"));
+  return expect(finishStudyBlock(request)).rejects.toThrow("Connection lost");
+}
 
-  await Promise.all(
-    owed.flatMap((row) =>
-      row.kind === "settleSessionDay" ? [settleOwedSessionDay({ ...row.input, userId })] : [],
-    ),
-  );
+function readBelts(userId: string) {
+  return prisma.milestone.findMany({ select: { key: true }, where: { kind: "belt", userId } });
 }
 
 function readSessionLedger({ sessionId, userId }: { sessionId: string; userId: string }) {
@@ -50,8 +47,13 @@ function readSessionLedger({ sessionId, userId }: { sessionId: string; userId: s
   });
 }
 
-async function practiceDay() {
+async function practiceDay({ brainPower }: { brainPower?: bigint } = {}) {
   const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+
+  if (brainPower !== undefined) {
+    await prisma.userProgress.create({ data: { totalBrainPower: brainPower, userId: user.id } });
+  }
+
   const goal = await goalFixture({ timezone: "UTC", userId: user.id });
   const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
 
@@ -84,9 +86,7 @@ describe("a finished block's day settles even when its request fails after the b
     freezeClock();
     vi.setSystemTime(SESSION_NOW);
     const { block, goal, request, session, user } = await practiceDay();
-
-    vi.mocked(settleSessionDay).mockRejectedValueOnce(new Error("Connection lost"));
-    await expect(finishStudyBlock(request)).rejects.toThrow("Connection lost");
+    await failFinish(request);
     await runOwedSettlements(user.id);
 
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
@@ -113,6 +113,82 @@ describe("a finished block's day settles even when its request fails after the b
     await expect(
       prisma.followUp.findMany({ select: { key: true, kind: true }, where: { userId: user.id } }),
     ).resolves.toContainEqual({ key: session.id, kind: "rememberSession" });
+  });
+
+  it("ends a day recovered after it's over without settling its missions against a later day", async () => {
+    freezeClock();
+    vi.setSystemTime(SESSION_NOW);
+    const { request, session, user } = await practiceDay();
+    await failFinish(request);
+
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    await runOwedSettlements(user.id);
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+    ).resolves.toMatchObject({ fullMealAt: null, missions: PRACTICE_MISSION, status: "completed" });
+  });
+
+  it("awards the belts a block and its recovered full meal crossed", async () => {
+    freezeClock();
+    vi.setSystemTime(SESSION_NOW);
+    const crossedByBlock = await practiceDay({ brainPower: 2499n });
+    await failFinish(crossedByBlock.request);
+    await expect(readBelts(crossedByBlock.user.id)).resolves.toStrictEqual([{ key: "yellow" }]);
+
+    const crossedByMeal = await practiceDay({ brainPower: 2470n });
+    await failFinish(crossedByMeal.request);
+    await expect(readBelts(crossedByMeal.user.id)).resolves.toStrictEqual([]);
+    await runOwedSettlements(crossedByMeal.user.id);
+    await expect(readBelts(crossedByMeal.user.id)).resolves.toStrictEqual([{ key: "yellow" }]);
+  });
+
+  it("keeps an empty checkpoint's neutral ending when its day is recovered", async () => {
+    freezeClock();
+    vi.setSystemTime(SESSION_NOW);
+    const user = await userFixture();
+    const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: SESSION_TODAY,
+      missions: {
+        picks: [
+          { anchor: { blockKind: "practice" }, done: 1, kind: "practice", total: 1 },
+          { anchor: { blockKind: "checkpoint" }, kind: "challenge", total: 1 },
+        ],
+        version: 1,
+      },
+      startedAt: SESSION_NOW,
+      status: "active",
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({
+      kind: "checkpoint",
+      payload: toBlockPayload({
+        checkpoint: {
+          kind: "boss",
+          mock: false,
+          passMark: 1,
+          phase: 0,
+          rematch: false,
+          timeLimitMinutes: null,
+        },
+        itemIds: [crypto.randomUUID()],
+      }),
+      sessionId: session.id,
+      startedAt: SESSION_NOW,
+      status: "active",
+    });
+
+    mockSession(user.id);
+    await failFinish({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id });
+    await runOwedSettlements(user.id);
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+    ).resolves.toMatchObject({ fullMealAt: null, status: "completed" });
   });
 
   it("leaves nothing for the owed settlement when the finish settled its own day", async () => {

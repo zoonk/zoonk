@@ -14,6 +14,7 @@ import {
 } from "../../../auth/src/guests/_test-utils/guest-auth";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import * as milestoneAwards from "../milestones/award-milestones";
+import { runOwedSettlements } from "./_test-utils/owed-settlements";
 import * as blockCompletion from "./_utils/block-completion";
 import { toBlockPayload } from "./block-payload";
 import { BRAIN_POWER_BONUS } from "./brain-power";
@@ -332,6 +333,9 @@ describe("session day settlement during guest linking", () => {
         failedAward.mockRestore();
       }
 
+      await runOwedSettlements(guest.guestId);
+      const recovered = await prisma.milestone.findMany({ where: { userId: guest.guestId } });
+
       const paidBlock = await prisma.studySessionBlock.findUniqueOrThrow({
         where: { id: block.id },
       });
@@ -372,7 +376,11 @@ describe("session day settlement during guest linking", () => {
         retried.status === "ready"
           ? retried.completion.milestones.map((row) => `${row.kind}:${row.key}`).toSorted()
           : [],
-      ).toStrictEqual(expected.toSorted());
+      ).toStrictEqual(
+        expected
+          .filter((award) => !recovered.some((row) => `${row.kind}:${row.key}` === award))
+          .toSorted(),
+      );
 
       expect(again).toMatchObject({ completion: { milestones: [] }, status: "ready" });
 

@@ -16,6 +16,7 @@ export const followUpSchema = z.discriminatedUnion("kind", [
   z.object({
     input: z.object({
       blockId: z.uuid(),
+      rewardMissions: z.boolean().optional(),
       sessionId: z.uuid(),
       source: z.object({ id: z.string(), kind: z.string() }).optional(),
       timeZone: z.string(),
