@@ -52,7 +52,7 @@ struct StatTile<Icon: View>: View {
           .lineLimit(2)
       }
       .typeStyle(.label)
-      .foregroundStyle(.mutedForeground)
+      .foregroundStyle(.faint)
 
       valueText
         .typeStyle(.readout)
