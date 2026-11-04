@@ -74,6 +74,7 @@ export async function toDraftView({
     prompt: draft.prompt,
     // An unreadable stored understanding must be retried rather than exposed as understood.
     status: draft.status === "understood" && !understanding ? "failed" : draft.status,
+    timeZone: draft.timeZone,
     understanding,
   };
 }

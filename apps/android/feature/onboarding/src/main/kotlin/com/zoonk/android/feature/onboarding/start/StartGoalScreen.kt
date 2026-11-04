@@ -400,6 +400,7 @@ private fun ColumnScope.DraftContent(
                 goal = draft.prompt,
                 understanding = understanding.value,
                 activeGoalLimit = draft.activeGoalLimit,
+                timeZone = draft.timeZone,
                 material = vm.flow.attached.map { it.title },
                 isCreating = vm.isCreating,
                 error = vm.creationError,

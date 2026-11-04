@@ -709,12 +709,13 @@ private fun NoSittingLine(
     }
 }
 
-private fun goalZone(timeZone: String?): ZoneId = timeZone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneOffset.UTC
+/** Core counts a goal's or draft's days in its zone, UTC without one, so date pickers do too. */
+internal fun goalZone(timeZone: String?): ZoneId = timeZone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneOffset.UTC
 
 /** From tomorrow to ten years ahead, the deadlines core accepts. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TargetDatePicker(
+internal fun TargetDatePicker(
     today: LocalDate,
     initial: LocalDate?,
     onDismiss: () -> Unit,
@@ -723,7 +724,12 @@ private fun TargetDatePicker(
     val last = today.plusDays(MAX_DAYS_AHEAD)
     val state =
         rememberDatePickerState(
-            initialSelectedDateMillis = initial?.atStartOfDay(ZoneOffset.UTC)?.toInstant()?.toEpochMilli(),
+            initialSelectedDateMillis =
+                initial
+                    ?.takeIf { it > today && it <= last }
+                    ?.atStartOfDay(ZoneOffset.UTC)
+                    ?.toInstant()
+                    ?.toEpochMilli(),
             yearRange = today.year..last.year,
             selectableDates =
                 object : SelectableDates {

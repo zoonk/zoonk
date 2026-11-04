@@ -20192,7 +20192,7 @@
         }
       },
       "patch": {
-        "description": "One fix on the \"Here's what I understood\" card, recomputing the fields that depend on it: the learner's own date (any full date, such as the notice's day it offers) replaces the exam's dates, and null brings them back; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal (no such goal, a day already past). Fixing the words themselves is a new understanding.",
+        "description": "One fix on the \"Here's what I understood\" card, recomputing the fields that depend on it: the learner's own date (any full date, such as the notice's day it offers) replaces the exam's dates, and null brings them back; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal or its date is out of range. Fixing the words themselves is a new understanding.",
         "operationId": "reviseGoalUnderstanding",
         "security": [
           {
@@ -20282,7 +20282,7 @@
             }
           },
           "422": {
-            "description": "The request is valid but cannot be applied to the resource",
+            "description": "UNPROCESSABLE_ENTITY when the card has no such goal; TARGET_DATE_OUT_OF_RANGE when the date is before the day after the learner's today in the draft's `timeZone` or after calendar day 3,650 from it, as POST /goals refuses it. Nothing was saved; details give the nearest accepted date.",
             "content": {
               "application/json": {
                 "schema": {
@@ -27673,7 +27673,7 @@
               },
               "value": {
                 "nullable": true,
-                "description": "The learner's own deadline; null brings back the exam's dates. From the learner's today (an earlier one is refused with 422) to at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
+                "description": "The learner's own deadline; null brings back the exam's dates. From the day after the learner's today in the draft's `timeZone` through 3,650 days after it; a date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE, as POST /goals refuses it",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -84860,6 +84860,10 @@
             ],
             "description": "`understanding` while the words are read, `understood` once `understanding` is there, `failed` when they couldn't be read (start it again)"
           },
+          "timeZone": {
+            "type": "string",
+            "description": "The IANA zone the draft counts the learner's today in. A `targetDate` fix is accepted from the day after that today through 3,650 days after it, so a date picker offers exactly those days"
+          },
           "understanding": {
             "nullable": true,
             "description": "What was understood, with the learner's fixes; null until then",
@@ -84877,6 +84881,7 @@
           "id",
           "prompt",
           "status",
+          "timeZone",
           "understanding"
         ],
         "additionalProperties": false

@@ -98,7 +98,11 @@ function ReadDraft({
 }) {
   switch (understanding.status) {
     case "goals": {
-      const card = toUnderstandingDraft({ activeGoalLimit: draft.activeGoalLimit, understanding });
+      const card = toUnderstandingDraft({
+        activeGoalLimit: draft.activeGoalLimit,
+        timeZone: draft.timeZone,
+        understanding,
+      });
 
       return (
         <UnderstoodScreen

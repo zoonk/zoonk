@@ -37,11 +37,8 @@ async function applyEdit({
     return { status: "conflict" };
   }
 
-  const today = getLearnerToday(draft.timeZone);
-
   if (edit.field === "targetDate") {
     assertTargetDates({
-      latestOnly: true,
       targets: [
         {
           current: understanding.goals[edit.goal]?.draft.targetDate,
@@ -49,11 +46,11 @@ async function applyEdit({
           targetDate: edit.value,
         },
       ],
-      today,
+      today: getLearnerToday(draft.timeZone),
     });
   }
 
-  const revised = await reviseUnderstanding({ edit, today, understanding });
+  const revised = await reviseUnderstanding({ edit, understanding });
 
   if (!revised) {
     return { status: "invalid" };

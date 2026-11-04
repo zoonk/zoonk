@@ -1,19 +1,29 @@
 "use client";
 
+import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { ArrowUpRightIcon, PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../../_components/save-error";
-import { toLocalIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
 import { UseDateButton } from "../../plan/notice-day";
 import { type UnderstoodRow as Row } from "./use-understood-rows";
 
 type EditorType = NonNullable<Row["editable"]>["kind"];
 
-function getInputLimits(type: EditorType) {
-  return type === "date" ? { min: toLocalIsoDate(new Date()) } : {};
+function getInputLimits({
+  now,
+  timeZone,
+  type,
+}: {
+  now: Date;
+  timeZone: string;
+  type: EditorType;
+}) {
+  return type === "date" ? getTargetDateBounds(getTodayInZone({ now, timeZone })) : {};
 }
 
 const MAX_SOURCE_TITLE_LENGTH = 40;
@@ -49,6 +59,7 @@ function RowEditor({
   label,
   onCancel,
   onSave,
+  timeZone,
   type,
 }: {
   defaultValue: string;
@@ -56,9 +67,11 @@ function RowEditor({
   onCancel: () => void;
   /** False when it couldn't be saved, which keeps the editor open. */
   onSave: (value: string) => Promise<boolean>;
+  timeZone: string;
   type: EditorType;
 }) {
   const t = useExtracted();
+  const openedAt = useMountTime();
   const inputId = useId();
   const [value, setValue] = useState(defaultValue);
   const [failed, setFailed] = useState(false);
@@ -90,7 +103,7 @@ function RowEditor({
         onKeyDown={(event) => event.key === "Escape" && onCancel()}
         type={type}
         value={value}
-        {...getInputLimits(type)}
+        {...getInputLimits({ now: openedAt, timeZone, type })}
       />
       {failed && <ChangeSaveError />}
       <div className="flex gap-2">
@@ -207,6 +220,7 @@ export function UnderstoodRowItem({
   onEdit,
   onSave,
   row,
+  timeZone,
 }: {
   editValue: string;
   editing: boolean;
@@ -214,6 +228,7 @@ export function UnderstoodRowItem({
   onEdit: (editing: boolean) => void;
   onSave: (value: string) => Promise<boolean>;
   row: Row;
+  timeZone: string;
 }) {
   const t = useExtracted();
   const label = editing ? (row.editLabel ?? row.label) : row.label;
@@ -238,6 +253,7 @@ export function UnderstoodRowItem({
 
                 return saved;
               }}
+              timeZone={timeZone}
               type={row.editable.kind}
             />
           ) : (
