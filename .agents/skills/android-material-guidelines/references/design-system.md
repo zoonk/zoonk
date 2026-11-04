@@ -20,7 +20,8 @@ When `globals.css` changes, regenerate the palette: `pnpm --filter android palet
 | `card`, `popover`                                           | `surfaceContainerLow`, `surfaceContainer` (cards, sheets, menus and the navigation bar draw their own)                      |
 | `muted` (the row the learner is on), `surface-3` (a track)  | `surfaceContainerHigh`, `surfaceContainerHighest`                                                                           |
 | `border`, `input`                                           | `outlineVariant`, `outline`                                                                                                 |
-| `foreground`, `muted-foreground`, `faint`                   | `onSurface`, `onSurfaceVariant` (both quiet steps)                                                                          |
+| `foreground`, `muted-foreground`                            | `onSurface`, `onSurfaceVariant`                                                                                             |
+| `faint` (an eyebrow, a stat's label, a list's numbers)      | `MaterialTheme.zoonk.faint`                                                                                                 |
 | `primary` (the main action)                                 | `primary` / `onPrimary`                                                                                                     |
 | `selected` (a pick before it's checked)                     | `primary` ink: radio, checkbox, a 2dp ring on `MaterialTheme.zoonk.selectedTint` (`answerTone`). Never blue.                |
 | `success` (progress, done, right, the learner's place)      | `tertiary`; its tint `tertiaryContainer`. Pass `tertiary` to progress indicators: Material defaults to `primary`.           |
@@ -38,25 +39,30 @@ When `globals.css` changes, regenerate the palette: `pnpm --filter android palet
 
 ## Type
 
-The default Material 3 `Typography`, system font, sizes in `sp`.
+Geist and Geist Mono, bundled in `:core:resources` (`res/font/`) and set in `ui/theme/Type.kt`, which holds main's roles once: Material's slots for what Material's components and most text use, and `MaterialTheme.zoonkType` for main's roles no slot carries. The numbers are the Apple app's (`DesignSystem/Typography.swift`), measured on main at 390px. Sizes are in `sp`, so they follow the font scale; Bold Text (API 31+) adds its weight on its own. Scripts Geist lacks fall back to the system font. Screens use roles, never sizes.
 
-| Design-system role          | Material style                                                                 |
-| --------------------------- | ------------------------------------------------------------------------------ |
-| Display                     | `displaySmall`                                                                 |
-| Headline                    | `headlineSmall`                                                                |
-| Title                       | `titleLarge` (a top app bar's title)                                           |
-| Section, Section in the app | `titleMedium` (`SectionHeader`, a TalkBack heading)                            |
-| Lead, Body                  | `bodyLarge`                                                                    |
-| Supporting line, meta       | `bodyMedium` in `onSurfaceVariant`                                             |
-| Label                       | `labelLarge`; small facts `labelMedium`                                        |
-| Readout (a big number)      | `displaySmall.withTabularFigures()`, its unit smaller in `onSurfaceVariant`    |
-| Mono (data that lines up)   | the line's style `.withTabularFigures()`; `FontFamily.Monospace` only for code |
+| Design-system role                                      | Compose                                                           |
+| ------------------------------------------------------- | ----------------------------------------------------------------- |
+| Headline (`text-headline`), a ceremony                  | `displaySmall`                                                    |
+| Page title (`PageTitle`)                                | `headlineMedium` (`PageTitleRow`)                                 |
+| Readout (`BigQuantity`); a moment's leading number      | `headlineSmall`; `displayMedium` (`Readout` adds tabular figures) |
+| Section (`text-section`), a top app bar's title         | `titleLarge`                                                      |
+| Section title (`PageSectionTitle`)                      | `titleSmall` (`SectionHeader`)                                    |
+| Reading (the buddy's words, Today's queue)              | `bodyLarge`                                                       |
+| Body (`text-sm`)                                        | `bodyMedium`                                                      |
+| Row title, description (`ListRowTitle`, `-Description`) | `zoonkType.rowTitle`, `bodySmall` (`ListRow` sets both)           |
+| Data that lines up (`ListRowTrailing`, section details) | `zoonkType.data` (Geist Mono)                                     |
+| Eyebrow (`PageEyebrow`)                                 | `zoonkType.eyebrow` in `faint`, uppercase (`Eyebrow`)             |
+| Label (`text-label`, a stat's label)                    | `zoonkType.label` in `faint`, uppercase (`StatTile`)              |
+| Lead, a lesson's text, a lesson's question              | `zoonkType.lead`, `lessonText`, `question`                        |
+| Button: a screen's action, small                        | `labelLarge`, `labelMedium` (the button wrappers pick it by size) |
+| Code                                                    | the line's style with `GeistMono`                                 |
 
-Three levels of type in a block at most; weight and size lead, color only quiets.
+Three levels of type in a block at most; weight and size lead, color only quiets. Uppercase is written into the text (`toUpperCase(LocaleList.current)`) with the words as written for TalkBack.
 
 ## Shape and spacing
 
-Material's `shapes` and component defaults. Shape carries no meaning in the design system, so the theme doesn't override it. Spacing comes from component defaults and content padding; group with spacing and `HorizontalDivider` before adding a container.
+Main's radii (`--radius`), generated into `ZoonkRadius` beside the palette (`sm`, `md`, `lg`, `option`, `xl`, `xxl`). The theme puts them in Material's slots (`ui/theme/ZoonkShapes.kt`): `extraSmall` sm, `small` md (chips), `medium` option (cards, answer options, stat tiles), `large` xl (panels), `extraLarge` xxl (dialogs, sheets). Buttons take `lg` (`md` when small) through the button wrappers. A shape that isn't a slot's takes `RoundedCornerShape(ZoonkRadius.<name>)`, never a number. Nothing is a pill except avatars, dots and rings. Spacing comes from component defaults and content padding; group with spacing and `HorizontalDivider` before adding a container.
 
 ## Foldables
 
@@ -86,10 +92,10 @@ Material's `shapes` and component defaults. Shape carries no meaning in the desi
 
 ## Components
 
-- **Actions:** the main action `Button`; a secondary action `FilledTonalButton` (muted fill, ink words); a quiet one `TextButton`. `OutlinedButton` writes its label in `onSurfaceVariant`, Zoonk's supporting-words gray, so it reads as disabled beside ink.
+- **Actions:** the design system's buttons in `ui/components/Buttons.kt`, one look per role as on main: the main action `Button` (ink), a secondary one `OutlinedButton` (an `input` line, ink words), a quiet one `TextButton`, and `DestructiveButton` (pink-red words on their tint). `ButtonSize.Large` (44dp) is a screen's action, which `DockedActionBar` and `TaskActionBar` give their buttons; `ButtonSize.Small` (30dp) sits beside text, such as a page title's action. Material's own buttons, tonal and elevated ones included, fail the `MaterialButton` lint check.
 - **Selection:** `RadioButton`, `Checkbox`, `Switch` and `FilterChip` as they are; a selected `FilterChip` shows a check (`leadingIcon`) so the state isn't color alone.
-- **`PageTitleRow`, `SectionHeader`:** main's `PageHeader` and `PageSectionHeader`: a page's title (`headlineMedium`) or a section's (`titleMedium`), a TalkBack heading, with what sits at its end (a page's actions or readout; a section's short fact as `detail`, or a legend or button as `trailing`), which moves under the title when both don't fit, so the title never breaks inside a word to make room for it. A page or section heading beside something takes one of them, never a `Row` with the heading's `weight`, which gives the room to what's beside it first.
-- **`LabelChip`:** main's quiet chip, a few words beside a title (Plus, "1 week"), optionally with a symbol. Not tappable; a chip people tap is `AssistChip` or `FilterChip`.
+- **`PageTitleRow`, `PageHeader`, `SectionHeader`:** main's `PageHeader` and `PageSectionHeader`: a page's title (`headlineMedium`; `PageHeader` adds its supporting line) or a section's (`titleSmall`), a TalkBack heading, with what sits at its end (a page's actions or readout; a section's short fact as `detail`, or a legend or button as `trailing`), which moves under the title when both don't fit, so the title never breaks inside a word to make room for it. A page or section heading beside something takes one of them, never a `Row` with the heading's `weight`, which gives the room to what's beside it first. A page leads its content with its title, as main's pages do: on a `PageScaffold`, whose `title` the bar then shows only once that heading scrolls under it.
+- **`LabelChip`:** main's quiet chip (22dp, `md` corners, an `input` line, no fill), a few words beside a title (Plus, "1 week"), optionally with a symbol. Not tappable; a chip people tap is `AssistChip` or `FilterChip`.
 - **`Meter`, `MeterParts`:** a share on a track in `tertiary` (Energy and Brain Power pass their color), and a meter of weighted parts (`Track`, `Place`, `Solid`). Hidden from TalkBack unless given a `contentDescription`, since the words beside them say the number.
 - **`StatusMark`, `DoneMark`, `ProgressMark`:** done is one blue check; skipped a quiet fast-forward; the learner's place a blue dot with a halo, never a fill; ahead a faint dot; part done a blue ring filling on the track. Marks are one line of body text tall, so they grow with the font.
 - **`ListRow`:** main's list row on Material's `ListItem`: a mark in `leading` (sized by `markSize()`), the words in `headline` and `supporting`, and numbers, a date or the Plus mark in `meta`, which ends the headline and moves under it when the words would get too little room. A row that opens a page has no chevron; the only trailing icon is the arrow of a row with `expanded`, which opens what's under it and tells TalkBack whether it's open. `highlighted` marks the learner's place. Rows reach the list's edges and inset their own content by `LIST_ITEM_INSET`, so a list under a heading takes `Modifier.bleed(LIST_ITEM_INSET)` to line its words up with the heading; a nested row moves its mark and words in by `indent`.
