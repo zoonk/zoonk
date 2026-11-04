@@ -290,8 +290,6 @@ describe(checkWrittenLesson, () => {
       expect.arrayContaining([expect.objectContaining({ picture: expect.any(Object) })]),
     );
 
-    const [liquid, digital] = pictured.options;
-
     const bothDrawings = {
       alt: "1 is a glass tube; 2 is a screen",
       prompt: "Two thermometers, 1 and 2",
@@ -299,10 +297,7 @@ describe(checkWrittenLesson, () => {
 
     const samePicture = {
       ...pictured,
-      options: [
-        { ...liquid, picture: bothDrawings },
-        { ...digital, picture: bothDrawings },
-      ],
+      options: pictured.options.map((option) => ({ ...option, picture: bothDrawings })),
     };
 
     expect(codesOf(withScreen(7, samePicture))).toStrictEqual([[7, "visual"]]);
