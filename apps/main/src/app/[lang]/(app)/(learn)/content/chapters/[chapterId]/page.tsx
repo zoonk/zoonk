@@ -81,16 +81,16 @@ async function ChapterBody({ params, searchParams }: Props) {
     );
   }
 
+  if (language.status === "ready") {
+    return <UnitInPlace chapterId={chapterId} tutor={tutor} />;
+  }
+
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
         <LearnNotFound />
       </NotFoundPage>
     );
-  }
-
-  if (language.status === "ready") {
-    return <UnitInPlace chapterId={chapterId} tutor={tutor} />;
   }
 
   return (

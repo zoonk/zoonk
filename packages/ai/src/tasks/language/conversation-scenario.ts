@@ -6,9 +6,9 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages } from "../_utils/prompt-language";
 import { scenarioSchema } from "./_utils/scenario-schema";
-import systemPrompt from "./conversation-scenario.prompt.md";
+import promptTemplate from "./conversation-scenario.prompt.md";
 
 /** Cached per chapter and level and shared, so it runs rarely: Luna scored 9.22 (Sep 2026). */
 const defaultModel = "openai/gpt-6-luna";
@@ -30,14 +30,7 @@ export type GenerateConversationScenarioParams = {
 };
 
 function buildUserPrompt(params: GenerateConversationScenarioParams): string {
-  const languages = getLanguagePromptContext({
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.learnerLanguage,
-  });
-
   return `
-    TARGET_LANGUAGE: ${languages.targetLanguageName}
-    LEARNER_LANGUAGE: ${languages.userLanguageName}
     LEVEL: ${params.level}
     UNIT_TITLE: ${params.unitTitle}
     UNIT_DESCRIPTION: ${params.unitDescription}
@@ -50,6 +43,7 @@ ${formatLocalContext(params.targetLanguage)}
 
 export async function generateConversationScenario(params: GenerateConversationScenarioParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const systemPrompt = fillPromptLanguages({ ...params, template: promptTemplate });
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
