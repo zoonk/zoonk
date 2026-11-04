@@ -121,7 +121,7 @@ private struct CompletedLessonRow: View {
 
         if let chapterTitle = lesson.chapterTitle {
           Text(chapterTitle)
-            .font(.footnote)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
         }
       }

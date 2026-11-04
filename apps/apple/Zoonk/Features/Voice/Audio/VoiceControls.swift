@@ -68,7 +68,7 @@ struct HelpLimitNotice: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text(message)
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
 
       if limit.needsAccount {

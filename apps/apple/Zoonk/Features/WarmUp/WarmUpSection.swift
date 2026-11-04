@@ -21,7 +21,7 @@ struct WarmUpSection: View {
 
       Section {
         Text(card.question)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           .accessibilityAddTraits(.isHeader)
           .accessibilityFocused($focusesQuestion)
           .sensoryFeedback(trigger: picked) { _, picked in picked == nil ? nil : .selection }
@@ -37,7 +37,7 @@ struct WarmUpSection: View {
           VStack(alignment: .leading, spacing: 4) {
             Label {
               Text(verdict.title)
-                .font(.headline)
+                .typeStyle(.body.weight(.semibold))
             } icon: {
               Image(systemName: verdict.symbol)
             }

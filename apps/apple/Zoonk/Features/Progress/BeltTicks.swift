@@ -40,7 +40,7 @@ struct LevelBadge: View {
 
   var body: some View {
     Text(level, format: .number)
-      .font(.body.weight(.semibold).monospacedDigit())
+      .typeStyle(.body.weight(.semibold).monospaced())
       .foregroundStyle(isLight ? Color.black.opacity(0.8) : .white)
       .frame(width: size, height: size)
       .background(belt.color, in: .circle)

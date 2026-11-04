@@ -14,7 +14,7 @@ struct MissionsSummary: View {
       if left.isEmpty {
         HStack {
           Text("Missions done", tableName: "Today", comment: "Today's missions are done")
-            .font(.body.weight(.medium))
+            .typeStyle(.body.weight(.medium))
           Spacer()
           BrainPowerReward(points: bonus, earned: true)
         }
@@ -34,8 +34,7 @@ struct MissionsSummary: View {
           }
 
           remaining(left)
-            .font(.subheadline)
-            .monospacedDigit()
+            .typeStyle(.body.monospaced())
 
           Spacer()
 

@@ -237,7 +237,7 @@ private struct LibraryCourseOffer: View {
               "A course in the Library fits your goal", tableName: "Onboarding",
               comment: "Above a Library course that teaches the learner's goal"
             )
-            .font(.footnote)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
 
             Text(title)
@@ -247,7 +247,7 @@ private struct LibraryCourseOffer: View {
                 "\(chapters) chapters", tableName: "Courses",
                 comment: "How many chapters a course or an exam area has"
               )
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
             }
           }
@@ -533,21 +533,20 @@ private struct PlanReveal: View {
         } icon: {
           Image(systemName: "checkmark.circle.fill")
         }
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
         .foregroundStyle(.success)
 
         Text(goal.title)
-          .font(.title2.bold())
+          .typeStyle(.section)
           .accessibilityAddTraits(.isHeader)
 
         Text(facts.joinedFacts())
-          .font(.subheadline)
-          .monospacedDigit()
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
 
         if let pace = paceLine(goal: goal) {
           Text(pace)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
         }
       }
@@ -925,8 +924,7 @@ private struct SyllabusTopicsSheet: View {
 
       if let line = subjectLine(subject) {
         Text(line)
-          .font(.footnote)
-          .monospacedDigit()
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
       }
     }
@@ -975,8 +973,7 @@ private struct AreaWeights: View {
               Text(subject.name)
             } value: {
               Text(percentText(weight))
-                .font(.subheadline)
-                .monospacedDigit()
+                .typeStyle(.data)
                 .foregroundStyle(.secondary)
             }
 

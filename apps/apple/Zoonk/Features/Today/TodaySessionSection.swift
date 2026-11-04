@@ -40,7 +40,7 @@ struct TodaySessionSection: View {
     Section {
       if let freshStart {
         Text(freshStart)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
       }
 
@@ -131,7 +131,7 @@ struct TodaySessionSection: View {
           PlusMark()
         }
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
     }
   }
@@ -175,7 +175,7 @@ struct TodaySessionSection: View {
             "Already know this? **Take the test**", tableName: "Today",
             comment: "Skips the next lesson's chapter with its test"
           )
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
         }
         .listRowBackground(NextRowBackground())
@@ -323,7 +323,7 @@ struct TodayMainAction: View {
 
       if failed {
         failure
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.destructive)
       }
     }
@@ -375,7 +375,7 @@ private struct DayProgressRow: View {
           "\(studyDuration(minutes: session.minutesLeft)) left", tableName: "Today",
           comment: "The time still to go in today's session"
         )
-        .font(.subheadline.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.secondary)
       }
 
@@ -406,13 +406,13 @@ struct BlockRow: View {
       AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 2) {
         VStack(alignment: .leading, spacing: 2) {
           Text(block.displayTitle)
-            .font(isNext ? .body.weight(.semibold) : .body)
+            .typeStyle(isNext ? .reading.weight(.semibold) : .reading)
             .foregroundStyle(block.isFinished ? .secondary : .primary)
 
           if !block.isFinished {
             ForEach(lines, id: \.self) { line in
               Text(line)
-                .font(.footnote)
+                .typeStyle(.note)
                 .foregroundStyle(.secondary)
             }
           }
@@ -442,7 +442,7 @@ struct BlockRow: View {
         }
 
         Text(studyDuration(minutes: block.estimatedMinutes))
-          .font(.footnote.monospacedDigit())
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
       }
     }
@@ -550,7 +550,7 @@ private struct ComingLessonsRow: View {
             )
           }
         }
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
 
         if failed {
@@ -558,7 +558,7 @@ private struct ComingLessonsRow: View {
             "That didn't save. Try again.", tableName: "Today",
             comment: "A change couldn't be saved"
           )
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.destructive)
         }
       }
@@ -623,12 +623,12 @@ private struct FoldRow: View {
 
         if let minutes, minutes > 0, !isOpen {
           Text(studyDuration(minutes: minutes))
-            .font(.footnote.monospacedDigit())
+            .typeStyle(.data)
         }
 
         Image(systemName: "chevron.down")
           .rotationEffect(.degrees(isOpen ? 180 : 0))
-          .font(.footnote)
+          .typeStyle(.note)
           .accessibilityHidden(true)
       }
       .foregroundStyle(.secondary)
@@ -777,7 +777,7 @@ private struct TodayDayStatus: View {
       Image(systemName: systemImage)
         .foregroundStyle(.secondary)
     }
-    .font(.subheadline)
+    .typeStyle(.note)
   }
 
   private static func seeYou(_ week: StudyWeek) -> String {
@@ -819,7 +819,7 @@ private struct TodayEarlierWorkSection: View {
           "Start with these. Starting your session fits the plan to today's time.",
           tableName: "Today", comment: "Why the day that opens can differ from the one shown"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
 
         ForEach(Array(items.enumerated()), id: \.offset) { _, item in
@@ -830,7 +830,7 @@ private struct TodayEarlierWorkSection: View {
           "Earlier unfinished work\u{00A0}· \(items.count.formatted())", tableName: "Today",
           comment: "Lessons left from earlier days, with how many"
         )
-        .font(.body.weight(.medium))
+        .typeStyle(.body.weight(.medium))
       }
     }
   }

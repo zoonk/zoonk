@@ -81,7 +81,7 @@ private struct HowItWorks: View {
   private func step(_ number: Int, _ title: Text, isCurrent: Bool = false) -> some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       Text(number, format: .number)
-        .font(.caption.monospaced())
+        .typeStyle(.data)
         .foregroundStyle(.secondary)
         .accessibilityHidden(true)
 

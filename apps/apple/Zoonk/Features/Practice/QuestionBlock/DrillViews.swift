@@ -62,7 +62,7 @@ struct DrillNoteView: View {
     {
       PracticeCallout(systemImage: drill.kind.systemImage) {
         if !isAnswered {
-          Text(drill.line).fontWeight(.medium)
+          Text(drill.line).typeWeight(.medium)
         }
 
         if let lastAnswer {
@@ -110,7 +110,7 @@ struct DrillIdeaView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
       VStack(alignment: .leading, spacing: 6) {
-        Text(lesson.title).font(.title2.bold())
+        Text(lesson.title).typeStyle(.section)
         Text(drill.line).foregroundStyle(.secondary)
       }
 
@@ -119,7 +119,7 @@ struct DrillIdeaView: View {
           if index > 0 { Divider() }
           HStack(alignment: .firstTextBaseline, spacing: 12) {
             Text(index + 1, format: .number)
-              .font(.subheadline.monospacedDigit())
+              .typeStyle(.data)
               .foregroundStyle(.tertiary)
             Text(idea)
           }
@@ -151,7 +151,7 @@ struct DrillCountdownView: View {
         EmptyView()
       }
       Text(timerInterval: start...end, countsDown: true)
-        .font(.subheadline.monospacedDigit().weight(.medium))
+        .typeStyle(.body.weight(.medium).monospaced())
         .frame(minWidth: 44, alignment: .trailing)
         .accessibilityLabel(
           Text(

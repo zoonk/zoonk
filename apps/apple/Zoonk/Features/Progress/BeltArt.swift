@@ -119,7 +119,7 @@ struct BeltDrawing: View {
       let isCurrent = index + 1 == level.level
       let number = context.resolve(
         Text(index + 1, format: .number)
-          .font(.caption2.monospacedDigit().weight(isCurrent ? .semibold : .regular))
+          .font(TypeStyle.small.weight(isCurrent ? .semibold : .regular).monospaced().font(in: context.environment))
           .foregroundStyle(isCurrent ? Color(.label) : Color(.tertiaryLabel)))
       context.draw(number, at: CGPoint(x: slot.midX, y: bandHeight + 4), anchor: .top)
     }
@@ -151,7 +151,7 @@ struct BeltRack: View {
 
             if sizeClass == .regular {
               Text(belt.shortTitle)
-                .font(.caption2.weight(index == currentIndex ? .medium : .regular))
+                .typeStyle(.small.weight(index == currentIndex ? .medium : .regular))
                 .foregroundStyle(
                   index == currentIndex
                     ? AnyShapeStyle(.primary)
@@ -178,7 +178,7 @@ struct BeltRack: View {
           Spacer()
           Text(ProgressBelt.black.localizedTitle)
         }
-        .font(.caption2)
+        .typeStyle(.small)
         .foregroundStyle(.tertiary)
         .accessibilityHidden(true)
       }

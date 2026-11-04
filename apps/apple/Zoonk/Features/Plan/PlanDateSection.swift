@@ -65,7 +65,7 @@ struct PlanDateSection: View {
       if let noticeDay = schedule.noticeDay {
         VStack(alignment: .leading, spacing: 8) {
           planNoticeDayText(noticeDay, document: plan.examDocument)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
 
           Button {

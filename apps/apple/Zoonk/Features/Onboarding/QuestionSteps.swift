@@ -106,12 +106,12 @@ struct StepHeader: View {
       VStack(alignment: .leading, spacing: 6) {
         if let subject {
           Text(subject)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
         }
 
         title
-          .font(.title2.bold())
+          .typeStyle(.section)
           .accessibilityAddTraits(.isHeader)
 
         if let description {
@@ -202,7 +202,7 @@ struct ChoiceRows<Value: Hashable>: View {
                 .foregroundStyle(.primary)
               if let detail = choice.detail {
                 detail
-                  .font(.subheadline)
+                  .typeStyle(.note)
                   .foregroundStyle(.secondary)
               }
             }
@@ -359,7 +359,7 @@ struct LabeledField: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       label
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
         .accessibilityHidden(true)
       // Without a prompt, the field would repeat its label, already shown above, as its placeholder.
@@ -860,7 +860,7 @@ private struct ExamChoiceQuestion: View {
           VStack(alignment: .leading, spacing: 2) {
             Text(choice.group)
             Text.examPickLimit(choice.take)
-              .fontWeight(.regular)
+              .typeWeight(.regular)
           }
         } footer: {
           leftOut

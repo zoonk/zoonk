@@ -55,7 +55,7 @@ struct LessonWaysOut: View {
       }
     }
     .buttonStyle(.borderless)
-    .font(.subheadline)
+    .typeStyle(.body)
   }
 }
 
@@ -98,7 +98,7 @@ struct LessonScreenHelp: View {
       } icon: {
         Image(systemName: "bubble.left.and.text.bubble.right")
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
 
       FlowLayout {
@@ -119,7 +119,7 @@ struct LessonScreenHelp: View {
         }
       }
       .buttonStyle(.suggestionChip)
-      .font(.subheadline)
+      .typeStyle(.body)
     }
     .accessibilityElement(children: .contain)
   }
@@ -142,7 +142,7 @@ struct LessonAskBuddyOffer: View {
     if tutor.panel != nil, !isDismissed {
       VStack(alignment: .leading, spacing: 8) {
         message
-          .font(.subheadline)
+          .typeStyle(.body)
 
         ButtonRow {
           Button {
@@ -159,7 +159,7 @@ struct LessonAskBuddyOffer: View {
           }
           .buttonStyle(.borderless)
         }
-        .font(.subheadline)
+        .typeStyle(.body)
       }
       .padding(.top, 12)
       .overlay(alignment: .top) { Divider() }

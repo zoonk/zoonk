@@ -10,7 +10,7 @@ struct PlanSoFar: View {
         ForEach(facts) { fact in
           VStack(alignment: .leading, spacing: 2) {
             Text(fact.label)
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
 
             Text(fact.value)
@@ -18,14 +18,13 @@ struct PlanSoFar: View {
 
             if let note = fact.note {
               Text(note)
-                .font(.caption)
+                .typeStyle(.meta)
                 .foregroundStyle(.secondary)
             }
 
             if let daysLeft = fact.daysLeft {
               Text(daysLeft)
-                .font(.caption)
-                .monospacedDigit()
+                .typeStyle(.data)
                 .foregroundStyle(.secondary)
             }
           }

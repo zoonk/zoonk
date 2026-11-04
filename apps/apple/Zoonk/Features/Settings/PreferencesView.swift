@@ -32,7 +32,7 @@ struct PreferencesView: View {
               comment: "The buddy's growth stage and glasses, as in “Baby · Round glasses”")
           } icon: {
             BuddyFace(kind: preferences.buddy.kind, glasses: preferences.buddy.glasses)
-              .font(.title2)
+              .typeStyle(.section.weight(.regular))
           }
         } header: {
           Text("Your buddy", tableName: "Settings", comment: "Preferences section about the buddy")
@@ -176,7 +176,7 @@ struct ChangeLimitButton: View {
       router.present(.account(.preferences))
     } label: {
       Text("Change limit", tableName: "Settings", comment: "Opens the daily time limit setting")
-        .fontWeight(.semibold)
+        .typeWeight(.semibold)
     }
     .buttonStyle(.borderless)
   }

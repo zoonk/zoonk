@@ -193,7 +193,7 @@ private struct MockChooser: View {
     Section {
       VStack(alignment: .leading, spacing: 4) {
         Text(view.examName)
-          .font(.caption.monospaced())
+          .typeStyle(.data)
           .foregroundStyle(.tertiary)
         detail
           .foregroundStyle(.secondary)
@@ -209,7 +209,7 @@ private struct MockChooser: View {
             VStack(alignment: .leading, spacing: 2) {
               Text("Continue your mock exam", tableName: "Mock", comment: "A running mock")
               Text("It's where you left it", tableName: "Mock", comment: "Under a running mock")
-                .font(.subheadline)
+                .typeStyle(.note)
                 .foregroundStyle(.secondary)
             }
           } icon: {
@@ -382,12 +382,12 @@ private struct MockChooser: View {
       Label {
         VStack(alignment: .leading, spacing: 2) {
           Text("Preparing your mock exam", tableName: "Mock", comment: "Questions being written")
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
           Text(
             "We're writing questions like the exam's for you. It starts here as soon as they're ready.",
             tableName: "Mock", comment: "While a mock's questions are written"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
         }
       } icon: {
@@ -413,18 +413,18 @@ private struct MockChooser: View {
             comment: "No more questions")
         }
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
     case .notEnoughQuestions?:
       Text(
         "There aren't enough questions for this mock yet. Try the full exam or another subject.",
         tableName: "Mock", comment: "Too few questions for a mock"
       )
-      .font(.subheadline)
+      .typeStyle(.body)
       .foregroundStyle(.destructive)
     case .failed?:
       Text("We couldn't start the mock. Try again.", tableName: "Mock", comment: "Start failed")
-        .font(.subheadline)
+        .typeStyle(.body)
         .foregroundStyle(.destructive)
     case .refused(let limit)?:
       HelpLimitNotice(limit: limit)
@@ -501,7 +501,7 @@ private struct MockChooser: View {
           VStack(alignment: .leading, spacing: 2) {
             Text(name)
             Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
         }
@@ -568,13 +568,13 @@ private struct MockChooser: View {
           Text(title)
           if let detail, !detail.isEmpty {
             Text(detail)
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
         }
         Spacer()
         Text(trailing)
-          .font(.subheadline.monospacedDigit())
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
           .accessibilityLabel(spokenTrailing)
         Image(systemName: "checkmark")
@@ -764,7 +764,7 @@ struct PlacementMockOffer: View {
                         tableName: "Mock", comment: "The placement mock's lengths")
                     }
                   }
-                  .font(.subheadline)
+                  .typeStyle(.note)
                   .foregroundStyle(.secondary)
                 }
               } icon: {

@@ -54,7 +54,7 @@ struct CourseMark: View {
   var body: some View {
     if let flag = languageFlag.flatMap(flagEmoji) {
       Text(flag)
-        .font(.largeTitle)
+        .typeStyle(.heroTitle.weight(.regular))
         .minimumScaleFactor(0.5)
         .frame(width: size, height: size)
         .accessibilityLabel(Text(flagLabel))
@@ -167,6 +167,6 @@ struct CatalogSectionHeader<Title: View, Detail: View>: View {
 
   private var detailText: some View {
     detail
-      .font(.footnote.monospacedDigit())
+      .typeStyle(.data)
   }
 }

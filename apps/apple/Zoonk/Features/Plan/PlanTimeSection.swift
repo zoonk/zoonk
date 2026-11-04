@@ -138,7 +138,7 @@ struct PlanTimeSection: View {
           }
         }
       }
-      .font(.subheadline)
+      .typeStyle(.body)
 
       // A goal that isn't an exam can move its date to the day its own time covers everything.
       if goal.kind != .exam, !line.coversEverything, let fittingDate = found?.fittingDate {
@@ -146,7 +146,7 @@ struct PlanTimeSection: View {
       }
     } else if let finish {
       finish
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
     }
   }

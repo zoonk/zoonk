@@ -9,7 +9,7 @@ struct LessonRecapView: View {
       VStack(alignment: .leading, spacing: 12) {
         content
       }
-      .font(.subheadline)
+      .typeStyle(.body)
       .padding(.top, 8)
     } label: {
       Label {
@@ -20,7 +20,7 @@ struct LessonRecapView: View {
 
           if let title {
             LessonRichText(title)
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
         }
@@ -74,7 +74,7 @@ struct LessonRecapView: View {
 
     VStack(alignment: .leading, spacing: 4) {
       Text("Result", tableName: "Player", comment: "Above a worked example's result in a recap")
-        .fontWeight(.medium)
+        .typeWeight(.medium)
         .foregroundStyle(.secondary)
 
       LessonTextBlocks(example.result, mark: recap.mark)

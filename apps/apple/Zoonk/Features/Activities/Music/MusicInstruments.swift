@@ -42,7 +42,7 @@ struct MusicSoundNote: View {
         "The sound couldn't play. You can still see every note.", tableName: "ActivitiesMusic",
         comment: "Under an instrument when the device couldn't play sound"
       )
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
     }
   }
@@ -56,7 +56,7 @@ struct NoteMark: View {
 
   var body: some View {
     Text(label)
-      .font(.caption2.weight(.semibold).monospacedDigit())
+      .typeStyle(.small.weight(.semibold).monospaced())
       .minimumScaleFactor(0.6)
       .lineLimit(1)
       .foregroundStyle(textColor)
@@ -217,7 +217,7 @@ struct PianoKeyboard: View {
           NoteMark(kind: mark, label: nameOf(midi))
         } else if midi % MusicNotes.octave == 0 {
           Text(nameOf(midi))
-            .font(.caption.weight(.medium))
+            .typeStyle(.meta.weight(.medium))
             .foregroundStyle(Color.black.opacity(0.55))
         }
       }
@@ -300,7 +300,7 @@ struct GuitarFretboard: View {
       ForEach(Guitar.tuning.indices.reversed(), id: \.self) { string in
         HStack(spacing: 0) {
           Text(MusicLabels.display(MusicLabels.stringNames[string]))
-            .font(.caption.weight(.medium))
+            .typeStyle(.meta.weight(.medium))
             .foregroundStyle(.secondary)
             .frame(width: nameWidth)
             .accessibilityHidden(true)
@@ -325,7 +325,7 @@ struct GuitarFretboard: View {
 
         ForEach(frets, id: \.self) { fret in
           Text(fret, format: .number)
-            .font(.caption.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.secondary)
             .frame(minWidth: 44, maxWidth: .infinity)
         }
@@ -342,7 +342,7 @@ struct GuitarFretboard: View {
 
       if fret == nil {
         Text(Self.mutedMark)
-          .font(.subheadline.weight(.semibold))
+          .typeStyle(.note.weight(.semibold))
           .foregroundStyle(.secondary)
       } else if fret == 0 {
         Circle().strokeBorder(.primary, lineWidth: 2).frame(width: 14, height: 14)
@@ -359,7 +359,7 @@ struct GuitarFretboard: View {
         onChange(string, nil)
       } label: {
         Text(Self.mutedMark)
-          .font(.subheadline.weight(.semibold))
+          .typeStyle(.body.weight(.semibold))
           .foregroundStyle(current == nil ? AnyShapeStyle(.primary) : AnyShapeStyle(.quaternary))
           .frame(width: 44, height: rowHeight)
           .contentShape(.rect)

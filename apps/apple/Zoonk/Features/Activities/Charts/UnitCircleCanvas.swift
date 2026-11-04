@@ -162,15 +162,15 @@ struct UnitCircleCanvas: View {
   var body: some View {
     ChartsCanvas {
       LessonRichText(fields.frame)
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
 
       HStack(spacing: 16) {
         Text(verbatim: angleText(degrees))
-          .font(.title2.weight(.semibold).monospacedDigit())
+          .typeStyle(.readout)
         ForEach(fields.show, id: \.self) { trig in
           Text(verbatim: "\(trigName(trig)) \(valueText(fields.value(trig, degrees: degrees)))")
-            .font(.subheadline.weight(.medium).monospacedDigit())
+            .typeStyle(.body.weight(.medium).monospaced())
             .foregroundStyle(Self.color(trig))
         }
       }
@@ -185,7 +185,7 @@ struct UnitCircleCanvas: View {
           "As the point turns", tableName: "ActivitiesCharts",
           comment: "Above the sine and cosine waves"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
         waves
       }
@@ -324,7 +324,9 @@ struct UnitCircleCanvas: View {
         Path(ellipseIn: CGRect(x: mark.x - 12, y: mark.y - 12, width: 24, height: 24)),
         with: .style(Color.success), lineWidth: 3)
       canvas.drawChartsLabel(
-        Text(verbatim: angleText(target.degrees)).font(.caption.weight(.semibold)).foregroundStyle(
+        Text(verbatim: angleText(target.degrees)).font(
+          TypeStyle.meta.weight(.semibold).font(in: canvas.environment)
+        ).foregroundStyle(
           Color.success), at: CGPoint(x: mark.x, y: mark.y - 22))
     }
   }

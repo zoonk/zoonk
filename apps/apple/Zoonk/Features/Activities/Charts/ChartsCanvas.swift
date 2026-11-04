@@ -20,7 +20,7 @@ struct ChartsReadout: View {
 
   var body: some View {
     Text(verbatim: text)
-      .font(.title2.weight(.semibold).monospacedDigit())
+      .typeStyle(.readout)
       .foregroundStyle(style)
       .contentTransition(.numericText())
   }
@@ -37,7 +37,7 @@ struct ChartsChoiceStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-      .font(.subheadline.weight(state == .plain ? .regular : .medium).monospacedDigit())
+      .typeStyle(.body.weight(state == .plain ? .regular : .medium).monospaced())
       .foregroundStyle(foreground)
       .multilineTextAlignment(.center)
       .frame(maxWidth: .infinity, minHeight: 44)
@@ -164,7 +164,7 @@ struct ChartsCaption: View {
 
   var body: some View {
     Text(verbatim: text)
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
   }
 }

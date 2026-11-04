@@ -9,7 +9,7 @@ struct EssayGradeSections: View {
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text("Too short to grade", tableName: "Essay", comment: "An essay too short to grade")
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
           if !isClosed {
             Text(
               "Write the whole essay, then send it again.", tableName: "Essay",
@@ -23,12 +23,12 @@ struct EssayGradeSections: View {
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text(MockLabels.range(low: grade.range.low, high: grade.range.high))
-            .font(.largeTitle.weight(.semibold).monospacedDigit())
+            .typeStyle(.momentReadout)
           Text(
             "Estimated score, from 0 to \(MockLabels.number(grade.total.maxScore))",
             tableName: "Essay", comment: "Under an essay's estimated range"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
@@ -42,7 +42,7 @@ struct EssayGradeSections: View {
             .monospacedDigit()
           } label: {
             Text(criterion.name)
-              .fontWeight(criterion.id == grade.nextStep?.criterionId ? .semibold : .regular)
+              .typeWeight(criterion.id == grade.nextStep?.criterionId ? .semibold : .regular)
           }
         }
       } header: {
@@ -53,14 +53,14 @@ struct EssayGradeSections: View {
         if let next = grade.nextStep {
           VStack(alignment: .leading, spacing: 4) {
             if let criterion = grade.nextStepCriterion {
-              Text(criterion.name).font(.headline)
+              Text(criterion.name).typeStyle(.body.weight(.semibold))
             }
             Text(next.text)
           }
         } else {
           VStack(alignment: .leading, spacing: 4) {
             Text("Nothing left to work on", tableName: "Essay", comment: "Full marks")
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
             Text(
               "Every criterion has full marks in this estimate.", tableName: "Essay",
               comment: "Full marks on every criterion"
@@ -117,7 +117,7 @@ struct EssayCommentsSection: View {
                   .foregroundStyle(.secondary)
               }
             }
-            .font(.callout)
+            .typeStyle(.reading)
           } label: {
             Text(criterion.name)
           }

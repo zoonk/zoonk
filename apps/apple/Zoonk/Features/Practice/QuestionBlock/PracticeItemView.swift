@@ -144,7 +144,7 @@ struct PickRule: View {
           comment: "Rule above a multiple-choice question asking for an exact number of options.")
       }
     }
-    .font(.subheadline.weight(.medium))
+    .typeStyle(.note.weight(.medium))
     .foregroundStyle(.secondary)
   }
 }
@@ -207,7 +207,7 @@ struct TrueFalseStatementCard: View {
 
   var body: some View {
     ItemText(statement)
-      .font(.title3.weight(.semibold))
+      .typeStyle(.section)
       .foregroundStyle(result == nil ? .primary : .secondary)
       .padding(20)
       .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
@@ -382,7 +382,7 @@ private struct PairBadge: View {
 
   var body: some View {
     Text(number, format: .number)
-      .font(.caption.monospacedDigit().weight(.semibold))
+      .typeStyle(.meta.weight(.semibold).monospaced())
       .foregroundStyle(Color(.systemBackground))
       .frame(minWidth: 24, minHeight: 24)
       .background(Color.primary, in: Circle())
@@ -404,7 +404,7 @@ struct OrderItemView: View {
         "Tap the steps in order.", tableName: "Practice",
         comment: "Instruction above an ordering question."
       )
-      .font(.subheadline.weight(.medium))
+      .typeStyle(.note.weight(.medium))
       .foregroundStyle(.secondary)
 
       ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
@@ -479,7 +479,7 @@ struct NumericItemView: View {
             localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
           text: Binding(get: { typedText ?? NumericEntryParser.text(for: draft) }, set: type)
         )
-        .font(.title3.monospacedDigit())
+        .typeStyle(.readout.weight(.regular))
         .keyboardType(entry?.kind == .fraction ? .numbersAndPunctuation : .decimalPad)
         .submitLabel(.done)
         .focused($isFocused)
@@ -500,11 +500,11 @@ struct NumericItemView: View {
 
       if isInvalid {
         Text(invalidHint)
-          .font(.subheadline)
+          .typeStyle(.body)
           .foregroundStyle(.destructive)
       } else if let rule {
         Text(rule)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
       }
     }
@@ -586,7 +586,7 @@ struct TypedItemView: View {
           localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
         text: Binding(get: { shown }, set: type)
       )
-      .font(.title3)
+      .typeStyle(.section.weight(.regular))
       .textInputAutocapitalization(.never)
       .autocorrectionDisabled()
       .submitLabel(.done)

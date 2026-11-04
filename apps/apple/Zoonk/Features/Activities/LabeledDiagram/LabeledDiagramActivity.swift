@@ -161,7 +161,7 @@ private struct LabeledDiagramCanvas: View {
     } label: {
       HStack(alignment: .firstTextBaseline, spacing: 12) {
         Text(slot.key)
-          .font(.subheadline.weight(.semibold).monospacedDigit())
+          .typeStyle(.body.weight(.semibold).monospaced())
           .frame(minWidth: 24)
 
         VStack(alignment: .leading, spacing: 2) {
@@ -170,7 +170,7 @@ private struct LabeledDiagramCanvas: View {
               .strikethrough(mark == .wrong)
             if mark == .wrong {
               Text(slot.label)
-                .fontWeight(.semibold)
+                .typeWeight(.semibold)
                 .foregroundStyle(Color.primary)
               if let feedback = fields.mixUpFeedback(correct: slot.label, placed: placed) {
                 LessonRichText(feedback)
@@ -179,7 +179,7 @@ private struct LabeledDiagramCanvas: View {
             }
           } else if let placed {
             Text(placed)
-              .fontWeight(.medium)
+              .typeWeight(.medium)
           } else {
             Group {
               if isActive {
@@ -294,7 +294,7 @@ private struct LabeledDiagramCanvas: View {
       ForEach(fields.slots, id: \.key) { slot in
         HStack(alignment: .firstTextBaseline, spacing: 12) {
           Text(slot.key)
-            .font(.subheadline.weight(.semibold).monospacedDigit())
+            .typeStyle(.body.weight(.semibold).monospaced())
             .frame(minWidth: 24)
           Text(slot.label)
         }

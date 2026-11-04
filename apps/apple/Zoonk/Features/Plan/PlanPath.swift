@@ -43,9 +43,8 @@ struct PlanPathSection: View {
             "\(done) of \(phases.count) phases done", tableName: "Plan",
             comment: "Phases done of the plan's phases"
           )
-          .font(.footnote)
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
-          .monospacedDigit()
         }
       }
     }
@@ -194,7 +193,7 @@ private struct PlanPhaseRow: View {
         "More lessons for this phase are being written.", tableName: "Plan",
         comment: "Note under a phase whose lessons are still being written"
       )
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
     }
   }
@@ -233,12 +232,12 @@ private struct PlanPhaseRow: View {
                 comment: "Name of an unnamed phase by its number")
               : phase.title
           )
-          .fontWeight(phase.state == .current ? .semibold : .regular)
+          .typeWeight(phase.state == .current ? .semibold : .regular)
           .foregroundStyle(phase.state == .done ? .secondary : .primary)
 
           if let meta {
             meta
-              .font(.caption)
+              .typeStyle(.meta)
               .foregroundStyle(.secondary)
           }
         }
@@ -257,7 +256,7 @@ private struct PlanPhaseRow: View {
 
         if let until {
           until
-            .font(.caption)
+            .typeStyle(.meta)
         }
       }
     }
@@ -384,7 +383,7 @@ private struct PlanChapterRow: View {
 
           if let note {
             note
-              .font(.caption)
+              .typeStyle(.meta)
               .foregroundStyle(.secondary)
           }
         }
@@ -522,7 +521,7 @@ struct PlanSyllabusSection: View {
             Text("Lessons studied", tableName: "Plan", comment: "What the modules' bars measure")
           }
         }
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
     } footer: {
@@ -574,13 +573,12 @@ struct SyllabusSubjectRow: View {
           .foregroundStyle(subject.notPlannedReason == nil ? .primary : .secondary)
       } value: {
         Text(share, format: .percent.precision(.fractionLength(0)))
-          .font(.subheadline)
-          .monospacedDigit()
+          .typeStyle(.body.monospaced())
       }
 
       if subject.notPlannedReason != nil {
         Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.secondary)
       } else {
         ProgressView(value: share)
@@ -648,7 +646,7 @@ struct PlanChallengeLabel: View {
                 comment: "What a phase challenge is, under its row")
             }
           }
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.secondary)
         }
       }

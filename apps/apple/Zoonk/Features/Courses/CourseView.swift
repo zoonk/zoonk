@@ -157,14 +157,14 @@ private struct CourseHeroSection: View {
         }
 
         Text(detail.course.title)
-          .font(.largeTitle.bold())
+          .typeStyle(.heroTitle)
           .fixedSize(horizontal: false, vertical: true)
           .accessibilityAddTraits(.isHeader)
           .heroTitle()
 
         if let promise {
           Text(promise)
-            .font(.title3)
+            .typeStyle(.section.weight(.regular))
             .foregroundStyle(.secondary)
         }
 
@@ -200,7 +200,7 @@ private struct CourseExamEyebrow: View {
           comment: "An exam course's next sitting: its days, then how long until it")
       }
     }
-    .font(.footnote.monospacedDigit())
+    .typeStyle(.data)
     .foregroundStyle(.secondary)
   }
 
@@ -255,7 +255,7 @@ struct PlanLine: View {
       Image(systemName: "map")
         .accessibilityHidden(true)
     }
-    .font(.subheadline)
+    .typeStyle(.note)
     .foregroundStyle(.secondary)
   }
 }
@@ -326,7 +326,7 @@ private struct CourseClosingSection: View {
               comment: "A course page's last call")
           }
         }
-        .font(.title2.weight(.semibold))
+        .typeStyle(.section)
         .accessibilityAddTraits(.isHeader)
 
         if goal == nil {

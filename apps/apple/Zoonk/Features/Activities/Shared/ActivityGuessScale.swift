@@ -82,7 +82,7 @@ struct ActivityGuessScaleView: View {
             comment: "Before the learner guesses on a scale")
         }
       }
-      .font(.title3.weight(.semibold).monospacedDigit())
+      .typeStyle(.readout)
 
       if let actual {
         revealed(actual: actual)
@@ -97,9 +97,9 @@ struct ActivityGuessScaleView: View {
             "Your guess", tableName: "Activities",
             comment: "VoiceOver: the slider the learner guesses with")
         } minimumValueLabel: {
-          Text(format(scale.min)).font(.caption.monospacedDigit())
+          Text(format(scale.min)).typeStyle(.data)
         } maximumValueLabel: {
-          Text(format(scale.max)).font(.caption.monospacedDigit())
+          Text(format(scale.max)).typeStyle(.data)
         }
         .accessibilityValue(
           guess.map { Text(verbatim: format($0)) }
@@ -122,7 +122,7 @@ struct ActivityGuessScaleView: View {
         Spacer()
         Text(format(scale.max))
       }
-      .font(.caption.monospacedDigit())
+      .typeStyle(.data)
       .foregroundStyle(.secondary)
       .accessibilityHidden(true)
 
@@ -130,7 +130,7 @@ struct ActivityGuessScaleView: View {
         "Real value: \(format(actual))", tableName: "Activities",
         comment: "The real value revealed after a guess"
       )
-      .font(.headline.monospacedDigit())
+      .typeStyle(.body.weight(.semibold).monospaced())
       .foregroundStyle(Color.success)
     }
   }

@@ -105,7 +105,7 @@ private struct ChanceSimulationView: View {
     ChartsCanvas {
       HStack(alignment: .top) {
         VStack(alignment: .leading, spacing: 2) {
-          Text(verbatim: runsLabel).font(.subheadline).foregroundStyle(.secondary)
+          Text(verbatim: runsLabel).typeStyle(.note).foregroundStyle(.secondary)
           ChartsCaption(fields.hitLabel)
 
           if isRunning, let guess {
@@ -113,7 +113,7 @@ private struct ChanceSimulationView: View {
               "Your guess: \(percentText(guess))", tableName: "ActivitiesCharts",
               comment: "The learner's guess next to a simulation"
             )
-            .font(.footnote.weight(.medium))
+            .typeStyle(.note.weight(.medium))
           }
         }
 
@@ -130,7 +130,7 @@ private struct ChanceSimulationView: View {
           "Pick your guess, then check it to run the simulation.", tableName: "ActivitiesCharts",
           comment: "Before a simulation runs"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, minHeight: 128)
@@ -187,7 +187,7 @@ private struct ChanceSimulationView: View {
       "\(fields.hitLabel) in \(percentText(share)) of the runs. The exact chance is \(exact).",
       tableName: "ActivitiesCharts", comment: "What a simulation found, next to the exact chance"
     )
-    .font(.subheadline.monospacedDigit())
+    .typeStyle(.body.monospaced())
   }
 
   private var runAgain: some View {
@@ -255,7 +255,7 @@ private struct ChanceSimulationView: View {
               "Your guess: \(percentText(guess))", tableName: "ActivitiesCharts",
               comment: "The learner's guess next to a simulation"
             )
-            .font(.caption2)
+            .typeStyle(.small)
             .foregroundStyle(isGuessRight ? Color.success : .destructive)
           }
       }
@@ -448,7 +448,7 @@ private struct SamplingSimulationView: View {
               "True value: \(valueText(truth, digits: digits))", tableName: "ActivitiesCharts",
               comment: "The population's real value on a sampling chart"
             )
-            .font(.caption2.weight(.medium))
+            .typeStyle(.small.weight(.medium))
             .foregroundStyle(.orange)
           }
       }
@@ -482,10 +482,9 @@ private struct SamplingSimulationView: View {
 
       VStack(alignment: .leading, spacing: 4) {
         HStack {
-          Text(verbatim: sizeLabel).font(.subheadline)
+          Text(verbatim: sizeLabel).typeStyle(.body)
           Spacer()
-          Text(verbatim: ActivityNumberFormat.format(Double(size))).font(
-            .subheadline.weight(.medium).monospacedDigit())
+          Text(verbatim: ActivityNumberFormat.format(Double(size))).typeStyle(.body.weight(.medium).monospaced())
         }
         .accessibilityHidden(true)
 
@@ -498,11 +497,11 @@ private struct SamplingSimulationView: View {
           Text(verbatim: sizeLabel)
         } minimumValueLabel: {
           Text(verbatim: ActivityNumberFormat.format(Double(smallest)))
-            .font(.caption)
+            .typeStyle(.meta)
             .accessibilityHidden(true)
         } maximumValueLabel: {
           Text(verbatim: ActivityNumberFormat.format(Double(fields.sampleSizes.last ?? smallest)))
-            .font(.caption)
+            .typeStyle(.meta)
             .accessibilityHidden(true)
         }
         .disabled(isChecked)
@@ -571,7 +570,7 @@ private struct SamplingSimulationView: View {
         "95% of samples land within", tableName: "ActivitiesCharts",
         comment: "Above a sampling simulation's margin of error"
       )
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
       ChartsCaption(fields.populationLabel)
     }
@@ -588,7 +587,7 @@ private struct SamplingSimulationView: View {
       RoundedRectangle(cornerRadius: 2).fill(color).frame(width: 10, height: 10)
       Text(verbatim: text)
     }
-    .font(.caption.monospacedDigit().weight(isCurrent ? .medium : .regular))
+    .typeStyle(.meta.weight(isCurrent ? .medium : .regular).monospaced())
     .foregroundStyle(isCurrent ? .primary : .secondary)
   }
 
@@ -606,7 +605,7 @@ private struct SamplingSimulationView: View {
         .accessibilityHidden(true)
       }
     }
-    .font(.subheadline.monospacedDigit())
+    .typeStyle(.data)
     .foregroundStyle(.secondary)
   }
 
@@ -637,25 +636,25 @@ private struct SamplingSimulationView: View {
         "What the math says", tableName: "ActivitiesCharts",
         comment: "Title above the expected margins"
       )
-      .font(.subheadline.weight(.medium))
+      .typeStyle(.body.weight(.medium))
 
       ForEach(fields.sampleSizes, id: \.self) { size in
         LabeledContent {
           Text(
             verbatim: marginText(SamplingModel.standardError(fields.population, size: size) * 1.96)
           )
-          .fontWeight(.medium)
+          .typeWeight(.medium)
         } label: {
           Text(verbatim: ActivityNumberFormat.format(Double(size)))
         }
-        .font(.subheadline.monospacedDigit())
+        .typeStyle(.body.monospaced())
       }
 
       Text(
         "From \(ActivityNumberFormat.format(Double(smallest))) to \(ActivityNumberFormat.format(Double(largest))), the margin shrinks to \(ActivityNumberFormat.format(ratio * 100, unit: "%", digits: 1)) of its size.",
         tableName: "ActivitiesCharts", comment: "How much a margin of error shrinks as samples grow"
       )
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
     }
     .padding()

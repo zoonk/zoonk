@@ -42,7 +42,7 @@ struct CatalogStartActions: View {
 
       if let note {
         note
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
       } else if session.authenticatedSession == nil {
         Text(
@@ -50,7 +50,7 @@ struct CatalogStartActions: View {
           tableName: "Courses",
           comment: "Note under a course's start buttons for someone who isn't signed in"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
     }

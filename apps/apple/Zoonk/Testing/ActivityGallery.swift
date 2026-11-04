@@ -190,7 +190,7 @@
           verbatim: [result.correctAnswer, result.feedback].compactMap { $0 }.joined(
             separator: "\n")
         )
-        .font(.footnote)
+        .typeStyle(.note)
       }
     }
 

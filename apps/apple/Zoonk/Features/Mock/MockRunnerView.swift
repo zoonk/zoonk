@@ -205,7 +205,7 @@ private struct MockQuestionMeta: View {
           .monospacedDigit()
       }
     }
-    .font(.caption.monospaced())
+    .typeStyle(.data)
     .foregroundStyle(.secondary)
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(accessibilityPlace)
@@ -323,7 +323,7 @@ private struct MockEssayBox: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text((view.essayRubric ?? .custom).writingName)
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .accessibilityHidden(true)
 
       let words = WordCount.count(text.wrappedValue)
@@ -339,7 +339,7 @@ private struct MockEssayBox: View {
 
       if words > 0 {
         EssayWords.text(words)
-          .font(.caption.monospaced())
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
       }
     }
@@ -405,7 +405,7 @@ private struct MovesNote: View {
         Text("Answer each question to move on.", tableName: "Mock", comment: "Answers required")
       }
     }
-    .font(.footnote)
+    .typeStyle(.note)
     .foregroundStyle(.secondary)
   }
 }
@@ -429,7 +429,7 @@ private struct ItemClock: ViewModifier {
             HStack {
               Spacer()
               Text(timerInterval: Date.now...max(deadline, .now), countsDown: true)
-                .font(.caption.monospacedDigit())
+                .typeStyle(.data)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(
                   Text(
@@ -537,7 +537,7 @@ private struct MockAnswerSheet: View {
     List {
       if isBeside {
         Text("Answer sheet", tableName: "Mock", comment: "The answer sheet")
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           .accessibilityAddTraits(.isHeader)
           .listRowBackground(Color.clear)
       }
@@ -571,7 +571,7 @@ private struct MockAnswerSheet: View {
                     localized: "Section \(section.index + 1)", table: "Mock",
                     comment: "A section without a name"))
             }
-            .fontWeight(section.status == .current ? .semibold : .regular)
+            .typeWeight(section.status == .current ? .semibold : .regular)
           }
         } header: {
           Text("Sections", tableName: "Mock", comment: "The mock's sections")
@@ -608,7 +608,7 @@ private struct MockAnswerSheet: View {
             Text("Question \(question.number)", tableName: "Mock", comment: "A question by number")
           }
         }
-        .fontWeight(isCurrent ? .semibold : .regular)
+        .typeWeight(isCurrent ? .semibold : .regular)
         .foregroundStyle(.primary)
 
         Spacer()

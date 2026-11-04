@@ -92,11 +92,11 @@ struct ConversationIntro<Footer: View>: View {
           "About \(length)\u{00A0}· Level \(intro.level)", tableName: "Voice",
           comment: "A call's length and level, over its title"
         )
-        .font(.caption.monospaced())
+        .typeStyle(.data)
         .foregroundStyle(.tertiary)
 
         Text(intro.speakingTask?.task.name ?? intro.title)
-          .font(.title2.weight(.semibold))
+          .typeStyle(.section)
 
         Text(intro.speakingTask?.card.summary ?? intro.situation)
           .foregroundStyle(.secondary)
@@ -106,7 +106,7 @@ struct ConversationIntro<Footer: View>: View {
             "It ends on its own after about \(length).", tableName: "Voice",
             comment: "An exam task's call stops by itself at about its length"
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
         }
       }
@@ -138,7 +138,7 @@ struct ConversationIntro<Footer: View>: View {
             Text(objective.label)
               .typesettingLanguage(.init(identifier: intro.targetLanguage))
             Text(objective.description)
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
         }
@@ -237,10 +237,10 @@ struct CallMicrophoneOff: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       Self.title
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       Self.text(name: name)
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -323,7 +323,7 @@ struct CharacterRow: View {
 
     HStack(spacing: 12) {
       Text(character.name.prefix(1).uppercased())
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.note.weight(.medium))
         .frame(minWidth: 32, minHeight: 32)
         .background(Color(.secondarySystemFill), in: .circle)
         .overlay {
@@ -333,7 +333,7 @@ struct CharacterRow: View {
 
       VStack(alignment: .leading, spacing: 2) {
         Text(character.name)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         Group {
           if let role = intro.speakingTask?.task.role {
@@ -347,7 +347,7 @@ struct CharacterRow: View {
             Text("\(character.role)\u{00A0}· \(character.place)")
           }
         }
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
     }
@@ -368,26 +368,26 @@ private struct ExamTaskCard: View {
 
       if let text = card.text {
         VStack(alignment: .leading, spacing: 4) {
-          Text(text.title).font(.headline)
+          Text(text.title).typeStyle(.body.weight(.semibold))
           Text(text.body)
         }
       }
 
       if let table = card.table {
         VStack(alignment: .leading, spacing: 8) {
-          Text(table.title).font(.headline)
+          Text(table.title).typeStyle(.body.weight(.semibold))
 
           Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 4) {
             GridRow {
               ForEach(table.columns, id: \.self) { column in
-                Text(column).font(.subheadline.weight(.semibold))
+                Text(column).typeStyle(.body.weight(.semibold))
               }
             }
 
             ForEach(Array(table.rows.enumerated()), id: \.offset) { _, row in
               GridRow {
                 ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
-                  Text(cell).font(.subheadline)
+                  Text(cell).typeStyle(.body)
                 }
               }
             }

@@ -254,7 +254,7 @@ private struct ScoreTrend: View {
           "Your score shows after your first answers.", tableName: "Progress",
           comment: "In place of the Score trend before the learner has answers"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
     }
@@ -266,7 +266,7 @@ extension ScoreTrend {
   fileprivate var number: some View {
     if let score {
       Text(metricPercent(score.performance.score))
-        .font(.subheadline.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.secondary)
     }
   }
@@ -322,7 +322,7 @@ private struct PatternsOverview: View {
         Image(systemName: "chevron.forward")
           .imageScale(.small)
       }
-      .font(.subheadline)
+      .typeStyle(.body)
     }
     .buttonStyle(.borderless)
   }
@@ -345,7 +345,7 @@ private struct PatternsOverview: View {
     } label: {
       label
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .padding(.vertical, 12)
   }
 }
@@ -377,7 +377,7 @@ private struct PatternsLinkRow: View {
         .frame(maxWidth: .infinity, alignment: .leading)
 
         Image(systemName: "chevron.forward")
-          .font(.footnote.weight(.semibold))
+          .typeStyle(.note.weight(.semibold))
           .foregroundStyle(.tertiary)
           .accessibilityHidden(true)
       }

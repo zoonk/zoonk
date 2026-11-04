@@ -157,19 +157,19 @@ private struct PatternRow: View {
     VStack(alignment: .leading, spacing: 1) {
       HStack(alignment: .firstTextBaseline, spacing: 6) {
         Text(name)
-          .font(.subheadline.weight(isBest ? .semibold : .regular))
+          .typeStyle(.body.weight(isBest ? .semibold : .regular))
           .lineLimit(isStacked ? nil : 1)
 
         if let hours {
           Text(hours)
-            .font(.caption2.monospacedDigit())
+            .typeStyle(.small.monospaced())
             .foregroundStyle(.secondary)
             .fixedSize()
         }
       }
 
       Text(answers)
-        .font(.caption.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.secondary)
     }
   }
@@ -186,7 +186,7 @@ private struct PatternRow: View {
 
   private var share: some View {
     Text(performance.totalAnswers > 0 ? wholePercent(performance.score) : "–")
-      .font(.subheadline.monospacedDigit())
+      .typeStyle(.data)
       .foregroundStyle(isCounted ? Color.primary : Color.secondary)
   }
 
@@ -274,7 +274,7 @@ struct PatternsNote: View {
 
   var body: some View {
     Text(sentences.joinedSentences())
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
       .frame(maxWidth: .infinity, alignment: .leading)
   }

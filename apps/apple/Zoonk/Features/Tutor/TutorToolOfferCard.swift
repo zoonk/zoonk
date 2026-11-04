@@ -46,7 +46,7 @@ struct TutorToolOfferCard: View {
       VStack(alignment: .leading, spacing: 12) {
         if let description = content.description {
           description
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
         }
 

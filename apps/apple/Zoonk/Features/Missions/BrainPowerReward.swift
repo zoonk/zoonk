@@ -19,7 +19,7 @@ struct BrainPowerReward: View {
           Image(systemName: earned ? "checkmark" : "brain")
         }
         .labelStyle(.titleAndIcon)
-        .font(.subheadline.weight(.semibold).monospacedDigit())
+        .typeStyle(.body.weight(.semibold).monospaced())
         .foregroundStyle(earned ? Color(.systemBackground) : .brain)
         .padding(.horizontal, earned ? 6 : 0)
         .padding(.vertical, earned ? 2 : 0)
@@ -30,7 +30,7 @@ struct BrainPowerReward: View {
         }
 
         Text("Brain Power", tableName: "Today", comment: "Under the missions' bonus")
-          .font(.caption2)
+          .typeStyle(.small)
           .foregroundStyle(.secondary)
       }
     }
@@ -47,13 +47,13 @@ struct BrainPowerReward: View {
     .popover(isPresented: $explains) {
       VStack(alignment: .leading, spacing: 8) {
         Text("Brain Power", tableName: "Today", comment: "Title of what Brain Power is")
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         Text(
           "What you've learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today's missions adds +\(points).",
           tableName: "Today", comment: "What Brain Power is; the number is the missions' bonus"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
       .padding()

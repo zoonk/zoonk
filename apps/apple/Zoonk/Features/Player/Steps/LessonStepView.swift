@@ -109,7 +109,7 @@ private struct HookStepView: View {
       Text(
         "Guess first", tableName: "Player", comment: "Above a hook's question: a guess never counts"
       )
-      .font(.caption.monospaced())
+      .typeStyle(.data)
       .foregroundStyle(.secondary)
       LessonQuestionText(text: question)
       StepMedia(step: step, visual: content.visual, asks: true)
@@ -120,7 +120,7 @@ private struct HookStepView: View {
       }
 
       LessonTextBlocks(content.text ?? "")
-        .font(.title2.weight(.semibold))
+        .typeStyle(.lessonText)
     }
   }
 
@@ -166,7 +166,7 @@ private struct ExplanationStepView: View {
       }
 
       LessonTextBlocks(content.text)
-        .font(.body)
+        .typeStyle(.lessonText)
     case .turn:
       if isPaneSplit {
         StepMedia(step: step, visual: content.visual, hero: true)
@@ -214,7 +214,7 @@ private struct WorkedExampleStepView: View {
   @ViewBuilder
   private var problem: some View {
     Text("Worked example", tableName: "Player", comment: "Label above a worked example")
-      .font(.caption.monospaced())
+      .typeStyle(.data)
       .foregroundStyle(.secondary)
 
     if let title = content.title {
@@ -231,7 +231,7 @@ private struct WorkedExampleStepView: View {
       ForEach(Array(content.steps.prefix(shown).enumerated()), id: \.offset) { index, solved in
         HStack(alignment: .firstTextBaseline, spacing: 12) {
           Text(index + 1, format: .number)
-            .font(.subheadline.monospacedDigit().weight(.semibold))
+            .typeStyle(.note.weight(.semibold).monospaced())
             .foregroundStyle(.secondary)
           VStack(alignment: .leading, spacing: 4) {
             LessonTextBlocks(solved.text)
@@ -246,7 +246,7 @@ private struct WorkedExampleStepView: View {
 
     if shown >= content.steps.count {
       LessonTextBlocks(content.result)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
     }
   }
 }
@@ -305,7 +305,7 @@ private struct TypedAnswerStepView: View {
         } icon: {
           Image(systemName: "pencil.line")
         }
-        .font(.caption.monospaced())
+        .typeStyle(.data)
         .foregroundStyle(.secondary)
       }
 
@@ -422,14 +422,14 @@ private struct SpokenAnswerStepView: View {
   private var screen: some View {
     if mode == .speak {
       Text("Tap and say it out loud", tableName: "Player", comment: "Above a sentence to say")
-        .font(.caption.monospaced())
+        .typeStyle(.data)
         .foregroundStyle(.secondary)
     }
 
     LessonQuestionText(text: content.prompt)
     VStack(alignment: .leading, spacing: 4) {
       Text(content.targetText)
-        .font(.title3.weight(.medium))
+        .typeStyle(.section.weight(.medium))
       if let romanization = content.romanization {
         Text(romanization).foregroundStyle(.secondary)
       }
@@ -466,7 +466,7 @@ private struct SpokenAnswerStepView: View {
             }
           }
         }
-        .font(.subheadline)
+        .typeStyle(.body)
       }
 
       LessonAnswerField(
@@ -521,7 +521,7 @@ private struct SummaryStepView: View {
 
   var body: some View {
     Text("Summary", tableName: "Player", comment: "Title of a lesson's summary screen")
-      .font(.title2.weight(.semibold))
+      .typeStyle(.pageTitle)
       .accessibilityAddTraits(.isHeader)
 
     VStack(alignment: .leading, spacing: 12) {

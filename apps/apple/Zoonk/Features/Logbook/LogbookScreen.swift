@@ -354,12 +354,12 @@ private struct LogbookSteps: View {
     VStack(alignment: .leading, spacing: 6) {
       if let eyebrow {
         eyebrow
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
       }
 
       title
-        .font(.largeTitle.bold())
+        .typeStyle(.heroTitle)
         .accessibilityAddTraits(.isHeader)
         .accessibilityFocused($focusedStep, equals: step)
 
@@ -533,11 +533,11 @@ private struct WeekRings: View {
 
         VStack(spacing: 4) {
           Image(systemName: studied ? "checkmark.circle.fill" : "circle")
-            .font(.title3)
+            .typeStyle(.section.weight(.regular))
             .foregroundStyle(studied ? AnyShapeStyle(.success) : AnyShapeStyle(.quaternary))
 
           Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
-            .font(.caption2)
+            .typeStyle(.small)
             .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)

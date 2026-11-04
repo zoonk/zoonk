@@ -53,11 +53,11 @@ struct PlusNotice<Action: View>: View {
             "Available with Plus",
             tableName: "Subscriptions",
             comment: "Title of the notice on a feature the learner's plan doesn't include"))
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         if let description {
           description
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
         }
 

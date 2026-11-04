@@ -192,7 +192,7 @@ struct DistributionExplorerCanvas: View {
           "\(fields.valueLabel) from \(ActivityNumberFormat.format(handles.from)) to \(ActivityNumberFormat.format(handles.to))",
           tableName: "ActivitiesCharts", comment: "The range between a distribution's two handles"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
 
         Spacer()
@@ -232,7 +232,7 @@ struct DistributionExplorerCanvas: View {
                 verbatim:
                   "\(ActivityNumberFormat.format(fields.target.from)) – \(ActivityNumberFormat.format(fields.target.to)): \(percentText(DistributionModel.percent(fields.distribution, fields.target)))"
               )
-              .font(.caption.weight(.semibold).monospacedDigit())
+              .typeStyle(.meta.weight(.semibold).monospaced())
               .foregroundStyle(.orange)
             }
         }
@@ -301,7 +301,7 @@ struct DistributionExplorerCanvas: View {
 
   private func tail(_ share: Double) -> some View {
     Text(verbatim: percentText(share))
-      .font(.caption2.monospacedDigit())
+      .typeStyle(.small.monospaced())
       .foregroundStyle(.secondary)
       .chartsLabelHalo()
       .accessibilityHidden(true)

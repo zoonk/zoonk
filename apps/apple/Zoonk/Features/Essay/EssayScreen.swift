@@ -127,7 +127,7 @@ private struct EssayContent: View {
         List {
           Section {
             ItemText(essay.question)
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
           } footer: {
             Text(
               "You skipped this essay.", tableName: "Essay",
@@ -237,7 +237,7 @@ private struct EssayContent: View {
     if let context = essay.context, !context.isEmpty {
       Section {
         ItemText(context)
-          .font(.callout)
+          .typeStyle(.reading)
       } header: {
         Text(essay.rubric.textsLabel)
       }
@@ -245,7 +245,7 @@ private struct EssayContent: View {
 
     Section {
       ItemText(essay.question)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
     }
   }
 
@@ -257,7 +257,7 @@ private struct EssayContent: View {
           VStack(alignment: .leading, spacing: 4) {
             if let criterion = grade.nextStepCriterion {
               Text("Next step: \(criterion.name)", tableName: "Essay", comment: "Rewrite guide")
-                .font(.headline)
+                .typeStyle(.body.weight(.semibold))
             }
             Text(next.text)
           }
@@ -346,7 +346,7 @@ private struct EssayContent: View {
         .foregroundStyle(.secondary)
       }
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 

@@ -19,7 +19,7 @@ struct TutorPlanChangeCard: View {
 
         if let status = statusLine {
           status
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
             .accessibilityFocused($isResultFocused)
         }
@@ -31,7 +31,7 @@ struct TutorPlanChangeCard: View {
             "We couldn't save your answer. Try again.", tableName: "Tutor",
             comment: "Answering a plan change the buddy proposed failed"
           )
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.destructive)
         }
       }
@@ -202,7 +202,7 @@ struct TutorMemoryUpdate: View {
         .buttonStyle(.borderless)
       }
     }
-    .font(.footnote)
+    .typeStyle(.note)
     .foregroundStyle(.secondary)
   }
 
@@ -233,12 +233,12 @@ struct TutorMissionMoment: View {
           "Mission done", tableName: "Tutor",
           comment: "Asking the buddy completed one of the day's missions"
         )
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
         Text(
           "Today's missions: \(done) of \(moment.missions.count)", tableName: "Tutor",
           comment: "The day's missions done, after asking the buddy"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
     } icon: {

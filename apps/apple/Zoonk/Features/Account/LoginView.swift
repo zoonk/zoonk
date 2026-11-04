@@ -8,14 +8,14 @@ struct LoginView: View {
       VStack(spacing: 24) {
         VStack(spacing: 8) {
           Image(systemName: "person.crop.circle.badge.checkmark")
-            .font(.largeTitle)
+            .typeStyle(.heroTitle.weight(.regular))
             .imageScale(.large)
             .symbolRenderingMode(.hierarchical)
             .foregroundStyle(.tint)
             .accessibilityHidden(true)
 
           Text(title)
-            .font(.title2.bold())
+            .typeStyle(.section)
             .multilineTextAlignment(.center)
             .accessibilityAddTraits(.isHeader)
             .heroTitle()
@@ -63,7 +63,7 @@ struct LoginView: View {
               .fixedSize(horizontal: false, vertical: true)
               .multilineTextAlignment(.center)
             }
-            .font(.body.weight(.medium))
+            .typeStyle(.body.weight(.medium))
             .padding(.horizontal, 16)
             .authenticationButtonFrame()
             .foregroundStyle(.tint)
@@ -93,7 +93,7 @@ struct LoginView: View {
           comment:
             "Legal agreement below the sign-in methods; the arguments are the links to the terms of service and the privacy policy"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
         .multilineTextAlignment(.center)
       }
@@ -145,7 +145,7 @@ struct AccountFailureMessage: View {
       } icon: {
         Image(systemName: "exclamationmark.circle")
       }
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.destructive)
       .multilineTextAlignment(.center)
       .accessibilityElement(children: .combine)
