@@ -14,7 +14,7 @@
     <string name="stats_part_failed">We couldn\'t load this part.</string>
 
     <string name="stats_energy_average">Average %1$s</string>
-    <string name="stats_study_days">Study days</string>
+    <string name="stats_days_studied">Days studied</string>
     <plurals name="stats_lessons_time">
         <item quantity="one">%1$s lesson · %2$s</item>
         <item quantity="other">%1$s lessons · %2$s</item>

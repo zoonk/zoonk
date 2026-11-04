@@ -7,12 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -21,18 +17,12 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,11 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
@@ -66,23 +55,20 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyGlasses
-import com.zoonk.android.ui.characters.BuddyGlassesPicker
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyLook
-import com.zoonk.android.ui.characters.BuddyPicker
-import com.zoonk.android.ui.characters.BuddyStage
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.buddyStageName
 import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.characters.worn
-import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageHeader
-import com.zoonk.android.ui.components.SectionHeader
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -184,10 +170,14 @@ fun PreferencesScreen(
                     Modifier
                         .widthIn(max = 640.dp)
                         .fillMaxWidth()
-                        .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
+                        .padding(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
-                PageHeader(stringResource(R.string.settings_preferences), stringResource(R.string.settings_preferences_description))
+                PageHeader(
+                    stringResource(R.string.settings_preferences),
+                    stringResource(R.string.settings_preferences_description),
+                    Modifier.padding(horizontal = LIST_ITEM_INSET),
+                )
 
                 when (val state = profile) {
                     is LoadState.Loaded -> {
@@ -225,22 +215,17 @@ private fun BuddySection(
     val look = summaryLook.copy(kind = kind, glasses = glasses)
     val editLabel = if (profile.buddy.picked) R.string.settings_preferences_change else R.string.settings_preferences_choose_buddy
 
-    Section(stringResource(R.string.settings_preferences_buddy)) {
-        OutlinedCard(Modifier.fillMaxWidth()) {
-            ListItem(
-                leadingContent = { Buddy(look, Modifier.size(40.dp)) },
-                headlineContent = { Text(buddyName(kind, profile.buddy.name)) },
-                supportingContent = {
-                    Text(stringResource(R.string.settings_preferences_buddy_line, buddyStageName(look.stage), stringResource(glasses.worn)))
-                },
-            )
-            OutlinedButton(
-                onClick = { preferences.editBuddy(true) },
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-            ) {
-                Text(stringResource(editLabel))
-            }
-        }
+    SettingsSection(stringResource(R.string.settings_preferences_buddy)) {
+        ListRow(
+            leading = { Buddy(look, Modifier.size(36.dp)) },
+            headline = { Text(buddyName(kind, profile.buddy.name), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            supporting = {
+                Text(stringResource(R.string.settings_preferences_buddy_line, buddyStageName(look.stage), stringResource(glasses.worn)))
+            },
+            trailing = {
+                OutlinedButton(onClick = { preferences.editBuddy(true) }, size = ButtonSize.Small) { Text(stringResource(editLabel)) }
+            },
+        )
     }
 
     if (preferences.isEditingBuddy) {
@@ -270,20 +255,20 @@ internal fun LessonsSection(
         minutes?.let { stringResource(R.string.settings_preferences_limit_a_day, formatMinutes(it.toInt(), locale)) }
             ?: stringResource(R.string.settings_preferences_no_limit)
 
-    Section(stringResource(R.string.settings_preferences_lessons)) {
-        OutlinedCard(Modifier.fillMaxWidth()) {
+    SettingsSection(stringResource(R.string.settings_preferences_lessons)) {
+        Column {
             SwitchRow(
                 title = stringResource(R.string.settings_preferences_sounds),
                 description = stringResource(R.string.settings_preferences_sounds_description),
                 checked = profile.soundsEnabled,
                 onCheckedChange = preferences::setSoundsEnabled,
             )
-            HorizontalDivider()
+            ListDivider()
             Box {
-                ListItem(
-                    headlineContent = { Text(stringResource(R.string.settings_preferences_daily_limit)) },
-                    supportingContent = { Text(stringResource(R.string.settings_preferences_daily_limit_description)) },
-                    trailingContent = { Text(limitLabel(profile.dailyLimitMinutes)) },
+                ListRow(
+                    headline = { Text(stringResource(R.string.settings_preferences_daily_limit)) },
+                    supporting = { Text(stringResource(R.string.settings_preferences_daily_limit_description)) },
+                    trailing = { SettingValue(limitLabel(profile.dailyLimitMinutes)) },
                     modifier = Modifier.clickable(role = Role.DropdownList) { isChoosingLimit = true },
                 )
                 DropdownMenu(
@@ -336,15 +321,13 @@ internal fun UsageDataSection(
     usageDataSharing: Boolean?,
     preferences: PreferencesViewModel,
 ) {
-    Section(stringResource(R.string.settings_your_data)) {
-        OutlinedCard(Modifier.fillMaxWidth()) {
-            SwitchRow(
-                title = stringResource(R.string.settings_preferences_share_usage_data),
-                description = stringResource(R.string.settings_preferences_share_usage_data_description),
-                checked = profile.shareUsageData ?: (usageDataSharing == true),
-                onCheckedChange = preferences::setShareUsageData,
-            )
-        }
+    SettingsSection(stringResource(R.string.settings_your_data)) {
+        SwitchRow(
+            title = stringResource(R.string.settings_preferences_share_usage_data),
+            description = stringResource(R.string.settings_preferences_share_usage_data_description),
+            checked = profile.shareUsageData ?: (usageDataSharing == true),
+            onCheckedChange = preferences::setShareUsageData,
+        )
     }
 }
 
@@ -355,12 +338,18 @@ private fun SwitchRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    ListItem(
-        headlineContent = { Text(title) },
-        supportingContent = { Text(description) },
-        trailingContent = { Switch(checked = checked, onCheckedChange = null) },
+    ListRow(
+        headline = { Text(title) },
+        supporting = { Text(description) },
+        trailing = { Switch(checked = checked, onCheckedChange = null) },
         modifier = Modifier.toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
     )
+}
+
+/** What a row is set to, at its end in quiet words (main's select). */
+@Composable
+private fun SettingValue(text: String) {
+    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
 /** Android keeps each app's language itself from API 33; below it the app follows the system's. */
@@ -370,28 +359,12 @@ private fun LanguageSection() {
     val context = LocalContext.current
     val locale = currentLocale()
 
-    Section(stringResource(R.string.settings_preferences_language)) {
-        OutlinedCard(Modifier.fillMaxWidth()) {
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.settings_preferences_app_language)) },
-                supportingContent = { Text(stringResource(R.string.settings_preferences_on_this_device)) },
-                trailingContent = { Text(locale.getDisplayLanguage(locale).replaceFirstChar { it.titlecase(locale) }) },
-                modifier =
-                    Modifier.clickable(role = Role.Button) {
-                        context.startActivity(Intent(Settings.ACTION_APP_LOCALE_SETTINGS, "package:${context.packageName}".toUri()))
-                    },
-            )
-        }
-    }
-}
-
-@Composable
-private fun Section(
-    title: String,
-    content: @Composable () -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(title)
-        content()
+    SettingsSection(stringResource(R.string.settings_preferences_language)) {
+        ListRow(
+            headline = { Text(stringResource(R.string.settings_preferences_app_language)) },
+            supporting = { Text(stringResource(R.string.settings_preferences_on_this_device)) },
+            trailing = { SettingValue(locale.getDisplayLanguage(locale).replaceFirstChar { it.titlecase(locale) }) },
+            onClick = { context.startActivity(Intent(Settings.ACTION_APP_LOCALE_SETTINGS, "package:${context.packageName}".toUri())) },
+        )
     }
 }

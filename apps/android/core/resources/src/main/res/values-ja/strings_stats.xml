@@ -29,6 +29,7 @@
   "stats_day_no_study": "444ee39aac0e9a72e3830858a59bab82469e757b159c5096b59aa062f62dc730",
   "stats_days": "dfc29661c42d75f015a772b97f713074ea417fc00e88546fc522332bf4cd2bbd",
   "stats_days_even": "cfddd218dce740df042974dab8f010727b2a783c41e9bad31946bb03ffee3dc4",
+  "stats_days_studied": "f64c48ebec791696b7c7a857ce7e200ea6738859c0c881965f580141168b83d2",
   "stats_empty_title": "0c9be60f57418235093daa11b44296102e75eb674084850505de57f862b72730",
   "stats_energy": "32f6033d4147aad3f397aca196e1f62ebe9ff078d11e21339611dabf4d7baa33",
   "stats_energy_average": "13a40513916d7d7cb23733d01fe3dd82f56e51b219950d83c05447c8b113e24b",
@@ -83,7 +84,6 @@
   "stats_score_week": "34466462158919388fb84af46106db99e5c9757cf514e1b79de2bc2b88e62830",
   "stats_see_all": "73818409618dc9493b2c772aee6a2cec71d433ea99fa9a1c7a0d9e5d1880c899",
   "stats_since_start": "6779aec846245c363c323749358afb82fa0cc1ddeb98bdbcbf9dbf097556e7cc",
-  "stats_study_days": "024f87a7aad7e9a6d3b37c42e2a887ac1e1f56a3da036391bc6d571178ffe9fa",
   "stats_studying_total": "4f06b308a235c822111f98fa08da8fe294a52d5b4ce57157dcf76a92b1a41ca6",
   "stats_throughout_day": "58a93b1a1152a323d147de2049267f544bae080b9eadcc2ecc72eb8365b684cc",
   "stats_throughout_week": "a7a89208eb4939381b9e11d185d457e17f347b865945287c193786ca5f8b4864",
@@ -111,7 +111,7 @@
     <string name="stats_not_yet">まだ</string>
     <string name="stats_part_failed">この部分を読み込めませんでした。</string>
     <string name="stats_energy_average">平均 %1$s</string>
-    <string name="stats_study_days">学習日数</string>
+    <string name="stats_days_studied">学習日数</string>
     <plurals name="stats_lessons_time">
         <item quantity="other">%1$sレッスン · %2$s</item>
     </plurals>
