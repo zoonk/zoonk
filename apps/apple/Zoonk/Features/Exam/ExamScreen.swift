@@ -164,15 +164,17 @@ private struct ExamHero: View {
 
   var body: some View {
     Section {
-      PageHeader(Text(exam.examName), eyebrow: eyebrow)
+      VStack(alignment: .leading, spacing: 0) {
+        PageHeader(Text(exam.examName), eyebrow: eyebrow)
 
-      // Main's `DetailFacts`: mono data under the title, which a header's supporting line isn't.
-      if !facts.isEmpty {
-        Text(facts.joinedFacts())
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-          .listRowSeparator(.hidden)
+        // Main's `DetailFacts`: mono data under the title, which a header's supporting line isn't.
+        if !facts.isEmpty {
+          Text(facts.joinedFacts())
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
+        }
       }
+      .listRowSeparator(.hidden)
 
       if let options, options.offersMock {
         Button {
