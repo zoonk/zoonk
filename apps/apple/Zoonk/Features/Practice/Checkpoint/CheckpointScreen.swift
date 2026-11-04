@@ -366,9 +366,7 @@ private struct CheckpointResultView: View {
           }
 
           PracticeResultTitle(
-            title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed),
-            detail: CheckpointCopy.resultDetail(
-              kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons))
+            title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed))
 
           PracticeResultNumbers(
             correct: correct, total: total,
@@ -385,15 +383,25 @@ private struct CheckpointResultView: View {
                 ]
               } ?? [],
             day: state.completion.flatMap { try? StudyJSON.recode($0, as: BlockMoment.self) }?.day)
-
+        }
+      } response: {
+        if checkpoint.endedWithoutQuestions != true {
           if won {
             CheckpointRewards(
               checkpoint: checkpoint,
               brainPower: state.completion?.ownBrainPower ?? checkpoint.reward.brainPower)
           }
-        }
-      } response: {
-        if checkpoint.endedWithoutQuestions != true {
+
+          if let retry = CheckpointCopy.retryLine(
+            kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons)
+          {
+            Label {
+              Text(retry)
+            } icon: {
+              Image(systemName: "arrow.counterclockwise")
+            }
+          }
+
           if !won, let next = checkpoint.nextPhase?.value1 {
             Label {
               Text(
@@ -565,7 +573,7 @@ enum CheckpointCopy {
         "Not this time", table: "Practice", comment: "A lost phase challenge.")
   }
 
-  static func resultDetail(
+  static func retryLine(
     kind: Components.Schemas.Checkpoint.KindPayload, passed: Bool, lessons: Int
   )
     -> LocalizedStringResource?
