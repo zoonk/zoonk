@@ -247,7 +247,9 @@ struct MissionRow: View {
         FailureLine(
           message: LocalizedStringResource(
             "We couldn't open this step. Try again.", table: "Today",
-            comment: "Under a step of the day, or a mission, that didn't open"))
+            comment: "Under a step of the day, or a mission, that didn't open")
+        )
+        .font(.footnote)
       }
 
       if !mission.isDone, !detail.isEmpty {

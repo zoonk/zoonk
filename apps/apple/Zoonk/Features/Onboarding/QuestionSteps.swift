@@ -70,7 +70,7 @@ struct QuestionForm<Content: View>: View {
   let isSaving: Bool
   let failed: Bool
   /// Says why a save failed, when the answer itself was refused.
-  var failure: Text?
+  var failure: String?
   @ViewBuilder let content: Content
 
   var body: some View {
@@ -79,11 +79,11 @@ struct QuestionForm<Content: View>: View {
 
       if failed {
         Section {
-          (failure
-            ?? Text(
-              "That didn't save. Try again.", tableName: "Onboarding",
-              comment: "A change couldn't be saved"))
-            .foregroundStyle(.destructive)
+          FailureLine(
+            message: failure
+              ?? String(
+                localized: "That didn't save. Try again.", table: "Onboarding",
+                comment: "A change couldn't be saved"))
         }
       }
     }

@@ -83,12 +83,15 @@ struct TutorTurnView: View {
           .font(.subheadline)
           .foregroundStyle(.secondary)
         } else {
-          (failure.map(answerFailureMessage)
-            ?? Text(
-              "We couldn't finish this answer.", tableName: "Tutor",
-              comment: "A buddy answer failed"))
-            .font(.subheadline)
-            .foregroundStyle(.destructive)
+          if let failure {
+            FailureLine(message: answerFailureMessage(failure))
+              .font(.subheadline)
+          } else {
+            // An answer that failed before this visit is part of the thread, not news to announce.
+            Text(answerFailureMessage(.failed))
+              .font(.subheadline)
+              .foregroundStyle(.destructive)
+          }
 
           TutorRemedyButton(failure: failure ?? .failed) {
             Task { await conversation.retryAnswer(turn.id) }
@@ -140,12 +143,14 @@ struct TutorTurnView: View {
     .disabled(conversation.answeringID != nil)
   }
 
-  private func answerFailureMessage(_ failure: TutorFailure) -> Text {
+  private func answerFailureMessage(_ failure: TutorFailure) -> String {
     switch failure {
     case .signedOut, .plusRequired, .gone, .slowDown:
       failure.message
     case .signUpRequired, .limitReached, .invalid, .conflict, .failed:
-      Text("We couldn't finish this answer.", tableName: "Tutor", comment: "A buddy answer failed")
+      String(
+        localized: "We couldn't finish this answer.", table: "Tutor",
+        comment: "A buddy answer failed")
     }
   }
 }

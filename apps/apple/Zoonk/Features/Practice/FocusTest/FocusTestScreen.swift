@@ -157,11 +157,12 @@ struct FocusTestScreen: View {
       PracticeResultNumbers(day: DayResult(result))
 
       if undoFailed {
-        Text(
-          "We couldn't undo it. Try again.", tableName: "Practice",
-          comment: "Undoing a focus test's change failed."
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't undo it. Try again.", table: "Practice",
+            comment: "Undoing a focus test's change failed.")
         )
-        .font(.subheadline).foregroundStyle(.destructive)
+        .font(.subheadline)
       }
     } actions: {
       if let changeId = result.changeId, !undone {

@@ -186,12 +186,12 @@ struct SessionSummaryView: View {
         }
 
         if failed {
-          Text(
-            "We couldn't open the next step. Try again.", tableName: "Session",
-            comment: "Adding time failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't open the next step. Try again.", table: "Session",
+              comment: "Adding time failed")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       }
     }
