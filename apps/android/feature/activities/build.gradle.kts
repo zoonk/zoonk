@@ -8,6 +8,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.core)
     implementation(libs.coil.compose)
 
