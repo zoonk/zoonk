@@ -79,7 +79,7 @@ internal fun TodayHeading(
             if (wide) {
                 action()
             } else {
-                DayTime(model, MaterialTheme.typography.headlineMedium)
+                DayTime(model, MaterialTheme.typography.headlineSmall)
             }
         }
 
