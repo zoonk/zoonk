@@ -1,135 +1,143 @@
 # Zoonk's design system on Apple platforms
 
-Main's design system (`apps/playground/src/design-system/`, values in `packages/ui/src/styles/globals.css`) says what each thing means. On Apple platforms each meaning takes the closest **system** API, so iOS handles Dynamic Type, Dark Mode, Increase Contrast, Reduce Motion, Liquid Glass and new devices. Don't re-create main's values: no hex colors, no bundled web fonts, no fixed font sizes, no custom controls where a native one exists.
+Main's design system (`apps/playground/src/design-system/`, values in `packages/ui/src/styles/globals.css`) says what each thing means and how the content looks. On Apple platforms the content layer takes the same values and anatomy through the app's own roles and pieces, and the chrome stays the system's, so iOS still handles Dynamic Type, Bold Text, Dark Mode, Increase Contrast, Reduce Motion, Liquid Glass and new devices. Screens never spell a value: no hex colors, no fixed font sizes, no radius numbers, no custom controls where a native one exists.
 
-The app's code for this lives in `apps/apple/Zoonk/DesignSystem/`. It only names meanings and draws the few things the system doesn't.
+The app's code for this lives in `apps/apple/Zoonk/DesignSystem/`: the generated colors and radii, the type roles, and main's shared pieces drawn with native building blocks. A Debug build launched with `ZOONK_DEBUG_GALLERY=1` (or a section's name: `colors`, `text`, `buttons`, `chips`, `lists`, `panels`, `meters`, `marks`, `options`) shows every role and piece in one scroll, the native side of main's `/design` and Android's gallery. When you change a piece or add one, add it there and look at it in light, dark, Increase Contrast, an accessibility size, Bold Text and right to left.
 
 ## Ground rules
 
 - **Minimum iOS 26.** Liquid Glass, `.glass` button styles, `ConcentricRectangle` and `safeAreaBar` need no `#available` checks.
-- **The tint is ink.** `AccentColor` points at the system `labelColor`, and `ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME` applies it. Buttons, links, the selected tab and default `ProgressView`s are black in light mode and white in dark, as on main. Don't set `.tint` on screens, except for toggles (see Components).
-- **Color means something or stays neutral.** Before you color something, find its role below. If none fits, use `.primary`, `.secondary` or `.tertiary`.
+- **One source.** `pnpm --filter apple palette` writes every color role (`Resources/Assets.xcassets/Palette`, Display P3, with light, dark and both Increase Contrast appearances), the `AccentColor` and `Radius.swift` from `globals.css`; Android's generator shares its math in `scripts/theme/`. Never edit those outputs by hand: change `globals.css` and regenerate both apps ([README](../../../../apps/apple/README.md#design-tokens)).
+- **The tint is ink.** `AccentColor` is main's `primary`, and `ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME` applies it. Links, the selected tab, spinners and the system's own controls are ink, as on main. Don't set `.tint` on screens, except for toggles (see Components).
+- **Color means something or stays neutral.** Before you color something, find its role below. If none fits, use `Color(.foreground)`, `.mutedForeground` or `.faint`.
 - **Never color alone.** A word, an SF Symbol or a shape says the same thing.
 
 ## Color roles
 
-| Main token                                                        | SwiftUI                                                                                                                   |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `background`                                                      | Nothing: the system background (`List`/`Form` draw grouped backgrounds themselves). A plain page uses `.background`.      |
-| `card` (`Surface`)                                                | A `List`/`Form` section, `GroupBox`, or `Color(.secondarySystemGroupedBackground)` on a `.systemGroupedBackground` page   |
-| `popover`                                                         | Native sheets, menus and popovers                                                                                         |
-| `muted` (the row the learner is on)                               | `Color(.tertiarySystemFill)`                                                                                              |
-| `surface-3` (a meter's track)                                     | `Color(.systemFill)`. `ProgressView` draws its own track.                                                                 |
-| `border`, `input`                                                 | `.separator`. List separators and bordered controls draw their own.                                                       |
-| `foreground`, `muted-foreground`, `faint`                         | `.primary`, `.secondary`, `.tertiary`                                                                                     |
-| `primary` (the main action)                                       | `.buttonStyle(.mainAction)`                                                                                               |
-| `selected` (a pick before it's checked)                           | Ink: `.strokeBorder(.primary, lineWidth: 2)` over `.fill.quaternary`. Never blue: blue would say "right".                 |
-| `success`, `success-text` (progress, the learner's place)         | `.success` (system blue)                                                                                                  |
-| `destructive`, `destructive-text` (wrong, removed, inline errors) | `.destructive` (system pink). A destructive action is `Button(role: .destructive)`, which the system draws red.           |
-| `warning`, `warning-text` (look here)                             | `.warning` (system orange)                                                                                                |
-| `brain`, `brain-text` (Brain Power, only)                         | `.brain` (system indigo, the system's violet). System purple now sits at fuchsia, which is the mind map's hue.            |
-| `energy`                                                          | `.energy` (system yellow)                                                                                                 |
-| `kind-*`                                                          | `LearnKind.color`, drawn by `KindMark` / `KindDot`                                                                        |
-| `belt-*`                                                          | `ProgressBelt.color`: system colors at full strength in every mode, with a faint outline so white and black never vanish. |
-| `viz-accent`, `viz-highlight`, `viz-secondary`                    | `.mint`, `.orange`, `.purple`. The `-soft` fills are the same color at `.opacity(0.15)`.                                  |
+`DesignSystem/ColorRoles.swift` names the roles the code reads, each pointing at its generated colorset. A mark, fill or icon takes the base role; words take its `-text` role. Content never uses `.secondary`, `.tertiary`, `.separator`, `Color(.system…)` grays and fills, or system hues: they stay in the chrome the system draws.
 
-Hues were matched in OKLCH against the iOS 26 system colors, which are more saturated than main's soft tokens. Increase Contrast darkens system colors in light mode and lightens them in dark, which matches main's `prefers-contrast: more` modes.
+| Main token                                                        | SwiftUI                                                                                                                                                                  |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `background`                                                      | The system background, which a plain list's rows paint: main's `background` in light and both more-contrast modes, black in dark. Don't paint a page behind `ZoonkList`. |
+| `card` (`Surface`)                                                | `.card`, through `.panel()`                                                                                                                                              |
+| `popover`                                                         | Native sheets, menus and popovers                                                                                                                                        |
+| `muted` (the row the learner is on)                               | `.muted`; the learner's row is `.currentRow()`                                                                                                                           |
+| `surface-3` (a meter's track)                                     | `.surface3`, which `Meter` and `MeterParts` draw                                                                                                                         |
+| `border`, `input`                                                 | `.border` (a panel's line), `.input` (the stronger line of an outline button, a chip, a field or an answer option). A list's separators are the system's hairline.       |
+| `foreground`, `muted-foreground`, `faint`                         | `Color(.foreground)`, `.mutedForeground`, `.faint`                                                                                                                       |
+| `primary`, `primary-foreground` (the main action)                 | `.buttonStyle(.mainAction)`; `Color(.primary)` and `Color(.primaryForeground)` where a piece draws ink itself                                                            |
+| `selected`, `selected-tint` (a pick before it's checked)          | `.answerSurface(.picked)`: an ink ring on `.selectedTint`. Never blue: blue would say "right".                                                                           |
+| `success`, `success-text` (progress, the learner's place)         | `.success`, `.successText`                                                                                                                                               |
+| `destructive`, `destructive-text` (wrong, removed, inline errors) | `.destructive`, `.destructiveText`. A destructive action is `Button(role: .destructive)`, which the button styles draw as main's.                                        |
+| `warning`, `warning-text` (look here)                             | `.warning`, `.warningText`                                                                                                                                               |
+| `brain`, `brain-text` (Brain Power, only)                         | `.brain`, `.brainText`                                                                                                                                                   |
+| `energy`                                                          | `.energy`                                                                                                                                                                |
+| `kind-*`                                                          | `LearnKind.color` (`dotColor` for a dot), drawn by `KindMark` / `KindDot`                                                                                                |
+| `belt-*`                                                          | `ProgressBelt.color`: full strength in every mode, with a faint outline so white and black never vanish                                                                  |
+| `viz-accent`, `viz-highlight`, `viz-secondary`, `viz-grid`        | `.vizAccent`, `.vizHighlight`, `.vizSecondary`, `.vizGrid`                                                                                                               |
+| `[data-subject]`: `subject`, `subject-text`, `subject-tint`       | `SubjectColors` (`mark`, `text`, `tint`), drawn by `SubjectGlyph` and `CourseSubjectLabel` (main's `SubjectLabel`: the subject's words in its `-text` color on its tint) |
 
-**The one custom color is `kind-mock`** (`Resources/Assets.xcassets/Kinds/`). A mock and a challenge need an orange redder than review's. The system has no such hue, and system red sits about 8° from wrong's pink. It has light, dark and high-contrast variants copied from `globals.css`. Add another named color only when no system color can carry a meaning without colliding with another one, and record why here.
+SwiftUI's own `.primary`, `.foreground` and `.background` styles are the system's, so main's roles with those names are written `Color(.primary)`, `Color(.foreground)` and `Color(.background)`.
 
-**Subjects.** On iOS a subject is named in words. Its color goes on a small glyph beside the name (main's `SubjectGlyph`), never on the words, because system colors such as yellow fail as text. Use `Label { Text(name) } icon: { Image(systemName: "square.fill").foregroundStyle(hue) }`, with these nearest system hues:
-
-| Subject                          | Hue       |
-| -------------------------------- | --------- |
-| health                           | `.pink`   |
-| languages                        | `.red`    |
-| history                          | `.orange` |
-| culture                          | `.brown`  |
-| law, business                    | `.yellow` |
-| society, economics               | `.green`  |
-| geography                        | `.mint`   |
-| science                          | `.teal`   |
-| math                             | `.cyan`   |
-| communication, engineering, tech | `.blue`   |
-| exams, general                   | `.indigo` |
-| arts                             | `.purple` |
+A new meaning gets its token in `globals.css` and the generator's list (`scripts/theme/palette.mts`), then a name in `ColorRoles.swift`; never a color made in Swift.
 
 ## Type
 
-Use the system font through text styles. Dynamic Type, Bold Text and every language's fallback fonts then work for free. Main's Geist isn't bundled.
+App text takes one of main's type roles with `.typeStyle(_:)`: Geist for words and Geist Mono for data, at main's sizes, weights and tracking, growing with Dynamic Type and Bold Text. The roles and their values live only in `DesignSystem/Typography.swift` (`TypeStyle`); pick a role by its job, never a size.
 
-| Main role                                           | SwiftUI                                                                                                                                                                          |
-| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `text-title` (a page's or task's title)             | `.navigationTitle` with `.toolbarTitleDisplayMode(.inlineLarge)` on tab roots. Never a `Text` header.                                                                            |
-| `PageSectionTitle` (a page's block)                 | A `Section` header, or `.headline`, in title case. iOS 26 no longer uppercases list headers.                                                                                     |
-| `text-section`, `text-headline`                     | `.title2.weight(.semibold)`, `.largeTitle.bold()`                                                                                                                                |
-| `text-lead`                                         | `.body` in `.secondary`                                                                                                                                                          |
-| Body, a row's title                                 | `.body`                                                                                                                                                                          |
-| A row's second line, meta                           | `.subheadline` in `.secondary`. Notes under a section go in `.footnote`.                                                                                                         |
-| `text-label` (uppercase, inside a panel only)       | `.caption.weight(.medium)`, `.secondary`, `.textCase(.uppercase)`                                                                                                                |
-| `text-readout` (`BigQuantity`)                      | `.largeTitle.weight(.semibold).monospacedDigit()`, with the unit in `.title3`/`.subheadline` `.secondary` beside it. Changing numbers take `.contentTransition(.numericText())`. |
-| Mono data (minutes, counts, a row's trailing value) | `.monospacedDigit()` on the row's style. An eyebrow over a title is `.caption.monospaced()` in `.tertiary`.                                                                      |
+| Main                                                                 | `TypeStyle`                                                          |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `text-headline` (a course's, chapter's or lesson's name, a ceremony) | `.heroTitle`                                                         |
+| `text-title`, `PageTitle`                                            | `.pageTitle` (`PageHeader` sets it)                                  |
+| `text-section`                                                       | `.section`                                                           |
+| `PageSectionTitle` (a page's block, in the text color)               | `.sectionTitle` (`SectionTitle` sets it)                             |
+| `text-lead`                                                          | `.lead` in `.mutedForeground`                                        |
+| A lesson's question; its running text (`LessonBody`)                 | `.question`; `.lessonText`                                           |
+| Reading: the buddy's words, a question's context                     | `.reading`                                                           |
+| Body, and any text without a role                                    | `.body`                                                              |
+| `ListRowTitle`, Today's queue rows included                          | `.rowTitle` (`ListRow` sets it)                                      |
+| `ListRowDescription`, meta                                           | `.meta` in `.mutedForeground`                                        |
+| `ListRowTrailing`: minutes, counts, dates, a facts line              | `.data`                                                              |
+| `PageEyebrow`                                                        | `.eyebrow` (`PageHeader` sets it)                                    |
+| `text-label` (uppercase, inside a panel only)                        | `.label`                                                             |
+| A chip's words                                                       | `.chip` (`.chip()` sets it)                                          |
+| `text-readout` (`BigQuantity`); a moment's or result's number        | `.readout`, its unit in `.body` `.mutedForeground`; `.momentReadout` |
+| A screen's button; a small button                                    | `.button`; `.smallButton` (the button styles set them)               |
+| A note under a block, a hint                                         | `.note`                                                              |
+| Plot labels and small marks                                          | `.small`                                                             |
 
-Never write `.font(.system(size:))` for text. An SF Symbol takes the font of the text beside it, plus `.imageScale` if it needs to change size.
+- `.weight(_:)`, `.bold()`, `.monospaced()` (Geist Mono), `.monospacedDigit()` (Geist with tabular figures) and `.italic()` work on a role as `Font`'s do. A number inside a sentence keeps the sentence's role with `.monospacedDigit()`. Changing numbers take `.contentTransition(.numericText())`.
+- Change the weight of text that inherits its role with `.typeWeight(_:)`, not `.fontWeight(_:)` or `.bold()`, so Bold Text still adds to it. A piece of an interpolated `Text` takes `Text.typeWeight(_:legibility:)` with its view's `legibilityWeight`, and Markdown takes `Text(_:legibility:)`, which keeps strong emphasis heavier than the text around it. `.fontWeight` stays for SF Symbols.
+- Text that can't take a view modifier (a `Canvas`'s `context.resolve`) uses `.font(role.font(in: context.environment))`; a font inside an `AttributedString` uses `role.attributeFont`.
+- A role names one job. A place that needs a size no role has gets a named role in `Typography.swift`, never a number at the call site.
+- Never write `.font(_:)` for app text. System-drawn UI keeps the system font: navigation bar titles (large titles too), tab bar labels, alerts, menus, pickers, the keyboard. A page shows its title in Geist through `PageHeader`. An SF Symbol takes the role of the text beside it, plus `.imageScale` if it needs to change size.
+- Scripts Geist lacks (Japanese, Korean, Greek) fall back to the system font, as on the web.
 
 ## Shape and spacing
 
-Use the system's: default `padding()`, `.scenePadding()`, `.contentMargins`, list row heights (44pt or more), and the corner radii of `List`, `GroupBox` and buttons. A custom panel that can't be a list uses `.continuous` rounded corners, like the Progress cards. Inside a container with a shape (a sheet, a glass group), use `ConcentricRectangle()` so corners nest.
+Main's radii (`--radius`) are generated into `DesignSystem/Radius.swift` with the palette: `Radius.sm`, `.md`, `.lg`, `.option`, `.xl` and `.xxl`. Draw corners as `.continuous` rounded rectangles of those constants, never a number: buttons and fields `lg` (small buttons and chips `md`), answer options and stat tiles `option`, panels `xl`. Nothing is a capsule except avatars, dots and rings. Inside a container with a shape (a sheet, a glass group), use `ConcentricRectangle()` so corners nest.
 
-The only tokens are where main's structure needs something the system lacks:
+`ZoonkList` gives a page its margins and the space between sections; inside a row or panel, take the spacing main's piece uses (`packages/learn/src/_components`). Lines are 1pt in `.border` or `.input`; a list's separators are the system's hairline. No shadows in content; sheets and menus keep the system's.
 
-- `MeterParts`: 6pt tall, parts 2pt apart.
-- `StatusMark`: one scaled width, so a list's words start in one column.
-- `.chip()` padding.
+- `StatusMark` has one scaled width, and `ListRow` gives its leading marks one width, so a list's words start in one column.
 
 ## Accessibility text sizes
 
 From the first accessibility size text grows past what a row can hold side by side, so layouts change there, as Apple's apps do. One rule decides it, `@Environment(\.stacksContent)`, and `DesignSystem/AccessibilityLayout.swift` holds the shared pieces that follow it. Never switch a layout on `isAccessibilitySize` yourself:
 
-- Things side by side stack, text above what sat beside it: `AccessibilityStack` (`stackedSpacing` when the stacked gap differs). A title with a value at its end puts `.frame(maxWidth: .infinity, alignment: .leading)` on the title; a section header like that is `SectionHeaderRow`.
+- Things side by side stack, text above what sat beside it: `AccessibilityStack` (`stackedSpacing` when the stacked gap differs). A title with a value at its end puts `.frame(maxWidth: .infinity, alignment: .leading)` on the title; a section header like that is `SectionTitle`.
 - A mark, its text and something at the row's end (a chevron, a drag handle, a badge) are a `MarkedRow`: stacked, the mark and the end share the first line and the text takes the width under them.
 - Where content changes beyond the stack itself (a value's own alignment, a fixed width side by side), read `stacksContent`. Off a hinge, two panes or grid columns become one column on it too (`PaneSpace.pages(primaryShare:stacked:)`). At iPhone Duo's hinge each page is about a phone wide, so a page and what supports it keep a page each and their text stacks inside them; only a spread becomes one column there (`PaneSpace.panes(primaryShare:stacked:)`).
-- Stacked, a list row would flow a label's icon into its title's first line and push aside the first line of each text or control in the title. `StackingLabelStyle` keeps the icon beside a title that fits its line and puts it above one that wraps, as in a `MarkedRow`. In a list, a `LabeledContent` lays out a label in its own label itself, with the system's flow, so a list row with an icon and a value is an `IconLabeledContent`: a label around the `LabeledContent`, which looks the same side by side, keeps the system's title and subtitle styling, and takes the label style stacked. Outside a list, a `LabeledContent`'s label takes the style as it is. Stacked, the label style lays out a title as written, so a label's title with a note under it styles the note itself (a `VStack` with spacing 4, the note in `.subheadline` and `.secondary`, as a list draws it); a `LabeledContent` styles its own.
+- Stacked, a list row would flow a label's icon into its title's first line and push aside the first line of each text or control in the title. `StackingLabelStyle` keeps the icon beside a title that fits its line and puts it above one that wraps, as in a `MarkedRow`. In a list, a `LabeledContent` lays out a label in its own label itself, with the system's flow, so a list row with an icon and a value is an `IconLabeledContent`: a label around the `LabeledContent`, which looks the same side by side, keeps the system's title and subtitle styling, and takes the label style stacked. Outside a list, a `LabeledContent`'s label takes the style as it is. Stacked, the label style lays out a title as written, so a label's title with a note under it styles the note itself (a `VStack` with spacing 4, the note in `.note` and `.mutedForeground`); a `LabeledContent` styles its own.
 - The accessibility audit grows the text size and loses text that's replaced on the way: text inside an `if` on `stacksContent`, or in a `ViewThatFits` that holds two copies of it. It reports that text as "Dynamic Type font sizes are partially unsupported", with no element. Where a screen the audit covers changes layout as text grows, keep the text one view and switch the layout around it, with `AnyLayout` (`AccessibilityStack`) or a custom `Layout` (`StackingLabelStyle`).
 - A sentence built from pieces in a `FlowLayout` (words, blanks) uses `alignment: .firstTextBaseline`, so a piece that wraps keeps its neighbors on its first line.
 - Text buttons side by side go in a `ButtonRow`: stacked, each is a regular-size rounded rectangle as wide as the row, like an alert's buttons.
-- Buttons are rounded rectangles, not capsules: a wrapped capsule's round ends take the width its words need. Bordered, main-action and glass buttons follow the shape. A bordered button in a toolbar keeps `.buttonBorderShape(.automatic)` (`TutorAskToolbarItem`): toolbars keep their own text size, so it never wraps.
-- Neither the button shape nor the label style reaches into a presentation, so the app's root and the root of every presented screen (each `.sheet`, `.fullScreenCover` and `.popover`, the router's included) apply both with `zoonkStyles()`.
+- Buttons are rounded rectangles, not capsules: a wrapped capsule's round ends take the width its words need. Zoonk's button styles always are; a system-styled button (glass) takes the rounded rectangle from `zoonkStyles()` at accessibility sizes.
+- Neither the button shape, the label style, the `GroupBox` style nor the default type role reaches into a presentation, so the app's root and the root of every presented screen (each `.sheet`, `.fullScreenCover` and `.popover`, the router's included) apply them with `zoonkStyles()`.
 - A bar over the content (a `safeAreaBar`) grows with Dynamic Type like the content: never cap its text with `dynamicTypeSize(_:)`. Apple keeps fixed sizes for system bars, and the accessibility audit flags capped text anywhere else. Keep it short with its layout instead: chips stay one row that scrolls sideways, and a field and its button stack like any side-by-side content. Only controls that can't stack, such as a call's controls, show their symbols alone and their titles in the Large Content Viewer (`accessibilityShowsLargeContentViewer()`).
 - A plot's labels, placed by value in a frame that doesn't grow, stop growing at the largest standard size with `chartsPlotText()`, where they still fit beside each other. The words and readouts around the plot keep growing.
 
 ## Components
 
-| Main                                                        | SwiftUI                                                                                                                           |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `Button` (default): one main action per area                | `.buttonStyle(.mainAction)`, with `.controlSize(.large)` for a screen's action                                                    |
-| `outline` (secondary)                                       | `.buttonStyle(.bordered)`                                                                                                         |
-| `ghost`, a quiet option under the main action               | `.buttonStyle(.borderless)`                                                                                                       |
-| `link` (an action inside a sentence)                        | `Link`/`Button` with `.underline()` text. The tint is ink, so a link without an underline looks like text.                        |
-| `destructive`                                               | `Button(role: .destructive)` with `.bordered`                                                                                     |
-| A floating control (the player's ✕ and ⋯, a map's controls) | A toolbar item (glass comes free), or `.buttonStyle(.glass)`                                                                      |
-| `ListGroup` flat (a page's list)                            | `List` with `.listStyle(.plain)`                                                                                                  |
-| `ListGroup variant="panel"`, `Surface`                      | An inset-grouped `List`/`Form` section, or `GroupBox`                                                                             |
-| `ListRow*`                                                  | Native rows: `NavigationLink` (chevron included), `Label`, `LabeledContent`; a row-end value is `.badge(_:)`                      |
-| `StatusMark`, `DoneMark`                                    | `StatusMark(status:)`; done is `.done`                                                                                            |
-| `KindMark`, `KindDot`                                       | `KindMark(kind:)`, `KindDot(kind:)`                                                                                               |
-| `Meter`                                                     | `ProgressView(value:total:)` with `.tint(role)`                                                                                   |
-| `MeterParts`                                                | `MeterParts(parts:)`                                                                                                              |
-| Chip (Plus, "1 week", a status)                             | `.chip()`                                                                                                                         |
-| `StatTile`                                                  | A panel with a `Label` (its symbol in the stat's role color) over a readout                                                       |
-| `NoticeCard`, `Suggestion`                                  | `GroupBox` with a `Label`                                                                                                         |
-| Empty, error, signed-out states                             | `ContentUnavailableView`                                                                                                          |
-| Switch                                                      | `Toggle`, with `.tint(.success)` on its `Form`. The system default is green, and an ink switch hides its white knob in dark mode. |
-| Segmented choices, menus, dialogs, sheets                   | `Picker` with `.pickerStyle(.segmented)`, `Menu`, `.confirmationDialog`, `.alert`, `.sheet` with detents                          |
-| The task's action bar                                       | `.safeAreaBar(edge: .bottom)` holding a `.mainAction` button, so it gets the scroll edge effect                                   |
-| `ShortcutKbd` (⏎ on the main action)                        | `.keyboardShortcut(.defaultAction)`; Esc is `.keyboardShortcut(.cancelAction)`                                                    |
-| The buddy and the Trickster                                 | `BuddyCharacter`, `TricksterCharacter`, `BuddyFace` beside words (see Characters)                                                 |
+Each of main's pieces has one native counterpart in `DesignSystem/`, built on a native view so it keeps its role, VoiceOver, keyboard, pointer and Dynamic Type behavior.
+
+| Main                                                                                                    | SwiftUI                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button` (default): one main action per area                                                            | `.buttonStyle(.mainAction)`. `.controlSize(.large)` for a screen's action, `.small` beside text.                                                                                                                    |
+| `outline` (secondary)                                                                                   | `.buttonStyle(.outline)`                                                                                                                                                                                            |
+| `ghost`, a quiet option beside or under the main action                                                 | `.buttonStyle(.ghost)`                                                                                                                                                                                              |
+| `link` (an action inside a sentence)                                                                    | `Link`/`Button` with `.underline()` text. The tint is ink, so a link without an underline looks like text.                                                                                                          |
+| `destructive`                                                                                           | `Button(role: .destructive)` in any of the three styles, which then draw main's destructive button                                                                                                                  |
+| A floating control (the player's ✕ and ⋯, a map's controls)                                             | A toolbar item (glass comes free), or `.buttonStyle(.glass)`                                                                                                                                                        |
+| `PageHeader` (an eyebrow, the page's title, one supporting line, the main readout or action at its end) | `PageHeader` as the list's first row; the page keeps `navigationTitle` and takes `barTitleAfterHero(_:)`                                                                                                            |
+| `PageSectionHeader` (`PageSectionTitle` with a detail or small action)                                  | `SectionTitle` as a `Section`'s header; a header that isn't one text (a `Label`) takes `.sectionTitleStyle()`. A note under the section is `SectionFooter`.                                                         |
+| `ListGroup` (a page's list)                                                                             | `ZoonkList`: flat rows as wide as the column on the page, a hairline between rows, space between sections, one centered column where the width is regular. A page of settings is a `ZoonkList` too, never a `Form`. |
+| `ListGroup variant="panel"`, `Surface`                                                                  | `.panel()`: `card`, a `border` line, `Radius.xl`, no shadow, never inside another panel                                                                                                                             |
+| `ListRow*`                                                                                              | `ListRow` (a leading mark, title, description and trailing data) inside a `NavigationLink` or `Button`, which keep the chevron and the press; `Label` and `LabeledContent` where a row is just that                 |
+| The learner's row (`aria-current`)                                                                      | `.currentRow()`                                                                                                                                                                                                     |
+| `StatusMark`, `DoneMark`                                                                                | `StatusMark(status:)`; done is `.done`                                                                                                                                                                              |
+| `KindMark`, `KindDot`                                                                                   | `KindMark(kind:)`, `KindDot(kind:)`                                                                                                                                                                                 |
+| `Meter`                                                                                                 | `Meter(value:total:fill:)`. A spinner stays `ProgressView()`.                                                                                                                                                       |
+| `MeterParts`                                                                                            | `MeterParts(parts:)`                                                                                                                                                                                                |
+| Chip (Plus, "1 week", a status)                                                                         | `.chip()`, never a colored badge                                                                                                                                                                                    |
+| `StatTile`                                                                                              | `StatTile` (`Features/Progress`): a `.label` with its stat's icon in its tone over a `.readout`, optionally a `Meter`                                                                                               |
+| `NoticeCard`, `Suggestion`                                                                              | `GroupBox` with a `Label`, which `zoonkStyles()` draws as a panel                                                                                                                                                   |
+| An answer option, an activity's tile or choice                                                          | `.answerSurface(_:)` with an `AnswerTone`: `.idle`, `.picked`, `.right`, `.wrong`                                                                                                                                   |
+| `Input`, `Textarea` outside a list row                                                                  | A native `TextField` or `TextEditor` with `.fieldBorder(isFocused:)`                                                                                                                                                |
+| `SubjectLabel`, `SubjectGlyph`                                                                          | `CourseSubjectLabel`, `SubjectGlyph`                                                                                                                                                                                |
+| Empty, error, signed-out states                                                                         | `ContentUnavailableView`, its words in the type roles                                                                                                                                                               |
+| Switch                                                                                                  | `Toggle`, with `.tint(.success)` on its list. The system default is green, and an ink switch hides its white knob in dark mode.                                                                                     |
+| Segmented choices, menus, dialogs, sheets                                                               | `Picker` with `.pickerStyle(.segmented)`, `Menu`, `.confirmationDialog`, `.alert`, `.sheet` with detents                                                                                                            |
+| The task's action bar                                                                                   | `.safeAreaBar(edge: .bottom)` holding a `.mainAction` button, so it gets the scroll edge effect                                                                                                                     |
+| `ShortcutKbd` (⏎ on the main action)                                                                    | `.keyboardShortcut(.defaultAction)`; Esc is `.keyboardShortcut(.cancelAction)`                                                                                                                                      |
+| The buddy's tab                                                                                         | The buddy's face in today's missions ring (`Navigation/AppTabView.swift`), as on main and Android; the tab keeps its title for VoiceOver and iPhone Duo's icon-only bar                                             |
+| The buddy and the Trickster                                                                             | `BuddyCharacter`, `TricksterCharacter`, `BuddyFace` beside words (see Characters)                                                                                                                                   |
 
 ## Liquid Glass
 
 - Glass belongs to the navigation and control layer, never to content: `TabView`, `NavigationStack` bars, toolbars, sheets, menus and floating controls. They adopt it on their own.
 - Don't paint backgrounds on bars, tab bars or toolbars. Custom backgrounds there break glass and the scroll edge effect.
-- Content (rows, panels, readouts, answer options) stays opaque on system backgrounds.
+- Content (rows, panels, readouts, answer options) stays opaque on the page and the design system's surfaces.
 - `.glassProminent` is not the main action. With the ink tint its white label vanishes on dark mode's white glass, and recoloring it doesn't help because glass draws labels vibrantly (they turn gray). Use `.mainAction`, in a `safeAreaBar` when it floats.
 - Several custom glass controls together go in one `GlassEffectContainer`.
 - Group toolbar items by job, separate groups with `ToolbarSpacer(.fixed)`, and give every icon-only item an accessibility label.
@@ -152,7 +160,7 @@ Reduce Motion: system controls and symbol effects adapt on their own. A celebrat
 
 - Choose layouts by size class and available space, never by device. `userInterfaceIdiom`, screen bounds, orientation and known screen sizes are wrong on iPhone Duo and in resizable iPad windows. Measure with `onGeometryChange`, and use `ViewThatFits` and native containers.
 - **iPhone Duo** (iOS 27.1 SDK, which Xcode 27.1 builds with): on the inner display the app fills the screen, the status bar sits on the right edge, and the tab bar stands vertically below it, showing **icons only**. Every tab's SF Symbol must read on its own, with its title kept as the label for VoiceOver. Content keeps clear of the bar through the safe area. Don't crop media with `.aspectRatio(contentMode: .fill)` without a focal point.
-- **iPad**: `sidebarAdaptable` tabs become a top tab bar or a sidebar. Rows and panels keep the same roles; grids gain columns as the width grows.
+- **iPad**: `sidebarAdaptable` tabs become a top tab bar or a sidebar. A page's `ZoonkList` is one centered column with the phone's structure, as main's tablet portrait; rows and panels keep the same roles, and grids gain columns as the width grows.
 - **Simulators**: a headless iPhone Duo renders black until something attaches a display (agent-device or Simulator). `agent-device fold closed|half-open|open` sets the pose (half-open is the partial fold); when it reports that the hinge read-back failed, the pose usually still applied, so check a screenshot (a sheet moves to one side of the fold while it's partially folded). `agent-device orientation` reports success but rotates neither display, so the inner display in portrait and tabletop need Device Hub. On an iPad, agent-device can drag a full-screen window's corner to shrink it but never drag it back out, and iPadOS keeps that size across relaunches and reinstalls, so don't shrink a shared simulator's window that way. `simctl io <udid> screenshot --display=primary-1` captures the inner display and `--display=primary` the outer one. `simctl ui <udid> appearance|increase_contrast|content_size` sets each mode for checks.
 
 ### iPhone Duo
@@ -174,10 +182,12 @@ Open, the Duo reads like an open wallet: two panes either side of the fold, each
 
 ## Pitfalls
 
-- An ink tint makes every `.borderedProminent` label white on white in dark mode. That is why `.mainAction` exists. Don't use `.borderedProminent` directly.
+- `.secondary` and `.tertiary` are under AA on white in light mode, and they aren't main's neutrals in any mode. Supporting text is `.mutedForeground` or `.faint`, which the generator's test keeps at AA on every surface.
+- The system button styles (`.bordered`, `.borderedProminent`, `.borderless`) draw the system's look, and with the ink tint a prominent label turns white on white in dark mode. Content buttons take `.mainAction`, `.outline` or `.ghost`.
+- `Form` stays inset-grouped whatever list style it gets, so a page of settings or fields is a `ZoonkList`.
+- A plain list's rows paint the system background whatever is behind them. Painting the page's color behind a list bands between rows in dark mode, so `ZoonkList` paints nothing.
 - The asset `AccentColor` reaches neither `Toggle` nor `UISwitch.appearance()` in SwiftUI. Tint toggles explicitly.
-- `Color.purple` is fuchsia since iOS 26. Brain Power is `.brain` (indigo).
-- `Text + Text` is deprecated since iOS 26. Interpolate styled texts into one `Text` instead, for example a readout and its unit: `Text("\(Text(minutes, format: .number).font(.largeTitle.weight(.semibold)).monospacedDigit()) \(Text(unit).foregroundStyle(.secondary))")`.
+- `Text + Text` is deprecated since iOS 26. Interpolate styled texts into one `Text` instead, for example a number and its unit: `Text("\(Text(minutes, format: .number).monospacedDigit()) \(Text(unit).foregroundStyle(.mutedForeground))")` (an interpolated piece can't take `.typeStyle(_:)`).
 - A fixed `.frame(height:)` around text breaks at accessibility sizes. Let text set the height, or use `@ScaledMetric`.
 
 ## Characters

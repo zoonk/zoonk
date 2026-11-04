@@ -10,7 +10,7 @@ Main's design system (`apps/playground/src/design-system/`, values in `packages/
 - **Never color alone.** A word, a symbol or a shape says the same thing.
 - **Soft in the standard schemes, strict with more contrast.** Lines (`outline`, `outlineVariant`) and colored words are soft by design; the more-contrast schemes make them strong. Don't darken a role to fix one screen.
 
-When `globals.css` changes, regenerate the palette: `pnpm --filter android palette && make -C apps/android format`.
+When `globals.css` changes, regenerate both apps: `pnpm --filter android palette && make -C apps/android format` and `pnpm --filter apple palette` (the generators share `scripts/theme/`, whose tests fail when a committed output is stale).
 
 ## Color roles
 
@@ -39,24 +39,24 @@ When `globals.css` changes, regenerate the palette: `pnpm --filter android palet
 
 ## Type
 
-Geist and Geist Mono, bundled in `:core:resources` (`res/font/`) and set in `ui/theme/Type.kt`, which holds main's roles once: Material's slots for what Material's components and most text use, and `MaterialTheme.zoonkType` for main's roles no slot carries. The numbers are the Apple app's (`DesignSystem/Typography.swift`), measured on main at 390px. Sizes are in `sp`, so they follow the font scale; Bold Text (API 31+) adds its weight on its own. Scripts Geist lacks fall back to the system font. Screens use roles, never sizes.
+Geist and Geist Mono, bundled in `:core:resources` (`res/font/`) and set in `ui/theme/Type.kt`, which holds main's roles once: Material's slots for what Material's components and most text use, and `MaterialTheme.zoonkType` for main's roles no slot carries. Its numbers are main's, measured at 390px, as are the Apple app's roles (`DesignSystem/Typography.swift`). Sizes are in `sp`, so they follow the font scale; Bold Text (API 31+) adds its weight on its own. Scripts Geist lacks fall back to the system font. Screens use roles, never sizes.
 
-| Design-system role                                      | Compose                                                           |
-| ------------------------------------------------------- | ----------------------------------------------------------------- |
-| Headline (`text-headline`), a ceremony                  | `displaySmall`                                                    |
-| Page title (`PageTitle`)                                | `headlineMedium` (`PageTitleRow`)                                 |
-| Readout (`BigQuantity`); a moment's leading number      | `headlineSmall`; `displayMedium` (`Readout` adds tabular figures) |
-| Section (`text-section`), a top app bar's title         | `titleLarge`                                                      |
-| Section title (`PageSectionTitle`)                      | `zoonkType.sectionTitle` (`SectionHeader`)                        |
-| Reading (the buddy's words, Today's queue)              | `bodyLarge`                                                       |
-| Body (`text-sm`)                                        | `bodyMedium`                                                      |
-| Row title, description (`ListRowTitle`, `-Description`) | `titleSmall`, `bodySmall` (`ListRow` sets both)                   |
-| Data that lines up (`ListRowTrailing`, section details) | `zoonkType.data` (Geist Mono)                                     |
-| Eyebrow (`PageEyebrow`)                                 | `zoonkType.eyebrow` in `faint`, uppercase (`Eyebrow`)             |
-| Label (`text-label`, a stat's label)                    | `zoonkType.label` in `faint`, uppercase (`StatTile`)              |
-| Lead, a lesson's text, a lesson's question              | `zoonkType.lead`, `lessonText`, `question`                        |
-| Button: a screen's action, small                        | `labelLarge`, `labelMedium` (the button wrappers pick it by size) |
-| Code                                                    | the line's style with `GeistMono`                                 |
+| Design-system role                                      | Compose                                                            |
+| ------------------------------------------------------- | ------------------------------------------------------------------ |
+| Headline (`text-headline`), a ceremony                  | `displaySmall`                                                     |
+| Page title (`PageTitle`)                                | `headlineMedium` (`PageTitleRow`)                                  |
+| Readout (`BigQuantity`); a moment's leading number      | `headlineSmall`; `displayMedium` (`Readout` adds tabular figures)  |
+| Section (`text-section`), a top app bar's title         | `titleLarge`                                                       |
+| Section title (`PageSectionTitle`)                      | `zoonkType.sectionTitle` (`SectionHeader`)                         |
+| Reading (the buddy's words, a question's context)       | `bodyLarge`                                                        |
+| Body (`text-sm`)                                        | `bodyMedium`                                                       |
+| Row title, description (`ListRowTitle`, `-Description`) | `titleSmall`, `bodySmall` (`ListRow` sets both); Today's queue too |
+| Data that lines up (`ListRowTrailing`, section details) | `zoonkType.data` (Geist Mono)                                      |
+| Eyebrow (`PageEyebrow`)                                 | `zoonkType.eyebrow` in `faint`, uppercase (`Eyebrow`)              |
+| Label (`text-label`, a stat's label)                    | `zoonkType.label` in `faint`, uppercase (`StatTile`)               |
+| Lead, a lesson's text, a lesson's question              | `zoonkType.lead`, `lessonText`, `question`                         |
+| Button: a screen's action, small                        | `labelLarge`, `labelMedium` (the button wrappers pick it by size)  |
+| Code                                                    | the line's style with `GeistMono`                                  |
 
 Three levels of type in a block at most; weight and size lead, color only quiets. Uppercase is written into the text (`toUpperCase(LocaleList.current)`) with the words as written for TalkBack.
 
