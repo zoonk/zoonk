@@ -66,6 +66,7 @@ import com.zoonk.android.ui.format.fractionDigitsFor
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ActivityExpectedAnswer
 import com.zoonk.api.models.ActivityExpectedRows
 import kotlinx.coroutines.launch
@@ -317,7 +318,7 @@ private fun SqlRowsTable(
                     Modifier
                         .background(
                             when (state) {
-                                RowState.Extra -> colors.error.copy(alpha = SOFT_ALPHA)
+                                RowState.Extra -> MaterialTheme.zoonk.destructive.copy(alpha = SOFT_ALPHA)
                                 RowState.Missing -> colors.tertiary.copy(alpha = SOFT_ALPHA)
                                 RowState.Plain -> colors.surface
                             },

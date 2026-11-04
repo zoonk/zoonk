@@ -511,8 +511,8 @@ private struct SQLRowsTable: View {
   private func markColor(_ mark: Mark) -> Color {
     switch mark {
     case .plain: .clear
-    case .extra: Color.destructive.opacity(0.2)
-    case .missing: Color.success.opacity(0.2)
+    case .extra: Color.destructive.opacity(0.1)
+    case .missing: Color.success.opacity(0.1)
     }
   }
 

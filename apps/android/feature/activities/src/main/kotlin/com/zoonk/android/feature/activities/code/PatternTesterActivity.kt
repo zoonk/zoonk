@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -315,7 +316,9 @@ private fun SampleRow(
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(ZoonkRadius.option)
     val failing = result?.passes == false
-    val tone = if (shouldMatch) colors.tertiary else colors.error
+    val destructive = MaterialTheme.zoonk.destructive
+    val words = if (shouldMatch) colors.onTertiaryContainer else colors.error
+    val tint = if (shouldMatch) colors.tertiary else destructive
     val status =
         result?.let {
             stringResource(
@@ -334,7 +337,8 @@ private fun SampleRow(
                 append(sample)
             } else {
                 append(sample.substring(0, match.start))
-                withStyle(SpanStyle(color = tone, background = tone.copy(alpha = SOFT_ALPHA))) {
+                // A failing row is tinted already, so its match takes only the words' color.
+                withStyle(SpanStyle(color = words, background = if (failing) Color.Unspecified else tint.copy(alpha = SOFT_ALPHA))) {
                     append(sample.substring(match.start, match.end))
                 }
                 append(sample.substring(match.end))
@@ -346,7 +350,7 @@ private fun SampleRow(
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .clip(shape)
-            .background(if (failing) colors.error.copy(alpha = SOFT_ALPHA) else colors.surface)
+            .background(if (failing) destructive.copy(alpha = SOFT_ALPHA) else colors.surface)
             .border(1.dp, if (failing) colors.error.copy(alpha = FAILING_EDGE_ALPHA) else colors.outlineVariant, shape)
             .semantics(mergeDescendants = true) { status?.let { stateDescription = it } }
             .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -420,7 +424,7 @@ private fun FormulaExamples(
             HorizontalDivider(color = colors.outlineVariant)
             Row(
                 Modifier
-                    .background(if (result?.passes == false) colors.error.copy(alpha = SOFT_ALPHA) else colors.surface)
+                    .background(if (result?.passes == false) MaterialTheme.zoonk.destructive.copy(alpha = SOFT_ALPHA) else colors.surface)
                     .semantics(mergeDescendants = true) {},
                 verticalAlignment = Alignment.CenterVertically,
             ) {

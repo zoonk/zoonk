@@ -179,7 +179,7 @@ internal fun CodeLine(
             }
 
             CodeLineTone.Error -> {
-                Modifier.background(colors.error.copy(alpha = SOFT_ALPHA), shape)
+                Modifier.background(MaterialTheme.zoonk.destructive.copy(alpha = SOFT_ALPHA), shape)
             }
         }
     Row(
