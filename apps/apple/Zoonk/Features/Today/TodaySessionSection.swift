@@ -49,6 +49,7 @@ struct TodaySessionSection: View {
 
       if !session.blocks.isEmpty {
         DayProgressRow(session: session)
+          .listRowSeparator(.hidden)
       }
 
       queue
@@ -373,11 +374,11 @@ private struct DayProgressRow: View {
 
   var body: some View {
     MeterParts(parts: session.meterParts)
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(
-      Text(
-        "\(session.blocks.filter(\.isFinished).count) of \(session.blocks.count) done",
-        tableName: "Today", comment: "How far the day's session is"))
+      .accessibilityElement(children: .ignore)
+      .accessibilityLabel(
+        Text(
+          "\(session.blocks.filter(\.isFinished).count) of \(session.blocks.count) done",
+          tableName: "Today", comment: "How far the day's session is"))
   }
 }
 

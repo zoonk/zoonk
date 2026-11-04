@@ -16,7 +16,8 @@ struct BigQuantity: View {
     Self.parts(text).reduce(Text(verbatim: "")) { line, part in
       part.isNumber
         ? Text("\(line)\(Text(verbatim: part.text))")
-        : Text("\(line)\(Text(verbatim: part.text).font(unitFont).foregroundStyle(.mutedForeground))")
+        : Text(
+          "\(line)\(Text(verbatim: part.text).font(unitFont).foregroundStyle(.mutedForeground))")
     }
     .typeStyle(.readout)
     .foregroundStyle(Color(.foreground))

@@ -88,12 +88,14 @@ struct TodayDayView: View {
 
   private var header: some View {
     Section {
-      PageHeader(Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine) {
+      PageHeader(Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine)
+      {
         if let dayTime {
           BigQuantity(dayTime)
         }
       }
     }
+    .listSectionSpacing(.compact)
   }
 
   /// Main's `DayTime`: the time still ahead while the day goes on, and once it's done, or the daily
