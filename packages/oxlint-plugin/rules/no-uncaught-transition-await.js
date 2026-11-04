@@ -170,14 +170,8 @@ function valueSettles(node, scan, { returned = false } = {}) {
     return storedValueSettles(node, scan, { returned });
   }
 
-  // A promise made by hand rejects only through its executor's `reject`.
   if (node.type === "NewExpression" && node.callee.type === "Identifier") {
-    const [executor] = node.arguments;
-
-    return (
-      node.callee.name !== "Promise" ||
-      (FUNCTIONS.has(executor?.type) && executor.params.length < 2)
-    );
+    return node.callee.name !== "Promise" || executorSettles(node.arguments[0], scan);
   }
 
   return (
@@ -185,6 +179,24 @@ function valueSettles(node, scan, { returned = false } = {}) {
     (returned && isGlobal(node.callee, scan)) ||
     callSettles(node, scan)
   );
+}
+
+/**
+ * A promise made by hand settles when its executor takes only `resolve` and never throws. Without
+ * types, `resolve(aRejectedPromise)` still passes.
+ */
+function executorSettles(executor, scan) {
+  if (!FUNCTIONS.has(executor?.type)) {
+    return false;
+  }
+
+  const onlyResolve = executor.params.every((param) => param.type === "Identifier");
+
+  const throws = findRejections(executor.body, { caught: false, scan }).some(
+    (rejection) => rejection.type === "ThrowStatement",
+  );
+
+  return onlyResolve && executor.params.length < 2 && !throws;
 }
 
 /** A promise kept in a `const` (`const pending = save()`) is checked where it was made. */
