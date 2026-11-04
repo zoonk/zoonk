@@ -50,7 +50,6 @@ export type CallEndingState = {
   /** When the opening cue was acknowledged; a retry before that would greet twice (measured). */
   openingAckAt: number | null;
   openingRetried: boolean;
-  /** A check's note for the character waits until the learner has the floor. */
   progressDue: boolean;
   /** When the quiet stretch started: the end of the latest sound or keystroke from anyone. */
   quietFrom: number;
