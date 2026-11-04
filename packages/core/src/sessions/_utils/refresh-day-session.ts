@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
+import { type findActiveSubscription } from "../../auth/subscription";
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
@@ -100,10 +101,12 @@ function withoutKept({
 async function planRestOfDayWithPlan({
   day,
   kept,
+  readSubscription,
   selection,
 }: {
   day: DaySession;
   kept: readonly StudySessionBlock[];
+  readSubscription?: typeof findActiveSubscription;
   selection?: SelectedDayPlan;
 }) {
   const { goal, session, timeZone } = day;
@@ -112,6 +115,7 @@ async function planRestOfDayWithPlan({
     goal,
     localDate: session.localDate,
     now: new Date(),
+    readSubscription,
     timeZone,
     userId: session.userId,
   };
@@ -141,11 +145,9 @@ async function planRestOfDayWithPlan({
 }
 
 /** Excludes a second block of any kind already kept by the day. */
-export async function planRestOfDay(input: {
-  selection?: SelectedDayPlan;
-  day: DaySession;
-  kept: readonly StudySessionBlock[];
-}): Promise<PlannedBlock[]> {
+export async function planRestOfDay(
+  input: Parameters<typeof planRestOfDayWithPlan>[0],
+): Promise<PlannedBlock[]> {
   const { blocks } = await planRestOfDayWithPlan(input);
   return blocks;
 }

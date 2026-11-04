@@ -98,6 +98,7 @@ export async function planEntitlementLapseRefill({
   const planned = await planRestOfDay({
     day: { goal, session: { ...session, goal }, timeZone },
     kept,
+    readSubscription,
   });
 
   const lessons = planned
