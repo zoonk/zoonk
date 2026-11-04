@@ -20,6 +20,7 @@ struct GoalStartEntry: View {
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
+  @State private var materialDraft = MaterialDraft()
 
   var body: some View {
     if part == .examples {
@@ -32,9 +33,15 @@ struct GoalStartEntry: View {
         words: $goal.words, isSection: part != .box, showsExamples: part == .whole,
         canSubmitEmpty: !goal.material.isEmpty && goal.intent != nil,
         onSubmit: send,
+        attach: {
+          if part != .box {
+            GoalMaterialButton(material: $goal.material, draft: $materialDraft)
+          }
+        },
         attachment: {
           if part != .box {
-            GoalMaterialSections(material: $goal.material, intent: $goal.intent)
+            GoalMaterialSections(
+              material: $goal.material, intent: $goal.intent, draft: $materialDraft)
           }
         })
     }
@@ -85,7 +92,7 @@ enum GoalStart: Equatable {
   case goal(String)
 }
 
-struct GoalEntrySections<Attachment: View>: View {
+struct GoalEntrySections<Attach: View, Attachment: View>: View {
   @Binding var words: String
   var isSection = false
   var showsExamples = true
@@ -94,6 +101,9 @@ struct GoalEntrySections<Attachment: View>: View {
   /// With material and what to do with it, the box may stay empty.
   var canSubmitEmpty = false
   let onSubmit: (String) -> Void
+  /// Main's paperclip, at the box's leading edge across from "Build my plan".
+  @ViewBuilder var attach: () -> Attach
+  /// What the paperclip added, after the box.
   @ViewBuilder var attachment: () -> Attachment
 
   @FocusState private var isFocused: Bool
@@ -137,14 +147,19 @@ struct GoalEntrySections<Attachment: View>: View {
         }
         .padding(10)
 
-        Button(action: submit) {
-          Text(
-            "Build my plan", tableName: "Onboarding",
-            comment: "Sends the typed goal to start building a plan")
+        HStack(alignment: .bottom, spacing: 4) {
+          attach()
+
+          Spacer(minLength: 0)
+
+          Button(action: submit) {
+            Text(
+              "Build my plan", tableName: "Onboarding",
+              comment: "Sends the typed goal to start building a plan")
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
         }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .frame(maxWidth: .infinity, alignment: .trailing)
       }
       .padding(6)
       .inputPanel(isFocused: isFocused)
@@ -355,19 +370,5 @@ private enum LocalExample {
   static var language: String {
     let spoken = Locale.current.language.languageCode?.identifier == "en" ? "es" : "en"
     return Locale.current.localizedString(forLanguageCode: spoken) ?? spoken
-  }
-}
-
-extension GoalEntrySections where Attachment == EmptyView {
-  init(
-    words: Binding<String>,
-    isSection: Bool = false,
-    error: GoalError? = nil,
-    limit: GoalLimitReason? = nil,
-    onSubmit: @escaping (String) -> Void
-  ) {
-    self.init(
-      words: words, isSection: isSection, error: error, limit: limit, onSubmit: onSubmit,
-      attachment: { EmptyView() })
   }
 }

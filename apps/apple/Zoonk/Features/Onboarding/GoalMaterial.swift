@@ -7,15 +7,63 @@ enum MaterialIntent: Hashable {
   case questions
 }
 
-/// Only accounts can add material, so guests and visitors are told how to create one.
+/// Main's paperclip inside the goal box: the ways to add material for an account, or how to get
+/// one for a guest or a visitor, which `GoalMaterialSections` shows after the box.
+struct GoalMaterialButton: View {
+  @Binding var material: [AttachedSource]
+  @Binding var draft: MaterialDraft
+
+  @Environment(LearnerSummaryStore.self) private var learner
+
+  var body: some View {
+    Group {
+      if learner.canAttachMaterial {
+        MaterialAttachMenu(
+          draft: $draft,
+          header: Text(
+            "Your plan and lessons will use it.", tableName: "Onboarding",
+            comment: "Over the ways to add material to a goal, in their menu")
+        ) {
+          paperclip
+        } onAttached: { source in
+          material.attach(source)
+        }
+      } else {
+        Button {
+          draft.showsSignUp.toggle()
+        } label: {
+          paperclip
+        }
+      }
+    }
+    // Only the paperclip, not the box's row it's in, opens it.
+    .menuStyle(.button)
+    .buttonStyle(.borderless)
+  }
+
+  private var paperclip: some View {
+    Label {
+      Text(
+        "Add your material", tableName: "Onboarding",
+        comment: "Opens the ways to add a file, text or a link to a goal")
+    } icon: {
+      Image(systemName: "paperclip")
+    }
+    .labelStyle(.iconOnly)
+    .foregroundStyle(.mutedForeground)
+    .frame(minWidth: 44, minHeight: 44)
+    .contentShape(.rect)
+  }
+}
+
+/// What `GoalMaterialButton` added and is adding, after the goal box.
 struct GoalMaterialSections: View {
   @Binding var material: [AttachedSource]
   @Binding var intent: MaterialIntent?
+  @Binding var draft: MaterialDraft
 
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
-  @State private var showsSignUp = false
-  @State private var draft = MaterialDraft()
 
   var body: some View {
     Section {
@@ -29,13 +77,11 @@ struct GoalMaterialSections: View {
       }
       .onDelete { material.remove(atOffsets: $0) }
 
-      if canAttach {
-        MaterialAttachControls(draft: $draft) {
-          paperclipLabel
-        } onAttached: { source in
-          material = material.filter { $0.id != source.id } + [source]
+      if learner.canAttachMaterial {
+        MaterialAttachProgress(draft: $draft) { source in
+          material.attach(source)
         }
-      } else if showsSignUp {
+      } else if draft.showsSignUp {
         VStack(alignment: .leading, spacing: 8) {
           Text(
             "Study your own material", tableName: "Onboarding",
@@ -57,12 +103,6 @@ struct GoalMaterialSections: View {
               comment: "Opens sign-up to add material")
           }
         }
-      } else {
-        Button {
-          showsSignUp = true
-        } label: {
-          paperclipLabel
-        }
       }
     } header: {
       if !material.isEmpty {
@@ -70,14 +110,6 @@ struct GoalMaterialSections: View {
           Text(
             "Your material", tableName: "Onboarding",
             comment: "Header over the material attached to a goal"))
-      }
-    } footer: {
-      SectionFooter {
-        if canAttach, material.isEmpty {
-          Text(
-            "Your plan and lessons will use it.", tableName: "Onboarding",
-            comment: "Under the way to add material")
-        }
       }
     }
 
@@ -121,26 +153,25 @@ struct GoalMaterialSections: View {
     }
   }
 
-  private var paperclipLabel: some View {
-    Label {
-      Text(
-        "Add your material", tableName: "Onboarding",
-        comment: "Opens the ways to add a file, text or a link to a goal")
-    } icon: {
-      Image(systemName: "paperclip")
-    }
-  }
-
-  private var canAttach: Bool {
-    learner.summary.value.map { !$0.identity.isAnonymous } ?? false
-  }
-
   private func title(of source: AttachedSource) -> String {
     source.title.flatMap { $0.isEmpty ? nil : $0 }
       ?? String(
         localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
   }
+}
 
+extension LearnerSummaryStore {
+  /// Only accounts add material.
+  fileprivate var canAttachMaterial: Bool {
+    summary.value.map { !$0.identity.isAnonymous } ?? false
+  }
+}
+
+extension [AttachedSource] {
+  /// The same source added again replaces itself at the end.
+  fileprivate mutating func attach(_ source: AttachedSource) {
+    self = filter { $0.id != source.id } + [source]
+  }
 }
 
 /// What the uploads route reads.
@@ -151,7 +182,9 @@ private let readableMaterialTypes: [UTType] = [
   UTType(filenameExtension: "md"),
 ].compactMap { $0 }
 
-/// Text or a link being pasted, kept by the screen above its panes, so folding keeps it.
+/// What the learner is adding as material: text or a link being pasted, a source being read and
+/// what failed, or for a guest, how to get an account. Kept by the screen above its panes, so
+/// folding keeps it.
 struct MaterialDraft {
   enum Pasting {
     case text
@@ -160,87 +193,92 @@ struct MaterialDraft {
 
   var pasting: Pasting?
   var value = ""
+  var isAdding = false
+  var error: LocalizedStringResource?
+  var showsSignUp = false
 }
 
-/// A file, pasted text or a link, added as one source. Only accounts add material, so callers
-/// show it to them alone.
+/// A file, pasted text or a link, added as one source: the ways to add one, then what's being
+/// added. Only accounts add material, so callers show it to them alone.
 struct MaterialAttachControls<Label: View>: View {
+  var goal: (id: String, language: String)?
+  @Binding var draft: MaterialDraft
+  @ViewBuilder let label: Label
+  let onAttached: (AttachedSource) async throws -> Void
+
+  var body: some View {
+    MaterialAttachMenu(goal: goal, draft: $draft, label: { label }, onAttached: onAttached)
+    MaterialAttachProgress(goal: goal, draft: $draft, onAttached: onAttached)
+  }
+}
+
+/// The ways to add a source: a file, pasted text or a link.
+struct MaterialAttachMenu<Label: View>: View {
   /// A goal's material is read in its language and kept with it; onboarding's has no goal yet.
   var goal: (id: String, language: String)?
   @Binding var draft: MaterialDraft
+  /// Over the ways, what the material is for.
+  var header: Text?
   @ViewBuilder let label: Label
   /// Its throw shows as a failure to add.
   let onAttached: (AttachedSource) async throws -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
   @State private var isImporting = false
-  @State private var isAdding = false
-  @State private var error: LocalizedStringResource?
 
   var body: some View {
     Menu {
-      Button {
-        isImporting = true
-      } label: {
-        SwiftUI.Label {
-          Text("Upload a file", tableName: "Onboarding", comment: "Adds a file as material")
-        } icon: {
-          Image(systemName: "arrow.up.doc")
+      if let header {
+        Section {
+          ways
+        } header: {
+          header
         }
-      }
-
-      Button {
-        draft = MaterialDraft(pasting: .text)
-      } label: {
-        SwiftUI.Label {
-          Text("Paste text", tableName: "Onboarding", comment: "Adds pasted text as material")
-        } icon: {
-          Image(systemName: "doc.plaintext")
-        }
-      }
-
-      Button {
-        draft = MaterialDraft(pasting: .link)
-      } label: {
-        SwiftUI.Label {
-          Text("Paste a link", tableName: "Onboarding", comment: "Adds a link as material")
-        } icon: {
-          Image(systemName: "link")
-        }
+      } else {
+        ways
       }
     } label: {
       label
     }
-    .disabled(isAdding)
+    .disabled(draft.isAdding)
     .fileImporter(isPresented: $isImporting, allowedContentTypes: readableMaterialTypes) { result in
       if case .success(let file) = result {
-        add { try await attach(file) }
+        $draft.add({ try await attach(file) }, then: onAttached)
+      }
+    }
+  }
+
+  @ViewBuilder private var ways: some View {
+    Button {
+      isImporting = true
+    } label: {
+      SwiftUI.Label {
+        Text("Upload a file", tableName: "Onboarding", comment: "Adds a file as material")
+      } icon: {
+        Image(systemName: "arrow.up.doc")
       }
     }
 
-    if let pasting = draft.pasting {
-      PasteMaterialRow(value: $draft.value, isLink: pasting == .link, isAdding: isAdding) {
-        value in
-        add {
-          try await onboarding.attach(
-            pasting == .link ? .link(value, goal: goal) : .text(value, goal: goal))
-        }
-      } onCancel: {
-        draft = MaterialDraft()
+    Button {
+      draft.pasting = .text
+      draft.value = ""
+    } label: {
+      SwiftUI.Label {
+        Text("Paste text", tableName: "Onboarding", comment: "Adds pasted text as material")
+      } icon: {
+        Image(systemName: "doc.plaintext")
       }
     }
 
-    if isAdding {
-      HStack(spacing: 8) {
-        ProgressView()
-        Text("Adding your material…", tableName: "Onboarding", comment: "While material is added")
+    Button {
+      draft.pasting = .link
+      draft.value = ""
+    } label: {
+      SwiftUI.Label {
+        Text("Paste a link", tableName: "Onboarding", comment: "Adds a link as material")
+      } icon: {
+        Image(systemName: "link")
       }
-      .foregroundStyle(.mutedForeground)
-    }
-
-    if let error {
-      Text(error)
-        .foregroundStyle(.destructiveText)
     }
   }
 
@@ -254,25 +292,73 @@ struct MaterialAttachControls<Label: View>: View {
 
     return try await onboarding.attachFile(file, goal: goal)
   }
+}
 
-  private func add(_ attach: @escaping () async throws -> AttachedSource) {
-    isAdding = true
-    error = nil
+/// What `MaterialAttachMenu` started: the text or link being pasted, the source being read and
+/// what failed.
+struct MaterialAttachProgress: View {
+  var goal: (id: String, language: String)?
+  @Binding var draft: MaterialDraft
+  let onAttached: (AttachedSource) async throws -> Void
+
+  @Environment(OnboardingStore.self) private var onboarding
+
+  var body: some View {
+    if let pasting = draft.pasting {
+      PasteMaterialRow(value: $draft.value, isLink: pasting == .link, isAdding: draft.isAdding) {
+        value in
+        $draft.add(
+          {
+            try await onboarding.attach(
+              pasting == .link ? .link(value, goal: goal) : .text(value, goal: goal))
+          }, then: onAttached)
+      } onCancel: {
+        draft.pasting = nil
+        draft.value = ""
+      }
+    }
+
+    if draft.isAdding {
+      HStack(spacing: 8) {
+        ProgressView()
+        Text("Adding your material…", tableName: "Onboarding", comment: "While material is added")
+      }
+      .foregroundStyle(.mutedForeground)
+    }
+
+    if let error = draft.error {
+      Text(error)
+        .foregroundStyle(.destructiveText)
+    }
+  }
+}
+
+extension Binding<MaterialDraft> {
+  /// Reads one source and hands it on; a throw from either shows as a failure to add.
+  @MainActor
+  fileprivate func add(
+    _ read: @escaping () async throws -> AttachedSource,
+    then onAttached: @escaping (AttachedSource) async throws -> Void
+  ) {
+    wrappedValue.isAdding = true
+    wrappedValue.error = nil
 
     Task {
-      defer { isAdding = false }
+      defer { wrappedValue.isAdding = false }
 
       do {
-        try await onAttached(attach())
-        draft = MaterialDraft()
+        try await onAttached(read())
+        wrappedValue = MaterialDraft()
       } catch is CancellationError {
       } catch {
-        self.error = Self.message(for: error)
+        wrappedValue.error = MaterialDraft.message(for: error)
       }
     }
   }
+}
 
-  private static func message(for error: Error) -> LocalizedStringResource {
+extension MaterialDraft {
+  fileprivate static func message(for error: Error) -> LocalizedStringResource {
     switch error as? OnboardingError {
     case .limit(let limit) where limit.tier == "plus":
       LocalizedStringResource(
