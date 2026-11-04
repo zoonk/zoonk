@@ -4,11 +4,7 @@ import { type ExamOutline, canBuildOn, isWrittenTestSubject, placeInExam } from 
 import { COURSE_LEVELS, type CourseLevel } from "./course-levels";
 import { toExamWeight } from "./exam-weight";
 import { fitLessonBudget } from "./lesson-budget";
-import {
-  pushPhasesAfterPrerequisites,
-  removeCycles,
-  sortSkillsTopologically,
-} from "./order-skill-graph";
+import { orderSkillGraph } from "./order-skill-graph";
 import { toSkillNameKey } from "./skill-graph-checks";
 
 type RawSkillGraphSkill = {
@@ -27,7 +23,7 @@ type RawSkillGraphSkill = {
 };
 
 export type RawSkillGraph = {
-  courses: { key: string; levels: CourseLevel[]; title: string }[];
+  courses: { key: string; levels: CourseLevel[]; supporting?: boolean; title: string }[];
   phases: { milestone: string; title: string }[];
   skills: RawSkillGraphSkill[];
 };
@@ -300,7 +296,21 @@ export function normalizeSkillGraph(
     ),
   });
 
-  const ordered = sortSkillsTopologically(pushPhasesAfterPrerequisites(removeCycles(graphSkills)));
+  const subjectCourse = graphSkills[0]?.course;
+
+  const supportingCourses = new Set(
+    raw.courses
+      .filter((course) => course.supporting && toKey(course.key) !== subjectCourse)
+      .map((course) => toKey(course.key)),
+  );
+
+  const ordered = orderSkillGraph({
+    nodes: graphSkills,
+    supporting: new Set(
+      graphSkills.filter((skill) => supportingCourses.has(skill.course)).map((skill) => skill.key),
+    ),
+  });
+
   const normalized = normalizePhases({ phases: raw.phases, skills: ordered });
   const { phases } = normalized;
   const skills = fitLessonBudget({ budget: lessonBudget, skills: normalized.skills });
