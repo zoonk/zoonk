@@ -13,6 +13,7 @@ struct ChallengeScreen: View {
   @State private var currentPlanItemId: String?
   @State private var load: PracticeLoad<Components.Schemas.Challenge> = .loading
   @State private var isStarting = false
+  @State private var isStartSlow = false
   @State private var isWriting = false
   @State private var startProblem: LocalizedStringResource?
   @State private var isMoving = false
@@ -53,6 +54,15 @@ struct ChallengeScreen: View {
       }
     }
     .task(id: session.authenticatedSession) { await read() }
+    // Writing the questions shows its own wait, and the start after it is timed afresh.
+    .task(id: isStarting && !isWriting) {
+      isStartSlow = false
+
+      if isStarting, !isWriting {
+        try? await Task.sleep(for: Self.slowStart)
+        isStartSlow = !Task.isCancelled
+      }
+    }
     .onDisappear { action?.cancel() }
   }
 
@@ -190,6 +200,14 @@ struct ChallengeScreen: View {
             .font(.subheadline).foregroundStyle(.secondary)
           }
         }
+      }
+
+      if isStartSlow, isStarting, !isWriting {
+        Text(
+          "Still starting. This is taking longer than usual.", tableName: "Practice",
+          comment: "Starting a challenge is taking longer than usual."
+        )
+        .font(.subheadline).foregroundStyle(.secondary)
       }
 
       if let startProblem {
@@ -751,6 +769,9 @@ struct ChallengeScreen: View {
     .compactMap(\.self)
     .joinedSentences()
   }
+
+  /// Past this, a start still running says so (main's `START_BOUNDS.slowMs`).
+  private static let slowStart = Duration.seconds(10)
 
   private static let notDone = LocalizedStringResource(
     "That didn't go through. Try again in a moment.", table: "Practice",
