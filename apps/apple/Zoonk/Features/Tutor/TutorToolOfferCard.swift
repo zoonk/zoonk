@@ -17,6 +17,8 @@ enum TutorPlace: Hashable, Sendable {
   case energy
   case earlierQuestions
   case mission(Components.Schemas.StudyMissionOpens)
+  /// What a mission's block opened.
+  case missionStep(StudyDestination)
 }
 
 struct TutorPlaces {
