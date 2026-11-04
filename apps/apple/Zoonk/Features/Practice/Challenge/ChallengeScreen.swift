@@ -15,6 +15,7 @@ struct ChallengeScreen: View {
   @State private var isStarting = false
   @State private var isStartSlow = false
   @State private var isWriting = false
+  @State private var writeLimit: HelpLimit?
   @State private var startProblem: LocalizedStringResource?
   @State private var isMoving = false
   @State private var moveProblem: LocalizedStringResource?
@@ -63,6 +64,7 @@ struct ChallengeScreen: View {
       }
     }
     .task(id: session.authenticatedSession) { await read() }
+    .clearsRefusal { writeLimit = nil }
     // Writing the questions shows its own wait, and the start after it is timed afresh.
     .task(id: isStarting && !isWriting) {
       isStartSlow = false
@@ -287,6 +289,9 @@ struct ChallengeScreen: View {
             ? .mock(blockId: blockId, sessionId: sessionId)
             : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
+    } else if let writeLimit {
+      HelpLimitNotice(limit: writeLimit)
+        .frame(maxWidth: .infinity, alignment: .leading)
     } else if challenge.status == .ready || challenge.status == .started {
       PracticeActionRow {
         if challenge.canMove, moved == nil {
@@ -704,6 +709,8 @@ struct ChallengeScreen: View {
       guard !Task.isCancelled else { return }
       isWriting = false
       await start(afterWriting: true)
+    case .refused(.limit(let limit)):
+      writeLimit = limit
     case .refused:
       await read()
     case .failed:
