@@ -164,11 +164,11 @@ class TutorViewModel internal constructor(
 
     fun undoMemory(turnId: String) {
         val changes = state.value.memoryChanges[turnId] ?: return
-        if ((state.value.memoryUndos[turnId] ?: MemoryUndo.Offered) != MemoryUndo.Offered) return
+        if (!(state.value.memoryUndos[turnId] ?: MemoryUndo.Offered).canUndo) return
         mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to MemoryUndo.Undoing)) }
         viewModelScope.launch {
-            val undone = store.undoMemory(changes.map { it.shown.reference })
-            mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to if (undone) MemoryUndo.Undone else MemoryUndo.Failed)) }
+            val undo = store.undoMemory(changes.map { it.shown.reference }).memoryUndo()
+            mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to undo)) }
         }
     }
 

@@ -83,7 +83,9 @@ private class FakeMemoryApi : MemoryApi {
     override suspend fun undo(
         session: AuthenticatedSession,
         changes: List<MemoryChangeReference>,
-    ): Boolean = true
+    ) {
+        failure?.let { throw it }
+    }
 
     override suspend fun export(session: AuthenticatedSession): MemoryExport = throw UnsupportedOperationException()
 }
@@ -172,5 +174,22 @@ class MemoryStoreTest {
                 store.memory.state.value.value!!
                     .enabled,
             )
+        }
+
+    /** Only the API's conflict ends Undo; a dropped connection keeps it for another tap. */
+    @Test
+    fun anUndoThatChangedSinceEndsButOneThatDidNotReachTheServerCanBeTriedAgain() =
+        runTest {
+            val store = loadedStore()
+            val change = listOf(MemoryChangeReference(null, FACT_ID))
+
+            api.failure = ApiException(ApiError.Unavailable, "MEMORY_CHANGE_ALREADY_UNDONE", 409)
+            assertEquals(MemoryUndo.Changed, store.undo(change).memoryUndo())
+
+            api.failure = ApiException(ApiError.Network)
+            assertEquals(MemoryUndo.Failed, store.undo(change).memoryUndo())
+
+            api.failure = null
+            assertEquals(MemoryUndo.Undone, store.undo(change).memoryUndo())
         }
 }
