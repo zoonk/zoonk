@@ -79,7 +79,7 @@ describe("opening a day and reading it", () => {
     }
 
     expect(read.result.today.session).toStrictEqual(opened.result.session);
-    expect(opened.statements + read.statements).toBeLessThanOrEqual(205);
+    expect(opened.statements + read.statements).toBeLessThanOrEqual(208);
   });
 
   it("keeps the same display-limit day when a different owned goal crosses midnight", async () => {

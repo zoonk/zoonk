@@ -5,6 +5,7 @@ import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-cha
 import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
+import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
@@ -111,7 +112,7 @@ export async function loadStudySessionView({
             ),
           ],
           goalId: storedSession.goalId,
-          known: { source: readSavedPlan(userId, storedSession.goalId) },
+          known: { plan: readGoalPlan(storedSession.goalId) },
           now: new Date(),
           timeZone,
           userId,

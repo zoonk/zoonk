@@ -7,11 +7,11 @@ import { loadPracticeCall } from "../../language/conversations/_utils/practice-c
 import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
 import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
-import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
 import { getSession } from "../../users/get-session";
@@ -85,29 +85,34 @@ export async function getLanguageUnitView({
   const goal = await findLearnerLanguageGoal({ goalId, targetLanguage, userId });
   const lessonIds = chapter.lessons.map(({ lesson }) => lesson.id);
 
-  const plan = goal
-    ? await loadTestOutPlan(goal.id, { goal, source: readSavedPlan(userId, goal.id) })
-    : null;
-
-  const [todayBlocks, level, grammarTips, words, mistakes, pronunciation, blockedTestOutChapters] =
-    await Promise.all([
-      goal ? readTodayLearnBlocks(userId, goal.id) : [],
-      getSpeakingLevel({ goal, targetLanguage, userId }),
-      loadGrammarTips(lessonIds),
-      loadUnitWords(lessonIds),
-      loadUnitMistakes({ lessonIds, userId }),
-      readDuePronunciation(userId, targetLanguage),
-      goal
-        ? loadBlockedTestOutChapters({
-            chapterIds: [chapter.id],
-            goalId: goal.id,
-            known: { goal, ...(plan && { plan }) },
-            now: new Date(),
-            timeZone: getAnswerTimeZone({ goal }),
-            userId,
-          })
-        : new Set<string>(),
-    ]);
+  const [
+    plan,
+    todayBlocks,
+    level,
+    grammarTips,
+    words,
+    mistakes,
+    pronunciation,
+    blockedTestOutChapters,
+  ] = await Promise.all([
+    goal ? readSavedPlan(userId, goal.id) : null,
+    goal ? readTodayLearnBlocks(userId, goal.id) : [],
+    getSpeakingLevel({ goal, targetLanguage, userId }),
+    loadGrammarTips(lessonIds),
+    loadUnitWords(lessonIds),
+    loadUnitMistakes({ lessonIds, userId }),
+    readDuePronunciation(userId, targetLanguage),
+    goal
+      ? loadBlockedTestOutChapters({
+          chapterIds: [chapter.id],
+          goalId: goal.id,
+          known: { goal, plan: readGoalPlan(goal.id) },
+          now: new Date(),
+          timeZone: getAnswerTimeZone({ goal }),
+          userId,
+        })
+      : new Set<string>(),
+  ]);
 
   const chapterIds = [...new Set(plan?.items.flatMap((item) => item.chapterId ?? []))];
   const unitIndex = chapterIds.indexOf(chapter.id);

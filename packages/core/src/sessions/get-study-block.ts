@@ -7,7 +7,7 @@ import {
 } from "../checkpoints/_utils/checkpoint-answer-evidence";
 import { getAskablePassMark, isBlockDuelDecided } from "../checkpoints/_utils/checkpoint-outcome";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { readSavedPlan } from "../learner/facts/saved-plan";
+import { readGoalPlan } from "../learner/_utils/read-goal-plan";
 import { loadBlockedTestOutChapters } from "../learner/test-out/_utils/offer-eligibility";
 import { readNoticeFormats } from "../library/exams/notice-formats";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
@@ -160,7 +160,7 @@ export async function loadStudyBlock(
       ? loadBlockedTestOutChapters({
           chapterIds: [payload.chapterId],
           goalId: owned.session.goalId,
-          known: { source: readSavedPlan(owned.userId, owned.session.goalId) },
+          known: { plan: readGoalPlan(owned.session.goalId) },
           now: new Date(),
           timeZone: getAnswerTimeZone({ goal: owned.session.goal }),
           userId: owned.userId,

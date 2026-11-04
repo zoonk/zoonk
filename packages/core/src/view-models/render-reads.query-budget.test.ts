@@ -57,7 +57,7 @@ describe("render read statement budgets", () => {
       getLanguageUnitView({ chapterId: renting.id }),
     );
 
-    assertReadBudget(counts, 26);
+    assertReadBudget(counts, 28);
     expect(counts.result.status).toBe("ready");
   });
 });

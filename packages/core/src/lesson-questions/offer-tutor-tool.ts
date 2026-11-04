@@ -106,6 +106,7 @@ async function offerChapterTest({
   const blocked = await loadBlockedTestOutChapters({
     chapterIds: [offer.chapter.id],
     goalId,
+    known: { goal, plan },
     now: new Date(),
     timeZone: getAnswerTimeZone({ goal }),
     userId: goal.userId,

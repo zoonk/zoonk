@@ -1,6 +1,6 @@
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import "server-only";
-import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { withDayState } from "../day-state";
@@ -64,7 +64,7 @@ export async function loadUnstartedDayView({
     loadBlockedTestOutChapters({
       chapterIds: [...new Set(day.blocks.flatMap((block) => block.payload.chapterId ?? []))],
       goalId: goal.id,
-      known: { source: readSavedPlan(userId, goal.id) },
+      known: { plan: readGoalPlan(goal.id) },
       now,
       timeZone,
       userId,
