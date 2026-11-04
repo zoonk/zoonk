@@ -1,7 +1,8 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
-import { getString } from "@zoonk/utils/json";
+import { type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
+import { getString, isJsonObject } from "@zoonk/utils/json";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
+import { findDayLessonBlock } from "../../sessions/_utils/day-lesson-block";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { serializeStudyBlockCompletion } from "../../sessions/completion-contract";
 import { NOTHING_REACHED } from "../../sessions/reached";
@@ -12,17 +13,85 @@ export type RunCompletion = Omit<LibraryLessonCompletion, "ceremony" | "reached"
 
 export type LessonProgress = { brainPower: ProgressChange; energy: ProgressChange };
 
-/** Repeated completions return the same moment; standalone lessons celebrate on completion instead. */
+/** Caller must hold the learner's progress lock. */
+export async function lockRunBlock({
+  lessonId,
+  now,
+  run,
+  timeZone,
+  tx,
+  userId,
+}: {
+  lessonId: string;
+  now: Date;
+  run: LearningEvent;
+  timeZone: string;
+  tx: TransactionClient;
+  userId: string;
+}) {
+  const found = await findDayLessonBlock({
+    client: tx,
+    lessonId,
+    now,
+    runStartedAt: run.startedAt,
+    timeZone,
+    userId,
+  });
+
+  if (!found) {
+    return null;
+  }
+
+  await tx.$queryRaw`SELECT id FROM study_session_blocks WHERE id = ${found.id}::uuid FOR UPDATE`;
+  const block = await tx.studySessionBlock.findUnique({ where: { id: found.id } });
+
+  return block && { ...block, session: found.session };
+}
+
+type RunBlock = NonNullable<Awaited<ReturnType<typeof lockRunBlock>>>;
+
+/** Commits the block with the run that finished it, so a failed settlement still leaves it done and a retry on a later day still settles its day. */
+export async function completeRunBlock(
+  tx: TransactionClient,
+  {
+    block,
+    brainPower,
+    now,
+    run,
+  }: { block: RunBlock; brainPower: number; now: Date; run: LearningEvent },
+): Promise<boolean> {
+  if (block.status !== "active" && block.status !== "pending") {
+    return false;
+  }
+
+  await tx.studySessionBlock.update({
+    data: { brainPower, completedAt: now, status: "completed" },
+    where: { id: block.id },
+  });
+
+  await tx.learningEvent.update({
+    data: {
+      contentIds: {
+        ...(isJsonObject(run.contentIds) ? run.contentIds : {}),
+        studySessionBlockId: block.id,
+        studySessionId: block.sessionId,
+      },
+    },
+    where: { id: run.id },
+  });
+
+  return true;
+}
+
+/** Repeated completions return the same moment; a run that finished no block celebrates on its own. */
 export async function withStudyBlock({
   completion,
-  lessonId,
   progress,
   runId,
   timeZone,
   userId,
 }: {
   completion: RunCompletion;
-  lessonId: string;
   /** Supply only when this request closed the run. */
   progress?: LessonProgress;
   runId: string;
@@ -30,16 +99,11 @@ export async function withStudyBlock({
   userId: string;
 }): Promise<LibraryLessonCompletion> {
   const run = await prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } });
-  const blockId = getString(run.contentIds, "studySessionBlockId") ?? undefined;
+  const blockId = getString(run.contentIds, "studySessionBlockId");
 
-  const studyBlock = await settleFinishedLesson({
-    blockId,
-    energy: progress?.energy,
-    lessonId,
-    runStartedAt: run.startedAt,
-    timeZone,
-    userId,
-  });
+  const studyBlock = blockId
+    ? await settleFinishedLesson({ blockId, energy: progress?.energy, timeZone, userId })
+    : null;
 
   if (studyBlock) {
     return {
