@@ -1,12 +1,14 @@
 package com.zoonk.android.feature.session
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -30,6 +32,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -75,7 +78,10 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
@@ -430,71 +436,97 @@ internal fun NextStop(
                 null
             },
     ) { padding ->
-        Column(Modifier.padding(padding).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            SessionSegments(day, step, Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth().padding(horizontal = 16.dp))
+        var span by remember { mutableStateOf<PageSpan?>(null) }
+
+        BoxWithConstraints(Modifier.padding(padding).fillMaxSize().onPageSpan { span = it }) {
+            val fold = spreadFold(maxWidth, span)
+
+            if (fold != null) {
+                SessionSegments(
+                    day,
+                    step,
+                    Modifier.width(fold.start).padding(horizontal = 16.dp, vertical = 24.dp).semantics { isTraversalGroup = true },
+                    counted = true,
+                )
+            }
+            // What's next keeps its place in the composition, only padded past a fold, so folding keeps a guess on its card.
             Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 16.dp, vertical = 24.dp),
+                Modifier.fillMaxSize().padding(start = fold?.end ?: 0.dp).semantics { isTraversalGroup = true },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Eyebrow(stringResource(R.string.session_next_eyebrow))
-                    Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-                    blockDetail(step)?.let {
-                        Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-                    }
-                    StepFacts(step)
-                    if (written) {
-                        Text(
-                            stringResource(R.string.session_next_lesson_ready),
-                            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                    refusal?.let { reason ->
-                        Surface(
-                            Modifier.padding(top = 16.dp).fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            shape = MaterialTheme.shapes.medium,
-                        ) {
-                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                LessonNotWrittenNotice(
-                                    reason,
-                                    onRetry = { goalId?.let { viewModel.start(day, step, it) } },
-                                    onOpen = navigator::open,
-                                )
+                if (fold ==
+                    null
+                ) {
+                    SessionSegments(day, step, Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth().padding(horizontal = 16.dp))
+                }
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 16.dp, vertical = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Eyebrow(stringResource(R.string.session_next_eyebrow))
+                        Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+                        blockDetail(step)?.let {
+                            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                        }
+                        StepFacts(step)
+                        if (written) {
+                            Text(
+                                stringResource(R.string.session_next_lesson_ready),
+                                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                        refusal?.let { reason ->
+                            Surface(
+                                Modifier.padding(top = 16.dp).fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                shape = MaterialTheme.shapes.medium,
+                            ) {
+                                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    LessonNotWrittenNotice(
+                                        reason,
+                                        onRetry = { goalId?.let { viewModel.start(day, step, it) } },
+                                        onOpen = navigator::open,
+                                    )
+                                }
                             }
                         }
-                    }
-                    if (waiting) {
-                        Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                            if (failure != null) {
-                                GenerationFailureNotice(failure, onRetry = { retry() })
-                            } else {
-                                LessonWritingProgress(
-                                    run = if (lesson == NextStopLesson.Writing) run else GenerationRun(),
-                                    onRetry = { if (run.failure == GenerationFailure.Connection) viewModel.reconnect() else retry() },
-                                    note = stringResource(R.string.session_next_writing_note),
-                                )
+                        if (waiting) {
+                            Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                if (failure != null) {
+                                    GenerationFailureNotice(failure, onRetry = { retry() })
+                                } else {
+                                    LessonWritingProgress(
+                                        run = if (lesson == NextStopLesson.Writing) run else GenerationRun(),
+                                        onRetry = { if (run.failure == GenerationFailure.Connection) viewModel.reconnect() else retry() },
+                                        note = stringResource(R.string.session_next_writing_note),
+                                    )
+                                }
                             }
                         }
+                        WarmUpCard(warmUpId, warmUps, AnalyticsEvent.WarmUpSurface.LessonWait, hold, Modifier.padding(top = 16.dp))
                     }
-                    WarmUpCard(warmUpId, warmUps, AnalyticsEvent.WarmUpSurface.LessonWait, hold, Modifier.padding(top = 16.dp))
                 }
             }
         }
     }
 }
 
-/** Main's session header segments: the day's work by its minutes, done in blue and the shown step as the learner's place. */
+/**
+ * Main's session header segments: the day's work by its minutes, done in blue and the shown step as
+ * the learner's place. [counted] says how many are done above them, for a page of their own.
+ */
 @Composable
 private fun SessionSegments(
     day: DayView,
     step: DayStep,
     modifier: Modifier,
+    counted: Boolean = false,
 ) {
     val steps = day.steps.filter { it.status != StudyBlock.Status.SKIPPED }
     val done = MaterialTheme.colorScheme.tertiary
@@ -509,7 +541,21 @@ private fun SessionSegments(
             MeterPart(fill, weight = it.estimatedMinutes.coerceAtLeast(1).toFloat())
         }
 
-    if (parts.isNotEmpty()) MeterParts(parts, modifier, contentDescription = stepsDone(steps.count(DayStep::isFinished), steps.size))
+    if (parts.isEmpty()) return
+    val progress = stepsDone(steps.count(DayStep::isFinished), steps.size)
+
+    if (counted) {
+        Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                progress,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+            )
+            MeterParts(parts)
+        }
+    } else {
+        MeterParts(parts, modifier, contentDescription = progress)
+    }
 }
 
 @Composable
