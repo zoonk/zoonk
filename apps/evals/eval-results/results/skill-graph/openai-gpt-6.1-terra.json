@@ -5,98 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "coverage",
-          "reasoning": "All named prerequisite subjects and quantum pillars are explicitly represented, including differential equations, probability, linear algebra, classical mechanics, waves, electromagnetism, wavefunctions, the Schrödinger equation, observables, uncertainty, hydrogen, angular momentum, spin, approximation methods, and entanglement. No missing-pillar cap applies.",
-          "score": 10,
-          "label": "Coverage",
-          "weight": 25
-        },
-        {
-          "categoryId": "orderAndPrerequisites",
-          "reasoning": "The broad progression is sound, and calculus, complex numbers, and linear algebra precede quantum formalism. However, the graph omits several dependencies: probability current on time evolution, free-field quantization on Hamiltonian mechanics, and approximate many-electron interactions on approximation methods. These omissions trigger the cap of 7 for several prerequisite errors. 'Making quantum predictions' also triggers the phase-title cap of 9, which is superseded by the lower cap.",
-          "score": 7,
-          "label": "Order & prerequisites",
-          "weight": 20
-        },
-        {
-          "categoryId": "granularity",
-          "reasoning": "Skills are generally coherent chapter-sized units rather than trivia, and 345.4 hours falls within the expected hundreds-of-hours range. Nevertheless, the allocation is optimistic for the actual expanded curriculum and deep-learning purpose. Phase 1 compresses rebuilding forgotten mathematics through integration together with substantial physics into 46.4 hours; phase 5 allocates only 81.4 hours to numerous advanced specialties, including field quantization, scattering, renormalization, and effective field theory. The clearly undersized-area cap of 8 applies.",
-          "score": 8,
-          "label": "Granularity & honest size",
-          "weight": 15
-        },
-        {
-          "categoryId": "noFiller",
-          "reasoning": "The skills teach substantive mathematical and physical capabilities. Experimental evidence and measurement interpretations support conceptual understanding rather than serving as history, motivation, or generic introductions. No clear filler or substantially duplicate skill appears.",
-          "score": 10,
-          "label": "No filler",
-          "weight": 15
-        },
-        {
-          "categoryId": "goalFit",
-          "reasoning": "The path starts with suitable algebra foundations for someone who has forgotten high-school mathematics and develops toward technically substantive quantum physics. US English is used consistently, and exam weights are correctly null for a learning goal. The advanced extensions are relevant to the broad mastery goal, although separating them into optional branches would improve prioritization for a learner studying 45 minutes daily.",
-          "score": 9,
-          "label": "Goal & level fit",
-          "weight": 15
-        },
-        {
-          "categoryId": "aiEraSkills",
-          "reasoning": "The graph emphasizes modeling, interpretation, approximation, uncertainty, experimental inference, dimensional checking, and numerical convergence rather than rote memorization. AI-tool instruction is not required for this learning goal. More explicit physical sanity checks within quantum problem-solving outcomes would strengthen an already sound emphasis on understanding and judgment.",
-          "score": 9,
-          "label": "Skills for a world with AI",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "6 of 7 parts passed. \"Apply effective field theory\" sits at the end of a chain of 22 prerequisites; list only what a skill can't be learned without (at most 12 deep).",
-          "score": 8.714285714285714,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 15551,
-          "outputTokens": 1735,
-          "reasoningTokens": 879
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "Several prerequisite links are missing: position-space wavefunctions include probability current without requiring quantum time evolution; free-field quantization does not require Hamiltonian mechanics; and many-electron atoms invoke approximate interactions without requiring the approximation methods taught elsewhere. The study budget also looks compressed for the expanded scope: 46.4 hours rebuilds mathematics through calculus alongside mechanics, while 81.4 hours covers substantial quantum information, many-body physics, and quantum field theory.",
-          "kind": "majorErrors",
-          "score": 7.5
-        },
-        {
-          "conclusion": "The phase title 'Making quantum predictions' names an ability taught within that phase rather than distinctly naming its stage in the learning path.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Distinguish the core quantum-mechanics pathway from optional advanced specializations and show the calendar implications of studying 45 minutes daily. Strengthen verification outcomes by explicitly including limiting-case, normalization, symmetry, and conservation checks when solving quantum problems.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Huge goal: the graph must span several canonical courses, such as mathematics (algebra, trigonometry, calculus, differential equations, complex numbers, probability), linear algebra, classical mechanics, waves and oscillations, electromagnetism, and quantum mechanics\n      - Quantum mechanics must reach the core: the wave function, the Schrödinger equation, operators and observables, uncertainty, the hydrogen atom, angular momentum and spin, perturbation theory or approximation methods, and entanglement or quantum information\n      - Starting from forgotten high school math, the path begins with the math physics uses; calculus and linear algebra come before the quantum formalism\n      - The honest size is hundreds of hours (roughly 300 to 600); phases that move from the math physics uses through calculus, linear algebra and classical physics to quantum mechanics and its advanced topics are sensible\n      - Chapter-sized skills are expected, not hundreds of lesson-sized trivia skills\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-quantum-physics-from-zero-1",
-        "userInput": {
-          "context": "I finished high school years ago and forgot most of the math. I can study about 45 minutes a day.",
-          "goal": "Master quantum physics from scratch",
-          "goalKind": "learn",
-          "language": "en",
-          "ownLevel": "none",
-          "purpose": "deep"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "coverage",
           "reasoning": "All four examination areas, every named blueprint topic, and all five essay competencies are substantively covered. Formal writing, prompt understanding and interdisciplinary repertoire, argument organization, cohesion, and rights-respecting intervention each have dedicated skills. Weights follow the supplied frequencies: interpretation, statistics, proportions, and ecology receive 5; Brazilian history and citizenship receive 4; the specified low-frequency topics receive 2. No coverage cap is triggered.",
           "score": 9,
           "label": "Coverage",
@@ -496,246 +404,6 @@
           "language": "en",
           "ownLevel": "basic",
           "purpose": "work"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "coverage",
-          "reasoning": "All supplied top-level topics have corresponding skills, and frequent topics generally receive greater weights than water, thermochemistry, and mechanics. However, topic tags overstate demonstrated depth in places: calorimetry and heat transfer do not explicitly cover thermal expansion, and radiation applications do not establish nuclear transformations, radioactive decay, fission, or fusion. These are content gaps within represented pillars, rather than an entirely missing course.",
-          "score": 8,
-          "label": "Coverage",
-          "weight": 25
-        },
-        {
-          "categoryId": "orderAndPrerequisites",
-          "reasoning": "Several prerequisite errors trigger the cap of 7. Stoichiometry lacks prior mole instruction; solutions lack the explicitly required balanced-equation and mole dependencies. Thermodynamics inherits a Newtonian-mechanics dependency through mechanical energy. Other gates, such as graph interpretation before statistical measures, are not consistently hard dependencies. Conversely, listed dependencies appear earlier, ecology avoids the prohibited biology dependencies, inheritance builds on meiosis, and the phase titles appropriately describe stages rather than topics.",
-          "score": 7,
-          "label": "Order & prerequisites",
-          "weight": 20
-        },
-        {
-          "categoryId": "granularity",
-          "reasoning": "The 261.6-hour total is plausible for preparation across the two large subject areas, and the skills are mostly chapter-sized rather than trivia-sized. Allocation is less convincing locally: the entire integration of human organ systems receives almost the same lesson count as membrane transport, and broad organism classification receives a similarly narrow allocation. This is a clearly unevenly sized area, applying the cap of 8, but the graph remains usable.",
-          "score": 8,
-          "label": "Granularity & honest size",
-          "weight": 15
-        },
-        {
-          "categoryId": "noFiller",
-          "reasoning": "The supplied scope contains only Natural Sciences and Mathematics. Five essay skills are therefore unnecessary to this particular map, even though they would be useful in a broader ENEM plan. The additional time-management/TRI skill teaches test strategy rather than a scored subject ability. Four or more unnecessary skills trigger the cap of 6. The in-scope subject skills otherwise contain little motivational or introductory filler.",
-          "score": 6,
-          "label": "No filler",
-          "weight": 15
-        },
-        {
-          "categoryId": "goalFit",
-          "reasoning": "The substantive science and mathematics skills are appropriate to ENEM, use Brazilian Portuguese, and emphasize contextual problem solving. However, adding an essay course, five essay skills, and an essay-writing phase milestone repeatedly expands the expressly supplied two-subject scope. This pattern of mismatches triggers the cap of 7; it does not make the entire graph serve a different goal.",
-          "score": 7,
-          "label": "Goal & level fit",
-          "weight": 15
-        },
-        {
-          "categoryId": "aiEraSkills",
-          "reasoning": "The graph emphasizes modeling, interpreting representations, comparing explanations, evaluating research conclusions, and assessing environmental and health impacts. Its manual calculations are appropriate to abilities assessed by the exam, not unnecessary automation-resistant busywork. AI-tool instruction is not required for this exam goal, and no rote-dominated area is evident.",
-          "score": 10,
-          "label": "Skills for a world with AI",
-          "weight": 10
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 7 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 16609,
-          "outputTokens": 1445,
-          "reasoningTokens": 516
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The prerequisite graph violates explicit requirements: no prerequisite skill establishes the mole before stoichiometry, and solutions depend on neither balanced equations nor the mole. Thermodynamics indirectly requires Newton's laws through mechanical energy, unnecessarily gating thermal physics behind mechanics. The map also expands beyond the supplied two-subject blueprint with five essay skills and a test-management skill.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Some additional prerequisites are textbook-style rather than hard dependencies: interpreting statistical measures requires graph interpretation, and geometrical optics requires the entire waves skill. Coverage labels are comprehensive, but descriptions do not establish some required ENEM content, including thermal expansion and nuclear transformations. Skill sizes also vary substantially despite similar lesson allocations—for example, all human physiological systems receive 34 lessons while membrane transport receives 28.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Preserve the independent ecology entry point and the generally appropriate frequency-based weights. Make the more extensive topic descriptions explicit enough to audit their ENEM depth, calibrate lesson allocations to breadth, and distinguish lesson time from practice and review time within the otherwise plausible total estimate.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Two subjects of the ENEM notice: every topic of both is taught by some skill, at the depth ENEM asks\n      - Prerequisites are hard dependencies only: a skill lists a prerequisite only when its lessons can't be followed without it, never because it comes earlier in a textbook or in the same subject. Most skills have none, one or two\n      - Ecology and environmental science skills (food chains and webs, cycles of matter, population dynamics and relationships between species, environmental impacts) don't depend on cell and tissue biology, the classification of living beings or comparative physiology\n      - Real dependencies stay: stoichiometry and solution concentration build on balanced chemical equations and the mole, and genetics' inheritance patterns build on how genetic information is passed on\n      - Physics topics don't form one chain through mechanics when they don't use it: heat and electricity don't need Newton's laws\n      - Exam weights follow the topic frequency: ecology, cells, heredity, electricity, waves, heat, organic chemistry, statistics and numbers weigh more than water or energy in chemical transformations\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-enem-science-prerequisites-1",
-        "userInput": {
-          "examBlueprint": {
-            "name": "ENEM",
-            "notes": [
-              "Format: Múltipla escolha com cinco alternativas, de A a E",
-              "Scoring: Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente.",
-              "Rule: Cada questão tem uma única alternativa correta."
-            ],
-            "subjects": [
-              {
-                "group": null,
-                "name": "Ciências da Natureza e suas Tecnologias",
-                "questions": 45,
-                "topics": [
-                  "Conhecimentos básicos e fundamentais",
-                  "O movimento, o equilíbrio e a descoberta de leis físicas",
-                  "Energia, trabalho e potência",
-                  "A Mecânica e o funcionamento do Universo",
-                  "Fenômenos Elétricos e Magnéticos",
-                  "Oscilações, ondas, óptica e radiação",
-                  "O calor e os fenômenos térmicos",
-                  "Transformações Químicas",
-                  "Representação das transformações químicas",
-                  "Materiais, suas propriedades e usos",
-                  "Água",
-                  "Transformações Químicas e Energia",
-                  "Dinâmica das Transformações Químicas",
-                  "Transformação Química e Equilíbrio",
-                  "Compostos de Carbono",
-                  "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente",
-                  "Energias Químicas no Cotidiano",
-                  "Moléculas, células e tecidos",
-                  "Hereditariedade e diversidade da vida",
-                  "Identidade dos seres vivos",
-                  "Ecologia e ciências ambientais",
-                  "Origem e evolução da vida",
-                  "Qualidade de vida das populações humanas"
-                ],
-                "weight": null
-              },
-              {
-                "group": null,
-                "name": "Matemática e suas Tecnologias",
-                "questions": 45,
-                "topics": [
-                  "Conhecimentos numéricos",
-                  "Conhecimentos geométricos",
-                  "Conhecimentos de estatística e probabilidade",
-                  "Conhecimentos algébricos",
-                  "Conhecimentos algébricos/geométricos"
-                ],
-                "weight": null
-              }
-            ],
-            "topicFrequency": [
-              {
-                "level": "high",
-                "subject": "Matemática e suas Tecnologias",
-                "topic": "Conhecimentos numéricos"
-              },
-              {
-                "level": "high",
-                "subject": "Matemática e suas Tecnologias",
-                "topic": "Conhecimentos de estatística e probabilidade"
-              },
-              {
-                "level": "medium",
-                "subject": "Matemática e suas Tecnologias",
-                "topic": "Conhecimentos algébricos"
-              },
-              {
-                "level": "medium",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "O movimento, o equilíbrio e a descoberta de leis físicas"
-              },
-              {
-                "level": "medium",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Energia, trabalho e potência"
-              },
-              {
-                "level": "high",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Fenômenos Elétricos e Magnéticos"
-              },
-              {
-                "level": "high",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Oscilações, ondas, óptica e radiação"
-              },
-              {
-                "level": "high",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "O calor e os fenômenos térmicos"
-              },
-              {
-                "level": "medium",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Transformações Químicas"
-              },
-              {
-                "level": "medium",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Materiais, suas propriedades e usos"
-              },
-              {
-                "level": "low",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Água"
-              },
-              {
-                "level": "medium",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Transformações Químicas e Energia"
-              },
-              {
-                "level": "high",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Dinâmica das Transformações Químicas"
-              },
-              {
-                "level": "high",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Compostos de Carbono"
-              },
-              {
-                "level": "high",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente"
-              },
-              {
-                "level": "high",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Moléculas, células e tecidos"
-              },
-              {
-                "level": "high",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Hereditariedade e diversidade da vida"
-              },
-              {
-                "level": "high",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Ecologia e ciências ambientais"
-              },
-              {
-                "level": "high",
-                "subject": "Ciências da Natureza e suas Tecnologias",
-                "topic": "Qualidade de vida das populações humanas"
-              }
-            ]
-          },
-          "goal": "ENEM",
-          "goalKind": "exam",
-          "language": "pt"
         }
       }
     },
@@ -1620,50 +1288,50 @@
       "categoryScores": [
         {
           "categoryId": "coverage",
-          "reasoning": "Kotlin, Android Studio, Compose layouts and state, navigation, API calls, local storage, testing, and Google Play publishing all appear explicitly. However, the required AI coding-assistant pillar is absent. One missing named pillar caps coverage at 8.",
-          "score": 8,
+          "reasoning": "All supplied top-level topic labels appear, and the main frequency priorities are generally reflected in the weights. However, labels do not establish full coverage: electromagnetic radiation does not teach radioactive decay or nuclear transformations; organism classification and human physiology do not teach plant physiology; and trigonometric ratios do not cover trigonometric functions. These are several substantive gaps within the ENEM areas, triggering the cap of 7. The separately scored essay competencies are represented.",
+          "score": 7,
           "label": "Coverage",
           "weight": 25
         },
         {
           "categoryId": "orderAndPrerequisites",
-          "reasoning": "Most dependencies support a sensible progression from Kotlin and tooling to UI, persistence, networking, testing, and release. However, privacy-compliance depends on play-release instead of preparing the learner for publication, a clear central prerequisite error that caps this category at 8. Most phase titles also describe situations or topics rather than progression stages, independently supporting the same cap. The milestones otherwise describe achievable capabilities.",
-          "score": 8,
+          "reasoning": "Several central dependency errors trigger the cap of 7. 'fluxos-ecossistemas' depends on metabolism and consequently cellular biology, also blocking environmental impacts behind that chain. Electrical consumption and thermodynamics inherit Newtonian mechanics unnecessarily. Solution concentration appears before the mole foundation and lacks the required equation dependency. Mixture separation also unnecessarily requires bonding. Balanced equations correctly precede stoichiometry, and cell division precedes inheritance. Phase titles appropriately describe stages, but the strategy course is not a canonical subject.",
+          "score": 6,
           "label": "Order & prerequisites",
           "weight": 20
         },
         {
           "categoryId": "granularity",
-          "reasoning": "Skills have broadly consistent scope and estimates, usually 18–30 short lessons, and none substitutes for an entire course. The 161.2-hour total is plausible for a substantial Android path building on Java knowledge and leaves meaningful time beyond the three-minute lessons for practice. Minor scope clarification would help distinguish introductory coroutine management from advanced cancellation and error handling.",
-          "score": 9,
-          "label": "Granularity & honest size",
+          "reasoning": "Most mathematical and physical skills have plausible chapter-sized allocations, and the 295-hour total is not inherently inappropriate. Nevertheless, 50 three-minute lessons for both tissues and integrated human systems, and 40 for viruses and the diversity of organism groups, compress multiple substantial ENEM distinctions and worked cases into broad containers. These several under-differentiated areas trigger the cap of 7; practice time alone does not establish their conceptual coverage.",
+          "score": 7,
+          "label": "Size matched to demand",
           "weight": 15
         },
         {
           "categoryId": "noFiller",
-          "reasoning": "The skills contribute to Android implementation, architecture, quality, platform integration, or publication. There are no motivation, history, study-tip, or standalone overview skills. The two application-building skills provide relevant integration practice rather than obvious recap filler, and the advanced topics fit the requested deep learning purpose.",
-          "score": 10,
-          "label": "No filler",
+          "reasoning": "Most skills teach relevant subject knowledge, with no clear widespread duplication. Essay instruction is permissible because the exam scores it separately. However, the 25-lesson standalone strategy skill focuses on time management and TRI-aware tactics, not an independently scored ability. This is one unsupported skill under the rubric's restriction on exam strategy, triggering the cap of 8.",
+          "score": 8,
+          "label": "No filler or overlap",
           "weight": 15
         },
         {
           "categoryId": "goalFit",
-          "reasoning": "The technical path fits a Java-knowing computer engineering student new to mobile development. Kotlin is introduced through language-specific features rather than a separate general programming foundations course. Names and milestones consistently end with Turkish infinitives, and the language is generally natural. However, the required informal learner address is absent throughout the descriptions; this clear mismatch caps the category at 8.",
-          "score": 8,
+          "reasoning": "The map is consistently in Brazilian Portuguese and predominantly targets contextualized ENEM reasoning and calculations. Its opening includes substantive mathematics and science rather than a separate preparatory course. No learner level was supplied that would make these foundations inappropriate, and the essay component addresses separately scored competencies.",
+          "score": 9,
           "label": "Goal & level fit",
           "weight": 15
         },
         {
           "categoryId": "aiEraSkills",
-          "reasoning": "Debugging, testing, security decisions, lifecycle handling, measurement before optimization, and responsibility boundaries emphasize understanding and verification rather than rote syntax. Nevertheless, the case explicitly requires effective use of AI coding assistants, including reading and checking generated code, and no skill addresses that capability.",
-          "score": 8,
+          "reasoning": "The skills emphasize interpretation, comparison, modeling, estimation, and evaluation of scientific and social consequences. Manual calculations are appropriate for the exam rather than unnecessary automation-resistant busywork. An AI-tool skill is not required for this exam goal, and no area is dominated by rote memorization.",
+          "score": 10,
           "label": "Skills for a world with AI",
           "weight": 10
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 7 parts passed the code checks.",
+          "reasoning": "All 8 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1673,30 +1341,544 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 12449,
-          "outputTokens": 1335,
+          "inputTokens": 16458,
+          "outputTokens": 1452,
           "reasoningTokens": 516
         }
       },
       "steps": [
         {
-          "conclusion": "The required AI coding-assistant capability is entirely missing: no skill teaches specifying a coding task, reading generated code, checking API validity, or verifying behavior with tests. The publishing dependency is also reversed: privacy and store compliance requires play-release, although the relevant declarations and compliance checks must be completed before publishing.",
+          "conclusion": "The prerequisite graph violates explicit requirements: ecosystem flows inherit cellular biology through metabolism; electrical consumption and thermodynamics inherit Newton's laws through mechanical energy; and solution concentration precedes any established mole foundation and lacks the required balanced-equation dependency. Coverage also leaves important ENEM content unassigned, including nuclear transformations, plant physiology, and trigonometric functions. Broad organism diversity and human tissue/physiology skills need more differentiated depth planning.",
           "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several additional prerequisites are curricular rather than necessary: mixture separation requires chemical bonding, and collective health requires the full infectious-disease/immunity skill. The standalone exam-strategy skill teaches time management and TRI-oriented tactics rather than a separately scored ability. Its course is not a canonical Library subject, and its ENEM-specific name is not reusable across courses.",
+          "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Descriptions consistently use impersonal wording such as 'kullanmayı kapsar' rather than addressing the learner as 'sen'. Several phase titles describe situations or subject matter—particularly 'Bağımsız uygulamalar', 'Gerçek dünya koşulları', and 'Yayın ve sürdürülebilirlik'—rather than clearly naming stages of progression.",
-          "kind": "minorErrors",
+          "conclusion": "Add an explicit syllabus-to-lesson audit, especially for broad biology skills, and allocate distinct conceptual lessons and worked cases to their major subtopics. Introduce mole concepts before quantitative solution chemistry, remove indirect mechanics and cellular-biology gates from independent branches, and integrate timed practice into subject exercises rather than a standalone strategy course.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Two subjects of the ENEM notice: every topic of both is taught by some skill, at the depth ENEM asks\n      - Prerequisites are hard dependencies only: a skill lists a prerequisite only when its lessons can't be followed without it, never because it comes earlier in a textbook or in the same subject. Most skills have none, one or two\n      - Ecology and environmental science skills (food chains and webs, cycles of matter, population dynamics and relationships between species, environmental impacts) don't depend on cell and tissue biology, the classification of living beings or comparative physiology\n      - Real dependencies stay: stoichiometry and solution concentration build on balanced chemical equations and the mole, and genetics' inheritance patterns build on how genetic information is passed on\n      - Physics topics don't form one chain through mechanics when they don't use it: heat and electricity don't need Newton's laws\n      - Exam weights follow the topic frequency: ecology, cells, heredity, electricity, waves, heat, organic chemistry, statistics and numbers weigh more than water or energy in chemical transformations\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-enem-science-prerequisites-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "ENEM",
+            "notes": [
+              "Format: Múltipla escolha com cinco alternativas, de A a E",
+              "Scoring: Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente.",
+              "Rule: Cada questão tem uma única alternativa correta."
+            ],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Ciências da Natureza e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Conhecimentos básicos e fundamentais",
+                  "O movimento, o equilíbrio e a descoberta de leis físicas",
+                  "Energia, trabalho e potência",
+                  "A Mecânica e o funcionamento do Universo",
+                  "Fenômenos Elétricos e Magnéticos",
+                  "Oscilações, ondas, óptica e radiação",
+                  "O calor e os fenômenos térmicos",
+                  "Transformações Químicas",
+                  "Representação das transformações químicas",
+                  "Materiais, suas propriedades e usos",
+                  "Água",
+                  "Transformações Químicas e Energia",
+                  "Dinâmica das Transformações Químicas",
+                  "Transformação Química e Equilíbrio",
+                  "Compostos de Carbono",
+                  "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente",
+                  "Energias Químicas no Cotidiano",
+                  "Moléculas, células e tecidos",
+                  "Hereditariedade e diversidade da vida",
+                  "Identidade dos seres vivos",
+                  "Ecologia e ciências ambientais",
+                  "Origem e evolução da vida",
+                  "Qualidade de vida das populações humanas"
+                ],
+                "weight": null
+              },
+              {
+                "group": null,
+                "name": "Matemática e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Conhecimentos numéricos",
+                  "Conhecimentos geométricos",
+                  "Conhecimentos de estatística e probabilidade",
+                  "Conhecimentos algébricos",
+                  "Conhecimentos algébricos/geométricos"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": [
+              {
+                "level": "high",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Conhecimentos numéricos"
+              },
+              {
+                "level": "high",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Conhecimentos de estatística e probabilidade"
+              },
+              {
+                "level": "medium",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Conhecimentos algébricos"
+              },
+              {
+                "level": "medium",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "O movimento, o equilíbrio e a descoberta de leis físicas"
+              },
+              {
+                "level": "medium",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Energia, trabalho e potência"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Fenômenos Elétricos e Magnéticos"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Oscilações, ondas, óptica e radiação"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "O calor e os fenômenos térmicos"
+              },
+              {
+                "level": "medium",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Transformações Químicas"
+              },
+              {
+                "level": "medium",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Materiais, suas propriedades e usos"
+              },
+              {
+                "level": "low",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Água"
+              },
+              {
+                "level": "medium",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Transformações Químicas e Energia"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Dinâmica das Transformações Químicas"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Compostos de Carbono"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Moléculas, células e tecidos"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Hereditariedade e diversidade da vida"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Ecologia e ciências ambientais"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Qualidade de vida das populações humanas"
+              }
+            ]
+          },
+          "goal": "ENEM",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every required pillar is represented: cells, metabolism, genetics, evolution, organism physiology, ecology, and advanced biological mechanisms. Coverage extends to plant and animal biology, development, immunity, microbiology, experimental methods, and biotechnology. No missing-pillar cap applies.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The opening teaches concrete biology before chemistry, and supporting subjects are interleaved near biological applications rather than isolated in long blocks. Phase titles describe stages and courses are canonical subjects. However, conceptual gene–trait learning inherits an unnecessary biomolecule prerequisite, mechanistic DNA replication lacks an enzyme prerequisite, and Phase 2's organism-formation milestone is not supported by its skills. These multiple sequencing and milestone weaknesses warrant 7.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 318.3-hour total is credible for a substantial foundational-to-advanced learning path, rather than a claim of exhaustive professional mastery. Skills generally have chapter-sized scopes with 14–42 short lessons, and the phase hours sum correctly. No clear size cap applies, although more explicit boundaries for broad advanced skills would improve planning precision.",
+          "score": 9,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills teach relevant biological knowledge or necessary supporting methods. Introductory and advanced treatments generally have distinct scopes: basic inheritance versus molecular regulation, basic defenses versus immune mechanisms, and ecological organization versus ecosystem analysis. The history-of-life skill concerns scientific evidence rather than history for its own sake. No concrete filler or substantial duplication triggers a cap.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map fits an adult beginner seeking depth, progressing from recognizable biological entities to advanced mechanisms and evidence evaluation. Names, descriptions, titles, and milestones use Brazilian Portuguese, skill names begin with action verbs, and exam weights are correctly null. Explicitly stating the cell-as-unit-of-life outcome would strengthen the opening's alignment.",
+          "score": 9,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The path emphasizes explanation, comparison, integration, experimental design, uncertainty, evidence appraisal, and evaluation of applications rather than rote procedures. Bioinformatics and systems-model interpretation add tool-mediated analysis. This is a learning goal, so a dedicated AI-tool skill is not required, and no rote-dominance cap applies.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 17786,
+          "outputTokens": 1867,
+          "reasoningTokens": 1034
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The prerequisite graph does not consistently distinguish conceptual learning from mechanistic learning. The introductory 'genes-caracteristicas' unnecessarily requires biomolecules, although its stated scope is relating genes, environment, and observable traits. Conversely, mechanistic DNA replication does not list enzyme knowledge as a prerequisite. Phase 2 also promises explaining how cells form organisms without skills explicitly teaching differentiation or multicellular development; those appear later.",
+          "kind": "majorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the study-time allocation more transparent by distinguishing short lessons from implementation practice and review. Also clarify the boundary between the introductory coroutine skill and the later cancellation/error-handling skill, since both descriptions include cancellation and scope management.",
+          "conclusion": "The description of 'respiracao-celular' covers glycolysis, the citric acid cycle, and oxidative phosphorylation but omits fermentation, despite fermentation appearing in its name. This leaves the intended contrast between respiratory and fermentative metabolism insufficiently specified.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make the opening explicitly explain cells as the units of life and use everyday living/nonliving comparisons. For advanced analytical skills, specify representative applications or evidence the learner will interpret, making their intended depth easier to assess and plan.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST be in natural Turkish, addressing the learner as \"sen\"\n      - Mobile app development for a second-year computer engineering student who knows Java: Kotlin, Android Studio, Jetpack Compose layouts and state, navigation, calling an API, local storage, testing, publishing to Google Play, and using AI coding assistants well (reading and checking generated code)\n      - Doesn't reteach programming basics the learner knows from Java\n      - Skill names and milestones end in the -mak/-mek infinitive with the verb last (\"bütçe hazırlamak\"), never as an order (\"hazırlayın\", \"hazırla\") or a bare noun\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - An adult beginner wants depth, not an overview-only course: retain cells, metabolism, genetics, evolution, organism physiology, ecology and advanced biological mechanisms\n      - The first skills teach concrete biology from everyday knowledge: distinguish living things and explain cells as units of life. They must not wait for chemistry, biomolecules or enzymes\n      - Supporting skills sit near their first use, not in whole-course blocks after the opening. Chemistry remains where biological mechanisms need it: bonds and biomolecules before molecular mechanisms, energy before detailed metabolism. Do not front-load a chemistry course before the learner encounters living things or cells\n      - Early conceptual skills and later mechanistic skills have distinct scopes, rather than repeating the same skill or making an introductory skill cover advanced depth\n      - Phase milestones must be supported by the skills in that phase\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-biology-beginner-deep-1",
+        "userInput": {
+          "goal": "Aprender tudo sobre biologia",
+          "goalKind": "learn",
+          "language": "pt",
+          "ownLevel": "none",
+          "purpose": "deep"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All explicitly named economic pillars are present: scarcity, opportunity cost, everyday markets, microeconomics, macroeconomics, econometrics, and policy. Algebra, differentiation, optimization, statistics, and linear algebra also appear. Quantitative coverage is nevertheless incomplete for the advanced scope: integration is absent, and the foundations needed to assess general-equilibrium existence are not explicitly taught. These are supporting-foundation gaps, not missing whole economic courses.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The opening appropriately teaches economics before supporting mathematics, and most supporting skills are placed near applications. Phase titles describe distinct stages, and the graph has no evident backward prerequisite edges. However, behavioral-economics inherits single-optimization through consumer-choice; growth-basics inherits optimization through production-costs; and institutions-growth inherits advanced causal estimation through development-policy. These unnecessarily gate conceptual explanations. Advanced general-equilibrium existence analysis also lacks explicit mathematical foundations, triggering the cap of 6 for omitted foundations used by formal skills.",
+          "score": 6,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Chapter-sized skills and a total measured in hundreds of hours are appropriate in principle. The promised scope is substantially more ambitious than the budget supports, however: phase 5 allocates 93 hours across 19 demanding skills, including dynamic optimization, general equilibrium, contract theory, modern macroeconomic models, and advanced econometrics. Roughly five hours per such skill, including lessons, practice, and reviews, is too thin for an adult starting from scratch. Several units also bundle broad methods, especially platforms/auctions/pricing and difference equations/dynamic optimization. Multiple mis-sized areas warrant the cap of 7.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills teach substantive economics or relevant supporting methods. There are no orientation-only lessons, motivational units, career detours, or obvious duplicate skills. Beginner explanations and later formal derivations generally have distinct purposes. Economic history supports subsequent institutional and development analysis rather than appearing as history for its own sake.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map targets broad, deep economics learning rather than an overview, exam, or career curriculum. Its opening is accessible to a beginner, its language is consistent with US English, skill names are action-first, and exam weights are appropriately null. Its extensive economic applications fit the stated purpose. The prerequisite and workload weaknesses are assessed independently in their respective categories.",
+          "score": 9,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map emphasizes mechanisms, assumptions, causal identification, uncertainty, reproducibility, robustness, and policy trade-offs rather than rote calculation. Checking computed results and evaluating research are explicit skills. An AI-tool skill is not mandatory for this learning goal, though explicitly auditing AI-generated economic analyses would be a useful enhancement.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 14165,
+          "outputTokens": 1769,
+          "reasoningTokens": 800
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Conceptual economics inherits unnecessary formal prerequisites: behavioral explanations require consumer optimization, basic growth explanations require production optimization, and institutional explanations require advanced growth models and causal econometrics. This conflicts with the requirement to keep conceptual reasoning accessible independently. The advanced mathematical coverage also lacks explicit foundations for some promised analysis, particularly integration for continuous-distribution models and convexity/existence reasoning for general equilibrium. Finally, the 335.2-hour budget is too compressed for the breadth of advanced mastery promised across 14 subjects.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some skills combine substantially different capabilities. Most clearly, 'Analyze platforms auctions and pricing' groups platform competition, auction analysis, and pricing strategies into one planning unit. 'Solve dynamic economic optimization problems' similarly combines learning difference equations with dynamic optimization rather than making their prerequisite relationship visible.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add representative economic investigations that integrate model selection, estimation, robustness checks, and policy judgment. Explain the practice and review assumptions behind the hour estimates, especially in the advanced phase. An optional skill for checking AI-generated economic explanations and analyses would strengthen an already judgment-oriented map.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - An adult beginner wants to study economics in depth\n      - Begin with economic choices, scarcity, opportunity cost and everyday markets, rather than a separate mathematics or statistics course\n      - Retain quantitative depth: place algebra, calculus and statistics just before the economic methods that use them, rather than in a complete math block after the opening, plus microeconomics, macroeconomics, econometrics and policy\n      - Conceptual economic reasoning must not depend on formal optimization or econometrics, and advanced mathematical economic analysis must not lose its real prerequisites\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-economics-beginner-deep-1",
+        "userInput": {
+          "goal": "Learn economics in depth from scratch",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "none",
+          "purpose": "deep"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every named pillar is present: algebra, trigonometry, calculus, differential equations, complex numbers, probability, linear algebra, mechanics, waves, and electromagnetism. Quantum coverage explicitly includes wavefunctions, the Schrödinger equation, observables, uncertainty, hydrogen, angular momentum, spin, approximation methods, and entanglement. Advanced applications extend beyond the minimum without replacing core coverage. Exam weights correctly remain null.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The concrete quantum opening and repeated interleaving of supporting subjects are strong. However, partial derivatives, PDE separation methods, and series methods are scheduled after formal quantum skills that use them. Electrostatics is also an unnecessary prerequisite for special relativity. These several prerequisite issues trigger the cap of 7. The topic-based phase title 'Working in three dimensions' independently triggers the title cap of 9, which does not override the lower cap.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 348.8-hour estimate meets the expected hundreds-of-hours scale, and most skills are coherent chapter-sized units with roughly 24–55 short lessons rather than trivia-sized fragments. The graph preserves substantial foundational and advanced content. More transparent allocation of practice time would improve confidence in the ambitious advanced end, but the provided estimates do not establish a clear size-cap violation.",
+          "score": 9,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Most skills teach necessary subject knowledge, and conceptual quantum skills are appropriately distinct from later formal treatments. One overlapping skill is identifiable: 'Interpret energy levels and degeneracy' arrives after those concepts have already been used extensively, including in hydrogen and degenerate perturbation theory. Its new thermal component could be incorporated into thermal ensembles. This triggers the one-overlapping-skill cap of 8.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The graph addresses deep learning from forgotten high-school mathematics rather than offering only an overview. It begins with accessible quantum phenomena, rebuilds mathematical foundations, and reaches core quantum theory and advanced applications. Names are action-led, descriptions and milestones use US English, and the courses are recognizable academic subjects.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The path includes dimensional checks, order-of-magnitude estimates, approximation quality, numerical convergence, physical constraints, interpretive limits, and comparison with experimental data. These support understanding and verification rather than rote execution. An AI-tool skill is not required for this learning goal. Explicitly comparing and selecting solution methods would strengthen the already substantial emphasis on judgment.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "7 of 8 parts passed. \"Analyze elementary superconductivity models\" sits at the end of a chain of 18 prerequisites; list only what a skill can't be learned without (at most 12 deep).",
+          "score": 8.875,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 15498,
+          "outputTokens": 2878,
+          "reasoningTokens": 1926
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several mathematical foundations arrive after their formal uses. The time-dependent Schrödinger equation appears in phase 2, but partial derivatives are not explicitly introduced until multivariable calculus in phase 3. Three-dimensional separation of variables is used in phase 3 before the supporting PDE skill in phase 4, and series methods arrive in phase 5, after solving hydrogen and introducing perturbative approximations. The graph also invents an electrostatics prerequisite for special relativity. These issues weaken an otherwise well-interleaved beginner path.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The late 'Interpret energy levels and degeneracy' skill substantially revisits material already needed for hydrogen, observables, and degenerate perturbation theory; its thermal-occupation component would fit better with statistical ensembles. The phase title 'Working in three dimensions' names the topic taught rather than a distinct stage of the learning path.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the substantial practice demands of advanced calculations more visible in the time estimates, especially for quantum field theory. Add more explicit comparisons of when to choose perturbative, variational, semiclassical, or numerical methods. At the learner's stated pace, identifying the approximately 465 study days represented by the estimate would also make the commitment easier to plan.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Huge goal: the graph must span several canonical courses, such as mathematics (algebra, trigonometry, calculus, differential equations, complex numbers, probability), linear algebra, classical mechanics, waves and oscillations, electromagnetism, and quantum mechanics\n      - Quantum mechanics must reach the core: the wave function, the Schrödinger equation, operators and observables, uncertainty, the hydrogen atom, angular momentum and spin, perturbation theory or approximation methods, and entanglement or quantum information\n      - Starting from forgotten high school math, begin with concrete quantum phenomena such as quantization, interference or measurement in plain words; do not require a separate mathematics or classical mechanics course before encountering quantum physics\n      - Calculus, complex numbers and linear algebra still come before the quantum formalism that uses them, with conceptual and formal skills scoped separately\n      - The honest size is hundreds of hours (roughly 300 to 600); retain mathematics, classical physics, quantum mechanics and advanced topics, introducing supporting skills just before their dependents, not in a whole math or classical physics course after a short quantum opening\n      - Chapter-sized skills are expected, not hundreds of lesson-sized trivia skills\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-quantum-physics-from-zero-1",
+        "userInput": {
+          "context": "I finished high school years ago and forgot most of the math. I can study about 45 minutes a day.",
+          "goal": "Master quantum physics from scratch",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "none",
+          "purpose": "deep"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Kotlin, Android Studio, Compose layouts and state, navigation, API access, local storage, testing, and Play-oriented publishing are represented. Using AI coding assistants and checking their generated code is entirely absent. This missing named pillar triggers the maximum score of 8.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The overall progression is coherent, and milestones describe capabilities supported by their phases. However, compose-basics uses lambda-based composable APIs before kotlin-functions and has no prerequisite edge to it. Conversely, unit-tests unnecessarily requires repository and dependency-injection skills for testing Kotlin business logic. These are concrete prerequisite weaknesses, limiting the score to 8. “Gerçek verilerle çalışma” is also a topic-like phase title, independently triggering the cap of 9.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most skills are useful planning units, and a substantial path is appropriate for this deep-learning goal. The lesson counts should not be judged excessive merely because they exceed fifteen three-minute lessons. However, kotlin-types bundles generics, extension functions, and scope functions, while compose-animation combines animation, custom drawing, and gestures. These weaken the one-action-per-skill structure. The total study time is plausible as a guided path for a Java programmer, although the advanced scope leaves limited room for independent practice.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "No concrete filler or substantial duplication is evident. The opening teaches actual Android concepts, and Kotlin instruction explicitly builds on Java knowledge. State hoisting, ViewModel state, lifecycle collection, and restoration address distinct concerns rather than repeating the same skill. The additional security, device, performance, and maintenance content fits a deep Android-learning goal.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The technical path fits a Java-knowing engineering student learning Android, without clearly reteaching general programming from zero. Skill names and milestones consistently end in verb-final -mak/-mek infinitives. However, descriptions systematically use third-person narration instead of the explicitly required informal second-person address. This repeated language/context mismatch triggers the cap of 7.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Debugging, testing, performance measurement, security assessment, and architectural judgment provide substantial checking and reasoning skills; the graph is not predominantly rote. Nevertheless, it omits the explicitly requested ability to direct AI coding assistants and inspect and validate their output. Conventional testing skills do not substitute for that capability.",
+          "score": 8,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 12916,
+          "outputTokens": 1386,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required AI-assistant skill is absent: nothing teaches specifying a coding task, reading generated Android code, checking API validity, or verifying generated behavior. The descriptions also consistently use third-person forms such as “kullanır” and “geliştirir,” rather than addressing the learner as “sen.”",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Compose basics precede Kotlin lambda/function-type instruction and omit that prerequisite, despite relying on lambda-based APIs. Basic unit testing is unnecessarily gated behind repositories and dependency injection. Phase 3’s title names its subject matter rather than its stage. A few skills bundle distinct abilities, notably generics, extension functions, and scope functions.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the practice allowance clearer for the advanced material within the 146.3-hour estimate. Introduce AI-code review alongside early debugging and testing, and distinguish Compose recomposition explicitly from activity or process recreation in the Turkish terminology.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in natural Turkish, addressing the learner as \"sen\"\n      - Mobile app development for a second-year computer engineering student who knows Java: Kotlin, Android Studio, Jetpack Compose layouts and state, navigation, calling an API, local storage, testing, publishing to Google Play, and using AI coding assistants well (reading and checking generated code)\n      - Doesn't reteach programming basics the learner knows from Java\n      - Skill names and milestones end in the -mak/-mek infinitive with the verb last (\"bütçe hazırlamak\"), never as an order (\"hazırlayın\", \"hazırla\") or a bare noun\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
         "id": "tr-android-development-student-1",
         "userInput": {
           "context": "Bilgisayar mühendisliği 2. sınıftayım. Java biliyorum ama hiç mobil uygulama yapmadım.",
