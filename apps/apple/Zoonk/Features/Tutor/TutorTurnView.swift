@@ -155,7 +155,7 @@ struct TutorTurnView: View {
 struct TutorAnswerText: View {
   @Environment(AppRouter.self) private var router
   @ScaledMetric private var listIndent = 20.0
-  @State private var isOpeningBlock = false
+  @State private var blockOpen: Task<Void, Never>?
   @State private var blockOpenFailed = false
 
   let text: String
@@ -187,6 +187,7 @@ struct TutorAnswerText: View {
           .foregroundStyle(.destructive)
       }
     }
+    .onDisappear { blockOpen?.cancel() }
   }
 
   @ViewBuilder
@@ -230,22 +231,25 @@ struct TutorAnswerText: View {
     return .handled
   }
 
-  /// One at a time, so two opens never race.
+  /// One at a time, so two opens never race. An answer that leaves the screen takes its open with
+  /// it, so nothing is said over what the learner went to.
   private func open(blockID: String) {
-    guard !isOpeningBlock else {
+    guard blockOpen == nil else {
       return
     }
 
-    isOpeningBlock = true
     blockOpenFailed = false
 
-    Task {
-      if case .failed = await router.open(blockID: blockID) {
-        blockOpenFailed = true
-        AccessibilityNotification.Announcement(String(localized: .blockOpenFailed)).post()
+    blockOpen = Task {
+      let result = await router.open(blockID: blockID)
+      blockOpen = nil
+
+      guard !Task.isCancelled, case .failed = result else {
+        return
       }
 
-      isOpeningBlock = false
+      blockOpenFailed = true
+      AccessibilityNotification.Announcement(String(localized: .blockOpenFailed)).post()
     }
   }
 
