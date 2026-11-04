@@ -7,7 +7,7 @@ import { repairNegativeMoney } from "@zoonk/utils/negative-money";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { dropEquivalentOptions } from "../_utils/option-checks";
 import { checkWrittenExplore } from "../steps/written-screens";
-import { readComparingTables } from "./_utils/planned-visuals";
+import { findScreenTables } from "./_utils/planned-visuals";
 import { mapActivityProse, mapScreenTexts } from "./_utils/screen-texts";
 
 const MIN_OPTIONS = 2;
@@ -132,7 +132,7 @@ function showsNothing(screen: TeachingScreen): boolean {
   return (
     screen.image === null &&
     screen.visual === null &&
-    readComparingTables(screen).length === 0 &&
+    findScreenTables(screen).length === 0 &&
     !(explore && checkWrittenExplore(explore).ok)
   );
 }

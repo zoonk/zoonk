@@ -331,21 +331,14 @@ describe("checkWrittenLesson's flow checks", () => {
     expect(flowCodes(repeated)).toContainEqual([4, "repeatedVisual"]);
   });
 
-  it("asks for a second row when the planned table has one: a table compares at least two cases", () => {
-    const oneRow = withScreens({
+  it("takes a one-row table comparing before and after as the planned table", () => {
+    const comparison = withScreens({
       4: explanation(
-        "At noon it's 2 °C.\n\n| Time | Temperature |\n| --- | ---: |\n| Noon | 2 °C |",
+        "By noon the mark has climbed past zero.\n\n| Before | After |\n| ---: | ---: |\n| −3 °C | 2 °C |",
       ),
     });
 
-    const missing = checkWrittenLesson({
-      language: "en",
-      lesson: oneRow,
-      level: "beginner",
-      spec: planned({ 4: { visualKind: "table" } }),
-    }).problems.find((problem) => problem.code === "plannedVisual" && problem.screen === 4);
-
-    expect(missing?.problem).toContain("at least two cases");
+    expect(flowCodes(comparison, planned({ 4: { visualKind: "table" } }))).toStrictEqual([]);
   });
 
   it("flags tables with the same columns on two teaching screens in a row, not on a check after them", () => {

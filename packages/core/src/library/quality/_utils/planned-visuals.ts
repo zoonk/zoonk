@@ -10,17 +10,12 @@ const DRAWN_ON_THEIR_OWN = new Set<WrittenScreen["kind"]>(["activity", "mathChec
 
 const TEACHING_KINDS = new Set<WrittenScreen["kind"]>(["explanation", "workedExample"]);
 
-function readTableParts(screen: WrittenScreen) {
+export function findScreenTables(screen: WrittenScreen): MarkdownTable[] {
   return getScreenTexts(screen).flatMap((piece) => findMarkdownTables(piece.text));
 }
 
-/** A table compares at least two cases: one row only repeats the sentence beside it. */
-export function readComparingTables(screen: WrittenScreen): MarkdownTable[] {
-  return readTableParts(screen).filter((table) => table.rows.length >= 2);
-}
-
 function readTables(screen: WrittenScreen): string[] {
-  return readTableParts(screen).map((table) =>
+  return findScreenTables(screen).map((table) =>
     normalizeString(JSON.stringify([table.header, table.rows])),
   );
 }
@@ -44,7 +39,7 @@ const SHOWS_PLANNED: Readonly<Record<LessonVisualKind, (input: VisualInput) => b
   chart: showsDrawing,
   none: () => true,
   picture: ({ screen }) => "image" in screen && screen.image !== null,
-  table: ({ screen }) => readComparingTables(screen).length > 0,
+  table: ({ screen }) => findScreenTables(screen).length > 0,
   template: ({ explores, screen }) => screen.kind !== "explanation" || explores,
   timeline: showsDrawing,
 };
@@ -58,10 +53,6 @@ export function findMissingPlannedVisual(input: VisualInput): string | null {
 
   if (specScreen.visualKind === "template") {
     return `The plan shows the ${String(specScreen.activityTemplate)} template to explore on this screen, but it shows none.${describeExploreIssues(input.screen)} Write its fields so they pass.`;
-  }
-
-  if (specScreen.visualKind === "table" && readTableParts(input.screen).length > 0) {
-    return "The plan shows a table on this screen, but its table has one row, which only repeats the text: a table compares at least two cases. Give it a row for each case, from the brief's data.";
   }
 
   return `The plan shows a ${specScreen.visualKind} on this screen, but it shows none. Add it with the brief's data.`;
@@ -82,7 +73,7 @@ function readVisuals(screen: WrittenScreen): Visual[] {
   const template = readTemplate(screen);
 
   const columns = TEACHING_KINDS.has(screen.kind)
-    ? readTableParts(screen).map((table) => normalizeString(JSON.stringify(table.header)))
+    ? findScreenTables(screen).map((table) => normalizeString(JSON.stringify(table.header)))
     : [];
 
   return [
