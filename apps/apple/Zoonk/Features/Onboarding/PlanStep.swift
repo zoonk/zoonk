@@ -484,6 +484,7 @@ private struct PlanReveal: View {
   @State private var showsTodayProgress = false
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
+  @State private var slotAnswer: PlanSlotAnswer?
 
   var body: some View {
     let goal = learnerGoal
@@ -633,7 +634,7 @@ private struct PlanReveal: View {
       AreaWeights(syllabus: syllabus)
     }
 
-    PlanSuggestionSection(context: context)
+    PlanSuggestionSection(context: context, answer: $slotAnswer)
 
     if let structure {
       Section {
