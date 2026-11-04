@@ -31,8 +31,6 @@ struct ChartsChoiceStyle: ButtonStyle {
     case plain, selected, right, wrong
   }
 
-  @Environment(\.colorSchemeContrast) private var contrast
-
   var state: State = .plain
 
   func makeBody(configuration: Configuration) -> some View {
@@ -42,38 +40,23 @@ struct ChartsChoiceStyle: ButtonStyle {
       .multilineTextAlignment(.center)
       .frame(maxWidth: .infinity, minHeight: 44)
       .padding(.horizontal, 12)
-      .background(background, in: .rect(cornerRadius: 12, style: .continuous))
-      .overlay {
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
-          .strokeBorder(stroke, lineWidth: state == .plain ? 1 : 2)
-      }
-      .opacity(configuration.isPressed ? 0.7 : 1)
-      .contentShape(.rect(cornerRadius: 12))
+      .answerSurface(tone, isPressed: configuration.isPressed)
   }
 
   private var foreground: Color {
     switch state {
-    case .right: .success
-    case .wrong: .destructive
-    default: .primary
+    case .right: .successText
+    case .wrong: .destructiveText
+    default: Color(.foreground)
     }
   }
 
-  private var background: AnyShapeStyle {
+  private var tone: AnswerTone {
     switch state {
-    case .plain: AnyShapeStyle(.background)
-    case .selected: AnyShapeStyle(Color.pick(contrast))
-    case .right: AnyShapeStyle(Color.success.opacity(0.15))
-    case .wrong: AnyShapeStyle(Color.destructive.opacity(0.15))
-    }
-  }
-
-  private var stroke: Color {
-    switch state {
-    case .plain: Color(.separator)
-    case .selected: .primary
-    case .right: .success
-    case .wrong: .destructive
+    case .plain: .idle
+    case .selected: .picked
+    case .right: .right
+    case .wrong: .wrong
     }
   }
 }

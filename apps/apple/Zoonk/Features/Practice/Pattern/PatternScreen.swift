@@ -213,7 +213,7 @@ struct PatternScreen: View {
         .navigationBarTitleDisplayMode(.inline)
       }
       .presentationDetents([.medium, .large])
-      .accessibilitySizeStyles()
+      .zoonkStyles()
     }
   }
 

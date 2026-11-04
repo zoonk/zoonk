@@ -79,28 +79,14 @@ struct ButtonRow<Content: View>: View {
   }
 }
 
-/// A section header's title with a value at its end, the value under it when they'd stack.
-struct SectionHeaderRow<Trailing: View>: View {
-  var alignment: VerticalAlignment = .center
-  let title: Text
-  @ViewBuilder let trailing: Trailing
-
-  var body: some View {
-    AccessibilityStack(alignment: alignment) {
-      title
-        .frame(maxWidth: .infinity, alignment: .leading)
-
-      trailing
-    }
-  }
-}
-
 extension View {
-  /// The button shape and label style for accessibility sizes. Neither reaches into a
-  /// presentation, so the app's root and the root of each presented screen apply them.
-  func accessibilitySizeStyles() -> some View {
+  /// The styles that don't reach into a presentation, so the app's root and the root of each
+  /// presented screen apply them: the button shape and label style for accessibility sizes, and
+  /// `GroupBox` as a panel.
+  func zoonkStyles() -> some View {
     modifier(AccessibilityButtonShape())
       .labelStyle(StackingLabelStyle())
+      .groupBoxStyle(.panel)
   }
 }
 

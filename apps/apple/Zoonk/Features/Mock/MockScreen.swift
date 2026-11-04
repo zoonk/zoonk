@@ -466,7 +466,7 @@ private struct MockSpeakingView: View {
         openTask = nil
       }
       .onDisappear { Task { await run.reload() } }
-      .accessibilitySizeStyles()
+      .zoonkStyles()
     }
     .safeAreaBar(edge: .bottom) {
       MockActionBar(run: run) {

@@ -252,8 +252,8 @@ private struct SubjectContent: View {
           SubjectChapterRow(goal: goal, chapter: chapter)
         }
       } header: {
-        SectionHeaderRow(
-          title: Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
+        SectionTitle(
+          Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
         ) {
           Text(
             "\(done) of \(chapters.count)", tableName: "Plan",

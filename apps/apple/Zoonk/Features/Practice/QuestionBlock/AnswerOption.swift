@@ -21,7 +21,7 @@ struct AnswerOption<Label: View>: View {
         if let marker {
           Text(marker, format: .number)
             .font(.footnote.monospacedDigit())
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .accessibilityHidden(true)
         }
 
@@ -37,7 +37,7 @@ struct AnswerOption<Label: View>: View {
           if let result {
             Text(resultLabel(result))
               .font(.caption.weight(.semibold))
-              .foregroundStyle(result == .right ? Color.success : Color.destructive)
+              .foregroundStyle(result == .right ? Color.successText : Color.destructiveText)
           }
         }
       }
@@ -68,32 +68,20 @@ struct AnswerOptionStyle: ButtonStyle {
   var result: AnswerOptionResult?
 
   func makeBody(configuration: Configuration) -> some View {
-    let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
-
     configuration.label
       .font(.body.weight(.medium))
-      .foregroundStyle(.primary)
+      .foregroundStyle(Color(.foreground))
       .padding(.horizontal, 14)
       .padding(.vertical, 12)
       .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-      .background(fill.opacity(configuration.isPressed ? 0.8 : 1), in: shape)
-      .overlay(shape.strokeBorder(stroke, lineWidth: isPicked || result != nil ? 2 : 1))
-      .contentShape(shape)
+      .answerSurface(tone, isPressed: configuration.isPressed)
   }
 
-  private var fill: Color {
+  private var tone: AnswerTone {
     switch result {
-    case .right: Color.success.opacity(0.1)
-    case .wrong: Color.destructive.opacity(0.1)
-    case nil: isPicked ? Color(.secondarySystemFill) : Color(.secondarySystemGroupedBackground)
-    }
-  }
-
-  private var stroke: Color {
-    switch result {
-    case .right: .success
-    case .wrong: .destructive
-    case nil: isPicked ? .primary : Color(.separator)
+    case .right: .right
+    case .wrong: .wrong
+    case nil: isPicked ? .picked : .idle
     }
   }
 }

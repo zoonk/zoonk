@@ -28,7 +28,7 @@ struct TutorPanel: View {
             }
           }
       }
-      .accessibilitySizeStyles()
+      .zoonkStyles()
       .presentationDetents([.medium, .large])
       .presentationBackgroundInteraction(.enabled(upThrough: .medium))
     }

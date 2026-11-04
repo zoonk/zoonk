@@ -274,8 +274,8 @@ private struct LanguageUnitContent: View {
           }
         }
       } header: {
-        SectionHeaderRow(
-          title: Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
+        SectionTitle(
+          Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
         ) {
           Text(
             "\(done) of \(lessons.count)", tableName: "Plan",

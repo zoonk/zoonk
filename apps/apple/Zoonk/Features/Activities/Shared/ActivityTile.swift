@@ -24,17 +24,7 @@ enum ActivityTileMark: Hashable, Sendable {
   }
 }
 
-extension Color {
-  /// In more contrast a pick gets a fill as well as its thicker line, so it never rests on line
-  /// weight alone, as on main.
-  static func pick(_ contrast: ColorSchemeContrast) -> Color {
-    Color(contrast == .increased ? .systemFill : .quaternarySystemFill)
-  }
-}
-
 struct ActivityTileStyle: ButtonStyle {
-  @Environment(\.colorSchemeContrast) private var contrast
-
   let mark: ActivityTileMark
   var isCompact = false
 
@@ -45,13 +35,8 @@ struct ActivityTileStyle: ButtonStyle {
       .padding(.horizontal, isCompact ? 4 : 12)
       .padding(.vertical, isCompact ? 6 : 10)
       .frame(minHeight: 44)
-      .background(background, in: .rect(cornerRadius: 12))
-      .overlay {
-        RoundedRectangle(cornerRadius: 12)
-          .strokeBorder(stroke, lineWidth: mark == .plain || mark == .dimmed ? 1 : 2)
-      }
-      .opacity(configuration.isPressed ? 0.75 : mark == .dimmed ? 0.6 : 1)
-      .contentShape(.rect(cornerRadius: 12))
+      .answerSurface(tone, isPressed: configuration.isPressed)
+      .opacity(mark == .dimmed ? 0.6 : 1)
   }
 
   @ViewBuilder
@@ -83,27 +68,18 @@ struct ActivityTileStyle: ButtonStyle {
 
   private var foreground: Color {
     switch mark {
-    case .right: .success
-    case .wrong: .destructive
-    default: .primary
+    case .right: .successText
+    case .wrong: .destructiveText
+    default: Color(.foreground)
     }
   }
 
-  private var background: Color {
+  private var tone: AnswerTone {
     switch mark {
-    case .selected: .pick(contrast)
-    case .right: Color.success.opacity(0.15)
-    case .wrong: Color.destructive.opacity(0.15)
-    default: Color(.systemBackground)
-    }
-  }
-
-  private var stroke: Color {
-    switch mark {
-    case .selected: .primary
-    case .right: .success
-    case .wrong: .destructive
-    default: Color(.separator)
+    case .selected: .picked
+    case .right: .right
+    case .wrong: .wrong
+    case .plain, .dimmed: .idle
     }
   }
 }

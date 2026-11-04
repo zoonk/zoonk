@@ -13,7 +13,7 @@ enum StatTone {
     case .energy:
       .energy
     case .neutral:
-      .secondary
+      .mutedForeground
     case .success:
       .success
     }
@@ -42,31 +42,27 @@ struct StatTile<Icon: View>: View {
       }
       .font(.caption.weight(.medium))
       .textCase(.uppercase)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       value
         .font(.title2.weight(.semibold))
         .monospacedDigit()
-        .foregroundStyle(tone == .brain ? Color.brain : Color.primary)
+        .foregroundStyle(tone == .brain ? Color.brainText : Color(.foreground))
 
       if let detail {
         detail
           .font(.caption)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if let meter {
-        ProgressView(value: meter)
-          .tint(.brain)
+        Meter(value: meter, fill: .brain)
           .padding(.top, 4)
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .padding(12)
-    .background(
-      Color(.secondarySystemGroupedBackground),
-      in: RoundedRectangle(cornerRadius: 12, style: .continuous)
-    )
+    .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(.border))
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(label)
     .accessibilityValue(accessibilityValue)

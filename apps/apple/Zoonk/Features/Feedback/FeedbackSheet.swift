@@ -37,7 +37,7 @@ private struct FeedbackSheetPresenter: ViewModifier {
 
   private func form(_ store: FeedbackFormStore) -> some View {
     FeedbackForm(store: store, isReport: isReport)
-      .accessibilitySizeStyles()
+      .zoonkStyles()
   }
 }
 

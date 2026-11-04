@@ -180,7 +180,7 @@ private struct PlanContent: View {
     .planSheets($sheet, context: context, syllabus: syllabus)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: store)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     .feedbackSheet(
       isPresented: $isReporting,

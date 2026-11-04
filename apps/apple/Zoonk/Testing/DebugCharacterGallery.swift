@@ -18,7 +18,7 @@
               Gallery()
             }
           }
-          .accessibilitySizeStyles()
+          .zoonkStyles()
         }
       } else {
         content

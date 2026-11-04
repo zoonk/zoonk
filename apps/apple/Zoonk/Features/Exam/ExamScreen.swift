@@ -591,8 +591,8 @@ private struct ExamMocksSection: View {
             isInset: true)
         }
       } header: {
-        SectionHeaderRow(
-          title: Text("Mock exams", tableName: "Exam", comment: "The exam's mocks")
+        SectionTitle(
+          Text("Mock exams", tableName: "Exam", comment: "The exam's mocks")
         ) {
           if !exam.mocks.isEmpty {
             Text("\(exam.mocks.count) taken", tableName: "Exam", comment: "Mocks taken")
@@ -703,8 +703,8 @@ private struct ExamProgressSection: View {
           }
         }
       } header: {
-        SectionHeaderRow(
-          title: Text("How your mocks went", tableName: "Exam", comment: "Mock progress section")
+        SectionTitle(
+          Text("How your mocks went", tableName: "Exam", comment: "Mock progress section")
         ) {
           if exam.mocksRequirePlus {
             PlusMark()

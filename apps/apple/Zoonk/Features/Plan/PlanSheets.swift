@@ -70,7 +70,7 @@ private struct PlanSheets: ViewModifier {
             self.sheet = nil
           }
         )
-        .accessibilitySizeStyles()
+        .zoonkStyles()
       }
   }
 
@@ -122,7 +122,7 @@ private struct PlanPathSheet: View {
               outline = nil
             }
           )
-          .accessibilitySizeStyles()
+          .zoonkStyles()
       }
     }
   }

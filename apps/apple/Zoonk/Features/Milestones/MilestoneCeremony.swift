@@ -290,7 +290,7 @@ private struct MilestoneCeremonyPresenter: ViewModifier {
         MilestoneCeremony(milestone: milestone) {
           shown = nil
         }
-        .accessibilitySizeStyles()
+        .zoonkStyles()
       }
   }
 }

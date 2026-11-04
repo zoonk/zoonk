@@ -15,7 +15,7 @@
               .padding()
               .accessibilityIdentifier("ui-test-fixture-failure")
           }
-          .accessibilitySizeStyles()
+          .zoonkStyles()
         }
       } else {
         content

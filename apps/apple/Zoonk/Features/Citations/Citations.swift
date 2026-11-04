@@ -90,7 +90,7 @@ struct SourcesChip: View {
       SourceDetails(title: title, publisher: publisher, url: url, checkedAt: checkedAt)
         // By default a popover becomes a full-screen cover in landscape, with no way to close it.
         .presentationCompactAdaptation(.popover)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
   }
 }

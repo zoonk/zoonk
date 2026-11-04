@@ -155,7 +155,7 @@ private struct BuddyContent: View {
           isDayShown = false
         }
       )
-      .accessibilitySizeStyles()
+      .zoonkStyles()
     }
     .sheet(isPresented: $isEditing) {
       BuddyEditor(
@@ -165,11 +165,11 @@ private struct BuddyContent: View {
         },
         save: { choice in Task { await store.save(choice) } }
       )
-      .accessibilitySizeStyles()
+      .zoonkStyles()
     }
     .sheet(isPresented: $isWearing) {
       BuddyGlassesPicker(status: status)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).isAsking } ?? false) {
       _, isAsking in

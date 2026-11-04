@@ -151,7 +151,7 @@ private struct MistakeListSections: View {
             )
           }
         } header: {
-          SectionHeaderRow(title: Text(group.name)) {
+          SectionTitle(Text(group.name)) {
             Text(group.mistakes.count, format: .number).monospacedDigit()
           }
         }

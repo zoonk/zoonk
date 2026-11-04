@@ -63,10 +63,14 @@ struct AppTabView: View {
       Tab(value: AppTab.buddy) {
         TabRoot(tab: .buddy, tabBarPlacement: $tabBarPlacement)
       } label: {
-        if let name = learner.summary.value?.buddyDisplayName {
-          Label(name, systemImage: AppTab.buddy.systemImage)
-        } else {
-          TabLabel(tab: .buddy)
+        Label {
+          if let name = learner.summary.value?.buddyDisplayName {
+            Text(name)
+          } else {
+            Text(AppTab.buddy.title)
+          }
+        } icon: {
+          BuddyTabIcon()
         }
       }
 
@@ -139,6 +143,40 @@ private struct TabLabel: View {
   }
 }
 
+/// Main's buddy tab: the buddy's face in today's missions ring. A tab item takes only an image, so
+/// the face is drawn into one, in the tab bar's color scheme.
+private struct BuddyTabIcon: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(TodayStore.self) private var today
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.displayScale) private var displayScale
+
+  var body: some View {
+    if let image = rendered {
+      Image(uiImage: image)
+    } else {
+      Image(systemName: AppTab.buddy.systemImage)
+    }
+  }
+
+  private var rendered: UIImage? {
+    let missions =
+      if case .day(let view) = today.today.value { view.session.missions } else { [StudyMission]() }
+
+    let renderer = ImageRenderer(
+      content: MissionsRing(done: missions.count(where: \.isDone), total: missions.count) {
+        BuddyCharacter(
+          look: learner.summary.value?.buddy ?? BuddyLook(), expression: .happy, crop: .face
+        )
+        .frame(width: 22, height: 22)
+      }
+      .environment(\.colorScheme, colorScheme))
+    renderer.scale = displayScale
+
+    return renderer.uiImage?.withRenderingMode(.alwaysOriginal)
+  }
+}
+
 private struct TabRoot: View {
   @Environment(\.tabBarPlacement) private var placement
   @Environment(AppRouter.self) private var router
@@ -177,6 +215,6 @@ struct AppSheetView: View {
         SubscriptionScreen()
       }
     }
-    .accessibilitySizeStyles()
+    .zoonkStyles()
   }
 }

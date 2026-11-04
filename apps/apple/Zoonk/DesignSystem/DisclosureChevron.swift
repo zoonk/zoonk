@@ -5,7 +5,7 @@ struct DisclosureChevron: View {
   var body: some View {
     Image(systemName: "chevron.forward")
       .font(.footnote.weight(.semibold))
-      .foregroundStyle(.tertiary)
+      .foregroundStyle(Color.mutedForeground.opacity(0.6))
       .accessibilityHidden(true)
   }
 }

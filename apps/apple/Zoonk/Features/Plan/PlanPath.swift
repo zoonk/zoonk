@@ -33,9 +33,8 @@ struct PlanPathSection: View {
         }
       }
     } header: {
-      SectionHeaderRow(
-        alignment: .firstTextBaseline,
-        title: Text(
+      SectionTitle(
+        Text(
           "Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters")
       ) {
         if phases.count > 1 {
@@ -509,9 +508,8 @@ struct PlanSyllabusSection: View {
         }
       }
     } header: {
-      SectionHeaderRow(
-        alignment: .firstTextBaseline,
-        title: isExam
+      SectionTitle(
+        isExam
           ? Text("Subjects", tableName: "Plan", comment: "Section of an exam's subjects")
           : Text("Modules", tableName: "Plan", comment: "Section of a plan's modules")
       ) {
