@@ -53,7 +53,7 @@ extension TutorPlaces {
       case .chapterTest(let chapterId):
         router.open(.testOut(chapterId: chapterId))
       case .chooseFocus:
-        router.select(.plan)
+        router.showRoot(of: .plan)
       case .call(let conversationId):
         router.open(.conversation(conversationId: conversationId))
       case .mockChooser:

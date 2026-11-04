@@ -367,14 +367,12 @@ extension AppRouter {
   /// couldn't, or once the learner moved on.
   static func openingTodayBlocks(today: TodayStore) -> BlockOpener {
     { blockID, router in
-      let tab = router.selectedTab
-      let shown = (router.tasks, router.path(for: tab).wrappedValue)
+      let shown = router.shown
 
       Task {
         let result = await today.open(blockID: blockID)
 
-        guard router.selectedTab == tab, shown == (router.tasks, router.path(for: tab).wrappedValue)
-        else {
+        guard shown == router.shown else {
           return
         }
 
