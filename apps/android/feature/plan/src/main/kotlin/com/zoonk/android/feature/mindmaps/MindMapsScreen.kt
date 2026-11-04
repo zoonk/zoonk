@@ -264,7 +264,7 @@ private class TileGrid(
 
 /**
  * Main's grid on a page [width] wide whose grid starts [start] from its edge. Across a book's [fold] each page holds the
- * tiles a row a phone would, as many and as wide on both, with the fold between them, so folding moves nothing.
+ * tiles a row its width allows, as many and as wide on both, with the fold between them, so folding moves nothing.
  */
 private fun tileGrid(
     width: Dp,
@@ -272,20 +272,27 @@ private fun tileGrid(
     start: Dp,
 ): TileGrid {
     if (fold == null) {
-        val columns = if (width < WIDE_FROM) GridCells.Fixed(2) else GridCells.Adaptive(TILE_MIN)
+        val columns = if (width < WIDE_FROM) GridCells.Fixed(narrowColumns(width - MARGIN * 2)) else GridCells.Adaptive(TILE_MIN)
         return TileGrid(columns, Arrangement.spacedBy(tileSpacing(width)), Modifier)
     }
 
     val leading = fold.start - start - MARGIN
     val page = minOf(fold.start, width - fold.end)
     val spacing = tileSpacing(page)
-    val perPage = if (page < WIDE_FROM) 2 else ((page - MARGIN * 2 + spacing) / (TILE_MIN + spacing)).toInt().coerceAtLeast(1)
+    val room = page - MARGIN * 2
+    val perPage = if (page < WIDE_FROM) narrowColumns(room) else ((room + spacing) / (TILE_MIN + spacing)).toInt().coerceAtLeast(1)
     val around = AroundFold(leading, gap = fold.end - fold.start + MARGIN * 2, perPage, spacing)
 
     return TileGrid(around, around, Modifier.wrapContentWidth(Alignment.Start).width(leading))
 }
 
 private fun tileSpacing(width: Dp): Dp = if (width < WIDE_FROM) 12.dp else 16.dp
+
+/**
+ * Main's two tiles a row on a phone, where [room] is at least the narrowest phone's. A narrower room, such as a book's
+ * page beside the rail, holds one, so a tile keeps room for its button's label on one line.
+ */
+private fun narrowColumns(room: Dp): Int = if (room >= NARROWEST_PHONE - MARGIN * 2) 2 else 1
 
 /**
  * [perPage] tiles a page on each side of a fold, all as wide, the ones before it ending at [leading] and the ones after
@@ -547,3 +554,5 @@ private val MARGIN = 16.dp
 
 /** Main's `sm`: two tiles a row on a phone, then as many 13rem tiles as fit. */
 private val WIDE_FROM = 600.dp
+
+private val NARROWEST_PHONE = 320.dp
