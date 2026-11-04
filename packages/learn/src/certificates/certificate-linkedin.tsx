@@ -101,7 +101,16 @@ export function CertificateLinkedInDialog({
         </DialogHeader>
 
         <ListGroup>
-          <FieldRow copy={t("Copy the name")} label={t("Name")} value={linkedInName(facts)} />
+          <FieldRow
+            copy={t("Copy the name")}
+            label={t({
+              description:
+                "LinkedIn's field for the certificate's name, labeled as in LinkedIn's \"Add license or certification\" form",
+              id: "linkedInCertificationName",
+              message: "Name",
+            })}
+            value={linkedInName(facts)}
+          />
           <FieldRow
             copy={t("Copy the issuing organization")}
             label={t("Issuing organization")}
