@@ -212,7 +212,7 @@ final class TutorConversation {
     }
   }
 
-  /// Once per turn: a second undo would find the changes gone and say it couldn't.
+  /// Once per turn: the server answers a second undo of the same changes with a conflict.
   func undoMemory(of turnID: String) async {
     guard let changes = memoryChanges[turnID], memoryUndos[turnID] == nil else {
       return
