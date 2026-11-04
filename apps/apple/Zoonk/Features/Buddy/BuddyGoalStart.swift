@@ -33,6 +33,7 @@ struct BuddyGoalStart: View {
             }
           }
           .buttonStyle(.borderless)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -42,18 +43,20 @@ struct BuddyGoalStart: View {
     .scrollDismissesKeyboard(.interactively)
     .safeAreaBar(edge: .bottom) {
       VStack(alignment: .leading, spacing: 10) {
-        ScrollView(.horizontal) {
-          HStack(spacing: 8) {
-            ForEach(examples, id: \.self) { example in
-              Button(example) {
-                goal = example
-              }
-              .buttonStyle(.outline)
-              .controlSize(.mini)
+        FlowLayout(spacing: 6) {
+          ForEach(examples, id: \.self) { example in
+            Button {
+              goal = example
+            } label: {
+              Text(example)
+                .typeStyle(.meta.weight(.medium))
+                .foregroundStyle(.mutedForeground)
+                .lineLimit(1)
             }
+            .buttonStyle(.outline)
+            .controlSize(.mini)
           }
         }
-        .scrollIndicators(.hidden)
         .accessibilityElement(children: .contain)
         .accessibilityLabel(
           Text("Examples", tableName: "Buddy", comment: "Example goals filled in with one tap"))
