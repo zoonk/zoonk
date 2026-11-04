@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -69,6 +68,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
@@ -107,9 +107,7 @@ fun ExplainScreen(
 
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            TaskScaffold(onClose = navigator::closeTask) { padding ->
-                Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-            }
+            TaskScaffold(onClose = navigator::closeTask) { padding -> PageLoading(Modifier.padding(padding)) }
         }
 
         is LoadState.Failed, LoadState.Empty -> {
@@ -228,6 +226,7 @@ internal fun ExplainWaiting(
 
     TaskScaffold(
         onClose = navigator::closeTask,
+        lonePage = true,
         bottomBar =
             if (ready) {
                 {

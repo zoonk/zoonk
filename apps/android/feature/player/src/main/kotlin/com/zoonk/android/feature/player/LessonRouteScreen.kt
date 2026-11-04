@@ -61,6 +61,7 @@ import com.zoonk.android.feature.tutor.tutorIdentity
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
 
@@ -89,9 +90,7 @@ fun LessonRouteScreen(
 
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            LessonFrame(title = null, onClose = exits::close) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-            }
+            LessonFrame(title = null, onClose = exits::close, scrolls = false) { PageLoading() }
         }
 
         is LoadState.Failed -> {
@@ -239,6 +238,7 @@ internal fun LessonFrame(
         modifier = modifier,
         title = { title?.let { LessonTitle(it) } },
         bottomBar = bottomBar,
+        lonePage = true,
     ) { padding ->
         val scroll = if (scrolls) Modifier.verticalScroll(rememberScrollState()) else Modifier
         Box(Modifier.fillMaxSize().padding(padding).then(scroll)) { content() }

@@ -1,9 +1,7 @@
 package com.zoonk.android.feature.conversation
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -36,6 +33,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.api.models.LanguageCheckpointCall
 import com.zoonk.api.models.LanguageCheckpointCallIntro
@@ -161,7 +159,7 @@ internal fun CheckpointCallContent(
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
             CallFrame(title = { CallTitle(stringResource(R.string.conversation_unit_challenge)) }, onClose = exits::close) {
-                item(key = "loading") { Box(Modifier.callItem(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } }
+                item(key = "loading") { PageLoading(Modifier.fillParentMaxSize()) }
             }
         }
 

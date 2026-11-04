@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -82,6 +81,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.WritingWait
 import com.zoonk.android.ui.format.currentLocale
@@ -125,17 +125,12 @@ fun SpeakingScreen(
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.speaking_title)) }) { padding ->
         Box(Modifier.padding(padding)) {
             if (goalId == null) {
-                Loading()
+                PageLoading()
             } else {
                 SpeakingContent(app.speaking.paper(goalId), goalId, route.task, actions)
             }
         }
     }
-}
-
-@Composable
-private fun Loading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
 }
 
 @Composable
@@ -149,7 +144,7 @@ internal fun SpeakingContent(
     val scope = rememberCoroutineScope()
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
-            Loading()
+            PageLoading()
         }
 
         is LoadState.Failed -> {
