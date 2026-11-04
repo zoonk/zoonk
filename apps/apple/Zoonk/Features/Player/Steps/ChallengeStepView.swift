@@ -137,14 +137,14 @@ struct ChallengeStepView: View {
       ForEach(Array(decision.node.messages.enumerated()), id: \.offset) { _, message in
         bubble(message)
       }
-      LessonRichText(named(decision.choice.text))
-        .typeStyle(.reading)
-        .foregroundStyle(Color(.primaryForeground))
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .background(Color(.primary), in: .rect(cornerRadius: Radius.xl, style: .continuous))
-        .containerRelativeFrame(.horizontal, alignment: .trailing) { width, _ in width * 0.85 }
-        .frame(maxWidth: .infinity, alignment: .trailing)
+      ShareRow(share: 0.85, edge: .trailing) {
+        LessonRichText(named(decision.choice.text))
+          .typeStyle(.reading)
+          .foregroundStyle(Color(.primaryForeground))
+          .padding(.horizontal, 16)
+          .padding(.vertical, 10)
+          .background(Color(.primary), in: .rect(cornerRadius: Radius.xl, style: .continuous))
+      }
       ForEach(Array(decision.choice.replies.enumerated()), id: \.offset) { _, reply in
         bubble(reply)
       }

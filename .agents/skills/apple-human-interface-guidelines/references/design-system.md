@@ -80,6 +80,7 @@ Main's radii (`--radius`) are generated into `DesignSystem/Radius.swift` with th
 `ZoonkList` gives a page its margins and the space between sections; inside a row or panel, take the spacing main's piece uses (`packages/learn/src/_components`). Lines are 1pt in `.border` or `.input`; a list's separators are the system's hairline. No shadows in content; sheets and menus keep the system's.
 
 - `StatusMark` has one scaled width, and `ListRow` gives its leading marks one width, so a list's words start in one column.
+- A width that's a share of the column (main's `max-w-[85%]` bubble, a `width: 60%` bar) is a `ShareRow`. `containerRelativeFrame` measures the scroll view, which is wider than a capped lesson column on iPad and at accessibility sizes.
 
 ## Accessibility text sizes
 
