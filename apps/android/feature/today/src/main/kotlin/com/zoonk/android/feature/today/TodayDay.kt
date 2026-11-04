@@ -112,7 +112,7 @@ fun TodayDay(
         )
     val model = remember(read, poll.stalled) { TodayDayModel(read, poll.stalled) }
     val activity = LocalActivity.current
-    DisposableEffect(viewModel) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
+    DisposableEffect(viewModel, read.noticeVisit()) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
     TrackShown(AnalyticsEvent.TodayViewed)
     // Here rather than in the notice, which a lazy list or a layout change can compose again within one visit.
     viewModel.noticeEvent(read)?.let { TrackShown(it) }

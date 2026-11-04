@@ -164,7 +164,10 @@ class TodayViewModel(
         noticeHold = noticeHold.next(read.today.goal.id, read.day.localDate, picked, read.today.insight)
     }
 
-    /** Today left the screen (a task over it, another tab), so the next notice can show on return. */
+    /**
+     * Today left the screen (a task over it, another tab) or moved to another goal or day, so the next
+     * notice can show on return and a row's failure stays with the day it was tapped on.
+     */
     fun endVisit() {
         visit++
         failed = null

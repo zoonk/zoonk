@@ -76,6 +76,22 @@ class TodayTapTest {
             assertEquals(TodayTap.Mission(0), viewModel.failed)
         }
 
+    /** Switching goals or a new day ends the visit, so another goal's row at the same position never shows this one's failure. */
+    @Test
+    fun aFailureShownOnARowIsGoneOnceTheVisitEnds() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            api.failures += offline
+
+            viewModel.open(read, read.day.steps[1], next = false)
+            advanceUntilIdle()
+            assertEquals(TodayTap.Step(1), viewModel.failed)
+
+            viewModel.endVisit()
+
+            assertNull(viewModel.failed)
+        }
+
     @Test
     fun aTapThatFailsAfterTheLearnerLeftTodaySaysNothing() =
         runTest(dispatcher) {
