@@ -2,6 +2,7 @@
 
 import { MAX_SESSION_TYPED_ANSWER_LENGTH } from "@zoonk/core/sessions/answer-limits";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
+import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -55,6 +56,7 @@ export function TypedAnswerField({
             setText(event.target.value);
             onChange?.(event.target.value.trim());
           }}
+          onKeyDown={ignoreHeldEnter}
           readOnly={locked}
           spellCheck={false}
           value={text}

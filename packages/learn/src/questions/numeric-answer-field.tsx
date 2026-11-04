@@ -6,6 +6,7 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@zoonk/ui/components/input-group";
+import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -151,6 +152,7 @@ export function NumericAnswerField({
             setInvalid(false);
             onChange?.(parseEntryAnswer({ entry, locale, text: event.target.value }));
           }}
+          onKeyDown={ignoreHeldEnter}
           readOnly={locked}
           spellCheck={false}
           value={text}
