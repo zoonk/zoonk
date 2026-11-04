@@ -2,7 +2,8 @@ import SwiftUI
 
 extension View {
   /// For controls outside a `PaneSplit` pane; the control takes the full width it's offered. System
-  /// sheets, alerts, menus and toolbars move by themselves.
+  /// sheets, alerts, menus and toolbars move by themselves. Never inside `.lonePage()`, which already
+  /// keeps its content before the hinge: opened half folded, the two measure each other forever.
   func keepsOffFold() -> some View {
     modifier(FoldDisplacement())
   }

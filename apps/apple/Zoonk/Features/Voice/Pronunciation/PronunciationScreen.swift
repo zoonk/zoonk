@@ -416,7 +416,7 @@ private struct PronunciationResultView: View {
           Image(systemName: "checkmark.circle")
         }
       }
-      .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
+      .safeAreaBar(edge: .bottom) { doneButton }
       .lonePage()
     } else {
       PaneSplit {
