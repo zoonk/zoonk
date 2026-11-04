@@ -65,8 +65,8 @@ const val MAX_GOAL_LENGTH = 2000
  * Main's goal box (the landing's and `/start`'s): "I want to …" and Build my plan in one panel.
  * [onSubmit] gets the trimmed words; an empty box asks for them unless [canSubmitEmpty] (material and
  * an intent are already chosen). [leading] holds the attach button; [placeholder] is a page's own
- * example, as the catalog's is. [hiddenLabel] drops the visible "I want to" for a label only TalkBack
- * reads, as main's buddy box does. Enter sends, as main's box does.
+ * example, as the catalog's is. [hiddenLabel] makes it main's buddy box: no visible "I want to" (TalkBack reads
+ * the hidden label), and Build my plan beside the words while it fits. Enter sends, as main's box does.
  */
 @Composable
 fun GoalBox(
@@ -160,6 +160,21 @@ fun GoalBox(
                 )
             }
 
+            val submitButton: @Composable () -> Unit = {
+                Button(onClick = submit, size = ButtonSize.Large) {
+                    Text(stringResource(R.string.goal_box_submit))
+
+                    if (isSubmitting) {
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
+                            color = colors.onPrimary,
+                            strokeWidth = 2.dp,
+                        )
+                    }
+                }
+            }
+
             if (hiddenLabel == null) {
                 LabelBeside(
                     label = {
@@ -175,25 +190,23 @@ fun GoalBox(
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                     field = textField,
                 )
-            } else {
-                Box(Modifier.padding(start = 10.dp, end = 10.dp)) { textField() }
-            }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
-                Spacer(Modifier.weight(1f))
-                Button(onClick = submit, size = ButtonSize.Large) {
-                    Text(stringResource(R.string.goal_box_submit))
-
-                    if (isSubmitting) {
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                            color = colors.onPrimary,
-                            strokeWidth = 2.dp,
-                        )
-                    }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
+                    Spacer(Modifier.weight(1f))
+                    submitButton()
                 }
+            } else {
+                ActionBeside(
+                    field = textField,
+                    action = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
+                            submitButton()
+                        }
+                    },
+                    modifier = Modifier.padding(start = 10.dp),
+                )
             }
         }
 
@@ -231,6 +244,33 @@ private fun LabelBeside(
         layout(width, maxOf(labelPlaceable.height, fieldTop + fieldPlaceable.height)) {
             labelPlaceable.placeRelative(0, 0)
             fieldPlaceable.placeRelative(if (beside) labelPlaceable.width + gap else 0, fieldTop)
+        }
+    }
+}
+
+/**
+ * The buddy box's Build my plan at the end of the words' line, level with their last line, as main's; under them
+ * at the end once it would take more than [ACTION_SHARE] of the line (a large font, a narrow window, a long
+ * translation), so the words keep room to wrap.
+ */
+@Composable
+private fun ActionBeside(
+    field: @Composable () -> Unit,
+    action: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Layout(contents = listOf(field, action), modifier = modifier) { (fields, actions), constraints ->
+        val width = constraints.maxWidth
+        val gap = LABEL_GAP.roundToPx()
+        val actionPlaceable = actions.first().measure(constraints.copy(minWidth = 0, minHeight = 0))
+        val beside = actionPlaceable.width + gap <= width * ACTION_SHARE
+        val fieldWidth = if (beside) width - actionPlaceable.width - gap else width - WORDS_END.roundToPx()
+        val fieldPlaceable = fields.first().measure(constraints.copy(minWidth = fieldWidth, maxWidth = fieldWidth, minHeight = 0))
+        val height = if (beside) maxOf(fieldPlaceable.height, actionPlaceable.height) else fieldPlaceable.height + actionPlaceable.height
+
+        layout(width, height) {
+            fieldPlaceable.placeRelative(0, if (beside) height - fieldPlaceable.height else 0)
+            actionPlaceable.placeRelative(width - actionPlaceable.width, height - actionPlaceable.height)
         }
     }
 }
@@ -306,4 +346,6 @@ private const val QUICK_EXPLANATION_MINUTES = 5
 private val GOAL_LINE_HEIGHT = 24.sp
 private val WORDS_PADDING = 10.dp
 private val LABEL_GAP = 8.dp
+private val WORDS_END = 10.dp
 private const val INLINE_LABEL_SHARE = 0.4f
+private const val ACTION_SHARE = 0.5f
