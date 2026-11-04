@@ -42,9 +42,8 @@ struct MistakesScreen: View {
 
         Section {
           PageHeader(title, eyebrow: goalTitle.map { Text(verbatim: $0) })
+          header(shown.value)
         }
-
-        header(shown.value)
 
         if !isBeside {
           picker(counts: shown.value?.counts)
@@ -74,12 +73,11 @@ struct MistakesScreen: View {
   }
 
   private func header(_ list: Components.Schemas.MistakeList?) -> some View {
-    Section {
-      NotebookHeader(list: list) { hooks.navigate(.mistakePractice(skillId: nil)) }
-    }
-    .listRowBackground(Color.clear)
-    // The row's own side margins: at the cell's edge, a wrapped line's first letter was clipped.
-    .listRowInsets(.vertical, 8)
+    NotebookHeader(list: list) { hooks.navigate(.mistakePractice(skillId: nil)) }
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
+      // The row's own side margins: at the cell's edge, a wrapped line's first letter was clipped.
+      .listRowInsets(.vertical, 8)
   }
 
   private func picker(counts: Components.Schemas.MistakeList.CountsPayload?) -> some View {
