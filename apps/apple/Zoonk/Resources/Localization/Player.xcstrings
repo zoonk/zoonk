@@ -9581,6 +9581,65 @@
         }
       }
     },
+    "Still checking. This is taking longer than usual." : {
+      "comment" : "Grading the answer is taking longer than usual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir prüfen noch. Das dauert länger als üblich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún estamos comprobando tu respuesta. Está tardando más de lo habitual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La vérification continue. Elle prend plus de temps que d’habitude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo ancora controllando. Ci stiamo mettendo più del solito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "答え合わせを続けています。いつもより時間がかかっています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadal sprawdzamy. Trwa to dłużej niż zwykle."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda estamos conferindo. Está demorando mais que o normal."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hâlâ kontrol ediyoruz. Normalden uzun sürüyor."
+          }
+        }
+      }
+    },
     "sub %@" : {
       "comment" : "Screen reader words for an index, said after its base: \"x sub 1\".",
       "localizations" : {
@@ -10757,6 +10816,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu soru dersin sonunda tekrar karşına çıkacak"
+          }
+        }
+      }
+    },
+    "This question was waiting for its picture. Answer it to finish the lesson." : {
+      "comment" : "A question left out while its picture was drawn came back once it was drawn",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Frage hat auf ihr Bild gewartet. Beantworte sie, um die Lektion abzuschließen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faltaba la imagen de esta pregunta. Respóndela para terminar la lección."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette question attendait son image. Réponds-y pour terminer la leçon."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per questa domanda mancava l’immagine. Rispondi per completare la lezione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像の準備ができました。この問題に答えてレッスンを完了してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그림이 준비되기를 기다리던 문제예요. 레슨을 마치려면 이 문제에 답해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To pytanie czekało na obrazek. Odpowiedz na nie, by ukończyć lekcję."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta pergunta estava esperando a imagem. Responda para concluir a aula."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu soru için görsel bekleniyordu. Dersi bitirmek için soruyu cevapla."
           }
         }
       }

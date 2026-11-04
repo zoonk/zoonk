@@ -6,6 +6,7 @@ struct LessonStageView: View {
   @Environment(\.lessonAudio) private var audio
   @Environment(\.spokenAnswerRecording) private var recording
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @State private var isCheckSlow = false
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -145,7 +146,7 @@ struct LessonStageView: View {
                 }
               }
 
-              LessonCheckNote(state: state)
+              LessonCheckNote(state: state, isSlow: isCheckSlow)
                 .id(Self.checkNoteId)
 
               if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
@@ -185,7 +186,8 @@ struct LessonStageView: View {
                 announceVerdict()
               }
             }
-            .onChange(of: state.notice == .selfCorrect || state.checkFailed) { _, hasNote in
+            .onChange(of: state.notice == .selfCorrect || state.checkFailed || isCheckSlow) {
+              _, hasNote in
               if hasNote {
                 scroll.scrollTo(Self.checkNoteId, anchor: .bottom)
               }
@@ -247,6 +249,15 @@ struct LessonStageView: View {
           await store.loadExampleLine(stepId: step.id)
         }
       }
+      // Here rather than on the note, which would add a gap to the page while it's empty.
+      .task(id: state.phase == .checking) {
+        isCheckSlow = false
+
+        if state.phase == .checking {
+          try? await Task.sleep(for: LessonGrading.slowCheck)
+          isCheckSlow = !Task.isCancelled
+        }
+      }
       .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
       .sensoryFeedback(trigger: countedVerdict(step)) { _, isCorrect in
@@ -305,6 +316,7 @@ private struct LessonStepNotes: View {
 
 private struct LessonCheckNote: View {
   let state: LessonPlayerState
+  let isSlow: Bool
 
   var body: some View {
     if state.notice == .selfCorrect {
@@ -323,6 +335,15 @@ private struct LessonCheckNote: View {
       Text(
         "We couldn't check your answer this time. Try again.", tableName: "Player",
         comment: "The server couldn't grade a written or spoken answer"
+      )
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+    }
+
+    if isSlow, state.phase == .checking {
+      Text(
+        "Still checking. This is taking longer than usual.", tableName: "Player",
+        comment: "Grading the answer is taking longer than usual"
       )
       .font(.subheadline)
       .foregroundStyle(.secondary)
@@ -386,6 +407,7 @@ struct LessonActionBar: View {
       HStack {
         if primary.isBusy {
           ProgressView()
+            .controlSize(.small)
         }
 
         Text(primary.title)
@@ -549,6 +571,17 @@ private struct LessonNotice: View {
             comment: "The lesson came back to a screen whose answer was never saved")
         } icon: {
           Image(systemName: "icloud.slash")
+        }
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      case .pictureReady:
+        Label {
+          Text(
+            "This question was waiting for its picture. Answer it to finish the lesson.",
+            tableName: "Player",
+            comment: "A question left out while its picture was drawn came back once it was drawn")
+        } icon: {
+          Image(systemName: "photo")
         }
         .font(.subheadline)
         .foregroundStyle(.secondary)
