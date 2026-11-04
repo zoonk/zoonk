@@ -44,11 +44,10 @@ const WRITER_MODELS = [
 const [defaultModel, sharedLessonModel] = WRITER_MODELS;
 
 /**
- * Opus 5.5 writes a lesson other learners will read. On 8 lessons across subjects and levels (4 Nov
- * 2026), the judge from neither family scored it 8.97, Sonnet 8.54, Sol 8.36 and Terra 8.28, and
- * readers flagged the fewest sentences to reread or that didn't sound spoken, at about $0.21 a
- * lesson, which a shared lesson spreads across its readers. Terra tied Sol for a lesson one learner
- * reads, at half its price.
+ * Opus 5.5 writes a lesson other learners will read. On 15 lessons across subjects, levels and 8
+ * languages (4 Nov 2026), three blind judges scored it 8.74 and Sonnet 5.5 8.34, widest on clarity
+ * and natural speech, at about $0.20 a lesson against $0.15, which a shared lesson spreads across its
+ * readers. Terra tied Sol for a lesson one learner reads, at half its price.
  */
 export function getLessonWriterModel({ reuse }: { reuse: CallReuse }): string {
   return reuse === "personal" ? defaultModel : sharedLessonModel;
