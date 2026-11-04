@@ -20,6 +20,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -110,7 +111,6 @@ internal fun BuddyGoalStart(
                 FlowRow(
                     Modifier.semantics { contentDescription = examplesLabel },
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     examples.forEach { example -> GoalChip(example) { goal = example } }
                 }
@@ -135,8 +135,8 @@ internal fun BuddyGoalStart(
 private const val EXAMPLES = 3
 
 /**
- * Main's buddy example: small and quiet, it fills the box. Compose stretches its touch area to 48dp around the
- * drawn chip, as main's `hit-area` does, so the chips sit as close as main's.
+ * Main's buddy example: small and quiet, it fills the box. Each chip reserves its 48dp touch height in layout, so
+ * chips that wrap onto two lines never share a touch area.
  */
 @Composable
 private fun GoalChip(
@@ -149,6 +149,7 @@ private fun GoalChip(
     Text(
         text,
         Modifier
+            .minimumInteractiveComponentSize()
             .clip(shape)
             .background(colors.surface)
             .border(1.dp, colors.outline, shape)
