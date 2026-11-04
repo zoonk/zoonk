@@ -97,7 +97,12 @@ struct SessionSummaryView: View {
           .tabViewStyle(.page(indexDisplayMode: .always))
           .indexViewStyle(.page(backgroundDisplayMode: .always))
           .background(Color(.systemGroupedBackground))
-          .safeAreaBar(edge: .bottom) { actionBar(summary, at: step).keepsOffFold() }
+          .safeAreaBar(edge: .bottom) {
+            // Only the page slides: the buttons change at once, as they do after a swipe.
+            actionBar(summary, at: step)
+              .animation(nil, value: step)
+              .keepsOffFold()
+          }
         } else {
           page(.done, visit: visit) {
             doneStep(summary, showsBrainPower: true)
