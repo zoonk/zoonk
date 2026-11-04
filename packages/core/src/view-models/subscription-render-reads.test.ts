@@ -11,6 +11,7 @@ import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { type readActiveSubscription } from "../learner/facts/subscription";
 import { getLearnerSummary } from "../learner/summary/get-learner-summary";
 import { getBuddyStatus } from "../milestones/get-buddy-status";
+import { getWeeklyRecap } from "../milestones/get-weekly-recap";
 import { signedInCourseGoal } from "./_test-utils/course-goal";
 import { getChapterView } from "./chapter/get-chapter-view";
 import { getFieldMapView } from "./map/get-field-map-view";
@@ -126,6 +127,22 @@ describe("a Plus learner's page reads", () => {
     const [chapter] = reads.result;
 
     expect(chapter.status).toBe("ready");
+    expect(reads.rows).toBe(1);
+  });
+
+  it("reads it once for an exam goal's weekly recap and the summary", async () => {
+    const { goal, user } = await signedInCourseGoal();
+    await prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } });
+    await subscribe(user);
+
+    const reads = await countDatabaseRows(
+      () => Promise.all([getWeeklyRecap({ goalId: goal.id }), getLearnerSummary()]),
+      SUBSCRIPTION_ROWS,
+    );
+
+    const [recap] = reads.result;
+
+    expect(recap.status).toBe("ready");
     expect(reads.rows).toBe(1);
   });
 });
