@@ -436,7 +436,7 @@ private fun TimeEditor(
         confirmButton = {
             TextButton(
                 onClick = {
-                    onPick("%02d:%02d".format(state.hour, state.minute))
+                    onPick(LocalTime.of(state.hour, state.minute).toString())
                     onDismiss()
                 },
             ) { Text(stringResource(R.string.onboarding_save)) }

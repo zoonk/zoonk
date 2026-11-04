@@ -33,6 +33,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.util.Locale
 
 /**
  * Review screenshots of the gallery, written only on demand:
@@ -110,7 +111,10 @@ class GalleryScreenshots {
             index = section
             compose.waitForIdle()
             val slug = gallerySections[section].title.lowercase().replace(' ', '-')
-            write("$prefix-${"%02d".format(section + 1)}-$slug", compose.onNodeWithTag(SHOT).captureToImage().asAndroidBitmap())
+            write(
+                "$prefix-${"%02d".format(Locale.ROOT, section + 1)}-$slug",
+                compose.onNodeWithTag(SHOT).captureToImage().asAndroidBitmap(),
+            )
         }
     }
 
