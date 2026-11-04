@@ -10,12 +10,14 @@ async function readSkippedActivities(goalId: string): Promise<LanguageActivityTy
 }
 
 export async function loadSkippedActivities({
+  activeGoalId,
   targetLanguage,
   userId,
 }: {
+  activeGoalId?: string | null;
   targetLanguage: string;
   userId: string;
 }): Promise<LanguageActivityType[]> {
-  const goal = await findLearnerLanguageGoal({ targetLanguage, userId });
+  const goal = await findLearnerLanguageGoal({ activeGoalId, targetLanguage, userId });
   return goal ? readSkippedActivities(goal.id) : [];
 }

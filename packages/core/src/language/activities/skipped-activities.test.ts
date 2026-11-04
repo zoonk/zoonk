@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { setupPlayableLesson } from "../../lesson-player/_test-utils/playable-lesson-setup";
@@ -103,5 +104,35 @@ describe("skipping language activities", () => {
     });
 
     await expect(kinds()).resolves.toStrictEqual(["explanation", "summary"]);
+  });
+
+  it("follows the goal the learner chose when another goal for the language changed more recently", async () => {
+    const { goal, lesson, user } = await languageLessonSetup();
+    mockSession(user.id);
+
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ activities: ["writing"], kind: "skipActivities" }] },
+    });
+
+    const other = await goalFixture({
+      kind: "language",
+      language: "pt",
+      targetLanguage: "en",
+      userId: user.id,
+    });
+
+    await Promise.all([
+      planFixture({ goalId: other.id }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+
+    expect(
+      played?.status === "ready" ? played.lesson.steps.map((step) => step.kind) : null,
+    ).toStrictEqual(["explanation", "summary"]);
+
+    await expect(startAndComplete(lesson.id)).resolves.toMatchObject({ status: "completed" });
   });
 });

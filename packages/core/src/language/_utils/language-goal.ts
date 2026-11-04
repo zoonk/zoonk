@@ -7,25 +7,31 @@ export function readGoalDetails(goal: Pick<Goal, "details"> | null): Record<stri
   return goal && isJsonObject(goal.details) ? goal.details : {};
 }
 
-/** A supplied goal must belong to the learner; otherwise the goal they chose, when it's for the language, then their latest active or latest goal for it. */
+/**
+ * A supplied goal must belong to the learner; otherwise the goal they chose, when it's for the
+ * language, then their latest active or latest goal for it. GET reads pass the chosen goal they
+ * loaded with `readActiveGoal` (null for none); writes leave it out and it's read fresh.
+ */
 export async function findLearnerLanguageGoal({
+  activeGoalId,
   goalId,
   targetLanguage,
   userId,
 }: {
+  activeGoalId?: string | null;
   goalId?: string;
   targetLanguage: string;
   userId: string;
 }): Promise<Goal | null> {
-  const [goals, activeGoalId] = await Promise.all([
+  const [goals, chosenId] = await Promise.all([
     prisma.goal.findMany({
       orderBy: { updatedAt: "desc" },
       where: { kind: "language", targetLanguage, userId },
     }),
-    findActiveGoalId(userId),
+    activeGoalId === undefined ? findActiveGoalId(userId) : activeGoalId,
   ]);
 
-  const [preferred] = [goalId, activeGoalId].flatMap(
+  const [preferred] = [goalId, chosenId].flatMap(
     (id) => goals.find((goal) => goal.id === id) ?? [],
   );
 
