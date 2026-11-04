@@ -39,16 +39,10 @@ struct TodaySessionSection: View {
     }
 
     Section {
-      if let freshStart {
-        Text(freshStart)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-      }
+      let lead = TodayDayLead(view: view)
 
-      mockFunding
-
-      if !session.blocks.isEmpty {
-        DayProgressRow(session: session)
+      if !view.dayLeadJoinsHeader, !lead.isEmpty {
+        lead
           .listRowSeparator(.hidden)
       }
 
@@ -70,71 +64,6 @@ struct TodaySessionSection: View {
       .listRowBackground(Color.clear)
       .listRowInsets(.vertical, 0)
       .listSectionSpacing(.compact)
-    }
-  }
-
-  /// It belongs to the session it explains, so it goes once the learner starts, and a day with
-  /// nothing to start says its own words instead.
-  private var freshStart: String? {
-    let state = session.state
-    guard !view.studiedToday, !session.isStarted, session.dailyLimit?.reached != true,
-      state != .ahead, state != .rest
-    else {
-      return nil
-    }
-
-    let time = studyDuration(minutes: session.blocks.reduce(0) { $0 + $1.estimatedMinutes })
-
-    switch session.freshStart {
-    case .welcomeBack:
-      return session.examAccess.trialEnded
-        ? String(
-          localized: "Welcome back! Today takes about \(time), so it's easy to pick up again.",
-          table: "Today", comment: "A return after a break")
-        : String(
-          localized:
-            "Welcome back! Today is lighter, about \(time), so it's easy to pick up again.",
-          table: "Today", comment: "A return after a break")
-    case .newPhase:
-      return String(
-        localized: "A new phase starts today, with an easy warm-up first.", table: "Today",
-        comment: "A day starting a new phase")
-    case .newWeek:
-      return String(
-        localized: "A fresh week. Today starts with an easy warm-up.", table: "Today",
-        comment: "A day starting a new week")
-    case nil:
-      return nil
-    }
-  }
-
-  /// A return after a break already says the day is lighter, so it only names the mock.
-  @ViewBuilder
-  private var mockFunding: some View {
-    if let funding = view.mockFunding, session.state != .done, session.state != .rest,
-      let date = studyDate(funding.mockDate)
-    {
-      let day = date.formatted(.studyDay.month(.abbreviated).day())
-
-      HStack {
-        if session.freshStart == .welcomeBack {
-          Text(
-            "Saving time for \(day)'s mock exam", tableName: "Today",
-            comment:
-              "Why the day is lighter, on a return after a break that already says so; the argument is the mock's date, like 'May 5'"
-          )
-        } else {
-          Text(
-            "Lighter day: saving time for \(day)'s mock exam", tableName: "Today",
-            comment: "Why the day is lighter; the argument is the mock's date, like 'May 5'")
-        }
-
-        if !session.examAccess.includesMockExams {
-          PlusMark()
-        }
-      }
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -365,6 +294,109 @@ struct TodayMainAction: View {
       Text("Start session", tableName: "Today", comment: "Starts today's session")
     case .summary:
       Text("See today's summary", tableName: "Today", comment: "Opens today's summary")
+    }
+  }
+}
+
+extension TodayView {
+  /// Main's order puts earlier unfinished work between the heading and the session's meter. Without
+  /// it, the day's lead sits in the heading's row: in a row of its own, the list's 44pt minimum row
+  /// height would hold the 6pt meter far from the title.
+  var dayLeadJoinsHeader: Bool { earlierWork.isEmpty }
+}
+
+/// What opens main's `TodaySession` before its queue: why the day is as it is, then its meter.
+struct TodayDayLead: View {
+  let view: TodayView
+
+  private var session: StudyDay { view.session }
+
+  var isEmpty: Bool { freshStart == nil && mockDay == nil && session.blocks.isEmpty }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      if let freshStart {
+        Text(freshStart)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
+
+      mockFunding
+
+      if !session.blocks.isEmpty {
+        DayProgressRow(session: session)
+      }
+    }
+  }
+
+  /// It belongs to the session it explains, so it goes once the learner starts, and a day with
+  /// nothing to start says its own words instead.
+  private var freshStart: String? {
+    let state = session.state
+    guard !view.studiedToday, !session.isStarted, session.dailyLimit?.reached != true,
+      state != .ahead, state != .rest
+    else {
+      return nil
+    }
+
+    let time = studyDuration(minutes: session.blocks.reduce(0) { $0 + $1.estimatedMinutes })
+
+    switch session.freshStart {
+    case .welcomeBack:
+      return session.examAccess.trialEnded
+        ? String(
+          localized: "Welcome back! Today takes about \(time), so it's easy to pick up again.",
+          table: "Today", comment: "A return after a break")
+        : String(
+          localized:
+            "Welcome back! Today is lighter, about \(time), so it's easy to pick up again.",
+          table: "Today", comment: "A return after a break")
+    case .newPhase:
+      return String(
+        localized: "A new phase starts today, with an easy warm-up first.", table: "Today",
+        comment: "A day starting a new phase")
+    case .newWeek:
+      return String(
+        localized: "A fresh week. Today starts with an easy warm-up.", table: "Today",
+        comment: "A day starting a new week")
+    case nil:
+      return nil
+    }
+  }
+
+  private var mockDay: String? {
+    guard let funding = view.mockFunding, session.state != .done, session.state != .rest,
+      let date = studyDate(funding.mockDate)
+    else {
+      return nil
+    }
+
+    return date.formatted(.studyDay.month(.abbreviated).day())
+  }
+
+  /// A return after a break already says the day is lighter, so it only names the mock.
+  @ViewBuilder
+  private var mockFunding: some View {
+    if let day = mockDay {
+      HStack {
+        if session.freshStart == .welcomeBack {
+          Text(
+            "Saving time for \(day)'s mock exam", tableName: "Today",
+            comment:
+              "Why the day is lighter, on a return after a break that already says so; the argument is the mock's date, like 'May 5'"
+          )
+        } else {
+          Text(
+            "Lighter day: saving time for \(day)'s mock exam", tableName: "Today",
+            comment: "Why the day is lighter; the argument is the mock's date, like 'May 5'")
+        }
+
+        if !session.examAccess.includesMockExams {
+          PlusMark()
+        }
+      }
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
     }
   }
 }

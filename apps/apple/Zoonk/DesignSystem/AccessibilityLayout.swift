@@ -31,6 +31,8 @@ struct AccessibilityStack<Content: View>: View {
 struct MarkedRow<Mark: View, Content: View, End: View>: View {
   @Environment(\.stacksContent) private var isStacked
 
+  /// Side by side; a mark without text, such as a ring, centers instead.
+  var alignment = VerticalAlignment.firstTextBaseline
   var stackedSpacing: CGFloat?
   @ViewBuilder let mark: Mark
   @ViewBuilder let content: Content
@@ -48,7 +50,7 @@ struct MarkedRow<Mark: View, Content: View, End: View>: View {
         content
       }
     } else {
-      HStack(alignment: .firstTextBaseline, spacing: 12) {
+      HStack(alignment: alignment, spacing: 12) {
         mark
 
         content
