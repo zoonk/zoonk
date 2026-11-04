@@ -1,4 +1,5 @@
 {
+  "understood": "view=understood",
   "diagnostic": "view=diagnostic",
   "diagnostic-picked": "view=diagnostic&state=picked",
   "schedule": "view=schedule",

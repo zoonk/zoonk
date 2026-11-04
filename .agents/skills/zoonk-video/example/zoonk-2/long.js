@@ -27,38 +27,12 @@ __build((Z) => {
     dur === 0
       ? tl.set(p.phone, { scale: z, y: fy(sy, z) }, t)
       : tl.to(p.phone, { scale: z, y: fy(sy, z), duration: dur, ease: "swing" }, t);
-  // One focal point at a time: the headline alone in the middle, then the phone alone, framed on `at`.
-  // A scene's first beat waits out the previous scene's fade (`lead` 0 after a hard cut). Returns when the phone is back.
-  const beat = (L, p, title, t0, o = {}) => {
-    const words = `${title} ${o.sub ?? ""}`.replace(/<br>/g, " ").trim().split(/\s+/).length;
-    const hold = Math.min(2.0, Math.max(1.5, 1.1 + 0.12 * words));
-    const start = t0 + (o.lead ?? (o.first ? 0.25 : 0.05));
-    const back = start + hold;
-    if (!o.first)
-      tl.to(
-        p.rig,
-        { autoAlpha: 0, scale: 0.96, filter: "blur(14px)", duration: 0.4, ease: "power2.in" },
-        t0 - 0.35,
-      );
-    const r = K.say(
-      L,
-      {
-        x: 160,
-        y: 540,
-        w: 1600,
-        align: "center",
-        title,
-        size: 104,
-        stagger: 0.045,
-        sub: o.sub,
-        subSize: 40,
-        subW: 1000,
-      },
-      start,
-      back,
-    );
-    K.fit(r.h, 1600);
-    if (o.at) cam(p, back - 0.05, o.at[0], o.at[1], 0);
+  const REST = [434 - 62, PS];
+  // The phone comes into focus already framed on `at` ([screen y, zoom]) and blurs out at the scene's end.
+  // focusOut ends on the cut and the next phone starts there, so two phones never share a frame. After a
+  // scene without a phone, focusIn starts 0.15 s after the cut, once that scene has faded out.
+  const focusIn = (p, t, at) => {
+    cam(p, t, at[0], at[1], 0);
     tl.fromTo(
       p.rig,
       { autoAlpha: 0, scale: 0.94, filter: "blur(14px)" },
@@ -70,11 +44,16 @@ __build((Z) => {
         ease: "zo",
         immediateRender: false,
       },
-      back,
+      t,
     );
-    if (o.first) Z.sfx("whoosh", back);
-    return back;
+    Z.sfx("whoosh", t);
   };
+  const focusOut = (p, t1) =>
+    tl.to(
+      p.rig,
+      { autoAlpha: 0, scale: 0.96, filter: "blur(14px)", duration: 0.3, ease: "power2.in" },
+      t1 - 0.3,
+    );
   const T = {
     en: {
       build: [293, 323],
@@ -206,16 +185,16 @@ __build((Z) => {
 
   // 3. How it works: one phone
   {
-    const [t0] = seg(0);
     const [a0] = seg(2);
     const [b0] = seg(2);
     const [c0] = seg(2.5);
     const [d0] = seg(2);
     const [e0, e1] = seg(2.5);
-    const L = K.scene(t0, e1, { fadeIn: 0 });
+    const L = K.scene(a0, e1, { fadeIn: 0 });
     const p = rigAt(L);
     const s = p.screen;
-    const typing = K.seq(s, "typing", a0 + 1.7, a0 + 4.0);
+    const typing = K.seq(s, "typing", a0 + 0.6, a0 + 3.6);
+    const understood = K.still(s, "understood");
     const diag = K.still(s, "diagnostic");
     const diagPicked = K.still(s, "diagnostic-picked");
     const sched = K.still(s, "schedule");
@@ -226,40 +205,38 @@ __build((Z) => {
     const changed = K.still(s, "today-changed");
     K.track([
       { at: a0, el: typing },
-      { at: b0 + 0.2, el: diag, trans: "cut" },
-      { at: b0 + 3.75, el: diagPicked, trans: "fade" },
-      { at: c0 + 0.2, el: sched, trans: "cut" },
-      { at: d0 + 0.2, el: t0d, trans: "cut" },
-      { at: d0 + 2.2, el: t1d, trans: "fade" },
-      { at: d0 + 2.9, el: t2d, trans: "fade" },
-      { at: d0 + 3.6, el: t3d, trans: "fade" },
-      { at: e0 + 0.2, el: changed, trans: "cut" },
+      { at: b0, el: understood, trans: "push" },
+      { at: b0 + 1.5, el: diag, trans: "push" },
+      { at: b0 + 3.2, el: diagPicked, trans: "fade" },
+      { at: c0, el: sched, trans: "push" },
+      { at: d0, el: t0d, trans: "push" },
+      { at: d0 + 1.3, el: t1d, trans: "fade" },
+      { at: d0 + 2.3, el: t2d, trans: "fade" },
+      { at: d0 + 3.3, el: t3d, trans: "fade" },
+      { at: e0, el: changed, trans: "push" },
     ]);
-
-    beat(L, p, C.tellGoal, a0, { first: true, lead: 0.05, at: [280, 1.9] });
-    K.tapAt(s, T.build[0], T.build[1], a0 + 4.3);
-
-    beat(L, p, C.checks, b0, { at: [270, 1.9] });
-    cam(p, b0 + 2.85, 520, 1.9, 0.7);
-    K.tapAt(s, T.dontKnow[0], T.dontKnow[1], b0 + 3.7);
-
-    const cIn = beat(L, p, C.time, c0, { at: [330, 1.9] });
-    cam(p, cIn + 1.0, 450, 2.4, 1.2);
-    K.ring(s, 10, 413, 370, 88, cIn + 1.7, d0 - 0.3);
-    Z.sfx("tick", cIn + 1.7);
-
-    beat(L, p, C.follow, d0, { at: [300, 1.8] });
-    [d0 + 2.2, d0 + 2.9, d0 + 3.6].forEach((x) => Z.sfx("check", x));
-
-    const eIn = beat(L, p, C.missed, e0, { at: [250, 1.9] });
-    cam(p, eIn + 1.7, 560, 1.9, 1.0);
+    focusIn(p, a0, REST);
+    cam(p, a0 + 0.5, 280, 1.9, 1.0);
+    K.tapAt(s, T.build[0], T.build[1], a0 + 3.95);
+    cam(p, b0, 300, 1.7, 0.55);
+    cam(p, b0 + 1.5, 270, 1.9, 0.55);
+    cam(p, b0 + 2.4, 520, 1.9, 0.7);
+    K.tapAt(s, T.dontKnow[0], T.dontKnow[1], b0 + 3.15);
+    cam(p, c0, 330, 1.9, 0.55);
+    cam(p, c0 + 1.3, 450, 2.4, 1.2);
+    K.ring(s, 10, 413, 370, 88, c0 + 2.0, d0 - 0.3);
+    Z.sfx("tick", c0 + 2.0);
+    cam(p, d0, 300, 1.8, 0.55);
+    [d0 + 1.3, d0 + 2.3, d0 + 3.3].forEach((x) => Z.sfx("check", x));
+    cam(p, e0, 250, 1.9, 0.55);
+    cam(p, e0 + 2.6, 560, 1.9, 1.0);
+    focusOut(p, e1);
   }
 
   // 4. Whatever you're working toward
   {
     const [t0, t1] = seg(1);
     const L = K.scene(t0, t1);
-    K.say2(L, { x: 0, y: 330, w: 1920, align: "center", title: C.whatever, size: 88 }, t0 + 0.1);
     const ics = [
       ["graduation-cap", "var(--mock)"],
       ["languages", "var(--conv)"],
@@ -267,10 +244,10 @@ __build((Z) => {
       ["lightbulb", "var(--brain)"],
     ];
     ics.forEach(([ic, c], i) => {
-      const card = K.card(L, { x: 99 + i * 438, y: 500, w: 340, pad: 30, zoom: 1.2 });
+      const card = K.card(L, { x: 99 + i * 438, y: 390, w: 340, pad: 30, zoom: 1.2 });
       card.style.cssText += ";height:250px;display:flex;flex-direction:column";
       card.innerHTML = `<div style="color:${c}">${icon(ic, 54, 1.6)}</div><div style="font-weight:600;font-size:32px;letter-spacing:-0.03em;line-height:1.15;margin-top:auto">${C.areas[i]}</div>`;
-      K.cardIn(card, t0 + 0.4 + i * 0.12, { y: 50, sound: i === 0, dur: 0.7 });
+      K.cardIn(card, t0 + 0.2 + i * 0.12, { y: 50, sound: i === 0, dur: 0.7 });
     });
   }
 
@@ -284,24 +261,27 @@ __build((Z) => {
     const p = rigAt(L);
     const s = p.screen;
     const pt = Z.lang === "pt";
+    const plan = K.still(s, "exam-plan");
     const subj = K.still(s, "exam-subject");
     const run = K.still(s, "mock-run");
     const res = K.still(s, "mock-result");
     const extra = K.still(s, pt ? "essay" : "speaking-band");
     const mist = K.still(s, pt ? "mistakes" : "mistakes-open2");
     K.track([
-      { at: a0, el: subj },
-      { at: b0 + 0.2, el: run, trans: "cut" },
-      { at: b0 + 3.5, el: res, trans: "push" },
+      { at: a0, el: plan },
+      { at: a0 + 2.4, el: subj, trans: "push" },
+      { at: b0, el: run, trans: "push" },
+      { at: b0 + 2.2, el: res, trans: "push" },
       { at: c0, el: extra, trans: "push" },
       { at: d0, el: mist, trans: "push" },
     ]);
-    const aIn = beat(L, p, C.exam, a0, { first: true, at: [260, 1.8] });
-    cam(p, aIn + 0.9, 500, 1.8, 1.6);
-    beat(L, p, C.mock, b0, { at: [230, 1.85] });
-    Z.sfx("chime", b0 + 3.8);
-    cam(p, c0, pt ? 250 : 230, 1.85, 0.6);
-    cam(p, d0, pt ? 480 : 540, 1.85, 0.7);
+    focusIn(p, a0 + 0.15, [330, 1.7]);
+    cam(p, a0 + 2.4, 480, 1.8, 0.55);
+    cam(p, b0, 230, 1.85, 0.55);
+    Z.sfx("chime", b0 + 2.5);
+    cam(p, c0, pt ? 250 : 230, 1.85, 0.55);
+    cam(p, d0, pt ? 480 : 540, 1.85, 0.55);
+    focusOut(p, d1);
   }
 
   // 6. Languages
@@ -321,18 +301,19 @@ __build((Z) => {
     K.track([
       { at: a0, el: unit },
       { at: b0, el: word, trans: "push" },
-      { at: c0 + 0.2, el: call, trans: "cut" },
-      { at: c0 + 3.5, el: fb, trans: "up" },
+      { at: c0, el: call, trans: "push" },
+      { at: c0 + 2.6, el: fb, trans: "up" },
       { at: d0, el: pat, trans: "push" },
     ]);
-    beat(L, p, C.language, a0, { first: true, at: [300, 1.8] });
-    cam(p, b0 + 0.1, 180, 2.2, 0.8);
-    K.tapAt(s, T.speaker[0], T.speaker[1], b0 + 2.35, { sound: false });
-    Z.sfx(Z.lang === "pt" ? "word-stay" : "word-quedarse", b0 + 2.45);
-    const cIn = beat(L, p, C.call, c0, { at: [380, 1.6] });
-    [cIn + 0.3, cIn + 0.9].forEach((x) => Z.sfx("bubble", x));
-    cam(p, c0 + 3.5, 250, 1.8, 0.6);
-    cam(p, d0 + 0.1, 200, 2.0, 0.7);
+    focusIn(p, a0, [300, 1.8]);
+    cam(p, b0, 180, 2.2, 0.6);
+    K.tapAt(s, T.speaker[0], T.speaker[1], b0 + 2.75, { sound: false });
+    Z.sfx(Z.lang === "pt" ? "word-stay" : "word-quedarse", b0 + 2.85);
+    cam(p, c0, 380, 1.6, 0.55);
+    [c0 + 0.6, c0 + 1.4].forEach((x) => Z.sfx("bubble", x));
+    cam(p, c0 + 2.6, 250, 1.8, 0.55);
+    cam(p, d0, 200, 2.0, 0.55);
+    focusOut(p, d1);
   }
 
   // 7. Career
@@ -344,11 +325,12 @@ __build((Z) => {
     const tools = K.still(p.screen, "tools-setup");
     K.track([
       { at: t0, el: mods },
-      { at: t0 + 3.2, el: tools, trans: "up" },
+      { at: t0 + 2.6, el: tools, trans: "up" },
     ]);
-    const tIn = beat(L, p, C.career, t0, { first: true, at: [380, 1.7] });
-    cam(p, tIn + 0.6, 450, 2.2, 1.0);
-    cam(p, t0 + 3.2, 420, 1.9, 0.6);
+    focusIn(p, t0, [380, 1.7]);
+    cam(p, t0 + 1.0, 450, 2.2, 1.0);
+    cam(p, t0 + 2.6, 420, 1.9, 0.55);
+    focusOut(p, t1);
   }
 
   // 8. Learn anything
@@ -360,62 +342,47 @@ __build((Z) => {
     const adj = K.still(p.screen, "plan-learn-adjust");
     K.track([
       { at: t0, el: plan },
-      { at: t0 + 3.1, el: adj, trans: "up" },
+      { at: t0 + 2.2, el: adj, trans: "up" },
     ]);
-    beat(L, p, C.learn, t0, { first: true, at: [330, 1.8] });
-    cam(p, t0 + 3.1, 400, 1.9, 0.6);
+    focusIn(p, t0, [330, 1.8]);
+    cam(p, t0 + 2.2, 400, 1.9, 0.55);
+    focusOut(p, t1);
   }
 
-  // 9. Lessons
+  // 9. Lessons: activities in one phone, each pushed in as the voice names it
   {
-    let [t0, t1] = seg(1);
+    let [t0, t1] = seg(5);
     let L = K.scene(t0, t1);
-    K.say2(
-      L,
-      {
-        x: 0,
-        y: 470,
-        w: 1920,
-        align: "center",
-        title: C.bus[0],
-        size: 110,
-        sub: C.bus[1],
-        subW: 900,
-      },
-      t0 + 0.1,
-    );
-
-    // Learn by doing: the activities play in one phone, each pushed in as the voice names it.
-    [t0, t1] = seg(4);
-    L = K.scene(t0, t1);
     let p = rigAt(L);
-    const acts = ["map", "projectile", "code", "piano", "timeline"];
-    const starts = [2.25, 3.55, 4.85, 6.35, 7.75].map((x) => t0 + x);
+    const acts = ["polls", "timeline", "map", "projectile", "code", "piano"];
+    const starts = [0, 2.6, 4.6, 5.95, 7.25, 8.75].map((x) => t0 + x);
     const plays = acts.map((a, i) =>
-      K.seq(p.screen, a, starts[i] + 0.05, i + 1 < acts.length ? starts[i + 1] : t1 - 0.2),
+      K.seq(p.screen, a, starts[i] + 0.3, i + 1 < acts.length ? starts[i + 1] : t1 - 0.3),
     );
-    K.track(plays.map((el, i) => ({ at: i ? starts[i] : t0, el, trans: i ? "push" : "cut" })));
-    beat(L, p, C.doing[0], t0, { first: true, sub: C.doing[1], at: [400, 1.3] });
+    K.track(plays.map((el, i) => ({ at: starts[i], el, trans: i ? "push" : "cut" })));
+    focusIn(p, t0, [400, 1.3]);
+    focusOut(p, t1);
 
     // Wrong answer explained
     [t0, t1] = seg(2);
     L = K.scene(t0, t1);
     p = rigAt(L);
-    const avg = K.seq(p.screen, "averages", t0 + 1.5, t0 + 4.4);
+    const avg = K.seq(p.screen, "averages", t0 + 0.4, t0 + 3.4);
     K.track([{ at: t0, el: avg }]);
-    beat(L, p, C.wrong, t0, { first: true, at: [470, 1.4] });
-    K.tapAt(p.screen, T.mean[0], T.mean[1], t0 + 2.35);
-    K.tapAt(p.screen, T.check[0], T.check[1], t0 + 3.25);
-    Z.sfx("wrong", t0 + 3.55);
-    cam(p, t0 + 3.75, 330, 2.1, 0.75);
+    focusIn(p, t0, [470, 1.4]);
+    K.tapAt(p.screen, T.mean[0], T.mean[1], t0 + 1.3);
+    K.tapAt(p.screen, T.check[0], T.check[1], t0 + 1.95);
+    Z.sfx("wrong", t0 + 2.1);
+    cam(p, t0 + 2.8, 330, 2.1, 0.8);
+    focusOut(p, t1);
   }
 
   // 10. Zu
   {
     let [t0, t1] = seg(1);
     let L = K.scene(t0, t1);
-    const zu = div("abs", L, K.zu("zu-baby-cheer", 330));
-    zu.style.cssText = "left:795px;top:170px";
+    const zu = div("abs", L, K.zu("zu-baby-cheer", 420));
+    zu.style.cssText = "left:750px;top:330px";
     tl.fromTo(
       zu,
       { scale: 0.4, autoAlpha: 0, y: 80 },
@@ -423,37 +390,23 @@ __build((Z) => {
       t0 + 0.05,
     );
     Z.sfx("pop", t0 + 0.1);
-    K.say2(
-      L,
-      {
-        x: 0,
-        y: 640,
-        w: 1920,
-        align: "center",
-        title: C.zu[0].replace("<br>", " "),
-        size: 100,
-        sub: C.zu[1],
-        subW: 900,
-        anchor: "top",
-      },
-      t0 + 0.3,
-    );
 
     // Help, then the lesson's end in the same phone
     [t0] = seg(2);
     const [r0, r1] = seg(1);
     L = K.scene(t0, r1);
     let p = rigAt(L);
-    const tut = K.seq(p.screen, "tutor", t0 + 2.4, r0 - 0.2, { from: 1 });
+    const tut = K.seq(p.screen, "tutor", t0 + 0.9, r0 - 0.2, { from: 1 });
     const done = K.seq(p.screen, "complete", r0 + 0.3, r0 + 1.9, { from: 1 });
     K.track([
       { at: t0, el: tut },
       { at: r0, el: done, trans: "push" },
     ]);
-    const hIn = beat(L, p, C.help, t0, { first: true, at: [400, 1.6] });
-    K.tapAt(p.screen, T.chip[0], T.chip[1], t0 + 2.64);
-    cam(p, hIn + 1.2, 500, 1.9, 1.0);
+    focusIn(p, t0 + 0.15, [400, 1.6]);
+    K.tapAt(p.screen, T.chip[0], T.chip[1], t0 + 1.15);
+    cam(p, t0 + 1.8, 500, 1.9, 1.0);
     cam(p, r0, 180, 2.0, 0.6);
+    focusOut(p, r1);
 
     [t0, t1] = seg(2);
     L = K.scene(t0, t1);
@@ -462,12 +415,13 @@ __build((Z) => {
     const za = K.still(p.screen, "zu-tab-applied");
     K.track([
       { at: t0, el: zt },
-      { at: t0 + 3.6, el: za, trans: "fade" },
+      { at: t0 + 3.0, el: za, trans: "fade" },
     ]);
-    const zIn = beat(L, p, C.change, t0, { first: true, at: [360, 1.7] });
-    cam(p, zIn + 0.7, 520, 2.0, 1.0);
-    K.tapAt(p.screen, T.apply[0], T.apply[1], t0 + 3.5);
-    Z.sfx("chime", t0 + 3.7);
+    focusIn(p, t0, [360, 1.7]);
+    cam(p, t0 + 1.2, 520, 2.0, 1.0);
+    K.tapAt(p.screen, T.apply[0], T.apply[1], t0 + 2.9);
+    Z.sfx("chime", t0 + 3.1);
+    focusOut(p, t1);
   }
 
   // 11. Progress
@@ -479,9 +433,10 @@ __build((Z) => {
     const glow = K.still(p.screen, "energy-glowing-sheet");
     K.track([
       { at: t0, el: nap },
-      { at: t0 + 3.0, el: glow, trans: "fade" },
+      { at: t0 + 2.6, el: glow, trans: "fade" },
     ]);
-    beat(L, p, C.energy, t0, { first: true, at: [400, 1.9] });
+    focusIn(p, t0, [400, 1.9]);
+    focusOut(p, t1);
 
     [t0, t1] = seg(2);
     L = K.scene(t0, t1);
@@ -490,11 +445,12 @@ __build((Z) => {
     const grew = K.still(p.screen, "buddy-grew");
     K.track([
       { at: t0, el: lv },
-      { at: t0 + 2.8, el: grew, trans: "push" },
+      { at: t0 + 2.25, el: grew, trans: "push" },
     ]);
-    beat(L, p, C.brain, t0, { first: true, at: [360, 1.7] });
-    cam(p, t0 + 2.8, 360, 1.75, 0.55);
-    Z.sfx("pop", t0 + 3.05);
+    focusIn(p, t0, [360, 1.7]);
+    cam(p, t0 + 2.25, 360, 1.75, 0.55);
+    Z.sfx("pop", t0 + 2.5);
+    focusOut(p, t1);
 
     [t0, t1] = seg(2);
     L = K.scene(t0, t1);
@@ -503,10 +459,11 @@ __build((Z) => {
     const cw = K.still(p.screen, "checkpoint-won");
     K.track([
       { at: t0, el: ci },
-      { at: t0 + 3.2, el: cw, trans: "push" },
+      { at: t0 + 2.6, el: cw, trans: "push" },
     ]);
-    beat(L, p, C.trickster, t0, { first: true, at: [260, 1.8] });
-    Z.sfx("chime", t0 + 3.4);
+    focusIn(p, t0, [260, 1.8]);
+    Z.sfx("chime", t0 + 2.8);
+    focusOut(p, t1);
   }
 
   // 12. Payoff

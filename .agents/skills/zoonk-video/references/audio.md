@@ -12,7 +12,7 @@ You can't listen. An audio-capable model judges, transcription checks the words,
 ## Narration
 
 1. **Script.** Write the film's `narration.py` (see `example/zoonk-2/narration.py`): the model, the voice, per-language instructions, and per cut `(id, start s, scene end s, en, pt)` rows. A line may run past its scene's end into the next scene, never into the next line.
-   - The voice complements the supers; it doesn't read them.
+   - In a narrated 16:9 film the voice carries each product scene on its own. In the vertical it complements the supers instead of reading them.
    - Spell out what TTS mangles: "Zoonk two point oh", "zoonk dot com", "dois ponto zero", "zoonk ponto com".
 2. **Voice.** Gemini TTS `google/gemini-3.8-flash-tts` with the voice `Charon` won blind rankings in both languages, so one narrator covers both channels.
    - Pass `instructions`: warm, calm, confident, unhurried, never salesy.

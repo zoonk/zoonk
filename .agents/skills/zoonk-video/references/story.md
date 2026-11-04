@@ -6,9 +6,9 @@ The 2.0 launch film (`example/zoonk-2/long.js`) follows a proven shape:
 
 1. **Cold open.** Real goals typed into the goal box, then the questions every learner has. The brand comes in about 10 s.
 2. **Reveal.** A dark frame, the logo, the version and the tagline.
-3. **How it works.** One phone stays in the scene while its screens change: goal, what you know, honest time, Today, missed day. Each beat shows its headline alone, then the phone alone.
-4. **Every goal.** A chapter card, then exams, languages, career and learn anything, each with its best real screens.
-5. **Lessons.** About three minutes long, a carousel of real activities, a wrong answer explained, Ask Zu.
+3. **How it works.** One phone stays in the scene while its screens change and the camera follows the voice: goal, what you know, honest time, Today, missed day.
+4. **Every goal.** The four goal cards, then exams, languages, career and learn anything, each with its best real screens.
+5. **Lessons.** Real activities in one phone, a wrong answer explained, Zu, help inside a lesson.
 6. **Progress.** Energy instead of streaks, Brain Power and belts, the Trickster.
 7. **Payoff.** The cold-open goals checked off, "one day at a time", the ten languages.
 8. **CTA.** Held long enough for the end screen.
@@ -38,8 +38,7 @@ The blog and old copy go stale. For every claim, open the code that decides it:
 
 ## Copy
 
-- **Supers:** a headline of at most about 20 characters per line, broken with `<br>`. Write the pt line yourself in natural Brazilian Portuguese; don't translate word by word.
-  - 16:9: a beat's headline stands alone and the voice says the rest. Only title cards (no phone) carry a subline.
+- **Supers:** a headline of at most about 20 characters per line, broken with `<br>`, used only where [composition](#composition) allows. Write the pt line yourself in natural Brazilian Portuguese; don't translate word by word.
   - Vertical: a short subline under the headline, since many watch with the sound off.
 - **Brand terms in pt:** Energia, Poder Mental, faixas, Pegadinha, parceiro (not "buddy"), ofensiva (for streak), edital, simulado.
 - **CTA:**
@@ -52,26 +51,31 @@ The blog and old copy go stale. For every claim, open the code that decides it:
 
 One focal point at a time. When a launch film put the headline on the left and the phone on the right in every scene, viewers didn't know where to look and lost the thread. In 16:9:
 
-- **Never put text beside the phone.** A beat is the headline alone in the middle, then the phone alone in the middle (`beat()` in `example/zoonk-2/long.js`).
-  - The phone blurs out as the headline comes in.
-  - The headline clears before the phone comes back into focus.
-- **Frame what the voice describes.** The phone returns already framed on that part of the screen, at 1.6–2.4× (`cam()`), so the UI reads even on a phone. Pan to the next part instead of pulling back to the whole screen.
-- **Short beats skip the headline.** Under about 3.6 s, the phone stays in focus, its screen changes, and the voice carries the beat.
+- **Never put text beside the phone.**
+- **Narrated: no headlines on product scenes.** The voice says it, and the uploaded `.srt` captions carry it with the sound off.
+  - A headline before each screen took about 2 s from the screen and cut away before anyone finished reading it.
+  - Text stays only where the words are the picture: the typed goals and questions of the cold open, the brand reveal, the checked-off goals, the ten languages and the CTA.
+  - A chapter visual keeps its picture and drops the headline the voice says: the four goal cards, Zu cheering.
+- **Unnarrated:** each beat shows its headline alone in the middle, then the phone alone. The phone blurs out under the headline, and the headline clears before the phone comes back.
+- **Frame what the voice describes.** A scene's phone comes into focus already framed on that part of the screen, at 1.6–2.4× (`focusIn()` and `cam()` in `example/zoonk-2/long.js`), so the UI reads even on a phone. Pan to the next part as the voice moves on instead of pulling back to the whole screen.
+- **One phone per scene.** Screens push in on the beat while the camera reframes.
 - **A run of screens** (activities, steps) plays inside one phone, each pushed in as the voice names it. Two phones side by side compete, even faded and mid-swipe.
-- **Transitions:** a scene's first headline waits until the previous scene has faded out. Text dissolving over a phone reads as two things at once.
-- **Markers** (rings, taps) end with their beat, and land inside the frame. A ring left on would circle an unrelated row on the next screen. Measure tap targets on the current captures: screens move when the app changes.
+- **Transitions:** a phone blurs out on the cut and the next one blurs in from it, never overlapping: two phones framed differently read as two things. After a scene without a phone, the phone waits until that scene has faded out. Text dissolving over a phone reads as two things at once too.
+- **Markers** (rings, taps) end with their beat, and land inside the frame. A ring left on would circle an unrelated row on the next screen.
+  - Measure tap targets on the current captures: screens move when the app changes.
+  - Time a tap just before the frame it causes. `K.seq` spreads frames by their `hold` weights in `manifest.json`, so compute when that frame starts instead of guessing.
 - **Vertical:** the super sits above the phone in one column, which reads top to bottom. Keep anything else off the frame.
 
 ## Pace
 
-- Hold each line for about 0.28 s per word plus 0.6 s, at least about 1.8 s. A 16:9 beat's headline, which the voice speaks over, holds 1.5–2 s (1.1 s plus 0.12 s per word).
+- Hold each super for about 0.28 s per word plus 0.6 s, at least about 1.8 s.
 - Words reveal 0.045 s apart, each over 0.6 s.
-- The next scene is already moving when a cut lands. Avoid a blank frame between scenes; dissolves between two light scenes run about 0.3–0.5 s.
+- The next scene is already moving when a cut lands. Avoid a blank frame between scenes; dissolves between two light scenes run about 0.3–0.5 s. The one exception is phone to phone: the quick blur dip through the cut (about 0.1 s nearly empty) reads as one transition, where a dissolve would show two phones.
 - Cuts land on half bars of the soundtrack's grid: `Z.BAR` is 2.4 s at 100 BPM. Change it if the bed has another tempo.
 - About 2:30 of story and about 40 s vertical felt right to the owner. 3:36 felt sluggish.
 
 ## Plan before building
 
-- Write a scene table (time, visual, en super, pt super) plus the goals per locale.
+- Write a scene table (time, visual, en and pt narration or supers) plus the goals per locale.
 - Get it approved before rendering anything.
 - List the corrections the code made to earlier assumptions, so the user sees why the story changed.

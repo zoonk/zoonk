@@ -70,7 +70,7 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
 - **Locales:**
   - Keep every line of copy in `copy.js` and every learner value in `realui/story.ts`, per locale; scenes and views only read keys.
   - Headlines break only at `<br>` and shrink to fit (`K.fit`), so Portuguese never wraps by surprise.
-- **One focal point:** in 16:9 a beat is the headline alone, then the phone alone, framed on the part the voice describes; never text beside the phone. See [composition](references/story.md#composition).
+- **One focal point:** in 16:9, never put text beside the phone. With narration, product scenes have no headlines: the phone stays framed on the part the voice describes. Without narration, each headline shows alone, then the phone alone. See [composition](references/story.md#composition).
 - **Pace:**
   - Hold each line for about 0.28 s per word plus 0.6 s.
   - No empty frames at cuts.
@@ -104,7 +104,7 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
   - `story.ts`: the sample learner per locale.
 - `example/zoonk-2/`: the 2.0 launch film. Copy it, then change what the new video needs.
   - Pages: `long`, `short` and `thumb`, as `.html` and `.js`.
-  - `copy.js`: the supers in both languages.
+  - `copy.js`: the on-screen words in both languages.
   - `stills.json`: the screens to capture.
   - `narration.py`: lines, voice and sample words.
   - `music.json`: the prompts for the two beds.
