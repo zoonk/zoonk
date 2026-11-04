@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A single share is a `ProgressView` instead.
+/// A single share is a `Meter` instead.
 struct MeterParts: View {
   struct Part {
     enum Fill {

@@ -86,15 +86,12 @@ struct TutorPanel: View {
   }
 }
 
-/// A toolbar shows its face alone at the bar's own text size, so it never wraps and keeps the
-/// bar's shape.
 struct TutorAskToolbarItem: ToolbarContent {
   let scope: TutorScope
 
   var body: some ToolbarContent {
     ToolbarItem(placement: .primaryAction) {
       TutorAskButton(scope: scope)
-        .buttonBorderShape(.automatic)
     }
   }
 }
