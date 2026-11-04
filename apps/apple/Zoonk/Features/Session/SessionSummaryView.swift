@@ -65,6 +65,7 @@ struct SessionSummaryView: View {
           dayResult(summary)
         }
         .celebratesOnce(id: visit)
+        .pageMargins()
       } secondary: {
         List {
           onward(summary)
@@ -73,14 +74,14 @@ struct SessionSummaryView: View {
         // background.
         .scrollContentBackground(.hidden)
         .background(Color(.systemGroupedBackground))
-        .safeAreaBar(edge: .bottom) { actionBar(summary) }
+        .pageBar { actionBar(summary) }
       } single: {
         List {
           dayResult(summary)
           onward(summary)
         }
         .celebratesOnce(id: visit)
-        .safeAreaBar(edge: .bottom) { actionBar(summary).keepsOffFold() }
+        .pageBar { actionBar(summary) }
       }
     }
   }
@@ -165,9 +166,6 @@ struct SessionSummaryView: View {
       }
     }
     .controlSize(.large)
-    .frame(maxWidth: 680)
-    .frame(maxWidth: .infinity)
-    .scenePadding()
   }
 
   /// See mistakes and Keep going sit before Finish, which takes the rest of the line. A stopped
