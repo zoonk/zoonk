@@ -1535,12 +1535,12 @@ msgstr "Niveaux"
 #: src/certificates/certificate-details.tsx
 msgctxt "avtgF2"
 msgid "Taken"
-msgstr "Passé le"
+msgstr "Date du test"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "95stPq"
 msgid "Completed"
-msgstr "Terminé le"
+msgstr "Date de fin"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "mrBiB2"
@@ -1555,7 +1555,7 @@ msgstr "Leçons validées par test"
 #: src/certificates/certificate-details.tsx
 msgctxt "KHL8ap"
 msgid "Study time"
-msgstr "Temps d’étude"
+msgstr "Durée d’étude"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "2mUitd"
@@ -1644,7 +1644,7 @@ msgstr "Niveau {level} en {language}, terminé sur Zoonk"
 #: src/certificates/certificate-labels.ts
 msgctxt "do3pHn"
 msgid "{name} completed {course}"
-msgstr "{name} a terminé le cours {course}"
+msgstr "{name} a terminé {course}"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "z9WxBG"
@@ -1725,7 +1725,7 @@ msgstr "Les niveaux sont alignés sur le CEFR, le cadre européen commun de réf
 #: src/certificates/certificate-meaning.tsx
 msgctxt "_1AldP"
 msgid "Zoonk's placement test asks 3 reading questions, 3 listening questions and one sentence to say aloud, each adapted to the answers before it. It estimated this level from those {count, plural, one {# answer} other {# answers}}; skills the learner skipped aren't counted."
-msgstr "Le test de positionnement de Zoonk comprend 3 questions de lecture, 3 questions d’écoute et une phrase à dire à voix haute, toutes adaptées aux réponses précédentes. Il a estimé ce niveau à partir de {count, plural, one {# réponse} other {# réponses}} ; les compétences sautées ne sont pas prises en compte."
+msgstr "Le test de niveau de Zoonk comprend 3 questions de lecture, 3 questions d’écoute et une phrase à dire à voix haute, toutes adaptées aux réponses précédentes. Il a estimé ce niveau à partir de {count, plural, one {# réponse} other {# réponses}} ; les compétences sautées ne sont pas prises en compte."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "X1QrOq"
@@ -1796,7 +1796,7 @@ msgstr "Niveau {level} terminé !"
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "BAZS05"
 msgid "Your {certificate} placement result is ready."
-msgstr "Ton résultat au test de positionnement {certificate} est prêt."
+msgstr "Ton résultat au test de niveau {certificate} est prêt."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "lopydx"
@@ -1851,7 +1851,7 @@ msgstr "Ce nom figure sur tes certificats et ton compagnon l’utilise."
 #: src/certificates/certificate-name.tsx
 msgctxt "F6SpEM"
 msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "Ce nom figure sur tes certificats et ton compagnon l’utilise. Tu peux le changer à tout moment."
+msgstr "Ce nom figure sur tes certificats et ton compagnon l’utilise. Tu peux le modifier à tout moment."
 
 #: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
@@ -1886,7 +1886,7 @@ msgstr "Certificat vérifié · délivré par Zoonk"
 #: src/certificates/certificate-page.tsx
 msgctxt "PDKCn3"
 msgid "Measured by Zoonk's placement test on {date}."
-msgstr "Niveau évalué par le test de positionnement de Zoonk le {date}."
+msgstr "Évalué par le test de niveau de Zoonk le {date}."
 
 #: src/certificates/certificate-page.tsx
 msgctxt "faSg-e"

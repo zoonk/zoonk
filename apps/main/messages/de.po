@@ -3556,7 +3556,7 @@ msgstr "Dein Name"
 #: src/lib/certificates/certificate-view.ts
 msgctxt "WSC4bY"
 msgid "Placement result"
-msgstr "Ergebnis des Einstufungstests"
+msgstr "Einstufungsergebnis"
 
 #. The kind of document, above the learner's name on a certificate.
 #: src/lib/certificates/certificate-view.ts

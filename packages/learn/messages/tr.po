@@ -1811,7 +1811,7 @@ msgstr "Kurs tamamlandı!"
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "H8ofJ_"
 msgid "{count, plural, other {# certificates earned}}"
-msgstr "{count, plural, other {# sertifika kazanıldı}}"
+msgstr "{count, plural, other {# sertifika kazandın}}"
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "72XHg-"
@@ -1861,7 +1861,7 @@ msgstr "Sertifikalarındaki ad"
 #: src/certificates/certificate-name.tsx
 msgctxt "Zeqtwb"
 msgid "Your name, as it should appear"
-msgstr "Adın, görünmesini istediğin şekilde"
+msgstr "Sertifikanda görünecek adın"
 
 #: src/certificates/certificate-name.tsx
 msgctxt "m4c_De"
@@ -2014,7 +2014,7 @@ msgstr "Henüz sertifikan yok"
 #: src/certificates/certificates-screen.tsx
 msgctxt "SHp4oN"
 msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
-msgstr "Bir kursu veya dil seviyesini tamamladığında sertifikan burada görünür. Ücretsiz olarak yazdırıp paylaşabilirsin. Seviye belirleme sınavının sonucu da burada görünür."
+msgstr "Bir kursu veya dil seviyesini tamamladığında sertifikan burada görünür. Ücretsiz olarak yazdırıp paylaşabilirsin. Seviye belirleme testi sonucun da burada görünür."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"

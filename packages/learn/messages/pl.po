@@ -1655,7 +1655,7 @@ msgstr "{course}, kurs ukończony w Zoonku"
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "2i1LGp"
 msgid "{certificate} placement result"
-msgstr "{certificate} – wynik testu poziomującego"
+msgstr "{certificate}: wynik testu poziomującego"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "B-Co6Y"
@@ -1801,7 +1801,7 @@ msgstr "Twój wynik testu poziomującego jest gotowy: {certificate}."
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "lopydx"
 msgid "Your certificate for {course} is ready."
-msgstr "Twój certyfikat ukończenia kursu jest gotowy: {course}."
+msgstr "Twój certyfikat jest gotowy: {course}."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "SqnwjO"
@@ -1821,17 +1821,17 @@ msgstr "Twoje certyfikaty są gotowe: {list}."
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "5g51Cu"
 msgid "{count, plural, one {Create a free account to keep your certificate and put your name on it.} other {Create a free account to keep your certificates and put your name on them.}}"
-msgstr "{count, plural, one {Załóż bezpłatne konto, aby zachować certyfikat i umieścić na nim swoje imię i nazwisko.} other {Załóż bezpłatne konto, aby zachować certyfikaty i umieścić na nich swoje imię i nazwisko.}}"
+msgstr "{count, plural, one {Załóż bezpłatne konto, by zachować certyfikat i umieścić na nim swoje imię i nazwisko.} other {Załóż bezpłatne konto, by zachować certyfikaty i umieścić na nich swoje imię i nazwisko.}}"
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "_QSets"
 msgid "They're saved in Certificates."
-msgstr "Są zapisane w sekcji „Certyfikaty”."
+msgstr "Zapisano je w sekcji Certyfikaty."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "m77iCk"
 msgid "It's saved in Certificates."
-msgstr "Jest zapisany w sekcji „Certyfikaty”."
+msgstr "Zapisano go w sekcji Certyfikaty."
 
 #: src/certificates/certificate-moment-parts.tsx
 msgctxt "e_2HUM"
@@ -1896,7 +1896,7 @@ msgstr "Certyfikat ukończenia, wydany {date}."
 #: src/certificates/certificate-page.tsx
 msgctxt "oyh3QA"
 msgid "Create a free account to keep your certificate and put your name on it."
-msgstr "Załóż bezpłatne konto, aby zachować certyfikat i umieścić na nim swoje imię i nazwisko."
+msgstr "Załóż bezpłatne konto, by zachować certyfikat i umieścić na nim swoje imię i nazwisko."
 
 #: src/certificates/certificate-page.tsx
 msgctxt "CXRlIo"
@@ -1919,7 +1919,7 @@ msgstr "Mój wynik testu poziomującego w Zoonku: {language}, poziom {level}."
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
 msgid "I just completed level {level} in {language} on Zoonk."
-msgstr "Właśnie udało mi się ukończyć poziom {level} w Zoonku (język: {language})."
+msgstr "Poziom {level} ({language}) w Zoonku już za mną."
 
 #: src/certificates/certificate-share.tsx
 msgctxt "rIzvkK"
@@ -2014,7 +2014,7 @@ msgstr "Nie masz jeszcze certyfikatów"
 #: src/certificates/certificates-screen.tsx
 msgctxt "SHp4oN"
 msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
-msgstr "Ukończ kurs lub poziom nauki języka, a certyfikat pojawi się tutaj. Możesz go bezpłatnie wydrukować i udostępnić. Znajdziesz tu też wynik testu poziomującego."
+msgstr "Ukończ kurs lub poziom językowy, a certyfikat pojawi się tutaj. Możesz go bezpłatnie wydrukować i udostępnić. Znajdziesz tu też wynik testu poziomującego."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"

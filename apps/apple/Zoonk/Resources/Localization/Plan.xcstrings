@@ -16593,13 +16593,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "修了証を受け取る"
+            "value" : "証明書を受け取る"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "수료증 받기"
+            "value" : "인증서 받기"
           }
         },
         "pl" : {
@@ -29614,13 +29614,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "修了証を見る"
+            "value" : "証明書を見る"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "수료증 보기"
+            "value" : "인증서 보기"
           }
         },
         "pl" : {

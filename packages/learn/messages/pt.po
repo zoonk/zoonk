@@ -1535,12 +1535,12 @@ msgstr "Níveis"
 #: src/certificates/certificate-details.tsx
 msgctxt "avtgF2"
 msgid "Taken"
-msgstr "Realizado"
+msgstr "Realizado em"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "95stPq"
 msgid "Completed"
-msgstr "Concluído"
+msgstr "Concluído em"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "mrBiB2"
@@ -1550,12 +1550,12 @@ msgstr "Aulas estudadas"
 #: src/certificates/certificate-details.tsx
 msgctxt "dx3nJs"
 msgid "Passed by test"
-msgstr "Puladas por teste"
+msgstr "Aulas dispensadas por teste"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "KHL8ap"
 msgid "Study time"
-msgstr "Tempo de estudo"
+msgstr "Carga horária"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "2mUitd"
@@ -1725,7 +1725,7 @@ msgstr "Os níveis seguem o CEFR, o Quadro Europeu Comum de Referência para Lí
 #: src/certificates/certificate-meaning.tsx
 msgctxt "_1AldP"
 msgid "Zoonk's placement test asks 3 reading questions, 3 listening questions and one sentence to say aloud, each adapted to the answers before it. It estimated this level from those {count, plural, one {# answer} other {# answers}}; skills the learner skipped aren't counted."
-msgstr "O teste de nivelamento do Zoonk tem 3 perguntas de leitura, 3 de escuta e uma frase para falar em voz alta, cada uma adaptada às respostas anteriores. O teste estimou este nível a partir {count, plural, one {dessa # resposta} other {dessas # respostas}}; as habilidades que a pessoa pulou não entram no cálculo."
+msgstr "O teste de nível do Zoonk tem 3 perguntas de leitura, 3 de escuta e uma frase para falar em voz alta, cada uma adaptada às respostas anteriores. O teste estimou este nível a partir {count, plural, one {dessa # resposta} other {dessas # respostas}}; as habilidades que a pessoa pulou não entram no cálculo."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "X1QrOq"
@@ -1796,7 +1796,7 @@ msgstr "{level} concluído!"
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "BAZS05"
 msgid "Your {certificate} placement result is ready."
-msgstr "Seu resultado de nivelamento em {certificate} está pronto."
+msgstr "Seu resultado do teste de nível de {certificate} está pronto."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "lopydx"
@@ -1886,7 +1886,7 @@ msgstr "Certificado verificado · emitido pelo Zoonk"
 #: src/certificates/certificate-page.tsx
 msgctxt "PDKCn3"
 msgid "Measured by Zoonk's placement test on {date}."
-msgstr "Nível medido no teste de nivelamento do Zoonk em {date}."
+msgstr "Medido no teste de nível do Zoonk em {date}."
 
 #: src/certificates/certificate-page.tsx
 msgctxt "faSg-e"
@@ -2014,7 +2014,7 @@ msgstr "Ainda sem certificados"
 #: src/certificates/certificates-screen.tsx
 msgctxt "SHp4oN"
 msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
-msgstr "Conclua um curso ou um nível de idioma e seu certificado aparece aqui para você imprimir e compartilhar de graça. O resultado do teste de nível também aparece aqui."
+msgstr "Ao concluir um curso ou um nível de idioma, seu certificado aparece aqui para você imprimir e compartilhar de graça. O resultado do teste de nível também aparece aqui."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -4512,7 +4512,7 @@ msgstr "Adicionando um teste rápido para ver se funciona…"
 #: src/journey/course-certificate.tsx
 msgctxt "n-Px0T"
 msgid "Get your certificate"
-msgstr "Receber seu certificado"
+msgstr "Emitir seu certificado"
 
 #: src/journey/course-certificate.tsx
 msgctxt "koWpue"

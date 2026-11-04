@@ -1519,7 +1519,7 @@ msgstr "안경 씌우기"
 #: src/certificates/certificate-copy-button.tsx
 msgctxt "p556q3"
 msgid "Copied"
-msgstr "복사 완료"
+msgstr "복사됨"
 
 #: src/certificates/certificate-copy-button.tsx
 #: src/certificates/certificate-details.tsx
@@ -1606,7 +1606,7 @@ msgstr "레벨 테스트 결과"
 #: src/certificates/certificate-labels.ts
 msgctxt "zaINXN"
 msgid "Certificate of completion"
-msgstr "수료증"
+msgstr "수료 인증서"
 
 #. An approximate study time, such as "about 41 hr".
 #: src/certificates/certificate-labels.ts
@@ -1634,7 +1634,7 @@ msgstr "레벨 테스트 결과: {certificate}"
 #: src/certificates/certificate-labels.ts
 msgctxt "ZfBPq3"
 msgid "{name} completed level {level} in {language}"
-msgstr "{name}님이 {level} 레벨의 {language} 과정을 수료했어요"
+msgstr "{name}님이 {level} 레벨의 {language} 과정을 마쳤어요"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "7ULGz_"
@@ -1644,7 +1644,7 @@ msgstr "{level} 레벨의 {language} 과정을 Zoonk에서 수료했어요"
 #: src/certificates/certificate-labels.ts
 msgctxt "do3pHn"
 msgid "{name} completed {course}"
-msgstr "{name}님이 {course} 코스를 수료했어요"
+msgstr "{name}님이 {course} 코스를 마쳤어요"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "z9WxBG"
@@ -1725,7 +1725,7 @@ msgstr "레벨은 유럽 공통 언어 참조 기준인 CEFR에 맞춰져 있어
 #: src/certificates/certificate-meaning.tsx
 msgctxt "_1AldP"
 msgid "Zoonk's placement test asks 3 reading questions, 3 listening questions and one sentence to say aloud, each adapted to the answers before it. It estimated this level from those {count, plural, one {# answer} other {# answers}}; skills the learner skipped aren't counted."
-msgstr "Zoonk의 레벨 진단에는 읽기 3문제, 듣기 3문제, 소리 내어 말할 문장 하나가 나와요. 각 문제와 문장은 앞선 답변에 맞춰 조정돼요. 이 레벨은 {count, plural, other {#개의 답변}}을 바탕으로 추정했으며, 건너뛴 스킬은 반영하지 않아요."
+msgstr "Zoonk의 레벨 테스트에는 읽기 3문제, 듣기 3문제, 소리 내어 말할 문장 하나가 나와요. 각 문제와 문장은 앞선 답변에 맞춰 조정돼요. 이 레벨은 {count, plural, other {#개의 답변}}을 바탕으로 추정했으며, 건너뛴 스킬은 반영하지 않아요."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "X1QrOq"
@@ -1796,7 +1796,7 @@ msgstr "{level} 완료!"
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "BAZS05"
 msgid "Your {certificate} placement result is ready."
-msgstr "{certificate} 레벨 진단 결과가 준비됐어요."
+msgstr "{certificate} 레벨 테스트 결과가 준비됐어요."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "lopydx"
@@ -1811,7 +1811,7 @@ msgstr "코스 완료!"
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "H8ofJ_"
 msgid "{count, plural, other {# certificates earned}}"
-msgstr "{count, plural, other {인증서 #개 획득}}"
+msgstr "{count, plural, other {인증서 #개를 받았어요}}"
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "72XHg-"
@@ -1836,7 +1836,7 @@ msgstr "인증서 목록에 저장했어요."
 #: src/certificates/certificate-moment-parts.tsx
 msgctxt "e_2HUM"
 msgid "On your certificate: <strong>{name}</strong>"
-msgstr "인증서 이름: <strong>{name}</strong>님"
+msgstr "인증서에 표시되는 이름: <strong>{name}</strong>님"
 
 #: src/certificates/certificate-name.tsx
 msgctxt "D4cYHr"
@@ -1866,7 +1866,7 @@ msgstr "인증서에 표시할 이름"
 #: src/certificates/certificate-name.tsx
 msgctxt "m4c_De"
 msgid "Your full name"
-msgstr "이름(성 포함)"
+msgstr "성명"
 
 #: src/certificates/certificate-name.tsx
 msgctxt "Qcr1L3"
@@ -1886,12 +1886,12 @@ msgstr "검증된 인증서 · Zoonk 발급"
 #: src/certificates/certificate-page.tsx
 msgctxt "PDKCn3"
 msgid "Measured by Zoonk's placement test on {date}."
-msgstr "{date}에 Zoonk의 레벨 진단으로 측정한 결과예요."
+msgstr "{date}에 Zoonk의 레벨 테스트로 측정한 결과예요."
 
 #: src/certificates/certificate-page.tsx
 msgctxt "faSg-e"
 msgid "Certificate of completion, issued on {date}."
-msgstr "{date}에 발급한 수료증이에요."
+msgstr "{date}에 발급한 수료 인증서예요."
 
 #: src/certificates/certificate-page.tsx
 msgctxt "oyh3QA"
@@ -1979,12 +1979,12 @@ msgstr "게시할 곳"
 #: src/certificates/certificate-share.tsx
 msgctxt "lbr3Lq"
 msgid "Copy link"
-msgstr "링크 복사하기"
+msgstr "링크 복사"
 
 #: src/certificates/certificate-sharing.tsx
 msgctxt "OKhRC6"
 msgid "Share"
-msgstr "공유하기"
+msgstr "공유"
 
 #: src/certificates/certificate-sharing.tsx
 msgctxt "L2bkq_"
@@ -2014,7 +2014,7 @@ msgstr "아직 인증서가 없어요"
 #: src/certificates/certificates-screen.tsx
 msgctxt "SHp4oN"
 msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
-msgstr "코스를 마치거나 언어 레벨을 완료하면 인증서가 여기에 표시돼요. 무료로 인쇄하고 공유할 수 있어요. 레벨 테스트 결과도 여기에 표시돼요."
+msgstr "코스나 언어 레벨을 마치면 인증서가 여기에 표시돼요. 무료로 인쇄하고 공유할 수 있어요. 레벨 테스트 결과도 여기에 표시돼요."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"

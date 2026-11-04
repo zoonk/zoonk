@@ -1519,13 +1519,13 @@ msgstr "相棒にかける"
 #: src/certificates/certificate-copy-button.tsx
 msgctxt "p556q3"
 msgid "Copied"
-msgstr "コピー済み"
+msgstr "コピーしました"
 
 #: src/certificates/certificate-copy-button.tsx
 #: src/certificates/certificate-details.tsx
 msgctxt "4l6vz1"
 msgid "Copy"
-msgstr "コピー"
+msgstr "コピーする"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "CgT-Q3"
@@ -1545,12 +1545,12 @@ msgstr "修了日"
 #: src/certificates/certificate-details.tsx
 msgctxt "mrBiB2"
 msgid "Lessons studied"
-msgstr "学習したレッスン"
+msgstr "学習したレッスン数"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "dx3nJs"
 msgid "Passed by test"
-msgstr "テストで合格したレッスン"
+msgstr "テスト合格で免除されたレッスン数"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "KHL8ap"
@@ -1601,12 +1601,12 @@ msgstr "{language} {level}"
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "WSC4bY"
 msgid "Placement result"
-msgstr "レベル判定結果"
+msgstr "レベル診断結果"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "zaINXN"
 msgid "Certificate of completion"
-msgstr "修了証"
+msgstr "修了証明書"
 
 #. An approximate study time, such as "about 41 hr".
 #: src/certificates/certificate-labels.ts
@@ -1623,13 +1623,13 @@ msgstr "{from, select, overview {概要} beginner {初級} intermediate {中級}
 #: src/certificates/certificate-labels.ts
 msgctxt "u9fD-O"
 msgid "Placement result for {name}: {certificate}"
-msgstr "{name}さんのレベル判定結果：{certificate}"
+msgstr "{name}さんのレベル診断結果：{certificate}"
 
 #: src/certificates/certificate-labels.ts
 #: src/certificates/placement-row.tsx
 msgctxt "vc8W5b"
 msgid "Placement result: {certificate}"
-msgstr "レベル判定結果：{certificate}"
+msgstr "レベル診断結果：{certificate}"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "ZfBPq3"
@@ -1655,17 +1655,17 @@ msgstr "{course}をZoonkで修了しました"
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "2i1LGp"
 msgid "{certificate} placement result"
-msgstr "{certificate}のレベル判定結果"
+msgstr "{certificate}のレベル診断結果"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "B-Co6Y"
 msgid "Add to your LinkedIn profile"
-msgstr "LinkedInプロフィールに追加する"
+msgstr "LinkedInのプロフィールに追加する"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "bv21CP"
 msgid "LinkedIn opens its form to add a license or certification. Copy each field into it."
-msgstr "LinkedInで資格や認定を追加するフォームが開きます。各項目をコピーして貼り付けてください。"
+msgstr "LinkedInで免許や資格を追加するフォームが開きます。各項目をコピーして貼り付けてください。"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "Gsc9HO"
@@ -1750,7 +1750,7 @@ msgstr "この証明書が示すこと"
 #: src/certificates/certificate-meaning.tsx
 msgctxt "fAGVcM"
 msgid "Topics covered"
-msgstr "対象トピック"
+msgstr "学習したトピック"
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "8Rm1i0"
@@ -1821,7 +1821,7 @@ msgstr "{list}の証明書ができました。"
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "5g51Cu"
 msgid "{count, plural, one {Create a free account to keep your certificate and put your name on it.} other {Create a free account to keep your certificates and put your name on them.}}"
-msgstr "{count, plural, other {無料アカウントを作成すると、証明書を保存でき、名前も入れられます。}}"
+msgstr "{count, plural, other {無料アカウントを作成すると、証明書を保存して名前を入れられます。}}"
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "_QSets"
@@ -1846,12 +1846,12 @@ msgstr "150文字以内で入力してください。"
 #: src/certificates/certificate-name.tsx
 msgctxt "Vrz1pI"
 msgid "Your certificates and your buddy use this name."
-msgstr "証明書への記載や、相棒からの呼びかけに使う名前です。"
+msgstr "証明書にこの名前が載ります。相棒もこの名前で呼びます。"
 
 #: src/certificates/certificate-name.tsx
 msgctxt "F6SpEM"
 msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "証明書への記載や、相棒からの呼びかけに使う名前です。いつでも変更できます。"
+msgstr "証明書にこの名前が載ります。相棒もこの名前で呼びます。いつでも変更できます。"
 
 #: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
@@ -1861,7 +1861,7 @@ msgstr "証明書に記載する名前"
 #: src/certificates/certificate-name.tsx
 msgctxt "Zeqtwb"
 msgid "Your name, as it should appear"
-msgstr "証明書に載せたい名前"
+msgstr "証明書に記載する名前"
 
 #: src/certificates/certificate-name.tsx
 msgctxt "m4c_De"
@@ -1896,7 +1896,7 @@ msgstr "{date}発行の修了証明書です。"
 #: src/certificates/certificate-page.tsx
 msgctxt "oyh3QA"
 msgid "Create a free account to keep your certificate and put your name on it."
-msgstr "無料アカウントを作成すると、証明書を保存でき、名前も入れられます。"
+msgstr "無料アカウントを作成すると、証明書を保存して名前を入れられます。"
 
 #: src/certificates/certificate-page.tsx
 msgctxt "CXRlIo"
@@ -1914,12 +1914,12 @@ msgstr "ダウンロード"
 #: src/certificates/certificate-share.tsx
 msgctxt "dkg2AU"
 msgid "My {language} placement result on Zoonk: {level}."
-msgstr "Zoonkでの{language}のレベル判定結果は{level}でした。"
+msgstr "Zoonkでの{language}のレベル診断結果は{level}でした。"
 
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
 msgid "I just completed level {level} in {language} on Zoonk."
-msgstr "Zoonkでレベル{level}を修了しました（{language}）。"
+msgstr "Zoonkでレベル{level}（{language}）を修了しました。"
 
 #: src/certificates/certificate-share.tsx
 msgctxt "rIzvkK"
@@ -1954,7 +1954,7 @@ msgstr "文章をコピーしました。Facebookの投稿に貼り付けてく�
 #: src/certificates/certificate-share.tsx
 msgctxt "tXB0F9"
 msgid "Share your certificate"
-msgstr "証明書をシェアする"
+msgstr "証明書を共有する"
 
 #: src/certificates/certificate-share.tsx
 msgctxt "Mpsug3"
@@ -1984,7 +1984,7 @@ msgstr "リンクをコピーする"
 #: src/certificates/certificate-sharing.tsx
 msgctxt "OKhRC6"
 msgid "Share"
-msgstr "シェアする"
+msgstr "共有する"
 
 #: src/certificates/certificate-sharing.tsx
 msgctxt "L2bkq_"
@@ -2014,7 +2014,7 @@ msgstr "まだ証明書はありません"
 #: src/certificates/certificates-screen.tsx
 msgctxt "SHp4oN"
 msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
-msgstr "コースや言語のレベルを修了すると、ここに証明書が表示されます。無料で印刷・共有できます。レベル判定テストの結果もここに表示されます。"
+msgstr "コースや言語のレベルを修了すると、ここに証明書が表示されます。無料で印刷・共有できます。レベル診断テストの結果もここに表示されます。"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -2034,7 +2034,7 @@ msgstr "証明書はいつでも印刷、ダウンロード、共有できます
 #: src/certificates/placement-row.tsx
 msgctxt "BnNTsQ"
 msgid "Create a free account to keep it and share it."
-msgstr "無料アカウントを作成すると、この結果を保存してシェアできます。"
+msgstr "無料アカウントを作成すると、結果を保存して共有できます。"
 
 #: src/certificates/placement-row.tsx
 msgctxt "DcP7sL"

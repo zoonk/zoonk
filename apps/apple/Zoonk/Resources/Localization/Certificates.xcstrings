@@ -72,7 +72,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einstufungsergebnis: %1$@ %2$@"
+            "value" : "%1$@ %2$@: Einstufungsergebnis"
           }
         },
         "en" : {
@@ -84,13 +84,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resultado de la prueba de nivel: %1$@ %2$@"
+            "value" : "%1$@ %2$@: resultado de la prueba de nivel"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Résultat du test de niveau : %1$@ %2$@"
+            "value" : "%1$@ %2$@ : résultat du test de niveau"
           }
         },
         "it" : {
@@ -102,7 +102,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@ レベル判定結果"
+            "value" : "%1$@ %2$@のレベル診断結果"
           }
         },
         "ko" : {
@@ -126,7 +126,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@ seviye tespit sonucu"
+            "value" : "%1$@ %2$@ seviye belirleme sonucu"
           }
         }
       }
@@ -155,7 +155,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Livello %@ completato!"
+            "value" : "%@ completato!"
           }
         },
         "ja" : {
@@ -238,7 +238,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ma za sobą kurs: %2$@"
+            "value" : "%1$@ ma ukończony kurs: %2$@"
           }
         },
         "pt" : {
@@ -291,7 +291,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@さんがレベル%2$@（%3$@）を修了しました"
+            "value" : "%1$@さんが%2$@レベルの%3$@を修了しました"
           }
         },
         "ko" : {
@@ -303,13 +303,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ma za sobą poziom %2$@. Język: %3$@"
+            "value" : "%1$@ ma ukończony poziom %2$@ (%3$@)"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ concluiu o nível %2$@ de %3$@"
+            "value" : "%1$@ concluiu o nível %2$@ em %3$@"
           }
         },
         "tr" : {
@@ -541,7 +541,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adicionar ao perfil LinkedIn"
+            "value" : "Adicionar ao LinkedIn"
           }
         },
         "tr" : {
@@ -558,7 +558,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu deinem LinkedIn-Profil hinzufügen"
+            "value" : "Zum LinkedIn-Profil hinzufügen"
           }
         },
         "es" : {
@@ -594,7 +594,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dodawanie do profilu LinkedIn"
+            "value" : "Dodaj do profilu na LinkedIn"
           }
         },
         "pt" : {
@@ -641,13 +641,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "リンクを知っている人なら誰でもこの証明書を見られます。ページは検索結果に表示されません。"
+            "value" : "リンクを知っている人なら誰でもこの証明書を見られます。このページは検索結果に表示されません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "링크가 있으면 누구나 이 인증서를 볼 수 있어요. 인증서 페이지는 검색 결과에 나오지 않아요."
+            "value" : "링크가 있으면 누구나 이 인증서를 볼 수 있어요. 이 페이지는 검색 결과에 나오지 않아요."
           }
         },
         "pl" : {
@@ -659,7 +659,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quem tiver o link pode ver este certificado. A página dele não aparece nas buscas."
+            "value" : "Qualquer pessoa com o link pode ver este certificado. A página dele não aparece nas buscas."
           }
         },
         "tr" : {
@@ -747,7 +747,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Certificat de réussite"
+            "value" : "Certificat de fin de formation"
           }
         },
         "it" : {
@@ -759,13 +759,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "修了証"
+            "value" : "修了証明書"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "수료증"
+            "value" : "수료 인증서"
           }
         },
         "pl" : {
@@ -871,7 +871,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifica"
+            "value" : "Cambia"
           }
         },
         "ja" : {
@@ -883,7 +883,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "변경"
+            "value" : "바꾸기"
           }
         },
         "pl" : {
@@ -971,7 +971,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fortfahren"
+            "value" : "Weiter"
           }
         },
         "es" : {
@@ -1060,7 +1060,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "학습 계속하기"
+            "value" : "계속 학습하기"
           }
         },
         "pl" : {
@@ -1373,7 +1373,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ücretsiz bir hesap oluştur"
+            "value" : "Ücretsiz hesap oluştur"
           }
         }
       }
@@ -1390,13 +1390,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea una cuenta gratis para conservarlo y compartirlo."
+            "value" : "Crea una cuenta gratis para guardarlo y compartirlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crée un compte gratuit pour le garder et le partager."
+            "value" : "Crée un compte gratuit pour le conserver et le partager."
           }
         },
         "it" : {
@@ -1408,31 +1408,31 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無料アカウントを作成すると、証明書を保存して共有できます。"
+            "value" : "無料アカウントを作成すると、結果を保存して共有できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "무료 계정을 만들어 인증서를 보관하고 공유하세요."
+            "value" : "무료 계정을 만들면 결과를 보관하고 공유할 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utwórz bezpłatne konto, by zachować certyfikat i go udostępniać."
+            "value" : "Załóż bezpłatne konto, by zachować wynik i go udostępniać."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crie uma conta grátis para guardar e compartilhar seu certificado."
+            "value" : "Crie uma conta grátis para salvar e compartilhar seu resultado."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sertifikanı saklamak ve paylaşmak için ücretsiz bir hesap oluştur."
+            "value" : "Sonucunu kaydetmek ve paylaşmak için ücretsiz bir hesap oluştur."
           }
         }
       }
@@ -1455,7 +1455,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crée un compte gratuit pour garder ton certificat et y ajouter ton nom."
+            "value" : "Crée un compte gratuit pour conserver ton certificat et y ajouter ton nom."
           }
         },
         "it" : {
@@ -1473,13 +1473,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "무료 계정을 만들어 인증서를 보관하고 이름을 넣으세요."
+            "value" : "무료 계정을 만들어 인증서를 보관하고 이름도 넣어 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utwórz bezpłatne konto, by zachować certyfikat i umieścić na nim swoje imię i nazwisko."
+            "value" : "Załóż bezpłatne konto, by zachować certyfikat i umieścić na nim swoje imię i nazwisko."
           }
         },
         "pt" : {
@@ -1491,7 +1491,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sertifikanı saklamak ve adını eklemek için ücretsiz bir hesap oluştur."
+            "value" : "Sertifikanı saklamak ve üzerine adını eklemek için ücretsiz bir hesap oluştur."
           }
         }
       }
@@ -1514,7 +1514,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Identifiant du certificat"
+            "value" : "Identifiant de la certification"
           }
         },
         "it" : {
@@ -1526,7 +1526,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "認定資格ID"
+            "value" : "認定ID"
           }
         },
         "ko" : {
@@ -1573,7 +1573,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "URL du certificat"
+            "value" : "URL de la certification"
           }
         },
         "it" : {
@@ -1585,7 +1585,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "認定資格URL"
+            "value" : "認定URL"
           }
         },
         "ko" : {
@@ -1626,37 +1626,37 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al completar un curso o un nivel de un idioma, su certificado aparece aquí y puedes imprimirlo y compartirlo gratis. El resultado de una prueba de nivel también aparece aquí."
+            "value" : "Completa un curso o un nivel de un idioma y su certificado aparecerá aquí para que puedas imprimirlo y compartirlo gratis. El resultado de una prueba de nivel también aparece aquí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quand tu termines un cours ou un niveau de langue, ton certificat s’affiche ici. Tu peux l’imprimer et le partager gratuitement. Le résultat d’un test de niveau s’affiche aussi ici."
+            "value" : "Termine un cours ou un niveau de langue pour retrouver ici ton certificat, à imprimer et à partager gratuitement. Le résultat d’un test de niveau apparaît ici aussi."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completa un corso o un livello di una lingua e troverai qui il certificato, da stampare e condividere gratis. Qui troverai anche il risultato del test di livello."
+            "value" : "Completa un corso o un livello di lingua e troverai qui il certificato, da stampare e condividere gratis. Qui trovi anche il risultato del test di livello."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "コースや言語のレベルを修了すると、ここに証明書が表示されます。無料で印刷・共有できます。レベル判定テストの結果もここに表示されます。"
+            "value" : "コースや言語のレベルを修了すると、ここに証明書が表示されます。無料で印刷・共有できます。レベル診断テストの結果もここに表示されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "코스나 언어 레벨 과정을 마치면 인증서가 여기에 표시돼요. 무료로 인쇄하고 공유할 수 있어요. 레벨 테스트 결과도 여기에 표시돼요."
+            "value" : "코스나 언어 레벨을 마치면 인증서가 여기에 표시돼요. 무료로 인쇄하고 공유할 수 있어요. 레벨 테스트 결과도 여기에 표시돼요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ukończ kurs lub poziom językowy, a certyfikat pojawi się tutaj. Możesz go bezpłatnie wydrukować i udostępnić. Tu znajdziesz też wynik testu poziomującego."
+            "value" : "Ukończ kurs lub poziom językowy, a certyfikat pojawi się tutaj. Możesz go bezpłatnie wydrukować i udostępnić. Znajdziesz tu też wynik testu poziomującego."
           }
         },
         "pt" : {
@@ -1668,7 +1668,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bir kursu veya dil seviyesini tamamladığında sertifikan burada görünür; ücretsiz yazdırıp paylaşabilirsin. Seviye tespit testi sonucun da burada yer alır."
+            "value" : "Bir kursu veya dil seviyesini tamamladığında sertifikan burada görünür. Ücretsiz olarak yazdırıp paylaşabilirsin. Seviye belirleme testi sonucun da burada görünür."
           }
         }
       }
@@ -1691,7 +1691,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acabo de completar el nivel %1$@ de %2$@ en Zoonk."
+            "value" : "Recién completé el nivel %1$@ de %2$@ en Zoonk."
           }
         },
         "fr" : {
@@ -1715,13 +1715,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk에서 방금 %1$@ 레벨의 %2$@ 과정을 마쳤어요."
+            "value" : "Zoonk에서 %1$@ 레벨의 %2$@ 학습을 막 마쳤어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Właśnie udało mi się ukończyć poziom %1$@ w Zoonku. Język: %2$@."
+            "value" : "Poziom %1$@ (%2$@) w Zoonku już za mną."
           }
         },
         "pt" : {
@@ -1733,7 +1733,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk’ta %1$@ seviyesini %2$@ dilinde yeni tamamladım."
+            "value" : "Zoonk’ta %1$@ seviyesini %2$@ dilinde az önce tamamladım."
           }
         }
       }
@@ -2414,7 +2414,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Organización emisora"
+            "value" : "Empresa emisora"
           }
         },
         "fr" : {
@@ -2497,13 +2497,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "인증서 목록에 저장됐어요."
+            "value" : "인증서 목록에 저장했어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zapisano w Certyfikatach."
+            "value" : "Zapisano go w sekcji Certyfikaty."
           }
         },
         "pt" : {
@@ -2556,13 +2556,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "링크 복사됨"
+            "value" : "링크를 복사했어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Link skopiowany"
+            "value" : "Skopiowano link"
           }
         },
         "pt" : {
@@ -2591,19 +2591,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "LinkedIn abre su formulario para agregar una licencia o certificación. Copia ahí los datos de cada campo."
+            "value" : "LinkedIn abre su formulario para agregar una licencia o certificación. Copia cada dato en el campo correspondiente."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "LinkedIn ouvre son formulaire pour ajouter une licence ou une certification. Copie chaque champ dans ce formulaire."
+            "value" : "LinkedIn ouvre son formulaire d’ajout de licence ou de certification. Copie les informations dans les champs correspondants."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "LinkedIn apre il modulo per aggiungere una licenza o una certificazione. Copia i dati di ogni campo nel modulo."
+            "value" : "LinkedIn apre il modulo per aggiungere una licenza o una certificazione. Copia ogni dato nel campo corrispondente."
           }
         },
         "ja" : {
@@ -2615,25 +2615,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "LinkedIn에서 자격증이나 인증을 추가하는 양식이 열려요. 각 항목을 복사해 붙여 넣으세요."
+            "value" : "LinkedIn에서 자격증이나 인증서를 추가하는 양식이 열려요. 각 항목을 복사해 양식에 붙여 넣으세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "LinkedIn otworzy formularz dodawania licencji lub certyfikatu. Skopiuj do niego zawartość każdego pola."
+            "value" : "LinkedIn otworzy formularz dodawania licencji lub certyfikatu. Skopiuj do niego dane z każdego pola."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "LinkedIn abre o formulário para adicionar uma licença ou certificação. Copie cada campo para ele."
+            "value" : "LinkedIn abre o formulário para adicionar uma licença ou certificação. Copie os dados de cada campo para ele."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "LinkedIn, lisans veya sertifika ekleme formunu açar. Her alanı kopyalayıp forma yapıştır."
+            "value" : "LinkedIn, lisans veya sertifika ekleme formunu açar. Her alandaki bilgiyi forma kopyala."
           }
         }
       }
@@ -2674,13 +2674,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonkでの%1$@のレベル判定結果は%2$@でした。"
+            "value" : "Zoonkでの%1$@のレベル診断結果は%2$@でした。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk에서 본 제 %1$@ 레벨 테스트 결과: %2$@."
+            "value" : "Zoonk에서 확인한 내 %1$@ 레벨 테스트 결과: %2$@."
           }
         },
         "pl" : {
@@ -2698,7 +2698,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk’ta %1$@ seviye tespit sonucum: %2$@."
+            "value" : "Zoonk’taki %1$@ seviye belirleme sonucum: %2$@."
           }
         }
       }
@@ -2798,7 +2798,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "인증서에 표시할 이름"
+            "value" : "인증서에 표시되는 이름"
           }
         },
         "pl" : {
@@ -2839,7 +2839,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas encore de certificat"
+            "value" : "Pas encore de certificats"
           }
         },
         "it" : {
@@ -2910,13 +2910,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "証明書に記載する名前：%@"
+            "value" : "証明書に載る名前：%@さん"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "인증서에 표시되는 이름: %@"
+            "value" : "인증서에 표시되는 이름: %@님"
           }
         },
         "pl" : {
@@ -3028,7 +3028,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レベル判定結果"
+            "value" : "レベル診断結果"
           }
         },
         "ko" : {
@@ -3052,7 +3052,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seviye tespit sonucu"
+            "value" : "Seviye belirleme sonucu"
           }
         }
       }
@@ -3087,13 +3087,13 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Risultato del test di livello per %1$@: %2$@ %3$@"
+            "value" : "Risultato del test di livello di %1$@: %2$@ %3$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@さんのレベル判定結果：%2$@ %3$@"
+            "value" : "%1$@さんのレベル診断結果：%2$@ %3$@"
           }
         },
         "ko" : {
@@ -3105,19 +3105,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: wynik testu poziomującego, %2$@ %3$@"
+            "value" : "Wynik testu poziomującego: %1$@, %2$@ %3$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resultado de %1$@ no teste de nível: %2$@ %3$@"
+            "value" : "Resultado do teste de nível de %1$@: %2$@ %3$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ için seviye tespit sonucu: %2$@ %3$@"
+            "value" : "%1$@ için seviye belirleme sonucu: %2$@ %3$@"
           }
         }
       }
@@ -3158,7 +3158,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レベル判定結果：%1$@ %2$@"
+            "value" : "レベル診断結果：%1$@ %2$@"
           }
         },
         "ko" : {
@@ -3182,7 +3182,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seviye tespit sonucu: %1$@ %2$@"
+            "value" : "Seviye belirleme sonucu: %1$@ %2$@"
           }
         }
       }
@@ -3229,7 +3229,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wydrukuj"
+            "value" : "Drukuj"
           }
         },
         "pt" : {
@@ -3282,13 +3282,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "언제든 인증서를 인쇄, 다운로드, 공유할 수 있어요."
+            "value" : "인증서를 언제든 인쇄, 다운로드, 공유할 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Możesz w każdej chwili wydrukować, pobrać lub udostępnić swoje certyfikaty."
+            "value" : "Certyfikaty możesz w każdej chwili wydrukować, pobrać lub udostępnić."
           }
         },
         "pt" : {
@@ -3459,13 +3459,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "인증서 목록에 저장됐어요. 언제든 공유하세요."
+            "value" : "인증서 목록에 저장했어요. 언제든 공유하세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zapisano wśród twoich certyfikatów. Udostępnij, kiedy chcesz."
+            "value" : "Zapisano w twoich certyfikatach. Możesz go udostępnić w każdej chwili."
           }
         },
         "pt" : {
@@ -3565,19 +3565,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qualcosa è andato storto. Riprova tra poco."
+            "value" : "Non ha funzionato. Riprova tra poco."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "うまくいきませんでした。少し待ってからもう一度お試しください。"
+            "value" : "うまくいきませんでした。少し待ってから、もう一度お試しください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "불러오지 못했어요. 잠시 후 다시 시도해 보세요."
+            "value" : "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
           }
         },
         "pl" : {
@@ -3630,13 +3630,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "「修了証」に保存されています。"
+            "value" : "「証明書」に保存されています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "수료증 메뉴에 저장되어 있어요."
+            "value" : "인증서 목록에 저장했어요."
           }
         },
         "pl" : {
@@ -3648,7 +3648,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eles estão salvos em Certificados."
+            "value" : "Estão salvos em Certificados."
           }
         },
         "tr" : {
@@ -3736,7 +3736,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu certificado de %1$@ de nivel %2$@ está listo."
+            "value" : "Tu certificado de %1$@ %2$@ está listo."
           }
         },
         "fr" : {
@@ -3754,19 +3754,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@（%2$@）の修了証ができました。"
+            "value" : "%1$@ %2$@の証明書ができました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$@ 수료증이 준비됐어요."
+            "value" : "%1$@ %2$@ 인증서가 준비됐어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twój certyfikat jest gotowy: %1$@, %2$@."
+            "value" : "Twój certyfikat jest gotowy: %1$@ %2$@."
           }
         },
         "pt" : {
@@ -3807,19 +3807,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I tuoi certificati di %@ sono pronti."
+            "value" : "I tuoi certificati per %@ sono pronti."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@の修了証ができました。"
+            "value" : "%@の証明書ができました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 수료증이 준비됐어요."
+            "value" : "%@ 인증서가 준비됐어요."
           }
         },
         "pl" : {
@@ -3837,7 +3837,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ için sertifikaların hazır."
+            "value" : "%@ sertifikaların hazır."
           }
         }
       }
@@ -3931,13 +3931,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@の修了証ができました。"
+            "value" : "%@の証明書ができました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 수료증이 준비됐어요."
+            "value" : "%@ 인증서가 준비됐어요."
           }
         },
         "pl" : {
@@ -3966,13 +3966,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Name steht auf deinen Zertifikaten. Dein Kumpel nennt dich so."
+            "value" : "Dieser Name steht auf deinen Zertifikaten. Dein Kumpel nennt dich auch so."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este nombre aparece en tus certificados y es el que usa tu compañero."
+            "value" : "Este nombre aparece en tus certificados y tu compañero te llama así."
           }
         },
         "fr" : {
@@ -3984,25 +3984,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "È il nome che compare sui tuoi certificati e che usa il tuo compagno."
+            "value" : "È il nome che appare sui tuoi certificati e con cui ti chiama il tuo compagno."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "修了証に載る名前です。相棒もこの名前で呼びます。"
+            "value" : "証明書にこの名前が載ります。相棒もこの名前で呼びます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "수료증에 표시되고 짝꿍도 이 이름으로 불러요."
+            "value" : "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tak podpiszemy twoje certyfikaty i tak będzie się do ciebie zwracać twój kumpel."
+            "value" : "To imię i nazwisko widnieją na twoich certyfikatach. Tak też zwraca się do ciebie twój kumpel."
           }
         },
         "pt" : {
@@ -4014,7 +4014,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sertifikalarında bu ad yer alır, ders arkadaşın da sana bu adla seslenir."
+            "value" : "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir."
           }
         }
       }
@@ -4025,13 +4025,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Name steht auf deinen Zertifikaten. Dein Kumpel nennt dich so. Du kannst ihn jederzeit ändern."
+            "value" : "Dieser Name steht auf deinen Zertifikaten. Dein Kumpel nennt dich auch so. Du kannst ihn jederzeit ändern."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este nombre aparece en tus certificados y es el que usa tu compañero. Puedes cambiarlo cuando quieras."
+            "value" : "Este nombre aparece en tus certificados y tu compañero te llama así. Puedes cambiarlo cuando quieras."
           }
         },
         "fr" : {
@@ -4043,25 +4043,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "È il nome che compare sui tuoi certificati e che usa il tuo compagno. Puoi cambiarlo quando vuoi."
+            "value" : "È il nome che appare sui tuoi certificati e con cui ti chiama il tuo compagno. Puoi cambiarlo quando vuoi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "修了証に載る名前です。相棒もこの名前で呼びます。いつでも変更できます。"
+            "value" : "証明書にこの名前が載ります。相棒もこの名前で呼びます。いつでも変更できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "수료증에 표시되고 짝꿍도 이 이름으로 불러요. 언제든 바꿀 수 있어요."
+            "value" : "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요. 언제든 바꿀 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tak podpiszemy twoje certyfikaty i tak będzie się do ciebie zwracać twój kumpel. Możesz to zmienić w każdej chwili."
+            "value" : "To imię i nazwisko widnieją na twoich certyfikatach. Tak też zwraca się do ciebie twój kumpel. Możesz je zmienić w każdej chwili."
           }
         },
         "pt" : {
@@ -4073,7 +4073,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sertifikalarında bu ad yer alır, ders arkadaşın da sana bu adla seslenir. İstediğin zaman değiştirebilirsin."
+            "value" : "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir. İstediğin zaman değiştirebilirsin."
           }
         }
       }
@@ -4108,7 +4108,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "氏名"
+            "value" : "フルネーム"
           }
         },
         "ko" : {
@@ -4120,7 +4120,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Imię i nazwisko"
+            "value" : "Twoje imię i nazwisko"
           }
         },
         "pt" : {
@@ -4167,19 +4167,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "修了証に記載する名前"
+            "value" : "証明書に記載する名前"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "수료증에 표시할 이름"
+            "value" : "인증서에 표시할 이름"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Imię i nazwisko na certyfikacie"
+            "value" : "Imię i nazwisko, które mają widnieć na certyfikacie"
           }
         },
         "pt" : {
@@ -4191,7 +4191,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sertifikada görünecek adın"
+            "value" : "Sertifikanda görünecek adın"
           }
         }
       }

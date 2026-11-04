@@ -1589,7 +1589,7 @@ msgstr "Dettagli"
 #: src/certificates/certificate-details.tsx
 msgctxt "QshKyk"
 msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
-msgstr "Chiunque abbia il link può vedere questo certificato. La pagina non compare nei risultati di ricerca."
+msgstr "Chiunque abbia il link può vedere questo certificato. La sua pagina non compare nei risultati di ricerca."
 
 #. A language and a CEFR level, such as "Spanish B1": a certificate's name.
 #: src/certificates/certificate-labels.ts
@@ -1826,12 +1826,12 @@ msgstr "{count, plural, one {Crea un account gratuito per conservare il tuo cert
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "_QSets"
 msgid "They're saved in Certificates."
-msgstr "Sono salvati nella sezione Certificati."
+msgstr "Sono salvati in Certificati."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "m77iCk"
 msgid "It's saved in Certificates."
-msgstr "È salvato nella sezione Certificati."
+msgstr "È salvato in Certificati."
 
 #: src/certificates/certificate-moment-parts.tsx
 msgctxt "e_2HUM"

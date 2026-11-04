@@ -1540,7 +1540,7 @@ msgstr "Fecha de la prueba"
 #: src/certificates/certificate-details.tsx
 msgctxt "95stPq"
 msgid "Completed"
-msgstr "Completado"
+msgstr "Fecha de finalización"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "mrBiB2"
@@ -1550,7 +1550,7 @@ msgstr "Lecciones estudiadas"
 #: src/certificates/certificate-details.tsx
 msgctxt "dx3nJs"
 msgid "Passed by test"
-msgstr "Aprobadas con una prueba"
+msgstr "Aprobadas mediante una prueba"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "KHL8ap"
@@ -1675,17 +1675,17 @@ msgstr "Copiar el nombre"
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "Stmjvy"
 msgid "Copy the issuing organization"
-msgstr "Copiar la organización emisora"
+msgstr "Copiar la empresa emisora"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "chGb2H"
 msgid "Issuing organization"
-msgstr "Organización emisora"
+msgstr "Empresa emisora"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "c3mXbd"
 msgid "Issue date"
-msgstr "Fecha de emisión"
+msgstr "Fecha de expedición"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "iIH6lJ"

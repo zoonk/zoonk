@@ -3562,7 +3562,7 @@ msgstr "Seviye belirleme sonucu"
 #: src/lib/certificates/certificate-view.ts
 msgctxt "zaINXN"
 msgid "Certificate of completion"
-msgstr "Bitirme sertifikası"
+msgstr "Tamamlama sertifikası"
 
 #. Above a certificate's link and QR code, which open the page that proves it's real.
 #: src/lib/certificates/certificate-view.ts

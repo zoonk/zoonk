@@ -391,13 +391,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "修了証"
+            "value" : "証明書"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "수료증"
+            "value" : "인증서"
           }
         },
         "pl" : {

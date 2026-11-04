@@ -22,6 +22,8 @@
 ## Glossary
 
 - “lesson”: “레슨”, not “수업” or “강의”
+- “certificate” (what a finished course, level or placement test earns) and the Certificates page: “인증서”, never “수료증”; “Certificate of completion”: “수료 인증서”
+- the language “placement test” or “level test”: “레벨 테스트”, not “레벨 진단”
 - “chapter” (of a course): “챕터”, never “단원” or “장”; “unit” (of a language plan): “단원”; “module”: “모듈”
 - “course” (in Zoonk): “코스”; the university “course” or program a learner applies to: “학과”
 - “essay” (graded writing practice): “에세이”; an exam's written part: “서술형”

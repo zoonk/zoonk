@@ -2432,12 +2432,12 @@ msgstr "계정이 삭제됐어요."
 #: src/app/[lang]/c/[code]/page.tsx
 msgctxt "kgqbTN"
 msgid "We couldn't find this certificate"
-msgstr "이 수료증을 찾을 수 없어요"
+msgstr "이 인증서를 찾을 수 없어요"
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 msgctxt "pFjRPG"
 msgid "Check the link. A certificate's link ends in its 12-character code, like {example}, and works with or without the dashes."
-msgstr "링크를 확인해 보세요. 수료증 링크는 {example}처럼 12자리 코드로 끝나요. 하이픈이 있어도 없어도 접속할 수 있어요."
+msgstr "링크를 확인해 보세요. 인증서 링크는 {example}처럼 12자리 코드로 끝나요. 하이픈이 있어도 없어도 접속할 수 있어요."
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 msgctxt "15PZTm"
@@ -2447,7 +2447,7 @@ msgstr "Zoonk로 이동하기"
 #: src/app/[lang]/c/[code]/page.tsx
 msgctxt "4566_7"
 msgid "A certificate issued by Zoonk. Anyone with its link can check it."
-msgstr "Zoonk에서 발급한 수료증이에요. 링크가 있으면 누구나 확인할 수 있어요."
+msgstr "Zoonk에서 발급한 인증서예요. 링크가 있으면 누구나 확인할 수 있어요."
 
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
@@ -3508,7 +3508,7 @@ msgstr "쓰기"
 #: src/lib/certificates/certificate-study-view.ts
 msgctxt "95stPq"
 msgid "Completed"
-msgstr "수료일"
+msgstr "완료일"
 
 #. A certificate's fact: how many of the plan's lessons the learner studied.
 #: src/lib/certificates/certificate-study-view.ts
@@ -3562,13 +3562,13 @@ msgstr "레벨 테스트 결과"
 #: src/lib/certificates/certificate-view.ts
 msgctxt "zaINXN"
 msgid "Certificate of completion"
-msgstr "수료증"
+msgstr "수료 인증서"
 
 #. Above a certificate's link and QR code, which open the page that proves it's real.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "5FXh-Z"
 msgid "Verify this certificate"
-msgstr "수료증 진위 확인"
+msgstr "인증서 진위 확인"
 
 #. A placement result's fact: the day the learner took the level test.
 #: src/lib/certificates/certificate-view.ts
@@ -3622,7 +3622,7 @@ msgstr "학습한 주제"
 #: src/lib/certificates/certificate-view.ts
 msgctxt "fDd8ap"
 msgid "Awarded for finishing every lesson and challenge of this course on Zoonk."
-msgstr "Zoonk에서 이 코스의 모든 레슨과 챌린지를 마쳐 받은 수료증이에요."
+msgstr "Zoonk에서 이 코스의 모든 레슨과 챌린지를 마쳐 받은 인증서예요."
 
 #: src/lib/public/public-labels.ts
 msgctxt "3Rx6Qo"

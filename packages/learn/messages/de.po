@@ -1589,7 +1589,7 @@ msgstr "Details"
 #: src/certificates/certificate-details.tsx
 msgctxt "QshKyk"
 msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
-msgstr "Alle mit dem Link können dieses Zertifikat ansehen. Die Seite erscheint nicht in Suchergebnissen."
+msgstr "Wer den Link hat, kann dieses Zertifikat sehen. Die Seite erscheint nicht in Suchergebnissen."
 
 #. A language and a CEFR level, such as "Spanish B1": a certificate's name.
 #: src/certificates/certificate-labels.ts
@@ -1914,7 +1914,7 @@ msgstr "Herunterladen"
 #: src/certificates/certificate-share.tsx
 msgctxt "dkg2AU"
 msgid "My {language} placement result on Zoonk: {level}."
-msgstr "Mein Ergebnis beim Einstufungstest für {language} auf Zoonk: {level}."
+msgstr "Mein Einstufungsergebnis für {language} auf Zoonk: {level}."
 
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
@@ -2014,7 +2014,7 @@ msgstr "Noch keine Zertifikate"
 #: src/certificates/certificates-screen.tsx
 msgctxt "SHp4oN"
 msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
-msgstr "Wenn du einen Kurs oder ein Sprachlevel abschließt, erscheint hier dein Zertifikat zum kostenlosen Ausdrucken und Teilen. Auch das Ergebnis eines Einstufungstests findest du hier."
+msgstr "Wenn du einen Kurs oder ein Sprachlevel abschließt, findest du hier dein Zertifikat zum kostenlosen Ausdrucken und Teilen. Auch das Ergebnis eines Einstufungstests erscheint hier."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -2034,7 +2034,7 @@ msgstr "Du kannst deine Zertifikate jederzeit ausdrucken, herunterladen oder tei
 #: src/certificates/placement-row.tsx
 msgctxt "BnNTsQ"
 msgid "Create a free account to keep it and share it."
-msgstr "Erstell ein kostenloses Konto, um es zu speichern und zu teilen."
+msgstr "Erstell ein kostenloses Konto, um es zu behalten und zu teilen."
 
 #: src/certificates/placement-row.tsx
 msgctxt "DcP7sL"
@@ -4512,7 +4512,7 @@ msgstr "Wir ergänzen einen kurzen Test, ob alles funktioniert…"
 #: src/journey/course-certificate.tsx
 msgctxt "n-Px0T"
 msgid "Get your certificate"
-msgstr "Zertifikat holen"
+msgstr "Zertifikat erhalten"
 
 #: src/journey/course-certificate.tsx
 msgctxt "koWpue"

@@ -11,7 +11,7 @@
   "certificates_caption_course_hours": "377fe7933c3298f587ee450c6f135458ec2015a27b05e86b30bdcafb3864e578",
   "certificates_caption_course_minutes": "33eeb371e075f3ca24a5e56c0e45b2b0880f39e19231e4260b7947a09c355eab",
   "certificates_caption_course_tested_out": "38dbe1a7273dfbfef9bdd396b12a30232fb159121ec9a65a9ea21c6dfc1b4b09",
-  "certificates_caption_level": "054f9f3c41ead7373c6478dc31f4a97a31fe83d14b798464429d1603a853bf16",
+  "certificates_caption_level": "0c86d55e7af6d68a3742c3464e8f69b8db81379e9b77c92d8bf8a4067ed4883b",
   "certificates_caption_placement": "b1c09034662a8154c34ef1e084a9a0a9db103d190c16fbfab8ba30fc4107055b",
   "certificates_certificate": "f3f6f206110190eabe20dfdb1dc4f3e365909d5b2931625b3ff73a90cf556637",
   "certificates_change": "aad274e3c6d839c5b27b7c7e847c00775e5e4eb8c687ac89046106d7ed34e0e4",
@@ -24,7 +24,7 @@
   "certificates_copy_link": "eb85a74d0be8a3b37a9ce62584bdd9dc612e7571259e1b4a42b51d8d0bb9a5cd",
   "certificates_count": "e729dcddb6713406a09fe12be64c766e4ee4c7e4ded98af5a20da3c4d5510c15",
   "certificates_course_complete": "564a6e2eab423579d8f08f89fba33873946bf9aa1f854bf7bea8c1eeed7a67e8",
-  "certificates_course_ready": "1fdad3ca345de5702f1f1b80d28b204ec7747c6cd8e887a816fe574ed13d8ddf",
+  "certificates_course_ready": "9b893d7f9d83692a846d89cd82984e883818668bdbcf9e0835d1a1488d93c00d",
   "certificates_create_account": "4ecb7138ca9e82260cf2229a65dd6c03617434b3b1beae279644e2fa3cc021c6",
   "certificates_download": "eb6e1e11f5ff6d31905645cb6acecb49c1c167e70d5187e828ab830ec9209020",
   "certificates_downloaded": "6c150eb7c3b809be23c078b3dc8f27b1da93db1f0b377834a2014de8d4c2834e",
@@ -44,25 +44,25 @@
   "certificates_link_note": "a3e3ff89c0fe7f6cc907b3e3e5cefd41faf7dc9190252bd2d4a0b206937c881a",
   "certificates_linkedin_credential_id": "8b217abcbdad52c10bbc64f8d30ee9c48b6d399ea1ac3a7bd25704745aca6eea",
   "certificates_linkedin_credential_url": "5ec4a5334232e57d39985e52e9c648d58430c983835106d52a0291fd5406ae9a",
-  "certificates_linkedin_description": "27a9f634f9d857b488edf806632f07c9dd33e9699736ff208c83d17d5a748a79",
+  "certificates_linkedin_description": "ab385d114d7c94445d2f85207d0b0f793157ade7b249e2aede3e7e1705ea9824",
   "certificates_linkedin_issue_date": "d657742e7cb60e91375226167e570e0ce145a8b0afee01237747c8ebf2a047c1",
   "certificates_linkedin_name": "f129a6dd194385ce0fa97f35360435f4109a595ba75de3fec15aed39d3d74c81",
   "certificates_linkedin_open": "666b6d685cd7f6af82c1f36f7c8d493cd393a24ee395dba6d50beead57b1a766",
   "certificates_linkedin_organization": "921166884b66fe660af1234e6d73ccc41a80bf8b70bfb1f4b8f9ba017cdc6b9a",
-  "certificates_linkedin_placement_name": "b303f5b510048921df9a6c3462dbc0c5208fee8014a742b436efa8f6c691827f",
+  "certificates_linkedin_placement_name": "c97f2294fa5804a3438e91ac99296d8601dbe864daf940bf13f706305a161f47",
   "certificates_linkedin_title": "90ff492fe1f4436662fb757886c3bcc207704d995f6778f6f6c1f990aa6e74cf",
-  "certificates_name_hint": "e53744ccc9783f965c611e0f1bd38282dcdf809684669277eba077eef1f9d52e",
-  "certificates_name_hint_new": "f8f9307f5b80b48937758102badf062441ce7a108ff566b416fb3b34100b7375",
-  "certificates_name_label": "871a33b305d73c89a9b5adf82103abf978a1f90344e7e1eca880250ee2ddf5dc",
+  "certificates_name_hint": "d7272a290e722a949310e140a36c9bc8432a4949641d7162e35df94723f7739f",
+  "certificates_name_hint_new": "6c684c7d2ea2249454dc1784ba92ab28ccfd2b70f081c4d44fb9e87d139e5b00",
+  "certificates_name_label": "a354b326da53e7aae25c0598148487b707260dd1826e2dc982ac6c2f38c75533",
   "certificates_name_label_new": "2a19467e0274b0b19fde08360cf1ff9102a7793b0220c8c90318f25941ee4928",
   "certificates_name_on_certificate": "cb5b57948c82b0f82d51f08322e27a3a3ccfcdec6b8416993d0d944b11f26c58",
   "certificates_name_placeholder": "de59cd4f1ebcaec302d7ea735a764dc994038c3efa5585f116c363b66aaa2593",
   "certificates_name_save_failed": "fee682ad51bfa141dd76e373f4b3771896a4b6356d5531a2ded9c8df21af2c7e",
   "certificates_not_found": "f0443b9fcad5b26800a1c836e4d1f06014ccefc6252938e6d3dc7bd5abe0f3d8",
-  "certificates_on_your_certificate": "a300de74566238fa2b2882d5fe9d154c523203254954e10d824a46bc61c56225",
+  "certificates_on_your_certificate": "fa472d989f62466ffa1532d5ebecc7c0c25505681a412efc069552cd5d31f2ec",
   "certificates_picture_failed": "73ef0451ea37fad5495f434e63ea8206c8f1b2ced5c8329edbe70f0842f00b8f",
-  "certificates_placement_row_guest": "38ef8985f61cc4fca7ddc3f47a05e572bff7aac43d18b2730743fb4f617424d7",
-  "certificates_placement_row_saved": "6552b190e0471ef967b0ce2aef0407bd49f2690b6a86346c1a51cab88ff5e4af",
+  "certificates_placement_row_guest": "85d192f58a15f5dbb2a8fe4cda3e141a0107e47f119a6867bdb9a1defbb6e389",
+  "certificates_placement_row_saved": "3d8e9544721eed30ae42feef0b5921a31c2395e29f0fc1d8f168d474c9f87371",
   "certificates_placement_row_title": "5e2c1e8b834787220d32543e36b75360b36e3400012178979b8ef79150d64789",
   "certificates_print": "103aeacea9c31618fc4f79c27929acea6f62a38fdaad99df69e13125db974f2f",
   "certificates_save": "fa64e3ff34da391c213ef64a868468feaf6bb9c54333f85f824b46e50a19fd28",
@@ -72,8 +72,8 @@
   "certificates_share": "1667a04a3fa87ab77b2af29918c4e5937c3ed9b0dd266072e1aa943c71739091",
   "certificates_title": "e7dd358dc931effbbf24d9491bf7d473b1db8e856c697ea1209be98ea816e65c",
   "certificates_up_next": "41ac7c68c0b715bc2e2c4f2c06bde1a1d78af8fedbf29de5a60af5549faa6f23",
-  "certificates_up_next_course": "70ff252d09a5ea7dbba772c8e671bb56406373452f2b38df1fb118ecadd03995",
-  "certificates_up_next_language": "2d26a91c3302b21903e9a3cdb4b06d16ca5d1646ddececa2b6a11f6c2d667521",
+  "certificates_up_next_course": "69a83fbfbe47c65bb6b81a6261e3aedacb81dc4a788695c8f626ecf9601aaaf3",
+  "certificates_up_next_language": "a61fe9215a0c99fa53332c83f3d75dbac1a5fd902836379513fcafba26c1d273",
   "certificates_view": "cd42dc9fe7ca27340f613bb5f781207d9cfefdf03285c57bf78c243de7045754"
 }
 -->
@@ -101,9 +101,9 @@
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">Sertifikanı al</string>
     <string name="certificates_up_next">Sıradaki</string>
-    <string name="certificates_up_next_course">Planı bitirince sertifikanı alırsın</string>
+    <string name="certificates_up_next_course">Planı tamamladığında sertifikanı alırsın</string>
     <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
-    <string name="certificates_up_next_language">Çalıştığın tüm becerilerde bir üst seviyeye ulaşınca hazır olur</string>
+    <string name="certificates_up_next_language">Çalıştığın her beceride bir sonraki seviyeye ulaştığında alırsın</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Kurs tamamlandı!</string>
     <!-- The title of a full screen shown once, right after the learner finishes a language level. %1$s is the CEFR level, such as "B1". -->
@@ -114,7 +114,7 @@
         <item quantity="other">%1$d sertifika kazandın</item>
     </plurals>
     <!-- %1$s is the course's title. -->
-    <string name="certificates_course_ready">%1$s kursu için sertifikan hazır.</string>
+    <string name="certificates_course_ready">%1$s için sertifikan hazır.</string>
     <!-- %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_ready">%1$s %2$s sertifikan hazır.</string>
     <!-- %1$s lists the certificates' names, such as "Spanish A2 and B1" or "Python and Spanish B1". -->
@@ -122,7 +122,7 @@
     <string name="certificates_guest_line">Sertifikanı saklamak ve üzerine adını eklemek için ücretsiz bir hesap oluştur.</string>
     <string name="certificates_create_account">Ücretsiz hesap oluştur</string>
     <!-- %1$s is the learner's name, as printed on their certificate. -->
-    <string name="certificates_on_your_certificate">Sertifikandaki adın: %1$s</string>
+    <string name="certificates_on_your_certificate">Sertifikandaki ad: %1$s</string>
     <!-- A short button beside the learner's name, to edit the name printed on their certificates. -->
     <string name="certificates_change">Değiştir</string>
     <!-- TalkBack's name for the Change button beside the learner's name. -->
@@ -130,10 +130,10 @@
     <!-- The label of a field where a learner without a name types it for the first time. -->
     <string name="certificates_name_label_new">Sertifikanda görünecek adın</string>
     <!-- The label of the field with the learner's current name, when they change it. -->
-    <string name="certificates_name_label">Sertifikalarındaki adın</string>
+    <string name="certificates_name_label">Sertifikalarındaki ad</string>
     <string name="certificates_name_placeholder">Adın ve soyadın</string>
-    <string name="certificates_name_hint_new">Bu ad sertifikalarında görünür ve ders arkadaşın sana bu adla seslenir. İstediğin zaman değiştirebilirsin.</string>
-    <string name="certificates_name_hint">Bu ad sertifikalarında görünür ve ders arkadaşın sana bu adla seslenir.</string>
+    <string name="certificates_name_hint_new">Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir. İstediğin zaman değiştirebilirsin.</string>
+    <string name="certificates_name_hint">Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir.</string>
     <string name="certificates_save">Kaydet</string>
     <string name="certificates_cancel">Vazgeç</string>
     <string name="certificates_name_save_failed">Kaydedilemedi. Tekrar dene.</string>
@@ -147,8 +147,8 @@
     <string name="certificates_continue">Devam et</string>
     <!-- A row on the language level test's last screen. %1$s is the language, such as "Spanish", and %2$s the level the test measured, such as "B1". -->
     <string name="certificates_placement_row_title">Seviye belirleme sonucu: %1$s %2$s</string>
-    <string name="certificates_placement_row_saved">Sertifikalarına kaydedildi. İstediğin zaman paylaşabilirsin.</string>
-    <string name="certificates_placement_row_guest">Saklamak ve paylaşmak için ücretsiz bir hesap oluştur.</string>
+    <string name="certificates_placement_row_saved">Sertifikalarına kaydedildi. İstediğin zaman paylaş.</string>
+    <string name="certificates_placement_row_guest">Sonucunu kaydetmek ve paylaşmak için ücretsiz bir hesap oluştur.</string>
     <!-- The title of the screen showing one certificate. -->
     <string name="certificates_certificate">Sertifika</string>
     <!-- Prints the certificate, or saves it as a PDF from the printing screen. -->
@@ -192,11 +192,11 @@
         <item quantity="other">%1$s ders</item>
     </plurals>
     <!-- Text the learner can post with their certificate. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
-    <string name="certificates_caption_level">Zoonk’ta %1$s seviyesindeki %2$s derslerini yeni tamamladım.</string>
+    <string name="certificates_caption_level">Zoonk’ta %1$s seviyesini %2$s dilinde az önce tamamladım.</string>
     <!-- Text the learner can post with their certificate. %1$s is the language, such as "Spanish", and %2$s the level a placement test measured, such as "B1". -->
     <string name="certificates_caption_placement">Zoonk’taki %1$s seviye belirleme sonucum: %2$s.</string>
     <string name="certificates_linkedin_title">LinkedIn profiline ekle</string>
-    <string name="certificates_linkedin_description">LinkedIn’de lisans veya sertifika ekleme formu açılır. Alanları tek tek kopyalayıp forma yapıştır.</string>
+    <string name="certificates_linkedin_description">LinkedIn, lisans veya sertifika ekleme formunu açar. Her alandaki bilgiyi forma kopyala.</string>
     <!-- The fields of LinkedIn's "Add license or certification" form, named as LinkedIn names them. -->
     <string name="certificates_linkedin_name">Ad</string>
     <string name="certificates_linkedin_organization">Veren kuruluş</string>
@@ -204,7 +204,7 @@
     <string name="certificates_linkedin_credential_id">Yeterlilik kimliği</string>
     <string name="certificates_linkedin_credential_url">Yeterlilik URL’si</string>
     <!-- The certificate's name in LinkedIn's form for a placement test's result. %1$s is the language, such as "Spanish", and %2$s the level, such as "B1". -->
-    <string name="certificates_linkedin_placement_name">%1$s seviye belirleme sonucu: %2$s</string>
+    <string name="certificates_linkedin_placement_name">%1$s %2$s seviye belirleme sonucu</string>
     <string name="certificates_linkedin_open">LinkedIn’i aç</string>
     <string name="certificates_copy">Kopyala</string>
     <!-- TalkBack's name for a Copy button. %1$s is the field it copies, such as "Credential ID". -->

@@ -3556,19 +3556,19 @@ msgstr "Il tuo nome"
 #: src/lib/certificates/certificate-view.ts
 msgctxt "WSC4bY"
 msgid "Placement result"
-msgstr "Esito del test di livello"
+msgstr "Risultato del test di livello"
 
 #. The kind of document, above the learner's name on a certificate.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "zaINXN"
 msgid "Certificate of completion"
-msgstr "Attestato di completamento"
+msgstr "Certificato di completamento"
 
 #. Above a certificate's link and QR code, which open the page that proves it's real.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "5FXh-Z"
 msgid "Verify this certificate"
-msgstr "Verifica questo attestato"
+msgstr "Verifica questo certificato"
 
 #. A placement result's fact: the day the learner took the level test.
 #: src/lib/certificates/certificate-view.ts
