@@ -169,13 +169,15 @@ private struct LogbookSteps: View {
         ForEach(steps.filter { $0 != .week }, id: \.self) { step in
           page(step)
         }
-
-        Section {
-          letsGo
-            .controlSize(.large)
-        }
-        .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
+      }
+      // A quiet week leaves it empty, and an empty list draws the plain background.
+      .scrollContentBackground(.hidden)
+      .background(Color(.systemGroupedBackground))
+      .safeAreaBar(edge: .bottom) {
+        letsGo
+          .controlSize(.large)
+          .scenePadding(.horizontal)
+          .padding(.vertical, 10)
       }
     } single: {
       TabView(selection: $current) {
