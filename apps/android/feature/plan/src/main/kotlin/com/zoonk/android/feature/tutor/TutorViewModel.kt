@@ -19,14 +19,18 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.memory.MemoryUndo
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.StudyMissionMoment
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -83,6 +87,8 @@ class TutorViewModel internal constructor(
     scope: TutorScope,
     private val store: TutorStore,
     private val saved: SavedStateHandle,
+    /** A step of the day an answer links, opened as a mission's: null when it isn't free to start anymore. */
+    private val openMission: suspend (UUID) -> MutationResult<AppRoute?>,
 ) : ViewModel() {
     /** The conversation's latest scope (the question now checked) is what its next question is about. */
     var scope: TutorScope by mutableStateOf(scope)
@@ -106,6 +112,49 @@ class TutorViewModel internal constructor(
         saved.remove<String>(SENT_DRAFT)
         viewModelScope.launch { snapshotFlow { draft.text.toString() }.collect { saved[DRAFT] = it } }
     }
+
+    /** One at a time, so two opens never race. */
+    fun openBlock(
+        turnId: String,
+        blockId: UUID,
+    ) {
+        if (isOpeningBlock) return
+        isOpeningBlock = true
+        blockNotice = null
+
+        viewModelScope.launch {
+            try {
+                when (val result = openMission(blockId)) {
+                    is MutationResult.Done -> {
+                        result.value?.let(openedBlocks::trySend)
+                            ?: run { blockNotice = BlockNotice(turnId, closed = true) }
+                    }
+
+                    is MutationResult.Failed -> {
+                        blockNotice = BlockNotice(turnId, closed = false)
+                    }
+
+                    MutationResult.Obsolete -> {
+                        Unit
+                    }
+                }
+            } finally {
+                isOpeningBlock = false
+            }
+        }
+    }
+
+    var isOpeningBlock by mutableStateOf(false)
+        private set
+
+    /** Why the step link the learner last tapped didn't open, under the answer it's in. */
+    var blockNotice by mutableStateOf<BlockNotice?>(null)
+        private set
+
+    private val openedBlocks = Channel<AppRoute>(Channel.BUFFERED)
+
+    /** Where an answer's step link leads once it opened, even after the answer scrolled away or the screen was made again. */
+    val blockRoutes: Flow<AppRoute> = openedBlocks.receiveAsFlow()
 
     private val mutableState = MutableStateFlow(TutorConversationState())
     val state: StateFlow<TutorConversationState> = mutableState.asStateFlow()
@@ -497,3 +546,10 @@ private const val INITIAL_POLL_MILLIS = 1_000.0
 private const val MAX_POLL_MILLIS = 5_000.0
 private const val MIN_JITTER = 0.8
 private const val JITTER_RANGE = 0.4
+
+/** [closed]: the step isn't free to start anymore; otherwise it couldn't open. */
+@Immutable
+data class BlockNotice(
+    val turnId: String,
+    val closed: Boolean,
+)

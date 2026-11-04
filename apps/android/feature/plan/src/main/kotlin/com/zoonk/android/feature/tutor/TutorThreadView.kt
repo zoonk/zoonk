@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,7 +55,6 @@ import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
-import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.catalog.toUuidOrNull
 import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.memory.MemoryUndo
@@ -83,8 +83,6 @@ class TutorRoutes(
     val seePlus: () -> Unit,
     val open: (AppRoute) -> Unit,
     val startCall: CallStarter,
-    /** A step of the day an answer links: its route, null when it isn't free to start anymore. */
-    val openBlock: suspend (UUID) -> MutationResult<AppRoute?>,
 )
 
 @Composable
@@ -99,6 +97,8 @@ internal fun TutorThreadView(
     page: TutorPage? = null,
 ) {
     val coroutines = rememberCoroutineScope()
+    val openRoute by rememberUpdatedState(routes.open)
+    LaunchedEffect(vm) { vm.blockRoutes.collect { openRoute(it) } }
 
     Box(modifier.fillMaxSize()) {
         when {
@@ -399,7 +399,7 @@ private fun Answer(
         }
 
         turn.status == TutorTurn.Status.Failed -> {
-            turn.answer?.let { AnswerText(it, linksChecked, routes.open, routes.openBlock) }
+            turn.answer?.let { AnswerText(it, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn)) }
             if (failure?.helpLimit != null) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
@@ -417,7 +417,7 @@ private fun Answer(
         }
 
         answer != null -> {
-            AnswerText(answer, linksChecked, routes.open, routes.openBlock)
+            AnswerText(answer, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn))
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
 
@@ -456,43 +456,31 @@ private fun Thinking() {
 private val TutorFailure?.isGeneric: Boolean
     get() = this == null || this == TutorFailure.Failed || this == TutorFailure.Invalid
 
-private enum class BlockLinkNotice { Closed, Failed }
+private fun TutorViewModel.noticeFor(turn: TutorTurn) = blockNotice?.takeIf { it.turnId == turn.id }
 
 /**
- * Unchecked links read as their words. A checked one opens Zoonk's page in the app, or a website
- * after asking. With [openBlock], a step of the day opens as main's mission link does, one tap at a
- * time, and says so under the answer when it didn't.
+ * Unchecked links read as their words. A checked one opens Zoonk's page in the app, a step of the
+ * day through [onOpenBlock] as main's mission link does, or a website after asking. [blockNotice]
+ * says why a step link in this answer didn't open.
  */
 @Composable
 fun AnswerText(
     answer: String,
     linksChecked: Boolean,
     onOpenRoute: (AppRoute) -> Unit,
-    openBlock: (suspend (UUID) -> MutationResult<AppRoute?>)? = null,
+    onOpenBlock: ((UUID) -> Unit)? = null,
+    blockNotice: BlockNotice? = null,
 ) {
-    val coroutines = rememberCoroutineScope()
     var asked by remember { mutableStateOf<String?>(null) }
-    var opening by remember { mutableStateOf(false) }
-    var notice by remember { mutableStateOf<BlockLinkNotice?>(null) }
     val open: (String) -> Unit = { url ->
         val route = AppLink.parse(url)
-        val blockId = (route as? AppRoute.Session)?.takeIf { it.sessionId == null && it.goalId == null }?.blockId?.toUuidOrNull()
-        if (blockId != null && openBlock != null) {
-            if (!opening) {
-                opening = true
-                notice = null
-                coroutines.launch {
-                    try {
-                        when (val result = openBlock(blockId)) {
-                            is MutationResult.Done -> result.value?.let(onOpenRoute) ?: run { notice = BlockLinkNotice.Closed }
-                            is MutationResult.Failed -> notice = BlockLinkNotice.Failed
-                            MutationResult.Obsolete -> Unit
-                        }
-                    } finally {
-                        opening = false
-                    }
-                }
-            }
+        val blockId =
+            (route as? AppRoute.Session)
+                ?.takeIf { it.sessionId == null && it.goalId == null && !it.stopped }
+                ?.blockId
+                ?.toUuidOrNull()
+        if (blockId != null && onOpenBlock != null) {
+            onOpenBlock(blockId)
         } else if (route != null) {
             onOpenRoute(route)
         } else if (url.isWebAddress) {
@@ -506,11 +494,11 @@ fun AnswerText(
         style = MaterialTheme.typography.bodyLarge,
     )
 
-    notice?.let {
+    blockNotice?.let {
         Text(
-            text = stringResource(if (it == BlockLinkNotice.Closed) R.string.tutor_step_closed else R.string.tutor_step_open_failed),
+            text = stringResource(if (it.closed) R.string.tutor_step_closed else R.string.tutor_step_open_failed),
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            color = if (it == BlockLinkNotice.Closed) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
+            color = if (it.closed) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )
     }

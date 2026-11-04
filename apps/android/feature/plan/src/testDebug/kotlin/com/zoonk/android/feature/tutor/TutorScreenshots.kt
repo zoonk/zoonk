@@ -129,7 +129,7 @@ class TutorScreenshots {
                 TutorScope.Plan("goal"),
                 TutorStore(api, cache, session, { true }) { _, _, _ -> MutationResult.Obsolete },
                 SavedStateHandle(),
-            )
+            ) { MutationResult.Obsolete }
         val routes =
             TutorRoutes(
                 createAccount = {},
@@ -137,7 +137,6 @@ class TutorScreenshots {
                 seePlus = {},
                 open = {},
                 startCall = callStarter { CallStart.Failed },
-                openBlock = { MutationResult.Obsolete },
             )
 
         compose.setContent {

@@ -71,7 +71,10 @@ fun rememberTutor(
     val account = (session as? SessionState.SignedIn)?.session?.localId
     val summary by app.learnerSummary.summary.collectShown()
     val activeGoalId = summary.value?.activeGoalId?.toString()
-    val vm = viewModel(key = "tutor:${scope.thread}:$account") { TutorViewModel(scope, app.tutor, createSavedStateHandle()) }
+    val vm =
+        viewModel(key = "tutor:${scope.thread}:$account") {
+            TutorViewModel(scope, app.tutor, createSavedStateHandle(), app.studyOpener::openMission)
+        }
     SideEffect {
         vm.scope = scope
         vm.activeGoalId = activeGoalId
@@ -284,7 +287,6 @@ internal fun TutorSheet(
             seePlus = { open(AppRoute.Subscription) },
             open = open,
             startCall = app.conversations,
-            openBlock = app.studyOpener::openMission,
         )
     val tall = currentWindowAdaptiveInfoV2().windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
     // The sheet already sits above the keyboard, so typing takes all the height that's left.
