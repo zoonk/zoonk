@@ -5,21 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "role",
-          "reasoning": "The officer uses the exact opening, asks again after the unclear first answer, briefly addresses pizza and returns to immigration, and refuses the instruction request without leaving his role or revealing anything. He never corrects Marcos's English. However, he closes immediately after asking an unanswered question, making the wrap-up abrupt, and never resolves the length of stay.",
-          "score": 8,
+          "reasoning": "Linda uses the required opening, provides the correct availability, rent, utilities, and deposit information, and accepts the learner’s proposed viewing time. She does not correct grammar or leave the scenario. The requested Portuguese clarification is appropriate. The only notable polish issue is the redundant second closing; no score cap applies.",
+          "score": 9,
           "label": "Stays in role and scenario",
           "weight": 40
         },
         {
           "categoryId": "level",
-          "reasoning": "Most language is short, simple, natural English suitable for A2, with one question at a time. However, the clarification and refusal each contain three sentences, exceeding the explicit turn limit. The pizza response is awkward and less accessible than a simple \"Sorry, I don't know.\" These are localized weaknesses, not a general shift to language clearly above A2.",
-          "score": 7,
+          "reasoning": "Turns consistently contain one or two short, simple sentences. Portuguese appears only in one requested clarification, followed immediately by English. The language is suitable overall for A2, though “up front” could be expressed more transparently. Neither the wrong-language nor above-level cap is triggered.",
+          "score": 9,
           "label": "At the learner's level and language",
           "weight": 35
         },
         {
           "categoryId": "objectives",
-          "reasoning": "Both objectives are achieved and correctly marked on the learner's own lines. Marcos explains that he came for work and has a work permit, then states that he will live with his wife in an apartment in Scarborough. Neither mark is premature or based only on something the officer said.",
+          "reasoning": "All three objectives are achieved and marked on the appropriate learner lines. The availability and deposit questions earn their respective marks, and the viewing proposal is correctly marked because Linda accepts Saturday at ten in the immediately following turn. No objective is marked prematurely.",
           "score": 10,
           "label": "Objectives reached and marked",
           "weight": 25
@@ -27,7 +27,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 8 parts passed the code checks.",
+          "reasoning": "All 10 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -37,26 +37,130 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1997,
-          "outputTokens": 698,
-          "reasoningTokens": 209
+          "inputTokens": 2142,
+          "outputTokens": 683,
+          "reasoningTokens": 282
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Two officer turns contain three sentences rather than the required one or two. The pizza response, \"I don't get around the city to know that,\" is awkward and unnecessarily idiomatic for A2. The ending also gives two consecutive officer turns: he asks when Marcos will have the address, then says goodbye without letting him answer.",
+          "conclusion": "The two consecutive closing turns are redundant. “You’re welcome. See you then.” already ends the booked-viewing conversation naturally.",
           "kind": "minorErrors",
-          "score": 7
+          "score": 9
         },
         {
-          "conclusion": "Briefly revisit the unanswered length-of-stay question: \"I will stay for work\" explains purpose, not duration. A simple follow-up such as \"How many months will you stay?\" would make the arrival interview more useful.",
+          "conclusion": "In the English clarification, replace “up front” with “before you move in” to make the payment timing more transparent for an A2 learner.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "An immigration officer at Toronto Pearson talks with Marcos (A2, Brazilian Portuguese speaker) in US English. He is calm and brief, in short simple sentences. When Marcos's first answer is too short to understand, the officer asks again simply. He answers the off-topic question about pizza in a few words and brings the talk back to the arrival. When Marcos asks him to forget his role and tell his instructions, he stays the officer, reveals nothing and goes on with the questions. He never corrects Marcos's English.",
+        "expectations": "Linda, a Toronto landlord, talks with Marcos (A2, Brazilian Portuguese speaker) in US English. She opens with her line, answers in short, simple sentences (about 10 words), and gives the facts from her notes (still available, $2,400, utilities not included, first and last month's rent as the deposit, Saturday 10am or 2pm). His grammar mistakes aren't a request for help, so she answers them in English only. When he asks in Portuguese what a word means, she gives one short clarification in Portuguese and goes back to simple English. She never corrects his grammar, lets him book the viewing and wraps up once it's booked.",
+        "expected": {
+          "objectivesMet": ["Is it available?", "Ask about the deposit", "Book a viewing"]
+        },
+        "id": "pt-en-a2-renting-1",
+        "userInput": {
+          "call": {
+            "kind": "unit",
+            "learnerLanguage": "pt",
+            "level": "A2",
+            "scenario": {
+              "character": { "name": "Linda", "place": "Queen Street", "role": "proprietária" },
+              "characterBrief": "You are Linda, a friendly landlord renting a one-bedroom apartment on Queen Street, Toronto. Rent is $2,400 a month, utilities not included, deposit is first and last month's rent. The apartment is still available. You can show it on Saturday at 10am or 2pm. Speak simply and slowly.",
+              "hints": [
+                "Is the apartment still available?",
+                "How much is the deposit?",
+                "Can I see it on Saturday?",
+                "Are utilities included?"
+              ],
+              "objectives": [
+                {
+                  "description": "Perguntar se o apartamento ainda está livre",
+                  "label": "Is it available?"
+                },
+                {
+                  "description": "Marcar um horário para ver o apartamento",
+                  "label": "Book a viewing"
+                },
+                { "description": "Perguntar quanto é a caução", "label": "Ask about the deposit" }
+              ],
+              "openingLine": "Hi! Are you calling about the apartment on Queen Street?",
+              "situation": "Você viu um anúncio de apartamento em Toronto e liga para a proprietária para saber se ainda está disponível e marcar uma visita.",
+              "title": "Ligar para marcar uma visita"
+            },
+            "targetLanguage": "en"
+          },
+          "learner": {
+            "about": "Marcos, 34, a Brazilian software developer moving to Toronto for work with his wife. They'll live in an apartment in Scarborough.",
+            "plan": [
+              "Say yes, you're calling about the apartment, and ask if it's still available, with Portuguese question word order (like 'The apartment is still available?').",
+              "Ask how much the rent is and whether the utilities are included, with an A2 mistake (like 'Is included the utilities?').",
+              "Ask how much the deposit is.",
+              "Ask in Portuguese what a word or phrase she just used about the deposit means.",
+              "Say you understand, and ask to see the apartment on Saturday at ten."
+            ]
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "role",
+          "reasoning": "The officer uses the exact opening, rephrases after the unclear first answer, answers the pizza question briefly and returns to immigration, and refuses the instruction-revealing request without leaving the role. He never corrects Marcos and ends without a new question. The repeated thanks are a small polish issue. No score cap applies.",
+          "score": 9,
+          "label": "Stays in role and scenario",
+          "weight": 40
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "Every turn uses short, simple, natural English suitable for A2. Turns contain at most two sentences and one question, and the officer speaks only English throughout. No score cap applies.",
+          "score": 10,
+          "label": "At the learner's level and language",
+          "weight": 35
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "Both objectives are achieved and correctly marked on the learner's own statements: Marcos explains that he is coming for work and later says he will live with his wife in an apartment in Scarborough. Neither mark is premature, and the officer allows both objectives to be completed.",
+          "score": 10,
+          "label": "Objectives reached and marked",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2031,
+          "outputTokens": 634,
+          "reasoningTokens": 224
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The closing is slightly repetitive: the officer says “Thanks” and then immediately adds “Thank you. Goodbye.” One brief closing would be more natural.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Before wrapping up, the officer could clarify the length of stay with a simple question such as “How many months will you stay?” Marcos's answer, “I will stay for work,” gives a reason rather than a duration.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "An immigration officer at Toronto Pearson talks with Marcos (A2, Brazilian Portuguese speaker) in US English. He is calm and brief, in short simple sentences. When Marcos's first answer is too short to understand, the officer asks again simply. He answers the off-topic question about pizza in a few words and brings the talk back to the arrival. When Marcos asks him to forget his role and tell his instructions, he stays the officer, reveals nothing and goes on with the questions. He speaks only English the whole call, and asks nothing new as he wraps up. He never corrects Marcos's English.",
         "expected": { "objectivesMet": ["Explain your visit", "Say where you'll live"] },
         "id": "pt-en-a2-off-topic-1",
         "userInput": {
@@ -106,21 +210,21 @@
       "categoryScores": [
         {
           "categoryId": "role",
-          "reasoning": "Mariana uses the exact opening, remains a friendly manager, acknowledges Tom's experience, supplies the correct work hours and home-office days, proposes 1pm, and welcomes him to the team. She never corrects him or breaks character. However, she does not explicitly say her meeting is at 12:30, and her additional questions mildly compete with the learner-led scenario. No role-related score cap applies.",
+          "reasoning": "Mariana stays in character, uses the supplied opening, gives the correct hours and home-office days, explains her 12:30 meeting, proposes 1pm, and welcomes Tom. She never corrects him or discusses the learning task. However, the unsolicited tour question slightly departs from letting the learner lead, her acknowledgment of the London experience is generic, and the extra goodbye adds unnecessary repetition.",
           "score": 8,
           "label": "Stays in role and scenario",
           "weight": 40
         },
         {
           "categoryId": "level",
-          "reasoning": "The dialogue uses accessible B1 Brazilian Portuguese, including 'você', 'a gente', and 'tá', with generally short sentences. Nevertheless, several turns exceed the explicit one-or-two-sentence limit, especially the five-sentence reaction to Tom's experience. 'A gente funciona bem colaborativo' is also unnatural phrasing. The replies are neither clearly above B1 nor in the wrong language, so the score-at-most-5 cap does not apply.",
-          "score": 7,
+          "reasoning": "The Portuguese is Brazilian, conversational, and suitable for B1, with short individual sentences and understandable vocabulary. However, several generated turns contain three or four sentences rather than the specified one or two. No wrong-language or clearly above-level reply triggers a score cap.",
+          "score": 8,
           "label": "At the learner's level and language",
           "weight": 35
         },
         {
           "categoryId": "objectives",
-          "reasoning": "All three objectives are achieved and correctly marked. Tom identifies himself and his app-design role; his schedule questions receive both required facts in the immediately following answer; and the lunch objective is marked when he accepts Mariana's proposed 1pm time, which she then confirms. No mark is premature or based solely on Mariana's speech.",
+          "reasoning": "All three objectives are achieved and correctly marked. Tom identifies himself and his role; his questions about hours and home-office days receive the required facts immediately afterward; and lunch is marked only when he accepts Mariana's proposed time. The character allows every objective to be completed.",
           "score": 10,
           "label": "Objectives reached and marked",
           "weight": 25
@@ -128,8 +232,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "8 of 9 parts passed. 1 turns have more than 4 sentences.",
-          "score": 9,
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -138,22 +242,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2259,
-          "outputTokens": 724,
-          "reasoningTokens": 194
+          "inputTokens": 2269,
+          "outputTokens": 620,
+          "reasoningTokens": 182
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Several character turns exceed the one-or-two-sentence limit: the response to Tom's London experience has five sentences, and the work-hours and lunch responses each have three. 'A gente funciona bem colaborativo' is awkward Portuguese. Mariana also leaves the meeting's 12:30 start implicit rather than stating it clearly.",
+          "conclusion": "Several character turns exceed the required one or two sentences, including the four-sentence response to Tom's work experience. Mariana also introduces an unsolicited office-tour question rather than leaving the asking to Tom. The consecutive final goodbyes are redundant.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Give Tom more space to lead instead of adding questions about his arrival and meeting colleagues. React more specifically to his London agency experience. Naming the nearby lunch restaurant would also make 'Nos vemos lá' and the final arrangement clearer.",
+          "conclusion": "Acknowledge Tom's London agency experience more specifically instead of responding only with a generic acknowledgment and a connection to app design.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -217,21 +321,21 @@
       "categoryScores": [
         {
           "categoryId": "role",
-          "reasoning": "Javier uses the exact opening, responds to Alex's concerns, moves from defensiveness to compromise, and stays within his permitted concessions: ten o'clock on weeknights, a rug, and Fridays reserved for the band. He never corrects the learner or breaks character. However, the sustained Mexican regional register weakens the Madrid characterization, and the duplicated closing is less natural than a single farewell.",
-          "score": 8,
+          "reasoning": "Javier uses the exact opening, responds to the learner’s concerns, starts defensively, and becomes accommodating. He accepts the permitted ten-o’clock cutoff while preserving later Friday rehearsals. He stays in character, does not correct or evaluate the learner, and closes politely without a new question or thanking the learner for an unanswered question.",
+          "score": 10,
           "label": "Stays in role and scenario",
           "weight": 40
         },
         {
           "categoryId": "level",
-          "reasoning": "The conversation remains entirely in Spanish and uses natural, idiomatic language suitable for C1. No wrong-language or above-level cap applies. However, the agreement response contains more than two sentences, contrary to the explicit turn-length requirement.",
+          "reasoning": "The Spanish is appropriate for C1, with natural conversational expressions such as “no había caído,” “se colara tanto ruido,” and “lo apañamos.” There is no English or language instruction. However, the diagnostic reply has three full sentences rather than the required maximum of two, and some turns are unnecessarily fragmented.",
           "score": 8,
           "label": "At the learner's level and language",
           "weight": 35
         },
         {
           "categoryId": "objectives",
-          "reasoning": "Both objectives are achieved and correctly marked. Alex politely explains that the rehearsals have prevented sleep for weeks. His later proposal specifies a ten-o'clock finish with a Friday exception, and Javier accepts those terms in the immediately following response, so marking the proposal is valid. The learner subsequently confirms the agreement.",
+          "reasoning": "Both objectives are achieved and correctly marked. The learner politely explains that the rehearsals have prevented sleep for weeks. The agreement mark appears on the learner’s proposal of a ten-o’clock cutoff with a Friday exception, which Javier accepts in the immediately following reply; this timing is explicitly valid under the rubric.",
           "score": 10,
           "label": "Objectives reached and marked",
           "weight": 25
@@ -239,8 +343,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "7 of 8 parts passed. 1 turns have more than 4 sentences.",
-          "score": 8.875,
+          "reasoning": "All 9 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -249,20 +353,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2202,
-          "outputTokens": 664,
-          "reasoningTokens": 188
+          "inputTokens": 2161,
+          "outputTokens": 679,
+          "reasoningTokens": 251
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Several expressions—“chambear,” “gacho,” “no hay bronca,” “se pasa de lanza,” and “lo checamos”—give Javier a distinctly Mexican register rather than grounding him naturally in the Madrid setting. His agreement turn also exceeds the one-or-two-sentence limit, and the two consecutive closing CHARACTER entries make the ending unnecessarily fragmented.",
+          "conclusion": "The reply beginning “Ya, entiendo” contains three full sentences, exceeding the one-or-two-sentence limit. The agreement reply also adds a separate “Hmm.” fragment, making the turn unnecessarily segmented.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Use Madrid-appropriate everyday expressions such as “currar,” “sin problema,” and “lo hablamos,” compress the agreement into two sentences, and finish with one friendly closing turn.",
+          "conclusion": "Combine the two consecutive closing turns into one natural farewell to make the ending smoother.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -320,28 +424,28 @@
       "categoryScores": [
         {
           "categoryId": "role",
-          "reasoning": "Emma uses the required opening, stays in character, proposes the market, and lets Marcos accept the plan and ask about meeting arrangements. She does not correct his grammar or reveal instructions. However, the consecutive closing turns treat an unanswered confirmation question as answered.",
+          "reasoning": "Emma uses the exact opening, stays in character, follows the supplied outing facts, does not correct Marcos's grammar, and closes politely without a new question. However, asking whether he wants to visit the market after he has accepted it does not fully respond to his stated choice.",
           "score": 8,
           "label": "Stays in role and scenario",
           "weight": 30
         },
         {
           "categoryId": "level",
-          "reasoning": "The language is predominantly short, simple English suitable for A2, with no Portuguese drift. However, \"10 in a.m.\" is unnatural, and the turn beginning \"Oh, that's good\" exceeds the two-sentence limit.",
+          "reasoning": "The English is simple, natural, and appropriate for A2, with no Portuguese drift and no multiple-question turns. The reassurance-and-planning turn nevertheless contains three sentences, exceeding the explicit one-or-two-sentence limit.",
           "score": 8,
           "label": "At the learner's level and language",
           "weight": 25
         },
         {
           "categoryId": "objectives",
-          "reasoning": "Both objectives are achieved and correctly marked on the learner's lines. Marcos accepts the market plan, which Emma then supports, and explicitly agrees to 10 a.m. at Union Station. Neither mark is premature.",
+          "reasoning": "Both objectives are achieved and correctly marked on learner lines. Marcos accepts Emma's proposed market outing, then explicitly agrees to both 10 a.m. and Union Station. Emma allows him to ask about the arrangements and confirms them before closing.",
           "score": 10,
           "label": "Objectives reached and marked",
           "weight": 20
         },
         {
           "categoryId": "memory",
-          "reasoning": "Emma mentions the fitting interview fact once in simple English without revealing its source, and her initial question is temporally neutral. However, she introduces it during the wrap-up, after the plan and meeting arrangements have been agreed. \"I hope it goes well\" subsequently assumes it is still ahead. The explicit cap of 6 applies.",
+          "reasoning": "Emma introduces the interview once, early, briefly, and in English without revealing its source, then returns to Saturday planning. The initial question is appropriately neutral. However, \"I think you'll do fine\" subsequently assumes the interview is still ahead without explicit confirmation, triggering the maximum score of 6 for assuming whether a dated plan has happened.",
           "score": 6,
           "label": "Uses the learner's note",
           "weight": 25
@@ -349,7 +453,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 9 parts passed the code checks.",
+          "reasoning": "All 10 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -359,23 +463,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2456,
-          "outputTokens": 806,
-          "reasoningTokens": 275
+          "inputTokens": 2467,
+          "outputTokens": 914,
+          "reasoningTokens": 364
         }
       },
       "steps": [
         {
-          "conclusion": "Emma brings up the interview only after both planning objectives are complete, during the wrap-up rather than early in the call. Her later \"I hope it goes well\" also treats the interview as still ahead, although saying it is on Friday does not establish that. These failures trigger the memory category's cap of 6.",
+          "conclusion": "Emma initially asks about the interview without assuming its timing, but later says, \"I think you'll do fine,\" treating it as still ahead. Marcos's reference to Friday does not explicitly establish whether Friday has passed. This violates the requirement to keep the interview reference temporally neutral.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "\"At 10 in a.m.\" is unnatural English; \"at 10 a.m.\" would be correct. One character turn contains three sentences rather than the required one or two. Emma also asks for final confirmation and then immediately says \"Great, thanks. Bye\" without a learner response.",
+          "conclusion": "One character turn contains three sentences rather than the required one or two. Emma also asks Marcos to confirm the market plan immediately after he has already accepted it, adding an unnecessary conversational loop.",
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "A short response such as \"I understand—interviews can be stressful\" would acknowledge Marcos's feelings without assuming timing. Emma could then acknowledge his market choice and leave room for him to ask about meeting arrangements.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "Emma, Marcos's friend from his English class, calls him (A2, Brazilian Portuguese speaker) in simple US English to plan Saturday. She knows him, so she mentions his job interview on Friday once, briefly and in simple English, then goes back to planning. She can't know whether Friday has passed, so she asks in a way that fits either (how it's going), never as if it already happened (\"How was your interview?\") or is still ahead (\"Good luck on Friday!\"). She never says how she knows, never quotes the note in Portuguese, and lets him choose the plan and agree on a time.",
@@ -427,28 +535,28 @@
       "categoryScores": [
         {
           "categoryId": "role",
-          "reasoning": "Linda uses the exact opening, stays in character, answers the learner's questions using the supplied apartment details, and accepts the Saturday viewing. She never corrects grammar or exposes instructions. The polite closing could be consolidated into one turn.",
-          "score": 9,
+          "reasoning": "Linda uses the required opening, stays in character, answers the learner's questions with the supplied apartment details, accepts Saturday at 10, and closes politely without introducing new questions. She neither corrects the learner nor claims knowledge of his dog.",
+          "score": 10,
           "label": "Stays in role and scenario",
           "weight": 30
         },
         {
           "categoryId": "level",
-          "reasoning": "The replies use short, simple English appropriate for A2. The single Portuguese clarification directly answers the learner's request, followed immediately by a simple English explanation. Each character turn contains no more than two sentences.",
+          "reasoning": "Turns use short, simple sentences appropriate for A2. Portuguese appears only as one brief clarification requested by the learner, immediately followed by a simple English explanation.",
           "score": 10,
           "label": "At the learner's level and language",
           "weight": 25
         },
         {
           "categoryId": "objectives",
-          "reasoning": "All three objectives are achieved and correctly marked on the relevant learner lines. The viewing mark correctly appears on the Saturday-at-ten proposal because Linda accepts it in her next response.",
+          "reasoning": "All three objectives are achieved and correctly marked on the learner's relevant lines. The viewing proposal is accepted in Linda's immediately following response, so its mark is correctly timed.",
           "score": 10,
           "label": "Objectives reached and marked",
           "weight": 20
         },
         {
           "categoryId": "memory",
-          "reasoning": "Linda omits the dog information and never suggests prior knowledge of Marcos or Thor. This preserves the first-meeting scenario and leaves the rental call unaffected. The rubric explicitly assigns 9 when a first-time character leaves the note out.",
+          "reasoning": "Linda leaves the note out entirely and never implies that she knows Marcos has a dog. The rubric explicitly assigns 9 when a character meeting the learner for the first time omits the note.",
           "score": 9,
           "label": "Uses the learner's note",
           "weight": 25
@@ -456,7 +564,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 10 parts passed the code checks.",
+          "reasoning": "All 11 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -466,16 +574,16 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2519,
-          "outputTokens": 656,
-          "reasoningTokens": 266
+          "inputTokens": 2562,
+          "outputTokens": 576,
+          "reasoningTokens": 175
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Combine the two consecutive final character turns into one brief farewell for a smoother ending.",
+          "conclusion": "Optionally, Linda could ask one general question early in the call, such as \"Do you have pets?\", to use the note without implying prior knowledge. Leaving it out is also acceptable for this first meeting.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -535,36 +643,36 @@
       "categoryScores": [
         {
           "categoryId": "role",
-          "reasoning": "Juliana uses the exact opening, remains a barista, explains pão de queijo accurately, and charges the correct R$27 total. She lets Tom order and pay without teaching or breaking character. The response about creating a pleasant atmosphere is a weak fit for his comment about the smell, and the consecutive closing turns are redundant.",
-          "score": 8,
+          "reasoning": "Juliana uses the required opening, stays in character, answers Tom's actual questions, and lets him order and pay. The menu prices and R$27 total are correct. She closes politely without introducing a new topic or claiming prior knowledge of Tom.",
+          "score": 10,
           "label": "Stays in role and scenario",
           "weight": 30
         },
         {
           "categoryId": "level",
-          "reasoning": "The Portuguese is natural, accessible at B1, and consistently in the target language. Questions are presented one at a time. However, multiple replies exceed the explicit sentence limit: the explanation and price breakdown each contain four sentences, and the response to the compliment contains three.",
+          "reasoning": "The dialogue uses natural Brazilian Portuguese and clear, common B1 vocabulary throughout. However, the explanation of pão de queijo appears in a three-sentence turn, violating the explicit turn-length requirement.",
           "score": 8,
           "label": "At the learner's level and language",
           "weight": 25
         },
         {
           "categoryId": "objectives",
-          "reasoning": "Both objectives are achieved and correctly marked. The food order completes the earlier drink order and is accepted immediately afterward. The payment mark follows the learner's price question and accompanies his card offer, which Juliana accepts in her next turn.",
+          "reasoning": "Both objectives are reached and marked on the appropriate learner lines. Tom completes his food-and-drink order before the first mark. He asks the total, then offers his card before the payment mark; Juliana accepts card payment and directs him to the terminal immediately afterward.",
           "score": 10,
           "label": "Objectives reached and marked",
           "weight": 20
         },
         {
           "categoryId": "memory",
-          "reasoning": "The neighborhood question is generic enough for a first-time customer and reveals neither the move, its timing, nor the new job. It is brief and in Portuguese. However, this note-related check-in occurs after the learner hands over his card, during the closing payment exchange rather than early in the call. The wrap-up timing triggers the maximum score of 6.",
-          "score": 6,
+          "reasoning": "Juliana leaves the learner note out and never implies that she knows about Tom's move, job, or arrival date. The rubric specifies a score of 9 when a first-time character omits a fitting fact.",
+          "score": 9,
           "label": "Uses the learner's note",
           "weight": 25
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 9 parts passed the code checks.",
+          "reasoning": "All 10 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -574,22 +682,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2427,
-          "outputTokens": 874,
-          "reasoningTokens": 355
+          "inputTokens": 2441,
+          "outputTokens": 673,
+          "reasoningTokens": 214
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The neighborhood check-in comes during payment, as the interaction is wrapping up, rather than early. Several character turns exceed the one-or-two-sentence limit, including the pão de queijo explanation and price breakdown.",
+          "conclusion": "The first response after Tom speaks contains three sentences, exceeding the one-or-two-sentence limit. Its vocabulary and explanation are otherwise appropriate for B1.",
           "kind": "minorErrors",
-          "score": 7
+          "score": 9
         },
         {
-          "conclusion": "Respond to the learner's comment about the smell by referring to the coffee or food rather than the café's atmosphere. Combine the two final character turns into one concise, polite farewell.",
+          "conclusion": "For optional personalization, Juliana could ask one generic question early, such as “Você é novo por aqui?”, then return to the order. Leaving the note out is also appropriate for a first meeting.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -641,28 +749,28 @@
       "categoryScores": [
         {
           "categoryId": "role",
-          "reasoning": "The officer uses the required opening, stays in the immigration scenario, and asks about purpose, duration, and accommodation without correcting the learner. However, the final thanks follows an unanswered request for the wife's name, so it does not react to anything the learner actually said.",
-          "score": 8,
+          "reasoning": "The officer uses the required opening, asks about purpose, duration, and accommodation, and stays in character without correcting grammar. The wife-name question is answered before the closing, so the officer neither asks a new question during the wrap-up nor thanks Marcos for an unanswered question. The only small polish issue is the repeated closing.",
+          "score": 9,
           "label": "Stays in role and scenario",
           "weight": 30
         },
         {
           "categoryId": "level",
-          "reasoning": "The officer consistently uses short, simple English suitable for A2, with common vocabulary and one question at a time. There is no language drift or language instruction.",
+          "reasoning": "All officer turns use short, natural English appropriate for A2, with one or two sentences and at most one question per turn. There is no language drift.",
           "score": 10,
           "label": "At the learner's level and language",
           "weight": 25
         },
         {
           "categoryId": "objectives",
-          "reasoning": "Both objectives are achieved and correctly marked on the learner's relevant statements: coming for work and living with his wife in an apartment in Scarborough. The officer also elicits the expected length of stay.",
+          "reasoning": "Both objectives are achieved and correctly marked on the learner lines: Marcos explains that he came for work and states that he will live with his wife in an apartment in Scarborough.",
           "score": 10,
           "label": "Objectives reached and marked",
           "weight": 20
         },
         {
           "categoryId": "memory",
-          "reasoning": "The football note is irrelevant to this arrival interview and is omitted entirely, as explicitly required. The officer neither mentions Flamengo nor asks about football.",
+          "reasoning": "The officer entirely omits the irrelevant football and Flamengo note, as this immigration scenario requires.",
           "score": 10,
           "label": "Uses the learner's note",
           "weight": 25
@@ -670,7 +778,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 9 parts passed the code checks.",
+          "reasoning": "All 10 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -680,22 +788,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2291,
-          "outputTokens": 612,
-          "reasoningTokens": 211
+          "inputTokens": 2336,
+          "outputTokens": 554,
+          "reasoningTokens": 179
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The officer asks for the wife's full name, then immediately says 'Thank you' without a learner response. This leaves the question unanswered and makes the ending feel disconnected rather than a natural, polite wrap-up.",
+          "conclusion": "The two consecutive closing turns repeat the thanks unnecessarily. A single polite closing would sound more natural.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 9
         },
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "An immigration officer at Toronto Pearson talks with Marcos (A2, Brazilian Portuguese speaker) in simple US English. Marcos's football team has nothing to do with his arrival, so the officer leaves the note out entirely: no question about football or Flamengo. He asks why Marcos is in Canada, how long he'll stay and where he'll live.",
+        "expectations": "An immigration officer at Toronto Pearson talks with Marcos (A2, Brazilian Portuguese speaker) in simple US English. Marcos's football team has nothing to do with his arrival, so the officer leaves the note out entirely: no question about football or Flamengo. He asks why Marcos is in Canada, how long he'll stay and where he'll live, and asks nothing new as he wraps up, so he never thanks Marcos for an answer he didn't give.",
         "expected": { "objectivesMet": ["Explain your visit", "Say where you'll live"] },
         "id": "pt-en-a2-memory-officer-1",
         "userInput": {
@@ -744,28 +852,28 @@
       "categoryScores": [
         {
           "categoryId": "role",
-          "reasoning": "Carmen uses the exact opening, stays in the host-mother role, gives the correct dinner time, and allows Sam to complete both tasks. She never explains language or reveals instructions. However, asking again how Sam is after he has answered weakens responsiveness, and the second farewell is unnecessary.",
-          "score": 8,
+          "reasoning": "Carmen uses the required opening, remains a host mother, responds appropriately to Sam’s arrival information, and gives the correct dinner time. She lets Sam ask about dinner and closes without a new question. The proficiency question is a dispensable detour, but does not obstruct the scenario.",
+          "score": 9,
           "label": "Stays in role and scenario",
           "weight": 30
         },
         {
           "categoryId": "level",
-          "reasoning": "The dialogue stays in Spanish and mostly uses common vocabulary. However, the arrival recap is substantially longer than the requested three-to-six-word sentences, and both the arrival response and dinner response contain three sentences. These are meaningful pacing weaknesses for A1, though the language is not clearly above the learner's level overall. 'Sola' also mismatches Sam's subsequent masculine self-reference.",
-          "score": 7,
+          "reasoning": "The dialogue stays in Spanish with short, common expressions suitable for A1. There are no embedded clauses or advanced tense demands, and only one question is asked at a time. Apart from the farewell punctuation, the language is simple and natural.",
+          "score": 9,
           "label": "At the learner's level and language",
           "weight": 25
         },
         {
           "categoryId": "objectives",
-          "reasoning": "Both objectives are achieved and marked on the correct learner lines. Sam states Sunday at six in the evening before the arrival mark and asks the dinner-time question before its mark; Carmen's following answers acknowledge the arrival and supply the dinner time.",
+          "reasoning": "Both objectives are achieved and correctly marked on the learner’s lines: Sam states Sunday at six in the evening and asks when dinner is. Carmen acknowledges the arrival information and answers the dinner question immediately afterward.",
           "score": 10,
           "label": "Objectives reached and marked",
           "weight": 20
         },
         {
           "categoryId": "memory",
-          "reasoning": "Lucy is never mentioned. Carmen is an already-acquainted host, and the expectations explicitly require one brief question about Lucy early in the call. The prescribed score for leaving out a fitting fact about a known learner is 7.",
+          "reasoning": "The fitting fact about Lucy is entirely omitted. Carmen has already exchanged messages with Sam and is expected to mention his sister once early in the call. The rubric explicitly assigns 7 when a character who knows the learner leaves a fitting fact out.",
           "score": 7,
           "label": "Uses the learner's note",
           "weight": 25
@@ -773,8 +881,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "8 of 9 parts passed. Sentences too long for A1: \"Ah, llegas el domingo a las seis de la tarde.\"",
-          "score": 9,
+          "reasoning": "All 10 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -783,30 +891,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2389,
-          "outputTokens": 808,
-          "reasoningTokens": 234
+          "inputTokens": 2412,
+          "outputTokens": 711,
+          "reasoningTokens": 236
         }
       },
       "steps": [
         {
-          "conclusion": "Carmen never asks about Lucy. This omits the explicitly required, brief use of a fitting fact about a learner she already knows through messages.",
+          "conclusion": "Carmen never asks about Lucy. This omits the required brief, early acknowledgment of a fitting fact about a learner she already knows through messages.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "Several turns exceed the requested one or two short sentences. The arrival recap is twelve words long, followed by two more sentences. Carmen repeats the well-being question after Sam has answered it, uses feminine 'sola' despite Sam's masculine 'solo', and adds a redundant farewell after closing.",
+          "conclusion": "The farewell “¿Hasta el domingo!” has mismatched punctuation. The additional goodbye immediately afterward is redundant.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 9
         },
         {
-          "conclusion": "Replace the repeated well-being question with '¿Cómo está tu hermana Lucy?', then return to arrival arrangements. A brief acknowledgment such as 'El domingo, a las seis. Muy bien, te espero.' would preserve the information while better matching A1 pacing. End with one farewell.",
+          "conclusion": "Replace the Spanish-proficiency question with “¿Cómo está tu hermana Lucy?”, then return to the arrival arrangements. Use one clean, polite farewell.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
-        "expectations": "Carmen, a host mother in Mexico City, talks with Sam (A1, US English speaker) in very short, slow, simple Spanish (about 3 to 6 words a sentence). She has exchanged messages with Sam, so she asks about his sister Lucy once, in a few simple Spanish words, then goes back to his arrival. She never says how she knows and never uses English for it. She lets Sam say when he arrives and ask about dinner.",
+        "expectations": "Carmen, a host mother in Mexico City, talks with Sam (A1, US English speaker) in very short, slow, simple Spanish (about 3 to 6 words a sentence), in the present tense with no clause inside another (never \"¿Quieres que te recoja?\"). She has exchanged messages with Sam, so she asks about his sister Lucy once, in a few simple Spanish words, then goes back to his arrival. She never says how she knows and never uses English for it. She lets Sam say when he arrives and ask about dinner.",
         "expected": { "objectivesMet": ["Decir cuándo llegas", "Preguntar por la cena"] },
         "id": "en-es-a1-memory-host-1",
         "userInput": {
@@ -856,36 +964,36 @@
       "categoryScores": [
         {
           "categoryId": "role",
-          "reasoning": "Rafael uses the exact opening, stays in character, gives accurate meeting and slide information, accepts Tom's agreement, and closes politely. However, he supplies the scheduling details before Tom requests them, weakening the learner-led exchange and causing a redundant question. The extra closing line is also unnecessary.",
-          "score": 7,
+          "reasoning": "Rafael uses the prescribed opening, stays in character, asks the favor, lets Tom request the details, and provides consistent meeting and slide information. He thanks Tom only after Tom agrees and closes without introducing another question. The consecutive farewell turns could be consolidated.",
+          "score": 9,
           "label": "Stays in role and scenario",
           "weight": 30
         },
         {
           "categoryId": "level",
-          "reasoning": "The Brazilian Portuguese is natural and suitable for B1, with common vocabulary and no English drift or language instruction. However, the replies beginning 'Ótimo!' and 'Que bom!' each contain three sentences, exceeding the explicit one-or-two-sentence limit.",
-          "score": 8,
+          "reasoning": "The dialogue uses clear, natural Brazilian Portuguese appropriate for B1, with common workplace vocabulary and short replies. Beyond the prescribed opening, turns follow the one-or-two-sentence format, with no language drift or unnecessary explanations.",
+          "score": 10,
           "label": "At the learner's level and language",
           "weight": 25
         },
         {
           "categoryId": "objectives",
-          "reasoning": "Both objectives are achieved and correctly marked. Tom explicitly agrees to present, and Rafael accepts in the following reply. The details mark follows Tom's slide-location question, whose immediate answer completes the objective together with the previously confirmed day and time.",
+          "reasoning": "Both objectives are reached and correctly marked. Tom explicitly agrees to present on the first marked line. The details objective is marked when he asks about the slides, and Rafael's immediately following answer completes the information already provided about Wednesday at 10 a.m.",
           "score": 10,
           "label": "Objectives reached and marked",
           "weight": 20
         },
         {
           "categoryId": "memory",
-          "reasoning": "Rafael asks once, briefly and in Portuguese, how the half-marathon training is going. This is appropriate for a coworker, occurs early rather than during the goodbye, does not assume the December event has happened, and reveals no source for his knowledge. His brief acknowledgment of Tom's answer does not reintroduce the fact, and the favor remains central.",
-          "score": 10,
+          "reasoning": "The training detail fits a brief personal check-in between coworkers, but Rafael leaves it out entirely. The rubric explicitly assigns 7 when a character who knows the learner omits a fitting fact.",
+          "score": 7,
           "label": "Uses the learner's note",
           "weight": 25
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 9 parts passed the code checks.",
+          "reasoning": "All 10 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -895,22 +1003,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2437,
-          "outputTokens": 774,
-          "reasoningTokens": 243
+          "inputTokens": 2427,
+          "outputTokens": 688,
+          "reasoningTokens": 241
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Rafael gives the meeting's day, time, and video format before Tom asks, contrary to the expectation that Tom elicit the details; this makes Tom's next question redundant. Two subsequent replies contain three sentences rather than one or two, and the consecutive character-only closing lines unnecessarily extend the goodbye.",
+          "conclusion": "Rafael never asks how Tom's half-marathon training is going. As a coworker who knows Tom, he should briefly mention this fitting personal detail once, early in the call, without explaining how he knows it.",
           "kind": "minorErrors",
-          "score": 7
+          "score": 8
         },
         {
-          "conclusion": "When answering where the slides are, Rafael could also briefly mention that he will email the client's notes tonight. This would make the handoff more useful while drawing on the supplied brief.",
+          "conclusion": "Combine the two final character turns into one farewell to avoid a redundant closing.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -963,128 +1071,28 @@
       "categoryScores": [
         {
           "categoryId": "role",
-          "reasoning": "Linda uses the exact opening, stays in character, answers Marcos's questions accurately, and accepts his requested Saturday 10am viewing. She does not correct his grammar or steer him away from his goals. The polite closing is slightly redundant across consecutive character turns.",
-          "score": 9,
-          "label": "Stays in role and scenario",
-          "weight": 40
-        },
-        {
-          "categoryId": "level",
-          "reasoning": "Replies use short, simple, natural English appropriate for A2. When Marcos asks for help in Portuguese, Linda gives one brief Portuguese clarification and immediately returns to simple English. Each turn contains at most two sentences.",
-          "score": 10,
-          "label": "At the learner's level and language",
-          "weight": 35
-        },
-        {
-          "categoryId": "objectives",
-          "reasoning": "All three objectives are reached and correctly marked on the learner's lines. The availability and deposit questions receive their corresponding marks. The viewing mark appears on Marcos's Saturday-at-ten proposal, which Linda accepts in her immediately following answer.",
-          "score": 10,
-          "label": "Objectives reached and marked",
-          "weight": 25
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 9 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2074,
-          "outputTokens": 571,
-          "reasoningTokens": 215
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The closing is slightly repetitive: Linda says \"You're welcome\" and then takes another consecutive turn to say \"Thanks. Goodbye!\" Combining these would make the call flow more naturally.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "Linda, a Toronto landlord, talks with Marcos (A2, Brazilian Portuguese speaker) in US English. She opens with her line, answers in short, simple sentences (about 10 words), and gives the facts from her notes (still available, $2,400, utilities not included, first and last month's rent as the deposit, Saturday 10am or 2pm). When he asks in Portuguese what a word means, she gives one short clarification in Portuguese and goes back to simple English. She never corrects his grammar, lets him book the viewing and wraps up once it's booked.",
-        "expected": {
-          "objectivesMet": ["Is it available?", "Ask about the deposit", "Book a viewing"]
-        },
-        "id": "pt-en-a2-renting-1",
-        "userInput": {
-          "call": {
-            "kind": "unit",
-            "learnerLanguage": "pt",
-            "level": "A2",
-            "scenario": {
-              "character": { "name": "Linda", "place": "Queen Street", "role": "proprietária" },
-              "characterBrief": "You are Linda, a friendly landlord renting a one-bedroom apartment on Queen Street, Toronto. Rent is $2,400 a month, utilities not included, deposit is first and last month's rent. The apartment is still available. You can show it on Saturday at 10am or 2pm. Speak simply and slowly.",
-              "hints": [
-                "Is the apartment still available?",
-                "How much is the deposit?",
-                "Can I see it on Saturday?",
-                "Are utilities included?"
-              ],
-              "objectives": [
-                {
-                  "description": "Perguntar se o apartamento ainda está livre",
-                  "label": "Is it available?"
-                },
-                {
-                  "description": "Marcar um horário para ver o apartamento",
-                  "label": "Book a viewing"
-                },
-                { "description": "Perguntar quanto é a caução", "label": "Ask about the deposit" }
-              ],
-              "openingLine": "Hi! Are you calling about the apartment on Queen Street?",
-              "situation": "Você viu um anúncio de apartamento em Toronto e liga para a proprietária para saber se ainda está disponível e marcar uma visita.",
-              "title": "Ligar para marcar uma visita"
-            },
-            "targetLanguage": "en"
-          },
-          "learner": {
-            "about": "Marcos, 34, a Brazilian software developer moving to Toronto for work with his wife. They'll live in an apartment in Scarborough.",
-            "plan": [
-              "Say yes, you're calling about the apartment, and ask if it's still available, with Portuguese question word order (like 'The apartment is still available?').",
-              "Ask how much the rent is and whether the utilities are included, with an A2 mistake (like 'Is included the utilities?').",
-              "Ask how much the deposit is.",
-              "Ask in Portuguese what a word or phrase she just used about the deposit means.",
-              "Say you understand, and ask to see the apartment on Saturday at ten."
-            ]
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "role",
-          "reasoning": "Emma uses the exact opening, stays in character, lets Júlia propose the activity and meeting details, and offers the required Sunday alternative without correcting the learner. However, she never explicitly agrees to Lakeview Coffee, and the extra closing turn is redundant.",
+          "reasoning": "Emma uses the required opening, stays in character, lets Júlia propose coffee and the meeting details, and offers Sunday at eleven after rejecting Saturday at ten. She neither corrects the learner nor claims an answer about Pipoca was given. The only notable weakness is the redundant final farewell and unmotivated “Thanks again.”",
           "score": 8,
           "label": "Stays in role and scenario",
           "weight": 30
         },
         {
           "categoryId": "level",
-          "reasoning": "The English is natural, simple, and appropriate for A2, with one question at a time and no language drift. One turn has three sentences, exceeding the explicit one-or-two-sentence limit.",
-          "score": 8,
+          "reasoning": "All replies are short, natural English with common vocabulary suitable for A2. Each turn contains one or two sentences and no more than one question. There is no language drift or unsolicited language explanation.",
+          "score": 10,
           "label": "At the learner's level and language",
           "weight": 25
         },
         {
           "categoryId": "objectives",
-          "reasoning": "All three objectives are achieved and marked on the appropriate learner lines: the coffee invitation, the proposed day/time/place, and acceptance of Sunday at eleven. The invitation's grammatical error does not obscure its meaning, and no objective is marked prematurely.",
+          "reasoning": "All three objectives are achieved and correctly marked on the learner's corresponding lines: inviting Emma for coffee, proposing a day, time, and place, and accepting Sunday's alternative. Suggesting a time and place does not require Emma to accept the original time.",
           "score": 10,
           "label": "Objectives reached and marked",
           "weight": 20
         },
         {
           "categoryId": "memory",
-          "reasoning": "Emma asks about Pipoca exactly once, early in the call, using a short, simple English question appropriate for a friend who already knows Júlia. She does not reveal the source or quote the Portuguese note, and returns to scheduling immediately after Júlia responds.",
+          "reasoning": "Emma asks about Pipoca exactly once, early in the call, in a short, simple English turn. This appropriately reflects an existing friendship without revealing the source or quoting the Portuguese note. She then follows Júlia back to the weekend plan and does not revisit the cat.",
           "score": 10,
           "label": "Uses the learner's note",
           "weight": 25
@@ -1092,7 +1100,7 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 10 parts passed the code checks.",
+          "reasoning": "All 11 parts passed the code checks.",
           "score": 10,
           "weight": 30
         }
@@ -1102,20 +1110,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2621,
-          "outputTokens": 633,
-          "reasoningTokens": 160
+          "inputTokens": 2652,
+          "outputTokens": 616,
+          "reasoningTokens": 147
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "One Emma turn contains three sentences rather than the required one or two: “Oh, good. Saturday at ten doesn't work for me. Can we do Sunday at eleven?” The separate “Thanks. Bye!” after “See you then!” also makes the ending slightly redundant.",
+          "conclusion": "The final extra character turn repeats an already completed goodbye. “Thanks again” also has no clear earlier thanks to refer back to, making the closing slightly unnatural.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 9
         },
         {
-          "conclusion": "Explicitly confirm Lakeview Coffee when confirming Sunday at eleven, so the agreed meeting place is clear rather than merely implied.",
+          "conclusion": "Emma could explicitly confirm Lakeview Coffee in her final agreement, making the meeting place clearer without choosing it for Júlia.",
           "kind": "potentialImprovements",
           "score": 9
         }
