@@ -34,6 +34,7 @@ describe(getOnboardingDraft, () => {
         id: draft.id,
         prompt: "pass the bar exam",
         status: "understanding",
+        timeZone: "UTC",
         understanding: null,
       },
       status: "ready",

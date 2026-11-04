@@ -99,6 +99,10 @@ test.describe("Goal understandings API", () => {
 
     expect([pastDate.status(), badEdit.status(), hidden.status()]).toEqual([422, 400, 404]);
 
+    await expect(pastDate.json()).resolves.toMatchObject({
+      error: { code: "TARGET_DATE_OUT_OF_RANGE", details: [{ bound: "earliest" }] },
+    });
+
     await expect(
       readBody({
         response: await api.get("/v1/me/onboarding-resume"),
