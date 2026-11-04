@@ -276,4 +276,35 @@ describe(pictureBareTeachingScreens, () => {
       image: { alt: brief, prompt: brief },
     });
   });
+
+  it("treats a one-row table as nothing to look at, since it only repeats the sentence", () => {
+    const lesson = writtenTemperatureLesson();
+    const brief = "The mark climbs from −3 °C past zero to 2 °C.";
+
+    const planned = {
+      ...spec,
+      screens: spec.screens.map((screen, index) =>
+        index === 4 ? { ...screen, brief, visualKind: "table" as const } : screen,
+      ),
+    };
+
+    const bare = lesson.screens[4];
+
+    if (bare?.kind !== "explanation") {
+      throw new Error("Screen 5 is an explanation.");
+    }
+
+    const oneRow = "At noon it's 2 °C.\n\n| Time | Temperature |\n| --- | ---: |\n| Noon | 2 °C |";
+
+    const written = {
+      ...lesson,
+      screens: lesson.screens.map((screen, index) =>
+        index === 4 ? { ...bare, explore: null, image: null, text: oneRow, visual: null } : screen,
+      ),
+    };
+
+    const repaired = pictureBareTeachingScreens({ lesson: written, spec: planned });
+
+    expect(repaired.screens[4]).toMatchObject({ image: { alt: brief, prompt: brief } });
+  });
 });
