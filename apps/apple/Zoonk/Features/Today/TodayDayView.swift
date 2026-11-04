@@ -156,7 +156,7 @@ struct TodayDayView: View {
           MemoryInsightCard(insight: insight)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
+        .listRowInsets(.vertical, 0)
       }
     case .practice:
       TodayLanguagePracticeSection(view: view, language: language)

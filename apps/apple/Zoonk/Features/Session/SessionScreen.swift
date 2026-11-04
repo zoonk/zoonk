@@ -364,7 +364,7 @@ private struct NextStopView: View {
       }
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
   }
 
   private func title(of moment: BlockMoment) -> String {

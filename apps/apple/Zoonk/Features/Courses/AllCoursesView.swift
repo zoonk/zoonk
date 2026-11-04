@@ -32,7 +32,7 @@ struct AllCoursesView: View {
             categories: populatedCategories(counts: counts, open: category),
             selection: $category)
         }
-        .listRowInsets(EdgeInsets())
+        .listRowInsets(.vertical, 0)
         .listRowBackground(Color.clear)
         .listSectionMargins(.trailing, leadingPageMargin)
       }

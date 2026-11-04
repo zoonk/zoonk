@@ -66,7 +66,7 @@ struct TodaySessionSection: View {
         action
       }
       .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
       .listSectionSpacing(.compact)
     }
   }

@@ -150,7 +150,7 @@ struct PlanLinkScreen: View {
         .buttonStyle(.mainAction)
         .controlSize(.large)
         .disabled(isStarting)
-        .listRowInsets(EdgeInsets())
+        .listRowInsets(.vertical, 0)
         .listRowBackground(Color.clear)
       }
 

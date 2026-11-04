@@ -117,7 +117,7 @@ struct SeePlusButton: View {
     }
 
     PlusNotice(description: Text(verbatim: "Your whole exam plan, every day to the exam"))
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
   }
   .zoonkList()
   .environment(AppRouter())

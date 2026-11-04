@@ -154,7 +154,7 @@ struct GoalEntrySections<Attachment: View>: View {
       .buttonStyle(.mainAction)
       .controlSize(.large)
       .keepsOffFold()
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
     }
 

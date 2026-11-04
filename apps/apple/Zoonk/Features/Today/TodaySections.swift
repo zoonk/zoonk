@@ -38,7 +38,7 @@ struct TodayUpNextSection: View {
       TodayMainAction(kind: .keepLearning, isBusy: isBusy, failed: false, action: keepLearning)
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
     .listSectionSpacing(.compact)
   }
 }
@@ -64,7 +64,7 @@ struct TodayMoreSection: View {
             isBusy: busy == .keepLearning, failed: false, action: addTime)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
+        .listRowInsets(.vertical, 0)
         .listSectionSpacing(.compact)
       }
 

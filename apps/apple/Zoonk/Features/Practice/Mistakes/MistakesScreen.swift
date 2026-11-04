@@ -80,7 +80,7 @@ struct MistakesScreen: View {
       .pickerStyle(.segmented)
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
   }
 
   private func listTitle(fixed: Bool, counts: Components.Schemas.MistakeList.CountsPayload?)

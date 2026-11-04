@@ -100,7 +100,7 @@ struct SessionSummaryView: View {
       SummaryTiles(summary: summary, goalKind: learner.summary.value?.shownGoal?.kind)
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
 
     EarnedToday(summary: summary, missionsBonus: store.session(id: sessionID).value?.fullMeal.bonus)
   }
@@ -200,7 +200,7 @@ struct SessionSummaryView: View {
       }
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
   }
 
   private func title(_ summary: SessionSummary) -> Text {

@@ -104,7 +104,7 @@ struct LevelTestStep: View {
       .buttonStyle(.outline)
       .controlSize(.large)
       .disabled(isSaving)
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
     } footer: {
       SectionFooter {

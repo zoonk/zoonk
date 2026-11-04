@@ -176,7 +176,7 @@ private struct LogbookSteps: View {
             .controlSize(.large)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
+        .listRowInsets(.vertical, 0)
       }
       .zoonkList()
     } single: {

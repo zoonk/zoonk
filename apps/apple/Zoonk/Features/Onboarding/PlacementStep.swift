@@ -308,7 +308,7 @@ struct PlacementStep: View {
           }
           .buttonStyle(.outline)
           .controlSize(.large)
-          .listRowInsets(EdgeInsets())
+          .listRowInsets(.vertical, 0)
           .listRowBackground(Color.clear)
         } footer: {
           SectionFooter {
