@@ -145,7 +145,6 @@ struct ChallengeStepView: View {
     }
   }
 
-  /// A move of 25 or more is "much".
   @ViewBuilder
   private func move(_ change: Int, of meter: ChallengeContent.Meter) -> some View {
     if change == 0 {
@@ -234,7 +233,6 @@ struct ChallengeStepView: View {
     .accessibilityHidden(true)
   }
 
-  /// "Name · role", the role quieter.
   private func speaker(_ name: String, role: String?) -> Text {
     var line = AttributedString(name)
     line.font = .subheadline.weight(.semibold)
@@ -265,8 +263,7 @@ struct ChallengeStepView: View {
           comment: "VoiceOver: the learner's pick in a challenge's conversation"))
   }
 
-  /// The meters a pick moved. VoiceOver skips them, as on main, and hears the last move from the
-  /// meters.
+  /// VoiceOver skips these, as on main: the meters above say the last move.
   @ViewBuilder
   private func effects(_ choice: ChallengeContent.Choice) -> some View {
     let moved = choice.effects.compactMap { effect in
