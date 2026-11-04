@@ -14,16 +14,13 @@ import { type UnderstoodRow as Row } from "./use-understood-rows";
 
 type EditorType = NonNullable<Row["editable"]>["kind"];
 
-function getInputLimits({
-  now,
-  timeZone,
-  type,
-}: {
-  now: Date;
-  timeZone: string;
-  type: EditorType;
-}) {
-  return type === "date" ? getTargetDateBounds(getTodayInZone({ now, timeZone })) : {};
+/** The deadlines a fix can save, counted from when the editor or button appeared. */
+function useDateBounds(timeZone: string) {
+  return getTargetDateBounds(getTodayInZone({ now: useMountTime(), timeZone }));
+}
+
+function isWithin({ bounds, date }: { bounds: { max: string; min: string }; date: string }) {
+  return date >= bounds.min && date <= bounds.max;
 }
 
 const MAX_SOURCE_TITLE_LENGTH = 40;
@@ -71,7 +68,7 @@ function RowEditor({
   type: EditorType;
 }) {
   const t = useExtracted();
-  const openedAt = useMountTime();
+  const bounds = useDateBounds(timeZone);
   const inputId = useId();
   const [value, setValue] = useState(defaultValue);
   const [failed, setFailed] = useState(false);
@@ -103,7 +100,7 @@ function RowEditor({
         onKeyDown={(event) => event.key === "Escape" && onCancel()}
         type={type}
         value={value}
-        {...getInputLimits({ now: openedAt, timeZone, type })}
+        {...(type === "date" ? bounds : {})}
       />
       {failed && <ChangeSaveError />}
       <div className="flex gap-2">
@@ -121,11 +118,18 @@ function RowEditor({
 function SuggestedDate({
   date,
   onSave,
+  timeZone,
 }: {
   date: string;
   onSave: (value: string) => Promise<boolean>;
+  timeZone: string;
 }) {
   const [failed, setFailed] = useState(false);
+  const bounds = useDateBounds(timeZone);
+
+  if (!isWithin({ bounds, date })) {
+    return null;
+  }
 
   return (
     <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -143,17 +147,25 @@ function SuggestedDate({
 function ChoiceDates({
   dates,
   onSave,
+  timeZone,
 }: {
   dates: string[];
   onSave: (value: string) => Promise<boolean>;
+  timeZone: string;
 }) {
   const formatDate = useFormatIsoDate();
   const [failed, setFailed] = useState(false);
   const [isSaving, startSaving] = useTransition();
+  const bounds = useDateBounds(timeZone);
+  const offered = dates.filter((date) => isWithin({ bounds, date }));
+
+  if (offered.length === 0) {
+    return null;
+  }
 
   return (
     <div className="mt-1.5 flex flex-wrap items-center gap-2">
-      {dates.map((date) => (
+      {offered.map((date) => (
         <Button
           disabled={isSaving}
           focusableWhenDisabled
@@ -261,10 +273,12 @@ export function UnderstoodRowItem({
           )}
 
           {row.suggestedDate && !editing && (
-            <SuggestedDate date={row.suggestedDate} onSave={onSave} />
+            <SuggestedDate date={row.suggestedDate} onSave={onSave} timeZone={timeZone} />
           )}
 
-          {row.choiceDates && !editing && <ChoiceDates dates={row.choiceDates} onSave={onSave} />}
+          {row.choiceDates && !editing && (
+            <ChoiceDates dates={row.choiceDates} onSave={onSave} timeZone={timeZone} />
+          )}
         </div>
       </div>
 

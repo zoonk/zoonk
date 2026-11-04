@@ -39,13 +39,7 @@ async function applyEdit({
 
   if (edit.field === "targetDate") {
     assertTargetDates({
-      targets: [
-        {
-          current: understanding.goals[edit.goal]?.draft.targetDate,
-          path: ["value"],
-          targetDate: edit.value,
-        },
-      ],
+      targets: [{ path: ["value"], targetDate: edit.value }],
       today: getLearnerToday(draft.timeZone),
     });
   }

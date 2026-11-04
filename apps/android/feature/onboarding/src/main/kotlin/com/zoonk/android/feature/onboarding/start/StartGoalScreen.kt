@@ -411,6 +411,7 @@ private fun ColumnScope.DraftContent(
                         understoodGoalsInput(
                             understanding.value,
                             draft.activeGoalLimit,
+                            draft.timeZone,
                             flow.intent.takeIf { flow.attached.isNotEmpty() },
                             flow.attached.map { it.id },
                         ),

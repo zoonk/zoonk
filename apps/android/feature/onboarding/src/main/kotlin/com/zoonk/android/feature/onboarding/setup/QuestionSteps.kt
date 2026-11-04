@@ -713,6 +713,8 @@ private fun NoSittingLine(
 internal fun goalZone(timeZone: String?): ZoneId = timeZone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: ZoneOffset.UTC
 
 /** From tomorrow to ten years ahead, the deadlines core accepts. */
+internal fun targetDateBounds(today: LocalDate): ClosedRange<LocalDate> = today.plusDays(1)..today.plusDays(MAX_DAYS_AHEAD)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun TargetDatePicker(
@@ -721,22 +723,20 @@ internal fun TargetDatePicker(
     onDismiss: () -> Unit,
     onPick: (LocalDate) -> Unit,
 ) {
-    val last = today.plusDays(MAX_DAYS_AHEAD)
+    val bounds = targetDateBounds(today)
     val state =
         rememberDatePickerState(
             initialSelectedDateMillis =
                 initial
-                    ?.takeIf { it > today && it <= last }
+                    ?.takeIf { it in bounds }
                     ?.atStartOfDay(ZoneOffset.UTC)
                     ?.toInstant()
                     ?.toEpochMilli(),
-            yearRange = today.year..last.year,
+            yearRange = bounds.start.year..bounds.endInclusive.year,
             selectableDates =
                 object : SelectableDates {
-                    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                        val day = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
-                        return day > today && day <= last
-                    }
+                    override fun isSelectableDate(utcTimeMillis: Long) =
+                        Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate() in bounds
                 },
         )
     DatePickerDialog(

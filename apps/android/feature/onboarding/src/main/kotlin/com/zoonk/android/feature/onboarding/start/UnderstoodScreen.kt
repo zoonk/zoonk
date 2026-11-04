@@ -56,6 +56,7 @@ import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.setup.TargetDatePicker
 import com.zoonk.android.feature.onboarding.setup.goalZone
+import com.zoonk.android.feature.onboarding.setup.targetDateBounds
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.components.TimePickerDialog
@@ -250,6 +251,8 @@ private fun FactRow(
     val save: (String) -> Unit = { value -> if (!saving) onSave(value) }
     val label = if (editing) row.editLabel ?: row.label else row.label
     val editor = row.editable?.kind
+    val today = LocalDate.now(goalZone(timeZone))
+    val offered = targetDateBounds(today)
 
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.Top) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -275,14 +278,15 @@ private fun FactRow(
                 TextEditor(label, editValue, saving, onCancel = { onEdit(false) }, onSave = save)
             } else {
                 RowNote(row)
-                row.suggestedDate?.let { date ->
+                row.suggestedDate?.takeIf { it in offered }?.let { date ->
                     FilledTonalButton(onClick = { save(date.toString()) }, enabled = !saving, modifier = Modifier.padding(top = 6.dp)) {
                         Text(stringResource(R.string.onboarding_use_this_date))
                     }
                 }
-                if (row.choiceDates.isNotEmpty()) {
+                val choiceDates = row.choiceDates.filter { it in offered }
+                if (choiceDates.isNotEmpty()) {
                     FlowRow(modifier = Modifier.padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        row.choiceDates.forEach { date ->
+                        choiceDates.forEach { date ->
                             FilledTonalButton(onClick = { save(date.toString()) }, enabled = !saving) {
                                 Text(formatDate(date, currentLocale(), DateStyle.Short))
                             }
@@ -314,7 +318,7 @@ private fun FactRow(
 
     if (editing && editor == EditorKind.Date) {
         TargetDatePicker(
-            today = LocalDate.now(goalZone(timeZone)),
+            today = today,
             initial = runCatching { LocalDate.parse(editValue) }.getOrNull(),
             onDismiss = { onEdit(false) },
             onPick = { save(it.toString()) },

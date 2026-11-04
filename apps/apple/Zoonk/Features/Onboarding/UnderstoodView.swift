@@ -25,7 +25,7 @@ struct ReadDraftView: View {
         create {
           try await onboarding.createGoals(
             understood.startableGoals(limit: draft.activeGoalLimit).map(\.draft.value1),
-            schedule: understood.schedule, sourceIDs: sourceIDs)
+            schedule: understood.schedule, sourceIDs: sourceIDs, timeZone: draft.timeZone)
         } then: {
           onCreated($0)
         }
@@ -340,17 +340,34 @@ private struct UnderstoodRowView: View {
       VStack(alignment: .leading, spacing: 10) {
         fact
 
-        if row.suggestedDate != nil || !row.choiceDates.isEmpty {
+        if suggestedDate != nil || !choiceDates.isEmpty {
           dateChoices
         }
       }
     }
   }
 
+  /// Only days core would save are offered.
+  private var dateRange: ClosedRange<Date> {
+    GoalDate.range(today: GoalDate.today(now: .now, timeZone: timeZone))
+  }
+
+  private var suggestedDate: String? {
+    row.suggestedDate.flatMap { offers($0) ? $0 : nil }
+  }
+
+  private var choiceDates: [String] {
+    row.choiceDates.filter(offers)
+  }
+
+  private func offers(_ date: String) -> Bool {
+    UnderstoodRows.day(date).map(dateRange.contains) ?? false
+  }
+
   private var dateChoices: some View {
     VStack(alignment: .leading, spacing: 6) {
       ButtonRow {
-        if let suggested = row.suggestedDate {
+        if let suggested = suggestedDate {
           Button {
             use(suggested)
           } label: {
@@ -358,7 +375,7 @@ private struct UnderstoodRowView: View {
           }
         }
 
-        ForEach(row.choiceDates, id: \.self) { date in
+        ForEach(choiceDates, id: \.self) { date in
           Button {
             use(date)
           } label: {
