@@ -9,6 +9,7 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type HelpLimit, HelpLimitNotice } from "../../_components/help-limit-notice";
 import { AnswersSaveError } from "../../_components/save-error";
+import { StatusRegion } from "../../_components/status-region";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../../_components/step-card";
 import { TaskMeta } from "../../_components/task-meta";
 import { useFormatDuration } from "../../_utils/time-format";
@@ -72,13 +73,17 @@ function FocusTestIntro({
       closeOnEscape
       exitHref={closeHref}
       footer={
-        limit ? (
-          <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
-        ) : (
-          <TaskMainButton busy={preparing?.starting ?? false} onClick={onStart}>
-            {preparing?.starting ? t("Starting…") : t("Start the test")}
-          </TaskMainButton>
-        )
+        <>
+          <StatusRegion>
+            {limit && <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />}
+          </StatusRegion>
+
+          {!limit && (
+            <TaskMainButton busy={preparing?.starting ?? false} onClick={onStart}>
+              {preparing?.starting ? t("Starting…") : t("Start the test")}
+            </TaskMainButton>
+          )}
+        </>
       }
     >
       <StepCard>
@@ -208,7 +213,12 @@ function FocusTestRun({
       ? {
           ended: limit !== null || writing.status === "failed" || writing.status === "ready",
           total,
-          waiting: limit ? <FocusTestLimited limit={limit} /> : <FocusTestWaiting run={writing} />,
+          waiting: (
+            <>
+              <StatusRegion>{limit && <FocusTestLimited limit={limit} />}</StatusRegion>
+              {!limit && <FocusTestWaiting run={writing} />}
+            </>
+          ),
         }
       : null;
 
