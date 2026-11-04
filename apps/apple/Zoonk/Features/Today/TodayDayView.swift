@@ -87,11 +87,20 @@ struct TodayDayView: View {
   }
 
   private var header: some View {
-    Section {
-      PageHeader(Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine)
-      {
-        if let dayTime {
-          BigQuantity(dayTime)
+    let lead = TodayDayLead(view: view)
+
+    return Section {
+      VStack(alignment: .leading, spacing: 6) {
+        PageHeader(
+          Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine
+        ) {
+          if let dayTime {
+            BigQuantity(dayTime)
+          }
+        }
+
+        if view.dayLeadJoinsHeader, !lead.isEmpty {
+          lead
         }
       }
     }
