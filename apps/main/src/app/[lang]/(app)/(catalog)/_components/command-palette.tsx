@@ -7,6 +7,7 @@ import { useGoToStudyDestination } from "@/lib/session/use-study-navigation";
 import { useContentFeedback } from "@zoonk/learn/feedback";
 import { useGoalSwitchTransition } from "@zoonk/learn/goal-switcher";
 import { useAppLocale } from "@zoonk/learn/locale";
+import { useChangeSaveErrorMessage } from "@zoonk/learn/save-error";
 import {
   Command,
   CommandDialog,
@@ -20,6 +21,7 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import { listenForCommandPaletteOpen } from "@zoonk/ui/lib/command-palette-event";
+import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -86,12 +88,14 @@ function useContinueFromPalette() {
 
   return (sessionId: string) => {
     startTransition(async () => {
-      const destination = await openStudyBlockAction({
-        target: { kind: "next", sessionId },
-        timeZone: getLocalTimeZone(),
-      });
-
-      const opened = await go(destination);
+      const { data: opened } = await safeAsync(async () =>
+        go(
+          await openStudyBlockAction({
+            target: { kind: "next", sessionId },
+            timeZone: getLocalTimeZone(),
+          }),
+        ),
+      );
 
       if (!opened) {
         showErrorToast(t("Couldn't open your next step. Try again."));
@@ -153,6 +157,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   const t = useExtracted();
   const locale = useAppLocale();
   const contentFeedback = useContentFeedback();
+  const saveError = useChangeSaveErrorMessage();
   const [, startGoalSwitch] = useGoalSwitchTransition();
   const continueSession = useContinueFromPalette();
 
@@ -205,7 +210,11 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
 
     if (item.kind === "goal") {
       startGoalSwitch(async () => {
-        await shown.learner?.onSwitchGoal(item.goalId);
+        const { error } = await safeAsync(async () => shown.learner?.onSwitchGoal(item.goalId));
+
+        if (error) {
+          showErrorToast(saveError);
+        }
       });
 
       return;

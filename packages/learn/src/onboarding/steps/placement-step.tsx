@@ -184,10 +184,10 @@ export function PlacementStep({
   const finish = (fromScratch: boolean, stopMockId: string | null = null) =>
     startTransition(async () => {
       if (stopMockId) {
-        await actions.stopPlacementMock(stopMockId);
+        await safeAsync(() => actions.stopPlacementMock(stopMockId));
       }
 
-      await actions.finishPlacement({ fromScratch, goalId });
+      await safeAsync(() => actions.finishPlacement({ fromScratch, goalId }));
       onDone();
     });
 
@@ -218,12 +218,9 @@ export function PlacementStep({
     (question: PlacementQuestion, answered: number) =>
     (choice: PlacementAnswer, durationMs: number) =>
       startTransition(async () => {
-        const outcome = await actions.answerPlacement({
-          answer: choice,
-          durationMs,
-          goalId,
-          itemId: question.itemId,
-        });
+        const outcome = await actions
+          .answerPlacement({ answer: choice, durationMs, goalId, itemId: question.itemId })
+          .catch((): PlacementOutcome => ({ status: "failed" }));
 
         setAnswerFailed(outcome.status === "failed");
 

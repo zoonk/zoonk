@@ -2,6 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
+import { safeAsync } from "@zoonk/utils/error";
 import { ArrowUpRightIcon, PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
@@ -76,7 +77,8 @@ function RowEditor({
 
         startSaving(async () => {
           setFailed(false);
-          setFailed(!(await onSave(value.trim())));
+          const { data: saved } = await safeAsync(() => onSave(value.trim()));
+          setFailed(!saved);
         });
       }}
     >
@@ -113,14 +115,19 @@ function SuggestedDate({
   onSave: (value: string) => Promise<boolean>;
 }) {
   const [failed, setFailed] = useState(false);
+  const [isSaving, startSaving] = useTransition();
 
   return (
     <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
       <UseDateButton
-        onUse={async () => {
-          setFailed(false);
-          setFailed(!(await onSave(date)));
-        }}
+        disabled={isSaving}
+        onUse={() =>
+          startSaving(async () => {
+            setFailed(false);
+            const { data: saved } = await safeAsync(() => onSave(date));
+            setFailed(!saved);
+          })
+        }
       />
       {failed && <ChangeSaveError />}
     </div>
@@ -148,7 +155,8 @@ function ChoiceDates({
           onClick={() =>
             startSaving(async () => {
               setFailed(false);
-              setFailed(!(await onSave(date)));
+              const { data: saved } = await safeAsync(() => onSave(date));
+              setFailed(!saved);
             })
           }
           size="sm"

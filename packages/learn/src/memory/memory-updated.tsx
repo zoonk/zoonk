@@ -7,6 +7,7 @@ import {
 } from "@zoonk/core/memory/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { BrainIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -73,7 +74,8 @@ export function MemoryUpdated({
 
   const undo = () => {
     startTransition(async () => {
-      setStatus((await onUndo(toMemoryChangeReferences(changes))) ? "undone" : "failed");
+      const { data: undone } = await safeAsync(() => onUndo(toMemoryChangeReferences(changes)));
+      setStatus(undone ? "undone" : "failed");
     });
   };
 

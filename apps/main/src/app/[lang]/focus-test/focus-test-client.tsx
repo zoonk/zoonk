@@ -113,7 +113,9 @@ export function FocusTestClient({
 
   const start = () =>
     startTransition(async () => {
-      const result = await requestFocusTestWriting(page.goalId);
+      const result = await requestFocusTestWriting(page.goalId).catch((): QuestionWriting => ({
+        status: "failed",
+      }));
 
       if (result.status === "ready") {
         router.replace(getTestHref({ page, run: null }));

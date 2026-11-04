@@ -117,7 +117,7 @@ export function TestOutPreparingClient({
       const result = await requestTestOutWriting({
         chapterId: page.chapterId,
         goalId: page.goalId,
-      });
+      }).catch((): QuestionWriting => ({ status: "failed" }));
 
       if (result.status === "ready") {
         router.refresh();

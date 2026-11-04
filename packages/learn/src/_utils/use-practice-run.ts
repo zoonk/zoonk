@@ -11,7 +11,7 @@ export function usePracticeRun(run: () => Promise<AreaPracticeOutcome>) {
 
   const practice = () => {
     startTransition(async () => {
-      setOutcome(await run());
+      setOutcome(await run().catch((): AreaPracticeOutcome => "failed"));
     });
   };
 

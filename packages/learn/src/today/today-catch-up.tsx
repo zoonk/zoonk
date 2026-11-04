@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -45,7 +46,8 @@ export function CatchUpLater() {
 
   const catchUp = () =>
     startTransition(async () => {
-      setFailed(!(await actions.catchUp()));
+      const { data: added } = await safeAsync(actions.catchUp);
+      setFailed(!added);
     });
 
   return (

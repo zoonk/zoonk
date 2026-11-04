@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
 import { LearnLink } from "../learn-link";
@@ -32,7 +33,7 @@ export function RowOpen({
 
   const open = () => {
     startTransition(async () => {
-      await actions.openBlock(block);
+      await safeAsync(() => actions.openBlock(block));
     });
   };
 

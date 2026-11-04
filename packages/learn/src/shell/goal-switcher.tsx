@@ -12,11 +12,14 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { ChevronDownIcon, LayoutGridIcon, LightbulbIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "react";
+import { useChangeSaveErrorMessage } from "../_components/save-error";
 import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
@@ -182,6 +185,7 @@ export function GoalSwitcher({
   waitingGoals: WaitingGoal[];
 }) {
   const t = useExtracted("goalSwitcher");
+  const saveError = useChangeSaveErrorMessage();
   const [isPending, startTransition] = useGoalSwitchTransition();
   const followed = goals.filter((goal) => goal.kind !== "explain");
   const explanations = goals.filter((goal) => goal.kind === "explain");
@@ -199,7 +203,12 @@ export function GoalSwitcher({
 
     startTransition(async () => {
       setSelectedId(goalId);
-      await onSelect(goalId);
+      const { error } = await safeAsync(() => onSelect(goalId));
+
+      // Said in a toast: the menu has closed by then.
+      if (error) {
+        showErrorToast(saveError);
+      }
     });
   };
 
@@ -245,7 +254,11 @@ export function GoalSwitcher({
                 key={goal.id}
                 onStart={(waitingGoalId) =>
                   startTransition(async () => {
-                    await onStartWaiting(waitingGoalId);
+                    const { error } = await safeAsync(() => onStartWaiting(waitingGoalId));
+
+                    if (error) {
+                      showErrorToast(saveError);
+                    }
                   })
                 }
               />

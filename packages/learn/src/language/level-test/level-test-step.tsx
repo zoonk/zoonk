@@ -188,7 +188,7 @@ export function LanguageLevelTestStep({
   const finish = () =>
     startTransition(async () => {
       setStopFailed(false);
-      await actions.finish();
+      await safeAsync(actions.finish);
       onDone();
     });
 

@@ -133,7 +133,7 @@ export function MaterialQuestions({
         language: locale,
         question: trimmed,
         sourceIds: sources.map((source) => source.id),
-      });
+      }).catch((): MaterialQuestionOutcome => ({ status: "failed" }));
 
       setTurns((previous) => [
         ...previous,

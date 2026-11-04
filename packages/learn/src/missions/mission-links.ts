@@ -2,6 +2,7 @@
 
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type DayMission, type Mission } from "@zoonk/core/sessions/missions";
+import { safeAsync } from "@zoonk/utils/error";
 import { useTransition } from "react";
 
 export type MissionView = Mission | DayMission;
@@ -71,7 +72,7 @@ export function useMissionOpen({
         ? {
             open: () =>
               startTransition(async () => {
-                await open();
+                await safeAsync(open);
               }),
             pending,
           }

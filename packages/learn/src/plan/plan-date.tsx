@@ -140,7 +140,7 @@ export function PlanDate() {
           <p className="text-muted-foreground">
             {noticeDayText({ ...noticeDay, document: plan.examDocument })}
           </p>
-          <UseDateButton onUse={() => setDate(noticeDay.date)} />
+          <UseDateButton disabled={isPending} onUse={() => void setDate(noticeDay.date)} />
         </div>
       )}
 

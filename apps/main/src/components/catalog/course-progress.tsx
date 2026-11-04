@@ -8,8 +8,11 @@ import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
+import { useChangeSaveErrorMessage } from "@zoonk/learn/save-error";
 import { StatusMark } from "@zoonk/learn/status-mark";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
 import { ArrowRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -130,6 +133,7 @@ function useCourseGoal(courseId: string): LearnerSummaryGoal | null {
 export function CourseContinueLink({ courseId }: { courseId: string }) {
   const t = useExtracted();
   const router = useRouter();
+  const saveError = useChangeSaveErrorMessage();
   const goal = useCourseGoal(courseId);
   const [isPending, startTransition] = useTransition();
 
@@ -158,7 +162,13 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
 
   const continueGoal = () => {
     startTransition(async () => {
-      await switchGoal(goal.id);
+      const { error } = await safeAsync(() => switchGoal(goal.id));
+
+      if (error) {
+        showErrorToast(saveError);
+        return;
+      }
+
       router.push("/today");
     });
   };

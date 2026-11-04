@@ -61,7 +61,11 @@ function InstrumentDraft({
       isStarting={creation.isCreating}
       onJoinWaitlist={() =>
         startJoining(async () => {
-          setWaitlist(await actions.joinWaitlist({ instrument, language: locale }));
+          setWaitlist(
+            await actions
+              .joinWaitlist({ instrument, language: locale })
+              .catch((): WaitlistOutcome => "failed"),
+          );
         })
       }
       onStartMusicianship={() => creation.run(() => createMusicianship({ draft, instrument }))}

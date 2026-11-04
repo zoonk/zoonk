@@ -168,10 +168,19 @@ export function StepsFlow({
   };
 
   const startOver = () => {
-    setSending({ open: true, step: state.current });
+    const step = state.current;
+    setSending({ open: true, step });
+    setFailed(null);
 
     startTransition(async () => {
-      await actions.startOver(state.view.goalIds);
+      const { error } = await safeAsync(() => actions.startOver(state.view.goalIds));
+
+      if (error) {
+        setSending({ open: false, step });
+        setFailed({ dayTooShort: null, step });
+        return;
+      }
+
       navigation.toStart();
     });
   };
