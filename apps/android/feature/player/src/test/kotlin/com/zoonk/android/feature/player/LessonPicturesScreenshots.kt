@@ -81,6 +81,17 @@ class LessonPicturesScreenshots {
         capture("pending-diagram-phone", ActivityFixtures.step("labeledDiagram").copy(image = null, imagePending = true))
 
     @Test
+    @Config(qualifiers = "w411dp-h2400dp-xhdpi")
+    fun phoneQuestionAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("pending-question-phone-font200", questionDrawing())
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun tabletQuestionDark() = capture("pending-question-tablet-dark", questionDrawing())
+
+    @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tabletQuestion() = capture("pending-question-tablet", questionDrawing())
 }

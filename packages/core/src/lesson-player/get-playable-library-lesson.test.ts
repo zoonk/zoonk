@@ -360,6 +360,35 @@ describe(getPlayableLibraryLesson, () => {
     expect(steps[0]?.kind === "explanation" && steps[0].content.explore).toBeUndefined();
   });
 
+  it("serves a check's setup picture and reserves a pending picture without one", async () => {
+    const image = { alt: "Two atoms sharing a pair of electrons", prompt: "A covalent bond" };
+    const asset = await mediaAssetFixture({ height: 1024, width: 1536 });
+
+    const { lesson } = await playableLessonFixture({
+      steps: [
+        { content: { ...playableStepContent.check, image }, kind: "check", mediaAssetId: asset.id },
+        { content: { ...playableStepContent.check, image }, kind: "check" },
+      ],
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+    expect(steps[0]).toMatchObject({
+      content: { image },
+      image: { alt: image.alt, height: 1024, id: asset.id, url: asset.url, width: 1536 },
+      imagePending: false,
+      kind: "check",
+    });
+
+    expect(steps[1]).toMatchObject({
+      content: { image },
+      image: null,
+      imagePending: true,
+      kind: "check",
+    });
+  });
+
   it("drops screens it can't serve instead of failing the lesson", async () => {
     const { lesson } = await playableLessonFixture({
       steps: [

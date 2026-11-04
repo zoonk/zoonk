@@ -1,4 +1,7 @@
-import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
+import {
+  pictureCheckContent,
+  playableStepContent,
+} from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import { atViewport } from "../_test-utils/browser-viewport";
@@ -168,6 +171,43 @@ describe("a drawn lesson picture", () => {
 
       expect(boxOf(imageOf(alt))).toStrictEqual(drawing);
       expect(topOf(QUESTION)).toBe(questionTop);
+    });
+  });
+
+  it("keeps a check's answer and its setup in place when an optional picture arrives", async () => {
+    await atViewport(PHONE, async () => {
+      const getLessonPictures = pollPictures();
+      const held = await heldPicture();
+      const alt = "Two atoms sharing a pair of electrons";
+
+      const step = contentStep("check", {
+        content: { ...playableStepContent.check, image: { alt, prompt: alt } },
+        imagePending: true,
+      });
+
+      const lesson = buildLesson([step]);
+
+      renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
+
+      await expect.element(page.getByText("Drawing the picture…")).toBeVisible();
+      const drawing = boxOf(document.querySelector('[data-slot="media-pending"]') ?? document.body);
+      const questionTop = topOf(step.content.question);
+      const option = page.getByRole("radio", { name: step.content.options[0]?.text });
+      await option.click();
+      await expect.element(option).toBeChecked();
+
+      getLessonPictures.mockResolvedValue([
+        { image: picture({ alt, shape: "scene", url: held.url }), stepId: step.id },
+      ]);
+
+      await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
+      await expect.poll(() => document.querySelector(`img[alt="${alt}"]`)).not.toBeNull();
+
+      expect(boxOf(imageOf(alt))).toStrictEqual(drawing);
+      expect(topOf(step.content.question)).toBe(questionTop);
+      await expect.element(option).toBeChecked();
+      await page.getByRole("button", { name: /^Check/u }).click();
+      await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
     });
   });
 
