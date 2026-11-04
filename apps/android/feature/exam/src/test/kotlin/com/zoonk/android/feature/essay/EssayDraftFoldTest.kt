@@ -25,6 +25,7 @@ import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -70,6 +71,36 @@ class EssayDraftFoldTest {
 
         restoration.emulateSavedInstanceStateRestore()
         publish(fold = false)
+        box().assert(hasText(text)).assertSelection(cursor)
+        assertEquals(scrolled, page().scrollValue())
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp")
+    fun theDraftWithSourceTextsKeepsItsPlaceWhenTheLayoutChanges() {
+        val read = essay(withTexts = true)
+        val viewModel = essayViewModel(read, drafts.root)
+        rule.setContent {
+            ZoonkTheme {
+                val ui by viewModel.ui.collectAsStateWithLifecycle()
+                EssayWrite(read, ui, finishing = false, finishFailed = false, viewModel, rememberAppNavigator())
+            }
+        }
+        val cursor = TextRange(text.length / 2)
+        box().performTextInput(text)
+        box().performTextInputSelection(cursor)
+        box().assertSelection(cursor)
+
+        publish(fold = true)
+        box().assert(hasText(text)).assertSelection(cursor)
+        page().performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, -SCROLL_ALL) }
+        page().performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, SCROLLED) }
+        val scrolled = page().scrollValue()
+        assertTrue(scrolled > 0f)
+
+        publish(fold = false)
+        box().assert(hasText(text)).assertSelection(cursor)
+        publish(fold = true)
         box().assert(hasText(text)).assertSelection(cursor)
         assertEquals(scrolled, page().scrollValue())
     }

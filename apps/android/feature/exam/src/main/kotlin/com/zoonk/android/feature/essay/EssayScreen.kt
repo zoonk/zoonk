@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.essay
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -218,6 +219,10 @@ internal fun EssayWrite(
     val rewriting = ui.drafts.orEmpty().isNotEmpty()
     val box = remember { FocusRequester() }
     val moveFocus = rememberMoveFocus()
+    // The learner's cursor and scroll outlive the layouts that move the field.
+    var value by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(ui.text)) }
+    val scroll = rememberScrollState()
+    val boxScroll = rememberScrollState()
 
     LaunchedEffect(Unit) { if (ui.switched) moveFocus(box) }
 
@@ -279,7 +284,20 @@ internal fun EssayWrite(
                         null
                     },
             ) { beside ->
-                EssayWriteColumn(essay, ui, rubric, inlineTexts = texts.takeUnless { beside }, fill = beside, fold, box, viewModel)
+                EssayWriteColumn(
+                    essay,
+                    ui,
+                    rubric,
+                    inlineTexts = texts.takeUnless { beside },
+                    fill = beside,
+                    fold,
+                    box,
+                    value,
+                    onValueChange = { value = it },
+                    scroll,
+                    boxScroll,
+                    viewModel,
+                )
             }
         }
     }
@@ -298,6 +316,10 @@ private fun EssayWriteColumn(
     fill: Boolean,
     fold: PageFold?,
     box: FocusRequester,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    scroll: ScrollState,
+    boxScroll: ScrollState,
     viewModel: EssayViewModel,
 ) {
     val prompt: @Composable ColumnScope.() -> Unit = {
@@ -313,28 +335,23 @@ private fun EssayWriteColumn(
         }
     }
     val guide: @Composable ColumnScope.() -> Unit = { ui.grade?.let { RewriteGuide(it, viewModel::seeGrade) } }
-    // The one column keeps its own scroll, so folding back finds it where the learner left it.
-    val scroll = rememberScrollState()
-    val boxScroll = rememberScrollState()
-
     BoxWithConstraints {
         if (fill && maxHeight >= FILL_HEIGHT) {
             Column(Modifier.fillMaxSize().padding(vertical = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Column(Modifier.runColumn().weight(1f), verticalArrangement = Arrangement.spacedBy(24.dp)) {
                     prompt()
                     guide()
-                    EssayBox(ui, rubric, box, viewModel::write, Modifier.weight(1f).heightIn(min = BOX_MIN_HEIGHT))
+                    EssayBox(ui, rubric, box, value, onValueChange, viewModel::write, Modifier.weight(1f).heightIn(min = BOX_MIN_HEIGHT))
                 }
             }
         } else {
-            // The box's page is the one column's place, so the draft keeps its cursor as the book opens or closes.
             RunPage(
                 if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true },
                 if (fold == null) scroll else boxScroll,
             ) {
                 if (fold == null) prompt()
                 guide()
-                EssayBox(ui, rubric, box, viewModel::write, Modifier.heightIn(min = BOX_HEIGHT))
+                EssayBox(ui, rubric, box, value, onValueChange, viewModel::write, Modifier.heightIn(min = BOX_HEIGHT))
             }
             if (fold != null) RunPage(Modifier.width(fold.start).semantics { isTraversalGroup = true }, content = prompt)
         }
@@ -402,17 +419,16 @@ private fun EssayBox(
     ui: EssayUi,
     rubric: EssayRubric,
     focus: FocusRequester,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     onWrite: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val label = if (ui.drafts.orEmpty().isNotEmpty()) stringResource(R.string.essay_rewrite_label) else writingName(rubric)
-    // The text is the view model's; the cursor is saved here, so it stays where it was through a fold.
-    var value by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(ui.text)) }
-
     OutlinedTextField(
         value = value.copy(text = ui.text),
         onValueChange = {
-            value = it
+            onValueChange(it)
             if (it.text != ui.text) onWrite(it.text)
         },
         modifier = modifier.fillMaxWidth().focusRequester(focus),
