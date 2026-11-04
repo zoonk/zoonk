@@ -255,7 +255,9 @@ private struct BuddyContent: View {
       Text(
         "Hi! I'm \(name), your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan.",
         tableName: "Buddy",
-        comment: "The buddy's hello at the top of its conversation; the argument is its name")
+        comment: "The buddy's hello at the top of its conversation; the argument is its name"
+      )
+      .typeStyle(.message)
 
       if store.saveFailed {
         Text(

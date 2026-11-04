@@ -46,8 +46,12 @@ extension TypeStyle {
     size: 18, relativeTo: .body, weight: .regular, lineHeight: 1.625)
   /// Main's `text-lead`, in the secondary color.
   static let lead = TypeStyle(size: 17, relativeTo: .body, weight: .regular, tracking: -0.01)
-  /// Running text read for itself: the buddy's words, a question's context.
+  /// Running text read for itself: a question's context.
   static let reading = TypeStyle(size: 16, relativeTo: .callout, weight: .regular)
+  /// The buddy's words on its page, its hello included; a panel's answers stay in `.body`, as
+  /// main's.
+  static let message = TypeStyle(
+    size: 15, relativeTo: .subheadline, weight: .regular, lineHeight: 1.55)
   /// A long answer the learner writes, main's essay box: reading size with relaxed lines.
   static let writing = TypeStyle(
     size: 16, relativeTo: .callout, weight: .regular, lineHeight: 1.625)

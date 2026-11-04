@@ -81,7 +81,7 @@ private struct EarlierQuestionRow: View {
 
       if let answer = question.answer {
         TutorAnswerText(text: answer, linksEnabled: false, buddyName: "")
-          .typeStyle(.body)
+          .typeStyle(.message)
           .accessibilityLabel(Text(answer))
       } else {
         Text(

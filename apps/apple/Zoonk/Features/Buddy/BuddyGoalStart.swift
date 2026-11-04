@@ -18,7 +18,9 @@ struct BuddyGoalStart: View {
         Text(
           "Hi! I'm \(name), your AI study buddy. What do you want to learn, and by when? I'll turn it into a plan for every day until then.",
           tableName: "Buddy",
-          comment: "The buddy's hello before the learner has a goal; the argument is its name")
+          comment: "The buddy's hello before the learner has a goal; the argument is its name"
+        )
+        .typeStyle(.message)
 
         if case .loaded = store.earlierQuestions.state {
           Button {
