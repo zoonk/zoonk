@@ -48,7 +48,8 @@ Geist and Geist Mono, bundled in `:core:resources` (`res/font/`) and set in `ui/
 | Readout (`BigQuantity`); a moment's leading number       | `headlineSmall`; `displayMedium` (`Readout` adds tabular figures and draws the words smaller and medium in `onSurfaceVariant`) |
 | Section (`text-section`), a top app bar's title          | `titleLarge`                                                                                                                   |
 | Section title (`PageSectionTitle`)                       | `zoonkType.sectionTitle` (`SectionHeader`)                                                                                     |
-| Reading (the buddy's words, a question's context)        | `bodyLarge`                                                                                                                    |
+| Reading (a question's context)                           | `bodyLarge`                                                                                                                    |
+| The buddy's words on its page (panel: `bodyMedium`)      | `zoonkType.message`                                                                                                            |
 | Body (`text-sm`)                                         | `bodyMedium`                                                                                                                   |
 | Row title, description (`ListRowTitle`, `-Description`)  | `titleSmall`, `bodySmall` (`ListRow` sets both); Today's queue too                                                             |
 | Data that lines up (`ListRowTrailing`, section details)  | `zoonkType.data` (Geist Mono); a line of facts (`TaskMeta`) is `Facts`                                                         |

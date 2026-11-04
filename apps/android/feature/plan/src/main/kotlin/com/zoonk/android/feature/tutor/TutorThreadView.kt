@@ -45,6 +45,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -70,6 +71,7 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.MarkdownText
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudyMission
 import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.launch
@@ -208,7 +210,7 @@ private fun Turns(
                     sending.about.takeIf { page == null },
                     identity.takeIf { page == null },
                     day?.let { { DayLabel(it, today) } },
-                ) { Thinking() }
+                ) { Thinking(answerWords(inPanel = page == null)) }
             }
         }
         state.missionMoment?.facts()?.takeIf { it.shows }?.let { facts ->
@@ -260,7 +262,7 @@ fun TutorGreeting(
     action: (@Composable () -> Unit)? = null,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(text, style = MaterialTheme.typography.bodyLarge)
+        Text(text, style = MaterialTheme.zoonkType.message)
         action?.invoke()
     }
 }
@@ -307,7 +309,7 @@ private fun TurnView(
             Modifier.semantics { if (finished) liveRegion = LiveRegionMode.Polite },
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Answer(turn, vm, state, routes, others)
+            Answer(turn, vm, state, routes, others, answerWords(inPanel))
         }
         if (turn.answer != null || turn.status != TutorTurn.Status.Running) {
             val change = turn.planChange
@@ -381,6 +383,7 @@ private fun Answer(
     state: TutorConversationState,
     routes: TutorRoutes,
     others: Int,
+    words: TextStyle,
 ) {
     val streaming = state.answeringId == turn.id
     val busy = state.answeringId != null || state.asking
@@ -396,7 +399,7 @@ private fun Answer(
         }
 
         turn.status == TutorTurn.Status.Failed -> {
-            turn.answer?.let { AnswerText(it, linksChecked, routes.open) }
+            turn.answer?.let { AnswerText(it, linksChecked, routes.open, words) }
             if (failure?.helpLimit != null) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
@@ -414,7 +417,7 @@ private fun Answer(
         }
 
         answer != null -> {
-            AnswerText(answer, linksChecked, routes.open)
+            AnswerText(answer, linksChecked, routes.open, words)
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
 
@@ -422,19 +425,23 @@ private fun Answer(
             Text(
                 stringResource(R.string.tutor_no_answer),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge,
+                style = words,
             )
         }
 
         else -> {
-            Thinking()
+            Thinking(words)
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
     }
 }
 
+/** Main's buddy page draws its answers at 15px; a panel's stay in the body size. */
 @Composable
-private fun Thinking() {
+private fun answerWords(inPanel: Boolean): TextStyle = if (inPanel) MaterialTheme.typography.bodyMedium else MaterialTheme.zoonkType.message
+
+@Composable
+private fun Thinking(words: TextStyle) {
     Row(
         Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -444,7 +451,7 @@ private fun Thinking() {
         Text(
             stringResource(R.string.tutor_thinking),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyLarge,
+            style = words,
         )
     }
 }
@@ -459,6 +466,7 @@ fun AnswerText(
     answer: String,
     linksChecked: Boolean,
     onOpenRoute: (AppRoute) -> Unit,
+    style: TextStyle = MaterialTheme.zoonkType.message,
 ) {
     var asked by remember { mutableStateOf<String?>(null) }
     val open: (String) -> Unit = { url ->
@@ -473,7 +481,7 @@ fun AnswerText(
     MarkdownText(
         markdown = answer,
         onOpenLink = open.takeIf { linksChecked },
-        style = MaterialTheme.typography.bodyLarge,
+        style = style,
     )
 
     asked?.let { url -> ExternalLink(url, onDismiss = { asked = null }) }

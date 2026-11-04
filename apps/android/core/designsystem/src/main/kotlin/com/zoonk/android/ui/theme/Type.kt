@@ -79,7 +79,7 @@ internal val ZoonkMaterialTypography =
             titleMedium = titleMedium.role(16f, 500, 24f),
             // A row's title (`ListRowTitle`), and what titles a card or an item.
             titleSmall = titleSmall.role(14f, 500, 20f),
-            // Reading: the buddy's words, a question's context, Today's queue.
+            // Reading: a question's context, Today's queue.
             bodyLarge = bodyLarge.role(16f, 400, 24f),
             // The app's body (`text-sm`).
             bodyMedium = bodyMedium.role(14f, 400, 20f),
@@ -115,6 +115,8 @@ data class ZoonkTypography(
     val verdict: TextStyle,
     /** The word on a checked answer option (`ANSWER_TAG_CLASS`). */
     val tag: TextStyle,
+    /** The buddy's words on its page, its hello included; a panel's answers stay `bodyMedium`, as main's. */
+    val message: TextStyle,
 )
 
 internal val ZoonkTypeRoles =
@@ -129,6 +131,7 @@ internal val ZoonkTypeRoles =
             question = titleMedium.role(19f, 560, 25.65f, -0.02f),
             verdict = labelLarge.role(15f, 550, 24f),
             tag = labelSmall.role(11.5f, 550, 16f),
+            message = bodyLarge.role(15f, 400, 23.25f),
         )
     }
 
