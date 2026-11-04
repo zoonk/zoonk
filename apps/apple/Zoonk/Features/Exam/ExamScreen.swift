@@ -136,7 +136,8 @@ private struct ExamList: View {
     }
   }
 
-  /// Main's order: the map with the mocks, then speaking, then its aside (the format and scoring).
+  /// Main's order: the map with the mocks, then speaking, then its aside (the format, scoring and
+  /// the date note).
   @ViewBuilder
   private var about: some View {
     if exam.format.isEmpty, let map = exam.map, !map.subjects.isEmpty {
@@ -150,6 +151,7 @@ private struct ExamList: View {
     }
 
     ExamScoringSection(exam: exam)
+    ExamDateNote(exam: exam)
   }
 }
 
@@ -205,12 +207,6 @@ private struct ExamHero: View {
         .buttonStyle(.mainAction)
         .controlSize(.large)
         .listRowSeparator(.hidden)
-      }
-    } footer: {
-      SectionFooter {
-        if let note = dateNote {
-          Text(note)
-        }
       }
     }
 
@@ -350,12 +346,40 @@ private struct ExamHero: View {
     return facts
   }
 
-  private var dateNote: String? {
+  private func useDate(_ date: String) async {
+    usingDate = true
+    dateFailed = false
+    defer { usingDate = false }
+
+    switch await plan.change(goalId: exam.goalId, edits: [.targetDate(date)]) {
+    case .done(.applied), .done(.undone), .done(.unchanged), .obsolete: break
+    case .done(.invalid), .failed: dateFailed = true
+    }
+  }
+}
+
+/// Main's date note at the end of the exam's aside: where the dates come from while they aren't
+/// official.
+private struct ExamDateNote: View {
+  let exam: ExamView
+
+  var body: some View {
+    if let note {
+      Section {
+      } footer: {
+        SectionFooter {
+          Text(note)
+        }
+      }
+    }
+  }
+
+  private var note: String? {
     guard !exam.days.isEmpty else { return nil }
     let notice = exam.examDocument == .notice
 
     if exam.namedMonth {
-      guard exam.noticeDay == nil else { return nil }
+      guard exam.noticeDay == nil, exam.noSitting == nil else { return nil }
       return notice
         ? String(
           localized: "The month you told us. We'll tell you the day once the notice sets it.",
@@ -374,17 +398,6 @@ private struct ExamHero: View {
       : String(
         localized: "Estimated from past editions. We'll tell you when the official dates are out.",
         table: "Exam", comment: "Estimated days, before the calendar")
-  }
-
-  private func useDate(_ date: String) async {
-    usingDate = true
-    dateFailed = false
-    defer { usingDate = false }
-
-    switch await plan.change(goalId: exam.goalId, edits: [.targetDate(date)]) {
-    case .done(.applied), .done(.undone), .done(.unchanged), .obsolete: break
-    case .done(.invalid), .failed: dateFailed = true
-    }
   }
 }
 
