@@ -7765,7 +7765,7 @@
     },
     "/library/lessons/{lessonId}": {
       "get": {
-        "description": "A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs. The content includes the answers, so the app can give feedback at once. A language lesson leaves out the kinds of practice the learner's plan skips (words, listening, writing or speaking), so its screens change with the plan. The screens load only with a session, a guest's included (POST /guests): without one, a written lesson returns its outline with `status: \"sessionRequired\"`, so lessons can't be scraped. While the content is being written, returns the outline with `status: \"notGenerated\"`. A private lesson is only visible to its owner.",
+        "description": "A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs. The content includes the answers, so the app can give feedback at once. A language lesson leaves out the kinds of practice the learner's plan skips (words, listening, writing or speaking), unless only the summary would be left, so its screens change with the plan. The screens load only with a session, a guest's included (POST /guests): without one, a written lesson returns its outline with `status: \"sessionRequired\"`, so lessons can't be scraped. While the content is being written, returns the outline with `status: \"notGenerated\"`. A private lesson is only visible to its owner.",
         "operationId": "getLibraryLesson",
         "security": [
           {},
