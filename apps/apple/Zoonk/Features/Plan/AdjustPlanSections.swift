@@ -131,6 +131,12 @@ private struct PlanExamChoiceSection: View {
       options: choice.options.map(\.name), take: choice.take, names: picked)
 
     return Section {
+      // Main's quiet line over the options, not a second header line.
+      Text.examPickLimit(choice.take)
+        .typeStyle(.body)
+        .foregroundStyle(.mutedForeground)
+        .listRowSeparator(.hidden)
+
       ExamOptionToggles(
         options: choice.options, take: choice.take,
         picked: Binding(get: { picked }, set: { draft = $0 }))
@@ -146,15 +152,12 @@ private struct PlanExamChoiceSection: View {
       }
       .disabled(!picks.canSave(over: choice.subjects))
     } header: {
-      VStack(alignment: .leading, spacing: 2) {
+      SectionTitle(
         Text(
           "\(choice.group): which ones will you take?", tableName: "Plan",
           comment:
             "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
-        )
-        Text.examPickLimit(choice.take)
-          .typeWeight(.regular)
-      }
+        ))
     } footer: {
       SectionFooter {
         leftOut

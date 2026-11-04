@@ -29,6 +29,7 @@ struct StatTile<Icon: View>: View {
   /// From 0 to 1.
   var meter: Double?
   var spokenValue: Text?
+  var meterFill: Color = .brain
 
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
@@ -54,7 +55,7 @@ struct StatTile<Icon: View>: View {
       }
 
       if let meter {
-        Meter(value: meter, fill: .brain)
+        Meter(value: meter, fill: meterFill)
           .padding(.top, 4)
       }
     }
