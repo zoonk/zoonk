@@ -112,7 +112,7 @@ export async function loadStudySessionView({
             ),
           ],
           goalId: storedSession.goalId,
-          known: { plan: readGoalPlan(storedSession.goalId) },
+          known: { readPlan: readGoalPlan },
           now: new Date(),
           timeZone,
           userId,

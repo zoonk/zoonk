@@ -9,7 +9,7 @@ import { readGoalPlan } from "../_utils/read-goal-plan";
 import { pickPlacementItem } from "../placement/placement-item-choice";
 import { countSkippableItems, getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
 import { isTestOutPlusOnly } from "./_utils/test-out-access";
-import { type TestOutPlan, loadTestOutPlan } from "./_utils/test-out-plan";
+import { type TestOutPlanReader, loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   TEST_OUT_PASS_MARK,
   getQuestionsPerSkill,
@@ -70,16 +70,16 @@ function interleave(picks: readonly { itemIds: string[] }[]): string[] {
 export async function loadChapterTestOut({
   chapterId,
   goal,
-  plan: knownPlan,
+  readPlan,
   userId,
 }: {
   chapterId: string;
   goal: Pick<Goal, "createdAt" | "examBlueprintId" | "id" | "kind" | "timezone">;
   /** Only GET callers supply request facts; generation preconditions read the plan fresh. */
-  plan?: Promise<TestOutPlan>;
+  readPlan?: TestOutPlanReader;
   userId: string;
 }): Promise<Exclude<ChapterTestOutResult, { status: "unauthorized" }>> {
-  const plan = await loadTestOutPlan(goal.id, { goal, plan: knownPlan });
+  const plan = await loadTestOutPlan(goal.id, { goal, readPlan });
   const chapterSkills = getChapterSkills({ chapterId, plan });
 
   if (chapterSkills.length === 0) {
@@ -163,7 +163,7 @@ export async function getChapterTestOut({
   return loadChapterTestOut({
     chapterId,
     goal: owned.goal,
-    plan: readGoalPlan(goalId),
+    readPlan: readGoalPlan,
     userId: owned.userId,
   });
 }

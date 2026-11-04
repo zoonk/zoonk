@@ -160,7 +160,7 @@ export async function loadStudyBlock(
       ? loadBlockedTestOutChapters({
           chapterIds: [payload.chapterId],
           goalId: owned.session.goalId,
-          known: { plan: readGoalPlan(owned.session.goalId) },
+          known: { readPlan: readGoalPlan },
           now: new Date(),
           timeZone: getAnswerTimeZone({ goal: owned.session.goal }),
           userId: owned.userId,

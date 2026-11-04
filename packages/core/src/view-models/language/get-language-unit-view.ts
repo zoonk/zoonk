@@ -106,7 +106,7 @@ export async function getLanguageUnitView({
       ? loadBlockedTestOutChapters({
           chapterIds: [chapter.id],
           goalId: goal.id,
-          known: { goal, plan: readGoalPlan(goal.id) },
+          known: { goal, readPlan: readGoalPlan },
           now: new Date(),
           timeZone: getAnswerTimeZone({ goal }),
           userId,

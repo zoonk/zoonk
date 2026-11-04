@@ -33,13 +33,17 @@ async function loadTestOutItems(goalId: string): Promise<TestOutPlan> {
   };
 }
 
-/** GETs pass the request's plan (`readGoalPlan`); writes omit it to read after their own changes. */
+export type TestOutPlanReader = (goalId: string) => Promise<TestOutPlan>;
+
+/** GETs pass a plan they loaded or the request's reader (`readGoalPlan`); writes omit both to read after their own changes. */
 export async function loadTestOutPlan(
   goalId: string,
-  known: { goal?: Pick<Goal, "kind">; plan?: TestOutPlan | Promise<TestOutPlan> } = {},
+  known: { goal?: Pick<Goal, "kind">; plan?: TestOutPlan; readPlan?: TestOutPlanReader } = {},
 ): Promise<TestOutPlan> {
+  const { readPlan = loadTestOutItems } = known;
+
   const [plan, listening] = await Promise.all([
-    known.plan ?? loadTestOutItems(goalId),
+    known.plan ?? readPlan(goalId),
     known.goal && known.goal.kind !== "exam" ? new Set<string>() : loadListeningSkillIds(goalId),
   ]);
 

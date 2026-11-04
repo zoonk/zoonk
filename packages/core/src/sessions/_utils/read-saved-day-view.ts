@@ -47,7 +47,7 @@ export async function readSavedDayView({
         ...new Set(refill.blocks.flatMap((block) => readBlockPayload(block).chapterId ?? [])),
       ],
       goalId: session.goalId,
-      known: { plan: readGoalPlan(session.goalId) },
+      known: { readPlan: readGoalPlan },
       now: new Date(),
       timeZone,
       userId,
