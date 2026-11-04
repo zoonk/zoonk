@@ -14,8 +14,8 @@ import com.zoonk.android.ui.components.StatusMessage
 fun CatalogNotFound(navigator: AppNavigator) {
     StatusMessage(
         icon = R.drawable.ic_search_off,
-        title = stringResource(R.string.catalog_not_found_title),
-        description = stringResource(R.string.catalog_not_found_description),
+        title = stringResource(R.string.not_found_title),
+        description = stringResource(R.string.not_found_description),
     ) {
         Button(onClick = { navigator.open(AppRoute.Catalog()) }) { Text(stringResource(R.string.catalog_title)) }
     }

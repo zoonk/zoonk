@@ -114,7 +114,7 @@ private struct ConversationLoad: View {
       ProgressView()
         .navigationTitle(untitledCall)
     case .empty, .failed(.notFound):
-      CallNotHere()
+      NotFoundView()
         .navigationTitle(untitledCall)
     case .failed:
       CallLoadFailed {
@@ -146,19 +146,6 @@ private struct ConversationLoad: View {
 
   private var untitledCall: Text {
     Text("Conversation", tableName: "Voice", comment: "Names a call's screen until the call loads")
-  }
-}
-
-struct CallNotHere: View {
-  var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text(
-          "This call isn't here", tableName: "Voice", comment: "A conversation that doesn't exist")
-      } icon: {
-        Image(systemName: "phone.badge.waveform")
-      }
-    }
   }
 }
 
