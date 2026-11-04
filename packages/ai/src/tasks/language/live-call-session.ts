@@ -2,6 +2,7 @@ import "server-only";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { APICallError } from "ai";
 import { getLiveCallModel, liveCallFetch } from "./_utils/live-call-provider";
+import { type LiveCallTurn, getLiveCallStartupInput } from "./_utils/live-call-startup-input";
 import { LIVE_CALL_CREATE_TIMEOUT_MS, LiveCallCreationRefusedError } from "./live-call-creation";
 
 /** OpenAI answers a hangup within a second; one for a session that already ended took 6 s. */
@@ -53,17 +54,20 @@ export type LiveCallSession = { sdp: string; sessionId: string };
  * Callers authorize and fence the reservation; browser configuration never enters this boundary.
  * Rejects with `LiveCallCreationRefusedError` only when OpenAI itself refused the request.
  * `greeting` starts the session as developer input, so the character can speak first as soon as the
- * app's commentary cue arrives.
+ * app's commentary cue arrives. `turns`, the call so far, come before it only as the learner's and
+ * the character's own messages, never as instructions.
  */
 export async function createLiveCallSession({
   greeting,
   instructions,
   sdp,
+  turns,
   voice,
 }: {
   greeting: string;
   instructions: string;
   sdp: string;
+  turns: readonly LiveCallTurn[];
   voice: string;
 }): Promise<LiveCallSession> {
   const created = getLiveCallModel().doCreateWebRTCSession({
@@ -100,13 +104,7 @@ export async function createLiveCallSession({
             },
           },
           delegation: { type: "client" },
-          input: [
-            {
-              content: [{ text: greeting, type: "input_text" }],
-              role: "developer",
-              type: "message",
-            },
-          ],
+          input: getLiveCallStartupInput({ greeting, turns }),
           store: false,
         },
       },

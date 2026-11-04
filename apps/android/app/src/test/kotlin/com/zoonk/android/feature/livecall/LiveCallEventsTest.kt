@@ -106,7 +106,7 @@ class LiveCallEventsTest {
             ),
             turns,
         )
-        assertEquals(2L, turns.spokenSeconds)
+        assertEquals(1600.0, turns.spokenMs, 0.0)
     }
 
     @Test
@@ -122,16 +122,17 @@ class LiveCallEventsTest {
     }
 
     @Test
-    fun savedTurnsAreTrimmedCappedAndNeverBlank() {
+    fun savedTurnsAreTrimmedNeverBlankAndALongCallKeepsItsLatest() {
         val turns =
             listOf(TranscriptTurn(Speaker.LEARNER, "  ")) +
-                TranscriptTurn(Speaker.CHARACTER, " ${"a".repeat(2100)} ") +
-                List(310) { TranscriptTurn(Speaker.LEARNER, "Sí") }
+                List(300) { TranscriptTurn(Speaker.LEARNER, "Sí $it") } +
+                TranscriptTurn(Speaker.CHARACTER, " ${"a".repeat(2100)} ")
 
         val saved = turns.conversationTurns
 
         assertEquals(300, saved.size)
-        assertEquals(LanguageConversationTurn(Speaker.CHARACTER, "a".repeat(2000)), saved.first())
+        assertEquals("Sí 1", saved.first().text)
+        assertEquals(LanguageConversationTurn(Speaker.CHARACTER, "a".repeat(2000)), saved.last())
     }
 
     @Test

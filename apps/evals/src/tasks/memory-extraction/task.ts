@@ -40,10 +40,21 @@ function containsAny(text: string, keywords: readonly string[]): boolean {
   return keywords.some((keyword) => normalized.includes(normalizeString(keyword)));
 }
 
+/** Whole words, so "October 2" doesn't pass for "October 29". */
+function toWords(text: string): string {
+  return ` ${normalizeString(text).replaceAll(/[^\p{L}\d]+/gu, " ")} `;
+}
+
+function namesAnyDate(text: string, dates: readonly string[]): boolean {
+  const words = toWords(text);
+  return dates.some((date) => words.includes(toWords(date)));
+}
+
 function matchesExpected(fact: OutputFact, expected: ExpectedFact): boolean {
   return (
     expected.categories.some((category) => category === fact.category) &&
     containsAny(fact.statement, expected.keywords) &&
+    (!expected.dates || namesAnyDate(fact.statement, expected.dates)) &&
     fact.intent === (expected.intent ?? "remember") &&
     (!expected.expiresOn || expected.expiresOn.includes(fact.expiresOn ?? "")) &&
     (!expected.evidence || containsAny(fact.evidence, expected.evidence))
@@ -51,7 +62,8 @@ function matchesExpected(fact: OutputFact, expected: ExpectedFact): boolean {
 }
 
 function describeExpected(expected: ExpectedFact): string {
-  return `${expected.intent ?? "remember"} ${expected.categories.join("/")} fact with ${expected.keywords.join("/")}`;
+  const dates = expected.dates ? ` dated ${expected.dates.join("/")}` : "";
+  return `${expected.intent ?? "remember"} ${expected.categories.join("/")} fact with ${expected.keywords.join("/")}${dates}`;
 }
 
 function checkFacts({

@@ -2,6 +2,7 @@ import {
   type ExpressionFunctionName,
   expressionConstantValue,
   expressionFunctions,
+  withoutRoundingError,
 } from "./expression-functions";
 import { type ExpressionNode, type ParsedExpression, parseExpression } from "./parse-expression";
 
@@ -33,11 +34,13 @@ function evaluateVariable(name: string, variables: ExpressionVariables): Evaluat
 }
 
 function applyOperator(operator: string, left: number, right: number): number {
+  const inputSize = Math.max(Math.abs(left), Math.abs(right));
+
   switch (operator) {
     case "+":
-      return left + right;
+      return withoutRoundingError(left + right, inputSize);
     case "-":
-      return left - right;
+      return withoutRoundingError(left - right, inputSize);
     case "*":
       return left * right;
     case "/":
@@ -123,12 +126,16 @@ function evaluateNode(
   }
 }
 
-/** Returns `{ ok: false }` for unknown variables or domain errors; never throws. */
+/**
+ * Returns `{ ok: false }` for unknown variables or domain errors; never throws. A zero result is
+ * always +0, since -sin(π) would otherwise read "−0".
+ */
 export function evaluateExpression(
   expression: ParsedExpression,
   variables: ExpressionVariables = {},
 ): EvaluateExpressionResult {
-  return evaluateNode(expression.ast, variables);
+  const result = evaluateNode(expression.ast, variables);
+  return result.ok && result.value === 0 ? { ok: true, value: 0 } : result;
 }
 
 export function evaluateFormula(

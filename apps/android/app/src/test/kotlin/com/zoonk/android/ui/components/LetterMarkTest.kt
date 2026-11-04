@@ -40,7 +40,7 @@ class LetterMarkTest {
 
     private val user: MeUser =
         ApiJson.decodeFromString(
-            """{"analyticsDisabled":false,"createdAt":"2026-01-01T00:00:00Z","displayUsername":null,"email":"ana@zoonk.test",
+            """{"analyticsDisabled":false,"createdAt":"2026-01-01T00:00:00Z","email":"ana@zoonk.test",
                 "emailVerified":true,"id":"00000000-0000-4000-8000-000000000001","image":null,"name":"Ana",
                 "updatedAt":"2026-01-01T00:00:00Z","username":null}""",
         )

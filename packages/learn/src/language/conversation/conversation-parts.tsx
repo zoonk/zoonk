@@ -63,6 +63,24 @@ export function CallOffMessage({
   );
 }
 
+/** Why a call can't go on, under its screen's own title. */
+export function CallReason({
+  children,
+  className,
+  title,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  title: string;
+}) {
+  return (
+    <div className={cn("flex flex-col gap-1", className)}>
+      <p className="font-medium">{title}</p>
+      {children}
+    </div>
+  );
+}
+
 export function SpeakButton({
   language,
   personal = false,

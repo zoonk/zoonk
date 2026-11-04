@@ -116,8 +116,8 @@ enum MockLabels {
     Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .narrow))
   }
 
-  static func number(_ value: Double) -> String {
-    value.formatted(.number.precision(.fractionLength(0...2)))
+  static func number(_ value: Double, locale: Locale = .autoupdatingCurrent) -> String {
+    ActivityNumberFormat.format(value, digits: 2, locale: locale)
   }
 
   static func points(_ value: Double) -> String {
@@ -136,8 +136,8 @@ enum MockLabels {
       comment: "Points of a total, like '182 of 260'")
   }
 
-  static func percent(_ value: Double) -> String {
-    (value / 100).formatted(.percent.precision(.fractionLength(0...1)))
+  static func percent(_ value: Double, locale: Locale = .autoupdatingCurrent) -> String {
+    ActivityNumberFormat.percent(value / 100, digits: 1, locale: locale)
   }
 
   /// A points minimum is its number alone: the sentence around it says it's points.

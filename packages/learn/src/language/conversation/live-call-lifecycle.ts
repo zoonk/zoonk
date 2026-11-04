@@ -1,6 +1,6 @@
 "use client";
 
-import { type RefObject, useCallback, useRef, useState } from "react";
+import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
 import { type LiveCallSession } from "./live-call-session";
 import { loadLiveCallSession } from "./load-live-call-session";
@@ -125,6 +125,34 @@ export function useCallRelease({
   }, [setPhase, silence]);
 
   return { hangUp, release };
+}
+
+/** Leaving ends the call; a screen kept hidden in an Activity shows it dropped when it's back. */
+export function useEndCallOnLeave({
+  cancelStart,
+  fail,
+  phaseRef,
+  release,
+}: {
+  cancelStart: () => void;
+  fail: (error: LiveCallError) => void;
+  phaseRef: RefObject<LiveCallPhase>;
+  release: () => Promise<boolean>;
+}) {
+  useEffect(
+    () => () => {
+      // Cancels a start still waiting; Strict Mode's first setup and cleanup run before any start,
+      // so they cancel nothing.
+      cancelStart();
+
+      if (phaseRef.current === "connecting" || phaseRef.current === "live") {
+        fail(phaseRef.current === "live" ? "dropped" : "connect");
+      } else {
+        void release();
+      }
+    },
+    [cancelStart, fail, phaseRef, release],
+  );
 }
 
 export function useCallSession() {

@@ -41,12 +41,15 @@ val SCRIPT =
             ),
     )
 
-/** [talkSeconds] of talk, then the server hangs up [seconds] after the answer. */
+/** [talkSeconds] of talk, then the server hangs up [seconds] after the answer; [continuesCall] when the call dropped and was called again. */
 fun setup(
     talkSeconds: Long = 300,
     seconds: Long = talkSeconds + 45,
+    continuesCall: Boolean = false,
+    connectionId: UUID = CONNECTION,
 ) = LanguageConversationSetup(
-    connectionId = CONNECTION,
+    connectionId = connectionId,
+    continuesCall = continuesCall,
     deadlineAt = Instant.parse("2026-10-29T12:05:00Z"),
     script = SCRIPT,
     seconds = seconds,
@@ -83,14 +86,19 @@ class FakeTransport(
     var silenced = false
     var closed = false
 
+    /** The channel closing with a lost connection: it takes nothing. */
+    var refusing = false
+
     override suspend fun makeOffer(): String = "offer"
 
     override suspend fun accept(answer: String) {
         this.answer = answer
     }
 
-    override fun send(command: LiveClientCommand) {
+    override fun send(command: LiveClientCommand): Boolean {
+        if (refusing) return false
         sent += command
+        return true
     }
 
     override fun silence() {
@@ -115,9 +123,11 @@ class FakeCallClient : LiveCallClient {
     var reservations = ArrayDeque<CallReservation>(listOf(CallReservation.Ready(setup())))
     val connects = mutableListOf<Boolean>()
     val redeemed = mutableListOf<Pair<UUID, String>>()
+    val offeredTurns = mutableListOf<List<LanguageConversationTurn>>()
     val ended = mutableListOf<UUID>()
     var endAnswers = ArrayDeque<Boolean?>()
     val checks = mutableListOf<List<LanguageConversationTurn>>()
+    val checkedConnections = mutableListOf<UUID>()
     var check: (
         List<LanguageConversationTurn>,
     ) -> LanguageConversationObjectiveCheck? = {
@@ -142,8 +152,10 @@ class FakeCallClient : LiveCallClient {
     override suspend fun redeem(
         connectionId: UUID,
         offer: String,
+        turns: List<LanguageConversationTurn>,
     ): String {
         redeemed += connectionId to offer
+        offeredTurns += turns
         return "answer"
     }
 
@@ -153,7 +165,11 @@ class FakeCallClient : LiveCallClient {
         return if (endAnswers.isEmpty()) false else endAnswers.removeFirst()
     }
 
-    override suspend fun checkObjectives(turns: List<LanguageConversationTurn>): LanguageConversationObjectiveCheck? {
+    override suspend fun checkObjectives(
+        connectionId: UUID,
+        turns: List<LanguageConversationTurn>,
+    ): LanguageConversationObjectiveCheck? {
+        checkedConnections += connectionId
         checks += turns
         checkGate?.await()
         return check(turns)

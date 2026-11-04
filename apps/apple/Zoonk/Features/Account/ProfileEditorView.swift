@@ -20,7 +20,7 @@ struct ProfileEditorView: View {
     self.isRequiredSetup = isRequiredSetup
     self.deleteAccount = deleteAccount
     _name = State(initialValue: account.user.name)
-    _username = State(initialValue: account.user.displayUsername ?? account.user.username ?? "")
+    _username = State(initialValue: account.user.username ?? "")
   }
 
   var body: some View {
@@ -335,7 +335,6 @@ struct ProfileEditorView: View {
           deletion: AccountDeletionRequirements(hasAppleAccount: false),
           subscription: nil),
         user: AccountUser(
-          displayUsername: "zoonk_user",
           email: "hello@zoonk.com",
           id: UUID().uuidString,
           image: nil,

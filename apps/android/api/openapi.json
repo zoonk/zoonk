@@ -6518,7 +6518,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the talk time held and a short wrap-up for the goodbye, which never counts against the learner's call time) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `talkSeconds` is the talk time left when the server answered: start ending the call that long after the answer arrives, with the cues and timing in `script`. `seconds` is when the server hangs up, counted the same way. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created answers PREVIOUS_CONNECTION_CLOSING; a hangup OpenAI doesn't confirm still ends the old connection. A call starts at its full length while any of the learner's call time today and this month, their daily AI budget and their monthly call budget is left; all of it counts, so the next call is refused once one is used up. Connecting again a call that already connected keeps what's left of its talk time, each connection with its own wrap-up, even when no call time or budget is left; once that talk time is over, a checkpoint has ended and other calls start over under the limits. The daily connection cap also applies.",
+        "description": "Reserves one live-call connection after fresh authorization and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the talk time held and a short wrap-up for the goodbye, which never counts against the learner's call time) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `talkSeconds` is the talk time left when the server answered: start ending the call that long after the answer arrives, with the cues and timing in `script`. `seconds` is when the server hangs up, counted the same way. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created answers PREVIOUS_CONNECTION_CLOSING; a hangup OpenAI doesn't confirm still ends the old connection. A call starts at its full length while any of the learner's call time today and this month, their daily AI budget and their monthly call budget is left; all of it counts, so the next call is refused once one is used up. Connecting again a call that already connected keeps what's left of its talk time (`continuesCall`), each connection with its own wrap-up, even when no call time or budget is left; once that talk time is over, a checkpoint has ended and other calls start over under the limits. The daily connection cap also applies.",
         "operationId": "connectLanguageConversation",
         "summary": "Reserve a live conversation connection",
         "parameters": [
@@ -6788,7 +6788,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Redeems the owned reservation once, within a minute of reserving it, for a server-created GPT-Live WebRTC session. Rechecks Plus and that calls aren't paused. A reservation past its minute, or one a newer start ended, returns CONNECTION_EXPIRED. Browser sessionConfig is ignored. An offer without the lines of a WebRTC audio offer is refused (400) before any provider work. When creation fails (CALL_RETRYABLE), the reservation ends: reserve again. A session that's no longer wanted when it exists (the call was ended, replaced or completed meanwhile) is hung up at once. Apply the returned SDP answer to the peer; do not send session.start. Audio uses WebRTC media tracks; the call's end shows as the data channel closing. No provider key or token is returned.",
+        "description": "Redeems the owned reservation once, within a minute of reserving it, for a server-created GPT-Live WebRTC session. Rechecks Plus and that calls aren't paused. A reservation past its minute, or one a newer start ended, returns CONNECTION_EXPIRED. The server owns the session's configuration: of sessionConfig it reads only `providerOptions.zoonk.turns`, the call so far, when the connection continues the call. An offer without the lines of a WebRTC audio offer is refused (400) before any provider work. When creation fails (CALL_RETRYABLE), the reservation ends: reserve again. A session that's no longer wanted when it exists (the call was ended, replaced or completed meanwhile) is hung up at once. Apply the returned SDP answer to the peer; do not send session.start. Audio uses WebRTC media tracks; the call's end shows as the data channel closing. No provider key or token is returned.",
         "operationId": "redeemLanguageConversationSdp",
         "summary": "Exchange a live conversation SDP offer",
         "parameters": [
@@ -6934,7 +6934,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check read (with the exchange before them), so send the whole transcript each time: a transcript with no new turns, one sent again at once, or one past the call's live checks (about four per minute of the call) answers the goals met so far without a new check. The same check says whether the call just ended with the learner and the character saying goodbye to each other, and gives the cue that tells the character what the learner achieved. Exam tasks are never checked, and a check without open goals asks no model, so neither reports a goodbye. The call's review still checks every goal when it ends. Only for a connected call that is still running.",
+        "description": "Marks the call's goals while the learner talks: send what was said so far after each of the learner's turns. A separate model reads it and says which goals the learner's own words achieved; they stay met for the rest of the call. Each check reads only the turns no earlier check on the same connection read (with the exchange before them), so send the whole transcript the learner's screen holds each time, with the connection it's on: a new connection's checks read from its first turn, so a call that started over, or a screen that lost the call so far, sends only what it has. A transcript with no new turns, one sent again at once, or one past the call's live checks (about four per minute of the call) answers the goals met so far without a new check. The same check says whether the call just ended with the learner and the character saying goodbye to each other, and gives the cue that tells the character what the learner achieved. Exam tasks are never checked, and a check without open goals asks no model, so neither reports a goodbye. The call's review still checks every goal when it ends. Only while that connection is live.",
         "operationId": "checkLanguageConversationObjectives",
         "summary": "Check a live conversation's goals",
         "parameters": [
@@ -24606,7 +24606,28 @@
             "description": "The browser's WebRTC SDP offer, with an audio section"
           },
           "sessionConfig": {
-            "description": "Ignored: configuration is owned by the server"
+            "description": "Everything else in it is ignored: the server owns the configuration",
+            "type": "object",
+            "properties": {
+              "providerOptions": {
+                "type": "object",
+                "properties": {
+                  "zoonk": {
+                    "type": "object",
+                    "properties": {
+                      "turns": {
+                        "description": "The call so far, when the connection continues it (`continuesCall`): the character carries on from it. Ignored otherwise",
+                        "maxItems": 300,
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/LanguageConversationTurn"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "required": [
@@ -24617,6 +24638,12 @@
       "LanguageConversationObjectiveCheckInput": {
         "type": "object",
         "properties": {
+          "connectionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The live connection the learner is talking on"
+          },
           "turns": {
             "maxItems": 300,
             "type": "array",
@@ -24627,6 +24654,7 @@
           }
         },
         "required": [
+          "connectionId",
           "turns"
         ],
         "additionalProperties": false
@@ -28778,11 +28806,6 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
             "description": "User creation timestamp"
           },
-          "displayUsername": {
-            "nullable": true,
-            "description": "Display username",
-            "type": "string"
-          },
           "email": {
             "type": "string",
             "format": "email",
@@ -28823,7 +28846,6 @@
         "required": [
           "analyticsDisabled",
           "createdAt",
-          "displayUsername",
           "email",
           "emailVerified",
           "id",
@@ -39556,6 +39578,10 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "continuesCall": {
+            "type": "boolean",
+            "description": "This connection continues the call's talk window after a drop: keep the call so far on screen and send its turns with the SDP offer. False when it opens a new call: start from nothing"
+          },
           "deadlineAt": {
             "type": "string",
             "format": "date-time",
@@ -39588,6 +39614,7 @@
         },
         "required": [
           "connectionId",
+          "continuesCall",
           "deadlineAt",
           "script",
           "seconds",

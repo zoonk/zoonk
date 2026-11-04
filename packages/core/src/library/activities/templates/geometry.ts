@@ -6,6 +6,7 @@ import {
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
+import { trigFunctions } from "../expression/expression-functions";
 import { duplicateIssues, isClose, issue } from "./_utils/template-helpers";
 
 const MAX_POINTS = 6;
@@ -177,7 +178,6 @@ export const geometryBoardTemplate = defineActivityTemplate({
     ].filter((item) => item !== false),
 });
 
-const trigFunctions = { cos: Math.cos, sin: Math.sin, tan: Math.tan } as const;
 const trigNames = ["cos", "sin", "tan"] as const;
 
 const unitCircleFields = z

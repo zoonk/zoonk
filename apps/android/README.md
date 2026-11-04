@@ -1,6 +1,6 @@
 # Zoonk for Android
 
-Native Kotlin/Jetpack Compose app for phones, tablets, and foldables. Every page of the web app has a typed route; a route whose feature isn't built yet shows a placeholder.
+Native Kotlin/Jetpack Compose app for phones, tablets, and foldables. Every page of the web app has a typed route that opens its screen.
 
 ## Setup
 

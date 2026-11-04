@@ -48,7 +48,6 @@ struct AppleSubscriptionSynchronization: Equatable {
 }
 
 struct AccountUser: Decodable, Equatable {
-  let displayUsername: String?
   let email: String
   let id: String
   let image: String?

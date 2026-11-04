@@ -467,6 +467,8 @@ final class ChartsActivitiesTests: XCTestCase {
       {"angleUnit":"degrees","frame":"A seat.","show":["sin","tan"],"startAngle":0}
       """)
     XCTAssertEqual(fields.value(.sin, degrees: 30)!, 0.5, accuracy: 1e-12)
+    XCTAssertEqual(fields.value(.sin, degrees: 360), 0, "Not what rounding π leaves")
+    XCTAssertEqual(fields.value(.tan, degrees: 180), 0)
     XCTAssertNil(fields.value(.cos, degrees: 30), "Not shown")
     XCTAssertNil(fields.value(.tan, degrees: 90), "Undefined")
   }

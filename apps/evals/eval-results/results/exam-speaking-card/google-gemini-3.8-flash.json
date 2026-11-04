@@ -5,29 +5,29 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The card follows DELE B2 Task 1: an everyday municipal problem, six proposals, formal usted instructions, evaluation of at least four proposals for 3–4 minutes, and a subsequent 2–3-minute conversation. The topic fits the level and does not introduce personal financial hardship or another prohibited scenario.",
-          "score": 9,
+          "reasoning": "The card presents an everyday school-policy problem and six distinct proposals, requires evaluating at least four for 3 to 4 minutes, and specifies a subsequent 2-to-3-minute conversation. Its formal address, Spanish variety and B2-level demands fit DELE Task 1. No alternative-format cap applies.",
+          "score": 10,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "The six distinct, realistic proposals provide ample scope for weighing accessibility, convenience, effectiveness and implementation. They support the required extended turn without supplying the candidate's arguments. Photos, source text and tables are correctly absent.",
+          "reasoning": "The six realistic proposals provide sufficient contrasting approaches for discussing advantages and disadvantages. The problem is clear, and there are no photos, reading text or table, as required for this task.",
           "score": 10,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "The examiner listens silently during the long turn, avoids correction and praise, and has ordered questions and backups covering the preferred proposal, the candidate's country and personal opinion. The opening fits the role and timing. However, the first question's nested placeholder and fallback are not cleanly scripted as separate spoken alternatives. No role-contradiction cap is triggered.",
+          "reasoning": "The English brief provides Spanish opening wording, the required ordered questions about the best proposal, the candidate's country and their opinion, and follow-up questions. It instructs uninterrupted listening during the presentation and prohibits correction, praise and grading. However, two hints offer topic-specific arguments rather than neutral conversational scaffolding. This is a meaningful hint-design weakness, but it does not trigger the cap for contradicting the card or examiner role.",
           "score": 8,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The summary addresses the learner in Brazilian Portuguese, the role is Portuguese, and the candidate-facing fields use appropriate Spain Spanish. However, the bracketed private instructions in the examiner brief are Spanish rather than English. These are operational directions, not spoken dialogue, so the wrong-language cap of 5 applies. There are no emojis or em dashes.",
-          "score": 5,
+          "reasoning": "The summary addresses the learner in Brazilian Portuguese without Spanish intrusions, and 'examinadora' is valid Portuguese. Instructions, proposals, place, opening and hints are in appropriate Spanish; the private brief is in English with spoken lines in Spanish. There are no emojis or em dashes.",
+          "score": 10,
           "label": "Right language per field",
           "weight": 20
         },
@@ -44,30 +44,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2475,
-          "outputTokens": 1017,
-          "reasoningTokens": 421
+          "inputTokens": 2408,
+          "outputTokens": 786,
+          "reasoningTokens": 295
         }
       },
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The examiner brief includes Spanish private directions ('mencionar la propuesta elegida...' and 'preguntar directamente...'). Only spoken lines should be in Spanish; the private directions must be in English. This triggers the language category's explicit cap.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The first examiner question embeds an entire alternative question inside a sentence placeholder. If the candidate has not selected a proposal, the script does not provide a clean, directly speakable alternative. Separate the two branches so the examiner cannot produce a malformed question.",
+          "conclusion": "Two hints supply substantive arguments instead of reusable speaking support: the third asserts that a measure promotes discipline but is difficult to implement, and the fifth advocates education rather than prohibition. These partially answer the topic for the candidate.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "Make the country-comparison hint more neutral. 'A diferencia de lo que ocurre en España...' presupposes a difference and knowledge of Spain; a phrase such as 'En mi país, por lo general...' would support more candidates without steering their response.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "DELE B2 Task 1 for a Brazilian candidate: a problem and five to seven proposals to solve it on the card (the prompts), instructions in Spain Spanish with \"usted\" saying to weigh at least four for 3 to 4 minutes and then talk with the examiner. No photos, text or table. The examiner's brief listens without interrupting through the monologue, then asks which proposal is best, about the candidate's country and their opinion. Summary and role in Brazilian Portuguese.",
+        "expectations": "DELE B2 Task 1 for a Brazilian candidate: a problem and five to seven proposals to solve it on the card (the prompts), instructions in Spain Spanish with \"usted\" saying to weigh at least four for 3 to 4 minutes and then talk with the examiner. No photos, text or table. The examiner's brief listens without interrupting through the monologue, then asks which proposal is best, about the candidate's country and their opinion. Summary and role in Brazilian Portuguese, with no Spanish words. Found on a run whose summary said \"um huerto comunitário\".",
         "id": "pt-es-dele-b2-proposals-1",
         "userInput": {
           "exam": "dele",
@@ -90,28 +82,28 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The card fits the requested DELE A2 photograph-description task: formal usted instructions, an appropriate two-to-three-minute speaking period, and six guiding questions covering the required descriptive and speculative points. The everyday topic is safe and suitable for the level.",
+          "reasoning": "The card matches DELE A2 photo description: formal usted instructions, a suitable two-to-three-minute speaking period, and six accessible questions covering the requested descriptive and speculative topics. The everyday park scene is safe and fits the task.",
           "score": 10,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "The English scene depicts one coherent everyday moment with two people, clothing, a concrete setting, an activity, mood and lighting. No readable material is described. It supports description and speculation about relationships and preceding or subsequent events.",
-          "score": 10,
+          "reasoning": "The single scene provides people, clothing, actions, setting, light and mood, with no readable material. It supports description and speculation well. The minor mismatch between the alt and the scene should be corrected.",
+          "score": 9,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "The English brief provides Spanish spoken lines and an appropriate examiner opening. However, its conditional intervention contradicts the explicitly non-intervening role and the card's summary, triggering the maximum score of 5. The hints further weaken the script by supplying specific interpretations and an answer about what happens next instead of general communication strategies.",
-          "score": 4,
+          "reasoning": "The English private brief provides Spanish spoken lines and a suitable examiner opening and closing. However, its conditional follow-up questions contradict the required non-intervening examiner role, triggering the maximum score of 5. Several hints additionally provide answers about the photograph rather than general conversational support.",
+          "score": 5,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The summary addresses the learner as você in Brazilian Portuguese; the role and photo alt are also Portuguese. Instructions, prompts, place, opening and hints are in appropriate Spanish, while the brief and photo scene are English. There are no emojis or em dashes.",
+          "reasoning": "The summary addresses the learner in Brazilian Portuguese, and the role and photo alt are also Portuguese. Instructions, prompts, place, opening and hints are Spanish; the scene and private brief are English, with spoken Spanish lines appropriately embedded. There are no emojis or em dashes.",
           "score": 10,
           "label": "Right language per field",
           "weight": 20
@@ -129,18 +121,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2208,
-          "outputTokens": 751,
-          "reasoningTokens": 276
+          "inputTokens": 2190,
+          "outputTokens": 924,
+          "reasoningTokens": 437
         }
       },
       "steps": [
         {
-          "conclusion": "The examiner script permits an unsolicited follow-up before one minute, contradicting the task's requirement to listen without intervening and the summary's promise of no interruptions. Several hints also supply topic-specific answers, including a grandfather–granddaughter relationship and returning home, rather than reusable A2 communication phrases.",
+          "conclusion": "The examiner script permits follow-up questions when the candidate stops early, contradicting this task's explicit requirement to give the instruction and then listen without intervening. Several hints also supply topic-specific answers about the park, clothing, happiness and a subsequent walk instead of reusable speaking-support phrases.",
           "kind": "majorErrors",
           "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "The Portuguese alt describes both people as sitting and brushing the dog, whereas the scene has the woman sitting and only the kneeling man brushing it.",
+          "kind": "minorErrors",
+          "score": 9
+        },
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
@@ -167,28 +163,28 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The card uses 'vous', requests an argued monologue with a problem, plan, examples and conclusion, and gives an appropriate five-to-seven-minute duration. Pedestrianisation is a suitable everyday social issue. However, the trigger document is noticeably shorter than the specified exam-style material. It does not follow another exam's format, so that cap is not triggered.",
+          "reasoning": "The card uses 'vous', a suitable B2 social question, and instructions covering the problem, announced plan, arguments, examples and conclusion. The five-to-seven-minute duration fits the requested task. However, the trigger document is shorter than specified. It remains recognisably a DELF monologue card, so the wrong-format cap does not apply.",
           "score": 8,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "The titled French text presents credible competing perspectives on pedestrianisation without prescribing the candidate's opinion. It supports the task, so the unusable-material cap does not apply. Nevertheless, approximately 150 words falls substantially short of 200–250, and the article relies on general assertions rather than concrete reporting that could enrich the argument.",
+          "reasoning": "The titled text presents realistic benefits and objections without directing the candidate toward a preferred answer. It can support the task, so the unusable-material cap does not apply. At approximately 168 words, however, it misses the requested length and reads more like a general overview than a concrete press report.",
           "score": 7,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "The private brief is in English, spoken lines are in French, and the opening fits an examiner. It correctly prohibits correction, praise and evaluation. However, its explicit instruction to ask for additional arguments during an early stop contradicts the required non-intervening role and the card, triggering the maximum score of 5. Some hints also steer the argument toward acknowledged advantages and a compromise rather than remaining fully adaptable.",
-          "score": 5,
+          "reasoning": "The English brief and French opening establish the examiner role appropriately, but the permission to prompt an early-stopping candidate contradicts the explicit requirement to listen silently, triggering the maximum score of 5. Treating 'En conclusion...' as the end also risks premature intervention. Multiple hints provide topic-specific content, including a proposed conclusion, rather than neutral language support.",
+          "score": 4,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The summary directly addresses the learner in Brazilian Portuguese, and the character's role is also Portuguese. Instructions, prompts, article, place, opening and hints are French. The private brief is English with French dialogue. There are no emojis or em dashes, and no wrong-language field triggers the cap.",
+          "reasoning": "The summary addresses the learner as 'você' in Portuguese, and the character role is also Portuguese. Instructions, prompts, article, place, opening and hints are French. The private brief is English with examiner utterances written in French. There are no emojis or em dashes and no wrong-language fields.",
           "score": 10,
           "label": "Right language per field",
           "weight": 20
@@ -206,24 +202,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2357,
-          "outputTokens": 864,
-          "reasoningTokens": 254
+          "inputTokens": 2494,
+          "outputTokens": 1207,
+          "reasoningTokens": 607
         }
       },
       "steps": [
         {
-          "conclusion": "The examiner script authorizes a follow-up question if the candidate stops after one or two minutes. This contradicts both the uninterrupted-monologue requirement and the card's promise that the examiner will not interrupt.",
+          "conclusion": "The examiner script contradicts the required silent monologue by allowing questions when the candidate stops before three minutes. It also treats 'En conclusion...' as a completion signal, risking interruption before the conclusion is delivered. Several hints supply topic-specific arguments or conclusions instead of reusable speaking phrases.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The trigger article is approximately 150 words, substantially below the requested 200–250 words. Its opposing viewpoints are usable, but the short, generic treatment offers limited factual detail for developing a seven-minute argument.",
+          "conclusion": "The trigger text contains approximately 168 words, noticeably below the requested 200–250 words. Its balanced discussion supports argumentation, but the generic presentation offers limited concrete reporting to engage with.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Expand the article with plausible, neutrally reported details while preserving its balanced presentation. Make the hints more adaptable: references to 'avantages indéniables' and a solution based on 'un équilibre' unnecessarily favor particular argumentative positions.",
+          "conclusion": "Expand the article with a plausible, concrete example of pedestrianisation and an attributed perspective while preserving its neutrality. Use topic-independent hints such as 'À mon avis...' and 'Pour illustrer mon propos...'.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -252,28 +248,28 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The card uses formal usted address, a suitable everyday topic, survey material and a spontaneous conversation of approximately the requested duration. It fits DELE B2 Task 3 rather than another task's format. However, it omits the required comparison with the Brazilian candidate's country.",
-          "score": 7,
+          "reasoning": "The card uses the correct survey-based DELE B2 interaction format, formal usted address, an everyday topic and a suitable four-minute scope. It covers the candidate's choice, striking results and comparison with their country. However, the requested discussion of personal habits is not explicitly elicited.",
+          "score": 8,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "The table has a question as its title, a year and five rows whose percentages total 100. It supports discussion, so the unusable-material cap does not apply. However, the fictional survey is attributed to the real CIS, the surveyed population is unspecified, and electronic books overlap with the phone/tablet category.",
-          "score": 7,
+          "reasoning": "The table supports the task well: its title contains the survey question, a plausible invented source and year; its four answer rows total exactly 100%; and its seasonal preferences and reasons are realistic for Spain. Explicitly identifying the surveyed population as people in Spain would make the international comparison clearer.",
+          "score": 9,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "The English private brief provides Spanish utterances, ordered questions, several back-ups and instructions not to interrupt or correct. It covers salient results and personal habits but entirely omits the required country comparison. The last hint suggests an actual opinion about the formats rather than a topic-neutral conversational phrase. The script otherwise maintains the examiner role and does not contradict the card, so the role-contradiction cap is not triggered.",
-          "score": 6,
+          "reasoning": "The English private brief supplies ordered Spanish questions, two back-ups, an appropriate opening and instructions not to interrupt or grade. It is feasible within four minutes and consistent with the card. However, the closing 'Muy bien' is an avoidable evaluative acknowledgement, and the climate hint supplies a topic-specific claim instead of purely functional language. A personal-habits follow-up is also missing.",
+          "score": 7,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The summary addresses the learner in Portuguese, and the character role is valid Portuguese. Instructions, prompts, table, place, spoken lines and hints are in Spanish, with no conflicting regional usage. The private brief is in English. There are no emojis or em dashes, and no wrong-language field triggers the cap.",
+          "reasoning": "The summary addresses the learner as você in Portuguese, and examinadora is a valid Portuguese role label. Instructions, prompts, table, place, opening and hints are in appropriate Spanish; the private brief is in English with spoken lines in Spanish. There are no emojis or em dashes and no wrong-language fields.",
           "score": 10,
           "label": "Right language per field",
           "weight": 20
@@ -291,26 +287,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2449,
-          "outputTokens": 832,
-          "reasoningTokens": 240
+          "inputTokens": 2436,
+          "outputTokens": 756,
+          "reasoningTokens": 180
         }
       },
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The examiner never asks the candidate to compare the survey results with Brazil, despite this being an explicit requirement. Neither the printed prompts nor the private script supplies that comparison.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The survey attributes an invented-looking study to CIS, a real Spanish institution, rather than providing a clearly invented source. The response categories also overlap: electronic books can be read on a phone or tablet. The final hint supplies a topic-specific position rather than just a reusable speaking phrase.",
+          "conclusion": "The examiner asks about preferences and the candidate's country, but never directly asks about the candidate's own seasonal habits or activities. The final hint supplies a substantive opinion about climate rather than just a reusable speaking phrase. The closing 'Muy bien' introduces unnecessary praise despite the examiner's neutral role.",
           "kind": "minorErrors",
-          "score": 7
+          "score": 8
         },
         {
-          "conclusion": "Identify the surveyed population as adults in Spain, distinguish reading devices from reading formats consistently, and replace the closing 'Muy bien' with a neutral transition to avoid any appearance of evaluation.",
+          "conclusion": "Identify Spain as the survey population to make the comparison with Brazil unambiguous. Add a brief follow-up about the candidate's usual activities in their preferred season, replace the final hint with a neutral opinion starter, and close simply with 'Con esto hemos terminado la prueba. Muchas gracias.'",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -337,28 +329,28 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The card fits Goethe B1 collaborative planning: German instructions address the candidates with Sie, four prompts structure an everyday cycling excursion, and candidates must propose and respond within about three minutes. The topic is safe and appropriate to the level.",
+          "reasoning": "The card matches Goethe B1 collaborative planning: German instructions using 'Sie', four practical prompts, an everyday city outing and a three-minute timeframe. It does not adopt another task's format.",
           "score": 10,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "The situation and four prompts provide sufficient material for a practical joint decision. Timing, destination, supplies, weather alternatives and preparation responsibilities are realistic and support the task without prescribing the learner's answers. No additional stimulus is needed for this topic-based task.",
+          "reasoning": "The situation and four prompts provide sufficient material for planning together. Freiburg Hauptbahnhof, the Münster, Schlossberg and tram travel are realistic suggestions. No additional text, table or photograph is needed for this topic-based task.",
           "score": 10,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "The English private brief establishes an equal partner with concrete German suggestions, short turns, balanced participation and no examiner behavior. The opening starts the planning with questions, and the hints are reusable interaction phrases. However, disagreement is only conditional on an unworkable suggestion, and neither disagreement nor the closing agreement has a written German utterance. These omissions weaken the requested negotiation and script completeness, but do not contradict the card or partner role.",
+          "reasoning": "Julia is correctly framed as another candidate, with her own ideas, short turns, approximately equal speaking time and a question-led opening. However, no German disagreement or contingent reaction lines are supplied, despite the requirement for occasional disagreement. The closing also declares completion without checking or consolidating the actual agreement. These are script weaknesses, but there is no contradiction of the card or partner role that triggers the five-point cap.",
           "score": 8,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The summary addresses the learner in Portuguese, and the role is correctly given as outra candidata. Instructions, prompts, place, opening and hints are in German. The private brief uses English directions with German spoken examples. There are no emojis or em dashes.",
+          "reasoning": "The learner-facing summary is natural Brazilian Portuguese, addresses the learner as 'Você' and summarizes the activity rather than translating the prompts. The role is 'outra candidata'. Instructions, prompts, place, opening and hints are German; the private brief is English with German dialogue. There are no emojis or em dashes.",
           "score": 10,
           "label": "Right language per field",
           "weight": 20
@@ -376,22 +368,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2313,
-          "outputTokens": 826,
-          "reasoningTokens": 339
+          "inputTokens": 2221,
+          "outputTokens": 736,
+          "reasoningTokens": 217
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The partner brief leaves polite disagreement and the final agreement summary as English directions without German lines to say. Disagreement is also conditional on the learner proposing something unworkable, so an ordinary exchange may contain only agreement rather than the requested negotiation.",
-          "kind": "minorErrors",
+          "conclusion": "The partner brief does not provide the required occasional disagreement or scripted reactions to the learner's suggestions. It instructs Julia to react naturally, but its German lines mostly present her own proposals. This leaves an important part of the collaborative planning practice underspecified.",
+          "kind": "majorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Add short German acceptance, disagreement and compromise branches. Replace the generic closing declaration with a brief confirmation of the choices actually agreed on, followed by a question checking the learner's agreement.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
-        "expectations": "Goethe-Zertifikat B1 Part 1 for a Brazilian candidate, with the AI as the other candidate: a situation to plan together with four prompts in German (\"Sie\" in the instructions), and a partner brief with its own suggestions, reactions and some disagreement, speaking about half the time in short turns and helping agree on a plan. The opening line is the partner starting the planning with a question. Role \"outra candidata\" or \"outro candidato\".",
+        "expectations": "Goethe-Zertifikat B1 Part 1 for a Brazilian candidate, with the AI as the other candidate: a situation to plan together with four prompts in German (\"Sie\" in the instructions), and a partner brief with its own suggestions, reactions and some disagreement, speaking about half the time in short turns and helping agree on a plan. The opening line is the partner starting the planning with a question. Summary in Brazilian Portuguese and role \"outra candidata\" or \"outro candidato\". Found on runs that wrote the summary in German, as \"Plane mit deiner Gesprächspartnerin…\".",
         "id": "pt-de-goethe-b1-plan-together-1",
         "userInput": {
           "exam": "goethe",
@@ -414,28 +410,28 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The central discussion question and five factors fit B2 First Part 3, with an everyday topic and appropriate language. However, the instructions omit the one-minute duration of the decision phase and imply that a decision must be reached. This is still the correct exam-task format, so the wrong-format cap does not apply.",
+          "reasoning": "The everyday reading topic, five written prompts and discussion-then-decision sequence fit B2 First Part 3. This is not another task's format, so the format cap does not apply. However, the expected central discussion question is only expressed indirectly through an instruction, and the English card omits the decision phase's one-minute limit.",
           "score": 8,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "The five concise prompts offer distinct, realistic considerations and support both comparing their importance and choosing one. They provide enough scope for B2 discussion without supplying the candidate's answers. Housing affordability is an ordinary consideration here, rather than a scenario centred on financial trouble.",
-          "score": 10,
+          "reasoning": "All five prompts are realistic, accessible at B2 and offer useful grounds for comparing convenience, enjoyment, concentration and social benefits. Although they mix formats with contexts and borrowing arrangements, they remain workable options for both questions. No unsupported factual claims or unusable material trigger a cap.",
+          "score": 9,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "Hannah opens as another candidate, offers independent views, models polite disagreement, invites responses and is instructed to share speaking time without correcting or examining. The main weakness is allowing the decision transition after three or four points regardless of elapsed time. The role label also does not use the explicitly requested 'otra candidata'. Neither issue amounts to acting in a contradictory role, so the role-contradiction cap does not apply.",
-          "score": 8,
+          "reasoning": "The English private brief establishes a genuine fellow candidate, supplies British-English contributions and a role-appropriate opening, invites participation, and targets roughly equal speaking time. It neither grades nor corrects the learner. However, occasional disagreement is not built into Hannah's behaviour, the alternative early-transition trigger can shorten discussion, and the final hint is a topic-specific question rather than a reusable interaction phrase. These are weaknesses, not contradictions of the partner role, so the role-conflict cap does not apply.",
+          "score": 7,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The summary addresses the learner in Spanish and describes the activity rather than translating the prompts. The role is also in Spanish. Instructions, prompts, place, opening line and hints are in suitable English, while the private brief is in English. There are no photos requiring alts, no emojis and no em dashes. No wrong-language cap applies.",
+          "reasoning": "The summary addresses the learner in Spanish without translating the prompts, and the role is correctly given as 'otra candidata'. Instructions, prompts, place, opening and hints are in English, with British usage such as 'travelling'. The private brief is in English. There are no photos requiring Spanish alts, emojis or em dashes, and no wrong-language field triggers a cap.",
           "score": 10,
           "label": "Right language per field",
           "weight": 20
@@ -453,20 +449,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2234,
-          "outputTokens": 934,
-          "reasoningTokens": 357
+          "inputTokens": 2182,
+          "outputTokens": 869,
+          "reasoningTokens": 267
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The instructions do not specify the one-minute decision phase, and 'you will decide' suggests that reaching a decision is required. The partner brief permits moving to that phase after only three or four points, potentially before approximately two minutes have elapsed. The role field uses 'compañera de examen' instead of the specifically requested 'otra candidata'.",
+          "conclusion": "The card supplies five suitable prompts but omits a standalone discussion question and does not state the one-minute decision time in its English instructions. Hannah has independent views, but the brief does not direct her to sometimes disagree or provide a disagreement line. Allowing the decision phase to begin whenever most prompts have been mentioned could cut the two-minute discussion short.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Clarify that the prompts can be discussed in any order and need not all be covered. Give the partner a short closing line that accommodates either agreement or different final preferences without forcing consensus.",
+          "conclusion": "Make the hints more reusable by replacing the topic-specific decision question with a general opinion or negotiation phrase. Keep the decision collaborative without implying that consensus is necessary.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -495,29 +491,29 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The result uses the correct Cambridge long-turn structure: two photographs, one printed question, comparison and speculation, and approximately one minute of individual speaking. The topic is everyday and safe. However, the instruction explicitly refers to where the question is printed, contrary to the task-specific expectation. It does not follow another exam’s format, so the format cap is not triggered.",
-          "score": 7,
+          "reasoning": "The card recognisably follows B2 First Part 2, with two photographs, one printed question and a one-minute comparison. However, it explicitly refers to where the question appears, despite the prohibition, and the photographs do not clearly depict the same activity done differently. The topic is everyday and safe. The cap for using another task's format is not triggered.",
+          "score": 6,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "Both scenes provide concrete people, settings, activities and moods, with no required readable content. They support comparison of practical and musical skill learning, including independent versus supported participation. Learning is less visually established in the woodworking scene, but the material remains usable for the task; the unusable-material cap does not apply.",
-          "score": 9,
+          "reasoning": "Both scenes are concrete, plausible everyday moments with people, settings and atmospheric details, and neither requires reading text within the image. They support comparison and speculation, so the unusable-material cap does not apply. Their different activities weaken the requested pairing, and the first alt adds unspecified backpacks.",
+          "score": 8,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "The examiner’s English brief provides spoken lines, silent listening during the minute, a neutral acknowledgement and a relevant short follow-up, while prohibiting correction and praise. However, several hints supply topic-specific observations rather than general speaking support, and the conditional back-up adds another substantive question beyond the requested single follow-up. Neither issue changes the examiner’s role or contradicts the card, so the role-contradiction cap is not triggered.",
-          "score": 7,
+          "reasoning": "The script uses the examiner role, supplies spoken wording and prohibits correction and praise. However, its instruction to encourage the candidate before the minute ends contradicts the required uninterrupted long turn, triggering the contradiction cap of 5. It also allows an additional follow-up beyond the specified single question. The hints about active hikers and seeking peace and quiet supply topic content rather than only reusable speaking phrases.",
+          "score": 5,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The role, summary and both alts are in Brazilian Portuguese; the remaining required fields use English, with appropriate British usage such as “cosy”. There are no emojis or em dashes, and no wrong-language field triggers the cap. However, the summary reproduces the prompt’s content in Portuguese, contrary to the explicit requirement that it not translate the prompts.",
-          "score": 8,
+          "reasoning": "The summary addresses the learner as 'você', and the role and both alts are in Brazilian Portuguese. Instructions, prompt, place, opening and hints are in English; the brief and scenes are also in English as required. British usage appears in 'jumper'. There are no emojis or em dashes and no wrong-language fields.",
+          "score": 10,
           "label": "Right language per field",
           "weight": 20
         },
@@ -534,24 +530,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2270,
-          "outputTokens": 948,
-          "reasoningTokens": 311
+          "inputTokens": 2240,
+          "outputTokens": 920,
+          "reasoningTokens": 306
         }
       },
       "steps": [
         {
-          "conclusion": "The instruction “answer the question printed above them” directly violates the requirement not to refer to the card’s layout. This reproduces the specific flaw identified in the expectations.",
+          "conclusion": "The instruction 'answer the question printed above them' explicitly violates the layout-independent wording requirement. The photographs show different activities, hiking and sitting looking at the sea, rather than people doing the same kind of thing in different ways. The examiner script permits prompting during the candidate's uninterrupted minute and potentially adds another follow-up question. Two hints supply topic-specific comparison or interpretation rather than reusable speaking support.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The Portuguese summary translates the substance of the prompt instead of limiting itself to learner-facing task guidance. Some hints supply photo-specific interpretations, such as the woman being absorbed and the man finding the activity challenging, rather than reusable speaking phrases. The conditional back-up also introduces a second substantive follow-up despite the task-specific requirement for one short follow-up.",
+          "conclusion": "The first Portuguese alt introduces backpacks that are not specified in the photo scene, creating a small mismatch between the image description and its alternative text.",
           "kind": "minorErrors",
-          "score": 7
+          "score": 8
         },
         {
-          "conclusion": "Make the opening more concise and closer to the standard examiner wording. A small visual indication that the woodworking participant is learning would also make the shared activity clearer without prescribing the candidate’s answer.",
+          "conclusion": "The opening could be tightened by removing redundant cues such as 'All right? Please begin', making the examiner's delivery closer to the short standard wording.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -580,28 +576,28 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The card otherwise fits a B1 follow-up conversation: it uses usted, refers to the previous presentation, requests opinions and experience, and gives an appropriate duration. However, explicitly offering remote study as an alternative weakens the required continuity with the working-from-home presentation. It does not use another task's format, so the format cap is not triggered.",
-          "score": 7,
+          "reasoning": "The card uses formal usted instructions and the correct examiner-led conversation format, explicitly continuing Task 1. The questions develop the same working-from-home themes through opinions, experience and preferences. The brief reference to studying offers an adjacent experience rather than establishing a separate discussion topic. The stated duration accommodates the requested four minutes.",
+          "score": 9,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "A topic-based conversation needs no photograph, text or table. The supplied discussion areas provide sufficient everyday material for four minutes of opinions and personal experience, without implausible factual claims. The material can support the task, so no cap applies.",
+          "reasoning": "This topic-based task does not require a photograph, text or table. The previous presentation supplies sufficient material, and the questions draw on its practical themes: concentration, relationships with colleagues and preferred working arrangements. There are no unsupported factual claims or unrealistic contextual details.",
           "score": 10,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "The English private brief provides ordered Spanish questions, several backups, appropriate listening instructions and a plausible four-minute examiner interaction. However, the organisation hint gives part of an answer rather than a neutral interaction phrase, and the closing 'Muy bien' is avoidably evaluative. The script follows the card and maintains the examiner role, so the contradiction cap is not triggered.",
-          "score": 7,
+          "reasoning": "The English private brief supplies ordered Spanish questions, back-ups and a closing line, maintains a neutral examiner role and explicitly prohibits correction, praise and grading. The opening fits a conversation following a presentation. However, there is no suitable first-question back-up for someone without relevant experience, and some questions are unnecessarily linguistically dense for B1. Hints provide useful conversational frames rather than prepared answers.",
+          "score": 8,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The summary addresses the learner as você in Brazilian Portuguese, and examinadora is also Portuguese. Candidate-facing instructions, prompts, place, opening and hints are in appropriate Spanish with usted. The private brief is in English with spoken lines in Spanish. There are no emojis, em dashes or wrong-language fields.",
+          "reasoning": "The summary addresses the learner as você in natural Brazilian Portuguese, and examinadora is valid Portuguese for the character's role. Instructions, place, opening, questions and hints are in Spanish, with consistent formal address and wording compatible with Spain Spanish. The private brief is in English. There are no emojis or em dashes.",
           "score": 10,
           "label": "Right language per field",
           "weight": 20
@@ -609,8 +605,8 @@
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 4 parts passed the code checks.",
-          "score": 10,
+          "reasoning": "3 of 4 parts passed. Prompts have 0 items instead of 1 to 7.",
+          "score": 7.75,
           "weight": 30
         }
       ],
@@ -619,26 +615,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2344,
-          "outputTokens": 840,
-          "reasoningTokens": 252
+          "inputTokens": 2322,
+          "outputTokens": 876,
+          "reasoningTokens": 315
         }
       },
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The card and opening question allow the conversation to move from working from home to studying from home. A candidate could therefore discuss only remote study, rather than continue Task 1's specified topic. Offer a hypothetical work-from-home question for candidates without relevant work experience instead.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The first hint supplies a substantive answer about organising oneself, whereas hints must provide reusable interaction language rather than topic answers. The closing 'Muy bien' also risks sounding evaluative under the requirement not to praise candidates.",
+          "conclusion": "The opening question and its back-up assume relevant experience: neither provides a clear route for a candidate who has never worked or studied from home. Questions 2 and 3 also combine relatively dense vocabulary and competing viewpoints, making them less accessible at B1 than necessary.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Add a work-focused hypothetical fallback for candidates with no teleworking experience, replace the first hint with an unfinished opinion phrase, and close neutrally with 'Muchas gracias. Hemos terminado la conversación.'",
+          "conclusion": "Add a hypothetical back-up about working from home for candidates without experience, and shorten the longer questions into a main question followed by an optional probe. Give the examiner a brief pacing instruction so back-ups do not push the conversation beyond four minutes.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -679,28 +671,28 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The card closely matches DELE B1 Task 3: formal address, a one-to-two-minute photo description, appropriate guiding prompts, and a subsequent conversation. The everyday cooking topic is safe and suitable for B1. It does not adopt another task's format.",
-          "score": 9,
+          "reasoning": "The card matches DELE B1 Task 3: formal usted instructions, a one-to-two-minute photo description, appropriate guiding questions, and a subsequent conversation about the candidate's life. The everyday leisure topic is safe and suitable for an unprepared three-minute task.",
+          "score": 10,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "The single scene provides a concrete everyday moment with two people, clothing, actions, objects, a clear setting, natural lighting, and a relaxed mood. It supports both description and speculation about relationships and conversation. No readable material is included.",
-          "score": 10,
+          "reasoning": "The single scene provides people, casual clothing, distinct actions, a concrete living-room setting, objects, mood and afternoon light. It supports both description and speculation. No readable text is specified; explicitly making the game components text-free would make the image specification more robust.",
+          "score": 9,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "The English private brief provides Spanish examiner lines, ordered personal-life questions, and some back-ups, while prohibiting correction and praise. However, its five-second intervention rule contradicts the required uninterrupted description phase, triggering the maximum score of 5 for a script that contradicts the task's prescribed conduct. Topic-specific hints, the premature whole-test closing, and the missing final back-up further weaken the script.",
-          "score": 5,
+          "reasoning": "The English private brief supplies Spanish examiner wording, ordered personal follow-up questions, backups and a timed closing. It protects the uninterrupted description and prohibits correction, praise and grading. However, several hints provide topic-specific interpretations or personal answers instead of the required neutral conversational support.",
+          "score": 8,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The summary addresses the learner as 'you' in English; the role, photo scene, alt, and private brief are also in English. Instructions, prompts, place, opening line, hints, and spoken examiner lines are in appropriate Spanish with formal address. There are no emojis or em dashes, and no wrong-language field triggers the cap.",
+          "reasoning": "The summary addresses the learner as you in English; the role and photo alt are also English. The scene and private brief are English, with spoken examiner lines in Spanish. Instructions, prompts, place, opening and hints use appropriate Spanish and formal address. There are no emojis or em dashes.",
           "score": 10,
           "label": "Right language per field",
           "weight": 20
@@ -718,30 +710,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2431,
-          "outputTokens": 1068,
-          "reasoningTokens": 483
+          "inputTokens": 2365,
+          "outputTokens": 823,
+          "reasoningTokens": 307
         }
       },
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The examiner is instructed to intervene after only five seconds of silence during the description, contradicting the required uninterrupted one-to-two-minute speaking phase. Some hints also supply topic-specific answer content, particularly the claim that the people look relaxed and the suggested discussion of advantages of cooking at home, rather than only reusable speaking support.",
-          "kind": "majorErrors",
-          "score": 6.5
-        },
-        {
-          "conclusion": "The closing line announces the end of the whole speaking test rather than this task. The third personal-experience question also lacks a back-up, unlike the first two.",
+          "conclusion": "Several hints supply topic-specific answers rather than neutral speaking support. In particular, “parecen amigos porque...” supplies a relationship interpretation, and “no suelo jugar mucho” supplies a personal answer. Hints should instead help the candidate buy time or express their own opinions.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Give the examiner a clear question-selection rule for the remaining time, so a two-minute description does not lead to rushing through all three follow-up questions in the final minute.",
+          "conclusion": "Specify that the board and cards contain only pictures or shapes, with no readable text. The scene does not explicitly include writing, but this clarification would help ensure the generated photo meets the no-reading requirement.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "DELE B1 Task 3 for an English-speaking candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in English, and guiding prompts in Spain Spanish with \"usted\" (the people, the place, the objects, how the people are related, what they may be talking about). The examiner listens for one to two minutes without interrupting, then asks questions linking the photo to the candidate's own life. Summary and role in English.",
+        "expectations": "DELE B1 Task 3 for an English-speaking candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in English, and guiding prompts in Spain Spanish with \"usted\" (the people, the place, the objects, how the people are related, what they may be talking about). The examiner listens for one to two minutes without interrupting, then asks questions linking the photo to the candidate's own life. Summary and role in English. Found on runs that wrote the alt in Spanish and the role as \"examinadora\".",
         "id": "en-es-dele-b1-photo-1",
         "userInput": {
           "exam": "dele",
@@ -764,28 +752,28 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The German situation uses Sie, provides the candidate's own Saturday diary and sets an everyday joint-planning task at A2 level. The partner has a different diary for the same day. The additional gift-selection and transport prompts broaden the task beyond the central diary-matching exercise, but it remains the requested task format; no format cap applies.",
+          "reasoning": "The card uses usted, appropriate A1 instructions and the seven self-introduction areas, without importing another task's format or adding a topic. However, 'Idiomas que habla o estudia' broadens the prescribed point about languages spoken rather than preserving the fixed sheet's scope.",
           "score": 8,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "The diary has clear, short entries and usable gaps. The two schedules genuinely overlap from 15:30 to 17:30, so the material supports negotiation and agreement. However, the table title omits the explicitly required invented source and year. The material-support cap does not apply.",
-          "score": 8,
+          "reasoning": "The seven-point sheet provides sufficient, accessible material for a short personal monologue. No additional text, image or table is needed, and nothing in the material prevents the candidate from completing the task.",
+          "score": 10,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "Fabian is correctly positioned as the other candidate, with his own commitments, gift ideas, polite refusals and a question-led opening. Short alternating turns and instructions not to correct support the role. However, the brief offers only sample German lines rather than a sufficiently developed conditional script for the intended conversation. The hints also include a ready-made viable meeting time and other topic-specific suggestions, contrary to the requirement for non-answer interaction phrases. Nothing contradicts the card or partner role, so the cap of 5 is not triggered.",
-          "score": 7,
+          "reasoning": "The English brief and Spanish opening establish the examiner role appropriately, but the explicit permission to intervene contradicts the task, triggering the maximum score of 5. The hints also provide topic-answer templates instead of time-buying or other permitted support phrases, and the prohibition on excessive praise falls short of prohibiting praise altogether.",
+          "score": 4,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The summary addresses the learner as you in English, and the role and private brief are in English. Instructions, prompts, table, place, opening line, hints and quoted spoken lines are in German. Informal du in the peer conversation does not undermine the formal Sie used in the task instructions. There are no emojis or em dashes.",
+          "reasoning": "The summary addresses the learner as 'you' in English, the role and private brief are in English, and the instructions, prompts, place, opening and spoken lines are in suitable Spanish. There are no emojis or em dashes.",
           "score": 10,
           "label": "Right language per field",
           "weight": 20
@@ -803,22 +791,107 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2415,
-          "outputTokens": 863,
-          "reasoningTokens": 249
+          "inputTokens": 2047,
+          "outputTokens": 784,
+          "reasoningTokens": 269
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The partner brief supplies sample utterances rather than written German lines covering the intended conversation, leaving some questions, reactions and agreement steps unspecified. Several hints provide topic-specific answers, especially the mutually available time of 16:00, instead of neutral interaction phrases. The table title lacks the required invented source and year.",
+          "conclusion": "The examiner script contradicts the required uninterrupted monologue by permitting questions after a pause of just five seconds or a short response. This triggers the script category's maximum score of 5. All five hints supply self-introduction answer templates rather than permitted conversational support phrases. Also, 'Never praise excessively' permits some praise, whereas the examiner must never praise.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The seventh point adds languages the candidate studies instead of remaining limited to languages they speak. The sheet otherwise retains all seven required areas and does not introduce a themed personality prompt.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "DELE A1 Task 1 for an English-speaking candidate: the self-introduction sheet as the exam prints it, the same for every candidate, with its seven plain points in Spain Spanish (name, age, nationality, where they live, job or studies, personality, languages they speak) and no topic worked into them. The examiner gives the instruction and listens without intervening. Summary and role in English. Found on runs that turned a point into \"Cómo es usted en las celebraciones\".",
+        "id": "en-es-dele-a1-introduction-1",
+        "userInput": {
+          "exam": "dele",
+          "learnerLanguage": "en",
+          "level": "A1",
+          "paper": "Prueba 4: Expresión e interacción orales",
+          "previous": null,
+          "task": {
+            "brief": "The candidate introduces themself from a sheet of seven points: name, age, nationality, where they live, job or studies, personality, and languages they speak. The examiner gives the instruction, then listens without intervening.",
+            "minutes": 2,
+            "name": "Tarea 1: Presentación personal",
+            "role": "examiner",
+            "stimulus": "topic"
+          },
+          "title": "DELE A1"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The German situation uses Sie, supplies the candidate's own Saturday diary, and asks for joint planning at an appropriate A2 level. Renting bicycles is an original, everyday activity. The additional meeting, route, and packing questions remain compatible with the five-minute planning task. No alternative-format cap applies.",
+          "score": 9,
+          "label": "Like the exam's sheet",
+          "weight": 30
+        },
+        {
+          "categoryId": "material",
+          "reasoning": "The diary has clear time ranges, short entries, and usable availability. The partner has a different diary for the same Saturday, with a workable shared afternoon window. The material supports negotiation, so the unusable-material cap does not apply. However, the title omits the explicitly required invented source and year.",
+          "score": 8,
+          "label": "Material that works",
+          "weight": 25
+        },
+        {
+          "categoryId": "script",
+          "reasoning": "The brief establishes a genuine fellow candidate, short turns, approximately equal participation, and a question-led opening. However, multiple hints provide substantive answers, the appointment time is internally inconsistent, and the meeting-place line can overwrite an accepted 14:30 proposal. The closing confirmation is instructed but not scripted in German. These are concrete script weaknesses, although the script does not clearly contradict the candidate's card or assume an examiner role, so the specific cap of 5 is not triggered.",
+          "score": 6,
+          "label": "The examiner's or partner's script",
+          "weight": 25
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The summary addresses the learner as you in English, and the role is in English. Instructions, prompts, table, place, opening, and hints are in German. The private brief uses English directions with German dialogue and diary entries. There are no emojis or em dashes, and no wrong-language field triggers the cap.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2504,
+          "outputTokens": 1117,
+          "reasoningTokens": 480
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several hints supply topic-specific answers rather than reusable interaction phrases: they give the candidate's German-course excuse, suggest two o'clock, and offer refreshments. This explicitly violates the requirement that hints never provide answers about the topic.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The partner's written diary starts the dentist appointment at 11:30, but its scripted response says eleven. It accepts either 14:00 or 14:30, then proposes 14:00 without preserving the agreed time. The final confirmation is not written out in German. The table also lacks the required invented source and year.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Keep finding a shared time as the central challenge; gift selection and transport questions could be reduced or made optional. Add short conditional German turns for checking availability, responding to suggestions and confirming the final arrangement while preserving the candidate's freedom to lead.",
+          "conclusion": "Add short German fallback turns for other proposed times and an explicit closing confirmation that reuses the negotiated details. Give the partner a simple pacing instruction to sustain the five-minute exchange without prolonging an already completed agreement.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -845,28 +918,28 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The first instruction uses 'vous' and establishes an everyday rental situation in France. The card supplies manageable A2 interaction prompts, assigns the employee role to the examiner and fits a four-minute simulated transaction. It follows the requested DELF interaction format.",
-          "score": 10,
+          "reasoning": "This is an appropriate DELF A2 interaction card: a safe everyday booking situation, French instructions using 'vous', practical prompts, and an examiner playing the employee. It is manageable within four minutes. However, the first instruction does not itself state the booking situation, as explicitly requested. No other-exam-format cap applies.",
+          "score": 8,
           "label": "Like the exam's sheet",
           "weight": 30
         },
         {
           "categoryId": "material",
-          "reasoning": "The Annecy rental setting, euro prices, equipment, opening hours and payment conditions provide realistic material for the task. The private facts support the candidate's questions. The only small practical ambiguity is whether the accessory surcharge applies per day or per rental.",
-          "score": 9,
+          "reasoning": "The schedules, two-hour duration, euro prices, equipment and payment methods are plausible for France and support a usable booking exchange. However, the requested programme has no corresponding factual content, and the reserve remains unidentified. These are gaps rather than a failure to support the task, so the material cap does not apply.",
+          "score": 8,
           "label": "Material that works",
           "weight": 25
         },
         {
           "categoryId": "script",
-          "reasoning": "The assistant role and polite French opening are appropriate, and the brief correctly prohibits evaluation and correction. However, several essential facts appear only in English rather than in scripted French responses. The hints also violate the explicit requirement by supplying topic-specific questions and requests instead of general interaction phrases. There is no card or role contradiction triggering the category's five-point cap.",
-          "score": 6,
+          "reasoning": "The English brief establishes the correct employee role, provides polite French dialogue, reacts to candidate questions, and prohibits correction. However, the hints are topical questions and a booking answer rather than general interaction strategies. Several facts lack written French responses, and there is no programme response despite the card inviting that question. The script does not fundamentally contradict the card or role, so the contradiction cap is not triggered.",
+          "score": 7,
           "label": "The examiner's or partner's script",
           "weight": 25
         },
         {
           "categoryId": "languages",
-          "reasoning": "The summary addresses the learner as 'you' in English without translating the prompts, and the role is named in English. Instructions, prompts, place, opening and hints are in French. The private brief is in English with French dialogue examples. There are no emojis or em dashes.",
+          "reasoning": "The summary addresses the learner as 'you' in English, the role is named in English, and the private brief is in English with French spoken lines. Instructions, prompts, place, opening line and hints are in French. There are no emojis or em dashes and no wrong-language fields.",
           "score": 10,
           "label": "Right language per field",
           "weight": 20
@@ -884,24 +957,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2254,
-          "outputTokens": 929,
-          "reasoningTokens": 363
+          "inputTokens": 2236,
+          "outputTokens": 973,
+          "reasoningTokens": 362
         }
       },
       "steps": [
         {
-          "conclusion": "The script does not provide French lines for several essential responses, including reservation conditions, the deposit, payment methods and opening hours. The voice model must improvise these despite the requirement to write out its spoken lines. All five hints are topic-specific requests or questions rather than the required general interaction phrases.",
+          "conclusion": "The hints supply topic-specific questions and a booking request rather than general interaction phrases, contrary to the script requirements. The private brief also leaves some available information, including duration and the child-price condition, without written French responses.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "The accessory charge of 3 euros does not specify whether it applies per day or per rental. The instruction to greet the candidate when they greet you could also repeat the greeting already supplied in the opening line.",
+          "conclusion": "The first instruction uses 'vous' but establishes only the location; the booking situation appears in the second instruction. The candidate is told to ask about the programme, but the agent has no information about what the tour includes. The final hint requests two places although the card asks for one.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8
         },
         {
-          "conclusion": "Add a compact conditional French response bank covering each transaction point, with follow-up questions sufficient for approximately four minutes. Clarifying weekend collection and return arrangements would make the transaction easier to complete naturally.",
+          "conclusion": "Name a plausible reserve and provide a meeting point to make the reservation more concrete. Combine the location and booking goal in the first instruction, and replace topical hints with reusable A2 phrases for clarification or buying time.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -923,6 +996,113 @@
             "stimulus": "topic"
           },
           "title": "DELF A2"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The situation comes first, the instructions use usted, and the four everyday planning goals fit a three-to-four-minute DELE A2 role-play. However, moving the setting to Granada and omitting the photograph's concrete context weakens the required continuation of Task 2. This is still the correct task format, so the wrong-format cap does not apply.",
+          "score": 7,
+          "label": "Like the exam's sheet",
+          "weight": 30
+        },
+        {
+          "categoryId": "material",
+          "reasoning": "The topic card supplies a usable, safe situation with coherent goals covering timing, route, preparation and an alternative plan. The suggested activities are plausible in Granada, and no supplied facts contradict the planning goals. A topic-based role-play does not need a new photograph, table or rental price list. The material can support the interaction, so the cap does not apply.",
+          "score": 9,
+          "label": "Material that works",
+          "weight": 25
+        },
+        {
+          "categoryId": "script",
+          "reasoning": "The English private brief supplies Spanish dialogue in a sensible order, consistently plays the friend, offers choices and forbids correction or evaluation. Its opening fits that role, and informal tú is natural between friends. However, fallback support is limited to the first goal, and the opening includes unnecessarily complex language for A2. The script does not contradict the candidate card or assigned role, so the cap does not apply.",
+          "score": 8,
+          "label": "The examiner's or partner's script",
+          "weight": 25
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The summary addresses the learner in Brazilian Portuguese, and the character role is also Portuguese. Instructions, prompts, place, opening and hints are Spanish; the private brief is English with its spoken lines in Spanish. There are no emojis or em dashes and no wrong-language fields.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2452,
+          "outputTokens": 1133,
+          "reasoningTokens": 490
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The continuation preserves the friends-and-cycling topic but changes the setting from Seville in the photograph to Granada. It also drops the paper map and rental stand, making the connection to the actual earlier material weaker than required. Planning a ride is an allowed scenario, but it should remain grounded in that scene.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The script provides a fallback question only for arranging the time, leaving less support if the candidate struggles with the other goals. The opening phrase 'Qué bien que tengamos tiempo libre' is also less straightforward than desirable for simple A2 Spanish.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Retain Seville and explicitly introduce the friends planning their ride with the map beside the rental bicycles. Add short fallback questions for the route, supplies and rainy-weather alternative, and simplify the opening to something like 'Tenemos tiempo libre este fin de semana'.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "DELE A2 Task 3 continues Task 2's photo of two friends checking a paper map at a bike rental stand: the role-play builds on that scene (renting bikes, asking the way or planning a ride), with the examiner playing someone in it such as the rental clerk or one of the friends, never an unrelated situation. Instructions in simple Spain Spanish with \"usted\" state the situation first; the goals on the card and the examiner's facts (prices in euros, times, conditions) fit it. Summary and role in Brazilian Portuguese. Found in code: a continuing task never received the earlier card's photos, so it could not link the role-play to them.",
+        "id": "pt-es-dele-a2-role-play-continues-photo-1",
+        "userInput": {
+          "exam": "dele",
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "paper": "Prueba 4: Expresión e interacción orales",
+          "previous": {
+            "instructions": [
+              "Observe la fotografía y descríbala durante dos o tres minutos.",
+              "Puede usar las preguntas como guía."
+            ],
+            "photos": [
+              {
+                "alt": "Duas amigas olham um mapa de papel ao lado de bicicletas de aluguel numa praça.",
+                "scene": "Two women in their twenties, one in a yellow raincoat and one in a denim jacket, stand beside a row of rental bicycles in a sunny city square in Seville, unfolding a paper map together and pointing at it, with orange trees and a cafe terrace behind them in soft morning light."
+              }
+            ],
+            "prompts": [
+              "¿Quiénes son las personas?",
+              "¿Dónde están?",
+              "¿Qué están haciendo?",
+              "¿Qué relación hay entre ellas?",
+              "¿Cómo se sienten?",
+              "¿Qué han hecho antes y qué van a hacer después?"
+            ],
+            "table": null,
+            "task": "Tarea 2: Descripción de una fotografía",
+            "text": null
+          },
+          "task": {
+            "brief": "A role-play with the examiner in an everyday situation linked to the Task 2 photo (such as planning a surprise party with a sibling): the examiner plays the other person, follows a plan for the dialogue and improvises from the candidate's answers.",
+            "minutes": 4,
+            "name": "Tarea 3: Diálogo en una situación simulada",
+            "role": "examiner",
+            "stimulus": "topic"
+          },
+          "title": "DELE A2"
         }
       }
     }

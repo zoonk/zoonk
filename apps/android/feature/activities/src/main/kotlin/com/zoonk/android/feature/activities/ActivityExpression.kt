@@ -14,6 +14,8 @@ import kotlin.math.floor
 import kotlin.math.ln
 import kotlin.math.log10
 import kotlin.math.log2
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sign
 import kotlin.math.sin
@@ -29,6 +31,33 @@ object ActivityExpression {
     private const val MAX_DEPTH = 32
     private const val MAX_ROUND_DIGITS = 10
     private const val HALF_TURN_DEGREES = 180.0
+
+    /**
+     * Core's `withoutRoundingError`: no double is exactly 0.1 or π, so (0.1 + 0.2) − 0.3 leaves 5.6e-17 and sin(π)
+     * 1.2e-16 where the answer is 0. A sum within one unit in the last place of its larger input, or a sine within one
+     * of its angle, is within its inputs' rounding, so it can't be told from 0.
+     */
+    private fun withoutRoundingError(
+        value: Double,
+        inputSize: Double,
+    ): Double = if (abs(value) <= Math.ulp(1.0) * inputSize) 0.0 else value
+
+    /**
+     * Core's `MAX_ROUNDED_ANGLE`: past this, the cutoff an angle's rounding allows would keep growing until it zeroed
+     * real values, like sin(1e16) ≈ 0.78.
+     */
+    private const val MAX_ROUNDED_ANGLE = 1e9
+
+    private fun trig(
+        value: Double,
+        radians: Double,
+    ) = withoutRoundingError(value, min(abs(radians), MAX_ROUNDED_ANGLE))
+
+    fun sine(radians: Double) = trig(sin(radians), radians)
+
+    fun cosine(radians: Double) = trig(cos(radians), radians)
+
+    fun tangent(radians: Double) = trig(tan(radians), radians)
 
     private val tokenPattern = Regex("""(\s+)|((?:\d+\.?\d*|\.\d+)(?:[Ee][+-]?\d+)?)|([A-Z_a-z]\w*)|([(),*+/^-])|(.)""")
 
@@ -50,7 +79,7 @@ object ActivityExpression {
             "atan" to unary(::atan),
             "cbrt" to unary(::cbrt),
             "ceil" to unary(::ceil),
-            "cos" to unary(::cos),
+            "cos" to unary { cosine(it) },
             "deg" to unary { it * HALF_TURN_DEGREES / PI },
             "exp" to unary(::exp),
             "floor" to unary(::floor),
@@ -63,9 +92,9 @@ object ActivityExpression {
             "rad" to unary { it * PI / HALF_TURN_DEGREES },
             "round" to Function(1, 2, ::roundTo),
             "sign" to unary(Double::sign),
-            "sin" to unary(::sin),
+            "sin" to unary { sine(it) },
             "sqrt" to unary(::sqrt),
-            "tan" to unary(::tan),
+            "tan" to unary { tangent(it) },
         )
 
     private sealed interface Node {
@@ -120,7 +149,8 @@ object ActivityExpression {
         variables: Map<String, Double> = emptyMap(),
     ): Double? {
         val tree = parse(source) ?: return null
-        return runCatching { evaluate(tree, variables) }.getOrNull()?.takeIf { it.isFinite() }
+        // Core's +0 for a zero result, since -sin(π) would otherwise read "−0".
+        return runCatching { evaluate(tree, variables) }.getOrNull()?.takeIf { it.isFinite() }?.let { if (it == 0.0) 0.0 else it }
     }
 
     private fun parse(source: String): Node? {
@@ -279,8 +309,8 @@ object ActivityExpression {
         right: Double,
     ): Double =
         when (operator) {
-            '+' -> left + right
-            '-' -> left - right
+            '+' -> withoutRoundingError(left + right, max(abs(left), abs(right)))
+            '-' -> withoutRoundingError(left - right, max(abs(left), abs(right)))
             '*' -> left * right
             '/' -> left / right
             else -> left.pow(right)
