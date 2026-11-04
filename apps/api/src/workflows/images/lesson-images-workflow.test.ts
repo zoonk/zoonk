@@ -77,10 +77,13 @@ describe(lessonImagesWorkflow, () => {
     const [rejectedPrompt, passedPrompt] = [`globe ${randomUUID()}`, `compass ${randomUUID()}`];
     await markedScreens({ lessonId: lesson.id, prompts: [rejectedPrompt, passedPrompt] });
 
+    const isRejected = (scene: { focalObject: string }) =>
+      scene.focalObject.includes(rejectedPrompt);
+
     vi.mocked(checkLessonImage).mockImplementation(async ({ scene }) =>
-      scene.focalObject.includes(rejectedPrompt) &&
-      vi.mocked(checkLessonImage).mock.calls.filter(([params]) => params.scene === scene).length ===
-        1
+      isRejected(scene) &&
+      vi.mocked(checkLessonImage).mock.calls.filter(([params]) => isRejected(params.scene))
+        .length === 1
         ? ({ data: { ...passedCheck.data, passed: false, problems: ["wrong object"] } } as never)
         : (passedCheck as never),
     );
@@ -107,6 +110,13 @@ describe(lessonImagesWorkflow, () => {
 
     expect(alts.filter((alt) => alt === `A drawing of a ${rejectedPrompt}`)).toHaveLength(2);
     expect(alts.filter((alt) => alt === `A drawing of a ${passedPrompt}`)).toHaveLength(1);
+
+    expect(generateImageScene).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        alt: `A drawing of a ${rejectedPrompt}`,
+        findings: ["wrong object"],
+      }),
+    );
 
     expect(generateLessonImage).toHaveBeenLastCalledWith(
       expect.objectContaining({ corrections: ["wrong object"] }),
