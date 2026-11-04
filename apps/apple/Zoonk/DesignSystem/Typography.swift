@@ -23,6 +23,8 @@ struct TypeStyle: Hashable, Sendable {
   var isTabular = false
   var isItalic = false
   var isUppercase = false
+  /// As a multiple of the size, main's `leading-*`; without it lines keep Geist's own height.
+  var lineHeight: Double?
 }
 
 extension TypeStyle {
@@ -35,11 +37,13 @@ extension TypeStyle {
   /// A lesson's question.
   static let question = TypeStyle(size: 19, relativeTo: .title3, weight: 560, tracking: -0.02)
   /// A lesson's running text.
-  static let lessonText = TypeStyle(size: 18, relativeTo: .body, weight: 400)
+  static let lessonText = TypeStyle(size: 18, relativeTo: .body, weight: 400, lineHeight: 1.625)
   /// Main's `text-lead`, in the secondary color.
   static let lead = TypeStyle(size: 17, relativeTo: .body, weight: 400, tracking: -0.01)
   /// Running text read for itself: the buddy's words, a question's context, Today's queue.
   static let reading = TypeStyle(size: 16, relativeTo: .callout, weight: 400)
+  /// A long answer the learner writes, main's essay box: reading size with relaxed lines.
+  static let writing = TypeStyle(size: 16, relativeTo: .callout, weight: 400, lineHeight: 1.625)
   /// A screen's action.
   static let button = TypeStyle(size: 15, relativeTo: .subheadline, weight: 500)
   /// Text in the app; text without a role takes it.
@@ -62,6 +66,10 @@ extension TypeStyle {
   /// Uppercase, inside a panel only.
   static let label = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: 550, tracking: 0.04, isUppercase: true)
+  /// A checked answer's verdict, main's `FeedbackVerdict`, in its tone's word color.
+  static let verdict = TypeStyle(size: 15, relativeTo: .subheadline, weight: 550)
+  /// The word on a checked answer option, main's `ANSWER_TAG_CLASS`.
+  static let tag = TypeStyle(size: 11.5, relativeTo: .caption2, weight: 550)
   /// A chip's word, main's `CHIP_CLASS`.
   static let chip = TypeStyle(size: 11.5, relativeTo: .caption2, weight: 500)
   /// Plot labels and marks too small for `meta`.
@@ -178,11 +186,18 @@ private struct TypeStyleModifier: ViewModifier {
   func body(content: Content) -> some View {
     let pointSize = style.pointSize(dynamicTypeSize)
 
-    content
+    let styled =
+      content
       .font(style.font(pointSize: pointSize, legibility: legibilityWeight))
       .tracking(style.tracking * pointSize)
       .textCase(style.isUppercase ? .uppercase : textCase)
       .environment(\.typeStyle, style)
+
+    if let lineHeight = style.lineHeight {
+      styled.lineSpacing(max(0, (lineHeight - GeistFont.lineHeight(of: style.face)) * pointSize))
+    } else {
+      styled
+    }
   }
 }
 
@@ -198,6 +213,20 @@ private struct TypeWeightModifier: ViewModifier {
 
 private struct GeistFont: Hashable {
   @MainActor static var cache: [GeistFont: Font] = [:]
+  @MainActor private static var lineHeights: [TypeStyle.Face: Double] = [:]
+
+  /// A line's own height as a multiple of the size, as text lays it out.
+  @MainActor static func lineHeight(of face: TypeStyle.Face) -> Double {
+    if let lineHeight = lineHeights[face] {
+      return lineHeight
+    }
+
+    let font = GeistFont(face: face, isItalic: false, isTabular: false, size: 100, weight: 400)
+      .makeFont()
+    let lineHeight = (CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font)) / 100
+    lineHeights[face] = lineHeight
+    return lineHeight
+  }
 
   let face: TypeStyle.Face
   let isItalic: Bool

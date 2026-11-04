@@ -95,7 +95,7 @@ struct MockRunnerView: View {
     if showsAnswerSheet, fitsTwoPages {
       PaneSplit(primaryShare: 0.5) {
         QuestionColumn(readableWidth: 720, spacing: 16) {
-          EmptyView()
+          progress
         } content: {
           questionParts(question)
         } actions: {
@@ -114,7 +114,7 @@ struct MockRunnerView: View {
 
   private func spread(_ question: MockQuestion) -> some View {
     QuestionSpread(readableWidth: 720, spacing: 16) {
-      EmptyView()
+      progress
     } stimulus: {
       MockQuestionMeta(run: run, view: view, question: question)
       MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
@@ -132,6 +132,25 @@ struct MockRunnerView: View {
     MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
     MockQuestionCard(run: run, view: view, question: question, part: .response)
     MovesNote(moves: run.moves)
+  }
+
+  /// Main's `TaskHeaderProgress` under the bar: the share of this section answered.
+  private var progress: some View {
+    let counts = MockSectionCounts(run: run)
+
+    return Meter(
+      value: Double(counts.answered + counts.essays - counts.blankEssays),
+      total: Double(max(counts.total, 1)), height: 4
+    )
+    .accessibilityLabel(
+      Text(
+        "Questions answered in this section", tableName: "Mock",
+        comment: "VoiceOver label of the bar under a mock's clock")
+    )
+    .frame(maxWidth: 720)
+    .scenePadding(.horizontal)
+    .padding(.bottom, 4)
+    .frame(maxWidth: .infinity)
   }
 
   private var actionBar: some View {
@@ -319,6 +338,7 @@ private struct MockEssayBox: View {
   let view: MockView
   let question: MockQuestion
   let isLocked: Bool
+  @FocusState private var isFocused: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -329,10 +349,11 @@ private struct MockEssayBox: View {
       let words = WordCount.count(text.wrappedValue)
 
       TextEditor(text: text)
+        .typeStyle(.writing)
         .frame(minHeight: 280)
         .scrollContentBackground(.hidden)
-        .padding(8)
-        .panel(cornerRadius: 12)
+        .focused($isFocused)
+        .fieldBorder(isFocused: isFocused)
         .disabled(isLocked)
         .accessibilityLabel(Text((view.essayRubric ?? .custom).writingName))
         .accessibilityHint(EssayWords.hint(words))

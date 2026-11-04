@@ -123,7 +123,7 @@ struct CheckpointDuelState: Equatable {
     return questions.first { verdicts[$0.itemId] == nil }
   }
 
-  var segments: [PracticeSegment] {
+  var segments: [TaskSegment] {
     let current = currentQuestion?.itemId
 
     return questions.map { question in

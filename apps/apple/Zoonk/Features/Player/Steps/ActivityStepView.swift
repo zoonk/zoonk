@@ -163,6 +163,7 @@ struct ActivityDataNote: View {
 /// reads.
 private struct NumericAnswerField: View {
   @ActivityState("typedNumber") private var typed: String? = nil
+  @FocusState private var isFocused: Bool
 
   let value: Double?
   let expected: Double
@@ -183,16 +184,16 @@ private struct NumericAnswerField: View {
         Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
       }
       .keyboardType(.decimalPad)
+      .focused($isFocused)
       .disabled(isLocked)
-      .typeStyle(.readout.weight(.regular))
       .accessibilityHint(Text(verbatim: unit ?? ""))
 
       if let unit, !unitLeads {
         Text(unit).foregroundStyle(.mutedForeground).accessibilityHidden(true)
       }
     }
-    .padding()
-    .panel(cornerRadius: 16)
+    .typeStyle(.reading.monospacedDigit())
+    .fieldBorder(isFocused: isFocused, minHeight: 44)
     .onChange(of: value) {
       // An answer set elsewhere (going back to the screen) shows as itself.
       if let typed, parseLocalizedNumber(typed, locale: .courseLanguage) != value {

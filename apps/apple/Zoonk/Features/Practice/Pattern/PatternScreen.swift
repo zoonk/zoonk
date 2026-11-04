@@ -218,7 +218,7 @@ struct PatternScreen: View {
   }
 
   private func segments(_ pattern: Components.Schemas.MistakePattern, index: Int)
-    -> [PracticeSegment]
+    -> [TaskSegment]
   {
     pattern.drill.indices.map { position in
       guard position < picks.count else { return position == index ? .current : .ahead }

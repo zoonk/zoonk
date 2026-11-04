@@ -66,6 +66,22 @@ struct LessonTextBlocks: View {
   }
 }
 
+/// Main's `LessonEyebrow`: what kind of screen this is, as a chip over its question.
+struct LessonEyebrow: View {
+  let title: Text
+  let systemImage: String
+
+  var body: some View {
+    HStack(alignment: .firstTextBaseline, spacing: 6) {
+      Image(systemName: systemImage)
+        .imageScale(.small)
+        .accessibilityHidden(true)
+      title
+    }
+    .chip(wraps: true)
+  }
+}
+
 struct LessonQuestionText: View {
   let text: String
 
@@ -141,8 +157,9 @@ struct LessonPictureView: View {
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding()
-      .background(.muted, in: .rect(cornerRadius: 16))
+      .padding(.horizontal, 16)
+      .padding(.vertical, 12)
+      .background(Color.muted.opacity(0.5), in: .rect(cornerRadius: Radius.xl, style: .continuous))
     }
   }
 
@@ -231,7 +248,7 @@ extension View {
   /// place gets the same frame.
   func pictureFrame(aspectRatio: CGFloat, maxHeight: CGFloat = .infinity) -> some View {
     PictureFrameLayout(aspectRatio: aspectRatio, maxHeight: maxHeight) { self }
-      .clipShape(.rect(cornerRadius: 16))
+      .clipShape(.rect(cornerRadius: Radius.xl, style: .continuous))
       .frame(maxWidth: .infinity, alignment: .leading)
   }
 }

@@ -4,6 +4,8 @@ import SwiftUI
 enum AnswerTone {
   case idle
   case picked
+  /// A guess's pick once checked: neither right nor wrong.
+  case guess
   case right
   case wrong
 }
@@ -28,6 +30,7 @@ private func fill(_ tone: AnswerTone, isPressed: Bool) -> Color {
   switch tone {
   case .idle: isPressed ? Color.muted.opacity(0.6) : .clear
   case .picked: .selectedTint
+  case .guess: .clear
   case .right: Color.success.opacity(0.09)
   case .wrong: Color.destructive.opacity(0.09)
   }
@@ -37,6 +40,7 @@ private func stroke(_ tone: AnswerTone) -> Color {
   switch tone {
   case .idle: .input
   case .picked: Color(.foreground)
+  case .guess: Color(.foreground).opacity(0.4)
   case .right: .success
   case .wrong: .destructive
   }
@@ -46,6 +50,6 @@ private func lineWidth(_ tone: AnswerTone) -> CGFloat {
   switch tone {
   case .idle: 1
   case .picked: 2
-  case .right, .wrong: 1.5
+  case .guess, .right, .wrong: 1.5
   }
 }

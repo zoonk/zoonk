@@ -15,9 +15,13 @@ struct ZoonkButtonStyle: ButtonStyle {
   }
 
   let variant: Variant
+  var isIcon = false
+
+  /// Main's `size="icon"`: a square as tall as the size, for a label that is only an icon.
+  var icon: ZoonkButtonStyle { ZoonkButtonStyle(variant: variant, isIcon: true) }
 
   func makeBody(configuration: Configuration) -> some View {
-    ZoonkButton(configuration: configuration, variant: variant)
+    ZoonkButton(configuration: configuration, variant: variant, isIcon: isIcon)
   }
 }
 
@@ -36,6 +40,7 @@ private struct ZoonkButton: View {
 
   let configuration: ButtonStyleConfiguration
   let variant: ZoonkButtonStyle.Variant
+  let isIcon: Bool
 
   var body: some View {
     let shape = RoundedRectangle(
@@ -45,10 +50,10 @@ private struct ZoonkButton: View {
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
-      .padding(.horizontal, horizontalPadding)
+      .padding(.horizontal, isIcon ? 0 : horizontalPadding)
       .padding(.vertical, 6)
-      .frame(minHeight: height)
-      .frame(maxWidth: sizing == .flexible ? .infinity : nil)
+      .frame(minWidth: isIcon ? height : nil, minHeight: height)
+      .frame(maxWidth: sizing == .flexible && !isIcon ? .infinity : nil)
       .background(fill, in: shape)
       .overlay {
         if variant == .outline && !isDestructive {
