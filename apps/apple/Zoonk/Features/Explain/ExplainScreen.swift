@@ -82,7 +82,8 @@ private struct ExplanationView: View {
             tableName: "Explain",
             comment: "Eyebrow over a quick explanation's title: its kind and length"),
           supporting: Text(
-            "No plan to set up.", tableName: "Explain", comment: "Under a quick explanation's title")
+            "No plan to set up.", tableName: "Explain", comment: "Under a quick explanation's title"
+          )
         )
         .listRowBackground(Color.clear)
       }

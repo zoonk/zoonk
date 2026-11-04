@@ -280,7 +280,8 @@ private struct OutlineDisclosure<Label: View, Content: View>: View {
     .accessibilityValue(
       isExpanded
         ? Text("Expanded", tableName: "Courses", comment: "VoiceOver: a level's chapters are shown")
-        : Text("Collapsed", tableName: "Courses", comment: "VoiceOver: a level's chapters are hidden"))
+        : Text(
+          "Collapsed", tableName: "Courses", comment: "VoiceOver: a level's chapters are hidden"))
 
     if isExpanded {
       content
