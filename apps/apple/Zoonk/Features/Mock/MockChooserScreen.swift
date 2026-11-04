@@ -149,6 +149,7 @@ private struct MockChooser: View {
   @State private var length: PlacementMockOption.Length?
   @State private var status: ChooserStatus = .choosing
   @State private var busy = false
+  @State private var isOnScreen = false
   @AccessibilityFocusState private var isPlusNoticeFocused: Bool
 
   let goalId: String
@@ -187,6 +188,8 @@ private struct MockChooser: View {
       }
       .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
     }
+    .onAppear { isOnScreen = true }
+    .onDisappear { isOnScreen = false }
     // See Plus took the place of the Start the learner pressed.
     .onChange(of: isOpen) {
       if !isOpen, status == .plusRequired {
@@ -708,7 +711,8 @@ private struct MockChooser: View {
       status = .choosing
     }
 
-    if !outcome.isEmpty {
+    // A start that ends after the learner left for another tab isn't read out over it.
+    if isOnScreen, !outcome.isEmpty {
       AccessibilityNotification.Announcement(outcome.joined(separator: " ")).post()
     }
   }
