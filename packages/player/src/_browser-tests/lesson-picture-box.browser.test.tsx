@@ -3,7 +3,7 @@ import {
   playableStepContent,
 } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { heldPicture } from "../_test-utils/held-pictures";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
@@ -208,6 +208,47 @@ describe("a drawn lesson picture", () => {
       await expect.element(option).toBeChecked();
       await page.getByRole("button", { name: /^Check/u }).click();
       await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
+    });
+  });
+
+  it("lets a learner read a drawing picture's whole description at 200% text", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const alt =
+        "Two atoms with a pair of electrons where their shells overlap. The two blue dots sit between the nuclei, inside both shells, closer to neither one.";
+
+      const step = contentStep("check", {
+        content: { ...playableStepContent.check, image: { alt, prompt: alt } },
+        imagePending: true,
+      });
+
+      renderLessonPlayer({ lesson: buildLesson([step]) });
+
+      const status = page.getByText("Drawing the picture…");
+      await expect.element(status).toBeVisible();
+      const description = page.getByText(alt).element();
+      const content = description.parentElement;
+      const frame = document.querySelector('[data-slot="media-pending"]');
+
+      if (!(content instanceof HTMLElement) || !frame) {
+        throw new TypeError("No picture being drawn");
+      }
+
+      const { bottom, top } = frame.getBoundingClientRect();
+      expect(status.element().getBoundingClientRect().top).toBeGreaterThanOrEqual(top);
+      expect(description.getBoundingClientRect().bottom).toBeGreaterThan(bottom);
+
+      content.focus();
+      await userEvent.keyboard("{End}");
+
+      await expect
+        .poll(() => description.getBoundingClientRect().bottom)
+        .toBeLessThanOrEqual(bottom);
     });
   });
 

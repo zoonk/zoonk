@@ -12,6 +12,7 @@ function MediaPending({
     <div
       className={cn(
         "text-muted-foreground relative flex items-center justify-center overflow-hidden rounded-xl",
+        scrollable && "has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
         className,
       )}
       data-slot="media-pending"
@@ -21,7 +22,7 @@ function MediaPending({
       <div
         className={cn(
           "relative flex flex-col items-center gap-2 p-4 text-center text-sm",
-          scrollable && "max-h-full overflow-y-auto",
+          scrollable && "max-h-full overflow-y-auto outline-none",
         )}
         // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Overflowing descriptions need a keyboard scroll target.
         tabIndex={scrollable ? 0 : undefined}
