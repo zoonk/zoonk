@@ -451,7 +451,7 @@ private fun RequestTile(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        if (limit != null && !capped) MindMapLimit(limit, navigator)
+        if (limit != null && !capped && local?.pending != true) MindMapLimit(limit, navigator, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
     }
 }
 
