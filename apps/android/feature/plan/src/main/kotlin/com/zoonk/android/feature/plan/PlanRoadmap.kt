@@ -514,7 +514,7 @@ private fun PhaseLane(
 
     FractionRow(
         Modifier
-            .padding(top = 4.dp)
+            .padding(top = 8.dp)
             .height(16.dp)
             .fillMaxWidth()
             .clearAndSetSemantics {},
