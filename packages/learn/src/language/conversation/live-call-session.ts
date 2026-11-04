@@ -1,4 +1,5 @@
 import { Experimental_OpenAIRealtimeModelLive as OpenAIRealtimeModelLive } from "@ai-sdk/openai";
+import { type ConversationTurn } from "@zoonk/core/language/conversations/contract";
 import {
   Experimental_AbstractRealtimeSession as AbstractRealtimeSession,
   type Experimental_RealtimeServerEvent as RealtimeServerEvent,
@@ -64,18 +65,24 @@ export class LiveCallSession extends AbstractRealtimeSession {
   }
 }
 
-/** The call is closed by our server, never from the browser. */
+/**
+ * The call is closed by our server, never from the browser. `turns`, the call so far, go with the
+ * offer: the SDK posts its `sessionConfig` with it.
+ */
 export function createLiveCallSession({
   onEvent,
   sessionUrl,
+  turns,
 }: {
   onEvent: (event: RealtimeServerEvent) => void;
   sessionUrl: string;
+  turns: ConversationTurn[];
 }): LiveCallSession {
   return new LiveCallSession({
     api: { session: sessionUrl },
     model: LIVE_EVENTS,
     onEvent,
+    sessionConfig: { providerOptions: { zoonk: { turns } } },
     startupTimeoutMs: CONNECT_TIMEOUT_MS,
   });
 }

@@ -48,7 +48,7 @@ function cardInput({
 
 export const TEST_CASES: TestCase<unknown, ExamSpeakingCardInput>[] = [
   {
-    expectations: `DELE B2 Task 1 for a Brazilian candidate: a problem and five to seven proposals to solve it on the card (the prompts), instructions in Spain Spanish with "usted" saying to weigh at least four for 3 to 4 minutes and then talk with the examiner. No photos, text or table. The examiner's brief listens without interrupting through the monologue, then asks which proposal is best, about the candidate's country and their opinion. Summary and role in Brazilian Portuguese.`,
+    expectations: `DELE B2 Task 1 for a Brazilian candidate: a problem and five to seven proposals to solve it on the card (the prompts), instructions in Spain Spanish with "usted" saying to weigh at least four for 3 to 4 minutes and then talk with the examiner. No photos, text or table. The examiner's brief listens without interrupting through the monologue, then asks which proposal is best, about the candidate's country and their opinion. Summary and role in Brazilian Portuguese, with no Spanish words. Found on a run whose summary said "um huerto comunitário".`,
     id: "pt-es-dele-b2-proposals",
     userInput: cardInput({ exam: "dele", learnerLanguage: "pt", level: "B2", task: "t1" }),
   },
@@ -68,7 +68,7 @@ export const TEST_CASES: TestCase<unknown, ExamSpeakingCardInput>[] = [
     userInput: cardInput({ exam: "dele", learnerLanguage: "pt", level: "B2", task: "t3" }),
   },
   {
-    expectations: `Goethe-Zertifikat B1 Part 1 for a Brazilian candidate, with the AI as the other candidate: a situation to plan together with four prompts in German ("Sie" in the instructions), and a partner brief with its own suggestions, reactions and some disagreement, speaking about half the time in short turns and helping agree on a plan. The opening line is the partner starting the planning with a question. Role "outra candidata" or "outro candidato".`,
+    expectations: `Goethe-Zertifikat B1 Part 1 for a Brazilian candidate, with the AI as the other candidate: a situation to plan together with four prompts in German ("Sie" in the instructions), and a partner brief with its own suggestions, reactions and some disagreement, speaking about half the time in short turns and helping agree on a plan. The opening line is the partner starting the planning with a question. Summary in Brazilian Portuguese and role "outra candidata" or "outro candidato". Found on runs that wrote the summary in German, as "Plane mit deiner Gesprächspartnerin…".`,
     id: "pt-de-goethe-b1-plan-together",
     userInput: cardInput({ exam: "goethe", learnerLanguage: "pt", level: "B1", task: "t1" }),
   },
@@ -143,9 +143,14 @@ export const TEST_CASES: TestCase<unknown, ExamSpeakingCardInput>[] = [
     }),
   },
   {
-    expectations: `DELE B1 Task 3 for an English-speaking candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in English, and guiding prompts in Spain Spanish with "usted" (the people, the place, the objects, how the people are related, what they may be talking about). The examiner listens for one to two minutes without interrupting, then asks questions linking the photo to the candidate's own life. Summary and role in English.`,
+    expectations: `DELE B1 Task 3 for an English-speaking candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in English, and guiding prompts in Spain Spanish with "usted" (the people, the place, the objects, how the people are related, what they may be talking about). The examiner listens for one to two minutes without interrupting, then asks questions linking the photo to the candidate's own life. Summary and role in English. Found on runs that wrote the alt in Spanish and the role as "examinadora".`,
     id: "en-es-dele-b1-photo",
     userInput: cardInput({ exam: "dele", learnerLanguage: "en", level: "B1", task: "t3" }),
+  },
+  {
+    expectations: `DELE A1 Task 1 for an English-speaking candidate: the self-introduction sheet as the exam prints it, the same for every candidate, with its seven plain points in Spain Spanish (name, age, nationality, where they live, job or studies, personality, languages they speak) and no topic worked into them. The examiner gives the instruction and listens without intervening. Summary and role in English. Found on runs that turned a point into "Cómo es usted en las celebraciones".`,
+    id: "en-es-dele-a1-introduction",
+    userInput: cardInput({ exam: "dele", learnerLanguage: "en", level: "A1", task: "t1" }),
   },
   {
     expectations: `Goethe-Zertifikat A2 Part 3 for an English-speaking candidate, with the AI as the other candidate: a situation in German with "Sie" (find a time on the same day to do something together), and a table that is the candidate's own diary page for that day, with times and what is planned at each, leaving some gaps. The partner brief holds a different diary for the same day, written out, so the two must ask, suggest, react and agree on a time both have free; it speaks about half the time in short simple turns. The opening line is the partner starting the planning with a question. Summary and role ("other candidate") in English.`,

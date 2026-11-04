@@ -76,7 +76,7 @@ export function ConversationClient({
 
   const actions = useMemo<ConversationActions>(
     () => ({
-      checkObjectives: (turns) => checkObjectivesAction(id, { turns }),
+      checkObjectives: (input) => checkObjectivesAction(id, input),
       complete: (input) =>
         completeConversationAction(id, { ...input, timeZone: getLocalTimeZone() }),
       connect: (input) => connectConversationAction({ conversationId: id, input, locale }),

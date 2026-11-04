@@ -83,6 +83,43 @@ describe(evaluateFormula, () => {
     expect(valueOf("exp(0) + deg(pi)")).toBeCloseTo(181);
   });
 
+  it.each([
+    ["sin(pi)", {}],
+    ["cos(rad(90)) + tan(rad(180))", {}],
+    ["(0.1 + 0.2) - 0.3", {}],
+    ["((0.1 + 0.2) - 0.3) * 1000", {}],
+    ["speed^2 * sin(rad(2 * angle)) / 9.81", { angle: 90, speed: 20 }],
+    ["-sin(pi)", {}],
+    ["sin(pi) / -2", {}],
+  ])("reads a result that only rounding keeps from zero as 0: %s", (source, variables) => {
+    expect(valueOf(source, variables)).toBe(0);
+  });
+
+  it.each([
+    ["0.000075 + 0", 7.5e-5],
+    ["sin(1e-10)", 1e-10],
+    ["6.626e-34 * 5e14", 3.313e-19],
+    ["1 + 1e-10 - 1", 1e-10],
+    ["1000000000001 - 1000000000000", 1],
+    ["sin(100 * pi + 1e-10)", 1e-10],
+    ["sin(1e16)^2 + cos(1e16)^2", 1],
+  ])("keeps a small result rounding can't explain: %s", (source, expected) => {
+    expect(Number(valueOf(source)) / expected).toBeCloseTo(1, 3);
+  });
+
+  it.each([
+    [8, 32],
+    [20, 200],
+  ])("keeps a small difference a later step makes large: %d m/s", (speed, classical) => {
+    const energy = valueOf("(1 / sqrt(1 - (speed / light)^2) - 1) * mass * light^2", {
+      light: 3e8,
+      mass: 1,
+      speed,
+    });
+
+    expect(Number(energy) / classical).toBeCloseTo(1, 0);
+  });
+
   it("treats function names case-insensitively so spreadsheet formulas work", () => {
     expect(valueOf("ROUND(A1 * 0.15, 2)", { A1: 40 })).toBe(6);
   });

@@ -4,6 +4,7 @@ import { LIVE_CALL_SDP_OFFER } from "@zoonk/testing/fixtures/language";
 export const CHARACTER_REPLY = "Yes, it's still available.";
 export const CHARACTER_CHECK_IN = "Hello? Are you still there?";
 export const CHARACTER_GOODBYE = "Sorry, I have to go. Bye!";
+export const CHARACTER_RESUME = "Sorry, we got cut off. Where were we?";
 
 /** GPT-Live answers a cue 0.6 to 1.1 s after it's sent (measured). */
 const ANSWER_MS = 600;
@@ -16,12 +17,14 @@ type PeerMode = "answers" | "silent";
 type TestChannel = {
   close: () => void;
   emit: (event: object) => void;
+  earlierTurns: number;
   greeting: string | null;
+  onclose: (() => void) | null;
   onopen: (() => void) | null;
   readyState: string;
 };
 
-type PeerLines = { checkIn: string; goodbye: string; reply: string };
+type PeerLines = { checkIn: string; goodbye: string; reply: string; resume: string };
 
 function installChannelFactory({
   answerMs,
@@ -41,22 +44,27 @@ function installChannelFactory({
       close() {
         channel.readyState = "closed";
       },
+      earlierTurns: 0,
       elapsedMs: 0,
       emit(event: object) {
         channel.onmessage?.({ data: JSON.stringify(event) });
       },
       /**
        * GPT-Live greets once it has both the server's startup greeting and the app's opening cue
-       * (the measured recipe), with the line the server's greeting quotes.
+       * (the measured recipe), with the line the server's greeting quotes; a call that dropped
+       * carries on instead, when its earlier turns reached the session.
        */
       greet() {
-        const quoted = /opening line, (?<line>"(?:[^"\\]|\\.)*")/u.exec(channel.greeting ?? "")
-          ?.groups?.line;
+        const greeting = channel.greeting ?? "";
+        const quoted = /opening line, (?<line>"(?:[^"\\]|\\.)*")/u.exec(greeting)?.groups?.line;
 
-        if (quoted && !channel.greeted) {
-          channel.greeted = true;
-          channel.say(String(JSON.parse(quoted)));
+        if (!quoted || channel.greeted) {
+          return;
         }
+
+        channel.greeted = true;
+        const resumed = greeting.includes("cut off") && channel.earlierTurns > 0;
+        channel.say(resumed ? lines.resume : String(JSON.parse(quoted)));
       },
       greeted: false,
       greeting: null as string | null,
@@ -136,8 +144,15 @@ function installPeer({ mode, sdp }: { mode: PeerMode; sdp: string }) {
       }
     };
 
+    /** The network lost the call: its data channel closes without the provider ending it. */
+    private readonly drop = () => {
+      this.channel.readyState = "closed";
+      this.channel.onclose?.();
+    };
+
     constructor() {
       globalThis.addEventListener("e2e-live-server-event", this.receive);
+      globalThis.addEventListener("e2e-live-drop", this.drop);
     }
 
     static isObserver(value: unknown): value is () => unknown {
@@ -208,6 +223,10 @@ function installPeer({ mode, sdp }: { mode: PeerMode; sdp: string }) {
       const greeting = /^a=x-e2e-greeting:(?<json>.+)$/mu.exec(answer.sdp ?? "")?.groups?.json;
       this.channel.greeting = greeting ? String(JSON.parse(greeting)) : null;
 
+      this.channel.earlierTurns = Number(
+        /^a=x-e2e-turns:(?<count>\d+)$/mu.exec(answer.sdp ?? "")?.groups?.count ?? 0,
+      );
+
       queueMicrotask(() => {
         if (mode !== "silent") {
           this.channel.emit({ session: { id: "live_e2e" }, type: "session.started" });
@@ -219,6 +238,7 @@ function installPeer({ mode, sdp }: { mode: PeerMode; sdp: string }) {
 
     close() {
       globalThis.removeEventListener("e2e-live-server-event", this.receive);
+      globalThis.removeEventListener("e2e-live-drop", this.drop);
       this.connectionState = "closed";
       this.channel.close();
     }
@@ -268,7 +288,12 @@ export async function answerLiveCalls(page: Page, behavior: PeerMode) {
 
   await page.addInitScript(installChannelFactory, {
     answerMs: ANSWER_MS,
-    lines: { checkIn: CHARACTER_CHECK_IN, goodbye: CHARACTER_GOODBYE, reply: CHARACTER_REPLY },
+    lines: {
+      checkIn: CHARACTER_CHECK_IN,
+      goodbye: CHARACTER_GOODBYE,
+      reply: CHARACTER_REPLY,
+      resume: CHARACTER_RESUME,
+    },
     mode: behavior,
   });
 
@@ -276,6 +301,7 @@ export async function answerLiveCalls(page: Page, behavior: PeerMode) {
 
   return {
     asked: asked.promise,
+    drop: () => page.evaluate(() => globalThis.dispatchEvent(new Event("e2e-live-drop"))),
     emit: (event: object) =>
       page.evaluate((data) => {
         globalThis.dispatchEvent(new CustomEvent("e2e-live-server-event", { detail: data }));
