@@ -374,7 +374,11 @@ private struct SummaryTiles: View {
           label: goal.label, value: Text(verbatim: goal.value),
           systemImage: goal.dropped ? "chart.line.downtrend.xyaxis" : "chart.line.uptrend.xyaxis",
           tone: goal.dropped ? .neutral : .success,
-          detail: goal.before.map { Text(verbatim: "\($0) → \(goal.value)") })
+          detail: goal.before.map { before in
+            let change = Text(verbatim: "\(before) → \(goal.value)")
+            // A number that went down says so quietly, never in the color of progress.
+            return goal.dropped ? change : change.foregroundStyle(.success)
+          })
       }
 
       StatTile(
@@ -385,14 +389,18 @@ private struct SummaryTiles: View {
   }
 
   private var rightDetail: Text? {
-    let parts = [
-      summary.accuracy.map { $0.formatted(.percent.precision(.fractionLength(0))) },
-      summary.netScore.map {
-        String(localized: "net \($0)", table: "Session", comment: "Right minus wrong answers")
-      },
-    ].compactMap(\.self)
+    let accuracy = summary.accuracy.map {
+      Text($0, format: .percent.precision(.fractionLength(0))).foregroundStyle(.success)
+    }
+    let net = summary.netScore.map {
+      Text("net \($0)", tableName: "Session", comment: "Right minus wrong answers")
+    }
 
-    return parts.isEmpty ? nil : Text(verbatim: parts.joinedFacts())
+    guard let accuracy, let net else {
+      return accuracy ?? net
+    }
+
+    return Text("\(accuracy)\u{00A0}· \(net)")
   }
 
   /// A language goal has no number here; an exam shows its preparation, any other goal its
