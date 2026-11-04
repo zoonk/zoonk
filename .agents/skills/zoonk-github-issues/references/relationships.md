@@ -1,49 +1,8 @@
-# GitHub issue types and relationships
+# GitHub issue relationships
 
-Read this reference when the requested issue work needs types, dependencies, or parent-child relationships. The commands use `zoonk/zoonk`; verify that it is the requested repository and replace example numbers with verified issue numbers. Run only the mutations requested by the user. Inspect existing state before adding or removing relationships, and verify the resulting relationship afterward.
+Read this reference when the requested issue work needs dependencies or parent-child relationships. The commands use `zoonk/zoonk`; verify that it is the requested repository and replace example numbers with verified issue numbers. Run only the mutations requested by the user. Inspect existing state before adding or removing relationships, and verify the resulting relationship afterward.
 
-For GraphQL issue types and sub-issues, fetch node IDs. For REST dependencies, use the numeric database ID and `-F issue_id=...`, not the issue number, node ID, or a string passed with `-f`. If an operation fails, inspect the actual API error and current permissions/schema before retrying.
-
-## Issue Types
-
-Issue types help categorize issues (Epic, Bug, Task, Enhancement, etc.). This requires organization-level issue types to be enabled.
-
-### Get Available Issue Types
-
-```bash
-gh api graphql -f query='
-  query($owner: String!) {
-    organization(login: $owner) {
-      issueTypes(first: 20) {
-        nodes { id name description }
-      }
-    }
-  }' -f owner='zoonk'
-```
-
-### Get Issue Node ID
-
-Required for all GraphQL mutations:
-
-```bash
-gh api graphql -f query='
-  query($owner: String!, $repo: String!, $number: Int!) {
-    repository(owner: $owner, name: $repo) {
-      issue(number: $number) { id }
-    }
-  }' -f owner='zoonk' -f repo='zoonk' -F number=123
-```
-
-### Set Issue Type
-
-```bash
-gh api graphql -f query='
-  mutation($issueId: ID!, $issueTypeId: ID!) {
-    updateIssueIssueType(input: {issueId: $issueId, issueTypeId: $issueTypeId}) {
-      issue { id title issueType { name } }
-    }
-  }' -f issueId="ISSUE_NODE_ID" -f issueTypeId="TYPE_NODE_ID"
-```
+For GraphQL sub-issues, use node IDs (`gh issue view 123 --repo zoonk/zoonk --json id --jq .id`). For REST dependencies, use the numeric database ID and `-F issue_id=...`, not the issue number, node ID, or a string passed with `-f`. If an operation fails, inspect the actual API error and current permissions/schema before retrying.
 
 ## Dependencies (Blocked-By)
 

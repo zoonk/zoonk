@@ -42,6 +42,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.EarlierQuestion
 import kotlinx.coroutines.launch
@@ -74,62 +75,64 @@ fun EarlierQuestionsScreen(
     }
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.earlier_questions_title)) }) { padding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            item(key = "intro", contentType = "intro") {
-                Text(
-                    text = stringResource(R.string.earlier_questions_description),
-                    modifier = column.padding(bottom = 24.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+        BeforeFold(Modifier.padding(padding)) { beforeFold ->
+            LazyColumn(
+                modifier = beforeFold.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                item(key = "intro", contentType = "intro") {
+                    Text(
+                        text = stringResource(R.string.earlier_questions_description),
+                        modifier = column.padding(bottom = 24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
 
-            when (val shown = state) {
-                is LoadState.Loaded -> {
-                    itemsIndexed(shown.value.questions, key = {
-                        _,
-                        question,
-                        ->
-                        question.id.toString()
-                    }, contentType = { _, _ -> "question" }) {
-                        index,
-                        question,
-                        ->
-                        Column(column) {
-                            if (index > 0) HorizontalDivider()
-                            EarlierQuestionEntry(question, onOpenRoute = navigator::open)
+                when (val shown = state) {
+                    is LoadState.Loaded -> {
+                        itemsIndexed(shown.value.questions, key = {
+                            _,
+                            question,
+                            ->
+                            question.id.toString()
+                        }, contentType = { _, _ -> "question" }) {
+                            index,
+                            question,
+                            ->
+                            Column(column) {
+                                if (index > 0) HorizontalDivider()
+                                EarlierQuestionEntry(question, onOpenRoute = navigator::open)
+                            }
+                        }
+
+                        if (shown.value.nextCursor != null) {
+                            item(key = "older", contentType = "older") { OlderQuestions(isLoadingOlder, olderFailed, loadOlder, column) }
                         }
                     }
 
-                    if (shown.value.nextCursor != null) {
-                        item(key = "older", contentType = "older") { OlderQuestions(isLoadingOlder, olderFailed, loadOlder, column) }
+                    LoadState.Empty -> {
+                        item(key = "empty", contentType = "empty") {
+                            Text(
+                                text = stringResource(R.string.earlier_questions_empty),
+                                modifier = column,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
                     }
-                }
 
-                LoadState.Empty -> {
-                    item(key = "empty", contentType = "empty") {
-                        Text(
-                            text = stringResource(R.string.earlier_questions_empty),
-                            modifier = column,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
+                    is LoadState.Failed -> {
+                        item(key = "failed", contentType = "failed") {
+                            LoadFailedMessage(onRetry = { scope.launch { store.questions.refresh() } }, modifier = column)
+                        }
                     }
-                }
 
-                is LoadState.Failed -> {
-                    item(key = "failed", contentType = "failed") {
-                        LoadFailedMessage(onRetry = { scope.launch { store.questions.refresh() } }, modifier = column)
-                    }
-                }
-
-                LoadState.Idle, LoadState.Loading -> {
-                    item(key = "loading", contentType = "loading") {
-                        Box(column.padding(48.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                    LoadState.Idle, LoadState.Loading -> {
+                        item(key = "loading", contentType = "loading") {
+                            Box(column.padding(48.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                        }
                     }
                 }
             }

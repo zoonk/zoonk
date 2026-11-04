@@ -97,7 +97,7 @@ class FormulaModelTest {
 
         assertEquals(mapOf("distance" to null, "peak" to Change(15.3 - 5.1, 1)), changes(60.0))
         assertEquals(mapOf("distance" to Change(40.8 - 35.3, 2), "peak" to Change(10.2 - 5.1, 2)), changes(45.0))
-        assertEquals(Change(0.00000000000000499 - 35.3, 1), changes(90.0)["distance"])
+        assertEquals(Change(0.0 - 35.3, 1), changes(90.0)["distance"])
     }
 
     @Test

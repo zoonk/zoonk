@@ -24,7 +24,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning Mexican Spanish at A2, renting an apartment in Mexico City. A call to a landlord ("dueño" or "dueña") about a "departamento", with pesos, Mexican vocabulary ("renta", "depósito", "servicios", "departamento", not "piso") and "usted". Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    expectations: `US English speaker learning Mexican Spanish at A2, renting an apartment in Mexico City. A call to a landlord ("dueño" or "dueña") about a "departamento", with pesos, Mexican vocabulary ("renta", "depósito", "servicios", "departamento", not "piso") and "usted". Opening line and hints short (A2). Title, situation, role and every objective description in US English, never Spanish.`,
     id: "en-es-a2-renting",
     userInput: {
       canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
@@ -37,7 +37,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning Brazilian Portuguese at A1, at a restaurant. A face-to-face order or a call to a restaurant, with a Brazilian name and reais. Opening line and hints very short (A1): "Eu quero...", "A conta, por favor". Brazilian words ("cardápio", not "ementa"). Title, situation and descriptions in US English.`,
+    expectations: `US English speaker learning Brazilian Portuguese at A1, at a restaurant. A face-to-face order or a call to a restaurant, with a Brazilian name and reais. Opening line and hints very short (A1): "Eu quero...", "A conta, por favor". Brazilian words ("cardápio", not "ementa"). Title, situation, role and every objective description in US English, never Portuguese.`,
     id: "en-pt-a1-restaurant",
     userInput: {
       canDo: ["Ask for a table", "Order food and drinks", "Ask for the bill"],

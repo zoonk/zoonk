@@ -46,6 +46,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.language.LanguageUnitScreen
 import com.zoonk.android.feature.mindmaps.ChapterMindMapCard
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
@@ -53,7 +54,6 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.navigation.RoutePlaceholder
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
@@ -110,7 +110,7 @@ fun ChapterScreen(
 
             // A language's chapters are its units: drawn here too, as main does, so a link never redirects.
             goal.kind == LearnerSummaryGoal.Kind.LANGUAGE -> {
-                RoutePlaceholder(AppRoute.LanguageUnit(route.chapterId), navigator)
+                LanguageUnitScreen(AppRoute.LanguageUnit(route.chapterId), app, navigator)
             }
 
             else -> {

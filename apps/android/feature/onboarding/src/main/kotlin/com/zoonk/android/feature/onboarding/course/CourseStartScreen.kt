@@ -64,6 +64,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.FACT_SEPARATOR
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AllowanceResponse
@@ -131,7 +132,11 @@ internal fun CourseStartScreen(
             when (val shown = state) {
                 is LoadState.Loaded -> {
                     if (existingGoalId == null) {
-                        CourseStartForm(shown.value, route, vm, caps.value?.goalStartLimit(), signedIn, navigator)
+                        BeforeFold { beforeFold ->
+                            Box(beforeFold.fillMaxSize()) {
+                                CourseStartForm(shown.value, route, vm, caps.value?.goalStartLimit(), signedIn, navigator)
+                            }
+                        }
                     } else {
                         Loading()
                     }

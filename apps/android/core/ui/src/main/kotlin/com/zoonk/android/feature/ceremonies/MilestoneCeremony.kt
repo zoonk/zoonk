@@ -1,9 +1,11 @@
 package com.zoonk.android.feature.ceremonies
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,6 +53,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.launch
@@ -93,6 +96,8 @@ fun MilestoneCeremony(
     val shownAt = remember { timeSource.markNow() }
     val scope = rememberCoroutineScope()
     var closing by remember { mutableStateOf(false) }
+    val onePageScroll = rememberScrollState()
+    val artPageScroll = rememberScrollState()
 
     // A tap meant for the screen under it, as the ceremony appears, doesn't answer it.
     fun steady() = shownAt.elapsedNow() >= STEADY
@@ -108,19 +113,8 @@ fun MilestoneCeremony(
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
         Surface(Modifier.fillMaxSize()) {
-            Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding()) {
-                Column(
-                    modifier =
-                        Modifier
-                            .weight(
-                                1f,
-                            ).fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                            .padding(horizontal = 24.dp, vertical = 48.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically),
-                ) {
-                    CeremonyArt(milestone.kind, buddy.copy(belt = belt ?: buddy.belt, glasses = glasses ?: buddy.glasses), buddyName, belt)
+            val words =
+                @Composable {
                     Column(
                         Modifier.widthIn(max = 384.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -140,35 +134,70 @@ fun MilestoneCeremony(
                         )
                     }
                 }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    if (canWear) {
-                        OutlinedButton(onClick = { if (steady()) close() }, modifier = Modifier.weight(1f)) {
-                            Text(stringResource(R.string.ceremony_not_now))
+            val actions =
+                @Composable {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        if (canWear) {
+                            OutlinedButton(onClick = { if (steady()) close() }, modifier = Modifier.weight(1f)) {
+                                Text(stringResource(R.string.ceremony_not_now))
+                            }
                         }
-                    }
-                    Button(
-                        onClick = {
-                            if (!steady()) return@Button
-                            if (glasses != null && onWearGlasses != null) {
-                                scope.launch {
-                                    onWearGlasses(glasses)
+                        Button(
+                            onClick = {
+                                if (!steady()) return@Button
+                                if (glasses != null && onWearGlasses != null) {
+                                    scope.launch {
+                                        onWearGlasses(glasses)
+                                        close()
+                                    }
+                                } else {
                                     close()
                                 }
-                            } else {
-                                close()
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text(stringResource(if (canWear) R.string.ceremony_wear else R.string.ceremony_continue))
+                            },
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Text(stringResource(if (canWear) R.string.ceremony_wear else R.string.ceremony_continue))
+                        }
                     }
+                }
+
+            PageWithSupportingPane(
+                supportingPane = { CeremonyPage(footer = actions) { words() } },
+                modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding(),
+                panesTouch = true,
+                atFoldOnly = true,
+            ) { wordsBeside ->
+                CeremonyPage(footer = actions.takeUnless { wordsBeside }, scroll = if (wordsBeside) artPageScroll else onePageScroll) {
+                    CeremonyArt(milestone.kind, buddy.copy(belt = belt ?: buddy.belt, glasses = glasses ?: buddy.glasses), buddyName, belt)
+                    if (!wordsBeside) words()
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CeremonyPage(
+    footer: (@Composable () -> Unit)?,
+    scroll: ScrollState = rememberScrollState(),
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(Modifier.fillMaxSize()) {
+        Column(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(scroll)
+                    .padding(horizontal = 24.dp, vertical = 48.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically),
+            content = content,
+        )
+        footer?.invoke()
     }
 }
 

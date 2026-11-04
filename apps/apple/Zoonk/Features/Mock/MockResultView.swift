@@ -435,7 +435,7 @@ private struct MockScoreSections: View {
       )
       : (
         String(
-          localized: "\(change) since the last one", table: "Mock",
+          localized: "\(MockLabels.number(Double(change))) since the last one", table: "Mock",
           comment: "Score went down since the learner's previous mock exam"),
         false
       )

@@ -163,6 +163,21 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(restoredFactIds, [MemoryFact.evenings.id])
   }
 
+  func testASecondUndoTapWhileTheFirstRunsRestoresNothingMore() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    await store.memory.load()
+    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+
+    async let first: Void = store.undoDeletion()
+    async let second: Void = store.undoDeletion()
+    _ = await (first, second)
+
+    XCTAssertEqual(store.undoStatus, .undone)
+    let restoredFactIds = await api.restoredFactIds
+    XCTAssertEqual(restoredFactIds, [MemoryFact.evenings.id])
+  }
+
   func testFailedDeletionKeepsTheFact() async {
     let store = makeStore(api: SettingsAPIStub(deleteError: APIError.network))
     await store.memory.load()
@@ -591,7 +606,6 @@ extension CurrentAccount {
       deletion: AccountDeletionRequirements(hasAppleAccount: false),
       subscription: nil),
     user: AccountUser(
-      displayUsername: "learner",
       email: "learner@zoonk.test",
       id: "settings-test-user",
       image: nil,
@@ -623,7 +637,7 @@ private final class SwitchingAccountAPI: AccountAPIClient, @unchecked Sendable {
       account: AccountAccess(
         deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
       user: AccountUser(
-        displayUsername: userID, email: "\(userID)@zoonk.test", id: userID, image: nil,
+        email: "\(userID)@zoonk.test", id: userID, image: nil,
         name: userID, username: userID))
   }
 

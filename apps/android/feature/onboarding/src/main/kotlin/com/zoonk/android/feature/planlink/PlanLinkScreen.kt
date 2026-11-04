@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,8 +57,10 @@ import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
@@ -130,30 +133,32 @@ internal fun PlanLinkScreen(
 
             is LoadState.Failed -> {
                 if (shown.error == ApiError.NotFound) {
-                    EmptyState(
-                        icon = R.drawable.ic_link,
-                        title = stringResource(R.string.planlink_not_found),
-                        description = stringResource(R.string.planlink_not_found_description),
-                        modifier = Modifier.padding(padding),
-                    )
+                    NotFound(padding)
                 } else {
                     LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }, modifier = Modifier.padding(padding))
                 }
             }
 
             LoadState.Empty -> {
-                EmptyState(
-                    icon = R.drawable.ic_link,
-                    title = stringResource(R.string.planlink_not_found),
-                    description = stringResource(R.string.planlink_not_found_description),
-                    modifier = Modifier.padding(padding),
-                )
+                NotFound(padding)
             }
 
             LoadState.Idle, LoadState.Loading -> {
                 Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
             }
         }
+    }
+}
+
+@Composable
+private fun NotFound(padding: PaddingValues) {
+    BeforeFold(Modifier.padding(padding)) { beforeFold ->
+        EmptyState(
+            icon = R.drawable.ic_link,
+            title = stringResource(R.string.planlink_not_found),
+            description = stringResource(R.string.planlink_not_found_description),
+            modifier = beforeFold.padding(detailPagePadding()),
+        )
     }
 }
 

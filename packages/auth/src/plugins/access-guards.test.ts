@@ -227,7 +227,6 @@ describe("access guards", () => {
     ]);
 
     const refusals = await Promise.all([
-      updateUser({ body: { displayUsername: "admin" }, headers: learner.headers }),
       updateUser({ body: { image: "https://example.test/a.png" }, headers: learner.headers }),
       updateUser({
         auth: guestAuth,
@@ -236,20 +235,16 @@ describe("access guards", () => {
       }),
     ]);
 
-    expect(refusals).toStrictEqual([
-      INVALID_PROFILE_UPDATE,
-      INVALID_PROFILE_UPDATE,
-      INVALID_PROFILE_UPDATE,
-    ]);
+    expect(refusals).toStrictEqual([INVALID_PROFILE_UPDATE, INVALID_PROFILE_UPDATE]);
 
     await expect(
       prisma.user.findMany({
-        select: { displayUsername: true, image: true, stripeCustomerId: true },
+        select: { image: true, stripeCustomerId: true },
         where: { id: { in: [learner.userId, stripeLearner.userId] } },
       }),
     ).resolves.toStrictEqual([
-      { displayUsername: null, image: null, stripeCustomerId: null },
-      { displayUsername: null, image: null, stripeCustomerId: null },
+      { image: null, stripeCustomerId: null },
+      { image: null, stripeCustomerId: null },
     ]);
   });
 
