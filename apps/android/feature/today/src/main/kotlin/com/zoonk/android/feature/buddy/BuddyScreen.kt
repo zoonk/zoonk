@@ -80,6 +80,7 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.api.models.BuddyStatus
@@ -126,7 +127,7 @@ fun BuddyScreen(
                 }
 
                 else -> {
-                    CircularProgressIndicator(Modifier.align(Alignment.Center))
+                    PageLoading()
                 }
             }
         }

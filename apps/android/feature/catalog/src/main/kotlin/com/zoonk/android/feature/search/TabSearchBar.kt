@@ -28,7 +28,6 @@ import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -78,9 +77,11 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMockSummary
 import kotlinx.coroutines.FlowPreview
@@ -133,7 +134,7 @@ fun rememberTabSearchScroll(): SearchBarScrollBehavior? {
 /** A landscape phone is wide but short: the keyboard would cover a docked panel. */
 @Composable
 private fun isSearchDocked(): Boolean {
-    val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
+    val sizeClass = windowAdaptiveInfo().windowSizeClass
     return sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) &&
         sizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
 }
@@ -252,7 +253,10 @@ internal fun SearchPanel(
         ExpandedFullScreenSearchBar(
             state = state,
             inputField = { BeforeFold { beforeFold -> Box(beforeFold.fillMaxWidth(), propagateMinConstraints = true) { inputField() } } },
-        ) { SearchSpread(groups, searching = text.text.isNotBlank(), results) }
+        ) {
+            HoldUntilFoldsRead()
+            SearchSpread(groups, searching = text.text.isNotBlank(), results)
+        }
     }
 }
 

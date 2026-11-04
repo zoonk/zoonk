@@ -9,14 +9,13 @@ import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.adaptive.allVerticalHingeBounds
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.ui.scaffold.spreadShows
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 
 /**
  * Main's `TaskActionBar`: as wide as the task's column on a narrow layout, across it on a wide one
@@ -71,17 +70,8 @@ fun Modifier.taskOption(): Modifier = if (isWideLayout()) this else fillMaxWidth
  * of a spread's split, is about a phone wide, so what's on it lays out as on a phone.
  */
 @Composable
-fun isWideLayout(): Boolean = LocalWideLayout.current ?: readWideLayout()
-
-/**
- * [isWideLayout] as a task's frame read it from its start: a reading of the window's folds starts
- * without one, so actions that appear later would show the wide form for a frame at a fold.
- */
-internal val LocalWideLayout = compositionLocalOf<Boolean?> { null }
-
-@Composable
-internal fun readWideLayout(): Boolean {
-    val info = currentWindowAdaptiveInfoV2()
+fun isWideLayout(): Boolean {
+    val info = windowAdaptiveInfo()
 
     return info.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND) &&
         info.windowPosture.allVerticalHingeBounds.isEmpty() &&

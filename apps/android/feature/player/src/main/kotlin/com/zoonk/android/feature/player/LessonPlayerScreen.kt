@@ -127,6 +127,7 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -411,7 +412,7 @@ fun LessonPlayer(
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {
                 if (state == null || screen == null) {
-                    Starting()
+                    PageLoading()
                 } else {
                     Segments(screen.segments, state)
                     CompositionLocalProvider(LocalPrimaryFocus provides primaryFocus) {
@@ -493,11 +494,6 @@ private fun handleKey(
 }
 
 private val DIGIT_KEYS = listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine)
-
-@Composable
-private fun Starting() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-}
 
 @Composable
 private fun Segments(

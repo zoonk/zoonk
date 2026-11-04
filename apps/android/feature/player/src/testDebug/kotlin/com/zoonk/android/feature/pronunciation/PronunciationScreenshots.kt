@@ -11,23 +11,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.audio.previewSpeech
+import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PronunciationAnswerGrade
+import com.zoonk.api.models.PronunciationRoundResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -125,6 +127,7 @@ class PronunciationScreenshots {
             State("right", listOf(grade(isCorrect = true))),
             State("no-speech", listOf(null)),
             State("practice-done", listOf(grade(isCorrect = true)), skips = 2),
+            State("practice-done-belt", listOf(grade(isCorrect = true)), skips = 2, result = BELT),
             State("nothing-said", skips = 2),
             State("no-words", empty = true),
         )
@@ -134,6 +137,7 @@ class PronunciationScreenshots {
         val grades: List<PronunciationAnswerGrade?> = emptyList(),
         val skips: Int = 0,
         val empty: Boolean = false,
+        val result: PronunciationRoundResult = RESULT,
     )
 
     private fun capture(
@@ -151,7 +155,10 @@ class PronunciationScreenshots {
         var index by mutableIntStateOf(0)
         val models =
             states.map { state ->
-                val api = FakePronunciationApi(if (state.empty) reviews() else reviews(*words), *state.grades.toTypedArray())
+                val api =
+                    FakePronunciationApi(if (state.empty) reviews() else reviews(*words), *state.grades.toTypedArray()).apply {
+                        result = state.result
+                    }
                 val store = PronunciationStore(api, cache) { "UTC" }
                 PronunciationViewModel(compose.activity).apply { start(GOAL_ID, api.words, store) }.also { model ->
                     runBlocking {
@@ -161,6 +168,7 @@ class PronunciationScreenshots {
                 }
             }
 
+        val app = AppContainer.preview(compose.activity)
         compose.setContent {
             val model = models[index]
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
@@ -168,29 +176,26 @@ class PronunciationScreenshots {
                     LocalSnackbarHostState provides SnackbarHostState(),
                     LocalLayoutDirection provides (layoutDirection ?: LocalLayoutDirection.current),
                 ) {
-                    key(index) { PronunciationRoundScreen(model.round!!, model, previewSpeech(), rememberAppNavigator()) }
+                    key(index) {
+                        PronunciationRoundScreen(
+                            model.round!!,
+                            model,
+                            previewSpeech(),
+                            rememberAppNavigator(),
+                            buddy = null,
+                            ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
+                        )
+                    }
                 }
             }
         }
+        if (fold) compose.unfoldBook(folds)
         states.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            // Each screen reads the window afresh, and the publisher doesn't replay a fold to a late reader.
-            if (fold) {
-                folds.overrideWindowLayoutInfo(
-                    TestWindowLayoutInfo(
-                        listOf(
-                            FoldingFeature(
-                                compose.activity,
-                                state = FoldingFeature.State.FLAT,
-                                orientation = FoldingFeature.Orientation.VERTICAL,
-                            ),
-                        ),
-                    ),
-                )
-                compose.waitForIdle()
-            }
-            write("${states[screen].name}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            // A milestone's ceremony opens in a dialog's window, which onRoot() doesn't capture.
+            val shown = if (compose.onAllNodes(isDialog()).fetchSemanticsNodes().isEmpty()) compose.onRoot() else compose.onNode(isDialog())
+            write("${states[screen].name}-$name", shown.captureToImage().asAndroidBitmap())
         }
     }
 
@@ -205,5 +210,15 @@ class PronunciationScreenshots {
 
     private companion object {
         const val BOOK = "w852dp-h883dp-xhdpi"
+
+        val BELT: PronunciationRoundResult =
+            ApiJson.decodeFromString(
+                PronunciationRoundResult.serializer(),
+                """
+                {"brainPower":2,"correct":1,"total":1,"missionMoment":null,"reached":{"energy":null,"level":{"color":"yellow","level":1}},
+                 "ceremony":{"beltStartBrainPower":2500,"earnedAt":"2026-11-04T12:00:00Z","id":"00000000-0000-4000-8000-000000000077",
+                  "key":"yellow","kind":"belt","shownAt":null}}
+                """.trimIndent(),
+            )
     }
 }

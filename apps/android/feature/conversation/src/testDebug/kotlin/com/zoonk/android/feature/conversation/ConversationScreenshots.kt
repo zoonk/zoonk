@@ -10,9 +10,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.feature.livecall.CallReservation
 import com.zoonk.android.feature.livecall.LiveServerEvent
@@ -22,6 +19,7 @@ import com.zoonk.android.feature.livecall.setup
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.scaffold.unfoldBook
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -213,22 +211,7 @@ class ConversationScreenshots {
     }
 
     private fun shot(name: String) {
-        compose.waitForIdle()
-        // Each screen reads the window afresh, and the publisher doesn't replay a fold to a late reader.
-        if (folded) {
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(
-                            compose.activity,
-                            state = FoldingFeature.State.FLAT,
-                            orientation = FoldingFeature.Orientation.VERTICAL,
-                        ),
-                    ),
-                ),
-            )
-            compose.waitForIdle()
-        }
+        if (folded) compose.unfoldBook(folds) else compose.waitForIdle()
         val bitmap = compose.onRoot().captureToImage().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }

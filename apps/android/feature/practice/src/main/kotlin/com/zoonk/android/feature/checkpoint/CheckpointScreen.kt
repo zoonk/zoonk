@@ -760,10 +760,6 @@ internal fun DuelResult(
                             modifier = Modifier.semantics { heading() },
                             style = MaterialTheme.typography.headlineSmall,
                         )
-                    }
-                },
-                next = {
-                    if (outcome != null) {
                         val passMark =
                             duel.state.completion
                                 ?.checkpoint
@@ -780,9 +776,11 @@ internal fun DuelResult(
                                 ),
                         )
                         duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
-                        if (!wide && !rows.isEmpty) ResultDetails(duel, rows, won)
-                        if (wide && answers.isNotEmpty()) Review(duel, answers, app)
                     }
+                },
+                next = {
+                    if (outcome != null && !wide && !rows.isEmpty) ResultDetails(duel, rows, won)
+                    if (outcome != null && wide && answers.isNotEmpty()) Review(duel, answers, app)
                 },
             )
         }

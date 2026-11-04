@@ -288,14 +288,13 @@ fun LessonCompletionView(
                 }
                 if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
             }
-        },
-        next = {
             val result = completion.result
             if (completion.status == CompletionStatus.Saved && result != null) {
                 val moment = buddy.momentBuddy()
                 DayMoment(result, moment.look, moment.name)
             }
-
+        },
+        next = {
             if (completion.status == CompletionStatus.Saved && ending.guest) {
                 ending.fit?.let { WhereItFits(it) }
                 Text(
