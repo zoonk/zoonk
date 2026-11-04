@@ -163,9 +163,8 @@ struct TodaySessionSection: View {
     }
 
     if let next {
-      blockButton(next, isNext: true)
-        .listRowSeparator(
-          next.canTestOut && next.chapterId != nil ? .hidden : .automatic, edges: .bottom)
+      blockButton(
+        next, isNext: true, highlightJoins: next.canTestOut && next.chapterId != nil ? .bottom : [])
 
       if next.canTestOut, let chapterID = next.chapterId {
         Button {
@@ -178,8 +177,7 @@ struct TodaySessionSection: View {
           .font(.footnote)
           .foregroundStyle(.mutedForeground)
         }
-        .currentRow()
-        .listRowSeparator(.hidden, edges: .top)
+        .currentRow(joins: .top)
       }
     }
 
@@ -209,7 +207,9 @@ struct TodaySessionSection: View {
   /// A block still to do opens from its row, in whatever order the learner likes; one waiting for
   /// earlier work doesn't.
   @ViewBuilder
-  private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
+  private func blockButton(
+    _ block: StudyBlock, isNext: Bool, highlightJoins: VerticalEdge.Set = []
+  ) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
       isBusy: busy == .block(block.position) || (isNext && busy == .main))
@@ -222,7 +222,7 @@ struct TodaySessionSection: View {
       }
       .tint(.primary)
       .disabled(busy != nil)
-      .currentRow(isNext)
+      .currentRow(isNext, joins: highlightJoins)
     } else {
       row
     }
