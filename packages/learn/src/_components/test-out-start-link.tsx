@@ -49,16 +49,17 @@ export function TestOutStartStatus({
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
+  const shown = isPending ? null : result;
 
   return (
     <StatusRegion className={className}>
-      {result?.status === "refused" && (
-        <HelpLimitNotice limit={result.limit} linkComponent={LearnLink} routes={routes} />
+      {shown?.status === "refused" && (
+        <HelpLimitNotice limit={shown.limit} linkComponent={LearnLink} routes={routes} />
       )}
 
-      {result?.status === "plusRequired" && <FreeWeekOverNotice />}
+      {shown?.status === "plusRequired" && <FreeWeekOverNotice />}
 
-      {result?.status === "failed" && !isPending && (
+      {shown?.status === "failed" && (
         <p className="text-muted-foreground text-sm">
           {t("That didn't work. Try again in a moment.")}
         </p>

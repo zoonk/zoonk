@@ -188,12 +188,12 @@ export function ChooserPlusLink({ href }: { href: string }) {
   );
 }
 
-export function ChooserRefusal({ status }: { status: MockChooserStatus }) {
+export function ChooserRefusal({ busy, status }: { busy: boolean; status: MockChooserStatus }) {
   const routes = useLearnRoutes();
 
   return (
     <StatusRegion>
-      {status.kind === "refused" && (
+      {!busy && status.kind === "refused" && (
         <HelpLimitNotice limit={status.limit} linkComponent={LearnLink} routes={routes} />
       )}
     </StatusRegion>
