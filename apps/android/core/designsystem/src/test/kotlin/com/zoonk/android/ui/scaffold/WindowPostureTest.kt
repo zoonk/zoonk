@@ -13,7 +13,9 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.theme.ZoonkTheme
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,4 +53,34 @@ class WindowPostureTest {
 
         assertNotNull("the screen's first frame saw no fold", firstFold)
     }
+
+    /** Where WindowManager can't tell the folds at once, the window draws nothing until their first reading arrives. */
+    @Test
+    fun theWindowDrawsOnceItsFoldsAreRead() {
+        rule.mainClock.autoAdvance = false
+        rule.setContent { ZoonkTheme {} }
+        assertTrue("the window drew before its folds were read", drawingHeld())
+
+        rule.unfoldBook(folds)
+        rule.mainClock.advanceTimeByFrame()
+
+        assertFalse("the window kept waiting after its folds were read", drawingHeld())
+    }
+
+    /** A device that never reports its folds still shows the app. */
+    @Test
+    fun aWindowWhoseFoldsAreNeverReadDrawsAfterAWhile() {
+        rule.mainClock.autoAdvance = false
+        rule.setContent { ZoonkTheme {} }
+
+        repeat(HELD_FRAMES) { drawingHeld() }
+
+        assertFalse("the window never drew", drawingHeld())
+    }
+
+    private fun drawingHeld(): Boolean =
+        rule.runOnUiThread {
+            rule.activity.window.decorView.viewTreeObserver
+                .dispatchOnPreDraw()
+        }
 }

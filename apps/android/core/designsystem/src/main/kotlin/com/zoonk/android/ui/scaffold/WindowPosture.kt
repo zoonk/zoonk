@@ -2,11 +2,13 @@ package com.zoonk.android.ui.scaffold
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.view.ViewTreeObserver
 import androidx.compose.material3.adaptive.HingeInfo
 import androidx.compose.material3.adaptive.Posture
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -14,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.window.WindowSdkExtensions
 import androidx.window.core.layout.WindowSizeClass
@@ -39,28 +42,52 @@ fun windowAdaptiveInfo(): WindowAdaptiveInfo {
     return WindowAdaptiveInfo(sizeClass, LocalWindowPosture.current)
 }
 
-/** Reads the window's folds once for all of [content], so a screen opened later starts with them. */
+/**
+ * Reads the window's folds once for all of [content], so a screen opened later starts with them.
+ * Until the first reading arrives the window doesn't draw, so its first frame lays out at the fold.
+ */
 @Composable
 internal fun ReadWindowPosture(content: @Composable () -> Unit) {
     val context = LocalContext.current
     val tracker = remember(context) { WindowInfoTracker.getOrCreate(context) }
-    val updates = remember(tracker) { tracker.windowLayoutInfo(context).map { it.posture() } }
-    val posture by updates.collectAsState(remember(tracker) { tracker.currentPosture(context) })
+    val readings = remember(tracker) { tracker.windowLayoutInfo(context).map<WindowLayoutInfo, Posture?> { it.posture() } }
+    val posture by readings.collectAsState(remember(tracker) { tracker.currentPosture(context) })
 
-    CompositionLocalProvider(LocalWindowPosture provides posture, content = content)
+    if (posture == null) HoldDrawing()
+    CompositionLocalProvider(LocalWindowPosture provides (posture ?: Posture()), content = content)
+}
+
+/**
+ * Keeps the window from drawing while this is composed, so the splash, or the frame before a
+ * rotation or a fold, stays on screen instead of a frame laid out without the fold. WindowManager
+ * doesn't promise a first reading on every device, so it skips [HELD_FRAMES] frames at most.
+ */
+@Composable
+private fun HoldDrawing() {
+    val view = LocalView.current
+    DisposableEffect(view) {
+        val observer = view.viewTreeObserver
+        var skipped = 0
+        val hold = ViewTreeObserver.OnPreDrawListener { skipped++ >= HELD_FRAMES }
+        observer.addOnPreDrawListener(hold)
+        onDispose { if (observer.isAlive) observer.removeOnPreDrawListener(hold) }
+    }
 }
 
 private val LocalWindowPosture = compositionLocalOf { Posture() }
 
-// WindowManager tells the folds at once from its extensions' version 9 (Android 16 QPR2). Before it, the first reading
-// arrives after the first frame, as Material's always does. Lint before AGP 9.6 resolves `extensionVersion` on the
-// compiled class to its backing field, so it misses this check (#2016).
+/** About half a second at 60 Hz. */
+internal const val HELD_FRAMES = 30
+
+// WindowManager tells the folds at once from its extensions' version 9 (Android 16 QPR2); before it, null until the first
+// reading arrives. Lint before AGP 9.6 resolves `extensionVersion` on the compiled class to its backing field, so it
+// misses this check (#2016).
 @SuppressLint("RequiresWindowSdk")
-private fun WindowInfoTracker.currentPosture(context: Context): Posture {
+private fun WindowInfoTracker.currentPosture(context: Context): Posture? {
     if (WindowSdkExtensions.getInstance().extensionVersion >= 9) {
         return getCurrentWindowLayoutInfo(context).posture()
     }
-    return Posture()
+    return null
 }
 
 /** Material's own mapping (its `calculatePosture`, which it keeps internal). */
