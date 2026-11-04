@@ -93,15 +93,23 @@ async function completeIfFinished({
         throw new SessionCompletionUnchangedError("alreadyCompleted");
       }
 
+      // A block finished while completion waited ends the session later than the blocks read above.
+      const { _max: latest } = await tx.studySessionBlock.aggregate({
+        _max: { completedAt: true },
+        where: { sessionId: session.id },
+      });
+
+      const lastFinish = latest.completedAt ?? endedAt;
+
       await tx.studySession.update({
-        data: { endedAt, status: "completed" },
+        data: { endedAt: lastFinish, status: "completed" },
         where: { id: session.id },
       });
 
       await keepSessionEnd(tx, { end, sessionId: session.id });
 
       await recordSessionEnd(tx, {
-        endedAt,
+        endedAt: lastFinish,
         sessionId: session.id,
         timeZone,
         totals: {
