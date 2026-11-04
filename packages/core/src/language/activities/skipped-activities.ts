@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { findLearnerLanguageGoal } from "../_utils/language-goal";
 import { type LanguageActivityType } from "./language-activities";
@@ -10,14 +10,14 @@ async function readSkippedActivities(goalId: string): Promise<LanguageActivityTy
 }
 
 export async function loadSkippedActivities({
-  activeGoalId,
+  activeGoal,
   targetLanguage,
   userId,
 }: {
-  activeGoalId?: string | null;
+  activeGoal?: Goal | null;
   targetLanguage: string;
   userId: string;
 }): Promise<LanguageActivityType[]> {
-  const goal = await findLearnerLanguageGoal({ activeGoalId, targetLanguage, userId });
+  const goal = await findLearnerLanguageGoal({ activeGoal, targetLanguage, userId });
   return goal ? readSkippedActivities(goal.id) : [];
 }

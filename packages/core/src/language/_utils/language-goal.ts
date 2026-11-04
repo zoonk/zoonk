@@ -13,25 +13,33 @@ export function readGoalDetails(goal: Pick<Goal, "details"> | null): Record<stri
  * loaded with `readActiveGoal` (null for none); writes leave it out and it's read fresh.
  */
 export async function findLearnerLanguageGoal({
-  activeGoalId,
+  activeGoal,
   goalId,
   targetLanguage,
   userId,
 }: {
-  activeGoalId?: string | null;
+  activeGoal?: Goal | null;
   goalId?: string;
   targetLanguage: string;
   userId: string;
 }): Promise<Goal | null> {
-  const [goals, chosenId] = await Promise.all([
+  if (
+    activeGoal?.kind === "language" &&
+    activeGoal.targetLanguage === targetLanguage &&
+    (!goalId || goalId === activeGoal.id)
+  ) {
+    return activeGoal;
+  }
+
+  const [goals, activeGoalId] = await Promise.all([
     prisma.goal.findMany({
       orderBy: { updatedAt: "desc" },
       where: { kind: "language", targetLanguage, userId },
     }),
-    activeGoalId === undefined ? findActiveGoalId(userId) : activeGoalId,
+    activeGoal === undefined ? findActiveGoalId(userId) : (activeGoal?.id ?? null),
   ]);
 
-  const [preferred] = [goalId, chosenId].flatMap(
+  const [preferred] = [goalId, activeGoalId].flatMap(
     (id) => goals.find((goal) => goal.id === id) ?? [],
   );
 

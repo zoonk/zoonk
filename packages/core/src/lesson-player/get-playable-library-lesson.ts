@@ -159,10 +159,8 @@ async function loadLessonSkippedActivities({
     return [];
   }
 
-  const activeGoal = await readActiveGoal(userId);
-
   return loadSkippedActivities({
-    activeGoalId: activeGoal?.id ?? null,
+    activeGoal: await readActiveGoal(userId),
     targetLanguage: lesson.targetLanguage,
     userId,
   });

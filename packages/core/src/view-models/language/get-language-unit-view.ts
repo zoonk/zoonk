@@ -87,12 +87,7 @@ export async function getLanguageUnitView({
     return { status: "notLanguage" };
   }
 
-  const goal = await findLearnerLanguageGoal({
-    activeGoalId: activeGoal?.id ?? null,
-    goalId,
-    targetLanguage,
-    userId,
-  });
+  const goal = await findLearnerLanguageGoal({ activeGoal, goalId, targetLanguage, userId });
 
   const lessonIds = chapter.lessons.map(({ lesson }) => lesson.id);
 
