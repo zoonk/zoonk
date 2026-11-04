@@ -18,19 +18,29 @@ const PHASE_END_SHARE = 0.9;
 
 const MIDDLE_SHARE = 0.5;
 
+const FLAG_ROOM = "1rem";
+
 function LaneMark({
+  beforeFlag = false,
   children,
-  className,
+  end = false,
   share,
 }: {
+  beforeFlag?: boolean;
   children: React.ReactNode;
-  className?: string;
+  end?: boolean;
   share: number;
 }) {
+  const anchor = end ? "-100%" : "-50%";
+
+  const x = beforeFlag
+    ? `min(${anchor}, ${(1 - share) * PERCENT}cqw - ${FLAG_ROOM} - 100%)`
+    : anchor;
+
   return (
     <span
-      className={cn("absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2", className)}
-      style={{ left: `${share * PERCENT}%` }}
+      className="absolute top-1/2 flex"
+      style={{ left: `${share * PERCENT}%`, translate: `${x} -50%` }}
     >
       {children}
     </span>
@@ -52,18 +62,15 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
   const overrunShare = overrun?.phaseIndex === phase.index ? overrun.share : null;
 
   return (
-    <span aria-hidden="true" className="relative mt-1 block h-4">
+    <span aria-hidden="true" className="@container relative mt-1 block h-4">
       {typeof mockShare === "number" && (
-        <LaneMark share={mockShare}>
+        <LaneMark beforeFlag={flag} share={mockShare}>
           <KindDot className="size-1.5" kind="mock" />
         </LaneMark>
       )}
 
       {typeof challengeShare === "number" && (
-        <LaneMark
-          className={cn(challengeShare > PHASE_END_SHARE && "-translate-x-full", flag && "-ml-4")}
-          share={challengeShare}
-        >
+        <LaneMark beforeFlag={flag} end={challengeShare > PHASE_END_SHARE} share={challengeShare}>
           <Trickster className="size-3.5" />
         </LaneMark>
       )}

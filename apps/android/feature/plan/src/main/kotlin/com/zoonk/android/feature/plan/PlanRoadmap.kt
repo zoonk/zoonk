@@ -512,26 +512,29 @@ private fun PhaseLane(
     val flag = isLast && page.finish != null && !hasOverrun
     val flagTint = MaterialTheme.colorScheme.onSurface
 
-    FractionRow(
+    Box(
         Modifier
             .padding(top = 4.dp)
             .height(16.dp)
             .fillMaxWidth()
             .clearAndSetSemantics {},
     ) {
-        mockShare?.let { At(it, Anchor.Center) { KindDot(LearnKind.Mock) } }
-        challengeShare?.let { At(it, if (it > PHASE_END_SHARE) Anchor.End else Anchor.Center) { Trickster(Modifier.size(14.dp)) } }
-        if (flag) At(1f, Anchor.End) { Icon(painterResource(R.drawable.ic_flag), null, Modifier.size(14.dp), tint = flagTint) }
-        overrun?.let {
-            At(
-                it.share,
-                Anchor.Center,
-            ) { Icon(painterResource(R.drawable.ic_flag), null, Modifier.size(14.dp), tint = flagTint) }
+        FractionRow(Modifier.fillMaxSize(), endRoom = FLAG_ROOM.takeIf { flag }) {
+            mockShare?.let { At(it, Anchor.Center) { KindDot(LearnKind.Mock) } }
+            challengeShare?.let { At(it, if (it > PHASE_END_SHARE) Anchor.End else Anchor.Center) { Trickster(Modifier.size(14.dp)) } }
+            overrun?.let {
+                At(
+                    it.share,
+                    Anchor.Center,
+                ) { Icon(painterResource(R.drawable.ic_flag), null, Modifier.size(14.dp), tint = flagTint) }
+            }
         }
+        if (flag) Icon(painterResource(R.drawable.ic_flag), null, Modifier.align(Alignment.TopEnd).size(14.dp), tint = flagTint)
     }
 }
 
 private const val PHASE_END_SHARE = 0.9f
+private val FLAG_ROOM = 16.dp
 
 @Composable
 private fun PhaseAxis(
@@ -618,11 +621,13 @@ private class FractionScope {
 @Composable
 private fun FractionRow(
     modifier: Modifier,
+    endRoom: Dp? = null,
     content: FractionScope.() -> Unit,
 ) {
     val items = FractionScope().apply(content).items
     Layout(content = { items.forEach { it.third() } }, modifier = modifier) { measurables, constraints ->
         val placeables = measurables.map { it.measure(Constraints()) }
+        val end = endRoom?.let { constraints.maxWidth - it.roundToPx() }
         layout(
             constraints.maxWidth,
             constraints.maxHeight.takeIf { it != Constraints.Infinity } ?: placeables.maxOfOrNull { it.height } ?: 0,
@@ -636,7 +641,7 @@ private fun FractionRow(
                         Anchor.Center -> x - placeable.width / 2
                         Anchor.End -> x - placeable.width
                     }
-                placeable.placeRelative(left, 0)
+                placeable.placeRelative(end?.let { left.coerceAtMost(it - placeable.width) } ?: left, 0)
             }
         }
     }
