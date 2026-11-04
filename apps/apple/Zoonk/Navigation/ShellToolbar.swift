@@ -337,8 +337,8 @@ private struct GoalSwitcher: View {
         comment: "A goal waiting in the goal switcher didn't start")
     case .switchGoal:
       Text(
-        "That didn't save. Try again.", tableName: "Navigation",
-        comment: "Switching to another goal in the goal switcher didn't save")
+        "We couldn't switch goals. Try again.", tableName: "Navigation",
+        comment: "Switching to another goal in the goal switcher didn't go through")
     }
   }
 

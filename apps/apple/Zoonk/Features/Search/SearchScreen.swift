@@ -49,11 +49,12 @@ struct SearchScreen: View {
     }
     .catalogDestinations()
     .feedbackSheet(
-      isPresented: $isFeedbackPresented, context: FeedbackContext(screen: "command-palette"))
+      isPresented: $isFeedbackPresented, context: FeedbackContext(screen: "command-palette")
+    )
     .alert(
       Text(
-        "That didn't save. Try again.", tableName: "Search",
-        comment: "Switching to another goal from search didn't save"),
+        "We couldn't switch goals. Try again.", tableName: "Search",
+        comment: "Switching to another goal from search didn't go through"),
       isPresented: $switchFailed
     ) {}
   }
