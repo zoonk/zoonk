@@ -14071,7 +14071,7 @@
             }
           },
           "422": {
-            "description": "GOAL_REFERENCE_NOT_FOUND when an exam or course isn't available; TARGET_DATE_OUT_OF_RANGE when a new explicit date is before tomorrow or after calendar day 3,650 from the learner's today. A range refusal writes no goal or plan; details give the nearest accepted date.",
+            "description": "GOAL_REFERENCE_NOT_FOUND when an exam or course isn't available; TARGET_DATE_OUT_OF_RANGE when a new explicit date is before tomorrow or after calendar day 3,650 from the learner's today (a goal from an onboarding card starts without such a date instead). A range refusal writes no goal or plan; details give the nearest accepted date.",
             "content": {
               "application/json": {
                 "schema": {
@@ -26272,7 +26272,7 @@
             "description": "What the learner typed"
           },
           "targetDate": {
-            "description": "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created.",
+            "description": "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created, except on a goal from an onboarding card (`details.onboardingId`): a card's date can stop being ahead after the card was read, so that goal starts without it and its setup asks for one.",
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -91962,7 +91962,7 @@
             "description": "What the learner typed"
           },
           "targetDate": {
-            "description": "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created.",
+            "description": "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created, except on a goal from an onboarding card (`details.onboardingId`): a card's date can stop being ahead after the card was read, so that goal starts without it and its setup asks for one.",
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"

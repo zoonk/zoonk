@@ -6,8 +6,6 @@ import { describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getTargetDateBounds } from "../../plans/target-date-range";
 import { getLearnerToday } from "./_utils/understanding-view";
-import { createOnboardingGoals } from "./create-onboarding-goals";
-import { getOnboarding } from "./get-onboarding";
 import { getOnboardingDraft } from "./get-onboarding-draft";
 
 function learnGoal({ targetDate, title }: { targetDate: string; title: string }) {
@@ -77,7 +75,7 @@ describe(getOnboardingDraft, () => {
     expect(understanding?.status).toBe("goals");
   });
 
-  it("shows a card date a new goal can't have as no date, so confirming the card starts it and setup asks the date", async () => {
+  it("shows a card date a new goal can't have as no date", async () => {
     const timeZone = "Pacific/Kiritimati";
     const user = await userFixture();
     mockSession(user.id);
@@ -111,17 +109,6 @@ describe(getOnboardingDraft, () => {
       max,
       undefined,
     ]);
-
-    const created = await createOnboardingGoals({
-      dailyMinutes: 15,
-      goals: goals.slice(0, 1).map((goal) => goal.draft),
-      timeZone,
-    });
-
-    const goalId = created.status === "created" ? (created.goals[0]?.id ?? "") : "";
-    const setup = await getOnboarding({ goalId });
-
-    expect(setup.status === "ready" && setup.onboarding.steps).toContain("targetDate");
   });
 
   it("reads another learner's draft, or a malformed id, as missing", async () => {

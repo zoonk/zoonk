@@ -91,16 +91,20 @@ async function chooseActiveGoalId({
   return (await findActiveGoalId(userId)) ?? mainId;
 }
 
-function assertNewGoalDates(input: GoalCreateInput): void {
-  const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
+/** The day a new goal's date bounds count from, in the zone the request names. */
+export function getNewGoalToday(timeZone: string | undefined): string {
+  const zone = getAnswerTimeZone({ goal: null, timeZone });
+  return toIsoDate(getDateInTimeZone({ date: new Date(), timeZone: zone }));
+}
 
+function assertNewGoalDates(input: GoalCreateInput): void {
   assertTargetDates({
     latestOnly: false,
     targets: input.goals.map((goal, index) => ({
       path: ["goals", index, "targetDate"],
       targetDate: goal.targetDate,
     })),
-    today: toIsoDate(getDateInTimeZone({ date: new Date(), timeZone })),
+    today: getNewGoalToday(input.timeZone),
   });
 }
 
