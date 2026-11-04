@@ -32,14 +32,16 @@ function lessonWithAnswer(text: string) {
 
 describe("checked answer readability", () => {
   it.each([
-    { fontSize: "150%", keepsWordsWhole: true, width: 390 },
-    { fontSize: "200%", keepsWordsWhole: true, width: 390 },
-    { fontSize: "400%", keepsWordsWhole: false, width: 320 },
+    { fontFamily: "", fontSize: "150%", width: 390 },
+    { fontFamily: "", fontSize: "200%", width: 390 },
+    { fontFamily: "", fontSize: "400%", width: 320 },
+    { fontFamily: "monospace", fontSize: "200%", width: 400 },
   ])(
     "keeps the answer and tag readable at $fontSize on a $width px phone",
-    async ({ fontSize: enlargedFontSize, keepsWordsWhole, width }) => {
+    async ({ fontFamily: enlargedFontFamily, fontSize: enlargedFontSize, width }) => {
       await atViewport({ height: 844, width }, async () => {
         const fontSize = document.documentElement.style.fontSize;
+        const fontFamily = document.documentElement.style.fontFamily;
 
         try {
           renderLessonPlayer({ lesson: lessonWithAnswer(ANSWER) });
@@ -50,6 +52,7 @@ describe("checked answer readability", () => {
           await expect.element(selected.getByText("Your answer")).toBeVisible();
 
           document.documentElement.style.fontSize = enlargedFontSize;
+          document.documentElement.style.fontFamily = enlargedFontFamily;
 
           const answer = selected.getByText(ANSWER, { exact: true }).element();
           const tag = selected.getByText("Your answer").element().getBoundingClientRect();
@@ -67,31 +70,41 @@ describe("checked answer readability", () => {
           }
 
           const splitWords: string[] = [];
+          const text = document.createTreeWalker(answer, NodeFilter.SHOW_TEXT).nextNode();
+          const content = answer.closest('[data-slot="player-choice-scene-option-text"]');
+          const row = content?.parentElement?.parentElement;
 
-          if (keepsWordsWhole) {
-            const text = document.createTreeWalker(answer, NodeFilter.SHOW_TEXT).nextNode();
+          if (!text || !row) {
+            throw new Error("The selected answer must contain text in a row.");
+          }
 
-            if (!text) {
-              throw new Error("The selected answer must contain text.");
-            }
+          const measure = document.createElement("span");
+          const rowWidth = row.getBoundingClientRect().width;
 
-            for (const word of ANSWER.matchAll(/\S+/gu)) {
-              range.setStart(text, word.index);
-              range.setEnd(text, word.index + word[0].length);
-              const lines = new Set([...range.getClientRects()].map((line) => line.top));
+          measure.style.cssText =
+            "position:fixed;visibility:hidden;white-space:nowrap;width:max-content";
 
-              if (lines.size > 1) {
-                splitWords.push(word[0]);
-              }
+          row.append(measure);
+
+          for (const word of ANSWER.matchAll(/\S+/gu)) {
+            measure.textContent = word[0];
+            range.setStart(text, word.index);
+            range.setEnd(text, word.index + word[0].length);
+            const lines = new Set([...range.getClientRects()].map((line) => line.top));
+
+            if (measure.getBoundingClientRect().width <= rowWidth && lines.size > 1) {
+              splitWords.push(word[0]);
             }
           }
 
+          measure.remove();
           expect(splitWords).toStrictEqual([]);
 
           const option = selected.element();
           expect(option.scrollWidth).toBeLessThanOrEqual(option.clientWidth);
         } finally {
           document.documentElement.style.fontSize = fontSize;
+          document.documentElement.style.fontFamily = fontFamily;
         }
       });
     },
