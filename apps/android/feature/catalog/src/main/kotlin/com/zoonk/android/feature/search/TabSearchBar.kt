@@ -77,6 +77,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
@@ -252,7 +253,10 @@ internal fun SearchPanel(
         ExpandedFullScreenSearchBar(
             state = state,
             inputField = { BeforeFold { beforeFold -> Box(beforeFold.fillMaxWidth(), propagateMinConstraints = true) { inputField() } } },
-        ) { SearchSpread(groups, searching = text.text.isNotBlank(), results) }
+        ) {
+            HoldUntilFoldsRead()
+            SearchSpread(groups, searching = text.text.isNotBlank(), results)
+        }
     }
 }
 
