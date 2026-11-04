@@ -26,6 +26,8 @@
   "buddy_page_fully_grown": "fd79defc214ef10438c17c2ea6efa54ab1a26883c0c780dc211697abbee5c953",
   "buddy_page_glasses_description": "3abe5ecb5dc2abda3a0d1e35b02fd9ebb04a7c1d3df5b45eeb9133a04210f6da",
   "buddy_page_goal_greeting": "a5afef8fb060e46104f49000a437adb77b2a12cf6282944162454f7a4cbe1b5c",
+  "buddy_page_goal_label": "ad71928b3f9d5db26b7d8997b07f49005b6e29899610168913c5a65df0d0ab5b",
+  "buddy_page_goal_placeholder": "b37d2e2b74bb31269a3f814e7b679a4418b572d1241ebcd7ae0f62fb5e4a4966",
   "buddy_page_greeting": "f7df21d290593fdfff8b78be61d0e33c3a30cd13268f36e2e431feb02d8d47e1",
   "buddy_page_grows_adult": "90faa913998993a2708d0f45cd3a31ed871f7c5a56faad9ac6543c639392a7f4",
   "buddy_page_grows_young": "797a9a8ae56568858b07dcca061b0891666654ef9d34ae1afae77716d0535e24",
@@ -70,6 +72,8 @@
     <string name="buddy_page_open_failed">開けませんでした。もう一度試してください。</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">こんにちは！わたしは%1$s、一緒に学習するAIの相棒です。学んでいることは何でも聞いてください。学習計画で変えたいことも教えてください。</string>
+    <string name="buddy_page_goal_placeholder">学びたいこと</string>
+    <string name="buddy_page_goal_label">目標</string>
     <string name="buddy_page_goal_greeting">こんにちは！わたしは、学習の相棒になるAIの%1$sです。何をいつまでに学びたいですか？その日までの毎日の学習計画を立てます。</string>
     <string name="buddy_page_placeholder">質問や変更したいことを入力</string>
     <string name="buddy_page_suggest_plan_today">今日の学習計画は？</string>

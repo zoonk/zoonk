@@ -26,6 +26,8 @@
   "buddy_page_fully_grown": "c2a3c35a20c85e2023b83e775f0f34d09350f6d801ff90ab89dce77a6f535ae1",
   "buddy_page_glasses_description": "7d7d521efc91e793a12c5377274bee5252329b5f15d1dc6fb88204261d6a606c",
   "buddy_page_goal_greeting": "78b3eed9457f4bc72f0c590679555f566dd012612f33eab1038bb38c97b3ce92",
+  "buddy_page_goal_label": "7d32247cc33e53fb281692b749dcba950a5f8810f000925b0b08e05dfd85bc02",
+  "buddy_page_goal_placeholder": "c3e7fc18c8875cfd3ebf3c11ff0c54d7e62de4db55493eda5fd8042f6ed1d4ad",
   "buddy_page_greeting": "d519428c7ecc447ca59f2e5bb6d0f9277b8223d5d2e24af24975420a995a3f5a",
   "buddy_page_grows_adult": "89572a91dda71f8553de2e1ef80c1ccdb0ab298087821b5b138f6494f00a2a9d",
   "buddy_page_grows_young": "a211f30580e77126191888fc0dcb6dc3b331ad5a45154896db64d7312cf89396",
@@ -70,6 +72,8 @@
     <string name="buddy_page_open_failed">Açılamadı. Tekrar dene.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">Merhaba! Ben %1$s, yapay zekâ ders arkadaşın. Çalıştığın konular hakkında bana istediğini sor ya da planında neleri değiştirmek istediğini anlat.</string>
+    <string name="buddy_page_goal_placeholder">Öğrenmek istediğin şey</string>
+    <string name="buddy_page_goal_label">Hedefin</string>
     <string name="buddy_page_goal_greeting">Merhaba! Ben %1$s, yapay zekâ ders arkadaşın. Ne öğrenmek istiyorsun ve ne zamana kadar? Buna göre o tarihe kadar her gün için bir plan hazırlayacağım.</string>
     <string name="buddy_page_placeholder">Soru sor veya değişiklik iste</string>
     <string name="buddy_page_suggest_plan_today">Bugünkü planımda neler var?</string>

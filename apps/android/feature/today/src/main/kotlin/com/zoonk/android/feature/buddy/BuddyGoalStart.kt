@@ -101,7 +101,13 @@ internal fun BuddyGoalStart(
                 FlowRow(Modifier.semantics { contentDescription = examplesLabel }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     examples.forEach { example -> SuggestionChip(onClick = { goal = example }, label = { Text(example) }) }
                 }
-                GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = { navigator.open(AppRoute.StartGoal(goal = it)) })
+                GoalBox(
+                    value = goal,
+                    onValueChange = { goal = it },
+                    onSubmit = { navigator.open(AppRoute.StartGoal(goal = it)) },
+                    placeholder = stringResource(R.string.buddy_page_goal_placeholder),
+                    hiddenLabel = stringResource(R.string.buddy_page_goal_label),
+                )
             }
         }
     }
