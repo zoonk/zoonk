@@ -5,10 +5,11 @@ import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-const repoRoot = fileURLToPath(new URL("../../../../", import.meta.url));
+const repoRoot = fileURLToPath(new URL("../../", import.meta.url));
 
 const androidFiles = [
   "core/designsystem/src/main/kotlin/com/zoonk/android/ui/theme/ZoonkPalette.kt",
+  "core/designsystem/src/main/kotlin/com/zoonk/android/ui/theme/ZoonkRadius.kt",
   "core/resources/src/main/res/values/window_colors.xml",
   "core/resources/src/main/res/values-night/window_colors.xml",
 ];
@@ -37,7 +38,7 @@ describe("native palette generation", () => {
       const apple = join(output, "apple");
 
       execFileSync(process.execPath, [
-        join(repoRoot, "apps/android/scripts/theme/generate-palette.mts"),
+        join(repoRoot, "apps/android/scripts/generate-palette.mts"),
         android,
       ]);
 
@@ -52,9 +53,25 @@ describe("native palette generation", () => {
         );
       }
 
+      for (const file of [
+        "Zoonk/DesignSystem/Radius.swift",
+        "Zoonk/Resources/Assets.xcassets/AccentColor.colorset/Contents.json",
+      ]) {
+        expect(readFileSync(join(apple, file), "utf8")).toBe(
+          readFileSync(join(repoRoot, "apps/apple", file), "utf8"),
+        );
+      }
+
       expect(contents(join(apple, applePalette))).toStrictEqual(
         contents(join(repoRoot, "apps/apple", applePalette)),
       );
+
+      expect(
+        readFileSync(
+          join(apple, "Zoonk/Resources/Assets.xcassets/AccentColor.colorset/Contents.json"),
+          "utf8",
+        ),
+      ).toBe(readFileSync(join(apple, applePalette, "primary.colorset/Contents.json"), "utf8"));
     } finally {
       rmSync(output, { force: true, recursive: true });
     }

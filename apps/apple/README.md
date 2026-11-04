@@ -48,6 +48,10 @@ Run one test or test class by passing an Xcode test identifier:
 make ui-test ONLY_TESTING=ZoonkUITests/ZoonkUITests/<test name>
 ```
 
+## Design tokens
+
+Run `pnpm --filter apple palette` from the repository root to regenerate the Display P3 colorsets, `AccentColor` tint and `Zoonk/DesignSystem/Radius.swift` from `globals.css`. The writer is `scripts/generate-palette.mts`; it shares the parser and color and radius math in [`scripts/theme/`](../../scripts/theme) with Android. Run `pnpm test:deploy scripts/theme/` to check generation drift and neutral-text contrast.
+
 ## API client
 
 The local `ZoonkAPI` Swift package generates the public Swift API client during a normal build, isolating it from app recompilation. The package also owns the hand-written lesson wire models used by the generator’s type overrides. A fresh clone does not need a separate SDK setup or generation command, and generated Swift files are not committed.
