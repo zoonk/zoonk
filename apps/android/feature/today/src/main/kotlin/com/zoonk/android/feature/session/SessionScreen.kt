@@ -67,10 +67,10 @@ import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
@@ -496,19 +496,20 @@ private fun SessionSegments(
     modifier: Modifier,
 ) {
     val steps = day.steps.filter { it.status != StudyBlock.Status.SKIPPED }
-    val done = MaterialTheme.colorScheme.tertiary
-    val parts =
-        steps.map {
-            val fill =
-                when {
-                    it.status == StudyBlock.Status.COMPLETED -> MeterPart.Fill.Solid(done)
-                    it.position == step.position -> MeterPart.Fill.Place()
-                    else -> MeterPart.Fill.Track
-                }
-            MeterPart(fill, weight = it.estimatedMinutes.coerceAtLeast(1).toFloat())
-        }
+    if (steps.isEmpty()) return
 
-    if (parts.isNotEmpty()) MeterParts(parts, modifier, contentDescription = stepsDone(steps.count(DayStep::isFinished), steps.size))
+    TaskSegments(
+        steps.map {
+            when {
+                it.status == StudyBlock.Status.COMPLETED -> TaskSegment.Done
+                it.position == step.position -> TaskSegment.Current
+                else -> TaskSegment.Ahead
+            }
+        },
+        modifier,
+        weights = steps.map { it.estimatedMinutes.toFloat() },
+        contentDescription = stepsDone(steps.count(DayStep::isFinished), steps.size),
+    )
 }
 
 @Composable

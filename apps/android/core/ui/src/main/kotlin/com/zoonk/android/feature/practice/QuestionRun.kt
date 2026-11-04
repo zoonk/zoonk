@@ -5,6 +5,7 @@ import com.zoonk.android.feature.questions.AnswerFeedback
 import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
+import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.api.models.StudyBlockCompletion
 
 sealed interface RunPhase {
@@ -119,20 +120,18 @@ data class QuestionRun(
     }
 }
 
-enum class Segment { Ahead, Current, Right, Wrong, Read }
-
 /** A placement question or a blank statement is read, neither right nor wrong. */
 fun segments(
     questions: List<Question>,
     run: QuestionRun,
-): List<Segment> =
+): List<TaskSegment> =
     questions.mapIndexed { index, question ->
         val graded = run.answers[index] ?: question.answered?.let { Graded(it.isCorrect, it.blank) }
         when {
-            graded == null -> if (index == run.index) Segment.Current else Segment.Ahead
-            question.placement || graded.blank -> Segment.Read
-            graded.isCorrect -> Segment.Right
-            else -> Segment.Wrong
+            graded == null -> if (index == run.index) TaskSegment.Current else TaskSegment.Ahead
+            question.placement || graded.blank -> TaskSegment.Read
+            graded.isCorrect -> TaskSegment.Right
+            else -> TaskSegment.Wrong
         }
     }
 

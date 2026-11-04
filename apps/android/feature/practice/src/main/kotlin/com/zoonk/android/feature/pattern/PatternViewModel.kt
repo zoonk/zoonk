@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
-import com.zoonk.android.feature.practice.Segment
+import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.api.models.MistakePattern
 import com.zoonk.api.models.MistakePatternDrillInner
 import com.zoonk.api.models.MistakePatternPracticeResult
@@ -40,14 +40,14 @@ data class PatternDrill(
     val question: MistakePatternDrillInner? get() = (step as? DrillStep.Question)?.let { pattern.drill.getOrNull(it.index) }
     val answer: String? get() = answers.getOrNull(index)
 
-    val segments: List<Segment>
+    val segments: List<TaskSegment>
         get() =
             pattern.drill.mapIndexed { position, question ->
                 val checked = answers.getOrNull(position)
                 when {
-                    checked == null -> if (position == index) Segment.Current else Segment.Ahead
-                    checked.trim() == question.answer.trim() -> Segment.Right
-                    else -> Segment.Wrong
+                    checked == null -> if (position == index) TaskSegment.Current else TaskSegment.Ahead
+                    checked.trim() == question.answer.trim() -> TaskSegment.Right
+                    else -> TaskSegment.Wrong
                 }
             }
 }

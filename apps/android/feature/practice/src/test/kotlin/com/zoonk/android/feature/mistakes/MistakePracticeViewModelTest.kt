@@ -8,11 +8,11 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.practice.RunPhase
-import com.zoonk.android.feature.practice.Segment
 import com.zoonk.android.feature.practice.segments
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.ui.components.TaskSegment
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -158,7 +158,7 @@ class MistakePracticeViewModelTest {
             advanceUntilIdle()
 
             assertEquals(30_000L, api.answers[0].durationMs)
-            assertEquals(listOf(Segment.Wrong, Segment.Read), segments(read.questions, viewModel.now.run))
+            assertEquals(listOf(TaskSegment.Wrong, TaskSegment.Read), segments(read.questions, viewModel.now.run))
         }
 
     @Test
@@ -248,7 +248,10 @@ class MistakePracticeViewModelTest {
                     .distinct()
                     .size,
             )
-            assertEquals(listOf(Segment.Right, Segment.Wrong, Segment.Right, Segment.Ahead), segments(read.questions, viewModel.now.run))
+            assertEquals(
+                listOf(TaskSegment.Right, TaskSegment.Wrong, TaskSegment.Right, TaskSegment.Ahead),
+                segments(read.questions, viewModel.now.run),
+            )
         }
 
     @Test

@@ -69,11 +69,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -94,7 +92,6 @@ import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
-import com.zoonk.android.feature.player.engine.Segment
 import com.zoonk.android.feature.player.engine.isLanguageStep
 import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.round
@@ -124,12 +121,12 @@ import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalPrivatePictures
-import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageSpan
@@ -563,10 +560,9 @@ private fun Starting() {
 
 @Composable
 private fun Segments(
-    segments: List<Segment>,
+    segments: List<TaskSegment>,
     state: LessonPlayerState,
 ) {
-    val parts = segmentParts(segments)
     val label = stringResource(R.string.player_progress)
     val done = if (state.phase == LessonPhase.Completed) state.queue.size else state.position
     var span by remember { mutableStateOf<PageSpan?>(null) }
@@ -575,38 +571,11 @@ private fun Segments(
     BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
         val split = screenSplit(maxWidth, span)
 
-        LessonColumn(
-            (split?.let { Modifier.width(it.start) } ?: Modifier).padding(bottom = 8.dp).semantics {
-                contentDescription = label
-                progressBarRangeInfo =
-                    ProgressBarRangeInfo(
-                        done.toFloat(),
-                        0f..state.queue.size
-                            .coerceAtLeast(1)
-                            .toFloat(),
-                    )
-            },
-        ) {
-            MeterParts(parts)
+        LessonColumn((split?.let { Modifier.width(it.start) } ?: Modifier).padding(bottom = 8.dp)) {
+            TaskSegments(segments, contentDescription = label, done = done)
         }
     }
 }
-
-@Composable
-internal fun segmentParts(segments: List<Segment>): List<MeterPart> =
-    segments.map { segment ->
-        MeterPart(
-            when (segment) {
-                Segment.Ahead -> MeterPart.Fill.Track
-                Segment.Current -> MeterPart.Fill.Place()
-                Segment.Right -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.tertiary)
-                Segment.Wrong -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.error)
-                Segment.Read -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.onSurface.copy(alpha = READ_ALPHA))
-            },
-        )
-    }
-
-private const val READ_ALPHA = 0.25f
 
 private const val SWIPE_DISTANCE = 96f
 private val REVEAL_MARGIN = 16.dp

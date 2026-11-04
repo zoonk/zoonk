@@ -37,7 +37,6 @@ import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
-import com.zoonk.android.feature.player.engine.Segment
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.steps.count
@@ -55,6 +54,7 @@ import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.DateStyle
@@ -313,8 +313,8 @@ internal fun LessonReadouts(
 ) {
     val result = state.completion?.result ?: return
     val segments = state.screen().segments
-    val correct = segments.count { it == Segment.Right }
-    val answered = correct + segments.count { it == Segment.Wrong }
+    val correct = segments.count { it == TaskSegment.Right }
+    val answered = correct + segments.count { it == TaskSegment.Wrong }
     val block = result.studyBlock
     val brainPower = block?.ownBrainPower ?: result.brainPower
     val locale = currentLocale()
