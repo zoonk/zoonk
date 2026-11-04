@@ -14,11 +14,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -96,7 +96,7 @@ class NotationScreenshots {
             index = shot
             compose.waitForIdle()
             val (tune, tab) = shots[shot]
-            write("notation-$tune-${if (tab) "tab" else "staff"}-$name", compose.onNodeWithTag("shot").captureToImage().asAndroidBitmap())
+            write("notation-$tune-${if (tab) "tab" else "staff"}-$name", compose.onNodeWithTag("shot").captureRender().asAndroidBitmap())
         }
     }
 

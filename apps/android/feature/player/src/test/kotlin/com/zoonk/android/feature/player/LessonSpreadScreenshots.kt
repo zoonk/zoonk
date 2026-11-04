@@ -3,7 +3,6 @@ package com.zoonk.android.feature.player
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -25,6 +24,7 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepVisual
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.api.ApiJson
 import kotlinx.serialization.decodeFromString
 import org.junit.Assume.assumeTrue
@@ -87,7 +87,7 @@ class LessonSpreadScreenshots {
         }
         then()
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
