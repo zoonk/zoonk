@@ -101,7 +101,7 @@ struct PatternScreen: View {
         if let milestone = result.ceremony?.value1, !ceremonyClosed, let ceremony = hooks.ceremony {
           ceremony(milestone) { ceremonyClosed = true }
         } else {
-          PracticeTaskLayout {
+          PracticeTaskLayout(isResult: true) {
             PracticeResultTitle(
               title: LocalizedStringResource(
                 "Practice done", table: "Practice", comment: "End of a practice run."),

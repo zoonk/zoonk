@@ -370,7 +370,7 @@ private struct PracticeDoneView: View {
     if let milestone = summary?.ceremony, !ceremonyClosed, let ceremony = hooks.ceremony {
       ceremony(milestone.value1) { ceremonyClosed = true }
     } else {
-      PracticeTaskLayout {
+      PracticeTaskLayout(isResult: true) {
         PracticeResultTitle(
           title: LocalizedStringResource(
             "Practice done", table: "Practice", comment: "End of a practice run."),

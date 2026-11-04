@@ -348,7 +348,7 @@ private struct CheckpointResultView: View {
     {
       ceremony(milestone) { ceremonyClosed = true }
     } else {
-      PracticeTaskLayout {
+      PracticeTaskLayout(isResult: true) {
         if checkpoint.endedWithoutQuestions == true {
           PracticeResultTitle(
             title: LocalizedStringResource(
