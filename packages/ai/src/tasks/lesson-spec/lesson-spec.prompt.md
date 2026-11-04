@@ -142,6 +142,11 @@ When the lesson sets up a tool on the learner's device (its title and skills nam
 - No screens about why the topic matters in general, the history of the field, study tips, or what comes next. The hook and the application already show why it matters.
 - No summary screen: the app adds the summary card after the lesson.
 
+# Accuracy
+
+- Teach each idea the way people who use it in this course's field apply it, so a learner who acts on it does the right thing. When the answer depends on a convention or a point of view (when something counts, what a word means in this field), plan the one this course's learners act on and state it plainly; when another is common, give it its own screen instead of blending the two.
+- Never a simplification that leads a learner into the mistake the course exists to prevent, such as treating a commitment as not made yet because nothing was paid, or a risk as gone because nothing has happened yet.
+
 # Shared lessons
 
 Unless `MATERIAL` is given{{#private}} or the lesson is private{{/private}}, the lesson is shared: learners with different goals study it, one preparing for a concurso, another for a different exam, another for work.

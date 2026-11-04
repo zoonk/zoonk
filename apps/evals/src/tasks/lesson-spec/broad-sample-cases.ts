@@ -152,6 +152,22 @@ export const BROAD_SAMPLE_CASES: BroadCase[] = [
     pictures: "none",
   }),
   broadCase({
+    chapterTitle: "Orçamento pessoal",
+    courseTitle: "Educação Financeira",
+    expectations: `
+      - MUST be in Brazilian Portuguese, for a total beginner whose goal is to stay out of debt
+      - A purchase on credit is spending on the day it's made: paying the bill later pays what was already spent and isn't a second expense
+      - MUST NOT teach that a purchase on credit only becomes an expense when the bill is paid, or that it doesn't count until money leaves the account
+    `,
+    id: "pt-receitas-despesas",
+    language: "pt",
+    lessonDescription:
+      "O dinheiro que entra e o que sai: receitas e despesas no orçamento de casa.",
+    lessonTitle: "Receitas e despesas",
+    level: "beginner",
+    pictures: "any",
+  }),
+  broadCase({
     chapterTitle: "Ligações químicas",
     courseTitle: "Química",
     expectations: `
