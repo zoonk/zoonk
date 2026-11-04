@@ -101,8 +101,6 @@
   "conversation_no_score_title": "d51393515518b1a5382abb820053bfb1539dbbe558b4026fffa869390b3461b7",
   "conversation_not_connected": "84aae0d99c602ed4a1d7c45d4d01151930963a103a8a2279a56db3cc99f74c73",
   "conversation_not_connected_title": "e3535949690c23b43f4dd1d4e7afa5b055ea237698ac808381b7347e3347f9a4",
-  "conversation_not_found_description": "b3529f61e761d1eafc2004491f33d96a1ff812b79d59b2802116ce4ba40ad89c",
-  "conversation_not_found_title": "6d0bd48484d4da61e7b8f21a5afd152b4ea688c610da19993fc01c865ea2bc08",
   "conversation_not_rated": "5cd2a545b766f4eeef5bdf2421fbc42bc83135453a83ba3946d7f98cd495e65e",
   "conversation_not_this_time": "174fba694bc062ba391da61caa6f77367c183aa0dee54574b36e4d1a8bc454ef",
   "conversation_opens_and_card": "d32cf970a62e993fe491d24addc43d129637faf9197f1b0a92d5d85df6c8feb8",
@@ -218,8 +216,6 @@
     <string name="conversation_mic_off">Zezwól na dostęp do mikrofonu w Ustawieniach, by porozmawiać. Odpowie %1$s. Możesz też pisać.</string>
     <!-- Starts the call without the microphone, answering by typing. -->
     <string name="conversation_type_instead">Odpowiadaj pisemnie</string>
-    <string name="conversation_not_found_title">Nie udało nam się znaleźć tej rozmowy</string>
-    <string name="conversation_not_found_description">Link może być nieaktualny lub zawierać literówkę.</string>
     <!-- Read before what the learner said in the call's transcript. -->
     <string name="conversation_you_said">Ty: %1$s</string>
     <!-- Read before what the character said in the call's transcript: the character's name, then the words. -->

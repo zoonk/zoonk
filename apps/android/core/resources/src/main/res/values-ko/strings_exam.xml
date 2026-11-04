@@ -44,7 +44,6 @@
   "exam_format_one_day": "d06cbd296299bf7fdf298845ba2de24d6e962ab167d39d240c63e4c86686675b",
   "exam_format_parts_questions": "a04c5ac971f2a3765ae5096e347c1072c1735b9ddb8c02c63814bade78a71a9e",
   "exam_format_two_days": "cf2916e23876ea00498ce5a9e9aab15ed6c132d0cf40ca8d3ab8612c40fdf2b2",
-  "exam_go_to_today": "e6e0c96c3e60a49fac51603e4858c01f1f24559ba0156ba5a9dd289b92b005b0",
   "exam_how_did_it_go": "f6f3f18cdeb0d892158feefe0e9a0040a1d5ac81f2ff8a1e2b3b1372c4eaac16",
   "exam_latest_mock": "ff35337a7845152f3e8ea7adcab8e9d01f7750b3597c6964f22e86a3a913cf8c",
   "exam_mock_answered": "26de9bbe6b3b72c5beeecbb0902bdb8b9f993dedfadec28856f60fb463823d18",
@@ -61,8 +60,6 @@
   "exam_no_sitting_detail_one": "021b397b12d4ff75849a0bdbf324c3cf48028e0a7b30dfc90b1aa993d231a2c9",
   "exam_no_sitting_detail_several": "1dfdc8897e9b2767407f8b5442fb29b5fa1451dc7809ec543bcac58c504e3bf8",
   "exam_no_sitting_title": "114ceea8e0f81e6202f3ca466ee532e200ce2e9fd98f294496f41ed1c25a17ac",
-  "exam_not_found_description": "4bb802453c98d666c4b079ec425c544d4eec8d1b690912904d3ee6780549cdb4",
-  "exam_not_found_title": "ef8d1fecd736e3782c8dd0a4d15ffd6cb469d04a392c9747b925ab0359047d8a",
   "exam_out_of": "940d6514817e95fe6d2908cb978026e3caaaca10915a1f9a0e17ed9f6d12b155",
   "exam_pass_marks_language": "825b592f013893e389243a19a8f676b8f67646cfe0313b0c7e04c82a060d7d42",
   "exam_passed_no": "e71d62513781732ea0999cc44984d167762149720b7925f873bdb1a8c7a52a94",
@@ -285,7 +282,4 @@
     <string name="exam_cutoff_source">%1$s, 출처: %2$s</string>
     <!-- %1$s is the learner's goal, such as "Medicine at USP". -->
     <string name="exam_cutoff_goal">내 목표: %1$s</string>
-    <string name="exam_not_found_title">페이지를 찾을 수 없어요</string>
-    <string name="exam_not_found_description">오래된 링크이거나 주소가 잘못 입력되었을 수 있어요.</string>
-    <string name="exam_go_to_today">오늘의 학습으로 이동하기</string>
 </resources>

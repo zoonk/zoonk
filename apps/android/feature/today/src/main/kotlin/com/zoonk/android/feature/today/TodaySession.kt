@@ -748,9 +748,9 @@ private fun DayMeta(
 ) {
     val done = model.day.steps.count(DayStep::isFinished)
 
-    // While the action waits or failed, its words take the line, as main's meta does.
+    // While Continue waits or failed, its words take the line, as main's meta does.
     Row(modifier, verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (status.speaking) {
+        if (status.tap == TodayTap.Continue && status.speaking) {
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.End) { TodayActionStatus(status) }
         } else {
             Text(

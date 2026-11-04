@@ -63,7 +63,7 @@
   "navigation_user_menu": "519d13f66fa303b0080c9da45526bea41f4150663f8b1fc3e7674624fdb89b94",
   "not_found_description": "f9a92ace3b35477b3397f0b09141177936313d20e52aa4379a4393bfd6009c02",
   "not_found_go_home": "1973394b75d6eca01015c246a88a7c58be5c412c98e676cf05ea66f8a61cd6e1",
-  "not_found_title": "79b4e2b9274bae2f9608318598d2f4ccc43d0e326a2a52c497490cc6c0876b5d",
+  "not_found_title": "8283917f147ffb6ad6c3f29743501f2e31d2ae3b0fb93bd98a9eab2eb8055eb9",
   "suggestion_save_failed": "3201328931b215cc862758f886986add42f378c955330e0da377b83466bd972d",
   "suggestion_view": "1dcbae3a8851c1faf1f89a935ef862acc0be17cc10baf7fc0590148e7a03cde7",
   "task_leave": "6db565c745931437e4b0783c99b62b93de0ebe9c62e972e0f5db499b0a9c51ad",
@@ -137,7 +137,7 @@
     <string name="test_out_title">Tu connais déjà ce contenu ?</string>
     <string name="test_out_skip_chapter">Passer le test et sauter le chapitre</string>
     <string name="test_out_skip_unit">Passer le test et sauter l’unité</string>
-    <string name="not_found_title">Cette page est introuvable</string>
+    <string name="not_found_title">Nous n’avons pas trouvé cette page</string>
     <string name="not_found_description">Le lien est peut-être ancien ou mal saisi.</string>
     <string name="not_found_go_home">Aller à l’accueil</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
