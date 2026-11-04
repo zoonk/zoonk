@@ -16,4 +16,5 @@ dependencies {
     implementation(libs.androidx.compose.material3.adaptive)
 
     testImplementation(testFixtures(project(":feature:plan")))
+    testImplementation(libs.androidx.window.testing)
 }
