@@ -48,7 +48,13 @@ export function NoSittingWords({
       {noSitting.closest.map((date) => (
         <Fragment key={date}>
           <span aria-hidden="true">{" · "}</span>
-          <Button disabled={disabled} onClick={() => onUse(date)} type="button" variant="link">
+          <Button
+            disabled={disabled}
+            focusableWhenDisabled
+            onClick={() => onUse(date)}
+            type="button"
+            variant="link"
+          >
             {t("Use {date}", { date: formatDate(date, "long") })}
           </Button>
         </Fragment>

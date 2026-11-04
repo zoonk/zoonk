@@ -71,13 +71,7 @@ function StartButton({
   const ref = useTapFocus(focus);
 
   return (
-    <EnterButton
-      aria-busy={busy || undefined}
-      disabled={busy}
-      focusableWhenDisabled
-      onClick={onClick}
-      ref={ref}
-    >
+    <EnterButton aria-busy={busy || undefined} disabled={busy} onClick={onClick} ref={ref}>
       {step.status === "active" ? t("Continue") : t("Start")}
     </EnterButton>
   );
@@ -210,7 +204,13 @@ function NextStopActionBar({
         className={!isReady && alternative ? "max-lg:flex-col max-lg:items-stretch" : undefined}
       >
         {canStop && (
-          <Button disabled={stop.isPending} onClick={stop.run} size="xl" variant="outline">
+          <Button
+            disabled={stop.isPending}
+            focusableWhenDisabled
+            onClick={stop.run}
+            size="xl"
+            variant="outline"
+          >
             {t("Stop for today")}
           </Button>
         )}

@@ -155,6 +155,7 @@ function MoveToMondayButton({ className, main = false }: { className?: string; m
     <Button
       className={cn("shrink-0", className)}
       disabled={move.pending || start.busy}
+      focusableWhenDisabled
       onClick={() => void move.moveToMonday()}
       size="xl"
       variant="outline"

@@ -82,7 +82,7 @@ export function TestOutStartLink({
       <p className={cn("text-muted-foreground text-sm", className)}>
         {t("Already know this?")}
         {space}
-        <Button disabled={opening} onClick={start} variant="link">
+        <Button disabled={opening} focusableWhenDisabled onClick={start} variant="link">
           {opening ? t("Opening the test…") : t("Take the test")}
         </Button>
       </p>

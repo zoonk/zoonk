@@ -52,6 +52,7 @@
     "./goal-switcher": "./src/shell/goal-switcher.tsx",
     "./goal-mark": "./src/shell/goal-mark.tsx",
     "./help-limit": "./src/_components/help-limit-notice.tsx",
+    "./is-focus-lost": "./src/_utils/is-focus-lost.ts",
     "./journey": "./src/journey/journey-screen.tsx",
     "./journey/resume-effect": "./src/journey/resume-effect.tsx",
     "./diff-lines": "./src/_components/diff-lines.tsx",

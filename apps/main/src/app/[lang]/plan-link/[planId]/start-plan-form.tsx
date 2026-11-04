@@ -45,6 +45,7 @@ export function StartPlanForm({
         aria-keyshortcuts="Enter"
         className="mt-1"
         disabled={isPending}
+        focusableWhenDisabled
         size="lg"
         type="submit"
       >

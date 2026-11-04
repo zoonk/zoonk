@@ -181,6 +181,7 @@ export function OTPForm({
   const resendCode = useResendCode(email);
   const isCodeGone = needsNewCode(status);
   const isChecking = status === "pending";
+  const canResend = !isChecking && resendCode.status !== "sending";
 
   /** Auth turns away a check that overlaps another, so codes are checked one at a time. */
   const checkCode = async ({
@@ -257,6 +258,7 @@ export function OTPForm({
           <Button
             className="w-full font-[560]"
             disabled={resendCode.status === "sending"}
+            focusableWhenDisabled
             onClick={sendNewCode}
             size="lg"
             type="button"
@@ -274,9 +276,9 @@ export function OTPForm({
             {t("Didn't get it?")}
             {/* Not while a code is checked: its answer would land on the new code's empty box. */}
             <button
+              aria-disabled={!canResend || undefined}
               className={OTP_LINK_CLASS}
-              disabled={isChecking || resendCode.status === "sending"}
-              onClick={sendNewCode}
+              onClick={canResend ? sendNewCode : undefined}
               type="button"
             >
               {t("Send again")}

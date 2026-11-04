@@ -146,6 +146,7 @@ function MapRequestTile({
         {!isGenerating && (
           <Button
             disabled={isPending || isCapped}
+            focusableWhenDisabled
             onClick={isFailure ? retry : create}
             size="sm"
             variant="outline"

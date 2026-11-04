@@ -10,6 +10,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
+import { useFocusOnRemovedControl } from "../_components/suggestion-focus";
 import {
   TASK_HEADER_ICON_CLASS,
   TaskHeader,
@@ -226,7 +227,7 @@ export function TaskFrame({
         {fit === "always" ? children : <TaskBody>{children}</TaskBody>}
       </main>
 
-      {footer && <TaskActionBar>{footer}</TaskActionBar>}
+      {footer && <TaskFooter>{footer}</TaskFooter>}
 
       {aside && (
         <TaskAside footer={aside.footer} label={aside.label} meta={aside.meta} title={aside.title}>
@@ -234,6 +235,17 @@ export function TaskFrame({
         </TaskAside>
       )}
     </div>
+  );
+}
+
+function TaskFooter({ children }: { children: React.ReactNode }) {
+  const bar = useRef<HTMLDivElement>(null);
+  useFocusOnRemovedControl(bar);
+
+  return (
+    <TaskActionBar className="outline-none" ref={bar} tabIndex={-1}>
+      {children}
+    </TaskActionBar>
   );
 }
 
@@ -264,8 +276,9 @@ export function TaskMainButton({
   return (
     <Button
       aria-keyshortcuts="Enter"
-      className={cn(TASK_MAIN_ACTION_CLASS, busy && "disabled:opacity-100", className)}
+      className={cn(TASK_MAIN_ACTION_CLASS, className)}
       disabled={isDisabled}
+      focusableWhenDisabled
       onClick={onClick}
       ref={ref}
       size="xl"

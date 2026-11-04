@@ -15,6 +15,7 @@ export function EnterButton({
     <Button
       aria-keyshortcuts="Enter"
       className={cn(TASK_MAIN_ACTION_CLASS, className)}
+      focusableWhenDisabled
       size="xl"
       {...props}
     >

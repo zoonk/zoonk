@@ -2,6 +2,7 @@
 
 import { MAX_LESSON_QUESTION_LENGTH } from "@zoonk/core/lesson-questions/contract";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
+import { isFocusLost } from "@zoonk/learn/is-focus-lost";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import {
   InputGroup,
@@ -149,7 +150,7 @@ function ComposerLimit({ limit, variant }: { limit: HelpLimit; variant: Composer
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (document.activeElement === document.body) {
+    if (isFocusLost(document.activeElement)) {
       ref.current?.focus({ preventScroll: true });
     }
   }, []);
@@ -255,6 +256,7 @@ export function QuestionComposer({
             aria-label={submitLabel}
             className="size-7.5 rounded-lg"
             disabled={!canSend || createNavigationError}
+            focusableWhenDisabled
             onClick={() => void controller.send()}
             size="icon-sm"
             variant="default"
