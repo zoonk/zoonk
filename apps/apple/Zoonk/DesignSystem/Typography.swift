@@ -101,6 +101,17 @@ extension TypeStyle {
     return style
   }
 
+  /// For a font inside an `AttributedString`, which can't read the environment: it grows with
+  /// Dynamic Type, but Bold Text doesn't add to it and its weight rounds to Geist's named one.
+  var attributeFont: Font {
+    let font = Font.custom(
+      face == .mono ? "Geist Mono" : "Geist", size: size, relativeTo: relativeTo
+    )
+    .weight(Font.Weight.standard.min { abs($0.axisValue - weight) < abs($1.axisValue - weight) }!)
+
+    return isItalic ? font.italic() : font
+  }
+
   /// For text that can't take `typeStyle(_:)`, such as text a `Canvas` resolves.
   @MainActor func font(in environment: EnvironmentValues) -> Font {
     font(
@@ -140,6 +151,14 @@ extension View {
   /// Sets the weight of this view's text in the role it inherits, so Bold Text still adds to it.
   func typeWeight(_ weight: Font.Weight) -> some View {
     modifier(TypeWeightModifier(weight: weight))
+  }
+}
+
+extension Text {
+  /// `typeWeight(_:)` for a piece of an interpolated `Text`, which can't read Bold Text itself: its
+  /// view passes `legibilityWeight`, so the piece stays heavier than the bolder text around it.
+  func typeWeight(_ weight: Font.Weight, legibility: LegibilityWeight?) -> Text {
+    fontWeight(legibility == .bold ? weight.withBoldText : weight)
   }
 }
 
@@ -224,6 +243,14 @@ extension Font.Weight {
     case .black: 900
     default: 400
     }
+  }
+
+  fileprivate static let standard: [Font.Weight] = [
+    .ultraLight, .thin, .light, .regular, .medium, .semibold, .bold, .heavy, .black,
+  ]
+
+  fileprivate var withBoldText: Font.Weight {
+    Self.standard.first { $0.axisValue >= min(axisValue + 200, 900) } ?? .black
   }
 }
 
