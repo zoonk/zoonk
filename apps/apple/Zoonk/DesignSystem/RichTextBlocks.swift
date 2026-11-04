@@ -68,7 +68,7 @@ struct RichTextBlocks: View {
         case .list(let items, let ordered):
           list(items, ordered: ordered, mark: mark)
         case .table(let header, let alignments, let rows):
-          table(header: header, alignments: alignments, rows: rows)
+          RichTable(header: header, alignments: alignments, rows: rows, inline: inline)
         }
       }
     }
@@ -100,34 +100,67 @@ struct RichTextBlocks: View {
     marked.text[range].backgroundColor = .warning.opacity(0.15)
     return marked
   }
+}
 
-  private func table(
-    header: [String], alignments: [RichTextBlock.ColumnAlignment], rows: [[String]]
-  ) -> some View {
-    ScrollView(.horizontal) {
-      Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 8) {
-        GridRow {
-          ForEach(Array(header.enumerated()), id: \.offset) { index, cell in
-            Text(inline(cell))
-              .font(.subheadline.weight(.semibold))
-              .gridColumnAlignment(alignments[index].horizontal)
-          }
+/// Main's `RichTable`: the columns share the width the way an HTML table's do, their cells wrapping,
+/// and the table scrolls sideways only when a column would get narrower than a short word.
+private struct RichTable: View {
+  let header: [String]
+  let alignments: [RichTextBlock.ColumnAlignment]
+  let rows: [[String]]
+  let inline: (String) -> RichInline
+
+  @ScaledMetric(relativeTo: .subheadline) private var minimumColumnWidth = 88
+  @State private var visibleWidth: CGFloat?
+
+  private let columnSpacing: CGFloat = 16
+
+  var body: some View {
+    Group {
+      if let visibleWidth, visibleWidth < narrowestWidth {
+        ScrollView(.horizontal) { cells }
+          .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
+      } else {
+        cells
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .onGeometryChange(for: CGFloat.self) {
+      $0.size.width
+    } action: {
+      visibleWidth = $0
+    }
+  }
+
+  private var cells: some View {
+    Grid(alignment: .leading, horizontalSpacing: columnSpacing, verticalSpacing: 8) {
+      GridRow {
+        ForEach(Array(header.enumerated()), id: \.offset) { index, cell in
+          Text(inline(cell))
+            .font(.subheadline.weight(.semibold))
+            .fixedSize(horizontal: false, vertical: true)
+            .gridColumnAlignment(alignments[index].horizontal)
         }
+      }
 
-        Divider()
+      Divider()
 
-        ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-          GridRow {
-            ForEach(Array(row.enumerated()), id: \.offset) { index, cell in
-              Text(inline(cell))
-                .font(alignments[index] == .leading ? .subheadline : .subheadline.monospacedDigit())
-            }
+      ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+        GridRow {
+          ForEach(Array(row.enumerated()), id: \.offset) { index, cell in
+            Text(inline(cell))
+              .font(alignments[index] == .leading ? .subheadline : .subheadline.monospacedDigit())
+              .fixedSize(horizontal: false, vertical: true)
           }
         }
       }
-      .padding(.vertical, 4)
     }
-    .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
+    .padding(.vertical, 4)
+  }
+
+  private var narrowestWidth: CGFloat {
+    let columns = CGFloat(header.count)
+    return columns * minimumColumnWidth + (columns - 1) * columnSpacing
   }
 }
 
