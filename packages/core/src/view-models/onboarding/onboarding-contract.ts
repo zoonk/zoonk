@@ -109,6 +109,8 @@ export type OnboardingDraftView = {
   id: string;
   prompt: string;
   status: OnboardingDraftStatus;
+  /** Counts the learner's today, which a `targetDate` fix must come after. */
+  timeZone: string;
   understanding: GoalUnderstandingView | null;
 };
 
@@ -150,7 +152,7 @@ export const onboardingDraftEditSchema = z
           .nullable()
           .meta({
             description:
-              "The learner's own deadline; null brings back the exam's dates. From the learner's today (an earlier one is refused with 422) to at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
+              "The learner's own deadline; null brings back the exam's dates. From the day after the learner's today in the draft's `timeZone` through 3,650 days after it; a date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE, as POST /goals refuses it",
           }),
       })
       .strict(),

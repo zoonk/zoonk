@@ -20,15 +20,15 @@ enum StatTone {
   }
 }
 
-struct StatTile<Icon: View>: View {
+struct StatTile<Icon: View, Value: View>: View {
   let label: Text
-  let value: Text
+  let value: Value
   var tone = StatTone.neutral
   @ViewBuilder let icon: Icon
   var detail: Text?
   /// From 0 to 1.
   var meter: Double?
-  var spokenValue: Text?
+  let spokenValue: Text
 
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
@@ -73,19 +73,28 @@ struct StatTile<Icon: View>: View {
   }
 
   private var accessibilityValue: Text {
-    let number = spokenValue ?? value
-
     guard let detail else {
-      return number
+      return spokenValue
     }
 
     return Text(
-      "\(number), \(detail)", tableName: "Progress",
+      "\(spokenValue), \(detail)", tableName: "Progress",
       comment: "Spoken value of a stat tile: its number, then the line under it")
   }
 }
 
-extension StatTile where Icon == Image {
+extension StatTile where Value == Text {
+  init(
+    label: Text, value: Text, tone: StatTone = .neutral, @ViewBuilder icon: () -> Icon,
+    detail: Text? = nil, meter: Double? = nil, spokenValue: Text? = nil
+  ) {
+    self.init(
+      label: label, value: value, tone: tone, icon: icon, detail: detail, meter: meter,
+      spokenValue: spokenValue ?? value)
+  }
+}
+
+extension StatTile where Icon == Image, Value == Text {
   init(
     label: Text, value: Text, systemImage: String, tone: StatTone = .neutral, detail: Text? = nil,
     meter: Double? = nil, spokenValue: Text? = nil

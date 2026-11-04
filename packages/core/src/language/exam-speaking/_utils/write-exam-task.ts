@@ -17,8 +17,8 @@ function toPreviousCard(previous: PreviousCard | null) {
     return null;
   }
 
-  const { instructions, prompts, table, text } = previous.draft;
-  return { instructions, prompts, table, task: previous.task.name, text };
+  const { instructions, photos, prompts, table, text } = previous.draft;
+  return { instructions, photos, prompts, table, task: previous.task.name, text };
 }
 
 export async function writeExamCard({

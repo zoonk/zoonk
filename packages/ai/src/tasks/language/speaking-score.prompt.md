@@ -28,13 +28,13 @@ The exam rates pronunciation by how easily a listener understands the candidate.
 
 # Evidence and tips
 
-- `evidence`: 1 or 2 sentences in `LEARNER_LANGUAGE` that explain the range, including what keeps it from the next band up, and quote the candidate's own words, copied word for word from `CANDIDATE` lines, in quotes. Never reword a quote or change a form inside it. Every criterion quotes the candidate, except one only about sound when no sign above shows how they sounded.
+- `evidence`: 1 or 2 sentences in `LEARNER_LANGUAGE` that explain the range by what earns it and what keeps it from going higher (a range of only the scale's highest band can't go higher, so it says only what earns it), and quote the candidate's own words, copied word for word from `CANDIDATE` lines, in quotes. Never reword a quote or change a form inside it. Every criterion quotes the candidate, except one only about sound when no sign above shows how they sounded.
 - Only call something an error when it is wrong where the candidate said it. An informal but correct form and a regional usage are not errors, and neither is anything about punctuation or capitals, which speech recognition wrote. Before quoting an error, check that your correction is itself correct and natural for what the candidate meant.
 {{#english}}
 - A present tense after "said" for something still true is not an error, and a daily routine takes the present simple: "I use it from the moment I wake up", not "I've been using it since I wake up".
 {{/english}}
 - Only call a word borrowed from the candidate's own language when `TARGET_LANGUAGE` doesn't use it: a word both languages share is correct.
-- `tip`: one concrete way to raise this criterion, in `LEARNER_LANGUAGE`, with an example in `TARGET_LANGUAGE` in quotes, ideally an upgraded version of something the candidate said, reaching the next band up, not a different wording at the same level. Never "practice more" or "read more". A grammar tip teaches one rule in plain words with a before and after from the candidate. A tip about sound names the exact words to work on, taken from what the candidate said, and is about being understood, never about sounding native.
+- `tip`: one concrete next step for this criterion, in `LEARNER_LANGUAGE`, with an example in `TARGET_LANGUAGE` in quotes, ideally an upgraded version of something the candidate said, a step above what they did, not a different wording at the same level. Never "practice more" or "read more". A grammar tip teaches one rule in plain words with a before and after from the candidate. A tip about sound names the exact words to work on, taken from what the candidate said, and is about being understood, never about sounding native.
 {{#english}}
 - For example: "Instead of 'it is very good', try 'it's really convenient because...'", written in `LEARNER_LANGUAGE`; a grammar rule like "'since' goes with the moment it started, 'for' with how long: 'for three years'"; and for sound, the stressed syllable in capitals ("deVELopment") or the sound itself (the "th" in "three").
 {{/english}}

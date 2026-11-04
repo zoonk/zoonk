@@ -25,7 +25,7 @@ struct ReadDraftView: View {
         create {
           try await onboarding.createGoals(
             understood.startableGoals(limit: draft.activeGoalLimit).map(\.draft.value1),
-            schedule: understood.schedule, sourceIDs: sourceIDs)
+            schedule: understood.schedule, sourceIDs: sourceIDs, timeZone: draft.timeZone)
         } then: {
           onCreated($0)
         }
@@ -135,6 +135,7 @@ private struct UnderstoodCard: View {
           ForEach(rows(goal: index)) { row in
             UnderstoodRowView(
               row: row,
+              timeZone: draft.timeZone,
               isEditing: editing == row.field.map { FieldEdit(goal: index, field: $0) },
               onEdit: { isEditing in
                 editing = isEditing ? row.field.map { FieldEdit(goal: index, field: $0) } : nil
@@ -147,7 +148,9 @@ private struct UnderstoodCard: View {
       ForEach(locked, id: \.self) { index in
         Section {
           ForEach(rows(goal: index).map(\.readOnly)) { row in
-            UnderstoodRowView(row: row, isEditing: false, onEdit: { _ in }, onSave: { _ in false })
+            UnderstoodRowView(
+              row: row, timeZone: draft.timeZone, isEditing: false, onEdit: { _ in },
+              onSave: { _ in false })
           }
         }
       }
@@ -320,6 +323,7 @@ private struct RewritableWords: View {
 
 private struct UnderstoodRowView: View {
   let row: UnderstoodRow
+  let timeZone: String
   let isEditing: Bool
   let onEdit: (Bool) -> Void
   let onSave: (String) async -> Bool
@@ -329,22 +333,40 @@ private struct UnderstoodRowView: View {
 
   var body: some View {
     if isEditing, let field = row.field {
-      RowEditor(row: row, field: field, onCancel: { onEdit(false) }, onSave: onSave)
+      RowEditor(
+        row: row, field: field, timeZone: timeZone, onCancel: { onEdit(false) }, onSave: onSave)
     } else {
       VStack(alignment: .leading, spacing: 10) {
         fact
 
-        if row.suggestedDate != nil || !row.choiceDates.isEmpty {
+        if suggestedDate != nil || !choiceDates.isEmpty {
           dateChoices
         }
       }
     }
   }
 
+  /// Only days core would save are offered.
+  private var dateRange: ClosedRange<Date> {
+    GoalDate.range(today: GoalDate.today(now: .now, timeZone: timeZone))
+  }
+
+  private var suggestedDate: String? {
+    row.suggestedDate.flatMap { offers($0) ? $0 : nil }
+  }
+
+  private var choiceDates: [String] {
+    row.choiceDates.filter(offers)
+  }
+
+  private func offers(_ date: String) -> Bool {
+    UnderstoodRows.day(date).map(dateRange.contains) ?? false
+  }
+
   private var dateChoices: some View {
     VStack(alignment: .leading, spacing: 6) {
       ButtonRow {
-        if let suggested = row.suggestedDate {
+        if let suggested = suggestedDate {
           Button {
             use(suggested)
           } label: {
@@ -352,7 +374,7 @@ private struct UnderstoodRowView: View {
           }
         }
 
-        ForEach(row.choiceDates, id: \.self) { date in
+        ForEach(choiceDates, id: \.self) { date in
           Button {
             use(date)
           } label: {
@@ -470,6 +492,7 @@ private struct TrailingIconLabelStyle: LabelStyle {
 private struct RowEditor: View {
   let row: UnderstoodRow
   let field: UnderstoodField
+  let timeZone: String
   let onCancel: () -> Void
   let onSave: (String) async -> Bool
 
@@ -494,10 +517,7 @@ private struct RowEditor: View {
         .submitLabel(.done)
         .onSubmit(save)
       case .date:
-        DatePicker(
-          selection: $date, in: Calendar.current.startOfDay(for: .now)...,
-          displayedComponents: .date
-        ) {
+        DatePicker(selection: $date, in: dateRange, displayedComponents: .date) {
           Text(row.label)
         }
       case .time:
@@ -538,6 +558,10 @@ private struct RowEditor: View {
 
   private var trimmed: String { text.trimmingCharacters(in: .whitespacesAndNewlines) }
 
+  private var dateRange: ClosedRange<Date> {
+    GoalDate.range(today: GoalDate.today(now: .now, timeZone: timeZone))
+  }
+
   private func start() {
     let value = row.editValue ?? row.value
 
@@ -546,7 +570,10 @@ private struct RowEditor: View {
       text = value
       isFocused = true
     case .date:
-      date = UnderstoodRows.day(value) ?? .now
+      // The picker shows a day outside its range as the nearest bound, so Save sends that one.
+      let range = dateRange
+      date = min(
+        max(UnderstoodRows.day(value) ?? range.lowerBound, range.lowerBound), range.upperBound)
     case .time:
       let parts = value.split(separator: ":").compactMap { Int($0) }
       date =
@@ -563,7 +590,7 @@ private struct RowEditor: View {
       case .text:
         trimmed
       case .date:
-        date.formatted(.iso8601.year().month().day().timeZone(separator: .omitted))
+        isoDay(date)
       case .time:
         date.formatted(
           .verbatim(

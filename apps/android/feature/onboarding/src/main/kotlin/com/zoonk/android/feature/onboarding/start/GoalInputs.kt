@@ -18,10 +18,11 @@ private const val MUSICIANSHIP_MINUTES = 15L
 internal fun GoalUnderstandingOneOf.startableGoals(activeGoalLimit: Long?): List<UnderstoodGoal> =
     goals.take(activeGoalLimit?.toInt() ?: goals.size)
 
-/** The first goal carries what the learner wants from their material. */
+/** The first goal carries what the learner wants from their material; the draft's [timeZone] counted the card's dates. */
 internal fun understoodGoalsInput(
     understanding: GoalUnderstandingOneOf,
     activeGoalLimit: Long?,
+    timeZone: String,
     materialIntent: MaterialIntent?,
     sourceIds: List<String>,
 ): GoalCreateInput =
@@ -34,7 +35,7 @@ internal fun understoodGoalsInput(
         sourceIds = sourceIds.map(UUID::fromString).ifEmpty { null },
         studyDays = understanding.schedule.studyDays,
         studyTime = understanding.schedule.studyTime,
-        timeZone = TimeZone.getDefault().id,
+        timeZone = timeZone,
     )
 
 internal fun explanationInput(

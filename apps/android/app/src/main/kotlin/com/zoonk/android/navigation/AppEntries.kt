@@ -43,9 +43,8 @@ import com.zoonk.android.feature.testout.testOutEntries
 import com.zoonk.android.feature.today.todayEntries
 
 /**
- * Every route's screen, one call per feature's `<Name>Navigation.kt`, where each lane registers
- * its own routes (with their scene metadata, such as list-detail panes) in place of the
- * placeholders. Nothing else changes here.
+ * Every route's screen, one call per feature's `<Name>Navigation.kt`, where each feature registers
+ * its own routes (with their scene metadata, such as list-detail panes). Nothing else changes here.
  */
 fun appEntries(
     app: AppContainer,

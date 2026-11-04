@@ -163,6 +163,21 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(restoredFactIds, [MemoryFact.evenings.id])
   }
 
+  func testASecondUndoTapWhileTheFirstRunsRestoresNothingMore() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    await store.memory.load()
+    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+
+    async let first: Void = store.undoDeletion()
+    async let second: Void = store.undoDeletion()
+    _ = await (first, second)
+
+    XCTAssertEqual(store.undoStatus, .undone)
+    let restoredFactIds = await api.restoredFactIds
+    XCTAssertEqual(restoredFactIds, [MemoryFact.evenings.id])
+  }
+
   func testFailedDeletionKeepsTheFact() async {
     let store = makeStore(api: SettingsAPIStub(deleteError: APIError.network))
     await store.memory.load()

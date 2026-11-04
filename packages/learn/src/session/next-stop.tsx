@@ -8,6 +8,7 @@ import { EnterButton } from "../_components/enter-button";
 import { type LessonNotWritten } from "../_components/lesson-not-written-notice";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
 import { PageEyebrow } from "../_components/page";
+import { StatusRegion } from "../_components/status-region";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
 import { isFocusLost } from "../_utils/is-focus-lost";
@@ -295,10 +296,9 @@ export function NextStop({
           <TaskMeta facts={facts} />
         </div>
 
-        {/* Empty, it stays in the page, so it's heard when it speaks. */}
-        <p className="text-sm text-pretty empty:sr-only" role="status">
+        <StatusRegion className="text-sm text-pretty">
           {written && t("Your lesson is ready.")}
-        </p>
+        </StatusRegion>
 
         {!isReady && notWritten && (
           <NotWritten actions={actions} block={block} reason={notWritten} />

@@ -59,7 +59,7 @@
   "today_insight_time_moved": "5d5bfffa679ccbe67c493c74ee1b477ca82440ed3445c5735a0bf6cf99dc390b",
   "today_insight_time_stays": "ea0d4b386b1cb52839456a79c9f9411d6d47b6a62d9523085c6a087ccb3fec74",
   "today_keep_learning": "3d49c9787f34bb599dc953ca71ca33acee3776b12c3ca14461db25bd7a12c5ae",
-  "today_keep_learning_failed": "4a8aaa1afdc1211e0e7d16c41e91dce42bbf1b4422b903e35fd724e930fe4c05",
+  "today_keep_learning_failed": "a1226d56743154792d5a5ef203b63819023b7652baafabaa4899d4cfc70ef2cf",
   "today_keep_my_time": "ffc14057b4b11be582d567d06b49d857b02338d68d45b3abb417a1a58822c1bf",
   "today_lessons_not_written": "e522eccf1b080e07d8804c11bd0a493ae8fa84f8266b2e255e5b67298ca02f9a",
   "today_limit_reached": "5e898c758e0bc70c24017e6a9225dcef132c16948794954d8f41044936115e81",
@@ -327,7 +327,7 @@
     <string name="today_lessons_not_written">Les leçons du jour ne sont pas encore prêtes.</string>
     <string name="today_get_lessons">Obtenir les leçons du jour</string>
     <string name="today_open_failed">Impossible d’ouvrir la prochaine étape. Réessaie.</string>
-    <string name="today_keep_learning_failed">Impossible d’ouvrir tes prochaines leçons. Réessaie.</string>
+    <string name="today_keep_learning_failed">Nous n’avons pas pu ouvrir tes prochaines leçons. Réessaie.</string>
     <string name="today_welcome_back">Te revoilà</string>
     <!-- %1$s is a course's title. -->
     <string name="today_suggested_goal_question">Continuer %1$s ?</string>

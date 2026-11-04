@@ -6,7 +6,7 @@ import { type ReactNode, createContext, use } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 
 export type LessonQuestionNavigation = {
-  appLinks?: { openBlock?: (blockId: string) => void };
+  appLinks?: { openBlock?: (blockId: string) => Promise<boolean> };
   linkComponent: PlayerLinkComponent;
   loginHref: string;
   subscriptionHref: string;
