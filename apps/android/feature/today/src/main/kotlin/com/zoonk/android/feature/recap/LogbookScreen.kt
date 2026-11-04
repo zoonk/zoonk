@@ -192,13 +192,13 @@ internal fun Logbook(
                     modifier = Modifier.padding(padding),
                     withMoment = false,
                     columnModifier = Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = 24.dp),
-                    done = {
-                        steps.filter { it != RecapStep.Next }.forEachIndexed { position, step ->
+                    done = { RecapStepContent(RecapStep.Week, recap, learnerName) },
+                    next = {
+                        steps.drop(1).forEachIndexed { position, step ->
                             if (position > 0) HorizontalDivider()
                             RecapStepContent(step, recap, learnerName)
                         }
                     },
-                    next = { if (RecapStep.Next in steps) RecapStepContent(RecapStep.Next, recap, learnerName) },
                 )
             } else {
                 Box(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll), contentAlignment = Alignment.TopCenter) {

@@ -162,24 +162,20 @@ private struct LogbookSteps: View {
 
     PaneSplit {
       List {
-        ForEach(steps.filter { $0 != .next }, id: \.self) { step in
-          page(step)
-        }
+        page(.week)
       }
     } secondary: {
       List {
-        if steps.contains(.next) {
-          page(.next)
+        ForEach(steps.filter { $0 != .week }, id: \.self) { step in
+          page(step)
         }
-      }
-      // Without a next week it's empty, and an empty list draws the plain background.
-      .scrollContentBackground(.hidden)
-      .background(Color(.systemGroupedBackground))
-      .safeAreaBar(edge: .bottom) {
-        letsGo
-          .controlSize(.large)
-          .scenePadding(.horizontal)
-          .padding(.vertical, 10)
+
+        Section {
+          letsGo
+            .controlSize(.large)
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets())
       }
     } single: {
       TabView(selection: $current) {

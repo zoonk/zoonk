@@ -161,9 +161,8 @@ internal fun SessionSummary(
                         DoneTitle(summary, facts)
                         SessionNumbers(summary, facts, brainPowerTile = false)
                         EarnedToday(summary, facts, buddy, buddyName)
-                        SkillRises(summary)
                     },
-                    next = { Tomorrow(summary, facts) },
+                    next = { Onward(summary, facts) },
                 )
             } else {
                 Column(
@@ -201,8 +200,7 @@ private fun DoneStep(
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         DoneTitle(summary, facts)
         SessionNumbers(summary, facts, brainPowerTile = !wide)
-        SkillRises(summary)
-        Tomorrow(summary, facts)
+        Onward(summary, facts)
     }
 }
 
@@ -233,10 +231,11 @@ private fun DoneTitle(
 }
 
 @Composable
-private fun Tomorrow(
+private fun Onward(
     summary: StudySessionSummary,
     facts: SummaryFacts,
 ) {
+    SkillRises(summary)
     summary.tomorrow?.takeIf { !facts.stopped }?.let { tomorrow ->
         SummaryList(stringResource(R.string.session_summary_tomorrow)) {
             SummaryRow(R.drawable.ic_menu_book) { Text(tomorrow.title, style = MaterialTheme.typography.bodyLarge) }

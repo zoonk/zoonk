@@ -100,7 +100,10 @@ struct SessionSummaryView: View {
     .listRowInsets(EdgeInsets())
 
     EarnedToday(summary: summary, missionsBonus: store.session(id: sessionID).value?.fullMeal.bonus)
+  }
 
+  @ViewBuilder
+  private func onward(_ summary: SessionSummary) -> some View {
     if !summary.skillsMoved.isEmpty {
       Section {
         ForEach(summary.skillsMoved, id: \.skillId) { skill in
@@ -110,10 +113,7 @@ struct SessionSummaryView: View {
         Text("Skills that rose", tableName: "Session", comment: "Skills that moved up")
       }
     }
-  }
 
-  @ViewBuilder
-  private func onward(_ summary: SessionSummary) -> some View {
     if !stopped, let tomorrow = summary.tomorrow {
       Section {
         Label {
