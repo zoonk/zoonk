@@ -14,6 +14,10 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -32,7 +36,10 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class LanguageUnitScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -63,12 +70,37 @@ class LanguageUnitScreenshots {
     @Config(qualifiers = "w851dp-h882dp-xhdpi")
     fun foldOpen() = walk("fold-open")
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = walk("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = walk("small-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDark() = walk("book-dark", dark = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookLargeFont() {
+        RuntimeEnvironment.setFontScale(2f)
+        walk("book-font200", fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w700dp-h1000dp-xhdpi")
+    fun medium() = walk("medium")
+
     private fun walk(
         name: String,
         dark: Boolean = false,
+        fold: Boolean = false,
     ) {
         val actions = UnitActions(open = {}, start = callStarter { CallStart.Started(UUID.randomUUID()) })
         compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { UnitPage(languageUnit(), upNext = true, actions = actions) } } }
+        if (fold) unfold()
         shot("unit-top-$name")
         listOf("Your mistakes", "Words in this unit", "Grammar tips", "Unit summary").forEach { row ->
             scrollTo(row)
@@ -84,6 +116,23 @@ class LanguageUnitScreenshots {
         val list = if (lists == 1) hasScrollAction() else hasScrollAction() and hasAnyDescendant(hasText(text))
         compose.onNode(list).performScrollToNode(hasText(text))
     }
+
+    /** Opens the book flat, telling again what the fold composed, as a device tells every new reader. */
+    private fun unfold() =
+        repeat(2) {
+            compose.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(
+                            compose.activity,
+                            state = FoldingFeature.State.FLAT,
+                            orientation = FoldingFeature.Orientation.VERTICAL,
+                        ),
+                    ),
+                ),
+            )
+        }
 
     private fun shot(name: String) {
         compose.waitForIdle()

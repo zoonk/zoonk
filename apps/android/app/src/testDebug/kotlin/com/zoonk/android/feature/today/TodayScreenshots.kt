@@ -15,6 +15,10 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.WithTabRootBar
 import com.zoonk.android.feature.session.decodeFixture
@@ -52,7 +56,10 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class TodayScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -97,10 +104,30 @@ class TodayScreenshots {
         capture("medium-font200")
     }
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("small-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDarkMoreContrast() = capture("book-dark-more-contrast", dark = true, moreContrast = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h1766dp-xhdpi")
+    fun bookAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("book-font200", fold = true)
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        fold: Boolean = false,
     ) {
         var index by mutableIntStateOf(0)
         compose.setContent {
@@ -110,6 +137,7 @@ class TodayScreenshots {
         }
         DAYS.indices.forEach { day ->
             index = day
+            if (fold) unfold()
             compose.waitForIdle()
             write("today-${DAYS[day].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
@@ -150,6 +178,23 @@ class TodayScreenshots {
             }
         }
     }
+
+    /** Opens the book flat, telling again what the fold composed, as a device tells every new reader. */
+    private fun unfold() =
+        repeat(2) {
+            compose.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(
+                            compose.activity,
+                            state = FoldingFeature.State.FLAT,
+                            orientation = FoldingFeature.Orientation.VERTICAL,
+                        ),
+                    ),
+                ),
+            )
+        }
 
     private fun write(
         name: String,

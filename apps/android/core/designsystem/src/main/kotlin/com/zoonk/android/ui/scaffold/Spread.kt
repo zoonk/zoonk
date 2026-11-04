@@ -36,6 +36,11 @@ fun spreadShows(): Boolean = LocalSpread.current?.shows == true
 @Composable
 fun isOnBookPage(): Boolean = currentWindowAdaptiveInfoV2().windowPosture.allVerticalHingeBounds.isNotEmpty() || spreadShows()
 
+/** Main's `sm` and `md`: a medium or wider window, except on a book's page ([isOnBookPage]), which lays out as on a phone. */
+@Composable
+fun isMediumLayout(): Boolean =
+    currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) && !isOnBookPage()
+
 /**
  * Where a page [width] wide splits, for what keeps off the split (a bar, a snackbar, a sheet): inside
  * a [SpreadScreen] where it splits, elsewhere at an unfolded book's fold ([pageFold]).

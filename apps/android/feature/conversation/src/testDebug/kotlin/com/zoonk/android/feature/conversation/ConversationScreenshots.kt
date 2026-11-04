@@ -87,6 +87,25 @@ class ConversationScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "w700dp-h1000dp-xhdpi")
+    fun medium() = walk("medium")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDark() {
+        folded = true
+        walk("book-dark", dark = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookLargeFont() {
+        folded = true
+        RuntimeEnvironment.setFontScale(2f)
+        walk("book-font200")
+    }
+
+    @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun bookLimit() {
         folded = true
