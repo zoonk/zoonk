@@ -1,21 +1,23 @@
-import { afterEach, beforeEach } from "vitest";
+import { beforeEach } from "vitest";
 
-let timedOut: string | null = null;
+let timedOut: { id: string; name: string } | null = null;
 
 /**
  * Vitest can't stop a timed-out test (https://vitest.dev/guide/recipes/cancellable), which then moves
- * the clock, mocks and rows of later files in its worker, so every later test there skips.
+ * the clock, mocks and rows of later tests in its worker: they skip, and its own retries fail.
  */
 export function skipAfterTimeout(): void {
-  beforeEach(({ skip }) => {
-    if (timedOut) {
-      skip(`"${timedOut}" timed out and may still be running in this worker`);
+  beforeEach(({ signal, skip, task }) => {
+    if (timedOut?.id === task.id) {
+      throw new Error("An earlier attempt timed out and may still be running");
     }
-  });
 
-  afterEach(({ signal, task }) => {
-    if (signal.aborted) {
-      timedOut ??= task.fullName;
+    if (timedOut) {
+      skip(`"${timedOut.name}" timed out and may still be running in this worker`);
     }
+
+    signal.addEventListener("abort", () => {
+      timedOut ??= { id: task.id, name: task.fullName };
+    });
   });
 }
