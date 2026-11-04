@@ -22,4 +22,4 @@ export async function getBeltLabel({ color }: { color: BeltColor }): Promise<str
 
   return beltColors.find((belt) => belt.key === color)?.label ?? color;
 }
-// lab 2
+// lab 3
