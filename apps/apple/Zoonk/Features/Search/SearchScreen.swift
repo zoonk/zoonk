@@ -14,6 +14,7 @@ struct SearchScreen: View {
   @State private var query = ""
   @State private var isFeedbackPresented = false
   @State private var switchFailed = false
+  @State private var isSwitchingGoal = false
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
@@ -203,7 +204,15 @@ struct SearchScreen: View {
     case .feedback:
       isFeedbackPresented = true
     case .switchGoal(let goalID):
+      guard !isSwitchingGoal else {
+        return
+      }
+
+      isSwitchingGoal = true
+
       Task {
+        defer { isSwitchingGoal = false }
+
         switch await learner.switchGoal(to: goalID) {
         case .done:
           router.showRoot(of: .today)
