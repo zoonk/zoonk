@@ -45,7 +45,8 @@ struct BuddyGoalStart: View {
     .scrollDismissesKeyboard(.interactively)
     .safeAreaBar(edge: .bottom) {
       VStack(alignment: .leading, spacing: 10) {
-        FlowLayout(spacing: 6) {
+        // Rows sit far enough apart that each mini button keeps its whole 44pt touch height.
+        FlowLayout(spacing: 6, rowSpacing: 20) {
           ForEach(examples, id: \.self) { example in
             Button {
               goal = example
