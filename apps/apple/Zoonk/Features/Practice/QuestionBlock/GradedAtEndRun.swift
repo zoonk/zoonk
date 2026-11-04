@@ -238,10 +238,16 @@ struct PracticeQuestionsPreparingView: View {
   let detail: LocalizedStringResource
   let writingDetail: LocalizedStringResource
   var facts: [String] = []
+  let isStarting: Bool
   let isWriting: Bool
   var failure: (any Error)?
   let start: () -> Void
   @Environment(\.practiceHooks) private var hooks
+  @AccessibilityFocusState private var focus: Focus?
+
+  private enum Focus { case failure, start, title }
+
+  private var needsPlus: Bool { failure as? PracticeAPIError == .plusRequired }
 
   var body: some View {
     PracticeTaskLayout {
@@ -253,6 +259,7 @@ struct PracticeQuestionsPreparingView: View {
               comment: "Title while a test's questions are written.") : title
         )
         .font(.title2.bold())
+        .accessibilityFocused($focus, equals: .title)
         Text(isWriting ? writingDetail : detail).foregroundStyle(.secondary)
 
         if !isWriting {
@@ -267,10 +274,11 @@ struct PracticeQuestionsPreparingView: View {
 
         if let failure {
           Text(failureText(failure)).font(.subheadline).foregroundStyle(.destructive)
+            .accessibilityFocused($focus, equals: .failure)
         }
       }
     } actions: {
-      if failure as? PracticeAPIError == .plusRequired {
+      if needsPlus {
         PracticeMainButton(
           title: LocalizedStringResource(
             "See Plus", table: "Practice",
@@ -283,7 +291,25 @@ struct PracticeQuestionsPreparingView: View {
           title: LocalizedStringResource(
             "Start the test", table: "Practice",
             comment: "Asks for a test's questions and starts it."),
-          action: start)
+          isBusy: isStarting, action: start
+        )
+        .accessibilityFocused($focus, equals: .start)
+      }
+    }
+    // Only the learner's tap starts the wait or sets a failure, so focus never moves on opening.
+    .onChange(of: isWriting) { _, isWriting in
+      if isWriting {
+        focus = .title
+      }
+    }
+    .onChange(of: failure.map(failureText)) { _, line in
+      guard let line else { return }
+
+      // A learner still on Start stays there to try again; otherwise the line took their place.
+      if !needsPlus, focus == .start {
+        AccessibilityNotification.Announcement(String(localized: line)).post()
+      } else {
+        focus = .failure
       }
     }
   }

@@ -25,6 +25,7 @@ struct TestOutScreen: View {
   @Environment(LearnerSummaryStore.self) private var summary
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<TestOutLoad> = .loading
+  @State private var isStarting = false
   @State private var isWriting = false
   @State private var writeFailure: (any Error)?
   @State private var isSubmitting = false
@@ -107,7 +108,7 @@ struct TestOutScreen: View {
         "We're writing a few questions on this chapter. The test opens here when they're ready.",
         table: "Practice",
         comment: "While a test-out's questions are written."),
-      isWriting: isWriting, failure: failure
+      isStarting: isStarting, isWriting: isWriting, failure: failure
     ) { Task { await write() } }
   }
 
@@ -227,9 +228,12 @@ struct TestOutScreen: View {
   private func write() async {
     guard let goalId else { return }
 
-    isWriting = true
+    isStarting = true
     writeFailure = nil
-    defer { isWriting = false }
+    defer {
+      isStarting = false
+      isWriting = false
+    }
 
     let chapterId = chapterId
     switch await practice.write(
@@ -239,6 +243,7 @@ struct TestOutScreen: View {
           token: identity.bearerToken, goalId: goalId, chapterId: chapterId)
 
         if case .generating(let generationId) = start {
+          isWriting = true
           try await practice.api.waitForQuestions(
             token: identity.bearerToken, generationId: generationId,
             readyStep: "testOutQuestionsReady")
