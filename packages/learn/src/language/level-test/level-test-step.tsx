@@ -91,11 +91,14 @@ export function LanguageLevelTestStep({
   goal,
   goalId,
   onDone,
+  onFinishFailed,
 }: {
   actions: LanguageLevelTestActions;
   goal: { language: string; targetLanguage: string };
   goalId: string;
   onDone: () => void;
+  /** Says a finish that never reached the server, until the learner's next try. */
+  onFinishFailed: (failed: boolean) => void;
 }) {
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
   const [levels, setLevels] = useState<ReadyTest["levels"]>([]);
@@ -111,6 +114,7 @@ export function LanguageLevelTestStep({
       return;
     }
 
+    onFinishFailed(false);
     setLevels(view.levels);
     setPhase(toReadyPhase(view));
   };
@@ -164,6 +168,7 @@ export function LanguageLevelTestStep({
 
   const begin = () =>
     startStarting(async () => {
+      onFinishFailed(false);
       rememberStepStart({ goalId, step: "levelTest" });
       setBank(INITIAL_BANK_WAIT);
 
@@ -188,7 +193,16 @@ export function LanguageLevelTestStep({
   const finish = () =>
     startTransition(async () => {
       setStopFailed(false);
-      await safeAsync(actions.finish);
+      onFinishFailed(false);
+
+      // Starting from scratch before the test was written finishes nothing (false) and moves on.
+      const { error } = await safeAsync(actions.finish);
+
+      if (error) {
+        onFinishFailed(true);
+        return;
+      }
+
       onDone();
     });
 

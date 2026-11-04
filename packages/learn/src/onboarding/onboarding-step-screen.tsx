@@ -246,6 +246,7 @@ export function OnboardingStepScreen({
             goal={{ language: getNativeLanguage(view), targetLanguage: view.goal.targetLanguage }}
             goalId={view.goal.id}
             onDone={onPlacementDone}
+            onFinishFailed={onPlacementFinishFailed}
           />
         );
       }
