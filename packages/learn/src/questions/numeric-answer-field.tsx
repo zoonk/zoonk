@@ -12,7 +12,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { useAppLocale } from "../_utils/locale";
 import { type NumericEntry, parseEntryAnswer } from "./_utils/numeric-entry";
-import { useAnswerFocus } from "./use-answer-focus";
+import { ANSWER_GROUP_CLASS, putAwayOnScreenKeyboard } from "./answer-field";
 
 type NumericUnit = { position: "prefix" | "suffix"; symbol: string };
 
@@ -94,7 +94,6 @@ export function NumericAnswerField({
   const [inputId, unitId, hintId, ruleId] = [useId(), useId(), useId(), useId()];
   const [text, setText] = useState(defaultText);
   const [invalid, setInvalid] = useState(false);
-  const { answerSent, fieldRef } = useAnswerFocus(result);
   const hasRule = entry !== null && entry.kind !== "number";
 
   const showsRule = hasRule && !invalid;
@@ -117,7 +116,7 @@ export function NumericAnswerField({
       return;
     }
 
-    answerSent();
+    putAwayOnScreenKeyboard();
     onSubmit(value);
   }
 
@@ -134,10 +133,7 @@ export function NumericAnswerField({
         {t("Your answer")}
       </label>
 
-      <InputGroup
-        className="bg-background data-[result=correct]:border-success data-[result=wrong]:border-destructive h-14 rounded-lg"
-        data-result={result ?? undefined}
-      >
+      <InputGroup className={ANSWER_GROUP_CLASS} data-result={result ?? undefined}>
         {unit?.position === "prefix" && <UnitAddon id={unitId} unit={unit} />}
 
         <InputGroupInput
@@ -156,7 +152,6 @@ export function NumericAnswerField({
             onChange?.(parseEntryAnswer({ entry, locale, text: event.target.value }));
           }}
           readOnly={locked}
-          ref={fieldRef}
           spellCheck={false}
           value={text}
         />
