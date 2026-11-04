@@ -367,13 +367,10 @@ extension AppRouter {
   /// couldn't, or once the learner moved on, which comes back `obsolete` so nothing says it failed.
   static func openingTodayBlocks(today: TodayStore) -> BlockOpener {
     { blockID, router in
-      let tab = router.selectedTab
-      let shown = (router.tasks, router.path(for: tab).wrappedValue, router.sheet)
+      let shown = router.shown
       let result = await today.open(blockID: blockID)
 
-      guard router.selectedTab == tab,
-        shown == (router.tasks, router.path(for: tab).wrappedValue, router.sheet)
-      else {
+      guard shown == router.shown else {
         return .obsolete
       }
 
@@ -391,7 +388,8 @@ extension AppRouter {
   }
 
   /// Anything but a question block opens its own screen over the session, so closing it goes on with
-  /// the day. `changed` opens nothing: the screen the learner tapped on reads again.
+  /// the day; a question block plays in the session, which comes to the front. `changed` opens
+  /// nothing: the screen the learner tapped on reads again.
   func openStudy(_ destination: StudyDestination) {
     switch destination {
     case .questionBlock(let blockID):
@@ -405,7 +403,9 @@ extension AppRouter {
     }
 
     guard let step = destination.step else {
-      if !tasks.contains(.session) {
+      if let session = tasks.firstIndex(of: .session) {
+        task(at: session + 1).wrappedValue = nil
+      } else {
         open(.session)
       }
 

@@ -146,6 +146,19 @@ final class AppRouter {
     hiddenTasks.contains(depth)
   }
 
+  /// Changes whenever the window goes somewhere: another tab, task, pushed screen or sheet.
+  var shown: Shown {
+    Shown(
+      tab: selectedTab, tasks: tasks, path: paths[selectedTab] ?? NavigationPath(), sheet: sheet)
+  }
+
+  struct Shown: Equatable {
+    let tab: AppTab
+    let tasks: [AppRoute]
+    let path: NavigationPath
+    let sheet: AppSheet?
+  }
+
   @discardableResult
   func open(url: URL) -> Bool {
     switch AppLink(url: url) {
@@ -202,5 +215,31 @@ final class AppRouter {
     if keepingPlace {
       paths[.today, default: NavigationPath()].append(route)
     }
+  }
+}
+
+extension View {
+  /// For a sheet's content. SwiftUI holds back a modal the window opens while a sheet is up, and a
+  /// push lands under it, so the sheet closes wherever the window goes, and for any place opened
+  /// from it, even one the window already shows.
+  func closesOnNavigation() -> some View {
+    modifier(ClosesOnNavigation())
+  }
+}
+
+private struct ClosesOnNavigation: ViewModifier {
+  @Environment(\.dismiss) private var dismiss
+  @Environment(\.tutorPlaces) private var places
+  @Environment(AppRouter.self) private var router
+
+  func body(content: Content) -> some View {
+    content
+      .onChange(of: router.shown) { dismiss() }
+      .environment(
+        \.tutorPlaces,
+        TutorPlaces { place in
+          dismiss()
+          places.open(place)
+        })
   }
 }
