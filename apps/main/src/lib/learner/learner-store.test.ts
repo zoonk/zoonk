@@ -8,6 +8,7 @@ import {
   stubSummaryReads,
   summaryOf,
 } from "./_test-utils/learner-page";
+import { isSameLearner } from "./learner-snapshot";
 
 const SEED_WAIT_MS = 10_000;
 
@@ -135,6 +136,74 @@ describe("learner store identity", () => {
       status: "ready",
       summary: { activeGoalId: "new-goal" },
     });
+  });
+});
+
+async function holdFirst() {
+  stubPage({ seeded: false });
+  const reads = stubSummaryReads();
+  const store = await loadStore();
+
+  store.ensureLearnerSummary();
+  reads[0]?.resolve(answerFor(summaryOf("first")));
+  await settle();
+
+  return { reads, store };
+}
+
+describe("learner a tap was made for", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("is still the learner after a check of who holds the session finds them again", async () => {
+    const { reads, store } = await holdFirst();
+    const tapped = store.getLearnerId();
+    const generation = store.getLearnerGeneration();
+
+    store.mergeLearnerSummarySeed(seedFor(summaryOf("second")));
+    expect(isSameLearner(tapped, store.getLearnerId())).toBe(true);
+
+    reads[1]?.resolve(answerFor(summaryOf("first")));
+    await settle();
+
+    expect(store.getLearnerGeneration()).not.toBe(generation);
+    expect(isSameLearner(tapped, store.getLearnerId())).toBe(true);
+  });
+
+  it.each([
+    { answer: answerFor(summaryOf("second")), found: "another account" },
+    { answer: { readAt: Date.now(), status: "visitor" as const }, found: "no one signed in" },
+  ])("is someone else once that check finds $found", async ({ answer }) => {
+    const { reads, store } = await holdFirst();
+    const tapped = store.getLearnerId();
+
+    store.mergeLearnerSummarySeed(seedFor(summaryOf("second")));
+    reads[1]?.resolve(answer);
+    await settle();
+
+    expect(isSameLearner(tapped, store.getLearnerId())).toBe(false);
+  });
+
+  it("is still the learner when it was made before the page's late seed was checked", async () => {
+    stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    const tapped = store.getLearnerId();
+
+    vi.advanceTimersByTime(SEED_WAIT_MS);
+    reads[0]?.resolve(answerFor(summaryOf("first")));
+    await settle();
+
+    expect(store.getLearnerGeneration()).toBe(1);
+    expect(isSameLearner(tapped, store.getLearnerId())).toBe(true);
   });
 });
 

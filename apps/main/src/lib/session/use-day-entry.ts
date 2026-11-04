@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "@/i18n/navigation";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
+import { getLearnerId } from "@/lib/learner/learner-store";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useSyncExternalStore } from "react";
@@ -19,8 +19,8 @@ function useEntryScope() {
   const summary = useLearnerSummary();
 
   return {
-    generation: getLearnerGeneration(),
     href: search ? `${pathname}?${search}` : pathname,
+    learner: getLearnerId(),
     userId: summary.status === "ready" ? summary.summary.identity.userId : null,
   };
 }

@@ -1,3 +1,4 @@
+import { type LearnerId, isSameLearner } from "@/lib/learner/learner-snapshot";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
 import { type NextStopTap } from "@zoonk/learn/session/next-stop";
@@ -35,9 +36,9 @@ export type DayEntry = {
   day: TapDay;
   expired: boolean;
   focusMain: boolean;
-  generation: number;
   href: string;
   id: number;
+  learner: LearnerId;
   next: boolean;
   result: TapResult | null;
   shown: boolean;
@@ -52,15 +53,17 @@ export type DayEntry = {
 export function hasLeftEntry({
   at,
   entry,
-  generation,
+  learner,
   origin,
 }: {
   at: string;
-  entry: Pick<DayEntry, "generation" | "href" | "shown">;
-  generation: number;
+  entry: Pick<DayEntry, "href" | "learner" | "shown">;
+  learner: LearnerId;
   origin: string;
 }): boolean {
-  return entry.generation !== generation || (at !== entry.href && (entry.shown || at !== origin));
+  return (
+    !isSameLearner(entry.learner, learner) || (at !== entry.href && (entry.shown || at !== origin))
+  );
 }
 
 /** While its POST is out it never lets go, so a slow reply still moves the screen on. */
@@ -78,12 +81,12 @@ function toDayDate(localDate: Date): string {
   return localDate.toISOString().slice(0, 10);
 }
 
-type EntryScope = { generation: number; href: string; userId: string | null };
+type EntryScope = { href: string; learner: LearnerId; userId: string | null };
 
-function isCurrent({ entry, generation, href, userId }: EntryScope & { entry: DayEntry }) {
+function isCurrent({ entry, href, learner, userId }: EntryScope & { entry: DayEntry }) {
   return (
     !entry.expired &&
-    entry.generation === generation &&
+    isSameLearner(entry.learner, learner) &&
     (userId === null || entry.day.shown.userId === userId) &&
     entry.href === href
   );

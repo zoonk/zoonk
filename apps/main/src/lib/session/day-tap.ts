@@ -1,5 +1,4 @@
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
 import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
 import { type OpenStudyDayInput } from "@zoonk/core/sessions/open-day-contract";
 import { type TapResult } from "./day-entry";
@@ -37,11 +36,7 @@ export async function sendDayOpen({
   input: OpenStudyDayInput;
   stillHere: () => boolean;
 }): Promise<DayOpenOutcome> {
-  const generation = getLearnerGeneration();
   const first = await noteAppWrite(openStudyDayAction(input));
-
-  const again =
-    first.status === "retryable" && stillHere() && generation === getLearnerGeneration();
-
+  const again = first.status === "retryable" && stillHere();
   return again ? noteAppWrite(openStudyDayAction(input)) : first;
 }

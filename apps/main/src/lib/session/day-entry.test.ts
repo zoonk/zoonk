@@ -29,9 +29,9 @@ function entry(overrides: Partial<DayEntry> = {}): DayEntry {
     },
     expired: false,
     focusMain: true,
-    generation: 3,
     href: HREF,
     id: 1,
+    learner: "learner",
     next: true,
     result: null,
     shown: false,
@@ -46,7 +46,7 @@ function entry(overrides: Partial<DayEntry> = {}): DayEntry {
   };
 }
 
-const scope = { generation: 3, href: HREF, userId: "learner" };
+const scope = { href: HREF, learner: "learner", userId: "learner" };
 
 describe(getEntryExpiry, () => {
   it("holds a tap while its POST is out, however slow, so its reply still moves the screen on", () => {
@@ -100,9 +100,9 @@ describe(findDayTap, () => {
     expect(findDayTap({ ...scope, day, entry: failed })?.tap.state).toBe("failed");
   });
 
-  it("draws nothing with no tap, for another identity, or on another page", () => {
+  it("draws nothing with no tap, for another identity, once signed out, or on another page", () => {
     expect(findDayTap({ ...scope, day, entry: null })).toBeNull();
-    expect(findDayTap({ ...scope, day, entry: entry(), generation: 4 })).toBeNull();
+    expect(findDayTap({ ...scope, day, entry: entry(), learner: null, userId: null })).toBeNull();
     expect(findDayTap({ ...scope, day, entry: entry(), userId: "someone-else" })).toBeNull();
 
     expect(findDayTap({ ...scope, day, entry: entry(), href: "/session?goal=goal-y" })).toBeNull();
@@ -138,7 +138,7 @@ describe(findDayTap, () => {
 
 describe(hasLeftEntry, () => {
   const TODAY = "/today";
-  const tapped = { at: HREF, entry: entry(), generation: 3, origin: TODAY };
+  const tapped = { at: HREF, entry: entry(), learner: "learner", origin: TODAY };
 
   it("keeps a tap while the learner is on its screen, or still on their way there", () => {
     expect(hasLeftEntry(tapped)).toBe(false);
@@ -150,8 +150,13 @@ describe(hasLeftEntry, () => {
     expect(hasLeftEntry({ ...tapped, at: TODAY, entry: entry({ shown: true }) })).toBe(true);
   });
 
-  it("lets go once they're anywhere else, or someone else", () => {
+  it("lets go once they're anywhere else, someone else, or signed out", () => {
     expect(hasLeftEntry({ ...tapped, at: "/plan" })).toBe(true);
-    expect(hasLeftEntry({ ...tapped, generation: 4 })).toBe(true);
+    expect(hasLeftEntry({ ...tapped, learner: "someone-else" })).toBe(true);
+    expect(hasLeftEntry({ ...tapped, learner: null })).toBe(true);
+  });
+
+  it("keeps a tap made before the browser knew who was signed in", () => {
+    expect(hasLeftEntry({ ...tapped, entry: entry({ learner: undefined }) })).toBe(false);
   });
 });

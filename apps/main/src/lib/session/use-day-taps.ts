@@ -2,7 +2,8 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
+import { isSameLearner } from "@/lib/learner/learner-snapshot";
+import { getLearnerId } from "@/lib/learner/learner-store";
 import { type OpenStudyDayInput } from "@zoonk/core/sessions/open-day-contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback } from "react";
@@ -80,7 +81,7 @@ function settleEntry({ id, origin, result }: { id: number; origin: string; resul
 
   const left =
     entry?.id === id &&
-    hasLeftEntry({ at: getCurrentLocation(), entry, generation: getLearnerGeneration(), origin });
+    hasLeftEntry({ at: getCurrentLocation(), entry, learner: getLearnerId(), origin });
 
   if (result.kind === "failed" && left) {
     endDayEntry(id);
@@ -132,7 +133,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
   const tap = useCallback(
     async ({ next, step }: { next: boolean; step: TapStep }): Promise<boolean> => {
-      const generation = getLearnerGeneration();
+      const learner = getLearnerId();
       const origin = getCurrentLocation();
       const here = stayingHere();
       const focusMain = isFocusOnControl();
@@ -147,7 +148,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
           : null;
 
       const stillHere = () =>
-        generation === getLearnerGeneration() && [origin, href].includes(getCurrentLocation());
+        isSameLearner(learner, getLearnerId()) && [origin, href].includes(getCurrentLocation());
 
       // Sent before navigating, so the navigation never holds it back.
       const answer = request({ next, step, stillHere });
@@ -156,8 +157,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         const entry = beginDayEntry({
           day,
           focusMain,
-          generation,
           href,
+          learner,
           next,
           step,
           tappedAt: Date.now(),

@@ -3,7 +3,8 @@
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
+import { isSameLearner } from "@/lib/learner/learner-snapshot";
+import { getLearnerId } from "@/lib/learner/learner-store";
 import { LESSON_GENERATION_PARAM } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
@@ -87,9 +88,9 @@ export function getCurrentLocation(): string {
 }
 
 export function stayingHere(): () => boolean {
-  const generation = getLearnerGeneration();
+  const learner = getLearnerId();
   const origin = getCurrentLocation();
-  return () => generation === getLearnerGeneration() && origin === getCurrentLocation();
+  return () => isSameLearner(learner, getLearnerId()) && origin === getCurrentLocation();
 }
 
 type SessionAddress = { blockId?: string; href: string };

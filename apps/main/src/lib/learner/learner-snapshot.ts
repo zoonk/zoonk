@@ -48,6 +48,17 @@ export function isSameIdentity(a: LearnerIdentity | null, b: LearnerIdentity | n
   return a.userId === b.userId;
 }
 
+/** Null when no one is signed in, undefined until the browser knows who is. */
+export type LearnerId = string | null | undefined;
+
+/**
+ * Checking again who holds the session changes nothing while it finds the same learner, and a learner
+ * not known yet, on either side, can't be told apart from the other.
+ */
+export function isSameLearner(a: LearnerId, b: LearnerId): boolean {
+  return a === undefined || b === undefined || a === b;
+}
+
 export type LearnerStore = {
   changeTimer: ReturnType<typeof setTimeout> | undefined;
   generation: number;

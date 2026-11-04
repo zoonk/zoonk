@@ -37,7 +37,7 @@ function notify() {
   store.listeners.forEach((listener) => listener());
 }
 
-function getHeldIdentity(): LearnerIdentity | null | undefined {
+export function getHeldIdentity(): LearnerIdentity | null | undefined {
   if (store.state.status === "ready") {
     return store.state.summary.identity;
   }

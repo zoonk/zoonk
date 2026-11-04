@@ -1,5 +1,6 @@
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import {
+  type LearnerId,
   type LearnerSummarySeedValue,
   type LearnerSummaryState,
   getUntilChange,
@@ -9,6 +10,7 @@ import {
   NOT_LOADED,
   accept,
   fail,
+  getHeldIdentity,
   install,
   readLearnerSummary,
   readOrGuess,
@@ -98,6 +100,12 @@ export function mergeLearnerSummarySeed(seed: LearnerSummarySeedValue): void {
 
 export function getLearnerGeneration(): number {
   return store.generation;
+}
+
+/** While a check of who holds the session is out, still the learner held before it. */
+export function getLearnerId(): LearnerId {
+  const held = getHeldIdentity();
+  return held ? held.userId : held;
 }
 
 /**
