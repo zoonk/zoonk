@@ -62,7 +62,7 @@ Read [AGENTS.md](AGENTS.md) for architecture, platform, and contribution constra
 
 The theme (`ui/theme`), shared pieces (`ui/components`), formatters (`ui/format`), all in `:core:designsystem`, icons and the debug gallery follow the [design-system reference](../../.agents/skills/android-material-guidelines/references/design-system.md): what each Zoonk meaning maps to, how to regenerate the palette from `globals.css` (`pnpm palette`), add a Material Symbol (`pnpm --filter android symbol <name>`) and capture the gallery's review screenshots.
 
-`pnpm palette` from the repository root regenerates both apps from `globals.css`, since they read the same values: here `ZoonkPalette.kt`, `ZoonkRadius.kt` and the window-color resources. This app's writer is `scripts/generate-palette.mts` (`pnpm --filter android palette` runs it alone); it shares the parser and color and radius math in [`scripts/theme/`](../../scripts/theme) with Apple. Run `pnpm test:deploy scripts/theme/` from the repository root to check generation drift and neutral-text contrast.
+`pnpm palette` from the repository root regenerates both apps from `globals.css`, since they read the same values: here `ZoonkPalette.kt`, `ZoonkRadius.kt` and the window-color resources. This app's writer is `scripts/generate-palette.mts` (`pnpm --filter android palette` runs it alone); it shares the parser and color and radius math in [`scripts/theme/`](../../scripts/theme) with Apple. Run `pnpm test:deploy scripts/theme/` from the repository root to check generation drift and text contrast.
 
 ## Localization
 
