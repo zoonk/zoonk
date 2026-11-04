@@ -257,11 +257,11 @@
     --accent: var(--color-neutral-200);
     --accent-foreground: var(--color-black);
     --destructive: var(--color-pink-800);
-    --destructive-text: var(--destructive);
+    --destructive-text: oklch(0.432526 0.174094 3.815);
     /* A pick needs a fill as well as its thicker line, so it never rests on line weight alone. */
     --selected-tint: var(--muted);
     --warning: var(--color-amber-800);
-    --warning-text: var(--warning);
+    --warning-text: oklch(0.421874 0.118216 46.201);
     --success: var(--color-blue-800);
     --success-text: var(--success);
     --ground: var(--color-neutral-100);
@@ -357,19 +357,19 @@
       --accent: var(--color-neutral-700);
       --accent-foreground: var(--color-white);
       --destructive: var(--color-pink-300);
-      --destructive-text: var(--destructive);
+      --destructive-text: oklch(0.965374 0.021049 346.018);
       --selected-tint: var(--muted);
       --warning: var(--color-amber-300);
-      --warning-text: var(--warning);
+      --warning-text: oklch(0.962178 0.051316 91.605);
       --success: var(--color-blue-200);
-      --success-text: var(--success);
+      --success-text: oklch(0.962335 0.018188 254.128);
       --ground: var(--color-neutral-900);
       --border: var(--color-neutral-50);
       --input: var(--color-neutral-50);
       --ring: var(--color-primary);
       --energy: var(--color-amber-200);
       --brain: var(--color-violet-200);
-      --brain-text: var(--brain);
+      --brain-text: oklch(0.963904 0.018751 293.283);
       --score: var(--success);
       --kind-review: var(--color-amber-300);
       --kind-mock: var(--color-orange-300);

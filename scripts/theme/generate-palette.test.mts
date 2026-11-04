@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 
 const repoRoot = fileURLToPath(new URL("../../", import.meta.url));
 
@@ -15,6 +16,12 @@ const androidFiles = [
 ];
 
 const applePalette = "Zoonk/Resources/Assets.xcassets/Palette";
+
+const componentsSchema = z.record(z.string(), z.coerce.number().min(0).max(1));
+
+const colorsetSchema = z.object({
+  colors: z.array(z.object({ color: z.object({ components: componentsSchema }) })),
+});
 
 function contents(root: string): Record<string, string> {
   const files = readdirSync(root, { recursive: true, withFileTypes: true });
@@ -30,6 +37,19 @@ function contents(root: string): Record<string, string> {
 }
 
 describe("native palette generation", () => {
+  const appleColorsets = [
+    ...Object.keys(contents(join(repoRoot, "apps/apple", applePalette)))
+      .filter((file) => file.endsWith(".colorset/Contents.json"))
+      .map((file) => join(applePalette, file)),
+    "Zoonk/Resources/Assets.xcassets/AccentColor.colorset/Contents.json",
+  ];
+
+  it.each(appleColorsets)("%s stays inside Display P3 in every appearance", (file) => {
+    expect(() =>
+      colorsetSchema.parse(JSON.parse(readFileSync(join(repoRoot, "apps/apple", file), "utf8"))),
+    ).not.toThrow();
+  });
+
   it("keeps both platforms' committed palettes up to date with globals.css", () => {
     const output = mkdtempSync(join(tmpdir(), "zoonk-palette-"));
 
