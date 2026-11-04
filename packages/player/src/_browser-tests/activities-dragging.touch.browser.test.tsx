@@ -86,6 +86,12 @@ describe("dragging activity items with a finger", () => {
     const lastSpot = page.getByRole("button", { name: "Spot 5: empty" });
     await expect.element(lastSpot).toBeVisible();
     await expect.element(lastSpot).not.toBeInViewport();
+    const scroller = page.getByRole("main").element();
+
+    // Chrome on Linux drops a tap that stops a coasting scroll, so the next test's first tap would vanish if this one still coasts.
+    const settled = new Promise((resolve) => {
+      scroller.addEventListener("scrollend", resolve, { once: true });
+    });
 
     await flick(() =>
       swipeUpFrom(page.getByRole("button", { name: "Put Aorta on spot 1" }), SWIPE_PX),
@@ -93,6 +99,7 @@ describe("dragging activity items with a finger", () => {
 
     await expect.element(lastSpot).toBeInViewport();
     await expect.element(page.getByRole("button", { name: "Put Aorta on spot 1" })).toBeVisible();
+    await settled;
   });
 
   it("labeled diagram: tapping a name still puts it on the highlighted spot", async () => {

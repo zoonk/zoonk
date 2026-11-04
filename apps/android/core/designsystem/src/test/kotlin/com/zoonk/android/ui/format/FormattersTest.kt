@@ -96,6 +96,13 @@ class FormattersTest {
     }
 
     @Test
+    fun aNegativeShareTakesATypographicMinusUnlessItReadsAsZero() {
+        assertEquals("0%", formatPercent(-0.0004, en, maximumFractionDigits = 1))
+        assertEquals("−5%", formatPercent(-0.05, en))
+        assertEquals("−5 %", formatPercent(-0.05, fr).replace(' ', ' ').replace(' ', ' '))
+    }
+
+    @Test
     fun sharesAreWholePercentagesHonestAtTheirEnds() {
         assertEquals("46%", formatPercent(0.456, en))
         assertEquals("13%", formatPercent(0.125, en))

@@ -56,7 +56,6 @@ const meUserSchema = z
       .boolean()
       .meta({ description: "Whether product analytics are disabled for this account" }),
     createdAt: z.iso.datetime().meta({ description: "User creation timestamp" }),
-    displayUsername: z.string().nullable().meta({ description: "Display username" }),
     email: z.email().meta({ description: "Email address" }),
     emailVerified: z.boolean().meta({ description: "Whether the email has been verified" }),
     id: z.uuid().meta({ description: "User ID" }),

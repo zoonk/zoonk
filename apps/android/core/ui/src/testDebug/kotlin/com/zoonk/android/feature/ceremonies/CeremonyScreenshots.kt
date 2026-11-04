@@ -11,6 +11,10 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -20,6 +24,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
@@ -30,7 +35,10 @@ import kotlin.time.Clock
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class CeremonyScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -46,9 +54,33 @@ class CeremonyScreenshots {
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun phoneDark() = capture("phone-dark", dark = true)
 
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tablet() = capture("tablet")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun foldUnfolded() = capture("fold", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun foldUnfoldedDark() = capture("fold-dark", dark = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun foldUnfoldedLargeFont() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("fold-font200", fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun galaxyFoldUnfolded() = capture("galaxy-fold", fold = true)
+
     private fun capture(
         name: String,
         dark: Boolean = false,
+        fold: Boolean = false,
     ) {
         val milestones =
             listOf(
@@ -76,6 +108,21 @@ class CeremonyScreenshots {
         milestones.indices.forEach { shown ->
             index = shown
             compose.waitForIdle()
+            // Each ceremony reads the window afresh, and the publisher doesn't replay a fold to a late reader.
+            if (fold) {
+                folds.overrideWindowLayoutInfo(
+                    TestWindowLayoutInfo(
+                        listOf(
+                            FoldingFeature(
+                                compose.activity,
+                                state = FoldingFeature.State.FLAT,
+                                orientation = FoldingFeature.Orientation.VERTICAL,
+                            ),
+                        ),
+                    ),
+                )
+                compose.waitForIdle()
+            }
             write("ceremony-${milestones[shown].first}-$name", compose.onNode(isDialog()).captureToImage().asAndroidBitmap())
         }
     }
