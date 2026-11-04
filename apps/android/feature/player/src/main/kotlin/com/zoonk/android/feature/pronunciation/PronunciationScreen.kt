@@ -89,7 +89,6 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberRecordTap
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.withoutFailure
-import com.zoonk.android.feature.player.lessonColumnWidth
 import com.zoonk.android.feature.player.segmentParts
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.navigation.AppNavigator
@@ -105,6 +104,7 @@ import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -310,7 +310,7 @@ private fun WordPages(
             Box(
                 (if (fold == null) Modifier.fillMaxWidth() else Modifier.width(fold.start))
                     .wrapContentWidth(if (fold == null) Alignment.CenterHorizontally else Alignment.End)
-                    .lessonColumnWidth()
+                    .taskColumn()
                     .padding(top = 8.dp, bottom = 16.dp),
             ) { meter() }
             Box(Modifier.weight(1f).fillMaxWidth()) {
@@ -347,7 +347,7 @@ private fun WordPage(
             .verticalScroll(scroll)
             .padding(bottom = 16.dp)
             .wrapContentWidth(align)
-            .lessonColumnWidth(),
+            .taskColumn(),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         content = content,
     )
@@ -637,7 +637,7 @@ private fun RoundEnd(
         ResultPages(
             modifier = Modifier.padding(padding).semantics { liveRegion = LiveRegionMode.Polite },
             withMoment = true,
-            columnModifier = Modifier.lessonColumnWidth(),
+            columnModifier = Modifier.taskColumn(),
             done = {
                 if (noWords) {
                     Text(

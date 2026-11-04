@@ -76,7 +76,6 @@ import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.runAccount
-import com.zoonk.android.feature.practice.runColumn
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerCheck
 import com.zoonk.android.feature.questions.ItemSupport
@@ -109,6 +108,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -737,7 +737,7 @@ internal fun DuelResult(
             ResultPages(
                 modifier = Modifier.padding(padding),
                 withMoment = duel.state.completion != null,
-                columnModifier = Modifier.runColumn(),
+                columnModifier = Modifier.taskColumn(),
                 done = {
                     if (outcome == null) {
                         QuestionsRemoved(eyebrow = null)

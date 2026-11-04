@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -80,6 +79,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
@@ -236,14 +236,14 @@ private fun WritingScreen(
                 beforeFold
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
+                    .padding(vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 GenerationWait(
                     kind = GenerationKind.ChallengeQuestions,
                     run = run,
                     onRetry = viewModel::retryWriting.takeIf { viewModel.canRestart },
-                    modifier = Modifier.widthIn(max = CONTENT_WIDTH),
+                    modifier = Modifier.taskColumn(),
                 ) {
                     Text(
                         stringResource(R.string.challenge_writing_title),
@@ -315,11 +315,11 @@ private fun CenteredColumn(
 ) {
     BeforeFold(modifier) { beforeFold ->
         Column(
-            beforeFold.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 16.dp),
+            beforeFold.fillMaxSize().verticalScroll(rememberScrollState()).padding(vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Column(
-                Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(),
+                Modifier.taskColumn(),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 content = content,
             )
@@ -1001,4 +1001,3 @@ private fun StatusLine(
 }
 
 private const val DAYS_IN_A_WEEK = 7
-private val CONTENT_WIDTH = 640.dp
