@@ -53,8 +53,8 @@ internal fun ReadWindowPosture(content: @Composable () -> Unit) {
 private val LocalWindowPosture = compositionLocalOf { Posture() }
 
 // WindowManager tells the folds at once from its extensions' version 9 (Android 16 QPR2). Before it, the first reading
-// arrives after the first frame, as Material's always does. Lint (AGP 9.5) doesn't see this check against the compiled
-// library, even in the form its RequiresWindowSdk docs show.
+// arrives after the first frame, as Material's always does. Lint before AGP 9.6 resolves `extensionVersion` on the
+// compiled class to its backing field, so it misses this check (#2016).
 @SuppressLint("RequiresWindowSdk")
 private fun WindowInfoTracker.currentPosture(context: Context): Posture {
     if (WindowSdkExtensions.getInstance().extensionVersion >= 9) {
