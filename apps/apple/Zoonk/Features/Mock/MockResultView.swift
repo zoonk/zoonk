@@ -755,11 +755,10 @@ private struct MockEssaySections: View {
         .foregroundStyle(.secondary)
       case .failed, .idle:
         if run.essayGrading == .failed {
-          Text(
-            "That didn't go through. Try again in a moment.", tableName: "Mock",
-            comment: "Grading failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Mock",
+              comment: "Grading failed"))
         } else {
           Text("It hasn't been graded yet.", tableName: "Mock", comment: "An ungraded essay")
             .foregroundStyle(.secondary)
@@ -1008,11 +1007,10 @@ private struct MockPlanSection: View {
         }
       } else {
         if answers.byOffer.values.contains(.failed) {
-          Text(
-            "That didn't go through. Try again in a moment.", tableName: "Mock",
-            comment: "Applying the plan change failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Mock",
+              comment: "Applying the plan change failed"))
         }
 
         ButtonRow {

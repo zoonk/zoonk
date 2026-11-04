@@ -96,7 +96,7 @@ extension TutorPlaces {
           router.open(.mockChooser)
         }
       case .missionStep(let destination):
-        router.openMissionStep(destination)
+        router.openStudy(destination)
       }
     }
   }

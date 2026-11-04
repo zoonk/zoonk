@@ -145,10 +145,12 @@ struct TodayMoreSection: View {
     }
   }
 
-  private var saveFailure: FailureLine {
+  private var saveFailure: some View {
     FailureLine(
       message: LocalizedStringResource(
-        "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved"))
+        "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
+    )
+    .font(.footnote)
   }
 
   private func hasRows(_ state: DayState) -> Bool {
@@ -267,7 +269,9 @@ struct TodayPlanChangeSection: View {
         FailureLine(
           message: LocalizedStringResource(
             "We couldn't save your answer. Try again.", table: "Today",
-            comment: "Answering a plan change failed"))
+            comment: "Answering a plan change failed")
+        )
+        .font(.footnote)
       }
     }
     .onChange(of: shown.decision) {

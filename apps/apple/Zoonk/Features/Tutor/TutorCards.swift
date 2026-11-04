@@ -27,12 +27,12 @@ struct TutorPlanChangeCard: View {
         actions
 
         if failed {
-          Text(
-            "We couldn't save your answer. Try again.", tableName: "Tutor",
-            comment: "Answering a plan change the buddy proposed failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't save your answer. Try again.", table: "Tutor",
+              comment: "Answering a plan change the buddy proposed failed")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -172,11 +172,10 @@ struct TutorMemoryUpdate: View {
       case .undone:
         Text("Change undone", tableName: "Tutor", comment: "A memory change was undone")
       case .changedSince:
-        Text(
-          "Couldn't undo. It changed since.", tableName: "Tutor",
-          comment: "Undoing a memory change failed"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "Couldn't undo. It changed since.", table: "Tutor",
+            comment: "Undoing a memory change failed"))
       case .failed, .undoing, nil:
         Label {
           Text(

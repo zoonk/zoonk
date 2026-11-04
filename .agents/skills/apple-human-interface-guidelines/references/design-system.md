@@ -33,6 +33,8 @@ The app's code for this lives in `apps/apple/Zoonk/DesignSystem/`. It only names
 | `belt-*`                                                          | `ProgressBelt.color`: system colors at full strength in every mode, with a faint outline so white and black never vanish. |
 | `viz-accent`, `viz-highlight`, `viz-secondary`                    | `.mint`, `.orange`, `.purple`. The `-soft` fills are the same color at `.opacity(0.15)`.                                  |
 
+A line saying something the learner asked for didn't work is a `FailureLine`: it draws in `.destructive`, and VoiceOver reads it out as it appears, wherever focus is, as main's `role="alert"` does. Another view that answers a tap that didn't work takes `.announcesAlert(_:)`.
+
 Hues were matched in OKLCH against the iOS 26 system colors, which are more saturated than main's soft tokens. Increase Contrast darkens system colors in light mode and lightens them in dark, which matches main's `prefers-contrast: more` modes.
 
 **The one custom color is `kind-mock`** (`Resources/Assets.xcassets/Kinds/`). A mock and a challenge need an orange redder than review's. The system has no such hue, and system red sits about 8° from wrong's pink. It has light, dark and high-contrast variants copied from `globals.css`. Add another named color only when no system color can carry a meaning without colliding with another one, and record why here.

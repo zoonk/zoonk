@@ -52,9 +52,8 @@ struct ConversationResultView: View {
     .safeAreaBar(edge: .bottom) {
       VStack(spacing: 8) {
         if let startFailure {
-          startFailureText(startFailure)
+          FailureLine(message: startFailureMessage(startFailure))
             .font(.subheadline)
-            .foregroundStyle(.destructive)
         }
 
         mainAction
@@ -153,41 +152,34 @@ struct ConversationResultView: View {
     .keyboardShortcut(.defaultAction)
   }
 
-  @ViewBuilder
-  private func startFailureText(_ failure: StartFailure) -> some View {
+  private func startFailureMessage(_ failure: StartFailure) -> String {
     let isMock = conversation.kind == .speakingMock
 
     switch failure {
     case .limit(let limit) where limit.period == .month:
-      if isMock {
-        Text(
-          "Not enough call time this month for this mock", tableName: "Voice",
+      return isMock
+        ? String(
+          localized: "Not enough call time this month for this mock", table: "Voice",
           comment: "The call time left this month can't fit the mock")
-      } else {
-        Text(
-          "Not enough call time this month for this task", tableName: "Voice",
+        : String(
+          localized: "Not enough call time this month for this task", table: "Voice",
           comment: "The call time left this month can't fit this task")
-      }
     case .limit:
-      if isMock {
-        Text(
-          "Not enough call time today for this mock", tableName: "Voice",
+      return isMock
+        ? String(
+          localized: "Not enough call time today for this mock", table: "Voice",
           comment: "The call time left today can't fit the mock")
-      } else {
-        Text(
-          "Not enough call time today for this task", tableName: "Voice",
+        : String(
+          localized: "Not enough call time today for this task", table: "Voice",
           comment: "The call time left today can't fit this task")
-      }
     case .failed:
-      if isMock {
-        Text(
-          "The mock didn't start. Try again in a moment.", tableName: "Voice",
+      return isMock
+        ? String(
+          localized: "The mock didn't start. Try again in a moment.", table: "Voice",
           comment: "Starting the speaking mock failed")
-      } else {
-        Text(
-          "The task didn't start. Try again in a moment.", tableName: "Voice",
+        : String(
+          localized: "The task didn't start. Try again in a moment.", table: "Voice",
           comment: "Starting an exam task failed")
-      }
     }
   }
 
