@@ -363,8 +363,7 @@ struct TodayDayView: View {
 }
 
 extension AppRouter {
-  /// A mission's block, opened where the server says. Nothing opens when it couldn't, or once the
-  /// learner moved on, which comes back `obsolete`.
+  /// Nothing opens when it couldn't, or once the learner moved on, which comes back `obsolete`.
   static func openingTodayBlocks(today: TodayStore) -> BlockOpener {
     { blockID, router in
       let tab = router.selectedTab

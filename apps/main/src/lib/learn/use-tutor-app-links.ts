@@ -9,7 +9,6 @@ import { useMemo } from "react";
 
 type TutorAppLinks = NonNullable<LessonTutorConfig["navigation"]["appLinks"]>;
 
-/** A block the answer links opens as a mission's does; one no longer free to start says so. */
 export function useTutorAppLinks(): TutorAppLinks {
   const go = useGoToStudyDestination();
 

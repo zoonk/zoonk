@@ -79,7 +79,6 @@ class TutorViewModelTest {
         thread.state.value.value!!
             .turns
 
-    /** The open belongs to the conversation, so an answer scrolled away or a screen made again still gets where it leads. */
     @Test
     fun aStepLinkOpensOneAtATimeAndSaysWhyWhenItDidnt() =
         runTest(dispatcher) {

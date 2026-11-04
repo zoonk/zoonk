@@ -462,11 +462,7 @@ private val TutorFailure?.isGeneric: Boolean
 
 private fun TutorViewModel.noticeFor(turn: TutorTurn) = blockNotice?.takeIf { it.turnId == turn.id }
 
-/**
- * Unchecked links read as their words. A checked one opens Zoonk's page in the app, a step of the
- * day through [onOpenBlock] as main's mission link does, or a website after asking. [blockNotice]
- * says why a step link in this answer didn't open.
- */
+/** Unchecked links read as their words. A checked one opens Zoonk's page in the app, a step of the day through [onOpenBlock], or a website after asking. */
 @Composable
 fun AnswerText(
     answer: String,

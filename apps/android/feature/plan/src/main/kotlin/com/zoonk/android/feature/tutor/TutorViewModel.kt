@@ -87,7 +87,7 @@ class TutorViewModel internal constructor(
     scope: TutorScope,
     private val store: TutorStore,
     private val saved: SavedStateHandle,
-    /** A step of the day an answer links, opened as a mission's: null when it isn't free to start anymore. */
+    /** Null when the step isn't free to start anymore. */
     private val openMission: suspend (UUID) -> MutationResult<AppRoute?>,
 ) : ViewModel() {
     /** The conversation's latest scope (the question now checked) is what its next question is about. */
@@ -152,7 +152,6 @@ class TutorViewModel internal constructor(
     var isOpeningBlock by mutableStateOf(false)
         private set
 
-    /** Why the step link the learner last tapped didn't open, under the answer it's in. */
     var blockNotice by mutableStateOf<BlockNotice?>(null)
         private set
 
@@ -562,7 +561,6 @@ private const val MAX_POLL_MILLIS = 5_000.0
 private const val MIN_JITTER = 0.8
 private const val JITTER_RANGE = 0.4
 
-/** [closed]: the step isn't free to start anymore; otherwise it couldn't open. */
 @Immutable
 data class BlockNotice(
     val turnId: String,

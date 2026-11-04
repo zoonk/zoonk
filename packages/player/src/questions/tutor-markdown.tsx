@@ -15,15 +15,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { ExternalLinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import {
-  type ComponentProps,
-  type MouseEvent,
-  createContext,
-  use,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type ComponentProps, type MouseEvent, createContext, use, useState } from "react";
 import {
   type Components,
   type ExtraProps,
@@ -168,38 +160,32 @@ export function TutorMarkdown({
   const t = useExtracted();
   const plugins = useMarkdownPlugins({ isStreaming, text: answer });
   const [closed, setClosed] = useState(false);
-  const opening = useRef(false);
+  const [opening, setOpening] = useState(false);
+
+  const openBlock = appLinks?.openBlock;
 
   // One open at a time per answer, so an earlier tap's result never replaces a later one's.
-  const links = useMemo((): AnswerLinks | null => {
-    if (!appLinks) {
-      return null;
-    }
+  const links: AnswerLinks | undefined = appLinks && {
+    ...appLinks,
+    openBlock:
+      openBlock &&
+      (async (blockId) => {
+        if (opening) {
+          return;
+        }
 
-    const { openBlock } = appLinks;
+        setOpening(true);
+        setClosed(false);
 
-    return {
-      ...appLinks,
-      openBlock:
-        openBlock &&
-        (async (blockId) => {
-          if (opening.current) {
-            return;
-          }
+        const { data: result } = await safeAsync(() => openBlock(blockId));
 
-          opening.current = true;
-          setClosed(false);
-
-          const { data: result } = await safeAsync(() => openBlock(blockId));
-
-          opening.current = false;
-          setClosed(result === "closed");
-        }),
-    };
-  }, [appLinks]);
+        setOpening(false);
+        setClosed(result === "closed");
+      }),
+  };
 
   return (
-    <TutorAnswerLinksContext value={links}>
+    <TutorAnswerLinksContext value={links ?? null}>
       <Streamdown
         animated={isAnimating}
         className={TUTOR_MARKDOWN_CLASS}
