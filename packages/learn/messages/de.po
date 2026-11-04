@@ -6491,6 +6491,11 @@ msgctxt "_718cU"
 msgid "Couldn't undo. It changed since."
 msgstr "Das ließ sich nicht rückgängig machen. Der Eintrag wurde inzwischen geändert."
 
+#: src/memory/memory-updated.tsx
+msgctxt "GGUKxA"
+msgid "Couldn't undo. Try again."
+msgstr "Das ließ sich nicht rückgängig machen. Versuch es noch einmal."
+
 #: src/mind-maps/mind-map-card.tsx
 msgctxt "FZBGji"
 msgid "Full screen"

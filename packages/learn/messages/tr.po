@@ -6491,6 +6491,11 @@ msgctxt "_718cU"
 msgid "Couldn't undo. It changed since."
 msgstr "Geri alınamadı. Bu bilgi sonradan değişti."
 
+#: src/memory/memory-updated.tsx
+msgctxt "GGUKxA"
+msgid "Couldn't undo. Try again."
+msgstr "Geri alınamadı. Tekrar dene."
+
 #: src/mind-maps/mind-map-card.tsx
 msgctxt "FZBGji"
 msgid "Full screen"

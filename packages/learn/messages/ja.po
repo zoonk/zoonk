@@ -6491,6 +6491,11 @@ msgctxt "_718cU"
 msgid "Couldn't undo. It changed since."
 msgstr "取り消せませんでした。その後、内容が変更されています。"
 
+#: src/memory/memory-updated.tsx
+msgctxt "GGUKxA"
+msgid "Couldn't undo. Try again."
+msgstr "取り消せませんでした。もう一度お試しください。"
+
 #: src/mind-maps/mind-map-card.tsx
 msgctxt "FZBGji"
 msgid "Full screen"
