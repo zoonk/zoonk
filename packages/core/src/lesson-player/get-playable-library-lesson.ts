@@ -5,6 +5,7 @@ import { cacheTag } from "next/cache";
 import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../cache/tags";
 import { filterSkippedSteps } from "../language/activities/language-activities";
 import { loadSkippedActivities } from "../language/activities/skipped-activities";
+import { getLearnerLessonPlanCacheTags } from "../library/_utils/learner-lesson-plan";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
 import { readLessonMap } from "../library/lessons/lesson-map";
 import { CURRENT_STEPS } from "../library/lessons/lesson-versions";
@@ -187,6 +188,8 @@ export async function getPlayableLibraryLesson({
   }
 
   if (cached.result.status === "ready" && session) {
+    cacheTag(...getLearnerLessonPlanCacheTags(session.user.id));
+
     const [lesson, skippedActivities] = await Promise.all([
       withLearnerLessonVersions({ lesson: cached.result.lesson, userId: session.user.id }),
       loadLessonSkippedActivities({ lesson: cached.result.lesson, userId: session.user.id }),

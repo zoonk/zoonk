@@ -7,6 +7,7 @@ final class SettingsStore {
   enum UndoStatus: Equatable {
     case failed
     case idle
+    case undoing
     case undone
   }
 
@@ -155,10 +156,11 @@ final class SettingsStore {
 
   /// Waits its turn behind the memory's other changes, so the restored fact stays once they settle.
   func undoDeletion() async {
-    guard let deleted = deletedFact else {
+    guard let deleted = deletedFact, undoStatus == .idle else {
       return
     }
 
+    setNotice { $0.undoStatus = .undoing }
     let unchanged = { (memory: LearnerMemory) in memory }
 
     let result = await memorySaves.save(unchanged, invalidating: [.memory]) { [api] in
@@ -178,7 +180,7 @@ final class SettingsStore {
     case .failed:
       setNotice { $0.undoStatus = .failed }
     case .obsolete, nil:
-      break
+      setNotice { $0.undoStatus = .idle }
     }
   }
 

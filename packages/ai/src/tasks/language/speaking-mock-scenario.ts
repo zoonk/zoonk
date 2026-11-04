@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages } from "../_utils/prompt-language";
 import { scenarioSchema } from "./_utils/scenario-schema";
 import { type GenerateConversationScenarioSchema } from "./conversation-scenario";
 import { type SpeakingMockExam } from "./exam-speaking-exams";
@@ -45,14 +45,7 @@ export type GenerateSpeakingMockScenarioParams = {
 };
 
 function buildUserPrompt(params: GenerateSpeakingMockScenarioParams): string {
-  const languages = getLanguagePromptContext({
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.learnerLanguage,
-  });
-
   return `
-    TARGET_LANGUAGE: ${languages.targetLanguageName}
-    LEARNER_LANGUAGE: ${languages.userLanguageName}
     LEVEL: ${params.level}
     MINUTES: ${params.minutes}
   `;
@@ -61,7 +54,7 @@ function buildUserPrompt(params: GenerateSpeakingMockScenarioParams): string {
 /** The call runs it like a role play, with the examiner as the character. */
 export async function generateSpeakingMockScenario(params: GenerateSpeakingMockScenarioParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
-  const systemPrompt = SYSTEM_PROMPTS[params.exam];
+  const systemPrompt = fillPromptLanguages({ ...params, template: SYSTEM_PROMPTS[params.exam] });
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

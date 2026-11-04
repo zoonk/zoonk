@@ -29,7 +29,7 @@ export const guestAuth = betterAuth({
   secret: "guest-link-test-secret-with-enough-entropy",
 });
 
-function toCookieHeaders(responseHeaders: Headers) {
+export function toCookieHeaders(responseHeaders: Headers) {
   const cookie = responseHeaders
     .getSetCookie()
     .map((setCookie) => setCookie.split(";")[0])

@@ -56,8 +56,6 @@
   "catalog_load_more_failed": "fcc6d609a47b56ff8c3d007994d65149868f5dc0a9349909c7bae9ce76eb064f",
   "catalog_loading_more": "d82c9c0e7ce1e3da9edb3e10efb6073e994e040ae4c9c1c338c9aa691c8dde43",
   "catalog_no_sign_up": "3b8a2fd2551801a99f043c2cdca7d95957a9846bee1095b9567d5270855a9f84",
-  "catalog_not_found_description": "8a288af5277b7000daccd1e106d3da6423e0a90c312fbfac3516774e271bf1be",
-  "catalog_not_found_title": "cbe43f588cfee68c9ac22d3c0c9d4afcc3507f4998b942134e9cce25b60d5cd3",
   "catalog_open_course": "6cba1067825aa8f5e0e2a0c0200972190ec30ac3a927d0d7e06590332fd7897d",
   "catalog_outcomes": "fe4bd796741243615fe432bcdf00c1d5170de3fb5d3c5908077656a2cd5ec607",
   "catalog_outline": "6e87665a9ff24b696456c0494893f6c251c3b482ca64646c6cd168a1bc833cdb",
@@ -162,8 +160,6 @@
     <string name="catalog_start_goal">目標を始める</string>
     <string name="catalog_loading_more">さらにコースを読み込んでいます…</string>
     <string name="catalog_load_more_failed">うまくいきませんでした。もう一度お試しください。</string>
-    <string name="catalog_not_found_title">ページが見つかりませんでした</string>
-    <string name="catalog_not_found_description">リンクが古いか、正しく入力されていない可能性があります。</string>
     <string name="catalog_edition_notice">このコースは、お使いの言語でも学べます。</string>
     <string name="catalog_exam_on_today">試験日：%1$s · 今日</string>
     <plurals name="catalog_exam_on">

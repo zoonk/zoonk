@@ -56,8 +56,6 @@
   "catalog_load_more_failed": "51b50bfacf07d6b51352aebaa449ae61a323e377afb2d78a1f564f6f45c4cb67",
   "catalog_loading_more": "3053e5b1300f8faadf65802a50ac45cd7137104fb28efd6aa624a1f5dfd0a3ef",
   "catalog_no_sign_up": "b21c3cd10798359ccf3153c377a7ea25baa22ac5df632df52f214ddab8c435d3",
-  "catalog_not_found_description": "8998d9b004dfd787ab67b4a059b4e7c706ee37da6ee53d5ec3d891043c323ee3",
-  "catalog_not_found_title": "8200518e854db53b3e1093cf18e84fa7df71b7e8db03bf19b6c73c7366626934",
   "catalog_open_course": "8f698c4e231c46e4dce0c0e9f32bc56cea6f163d485741e7201a08ed47a285d7",
   "catalog_outcomes": "7139cca87d62e967f6772512bdc4a4817a58f5be062dbe3b0367fa210f3fcb2a",
   "catalog_outline": "20392136a115e2c5fb8a3baeae0a2469c1dd906847b787448413719d6a93bab8",
@@ -164,8 +162,6 @@
     <string name="catalog_start_goal">Crear un objetivo</string>
     <string name="catalog_loading_more">Cargando más cursos…</string>
     <string name="catalog_load_more_failed">Algo salió mal. Inténtalo de nuevo.</string>
-    <string name="catalog_not_found_title">No pudimos encontrar esta página</string>
-    <string name="catalog_not_found_description">El enlace puede estar desactualizado o mal escrito.</string>
     <string name="catalog_edition_notice">Este curso también está disponible en tu idioma.</string>
     <string name="catalog_exam_on_today">Examen el %1$s · hoy</string>
     <plurals name="catalog_exam_on">

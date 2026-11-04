@@ -667,13 +667,21 @@ final class LessonPlayerStore {
         fit = await api.getLessonFit(id: lessonId, token: token)
       }
     case .done(.incomplete):
-      // The run is missing an answer: the server's answers say which screen to go back to.
+      // The run is missing an answer: the server's answers say which screen to go back to, and
+      // the lesson read again has any picture a left-out question was waiting for.
+      async let pictures: Void = lessonResource.refresh()
       let restarted = await write { token in
         try await api.startLesson(id: lessonId, studySessionId: studySessionId, token: token)
       }
+      await pictures
+      guard isCurrent(identity) else { return }
 
       if case .done(.success(let run)) = restarted, run.runId == runId {
-        state?.resync(answers: run.answers, optionalStepIds: run.optionalStepIds)
+        let steps: [LessonStep] =
+          if case .ready(let lesson) = lessonResource.value { lesson.steps } else { [] }
+        state?.resync(
+          answers: run.answers, optionalStepIds: run.optionalStepIds,
+          lesson: steps.filter { !isUnplayable($0) })
       } else if case .obsolete = restarted {
         return
       } else {

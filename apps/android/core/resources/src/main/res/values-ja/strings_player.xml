@@ -36,8 +36,8 @@
   "player_challenge_improve": "2cc7e3dce88f72b4f662296438e682ab3f5b1af00386cbabdaaad569c6bfc067",
   "player_challenge_meters": "86f851d8d9d3a9d19d2a2044116cf163913c96becb2127679596852d25eb528d",
   "player_challenge_mission": "63bf785e49eeac63e9ee7c874c5776b9728561c467275238bed987fa5e6f83b3",
-  "player_challenge_much_higher": "82360c0659c3d89996d2426ed2f810bacd7682e636e60aabba93047a5cda3bf6",
-  "player_challenge_much_lower": "cd5d79f917df6bdb055c11b88d8166abfddcd6dc4c1831a5f63d6f8bbb1b85b0",
+  "player_challenge_much_higher": "91433a0f9a8f7bbd4c5fac584edc549959c35a6322c4a76669385c86eb9656b2",
+  "player_challenge_much_lower": "b7d33b8d7f3fac21fc683167476f4cc405d923ef1cd6af3e7ae5f756facf4cfc",
   "player_challenge_no_change": "e61c09647c22d195038da994c86a6b93d0681fd7f17134617061889b39c3a6c2",
   "player_challenge_practice": "1f7f56cb9b0da2154b852f133928cd57ff2a42bb40cdd84028126b89e029ac18",
   "player_challenge_said": "1add01dfc3bccd1938f37331007c89e636bbd5c4784690152cff59ce24a68156",
@@ -46,7 +46,7 @@
   "player_challenge_team": "27f9089fe7cf68e2e99514aeb331791b02f2b83bc28894120845d48e2cc6e079",
   "player_challenge_what_happened": "6191605b83a9fe33fa5b1bf34de5030f3de37ad6fd131a0e0dbd051233c14412",
   "player_challenge_what_if": "048e1d23ccf365baef6e892ca6755f55a4a7e8f53f82333ca1489c00863184c3",
-  "player_challenge_you": "82692250b5531f7672298424faea3f693fcbc1936acb011d7d20d88c219ebbab",
+  "player_challenge_you": "efb9ee1c0404ae6052232f7a1ec08d79080f6027f031b58a30575acff8d58567",
   "player_challenge_your_options": "89b516ac2b05244f061f0d4d5d0ac3d2523530f434d8e49e03f753b69b768483",
   "player_check_failed": "d3c80a4f3a483d344ae107ef583663501d64894de7332993a0b416bc8a3825b7",
   "player_citation_from_material": "38fd0eaa320f1fd1915f890d3b01a7cc89428f6e771966a9e366359dd6e70944",
@@ -333,12 +333,12 @@
     <string name="player_challenge_meters">現在の状況</string>
     <!-- How a meter moved after the learner's decision. -->
     <string name="player_challenge_no_change">変化なし</string>
-    <string name="player_challenge_much_higher">大幅に高い</string>
+    <string name="player_challenge_much_higher">大幅に上昇</string>
     <string name="player_challenge_bit_higher">少し上昇</string>
-    <string name="player_challenge_much_lower">大幅に低い</string>
+    <string name="player_challenge_much_lower">大幅に低下</string>
     <string name="player_challenge_bit_lower">少し低下</string>
     <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
-    <string name="player_challenge_you">自分の返答：%1$s</string>
+    <string name="player_challenge_you">自分：%1$s</string>
     <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->
     <string name="player_challenge_said">%1$s：%2$s</string>
     <string name="player_challenge_what_happened">結果</string>

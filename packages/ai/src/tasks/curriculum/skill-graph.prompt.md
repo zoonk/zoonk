@@ -68,6 +68,10 @@ For each skill:
 
 Skills are taught by shared courses. Name each course with the canonical subject title a catalog would use, such as "Mathematics", "Classical mechanics" or "Statistics", never with a title about this learner. Use one course when the goal fits one subject and several when it crosses subjects: quantum physics from zero needs mathematics, classical mechanics, waves and optics, linear algebra and quantum mechanics. For each course, give a short `key`, the `title` and the level bands (`levels`) the goal needs.
 
+{{#subjectStart}}
+Also set each course's `supporting`: true for a course outside the requested subject whose skills exist only to supply prerequisites for its skills, false for the subject's own courses and subfields. A subfield is part of the goal, not a supporting course. The app places supporting skills just before their first use and keeps their full depth. Phase milestones describe the subject capabilities reached, not completion of supporting coursework.
+
+{{/subjectStart}}
 # Areas
 
 Areas are how the learner sees the whole path and checks that nothing is missing, so they follow the way the learner thinks about the goal.
@@ -98,6 +102,14 @@ Put each skill in the band that teaches it at the depth the goal needs, not at t
 
 Start where `OWN_LEVEL` says, measured against the goal{{#exam}}: for an exam, `basic` means the learner knows a little of what the exam asks, not that they lack schooling{{/exam}}. With `none`, start from what an adult knows from everyday life. Otherwise, still include the foundations the goal depends on, since a placement test skips what the learner already knows, but don't go below what their level implies: no fractions for someone who studied physics at university.
 
+{{#subjectStart}}
+For a broad subject, begin with the subject's own concrete ideas that an adult can learn from everyday knowledge. The first skill teaches the subject's basic objects and their defining properties, rather than assuming the learner already recognizes them. Teach these through real distinctions, examples and explanations, not a tour of the course. As an exception to chapter-sized skills in huge goals, a bounded concept or an initial use of a supporting tool may need only a few lessons.
+
+List subject skills in study order within each phase. Build a progression of subject capabilities, introducing the smallest usable part of a supporting subject for its first application. A skill using a tool for the first time must not wait for the tool's full theory: return for that depth when harder subject skills need it. Continue developing the subject's accessible capabilities while building toward its formal treatment.
+
+Scope prerequisites to the depth being taught. Separate an accessible conceptual skill from a later skill that explains its mechanisms or uses formal methods, each teaching something distinct. The conceptual skill must not inherit the later skill's prerequisites. Deferring a foundation changes its position, never its coverage: retain every supporting concept and method the later skills use, with real prerequisite edges. Keep the full depth the goal asks for, without moving advanced mechanisms into the opening or replacing a deep path with an overview band.
+
+{{/subjectStart}}
 The learner's schooling also sets a floor, from `CONTEXT` (a school year, an age, a degree){{#exam}} or from the exam itself: a university entrance exam is taken at the end of secondary school, and a public-service exam requires at least a secondary-school diploma{{/exam}}. Don't give an adult or a student finishing school what school teaches children first, such as naming word classes, reading notices and recipes, or drilling basic arithmetic, unless the goal is about it.{{#exam}} For an exam, begin at the depth the exam asks, and teach a school basic only in the form the exam uses it, such as word classes as they decide a rewriting question.{{/exam}}
 
 # Phases
@@ -140,7 +152,7 @@ Favor what still matters when AI does routine work: understanding why, judgment,
 # No filler
 
 - Every skill must be needed for the goal.
-- No "Introduction to…", "Why X matters", overviews of the field, recaps, study tips, motivation, history for its own sake, or career skills, unless the goal asks for them (a career change or a job goal asks for its portfolio and job search).
+- No "Introduction to…", "Why X matters", overviews of the field, recaps, study tips, motivation, history for its own sake, or career skills, unless the goal asks for them (a career change or a job goal asks for its portfolio and job search).{{#subjectStart}} An overview here means a survey of what the course will cover; concrete subject knowledge at beginner depth is not filler.{{/subjectStart}}
 - No general study or thinking skills, such as the scientific method, telling a prediction from an observation or reading a chart, unless the goal itself is about them: every skill teaches the goal's own subject.
 - No duplicate skills: if two skills would share most of their lessons, merge them.
 

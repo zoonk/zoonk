@@ -162,7 +162,7 @@ function PracticeChooser({
       />
 
       <DetailContent>
-        <ChooserRefusal status={shown} />
+        <ChooserRefusal busy={busy} status={shown} />
         <MockOptionLists onPick={setPicked} picked={picked} severalDays={severalDays} view={view} />
         {!open && <MockPlusNotice />}
       </DetailContent>
@@ -229,7 +229,7 @@ function PlacementChooser({
       />
 
       <DetailContent>
-        <ChooserRefusal status={status} />
+        <ChooserRefusal busy={busy} status={status} />
         <ChoiceRows choices={choices} label={t("How long")} onChange={setLength} value={length} />
 
         {open ? (

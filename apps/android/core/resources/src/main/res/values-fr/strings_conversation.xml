@@ -101,8 +101,6 @@
   "conversation_no_score_title": "62f25f06d28ee894ad7bd046f77cf4a37827e28c63fcde20de5ad26efb470a2e",
   "conversation_not_connected": "cc3354eb742027531c3fece3bdbb0e27ad439dfff24170a7b5c6aaf06d0c9bae",
   "conversation_not_connected_title": "bff57a9f91341d98e42fe5607c4a23f4ba36617796f5e16cce552c64834dc0ac",
-  "conversation_not_found_description": "9437b5dc9a81ba5cba39174198e747c76180cf883801df6ebc2a1b201933e61e",
-  "conversation_not_found_title": "74721ed0a0bb4aee3942c726c6c3092c0d1379f4af1754a14ff60043f7943cae",
   "conversation_not_rated": "f4c48a744170ee758900edf69247b1a9b8ffcf584e763c07517e0ff84b499811",
   "conversation_not_this_time": "6b75aec7bbf6e6b6cf95a21b06a55d21889151a39a70c1a2ebf775b4e91316d6",
   "conversation_opens_and_card": "af8b666294bbfd0223905aafba01098571d9c5e0e1b63eab67835a3bfe3797cc",
@@ -218,8 +216,6 @@
     <string name="conversation_mic_off">Autorise l’accès au micro dans les paramètres pour parler avec %1$s, ou participe à l’appel par écrit.</string>
     <!-- Starts the call without the microphone, answering by typing. -->
     <string name="conversation_type_instead">Répondre par écrit</string>
-    <string name="conversation_not_found_title">Cet appel est introuvable</string>
-    <string name="conversation_not_found_description">Le lien est peut-être ancien ou mal saisi.</string>
     <!-- Read before what the learner said in the call's transcript. -->
     <string name="conversation_you_said">Toi : %1$s</string>
     <!-- Read before what the character said in the call's transcript: the character's name, then the words. -->

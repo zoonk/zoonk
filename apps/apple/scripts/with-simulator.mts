@@ -8,6 +8,7 @@ import {
   openSync,
   writeSync,
 } from "node:fs";
+import { availableParallelism, loadavg } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { applyCommandExit, runForegroundCommand } from "../../../scripts/dev/process.mts";
@@ -20,14 +21,25 @@ import {
   listSimulators,
 } from "./simulators.mts";
 
-// More booted at once crash Apple's simulator services on a busy Mac.
-const MAX_BOOTED_SIMULATORS = 3;
+// More booted at once crash Apple's simulator services on a busy Mac; a quiet one runs more. The
+// limits are apps/apple/AGENTS.md's "Simulators", which agents booting by hand follow too.
+const BUSY_MAX_BOOTED_SIMULATORS = 3;
+const QUIET_MAX_BOOTED_SIMULATORS = 6;
 const POLL_MS = 5000;
 // macOS's open(2) flag for an exclusive lock, which Node doesn't export. The kernel keeps the lock
 // until every process holding the file closes it, however they exit.
 const O_EXLOCK = 0x20;
 
 type Lease = { descriptor: number; device: Simulator };
+
+/** Quiet while fewer tasks wait to run than the machine has cores. */
+function getMaxBootedSimulators() {
+  const [lastMinute = Infinity] = loadavg();
+
+  return lastMinute < availableParallelism()
+    ? QUIET_MAX_BOOTED_SIMULATORS
+    : BUSY_MAX_BOOTED_SIMULATORS;
+}
 
 function isShutDown(device: Simulator) {
   return device.state === "Shutdown";
@@ -102,7 +114,7 @@ function tryLeasing(device: Simulator): Lease | undefined {
   const isBooted = booted.some(({ udid }) => udid === device.udid);
   const isLeftBehind = fstatSync(descriptor).size > 0;
 
-  if (isBooted ? isLeftBehind : booted.length < MAX_BOOTED_SIMULATORS) {
+  if (isBooted ? isLeftBehind : booted.length < getMaxBootedSimulators()) {
     claim(descriptor);
 
     if (isBooted || bootSimulator(device)) {
@@ -162,8 +174,10 @@ async function startRun({
 
     process.stderr.write(
       `Waiting for a simulator. Each test run boots a shut-down iPhone of its own, with at most ` +
-        `${MAX_BOOTED_SIMULATORS} booted at once, and booted now: ${names}. Shut down one you're ` +
-        `done with, or set TEST_DESTINATION='platform=iOS Simulator,id=<udid>' to test on yours.\n`,
+        `${BUSY_MAX_BOOTED_SIMULATORS} booted at once while the machine is busy ` +
+        `(${QUIET_MAX_BOOTED_SIMULATORS} while it's quiet), and booted now: ${names}. Shut down ` +
+        `one you're done with, or set TEST_DESTINATION='platform=iOS Simulator,id=<udid>' to ` +
+        `test on yours.\n`,
     );
   }
 

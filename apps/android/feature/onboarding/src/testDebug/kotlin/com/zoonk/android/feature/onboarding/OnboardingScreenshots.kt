@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -72,6 +71,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
@@ -147,11 +147,11 @@ class OnboardingScreenshots {
         compose.setContent { ZoonkTheme { Surface { Placement(api, run) } } }
         compose.onNodeWithText("Start").performClick()
         compose.waitForIdle()
-        write("placement-waiting-phone-screen", compose.onRoot().captureToImage().asAndroidBitmap())
+        write("placement-waiting-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
 
         run = GenerationRun(status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation)
         compose.waitForIdle()
-        write("placement-waiting-failed-phone-screen", compose.onRoot().captureToImage().asAndroidBitmap())
+        write("placement-waiting-failed-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** The questions of a new language pair wait for the learner's Start, so it's tapped first. */
@@ -165,7 +165,7 @@ class OnboardingScreenshots {
         compose.setContent { ZoonkTheme { Surface { ResearchNotices(SuggestionLayout.Panel) } } }
         compose.onNodeWithText("Upload the notice").performClick()
         compose.waitForIdle()
-        write("research-upload-open-phone-screen", compose.onRoot().captureToImage().asAndroidBitmap())
+        write("research-upload-open-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     @Test
@@ -192,12 +192,12 @@ class OnboardingScreenshots {
         compose.setContent { ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { LevelTest(api) } } }
         compose.onNodeWithText("Start").performClick()
         compose.waitForIdle()
-        write("level-test-waiting-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+        write("level-test-waiting-$name", compose.onRoot().captureRender().asAndroidBitmap())
 
         api.levelTest = preparingTestOf(startedAt = "2026-10-29T10:00:03Z")
         compose.mainClock.advanceTimeBy(3_500)
         compose.waitForIdle()
-        write("level-test-writing-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+        write("level-test-writing-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun capture(
@@ -216,7 +216,7 @@ class OnboardingScreenshots {
             compose.activity.viewModelStore.clear()
             index = screen
             compose.waitForIdle()
-            write("${SCREENS[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("${SCREENS[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

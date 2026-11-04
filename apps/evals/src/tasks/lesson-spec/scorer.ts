@@ -109,9 +109,11 @@ function checkLessonSpecs({
   return {
     judgedOutput: JSON.stringify({ lessons: passing.map((result) => result.lesson) }, null, 2),
     passed:
-      passing.length +
-      (hasPictureCheck && !pictureProblem ? 1 : 0) +
-      (hasTemplateCheck && !templateProblem ? 1 : 0),
+      passing.length === 0
+        ? 0
+        : passing.length +
+          (hasPictureCheck && !pictureProblem ? 1 : 0) +
+          (hasTemplateCheck && !templateProblem ? 1 : 0),
     problems:
       lessons.length === 0
         ? ["The output has no valid lesson specs."]

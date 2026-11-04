@@ -4121,6 +4121,11 @@ msgctxt "YtFTtA"
 msgid "Open link"
 msgstr "リンクを開く"
 
+#: src/questions/tutor-markdown.tsx
+msgctxt "xpHtfD"
+msgid "We couldn't open this step. Try again."
+msgstr "このステップを開けませんでした。もう一度お試しください。"
+
 #: src/questions/tutor-suggestion-words.ts
 msgctxt "tutorSuggestions.s6QqT3"
 msgid "I want to go deeper"

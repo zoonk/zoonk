@@ -19,7 +19,7 @@
 
 - Own the user’s intended outcome through implementation and verification. Before declaring completion, reconcile the intended outcome, the resulting implementation, and the evidence collected. Close material gaps that can be investigated within the authorized task. Passing selected checks establishes only what those checks exercise. Carry earlier evidence forward only while subsequent changes leave it applicable.
 - Keep changes within the requested scope. Refactor supporting code when needed for a complete solution, and remove code, tests, types, and layout left over from superseded requirements.
-- When you find a bug, weak UX or anything else worth improving outside your task, start a new thread for it (not a subagent) in its own worktree instead of asking the user, unless an open PR or thread already covers it. The thread is a task like any the user gives, ending with its own PR: it fixes a verified bug, investigates a suspected one and fixes it if confirmed, and investigates and improves the rest. Brief it with what you found and how to reproduce it, name it in your handoff, and carry on with your task. An agent that can't start threads names the find in its handoff instead.
+- When you find a bug, weak UX or anything else worth improving outside your task, start a new thread for it (not a subagent) in its own worktree instead of asking the user, unless an open issue, PR or thread already covers it. The thread investigates and ends with a GitHub issue, not a PR: it confirms the find (reproduces a bug, checks a suspected one, works out what the improvement is and why it matters) and files one issue with what it found and how to reproduce it, following [zoonk-github-issues](.agents/skills/zoonk-github-issues/SKILL.md) and opening with the [disclosure](.agents/skills/zoonk-post-on-behalf/SKILL.md#the-disclosure). This rule is its go-ahead to post. A find that doesn't hold up gets no issue, and the thread says why. Brief it with what you found and how to reproduce it, name it in your handoff, and carry on with your task. An agent that can't start threads names the find in its handoff instead.
 - Treat review comments and specs as hypotheses. Verify the actual path, product assumptions, and impact. In review/assessment work, fix confirmed bugs unless the user asks for findings only or the fix requires a meaningful product or architecture decision. Explain unsupported claims without changing code to satisfy them.
 - Act as a product peer: when a requested approach or repository rule creates observed UX friction or unnecessary complexity, explain the conflict and propose a simpler way to achieve the user's goal. Make improvements within the authorized scope; surface decisions that would change explicit requirements.
 - Read task-relevant files and documentation. Skills provide conditional guidance; an explicit user request takes precedence. If an instruction blocks authorized work, identify the file and rule and explain the concrete conflict.
@@ -28,7 +28,7 @@
 
 ## Agent orchestration
 
-Delegate a big task, or one that spans several areas (code, design, UX, accessibility), to subagents specialized in each, following the [orchestration guide](.agents/guides/orchestration.md). It also covers several agents sharing one machine. If you work in a worktree made for your task, commit, stop its servers and remove it before you hand back ([details](.agents/guides/orchestration.md#sharing-one-machine)).
+Delegate a big task, or one that spans several areas (code, design, UX, accessibility), to subagents specialized in each, following the [orchestration guide](.agents/guides/orchestration.md). It also covers several agents sharing one machine. Before you hand back, commit and stop the servers you started. If you own the task's PR, push and keep your worktree: review fixes and follow-ups happen there, and the harness removes it once the PR merges. A subagent or lane removes the worktree made for its slice ([details](.agents/guides/orchestration.md#sharing-one-machine)).
 
 ## Architecture shared by all workspaces
 
@@ -56,12 +56,13 @@ Delegate a big task, or one that spans several areas (code, design, UX, accessib
 
 ### Cross-model review
 
-Before committing or pushing any code change beyond a typo or a small, obvious fix:
+Before opening a PR with any code change beyond a typo or a small, obvious fix:
 
 1. Ask yourself: "Am I over-engineering this? Is there a simpler way to do it?"
-2. Have a subagent from the other model family review it adversarially at xhigh reasoning: GPT Sol reviews Opus's work, and Opus reviews GPT Sol's. Give it the request and the diff, not your reasoning, and fix what holds up.
+2. Have a subagent from the other model family review the branch adversarially at xhigh reasoning: GPT Sol reviews Opus's work, and Opus reviews GPT Sol's. Give it the request, the diff and the checkout to run it in, with the running app's URL when there is one, but not your reasoning. It tries to break the change and reports only what it can show ([evidence before findings](.agents/skills/zoonk-code-review/SKILL.md#evidence-before-findings)). Fix what holds up.
+3. A further round reviews only the fixes, and the rounds stop once one finds nothing new it can show. After the PR opens, a fix gets its own review only when it changes behavior.
 
-Some models over-engineer, and a reviewer from another family catches the bugs, clutter and simpler approaches the author misses. This applies to every agent that commits, subagents included: one that can't delegate hands back before committing so its lead gets the review. When only one model family is available, use a fresh agent of that family, given only the request and the diff, and say so in the handoff.
+Some models over-engineer, and a reviewer from another family catches the bugs, clutter and simpler approaches the author misses. A reviewer that only reads the code drifts into style notes and guards for paths nobody reaches; one that has to show each failure reports what's real. The agent that opens the PR runs this review, so a subagent that hands its work to a lead leaves it to the lead. When only one model family is available, use a fresh agent of that family, given only the request and the diff, and say so in the handoff.
 
 ### PR verification gate
 

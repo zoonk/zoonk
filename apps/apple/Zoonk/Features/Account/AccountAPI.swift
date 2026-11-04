@@ -513,7 +513,6 @@ struct AccountAPI {
             periodEnd: $0.periodEnd)
         }),
       user: AccountUser(
-        displayUsername: response.user.displayUsername,
         email: response.user.email,
         id: response.user.id,
         image: response.user.image,

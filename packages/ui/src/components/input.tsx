@@ -2,6 +2,7 @@ import { Input as InputPrimitive } from "@base-ui/react/input";
 import { cn } from "@zoonk/ui/lib/utils";
 import type * as React from "react";
 
+/** A field waiting on its submit takes `readOnly`, not `disabled`, so keyboard focus isn't dropped to the page. */
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <InputPrimitive

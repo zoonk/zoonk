@@ -12,12 +12,11 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { StatusMark } from "../_components/status-mark";
-import { useMockShapeLabel } from "./mock-labels";
+import { useMockNumber, useMockShapeLabel } from "./mock-labels";
 
 function useMeasureText() {
   const t = useExtracted();
-  const format = useFormatter();
-  const points = (value: number) => format.number(value, { maximumFractionDigits: 2 });
+  const points = useMockNumber();
 
   return (mock: ExamMockSummary): string => {
     // An IRT score is only ever an estimate shown as a range (on the Plan), so a past mock

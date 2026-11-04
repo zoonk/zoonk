@@ -3,8 +3,9 @@
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
+import { useMockNumber, useMockPercent } from "./mock-labels";
 import { ResultSection } from "./mock-result-section";
 
 type MockPoints = NonNullable<MockResult["points"]>;
@@ -36,21 +37,9 @@ export function hasTestRows(points: MockPoints | null | undefined): points is Mo
   );
 }
 
-function useFormatPoints() {
-  const format = useFormatter();
-  return (value: number) => format.number(round(value), { maximumFractionDigits: 2 });
-}
-
-function useFormatPercent() {
-  const format = useFormatter();
-
-  return (value: number) =>
-    format.number(value / 100, { maximumFractionDigits: 1, style: "percent" });
-}
-
 function useFormatMinimum() {
-  const points = useFormatPoints();
-  const percent = useFormatPercent();
+  const points = useMockNumber();
+  const percent = useMockPercent();
 
   return (minimum: Minimum) =>
     minimum.unit === "percent" ? percent(minimum.value) : points(minimum.value);
@@ -59,7 +48,7 @@ function useFormatMinimum() {
 function useRequirementLine() {
   const t = useExtracted();
   const formatMinimum = useFormatMinimum();
-  const percent = useFormatPercent();
+  const percent = useMockPercent();
 
   return (row: TestRow & { minimum: Minimum }): string => {
     const values = {
@@ -93,7 +82,7 @@ function useRequirementLine() {
 
 function TestRowScore({ row }: { row: TestRow }) {
   const t = useExtracted();
-  const points = useFormatPoints();
+  const points = useMockNumber();
 
   return (
     <span className="shrink-0 font-mono text-xs tabular-nums">
@@ -150,7 +139,7 @@ function TestRowItem({ row }: { row: TestRow }) {
 function useMissSentence() {
   const t = useExtracted();
   const formatMinimum = useFormatMinimum();
-  const percent = useFormatPercent();
+  const percent = useMockPercent();
 
   return (row: TestRow & { minimum: Minimum }): string => {
     const values = {
@@ -203,7 +192,7 @@ function Verdict({ rows }: { rows: readonly TestRow[] }) {
 
 function ProjectedLine({ points }: { points: MockPoints }) {
   const t = useExtracted();
-  const format = useFormatPoints();
+  const number = useMockNumber();
   const projects = points.projected !== null || points.parts.some((part) => part.projected);
 
   if (!projects) {
@@ -215,7 +204,7 @@ function ProjectedLine({ points }: { points: MockPoints }) {
       {points.projected !== null && points.max !== null
         ? t(
             "About {projected} of {max} points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums.",
-            { max: format(points.max), projected: format(points.projected) },
+            { max: number(points.max), projected: number(points.projected) },
           )
         : t(
             "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums.",

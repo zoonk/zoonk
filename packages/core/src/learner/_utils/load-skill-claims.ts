@@ -58,11 +58,9 @@ async function loadClaimLessonSkills({
 async function loadPlanEvents({
   goalId,
   known,
-  skillIds,
 }: {
   goalId: string;
   known?: ClaimPlan | null;
-  skillIds: ReadonlySet<string>;
 }): Promise<ClaimEvent[]> {
   const [items, plan] =
     known === undefined
@@ -97,13 +95,11 @@ async function loadPlanEvents({
         ? [item.skillId]
         : [...new Set([...(item.skillId ? [item.skillId] : []), ...taught])];
 
-    return claimed
-      .filter((skillId) => skillIds.has(skillId))
-      .map((skillId): ClaimEvent => ({
-        at: item.completedAt ?? new Date(0),
-        kind: item.status === "done" ? "studied" : "claim",
-        skillId,
-      }));
+    return claimed.map((skillId): ClaimEvent => ({
+      at: item.completedAt ?? new Date(0),
+      kind: item.status === "done" ? "studied" : "claim",
+      skillId,
+    }));
   });
 }
 
@@ -120,13 +116,25 @@ async function loadAnswerEvents({
       answeredAt: true,
       isCorrect: true,
       isPlacement: true,
-      item: { select: { format: true } },
+      itemId: true,
       skillId: true,
       studySessionId: true,
     },
     take: MAX_ANSWERS,
     where: { itemId: { not: null }, skillId: { in: [...skillIds] }, stepId: null, userId },
   });
+
+  const itemIds = [...new Set(answers.flatMap((answer) => answer.itemId ?? []))];
+
+  const trueFalse =
+    itemIds.length > 0
+      ? await prisma.item.findMany({
+          select: { id: true },
+          where: { format: "trueFalse", id: { in: itemIds } },
+        })
+      : [];
+
+  const trueFalseIds = new Set(trueFalse.map((item) => item.id));
 
   return answers.flatMap((answer): ClaimEvent[] =>
     answer.skillId
@@ -136,7 +144,7 @@ async function loadAnswerEvents({
             isCorrect: answer.isCorrect,
             kind: answer.studySessionId && !answer.isPlacement ? "practice" : "test",
             skillId: answer.skillId,
-            trueFalse: answer.item?.format === "trueFalse",
+            trueFalse: answer.itemId !== null && trueFalseIds.has(answer.itemId),
           },
         ]
       : [],
@@ -146,10 +154,12 @@ async function loadAnswerEvents({
 /** Includes basics skipped by choice, dated from that choice. */
 export async function loadDatedClaims({
   goalId,
+  readClaims,
   skillIds,
   userId,
 }: {
   goalId: string;
+  readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
   skillIds: readonly string[];
   userId: string;
 }): Promise<Map<string, DatedClaim>> {
@@ -157,28 +167,51 @@ export async function loadDatedClaims({
     return new Map();
   }
 
-  return readDatedClaims(await loadClaimEvents({ goalId, skillIds, userId }));
+  return readDatedClaims(
+    await (readClaims ? readClaims(skillIds) : loadClaimEvents({ goalId, skillIds, userId })),
+  );
+}
+
+/** Every claim the goal's plan and its history make, for any skill; answers depend on the skills asked. */
+export async function loadPlanClaimEvents({
+  goalId,
+  plan,
+  skillIds,
+}: {
+  goalId: string;
+  plan?: ClaimPlan | null;
+  /** A fresh read for these skills only skips history no asked skill needs; GETs share every skill's. */
+  skillIds?: ReadonlySet<string>;
+}): Promise<ClaimEvent[]> {
+  const [planEvents, passedOver, undone] = await Promise.all([
+    loadPlanEvents({ goalId, known: plan }),
+    loadPassedOverClaims({ goalId, known: plan, skillIds }),
+    loadUndoneTestOuts(goalId),
+  ]);
+
+  return [...planEvents, ...passedOver, ...undone];
 }
 
 export async function loadClaimEvents({
   goalId,
-  plan,
+  planEvents,
   skillIds,
   userId,
 }: {
   goalId: string;
-  plan?: ClaimPlan | null;
+  /** A GET's request-wide `loadPlanClaimEvents`; without it, they're read fresh. */
+  planEvents?: Promise<ClaimEvent[]>;
   skillIds: readonly string[];
   userId: string;
 }): Promise<ClaimEvent[]> {
-  const [planEvents, passedOver, undone, answers] = await Promise.all([
-    loadPlanEvents({ goalId, known: plan, skillIds: new Set(skillIds) }),
-    loadPassedOverClaims({ goalId, known: plan, skillIds: new Set(skillIds) }),
-    loadUndoneTestOuts({ goalId, skillIds: new Set(skillIds) }),
+  const asked = new Set(skillIds);
+
+  const [fromPlan, answers] = await Promise.all([
+    planEvents ?? loadPlanClaimEvents({ goalId, skillIds: asked }),
     loadAnswerEvents({ skillIds, userId }),
   ]);
 
-  return [...planEvents, ...passedOver, ...undone, ...answers];
+  return [...fromPlan.filter((event) => asked.has(event.skillId)), ...answers];
 }
 
 export async function loadSkillEvidence({
