@@ -13,7 +13,7 @@ struct TodayUpNextSection: View {
           KindMark(kind: .lesson)
             .frame(minWidth: 20)
           Text(lesson.title)
-            .typeStyle(index == 0 ? .reading.weight(.semibold) : .reading)
+            .typeStyle(.rowTitle)
           Spacer(minLength: 8)
           Text(studyDuration(minutes: lesson.minutes))
             .typeStyle(.data)
