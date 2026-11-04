@@ -50,9 +50,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "DELE B2 Task 1 for a Brazilian candidate: a problem and five to seven proposals to solve it on the card (the prompts), instructions in Spain Spanish with \"usted\" saying to weigh at least four for 3 to 4 minutes and then talk with the examiner. No photos, text or table. The examiner's brief listens without interrupting through the monologue, then asks which proposal is best, about the candidate's country and their opinion. Summary and role in Brazilian Portuguese.",
@@ -123,8 +135,16 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Specify the adults' individual garments and colours rather than only 'casual spring clothes' to give the generated photo clearer, A2-friendly clothing details.",
           "kind": "potentialImprovements",
@@ -200,7 +220,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The article body contains approximately 169 words, below the requested approximately 200–250 words. The sole prompt supplies a ready-made debate question rather than prompting the candidate to identify the problem and develop the aspects to cover, although the instructions do specify the required structure.",
           "kind": "minorErrors",
@@ -451,7 +475,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The partner brief provides four usable opinion lines, but leaves reactions, disagreement, the transition to the decision phase and negotiation largely to improvisation. This falls short of the requirement to write out the character's spoken lines, although the intended partner role remains clear.",
           "kind": "minorErrors",
@@ -532,7 +560,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The Portuguese summary translates the substantive photo question, although summaries must not translate the prompts. The examiner brief also permits an additional question after the short follow-up, exceeding the task-specific requirement for one short follow-up question.",
           "kind": "minorErrors",
@@ -613,13 +645,21 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The opening line already asks about the advantages and disadvantages of working from home, but the brief then instructs the examiner to ask essentially the same question as Question 1. This creates an avoidable repetition unless the voice model resolves it itself.",
           "kind": "minorErrors",
           "score": 9
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "DELE B1 Task 2 continues Task 1's presentation on working from home: the card and the examiner's questions stay on that topic, asking for the candidate's opinions and personal experience about it, never a new topic. In Spain Spanish with \"usted\"; summary in Brazilian Portuguese.",
@@ -714,7 +754,11 @@
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
       ],
       "testCase": {
         "expectations": "DELE B1 Task 3 for an English-speaking candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in English, and guiding prompts in Spain Spanish with \"usted\" (the people, the place, the objects, how the people are related, what they may be talking about). The examiner listens for one to two minutes without interrupting, then asks questions linking the photo to the candidate's own life. Summary and role in English.",
@@ -785,7 +829,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The diary table has a clear title but omits the invented plausible source and year explicitly required by the material expectations.",
           "kind": "minorErrors",
@@ -899,6 +947,113 @@
             "stimulus": "topic"
           },
           "title": "DELF A2"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The situation comes first, the instructions use usted, and the accessible prompts suit a four-minute DELE A2 role-play. It correctly continues the friends' bicycle outing in Seville rather than switching to an unrelated situation. However, the exam-room setting and limited use of the original map-and-rental-stand scene weaken the continuation. It does not follow another task's format, so the format cap is not triggered.",
+          "score": 8,
+          "label": "Like the exam's sheet",
+          "weight": 30
+        },
+        {
+          "categoryId": "material",
+          "reasoning": "The four goals provide a workable everyday planning conversation, and no new photograph is necessary for this topic-based task. However, there are no concrete rental conditions, prices, times or route options for the examiner to draw on, leaving much of the practical substance to improvisation. The setting field also conflicts with the simulated location. The material remains usable, so the unsupported-material cap is not triggered.",
+          "score": 7,
+          "label": "Material that works",
+          "weight": 25
+        },
+        {
+          "categoryId": "script",
+          "reasoning": "The English brief supplies ordered Spanish questions, back-ups and instructions not to correct, praise or grade. However, the opening has the friend announce the exam activity, contradicting her role and triggering the cap of 5. Alternatives and the closing exchange are described rather than fully scripted, and Marta has little concrete information or independent input to sustain the dialogue.",
+          "score": 5,
+          "label": "The examiner's or partner's script",
+          "weight": 25
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The summary addresses the learner in Portuguese rather than translating the prompts, and the character's role is also Portuguese. Instructions, prompts, place, opening and hints are Spanish; the private brief is English with Spanish spoken lines. The instructions use usted appropriately, while informal address fits dialogue between friends. There are no emojis, em dashes or wrong-language fields.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2484,
+          "outputTokens": 958,
+          "reasoningTokens": 271
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The opening mixes examiner instructions with the friend's dialogue: Marta says “Ahora vamos a hacer un diálogo” rather than opening naturally in character. This contradicts the assigned role and triggers the script category's cap of 5. The brief also leaves some required speech unwritten, including alternatives and the closing summary.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The setting field says “Sala de examen” rather than the square or bicycle rental stand. Although the conversation continues the bicycle outing in Seville, it does not explicitly reuse the paper map or the rental stand. The scripted question “¿Has visto dónde están?” weakens that continuity because the friends were already beside the rental bicycles.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Give Marta a small set of concrete, plausible rental and route details, such as a euro price, return time and nearby destination, to support four minutes of interaction. Begin directly with an in-character suggestion about the map, and provide complete Spanish alternatives and a closing confirmation.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "DELE A2 Task 3 continues Task 2's photo of two friends checking a paper map at a bike rental stand: the role-play builds on that scene (renting bikes, asking the way or planning a ride), with the examiner playing someone in it such as the rental clerk or one of the friends, never an unrelated situation. Instructions in simple Spain Spanish with \"usted\" state the situation first; the goals on the card and the examiner's facts (prices in euros, times, conditions) fit it. Summary and role in Brazilian Portuguese. Found in code: a continuing task never received the earlier card's photos, so it could not link the role-play to them.",
+        "id": "pt-es-dele-a2-role-play-continues-photo-1",
+        "userInput": {
+          "exam": "dele",
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "paper": "Prueba 4: Expresión e interacción orales",
+          "previous": {
+            "instructions": [
+              "Observe la fotografía y descríbala durante dos o tres minutos.",
+              "Puede usar las preguntas como guía."
+            ],
+            "photos": [
+              {
+                "alt": "Duas amigas olham um mapa de papel ao lado de bicicletas de aluguel numa praça.",
+                "scene": "Two women in their twenties, one in a yellow raincoat and one in a denim jacket, stand beside a row of rental bicycles in a sunny city square in Seville, unfolding a paper map together and pointing at it, with orange trees and a cafe terrace behind them in soft morning light."
+              }
+            ],
+            "prompts": [
+              "¿Quiénes son las personas?",
+              "¿Dónde están?",
+              "¿Qué están haciendo?",
+              "¿Qué relación hay entre ellas?",
+              "¿Cómo se sienten?",
+              "¿Qué han hecho antes y qué van a hacer después?"
+            ],
+            "table": null,
+            "task": "Tarea 2: Descripción de una fotografía",
+            "text": null
+          },
+          "task": {
+            "brief": "A role-play with the examiner in an everyday situation linked to the Task 2 photo (such as planning a surprise party with a sibling): the examiner plays the other person, follows a plan for the dialogue and improvises from the candidate's answers.",
+            "minutes": 4,
+            "name": "Tarea 3: Diálogo en una situación simulada",
+            "role": "examiner",
+            "stimulus": "topic"
+          },
+          "title": "DELE A2"
         }
       }
     }

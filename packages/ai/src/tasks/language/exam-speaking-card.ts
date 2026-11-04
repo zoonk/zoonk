@@ -44,9 +44,10 @@ const cardOutputSchema = z.object({
 
 export type ExamSpeakingCardOutput = z.infer<typeof cardOutputSchema>;
 
-type PreviousCard = Pick<ExamSpeakingCardOutput, "instructions" | "prompts" | "table" | "text"> & {
-  task: string;
-};
+type PreviousCard = Pick<
+  ExamSpeakingCardOutput,
+  "instructions" | "photos" | "prompts" | "table" | "text"
+> & { task: string };
 
 export type GenerateExamSpeakingCardParams = {
   exam: SpeakingExam;

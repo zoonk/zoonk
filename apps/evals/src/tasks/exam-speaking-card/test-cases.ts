@@ -94,6 +94,7 @@ export const TEST_CASES: TestCase<unknown, ExamSpeakingCardInput>[] = [
           "Prepare una presentación de 2 a 3 minutos sobre el tema.",
           "Incluya una introducción, el desarrollo y una conclusión.",
         ],
+        photos: [],
         prompts: [
           "¿Trabajar desde casa es una ventaja o un problema?",
           "¿Qué necesita una persona para trabajar bien en casa?",
@@ -105,6 +106,40 @@ export const TEST_CASES: TestCase<unknown, ExamSpeakingCardInput>[] = [
         text: null,
       },
       task: "t2",
+    }),
+  },
+  {
+    expectations: `DELE A2 Task 3 continues Task 2's photo of two friends checking a paper map at a bike rental stand: the role-play builds on that scene (renting bikes, asking the way or planning a ride), with the examiner playing someone in it such as the rental clerk or one of the friends, never an unrelated situation. Instructions in simple Spain Spanish with "usted" state the situation first; the goals on the card and the examiner's facts (prices in euros, times, conditions) fit it. Summary and role in Brazilian Portuguese. Found in code: a continuing task never received the earlier card's photos, so it could not link the role-play to them.`,
+    id: "pt-es-dele-a2-role-play-continues-photo",
+    userInput: cardInput({
+      exam: "dele",
+      learnerLanguage: "pt",
+      level: "A2",
+      previous: {
+        instructions: [
+          "Observe la fotografía y descríbala durante dos o tres minutos.",
+          "Puede usar las preguntas como guía.",
+        ],
+        photos: [
+          {
+            alt: "Duas amigas olham um mapa de papel ao lado de bicicletas de aluguel numa praça.",
+            scene:
+              "Two women in their twenties, one in a yellow raincoat and one in a denim jacket, stand beside a row of rental bicycles in a sunny city square in Seville, unfolding a paper map together and pointing at it, with orange trees and a cafe terrace behind them in soft morning light.",
+          },
+        ],
+        prompts: [
+          "¿Quiénes son las personas?",
+          "¿Dónde están?",
+          "¿Qué están haciendo?",
+          "¿Qué relación hay entre ellas?",
+          "¿Cómo se sienten?",
+          "¿Qué han hecho antes y qué van a hacer después?",
+        ],
+        table: null,
+        task: "Tarea 2: Descripción de una fotografía",
+        text: null,
+      },
+      task: "t3",
     }),
   },
   {
