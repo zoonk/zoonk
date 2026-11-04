@@ -4,10 +4,10 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type EntitlementTier } from "../../../entitlements/contract";
 import { getActiveGoalLimit } from "../../../entitlements/limits";
 import { type GoalCreateInput, type GoalDraft } from "../../../goals/goal-contract";
-import { getTargetDateBounds } from "../../../plans/target-date-range";
 import { type UnderstoodGoalView, type UnderstoodSchedule } from "../onboarding-contract";
 import { parseStoredUnderstanding } from "./onboarding-draft";
 import { readDetail } from "./onboarding-goals";
+import { withPlannableDate } from "./understanding-view";
 
 export type WaitingGoal = { id: string; input: GoalCreateInput; locked: boolean };
 
@@ -54,17 +54,16 @@ function toWaitingInput({
   schedule: UnderstoodSchedule;
   today: string;
 }): GoalCreateInput {
-  const { details = {}, targetDate } = goal.draft;
+  const { details = {} } = goal.draft;
   const answered = Array.isArray(details.answered) ? details.answered : [];
 
   const draft: GoalDraft = {
-    ...goal.draft,
+    ...withPlannableDate({ draft: goal.draft, today }),
     details: {
       ...details,
       answered: answered.filter((answer) => answer !== "schedule"),
       onboardingPlace: place,
     },
-    targetDate: targetDate && targetDate >= getTargetDateBounds(today).min ? targetDate : undefined,
   };
 
   return { dailyMinutes: schedule.dailyMinutes, goals: [draft] };

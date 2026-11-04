@@ -24,6 +24,23 @@ export function getLearnerToday(timeZone: string): string {
   return toIsoDate(getDateInTimeZone({ date: new Date(), timeZone }));
 }
 
+/**
+ * A new goal takes only a date in `getTargetDateBounds`, so the card reads any other (today, a day
+ * gone, one past the planner's reach) as no date, and setup asks for one.
+ */
+export function withPlannableDate({
+  draft,
+  today,
+}: {
+  draft: GoalDraft;
+  today: string;
+}): GoalDraft {
+  const { max, min } = getTargetDateBounds(today);
+  const { targetDate, ...undated } = draft;
+
+  return targetDate && targetDate >= min && targetDate <= max ? draft : undated;
+}
+
 function compactDetails(details: Record<string, DetailValue | undefined>) {
   return Object.fromEntries(
     Object.entries(details).filter(
@@ -102,8 +119,6 @@ async function toGoalView({
 
   const cutoff = await loadTargetCutoff({ details, examBlueprintId: exam?.blueprintId });
 
-  const understoodDate = goal.targetDate ?? exam?.targetDate ?? undefined;
-
   return {
     cutoff,
     draft: {
@@ -112,11 +127,7 @@ async function toGoalView({
       kind: goal.kind,
       language,
       prompt: context.goal,
-      // Dates beyond the planner's supported range require another onboarding answer.
-      targetDate:
-        understoodDate && understoodDate <= getTargetDateBounds(today).max
-          ? understoodDate
-          : undefined,
+      targetDate: goal.targetDate ?? exam?.targetDate ?? undefined,
       targetLanguage: goal.targetLanguage,
       title: goal.title,
     },

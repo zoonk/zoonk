@@ -4,7 +4,25 @@ import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-draft
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { getTargetDateBounds } from "../../plans/target-date-range";
+import { getLearnerToday } from "./_utils/understanding-view";
+import { createOnboardingGoals } from "./create-onboarding-goals";
+import { getOnboarding } from "./get-onboarding";
 import { getOnboardingDraft } from "./get-onboarding-draft";
+
+function learnGoal({ targetDate, title }: { targetDate: string; title: string }) {
+  return {
+    draft: {
+      details: { purpose: "overview" },
+      kind: "learn",
+      language: "en",
+      prompt: title,
+      targetDate,
+      title,
+    },
+    examDates: [],
+  };
+}
 
 describe(getOnboardingDraft, () => {
   it("needs a session", async () => {
@@ -57,6 +75,53 @@ describe(getOnboardingDraft, () => {
     expect(result.status === "ready" && result.draft.goalId).toBe(goal.id);
     expect(result.status === "ready" && result.draft.goalId).not.toBe(archived.id);
     expect(understanding?.status).toBe("goals");
+  });
+
+  it("shows a card date a new goal can't have as no date, so confirming the card starts it and setup asks the date", async () => {
+    const timeZone = "Pacific/Kiritimati";
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const today = getLearnerToday(timeZone);
+    const { max, min: tomorrow } = getTargetDateBounds(today);
+    const pastMax = getTargetDateBounds(tomorrow).max;
+
+    const draft = await onboardingDraftFixture({
+      timeZone,
+      understanding: {
+        goals: [
+          learnGoal({ targetDate: today, title: "Learn chess" }),
+          learnGoal({ targetDate: tomorrow, title: "Learn Go" }),
+          learnGoal({ targetDate: max, title: "Learn bridge" }),
+          learnGoal({ targetDate: pastMax, title: "Learn poker" }),
+        ],
+        schedule: { dailyMinutes: 15, studyDays: null, studyTime: null, studyTimeNote: null },
+        status: "goals",
+      },
+      userId: user.id,
+    });
+
+    const result = await getOnboardingDraft({ draftId: draft.id });
+    const understanding = result.status === "ready" ? result.draft.understanding : null;
+    const goals = understanding?.status === "goals" ? understanding.goals : [];
+
+    expect(goals.map((goal) => goal.draft.targetDate)).toStrictEqual([
+      undefined,
+      tomorrow,
+      max,
+      undefined,
+    ]);
+
+    const created = await createOnboardingGoals({
+      dailyMinutes: 15,
+      goals: goals.slice(0, 1).map((goal) => goal.draft),
+      timeZone,
+    });
+
+    const goalId = created.status === "created" ? (created.goals[0]?.id ?? "") : "";
+    const setup = await getOnboarding({ goalId });
+
+    expect(setup.status === "ready" && setup.onboarding.steps).toContain("targetDate");
   });
 
   it("reads another learner's draft, or a malformed id, as missing", async () => {
