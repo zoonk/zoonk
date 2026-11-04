@@ -10,7 +10,6 @@ extension ActivityRendererRegistry {
       .codeRunner,
       .codeTracer,
       .combinationGrid,
-      .decisionTree,
       .dialogueSimulator,
       .findError,
       .guessReveal,

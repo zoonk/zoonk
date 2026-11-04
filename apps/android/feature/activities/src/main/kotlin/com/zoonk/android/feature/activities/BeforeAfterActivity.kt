@@ -52,15 +52,15 @@ import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf34Fields
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf34FieldsAfter
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf34FieldsAfterFactsInner
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf33Fields
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf33FieldsAfter
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf33FieldsAfterFactsInner
 import java.util.Locale
-import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf34Value as BeforeAfterContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf33Value as BeforeAfterContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
 
-private typealias BeforeAfterState = PlayableLibraryStepAnyOfContentOneOf34FieldsAfter
-private typealias Fact = PlayableLibraryStepAnyOfContentOneOf34FieldsAfterFactsInner
+private typealias BeforeAfterState = PlayableLibraryStepAnyOfContentOneOf33FieldsAfter
+private typealias Fact = PlayableLibraryStepAnyOfContentOneOf33FieldsAfterFactsInner
 
 val beforeAfterRenderer =
     ActivityRenderer(
@@ -264,7 +264,7 @@ private fun changeLabel(
 
 /** Core's `changeRatio`: a fact's after value over its before value. */
 internal fun changeRatio(
-    fields: PlayableLibraryStepAnyOfContentOneOf34Fields,
+    fields: PlayableLibraryStepAnyOfContentOneOf33Fields,
     factId: String,
 ): Double? {
     val before =

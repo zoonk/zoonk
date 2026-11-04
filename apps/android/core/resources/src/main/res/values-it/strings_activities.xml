@@ -4,7 +4,6 @@
   "activities_badge_before_after": "9d235ee0417c7abb12967cecd1ffacd543798f633c81414445759eeff5cb4b99",
   "activities_badge_estimate_first": "58524dcdfaa3a4e20477ae76f0983aa2c78c0b95bd3aab0e7a4067ae3b743055",
   "activities_badge_find_error": "eaae67c226da686a63eb227fa73ac2efa8d32c0ddb20db33bfe88e9eed56d9f6",
-  "activities_badge_follow_questions": "a0d66b579b1a9b19b0cb659b772362bd4eb0b32c077eeae67003adbd845f381e",
   "activities_badge_read_chart": "df663c7f9850f88c2304fdce4f423023f3e699fae450fb81f4b152532c2b3482",
   "activities_badge_reply": "f7388df6931244165abf985a6a71e7adcfdd8071404f637ac4f80d2b63384731",
   "activities_badge_spot_pattern": "240f20d522fb2a6596aae2d2a9557caee6bc2a3bcc19178ed7841d535405fb50",
@@ -58,23 +57,13 @@
   "activities_sortable_move_up": "34fa18fb89e7276578607b64c9100c0d3cac880840c0dd9a5d0b54911db8a605",
   "activities_sortable_over": "72e92e3156c6d68c73f0eb2a86af6e563f6f6fdec34fe238978f728720e78cc3",
   "activities_sortable_picked_up": "b83e511d51993d8bd8aa828ac22a4e25ca4d221a7f0b3955664e5b06b872f1f8",
-  "activities_sortable_stopped": "c5d76219f91da08b41730c1a152cb8199f658d31ac0cbafa9a9046ed522848b2",
-  "activities_tree_case": "7c828bf4708933757c90451c7d42e2466d8145b5186da169d9f5dd82bf6e3d5b",
-  "activities_tree_it_leads_to": "e5e4e69e1543b34239c5739706b29385ff4c687b107687772e15ba119b21a898",
-  "activities_tree_leads_to": "d8a504eedb0d1cf91fe8524c67d410070b885adf9276dd7785e478f5e766529c",
-  "activities_tree_still_possible": "1e35adb37d4e3218da69b39dfb9d2536e049ecb8d67f11fb978bbd46d631406c",
-  "activities_tree_undo": "28169493c92983a630b5cbb73e4a43d5af639b50148c5be6c00ca39deff57ea2",
-  "activities_tree_walk": "ab8e3c58dde59e684373b961d0074ea7e2886281fdaed16f94792808aceff2a7",
-  "activities_tree_you_chose": "b33b650567c4e8488064a70c63515a424929645e2af2ec4c62fcbc8fa98d5ab0",
-  "activities_tree_your_answers": "24ff83c172f550ab3d366df4fb13f4ed3db9096ba1fa259f09a537d71e49d5b6"
+  "activities_sortable_stopped": "c5d76219f91da08b41730c1a152cb8199f658d31ac0cbafa9a9046ed522848b2"
 }
 -->
 <resources>
     <string name="activities_badge_estimate_first">Fai prima una stima</string>
     <string name="activities_badge_read_chart">Leggi il grafico</string>
     <string name="activities_badge_before_after">Prima e dopo</string>
-    <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
-    <string name="activities_badge_follow_questions">Segui le domande</string>
     <string name="activities_badge_find_error">Trova l’errore</string>
     <string name="activities_badge_step_by_step">Passo dopo passo</string>
     <string name="activities_badge_spot_pattern">Trova la regola</string>
@@ -112,18 +101,6 @@
     <string name="activities_chart_spans">Intervalli da misurare</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s per %2$s</string>
-    <!-- The panel with the case the learner follows through the questions. -->
-    <string name="activities_tree_case">Il caso</string>
-    <!-- The outcomes the learner's answers can still reach from here. -->
-    <string name="activities_tree_still_possible">Ancora possibili</string>
-    <string name="activities_tree_your_answers">Le tue risposte</string>
-    <string name="activities_tree_leads_to">Le tue risposte portano a</string>
-    <string name="activities_tree_undo">Annulla</string>
-    <string name="activities_tree_walk">Il percorso per questo caso</string>
-    <!-- The branch the learner took where the key went another way, like "You chose Single". -->
-    <string name="activities_tree_you_chose">Hai scelto %1$s</string>
-    <!-- The outcome the right walk reaches, like "It leads to Pine." -->
-    <string name="activities_tree_it_leads_to">Porta a %1$s.</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
     <string name="activities_find_error_ai_asked">Qualcuno ha chiesto a un assistente IA</string>
     <string name="activities_find_error_problem">Problema</string>

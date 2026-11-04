@@ -8,7 +8,6 @@ import {
   codeTracerTemplate,
   sqlPlaygroundTemplate,
 } from "./templates/computing";
-import { decisionTreeTemplate } from "./templates/decision-tree";
 import { formulaModelTemplate } from "./templates/formula-model";
 import { geometryBoardTemplate, unitCircleTemplate } from "./templates/geometry";
 import { guessRevealTemplate } from "./templates/guess-reveal";
@@ -73,7 +72,6 @@ export const activityTemplates = [
   matchPairsTemplate,
   argumentBuilderTemplate,
   findErrorTemplate,
-  decisionTreeTemplate,
   keyboardFretboardTemplate,
   notationPlayerTemplate,
   rhythmTapperTemplate,
@@ -113,7 +111,6 @@ export const activityContentSchema = z.discriminatedUnion("template", [
   matchPairsTemplate.content,
   argumentBuilderTemplate.content,
   findErrorTemplate.content,
-  decisionTreeTemplate.content,
   keyboardFretboardTemplate.content,
   notationPlayerTemplate.content,
   rhythmTapperTemplate.content,
@@ -149,7 +146,6 @@ export const exploreActivitySchema = z.discriminatedUnion("template", [
   timelineTemplate.explore,
   mapExplorerTemplate.explore,
   causeEffectChainTemplate.explore,
-  decisionTreeTemplate.explore,
   keyboardFretboardTemplate.explore,
   notationPlayerTemplate.explore,
   beforeAfterTemplate.explore,

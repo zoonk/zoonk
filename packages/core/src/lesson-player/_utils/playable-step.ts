@@ -10,7 +10,6 @@ import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { logError } from "@zoonk/utils/logger";
 import { getExploreExpected } from "../../library/activities/activity-expected";
 import { getActivityTemplate } from "../../library/activities/activity-templates";
-import { safeParseStepContent } from "../../library/steps/contract/step-contract";
 import { type LessonLanguages } from "../../player/contracts/build-word-bank-options";
 import { type ExerciseKind, isExerciseKind } from "../../player/contracts/exercise-content";
 import {
@@ -29,6 +28,7 @@ import {
   type PlayableWordHints,
   type TeachingStepKind,
 } from "../playable-lesson";
+import { safeParsePlayableContent } from "./parse-playable-content";
 import { getScreenPictures } from "./screen-pictures";
 import { getStepCitation, markExplanationsNotInMaterial } from "./step-citation";
 
@@ -68,7 +68,7 @@ function buildTeachingStep<TKind extends TeachingStepKind>(
   kind: TKind,
   row: PlayableStepRow,
 ): PlayableTeachingStepOf<TKind> | null {
-  const parsed = safeParseStepContent(kind, row.content);
+  const parsed = safeParsePlayableContent({ content: row.content, kind });
 
   if (!parsed.success) {
     logError(`[lesson-player] Step ${row.id} has invalid ${kind} content.`, parsed.error);

@@ -35,7 +35,6 @@ import {
   RotateCw,
   ScanSearch,
   SlidersHorizontal,
-  Split,
   SquareTerminal,
   Table2,
   Tag,
@@ -58,7 +57,6 @@ export type ActivityBadgeKind =
   | "exploreMap"
   | "fillSquare"
   | "findError"
-  | "followQuestions"
   | "handsOn"
   | "labelIt"
   | "linkCauses"
@@ -101,7 +99,6 @@ const BADGE_ICONS: Record<ActivityBadgeKind, LucideIcon> = {
   exploreMap: MapPinned,
   fillSquare: Grid2x2Check,
   findError: ScanSearch,
-  followQuestions: Split,
   handsOn: Hand,
   labelIt: Tag,
   linkCauses: Workflow,
@@ -148,7 +145,6 @@ function useBadgeLabel(kind: ActivityBadgeKind): string {
     exploreMap: t("Explore the map"),
     fillSquare: t("Fill the square"),
     findError: t("Find the error"),
-    followQuestions: t("Follow the questions"),
     handsOn: t("Hands on"),
     labelIt: t("Label it"),
     linkCauses: t("Link causes"),

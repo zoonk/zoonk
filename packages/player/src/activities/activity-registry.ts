@@ -60,14 +60,6 @@ export const activityRenderers: {
       import("./code-tracer/code-tracer-activity").then((module) => module.CodeTracerActivity),
     template: "codeTracer",
   }),
-  decisionTree: defineActivityRenderer({
-    badge: "followQuestions",
-    load: () =>
-      import("./decision-tree/decision-tree-activity").then(
-        (module) => module.DecisionTreeActivity,
-      ),
-    template: "decisionTree",
-  }),
   distributionExplorer: defineActivityRenderer({
     badge: "explore",
     load: () =>
