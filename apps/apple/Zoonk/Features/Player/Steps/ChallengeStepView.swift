@@ -8,6 +8,8 @@ struct ChallengeStepView: View {
   let store: LessonPlayerStore
   let part: LessonStepPart
 
+  @Environment(\.stacksContent) private var stacksContent
+
   var body: some View {
     let progress = ChallengeProgress(
       content: content, picks: state.challengePicks(step.id), shown: state.revealed[step.id] ?? 0)
@@ -61,17 +63,26 @@ struct ChallengeStepView: View {
 
       LessonQuestionText(text: named(content.title))
 
-      VStack(alignment: .leading, spacing: 4) {
-        Text("Your mission", tableName: "Player", comment: "Above a challenge's mission")
-          .font(.caption.weight(.medium))
-          .foregroundStyle(.secondary)
-        LessonRichText(named(content.mission))
-          .font(.title3)
+      GroupBox {
+        VStack(alignment: .leading, spacing: 8) {
+          panelLabel(
+            Text("Your mission", tableName: "Player", comment: "Above a challenge's mission")
+          )
+          .accessibilityAddTraits(.isHeader)
+          LessonRichText(named(content.mission))
+            .font(.title3)
+
+          if let deadline = content.deadline {
+            Label(named(deadline), systemImage: "clock")
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
       }
 
-      if let deadline = content.deadline {
-        Label(named(deadline), systemImage: "clock")
-          .foregroundStyle(.secondary)
+      ForEach(Array(content.panels.enumerated()), id: \.offset) { _, panel in
+        self.panel(panel)
       }
 
       Text("Your team", tableName: "Player", comment: "Above the people in a challenge")
@@ -150,11 +161,76 @@ struct ChallengeStepView: View {
         bubble(reply)
       }
       if let jump = decision.choice.timeJump {
-        Label(named(jump.label), systemImage: "clock.arrow.circlepath")
-          .font(.footnote)
-          .foregroundStyle(.secondary)
+        timeJump(jump)
       }
     }
+  }
+
+  private func timeJump(_ jump: ChallengeContent.Choice.TimeJump) -> some View {
+    VStack(spacing: 12) {
+      HStack(spacing: 12) {
+        VStack { Divider() }
+        Label(named(jump.label), systemImage: "calendar.badge.clock")
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+          .multilineTextAlignment(.center)
+          .layoutPriority(1)
+        VStack { Divider() }
+      }
+
+      if let panel = jump.panel {
+        self.panel(panel)
+      }
+    }
+  }
+
+  private func panel(_ panel: ChallengeContent.Panel) -> some View {
+    let columns = stacksContent || panel.metrics.count < 2 ? 1 : 2
+
+    return GroupBox {
+      VStack(alignment: .leading, spacing: 12) {
+        if let title = panel.title {
+          panelLabel(Text(named(title)))
+        }
+
+        LazyVGrid(
+          columns: Array(
+            repeating: GridItem(.flexible(), spacing: 16, alignment: .topLeading), count: columns),
+          alignment: .leading, spacing: 16
+        ) {
+          ForEach(Array(panel.metrics.enumerated()), id: \.offset) { _, metric in
+            VStack(alignment: .leading, spacing: 2) {
+              Text(named(metric.label))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+              Text(metric.value)
+                .font(.title2.weight(.semibold))
+                .monospacedDigit()
+              if let note = metric.note {
+                Text(named(note))
+                  .font(.caption)
+                  .foregroundStyle(.secondary)
+              }
+            }
+            .accessibilityElement(children: .combine)
+          }
+        }
+
+        if let note = panel.note {
+          LessonRichText(named(note))
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+    }
+  }
+
+  private func panelLabel(_ text: Text) -> some View {
+    text
+      .font(.caption.weight(.medium))
+      .textCase(.uppercase)
+      .foregroundStyle(.secondary)
   }
 
   private func bubble(_ message: ChallengeContent.Message) -> some View {
