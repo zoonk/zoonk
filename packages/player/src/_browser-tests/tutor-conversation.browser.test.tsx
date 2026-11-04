@@ -344,10 +344,9 @@ describe("the buddy's conversation", () => {
 
   it("says so when an earlier answer's step isn't free to start anymore, until a tap opens one", async () => {
     const api = stubTutorApi({});
-
-    const openBlock = vi.fn<(blockId: string) => Promise<"closed" | null>>(() =>
-      Promise.resolve("closed"),
-    );
+    const firstOpen = Promise.withResolvers<"closed" | null>();
+    const openBlock = vi.fn<(blockId: string) => Promise<"closed" | null>>();
+    openBlock.mockReturnValueOnce(firstOpen.promise);
 
     api.questions = [
       api.question({
@@ -366,7 +365,10 @@ describe("the buddy's conversation", () => {
     const status = page.getByRole("status").filter({ hasText: "isn't available" });
 
     await lesson.click();
+    await lesson.click();
+    firstOpen.resolve("closed");
     await expect.element(status).toHaveTextContent("This step isn't available anymore.");
+    expect(openBlock).toHaveBeenCalledOnce();
 
     openBlock.mockResolvedValueOnce(null);
     await lesson.click();

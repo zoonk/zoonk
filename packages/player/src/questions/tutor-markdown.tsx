@@ -15,7 +15,15 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { ExternalLinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ComponentProps, type MouseEvent, createContext, use, useMemo, useState } from "react";
+import {
+  type ComponentProps,
+  type MouseEvent,
+  createContext,
+  use,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   type Components,
   type ExtraProps,
@@ -104,9 +112,9 @@ function isPlainClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
 
-const TutorAnswerLinksContext = createContext<
-  (TutorAnswerLinks & { setClosed: (closed: boolean) => void }) | null
->(null);
+type AnswerLinks = Omit<TutorAnswerLinks, "openBlock"> & { openBlock?: (blockId: string) => void };
+
+const TutorAnswerLinksContext = createContext<AnswerLinks | null>(null);
 
 function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
   const links = use(TutorAnswerLinksContext);
@@ -115,21 +123,16 @@ function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
     return children;
   }
 
-  const { Link, openBlock, setClosed } = links;
+  const { Link, openBlock } = links;
   const blockId = readTutorBlockLink(href);
 
   const onClick =
     blockId && openBlock
-      ? async (event: MouseEvent<HTMLAnchorElement>) => {
-          if (!isPlainClick(event)) {
-            return;
+      ? (event: MouseEvent<HTMLAnchorElement>) => {
+          if (isPlainClick(event)) {
+            event.preventDefault();
+            openBlock(blockId);
           }
-
-          event.preventDefault();
-          setClosed(false);
-
-          const { data: opening } = await safeAsync(() => openBlock(blockId));
-          setClosed(opening === "closed");
         }
       : undefined;
 
@@ -165,7 +168,35 @@ export function TutorMarkdown({
   const t = useExtracted();
   const plugins = useMarkdownPlugins({ isStreaming, text: answer });
   const [closed, setClosed] = useState(false);
-  const links = useMemo(() => (appLinks ? { ...appLinks, setClosed } : null), [appLinks]);
+  const opening = useRef(false);
+
+  // One open at a time per answer, so an earlier tap's result never replaces a later one's.
+  const links = useMemo((): AnswerLinks | null => {
+    if (!appLinks) {
+      return null;
+    }
+
+    const { openBlock } = appLinks;
+
+    return {
+      ...appLinks,
+      openBlock:
+        openBlock &&
+        (async (blockId) => {
+          if (opening.current) {
+            return;
+          }
+
+          opening.current = true;
+          setClosed(false);
+
+          const { data: result } = await safeAsync(() => openBlock(blockId));
+
+          opening.current = false;
+          setClosed(result === "closed");
+        }),
+    };
+  }, [appLinks]);
 
   return (
     <TutorAnswerLinksContext value={links}>
