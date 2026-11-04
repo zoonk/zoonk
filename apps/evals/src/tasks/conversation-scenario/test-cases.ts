@@ -131,7 +131,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `Brazilian learner of German at B1, at the doctor. A call to a German Praxis to book an appointment and explain symptoms and since when, with a German name and euros. The doctor or receptionist addresses the caller as "Sie" ("Wie kann ich Ihnen helfen?") in the opening line and the brief, never "du", and any hint that addresses them uses "Sie". Opening line and hints at B1. Title, situation and descriptions in Brazilian Portuguese.`,
+    expectations: `Brazilian learner of German at B1, at the doctor. A call to a German Praxis to book an appointment and explain symptoms and since when, with a German name. The doctor or receptionist never says "du" to the caller: a line that addresses them, in the opening line or the hints, uses "Sie" ("Wie kann ich Ihnen helfen?"), and the brief tells the voice model to use "Sie". An opening that addresses no one is fine. Opening line and hints at B1. Title, situation and descriptions in Brazilian Portuguese.`,
     id: "pt-de-b1-doctor",
     userInput: {
       canDo: [
@@ -147,7 +147,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning French at A2, renting an apartment in France. A call to a landlord about an appartement, with the loyer, charges and dépôt de garantie in euros. The landlord addresses the caller as "vous" ("Comment puis-je vous aider ?") in the opening line and the brief, never "tu", and any hint that addresses them uses "vous". Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    expectations: `US English speaker learning French at A2, renting an apartment in France. A call to a landlord about an appartement, with the loyer, charges and dépôt de garantie in euros. The landlord never says "tu" to the caller: a line that addresses them, in the opening line or the hints, uses "vous" ("Comment puis-je vous aider ?"), and the brief tells the voice model to use "vous". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
     id: "en-fr-a2-renting",
     userInput: {
       canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
@@ -160,7 +160,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning Italian at A2, renting an apartment in Italy. A call to a landlord about an appartamento, with the affitto and the cauzione in euros. The landlord addresses the caller as "Lei" ("Come posso aiutarLa?") in the opening line and the brief, never "tu", and any hint that addresses them uses "Lei". Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    expectations: `US English speaker learning Italian at A2, renting an apartment in Italy. A call to a landlord about an appartamento, with the affitto and the cauzione in euros. The landlord never says "tu" to the caller: a line that addresses them, in the opening line or the hints, uses "Lei" ("Come posso aiutarLa?"), and the brief tells the voice model to use "Lei". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
     id: "en-it-a2-renting",
     userInput: {
       canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
@@ -185,7 +185,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord addresses the caller as "siz" ("Size nasıl yardımcı olabilirim?") in the opening line and the brief, never "sen", and any hint that addresses them uses "siz". Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    expectations: `US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord never says "sen" to the caller: a line that addresses them, in the opening line or the hints, uses "siz" ("Size nasıl yardımcı olabilirim?"), and the brief tells the voice model to use "siz". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
     id: "en-tr-a2-renting",
     userInput: {
       canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
