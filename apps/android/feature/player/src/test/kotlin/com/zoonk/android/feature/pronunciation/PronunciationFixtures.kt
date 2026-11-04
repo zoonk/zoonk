@@ -44,7 +44,13 @@ internal fun grade(
 internal val RESULT: PronunciationRoundResult =
     ApiJson.decodeFromString(
         PronunciationRoundResult.serializer(),
-        """{"ceremony":null,"reached":{"energy":null,"level":null},"brainPower":5,"correct":1,"missionMoment":null,"total":1}""",
+        """
+        {"ceremony":null,"reached":{"energy":80,"level":{"color":"yellow","level":3}},"brainPower":5,"correct":1,"total":1,
+         "missionMoment":{"completed":["pronunciation"],"fullMeal":{"bonus":50,"paid":false},"missions":[
+          {"kind":"review","status":"done","done":1,"total":1},
+          {"kind":"pronunciation","status":"done","done":1,"total":1},
+          {"kind":"somethingNew","status":"todo","done":0,"total":2,"minutes":12}]}}
+        """.trimIndent(),
     )
 
 /** Answers with [grades] in order; a null one is a recording without words. */

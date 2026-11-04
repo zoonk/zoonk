@@ -41,7 +41,13 @@ class PronunciationFlowTest {
         store: PronunciationStore = store(api),
     ) {
         rule.setContent {
-            ZoonkTheme { PronunciationTask(GOAL_ID, "local", store, previewSpeech(), rememberAppNavigator()) }
+            ZoonkTheme {
+                PronunciationTask(GOAL_ID, "local", store, previewSpeech(), rememberAppNavigator(), buddy = null, ceremony = {
+                    _,
+                    _,
+                    ->
+                })
+            }
         }
     }
 

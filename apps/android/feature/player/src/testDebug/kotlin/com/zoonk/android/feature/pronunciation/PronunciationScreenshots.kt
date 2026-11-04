@@ -168,7 +168,13 @@ class PronunciationScreenshots {
                     LocalSnackbarHostState provides SnackbarHostState(),
                     LocalLayoutDirection provides (layoutDirection ?: LocalLayoutDirection.current),
                 ) {
-                    key(index) { PronunciationRoundScreen(model.round!!, model, previewSpeech(), rememberAppNavigator()) }
+                    key(index) {
+                        PronunciationRoundScreen(model.round!!, model, previewSpeech(), rememberAppNavigator(), buddy = null, ceremony = {
+                            _,
+                            _,
+                            ->
+                        })
+                    }
                 }
             }
         }
