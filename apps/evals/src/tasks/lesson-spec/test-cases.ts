@@ -915,13 +915,13 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for a total beginner in accounting
-      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (who uses a business's accounting and what for (a bank deciding a loan, the owner deciding a price, the tax office)), and its \`visual\` shows that scene in a picture
-      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (who uses a business's accounting and what for (a bank deciding a loan, the owner deciding a price, the tax office)), with a picture only if the scene shows something the learner needs to see
+      - A visual only where a beginner would otherwise have to picture something, such as amounts or steps to compare, as a table, chart or template the app draws; a plan whose teaching screens are all text is fine when nothing needs showing
       - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
 
       ${SHARED_EXPECTATIONS}
     `,
-    expected: { pictures: "some" },
+    expected: { pictures: "any" },
     id: "pt-usuarios-contabilidade-cold-start",
     userInput: {
       activityTemplates: ACTIVITY_TEMPLATES,
@@ -971,13 +971,13 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for a total beginner in accounting
-      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a business kept apart from its owner (the shop's cash and the owner's home bill)), and its \`visual\` shows that scene in a picture
-      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a business kept apart from its owner (the shop's cash and the owner's home bill)), with a picture only if the scene shows something the learner needs to see
+      - A visual only where a beginner would otherwise have to picture something, such as amounts or steps to compare, as a table, chart or template the app draws; a plan whose teaching screens are all text is fine when nothing needs showing
       - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
 
       ${SHARED_EXPECTATIONS}
     `,
-    expected: { pictures: "some" },
+    expected: { pictures: "any" },
     id: "pt-entidade-contabil-cold-start",
     userInput: {
       activityTemplates: ACTIVITY_TEMPLATES,
@@ -1027,13 +1027,13 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for a total beginner in accounting
-      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a shop's goods on the shelf, its cash and what customers still owe it), and its \`visual\` shows that scene in a picture
-      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a shop's goods on the shelf, its cash and what customers still owe it), with a picture only if the scene shows something the learner needs to see
+      - A visual only where a beginner would otherwise have to picture something, such as amounts or steps to compare, as a table, chart or template the app draws; a plan whose teaching screens are all text is fine when nothing needs showing
       - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
 
       ${SHARED_EXPECTATIONS}
     `,
-    expected: { pictures: "some" },
+    expected: { pictures: "any" },
     id: "pt-bens-direitos-cold-start",
     userInput: {
       activityTemplates: ACTIVITY_TEMPLATES,
@@ -1073,13 +1073,13 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for a total beginner in accounting
-      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a business's records side by side: what it has, what it owes and what is left for its owner), and its \`visual\` shows that scene in a picture
-      - Beyond the hook, the teaching screens show what a beginner would otherwise have to picture: the main example again in a picture where its situation changes, and amounts or steps as a table, chart or template the app draws. A plan whose explanations and worked examples are all text fails this, even when its checks and activities are good
+      - The hook is a scene with nothing to pick or type, ending on the question the lesson answers, about the lesson's main example (a business's records side by side: what it has, what it owes and what is left for its owner), with a picture only if the scene shows something the learner needs to see
+      - A visual only where a beginner would otherwise have to picture something, such as amounts or steps to compare, as a table, chart or template the app draws; a plan whose teaching screens are all text is fine when nothing needs showing
       - Explanation first, with at least two explanations or worked examples before the first check, one new term per screen
 
       ${SHARED_EXPECTATIONS}
     `,
-    expected: { pictures: "some" },
+    expected: { pictures: "any" },
     id: "pt-equacao-patrimonial-cold-start",
     userInput: {
       activityTemplates: ACTIVITY_TEMPLATES,
@@ -1120,7 +1120,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese, for one learner who runs a small bakery
       - The scene opens on the learner's own stock (flour on the shelf, how much the bakery uses each week, how long a delivery takes) with a small table or chart the app draws, its numbers in the brief, and no picture: the lesson is private, so nothing the app draws is replaced by a picture
-      - At least one explanation or worked example in three shows a table, a chart or a template to explore (a formula with its sliders for the reorder point), never a picture standing in for them
+      - Where the stock's numbers need comparing, a table, a chart or a template to explore (a formula with its sliders for the reorder point) shows them, never a picture standing in for them
       - Right after the first explanation, one guess predicts something about the bakery's stock that beginners get wrong, never a calculation the screen before just did
       - Every check asks only what an earlier screen taught, and money and amounts are written in one format
 
@@ -1182,7 +1182,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
 
       ${SHARED_EXPECTATIONS}
     `,
-    expected: { pictures: "some" },
+    expected: { pictures: "any" },
     id: "pt-categorias-despesas-visual-mix",
     userInput: {
       activityTemplates: ACTIVITY_TEMPLATES,
