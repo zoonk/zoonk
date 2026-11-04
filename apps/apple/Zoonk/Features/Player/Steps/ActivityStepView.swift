@@ -142,7 +142,7 @@ struct ActivityDataNote: View {
       }
     }
     .typeStyle(.meta)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 
   private func name(_ source: ActivityData.Source) -> AttributedString {
@@ -176,7 +176,7 @@ private struct NumericAnswerField: View {
 
     HStack {
       if let unit, unitLeads {
-        Text(unit).foregroundStyle(.secondary).accessibilityHidden(true)
+        Text(unit).foregroundStyle(.mutedForeground).accessibilityHidden(true)
       }
 
       TextField(text: Binding(get: { typed ?? shown }, set: type)) {
@@ -188,11 +188,11 @@ private struct NumericAnswerField: View {
       .accessibilityHint(Text(verbatim: unit ?? ""))
 
       if let unit, !unitLeads {
-        Text(unit).foregroundStyle(.secondary).accessibilityHidden(true)
+        Text(unit).foregroundStyle(.mutedForeground).accessibilityHidden(true)
       }
     }
     .padding()
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .panel(cornerRadius: 16)
     .onChange(of: value) {
       // An answer set elsewhere (going back to the screen) shows as itself.
       if let typed, parseLocalizedNumber(typed, locale: .courseLanguage) != value {

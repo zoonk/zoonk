@@ -84,13 +84,13 @@ private struct CombinationGridCanvas: View {
     return VStack(alignment: .leading, spacing: 4) {
       Text(fields.columns.label)
         .typeStyle(.meta)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       Grid(horizontalSpacing: 6, verticalSpacing: 6) {
         GridRow {
           Text(fields.rows.label)
             .typeStyle(.meta)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .lineLimit(2)
             .minimumScaleFactor(0.7)
             .frame(maxWidth: .infinity)
@@ -151,7 +151,7 @@ private struct CombinationGridCanvas: View {
         {
           Text(CombinationGrid.isDominant(shown) ? traits.dominant : traits.recessive)
             .typeStyle(.small)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
         }
@@ -274,7 +274,7 @@ private struct CombinationGridCanvas: View {
                 if let traits = fields.traits {
                   Text(CombinationGrid.isDominant(option) ? traits.dominant : traits.recessive)
                     .typeStyle(.small)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.mutedForeground)
                 }
               }
               .frame(maxWidth: .infinity)

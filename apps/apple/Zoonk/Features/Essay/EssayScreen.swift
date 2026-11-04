@@ -36,7 +36,7 @@ struct EssayScreen: View {
             } label: {
               Text("Try again", tableName: "Essay", comment: "Button to retry loading")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
           .lonePage()
         case .loaded(let view):
@@ -87,16 +87,16 @@ private struct EssayContent: View {
     Group {
       if writer.isWriting {
         PaneSplit(isSpread: true) {
-          Form {
+          ZoonkList {
             promptSections
           }
         } secondary: {
-          Form {
+          ZoonkList {
             writeSections
           }
           .safeAreaBar(edge: .bottom) { actionBar }
         } single: {
-          Form {
+          ZoonkList {
             promptSections
             writeSections
           }
@@ -104,34 +104,33 @@ private struct EssayContent: View {
         }
       } else if let grade = essay.drafts.first?.grade {
         PaneSplit {
-          List {
+          ZoonkList {
             EssayGradeSections(grade: grade, isClosed: writer.isClosed)
           }
         } secondary: {
-          List {
+          ZoonkList {
             EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
-          // An essay too short to grade has no comments, and an empty list draws the plain
-          // background.
-          .scrollContentBackground(.hidden)
-          .background(Color(.systemGroupedBackground))
           .safeAreaBar(edge: .bottom) { actionBar }
         } single: {
-          List {
+          ZoonkList {
             EssayGradeSections(grade: grade, isClosed: writer.isClosed)
             EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
           .safeAreaBar(edge: .bottom) { actionBar }
         }
       } else {
-        List {
+        ZoonkList {
           Section {
             ItemText(essay.question)
               .typeStyle(.body.weight(.semibold))
           } footer: {
-            Text(
-              "You skipped this essay.", tableName: "Essay",
-              comment: "An essay the learner skipped without sending a draft")
+            SectionFooter {
+              Text(
+                "You skipped this essay.", tableName: "Essay",
+                comment: "An essay the learner skipped without sending a draft")
+
+            }
           }
         }
         .safeAreaBar(edge: .bottom) { actionBar }
@@ -199,7 +198,7 @@ private struct EssayContent: View {
         } label: {
           Text("Skip the rewrite", tableName: "Essay", comment: "Goes on without rewriting")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.large)
         .disabled(finishing || writer.status == .grading)
       }
@@ -239,7 +238,7 @@ private struct EssayContent: View {
         ItemText(context)
           .typeStyle(.reading)
       } header: {
-        Text(essay.rubric.textsLabel)
+        SectionTitle(Text(essay.rubric.textsLabel))
       }
     }
 
@@ -272,7 +271,8 @@ private struct EssayContent: View {
           Text("See the grade", tableName: "Essay", comment: "Back to the last grade")
         }
       } header: {
-        Text("Your last grade", tableName: "Essay", comment: "The last grade while rewriting")
+        SectionTitle(
+          Text("Your last grade", tableName: "Essay", comment: "The last grade while rewriting"))
       }
     }
 
@@ -284,11 +284,13 @@ private struct EssayContent: View {
         .accessibilityLabel(Text(boxLabel))
         .accessibilityHint(EssayWords.hint(words))
     } header: {
-      Text(boxLabel)
+      SectionTitle(Text(boxLabel))
     } footer: {
-      if words > 0 {
-        EssayWords.text(words)
-          .monospacedDigit()
+      SectionFooter {
+        if words > 0 {
+          EssayWords.text(words)
+            .monospacedDigit()
+        }
       }
     }
   }
@@ -307,20 +309,20 @@ private struct EssayContent: View {
           "That didn't go through. Try again in a moment.", tableName: "Essay",
           comment: "Finishing the block failed"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       } else if writer.status == .failed {
         Text(
           "That didn't go through. Your text is still here. Try again in a moment.",
           tableName: "Essay", comment: "Grading failed"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       } else if writer.isWriting, writer.status == .dailyLimitReached {
         VStack(alignment: .leading, spacing: 2) {
           Text(
             "You've reached your daily time limit. Your text stays here.", tableName: "Essay",
             comment: "The daily time limit is a setting that stops study for the day"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           ChangeLimitButton()
         }
       } else if writer.isWriting, writer.status == .signUpRequired {
@@ -330,7 +332,7 @@ private struct EssayContent: View {
           "You've used today's essay grades. Your text stays here; send it tomorrow.",
           tableName: "Essay", comment: "No essay grades left today"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       } else if writer.status == .grading {
         Group {
           if writer.slow {
@@ -343,7 +345,7 @@ private struct EssayContent: View {
               tableName: "Essay", comment: "Grading a draft")
           }
         }
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .typeStyle(.body)

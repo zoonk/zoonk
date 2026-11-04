@@ -53,7 +53,7 @@ private struct MockChooserContent: View {
         } label: {
           Text("Try again", tableName: "Mock", comment: "Button to retry loading")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     case .loaded(let view):
@@ -116,7 +116,7 @@ struct PlacementMockScreen: View {
         } label: {
           Text("Try again", tableName: "Mock", comment: "Button to retry loading")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     case .loaded(let view) where view.placement != nil && view.placement?.mock == nil:
       MockChooser(goalId: goalId, view: view, placement: true) { id in
@@ -166,19 +166,19 @@ private struct MockChooser: View {
 
   var body: some View {
     PaneSplit {
-      List {
+      ZoonkList {
         intro
         choices(notesUnder: false)
         plusSection
       }
     } secondary: {
-      List {
+      ZoonkList {
         pickedSections
         lastMockSection
       }
       .safeAreaBar(edge: .bottom) { startBar }
     } single: {
-      List {
+      ZoonkList {
         intro
         choices(notesUnder: true)
         plusSection
@@ -194,9 +194,9 @@ private struct MockChooser: View {
       VStack(alignment: .leading, spacing: 4) {
         Text(view.examName)
           .typeStyle(.data)
-          .foregroundStyle(.tertiary)
+          .foregroundStyle(.faint)
         detail
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
 
@@ -210,7 +210,7 @@ private struct MockChooser: View {
               Text("Continue your mock exam", tableName: "Mock", comment: "A running mock")
               Text("It's where you left it", tableName: "Mock", comment: "Under a running mock")
                 .typeStyle(.note)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           } icon: {
             KindDot(kind: .mock)
@@ -247,11 +247,13 @@ private struct MockChooser: View {
           }
         }
       } header: {
-        Text("How long", tableName: "Mock", comment: "Placement mock lengths")
+        SectionTitle(Text("How long", tableName: "Mock", comment: "Placement mock lengths"))
       } footer: {
-        Text(
-          "Stop whenever you want: your plan uses the questions you answered. Your result shows at the end.",
-          tableName: "Mock", comment: "Under the placement lengths")
+        SectionFooter {
+          Text(
+            "Stop whenever you want: your plan uses the questions you answered. Your result shows at the end.",
+            tableName: "Mock", comment: "Under the placement lengths")
+        }
       }
     } else {
       let examOptions = view.options.filter { $0.kind != .area }
@@ -260,10 +262,13 @@ private struct MockChooser: View {
       Section {
         ForEach(examOptions) { optionRow($0) }
       } header: {
-        Text("The exam", tableName: "Mock", comment: "Mocks of the whole exam or half of it")
+        SectionTitle(
+          Text("The exam", tableName: "Mock", comment: "Mocks of the whole exam or half of it"))
       } footer: {
-        if notesUnder {
-          pickedNotes
+        SectionFooter {
+          if notesUnder {
+            pickedNotes
+          }
         }
       }
 
@@ -271,7 +276,7 @@ private struct MockChooser: View {
         Section {
           ForEach(subjects) { optionRow($0) }
         } header: {
-          Text("One subject", tableName: "Mock", comment: "Mocks of one subject")
+          SectionTitle(Text("One subject", tableName: "Mock", comment: "Mocks of one subject"))
         }
       }
     }
@@ -300,7 +305,8 @@ private struct MockChooser: View {
       Section {
         MockSummaryRow(mock: last, blockId: blockId)
       } header: {
-        Text("Your last mock exam", tableName: "Mock", comment: "The latest mock taken")
+        SectionTitle(
+          Text("Your last mock exam", tableName: "Mock", comment: "The latest mock taken"))
       }
     }
   }
@@ -388,7 +394,7 @@ private struct MockChooser: View {
             tableName: "Mock", comment: "While a mock's questions are written"
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } icon: {
         ProgressView()
@@ -414,18 +420,18 @@ private struct MockChooser: View {
         }
       }
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     case .notEnoughQuestions?:
       Text(
         "There aren't enough questions for this mock yet. Try the full exam or another subject.",
         tableName: "Mock", comment: "Too few questions for a mock"
       )
       .typeStyle(.body)
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
     case .failed?:
       Text("We couldn't start the mock. Try again.", tableName: "Mock", comment: "Start failed")
         .typeStyle(.body)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
     case .refused(let limit)?:
       HelpLimitNotice(limit: limit)
     }
@@ -482,10 +488,12 @@ private struct MockChooser: View {
         Text("Usually takes", tableName: "Mock", comment: "How long a picked mock usually takes")
       }
     } header: {
-      Text(title)
+      SectionTitle(Text(title))
     } footer: {
-      if notes {
-        pickedNotes
+      SectionFooter {
+        if notes {
+          pickedNotes
+        }
       }
     }
     .monospacedDigit()
@@ -502,11 +510,11 @@ private struct MockChooser: View {
             Text(name)
             Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } header: {
-        title
+        SectionTitle(title)
       }
     }
   }
@@ -569,13 +577,13 @@ private struct MockChooser: View {
           if let detail, !detail.isEmpty {
             Text(detail)
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
         Spacer()
         Text(trailing)
           .typeStyle(.data)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .accessibilityLabel(spokenTrailing)
         Image(systemName: "checkmark")
           .fontWeight(.semibold)
@@ -765,7 +773,7 @@ struct PlacementMockOffer: View {
                     }
                   }
                   .typeStyle(.note)
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
                 }
               } icon: {
                 KindDot(kind: .mock)

@@ -151,7 +151,7 @@ private struct CauseEffectCanvas: View {
       if !isLocked, let notice {
         LessonRichText(notice)
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       linkList
@@ -169,7 +169,7 @@ private struct CauseEffectCanvas: View {
         if let year = node.year {
           Text(year, format: .number.grouping(.never))
             .typeStyle(.data)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
         LessonRichText(node.label)
       }
@@ -320,7 +320,7 @@ private struct CauseEffectCanvas: View {
         case .correct: Image(systemName: "checkmark").foregroundStyle(Color.success)
         case .incorrect: Image(systemName: "xmark").foregroundStyle(Color.destructive)
         case .missed: Image(systemName: "circle.dashed").foregroundStyle(Color.success)
-        case .made: Image(systemName: "arrow.right").foregroundStyle(.secondary)
+        case .made: Image(systemName: "arrow.right").foregroundStyle(.mutedForeground)
         }
       }
       .accessibilityHidden(true)
@@ -339,20 +339,20 @@ private struct CauseEffectCanvas: View {
             "Not a link in this story", tableName: "Activities",
             comment: "After the check: a wrong cause-effect link"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         case .missed:
           Text(
             "Missed link", tableName: "Activities",
             comment: "After the check: a cause-effect link the learner missed"
           )
-          .foregroundStyle(Color.success)
+          .foregroundStyle(Color.successText)
         default:
           EmptyView()
         }
 
         if showsWhy, let why {
           LessonRichText(why)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -371,12 +371,12 @@ private struct CauseEffectCanvas: View {
           .labelStyle(.iconOnly)
         }
         .buttonStyle(.borderless)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .typeStyle(.note)
     .padding(12)
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+    .panel(cornerRadius: 12)
     .overlay {
       if state == .missed {
         RoundedRectangle(cornerRadius: 12)

@@ -80,7 +80,7 @@ private struct TimelineCanvas: View {
               "Show the real dates", tableName: "Activities",
               comment: "Reveals the real years on a timeline")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
       }
 
@@ -123,7 +123,7 @@ private struct TimelineCanvas: View {
           }
         }
         .typeStyle(.data)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       } else {
         Slider(
           value: Binding(
@@ -155,7 +155,7 @@ private struct TimelineCanvas: View {
     switch mark {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
-    default: Color(.secondarySystemBackground)
+    default: Color.card
     }
   }
 
@@ -217,7 +217,7 @@ private struct TimelineCanvas: View {
 
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Circle()
-            .fill(index.isMultiple(of: 2) ? Color.orange : Color.purple)
+            .fill(index.isMultiple(of: 2) ? Color.vizHighlight : Color.vizSecondary)
             .frame(width: 8, height: 8)
             .accessibilityHidden(true)
 
@@ -304,14 +304,14 @@ private struct TimelineAxis: View {
           $0.move(to: CGPoint(x: inset, y: axisY))
           $0.addLine(to: CGPoint(x: inset + width, y: axisY))
         },
-        with: .color(Color(.separator)), lineWidth: 2)
+        with: .color(Color.border), lineWidth: 2)
 
       // Both ends always show; a tick between them shows only where its year fits beside the
       // others, so a narrow axis (a phone, a pane of the open iPhone Duo) never overlaps them.
       let ticks = TimelineScale.ticks(start: fields.start, end: fields.end).map { tick in
         let label = context.resolve(
           Text(formatYear(tick)).font(TypeStyle.small.monospaced().font(in: context.environment))
-            .foregroundStyle(.secondary))
+            .foregroundStyle(.mutedForeground))
         let anchor: UnitPoint =
           x(tick) < size.width * 0.15
           ? .topLeading : x(tick) > size.width * 0.85 ? .topTrailing : .top
@@ -333,7 +333,7 @@ private struct TimelineAxis: View {
       for (index, mark) in sorted.enumerated() {
         let y = axisY + rowHeight * Double(index + 1)
         let color: Color =
-          mark.kind == .anchor ? .secondary : mark.kind == .guess ? .primary : .success
+          mark.kind == .anchor ? .mutedForeground : mark.kind == .guess ? .primary : .success
 
         if let guess = mark.guess, guess != mark.year {
           context.stroke(
@@ -361,7 +361,7 @@ private struct TimelineAxis: View {
         context.draw(
           Text(LessonRichText.typeset(mark.label).text)
             .font(TypeStyle.meta.font(in: context.environment)).foregroundStyle(
-              color == .secondary ? .secondary : .primary),
+              color == .mutedForeground ? .mutedForeground : .primary),
           at: CGPoint(x: x(mark.year), y: y), anchor: anchor)
       }
     }

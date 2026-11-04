@@ -141,7 +141,7 @@ private struct GoalStartFlow: View {
       }
     } else {
       NavigationStack(path: $path) {
-        List {
+        ZoonkList {
           StepHeader(
             title: Text(
               "What do you want to achieve?", tableName: "Onboarding",
@@ -205,7 +205,7 @@ private struct GoalStartFlow: View {
   private var draftPage: some View {
     switch draft {
     case .opening(let id):
-      List {
+      ZoonkList {
         ProgressView()
           .frame(maxWidth: .infinity)
           .listRowBackground(Color.clear)
@@ -323,7 +323,7 @@ private struct DraftView: View {
 
   /// Starting it again is new work, so it waits for the learner's tap.
   private var failed: some View {
-    List {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Understanding your goal", tableName: "Onboarding",
@@ -384,8 +384,10 @@ struct TypedGoalSection: View {
       Text(goal)
         .textSelection(.enabled)
     } header: {
-      Text(
-        "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal")
+      SectionTitle(
+        Text(
+          "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal"
+        ))
     }
   }
 }

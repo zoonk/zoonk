@@ -32,7 +32,7 @@ struct ChapterScreen: View {
             } label: {
               Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
           .lonePage()
         case .idle, .loading:
@@ -112,17 +112,17 @@ private struct ChapterContent: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         header
         lessonsSection
       }
     } secondary: {
-      List {
+      ZoonkList {
         practiceSection
         referenceSection
       }
     } single: {
-      List {
+      ZoonkList {
         header
         lessonsSection
         practiceSection
@@ -143,7 +143,7 @@ private struct ChapterContent: View {
       VStack(alignment: .leading, spacing: 6) {
         eyebrow
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         Text(chapter.chapter.title)
           .typeStyle(.section)
@@ -152,7 +152,7 @@ private struct ChapterContent: View {
         if !lessons.isEmpty {
           facts(done: done)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let next = lessons.first(where: { $0.state == .next }) {
@@ -189,8 +189,8 @@ private struct ChapterContent: View {
           }
         }
       } header: {
-        SectionHeaderRow(
-          title: Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
+        SectionTitle(
+          Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
         ) {
           Text(
             "\(done) of \(lessons.count)", tableName: "Plan",
@@ -228,7 +228,7 @@ private struct ChapterContent: View {
                 comment: "What the chapter's test-out does"
               )
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .disclosureChevron()
@@ -254,11 +254,12 @@ private struct ChapterContent: View {
           if let practiceNote {
             practiceNote
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } header: {
-        Text("Practice", tableName: "Plan", comment: "Section of a chapter's practice")
+        SectionTitle(
+          Text("Practice", tableName: "Plan", comment: "Section of a chapter's practice"))
       }
     }
   }
@@ -419,9 +420,10 @@ private struct ChapterReferenceSection: View {
         }
       }
     } header: {
-      Text(
-        "For reference", tableName: "Plan",
-        comment: "Section of a chapter with its mind map and summaries, to look back at")
+      SectionTitle(
+        Text(
+          "For reference", tableName: "Plan",
+          comment: "Section of a chapter with its mind map and summaries, to look back at"))
     }
   }
 
@@ -452,7 +454,7 @@ struct LessonSummaries: View {
         ForEach(summary.ideas, id: \.self) { idea in
           Text((try? AttributedString(markdown: idea)) ?? AttributedString(idea))
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }

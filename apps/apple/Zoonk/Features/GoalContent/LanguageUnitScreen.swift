@@ -139,7 +139,7 @@ struct LanguageUnitScreen: View {
             } label: {
               Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
           .lonePage()
         case .idle, .loading:
@@ -198,15 +198,15 @@ private struct LanguageUnitContent: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         unitAndLessons
       }
     } secondary: {
-      List {
+      ZoonkList {
         practice
       }
     } single: {
-      List {
+      ZoonkList {
         unitAndLessons
         practice
       }
@@ -227,7 +227,7 @@ private struct LanguageUnitContent: View {
         if let eyebrow {
           eyebrow
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         Text(unit.unit.title)
@@ -236,7 +236,7 @@ private struct LanguageUnitContent: View {
 
         if let description = unit.unit.description, !description.isEmpty {
           Text(description)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let next {
@@ -274,8 +274,8 @@ private struct LanguageUnitContent: View {
           }
         }
       } header: {
-        SectionHeaderRow(
-          title: Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
+        SectionTitle(
+          Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
         ) {
           Text(
             "\(done) of \(lessons.count)", tableName: "Plan",
@@ -299,11 +299,15 @@ private struct LanguageUnitContent: View {
         }
       } header: {
         if finished {
-          Text(
-            "I can already…", tableName: "Plan", comment: "Section of what a finished unit taught")
+          SectionTitle(
+            Text(
+              "I can already…", tableName: "Plan", comment: "Section of what a finished unit taught"
+            ))
         } else {
-          Text(
-            "By the end of this unit", tableName: "Plan", comment: "Section of what a unit teaches")
+          SectionTitle(
+            Text(
+              "By the end of this unit", tableName: "Plan",
+              comment: "Section of what a unit teaches"))
         }
       }
     }
@@ -324,24 +328,26 @@ private struct LanguageUnitContent: View {
         ForEach(unit.grammarTips, id: \.self) { tip in
           DisclosureGroup {
             Text((try? AttributedString(markdown: tip.text)) ?? AttributedString(tip.text))
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           } label: {
             Text(tip.title)
           }
         }
       } header: {
-        Text("Grammar tips", tableName: "Plan", comment: "Section of a unit's grammar tips")
+        SectionTitle(
+          Text("Grammar tips", tableName: "Plan", comment: "Section of a unit's grammar tips"))
       }
     }
 
     if let words = unit.words, words.count > 0 {
       Section {
         Text(words.sample.formatted(.list(type: .and)))
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       } header: {
-        Text(
-          "\(words.count) words", tableName: "Plan",
-          comment: "Section of a unit's words, with how many it teaches")
+        SectionTitle(
+          Text(
+            "\(words.count) words", tableName: "Plan",
+            comment: "Section of a unit's words, with how many it teaches"))
       }
     }
 
@@ -375,7 +381,7 @@ private struct LanguageUnitContent: View {
               comment: "What the unit's test-out does"
             )
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
           .frame(maxWidth: .infinity, alignment: .leading)
           .disclosureChevron()
@@ -389,7 +395,7 @@ private struct LanguageUnitContent: View {
           VStack(alignment: .leading, spacing: 8) {
             skillName(mistake.skill)
               .typeStyle(.meta.weight(.medium))
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
 
             ItemText(mistake.question)
               .typeStyle(.body.weight(.medium))
@@ -405,13 +411,14 @@ private struct LanguageUnitContent: View {
             if let explanation = mistake.explanation {
               ItemText(explanation)
                 .typeStyle(.note)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
           .padding(.vertical, 4)
         }
       } header: {
-        Text("Your mistakes", tableName: "Plan", comment: "Section of a unit's mistakes")
+        SectionTitle(
+          Text("Your mistakes", tableName: "Plan", comment: "Section of a unit's mistakes"))
       }
     }
 
@@ -461,7 +468,7 @@ private struct LanguageUnitContent: View {
           .foregroundStyle(.primary)
         detail
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .lineLimit(1)
       }
     } icon: {
@@ -524,7 +531,7 @@ struct PracticeCallSection: View {
             comment: "Explains paused practice calls"
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } else {
         Picker(selection: Binding(get: { picked }, set: { minutes = $0 })) {
@@ -574,7 +581,7 @@ struct PracticeCallSection: View {
                 comment: "The plan's call time today is used")
             }
           }
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         } else if outcome == .failed || outcome == .callInProgress
           || outcome == .previousConnectionClosing || outcome == .ended
         {
@@ -582,18 +589,22 @@ struct PracticeCallSection: View {
             "The call didn't start. Try again in a moment.", tableName: "Plan",
             comment: "Says the practice call didn't start"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
     } header: {
-      Text(
-        "Practice a conversation", tableName: "Plan", comment: "Section of the unit's practice call"
-      )
-    } footer: {
-      if let character = conversation.character {
+      SectionTitle(
         Text(
-          "with \(character.name)\u{00A0}· \(character.role)", tableName: "Plan",
-          comment: "Who the practice call is with: the character's name and role")
+          "Practice a conversation", tableName: "Plan",
+          comment: "Section of the unit's practice call"
+        ))
+    } footer: {
+      SectionFooter {
+        if let character = conversation.character {
+          Text(
+            "with \(character.name)\u{00A0}· \(character.role)", tableName: "Plan",
+            comment: "Who the practice call is with: the character's name and role")
+        }
       }
     }
   }

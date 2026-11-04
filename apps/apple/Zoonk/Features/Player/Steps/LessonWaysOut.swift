@@ -66,12 +66,12 @@ struct LessonExampleLine: View {
     if let line {
       HStack(alignment: .firstTextBaseline, spacing: 12) {
         Image(systemName: "person")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         LessonRichText(line)
       }
       .padding(.leading, 12)
       .overlay(alignment: .leading) {
-        Rectangle().fill(.separator).frame(width: 2)
+        Rectangle().fill(.border).frame(width: 2)
       }
       .accessibilityElement(children: .combine)
       .accessibilityLabel(
@@ -99,7 +99,7 @@ struct LessonScreenHelp: View {
         Image(systemName: "bubble.left.and.text.bubble.right")
       }
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       FlowLayout {
         ForEach((store.lesson?.tutorSuggestions ?? []).prefix(2), id: \.id) { suggestion in
@@ -150,7 +150,7 @@ struct LessonAskBuddyOffer: View {
           } label: {
             askLabel
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
 
           Button {
             isDismissed = true

@@ -70,7 +70,7 @@ private struct PlanSheets: ViewModifier {
             self.sheet = nil
           }
         )
-        .accessibilitySizeStyles()
+        .zoonkStyles()
       }
   }
 
@@ -98,7 +98,7 @@ private struct PlanPathSheet: View {
     rows.show = { outline = $0 }
 
     return NavigationStack {
-      List {
+      ZoonkList {
         PlanPathRows(context: rows, brief: true)
       }
       .navigationTitle(
@@ -122,7 +122,7 @@ private struct PlanPathSheet: View {
               outline = nil
             }
           )
-          .accessibilitySizeStyles()
+          .zoonkStyles()
       }
     }
   }

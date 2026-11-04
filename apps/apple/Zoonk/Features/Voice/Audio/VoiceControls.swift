@@ -20,7 +20,7 @@ struct RecordButton: View {
               countsDown: false
             )
             .monospacedDigit()
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .accessibilityHidden(true)
           }
         } icon: {
@@ -28,7 +28,7 @@ struct RecordButton: View {
         }
         .frame(maxWidth: .infinity)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.large)
       .overlay(alignment: .trailing) {
         LevelMeter(level: recorder.level)
@@ -56,7 +56,7 @@ struct LevelMeter: View {
 
   var body: some View {
     Image(systemName: "waveform", variableValue: reduceMotion ? 1 : level)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .accessibilityHidden(true)
   }
 }
@@ -69,7 +69,7 @@ struct HelpLimitNotice: View {
     VStack(alignment: .leading, spacing: 8) {
       Text(message)
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       if limit.needsAccount {
         Button {
@@ -79,10 +79,10 @@ struct HelpLimitNotice: View {
             "Create a free account", tableName: "Voice",
             comment: "Button to sign up after a guest used the free help")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       } else if limit.offersPlus {
         SeePlusButton()
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
       }
     }
   }
@@ -153,7 +153,7 @@ struct MicrophoneOffView<Actions: View>: View {
       } label: {
         Text("Open Settings", tableName: "Voice", comment: "Button that opens the app's settings")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
 
       actions
     }

@@ -61,7 +61,7 @@ struct FormulaModelCanvas: View {
               Label(event.label, systemImage: events[event.name] == 1 ? "checkmark" : "plus")
             }
             .toggleStyle(.button)
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
             .disabled(isChecked)
           }
         }
@@ -81,7 +81,7 @@ struct FormulaModelCanvas: View {
           comment: "An output at a marked value, like Savings at 10 years: $1,600"
         )
         .typeStyle(.data)
-        .foregroundStyle(.orange)
+        .foregroundStyle(.vizHighlight)
         .accessibilityHidden(true)
       }
 
@@ -106,10 +106,10 @@ struct FormulaModelCanvas: View {
     ) {
       ForEach(readouts) { item in
         VStack(alignment: .leading, spacing: 2) {
-          Text(verbatim: item.label).typeStyle(.note).foregroundStyle(.secondary)
-          ChartsReadout(text: item.value, style: item.isPrimary ? .mint : .primary)
+          Text(verbatim: item.label).typeStyle(.note).foregroundStyle(.mutedForeground)
+          ChartsReadout(text: item.value, style: item.isPrimary ? .vizAccent : .primary)
           if let note = item.note {
-            Text(verbatim: note).typeStyle(.data).foregroundStyle(.secondary)
+            Text(verbatim: note).typeStyle(.data).foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -131,7 +131,7 @@ struct FormulaModelCanvas: View {
             x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
             series: .value(verbatim: "curve", "before")
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
         }
       }
@@ -141,19 +141,19 @@ struct FormulaModelCanvas: View {
           x: .value(verbatim: "x", point.x), y: .value(verbatim: "y", point.y),
           series: .value(verbatim: "curve", "now")
         )
-        .foregroundStyle(.mint)
+        .foregroundStyle(.vizAccent)
         .lineStyle(StrokeStyle(lineWidth: 2.5))
       }
 
       if let compared = view.compared {
         PointMark(x: .value(verbatim: "x", compared.x), y: .value(verbatim: "y", compared.y))
-          .foregroundStyle(.orange)
+          .foregroundStyle(.vizHighlight)
           .symbolSize(60)
       }
 
       if now != nil {
         RuleMark(x: .value(verbatim: "x", view.x))
-          .foregroundStyle(.secondary.opacity(0.5))
+          .foregroundStyle(.mutedForeground.opacity(0.5))
       }
 
       if let change {
@@ -161,7 +161,7 @@ struct FormulaModelCanvas: View {
           x: .value(verbatim: "x", view.x), yStart: .value(verbatim: "y", change.before),
           yEnd: .value(verbatim: "y", change.now)
         )
-        .foregroundStyle(.orange)
+        .foregroundStyle(.vizHighlight)
         .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
         .annotation(
           position: view.x >= (view.axis.min + view.axis.max) / 2 ? .leading : .trailing,
@@ -170,7 +170,7 @@ struct FormulaModelCanvas: View {
           if let label = change.label {
             Text(verbatim: label)
               .typeStyle(.meta.weight(.semibold).monospaced())
-              .foregroundStyle(.orange)
+              .foregroundStyle(.vizHighlight)
           }
         }
       }
@@ -179,7 +179,7 @@ struct FormulaModelCanvas: View {
         PointMark(x: .value(verbatim: "x", view.x), y: .value(verbatim: "y", before))
           .symbol {
             Circle()
-              .strokeBorder(.secondary, lineWidth: 2)
+              .strokeBorder(.mutedForeground, lineWidth: 2)
               .background(.background, in: .circle)
               .frame(width: 9, height: 9)
           }
@@ -187,7 +187,7 @@ struct FormulaModelCanvas: View {
 
       if let now {
         PointMark(x: .value(verbatim: "x", view.x), y: .value(verbatim: "y", now))
-          .foregroundStyle(.mint)
+          .foregroundStyle(.vizAccent)
           .symbolSize(90)
       }
 
@@ -199,7 +199,7 @@ struct FormulaModelCanvas: View {
           .annotation(position: .top, spacing: 4) {
             Text(verbatim: expected.label)
               .typeStyle(.meta.weight(.semibold).monospaced())
-              .foregroundStyle(.success)
+              .foregroundStyle(.successText)
               .chartsLabelHalo()
           }
       }
@@ -208,7 +208,7 @@ struct FormulaModelCanvas: View {
     .chartYScale(domain: domain)
     .chartXAxis {
       AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine()
+        AxisGridLine().foregroundStyle(.vizGrid)
         AxisValueLabel {
           if let x = value.as(Double.self) {
             Text(verbatim: ActivityNumberFormat.format(x, unit: view.axis.unit))
@@ -218,7 +218,7 @@ struct FormulaModelCanvas: View {
     }
     .chartYAxis {
       AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine()
+        AxisGridLine().foregroundStyle(.vizGrid)
         AxisValueLabel {
           if let y = value.as(Double.self) {
             Text(verbatim: ActivityNumberFormat.format(y, unit: view.charted.unit, compact: true))
@@ -248,7 +248,7 @@ struct FormulaModelCanvas: View {
   private func legend(_ kind: FormulaModelView.BaselineKind) -> some View {
     HStack(spacing: 16) {
       HStack(spacing: 6) {
-        Capsule().fill(.mint).frame(width: 16, height: 3)
+        Capsule().fill(.vizAccent).frame(width: 16, height: 3)
         kind == .whatIf
           ? Text(
             "With the what-ifs", tableName: "ActivitiesCharts", comment: "Legend of the solid curve"
@@ -257,7 +257,7 @@ struct FormulaModelCanvas: View {
       }
       HStack(spacing: 6) {
         Path { $0.addLines([CGPoint(x: 0, y: 1), CGPoint(x: 16, y: 1)]) }
-          .stroke(.secondary, style: StrokeStyle(lineWidth: 2, dash: [4, 2]))
+          .stroke(.mutedForeground, style: StrokeStyle(lineWidth: 2, dash: [4, 2]))
           .frame(width: 16, height: 2)
         kind == .whatIf
           ? Text(
@@ -269,7 +269,7 @@ struct FormulaModelCanvas: View {
       }
     }
     .typeStyle(.meta)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
     .accessibilityHidden(true)
   }
 
@@ -304,12 +304,12 @@ struct FormulaModelCanvas: View {
       } minimumValueLabel: {
         Text(verbatim: ActivityNumberFormat.format(variable.min, unit: variable.unit))
           .typeStyle(.meta)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .accessibilityHidden(true)
       } maximumValueLabel: {
         Text(verbatim: ActivityNumberFormat.format(variable.max, unit: variable.unit))
           .typeStyle(.meta)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .accessibilityHidden(true)
       }
       .disabled(isChecked)

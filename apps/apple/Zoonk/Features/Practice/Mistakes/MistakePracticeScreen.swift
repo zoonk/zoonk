@@ -256,7 +256,7 @@ struct MistakePracticeScreen: View {
       } label: {
         Text("Back", tableName: "Practice", comment: "Leaves an empty practice.")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
     .lonePage()
   }

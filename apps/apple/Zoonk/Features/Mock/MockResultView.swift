@@ -47,7 +47,7 @@ private struct ReviewList<Content: View>: View {
     let top = shown.contains(reviewHeader) ? nil : review.first { shown.contains($0.id) }?.id
 
     ScrollViewReader { proxy in
-      List {
+      ZoonkList {
         content
       }
       .environment(\.reviewRows, rows)
@@ -84,7 +84,7 @@ struct MockResultView: View {
     let diagnosisAfterFold = isAtHinge && view.review.isEmpty
 
     PaneSplit {
-      List {
+      ZoonkList {
         scoreSections
         if !diagnosisAfterFold {
           diagnosisSections
@@ -99,10 +99,6 @@ struct MockResultView: View {
         planSections
         reviewSections
       }
-      // Without a plan change or a question to review it's empty, and an empty list draws the
-      // plain background.
-      .scrollContentBackground(.hidden)
-      .background(Color(.systemGroupedBackground))
       .safeAreaBar(edge: .bottom) { actionBar }
     } single: {
       ReviewList(review: view.review, place: $choices.reviewPlace) {
@@ -128,7 +124,7 @@ struct MockResultView: View {
     }
     .sheet(item: $choices.speakingTask) { task in
       ConversationScreen(conversationId: task.conversationId)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
   }
 
@@ -149,7 +145,7 @@ struct MockResultView: View {
         Section {
           MockTopicRows(topics: result.topics, opened: $choices.opened.contains("topics"))
         } header: {
-          Text("By topic", tableName: "Mock", comment: "Each topic's result")
+          SectionTitle(Text("By topic", tableName: "Mock", comment: "Each topic's result"))
         }
       }
 
@@ -269,12 +265,12 @@ private struct MockScoreSections: View {
           comment: "Over a mock's score"
         )
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         Text(score.value)
           .typeStyle(.momentReadout)
         Text(detail)
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         if let delta {
           Label {
             Text(delta.text)
@@ -283,7 +279,7 @@ private struct MockScoreSections: View {
               systemName: delta.up ? "chart.line.uptrend.xyaxis" : "chart.line.downtrend.xyaxis")
           }
           .typeStyle(.data)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .padding(.vertical, 4)
@@ -323,15 +319,17 @@ private struct MockScoreSections: View {
           Image(systemName: "minus")
         }
       } footer: {
-        if result.net == nil, result.blank > 0 {
-          if result.irt != nil {
-            Text(
-              "Blank answers count as wrong, as on exam day.", tableName: "Mock",
-              comment: "Blank answers in an estimated score")
-          } else {
-            Text(
-              "Blank answers count as wrong in this score.", tableName: "Mock",
-              comment: "Blank answers in right answers")
+        SectionFooter {
+          if result.net == nil, result.blank > 0 {
+            if result.irt != nil {
+              Text(
+                "Blank answers count as wrong, as on exam day.", tableName: "Mock",
+                comment: "Blank answers in an estimated score")
+            } else {
+              Text(
+                "Blank answers count as wrong in this score.", tableName: "Mock",
+                comment: "Blank answers in right answers")
+            }
           }
         }
       }
@@ -341,9 +339,11 @@ private struct MockScoreSections: View {
     if counts == nil, result.net == nil, result.blank > 0 {
       Section {
       } footer: {
-        Text(
-          "Blank answers count as wrong in this score.", tableName: "Mock",
-          comment: "Blank answers in right answers")
+        SectionFooter {
+          Text(
+            "Blank answers count as wrong in this score.", tableName: "Mock",
+            comment: "Blank answers in right answers")
+        }
       }
     }
 
@@ -359,9 +359,12 @@ private struct MockScoreSections: View {
         }
       } header: {
         if view.examDocument == .notice {
-          Text("To pass, the notice says", tableName: "Mock", comment: "Pass marks header")
+          SectionTitle(
+            Text("To pass, the notice says", tableName: "Mock", comment: "Pass marks header"))
         } else {
-          Text("To pass, the official guide says", tableName: "Mock", comment: "Pass marks header")
+          SectionTitle(
+            Text(
+              "To pass, the official guide says", tableName: "Mock", comment: "Pass marks header"))
         }
       }
     }
@@ -370,7 +373,7 @@ private struct MockScoreSections: View {
       Section {
         Text(note)
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -531,7 +534,7 @@ private struct MockAreaSection: View {
         }
       }
     } header: {
-      Text("By area", tableName: "Mock", comment: "Each area's result")
+      SectionTitle(Text("By area", tableName: "Mock", comment: "Each area's result"))
     }
   }
 
@@ -550,8 +553,7 @@ private struct MockAreaSection: View {
       }
       .monospacedDigit()
 
-      ProgressView(value: area.correct, total: Double(max(area.total, 1)))
-        .tint(.success)
+      Meter(value: area.correct, total: Double(max(area.total, 1)), fill: .success)
         .accessibilityHidden(true)
     }
   }
@@ -583,7 +585,7 @@ private struct MockTopicRows: View {
         }
       } label: {
         Text("\(rest.count) more topics", tableName: "Mock", comment: "More topics")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -660,7 +662,8 @@ private struct MockInsightsSection: View {
           }
         }
       } header: {
-        Text("What the mock exam showed", tableName: "Mock", comment: "The mock's insights")
+        SectionTitle(
+          Text("What the mock exam showed", tableName: "Mock", comment: "The mock's insights"))
       }
     }
   }
@@ -689,7 +692,7 @@ private struct MockInsightsSection: View {
     Label {
       VStack(alignment: .leading, spacing: 4) {
         title.typeStyle(.body.weight(.semibold))
-        content().foregroundStyle(.secondary)
+        content().foregroundStyle(.mutedForeground)
       }
     } icon: {
       Image(systemName: systemImage)
@@ -714,11 +717,12 @@ private struct MockEssaySections: View {
       }
     } header: {
       if total > 1 {
-        Text(
-          "Written part\u{00A0}· \(number) of \(total)", tableName: "Mock",
-          comment: "Essay of essays")
+        SectionTitle(
+          Text(
+            "Written part\u{00A0}· \(number) of \(total)", tableName: "Mock",
+            comment: "Essay of essays"))
       } else {
-        Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
+        SectionTitle(Text("Written part", tableName: "Mock", comment: "A full mock's essay part"))
       }
     }
 
@@ -733,7 +737,7 @@ private struct MockEssaySections: View {
     switch essay.status {
     case .blank:
       Text("You left it blank.", tableName: "Mock", comment: "A blank essay")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     case .graded:
       EmptyView()
     case .pending:
@@ -746,30 +750,30 @@ private struct MockEssaySections: View {
         } icon: {
           ProgressView()
         }
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       case .limitReached:
         Text(
           "You've used today's essay grades. Try again tomorrow.", tableName: "Mock",
           comment: "No essay grades left today"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       case .failed, .idle:
         if run.essayGrading == .failed {
           Text(
             "That didn't go through. Try again in a moment.", tableName: "Mock",
             comment: "Grading failed"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         } else {
           Text("It hasn't been graded yet.", tableName: "Mock", comment: "An ungraded essay")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
         Button {
           Task { await run.gradeEssays() }
         } label: {
           Text("Grade it", tableName: "Mock", comment: "Grades a mock's essays")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     }
   }
@@ -796,7 +800,7 @@ private struct MockSpeakingSection: View {
           }
         }
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
       .padding(.vertical, 4)
 
@@ -808,7 +812,7 @@ private struct MockSpeakingSection: View {
             } label: {
               Text("See feedback", tableName: "Mock", comment: "Opens a speaking task's result")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           } else {
             Text("Not done", tableName: "Mock", comment: "A speaking task left undone")
           }
@@ -817,7 +821,7 @@ private struct MockSpeakingSection: View {
         }
       }
     } header: {
-      Text(paper.paper)
+      SectionTitle(Text(paper.paper))
     }
   }
 
@@ -897,7 +901,7 @@ private struct MockPreparationSection: View {
     Section {
       MockPreparationRow(preparation: preparation)
     } header: {
-      Text("Your preparation", tableName: "Mock", comment: "How preparation moved")
+      SectionTitle(Text("Your preparation", tableName: "Mock", comment: "How preparation moved"))
     }
   }
 }
@@ -912,8 +916,7 @@ private struct MockPreparationRow: View {
           "\(preparation.before.formatted(.percent.precision(.fractionLength(0)))) → \(preparation.after.formatted(.percent.precision(.fractionLength(0))))"
       )
       .typeStyle(.readout)
-      ProgressView(value: preparation.after, total: 1)
-        .tint(.success)
+      Meter(value: preparation.after, total: 1, fill: .success)
       Text(
         preparation.after > preparation.before
           ? String(
@@ -924,7 +927,7 @@ private struct MockPreparationRow: View {
             comment: "Preparation went down")
       )
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 }
@@ -974,17 +977,17 @@ private struct MockPlanSection: View {
           )
           .typeStyle(.body.weight(.semibold))
           Text(skip.topics.prefix(3).formatted(.list(type: .and)))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           if skip.topics.count > 3 {
             Text("\(skip.topics.count - 3) more topics", tableName: "Mock", comment: "More topics")
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
           Label {
             Text("\(skip.lessons) lessons less", tableName: "Mock", comment: "Lessons off the plan")
           } icon: {
             Image(systemName: "minus.circle")
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         } else if let focus = adapt.focus {
           Text("Focus more on \(focus.area)?", tableName: "Mock", comment: "Offer to focus an area")
             .typeStyle(.body.weight(.semibold))
@@ -998,13 +1001,13 @@ private struct MockPlanSection: View {
           } icon: {
             Image(systemName: "plus.circle")
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
 
       if open.isEmpty {
         ForEach(statusLines, id: \.self) { line in
-          Text(line).foregroundStyle(.secondary)
+          Text(line).foregroundStyle(.mutedForeground)
         }
       } else {
         if answers.byOffer.values.contains(.failed) {
@@ -1012,7 +1015,7 @@ private struct MockPlanSection: View {
             "That didn't go through. Try again in a moment.", tableName: "Mock",
             comment: "Applying the plan change failed"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
 
         ButtonRow {
@@ -1021,7 +1024,7 @@ private struct MockPlanSection: View {
           } label: {
             Text("Apply", tableName: "Mock", comment: "Applies the mock's plan change")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .disabled(answers.applying)
 
           Button {
@@ -1034,7 +1037,7 @@ private struct MockPlanSection: View {
         }
       }
     } header: {
-      Text("Your plan", tableName: "Mock", comment: "The plan after the mock")
+      SectionTitle(Text("Your plan", tableName: "Mock", comment: "The plan after the mock"))
     }
   }
 
@@ -1115,12 +1118,12 @@ private struct MockReviewSection: View {
         DisclosureGroup(isExpanded: $opened.contains("review:\(item.id)")) {
           VStack(alignment: .leading, spacing: 8) {
             if let context = item.context {
-              ItemText(context).typeStyle(.reading).foregroundStyle(.secondary)
+              ItemText(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
             ItemText(item.question)
             if item.outcome == .blank {
               Text("You left it blank.", tableName: "Mock", comment: "A blank question")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             } else if let answer = item.learnerAnswer {
               Label {
                 Text(answer)
@@ -1140,10 +1143,10 @@ private struct MockReviewSection: View {
                 "Partly right: it earned part of its points.", tableName: "Mock",
                 comment: "A partly right answer"
               )
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
             }
             if let explanation = item.explanation {
-              ItemText(explanation).typeStyle(.reading).foregroundStyle(.secondary)
+              ItemText(explanation).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
             if let citation = item.citation {
               CitationNote(citation: citation)
@@ -1160,7 +1163,7 @@ private struct MockReviewSection: View {
               }
             }
             .typeStyle(.data)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             Text(ItemTextBlock.plain(item.question))
               .lineLimit(2)
           }
@@ -1169,8 +1172,10 @@ private struct MockReviewSection: View {
         .onScrollVisibilityChange(threshold: 0.5) { rows?.update(item.id, isShown: $0) }
       }
     } header: {
-      Text("Questions to review", tableName: "Mock", comment: "The mock's questions to review")
-        .onScrollVisibilityChange(threshold: 0.5) { rows?.update(reviewHeader, isShown: $0) }
+      SectionTitle(
+        Text("Questions to review", tableName: "Mock", comment: "The mock's questions to review")
+      )
+      .onScrollVisibilityChange(threshold: 0.5) { rows?.update(reviewHeader, isShown: $0) }
     }
   }
 }
@@ -1187,12 +1192,14 @@ private struct MockNotesSection: View {
     {
       Section {
       } footer: {
-        VStack(alignment: .leading, spacing: 4) {
-          MockSizeNote(
-            document: view.examDocument, minutes: view.minutes, questions: view.questions,
-            source: view.sizeSource)
-          if let short { Text(short) }
-          ForEach(lines, id: \.self) { Text($0) }
+        SectionFooter {
+          VStack(alignment: .leading, spacing: 4) {
+            MockSizeNote(
+              document: view.examDocument, minutes: view.minutes, questions: view.questions,
+              source: view.sizeSource)
+            if let short { Text(short) }
+            ForEach(lines, id: \.self) { Text($0) }
+          }
         }
       }
     }

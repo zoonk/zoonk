@@ -147,7 +147,7 @@ struct GoalErrorSection: View {
     } else {
       Section {
         Text(error.message)
-          .foregroundStyle(error.needsAccount ? Color.primary : Color.destructive)
+          .foregroundStyle(error.needsAccount ? Color.primary : Color.destructiveText)
 
         if error.needsAccount {
           CreateAccountButton()
@@ -173,7 +173,7 @@ struct CreateAccountButton: View {
     .buttonStyle(.mainAction)
     .controlSize(.large)
     .keepsOffFold()
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
     .listRowBackground(Color.clear)
   }
 }

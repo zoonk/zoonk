@@ -9,14 +9,14 @@ struct BuddyDayView: View {
   var showsTitle = false
 
   var body: some View {
-    List {
+    ZoonkList {
       if showsTitle {
         VStack(alignment: .leading, spacing: 2) {
           title
             .typeStyle(.body.weight(.semibold))
           subtitle
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
         .listRowBackground(Color.clear)
         .accessibilityAddTraits(.isHeader)
@@ -47,7 +47,9 @@ struct BuddyDayView: View {
           }
         } header: {
           if !earned {
-            Text("Today's missions", tableName: "Buddy", comment: "Section of the day's missions")
+            SectionTitle(
+              Text("Today's missions", tableName: "Buddy", comment: "Section of the day's missions")
+            )
           }
         }
       }
@@ -79,7 +81,7 @@ struct BuddyDayView: View {
           Text("Weekly summary", tableName: "Buddy", comment: "Opens the week's logbook")
         }
       } header: {
-        Text(name)
+        SectionTitle(Text(name))
       }
       .foregroundStyle(.primary)
     }
@@ -113,13 +115,12 @@ struct BuddyDayView: View {
                 .foregroundStyle(.energy)
             }
 
-            ProgressView(value: min(max(current / 100, 0), 1))
-              .tint(.energy)
+            Meter(value: min(max(current / 100, 0), 1), fill: .energy)
               .accessibilityHidden(true)
 
             status.energyLine(name: name)
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .foregroundStyle(.primary)
@@ -137,7 +138,7 @@ struct BuddyDayView: View {
             comment: "Energy before the first lesson"
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
     }

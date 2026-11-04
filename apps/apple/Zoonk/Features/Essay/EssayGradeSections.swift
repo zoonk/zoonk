@@ -15,7 +15,7 @@ struct EssayGradeSections: View {
               "Write the whole essay, then send it again.", tableName: "Essay",
               comment: "What to do with an essay too short to grade"
             )
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -29,7 +29,7 @@ struct EssayGradeSections: View {
             tableName: "Essay", comment: "Under an essay's estimated range"
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
         .accessibilityElement(children: .combine)
 
@@ -46,7 +46,8 @@ struct EssayGradeSections: View {
           }
         }
       } header: {
-        Text("Score by criterion", tableName: "Essay", comment: "Each criterion's score")
+        SectionTitle(
+          Text("Score by criterion", tableName: "Essay", comment: "Each criterion's score"))
       }
 
       Section {
@@ -65,11 +66,12 @@ struct EssayGradeSections: View {
               "Every criterion has full marks in this estimate.", tableName: "Essay",
               comment: "Full marks on every criterion"
             )
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
       } header: {
-        Text("Next step", tableName: "Essay", comment: "The one thing to work on next")
+        SectionTitle(
+          Text("Next step", tableName: "Essay", comment: "The one thing to work on next"))
       }
 
       if let elements = grade.enemInterventionElements {
@@ -79,7 +81,7 @@ struct EssayGradeSections: View {
               Text(element.name)
             } icon: {
               Image(systemName: element.present ? "checkmark.circle.fill" : "circle.dashed")
-                .foregroundStyle(element.present ? .success : .secondary)
+                .foregroundStyle(element.present ? .success : .mutedForeground)
             }
             .accessibilityValue(
               element.present
@@ -87,9 +89,10 @@ struct EssayGradeSections: View {
                 : Text("missing", tableName: "Essay", comment: "A proposal element is missing"))
           }
         } header: {
-          Text(
-            "The five elements of the proposal", tableName: "Essay",
-            comment: "ENEM's intervention proposal elements")
+          SectionTitle(
+            Text(
+              "The five elements of the proposal", tableName: "Essay",
+              comment: "ENEM's intervention proposal elements"))
         }
       }
     }
@@ -109,12 +112,12 @@ struct EssayCommentsSection: View {
               if let quote = criterion.quote {
                 Text(verbatim: "“\(quote)”")
                   .italic()
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
               }
               Text(criterion.comment)
               if let example = criterion.example {
                 Text("For example: \(example)", tableName: "Essay", comment: "A rewrite example")
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
               }
             }
             .typeStyle(.reading)
@@ -123,7 +126,7 @@ struct EssayCommentsSection: View {
           }
         }
       } header: {
-        Text("Comments", tableName: "Essay", comment: "Comments on each criterion")
+        SectionTitle(Text("Comments", tableName: "Essay", comment: "Comments on each criterion"))
       }
     }
   }

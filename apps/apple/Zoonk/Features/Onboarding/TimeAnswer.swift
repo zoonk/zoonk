@@ -33,12 +33,12 @@ struct TimeAnswer: View {
     VStack(alignment: .leading, spacing: 8) {
       if let noteWords {
         Text(noteWords)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if let lineWords {
         Text(lineWords)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if failed {

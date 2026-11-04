@@ -24,7 +24,7 @@ struct ProfileEditorView: View {
   }
 
   var body: some View {
-    Form {
+    ZoonkList {
       if isRequiredSetup {
         StepHeader(
           title: setupTitle,
@@ -45,18 +45,20 @@ struct ProfileEditorView: View {
         }
         .textContentType(.name)
       } header: {
-        Text("Name", tableName: "Account", comment: "Profile name field label")
+        SectionTitle(Text("Name", tableName: "Account", comment: "Profile name field label"))
       } footer: {
-        if isNameTooLong {
-          Text(
-            "Use 150 characters or fewer.", tableName: "Account",
-            comment: "Shown under the profile name field when the typed name is too long"
-          )
-          .foregroundStyle(.destructive)
-        } else if !isRequiredSetup {
-          Text(
-            "How Zoonk and your buddy call you", tableName: "Account",
-            comment: "What the profile name is for")
+        SectionFooter {
+          if isNameTooLong {
+            Text(
+              "Use 150 characters or fewer.", tableName: "Account",
+              comment: "Shown under the profile name field when the typed name is too long"
+            )
+            .foregroundStyle(.destructiveText)
+          } else if !isRequiredSetup {
+            Text(
+              "How Zoonk and your buddy call you", tableName: "Account",
+              comment: "What the profile name is for")
+          }
         }
       }
 
@@ -64,7 +66,7 @@ struct ProfileEditorView: View {
         Section {
           HStack(spacing: 2) {
             Text(verbatim: "@")
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
               .accessibilityHidden(true)
 
             TextField(
@@ -81,9 +83,12 @@ struct ProfileEditorView: View {
             .textContentType(.username)
           }
         } header: {
-          Text("Username", tableName: "Account", comment: "Profile username field label")
+          SectionTitle(
+            Text("Username", tableName: "Account", comment: "Profile username field label"))
         } footer: {
-          usernameHint
+          SectionFooter {
+            usernameHint
+          }
         }
       } else {
         Section {
@@ -110,18 +115,20 @@ struct ProfileEditorView: View {
       }
 
       if !isRequiredSetup {
-        Section(
-          String(
-            localized: "Account email",
-            table: "Account",
-            comment: "Section title above the read-only account email")
-        ) {
+        Section {
           LabeledContent {
             Text(account.user.email)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           } label: {
             Text("Email", tableName: "Account", comment: "Read-only profile email label")
           }
+        } header: {
+          SectionTitle(
+            Text(
+              String(
+                localized: "Account email",
+                table: "Account",
+                comment: "Section title above the read-only account email")))
         }
       }
 
@@ -149,7 +156,9 @@ struct ProfileEditorView: View {
             await settings.exportAccountData()
           }
         } header: {
-          Text("Your data", tableName: "Account", comment: "Profile section with the data download")
+          SectionTitle(
+            Text(
+              "Your data", tableName: "Account", comment: "Profile section with the data download"))
         }
 
         Section {
@@ -158,12 +167,16 @@ struct ProfileEditorView: View {
               "Delete my account", tableName: "Account",
               comment: "Opens permanent account deletion")
           }
+          .foregroundStyle(.destructiveText)
         } header: {
-          Text("Delete account", tableName: "Account", comment: "Profile section about deletion")
+          SectionTitle(
+            Text("Delete account", tableName: "Account", comment: "Profile section about deletion"))
         } footer: {
-          Text(
-            "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
-            tableName: "Account", comment: "What deleting the account does")
+          SectionFooter {
+            Text(
+              "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
+              tableName: "Account", comment: "What deleting the account does")
+          }
         }
       }
     }
@@ -247,18 +260,18 @@ struct ProfileEditorView: View {
         "\(normalizedUsername) is available", tableName: "Account",
         comment: "The typed username is free; the argument is the username"
       )
-      .foregroundStyle(.success)
+      .foregroundStyle(.successText)
     case .taken:
       Text(
         "\(normalizedUsername) is already taken", tableName: "Account",
         comment: "Another account has the typed username; the argument is the username"
       )
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
     case .idle:
       usernameRules
     case .invalid:
       usernameRules
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
     }
   }
 

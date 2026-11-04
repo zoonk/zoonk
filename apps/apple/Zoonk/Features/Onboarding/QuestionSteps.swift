@@ -74,7 +74,7 @@ struct QuestionForm<Content: View>: View {
   @ViewBuilder let content: Content
 
   var body: some View {
-    Form {
+    ZoonkList {
       content
 
       if failed {
@@ -83,7 +83,7 @@ struct QuestionForm<Content: View>: View {
             ?? Text(
               "That didn't save. Try again.", tableName: "Onboarding",
               comment: "A change couldn't be saved"))
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
         }
       }
     }
@@ -107,7 +107,7 @@ struct StepHeader: View {
         if let subject {
           Text(subject)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         title
@@ -116,7 +116,7 @@ struct StepHeader: View {
 
         if let description {
           description
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .listRowBackground(Color.clear)
@@ -159,19 +159,21 @@ struct StepButtons: View {
                 "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question"))
               .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .disabled(!canSkip)
         }
       }
       .controlSize(.large)
       .keepsOffFold()
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
     } footer: {
-      if let note {
-        note
-          .frame(maxWidth: .infinity)
-          .multilineTextAlignment(.center)
+      SectionFooter {
+        if let note {
+          note
+            .frame(maxWidth: .infinity)
+            .multilineTextAlignment(.center)
+        }
       }
     }
   }
@@ -203,7 +205,7 @@ struct ChoiceRows<Value: Hashable>: View {
               if let detail = choice.detail {
                 detail
                   .typeStyle(.note)
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
               }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -219,9 +221,13 @@ struct ChoiceRows<Value: Hashable>: View {
         .accessibilityAddTraits(picked == choice.value ? .isSelected : [])
       }
     } header: {
-      header
+      if let header {
+        SectionTitle(header)
+      }
     } footer: {
-      footer
+      SectionFooter {
+        footer
+      }
     }
   }
 }
@@ -360,7 +366,7 @@ struct LabeledField: View {
     VStack(alignment: .leading, spacing: 4) {
       label
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
       // Without a prompt, the field would repeat its label, already shown above, as its placeholder.
       MultilineTextField(text: $text, prompt: prompt ?? Text(verbatim: ""), label: label)
@@ -863,7 +869,9 @@ private struct ExamChoiceQuestion: View {
               .typeWeight(.regular)
           }
         } footer: {
-          leftOut
+          SectionFooter {
+            leftOut
+          }
         }
       } else {
         ChoiceRows(

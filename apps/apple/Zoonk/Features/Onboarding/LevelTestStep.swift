@@ -90,7 +90,7 @@ struct LevelTestStep: View {
           "That didn't work. Try again in a moment.", tableName: "Onboarding",
           comment: "Starting or skipping the level test failed"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
 
@@ -101,15 +101,17 @@ struct LevelTestStep: View {
         )
         .frame(maxWidth: .infinity)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.large)
       .disabled(isSaving)
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
     } footer: {
-      Text(
-        "Your plan starts from the level you gave, and your first sessions fine-tune it.",
-        tableName: "Onboarding", comment: "What skipping the level test does")
+      SectionFooter {
+        Text(
+          "Your plan starts from the level you gave, and your first sessions fine-tune it.",
+          tableName: "Onboarding", comment: "What skipping the level test does")
+      }
     }
   }
 
@@ -351,7 +353,7 @@ private struct LevelTestIntro: View {
   @Environment(\.openURL) private var openURL
 
   var body: some View {
-    Form {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Let's see your level in \(Locale.current.languageName(targetLanguage))",
@@ -379,7 +381,7 @@ private struct LevelTestIntro: View {
             "That didn't work. Try again in a moment.", tableName: "Onboarding",
             comment: "Starting or skipping the level test failed"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
 
@@ -511,7 +513,7 @@ private struct ListeningMessage: View {
           .accessibilityHidden(true)
       }
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -525,7 +527,7 @@ private struct ListeningMessage: View {
         comment: "While a level test listening question's recording is still being made")
     }
     .typeStyle(.note)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
     .multilineTextAlignment(.center)
     .frame(maxWidth: .infinity)
     .accessibilityElement(children: .combine)
@@ -543,7 +545,7 @@ private struct ListeningMessage: View {
           comment: "A level test listening question's message failed to play"
         )
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       if canRetry {
@@ -556,7 +558,7 @@ private struct ListeningMessage: View {
             Image(systemName: "arrow.counterclockwise")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.small)
       }
     }
@@ -583,8 +585,7 @@ private struct LevelTestSpeaking: View {
 
   var body: some View {
     PracticeTaskLayout {
-      ProgressView(value: progress)
-        .tint(.success)
+      Meter(value: progress, fill: .success)
         .accessibilityHidden(true)
 
       Text(
@@ -597,7 +598,7 @@ private struct LevelTestSpeaking: View {
         Text(sentence.sentence)
           .typeStyle(.section)
         Text(sentence.translation)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     } response: {
       VoiceAnswerRecorder(
@@ -624,7 +625,7 @@ private struct LevelTestDone: View {
   let onContinue: () -> Void
 
   var body: some View {
-    Form {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Your level today", tableName: "Onboarding", comment: "Title after the level test"),
@@ -641,7 +642,7 @@ private struct LevelTestDone: View {
             } label: {
               VStack(alignment: .leading, spacing: 6) {
                 skillName(level.skill)
-                ProgressView(value: level.score, total: 5)
+                Meter(value: level.score, total: 5)
                   .accessibilityHidden(true)
               }
             }
@@ -655,7 +656,7 @@ private struct LevelTestDone: View {
             "That didn't work. Try again in a moment.", tableName: "Onboarding",
             comment: "Starting or skipping the level test failed"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
 

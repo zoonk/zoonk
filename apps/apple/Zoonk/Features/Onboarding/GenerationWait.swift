@@ -237,7 +237,7 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
     let runID = followedID ?? generationID
     let deckID = self.deckID
 
-    List {
+    ZoonkList {
       StepHeader(title: Text(title), description: Text(shownDescription))
 
       leading()
@@ -261,7 +261,7 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
             }
           } label: {
             Text(phase.label)
-              .foregroundStyle(phase.state == .waiting ? .secondary : .primary)
+              .foregroundStyle(phase.state == .waiting ? .mutedForeground : .primary)
 
             if phase.state == .working, failure == nil, let skillName = phase.skillName {
               Text(skillName)
@@ -502,7 +502,7 @@ struct GenerationFailureSection: View {
         Image(
           systemName: failure == .connection ? "wifi.exclamationmark" : "exclamationmark.triangle"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       if let act {

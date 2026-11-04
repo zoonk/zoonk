@@ -78,10 +78,12 @@ struct PlanSuggestionSection: View {
         slot(item)
           .padding(.vertical, 4)
       } footer: {
-        if items.count > 1 {
-          Text(
-            "1 of \(items.count)", tableName: "Plan",
-            comment: "The suggestion shown of the Plan's suggestions")
+        SectionFooter {
+          if items.count > 1 {
+            Text(
+              "1 of \(items.count)", tableName: "Plan",
+              comment: "The suggestion shown of the Plan's suggestions")
+          }
         }
       }
       .disabled(state.isWorking)
@@ -105,7 +107,7 @@ struct PlanSuggestionSection: View {
         options: {
           Text.examPickLimit(choice.take)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           ExamOptionToggles(
             options: choice.options, take: choice.take,
@@ -259,7 +261,7 @@ struct PlanSuggestionSection: View {
       if let description {
         description
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       PlanEffectDiff(effect: effect, today: context.plan.today)
@@ -269,7 +271,7 @@ struct PlanSuggestionSection: View {
       ButtonRow {
         actions()
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
   }
 
@@ -376,7 +378,7 @@ private struct PlanPausedSlot: View {
         }
       }
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       Button {
         Task {
@@ -387,7 +389,7 @@ private struct PlanPausedSlot: View {
       } label: {
         Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .disabled(isResuming)
     }
     .loads(preview, refreshable: false)
@@ -418,7 +420,7 @@ private struct PlanFinishedSlot: View {
           "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"
         )
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         if let level = value.nextLevel {
           Button {
@@ -428,7 +430,7 @@ private struct PlanFinishedSlot: View {
               "Continue at \(planLevelName(level.level))", tableName: "Plan",
               comment: "Starts the next level of the plan's course")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .disabled(isStarting)
         }
 
@@ -449,7 +451,7 @@ private struct PlanFinishedSlot: View {
           comment: "Says the next level didn't start"
         )
         .typeStyle(.body)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
     .loads(next, refreshable: false)

@@ -117,7 +117,7 @@ private struct BeforeAfterCanvas: View {
           )
           .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.large)
       }
     }
@@ -131,7 +131,7 @@ private struct BeforeAfterCanvas: View {
     VStack(alignment: .leading, spacing: 12) {
       Text(state.label)
         .typeStyle(.note.weight(.semibold))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityAddTraits(.isHeader)
 
       ForEach(state.facts) { fact in
@@ -140,12 +140,12 @@ private struct BeforeAfterCanvas: View {
 
       LessonRichText(state.description)
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
     .background(
-      isAfter ? Color.mint.opacity(0.15) : Color(.secondarySystemBackground),
+      isAfter ? Color.vizAccent.opacity(0.15) : Color.card,
       in: .rect(cornerRadius: 16)
     )
     .accessibilityElement(children: .contain)
@@ -172,14 +172,13 @@ private struct BeforeAfterCanvas: View {
       }
       .typeStyle(.note)
 
-      ProgressView(value: share)
-        .tint(isAfter ? Color.mint : Color.secondary)
+      Meter(value: share, fill: isAfter ? Color.vizAccent : Color.mutedForeground)
         .accessibilityHidden(true)
 
       if let change {
         changeText(change)
           .typeStyle(.meta.weight(.semibold).monospaced())
-          .foregroundStyle(fact.id == highlightId ? Color.success : .primary)
+          .foregroundStyle(fact.id == highlightId ? Color.successText : .primary)
       }
     }
     .accessibilityElement(children: .combine)

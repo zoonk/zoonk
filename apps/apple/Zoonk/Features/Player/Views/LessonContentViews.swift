@@ -94,7 +94,7 @@ private struct DimsOnceChecked: ViewModifier {
   @Environment(\.isLessonStepChecked) private var isChecked
 
   func body(content: Content) -> some View {
-    content.foregroundStyle(isChecked ? HierarchicalShapeStyle.secondary : .primary)
+    content.foregroundStyle(isChecked ? Color.mutedForeground : .primary)
   }
 }
 
@@ -139,10 +139,10 @@ struct LessonPictureView: View {
         Image(systemName: "photo")
       }
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding()
-      .background(.fill.tertiary, in: .rect(cornerRadius: 16))
+      .background(.muted, in: .rect(cornerRadius: 16))
     }
   }
 
@@ -200,7 +200,7 @@ struct LessonPicturePlaceholder: View {
       ScrollView { description }
     }
     .typeStyle(.note)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
     .multilineTextAlignment(.center)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background { MediaPendingFill(pulses: isDrawing) }
@@ -337,7 +337,7 @@ private struct LessonChartView: View {
       if let source = chart.source {
         Text(source)
           .typeStyle(.meta)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -347,8 +347,8 @@ extension View {
   func lessonValueAxis() -> some View {
     chartYAxis {
       AxisMarks { value in
-        AxisGridLine()
-        AxisTick()
+        AxisGridLine().foregroundStyle(.vizGrid)
+        AxisTick().foregroundStyle(.vizGrid)
         AxisValueLabel {
           if let y = value.as(Double.self) {
             Text(verbatim: ActivityNumberFormat.format(y, compact: true))
@@ -371,7 +371,7 @@ private struct LessonTimelineView: View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
           Text(event.date)
             .typeStyle(.body.weight(.semibold).monospaced())
-            .foregroundStyle(.success)
+            .foregroundStyle(.successText)
 
           VStack(alignment: .leading, spacing: 2) {
             Text(event.label)
@@ -379,7 +379,7 @@ private struct LessonTimelineView: View {
             if let detail = event.detail {
               Text(detail)
                 .typeStyle(.note)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
         }
@@ -399,7 +399,7 @@ struct LessonCitationView: View {
 
       Label(source, systemImage: "doc.text")
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityLabel(
           Text(
             "From your material: \(source)", tableName: "Player",
@@ -415,7 +415,7 @@ struct LessonCitationView: View {
         Image(systemName: "doc.questionmark")
       }
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 }

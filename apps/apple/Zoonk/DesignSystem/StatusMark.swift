@@ -34,12 +34,12 @@ struct StatusMark: View {
       Image(systemName: "forward.fill")
         .imageScale(.small)
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     case .todo:
       Image(systemName: "circle.fill")
         .imageScale(.small)
         .typeStyle(.small)
-        .foregroundStyle(.quaternary)
+        .foregroundStyle(Color(.foreground).opacity(0.2))
     }
   }
 }

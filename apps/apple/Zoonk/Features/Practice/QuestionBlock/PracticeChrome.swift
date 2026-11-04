@@ -33,9 +33,9 @@ struct PracticeSegmentsBar: View {
     switch segment {
     case .right: Capsule().fill(.success)
     case .wrong: Capsule().fill(.destructive)
-    case .read: Capsule().fill(Color(.systemGray3))
+    case .read: Capsule().fill(Color(.foreground).opacity(0.25))
     case .current: Capsule().strokeBorder(.success, lineWidth: 1)
-    case .ahead: Capsule().fill(Color(.systemFill))
+    case .ahead: Capsule().fill(Color.surface3)
     }
   }
 }
@@ -75,7 +75,7 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
     } actions: {
       actionsBar
     }
-    .background(Color(.systemGroupedBackground))
+    .background(Color(.systemBackground))
   }
 
   @ViewBuilder private var segmentsBar: some View {
@@ -287,14 +287,14 @@ struct PracticeSaveError: View {
         comment: "Shown over a run's actions when an answer or the finish didn't reach the server."
       )
       .typeStyle(.body)
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
 
       Spacer()
 
       Button(action: retry) {
         Text("Try again", tableName: "Practice", comment: "Sends an answer that didn't save again.")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
   }
 }
@@ -326,7 +326,7 @@ struct PracticeResultTitle: View {
     VStack(alignment: .leading, spacing: 6) {
       Text(title).typeStyle(.heroTitle)
       if let detail {
-        Text(detail).foregroundStyle(.secondary)
+        Text(detail).foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -357,12 +357,12 @@ struct PracticeResultNumbers: View {
             value: Text(brainPower, format: .number.sign(strategy: .always())),
             label: Text(
               "Brain Power", tableName: "Practice", comment: "Readout label: Brain Power earned."),
-            tint: .brain)
+            tint: .brainText)
         }
       }
 
       ForEach(facts, id: \.self) { fact in
-        Text(fact).typeStyle(.note).foregroundStyle(.secondary)
+        Text(fact).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       if let day, !day.isEmpty {
@@ -381,7 +381,7 @@ private struct Readout: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 2) {
       value.typeStyle(.readout).foregroundStyle(tint)
-      label.typeStyle(.note).foregroundStyle(.secondary)
+      label.typeStyle(.note).foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
   }
@@ -421,7 +421,7 @@ struct PracticeLoadFailureView: View {
       Button(action: retry) {
         Text("Try again", tableName: "Practice", comment: "Loads a practice screen again.")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
     .lonePage()
   }

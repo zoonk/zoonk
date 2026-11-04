@@ -44,7 +44,7 @@ struct LanguageLevelSheet: View {
   let standing: LanguageStanding
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         LabeledContent {
           Text(standing.levelText)
@@ -102,7 +102,7 @@ struct PlanAlphabetRow: View {
             }
           }
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } icon: {
         Image(systemName: "character.book.closed")
@@ -124,7 +124,7 @@ struct PlanAlphabetRow: View {
           "That didn't work. Try again in a moment.", tableName: "Plan",
           comment: "Says skipping the alphabet failed"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
   }

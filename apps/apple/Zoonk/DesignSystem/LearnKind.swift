@@ -15,17 +15,20 @@ enum LearnKind {
   var color: Color {
     switch self {
     case .lesson:
-      .secondary
+      .mutedForeground
     case .mistakes, .practice, .review:
-      .orange
-    // No system color is an orange redder than review's, and system red sits beside wrong's pink.
+      Color(.kindReview)
     case .challenge, .mock:
       Color(.kindMock)
     case .conversation, .essay:
-      .mint
+      Color(.kindConversation)
     case .mindMap:
-      .purple
+      Color(.kindMindMap)
     }
+  }
+
+  var dotColor: Color {
+    self == .lesson ? .faint : color
   }
 
   var systemImage: String {
@@ -60,7 +63,7 @@ struct KindDot: View {
     Image(systemName: "circle.fill")
       .imageScale(.small)
       .typeStyle(.small)
-      .foregroundStyle(kind == .lesson ? Color(.tertiaryLabel) : kind.color)
+      .foregroundStyle(kind.dotColor)
       .accessibilityHidden(true)
   }
 }

@@ -77,7 +77,7 @@ struct LessonCompletionView: View {
         tableName: "Player",
         comment: "Saving a finished lesson failed"
       )
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     case .saved:
       if let summary = completion.summary {
         readouts(summary)
@@ -101,7 +101,7 @@ struct LessonCompletionView: View {
         "Finish to see how it went.", tableName: "Player",
         comment: "Under the title of a lesson opened again with every step answered"
       )
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -172,14 +172,14 @@ struct LessonCompletionView: View {
           if summary.brainPower > 0 {
             EarnedNumber(value: summary.brainPower)
               .typeStyle(.heroTitle)
-              .foregroundStyle(.brain)
+              .foregroundStyle(.brainText)
           }
         }
         GridRow {
           if answered > 0 {
             Text("Right", tableName: "Player", comment: "Label under the lesson's score")
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
           if summary.brainPower > 0 {
             Text(
@@ -187,7 +187,7 @@ struct LessonCompletionView: View {
               comment: "Label under the Brain Power a lesson earned"
             )
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -200,7 +200,7 @@ struct LessonCompletionView: View {
           comment: "When the lesson's idea comes back for review"
         )
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -239,7 +239,7 @@ struct LessonUnavailableView: View {
       Button(action: retry) {
         Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     case .plusRequired, .limitReached(tier: .free, _):
       SeePlusButton()
         .buttonStyle(.mainAction)
@@ -260,7 +260,7 @@ struct LessonUnavailableView: View {
     } label: {
       Text("Back", tableName: "Player", comment: "Leaves a lesson that can't open")
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
   }
 
   private var title: LocalizedStringResource {
@@ -368,7 +368,7 @@ private struct LessonGuestEndingView: View {
                     tableName: "Player", comment: "A course's size at the end of a guest's lesson"
                   )
                   .typeStyle(.note)
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
                 }
               } icon: {
                 Image(systemName: "book")
@@ -385,7 +385,7 @@ private struct LessonGuestEndingView: View {
                   comment: "The lesson's place in its chapter"
                 )
                 .typeStyle(.data)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
               }
 
               MeterParts(
@@ -410,7 +410,7 @@ private struct LessonGuestEndingView: View {
         Image(systemName: "calendar.badge.clock")
       }
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       VStack(spacing: 8) {
         Button {
@@ -435,7 +435,7 @@ private struct LessonGuestEndingView: View {
             comment: "A guest creates an account at the end of a lesson"
           ).frame(maxWidth: .infinity)
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.large)
       }
     }
@@ -449,8 +449,10 @@ struct LessonSummarySheet: View {
 
   var body: some View {
     NavigationStack {
-      List(Array(ideas.enumerated()), id: \.offset) { _, idea in
-        LessonRichText(idea)
+      ZoonkList {
+        ForEach(Array(ideas.enumerated()), id: \.offset) { _, idea in
+          LessonRichText(idea)
+        }
       }
       .navigationTitle(
         Text("Lesson summary", tableName: "Player", comment: "Opens the lesson's summary card")
@@ -500,7 +502,7 @@ struct LessonHelpLimitNote: View {
           "You used today's AI help. Plus gives you more.", tableName: "Player",
           comment: "A free learner used the day's AI help")
         SeePlusButton()
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
       default:
         Text(
           "You've used today's AI help. It's back tomorrow.", tableName: "Player",
@@ -508,7 +510,7 @@ struct LessonHelpLimitNote: View {
       }
     }
     .typeStyle(.note)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -526,7 +528,7 @@ struct LessonWaitingView: View {
 
   var body: some View {
     if let warmUpID {
-      List {
+      ZoonkList {
         Section {
           unavailable
         }
@@ -664,7 +666,7 @@ struct LessonGuestGateView: View {
             "We couldn't open this lesson", tableName: "Player", comment: "A lesson failed to open"
           )
           .typeStyle(.note)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       } else {
         Button {

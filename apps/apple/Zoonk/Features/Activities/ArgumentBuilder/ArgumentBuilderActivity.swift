@@ -80,13 +80,13 @@ private struct ArgumentBuilderCanvas: View {
         VStack(alignment: .leading, spacing: 2) {
           Text("Claim", tableName: "Activities", comment: "The claim an argument is built for")
             .typeStyle(.meta.weight(.semibold))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           LessonRichText(fields.claim)
             .typeWeight(.medium)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color.mint.opacity(0.15), in: .rect(cornerRadius: 12))
+        .background(Color.vizAccent.opacity(0.15), in: .rect(cornerRadius: 12))
         .accessibilityElement(children: .combine)
 
         slot(
@@ -160,7 +160,7 @@ private struct ArgumentBuilderCanvas: View {
       HStack {
         label
           .typeStyle(.meta.weight(.semibold))
-          .foregroundStyle(isOpen || filled != nil ? .primary : .secondary)
+          .foregroundStyle(isOpen || filled != nil ? Color(.foreground) : .mutedForeground)
 
         Spacer()
 
@@ -179,7 +179,7 @@ private struct ArgumentBuilderCanvas: View {
             Image(systemName: verdict.symbol ?? "")
           }
           .typeStyle(.meta.weight(.semibold))
-          .foregroundStyle(isStrong == true ? Color.success : Color.destructive)
+          .foregroundStyle(isStrong == true ? Color.successText : Color.destructiveText)
         } else if filled != nil {
           Button {
             take(part)
@@ -200,7 +200,7 @@ private struct ArgumentBuilderCanvas: View {
             .labelStyle(.iconOnly)
           }
           .buttonStyle(.borderless)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -209,12 +209,12 @@ private struct ArgumentBuilderCanvas: View {
         if isChecked, let why {
           LessonRichText(why)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       } else {
         hint
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -242,7 +242,7 @@ private struct ArgumentBuilderCanvas: View {
     switch verdict {
     case .right: Color.success.opacity(0.1)
     case .wrong: Color.destructive.opacity(0.1)
-    default: isFilled ? Color(.systemBackground) : .clear
+    default: isFilled ? Color(.background) : .clear
     }
   }
 
@@ -250,7 +250,7 @@ private struct ArgumentBuilderCanvas: View {
     switch verdict {
     case .right: .success
     case .wrong: .destructive
-    default: isTargeted ? .primary : isOpen ? .primary.opacity(0.5) : Color(.separator)
+    default: isTargeted ? .primary : isOpen ? .primary.opacity(0.5) : Color.border
     }
   }
 
@@ -340,15 +340,15 @@ private struct ArgumentBuilderCanvas: View {
     VStack(alignment: .leading, spacing: 6) {
       title
         .typeStyle(.meta.weight(.semibold))
-        .foregroundStyle(Color.success)
+        .foregroundStyle(Color.successText)
       content
       LessonRichText(why)
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(12)
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+    .panel(cornerRadius: 12)
     .accessibilityElement(children: .combine)
   }
 }
@@ -362,7 +362,7 @@ private struct QuoteText: View {
       Text(LessonRichText.typeset("“\(text)”"))
       Text(citation)
         .typeStyle(.meta)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 }

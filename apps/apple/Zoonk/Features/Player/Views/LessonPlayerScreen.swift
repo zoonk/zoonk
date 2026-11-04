@@ -116,11 +116,11 @@ private struct LessonPlayerContent: View {
     // Beside the lesson on a spread (the stage shows it); a sheet where the lesson is one column.
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     .sheet(isPresented: $isShowingSummary) {
       LessonSummarySheet(ideas: store.lesson?.summaryIdeas ?? [])
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.
     .task(id: session.state == .restoring ? nil : session.authenticatedSession?.bearerToken ?? "") {
@@ -380,8 +380,7 @@ private struct LessonPlayerContent: View {
   }
 
   private func progressBar(_ value: Double) -> some View {
-    ProgressView(value: value)
-      .tint(.success)
+    Meter(value: value, height: 4)
       .accessibilityLabel(
         Text("Lesson progress", tableName: "Player", comment: "Progress bar of the lesson"))
   }

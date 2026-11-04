@@ -110,29 +110,28 @@ extension ProgressBelt {
     }
   }
 
-  /// Artwork, at full strength in every mode.
   var color: Color {
     switch self {
     case .white:
-      .white
+      Color(.beltWhite)
     case .yellow:
-      .yellow
+      Color(.beltYellow)
     case .orange:
-      .orange
+      Color(.beltOrange)
     case .green:
-      .green
+      Color(.beltGreen)
     case .blue:
-      .blue
+      Color(.beltBlue)
     case .purple:
-      .purple
+      Color(.beltPurple)
     case .brown:
-      .brown
+      Color(.beltBrown)
     case .red:
-      .red
+      Color(.beltRed)
     case .gray:
-      .gray
+      Color(.beltGray)
     case .black:
-      .black
+      Color(.beltBlack)
     }
   }
 }
@@ -232,7 +231,7 @@ func bigQuantity(_ text: String) -> Text {
   while let match = remainder.firstMatch(of: number) {
     var unit = AttributedString(remainder[remainder.startIndex..<match.range.lowerBound])
     unit.font = .subheadline.weight(.medium)
-    unit.foregroundColor = .secondary
+    unit.foregroundColor = .mutedForeground
     attributed += unit
     attributed += AttributedString(remainder[match.range])
     remainder = remainder[match.range.upperBound...]
@@ -240,7 +239,7 @@ func bigQuantity(_ text: String) -> Text {
 
   var tail = AttributedString(remainder)
   tail.font = .subheadline.weight(.medium)
-  tail.foregroundColor = .secondary
+  tail.foregroundColor = .mutedForeground
   attributed += tail
 
   return Text(attributed)

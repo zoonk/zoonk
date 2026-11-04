@@ -157,7 +157,7 @@ struct QuestionBlockView: View {
           "Finish to see how it went.", tableName: "Practice",
           comment: "Under the title of a block opened again with every answer in."
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     } else if phase == .finishing {
       ProgressView().frame(maxWidth: .infinity)
@@ -285,7 +285,7 @@ struct QuestionBlockView: View {
         comment: "Shown when an answer was saved before."
       )
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       PracticeMainButton(title: continueTitle) { onRefresh() }
     case .finishReady:
       PracticeMainButton(title: finishTitle) { Task { await run.finish() } }
@@ -426,14 +426,14 @@ private struct NetScoreLine: View {
         .joinedFacts()
       )
       .typeStyle(.data)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       Text(
         "A wrong answer cancels a right one. Not sure? Leave it blank.", tableName: "Practice",
         comment: "Why a net-scored block offers 'Leave blank'."
       )
       .typeStyle(.meta)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
   }
@@ -478,7 +478,7 @@ private struct PauseSuggestionView: View {
           "Stop for today", tableName: "Practice",
           comment: "Stops today's session from the pause suggestion.")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .disabled(isStopping)
 
       if failed {
@@ -487,7 +487,7 @@ private struct PauseSuggestionView: View {
           comment: "Stopping the session failed."
         )
         .typeStyle(.body)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
   }

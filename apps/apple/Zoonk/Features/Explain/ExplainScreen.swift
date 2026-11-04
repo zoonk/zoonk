@@ -73,7 +73,7 @@ private struct ExplanationView: View {
   }
 
   private var content: some View {
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text(
@@ -82,7 +82,7 @@ private struct ExplanationView: View {
             comment: "Eyebrow over a quick explanation's title: its kind and length"
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           Text(explanation.title)
             .typeStyle(.section)
             .accessibilityAddTraits(.isHeader)
@@ -90,7 +90,7 @@ private struct ExplanationView: View {
             "No plan to set up.", tableName: "Explain", comment: "Under a quick explanation's title"
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
         .listRowBackground(Color.clear)
       }
@@ -111,7 +111,7 @@ private struct ExplanationView: View {
             } icon: {
               Text(index + 1, format: .number)
                 .monospacedDigit()
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
 
@@ -121,13 +121,14 @@ private struct ExplanationView: View {
               comment: "The check after a quick explanation's screens")
           } icon: {
             Image(systemName: "checkmark.circle")
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
               .accessibilityHidden(true)
           }
         } header: {
-          Text(
-            "What's coming", tableName: "Explain",
-            comment: "Header over a quick explanation's outline")
+          SectionTitle(
+            Text(
+              "What's coming", tableName: "Explain",
+              comment: "Header over a quick explanation's outline"))
         }
       }
 
@@ -171,17 +172,19 @@ private struct ExplanationView: View {
       }
       .disabled(isRetrying)
     } footer: {
-      if retryFailed {
-        Text(
-          "We couldn't get this started.", tableName: "Explain",
-          comment: "A slow explanation couldn't be asked again"
-        )
-        .foregroundStyle(.destructive)
-      } else {
-        Text(
-          "Still writing your explanation. It shows up here as soon as it's ready.",
-          tableName: "Explain",
-          comment: "Under a quick explanation that's still being written")
+      SectionFooter {
+        if retryFailed {
+          Text(
+            "We couldn't get this started.", tableName: "Explain",
+            comment: "A slow explanation couldn't be asked again"
+          )
+          .foregroundStyle(.destructiveText)
+        } else {
+          Text(
+            "Still writing your explanation. It shows up here as soon as it's ready.",
+            tableName: "Explain",
+            comment: "Under a quick explanation that's still being written")
+        }
       }
     }
   }
@@ -194,7 +197,7 @@ private struct ExplanationView: View {
         } icon: {
           Text(index + 1, format: .number)
             .monospacedDigit()
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     } header: {
@@ -205,7 +208,8 @@ private struct ExplanationView: View {
       } icon: {
         Image(systemName: "checkmark.circle.fill")
       }
-      .foregroundStyle(.success)
+      .sectionTitleStyle()
+      .foregroundStyle(.successText)
     }
   }
 
@@ -241,7 +245,7 @@ private struct ExplanationView: View {
             }
           }
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -256,9 +260,10 @@ private struct ExplanationView: View {
         }
       }
     } header: {
-      Text(
-        "Want to go further?", tableName: "Explain",
-        comment: "Header over ways to go further after a quick explanation")
+      SectionTitle(
+        Text(
+          "Want to go further?", tableName: "Explain",
+          comment: "Header over ways to go further after a quick explanation"))
     }
   }
 
@@ -324,7 +329,7 @@ private struct ExplanationWait: View {
           }
         } label: {
           Text(phase.label)
-            .foregroundStyle(phase.state == .waiting ? .secondary : .primary)
+            .foregroundStyle(phase.state == .waiting ? .mutedForeground : .primary)
         }
       }
     }

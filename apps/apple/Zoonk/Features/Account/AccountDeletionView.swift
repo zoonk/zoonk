@@ -99,7 +99,7 @@ struct AccountDeletionView: View {
   }
 
   private var deletionForm: some View {
-    Form {
+    ZoonkList {
       Section {
         Label {
           Text(
@@ -130,27 +130,33 @@ struct AccountDeletionView: View {
           Image(systemName: "tray.full")
         }
       } header: {
-        Text(
-          "Permanently deleted",
-          tableName: "Account",
-          comment: "Heading above the data removed during account deletion")
+        SectionTitle(
+          Text(
+            "Permanently deleted",
+            tableName: "Account",
+            comment: "Heading above the data removed during account deletion"))
       } footer: {
-        Text(
-          "Account deletion can't be undone.",
-          tableName: "Account",
-          comment: "Warns that account deletion is irreversible")
+        SectionFooter {
+          Text(
+            "Account deletion can't be undone.",
+            tableName: "Account",
+            comment: "Warns that account deletion is irreversible")
+        }
       }
 
       if let storeSubscriptionProvider {
         Section {
           subscriptionManagementControl(for: storeSubscriptionProvider)
         } header: {
-          Text(
-            "Subscription",
-            tableName: "Account",
-            comment: "Heading for mobile-store billing guidance during account deletion")
+          SectionTitle(
+            Text(
+              "Subscription",
+              tableName: "Account",
+              comment: "Heading for mobile-store billing guidance during account deletion"))
         } footer: {
-          subscriptionDeletionMessage(for: storeSubscriptionProvider)
+          SectionFooter {
+            subscriptionDeletionMessage(for: storeSubscriptionProvider)
+          }
         }
       }
 
@@ -192,10 +198,12 @@ struct AccountDeletionView: View {
         }
         .disabled(session.isWorking)
       } footer: {
-        Text(
-          "Continue with Apple to confirm that this account is yours before deleting it.",
-          tableName: "Account",
-          comment: "Explains why Apple reauthorization is required for deletion")
+        SectionFooter {
+          Text(
+            "Continue with Apple to confirm that this account is yours before deleting it.",
+            tableName: "Account",
+            comment: "Explains why Apple reauthorization is required for deletion")
+        }
       }
     } else {
       Section {
@@ -208,6 +216,7 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Starts permanent account deletion")
         }
+        .foregroundStyle(.destructiveText)
         .disabled(session.isWorking)
       }
     }
@@ -217,7 +226,7 @@ struct AccountDeletionView: View {
     Section {
       LabeledContent {
         Text(email)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       } label: {
         Text(
           "Email",
@@ -258,6 +267,7 @@ struct AccountDeletionView: View {
               tableName: "Account",
               comment: "Verifies the email code and permanently deletes the account"))
         }
+        .foregroundStyle(.destructiveText)
         .disabled(normalizedCode.count != 6 || session.isWorking)
 
         Button {
@@ -287,15 +297,18 @@ struct AccountDeletionView: View {
         .disabled(session.isWorking)
       }
     } header: {
-      Text(
-        "Sign in again",
-        tableName: "Account",
-        comment: "Heading for email reauthentication before account deletion")
+      SectionTitle(
+        Text(
+          "Sign in again",
+          tableName: "Account",
+          comment: "Heading for email reauthentication before account deletion"))
     } footer: {
-      Text(
-        "For your security, enter a new code sent to the email on this account.",
-        tableName: "Account",
-        comment: "Explains the email reauthentication requirement for account deletion")
+      SectionFooter {
+        Text(
+          "For your security, enter a new code sent to the email on this account.",
+          tableName: "Account",
+          comment: "Explains the email reauthentication requirement for account deletion")
+      }
     }
   }
 

@@ -16,17 +16,17 @@ struct SearchScreen: View {
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
-      List {
+      ZoonkList {
         groupSections(leadingGroups)
       }
     } secondary: {
-      List {
+      ZoonkList {
         groupSections(trailingGroups)
         catalogSection
         groupSections(trailingFallback)
       }
     } single: {
-      List {
+      ZoonkList {
         groupSections(groups)
         catalogSection
         groupSections(fallback.map { [$0] } ?? [])
@@ -82,7 +82,7 @@ struct SearchScreen: View {
           .foregroundStyle(.primary)
         }
       } header: {
-        Text(group.title)
+        SectionTitle(Text(group.title))
       }
     }
   }
@@ -104,7 +104,7 @@ struct SearchScreen: View {
                 Text(chapter.title)
                 Text(chapter.courseTitle)
                   .typeStyle(.note)
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
               }
             } icon: {
               Image(systemName: "rectangle.stack")
@@ -112,7 +112,8 @@ struct SearchScreen: View {
           }
         }
       } header: {
-        Text("In the catalog", tableName: "Search", comment: "Search results from the catalog")
+        SectionTitle(
+          Text("In the catalog", tableName: "Search", comment: "Search results from the catalog"))
       }
     }
   }

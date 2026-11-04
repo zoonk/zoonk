@@ -24,7 +24,7 @@ struct MeterParts: View {
       let totalWeight = parts.reduce(0) { $0 + max($1.weight, 0) }
       let fixedWidth = Double(parts.count) * minimumWidth + Double(max(parts.count - 1, 0)) * gap
       let sharedWidth = max(size.width - fixedWidth, 0)
-      let radius = size.height / 2
+      let radius = 3.0
       var x = 0.0
 
       for part in parts {
@@ -35,7 +35,7 @@ struct MeterParts: View {
         switch part.fill {
         case .track:
           context.fill(
-            Path(roundedRect: rect, cornerRadius: radius), with: .color(Color(.systemFill)))
+            Path(roundedRect: rect, cornerRadius: radius), with: .color(.surface3))
         case .current:
           let inset = rect.insetBy(dx: ringWidth / 2, dy: ringWidth / 2)
           context.stroke(

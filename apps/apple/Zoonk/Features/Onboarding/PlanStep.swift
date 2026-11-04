@@ -238,7 +238,7 @@ private struct LibraryCourseOffer: View {
               comment: "Above a Library course that teaches the learner's goal"
             )
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
             Text(title)
 
@@ -248,7 +248,7 @@ private struct LibraryCourseOffer: View {
                 comment: "How many chapters a course or an exam area has"
               )
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
             }
           }
         } icon: {
@@ -319,7 +319,7 @@ private struct RevealNoticeDay: View {
         "That didn't go through. Try again in a moment.", tableName: "Exam",
         comment: "Changing the date failed"
       )
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
     }
   }
 
@@ -349,7 +349,7 @@ private struct RevealExamChoices: View {
       if let line = choice.followingLine {
         Section {
           Text(line)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           Button {
             change(choice.group)
@@ -381,7 +381,7 @@ struct NoticeReadingView: View {
   @State private var warmUpID: String?
 
   var body: some View {
-    List {
+    ZoonkList {
       StepHeader(title: title, description: description)
 
       Section {
@@ -493,15 +493,15 @@ private struct PlanReveal: View {
     let structure = syllabus.value.flatMap { $0.hasSubjectPages ? $0 : nil }
 
     PaneSplit {
-      List {
+      ZoonkList {
         heroSections(goal: goal)
       }
     } secondary: {
-      List {
+      ZoonkList {
         detailSections(context: context, syllabus: syllabus.value, structure: structure)
       }
     } single: {
-      List {
+      ZoonkList {
         heroSections(goal: goal)
         detailSections(context: context, syllabus: syllabus.value, structure: structure)
       }
@@ -512,12 +512,12 @@ private struct PlanReveal: View {
     .planSheets($sheet, context: context, syllabus: syllabus.value)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     .sheet(isPresented: $showsTopics) {
       if let structure {
         SyllabusTopicsSheet(syllabus: structure)
-          .accessibilitySizeStyles()
+          .zoonkStyles()
       }
     }
   }
@@ -534,7 +534,7 @@ private struct PlanReveal: View {
           Image(systemName: "checkmark.circle.fill")
         }
         .typeStyle(.body.weight(.semibold))
-        .foregroundStyle(.success)
+        .foregroundStyle(.successText)
 
         Text(goal.title)
           .typeStyle(.section)
@@ -542,12 +542,12 @@ private struct PlanReveal: View {
 
         Text(facts.joinedFacts())
           .typeStyle(.data)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         if let pace = paceLine(goal: goal) {
           Text(pace)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .listRowBackground(Color.clear)
@@ -583,24 +583,26 @@ private struct PlanReveal: View {
           )
           .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .controlSize(.large)
       .keepsOffFold()
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
     } footer: {
-      if learner.summary.value?.identity.isAnonymous == true {
-        VStack(alignment: .leading, spacing: 8) {
-          Text(
-            "Save your plan so it's here next time.", tableName: "Onboarding",
-            comment: "A guest's plan isn't saved to an account yet")
-          Button {
-            router.present(.signIn)
-          } label: {
+      SectionFooter {
+        if learner.summary.value?.identity.isAnonymous == true {
+          VStack(alignment: .leading, spacing: 8) {
             Text(
-              "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"
-            )
+              "Save your plan so it's here next time.", tableName: "Onboarding",
+              comment: "A guest's plan isn't saved to an account yet")
+            Button {
+              router.present(.signIn)
+            } label: {
+              Text(
+                "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"
+              )
+            }
           }
         }
       }
@@ -621,10 +623,12 @@ private struct PlanReveal: View {
     if plan.notice == .usual {
       Section {
       } footer: {
-        Text(
-          "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
-          tableName: "Onboarding",
-          comment: "Under a plan revealed before its exam's official documents were read")
+        SectionFooter {
+          Text(
+            "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
+            tableName: "Onboarding",
+            comment: "Under a plan revealed before its exam's official documents were read")
+        }
       }
     }
 
@@ -637,7 +641,7 @@ private struct PlanReveal: View {
     if let structure {
       Section {
         Text(syllabusSummary(structure, dailyMinutes: plan.schedule.dailyMinutes))
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         Button {
           showsTopics = true
@@ -782,16 +786,19 @@ private struct RevealChapters: View {
           } icon: {
             Text(index + 1, format: .number)
               .monospacedDigit()
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } header: {
-        Text("Chapters", tableName: "Onboarding", comment: "Header over a new plan's chapters")
+        SectionTitle(
+          Text("Chapters", tableName: "Onboarding", comment: "Header over a new plan's chapters"))
       } footer: {
-        if rest > 0 {
-          Text(
-            "\(rest) more chapters", tableName: "Onboarding",
-            comment: "Under a new plan's first chapters: how many more it holds")
+        SectionFooter {
+          if rest > 0 {
+            Text(
+              "\(rest) more chapters", tableName: "Onboarding",
+              comment: "Under a new plan's first chapters: how many more it holds")
+          }
         }
       }
     }
@@ -888,7 +895,7 @@ private struct SyllabusTopicsSheet: View {
 
   var body: some View {
     NavigationStack {
-      List {
+      ZoonkList {
         ForEach(syllabus.subjects) { subject in
           if subject.topics.isEmpty {
             label(subject)
@@ -896,7 +903,7 @@ private struct SyllabusTopicsSheet: View {
             DisclosureGroup {
               ForEach(subject.topics) { topic in
                 Text(topic.name)
-                  .foregroundStyle(topic.status == "notPlanned" ? .secondary : .primary)
+                  .foregroundStyle(topic.status == "notPlanned" ? .mutedForeground : .primary)
               }
             } label: {
               label(subject)
@@ -925,7 +932,7 @@ private struct SyllabusTopicsSheet: View {
       if let line = subjectLine(subject) {
         Text(line)
           .typeStyle(.data)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -974,22 +981,24 @@ private struct AreaWeights: View {
             } value: {
               Text(percentText(weight))
                 .typeStyle(.data)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
 
-            ProgressView(value: weight.share)
-              .tint(.primary)
+            Meter(value: weight.share, fill: .primary)
               .accessibilityHidden(true)
           }
           .accessibilityElement(children: .combine)
         }
       } header: {
-        Text(
-          "Weight by area", tableName: "Onboarding",
-          comment: "Header over an exam's areas and how much each weighs")
+        SectionTitle(
+          Text(
+            "Weight by area", tableName: "Onboarding",
+            comment: "Header over an exam's areas and how much each weighs"))
       } footer: {
-        if assumed > 0 {
-          Text(estimateNote(assumed))
+        SectionFooter {
+          if assumed > 0 {
+            Text(estimateNote(assumed))
+          }
         }
       }
     }

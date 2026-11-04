@@ -5,7 +5,7 @@ struct EarlierQuestionsScreen: View {
   @Environment(BuddyStore.self) private var store
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         switch store.earlierQuestions.state {
         case .idle, .loading:
@@ -24,7 +24,7 @@ struct EarlierQuestionsScreen: View {
             "You have no earlier questions.", tableName: "Buddy",
             comment: "The learner has no earlier questions"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         case .loaded(let page):
           ForEach(page.questions, id: \.id) { question in
             EarlierQuestionRow(question: question)
@@ -49,15 +49,15 @@ struct EarlierQuestionsScreen: View {
               "Something went wrong. Try again.", tableName: "Buddy",
               comment: "Older earlier questions couldn't be read"
             )
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
           }
         }
       } header: {
-        Text(
-          "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread.",
-          tableName: "Buddy", comment: "What the earlier questions page holds"
-        )
-        .textCase(nil)
+        SectionTitle(
+          Text(
+            "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread.",
+            tableName: "Buddy", comment: "What the earlier questions page holds"
+          ))
       }
     }
     .navigationTitle(
@@ -74,7 +74,7 @@ private struct EarlierQuestionRow: View {
     VStack(alignment: .leading, spacing: 8) {
       source
         .typeStyle(.meta)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       Text(question.question)
         .typeStyle(.body.weight(.semibold))
@@ -89,7 +89,7 @@ private struct EarlierQuestionRow: View {
           comment: "An earlier question without its answer"
         )
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .padding(.vertical, 4)

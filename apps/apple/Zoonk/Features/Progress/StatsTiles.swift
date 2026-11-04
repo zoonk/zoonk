@@ -13,7 +13,7 @@ enum StatTone {
     case .energy:
       .energy
     case .neutral:
-      .secondary
+      .mutedForeground
     case .success:
       .success
     }
@@ -41,29 +41,27 @@ struct StatTile<Icon: View>: View {
           .lineLimit(2)
       }
       .typeStyle(.label)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       value
         .typeStyle(.readout)
-        .foregroundStyle(tone == .brain ? Color.brain : Color.primary)
+        .foregroundStyle(tone == .brain ? Color.brainText : Color(.foreground))
 
       if let detail {
         detail
           .typeStyle(.meta)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if let meter {
-        ProgressView(value: meter)
-          .tint(.brain)
+        Meter(value: meter, fill: .brain)
           .padding(.top, 4)
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .padding(12)
-    .background(
-      Color(.secondarySystemGroupedBackground),
-      in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+    .overlay(
+      RoundedRectangle(cornerRadius: Radius.option, style: .continuous).strokeBorder(.border)
     )
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(label)
@@ -156,7 +154,7 @@ struct BeltDot: View {
   var body: some View {
     Circle()
       .fill(belt.color)
-      .strokeBorder(.secondary.opacity(0.35), lineWidth: 1)
+      .strokeBorder(Color.mutedForeground.opacity(0.35), lineWidth: 1)
       .frame(width: size, height: size)
       .accessibilityHidden(true)
   }
@@ -168,7 +166,7 @@ struct StatsLine: View {
   var body: some View {
     text
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .frame(maxWidth: 560, alignment: .leading)
   }
 }

@@ -20,7 +20,7 @@ struct BuddyEditor: View {
 
   var body: some View {
     NavigationStack {
-      Form {
+      ZoonkList {
         BuddyPickerSections(kind: $choice.kind, name: $name, glasses: choice.glasses)
 
         Section {
@@ -28,7 +28,7 @@ struct BuddyEditor: View {
             glassesRow(glasses)
           }
         } header: {
-          Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses")
+          SectionTitle(Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses"))
         }
       }
       .navigationTitle(
@@ -65,12 +65,12 @@ struct BuddyEditor: View {
       HStack {
         VStack(alignment: .leading) {
           glasses.name
-            .foregroundStyle(isEarned ? .primary : .secondary)
+            .foregroundStyle(isEarned ? Color(.foreground) : .mutedForeground)
 
           if !isEarned {
             glasses.howToEarn
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
 
@@ -82,7 +82,7 @@ struct BuddyEditor: View {
             .accessibilityHidden(true)
         } else if !isEarned {
           Image(systemName: "lock")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .accessibilityHidden(true)
         }
       }
@@ -136,7 +136,7 @@ struct BuddyPickerSections: View {
         }
       }
     } header: {
-      Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
+      SectionTitle(Text("Name", tableName: "Buddy", comment: "The buddy's custom name"))
     }
   }
 }
@@ -151,13 +151,13 @@ struct BuddyGlassesPicker: View {
 
   var body: some View {
     NavigationStack {
-      List {
+      ZoonkList {
         if store.saveFailed {
           Text(
             "We couldn't save your buddy. Try again.", tableName: "Buddy",
             comment: "Saving the buddy failed"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
 
         ForEach(status.glasses, id: \.glasses) { option in
@@ -249,11 +249,10 @@ struct BuddyGlassesPicker: View {
         }
       }
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       if counted, option.target > 0 {
-        ProgressView(value: Double(option.current), total: Double(option.target))
-          .tint(.secondary)
+        Meter(value: Double(option.current), total: Double(option.target), fill: .mutedForeground)
           .accessibilityHidden(true)
       }
     }

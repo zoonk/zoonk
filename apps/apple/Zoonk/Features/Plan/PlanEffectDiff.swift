@@ -166,10 +166,10 @@ struct PlanEffectDiff: View {
 
   private func style(_ line: PlanEffectLine) -> AnyShapeStyle {
     switch (line.tone, line.kind) {
-    case (.bad, _): AnyShapeStyle(.warning)
-    case (.good, _): AnyShapeStyle(.success)
+    case (.bad, _): AnyShapeStyle(.warningText)
+    case (.good, _): AnyShapeStyle(.successText)
     case (.neutral, .added): AnyShapeStyle(.primary)
-    case (.neutral, .removed): AnyShapeStyle(.secondary)
+    case (.neutral, .removed): AnyShapeStyle(.mutedForeground)
     }
   }
 }

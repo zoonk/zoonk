@@ -147,7 +147,7 @@ private struct RhythmStatus: View {
       }
     }
     .typeStyle(.data)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
     .accessibilityElement(children: .combine)
   }
 }
@@ -179,7 +179,7 @@ private struct RhythmGrid: View {
               dot(result?.status)
 
               RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(isHit ? Color.orange : Color(.systemBackground))
+                .fill(isHit ? Color.vizHighlight : Color(.background))
                 .frame(height: cellHeight)
                 .overlay {
                   if position == RhythmPosition(round: round, step: step) {
@@ -200,7 +200,7 @@ private struct RhythmGrid: View {
 
           Text(beat + 1, format: .number)
             .typeStyle(.data)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
       }
@@ -210,7 +210,7 @@ private struct RhythmGrid: View {
         VStack(alignment: .leading, spacing: 4) { legend }
       }
       .typeStyle(.meta)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(
@@ -240,7 +240,7 @@ private struct RhythmGrid: View {
         "Rhythm hits", tableName: "ActivitiesMusic",
         comment: "Legend: the colored cells are the taps")
     } icon: {
-      RoundedRectangle(cornerRadius: 3).fill(.orange).frame(width: 10, height: 10)
+      RoundedRectangle(cornerRadius: 3).fill(.vizHighlight).frame(width: 10, height: 10)
     }
 
     Label {
@@ -296,7 +296,7 @@ private struct RhythmControls: View {
         Image(systemName: "headphones")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
 
     Button(action: onStart) {
@@ -396,7 +396,7 @@ private struct RhythmCalibrationView: View {
 
           status(phase)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         RhythmTapPad(isActive: calibration.isRunning, isCountingIn: phase == .countIn) { time in

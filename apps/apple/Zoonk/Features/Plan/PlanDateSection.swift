@@ -66,14 +66,14 @@ struct PlanDateSection: View {
         VStack(alignment: .leading, spacing: 8) {
           planNoticeDayText(noticeDay, document: plan.examDocument)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           Button {
             Task { await save(noticeDay.date) }
           } label: {
             Text("Use this date", tableName: "Plan", comment: "Takes the notice's day as the date")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.small)
         }
       }
@@ -82,17 +82,19 @@ struct PlanDateSection: View {
         dropDeadline(date: date, namedMonth: namedMonth)
       }
     } footer: {
-      if namedMonth, let date = schedule.targetDate {
-        Text(
-          "\(PlanDate.text(date, today: plan.today, month: true)) for now. Pick the day when you know it.",
-          tableName: "Plan",
-          comment:
-            "A month the learner named stands until they pick the day; the argument is the month the learner named, like 'May 2027'"
-        )
-      } else if schedule.targetDate == nil && !isExam {
-        Text(
-          "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then.",
-          tableName: "Plan", comment: "A goal without a deadline, and what a deadline would do")
+      SectionFooter {
+        if namedMonth, let date = schedule.targetDate {
+          Text(
+            "\(PlanDate.text(date, today: plan.today, month: true)) for now. Pick the day when you know it.",
+            tableName: "Plan",
+            comment:
+              "A month the learner named stands until they pick the day; the argument is the month the learner named, like 'May 2027'"
+          )
+        } else if schedule.targetDate == nil && !isExam {
+          Text(
+            "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then.",
+            tableName: "Plan", comment: "A goal without a deadline, and what a deadline would do")
+        }
       }
     }
     .environment(\.timeZone, .gmt)

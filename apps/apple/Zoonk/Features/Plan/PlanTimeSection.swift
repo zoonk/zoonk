@@ -90,9 +90,11 @@ struct PlanTimeSection: View {
         fullCourseToggle
       }
     } footer: {
-      Text(
-        "Your plan changes from today. Less time spreads your lessons over more days.",
-        tableName: "Plan", comment: "Explains what changing the time a day does")
+      SectionFooter {
+        Text(
+          "Your plan changes from today. Less time spreads your lessons over more days.",
+          tableName: "Plan", comment: "Explains what changing the time a day does")
+      }
     }
   }
 
@@ -116,10 +118,10 @@ struct PlanTimeSection: View {
             "Working out what your time covers…", tableName: "Plan",
             comment: "While a change to the plan saves, in place of what the time a day covers"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         } else if plan.fitOffer?.fits == true, let covers = planCoversEverythingText(plan) {
           covers
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         } else {
           TimeAnswer(
             date: TimeAnswer.GoalDate(
@@ -147,7 +149,7 @@ struct PlanTimeSection: View {
     } else if let finish {
       finish
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 

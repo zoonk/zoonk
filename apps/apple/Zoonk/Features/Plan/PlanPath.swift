@@ -33,9 +33,8 @@ struct PlanPathSection: View {
         }
       }
     } header: {
-      SectionHeaderRow(
-        alignment: .firstTextBaseline,
-        title: Text(
+      SectionTitle(
+        Text(
           "Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters")
       ) {
         if phases.count > 1 {
@@ -43,8 +42,6 @@ struct PlanPathSection: View {
             "\(done) of \(phases.count) phases done", tableName: "Plan",
             comment: "Phases done of the plan's phases"
           )
-          .typeStyle(.data)
-          .foregroundStyle(.secondary)
         }
       }
     }
@@ -176,7 +173,7 @@ private struct PlanPhaseRow: View {
           Image(systemName: showsAll ? "minus" : "plus")
         }
       }
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -194,7 +191,7 @@ private struct PlanPhaseRow: View {
         comment: "Note under a phase whose lessons are still being written"
       )
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -233,12 +230,12 @@ private struct PlanPhaseRow: View {
               : phase.title
           )
           .typeWeight(phase.state == .current ? .semibold : .regular)
-          .foregroundStyle(phase.state == .done ? .secondary : .primary)
+          .foregroundStyle(phase.state == .done ? .mutedForeground : .primary)
 
           if let meta {
             meta
               .typeStyle(.meta)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
@@ -371,7 +368,7 @@ private struct PlanChapterRow: View {
       }
     } else {
       content
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -384,7 +381,7 @@ private struct PlanChapterRow: View {
           if let note {
             note
               .typeStyle(.meta)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
@@ -508,9 +505,8 @@ struct PlanSyllabusSection: View {
         }
       }
     } header: {
-      SectionHeaderRow(
-        alignment: .firstTextBaseline,
-        title: isExam
+      SectionTitle(
+        isExam
           ? Text("Subjects", tableName: "Plan", comment: "Section of an exam's subjects")
           : Text("Modules", tableName: "Plan", comment: "Section of a plan's modules")
       ) {
@@ -521,18 +517,18 @@ struct PlanSyllabusSection: View {
             Text("Lessons studied", tableName: "Plan", comment: "What the modules' bars measure")
           }
         }
-        .typeStyle(.note)
-        .foregroundStyle(.secondary)
       }
     } footer: {
-      if isExam {
-        Text(
-          "\(syllabus.subjects.count) subjects", tableName: "Plan",
-          comment: "How many subjects the exam has")
-      } else {
-        Text(
-          "\(syllabus.subjects.count) modules", tableName: "Plan",
-          comment: "How many modules the plan has")
+      SectionFooter {
+        if isExam {
+          Text(
+            "\(syllabus.subjects.count) subjects", tableName: "Plan",
+            comment: "How many subjects the exam has")
+        } else {
+          Text(
+            "\(syllabus.subjects.count) modules", tableName: "Plan",
+            comment: "How many modules the plan has")
+        }
       }
     }
   }
@@ -570,7 +566,7 @@ struct SyllabusSubjectRow: View {
     VStack(alignment: .leading, spacing: 6) {
       PlanPathRow {
         Text(subject.name)
-          .foregroundStyle(subject.notPlannedReason == nil ? .primary : .secondary)
+          .foregroundStyle(subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground)
       } value: {
         Text(share, format: .percent.precision(.fractionLength(0)))
           .typeStyle(.body.monospaced())
@@ -579,10 +575,9 @@ struct SyllabusSubjectRow: View {
       if subject.notPlannedReason != nil {
         Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
           .typeStyle(.meta)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       } else {
-        ProgressView(value: share)
-          .tint(.success)
+        Meter(value: share, fill: .success)
           .accessibilityHidden(true)
       }
     }
@@ -601,7 +596,7 @@ struct PlanPathRow<Title: View, Value: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
 
       value
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .fixedSize()
     }
   }
@@ -631,7 +626,7 @@ struct PlanChallengeLabel: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
           when?
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if explains {
@@ -647,7 +642,7 @@ struct PlanChallengeLabel: View {
             }
           }
           .typeStyle(.meta)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
       // In a list row's button it otherwise gets one line's height and truncates its title.

@@ -317,7 +317,7 @@ private struct SettingsHubView: View {
   let sendFeedback: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       if !isGuest {
         Section {
           AccountSectionLink(destination: .profile, sectionOpen: sectionOpen) {
@@ -330,7 +330,7 @@ private struct SettingsHubView: View {
 
                 Text(account.user.email)
                   .typeStyle(.note)
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
               }
             }
           }
@@ -347,7 +347,7 @@ private struct SettingsHubView: View {
                 Text(appLanguageName)
               }
             }
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           } label: {
             Text("Preferences", tableName: "Account", comment: "Settings row for Preferences")
           }
@@ -358,7 +358,7 @@ private struct SettingsHubView: View {
             if let count = settings.memory.value?.facts.count {
               Text(count, format: .number)
                 .monospacedDigit()
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           } label: {
             Text("Memory", tableName: "Account", comment: "Settings row for what Zoonk remembers")
@@ -400,6 +400,7 @@ private struct SettingsHubView: View {
           } label: {
             Text("Log out", tableName: "Account", comment: "Account log-out action")
           }
+          .foregroundStyle(.destructiveText)
           .disabled(session.isWorking)
         }
       }
@@ -439,7 +440,7 @@ private struct AccountSectionLink<Label: View>: View {
         label
       }
       .foregroundStyle(.primary)
-      .listRowBackground(isShown ? Color(.tertiarySystemFill) : nil)
+      .currentRow(isShown)
       .accessibilityAddTraits(isShown ? .isSelected : [])
     } else {
       NavigationLink(value: destination) {

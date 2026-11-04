@@ -75,7 +75,7 @@ private struct GuessRevealCanvas: View {
                       .monospacedDigit()
                   }
                   Text(working.label)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.mutedForeground)
                 }
                 .typeStyle(.note)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -83,7 +83,7 @@ private struct GuessRevealCanvas: View {
               }
             }
             .padding(12)
-            .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+            .panel(cornerRadius: 12)
           }
 
           if let comparison = fields.comparison {
@@ -93,7 +93,7 @@ private struct GuessRevealCanvas: View {
 
           LessonRichText(fields.takeaway)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }

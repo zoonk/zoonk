@@ -114,7 +114,7 @@ private struct UnderstoodCard: View {
   }
 
   var body: some View {
-    List {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Here's what I understood", tableName: "Onboarding",
@@ -304,13 +304,18 @@ private struct RewritableWords: View {
           .buttonStyle(.borderless)
         }
       } header: {
-        Text(
-          "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal"
-        )
+        SectionTitle(
+          Text(
+            "What you wrote", tableName: "Onboarding",
+            comment: "Header over the learner's typed goal"
+          ))
       } footer: {
-        Text(
-          "We'll read it again. To fix one detail, use its pencil below.", tableName: "Onboarding",
-          comment: "Under the typed words while they're being changed")
+        SectionFooter {
+          Text(
+            "We'll read it again. To fix one detail, use its pencil below.",
+            tableName: "Onboarding",
+            comment: "Under the typed words while they're being changed")
+        }
       }
     } else {
       TypedGoalSection(goal: words)
@@ -360,7 +365,7 @@ private struct UnderstoodRowView: View {
           }
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.small)
       .disabled(isSaving)
 
@@ -370,7 +375,7 @@ private struct UnderstoodRowView: View {
           comment: "A change couldn't be saved"
         )
         .typeStyle(.note)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
   }
@@ -391,21 +396,21 @@ private struct UnderstoodRowView: View {
         VStack(alignment: .leading, spacing: 4) {
           Text(row.label)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           HStack(alignment: .firstTextBaseline) {
             Text(row.value)
             if let badge = row.badge {
               Text(badge)
                 .typeStyle(.meta)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
 
           if let note = row.note {
             Text(note)
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
 
           if let source = row.source {
@@ -420,7 +425,7 @@ private struct UnderstoodRowView: View {
               .labelStyle(TrailingIconLabelStyle())
               .typeStyle(.note)
             }
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -439,7 +444,7 @@ private struct UnderstoodRowView: View {
             .labelStyle(.iconOnly)
           }
           .buttonStyle(.borderless)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .accessibilityElement(children: .combine)
@@ -483,7 +488,7 @@ private struct RowEditor: View {
     VStack(alignment: .leading, spacing: 8) {
       Text(row.label)
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       switch field.editor {
       case .text:
@@ -512,7 +517,7 @@ private struct RowEditor: View {
           comment: "A change couldn't be saved"
         )
         .typeStyle(.note)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
 
       ButtonRow {
@@ -595,13 +600,13 @@ private struct OutcomeHeader: View {
       VStack(alignment: .leading, spacing: 8) {
         Image(systemName: systemImage)
           .typeStyle(.section.weight(.regular))
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .accessibilityHidden(true)
         title
           .typeStyle(.section)
           .accessibilityAddTraits(.isHeader)
         description
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
       .listRowBackground(Color.clear)
     }
@@ -616,7 +621,7 @@ private struct ExplainOutcome: View {
   let onStart: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "lightbulb",
         title: Text(question),
@@ -660,7 +665,7 @@ private struct InstrumentOutcome: View {
   @State private var joinFailed = false
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "guitars",
         title: Text(
@@ -689,7 +694,7 @@ private struct InstrumentOutcome: View {
             "You're on the list. We'll let you know when lessons for playing are ready.",
             tableName: "Onboarding", comment: "After joining the instrument waitlist"
           )
-          .foregroundStyle(.success)
+          .foregroundStyle(.successText)
         case .signInRequired:
           Text(
             "Create an account so we can let you know.", tableName: "Onboarding",
@@ -701,7 +706,7 @@ private struct InstrumentOutcome: View {
               "That didn't save. Try again.", tableName: "Onboarding",
               comment: "A change couldn't be saved"
             )
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
           }
         }
       }
@@ -750,7 +755,7 @@ private struct DeclinedOutcome: View {
   let onRetry: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "hand.raised",
         title: Text(
@@ -776,7 +781,7 @@ private struct UnclearOutcome: View {
   let onRetry: () -> Void
 
   var body: some View {
-    List {
+    ZoonkList {
       OutcomeHeader(
         systemImage: "questionmark.bubble",
         title: Text(

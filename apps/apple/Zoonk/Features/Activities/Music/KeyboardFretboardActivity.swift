@@ -232,7 +232,7 @@ private struct GuitarOnlyBoard: View {
           comment: "Which frets of the guitar neck show, like “Frets 1 to 4”"
         )
         .typeStyle(.data)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         Spacer()
 
@@ -250,7 +250,7 @@ private struct GuitarOnlyBoard: View {
         }
         .disabled(firstFret >= Guitar.highestWindow)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .buttonBorderShape(.circle)
       .controlSize(.large)
     }
@@ -321,7 +321,7 @@ private struct KeyboardFretboardHeader: View {
 
       Text(notes.isEmpty ? noNotes : notes.map(MusicLabels.display).joined(separator: ", "))
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityLabel(
           notes.isEmpty
             ? Text(noNotes)
@@ -452,7 +452,7 @@ private struct GuitarMirror: View {
 
         (caption ?? defaultCaption)
           .typeStyle(.meta)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         if let voicing {
           GuitarFretboard(
@@ -465,7 +465,7 @@ private struct GuitarMirror: View {
             comment: "Under the piano when the pressed notes can't be played as one guitar shape"
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
     }

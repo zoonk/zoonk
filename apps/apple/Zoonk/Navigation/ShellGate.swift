@@ -68,7 +68,7 @@ struct ShellGate<Content: View>: View {
       ScrollView {
         VStack(alignment: .leading, spacing: 24) {
           Text(description)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           gate
         }
@@ -141,18 +141,18 @@ struct ShellGate<Content: View>: View {
   /// what's typed in it as they come and go.
   private var goalBox: some View {
     PaneBeside(atHingeOnly: true, paneEdge: .trailing, primaryShare: 0.55) {
-      List {
+      ZoonkList {
         GoalStartEntry(part: .examples, goal: $goal)
       }
     } content: { _ in
-      List {
+      ZoonkList {
         Section {
           Text(
             "Tell us what you want to learn, and we'll plan every day until you get there.",
             tableName: "Navigation",
             comment: "Explains what starting a goal does, on a page that needs one"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
         .listRowBackground(Color.clear)
 

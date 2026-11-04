@@ -17,7 +17,7 @@ struct CodeLine<Content: View>: View {
       Text(
         verbatim: String(repeating: " ", count: max(0, digits - String(number).count)) + "\(number)"
       )
-      .foregroundStyle(.tertiary)
+      .foregroundStyle(.faint)
 
       content
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -28,7 +28,7 @@ struct CodeLine<Content: View>: View {
     .background(background, in: .rect(cornerRadius: 6))
     .overlay(alignment: .leading) {
       if tone == .current {
-        Rectangle().fill(.orange).frame(width: 3)
+        Rectangle().fill(.vizHighlight).frame(width: 3)
       }
     }
   }
@@ -36,7 +36,7 @@ struct CodeLine<Content: View>: View {
   private var background: Color {
     switch tone {
     case .plain: .clear
-    case .current: .orange.opacity(0.15)
+    case .current: .vizHighlight.opacity(0.15)
     case .error: Color.destructive.opacity(0.12)
     }
   }
@@ -68,7 +68,7 @@ struct CodeRunBar: View {
           tableName: "ActivitiesCode", comment: "A code runtime (Python) failed to download"
         )
         .typeStyle(.body)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
 
         Button(action: retry) {
           Label {
@@ -77,7 +77,7 @@ struct CodeRunBar: View {
             Image(systemName: "arrow.counterclockwise")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     } else {
       VStack(alignment: .leading, spacing: 6) {
@@ -93,12 +93,12 @@ struct CodeRunBar: View {
               }
               .labelStyle(.iconOnly)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
             .disabled(isRunning)
           }
 
           if hasRun {
-            runButton.buttonStyle(.bordered)
+            runButton.buttonStyle(.outline)
           } else {
             runButton.buttonStyle(.mainAction)
           }

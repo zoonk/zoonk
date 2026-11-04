@@ -28,14 +28,14 @@ struct GradedAtEndRun: View {
     PracticeTaskLayout(segments: segments(total: total, index: index), index: index) {
       if let question {
         HStack(alignment: .firstTextBaseline) {
-          Text(hint(question)).typeStyle(.note).foregroundStyle(.secondary)
+          Text(hint(question)).typeStyle(.note).foregroundStyle(.mutedForeground)
           Spacer()
           Text(
             "\(min(index + 1, total)) of \(total)", tableName: "Practice",
             comment: "Where a test is: question n of total."
           )
           .typeStyle(.data)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         asked(question).stimulus
@@ -52,7 +52,7 @@ struct GradedAtEndRun: View {
             "Finish to see how it went.", tableName: "Practice",
             comment: "Under the title of a block opened again with every answer in."
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } else if total > questions.count {
         ContentUnavailableView {
@@ -253,11 +253,11 @@ struct PracticeQuestionsPreparingView: View {
               comment: "Title while a test's questions are written.") : title
         )
         .typeStyle(.section)
-        Text(isWriting ? writingDetail : detail).foregroundStyle(.secondary)
+        Text(isWriting ? writingDetail : detail).foregroundStyle(.mutedForeground)
 
         if !isWriting {
           ForEach(facts, id: \.self) { fact in
-            Text(fact).typeStyle(.data).foregroundStyle(.secondary)
+            Text(fact).typeStyle(.data).foregroundStyle(.mutedForeground)
           }
         }
 
@@ -266,7 +266,7 @@ struct PracticeQuestionsPreparingView: View {
         }
 
         if let failure {
-          Text(failureText(failure)).typeStyle(.body).foregroundStyle(.destructive)
+          Text(failureText(failure)).typeStyle(.body).foregroundStyle(.destructiveText)
         }
       }
     } actions: {

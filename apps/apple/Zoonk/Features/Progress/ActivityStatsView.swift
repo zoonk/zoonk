@@ -76,7 +76,7 @@ struct ActivityCalendar: View {
       high: Text(
         "More", tableName: "Progress", comment: "High end of the study days calendar's key"),
       shades: [
-        Color(.systemFill), Color.success.opacity(0.25), Color.success.opacity(0.45),
+        Color.surface3, Color.success.opacity(0.25), Color.success.opacity(0.45),
         Color.success.opacity(0.7), Color.success,
       ],
       days: days.map { day in

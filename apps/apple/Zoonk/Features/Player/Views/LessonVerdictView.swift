@@ -15,7 +15,7 @@ struct LessonVerdictView: View {
       } icon: {
         Image(systemName: verdict.symbol)
       }
-      .foregroundStyle(verdict.tint)
+      .foregroundStyle(verdict.words)
 
       if let spelling = result.spelling {
         LabeledText(
@@ -36,7 +36,7 @@ struct LessonVerdictView: View {
             comment: "A typed answer that wasn't graded, before the sample answer"
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         LabeledText(
@@ -83,7 +83,7 @@ struct LessonVerdictView: View {
       if hyperdriveStreak != nil || note != nil {
         notes
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -168,7 +168,7 @@ private struct LabeledText: View {
     VStack(alignment: .leading, spacing: 2) {
       label
         .typeStyle(.meta.weight(.medium))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       LessonRichText(text)
         .typeStyle(.body.weight(.medium))
     }
@@ -185,14 +185,14 @@ private struct LessonKeyPointsView: View {
         comment: "How many key points a typed answer stated"
       )
       .typeStyle(.meta.weight(.medium))
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       ForEach(keyPoints, id: \.self) { point in
         Label {
           LessonRichText(point.text)
         } icon: {
           Image(systemName: point.met ? "checkmark.circle" : "circle.dashed")
-            .foregroundStyle(point.met ? .success : .secondary)
+            .foregroundStyle(point.met ? .success : .mutedForeground)
         }
         .typeStyle(.note)
         .accessibilityLabel(
@@ -224,7 +224,7 @@ private struct LessonExplainAnswerView: View {
           comment: "Title above why a typed answer is wrong"
         )
         .typeStyle(.meta.weight(.medium))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         LessonTextBlocks(explanation)
           .typeStyle(.note)
       }
@@ -250,7 +250,7 @@ private struct LessonExplainAnswerView: View {
             }
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .disabled(state == .loading)
 
         switch state {
@@ -260,7 +260,7 @@ private struct LessonExplainAnswerView: View {
             comment: "The explanation of a typed answer failed"
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         case .refused(let refusal):
           LessonHelpLimitNote(refusal: refusal)
         default:
@@ -273,9 +273,36 @@ private struct LessonExplainAnswerView: View {
 
 /// What a checked answer was. A hook's guess is never wrong.
 struct LessonVerdict {
+  enum Tone {
+    case right
+    case neutral
+    case partial
+    case wrong
+  }
+
   let title: LocalizedStringResource
   let symbol: String
-  let tint: Color
+  let tone: Tone
+
+  /// Its fill's color.
+  var tint: Color {
+    switch tone {
+    case .right: .success
+    case .neutral: .mutedForeground
+    case .partial: .warning
+    case .wrong: .destructive
+    }
+  }
+
+  /// Its words' color, which reads on the fill.
+  var words: Color {
+    switch tone {
+    case .right: .successText
+    case .neutral: .mutedForeground
+    case .partial: .warningText
+    case .wrong: .destructiveText
+    }
+  }
 }
 
 extension LessonVerdict {
@@ -284,11 +311,11 @@ extension LessonVerdict {
       ? LessonVerdict(
         title: LocalizedStringResource(
           "Good guess!", table: "Player", comment: "A hook's guess was right"),
-        symbol: "sparkles", tint: .success)
+        symbol: "sparkles", tone: .right)
       : LessonVerdict(
         title: LocalizedStringResource(
           "Here's the answer", table: "Player", comment: "A hook's guess missed"),
-        symbol: "sparkles", tint: .secondary)
+        symbol: "sparkles", tone: .neutral)
   }
 
   static func of(_ result: LessonStepResult, step: LessonStep) -> LessonVerdict {
@@ -297,7 +324,7 @@ extension LessonVerdict {
         title: LocalizedStringResource(
           "Here's a good answer", table: "Player",
           comment: "\"I don't know yet\" shows a good answer"),
-        symbol: "text.bubble", tint: .secondary)
+        symbol: "text.bubble", tone: .neutral)
     }
 
     if step.kind == .hook {
@@ -309,19 +336,19 @@ extension LessonVerdict {
         ? LessonVerdict(
           title: LocalizedStringResource(
             "Correct!", table: "Player", comment: "The answer was right"), symbol: "checkmark",
-          tint: .success)
+          tone: .right)
         : LessonVerdict(
           title: LocalizedStringResource(
             "Right, watch the spelling", table: "Player",
             comment: "A right typed answer with a typo"),
-          symbol: "checkmark", tint: .success)
+          symbol: "checkmark", tone: .right)
     }
 
     if step.kind == .typedAnswer, !result.checked {
       return LessonVerdict(
         title: LocalizedStringResource(
           "Not checked this time", table: "Player", comment: "A typed answer that wasn't graded"),
-        symbol: "text.bubble", tint: .secondary)
+        symbol: "text.bubble", tone: .neutral)
     }
 
     if let score = result.score, score > 0 {
@@ -329,13 +356,13 @@ extension LessonVerdict {
         title: LocalizedStringResource(
           "Almost there", table: "Player", comment: "A typed or spoken answer that was partly right"
         ),
-        symbol: "circle.lefthalf.filled", tint: .warning)
+        symbol: "circle.lefthalf.filled", tone: .partial)
     }
 
     return LessonVerdict(
       title: LocalizedStringResource(
         "Not quite", table: "Player",
         comment: "Gentle verdict after a wrong answer, without saying it was almost right"),
-      symbol: "xmark", tint: .destructive)
+      symbol: "xmark", tone: .wrong)
   }
 }

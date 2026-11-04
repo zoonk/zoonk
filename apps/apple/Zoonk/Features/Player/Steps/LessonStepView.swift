@@ -110,7 +110,7 @@ private struct HookStepView: View {
         "Guess first", tableName: "Player", comment: "Above a hook's question: a guess never counts"
       )
       .typeStyle(.data)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       LessonQuestionText(text: question)
       StepMedia(step: step, visual: content.visual, asks: true)
     } else {
@@ -215,7 +215,7 @@ private struct WorkedExampleStepView: View {
   private var problem: some View {
     Text("Worked example", tableName: "Player", comment: "Label above a worked example")
       .typeStyle(.data)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
     if let title = content.title {
       LessonQuestionText(text: title)
@@ -232,7 +232,7 @@ private struct WorkedExampleStepView: View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
           Text(index + 1, format: .number)
             .typeStyle(.note.weight(.semibold).monospaced())
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           VStack(alignment: .leading, spacing: 4) {
             LessonTextBlocks(solved.text)
             if let math = solved.math {
@@ -262,7 +262,7 @@ private struct CheckStepView: View {
     case .screen:
       if let context = content.context {
         LessonTextBlocks(context)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       LessonQuestionText(text: content.question)
@@ -294,7 +294,7 @@ private struct TypedAnswerStepView: View {
     case .screen:
       if let context = content.context {
         LessonTextBlocks(context)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if content.isOwnWords {
@@ -306,7 +306,7 @@ private struct TypedAnswerStepView: View {
           Image(systemName: "pencil.line")
         }
         .typeStyle(.data)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       LessonQuestionText(text: content.question)
@@ -355,7 +355,7 @@ struct LessonAnswerField: View {
     .focused(isFocused)
     .disabled(isLocked)
     .padding()
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .panel(cornerRadius: 16)
   }
 }
 
@@ -423,7 +423,7 @@ private struct SpokenAnswerStepView: View {
     if mode == .speak {
       Text("Tap and say it out loud", tableName: "Player", comment: "Above a sentence to say")
         .typeStyle(.data)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
 
     LessonQuestionText(text: content.prompt)
@@ -431,10 +431,10 @@ private struct SpokenAnswerStepView: View {
       Text(content.targetText)
         .typeStyle(.section.weight(.medium))
       if let romanization = content.romanization {
-        Text(romanization).foregroundStyle(.secondary)
+        Text(romanization).foregroundStyle(.mutedForeground)
       }
       if let translation = content.translation {
-        Text(translation).foregroundStyle(.secondary)
+        Text(translation).foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -456,7 +456,7 @@ private struct SpokenAnswerStepView: View {
             "The microphone is blocked. Type your answer instead.", tableName: "Player",
             comment: "A spoken screen falls back to typing when the microphone is off"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
           if let settings = URL(string: UIApplication.openSettingsURLString) {
             Link(destination: settings) {
@@ -530,7 +530,7 @@ private struct SummaryStepView: View {
           LessonRichText(idea.text)
         } icon: {
           Image(systemName: "lightbulb")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }

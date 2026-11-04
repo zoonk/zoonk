@@ -33,7 +33,7 @@ struct SessionSummaryView: View {
           } label: {
             Text("Try again", tableName: "Session", comment: "Retries loading the summary")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
         .lonePage()
       } else {
@@ -53,16 +53,16 @@ struct SessionSummaryView: View {
 
     return SummaryVisit(visit: visit) {
       PaneSplit {
-        List {
+        ZoonkList {
           dayResult(summary)
         }
         .celebratesOnce(id: visit)
       } secondary: {
-        List {
+        ZoonkList {
           onward(summary)
         }
       } single: {
-        List {
+        ZoonkList {
           dayResult(summary)
           onward(summary)
         }
@@ -87,7 +87,7 @@ struct SessionSummaryView: View {
             comment: "Time studied in a session stopped for today"
           )
           .monospacedDigit()
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .listRowBackground(Color.clear)
@@ -97,7 +97,7 @@ struct SessionSummaryView: View {
       SummaryTiles(summary: summary, goalKind: learner.summary.value?.shownGoal?.kind)
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
 
     EarnedToday(summary: summary, missionsBonus: store.session(id: sessionID).value?.fullMeal.bonus)
   }
@@ -110,7 +110,8 @@ struct SessionSummaryView: View {
           Text(skill.name)
         }
       } header: {
-        Text("Skills that rose", tableName: "Session", comment: "Skills that moved up")
+        SectionTitle(
+          Text("Skills that rose", tableName: "Session", comment: "Skills that moved up"))
       }
     }
 
@@ -122,7 +123,7 @@ struct SessionSummaryView: View {
           KindMark(kind: .lesson)
         }
       } header: {
-        Text("Tomorrow", tableName: "Session", comment: "Tomorrow's lesson")
+        SectionTitle(Text("Tomorrow", tableName: "Session", comment: "Tomorrow's lesson"))
       }
     }
 
@@ -144,7 +145,7 @@ struct SessionSummaryView: View {
             Text("Keep going", tableName: "Session", comment: "Goes on with a stopped session")
               .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.large)
           .disabled(isAddingTime)
         }
@@ -156,7 +157,7 @@ struct SessionSummaryView: View {
             Text("See mistakes", tableName: "Session", comment: "Opens the mistakes notebook")
               .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.large)
           .disabled(isAddingTime)
         }
@@ -180,7 +181,7 @@ struct SessionSummaryView: View {
             }
             .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.large)
           .disabled(isAddingTime)
         }
@@ -191,12 +192,12 @@ struct SessionSummaryView: View {
             comment: "Adding time failed"
           )
           .typeStyle(.note)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
   }
 
   private func title(_ summary: SessionSummary) -> Text {
@@ -413,11 +414,11 @@ private struct EarnedToday: View {
           HStack(alignment: .firstTextBaseline, spacing: 6) {
             EarnedNumber(value: summary.brainPower)
               .typeStyle(.heroTitle)
-              .foregroundStyle(.brain)
+              .foregroundStyle(.brainText)
 
             Text("Brain Power", tableName: "Session", comment: "Brain Power earned")
               .typeStyle(.note.weight(.medium))
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
           .accessibilityElement(children: .combine)
         }
@@ -427,7 +428,7 @@ private struct EarnedToday: View {
             if let missionsBonus {
               Text(missionsBonus, format: .number.sign(strategy: .always()))
                 .monospacedDigit()
-                .foregroundStyle(.brain)
+                .foregroundStyle(.brainText)
             }
           } title: {
             Text("Today's missions", tableName: "Session", comment: "The missions' header")
@@ -447,7 +448,7 @@ private struct EarnedToday: View {
                 comment: "How many belt levels the session added"
               )
               .monospacedDigit()
-              .foregroundStyle(.success)
+              .foregroundStyle(.successText)
             } title: {
               Text(
                 "\(beltName(stripes.after.color) ?? stripes.after.color), level \(stripes.after.level)",
@@ -472,7 +473,7 @@ private struct EarnedToday: View {
           }
         }
       } header: {
-        Text("Earned today", tableName: "Session", comment: "What the session earned")
+        SectionTitle(Text("Earned today", tableName: "Session", comment: "What the session earned"))
       }
     }
   }

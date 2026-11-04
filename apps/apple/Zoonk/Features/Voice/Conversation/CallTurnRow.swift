@@ -18,7 +18,7 @@ struct CallTurnRow: View {
         if let detail {
           detail
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -42,16 +42,16 @@ struct CallTurnRow: View {
       Text(name.prefix(1).uppercased())
         .typeStyle(.note.weight(.medium))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.secondarySystemFill), in: .circle)
+        .background(Color.muted, in: .circle)
         .overlay {
-          Circle().strokeBorder(Color.secondary, lineWidth: 1.5)
+          Circle().strokeBorder(Color.mutedForeground, lineWidth: 1.5)
         }
     case .muted:
       Image(systemName: "mic.slash")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     case .typing:
       Image(systemName: "keyboard")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     case .listening:
       Image(systemName: "mic.fill")
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -12,7 +12,7 @@ extension ActivityRenderer {
           comment: "A map activity whose map isn't available"
         )
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -70,13 +70,13 @@ private struct MapExplorerCanvas: View {
             } icon: {
               RoundedRectangle(cornerRadius: 2)
                 .fill(item.tone.fill)
-                .strokeBorder(.separator)
+                .strokeBorder(.border)
                 .frame(width: 12, height: 12)
             }
           }
         }
         .typeStyle(.meta)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
       }
 
@@ -107,12 +107,12 @@ private struct MapExplorerCanvas: View {
             Image(systemName: "hand.tap")
           }
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(12)
-      .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+      .panel(cornerRadius: 12)
     }
   }
 
@@ -235,7 +235,7 @@ private struct MapShapes: View {
         let shape = path(region.path)
         context.fill(shape, with: .color(region.tone.fill))
         context.stroke(
-          shape, with: .color(Color(.separator)),
+          shape, with: .color(Color.border),
           style: StrokeStyle(lineWidth: 0.75, lineJoin: .round))
       }
 
@@ -250,7 +250,7 @@ private struct MapShapes: View {
           Path(
             CGRect(x: inset.x, y: inset.y, width: inset.width, height: inset.height).applying(
               transform)),
-          with: .color(Color(.separator)), lineWidth: 1)
+          with: .color(Color.border), lineWidth: 1)
       }
 
       for label in map.labels {
@@ -274,7 +274,7 @@ private struct MapShapes: View {
 
         labelContext.draw(
           text.foregroundStyle(
-            label.kind == .street ? Color.secondary : Color.primary.opacity(0.75)),
+            label.kind == .street ? Color.mutedForeground : Color.primary.opacity(0.75)),
           at: .zero)
       }
 
@@ -302,11 +302,11 @@ extension ActivityBaseMap.Tone {
 
   var fill: Color {
     switch self {
-    case .context: Color(.secondarySystemBackground)
+    case .context: Color.card
     case .focus: Color(.systemBackground)
-    case .groupA: .teal.opacity(0.22)
-    case .groupB: .orange.opacity(0.22)
-    case .groupC: .purple.opacity(0.14)
+    case .groupA: .vizAccent.opacity(0.22)
+    case .groupB: .vizHighlight.opacity(0.22)
+    case .groupC: .vizSecondary.opacity(0.14)
     }
   }
 }

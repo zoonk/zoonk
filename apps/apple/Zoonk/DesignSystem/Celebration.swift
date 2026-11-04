@@ -135,7 +135,7 @@ struct MeterSegment: View {
   let share: Double
   var from: Double?
   var color: Color
-  var track: Color = Color(.systemFill)
+  var track = Color.surface3
   var delay: TimeInterval = 0
 
   @Environment(\.celebrates) private var celebrates
@@ -150,7 +150,7 @@ struct MeterSegment: View {
   var body: some View {
     let start = fills && !filled ? (from ?? 0) / share : 1
 
-    Capsule()
+    RoundedRectangle(cornerRadius: 3, style: .continuous)
       .fill(track)
       .overlay(alignment: .leading) {
         GeometryReader { proxy in
@@ -160,7 +160,7 @@ struct MeterSegment: View {
             .scaleEffect(x: start, anchor: .leading)
         }
       }
-      .clipShape(.capsule)
+      .clipShape(.rect(cornerRadius: 3, style: .continuous))
       .task {
         guard fills, !filled else { return }
 

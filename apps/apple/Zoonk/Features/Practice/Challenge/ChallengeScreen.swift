@@ -70,7 +70,7 @@ struct ChallengeScreen: View {
       VStack(alignment: .leading, spacing: 8) {
         if let eyebrow = eyebrow(challenge) {
           Text(eyebrow)
-            .typeStyle(.note.weight(.medium)).foregroundStyle(.secondary)
+            .typeStyle(.note.weight(.medium)).foregroundStyle(.mutedForeground)
         }
 
         titleText(challenge).typeStyle(.heroTitle)
@@ -89,15 +89,15 @@ struct ChallengeScreen: View {
               }
             }
             .typeStyle(.data)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         } else {
-          Text(description(challenge)).foregroundStyle(.secondary)
+          Text(description(challenge)).foregroundStyle(.mutedForeground)
 
           if !facts(challenge).isEmpty {
             Text(facts(challenge).joinedFacts())
               .typeStyle(.data)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -139,7 +139,7 @@ struct ChallengeScreen: View {
               Text(topic.name)
               if let subject = topic.subject {
                 Spacer()
-                Text(subject).typeStyle(.note).foregroundStyle(.secondary)
+                Text(subject).typeStyle(.note).foregroundStyle(.mutedForeground)
               }
             }
           }
@@ -147,7 +147,7 @@ struct ChallengeScreen: View {
       }
 
       if let rule = duelRule(challenge) {
-        Text(rule).typeStyle(.note).foregroundStyle(.secondary)
+        Text(rule).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       if challenge.reward.brainPower > 0, !won {
@@ -158,7 +158,7 @@ struct ChallengeScreen: View {
         } icon: {
           Image(systemName: "brain.head.profile")
         }
-        .foregroundStyle(.brain)
+        .foregroundStyle(.brainText)
       }
 
       if challenge.locked || challenge.status == .plusRequired {
@@ -187,17 +187,17 @@ struct ChallengeScreen: View {
               tableName: "Practice",
               comment: "A challenge waits for its questions."
             )
-            .typeStyle(.note).foregroundStyle(.secondary)
+            .typeStyle(.note).foregroundStyle(.mutedForeground)
           }
         }
       }
 
       if let startProblem {
-        Text(startProblem).typeStyle(.body).foregroundStyle(.destructive)
+        Text(startProblem).typeStyle(.body).foregroundStyle(.destructiveText)
       }
 
       if let moveProblem {
-        Text(moveProblem).typeStyle(.body).foregroundStyle(.destructive)
+        Text(moveProblem).typeStyle(.body).foregroundStyle(.destructiveText)
       }
 
       if let moved, let date = challenge.date {
@@ -210,7 +210,7 @@ struct ChallengeScreen: View {
             )
             Text(movedDetail(moved.effect))
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
           Spacer()
           Button {
@@ -218,7 +218,7 @@ struct ChallengeScreen: View {
           } label: {
             Text("Undo", tableName: "Practice", comment: "Undoes moving a weekly challenge.")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .disabled(isMoving)
         }
       }
@@ -289,7 +289,7 @@ struct ChallengeScreen: View {
         "Opens after this phase's lessons", tableName: "Practice",
         comment: "A phase challenge waiting for earlier lessons."
       )
-      .typeStyle(.note).foregroundStyle(.secondary)
+      .typeStyle(.note).foregroundStyle(.mutedForeground)
     }
   }
 

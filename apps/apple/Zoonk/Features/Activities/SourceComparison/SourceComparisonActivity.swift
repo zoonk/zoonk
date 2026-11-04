@@ -206,7 +206,7 @@ private struct SourceComparisonCanvas: View {
       }
     }
     .typeStyle(.meta)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
     .accessibilityHidden(true)
   }
 
@@ -224,11 +224,11 @@ private struct SourceComparisonCanvas: View {
             .typeStyle(.note.weight(.semibold))
           Text(source.date)
             .typeStyle(.meta)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       } icon: {
         Image(systemName: symbol)
-          .foregroundStyle(.mint)
+          .foregroundStyle(.vizAccent)
       }
       .accessibilityElement(children: .combine)
 
@@ -263,12 +263,12 @@ private struct SourceComparisonCanvas: View {
       } else {
         Text(citation)
           .typeStyle(.meta)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .panel(cornerRadius: 16)
   }
 
   private func excerpt(_ source: SourceComparisonFields.Source) -> AttributedString {
@@ -289,9 +289,9 @@ private struct SourceComparisonCanvas: View {
 
         switch state(of: passage) {
         case .unmarked:
-          part.swiftUI.underlineStyle = Text.LineStyle(pattern: .dot, color: .mint)
+          part.swiftUI.underlineStyle = Text.LineStyle(pattern: .dot, color: .vizAccent)
         case .marked:
-          part.swiftUI.backgroundColor = Color.orange.opacity(0.25)
+          part.swiftUI.backgroundColor = Color.vizHighlight.opacity(0.25)
         case .correct:
           part.swiftUI.backgroundColor = Color.success.opacity(0.2)
         case .incorrect:

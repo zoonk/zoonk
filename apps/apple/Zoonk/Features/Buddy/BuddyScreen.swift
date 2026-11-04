@@ -52,7 +52,7 @@ struct BuddyScreen: View {
       } label: {
         Text("Try again", tableName: "Buddy", comment: "Reads the buddy's day again")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
     .lonePage()
     .navigationTitle(Text(summary.buddyDisplayName))
@@ -155,7 +155,7 @@ private struct BuddyContent: View {
           isDayShown = false
         }
       )
-      .accessibilitySizeStyles()
+      .zoonkStyles()
     }
     .sheet(isPresented: $isEditing) {
       BuddyEditor(
@@ -165,11 +165,11 @@ private struct BuddyContent: View {
         },
         save: { choice in Task { await store.save(choice) } }
       )
-      .accessibilitySizeStyles()
+      .zoonkStyles()
     }
     .sheet(isPresented: $isWearing) {
       BuddyGlassesPicker(status: status)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
     .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).isAsking } ?? false) {
       _, isAsking in
@@ -263,7 +263,7 @@ private struct BuddyContent: View {
           comment: "Saving the buddy failed"
         )
         .typeStyle(.note)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
 
       if !status.buddy.picked {
@@ -278,7 +278,7 @@ private struct BuddyContent: View {
             Image(systemName: "face.smiling")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     }
     .accessibilityElement(children: .contain)
@@ -393,7 +393,7 @@ private struct BuddyContent: View {
     }
     .labelStyle(.titleAndIcon)
     .typeStyle(.data)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
     .contentShape(.rect)
   }
 

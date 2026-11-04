@@ -112,7 +112,7 @@ struct GoalEntrySections<Attachment: View>: View {
           "I want to", tableName: "Onboarding",
           comment: "The goal box's label, before the learner's words"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
 
         MultilineTextField(
@@ -134,9 +134,10 @@ struct GoalEntrySections<Attachment: View>: View {
       }
     } header: {
       if isSection {
-        Text(
-          "Start a goal", tableName: "Onboarding",
-          comment: "Title of the section where a learner types a new goal")
+        SectionTitle(
+          Text(
+            "Start a goal", tableName: "Onboarding",
+            comment: "Title of the section where a learner types a new goal"))
       }
     }
 
@@ -153,7 +154,7 @@ struct GoalEntrySections<Attachment: View>: View {
       .buttonStyle(.mainAction)
       .controlSize(.large)
       .keepsOffFold()
-      .listRowInsets(EdgeInsets())
+      .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
     }
 
@@ -248,14 +249,15 @@ struct GoalExamplesSection: View {
               .foregroundStyle(.primary)
             Text(example.kind)
               .typeStyle(.note)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       }
     } header: {
-      Text(
-        "Examples", tableName: "Onboarding",
-        comment: "Title of example goals that start onboarding in one tap")
+      SectionTitle(
+        Text(
+          "Examples", tableName: "Onboarding",
+          comment: "Title of example goals that start onboarding in one tap"))
     }
   }
 

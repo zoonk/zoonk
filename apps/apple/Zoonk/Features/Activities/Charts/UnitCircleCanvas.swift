@@ -148,9 +148,9 @@ struct UnitCircleCanvas: View {
 
   private static func color(_ trig: UnitCircleFields.Trig) -> Color {
     switch trig {
-    case .sin: .orange
-    case .cos: .purple
-    case .tan: .mint
+    case .sin: .vizHighlight
+    case .cos: .vizSecondary
+    case .tan: .vizAccent
     }
   }
 
@@ -163,7 +163,7 @@ struct UnitCircleCanvas: View {
     ChartsCanvas {
       LessonRichText(fields.frame)
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       HStack(spacing: 16) {
         Text(verbatim: angleText(degrees))
@@ -186,7 +186,7 @@ struct UnitCircleCanvas: View {
           comment: "Above the sine and cosine waves"
         )
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         waves
       }
     }
@@ -271,37 +271,37 @@ struct UnitCircleCanvas: View {
     canvas.stroke(
       line(
         CGPoint(x: center.x - radius - 12, y: center.y),
-        CGPoint(x: center.x + radius + 12, y: center.y)), with: .style(Color(.separator)),
+        CGPoint(x: center.x + radius + 12, y: center.y)), with: .style(Color.vizGrid),
       lineWidth: 1.5)
     canvas.stroke(
       line(
         CGPoint(x: center.x, y: center.y - radius - 12),
-        CGPoint(x: center.x, y: center.y + radius + 12)), with: .style(Color(.separator)),
+        CGPoint(x: center.x, y: center.y + radius + 12)), with: .style(Color.vizGrid),
       lineWidth: 1.5)
     canvas.stroke(
       Path(
         ellipseIn: CGRect(
           x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)),
-      with: .style(.secondary), lineWidth: 1.5)
+      with: .style(.vizGrid), lineWidth: 1.5)
 
     canvas.stroke(
       Path { path in
         path.addArc(
           center: center, radius: 22, startAngle: .zero, endAngle: .degrees(-degrees),
           clockwise: true)
-      }, with: .style(.secondary), lineWidth: 1.5)
+      }, with: .style(.vizGrid), lineWidth: 1.5)
 
     canvas.stroke(line(center, point), with: .style(.primary), lineWidth: 2)
 
     if fields.show.contains(.cos) {
       canvas.stroke(
-        line(center, CGPoint(x: point.x, y: center.y)), with: .style(Color.purple),
+        line(center, CGPoint(x: point.x, y: center.y)), with: .style(Color.vizSecondary),
         style: StrokeStyle(lineWidth: 4, lineCap: .round))
     }
 
     if fields.show.contains(.sin) {
       canvas.stroke(
-        line(CGPoint(x: point.x, y: center.y), point), with: .style(Color.orange),
+        line(CGPoint(x: point.x, y: center.y), point), with: .style(Color.vizHighlight),
         style: StrokeStyle(lineWidth: 4, lineCap: .round))
     }
 
@@ -311,10 +311,11 @@ struct UnitCircleCanvas: View {
       let foot = CGPoint(x: center.x + radius, y: center.y)
       let top = CGPoint(x: foot.x, y: center.y - radius * tangent)
       canvas.stroke(
-        line(foot, top), with: .style(Color.mint), style: StrokeStyle(lineWidth: 4, lineCap: .round)
+        line(foot, top), with: .style(Color.vizAccent),
+        style: StrokeStyle(lineWidth: 4, lineCap: .round)
       )
       canvas.stroke(
-        line(center, top), with: .style(Color.mint.opacity(0.6)),
+        line(center, top), with: .style(Color.vizAccent.opacity(0.6)),
         style: StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
     }
 
@@ -327,7 +328,7 @@ struct UnitCircleCanvas: View {
         Text(verbatim: angleText(target.degrees)).font(
           TypeStyle.meta.weight(.semibold).font(in: canvas.environment)
         ).foregroundStyle(
-          Color.success), at: CGPoint(x: mark.x, y: mark.y - 22))
+          Color.successText), at: CGPoint(x: mark.x, y: mark.y - 22))
     }
   }
 
@@ -352,14 +353,14 @@ struct UnitCircleCanvas: View {
       }
 
       RuleMark(x: .value(verbatim: "angle", degrees))
-        .foregroundStyle(.secondary.opacity(0.5))
+        .foregroundStyle(.mutedForeground.opacity(0.5))
         .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [2, 4]))
     }
     .chartXScale(domain: 0...360)
     .chartYScale(domain: -1...1)
     .chartXAxis {
       AxisMarks(values: [0, 90, 180, 270, 360]) { value in
-        AxisGridLine()
+        AxisGridLine().foregroundStyle(.vizGrid)
         AxisValueLabel {
           if let x = value.as(Double.self) {
             Text(verbatim: angleText(x))
@@ -369,7 +370,7 @@ struct UnitCircleCanvas: View {
     }
     .chartYAxis {
       AxisMarks(values: [-1, 0, 1]) { value in
-        AxisGridLine()
+        AxisGridLine().foregroundStyle(.vizGrid)
         AxisValueLabel {
           if let y = value.as(Double.self) {
             Text(verbatim: ActivityNumberFormat.format(y))

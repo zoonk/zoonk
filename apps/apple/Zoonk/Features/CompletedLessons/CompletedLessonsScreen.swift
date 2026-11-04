@@ -27,14 +27,14 @@ struct CompletedLessonsScreen: View {
   private func content(_ lessons: Resource<CompletedLessonsPage>, goalId: String) -> some View {
     switch lessons.state {
     case .loaded(let page):
-      List {
+      ZoonkList {
         ForEach(days(page.lessons)) { day in
           Section {
             ForEach(day.lessons) { lesson in
               CompletedLessonRow(lesson: lesson)
             }
           } header: {
-            Text(day.title)
+            SectionTitle(Text(day.title))
           }
         }
 
@@ -122,7 +122,7 @@ private struct CompletedLessonRow: View {
         if let chapterTitle = lesson.chapterTitle {
           Text(chapterTitle)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)

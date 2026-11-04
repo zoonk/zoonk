@@ -91,7 +91,7 @@ struct CheckpointCallIntro: View {
           comment: "Starting a checkpoint call failed"
         )
         .typeStyle(.body)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
 
       Button {
@@ -190,7 +190,7 @@ private struct StudyTimeUsedUp: View {
       tableName: "Voice", comment: "The daily time limit is a setting that stops study for the day."
     )
     .typeStyle(.note)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
     .frame(maxWidth: .infinity, alignment: .leading)
 
     Button {

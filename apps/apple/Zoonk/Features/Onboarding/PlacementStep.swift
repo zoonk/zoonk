@@ -170,7 +170,7 @@ struct PlacementStep: View {
   }
 
   private func mockRunning(_ mockID: String) -> some View {
-    Form {
+    ZoonkList {
       StepHeader(
         title: Text(
           "Your mock exam is waiting", tableName: "Onboarding",
@@ -201,7 +201,7 @@ struct PlacementStep: View {
           "That didn't save. Try again.", tableName: "Onboarding",
           comment: "A change couldn't be saved"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
   }
@@ -216,7 +216,7 @@ struct PlacementStep: View {
   }
 
   private var intro: some View {
-    Form {
+    ZoonkList {
       StepHeader(
         subject: subject,
         title: Text(
@@ -258,7 +258,7 @@ struct PlacementStep: View {
     comment: "Title of placement's wait once its questions are ready, for a learner still guessing")
 
   private func waiting(holding: WarmUpHolding?) -> some View {
-    Form {
+    ZoonkList {
       if holding == nil {
         StepHeader(
           title: Text(
@@ -304,14 +304,16 @@ struct PlacementStep: View {
             )
             .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.large)
-          .listRowInsets(EdgeInsets())
+          .listRowInsets(.vertical, 0)
           .listRowBackground(Color.clear)
         } footer: {
-          Text(
-            "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
-            comment: "Under Skip for now")
+          SectionFooter {
+            Text(
+              "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
+              comment: "Under Skip for now")
+          }
         }
       }
     }
@@ -328,7 +330,7 @@ struct PlacementStep: View {
   }
 
   private func outcome(title: Text, description: Text) -> some View {
-    Form {
+    ZoonkList {
       StepHeader(title: title, description: description)
 
       saveFailure
@@ -559,7 +561,7 @@ struct PlacementQuestionScreen<Media: View>: View {
         if let subject {
           Text(subject)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         Text(
@@ -569,8 +571,7 @@ struct PlacementQuestionScreen<Media: View>: View {
         .typeStyle(.body.weight(.semibold))
       }
 
-      ProgressView(value: progress)
-        .tint(.success)
+      Meter(value: progress, fill: .success)
         .accessibilityHidden(true)
 
       media()
@@ -584,7 +585,7 @@ struct PlacementQuestionScreen<Media: View>: View {
           "That didn't save. Try again.", tableName: "Onboarding",
           comment: "A change couldn't be saved"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     } actions: {
       PracticeMainButton(

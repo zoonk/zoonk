@@ -70,7 +70,7 @@ struct DrillNoteView: View {
             "Last time you answered: \(lastAnswer)", tableName: "Practice",
             comment: "A mistake drill's note: what the learner answered when they got it wrong."
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         if let lesson {
@@ -98,7 +98,7 @@ struct LessonLinkButton: View {
         Image(systemName: "book")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.small)
   }
 }
@@ -111,7 +111,7 @@ struct DrillIdeaView: View {
     VStack(alignment: .leading, spacing: 20) {
       VStack(alignment: .leading, spacing: 6) {
         Text(lesson.title).typeStyle(.section)
-        Text(drill.line).foregroundStyle(.secondary)
+        Text(drill.line).foregroundStyle(.mutedForeground)
       }
 
       VStack(alignment: .leading, spacing: 0) {
@@ -120,7 +120,7 @@ struct DrillIdeaView: View {
           HStack(alignment: .firstTextBaseline, spacing: 12) {
             Text(index + 1, format: .number)
               .typeStyle(.data)
-              .foregroundStyle(.tertiary)
+              .foregroundStyle(.faint)
             Text(idea)
           }
           .padding(.vertical, 10)
@@ -144,7 +144,7 @@ struct DrillCountdownView: View {
     let end = start.addingTimeInterval(TimeInterval(seconds))
 
     HStack(spacing: 12) {
-      Image(systemName: "timer").foregroundStyle(.secondary).accessibilityHidden(true)
+      Image(systemName: "timer").foregroundStyle(.mutedForeground).accessibilityHidden(true)
       ProgressView(timerInterval: start...end, countsDown: true) {
         EmptyView()
       } currentValueLabel: {

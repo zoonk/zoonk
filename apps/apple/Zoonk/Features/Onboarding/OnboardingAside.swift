@@ -46,7 +46,7 @@ private struct HowItWorks: View {
   @Environment(LearnerSummaryStore.self) private var learner
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         step(
           1,
@@ -65,14 +65,17 @@ private struct HowItWorks: View {
             "Get a plan with dates, and your first lesson", tableName: "Onboarding",
             comment: "How it works, last step: the plan"))
       } header: {
-        Text(
-          "How it works", tableName: "Onboarding",
-          comment: "Heading over the steps from a goal to its plan")
-      } footer: {
-        if learner.summary.value?.identity.isAnonymous ?? true {
+        SectionTitle(
           Text(
-            "Start free, no account needed.", tableName: "Onboarding",
-            comment: "Under onboarding's steps for a visitor or a guest")
+            "How it works", tableName: "Onboarding",
+            comment: "Heading over the steps from a goal to its plan"))
+      } footer: {
+        SectionFooter {
+          if learner.summary.value?.identity.isAnonymous ?? true {
+            Text(
+              "Start free, no account needed.", tableName: "Onboarding",
+              comment: "Under onboarding's steps for a visitor or a guest")
+          }
         }
       }
     }
@@ -82,12 +85,12 @@ private struct HowItWorks: View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       Text(number, format: .number)
         .typeStyle(.data)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
 
       title
     }
-    .listRowBackground(isCurrent ? Color(.tertiarySystemFill) : nil)
+    .currentRow(isCurrent)
     .accessibilityAddTraits(isCurrent ? .isSelected : [])
   }
 }

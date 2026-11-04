@@ -160,7 +160,7 @@ private struct CodeRunnerCanvas: View {
       }
     }
     .typeStyle(.meta)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 
   private var fileName: some View {
@@ -209,7 +209,8 @@ private struct CodeRunnerCanvas: View {
                 "Line \(number), yours to edit", tableName: "ActivitiesCode",
                 comment: "VoiceOver: a line of a program the learner edits")
             }
-            .textFieldStyle(.roundedBorder)
+            .textFieldStyle(.plain)
+            .fieldBorder()
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .keyboardType(.asciiCapable)
@@ -303,7 +304,7 @@ private struct CodeRunnerOutput: View {
         }
       }
       .fixedSize(horizontal: false, vertical: true)
-      .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+      .panel(cornerRadius: 12)
 
       if let run {
         if isStale {
@@ -319,7 +320,7 @@ private struct CodeRunnerOutput: View {
             ScrollView(.horizontal) {
               Text(verbatim: run.errorOutput.trimmingCharacters(in: .newlines))
                 .typeStyle(.data)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
 
@@ -332,7 +333,7 @@ private struct CodeRunnerOutput: View {
                     "Gentle verdict after a wrong answer, above the feedback on its likely mistake"
                 )
                 .typeWeight(.semibold)
-                .foregroundStyle(.destructive)
+                .foregroundStyle(.destructiveText)
                 LessonRichText(mistake)
               }
             } icon: {
@@ -352,7 +353,7 @@ private struct CodeRunnerOutput: View {
     VStack(alignment: .leading, spacing: 2) {
       label()
         .typeStyle(.meta.weight(.medium))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       ScrollView(.horizontal) {
         content()
@@ -373,10 +374,10 @@ private struct CodeRunnerOutput: View {
           "Nothing printed", tableName: "ActivitiesCode", comment: "A program ran without printing"
         )
         .typeStyle(.note)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       } else if expectedOutput != nil && !isStale {
         outputText(run.output)
-          .foregroundStyle(matches ? Color.success : .destructive)
+          .foregroundStyle(matches ? Color.successText : .destructiveText)
           .accessibilityValue(
             matches
               ? Text(
@@ -394,7 +395,7 @@ private struct CodeRunnerOutput: View {
         comment: "Before a program's first run"
       )
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -413,7 +414,7 @@ private struct CodeRunnerOutput: View {
         Image(systemName: "xmark.circle")
       }
       .typeStyle(.body.monospaced())
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
     }
   }
 

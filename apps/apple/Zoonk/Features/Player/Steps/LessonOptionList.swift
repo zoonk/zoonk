@@ -68,7 +68,7 @@ struct LessonOptionList: View {
         if let detail = option.detail {
           Text(detail)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -184,8 +184,6 @@ struct LessonOptionStyle: ButtonStyle {
     }
   }
 
-  @Environment(\.colorSchemeContrast) private var contrast
-
   let mark: Mark
 
   func makeBody(configuration: Configuration) -> some View {
@@ -194,39 +192,26 @@ struct LessonOptionStyle: ButtonStyle {
       .foregroundStyle(foreground)
       .multilineTextAlignment(.leading)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding()
-      .background(background, in: .rect(cornerRadius: 16))
-      .overlay {
-        RoundedRectangle(cornerRadius: 16)
-          .strokeBorder(stroke, lineWidth: mark == .plain || mark == .dimmed ? 0 : 2)
-      }
-      .opacity(configuration.isPressed ? 0.75 : mark == .dimmed ? 0.6 : 1)
-      .contentShape(.rect(cornerRadius: 16))
+      .padding(.horizontal, 14)
+      .padding(.vertical, 12)
+      .answerSurface(tone, isPressed: configuration.isPressed)
+      .opacity(mark == .dimmed ? 0.6 : 1)
   }
 
   private var foreground: Color {
     switch mark {
-    case .right: .success
-    case .wrong: .destructive
-    default: .primary
+    case .right: .successText
+    case .wrong: .destructiveText
+    default: Color(.foreground)
     }
   }
 
-  private var background: Color {
+  private var tone: AnswerTone {
     switch mark {
-    case .selected: .pick(contrast)
-    case .right: Color.success.opacity(0.15)
-    case .wrong: Color.destructive.opacity(0.15)
-    default: Color(.secondarySystemBackground)
-    }
-  }
-
-  private var stroke: Color {
-    switch mark {
-    case .selected: .primary
-    case .right: .success
-    case .wrong: .destructive
-    default: .clear
+    case .selected: .picked
+    case .right: .right
+    case .wrong: .wrong
+    case .plain, .dimmed: .idle
     }
   }
 }
@@ -244,11 +229,11 @@ struct LessonWordTile: View {
         if let romanization {
           Text(romanization)
             .typeStyle(.meta)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .opacity(isUsed ? 0.3 : 1)
     .disabled(isUsed)
   }

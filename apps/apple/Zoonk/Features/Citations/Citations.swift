@@ -39,7 +39,7 @@ struct CitationNote: View {
   private var source: some View {
     Text(citation.text)
       .typeStyle(.meta.weight(.medium))
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
   }
 
   @ViewBuilder private var chip: some View {
@@ -81,16 +81,16 @@ struct SourcesChip: View {
       // `ViewThatFits` would squeeze the chip beside the citation instead of below it.
       .labelStyle(.titleAndIcon)
       .typeStyle(.note)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.small)
     .buttonSizing(dynamicTypeSize.isAccessibilitySize ? .flexible : .automatic)
     .popover(isPresented: $showsSource) {
       SourceDetails(title: title, publisher: publisher, url: url, checkedAt: checkedAt)
         // By default a popover becomes a full-screen cover in landscape, with no way to close it.
         .presentationCompactAdaptation(.popover)
-        .accessibilitySizeStyles()
+        .zoonkStyles()
     }
   }
 }
@@ -110,7 +110,7 @@ private struct SourceDetails: View {
 
           checked
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let url = url.flatMap(URL.init(string:)) {

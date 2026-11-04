@@ -8,7 +8,7 @@ struct PreferencesView: View {
   @State private var isEditingBuddy = false
 
   var body: some View {
-    Form {
+    ZoonkList {
       if let preferences = settings.preferences.value {
         Section {
           IconLabeledContent {
@@ -23,7 +23,7 @@ struct PreferencesView: View {
                   comment: "Opens the buddy editor before the learner picked one")
               }
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           } title: {
             Text(preferences.buddy.displayName)
             Text(
@@ -35,7 +35,9 @@ struct PreferencesView: View {
               .typeStyle(.section.weight(.regular))
           }
         } header: {
-          Text("Your buddy", tableName: "Settings", comment: "Preferences section about the buddy")
+          SectionTitle(
+            Text(
+              "Your buddy", tableName: "Settings", comment: "Preferences section about the buddy"))
         }
 
         Section {
@@ -65,11 +67,14 @@ struct PreferencesView: View {
               comment: "Setting that ends the day's study after a time")
           }
         } header: {
-          Text("Lessons", tableName: "Settings", comment: "Preferences section about lessons")
+          SectionTitle(
+            Text("Lessons", tableName: "Settings", comment: "Preferences section about lessons"))
         } footer: {
-          Text(
-            "Stop for the day after this much study.", tableName: "Settings",
-            comment: "Explains the daily time limit")
+          SectionFooter {
+            Text(
+              "Stop for the day after this much study.", tableName: "Settings",
+              comment: "Explains the daily time limit")
+          }
         }
 
         Section {
@@ -99,12 +104,15 @@ struct PreferencesView: View {
         }
         .foregroundStyle(.primary)
       } header: {
-        Text("Language", tableName: "Settings", comment: "Preferences section about language")
+        SectionTitle(
+          Text("Language", tableName: "Settings", comment: "Preferences section about language"))
       } footer: {
-        Text(
-          "Zoonk follows your device's language. Change it for Zoonk alone in Settings.",
-          tableName: "Settings",
-          comment: "Explains where the app's language is changed on iPhone and iPad")
+        SectionFooter {
+          Text(
+            "Zoonk follows your device's language. Change it for Zoonk alone in Settings.",
+            tableName: "Settings",
+            comment: "Explains where the app's language is changed on iPhone and iPad")
+        }
       }
 
       if settings.saveFailed {
@@ -130,7 +138,7 @@ struct PreferencesView: View {
             await settings.updatePreferences(.buddy(choice))
           }
         }
-        .accessibilitySizeStyles()
+        .zoonkStyles()
       }
     }
   }
@@ -192,7 +200,7 @@ struct SettingsSaveError: View {
       } icon: {
         Image(systemName: "exclamationmark.circle")
       }
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
     }
   }
 }

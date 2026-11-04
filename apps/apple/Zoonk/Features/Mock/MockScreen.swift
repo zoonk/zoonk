@@ -91,7 +91,7 @@ private struct MockStage: View {
         } label: {
           Text("Try again", tableName: "Mock", comment: "Button to retry loading")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
       .navigationTitle(untitledMock)
@@ -145,7 +145,7 @@ struct MockClock: View {
         .typeStyle(.body.weight(.semibold).monospaced())
       Text("time left", tableName: "Mock", comment: "Under the mock's clock")
         .typeStyle(.small)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
     }
     .accessibilityElement(children: .combine)
@@ -170,13 +170,13 @@ struct MockStepStatus: View {
           } label: {
             Text("Retry", tableName: "Mock", comment: "Sends the waiting answers now")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.small)
         }
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       case .refused:
         Text("Your last answer wasn't saved.", tableName: "Mock", comment: "A refused save")
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
       case .saved, .saving:
         EmptyView()
       }
@@ -193,13 +193,13 @@ struct MockStepStatus: View {
               comment: "A mock step failed")
           }
         }
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       } else if run.slow {
         Text(
           "Still handing it in. This is taking longer than usual.", tableName: "Mock",
           comment: "A mock step is slow"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .typeStyle(.body)
@@ -350,7 +350,7 @@ private struct MockBreakView: View {
   let until: Date
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 8) {
           Text(timerInterval: Date.now...max(until, .now), countsDown: true)
@@ -361,7 +361,7 @@ private struct MockBreakView: View {
             "The next section starts on its own when the break ends.", tableName: "Mock",
             comment: "Under a mock's break clock"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
         .padding(.vertical, 4)
       }
@@ -421,7 +421,7 @@ private struct MockSpeakingView: View {
   }
 
   var body: some View {
-    List {
+    ZoonkList {
       Section {
         if let speaking = view.speaking {
           ForEach(Array(speaking.tasks.enumerated()), id: \.element.id) { index, task in
@@ -441,17 +441,19 @@ private struct MockSpeakingView: View {
             comment: "Before a mock's speaking part starts")
         }
       } header: {
-        Text(view.currentSection?.name ?? view.speaking?.title ?? "")
+        SectionTitle(Text(view.currentSection?.name ?? view.speaking?.title ?? ""))
       } footer: {
-        if view.speaking != nil {
-          if left > 0 {
-            Text(
-              "Do the tasks in order. Each one is a call, and you come back here after it. \(left) tasks left.",
-              tableName: "Mock", comment: "Mock speaking tasks still to do")
-          } else {
-            Text(
-              "Every task is done. Hand in this section to go on.", tableName: "Mock",
-              comment: "Every mock speaking task is done")
+        SectionFooter {
+          if view.speaking != nil {
+            if left > 0 {
+              Text(
+                "Do the tasks in order. Each one is a call, and you come back here after it. \(left) tasks left.",
+                tableName: "Mock", comment: "Mock speaking tasks still to do")
+            } else {
+              Text(
+                "Every task is done. Hand in this section to go on.", tableName: "Mock",
+                comment: "Every mock speaking task is done")
+            }
           }
         }
       }
@@ -466,7 +468,7 @@ private struct MockSpeakingView: View {
         openTask = nil
       }
       .onDisappear { Task { await run.reload() } }
-      .accessibilitySizeStyles()
+      .zoonkStyles()
     }
     .safeAreaBar(edge: .bottom) {
       MockActionBar(run: run) {
@@ -522,7 +524,7 @@ private struct MockSpeakingView: View {
       VStack(alignment: .leading, spacing: 2) {
         Text("Task \(number)", tableName: "Mock", comment: "A speaking task's number")
           .typeStyle(.data)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         Text(task.name)
       }
       Spacer()
@@ -532,14 +534,14 @@ private struct MockSpeakingView: View {
         } icon: {
           StatusMark(status: .done)
         }
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       } else {
         Button {
           openTask = task
         } label: {
           Text("Start", tableName: "Mock", comment: "Starts a speaking task's call")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     }
   }

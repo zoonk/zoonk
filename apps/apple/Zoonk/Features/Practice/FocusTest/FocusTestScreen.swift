@@ -114,7 +114,7 @@ struct FocusTestScreen: View {
             "Your new focus", tableName: "Practice",
             comment: "Eyebrow over a focus test's chosen subjects."
           )
-          .typeStyle(.note.weight(.medium)).foregroundStyle(.secondary)
+          .typeStyle(.note.weight(.medium)).foregroundStyle(.mutedForeground)
           Text(chosen.formatted(.list(type: .and))).typeStyle(.heroTitle)
           Group {
             if chosen.count == 1 {
@@ -127,7 +127,7 @@ struct FocusTestScreen: View {
                 tableName: "Practice", comment: "Why a focus test chose its subjects.")
             }
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
     } response: {
@@ -148,7 +148,7 @@ struct FocusTestScreen: View {
               }
             }
             Text("\(area.correct)/\(area.total)").typeStyle(.data)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
           .accessibilityElement(children: .combine)
         }
@@ -161,7 +161,7 @@ struct FocusTestScreen: View {
           "We couldn't undo it. Try again.", tableName: "Practice",
           comment: "Undoing a focus test's change failed."
         )
-        .typeStyle(.body).foregroundStyle(.destructive)
+        .typeStyle(.body).foregroundStyle(.destructiveText)
       }
     } actions: {
       if let changeId = result.changeId, !undone {

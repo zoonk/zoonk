@@ -140,7 +140,7 @@ private struct SQLPlaygroundCanvas: View {
       if let queryRun, !isStale, let message = errorMessage(queryRun) {
         message
           .typeStyle(.body.monospaced())
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
       }
 
       if let result {
@@ -190,7 +190,8 @@ private struct SQLPlaygroundCanvas: View {
       )
       .lineLimit(3...)
       .typeStyle(.body.monospaced())
-      .textFieldStyle(.roundedBorder)
+      .textFieldStyle(.plain)
+      .fieldBorder()
       .textInputAutocapitalization(.never)
       .autocorrectionDisabled()
       .keyboardType(.asciiCapable)
@@ -225,7 +226,7 @@ private struct SQLPlaygroundCanvas: View {
             Text(verbatim: snippet.trimmingCharacters(in: .whitespaces))
               .typeStyle(.data)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
       }
     }
@@ -423,14 +424,14 @@ private struct SQLTableViewer: View {
       } label: {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
           Image(systemName: "tablecells")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           Text(verbatim: table.name)
             .typeStyle(.body.weight(.semibold).monospaced())
 
           Text(verbatim: table.columns.map(\.name).joined(separator: ", "))
             .typeStyle(.data)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -439,7 +440,7 @@ private struct SQLTableViewer: View {
             comment: "How many rows a SQL table has"
           )
           .typeStyle(.meta)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
     }
@@ -460,7 +461,7 @@ private struct SQLRowsTable: View {
     ScrollView(.horizontal) {
       grid
         .overlay {
-          RoundedRectangle(cornerRadius: 10).strokeBorder(.separator)
+          RoundedRectangle(cornerRadius: 10).strokeBorder(.border)
         }
         .clipShape(.rect(cornerRadius: 10))
     }
@@ -476,13 +477,13 @@ private struct SQLRowsTable: View {
           Text(verbatim: column)
             .fixedSize()
             .typeStyle(.data)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
       }
-      .background(Color(.tertiarySystemFill))
+      .background(Color.muted)
       .accessibilityHidden(true)
 
       ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
@@ -549,7 +550,7 @@ private struct SQLCell: View {
     if value == .null {
       Text(verbatim: "NULL")
         .italic()
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     } else {
       Text(verbatim: Self.text(value))
         .monospacedDigit()

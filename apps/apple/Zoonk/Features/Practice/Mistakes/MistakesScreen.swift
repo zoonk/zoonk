@@ -20,7 +20,7 @@ struct MistakesScreen: View {
     // The list to fix keeps its rows, and what's open in them, as the fixed list comes and goes.
     // Side by side, the two need no picker between them.
     PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
-      List {
+      ZoonkList {
         listTitle(fixed: true, counts: fixed.value?.counts)
         MistakeListSections(resource: fixed, goalId: goalId, fixed: true)
       }
@@ -29,7 +29,7 @@ struct MistakesScreen: View {
       let showsFixedHere = showsFixed && !isBeside
       let shown = showsFixedHere ? fixed : open
 
-      List {
+      ZoonkList {
         if isBeside {
           listTitle(fixed: false, counts: open.value?.counts)
         }
@@ -49,7 +49,7 @@ struct MistakesScreen: View {
       .readableColumn(isBeside ? .infinity : PracticeLayout.readableWidth, alignment: .leading)
       .loads(shown)
     }
-    .listStyle(.insetGrouped)
+
     .navigationTitle(
       Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
     )
@@ -78,7 +78,7 @@ struct MistakesScreen: View {
       .pickerStyle(.segmented)
     }
     .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
+    .listRowInsets(.vertical, 0)
   }
 
   private func listTitle(fixed: Bool, counts: Components.Schemas.MistakeList.CountsPayload?)
@@ -136,7 +136,7 @@ private struct MistakeListSections: View {
 
       if list.data.isEmpty {
         Section {
-          Text(emptyText).foregroundStyle(.secondary)
+          Text(emptyText).foregroundStyle(.mutedForeground)
         }
       }
 
@@ -151,7 +151,7 @@ private struct MistakeListSections: View {
             )
           }
         } header: {
-          SectionHeaderRow(title: Text(group.name)) {
+          SectionTitle(Text(group.name)) {
             Text(group.mistakes.count, format: .number).monospacedDigit()
           }
         }
@@ -253,7 +253,7 @@ private struct NotebookHeader: View {
 
         Text(countsLine(ready: ready, tomorrow: tomorrow, fixed: list.counts.fixed))
           .typeStyle(.data)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         if ready == 0, tomorrow > 0 {
           Text(
@@ -262,7 +262,7 @@ private struct NotebookHeader: View {
             comment: "Why today's mistakes can't be practiced yet."
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         if ready > 0 {
@@ -339,7 +339,7 @@ private struct MistakeEntryView: View {
           .monospacedDigit()
       }
       .typeStyle(.meta.weight(.medium))
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       if let set = try? snapshot.set.map({ try PracticeJSON.recode($0.value1) as PracticeItemSet })
       {
@@ -362,7 +362,7 @@ private struct MistakeEntryView: View {
       }
 
       if let explanation = snapshot.explanation {
-        ItemText(explanation).typeStyle(.note).foregroundStyle(.secondary)
+        ItemText(explanation).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       actions
@@ -382,7 +382,7 @@ private struct MistakeEntryView: View {
             comment: "A mistake from today, ready to practice tomorrow."
           )
           .typeStyle(.meta)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         if let skillId {
@@ -393,7 +393,7 @@ private struct MistakeEntryView: View {
               "Practice this skill", tableName: "Practice",
               comment: "Practices only this skill's mistakes.")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
 
         if let lesson = mistake.lesson {
@@ -480,7 +480,7 @@ struct MistakeAnswerRow: View {
             comment: "Mark beside the learner's wrong pick once a question is graded.")
       )
       .typeStyle(.meta.weight(.semibold))
-      .foregroundStyle(isRight ? Color.success : Color.destructive)
+      .foregroundStyle(isRight ? Color.successText : Color.destructiveText)
     }
     .typeStyle(.body.weight(.medium))
     .padding(12)
@@ -536,11 +536,11 @@ private struct PatternRow: View {
               : pattern.title
           )
           .typeStyle(.note)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } icon: {
         Image(systemName: pattern.isTypos ? "keyboard" : "sparkles")
-          .foregroundStyle(pattern.isTypos ? Color.secondary : Color.warning)
+          .foregroundStyle(pattern.isTypos ? Color.mutedForeground : Color.warning)
       }
     }
   }

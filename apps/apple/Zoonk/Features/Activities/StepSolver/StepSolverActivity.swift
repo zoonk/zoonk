@@ -125,7 +125,7 @@ private struct StepSolverCanvas: View {
           }
         }
         .typeStyle(isDone || isCurrent ? .body.weight(.semibold) : .body)
-        .foregroundStyle(isDone || isCurrent ? .primary : .secondary)
+        .foregroundStyle(isDone || isCurrent ? Color(.foreground) : .mutedForeground)
 
         if isCurrent, !isChecked {
           VStack(spacing: 8) {
@@ -146,7 +146,7 @@ private struct StepSolverCanvas: View {
           if let lastWrong = wrongPicks.last {
             LessonRichText(lastWrong.reason)
               .typeStyle(.body)
-              .foregroundStyle(.destructive)
+              .foregroundStyle(.destructiveText)
           }
         }
 
@@ -154,7 +154,7 @@ private struct StepSolverCanvas: View {
           StepSolverWork(step: step, maxValue: maxValue)
           LessonRichText(correct.reason)
             .typeStyle(.note)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if isChecked, isFirstPickWrong,
@@ -164,7 +164,7 @@ private struct StepSolverCanvas: View {
 
           firstPick(picked.quoted(spoken: false))
             .typeStyle(.body.weight(.medium))
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
             .accessibilityLabel(firstPick(picked.quoted(spoken: true)))
         }
       }
@@ -213,19 +213,19 @@ private struct StepSolverMarker: View {
       if isDone {
         Image(systemName: isWrong ? "xmark" : "checkmark")
           .fontWeight(.bold)
-          .foregroundStyle(Color(.systemBackground))
+          .foregroundStyle(Color(.background))
           .frame(width: size, height: size)
           .background(isWrong ? Color.destructive : Color.success, in: .circle)
       } else {
         Text(number, format: .number)
           .typeStyle(.note.weight(.semibold).monospaced())
-          .foregroundStyle(isCurrent ? Color(.systemBackground) : .secondary)
+          .foregroundStyle(isCurrent ? Color(.background) : .mutedForeground)
           .frame(width: size, height: size)
           .background(isCurrent ? Color.primary : .clear, in: .circle)
           .overlay {
             if !isCurrent {
               Circle().strokeBorder(
-                Color(.separator), style: StrokeStyle(lineWidth: 2, dash: [3, 3]))
+                Color.border, style: StrokeStyle(lineWidth: 2, dash: [3, 3]))
             }
           }
       }
@@ -246,7 +246,7 @@ private struct StepSolverWork: View {
     VStack(alignment: .leading, spacing: 4) {
       HStack(spacing: 8) {
         Capsule()
-          .fill(Color.mint)
+          .fill(Color.vizAccent)
           .frame(height: barHeight)
           .containerRelativeFrame(.horizontal) { width, _ in width * 0.6 * share }
 
