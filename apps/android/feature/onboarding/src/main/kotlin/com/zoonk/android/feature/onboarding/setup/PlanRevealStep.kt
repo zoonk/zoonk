@@ -373,7 +373,7 @@ private fun RevealBody(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SuccessEyebrow(stringResource(R.string.onboarding_reveal_created))
-        Text(goal.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        Text(goal.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
         FactsLine(plan.revealFacts(today), plan.schedule)
         PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
         PaceLine(plan, goal.kind)

@@ -200,6 +200,6 @@ internal fun ColumnScope.QuestionPages(
 }
 
 private val COLUMN_WIDTH = 640.dp
-private val MARGIN = 24.dp
+private val MARGIN = 16.dp
 private val EDGE = 16.dp
 private val GAP = 24.dp

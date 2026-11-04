@@ -92,6 +92,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ChoiceAnswer
 import com.zoonk.api.models.ChoiceAnswerAnyOf
 import com.zoonk.api.models.ChoiceAnswerAnyOf2
@@ -386,7 +387,7 @@ internal fun ColumnScope.PlacementQuestion(
             item.context?.let { RichText(it, style = MaterialTheme.typography.bodyLarge) }
             item.image?.let { PrivatePicture(it.url, it.alt, it.width, it.height, PictureFrame.Question) }
             visual?.let { LessonVisual(it) }
-            RichText(item.question, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+            RichText(item.question, modifier = Modifier.semantics { heading() }, style = MaterialTheme.zoonkType.question)
         },
         answer = {
             if (item.format == PlacementFormat.Typed) {

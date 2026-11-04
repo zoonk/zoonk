@@ -2,6 +2,7 @@ package com.zoonk.android.feature.onboarding
 
 import android.view.KeyEvent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
@@ -10,18 +11,20 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.theme.zoonk
 
 data class Choice<T>(
@@ -31,8 +34,9 @@ data class Choice<T>(
 )
 
 /**
- * One row per choice with its radio. [onPick] hears a tap or a number key, so a one-answer question
- * saves at once while the row shows picked, and a Continue during that save can't send it again.
+ * One row per choice with its radio, flat on the page as main's, the words on the page's margin.
+ * [onPick] hears a tap or a number key, so a one-answer question saves at once while the row shows
+ * picked, and a Continue during that save can't send it again.
  */
 @Composable
 fun <T> ChoiceList(
@@ -51,9 +55,10 @@ fun <T> ChoiceList(
         }
     }
 
-    OutlinedCard(
+    Column(
         modifier =
             modifier
+                .bleed(LIST_ITEM_INSET)
                 .selectableGroup()
                 .semantics { contentDescription = label }
                 .onPreviewKeyEvent { event ->
@@ -67,21 +72,16 @@ fun <T> ChoiceList(
                     }
                 },
     ) {
-        Column {
-            choices.forEachIndexed { index, choice ->
-                if (index > 0) HorizontalDivider()
-                val selected = choice.value == value
-                ListItem(
-                    headlineContent = { Text(choice.label) },
-                    supportingContent = choice.description?.let { { Text(it) } },
-                    trailingContent = { RadioButton(selected = selected, onClick = null) },
-                    colors =
-                        ListItemDefaults.colors(
-                            containerColor = if (selected) MaterialTheme.zoonk.selectedTint else MaterialTheme.colorScheme.surface,
-                        ),
-                    modifier = Modifier.selectable(selected = selected, enabled = !readOnly, role = Role.RadioButton) { choose(choice) },
-                )
-            }
+        choices.forEachIndexed { index, choice ->
+            if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
+            val selected = choice.value == value
+            ListItem(
+                headlineContent = { Text(choice.label, style = MaterialTheme.typography.titleSmall) },
+                supportingContent = choice.description?.let { { Text(it, style = MaterialTheme.typography.bodySmall) } },
+                trailingContent = { RadioButton(selected = selected, onClick = null) },
+                colors = ListItemDefaults.colors(containerColor = if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent),
+                modifier = Modifier.selectable(selected = selected, enabled = !readOnly, role = Role.RadioButton) { choose(choice) },
+            )
         }
     }
 }
@@ -99,19 +99,16 @@ fun <T> CheckList(
 ) {
     val full = max != null && value.size >= max
 
-    OutlinedCard(modifier.semantics { contentDescription = label }) {
+    Column(modifier.bleed(LIST_ITEM_INSET).semantics { contentDescription = label }) {
         choices.forEachIndexed { index, choice ->
-            if (index > 0) HorizontalDivider()
+            if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
             val checked = choice.value in value
             val open = checked || !full
             ListItem(
-                headlineContent = { Text(choice.label) },
-                supportingContent = choice.description?.let { { Text(it) } },
+                headlineContent = { Text(choice.label, style = MaterialTheme.typography.titleSmall) },
+                supportingContent = choice.description?.let { { Text(it, style = MaterialTheme.typography.bodySmall) } },
                 trailingContent = { Checkbox(checked = checked, onCheckedChange = null) },
-                colors =
-                    ListItemDefaults.colors(
-                        containerColor = if (checked) MaterialTheme.zoonk.selectedTint else MaterialTheme.colorScheme.surface,
-                    ),
+                colors = ListItemDefaults.colors(containerColor = if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent),
                 modifier =
                     Modifier
                         .alpha(if (open) 1f else DISABLED_ALPHA)

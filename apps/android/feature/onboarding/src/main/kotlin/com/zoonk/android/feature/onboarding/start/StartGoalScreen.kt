@@ -214,7 +214,7 @@ private fun StartColumn(content: @Composable ColumnScope.() -> Unit) {
                         .widthIn(max = 640.dp)
                         .fillMaxWidth()
                         .heightIn(min = windowHeight)
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                        .padding(horizontal = 16.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 content = content,
             )

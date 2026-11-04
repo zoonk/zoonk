@@ -99,7 +99,7 @@ fun VisitorWelcome(
                     Modifier
                         .widthIn(max = 640.dp)
                         .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 32.dp),
+                        .padding(horizontal = 16.dp, vertical = 32.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {

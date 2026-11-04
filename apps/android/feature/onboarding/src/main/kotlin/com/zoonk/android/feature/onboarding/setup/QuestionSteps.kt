@@ -61,6 +61,7 @@ import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyPicker
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DatePickerDialog
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
@@ -166,9 +167,7 @@ internal fun StepHeading(
     subject: String? = null,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (subject != null) {
-            Text(subject, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
-        }
+        if (subject != null) Eyebrow(subject)
         OnboardingHeading(title, description)
     }
 }
