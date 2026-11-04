@@ -1,10 +1,12 @@
+import { setTimeout } from "node:timers/promises";
 import { type APIRequestContext, type BrowserContext, type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { test as base, expect } from "./fixtures";
 import { createLanguageLearner } from "./language-learner";
-import { answerLiveCalls } from "./live-peer";
+import { CHARACTER_REPLY, CHARACTER_RESUME, answerLiveCalls } from "./live-peer";
 
 type Learner = Awaited<ReturnType<typeof createLanguageLearner>>;
 
@@ -529,6 +531,244 @@ test.describe("Live call server states", () => {
           timeout: 20_000,
         })
         .toMatchObject({ status: "completed" });
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("calling again after a drop carries the call on: its turns stay, the character picks up and the save covers the whole call", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      const peer = await answerLiveCalls(page, "answers");
+      const actions = observeActions({ conversationId: call.id, page });
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+      await expectLive(page);
+
+      const transcript = page.getByRole("log", { name: "Conversation" });
+      await page.getByRole("textbox", { name: "Type your reply" }).fill("Is it still free?");
+      await page.getByRole("button", { exact: true, name: "Send" }).click();
+      await expect(transcript.getByText(CHARACTER_REPLY)).toBeVisible();
+
+      await peer.drop();
+      await expect(page.getByText("The call dropped")).toBeVisible();
+      await page.getByRole("button", { name: "Call again" }).click();
+
+      await expect(transcript.getByText("Is it still free?")).toBeVisible();
+      await expect(transcript.getByText(CHARACTER_RESUME)).toBeVisible();
+      await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toHaveCount(1);
+
+      const earlierTurns = [
+        { speaker: "character", text: "Hi! Are you calling about the apartment?" },
+        { speaker: "learner", text: "Is it still free?" },
+        { speaker: "character", text: CHARACTER_REPLY },
+      ];
+
+      expect(actions.sdp).toMatchObject([
+        { sessionConfig: { providerOptions: { zoonk: { turns: [] } } } },
+        { sessionConfig: { providerOptions: { zoonk: { turns: earlierTurns } } } },
+      ]);
+
+      const reconnected = await connectionFor(call.id);
+      expect(reconnected.continuesCall).toBe(true);
+
+      await page.getByRole("button", { exact: true, name: "End" }).click();
+      await expect.poll(() => actions.complete.length).toBe(1);
+
+      expect(actions.complete[0]).toStrictEqual({
+        connectionId: reconnected.id,
+        turns: [...earlierTurns, { speaker: "character", text: CHARACTER_RESUME }],
+      });
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("a reconnect that doesn't go live leaves the call dropped, and ending it saves the whole call under the latest connection", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      const peer = await answerLiveCalls(page, "answers");
+      const actions = observeActions({ conversationId: call.id, page });
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+      await expectLive(page);
+
+      await page.getByRole("textbox", { name: "Type your reply" }).fill("Is it still free?");
+      await page.getByRole("button", { exact: true, name: "Send" }).click();
+
+      await expect(
+        page.getByRole("log", { name: "Conversation" }).getByText(CHARACTER_REPLY),
+      ).toBeVisible();
+
+      await peer.drop();
+      const dropped = page.getByText("The call dropped");
+      await expect(dropped).toBeVisible();
+
+      // The first reconnect can't connect.
+      await page.route("**/live-session/**", (route) => route.fulfill({ status: 503 }));
+      await page.getByRole("button", { name: "Call again" }).click();
+      await expect(dropped).toBeVisible();
+
+      // The learner cancels the second while its reservation is still on its way, calls again and
+      // ends the call before it answers: only that reservation is held.
+      const held = { reservation: false };
+
+      await page.route(`**/conversation/${call.id}`, async (route) => {
+        const args: unknown = JSON.parse(route.request().postData() ?? "null");
+        const reserving = Array.isArray(args) && getString(args[0], "conversationId") === call.id;
+        const hold = reserving && !held.reservation;
+        held.reservation ||= hold;
+        await (hold ? setTimeout(1500) : Promise.resolve());
+        await route.fallback();
+      });
+
+      await page.getByRole("button", { name: "Call again" }).click();
+      await page.getByRole("button", { exact: true, name: "Cancel" }).click();
+      await expect(dropped).toBeVisible();
+      await page.getByRole("button", { name: "Call again" }).click();
+      await page.getByRole("button", { name: "End the call" }).click();
+
+      await expect
+        .poll(() => prisma.languageConversation.findUnique({ where: { id: call.id } }), {
+          timeout: 20_000,
+        })
+        .toMatchObject({ status: "completed" });
+
+      const latest = await connectionFor(call.id);
+      await expect(page.getByText("Calling Linda…")).toBeHidden();
+      expect(actions.reserve).toHaveLength(3);
+      expect(actions.sdp).toHaveLength(2);
+
+      await expect(
+        prisma.liveCallConnection.count({ where: { conversationId: call.id } }),
+      ).resolves.toBe(3);
+
+      expect(actions.complete).toStrictEqual([
+        {
+          connectionId: latest.id,
+          turns: [
+            { speaker: "character", text: "Hi! Are you calling about the apartment?" },
+            { speaker: "learner", text: "Is it still free?" },
+            { speaker: "character", text: CHARACTER_REPLY },
+          ],
+        },
+      ]);
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("a reconnect without the microphone says why, and typing carries the call on", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      const peer = await answerLiveCalls(page, "answers");
+      const actions = observeActions({ conversationId: call.id, page });
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+      await expectLive(page);
+
+      await page.getByRole("textbox", { name: "Type your reply" }).fill("Is it still free?");
+      await page.getByRole("button", { exact: true, name: "Send" }).click();
+      const transcript = page.getByRole("log", { name: "Conversation" });
+      await expect(transcript.getByText(CHARACTER_REPLY)).toBeVisible();
+
+      await peer.drop();
+      await expect(page.getByText("The call dropped")).toBeVisible();
+
+      await page.evaluate(() => {
+        Object.defineProperty(navigator.mediaDevices, "getUserMedia", {
+          configurable: true,
+          value: () => Promise.reject(new DOMException("Permission denied", "NotAllowedError")),
+        });
+      });
+
+      await page.getByRole("button", { name: "Call again" }).click();
+      await expect(page.getByText("Your microphone is off")).toBeVisible();
+      await expect(page.getByText("The call dropped")).toBeVisible();
+      await expect(page.getByRole("button", { name: "End the call" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+      await page.getByRole("button", { name: "Type instead" }).click();
+
+      await expect(transcript.getByText(CHARACTER_RESUME)).toBeVisible();
+      await expect(transcript.getByText("Is it still free?")).toBeVisible();
+      await page.getByRole("button", { exact: true, name: "End" }).click();
+      await expect.poll(() => actions.complete.length).toBe(1);
+      const typed = await connectionFor(call.id);
+
+      expect(actions.complete[0]).toStrictEqual({
+        connectionId: typed.id,
+        turns: [
+          { speaker: "character", text: "Hi! Are you calling about the apartment?" },
+          { speaker: "learner", text: "Is it still free?" },
+          { speaker: "character", text: CHARACTER_REPLY },
+          { speaker: "character", text: CHARACTER_RESUME },
+        ],
+      });
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("a reconnect refused at the call limit says why and offers only to end the call", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner();
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      const peer = await answerLiveCalls(page, "answers");
+      const actions = observeActions({ conversationId: call.id, page });
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+      await expectLive(page);
+      const first = await connectionFor(call.id);
+
+      await peer.drop();
+      await expect(page.getByText("The call dropped")).toBeVisible();
+
+      // The call's talk window ran out while it was down, and today's call time is used up.
+      await prisma.liveCallConnection.update({
+        data: {
+          createdAt: new Date(first.createdAt.getTime() - 120_000),
+          deadlineAt: new Date(first.deadlineAt.getTime() - 120_000),
+        },
+        where: { id: first.id },
+      });
+
+      await usageRecordsFixture({
+        count: 1,
+        kind: "conversation",
+        seconds: 120,
+        userId: learner.user.id,
+      });
+
+      await page.getByRole("button", { name: "Call again" }).click();
+      await expect(page.getByText("No more calls today")).toBeVisible();
+      await expect(page.getByText("The call dropped")).toBeVisible();
+      await expect(page.getByRole("button", { name: "Call again" })).toBeHidden();
+      await page.getByRole("button", { name: "End the call" }).click();
+      await expect.poll(() => actions.complete.length).toBe(1);
+
+      expect(actions.complete[0]).toStrictEqual({
+        connectionId: first.id,
+        turns: [{ speaker: "character", text: "Hi! Are you calling about the apartment?" }],
+      });
     } finally {
       await owned.cleanup();
     }

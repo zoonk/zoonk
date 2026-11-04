@@ -392,6 +392,7 @@ msgstr "{done, number} de {total, number}"
 #: src/generation/generation-wait.tsx
 #: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/call-problem.tsx
+#: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/mind-map-card.tsx
 #: src/mind-maps/mind-map-tiles.tsx
@@ -928,7 +929,6 @@ msgid "{low} to {high}"
 msgstr "{low} a {high}"
 
 #: src/_utils/use-state-label.ts
-#: src/memory/memory-labels.tsx
 msgctxt "BkpBqH"
 msgid "Learning"
 msgstr "Aprendiendo"
@@ -4915,6 +4915,7 @@ msgid "Allow the microphone to talk with {name}."
 msgstr "Permite el acceso al micrófono para hablar con {name}."
 
 #: src/language/conversation/call-intro-footer.tsx
+#: src/language/conversation/dropped-call-screen.tsx
 msgctxt "KBc0tZ"
 msgid "Type instead"
 msgstr "Escribir en vez de hablar"
@@ -4990,70 +4991,6 @@ msgid "It ended when you started another call."
 msgstr "Terminó cuando iniciaste otra llamada."
 
 #: src/language/conversation/call-problem.tsx
-msgctxt "bSm8pu"
-msgid "Start a new call to keep practicing."
-msgstr "Inicia una nueva llamada para seguir practicando."
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "ZXosfu"
-msgid "This call has ended"
-msgstr "Esta llamada terminó"
-
-#. Under the title "Calls are paused": the pause applies to every learner, not only this one.
-#: src/language/conversation/call-problem.tsx
-#: src/language/exam-speaking/speaking-paper-section.tsx
-#: src/language/progress/speaking-mock-card.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "bpY1F_"
-msgid "It's the same for everyone right now. Try again later."
-msgstr "En este momento les pasa a todos. Inténtalo de nuevo más tarde."
-
-#: src/language/conversation/call-problem.tsx
-#: src/language/exam-speaking/speaking-paper-section.tsx
-#: src/language/exam-speaking/speaking-task-row.tsx
-#: src/language/progress/speaking-mock-card.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "hFgARl"
-msgid "Calls are paused"
-msgstr "Las llamadas están en pausa"
-
-#. Another call is still running: this ends it and starts the call on this screen.
-#: src/language/conversation/call-problem.tsx
-msgctxt "MAatFa"
-msgid "End that call and start this one"
-msgstr "Terminar esa llamada e iniciar esta"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "1ZMIpa"
-msgid "It's open in another tab or on another device. Ending it from here skips its feedback."
-msgstr "Está abierta en otra pestaña o en otro dispositivo. Si la terminas desde aquí, no recibirás comentarios sobre ella."
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "0LuKMT"
-msgid "You're already in a call"
-msgstr "Ya estás en una llamada"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "ycr28Y"
-msgid "End the call"
-msgstr "Terminar la llamada"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "p5AWJt"
-msgid "Call again"
-msgstr "Volver a llamar"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "253hZZ"
-msgid "Call again, or end the call to get feedback on what you said."
-msgstr "Vuelve a llamar o termina la llamada para recibir comentarios sobre lo que dijiste."
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "VCAZn4"
-msgid "The call dropped"
-msgstr "Se cortó la llamada"
-
-#: src/language/conversation/call-problem.tsx
 msgctxt "OheLSd"
 msgid "This happens sometimes. Try again in a moment."
 msgstr "Esto pasa a veces. Inténtalo de nuevo en un momento."
@@ -5093,13 +5030,56 @@ msgctxt "HBlKaW"
 msgid "We couldn't save the call."
 msgstr "No pudimos guardar la llamada."
 
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "1ZMIpa"
+msgid "It's open in another tab or on another device. Ending it from here skips its feedback."
+msgstr "Está abierta en otra pestaña o en otro dispositivo. Si la terminas desde aquí, no recibirás comentarios sobre ella."
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "0LuKMT"
+msgid "You're already in a call"
+msgstr "Ya estás en una llamada"
+
+#. Under the title "Calls are paused": the pause applies to every learner, not only this one.
+#: src/language/conversation/call-refusal-copy.ts
+#: src/language/exam-speaking/speaking-paper-section.tsx
+#: src/language/progress/speaking-mock-card.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "bpY1F_"
+msgid "It's the same for everyone right now. Try again later."
+msgstr "En este momento les pasa a todos. Inténtalo de nuevo más tarde."
+
+#: src/language/conversation/call-refusal-copy.ts
+#: src/language/exam-speaking/speaking-paper-section.tsx
+#: src/language/exam-speaking/speaking-task-row.tsx
+#: src/language/progress/speaking-mock-card.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "hFgARl"
+msgid "Calls are paused"
+msgstr "Las llamadas están en pausa"
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "bSm8pu"
+msgid "Start a new call to keep practicing."
+msgstr "Inicia una nueva llamada para seguir practicando."
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "ZXosfu"
+msgid "This call has ended"
+msgstr "Esta llamada terminó"
+
+#. Another call is still running: this ends it and starts the call on this screen.
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "MAatFa"
+msgid "End that call and start this one"
+msgstr "Terminar esa llamada e iniciar esta"
+
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "T1FmHH"
 msgid "{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}}"
 msgstr "{stars, plural, =0 {# estrellas de 3} other {# de 3 estrellas}}"
 
 #: src/language/conversation/call-stars-step.tsx
-#: src/memory/memory-labels.tsx
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Objetivos"
@@ -5327,6 +5307,26 @@ msgstr "Lo que aún falta decir"
 msgctxt "Ogdmi_"
 msgid "Words to practice saying"
 msgstr "Palabras para practicar la pronunciación"
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "253hZZ"
+msgid "Call again, or end the call to get feedback on what you said."
+msgstr "Vuelve a llamar o termina la llamada para recibir comentarios sobre lo que dijiste."
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "ycr28Y"
+msgid "End the call"
+msgstr "Terminar la llamada"
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "p5AWJt"
+msgid "Call again"
+msgstr "Volver a llamar"
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "VCAZn4"
+msgid "The call dropped"
+msgstr "Se cortó la llamada"
 
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "UVsIGR"
@@ -6346,24 +6346,35 @@ msgctxt "K3r6DQ"
 msgid "Delete"
 msgstr "Eliminar"
 
+#: src/memory/memory-labels.tsx
+msgctxt "memoryCategories.XHLYdJ"
+msgid "Goals"
+msgstr "Objetivos"
+
 #. A category of what Zoonk remembers about the learner: their studies, job, school year and the languages they speak.
 #: src/memory/memory-labels.tsx
-msgctxt "XQZA8e"
+msgctxt "memoryCategories.XQZA8e"
 msgid "Background"
 msgstr "Perfil"
 
 #: src/memory/memory-labels.tsx
-msgctxt "lEdpUM"
+msgctxt "memoryCategories.lEdpUM"
 msgid "Routine"
 msgstr "Rutina"
 
 #: src/memory/memory-labels.tsx
-msgctxt "PCSt5T"
+msgctxt "memoryCategories.PCSt5T"
 msgid "Preferences"
 msgstr "Preferencias"
 
+#. A category of what Zoonk remembers about the learner: how their studies are going, like mixing up two ideas or reading better than they speak.
 #: src/memory/memory-labels.tsx
-msgctxt "V2qutI"
+msgctxt "memoryCategories.BkpBqH"
+msgid "Learning"
+msgstr "Aprendizaje"
+
+#: src/memory/memory-labels.tsx
+msgctxt "memoryCategories.V2qutI"
 msgid "Context"
 msgstr "Contexto"
 

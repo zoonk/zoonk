@@ -7,6 +7,7 @@ import { isAccountDeletionCleanupReady } from "../account-deletion";
 import { getActiveSubscriptionQuery } from "../active-subscription";
 import { findRequestGuest } from "../guests/guest-request";
 import { linkGuestAccount } from "../guests/link-guest-account";
+import { profileUpdateSchema } from "../profile-update";
 
 /** One Plus per learner: the answer names where the learner's Plus is managed. */
 const guardPlusPurchase = createAuthMiddleware(async (context) => {
@@ -49,6 +50,19 @@ const guardBrandAddress = createAuthMiddleware(async (context) => {
     throw new APIError("FORBIDDEN", {
       code: ACCESS_ERROR_CODES.brandAddressLocked,
       message: "Brand addresses can't change here.",
+    });
+  }
+});
+
+/**
+ * Better Auth hands each field to the database as sent, so an object such as `{ "set": "…" }` would
+ * become a Prisma update that skips every check written for text.
+ */
+const guardProfileUpdate = createAuthMiddleware(async (context) => {
+  if (!profileUpdateSchema.safeParse(context.body).success) {
+    throw new APIError("BAD_REQUEST", {
+      code: ACCESS_ERROR_CODES.invalidProfileUpdate,
+      message: "Only your name and username can change here, each as text.",
     });
   }
 });
@@ -101,6 +115,7 @@ export function accessGuardsPlugin() {
           handler: guardAccountDeletion,
           matcher: (context) => context.path?.startsWith("/delete-user") === true,
         },
+        { handler: guardProfileUpdate, matcher: (context) => context.path === "/update-user" },
         {
           handler: guardBrandAddress,
           matcher: (context) =>

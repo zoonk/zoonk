@@ -1,17 +1,12 @@
 package com.zoonk.android.feature.conversation
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.livecall.LiveCallFailure
 import com.zoonk.android.ui.components.Limit
@@ -37,7 +32,6 @@ internal class CallProblemActions(
     val onClose: () -> Unit,
     val onRetry: () -> Unit,
     val onTakeover: () -> Unit,
-    val onEnd: () -> Unit,
     val onCreateAccount: () -> Unit,
     val onSeePlus: () -> Unit,
 )
@@ -86,20 +80,6 @@ internal fun CallProblem(
             }
         }
 
-        failure == LiveCallFailure.Dropped -> {
-            // Leaving a dropped call ends it, so what was said still gets its feedback.
-            BackHandler(onBack = actions.onEnd)
-            Problem(title, actions.onEnd, actions = {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilledTonalButton(onClick = actions.onEnd) { Text(stringResource(R.string.conversation_end_call)) }
-                    Button(
-                        onClick = actions.onRetry,
-                        modifier = Modifier.weight(1f),
-                    ) { Text(stringResource(R.string.conversation_call_again)) }
-                }
-            }) { ProblemMessage(stringResource(R.string.conversation_dropped_title), stringResource(R.string.conversation_dropped)) }
-        }
-
         else -> {
             Problem(title, actions.onClose, actions = {
                 Button(
@@ -125,15 +105,7 @@ internal fun CallLimitMessage(
     modifier: Modifier = Modifier,
     title: String? = null,
 ) {
-    val heading =
-        title ?: stringResource(
-            when (limit.period) {
-                LimitPeriod.Month -> R.string.conversation_no_calls_month
-                LimitPeriod.Total -> R.string.conversation_calls_need_account
-                else -> R.string.conversation_no_calls_today
-            },
-        )
-    CallOffMessage(heading, modifier) {
+    CallOffMessage(title ?: callLimitTitle(limit), modifier) {
         Text(
             limitMessage(limit, LimitSubject.Calls),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -142,6 +114,16 @@ internal fun CallLimitMessage(
         LimitActions(limit, onCreateAccount, onSeePlus)
     }
 }
+
+@Composable
+internal fun callLimitTitle(limit: Limit.Reached) =
+    stringResource(
+        when (limit.period) {
+            LimitPeriod.Month -> R.string.conversation_no_calls_month
+            LimitPeriod.Total -> R.string.conversation_calls_need_account
+            else -> R.string.conversation_no_calls_today
+        },
+    )
 
 @Composable
 private fun ProblemMessage(

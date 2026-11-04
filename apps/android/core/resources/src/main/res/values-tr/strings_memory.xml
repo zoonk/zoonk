@@ -11,11 +11,11 @@
   "memory_delete": "434b648cb3413eac5cff88a21b6125036dee019709460522faeced62b6a77fcb",
   "memory_description": "5c54bcb4e44fa6fa14eaee3175c1ce5356a8b084afb9d3b8afb5b3b5ccf4ea3c",
   "memory_download": "471f609a150cc26c9ce56594ede64c714b6559d22bb89963bcfe18c3e0fd153a",
-  "memory_download_description": "6c636928bcf44d4d8f4ad8595d693be8f9ca24949143f9ef15070230ce213b02",
+  "memory_download_description": "d78d1730015d5341823d802c06416ec4ec6e0db1bcd09f619ac17dea925e3d16",
   "memory_edit": "00f6d34375b460830b933347f46973138ebd1bf127f938fd4d2369f5c3c04d9b",
   "memory_edit_description": "99f8d0f5b381923929085b67f52c206c3126f2b10315ea4139cde52d7de5de1e",
   "memory_edit_label": "3d7b3aa1f40ed4771baab6c6df1a7bb06625a111e93a62554a290fa7a2369f1f",
-  "memory_edit_title": "a92417dc02f6d25f2ad5778364c68cb3bd71046099f4e040f963ae8bffac1c39",
+  "memory_edit_title": "a7a6ea6de5ff4bf5439be8362ed03d26608d5bee78e4af09930a0efbecb8dee5",
   "memory_empty_off": "eb1c948c3eaf8af5a3ded9804a350b9f3a4fe4d6b9ae09522e372dafae03b905",
   "memory_empty_on": "2f03d5a06f50a91a536c929a17b536523bc6b362b0e75a1b2a98441a1f1f1862",
   "memory_fact_options": "2e606799b894e94beefa8176ad6717d44b0af8345fcc3735ef5033b044dfc760",
@@ -63,12 +63,12 @@
     <string name="memory_edit">Düzenle</string>
     <string name="memory_delete">Sil</string>
     <!-- Title of the dialog that edits one fact Zoonk remembers about the learner. -->
-    <string name="memory_edit_title">Belleği düzenle</string>
+    <string name="memory_edit_title">Bellek kaydını düzenle</string>
     <string name="memory_edit_description">Seni doğru yansıtacak şekilde yaz.</string>
     <string name="memory_edit_label">Zoonk’un hatırladıkları</string>
     <string name="memory_download">Belleğimi indir</string>
     <!-- Everything Zoonk remembers about the learner, downloaded as one file. -->
-    <string name="memory_download_description">Belleğindeki tüm bilgiler tek bir dosyada</string>
+    <string name="memory_download_description">Belleğindeki her şey tek dosyada</string>
     <string name="memory_sensitive_note">Sen istemedikçe Zoonk sağlık, din gibi hassas konulardaki bilgilerini saklamaz.</string>
     <string name="memory_updated">Bellek güncellendi:</string>
     <plurals name="memory_updated_more">

@@ -29,6 +29,7 @@ import { CharacterRow } from "./conversation-parts";
 import { type LiveCall } from "./use-live-call";
 
 const MS_PER_SECOND = 1000;
+const SECONDS_PER_MINUTE = 60;
 const PERCENT = 100;
 const NO_BREAK_SPACE = "\u00A0";
 
@@ -186,10 +187,16 @@ function LiveDot({ live }: { live: boolean }) {
   );
 }
 
-function useCallProgress(call: LiveCall) {
+function useCallProgress({
+  call,
+  conversation,
+}: {
+  call: LiveCall;
+  conversation: LanguageConversationView;
+}) {
   const t = useExtracted();
-  const talkSeconds = call.talkSeconds ?? 0;
-  const value = talkSeconds > 0 ? (call.elapsedSeconds / talkSeconds) * PERCENT : 0;
+  const callSeconds = conversation.minutes * SECONDS_PER_MINUTE;
+  const value = Math.min(PERCENT, (call.elapsedSeconds / callSeconds) * PERCENT);
 
   return { label: t("Call time"), value: call.turn?.reason ? PERCENT : value };
 }
@@ -200,26 +207,22 @@ export function ConversationLive({
   ending = null,
   grading,
   onEnd,
-  onHelp,
-  usedHelp,
 }: {
   call: LiveCall;
   conversation: LanguageConversationView;
   ending?: CallEnding | null;
   grading: boolean;
   onEnd: () => void;
-  onHelp: () => void;
-  usedHelp: boolean;
 }) {
   const t = useExtracted();
   const asideShown = useTaskAsideShown();
   const [phrasesOpen, setPhrasesOpen] = useState(false);
-  const progress = useCallProgress(call);
+  const progress = useCallProgress({ call, conversation });
   const { character, examTask } = conversation;
   const started = call.turn !== null;
 
   const help = () => {
-    onHelp();
+    call.markHelpUsed();
 
     if (!asideShown) {
       setPhrasesOpen(true);
@@ -233,7 +236,7 @@ export function ConversationLive({
           children: (
             <>
               <CallObjectives conversation={conversation} met={call.metLabels} titled={false} />
-              {usedHelp && <Phrases conversation={conversation} />}
+              {call.usedHelp && <Phrases conversation={conversation} />}
             </>
           ),
           label: t("Call goals and phrases"),

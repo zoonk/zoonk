@@ -101,7 +101,7 @@ export function WeekStep({ range }: { range: string }) {
               })
             : t("Weekly summary · {range}", { range })}
         </StepEyebrow>
-        <StepTitle>
+        <StepTitle className="wrap-anywhere">
           {learnerName ? t("What a week, {name}!", { name: learnerName }) : t("What a week!")}
         </StepTitle>
         {gain && <StepDetail>{gain}</StepDetail>}

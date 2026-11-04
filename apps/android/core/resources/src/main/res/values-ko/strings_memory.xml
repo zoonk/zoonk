@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "memory_category_background": "2e66cd7615d1fd0ba98928f3b11f243d1e918f595131603432a1cf3a6b3da66d",
+  "memory_category_background": "445f4da24cc005dd658c980e6c3ef73fa044ca1ddefd5b7f45e8b973791ba640",
   "memory_category_context": "70e8771c12c3c1de992f234daef46903d26cd28a6da0a8a9eaff35c390476b9a",
   "memory_category_goals": "7c1636b502fc54c337af6f5d9f90530a5c7280d6a7a9a47790b8a4ac83ef7292",
   "memory_category_learning": "bd6eced59c67ec63a321f6b9556f1860d7260b98d8457f511b6f045b5baad668",
   "memory_category_preferences": "af5134a4fa7f084aee4b32bfaa8fc00466bf43908b5ab97703159f3a54483535",
-  "memory_category_routine": "6ddf1416e1d49967ba744b082a443275348c412931bfa4e15b249b89fd024b8c",
+  "memory_category_routine": "58307d5be0d1372e161ab9c03a50743aa890ff61b6de77750ed18dbbc28bf4e9",
   "memory_change_undone": "4d159bd2618ede6af759817aa35f95476c3c313c29a7b608b70c11da757c8d8d",
   "memory_delete": "067ed629de0e113d4d96df6bb7cb360145d158fb7d5bb4e13c6d4171ceaed233",
   "memory_description": "798060fff142c80e27407827eb93c7a49ee422e1fb4fc2e3281ca84bc905014f",
@@ -24,13 +24,13 @@
   "memory_sensitive_note": "d5135cab5110a1737057251475590e076da0dd5912fbba9ed19093d2480f45ea",
   "memory_source_chat": "107ca14e4138514c63245f0b65d48d2434ed9d5d1877f2dce40fc579ca795b60",
   "memory_source_noticed": "c8a86056ee6a939f2947b26ab9855a9cf37a53a13998b4fd17ce87708b89f487",
-  "memory_source_onboarding": "26489b61b545ac96859200048e570d6eccd08effc3c15bc420c80def8a1d605c",
+  "memory_source_onboarding": "40eb26041e507adff9fe362c76e875bae3bdec602901b7a3167598c9e0950498",
   "memory_source_session": "1f4d35377bb969b96543b688be81473188cbe24f7a729e6b269f635e5959c050",
   "memory_source_you": "627c4fbced9a6885774e81861a7b86c0549a36bff1d10ea056f0d837b10459f9",
   "memory_undo": "23bdc4e211dca854d156029f929e9e8a04f2a255217a461a8892710cc571b65a",
   "memory_undo_failed": "e7db3f07c39f328713b9e6373d667e9b2caea304d4484255f9ee29067d3e4f5c",
   "memory_updated": "e43d811b41b1c96275a8b20b96b47580069e0fa10bb49301f152cbb026687053",
-  "memory_updated_more": "db289de3164c9a5836fa73b90382ccf65f82511f4db307cbe9aa3e81e810b306",
+  "memory_updated_more": "f8c2d97214f2be28037800d695c393137bc9afe6e75ee22f810e77810927fe11",
   "memory_use": "3ffead7c761f1704ad003c12bd057f7a0564ae47e18238e3764703bd1a215372",
   "memory_use_off": "56f3595ea7c3a333b08a9a2cb600e6a54032fc1ac51c5924bd2a2053dd27cd7f",
   "memory_use_on": "bce98bb25d2e37f8f9185cb666bb3d060727b1091175a72f5619f47839cfe821"
@@ -46,15 +46,15 @@
     <string name="memory_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <string name="memory_category_goals">목표</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
-    <string name="memory_category_background">배경 정보</string>
-    <string name="memory_category_routine">생활 습관</string>
+    <string name="memory_category_background">기본 정보</string>
+    <string name="memory_category_routine">일상</string>
     <string name="memory_category_preferences">선호 사항</string>
     <string name="memory_category_learning">학습</string>
     <string name="memory_category_context">상황</string>
     <string name="memory_source_noticed">활동을 보고 알게 됐어요</string>
     <string name="memory_source_you">직접 알려 주셨어요</string>
     <string name="memory_source_chat">채팅에서 알려 주셨어요</string>
-    <string name="memory_source_onboarding">초기 설정에서</string>
+    <string name="memory_source_onboarding">처음 시작할 때 알려 준 내용</string>
     <string name="memory_source_session">학습 중에 알려 주셨어요</string>
     <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
     <string name="memory_fact_source">%1$s · %2$s</string>
@@ -72,7 +72,7 @@
     <string name="memory_sensitive_note">따로 요청하지 않으면 Zoonk는 건강, 종교 같은 민감한 정보를 저장하지 않아요.</string>
     <string name="memory_updated">메모리 업데이트:</string>
     <plurals name="memory_updated_more">
-        <item quantity="other">외 %d개</item>
+        <item quantity="other">외 %d건</item>
     </plurals>
     <string name="memory_undo">실행 취소</string>
     <string name="memory_change_undone">변경 사항을 되돌렸어요</string>

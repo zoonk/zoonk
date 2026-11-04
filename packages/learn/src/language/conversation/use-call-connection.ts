@@ -4,9 +4,15 @@ import { type LanguageConversationSetup } from "@zoonk/core/language/conversatio
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
 
-type LiveCallSetup = Pick<
+export type LiveCallSetup = Pick<
   LanguageConversationSetup,
-  "connectionId" | "deadlineAt" | "script" | "seconds" | "sessionUrl" | "talkSeconds"
+  | "connectionId"
+  | "continuesCall"
+  | "deadlineAt"
+  | "script"
+  | "seconds"
+  | "sessionUrl"
+  | "talkSeconds"
 >;
 
 export type ConversationConnection =
@@ -76,7 +82,9 @@ export function useCallConnection(actions: CallConnectionActions) {
     return ending.current;
   }, []);
 
-  const reserve = useCallback(
+  const reserving = useRef<Promise<unknown>>(Promise.resolve());
+
+  const reserveOnce = useCallback(
     async ({
       isCurrent,
       takeover,
@@ -100,16 +108,27 @@ export function useCallConnection(actions: CallConnectionActions) {
         return answer;
       }
 
+      // Kept even when the start was dropped meanwhile: completion must name the latest connection.
+      connectionId.current = answer.setup.connectionId;
+
       if (!isCurrent()) {
-        void actionsRef.current.end(answer.setup.connectionId).catch(() => null);
+        void end();
         return null;
       }
 
-      connectionId.current = answer.setup.connectionId;
       sessionUrl.current = answer.setup.sessionUrl;
       return answer;
     },
-    [],
+    [end],
+  );
+
+  const reserve = useCallback(
+    (start: Parameters<typeof reserveOnce>[0]) => {
+      const reserved = reserveOnce(start);
+      reserving.current = reserved;
+      return reserved;
+    },
+    [reserveOnce],
   );
 
   // A closing tab can't wait for a Server Action: a keepalive request to the call's own route ends
@@ -127,7 +146,10 @@ export function useCallConnection(actions: CallConnectionActions) {
 
   const getConnectionId = useCallback(() => connectionId.current, []);
 
+  /** Resolves once a reservation still on its way has answered, so its connection is known. */
+  const settle = useCallback(() => reserving.current, []);
+
   const endedByServer = useCallback(async () => (await end()) && endedAtDeadline.current, [end]);
 
-  return { end, endedByServer, getConnectionId, reconnecting, reserve };
+  return { end, endedByServer, getConnectionId, reconnecting, reserve, settle };
 }

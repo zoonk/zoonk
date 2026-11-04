@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { type CallLength, type TimedCue, takeDueExamCue } from "./live-call-clock";
 import { sendLiveCallCue } from "./live-call-commands";
 import {
   type CallEndingCommand,
@@ -12,34 +13,16 @@ import {
   startCallEnding,
   stepCallEnding,
 } from "./live-call-ending";
-import { type LiveCallCue, type LiveCallScript } from "./live-call-script";
+import { type LiveCallCue } from "./live-call-script";
 import { type LiveCallSession } from "./live-call-session";
 import { type ObjectiveCheckResult } from "./use-objective-checks";
 
 const TICK_MS = 250;
 const MS_PER_SECOND = 1000;
 
-/**
- * On this device's clock, from when the server's answer arrived: the time it said was left, so a
- * device whose clock is off still ends on time.
- */
-export type CallLength = {
-  hardStopAt: number;
-  script: LiveCallScript;
-  talkEndsAt: number;
-  talkSeconds: number;
-};
-
-type TimedCue = { atSeconds: number; say: string };
-
 const NO_CUES: readonly TimedCue[] = [];
 
-type RunningCall = {
-  length: CallLength;
-  session: LiveCallSession;
-  startedAt: number;
-  state: CallEndingState;
-};
+type RunningCall = { length: CallLength; session: LiveCallSession; state: CallEndingState };
 
 function isSameView(first: CallEndingView | null, second: CallEndingView) {
   return (
@@ -54,19 +37,20 @@ function isSameView(first: CallEndingView | null, second: CallEndingView) {
  */
 export function useCallEnding({
   examCues = NO_CUES,
+  examCuesSent,
   onCue,
   onHangUp,
 }: {
   examCues?: readonly TimedCue[];
+  examCuesSent: RefObject<number>;
   /** Any cue went out, which the character's next words may answer instead of the learner. */
   onCue: () => void;
   onHangUp: (reason: CallHangUpReason) => void;
 }) {
   const running = useRef<RunningCall | null>(null);
   const progress = useRef<LiveCallCue | null>(null);
-  const examCuesSent = useRef(0);
   const [view, setView] = useState<CallEndingView | null>(null);
-  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [clockFrom, setClockFrom] = useState<number | null>(null);
   const [callLength, setCallLength] = useState<CallLength | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
@@ -130,10 +114,12 @@ export function useCallEnding({
         timing: length.script.timing,
       });
 
-      const call: RunningCall = { length, session, startedAt: at, state: start.state };
+      const call: RunningCall = { length, session, state: start.state };
+      const from = length.clockFrom ?? at;
       running.current = call;
       setCallLength(length);
-      setStartedAt(at);
+      setClockFrom(from);
+      setElapsedSeconds(Math.floor((at - from) / MS_PER_SECOND));
       setView(getCallEndingView(start.state, at));
       run(call, start.commands);
     },
@@ -157,7 +143,7 @@ export function useCallEnding({
   );
 
   useEffect(() => {
-    if (startedAt === null) {
+    if (clockFrom === null) {
       return;
     }
 
@@ -170,26 +156,32 @@ export function useCallEnding({
       }
 
       const at = Date.now();
-      const elapsed = Math.floor((at - startedAt) / MS_PER_SECOND);
-      const cue = examCues[examCuesSent.current];
+      const elapsed = Math.floor((at - clockFrom) / MS_PER_SECOND);
       setElapsedSeconds(elapsed);
       dispatch({ at, type: "tick" });
 
-      if (cue && !call.state.reason && elapsed >= cue.atSeconds) {
-        examCuesSent.current += 1;
-        sendLiveCallCue({ cue: { channel: "instructions", text: cue.say }, session: call.session });
+      const sent = examCuesSent.current;
+      const due = takeDueExamCue({ cues: examCues, elapsedSeconds: elapsed, sent });
+      const cue = { channel: "instructions", text: due?.cue.say ?? "" } as const;
+
+      // Cues wait for the character's first words, so a continued call's overdue cue follows its
+      // resume line. One the session refused, as its connection was lost, stays due.
+      const open = call.state.characterAt !== null && !call.state.reason;
+
+      if (due && open && sendLiveCallCue({ cue, session: call.session })) {
+        examCuesSent.current = due.sent;
         onCue();
       }
     }, TICK_MS);
 
     return () => clearInterval(timer);
-  }, [dispatch, examCues, onCue, startedAt]);
+  }, [clockFrom, dispatch, examCues, examCuesSent, onCue]);
 
   // A call ended or failed from outside (End, a drop, the server's hangup) stops its clock, so a
   // late tick or check can't end it once more, or save a call the learner may still call again.
   const stop = useCallback(() => {
     running.current = null;
-    setStartedAt(null);
+    setClockFrom(null);
   }, []);
 
   return { begin, callLength, checked, dispatch, elapsedSeconds, stop, view };

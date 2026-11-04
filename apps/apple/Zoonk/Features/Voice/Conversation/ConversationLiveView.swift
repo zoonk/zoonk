@@ -12,7 +12,6 @@ struct ConversationLiveView: View {
 
   let call: LiveCall
   let conversation: LanguageConversation
-  @Binding var usedHelp: Bool
   /// Set once the call ended.
   let saving: LiveCallSaveState?
   let onEnd: () -> Void
@@ -30,7 +29,7 @@ struct ConversationLiveView: View {
             CallGoals(conversation: conversation, met: call.metLabels)
           }
 
-          if usedHelp {
+          if call.usedHelp {
             CallPhrases(conversation: conversation)
           }
         }
@@ -99,7 +98,7 @@ struct ConversationLiveView: View {
 
   private func controls(besideAside: Bool) -> some View {
     CallControls(call: call, onEnd: onEnd) {
-      usedHelp = true
+      call.useHelp()
 
       // Beside the call the aside shows the phrases; in one column a sheet does, so they don't
       // grow the transcript the call is following.
@@ -343,8 +342,8 @@ private struct CallHeader: View {
 
   var body: some View {
     TimelineView(.periodic(from: .now, by: 1)) { context in
-      let elapsed = elapsed(at: context.date)
-      let talk = TimeInterval(max(call.talkSeconds, 1))
+      let elapsed = call.elapsed(at: context.date)
+      let talk = TimeInterval(max(call.callSeconds, 1))
       // Full once the ending started, even when every goal was met early.
       let progress = call.signals.wrapUp == nil ? min(elapsed, talk) : talk
       let time = Text(clock(elapsed))
@@ -369,14 +368,6 @@ private struct CallHeader: View {
       )
       .accessibilityValue(time)
     }
-  }
-
-  private func elapsed(at date: Date) -> TimeInterval {
-    guard let start = call.liveSince else {
-      return 0
-    }
-
-    return max(0, (call.endedAt ?? date).timeIntervalSince(start))
   }
 
   private func clock(_ seconds: TimeInterval) -> String {

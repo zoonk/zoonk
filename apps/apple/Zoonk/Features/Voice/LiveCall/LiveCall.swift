@@ -5,14 +5,34 @@ import Observation
 struct LiveCallClient {
   /// Reserves the call; `takeover` ends the learner's other open call first.
   let connect: @MainActor (_ takeover: Bool) async -> CallReservation
-  let redeem: @MainActor (_ connectionId: String, _ offer: String) async throws -> String
+  /// `turns`: the call so far, which the character carries on from when the connection continues it.
+  let redeem:
+    @MainActor (_ connectionId: String, _ offer: String, _ turns: [ConversationTurn]) async throws
+      -> String
   /// Has the server hang up: whether it already had at the call's deadline, nil if unconfirmed.
   let end: @MainActor (_ connectionId: String) async -> Bool?
   /// Nil when the check didn't run.
-  let checkObjectives: @MainActor ([ConversationTurn]) async -> ObjectiveCheck?
+  let checkObjectives:
+    @MainActor (_ connectionId: String, _ turns: [ConversationTurn]) async -> ObjectiveCheck?
   let makeTransport: @MainActor () -> any LiveCallTransport
-  /// Asks for the microphone; false when the learner said no.
+  /// Asks for the microphone; false when the learner said no. Once they answered, it reads what
+  /// they set in Settings without asking again.
   let requestMicrophone: @MainActor () async -> Bool
+}
+
+/// What "Call again" hands the next connection on the same screen: the call so far.
+/// `connectionId` is what completion must name, the latest connection the screen saw: a new call
+/// has none.
+struct CallSoFar {
+  var turns: [TranscriptTurn] = []
+  var metLabels: [String]
+  var usedHelp = false
+  var examCuesSent = 0
+  var connectionId: String?
+
+  static func newCall(_ conversation: LanguageConversation) -> Self {
+    .init(metLabels: conversation.objectives.filter(\.met).map(\.label))
+  }
 }
 
 /// Mirrors main's `useLiveCall`. The microphone is asked for before anything is reserved, so a
@@ -60,22 +80,34 @@ final class LiveCall {
   private(set) var phase = Phase.idle
   private(set) var failure: Failure?
   private(set) var limit: CallLimit?
-  private(set) var turns: [TranscriptTurn] = []
-  private(set) var metLabels: [String]
+  private(set) var metLabels: [String] = []
   private(set) var muted = false
   /// The learner said no to the microphone, or chose to type.
   private(set) var micBlocked = false
   private(set) var reconnecting = false
   private(set) var liveSince: Date?
-  private(set) var endedAt: Date?
-  /// The call's talk time, after which the character says goodbye.
-  private(set) var talkSeconds: Int
+  private var endedAt: Date?
+  /// A new call's clock starts when it goes live; a continued one's goes on from the talk time its
+  /// earlier connections used.
+  private var clockStart: Date?
   private(set) var signals = Signals()
+  /// Earlier connections' turns: this connection's fragments never join them.
+  private var earlierTurns: [TranscriptTurn] = []
+  private var connectionTurns: [TranscriptTurn] = []
+  /// Earlier connections' help goes with them when the setup opens a new call; help used while
+  /// this one rang stays.
+  private var helpedEarlier = false
+  private var helped = false
+  /// The dropped call's connection this one continues, which completion names if it never goes
+  /// live: nil for a new call.
+  private var droppedConnectionId: String?
 
   @ObservationIgnored private let conversation: LanguageConversation
   @ObservationIgnored private let client: LiveCallClient
   @ObservationIgnored private var transport: (any LiveCallTransport)?
   @ObservationIgnored private var connectionId: String?
+  /// This connection's talk time, after which the character says goodbye.
+  @ObservationIgnored private var talkSeconds: Int
   @ObservationIgnored private var attempt = 0
   /// The learner chose to end their call that's open elsewhere.
   @ObservationIgnored private var takesOver = false
@@ -98,12 +130,60 @@ final class LiveCall {
   @ObservationIgnored private var checkTiming = ObjectiveCheckTiming()
   /// Its own task, so words that arrive while it runs don't cancel it and lose its answer.
   @ObservationIgnored private var runningCheck: Task<Void, Never>?
+  @ObservationIgnored private var reserving: Task<CallReservation?, Never>?
 
-  init(conversation: LanguageConversation, client: LiveCallClient) {
+  init(conversation: LanguageConversation, client: LiveCallClient, soFar: CallSoFar? = nil) {
     self.conversation = conversation
     self.client = client
-    metLabels = conversation.objectives.filter(\.met).map(\.label)
     talkSeconds = conversation.minutes * 60
+    carry(soFar ?? .newCall(conversation))
+  }
+
+  var turns: [TranscriptTurn] {
+    earlierTurns + connectionTurns
+  }
+
+  var usedHelp: Bool {
+    helpedEarlier || helped
+  }
+
+  /// There's a dropped call to save, whatever happens to this reconnect.
+  var continuing: Bool {
+    droppedConnectionId != nil
+  }
+
+  /// Nil until a connection of the call went live: calling again after one that never did starts
+  /// over. A reconnect's own reservation is the latest connection even if it never goes live.
+  var soFar: CallSoFar? {
+    guard liveSince != nil || continuing else {
+      return nil
+    }
+
+    return .init(
+      turns: turns, metLabels: metLabels, usedHelp: usedHelp, examCuesSent: examCuesSent,
+      connectionId: connectionId ?? droppedConnectionId)
+  }
+
+  var dropped: DroppedCall? {
+    DroppedCall(continuing: continuing, phase: phase, failure: failure, micBlocked: micBlocked)
+  }
+
+  /// The whole call's talk time, whichever connection this is.
+  var callSeconds: Int {
+    conversation.minutes * 60
+  }
+
+  func elapsed(at date: Date) -> TimeInterval {
+    guard let clockStart else {
+      return 0
+    }
+
+    return max(0, (endedAt ?? date).timeIntervalSince(clockStart))
+  }
+
+  /// On this connection: earlier connections' words don't count.
+  private var hasCharacterSpoken: Bool {
+    connectionTurns.contains { $0.speaker == .character }
   }
 
   /// The learner has said something out loud: until then the turn row tells them to.
@@ -118,7 +198,7 @@ final class LiveCall {
       return .reconnecting
     }
 
-    if phase != .live || !turns.contains(where: { $0.speaker == .character }) {
+    if phase != .live || !hasCharacterSpoken {
       return .calling
     }
 
@@ -165,7 +245,10 @@ final class LiveCall {
 
     phase = .connecting
 
-    let reservation = await reserve(takeover: takesOver, isCurrent: { self.attempt == mine })
+    let takeover = takesOver
+    let reserving = Task { await reserve(takeover: takeover, isCurrent: { self.attempt == mine }) }
+    self.reserving = reserving
+    let reservation = await reserving.value
 
     guard attempt == mine, let reservation else {
       return
@@ -178,6 +261,14 @@ final class LiveCall {
 
     // The times the server said were left, from now: the device's clock can be off.
     let now = Date.now
+
+    if setup.continuesCall {
+      clockStart = now.addingTimeInterval(-TimeInterval(callSeconds - setup.talkSeconds))
+    } else {
+      // The server keeps the goals already met.
+      carry(.init(metLabels: metLabels))
+    }
+
     talkSeconds = setup.talkSeconds
     talkEndsAt = now.addingTimeInterval(TimeInterval(setup.talkSeconds))
     hardStopAt = now.addingTimeInterval(TimeInterval(setup.seconds))
@@ -202,13 +293,29 @@ final class LiveCall {
     do {
       let offer = try await transport.makeOffer()
       guard attempt == mine else { return }
-      let answer = try await client.redeem(setup.connectionId, offer)
+      let answer = try await client.redeem(
+        setup.connectionId, offer, earlierTurns.conversationTurns)
       guard attempt == mine else { return }
       try await transport.accept(answer: answer)
     } catch {
       if attempt == mine, phase == .connecting {
         fail(.connect)
       }
+    }
+  }
+
+  /// Back from Settings, where the learner may have allowed the microphone: they can then call
+  /// by voice.
+  func recheckMicrophone() async {
+    guard phase == .idle, micBlocked else {
+      return
+    }
+
+    let granted = await client.requestMicrophone()
+
+    // Typing instead meanwhile keeps it blocked.
+    if granted, phase == .idle {
+      micBlocked = false
     }
   }
 
@@ -255,7 +362,7 @@ final class LiveCall {
       return
     }
 
-    turns = turns.addingTypedReply(trimmed)
+    connectionTurns = connectionTurns.addingTypedReply(trimmed)
     heard(.learner, startMs: nil)
 
     guard phase == .live, let script else {
@@ -278,6 +385,10 @@ final class LiveCall {
     advance()
   }
 
+  func useHelp() {
+    helped = true
+  }
+
   func toggleMute() {
     guard phase == .live, !micBlocked else {
       return
@@ -287,10 +398,17 @@ final class LiveCall {
     transport?.send(.mute(muted))
   }
 
+  /// Once a reservation still on its way has answered, so its connection is known.
+  func settled() async {
+    _ = await reserving?.value
+  }
+
   /// Returns what it saves whether or not the hangup went through: completing hangs it up too before
-  /// anything is reviewed. Nil only for a call that never got a connection.
+  /// anything is reviewed. Nil when no connection went live, as there's no call to save.
   func finish() async -> Components.Schemas.LanguageConversationCompletionInput? {
-    guard let connectionId else {
+    await settled()
+
+    guard let connectionId = soFar?.connectionId else {
       return nil
     }
 
@@ -301,7 +419,7 @@ final class LiveCall {
       spokenSeconds: min(turns.spokenSeconds, 1260),
       timeZone: TimeZone.current.identifier,
       turns: turns.conversationTurns,
-      usedHelp: false)
+      usedHelp: usedHelp)
   }
 
   /// True once the server confirmed the hangup. The connection's ID stays, so asking again after a
@@ -348,15 +466,17 @@ final class LiveCall {
       return answer
     }
 
-    // A start cancelled meanwhile never connects: its reservation is ended at once.
-    guard isCurrent() else {
-      Task { [client] in _ = await client.end(setup.connectionId) }
-      return nil
-    }
-
+    // Kept even when the start was cancelled meanwhile: completion must name the latest connection.
     connectionId = setup.connectionId
     closeConfirmed = false
     endedAtDeadline = false
+
+    // A start cancelled meanwhile never connects: its reservation is ended at once.
+    guard isCurrent() else {
+      Task { _ = await release() }
+      return nil
+    }
+
     return answer
   }
 
@@ -402,7 +522,8 @@ final class LiveCall {
     case .closed:
       end(.hardStop)
     case .transcript(let speaker, let delta, let startMs, let endMs):
-      turns = turns.adding(delta, speaker: speaker, startMs: startMs, endMs: endMs)
+      connectionTurns = connectionTurns.adding(
+        delta, speaker: speaker, startMs: startMs, endMs: endMs)
 
       if speaker == .learner {
         ending?.learnerHeard(at: now)
@@ -433,6 +554,7 @@ final class LiveCall {
 
     let now = Date.now
     liveSince = now
+    clockStart = clockStart ?? now
     phase = .live
     reconnecting = false
     ending = LiveCallEnding(
@@ -478,17 +600,25 @@ final class LiveCall {
     replyGaps.learnerSpoke(at: now)
   }
 
-  /// An exam's own prompts, at their times, until the ending starts.
+  /// An exam's own prompts, at their times on the call's clock, until the ending starts or the
+  /// connection is lost: a cue a drop held back goes out after "Call again", once the character's
+  /// first words there (its resume line) did.
   private func sendExamCues() {
-    guard let liveSince, let cues = conversation.speakingTask?.cues, ending?.armed == nil,
-      examCuesSent < cues.count,
-      Date.now.timeIntervalSince(liveSince) >= TimeInterval(cues[examCuesSent].atSeconds)
+    guard let cues = conversation.speakingTask?.cues, let ending, ending.armed == nil,
+      hasCharacterSpoken,
+      let due = Self.examCueDue(
+        at: elapsed(at: .now), times: cues.map(\.atSeconds), sent: examCuesSent)
     else {
       return
     }
 
-    send(LiveCallCue(channel: .instructions, text: cues[examCuesSent].say))
-    examCuesSent += 1
+    send(LiveCallCue(channel: .instructions, text: cues[due].say))
+    examCuesSent = due + 1
+  }
+
+  /// Only the latest cue that came due: ones a drop held back are stale once the call resumes.
+  static func examCueDue(at elapsed: TimeInterval, times: [Int], sent: Int) -> Int? {
+    times.indices.last { $0 >= sent && elapsed >= TimeInterval(times[$0]) }
   }
 
   private func advance(_ now: Date = .now) {
@@ -589,9 +719,13 @@ final class LiveCall {
   }
 
   private func checkObjectives() async {
+    guard let connectionId else {
+      return
+    }
+
     let sentAt = Date.now
     checkTiming.read()
-    let found = await client.checkObjectives(turns.conversationTurns)
+    let found = await client.checkObjectives(connectionId, turns.conversationTurns)
 
     guard phase == .live, let check = found else {
       return
@@ -676,7 +810,7 @@ final class LiveCall {
         .init(
           conversationKind: conversation.kind, delegations: delegations,
           durationSeconds: liveSince.map { Int(Date.now.timeIntervalSince($0).rounded()) } ?? 0,
-          learnerTurns: turns.filter { $0.speaker == .learner }.count, reason: reason,
+          learnerTurns: connectionTurns.filter { $0.speaker == .learner }.count, reason: reason,
           replyGapMaxMs: replyGaps.maxMs, replyGapMedianMs: replyGaps.medianMs,
           slowReplies: replyGaps.slowReplies, talkSeconds: talkSeconds,
           unansweredTurns: replyGaps.unansweredTurns)))
@@ -693,6 +827,14 @@ final class LiveCall {
     // The bar stays full once the ending started.
     signals = Signals(wrapUp: signals.wrapUp)
     transport?.silence()
+  }
+
+  private func carry(_ soFar: CallSoFar) {
+    earlierTurns = soFar.turns
+    metLabels = soFar.metLabels
+    helpedEarlier = soFar.usedHelp
+    examCuesSent = soFar.examCuesSent
+    droppedConnectionId = soFar.connectionId
   }
 
   private func closeTransport() {
@@ -751,10 +893,10 @@ extension LiveCallClient {
 
         return answer
       },
-      redeem: { connectionId, offer in
+      redeem: { connectionId, offer, turns in
         let answer = await voice.cache.mutate { identity in
           try await api.redeemSdp(
-            conversationId: conversationId, connectionId: connectionId, offer: offer,
+            conversationId: conversationId, connectionId: connectionId, offer: offer, turns: turns,
             token: identity.bearerToken)
         }
 
@@ -780,10 +922,11 @@ extension LiveCallClient {
 
         return ended ?? nil
       },
-      checkObjectives: { turns in
+      checkObjectives: { connectionId, turns in
         let check = await voice.cache.mutate { identity in
           try await api.checkObjectives(
-            conversationId: conversationId, turns: turns, token: identity.bearerToken)
+            conversationId: conversationId, connectionId: connectionId, turns: turns,
+            token: identity.bearerToken)
         }
 
         guard case .done(let found) = check else {

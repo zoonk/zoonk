@@ -23,6 +23,7 @@ import {
 } from "./config";
 import {
   ensureUserProgressAfterAuthCreate,
+  rejectInvalidName,
   reportSignInAfterSessionCreate,
   reportSignUpAfterAuthCreate,
 } from "./db-hooks";
@@ -91,8 +92,14 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
           await reportSignUpAfterAuthCreate(user, context);
         },
         before: async (user, context) => {
+          rejectInvalidName(user.name);
           await guardUserCreation(user, context);
           return nameProviderAccount(user, context);
+        },
+      },
+      update: {
+        before: async (user) => {
+          rejectInvalidName(user.name);
         },
       },
     },

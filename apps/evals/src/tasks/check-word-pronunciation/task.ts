@@ -79,5 +79,6 @@ export const checkWordPronunciationTask: Task<
   id: "check-word-pronunciation",
   name: "Check Word Pronunciation",
   score: scoreCheck,
+  skippedLanguages: { en: "it only hears words of other languages that English spells the same" },
   testCases: TEST_CASES,
 };

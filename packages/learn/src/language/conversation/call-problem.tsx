@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { useExtracted } from "next-intl";
@@ -9,10 +8,11 @@ import { type CallLimit } from "../../_components/help-limit-notice";
 import { TaskActions } from "../../_components/task-layout";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
 import { CallLimitMessage } from "./call-limit-message";
+import { useRefusalCopy } from "./call-refusal-copy";
 import { CallOffMessage } from "./conversation-parts";
 import { type LiveCallError } from "./live-call-lifecycle";
 
-type CallProblemKind = LiveCallError | "takenOver";
+type CallProblemKind = Exclude<LiveCallError, "dropped"> | "takenOver";
 
 function ProblemMessage({ text, title }: { text: string; title: string }) {
   return (
@@ -52,7 +52,6 @@ export function CallProblem({
   error,
   exitHref,
   limit,
-  onEnd,
   onRetry,
   onTakeover,
   title,
@@ -60,12 +59,12 @@ export function CallProblem({
   error: CallProblemKind | null;
   exitHref: string;
   limit: CallLimit | null;
-  onEnd: () => void;
   onRetry: () => void;
   onTakeover: () => void;
   title: string;
 }) {
   const t = useExtracted();
+  const copy = useRefusalCopy();
 
   if (error === "limit") {
     return (
@@ -80,11 +79,9 @@ export function CallProblem({
       <ProblemWithBack exitHref={exitHref} title={title}>
         <ProblemMessage
           text={
-            error === "takenOver"
-              ? t("It ended when you started another call.")
-              : t("Start a new call to keep practicing.")
+            error === "takenOver" ? t("It ended when you started another call.") : copy.ended.text
           }
-          title={t("This call has ended")}
+          title={copy.ended.title}
         />
       </ProblemWithBack>
     );
@@ -93,14 +90,7 @@ export function CallProblem({
   if (error === "callsPaused") {
     return (
       <ProblemWithBack exitHref={exitHref} title={title}>
-        <ProblemMessage
-          text={t({
-            description:
-              'Under the title "Calls are paused": the pause applies to every learner, not only this one.',
-            message: "It's the same for everyone right now. Try again later.",
-          })}
-          title={t("Calls are paused")}
-        />
+        <ProblemMessage {...copy.callsPaused} />
       </ProblemWithBack>
     );
   }
@@ -111,45 +101,12 @@ export function CallProblem({
         exitHref={exitHref}
         footer={
           <TaskActions>
-            <TaskMainButton onClick={onTakeover}>
-              {t({
-                description:
-                  "Another call is still running: this ends it and starts the call on this screen.",
-                message: "End that call and start this one",
-              })}
-            </TaskMainButton>
+            <TaskMainButton onClick={onTakeover}>{copy.takeover}</TaskMainButton>
           </TaskActions>
         }
         headerTitle={title}
       >
-        <ProblemMessage
-          text={t(
-            "It's open in another tab or on another device. Ending it from here skips its feedback.",
-          )}
-          title={t("You're already in a call")}
-        />
-      </TaskFrame>
-    );
-  }
-
-  if (error === "dropped") {
-    return (
-      <TaskFrame
-        exitHref={null}
-        footer={
-          <TaskActions>
-            <Button className="shrink-0" onClick={onEnd} size="lg" variant="outline">
-              {t("End the call")}
-            </Button>
-            <TaskMainButton onClick={onRetry}>{t("Call again")}</TaskMainButton>
-          </TaskActions>
-        }
-        headerTitle={title}
-      >
-        <ProblemMessage
-          text={t("Call again, or end the call to get feedback on what you said.")}
-          title={t("The call dropped")}
-        />
+        <ProblemMessage {...copy.callInProgress} />
       </TaskFrame>
     );
   }

@@ -204,10 +204,9 @@ private struct NumericAnswerField: View {
   /// A number the canvas set, at the answer's precision rather than its raw reading.
   private var shown: String {
     value.map {
-      formatLocalizedNumber(
-        $0,
-        fractionDigits: exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: $0),
-        locale: .courseLanguage)
+      ActivityNumberFormat.format(
+        $0, digits: exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: $0),
+        grouping: false)
     } ?? ""
   }
 

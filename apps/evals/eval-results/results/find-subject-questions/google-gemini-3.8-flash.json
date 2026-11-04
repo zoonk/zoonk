@@ -142,6 +142,42 @@
           "total": 170
         }
       }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "counts": { "1": 25, "2": 25, "3": 25 }, "status": "found" },
+        "id": "en-jee-main-paper-1-1",
+        "userInput": {
+          "board": "NTA",
+          "exam": "JEE Main, Paper 1 (B.E./B.Tech.)",
+          "subjects": ["Physics", "Chemistry", "Mathematics"],
+          "today": "2026-10-06",
+          "total": 75
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "counts": { "1": 45, "2": 45, "3": 90 }, "status": "found" },
+        "id": "en-neet-ug-1",
+        "userInput": {
+          "board": "NTA",
+          "exam": "NEET (UG)",
+          "subjects": ["Physics", "Chemistry", "Biology (Botany and Zoology)"],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
     }
   ],
   "taskId": "find-subject-questions"

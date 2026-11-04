@@ -191,7 +191,7 @@ const C1: SpeakingTaskFormat[] = [
     cues: [
       {
         atSeconds: 180,
-        say: "If the candidate hasn't started assessing the text and giving their opinion yet, tell them in one short sentence that about two minutes are left. Otherwise say nothing.",
+        say: "If the candidate hasn't started assessing the text and giving their opinion yet, tell them in one short sentence that time is getting short, so they should move on to it. Otherwise say nothing.",
       },
     ],
     key: "t1",
@@ -232,7 +232,10 @@ const C2: SpeakingTaskFormat[] = [
   speakingTask({
     brief: `From two or three short texts (700 to 800 words in all) and one or two tables of figures on one topic, read during preparation, the candidate gives a talk following three given points and using every source. ${SILENT_EXAMINER}`,
     cues: [
-      { atSeconds: 300, say: "Tell the candidate in one short sentence that one minute is left." },
+      {
+        atSeconds: 300,
+        say: "Tell the candidate in one short sentence that their time is nearly up, so they should round off their talk.",
+      },
     ],
     key: "t1",
     minutes: { max: 6, min: 5 },
