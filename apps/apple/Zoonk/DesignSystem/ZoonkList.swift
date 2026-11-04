@@ -1,9 +1,10 @@
 import SwiftUI
 
 extension View {
-  /// Main's `ListGroup` for a page's `List` or `Form`: flat rows on the page with a hairline between
-  /// them, as wide as the column. Where the width is regular it's one centered column at most
-  /// 768pt wide, as main's tablet portrait; a pane is narrower, so it keeps its own width.
+  /// Main's `ListGroup` for a page's `List`: flat rows on the page with a hairline between them, as
+  /// wide as the column. Where the width is regular it's one centered column at most 768pt wide, as
+  /// main's tablet portrait; a pane is narrower, so it keeps its own width. The page is the system
+  /// background, which a plain list's rows paint whatever is behind them.
   func zoonkList() -> some View {
     modifier(ZoonkList())
   }
@@ -21,8 +22,6 @@ private struct ZoonkList: ViewModifier {
   func body(content: Content) -> some View {
     content
       .listStyle(.plain)
-      .scrollContentBackground(.hidden)
-      .background(Color(.background))
       .listSectionSpacing(24)
       .readableColumn(horizontalSizeClass == .regular ? 768 : .infinity)
   }
