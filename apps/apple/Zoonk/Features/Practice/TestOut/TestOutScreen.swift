@@ -52,6 +52,8 @@ struct TestOutScreen: View {
           }
         } else {
           switch load {
+          case .loading where summary.summary.value != nil && goalId == nil:
+            PracticeRedirect { hooks.navigate(.today) }
           case .loading:
             ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
           case .failed(let error):

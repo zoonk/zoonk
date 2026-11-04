@@ -71,7 +71,7 @@ struct CheckpointCallIntro: View {
       .scenePadding()
       .frame(maxHeight: .infinity)
     case .empty, .failed(.notFound), .loaded(.notLanguage):
-      CallNotHere()
+      NotFoundView()
     case .failed(let error) where error != .unauthorized:
       CallLoadFailed {
         Task { await call.refresh() }

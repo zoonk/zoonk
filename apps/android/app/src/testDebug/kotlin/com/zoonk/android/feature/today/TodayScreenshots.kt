@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,6 +21,7 @@ import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.TabRootScaffold
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.LanguageTodaySpeaking
 import com.zoonk.api.models.MistakeListAvailability
@@ -112,7 +112,7 @@ class TodayScreenshots {
         DAYS.indices.forEach { day ->
             index = day
             compose.waitForIdle()
-            write("today-${DAYS[day].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("today-${DAYS[day].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

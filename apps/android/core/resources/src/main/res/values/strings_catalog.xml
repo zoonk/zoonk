@@ -33,8 +33,6 @@
     <string name="catalog_start_goal">Start a goal</string>
     <string name="catalog_loading_more">Loading more courses…</string>
     <string name="catalog_load_more_failed">Something went wrong. Please try again.</string>
-    <string name="catalog_not_found_title">We couldn\'t find this page</string>
-    <string name="catalog_not_found_description">The link may be old or mistyped.</string>
 
     <string name="catalog_edition_notice">This course is also available in your language.</string>
     <string name="catalog_exam_on_today">Exam on %1$s · today</string>

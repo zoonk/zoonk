@@ -44,7 +44,6 @@
   "exam_format_one_day": "760415b759a530eef091cceea1a70a2bae355f6dbf268737f05eb3ff697c501c",
   "exam_format_parts_questions": "ed62e1541121a7c270b2f0729492f7de15e37027ebb3b771f85596ad1c7af2fa",
   "exam_format_two_days": "122eec85e7a97093c97d755891214268ebf288d02efd546009423f337bd42f5d",
-  "exam_go_to_today": "355c56f541c017df9924d274e916ce718a7c5d217639ed672bdfe08e040a21a7",
   "exam_how_did_it_go": "5f1cbc7ef2042effd91354ec569400615787d1945e0d338ad2841275431b528b",
   "exam_latest_mock": "45dc3b1a164756cdcfaed1dc87ed0480c008170548631fd2b224207c0e10eacf",
   "exam_mock_answered": "220dbbd6b9699c4481574dd5ae5c483fe79871f0e71277db81a126f7ca3e97d7",
@@ -61,8 +60,6 @@
   "exam_no_sitting_detail_one": "eea16695fcb4832fcddad24deeeed2e8ea09997ec91f5a2386c8a2bed7ead32c",
   "exam_no_sitting_detail_several": "3f455eabe7084cac7275a8ce7bf999aee5a8d242789884cb973d3e17be5a4c17",
   "exam_no_sitting_title": "8cae48517e522d7664f39c8df8efe8e8d233c447a57667fb2ca8feed67b8f909",
-  "exam_not_found_description": "b3648222198053849a7c5dd90d13c783f9b2783b45b4fe750520ade71a514d99",
-  "exam_not_found_title": "f98e0ff569e0a14785033c995186e27907e405f67ad5d415f9455781871a7073",
   "exam_out_of": "9decc8fddecd4691cce19f921395f0338997ed6a46ef33363cc3d9d34aced3b0",
   "exam_pass_marks_language": "37110978f2322da17672db89cfee36a9a905b6a19401007f4367944ea6e2ccab",
   "exam_passed_no": "abee8d8ca9c4024c14f3b92d205d84bda36e80552a199ba619d283af5ab5109f",
@@ -295,7 +292,4 @@
     <string name="exam_cutoff_source">%1$s, %2$s verilerine göre</string>
     <!-- %1$s is the learner's goal, such as "Medicine at USP". -->
     <string name="exam_cutoff_goal">Hedefin: %1$s</string>
-    <string name="exam_not_found_title">Bu sayfayı bulamadık</string>
-    <string name="exam_not_found_description">Bağlantı eski veya yanlış yazılmış olabilir.</string>
-    <string name="exam_go_to_today">Bugün sayfasına git</string>
 </resources>
