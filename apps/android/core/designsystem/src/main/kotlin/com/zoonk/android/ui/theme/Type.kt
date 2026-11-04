@@ -111,6 +111,10 @@ data class ZoonkTypography(
     val lessonText: TextStyle,
     /** A lesson's question (`QUESTION_TEXT_CLASS`). */
     val question: TextStyle,
+    /** A checked answer's verdict (`FeedbackVerdict`), in its tone's word color. */
+    val verdict: TextStyle,
+    /** The word on a checked answer option (`ANSWER_TAG_CLASS`). */
+    val tag: TextStyle,
 )
 
 internal val ZoonkTypeRoles =
@@ -123,6 +127,8 @@ internal val ZoonkTypeRoles =
             lead = bodyLarge.role(17f, 400, 26f, -0.01f),
             lessonText = bodyLarge.role(18f, 400, 29.25f),
             question = titleMedium.role(19f, 560, 25.65f, -0.02f),
+            verdict = labelLarge.role(15f, 550, 24f),
+            tag = labelSmall.role(11.5f, 550, 16f),
         )
     }
 

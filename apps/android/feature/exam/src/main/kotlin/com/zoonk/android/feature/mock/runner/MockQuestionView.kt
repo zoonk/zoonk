@@ -140,19 +140,18 @@ private fun Options(
             ) {
                 when (option) {
                     is Answer.TrueFalse -> {
-                        ItemLine(trueFalseLabel(option.isTrue, words), style = MaterialTheme.typography.bodyLarge)
+                        ItemLine(trueFalseLabel(option.isTrue, words))
                     }
 
                     null -> {
                         Text(
                             stringResource(R.string.questions_leave_blank),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyLarge,
                         )
                     }
 
                     else -> {
-                        ItemLine(labels[index], style = MaterialTheme.typography.bodyLarge)
+                        ItemLine(labels[index])
                     }
                 }
             }
@@ -187,7 +186,7 @@ private fun Picks(
                     onClick = { viewModel.pickOption(index) },
                     enabled = !locked,
                     role = Role.Checkbox,
-                ) { ItemLine(label, style = MaterialTheme.typography.bodyLarge) }
+                ) { ItemLine(label) }
             }
         }
     }
