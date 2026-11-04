@@ -18,16 +18,14 @@ export async function listLessonImageStepsStep(lessonId: string): Promise<string
 /** One screen per step, so a failed image retries alone without redrawing the others. */
 export async function createStepImageStep({
   analytics,
-  runId,
   stepId,
 }: {
   analytics?: ImageAnalytics;
-  runId: string;
   stepId: string;
 }): Promise<StepImageOutcome> {
   "use step";
 
-  return createStepImage({ analytics, runId, stepId });
+  return createStepImage({ analytics, stepId });
 }
 
 export async function listLessonOptionPicturesStep(

@@ -118,38 +118,18 @@ async function linkStepImage({
   revalidateCacheTags([getLibraryLessonCacheTag(step.lessonId)]);
 }
 
-/**
- * The run claims the step before paying for its picture: an overlapping run whose claim loses draws
- * nothing, and the winner links its drawing to every screen sharing it. A retry of the same run
- * keeps its claim.
- */
-async function claimStepPicture({ runId, stepId }: { runId: string; stepId: string }) {
-  const claimed = await prisma.step.updateMany({
-    data: { pictureRunId: runId },
-    where: {
-      OR: [{ pictureRunId: null }, { pictureRunId: runId }],
-      id: stepId,
-      mediaAssetId: null,
-    },
-  });
-
-  return claimed.count > 0;
-}
-
 /** Internal workflow bridge, not an app authorization boundary. */
 export async function createStepImage({
   analytics,
-  runId,
   stepId,
 }: {
   analytics?: ImageAnalytics;
-  runId: string;
   stepId: string;
 }): Promise<StepImageOutcome> {
   const step = await findStepForImage(stepId);
   const request = step && !step.mediaAssetId ? getStepImageRequest(step) : null;
 
-  if (!step || !request || !(await claimStepPicture({ runId, stepId }))) {
+  if (!step || !request) {
     return { status: "none" };
   }
 

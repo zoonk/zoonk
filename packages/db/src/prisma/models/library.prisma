@@ -220,9 +220,6 @@ model Step {
   mediaAsset         MediaAsset?         @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
   /// Null on older links; ordinary screen edits never change it.
   pictureAvailableAt DateTime?           @map("picture_available_at")
-  /// The images run that claimed this step's picture before paying to draw it, so overlapping runs
-  /// draw it once.
-  pictureRunId       String?             @map("picture_run_id")
   sourceId           String?             @map("source_id") @db.Uuid
   source             Source?             @relation(fields: [sourceId], references: [id], onDelete: SetNull)
   /// Starts at 1.
