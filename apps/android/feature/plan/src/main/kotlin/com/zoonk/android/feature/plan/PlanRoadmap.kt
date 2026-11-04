@@ -548,7 +548,10 @@ private fun PhaseAxis(
     hasOverrun: Boolean,
     width: Dp,
 ) {
-    val style = MaterialTheme.typography.labelSmall.withTabularFigures().copy(lineBreak = LineBreak.Heading)
+    val style =
+        MaterialTheme.typography.labelSmall
+            .withTabularFigures()
+            .copy(lineBreak = LineBreak.Heading)
     val faint = MaterialTheme.colorScheme.onSurfaceVariant
     val ink = MaterialTheme.colorScheme.onSurface
     val overrunSide = overrun?.let { if (it.share < MIDDLE_SHARE) Anchor.Start else Anchor.End }
