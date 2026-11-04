@@ -162,6 +162,7 @@ enum LessonPictureFrame {
 }
 
 struct LessonPictureView: View {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.imageLoader) private var images
   @Environment(\.lessonScreenHeight) private var screenHeight
   @Environment(\.lessonPageHeight) private var pageHeight
@@ -188,7 +189,7 @@ struct LessonPictureView: View {
       picture(url: url, image: image)
     } else if let alt, isPending {
       LessonPicturePlaceholder(alt: asks ? alt : nil, saysItIsDrawing: true)
-        .pictureFrame(aspectRatio: drawnAspectRatio, maxHeight: maxHeight)
+        .pictureFrame(aspectRatio: drawnAspectRatio, maxHeight: maxHeight, alignment: alignment)
     } else if let alt, asks {
       Label {
         Text(alt)
@@ -207,6 +208,10 @@ struct LessonPictureView: View {
     let frame: LessonPictureFrame = asks ? .question : hero ? .hero : .inline
     let cap = frame.maxHeight(screen: screenHeight)
     return opens && !isPaneSplit ? max(140, min(pageHeight - openingReserve, cap)) : cap
+  }
+
+  private var alignment: Alignment {
+    horizontalSizeClass == .regular ? .leading : .center
   }
 
   private func picture(url: URL, image: LessonStepImage) -> some View {
@@ -231,7 +236,9 @@ struct LessonPictureView: View {
         }
       }
     }
-    .pictureFrame(aspectRatio: aspectRatio ?? drawnAspectRatio, maxHeight: maxHeight)
+    .pictureFrame(
+      aspectRatio: aspectRatio ?? drawnAspectRatio, maxHeight: maxHeight, alignment: alignment
+    )
     .accessibilityElement()
     .accessibilityLabel(Text(alt ?? ""))
     .accessibilityAddTraits(.isImage)
@@ -285,12 +292,14 @@ struct LessonPicturePlaceholder: View {
 }
 
 extension View {
-  /// A picture's shape at the width it's offered, no taller than `maxHeight` and centered when that
-  /// makes it narrower; whatever holds its place gets the same frame.
-  func pictureFrame(aspectRatio: CGFloat, maxHeight: CGFloat = .infinity) -> some View {
+  /// A picture's shape at the width it's offered, no taller than `maxHeight`; whatever holds its
+  /// place gets the same frame.
+  func pictureFrame(
+    aspectRatio: CGFloat, maxHeight: CGFloat = .infinity, alignment: Alignment = .center
+  ) -> some View {
     PictureFrameLayout(aspectRatio: aspectRatio, maxHeight: maxHeight) { self }
       .clipShape(.rect(cornerRadius: 16))
-      .frame(maxWidth: .infinity)
+      .frame(maxWidth: .infinity, alignment: alignment)
   }
 }
 

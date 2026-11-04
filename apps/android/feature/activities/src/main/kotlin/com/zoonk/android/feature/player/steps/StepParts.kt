@@ -1,17 +1,22 @@
 package com.zoonk.android.feature.player.steps
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -23,6 +28,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.player.LocalFeedbackReveal
@@ -40,7 +46,7 @@ import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.findMarkdownTableLines
 
 /**
- * Main's `LessonStepPicture`: the picture, centered when its frame keeps it narrower than the column,
+ * Main's `LessonStepPicture`: the picture, centered in a compact window and start-aligned otherwise,
  * a placeholder in its place while it's drawn, and on a question whose picture never came, its
  * description instead.
  */
@@ -51,11 +57,12 @@ fun StepPicture(
 ) {
     val image = step.image
     val picture = step.picture
-    val centered = Modifier.fillMaxWidth().wrapContentWidth()
+    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val modifier = Modifier.fillMaxWidth().wrapContentWidth(if (wide) Alignment.Start else Alignment.CenterHorizontally)
 
     when {
-        image != null -> PrivatePicture(image.url, image.alt, image.width, image.height, frame, centered, PictureShape.Landscape)
-        step.isOwnPictureDrawing -> StepPicturePending(frame, picture?.alt?.takeIf { frame == PictureFrame.Question }, centered)
+        image != null -> PrivatePicture(image.url, image.alt, image.width, image.height, frame, modifier, PictureShape.Landscape)
+        step.isOwnPictureDrawing -> StepPicturePending(frame, picture?.alt?.takeIf { frame == PictureFrame.Question }, modifier)
         frame == PictureFrame.Question && picture != null -> DescribedPicture(picture.alt)
     }
 }
@@ -67,20 +74,26 @@ private fun StepPicturePending(
     modifier: Modifier,
 ) {
     PendingPicture(frame, modifier, PictureShape.Landscape) {
-        Icon(painterResource(R.drawable.ic_image), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(
-            stringResource(R.string.player_drawing_picture),
-            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        if (alt != null) {
+        Column(
+            modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Icon(painterResource(R.drawable.ic_image), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(
-                alt,
+                stringResource(R.string.player_drawing_picture),
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
             )
+            if (alt != null) {
+                Text(
+                    alt,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }

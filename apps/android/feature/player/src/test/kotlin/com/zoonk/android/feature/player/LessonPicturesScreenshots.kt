@@ -3,9 +3,13 @@ package com.zoonk.android.feature.player
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.model.LessonStep
@@ -48,6 +52,10 @@ class LessonPicturesScreenshots {
     ) {
         harness.play(listOf(step, summaryStep("end")))
         rule.waitForIdle()
+        save(name)
+    }
+
+    private fun save(name: String) {
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
@@ -85,6 +93,9 @@ class LessonPicturesScreenshots {
     fun phoneQuestionAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
         capture("pending-question-phone-font200", questionDrawing())
+        rule.onAllNodes(hasScrollAction()).onLast().performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, 1000f) }
+        rule.waitForIdle()
+        save("pending-question-phone-font200-scrolled")
     }
 
     @Test
@@ -94,6 +105,14 @@ class LessonPicturesScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tabletQuestion() = capture("pending-question-tablet", questionDrawing())
+
+    @Test
+    @Config(qualifiers = "w1138dp-h712dp-land-xhdpi")
+    fun smallerTabletQuestion() = capture("pending-question-smaller-tablet", questionDrawing())
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-340dpi")
+    fun fractionalDensityTabletQuestion() = capture("pending-question-tablet-fractional-density", questionDrawing())
 }
 
 private fun questionDrawing(): LessonStep {
