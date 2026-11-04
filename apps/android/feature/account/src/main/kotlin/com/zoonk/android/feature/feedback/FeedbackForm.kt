@@ -20,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -54,6 +53,7 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OutlinedTextField
 import kotlinx.coroutines.flow.first
 import java.util.UUID
 
@@ -81,7 +81,7 @@ fun FeedbackForm(
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 128.dp),
-            label = { Text(stringResource(R.string.feedback_message)) },
+            label = stringResource(R.string.feedback_message),
             placeholder = { Text(stringResource(R.string.feedback_message_placeholder)) },
             supportingText = form.target.contentId?.let { { Text(stringResource(R.string.feedback_screen_attached)) } },
             readOnly = isSending,
@@ -96,7 +96,7 @@ fun FeedbackForm(
                     Modifier
                         .fillMaxWidth()
                         .semantics { contentType = ContentType.EmailAddress },
-                label = { Text(stringResource(R.string.feedback_email)) },
+                label = stringResource(R.string.feedback_email),
                 placeholder = { Text(stringResource(R.string.account_email_placeholder)) },
                 singleLine = true,
                 readOnly = isSending,

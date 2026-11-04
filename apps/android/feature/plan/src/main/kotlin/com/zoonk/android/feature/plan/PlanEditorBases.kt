@@ -14,7 +14,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +39,7 @@ import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
@@ -259,7 +259,7 @@ private fun SubjectChoice(
             modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled),
             enabled = enabled,
             readOnly = true,
-            label = { Text(area) },
+            label = area,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             supportingText = {
                 Text(

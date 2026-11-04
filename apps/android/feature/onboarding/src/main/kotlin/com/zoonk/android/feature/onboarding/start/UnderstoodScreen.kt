@@ -17,7 +17,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
@@ -59,6 +58,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DatePickerDialog
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimePickerDialog
 import com.zoonk.android.ui.format.DateStyle
@@ -209,7 +209,7 @@ private fun RewriteWords(
             value = value,
             onValueChange = { value = it.take(MAX_GOAL_LENGTH) },
             modifier = Modifier.fillMaxWidth().focusRequester(focus),
-            label = { Text(stringResource(R.string.onboarding_what_you_wrote)) },
+            label = stringResource(R.string.onboarding_what_you_wrote),
             supportingText = { Text(stringResource(R.string.onboarding_rewrite_hint)) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
             keyboardActions = KeyboardActions(onGo = { submit() }),
@@ -360,7 +360,7 @@ private fun TextEditor(
             value = value,
             onValueChange = { value = it },
             modifier = Modifier.fillMaxWidth().focusRequester(focus),
-            label = { Text(label) },
+            label = label,
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { submit() }),

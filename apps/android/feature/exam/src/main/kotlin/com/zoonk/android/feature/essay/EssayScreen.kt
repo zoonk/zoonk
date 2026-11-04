@@ -21,7 +21,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -92,6 +91,7 @@ import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LocalStepHeading
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
@@ -381,7 +381,7 @@ private fun EssayBox(
         value = ui.text,
         onValueChange = onWrite,
         modifier = modifier.fillMaxWidth().focusRequester(focus),
-        label = { Text(label) },
+        label = label,
         supportingText = {
             if (ui.words >
                 0

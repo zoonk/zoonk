@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 
 /**
@@ -66,7 +66,7 @@ fun ProfileFields(
                     .fillMaxWidth()
                     .focusRequester(nameFocus)
                     .semantics { contentType = ContentType.PersonFullName },
-            label = { Text(stringResource(R.string.account_name)) },
+            label = stringResource(R.string.account_name),
             supportingText =
                 nameHint?.let { hint ->
                     { Text(stringResource(hint), Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
@@ -110,7 +110,7 @@ private fun UsernameField(form: ProfileFormViewModel) {
             Modifier
                 .fillMaxWidth()
                 .semantics { contentType = ContentType.Username },
-        label = { Text(stringResource(R.string.account_username)) },
+        label = stringResource(R.string.account_username),
         prefix = { Text("@") },
         supportingText = {
             Text(
