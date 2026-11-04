@@ -155,6 +155,8 @@ struct TutorTurnView: View {
 struct TutorAnswerText: View {
   @Environment(AppRouter.self) private var router
   @ScaledMetric private var listIndent = 20.0
+  @State private var isOpeningBlock = false
+  @State private var isBlockClosed = false
 
   let text: String
   let linksEnabled: Bool
@@ -163,20 +165,28 @@ struct TutorAnswerText: View {
   var body: some View {
     let blocks = TutorAnswerBlock.blocks(of: text, linksEnabled: linksEnabled)
 
-    VStack(alignment: .leading, spacing: 0) {
-      ForEach(blocks) { block in
-        blockView(block)
-          .padding(.top, block.id == 0 ? 0 : block.followsListItem ? 6 : 12)
+    VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: 0) {
+        ForEach(blocks) { block in
+          blockView(block)
+            .padding(.top, block.id == 0 ? 0 : block.followsListItem ? 6 : 12)
+        }
+      }
+      .textSelection(.enabled)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .environment(\.openURL, OpenURLAction(handler: open))
+      .accessibilityElement(children: .combine)
+      .accessibilityLabel(
+        Text(
+          verbatim:
+            "\(buddyName): \(blocks.map { String($0.text.characters) }.joined(separator: "\n"))"))
+
+      if isBlockClosed {
+        Text(.blockClosed)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
       }
     }
-    .textSelection(.enabled)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .environment(\.openURL, OpenURLAction(handler: open))
-    .accessibilityElement(children: .combine)
-    .accessibilityLabel(
-      Text(
-        verbatim:
-          "\(buddyName): \(blocks.map { String($0.text.characters) }.joined(separator: "\n"))"))
   }
 
   @ViewBuilder
@@ -212,11 +222,45 @@ struct TutorAnswerText: View {
       return .discarded
     }
 
-    return router.open(url: page) ? .handled : .discarded
+    guard case .block(let blockID) = AppLink(url: page) else {
+      return router.open(url: page) ? .handled : .discarded
+    }
+
+    open(blockID: blockID)
+    return .handled
+  }
+
+  /// One at a time, so two opens never race.
+  private func open(blockID: String) {
+    guard !isOpeningBlock else {
+      return
+    }
+
+    isOpeningBlock = true
+    isBlockClosed = false
+
+    Task {
+      if case .done(.changed) = await router.openAnswerLink(blockID: blockID) {
+        isBlockClosed = true
+        AccessibilityNotification.Announcement(String(localized: .blockClosed)).post()
+      }
+
+      isOpeningBlock = false
+    }
   }
 
   /// Any of main's origins: the app reads only a link's path.
   private static let mainOrigin = URL(string: "https://www.zoonk.com")
+}
+
+extension LocalizedStringResource {
+  fileprivate static var blockClosed: LocalizedStringResource {
+    LocalizedStringResource(
+      "This step isn't available anymore.", table: "Tutor",
+      comment:
+        "Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since"
+    )
+  }
 }
 
 struct TutorAnswerBlock: Identifiable {

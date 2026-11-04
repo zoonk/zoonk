@@ -27,9 +27,10 @@ final class AppRouter {
   let playback = SessionPlayback()
   @ObservationIgnored private let openBlock: BlockOpener
 
-  typealias BlockOpener = @MainActor (_ blockID: String, _ router: AppRouter) -> Void
+  typealias BlockOpener =
+    @MainActor (_ blockID: String, _ router: AppRouter) async -> MutationResult<StudyDestination>
 
-  init(openBlock: @escaping BlockOpener = { _, _ in }) {
+  init(openBlock: @escaping BlockOpener = { _, _ in .obsolete }) {
     self.openBlock = openBlock
   }
 
@@ -165,8 +166,18 @@ final class AppRouter {
     }
   }
 
+  /// A block no longer free to start shows Today as it stands.
   func open(blockID: String) {
-    openBlock(blockID, self)
+    Task {
+      if case .done(.changed) = await openBlock(blockID, self) {
+        showRoot(of: .today)
+      }
+    }
+  }
+
+  /// A block a buddy answer links, which says itself when the block isn't free to start anymore.
+  func openAnswerLink(blockID: String) async -> MutationResult<StudyDestination> {
+    await openBlock(blockID, self)
   }
 
   func showRoot(of tab: AppTab) {
