@@ -120,23 +120,26 @@ class TutorViewModel internal constructor(
     ) {
         if (isOpeningBlock) return
         isOpeningBlock = true
+        leadsWhereTapped = true
         blockNotice = null
 
         viewModelScope.launch {
             try {
                 when (val result = openMission(blockId)) {
                     is MutationResult.Done -> {
-                        result.value?.let(openedBlocks::trySend)
-                            ?: run { blockNotice = BlockNotice(turnId, closed = true) }
+                        val route = result.value
+                        if (route == null) {
+                            blockNotice = BlockNotice(turnId, closed = true)
+                        } else if (leadsWhereTapped) {
+                            openedBlocks.trySend(route)
+                        }
                     }
 
                     is MutationResult.Failed -> {
                         blockNotice = BlockNotice(turnId, closed = false)
                     }
 
-                    MutationResult.Obsolete -> {
-                        Unit
-                    }
+                    MutationResult.Obsolete -> {}
                 }
             } finally {
                 isOpeningBlock = false
@@ -152,9 +155,19 @@ class TutorViewModel internal constructor(
         private set
 
     private val openedBlocks = Channel<AppRoute>(Channel.BUFFERED)
+    private var leadsWhereTapped = false
 
     /** Where an answer's step link leads once it opened, even after the answer scrolled away or the screen was made again. */
     val blockRoutes: Flow<AppRoute> = openedBlocks.receiveAsFlow()
+
+    /** The learner left the conversation, so a step link's open still on its way leads nowhere when it lands. */
+    fun leave() {
+        leadsWhereTapped = false
+        blockNotice = null
+        do {
+            val waiting = openedBlocks.tryReceive()
+        } while (waiting.isSuccess)
+    }
 
     private val mutableState = MutableStateFlow(TutorConversationState())
     val state: StateFlow<TutorConversationState> = mutableState.asStateFlow()
