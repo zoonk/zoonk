@@ -12,9 +12,18 @@ import {
 } from "@zoonk/ui/components/alert-dialog";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { ExternalLinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ComponentProps, type MouseEvent, createContext, use } from "react";
+import {
+  type ComponentProps,
+  type MouseEvent,
+  createContext,
+  use,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import {
   type Components,
   type ExtraProps,
@@ -87,7 +96,7 @@ const LESSON_QUESTION_LINK_SAFETY = {
 /** Set `verified` only after the saved answer's links have been checked against their allowlist. */
 export type TutorAnswerLinks = {
   Link: PlayerLinkComponent;
-  openBlock?: (blockId: string) => void;
+  openBlock?: (blockId: string) => Promise<boolean>;
   verified: boolean;
 };
 
@@ -100,30 +109,51 @@ function isPlainClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
 
-const TutorAnswerLinksContext = createContext<TutorAnswerLinks | null>(null);
+const TutorAnswerLinksContext = createContext<
+  (TutorAnswerLinks & { setOpenFailed: (failed: boolean) => void }) | null
+>(null);
 
 function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
   const links = use(TutorAnswerLinksContext);
+  const [pending, startTransition] = useTransition();
 
   if (!links?.verified || !href || !isTutorAppPath(href)) {
     return children;
   }
 
-  const { Link, openBlock } = links;
+  const { Link, openBlock, setOpenFailed } = links;
   const blockId = readTutorBlockLink(href);
 
   const onClick =
     blockId && openBlock
       ? (event: MouseEvent<HTMLAnchorElement>) => {
-          if (isPlainClick(event)) {
-            event.preventDefault();
-            openBlock(blockId);
+          if (!isPlainClick(event)) {
+            return;
           }
+
+          event.preventDefault();
+
+          if (pending) {
+            return;
+          }
+
+          setOpenFailed(false);
+
+          startTransition(async () => {
+            const { data: opened } = await safeAsync(() => openBlock(blockId));
+            setOpenFailed(!opened);
+          });
         }
       : undefined;
 
   return (
-    <Link href={href} onClick={onClick} prefetch={false}>
+    <Link
+      aria-busy={pending || undefined}
+      className="aria-busy:opacity-60"
+      href={href}
+      onClick={onClick}
+      prefetch={false}
+    >
       {children}
     </Link>
   );
@@ -151,10 +181,13 @@ export function TutorMarkdown({
   isAnimating: boolean;
   isStreaming: boolean;
 }) {
+  const t = useExtracted();
   const plugins = useMarkdownPlugins({ isStreaming, text: answer });
+  const [openFailed, setOpenFailed] = useState(false);
+  const links = useMemo(() => (appLinks ? { ...appLinks, setOpenFailed } : null), [appLinks]);
 
   return (
-    <TutorAnswerLinksContext value={appLinks ?? null}>
+    <TutorAnswerLinksContext value={links}>
       <Streamdown
         animated={isAnimating}
         className={TUTOR_MARKDOWN_CLASS}
@@ -170,6 +203,12 @@ export function TutorMarkdown({
       >
         {answer}
       </Streamdown>
+
+      {openFailed && (
+        <p className="text-destructive-text mt-2 text-sm" role="alert">
+          {t("We couldn't open this step. Try again.")}
+        </p>
+      )}
     </TutorAnswerLinksContext>
   );
 }

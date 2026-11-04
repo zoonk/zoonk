@@ -8,13 +8,5 @@ type TutorAppLinks = NonNullable<LessonTutorConfig["navigation"]["appLinks"]>;
 
 export function useTutorAppLinks(goalId: string): TutorAppLinks {
   const { openBlock } = useMissionLinks(goalId);
-
-  return useMemo(
-    () => ({
-      openBlock: (blockId) => {
-        void openBlock(blockId);
-      },
-    }),
-    [openBlock],
-  );
+  return useMemo(() => ({ openBlock }), [openBlock]);
 }

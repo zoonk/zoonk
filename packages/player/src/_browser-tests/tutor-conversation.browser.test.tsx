@@ -66,7 +66,7 @@ function renderConversation({
   initialThread?: LessonQuestionThreadPage;
   onAnswered?: () => void;
   onAsked?: () => void;
-  openBlock?: (blockId: string) => void;
+  openBlock?: (blockId: string) => Promise<boolean>;
 } = {}) {
   render(
     <TutorConversation
@@ -315,7 +315,7 @@ describe("the buddy's conversation", () => {
     const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
     const stream = tutorAnswerStream();
     api.next("answer", () => Promise.resolve(stream.response));
-    const openBlock = vi.fn();
+    const openBlock = vi.fn(() => Promise.resolve(true));
 
     renderConversation({ openBlock });
     await ask("Which lesson first?");
@@ -342,12 +342,49 @@ describe("the buddy's conversation", () => {
     expect(openBlock).toHaveBeenCalledExactlyOnceWith(BLOCK_ID);
   });
 
+  it("opens a block link once at a time and says when it couldn't open", async () => {
+    const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
+    const stream = tutorAnswerStream();
+    api.next("answer", () => Promise.resolve(stream.response));
+    const firstOpen = Promise.withResolvers<boolean>();
+
+    const openBlock = vi
+      .fn<(blockId: string) => Promise<boolean>>()
+      .mockReturnValueOnce(firstOpen.promise)
+      .mockResolvedValueOnce(true);
+
+    renderConversation({ openBlock });
+    await ask("Which lesson first?");
+
+    stream.part(LESSON_QUESTION_SAVED_ANSWER_PART, {
+      answer: `Start with [Atoms](/session?block=${BLOCK_ID}).`,
+    });
+
+    stream.finish();
+    stream.close();
+
+    const lesson = page.getByRole("link", { name: "Atoms" });
+    const failure = page.getByText("We couldn't open this step. Try again.");
+
+    await lesson.click();
+    await expect.element(lesson).toHaveAttribute("aria-busy", "true");
+    await lesson.click();
+    expect(openBlock).toHaveBeenCalledOnce();
+
+    firstOpen.resolve(false);
+    await expect.element(failure).toBeVisible();
+
+    await lesson.click();
+    await expect.element(failure).not.toBeInTheDocument();
+    expect(openBlock).toHaveBeenCalledTimes(2);
+  });
+
   it("keeps every link as words in an answer whose saved text never came", async () => {
     const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
     const stream = tutorAnswerStream();
     api.next("answer", () => Promise.resolve(stream.response));
 
-    renderConversation({ openBlock: vi.fn() });
+    renderConversation({ openBlock: vi.fn(() => Promise.resolve(true)) });
     await ask("Where are my mistakes?");
 
     stream.write("Open [your mistakes notebook](/mistakes).");
