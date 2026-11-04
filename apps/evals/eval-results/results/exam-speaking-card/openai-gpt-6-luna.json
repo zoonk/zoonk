@@ -50,21 +50,9 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "DELE B2 Task 1 for a Brazilian candidate: a problem and five to seven proposals to solve it on the card (the prompts), instructions in Spain Spanish with \"usted\" saying to weigh at least four for 3 to 4 minutes and then talk with the examiner. No photos, text or table. The examiner's brief listens without interrupting through the monologue, then asks which proposal is best, about the candidate's country and their opinion. Summary and role in Brazilian Portuguese.",
@@ -145,11 +133,7 @@
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "DELE A2 Task 2 for a Brazilian candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in Brazilian Portuguese, and about six guiding questions in simple Spain Spanish (who the people are, the place, what they're doing, how they feel, what happened before). The examiner gives the instruction and listens.",
@@ -475,11 +459,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The partner brief provides useful scripted opinions, but leaves follow-up invitations, the transition to the decision phase and collaborative decision-making to improvisation. It therefore only partially meets the requirement to write out the character's spoken lines.",
           "kind": "minorErrors",
@@ -560,11 +540,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The examiner may ask a second substantive follow-up if the first answer is short. This exceeds the task-specific requirement for one short follow-up question. Make the backup a rephrasing used only if the candidate does not understand the original question.",
           "kind": "minorErrors",
@@ -645,21 +621,9 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "DELE B1 Task 2 continues Task 1's presentation on working from home: the card and the examiner's questions stay on that topic, asking for the candidate's opinions and personal experience about it, never a new topic. In Spain Spanish with \"usted\"; summary in Brazilian Portuguese.",
@@ -754,11 +718,7 @@
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "DELE B1 Task 3 for an English-speaking candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in English, and guiding prompts in Spain Spanish with \"usted\" (the people, the place, the objects, how the people are related, what they may be talking about). The examiner listens for one to two minutes without interrupting, then asks questions linking the photo to the candidate's own life. Summary and role in English. Found on runs that wrote the alt in Spanish and the role as \"examinadora\".",
@@ -829,11 +789,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Some hints supply task-specific answers rather than reusable speaking support: the morning-availability statement and the suggestion to meet at the station are concrete contributions to the planning. The table lacks the required invented source and year. The English summary largely translates the situation and instructions instead of providing a distinct learner-facing overview.",
           "kind": "minorErrors",
@@ -919,16 +875,8 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "DELF A2 Part 3 for an English-speaking candidate: a role-play card whose first instruction, with \"vous\", states an everyday situation in France (buying, booking or inviting), with the points to sort out as prompts. The examiner plays the other person with the facts it knows (prices in euros, times, conditions) realistic for France, reacts to what the candidate asks and uses greetings and polite forms. The role names that person in English, and the summary is in English.",

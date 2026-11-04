@@ -50,21 +50,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Two hints supply substantive arguments instead of reusable speaking support: the third asserts that a measure promotes discipline but is difficult to implement, and the fifth advocates education rather than prohibition. These partially answer the topic for the candidate.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "DELE B2 Task 1 for a Brazilian candidate: a problem and five to seven proposals to solve it on the card (the prompts), instructions in Spain Spanish with \"usted\" saying to weigh at least four for 3 to 4 minutes and then talk with the examiner. No photos, text or table. The examiner's brief listens without interrupting through the monologue, then asks which proposal is best, about the candidate's country and their opinion. Summary and role in Brazilian Portuguese, with no Spanish words. Found on a run whose summary said \"um huerto comunitário\".",
@@ -145,11 +137,7 @@
           "kind": "minorErrors",
           "score": 9
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "DELE A2 Task 2 for a Brazilian candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in Brazilian Portuguese, and about six guiding questions in simple Spain Spanish (who the people are, the place, what they're doing, how they feel, what happened before). The examiner gives the instruction and listens.",
@@ -305,11 +293,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The examiner asks about preferences and the candidate's country, but never directly asks about the candidate's own seasonal habits or activities. The final hint supplies a substantive opinion about climate rather than just a reusable speaking phrase. The closing 'Muy bien' introduces unnecessary praise despite the examiner's neutral role.",
           "kind": "minorErrors",
@@ -395,11 +379,7 @@
           "kind": "majorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Add short German acceptance, disagreement and compromise branches. Replace the generic closing declaration with a brief confirmation of the choices actually agreed on, followed by a question checking the learner's agreement.",
           "kind": "potentialImprovements",
@@ -475,11 +455,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The card supplies five suitable prompts but omits a standalone discussion question and does not state the one-minute decision time in its English instructions. Hannah has independent views, but the brief does not direct her to sometimes disagree or provide a disagreement line. Allowing the decision phase to begin whenever most prompts have been mentioned could cut the two-minute discussion short.",
           "kind": "minorErrors",
@@ -645,11 +621,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The opening question and its back-up assume relevant experience: neither provides a clear route for a candidate who has never worked or studied from home. Questions 2 and 3 also combine relatively dense vocabulary and competing viewpoints, making them less accessible at B1 than necessary.",
           "kind": "minorErrors",
@@ -744,11 +716,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Several hints supply topic-specific answers rather than neutral speaking support. In particular, “parecen amigos porque...” supplies a relationship interpretation, and “no suelo jugar mucho” supplies a personal answer. Hints should instead help the candidate buy time or express their own opinions.",
           "kind": "minorErrors",
@@ -839,11 +807,7 @@
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "DELE A1 Task 1 for an English-speaking candidate: the self-introduction sheet as the exam prints it, the same for every candidate, with its seven plain points in Spain Spanish (name, age, nationality, where they live, job or studies, personality, languages they speak) and no topic worked into them. The examiner gives the instruction and listens without intervening. Summary and role in English. Found on runs that turned a point into \"Cómo es usted en las celebraciones\".",
