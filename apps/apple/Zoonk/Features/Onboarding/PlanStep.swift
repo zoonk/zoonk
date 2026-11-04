@@ -315,11 +315,10 @@ private struct RevealNoticeDay: View {
   @ViewBuilder
   private var failure: some View {
     if failed {
-      Text(
-        "That didn't go through. Try again in a moment.", tableName: "Exam",
-        comment: "Changing the date failed"
-      )
-      .foregroundStyle(.destructive)
+      FailureLine(
+        String(
+          localized: "That didn't go through. Try again in a moment.", table: "Exam",
+          comment: "Changing the date failed"))
     }
   }
 

@@ -209,11 +209,13 @@ private struct PronunciationRoundView: View {
         ) {}
       } else if case .limit(let limit) = notice {
         HelpLimitNotice(limit: limit)
+      } else if notice == .failed {
+        FailureLine(statusLine(notice))
+          .font(.subheadline)
       } else {
         Text(statusLine(notice))
           .font(.subheadline)
-          .foregroundStyle(
-            notice == .failed ? AnyShapeStyle(.destructive) : AnyShapeStyle(.secondary))
+          .foregroundStyle(.secondary)
       }
     }
   }
@@ -310,11 +312,12 @@ private struct PronunciationRoundView: View {
 
   private func finishError(_ round: PronunciationRound) -> some View {
     HStack {
-      Text(
-        "We couldn't save your answers.", tableName: "Voice", comment: "Finishing the round failed"
+      FailureLine(
+        String(
+          localized: "We couldn't save your answers.", table: "Voice",
+          comment: "Finishing the round failed")
       )
       .font(.subheadline)
-      .foregroundStyle(.destructive)
 
       Spacer()
 

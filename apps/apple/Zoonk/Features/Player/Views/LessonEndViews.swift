@@ -660,11 +660,12 @@ struct LessonGuestGateView: View {
         .disabled(isStarting)
 
         if startFailed {
-          Text(
-            "We couldn't open this lesson", tableName: "Player", comment: "A lesson failed to open"
+          FailureLine(
+            String(
+              localized: "We couldn't open this lesson", table: "Player",
+              comment: "A lesson failed to open")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       } else {
         Button {

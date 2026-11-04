@@ -522,12 +522,12 @@ private struct SubjectNotPlannedNotice: View {
       }
 
       if failed {
-        Text(
-          "That didn't work. Try again in a moment.", tableName: "Plan",
-          comment: "Says the subject didn't come back into the plan"
+        FailureLine(
+          String(
+            localized: "That didn't work. Try again in a moment.", table: "Plan",
+            comment: "Says the subject didn't come back into the plan")
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
       }
     }
   }

@@ -45,11 +45,10 @@ struct EarlierQuestionsScreen: View {
           }
 
           if store.olderFailed {
-            Text(
-              "Something went wrong. Try again.", tableName: "Buddy",
-              comment: "Older earlier questions couldn't be read"
-            )
-            .foregroundStyle(.destructive)
+            FailureLine(
+              String(
+                localized: "Something went wrong. Try again.", table: "Buddy",
+                comment: "Older earlier questions couldn't be read"))
           }
         }
       } header: {

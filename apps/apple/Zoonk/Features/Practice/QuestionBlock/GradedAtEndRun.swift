@@ -266,7 +266,7 @@ struct PracticeQuestionsPreparingView: View {
         }
 
         if let failure {
-          Text(failureText(failure)).font(.subheadline).foregroundStyle(.destructive)
+          FailureLine(String(localized: failureText(failure))).font(.subheadline)
         }
       }
     } actions: {

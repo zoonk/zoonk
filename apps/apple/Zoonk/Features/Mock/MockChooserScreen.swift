@@ -416,16 +416,20 @@ private struct MockChooser: View {
       .font(.subheadline)
       .foregroundStyle(.secondary)
     case .notEnoughQuestions?:
-      Text(
-        "There aren't enough questions for this mock yet. Try the full exam or another subject.",
-        tableName: "Mock", comment: "Too few questions for a mock"
+      FailureLine(
+        String(
+          localized:
+            "There aren't enough questions for this mock yet. Try the full exam or another subject.",
+          table: "Mock", comment: "Too few questions for a mock")
       )
       .font(.subheadline)
-      .foregroundStyle(.destructive)
     case .failed?:
-      Text("We couldn't start the mock. Try again.", tableName: "Mock", comment: "Start failed")
-        .font(.subheadline)
-        .foregroundStyle(.destructive)
+      FailureLine(
+        String(
+          localized: "We couldn't start the mock. Try again.", table: "Mock",
+          comment: "Start failed")
+      )
+      .font(.subheadline)
     case .refused(let limit)?:
       HelpLimitNotice(limit: limit)
     }

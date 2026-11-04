@@ -350,12 +350,12 @@ private struct NextStopView: View {
         .disabled(isStopping || isOpening)
 
         if failed {
-          Text(
-            "We couldn't open the next step. Try again.", tableName: "Session",
-            comment: "Opening or stopping failed"
+          FailureLine(
+            String(
+              localized: "We couldn't open the next step. Try again.", table: "Session",
+              comment: "Opening or stopping failed")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       }
     }
@@ -427,11 +427,10 @@ private struct NextStopView: View {
 
     if writing == .failed || lessonStatus == "failed" {
       return AnyView(
-        Text(
-          "We couldn't write this lesson.", tableName: "Session",
-          comment: "Writing a lesson failed"
-        )
-        .foregroundStyle(.destructive))
+        FailureLine(
+          String(
+            localized: "We couldn't write this lesson.", table: "Session",
+            comment: "Writing a lesson failed")))
     }
 
     guard isLessonWorkRunning else {
@@ -504,12 +503,10 @@ private struct NextStopView: View {
   /// VoiceOver says it however busy it is. It lands on Start once the wait moves on, so a learner
   /// still on the card can't open the lesson with a tap meant for an answer.
   private func offerWrittenLesson() {
-    var announcement = AttributedString(
+    announceUrgently(
       String(
         localized: "Your lesson is ready.", table: "Session",
         comment: "A lesson written while the learner waited, offered with Start"))
-    announcement.accessibilitySpeechAnnouncementPriority = .high
-    AccessibilityNotification.Announcement(announcement).post()
   }
 
   private func stop() {

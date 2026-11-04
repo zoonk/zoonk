@@ -148,9 +148,8 @@ private struct MindMapTile: View {
         .foregroundStyle(.secondary)
       } else if map.status == .available || map.status == .failed {
         if let failure = store.failures[map.chapterId] {
-          failureText(failure)
+          FailureLine(failureMessage(failure))
             .font(.footnote)
-            .foregroundStyle(.destructive)
         } else if map.status == .failed {
           Text(
             "It couldn't be made this time.", tableName: "MindMaps", comment: "A map that failed"
@@ -194,16 +193,16 @@ private struct MindMapTile: View {
     }
   }
 
-  private func failureText(_ failure: MindMapRequestFailure) -> Text {
+  private func failureMessage(_ failure: MindMapRequestFailure) -> String {
     switch failure {
     case .limit:
-      Text(
-        "Your plan made all its mind maps for now.", tableName: "MindMaps",
+      String(
+        localized: "Your plan made all its mind maps for now.", table: "MindMaps",
         comment: "A map refused by the learner's plan limit")
     case .unreachable:
-      Text(
-        "We couldn't reach the server.", tableName: "MindMaps", comment: "A map request that failed"
-      )
+      String(
+        localized: "We couldn't reach the server.", table: "MindMaps",
+        comment: "A map request that failed")
     }
   }
 }

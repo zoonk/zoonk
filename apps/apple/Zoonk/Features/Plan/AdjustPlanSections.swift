@@ -555,11 +555,10 @@ private struct PlanToolChoiceSheet: View {
           choices
 
           if failed {
-            Text(
-              "That didn't save. Try again.", tableName: "Plan",
-              comment: "The tool choice didn't save; Save tries again"
-            )
-            .foregroundStyle(.destructive)
+            FailureLine(
+              String(
+                localized: "That didn't save. Try again.", table: "Plan",
+                comment: "The tool choice didn't save; Save tries again"))
           }
         }
       }

@@ -221,65 +221,69 @@ extension TutorTurn.About {
 }
 
 extension TutorFailure {
-  var message: Text {
+  var message: String {
     switch self {
     case .signUpRequired:
-      Text(
-        "Create your free account to continue.", tableName: "Tutor",
+      String(
+        localized: "Create your free account to continue.", table: "Tutor",
         comment: "A guest's help is used up")
     case .slowDown:
-      Text(
-        "Take a short break, then ask again.", tableName: "Tutor",
+      String(
+        localized: "Take a short break, then ask again.", table: "Tutor",
         comment: "Fair use asks for a pause before the next question")
     case .limitReached(let period, let tier):
       Self.limitMessage(period: period, tier: tier)
     case .plusRequired:
-      Text(
-        "Subscribe to ask questions", tableName: "Tutor",
+      String(
+        localized: "Subscribe to ask questions", table: "Tutor",
         comment: "A free learner's question needs Plus")
     case .gone:
-      Text(
-        "This lesson is no longer available.", tableName: "Tutor",
+      String(
+        localized: "This lesson is no longer available.", table: "Tutor",
         comment: "What the question was about no longer exists")
     case .invalid:
-      Text(
-        "We couldn't send this question. Try again.", tableName: "Tutor",
+      String(
+        localized: "We couldn't send this question. Try again.", table: "Tutor",
         comment: "The question wasn't accepted")
     case .signedOut:
-      Text(
-        "Your session expired. Sign in again.", tableName: "Tutor",
+      String(
+        localized: "Your session expired. Sign in again.", table: "Tutor",
         comment: "The session ended while asking")
     case .conflict, .failed:
-      Text(
-        "Something went wrong. Try again.", tableName: "Tutor",
+      String(
+        localized: "Something went wrong. Try again.", table: "Tutor",
         comment: "A question or answer failed")
     }
   }
 
-  private static func limitMessage(period: Period, tier: LearnerTier) -> Text {
+  private static func limitMessage(period: Period, tier: LearnerTier) -> String {
     let thisMonth = period == .month || period == .total
 
     switch tier {
     case .guest:
       return thisMonth
-        ? Text(
-          "You've used the free help you can get without an account. Create a free account to keep going.",
-          tableName: "Tutor", comment: "A guest's help is used up")
-        : Text(
-          "You've used today's free help. Create a free account to keep going.", tableName: "Tutor",
+        ? String(
+          localized:
+            "You've used the free help you can get without an account. Create a free account to keep going.",
+          table: "Tutor", comment: "A guest's help is used up")
+        : String(
+          localized: "You've used today's free help. Create a free account to keep going.",
+          table: "Tutor",
           comment: "A guest's help for the day is used up")
     case .plus:
-      return Text(
-        "You've used today's help. It comes back tomorrow.", tableName: "Tutor",
+      return String(
+        localized: "You've used today's help. It comes back tomorrow.", table: "Tutor",
         comment: "A Plus learner's help for the day is used up")
     case .free:
       return thisMonth
-        ? Text(
-          "You've used this month's help. It comes back next month, or get Plus to keep going now.",
-          tableName: "Tutor", comment: "A free learner's help for the month is used up")
-        : Text(
-          "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
-          tableName: "Tutor", comment: "A free learner's help for the day is used up")
+        ? String(
+          localized:
+            "You've used this month's help. It comes back next month, or get Plus to keep going now.",
+          table: "Tutor", comment: "A free learner's help for the month is used up")
+        : String(
+          localized:
+            "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
+          table: "Tutor", comment: "A free learner's help for the day is used up")
     }
   }
 

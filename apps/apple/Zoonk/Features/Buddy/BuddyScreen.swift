@@ -258,12 +258,12 @@ private struct BuddyContent: View {
         comment: "The buddy's hello at the top of its conversation; the argument is its name")
 
       if store.saveFailed {
-        Text(
-          "We couldn't save your buddy. Try again.", tableName: "Buddy",
-          comment: "Saving the buddy failed"
+        FailureLine(
+          String(
+            localized: "We couldn't save your buddy. Try again.", table: "Buddy",
+            comment: "Saving the buddy failed")
         )
         .font(.footnote)
-        .foregroundStyle(.destructive)
       }
 
       if !status.buddy.picked {

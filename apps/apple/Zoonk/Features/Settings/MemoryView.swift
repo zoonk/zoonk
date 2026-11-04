@@ -262,11 +262,10 @@ private struct MemoryUpdatedNotice: View {
       case .undone:
         Text("Change undone", tableName: "Settings", comment: "Says a deleted fact came back")
       case .changedSince:
-        Text(
-          "Couldn't undo. It changed since.", tableName: "Settings",
-          comment: "Says a deleted fact couldn't come back"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "Couldn't undo. It changed since.", table: "Settings",
+            comment: "Says a deleted fact couldn't come back"))
       }
     }
     .font(.footnote)

@@ -32,10 +32,7 @@ struct LessonStageView: View {
     guard let step = state.currentStep, let result = state.currentResult, !step.showsOwnResult
     else { return }
 
-    var announcement = AttributedString(
-      String(localized: LessonVerdict.of(result, step: step).title))
-    announcement.accessibilitySpeechAnnouncementPriority = .high
-    AccessibilityNotification.Announcement(announcement).post()
+    announceUrgently(String(localized: LessonVerdict.of(result, step: step).title))
   }
 
   private func visit(_ step: LessonStep) -> String {
@@ -298,12 +295,12 @@ private struct LessonCheckNote: View {
     }
 
     if state.checkFailed {
-      Text(
-        "We couldn't check your answer this time. Try again.", tableName: "Player",
-        comment: "The server couldn't grade a written or spoken answer"
+      FailureLine(
+        String(
+          localized: "We couldn't check your answer this time. Try again.", table: "Player",
+          comment: "The server couldn't grade a written or spoken answer")
       )
       .font(.subheadline)
-      .foregroundStyle(.secondary)
     }
   }
 }

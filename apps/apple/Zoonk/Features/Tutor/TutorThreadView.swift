@@ -164,12 +164,12 @@ private struct TutorConversationView<Header: View>: View {
     if conversation.thread.value?.hasMore == true {
       VStack(spacing: 8) {
         if conversation.earlierFailed {
-          Text(
-            "Couldn't load earlier messages. Try again.", tableName: "Tutor",
-            comment: "Earlier messages of the conversation couldn't be read"
+          FailureLine(
+            String(
+              localized: "Couldn't load earlier messages. Try again.", table: "Tutor",
+              comment: "Earlier messages of the conversation couldn't be read")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
 
         Button {

@@ -773,22 +773,22 @@ private struct WebPlusSection: View {
             "Under the button that turns the stopped renewal of Plus bought on the web back on")
 
         if failed {
-          Text(
-            "We couldn't keep Plus. Try again or email hello@zoonk.com.",
-            tableName: "Account",
-            comment: "Turning the stopped renewal of Plus bought on the web back on failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            AttributedString(
+              localized: "We couldn't keep Plus. Try again or email hello@zoonk.com.",
+              table: "Account",
+              comment: "Turning the stopped renewal of Plus bought on the web back on failed"))
         }
       }
     } else if failed {
-      Text(
-        "We couldn't cancel Plus. Try again or email \(AttributedString.supportEmail).",
-        tableName: "Account",
-        comment:
-          "Canceling Plus bought on the web failed; the argument is the email address to write to"
-      )
-      .foregroundStyle(.destructive)
+      FailureLine(
+        AttributedString(
+          localized:
+            "We couldn't cancel Plus. Try again or email \(AttributedString.supportEmail).",
+          table: "Account",
+          comment:
+            "Canceling Plus bought on the web failed; the argument is the email address to write to"
+        ))
     }
   }
 

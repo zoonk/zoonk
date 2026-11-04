@@ -303,17 +303,15 @@ private struct EssayContent: View {
   private var statusLine: some View {
     Group {
       if finishFailed {
-        Text(
-          "That didn't go through. Try again in a moment.", tableName: "Essay",
-          comment: "Finishing the block failed"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          String(
+            localized: "That didn't go through. Try again in a moment.", table: "Essay",
+            comment: "Finishing the block failed"))
       } else if writer.status == .failed {
-        Text(
-          "That didn't go through. Your text is still here. Try again in a moment.",
-          tableName: "Essay", comment: "Grading failed"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          String(
+            localized: "That didn't go through. Your text is still here. Try again in a moment.",
+            table: "Essay", comment: "Grading failed"))
       } else if writer.isWriting, writer.status == .dailyLimitReached {
         VStack(alignment: .leading, spacing: 2) {
           Text(

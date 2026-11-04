@@ -472,12 +472,12 @@ private struct PlanFinishedSlot: View {
       }
 
       if failed {
-        Text(
-          "That didn't work. Try again in a moment.", tableName: "Plan",
-          comment: "Says the next level didn't start"
+        FailureLine(
+          String(
+            localized: "That didn't work. Try again in a moment.", table: "Plan",
+            comment: "Says the next level didn't start")
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
       }
     }
     .loads(next, refreshable: false)
