@@ -2,7 +2,7 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { isCurrentSession } from "./current-session";
+import { isCurrentSession, isRunStartDay } from "./current-session";
 import { STUDY_SESSION_INCLUDE } from "./study-session-access";
 
 /** Replayed completions must use the persisted block id, never another block opened for the same lesson meanwhile. */
@@ -44,7 +44,11 @@ export async function findDayLessonBlock({
 
   const current = blockId
     ? blocks
-    : blocks.filter((block) => isCurrentSession({ now, session: block.session, timeZone }));
+    : blocks.filter(
+        ({ session }) =>
+          isCurrentSession({ now, session, timeZone }) ||
+          (runStartedAt !== undefined && isRunStartDay({ now, runStartedAt, session, timeZone })),
+      );
 
   return current.find((block) => block.status === "active") ?? current[0] ?? null;
 }
