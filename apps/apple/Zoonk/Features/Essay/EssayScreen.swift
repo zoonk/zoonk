@@ -105,13 +105,14 @@ private struct EssayContent: View {
       } else if let grade = essay.drafts.first?.grade {
         PaneSplit {
           List {
-            EssayGradeSections(grade: grade, isClosed: writer.isClosed)
+            EssayScoreSections(grade: grade, isClosed: writer.isClosed)
+            EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
           }
         } secondary: {
           List {
-            EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
+            EssayNextStepSections(grade: grade)
           }
-          // An essay too short to grade has no comments, and an empty list draws the plain
+          // An essay too short to grade has no next step, and an empty list draws the plain
           // background.
           .scrollContentBackground(.hidden)
           .background(Color(.systemGroupedBackground))
