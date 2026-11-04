@@ -90,37 +90,28 @@
                 "activityTemplate": null,
                 "brief": "A UX goal names the change in people's experience ('fewer people give up at payment'), not the design that might cause it ('add a progress bar'). Explain with the checkout example.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which of three statements is a UX goal. Tempting wrong answer: 'Redesign the payment button', a solution phrased like a goal.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": "findError",
                 "brief": "Spot the AI's mistake: a designer asked an AI assistant to turn interview notes into a UX goal for a food delivery app. The assistant's four steps read the notes, find that people abandon orders when the delivery fee appears late, then in step 2 decide the goal is 'show the fee on the home screen' (the mistake: a solution, not a change in experience), and in steps 3 and 4 build the success measure and the summary on that wrong goal.",
                 "kind": "activity",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Application: in a banking app, support tickets show people can't find where to change their card limit. Ask the learner to pick the UX goal among options that mix goals and solutions.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],
@@ -244,38 +235,28 @@
                 "activityTemplate": null,
                 "brief": "O coração tem quatro câmaras: dois átrios em cima, que recebem o sangue, e dois ventrículos embaixo, que bombeiam. O lado direito manda sangue para os pulmões; o esquerdo, para o corpo todo. O septo separa os dois lados.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio."
               },
               {
                 "activityTemplate": "labeledDiagram",
                 "brief": "O aprendiz arrasta os nomes átrio direito, átrio esquerdo, ventrículo direito, ventrículo esquerdo e septo para o desenho do coração visto de frente. Confusão provável: trocar direito e esquerdo, já que o lado direito do coração fica à esquerda de quem olha.",
                 "kind": "activity",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte qual câmara bombeia o sangue para o corpo todo. Resposta tentadora: o ventrículo direito. Certa: o ventrículo esquerdo, que tem a parede mais grossa porque empurra o sangue mais longe.",
                 "kind": "check",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Num exame, o médico ouve um sopro causado por um furo no septo. Pergunte o que acontece com o sangue. Resposta certa: sangue do lado esquerdo passa para o direito, e o sangue que vai para o corpo e para os pulmões se mistura.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               }
             ],

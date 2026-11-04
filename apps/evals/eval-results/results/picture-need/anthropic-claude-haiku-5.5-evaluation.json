@@ -2,21 +2,10 @@
   "modelId": "anthropic/claude-haiku-5.5/evaluation",
   "results": [
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "decorative", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
@@ -24,9 +13,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "spec-en-particle-in-a-box-advanced-1-1",
         "language": "en",
         "userInput": {
@@ -41,21 +28,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -63,9 +39,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-en-particle-in-a-box-advanced-2-1",
         "language": "en",
         "userInput": {
@@ -80,21 +54,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -102,9 +65,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-pt-eletron-nucleo-overview-2-1",
         "language": "pt",
         "userInput": {
@@ -119,21 +80,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -141,9 +91,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-pt-eletron-nucleo-overview-3-1",
         "language": "pt",
         "userInput": {
@@ -158,21 +106,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -180,9 +117,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-pt-eletron-nucleo-overview-5-1",
         "language": "pt",
         "userInput": {
@@ -197,21 +132,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -219,9 +143,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-brain-lobes-2-1",
         "language": "en",
         "userInput": {
@@ -236,21 +158,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -258,9 +169,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-brain-lobes-5-1",
         "language": "en",
         "userInput": {
@@ -275,21 +184,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -297,9 +195,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-brain-lobes-9-1",
         "language": "en",
         "userInput": {
@@ -314,21 +210,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -336,9 +221,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-comparar-pinturas-1-1",
         "language": "pt",
         "userInput": {
@@ -353,21 +236,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -375,9 +247,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-comparar-pinturas-4-1",
         "language": "pt",
         "userInput": {
@@ -392,10 +262,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -414,9 +281,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "spec-visual-en-water-cycle-1-1",
         "language": "en",
         "userInput": {
@@ -431,21 +296,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -453,9 +307,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-water-cycle-2-1",
         "language": "en",
         "userInput": {
@@ -470,21 +322,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -492,9 +333,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-mapa-imperio-romano-1-1",
         "language": "pt",
         "userInput": {
@@ -509,21 +348,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -531,9 +359,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-mapa-imperio-romano-5-1",
         "language": "pt",
         "userInput": {
@@ -548,21 +374,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -570,9 +385,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-lever-1-1",
         "language": "en",
         "userInput": {
@@ -587,21 +400,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -609,9 +411,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-lever-7-1",
         "language": "en",
         "userInput": {
@@ -626,21 +426,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -648,9 +437,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-syntax-tree-6-1",
         "language": "en",
         "userInput": {
@@ -665,21 +452,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -687,9 +463,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-syntax-tree-8-1",
         "language": "en",
         "userInput": {
@@ -704,21 +478,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -726,9 +489,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-ligacao-covalente-1-1",
         "language": "pt",
         "userInput": {
@@ -743,21 +504,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -765,9 +515,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-ligacao-covalente-2-1",
         "language": "pt",
         "userInput": {
@@ -782,21 +530,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -804,9 +541,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-ligacao-covalente-6-1",
         "language": "pt",
         "userInput": {
@@ -821,21 +556,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -843,9 +567,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-soccer-formation-2-1",
         "language": "en",
         "userInput": {
@@ -860,21 +582,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -882,9 +593,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-soccer-formation-5-1",
         "language": "en",
         "userInput": {
@@ -899,21 +608,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -921,9 +619,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-earth-mars-5-1",
         "language": "en",
         "userInput": {
@@ -938,10 +634,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -960,9 +653,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "spec-visual-pt-camelo-adaptacoes-1-1",
         "language": "pt",
         "userInput": {
@@ -977,10 +668,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -999,9 +687,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "spec-visual-pt-camelo-adaptacoes-2-1",
         "language": "pt",
         "userInput": {
@@ -1016,21 +702,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1038,9 +713,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-3-1",
         "language": "pt",
         "userInput": {
@@ -1055,21 +728,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1077,9 +739,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-pt-camelo-adaptacoes-5-1",
         "language": "pt",
         "userInput": {
@@ -1094,21 +754,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1116,9 +765,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-gothic-romanesque-1-1",
         "language": "en",
         "userInput": {
@@ -1133,21 +780,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1155,9 +791,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-gothic-romanesque-4-1",
         "language": "en",
         "userInput": {
@@ -1172,21 +806,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1194,9 +817,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "spec-visual-en-gothic-romanesque-7-1",
         "language": "en",
         "userInput": {
@@ -1211,21 +832,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -1233,9 +843,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-en-particle-in-a-box-advanced-1-1",
         "language": "en",
         "userInput": {
@@ -1250,21 +858,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1272,9 +869,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-en-particle-in-a-box-advanced-2-1",
         "language": "en",
         "userInput": {
@@ -1289,10 +884,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1311,9 +903,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-particle-in-a-box-advanced-5-1",
         "language": "en",
         "userInput": {
@@ -1328,21 +918,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -1350,9 +929,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-en-particle-in-a-box-advanced-7-1",
         "language": "en",
         "userInput": {
@@ -1367,10 +944,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1389,9 +963,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-particle-in-a-box-advanced-11-1",
         "language": "en",
         "userInput": {
@@ -1406,10 +978,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1428,9 +997,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-1-1",
         "language": "en",
         "userInput": {
@@ -1445,10 +1012,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1467,9 +1031,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-2-1",
         "language": "en",
         "userInput": {
@@ -1484,10 +1046,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1506,9 +1065,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-3-1",
         "language": "en",
         "userInput": {
@@ -1523,10 +1080,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1545,9 +1099,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-6-1",
         "language": "en",
         "userInput": {
@@ -1562,10 +1114,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1584,9 +1133,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-percent-change-beginner-8-1",
         "language": "en",
         "userInput": {
@@ -1601,21 +1148,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -1623,9 +1159,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-1-1",
         "language": "pt",
         "userInput": {
@@ -1640,21 +1174,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1662,9 +1185,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-2-1",
         "language": "pt",
         "userInput": {
@@ -1679,21 +1200,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1701,9 +1211,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-3-1",
         "language": "pt",
         "userInput": {
@@ -1718,21 +1226,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1740,9 +1237,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-eletron-nucleo-overview-5-1",
         "language": "pt",
         "userInput": {
@@ -1757,21 +1252,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "decorative", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
@@ -1779,9 +1263,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-pt-regra-de-tres-intermediate-3-1",
         "language": "pt",
         "userInput": {
@@ -1796,10 +1278,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1818,9 +1297,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-python-range-beginner-2-1",
         "language": "en",
         "userInput": {
@@ -1835,10 +1312,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1857,9 +1331,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-tree-key-beginner-2-1",
         "language": "en",
         "userInput": {
@@ -1874,21 +1346,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -1896,9 +1357,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-camaras-do-coracao-beginner-2-1",
         "language": "pt",
         "userInput": {
@@ -1913,10 +1372,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -1935,9 +1391,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-en-compound-interest-beginner-2-1",
         "language": "en",
         "userInput": {
@@ -1952,21 +1406,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -1974,9 +1417,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-1-1",
         "language": "en",
         "userInput": {
@@ -1991,21 +1432,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -2013,9 +1443,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-imagens-e-legendas-beginner-5-1",
         "language": "en",
         "userInput": {
@@ -2030,10 +1458,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -2052,9 +1477,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-pt-patrimonio-liquido-beginner-0-1",
         "language": "pt",
         "userInput": {
@@ -2069,21 +1492,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -2091,9 +1503,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "plan-pt-niveis-ecologicos-beginner-2-1",
         "language": "pt",
         "userInput": {
@@ -2108,10 +1518,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -2130,9 +1537,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "plan-pt-receitas-regulares-overview-1-1",
         "language": "pt",
         "userInput": {
@@ -2147,21 +1552,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "teaches", "predicted": "decorative" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected teaches; got decorative.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected teaches; got decorative.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected teaches; got decorative.",
           "kind": "potentialImprovements",
@@ -2169,9 +1563,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "check-pt-eletrons-valencia-camadas-1",
         "language": "pt",
         "userInput": {
@@ -2186,21 +1578,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -2208,9 +1589,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "check-en-series-circuit-bulb-out-1",
         "language": "en",
         "userInput": {
@@ -2225,21 +1604,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "decorative", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Expected decorative; got teaches.",
-          "kind": "minorErrors",
-          "score": 6
-        },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected decorative; got teaches.", "kind": "minorErrors", "score": 6 },
         {
           "conclusion": "Expected decorative; got teaches.",
           "kind": "potentialImprovements",
@@ -2247,9 +1615,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "check-en-series-circuit-shows-answer-1",
         "language": "en",
         "userInput": {
@@ -2264,21 +1630,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -2286,9 +1641,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "guess-pt-mitose-cromossomos-1",
         "language": "pt",
         "userInput": {
@@ -2303,10 +1656,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -2325,9 +1675,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "hook-en-supply-demand-market-1",
         "language": "en",
         "userInput": {
@@ -2342,10 +1690,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -2364,9 +1709,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "explanation-pt-custos-aluguel-1",
         "language": "pt",
         "userInput": {
@@ -2381,21 +1724,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "teaches",
-        "predicted": "teaches"
-      },
+      "classification": { "expected": "teaches", "predicted": "teaches" },
       "steps": [
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected teaches; got teaches.",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected teaches; got teaches.", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Expected teaches; got teaches.",
           "kind": "potentialImprovements",
@@ -2403,9 +1735,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": true
-        },
+        "expected": { "teaches": true },
         "id": "explanation-en-burn-skin-layers-1",
         "language": "en",
         "userInput": {
@@ -2420,10 +1750,7 @@
       }
     },
     {
-      "classification": {
-        "expected": "decorative",
-        "predicted": "decorative"
-      },
+      "classification": { "expected": "decorative", "predicted": "decorative" },
       "steps": [
         {
           "conclusion": "Expected decorative; got decorative.",
@@ -2442,9 +1769,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "teaches": false
-        },
+        "expected": { "teaches": false },
         "id": "hook-en-ph-lemon-1",
         "language": "en",
         "userInput": {

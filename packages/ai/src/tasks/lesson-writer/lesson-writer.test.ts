@@ -229,9 +229,7 @@ describe(writeLessonDraft, () => {
 
     expect(opus).toMatchObject({ models: ["openai/gpt-6.1-terra", "google/gemini-4-argon"] });
 
-    expect(terra).toMatchObject({
-      models: ["anthropic/claude-opus-5.5", "google/gemini-4-argon"],
-    });
+    expect(terra).toMatchObject({ models: ["anthropic/claude-opus-5.5", "google/gemini-4-argon"] });
   });
 
   it("reads a key the model left out as null when null is all it could hold", async () => {

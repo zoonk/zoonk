@@ -90,95 +90,70 @@
                 "activityTemplate": null,
                 "brief": "Set up the model: V(x) = 0 for 0 < x < L and V = ∞ outside, so ψ = 0 outside the box. Continuity of ψ then gives the boundary conditions ψ(0) = 0 and ψ(L) = 0, just like a guitar string pinned at both ends.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": "Potential diagram: a flat floor from 0 to L with infinitely tall walls, with ψ = 0 marked outside and pinned points at x = 0 and x = L."
               },
               {
                 "activityTemplate": null,
                 "brief": "Inside the box the equation becomes −(ħ²/2m)ψ'' = Eψ, which is ψ'' = −k²ψ with k = √(2mE)/ħ. Its general solution is ψ(x) = A sin kx + B cos kx, the same oscillation as a vibrating string.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "The learner applies ψ(0) = 0 to ψ = A sin kx + B cos kx and chooses which term survives. Include the tempting wrong answer 'the cos term survives because cos is maximal at 0', and give feedback that cos 0 = 1 forces B = 0.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Work through ψ(L) = 0: A sin kL = 0, and A ≠ 0 (otherwise there is no particle), so kL = nπ. Exclude n = 0 because ψ would vanish, and exclude negative n because they give the same state up to a sign. Substitute k_n = nπ/L into E = ħ²k²/2m to get E_n = n²π²ħ²/(2mL²) = n²h²/(8mL²).",
                 "kind": "workedExample",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": "A step-by-step derivation column with the key condition sin kL = 0 highlighted and the allowed k_n shown as evenly spaced points on a k axis."
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask why the lowest state is n = 1 rather than n = 0. Include the tempting wrong answer 'n = 0 is the ground state with zero energy', and explain that n = 0 gives ψ ≡ 0, so the particle can never be at rest and has a zero-point energy E_1 > 0.",
                 "kind": "check",
-                "skills": [
-                  0,
-                  1
-                ],
+                "skills": [0, 1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Normalizing ∫|ψ|²dx = 1 over the box gives A = √(2/L), so ψ_n(x) = √(2/L) sin(nπx/L). These are standing waves: ψ_n fits n half-wavelengths into L and has n − 1 interior nodes, and the level spacing grows as E_n ∝ n².",
                 "kind": "explanation",
-                "skills": [
-                  2
-                ],
+                "skills": [2],
                 "visual": "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked."
               },
               {
                 "activityTemplate": "sliderGraph",
                 "brief": "The learner moves a slider for n from 1 to 6 and watches ψ_n(x) and |ψ_n|² redraw, with E_n/E_1 displayed. Then ask how many nodes ψ_4 has (3) and what E_3/E_1 is (9, not 3).",
                 "kind": "activity",
-                "skills": [
-                  1,
-                  2
-                ],
+                "skills": [1, 2],
                 "visual": "Graph of ψ_n(x) and |ψ_n(x)|² on 0 to L with an n slider and a live readout of E_n/E_1."
               },
               {
                 "activityTemplate": null,
                 "brief": "Treat an electron in a box with L = 1.0 nm: E_1 = h²/(8m_eL²) ≈ 6.0 × 10⁻²⁰ J ≈ 0.38 eV, and E_2 = 4E_1 ≈ 1.50 eV. The 2 → 1 photon has ΔE = 3E_1 ≈ 1.13 eV, so λ = hc/ΔE ≈ 1100 nm, in the near infrared.",
                 "kind": "workedExample",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "The learner calculates E_1 for the same electron in a box half as wide, with L = 0.5 nm, and picks the answer ≈ 1.5 eV. Include the tempting wrong answer ≈ 0.75 eV, which assumes E ∝ 1/L instead of 1/L².",
                 "kind": "check",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Return to the quantum dots and model the confinement energy as a particle in a box, E ∝ 1/L². The learner predicts by what factor the confinement contribution grows from a 6 nm dot to a 3 nm dot (a factor of 4) and explains why smaller dots emit bluer light.",
                 "kind": "application",
-                "skills": [
-                  0,
-                  1,
-                  2
-                ],
+                "skills": [0, 1, 2],
                 "visual": "Side-by-side energy ladders for a 6 nm and a 3 nm box drawn to scale, with the emitted photon arrows colored red and blue."
               }
             ],
@@ -311,36 +286,28 @@
                 "activityTemplate": null,
                 "brief": "O servidor nomeado por concurso para cargo efetivo fica estável após três anos de efetivo exercício, e só se for aprovado na avaliação especial de desempenho feita por uma comissão.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pedro completou três anos no cargo, mas a comissão ainda não fez a avaliação especial: ele já é estável? Pegadinha: achar que o tempo basta.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Estável não quer dizer que nunca perde o cargo: por falta ou mau desempenho, perde por sentença judicial transitada em julgado, processo administrativo com ampla defesa ou avaliação periódica de desempenho.",
                 "kind": "explanation",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma servidora estável da prefeitura de Recife é acusada de uma falta grave: o chefe pode demiti-la no mesmo dia, sem processo? Pegadinha: achar que o chefe decide sozinho.",
                 "kind": "application",
-                "skills": [
-                  1
-                ],
+                "skills": [1],
                 "visual": null
               }
             ],
@@ -418,11 +385,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The cytoplasm is described as the cell's liquid, which more precisely describes the cytosol. Several technical terms appear without beginner-friendly explanations, including mitochondria, matrix, cristae, and electrons. The location check mainly asks learners to recall the stated location, despite its misconception-based context. The hook's options lack individual reasons.",
           "kind": "minorErrors",
@@ -469,36 +432,28 @@
                 "activityTemplate": null,
                 "brief": "A glicólise acontece no citoplasma (o C do macete CMC). Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como o empréstimo do slide.",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Fase de rendimento: produz 4 ATP e 2 NADH (que levam elétrons à cadeia respiratória).",
                 "kind": "explanation",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte o saldo de ATP por glicose, com a pegadinha de responder 4.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte onde a glicólise acontece, com a pegadinha da mitocôndria.",
                 "kind": "check",
-                "skills": [
-                  0
-                ],
+                "skills": [0],
                 "visual": null
               }
             ],
