@@ -2,10 +2,10 @@ name: Apple App
 
 on:
   push:
-    branches: [main]
+    branches: [main, ci/actions-cache-lab]
     paths: [apps/apple/**, .github/workflows/apple.yml, .github/workflows/native-changes.yml]
   pull_request:
-    branches: [main]
+    branches: [main, ci/actions-cache-lab]
     paths: [apps/apple/**, .github/workflows/apple.yml, .github/workflows/native-changes.yml]
     types: [opened, synchronize, reopened]
 
@@ -93,14 +93,14 @@ jobs:
         run: make -C apps/apple build
 
       - name: Save Swift packages
-        if: github.ref == 'refs/heads/main' && steps.swiftpm.outputs.cache-hit != 'true'
+        if: github.ref == 'refs/heads/ci/actions-cache-lab' && steps.swiftpm.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ runner.temp }}/apple-source-packages
           key: ${{ steps.swiftpm.outputs.cache-primary-key }}
 
       - name: Save Xcode compilations
-        if: github.ref == 'refs/heads/main' && steps.compilations.outputs.cache-hit != 'true'
+        if: github.ref == 'refs/heads/ci/actions-cache-lab' && steps.compilations.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/apple/DerivedData/Make/CompilationCache.noindex
