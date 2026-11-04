@@ -186,6 +186,7 @@ private struct MockChooser: View {
       }
       .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
     }
+    .announcesStatus(startLine)
   }
 
   @ViewBuilder
@@ -395,40 +396,74 @@ private struct MockChooser: View {
       }
     case .short(_, let examQuestions, let limit, let minutes, let questions)?:
       VStack(alignment: .leading, spacing: 4) {
-        Text(
-          "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
-          tableName: "Mock", comment: "A mock that can ask only part of its questions")
-        switch limit {
-        case .day:
-          Text(
-            "More can be written for your mocks tomorrow.", tableName: "Mock",
-            comment: "Daily question limit")
-        case .month:
-          Text(
-            "More can be written for your mocks next month.", tableName: "Mock",
-            comment: "Monthly question limit")
-        case .total, nil:
-          Text(
-            "The question bank doesn't have more new ones for it yet.", tableName: "Mock",
-            comment: "No more questions")
-        }
+        Text(readyNow(questions: questions, of: examQuestions, minutes: minutes))
+        Text(moreLater(limit))
       }
       .font(.subheadline)
       .foregroundStyle(.secondary)
     case .notEnoughQuestions?:
-      Text(
-        "There aren't enough questions for this mock yet. Try the full exam or another subject.",
-        tableName: "Mock", comment: "Too few questions for a mock"
-      )
-      .font(.subheadline)
-      .foregroundStyle(.destructive)
+      Text(notEnoughQuestions)
+        .font(.subheadline)
+        .foregroundStyle(.destructive)
     case .failed?:
-      Text("We couldn't start the mock. Try again.", tableName: "Mock", comment: "Start failed")
+      Text(couldntStart)
         .font(.subheadline)
         .foregroundStyle(.destructive)
     case .refused(let limit)?:
       HelpLimitNotice(limit: limit)
     }
+  }
+
+  private var startLine: String? {
+    switch shownStatus {
+    case .short(_, let examQuestions, let limit, let minutes, let questions)?:
+      [readyNow(questions: questions, of: examQuestions, minutes: minutes), moreLater(limit)]
+        .joinedSentences()
+    case .notEnoughQuestions?:
+      notEnoughQuestions
+    case .failed?:
+      couldntStart
+    case .refused(let limit)?:
+      limit.message
+    case .choosing?, .writing?, .plusRequired?, nil:
+      nil
+    }
+  }
+
+  private func readyNow(questions: Int, of examQuestions: Int, minutes: Int) -> String {
+    String(
+      localized:
+        "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
+      table: "Mock", comment: "A mock that can ask only part of its questions")
+  }
+
+  private func moreLater(_ limit: MockStartOutcome.Limit?) -> String {
+    switch limit {
+    case .day:
+      String(
+        localized: "More can be written for your mocks tomorrow.", table: "Mock",
+        comment: "Daily question limit")
+    case .month:
+      String(
+        localized: "More can be written for your mocks next month.", table: "Mock",
+        comment: "Monthly question limit")
+    case .total, nil:
+      String(
+        localized: "The question bank doesn't have more new ones for it yet.", table: "Mock",
+        comment: "No more questions")
+    }
+  }
+
+  private var notEnoughQuestions: String {
+    String(
+      localized:
+        "There aren't enough questions for this mock yet. Try the full exam or another subject.",
+      table: "Mock", comment: "Too few questions for a mock")
+  }
+
+  private var couldntStart: String {
+    String(
+      localized: "We couldn't start the mock. Try again.", table: "Mock", comment: "Start failed")
   }
 
   /// Main's `PickedMock`: what Start starts.

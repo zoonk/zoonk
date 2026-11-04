@@ -140,7 +140,7 @@ private struct MindMapTile: View {
 
       if drawing {
         Label {
-          Text("Drawing…", tableName: "MindMaps", comment: "A map being drawn")
+          Text(drawingLine)
         } icon: {
           ProgressView()
         }
@@ -172,12 +172,17 @@ private struct MindMapTile: View {
         .controlSize(.small)
       }
     }
+    .announcesStatus(drawing ? drawingLine : nil)
     // Read only: a map already being drawn when the page opened is followed until it's done.
     .task(id: map.status) {
       if map.status == .generating {
         await store.follow(goalId: goalId, chapterId: map.chapterId)
       }
     }
+  }
+
+  private var drawingLine: String {
+    String(localized: "Drawing…", table: "MindMaps", comment: "A map being drawn")
   }
 
   @ViewBuilder

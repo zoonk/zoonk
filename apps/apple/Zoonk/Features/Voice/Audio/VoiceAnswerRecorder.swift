@@ -55,8 +55,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
     }
   }
 
-  /// Announcing the take's start would speak into the microphone, and the hint before it is there
-  /// from the start.
+  /// Silent while recording: VoiceOver's speech would end up in the take.
   private var announcement: String? {
     if recorder.isRecording {
       return nil

@@ -170,12 +170,9 @@ struct TutorMemoryUpdate: View {
     VStack(alignment: .leading, spacing: 6) {
       if let result {
         result
-          ? Text("Change undone", tableName: "Tutor", comment: "A memory change was undone")
-          : Text(
-            "Couldn't undo. It changed since.", tableName: "Tutor",
-            comment: "Undoing a memory change failed"
-          )
-          .foregroundStyle(.destructive)
+          ? Text(undone)
+          : Text(undoFailed)
+            .foregroundStyle(.destructive)
       } else {
         Label {
           Text(
@@ -204,6 +201,17 @@ struct TutorMemoryUpdate: View {
     }
     .font(.footnote)
     .foregroundStyle(.secondary)
+    .announcesStatus(result.map { $0 ? undone : undoFailed })
+  }
+
+  private var undone: String {
+    String(localized: "Change undone", table: "Tutor", comment: "A memory change was undone")
+  }
+
+  private var undoFailed: String {
+    String(
+      localized: "Couldn't undo. It changed since.", table: "Tutor",
+      comment: "Undoing a memory change failed")
   }
 
   private var statement: String {

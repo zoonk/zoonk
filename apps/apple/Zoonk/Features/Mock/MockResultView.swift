@@ -119,6 +119,7 @@ struct MockResultView: View {
     } action: {
       isAtHinge = $0
     }
+    .announcesStatus(gradesEssays ? MockEssaySections.grading : nil)
     .navigationTitle(MockLabels.title(number: view.number))
     .milestoneCeremony(view.day.ceremony)
     .toolbar {
@@ -130,6 +131,10 @@ struct MockResultView: View {
       ConversationScreen(conversationId: task.conversationId)
         .accessibilitySizeStyles()
     }
+  }
+
+  private var gradesEssays: Bool {
+    run.essayGrading == .grading && view.essays.contains { $0.status == .pending }
   }
 
   @ViewBuilder
@@ -698,6 +703,12 @@ private struct MockInsightsSection: View {
 }
 
 private struct MockEssaySections: View {
+  static var grading: String {
+    String(
+      localized: "Grading it with the exam's rubric. It can take up to 30 seconds.", table: "Mock",
+      comment: "An essay is being graded")
+  }
+
   let run: MockRun
   let essay: MockEssay
   let number: Int
@@ -740,9 +751,7 @@ private struct MockEssaySections: View {
       switch run.essayGrading {
       case .grading:
         Label {
-          Text(
-            "Grading it with the exam's rubric. It can take up to 30 seconds.", tableName: "Mock",
-            comment: "An essay is being graded")
+          Text(Self.grading)
         } icon: {
           ProgressView()
         }
@@ -1001,6 +1010,7 @@ private struct MockPlanSection: View {
           .foregroundStyle(.secondary)
         }
       }
+      .announcesStatus(open.isEmpty && !statusLines.isEmpty ? statusLines.joinedSentences() : nil)
 
       if open.isEmpty {
         ForEach(statusLines, id: \.self) { line in

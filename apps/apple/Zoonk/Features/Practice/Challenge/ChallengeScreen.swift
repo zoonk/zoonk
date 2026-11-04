@@ -203,11 +203,7 @@ struct ChallengeScreen: View {
       if let moved, let date = challenge.date {
         HStack(alignment: .firstTextBaseline) {
           VStack(alignment: .leading, spacing: 4) {
-            Text(
-              "Moved to \(Self.weekdayDay(date))", tableName: "Practice",
-              comment:
-                "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'."
-            )
+            Text(movedTo(date))
             Text(movedDetail(moved.effect))
               .font(.subheadline)
               .foregroundStyle(.secondary)
@@ -226,6 +222,15 @@ struct ChallengeScreen: View {
       actions(challenge)
     }
     .practiceActionsHidden(!hasActions(challenge))
+    .announcesStatus(challenge.dailyLimitReached ? String(localized: usedUpLine(challenge)) : nil)
+  }
+
+  private func movedTo(_ day: String) -> String {
+    String(
+      localized: "Moved to \(Self.weekdayDay(day))", table: "Practice",
+      comment:
+        "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'."
+    )
   }
 
   private var title: Text {
@@ -698,6 +703,10 @@ struct ChallengeScreen: View {
         Moved(changeId: $0, effect: moved.effect.flatMap { try? PracticeJSON.recode($0) })
       }
       await read()
+
+      if let moved = self.moved, case .loaded(let challenge) = load, let date = challenge.date {
+        announcePolitely([movedTo(date), movedDetail(moved.effect)].joinedSentences())
+      }
     case .refused(.invalid(let reason)):
       moveProblem =
         reason == "mockCollision"

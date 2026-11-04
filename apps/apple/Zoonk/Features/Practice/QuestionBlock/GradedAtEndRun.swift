@@ -286,6 +286,7 @@ struct PracticeQuestionsPreparingView: View {
           action: start)
       }
     }
+    .announcesStatus(failure.map { String(localized: failureText($0)) })
   }
 
   private func failureText(_ failure: any Error) -> LocalizedStringResource {

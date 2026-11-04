@@ -252,18 +252,26 @@ private struct MemoryUpdatedNotice: View {
         .buttonStyle(.borderless)
         .foregroundStyle(.primary)
       case .undone:
-        Text("Change undone", tableName: "Settings", comment: "Says a deleted fact came back")
+        Text(undone)
       case .failed:
-        Text(
-          "Couldn't undo. It changed since.", tableName: "Settings",
-          comment: "Says a deleted fact couldn't come back"
-        )
-        .foregroundStyle(.destructive)
+        Text(undoFailed)
+          .foregroundStyle(.destructive)
       }
     }
     .font(.footnote)
     .padding(.top, 4)
     .accessibilityElement(children: .combine)
+    .announcesStatus(status == .undone ? undone : status == .failed ? undoFailed : nil)
+  }
+
+  private var undone: String {
+    String(localized: "Change undone", table: "Settings", comment: "Says a deleted fact came back")
+  }
+
+  private var undoFailed: String {
+    String(
+      localized: "Couldn't undo. It changed since.", table: "Settings",
+      comment: "Says a deleted fact couldn't come back")
   }
 }
 

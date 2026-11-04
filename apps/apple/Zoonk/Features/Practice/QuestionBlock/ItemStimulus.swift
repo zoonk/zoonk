@@ -361,12 +361,9 @@ private struct ListeningPlayerView: View {
       }
 
       if recordings.failed.contains(playsKey) {
-        Text(
-          "The recording didn't load. Check your connection and try again.", tableName: "Practice",
-          comment: "Shown when a set's recording fails to load."
-        )
-        .font(.footnote)
-        .foregroundStyle(.destructive)
+        Text(recordingFailed)
+          .font(.footnote)
+          .foregroundStyle(.destructive)
       }
 
       if let questions, !questions.prompts.isEmpty {
@@ -410,6 +407,8 @@ private struct ListeningPlayerView: View {
         }
       }
     }
+    .announcesStatus(
+      announcement(answered: answered, playsLeft: playsLeft, isPlaying: isPlaying))
     .onAppear {
       played = max(served?.played ?? 0, recordings.used[playsKey] ?? 0)
       recordings.show(playsKey)
@@ -440,6 +439,25 @@ private struct ListeningPlayerView: View {
     Binding(
       get: { recordings.panels[playsKey]?.transcript ?? false },
       set: { recordings.panels[playsKey, default: .init()].transcript = $0 })
+  }
+
+  private var recordingFailed: String {
+    String(
+      localized: "The recording didn't load. Check your connection and try again.",
+      table: "Practice", comment: "Shown when a set's recording fails to load.")
+  }
+
+  /// Silent while an exam recording plays: speech over it would cover what the learner must hear.
+  private func announcement(answered: Bool, playsLeft: Int, isPlaying: Bool) -> String? {
+    if recordings.failed.contains(playsKey) {
+      return recordingFailed
+    }
+
+    if isPlaying, !answered {
+      return nil
+    }
+
+    return String(localized: rule(answered: answered, playsLeft: playsLeft, isPlaying: isPlaying))
   }
 
   private func rule(answered: Bool, playsLeft: Int, isPlaying: Bool) -> LocalizedStringResource {

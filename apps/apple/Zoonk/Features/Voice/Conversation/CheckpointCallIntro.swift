@@ -149,6 +149,10 @@ struct CheckpointCallIntro: View {
       needsPlus = true
     case .done(.refused(let refusal)) where Self.changes.contains(refusal.code):
       await call.refresh()
+
+      if case .loaded(.notStarted(let preview)) = call.state, preview.dailyLimitReached {
+        announcePolitely(StudyTimeUsedUp.line)
+      }
     case .failed(.notFound):
       await call.refresh()
     case .done(.refused), .failed:
@@ -182,16 +186,20 @@ struct CheckpointCallIntro: View {
 
 /// Start would refuse the call until the learner's next session.
 private struct StudyTimeUsedUp: View {
+  static var line: String {
+    String(
+      localized:
+        "You've reached your daily time limit. You can make this call in your next session.",
+      table: "Voice", comment: "The daily time limit is a setting that stops study for the day.")
+  }
+
   @Environment(AppRouter.self) private var router
 
   var body: some View {
-    Text(
-      "You've reached your daily time limit. You can make this call in your next session.",
-      tableName: "Voice", comment: "The daily time limit is a setting that stops study for the day."
-    )
-    .font(.footnote)
-    .foregroundStyle(.secondary)
-    .frame(maxWidth: .infinity, alignment: .leading)
+    Text(Self.line)
+      .font(.footnote)
+      .foregroundStyle(.secondary)
+      .frame(maxWidth: .infinity, alignment: .leading)
 
     Button {
       router.showRoot(of: .today)

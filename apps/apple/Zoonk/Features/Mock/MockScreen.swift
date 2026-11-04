@@ -161,10 +161,8 @@ struct MockStepStatus: View {
       switch run.queue.status {
       case .retrying:
         HStack {
-          Text(
-            "Not saved yet\u{00A0}· retrying", tableName: "Mock", comment: "An answer waits to save"
-          )
-          .frame(maxWidth: .infinity, alignment: .leading)
+          Text(retrying)
+            .frame(maxWidth: .infinity, alignment: .leading)
           Button {
             run.queue.retryNow()
           } label: {
@@ -195,15 +193,25 @@ struct MockStepStatus: View {
         }
         .foregroundStyle(.destructive)
       } else if run.slow {
-        Text(
-          "Still handing it in. This is taking longer than usual.", tableName: "Mock",
-          comment: "A mock step is slow"
-        )
-        .foregroundStyle(.secondary)
+        Text(slow)
+          .foregroundStyle(.secondary)
       }
     }
     .font(.subheadline)
     .frame(maxWidth: .infinity, alignment: .leading)
+    .announcesStatus(run.queue.status == .retrying ? retrying : nil)
+    .announcesStatus(!run.failed && run.slow ? slow : nil)
+  }
+
+  private var retrying: String {
+    String(
+      localized: "Not saved yet\u{00A0}· retrying", table: "Mock", comment: "An answer waits to save")
+  }
+
+  private var slow: String {
+    String(
+      localized: "Still handing it in. This is taking longer than usual.", table: "Mock",
+      comment: "A mock step is slow")
   }
 }
 
