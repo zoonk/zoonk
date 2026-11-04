@@ -265,14 +265,14 @@ struct PracticeQuestionsPreparingView: View {
           ProgressView().padding(.top, 8)
         }
 
-        if let failure, !isPlusRequired {
+        if isPlusRequired {
+          FreeWeekOverNotice(showsSeePlus: false, isInset: true)
+        } else if let failure {
           Text(failureText(failure)).font(.subheadline).foregroundStyle(.destructive)
         }
       }
     } actions: {
       if isPlusRequired {
-        FreeWeekOverNotice(showsSeePlus: false)
-
         PracticeMainButton(
           title: LocalizedStringResource(
             "See Plus", table: "Practice",

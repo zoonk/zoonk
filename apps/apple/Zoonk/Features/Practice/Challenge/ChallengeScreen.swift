@@ -121,6 +121,10 @@ struct ChallengeScreen: View {
         }
       }
 
+      if challenge.locked || challenge.status == .plusRequired {
+        plusNotice(challenge)
+      }
+
       if let result = challenge.result, challenge.status == .done, !won {
         Label {
           Text(
@@ -261,8 +265,6 @@ struct ChallengeScreen: View {
   @ViewBuilder
   private func actions(_ challenge: Components.Schemas.Challenge) -> some View {
     if challenge.locked || challenge.status == .plusRequired {
-      plusNotice(challenge)
-
       PracticeMainButton(
         title: LocalizedStringResource(
           "See Plus", table: "Practice",
@@ -533,15 +535,15 @@ struct ChallengeScreen: View {
         description: Text(
           "Mock exams come with Plus: whenever you want, and every week in your plan.",
           tableName: "Practice", comment: "A mock exam challenge is Plus-only."),
-        showsSeePlus: false)
+        showsSeePlus: false, isInset: true)
     } else if challenge.call != nil {
       PlusNotice(
         description: Text(
           "Challenge calls come with Plus. Your plan keeps going without them.",
           tableName: "Practice", comment: "A challenge call is Plus-only."),
-        showsSeePlus: false)
+        showsSeePlus: false, isInset: true)
     } else {
-      FreeWeekOverNotice(showsSeePlus: false)
+      FreeWeekOverNotice(showsSeePlus: false, isInset: true)
     }
   }
 
