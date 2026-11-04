@@ -289,6 +289,23 @@ describe(checkWrittenLesson, () => {
     expect(content && "options" in content && content.options).toStrictEqual(
       expect.arrayContaining([expect.objectContaining({ picture: expect.any(Object) })]),
     );
+
+    const [liquid, digital] = pictured.options;
+
+    const bothDrawings = {
+      alt: "1 is a glass tube; 2 is a screen",
+      prompt: "Two thermometers, 1 and 2",
+    };
+
+    const samePicture = {
+      ...pictured,
+      options: [
+        { ...liquid, picture: bothDrawings },
+        { ...digital, picture: bothDrawings },
+      ],
+    };
+
+    expect(codesOf(withScreen(7, samePicture))).toStrictEqual([[7, "visual"]]);
   });
 
   it("draws the picture a teaching screen points at, even a diagram the plan didn't ask for", () => {

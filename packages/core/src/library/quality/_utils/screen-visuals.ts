@@ -65,6 +65,7 @@ export function getScreenVisualProblems({
 
   const image = "image" in screen ? screen.image : null;
   const unplacedNumbers = allowImage ? findNumbersMissingFromAlt(screen) : [];
+  const sharedPictures = findSharedOptionPictures(screen);
 
   return [
     ...getVisualProblems({
@@ -82,7 +83,27 @@ export function getScreenVisualProblems({
           `Its options name ${unplacedNumbers.join(", ")} on the numbered picture, but the picture's \`alt\` never says where they sit. Learners who can't see the picture answer from the alt: say where each number sits and how that spot looks, without naming the part.`,
         ]
       : []),
+    ...(sharedPictures.length > 0
+      ? [
+          `The options ${sharedPictures.join(", ")} show the same picture, so the learner can't tell them apart. Give each option a picture of only its own thing, or put one shared picture in the question's \`image\` and drop the option pictures.`,
+        ]
+      : []),
   ];
+}
+
+function findSharedOptionPictures(screen: WrittenScreen): string[] {
+  if (screen.kind !== "check") {
+    return [];
+  }
+
+  const prompts = screen.options.map((option) => option.picture?.prompt.trim().toLowerCase());
+
+  return screen.options
+    .filter((_option, index) => {
+      const prompt = prompts[index];
+      return prompt !== undefined && prompts.indexOf(prompt) !== prompts.lastIndexOf(prompt);
+    })
+    .map((option) => `"${option.text}"`);
 }
 
 function findNumbersMissingFromAlt(screen: WrittenScreen): string[] {
