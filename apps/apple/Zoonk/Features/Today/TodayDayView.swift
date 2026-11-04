@@ -88,8 +88,40 @@ struct TodayDayView: View {
 
   private var header: some View {
     Section {
-      PageHeader(Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine)
+      PageHeader(Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine) {
+        if let dayTime {
+          Readout(dayTime)
+        }
+      }
     }
+  }
+
+  /// Main's `DayTime`: the time still ahead while the day goes on, and once it's done, or the daily
+  /// limit ended it, the time actually studied rather than the plan's estimate for what was done.
+  private var dayTime: String? {
+    let session = view.session
+
+    if session.state == .waiting {
+      return nil
+    }
+
+    if session.state == .done || session.dailyLimit?.reached == true {
+      let studied = session.week.days.first(where: \.isToday)?.minutes ?? 0
+
+      return studied > 0
+        ? String(
+          localized: "\(studyDuration(minutes: studied)) studied", table: "Today",
+          comment:
+            "The time studied today, once the day's session is done; the argument is a duration like '23 min'"
+        )
+        : nil
+    }
+
+    return session.minutesLeft > 0
+      ? String(
+        localized: "\(studyDuration(minutes: session.minutesLeft)) left", table: "Today",
+        comment: "The time still to go in today's session")
+      : nil
   }
 
   @ViewBuilder

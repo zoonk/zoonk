@@ -369,18 +369,7 @@ private struct DayProgressRow: View {
   let session: StudyDay
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      if session.minutesLeft > 0 {
-        Text(
-          "\(studyDuration(minutes: session.minutesLeft)) left", tableName: "Today",
-          comment: "The time still to go in today's session"
-        )
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
-      }
-
-      MeterParts(parts: session.meterParts)
-    }
+    MeterParts(parts: session.meterParts)
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(
       Text(
@@ -406,13 +395,13 @@ struct BlockRow: View {
       AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 2) {
         VStack(alignment: .leading, spacing: 2) {
           Text(block.displayTitle)
-            .typeStyle(isNext ? .reading.weight(.semibold) : .reading)
+            .typeStyle(.rowTitle)
             .foregroundStyle(block.isFinished ? .mutedForeground : .primary)
 
           if !block.isFinished {
             ForEach(lines, id: \.self) { line in
               Text(line)
-                .typeStyle(.note)
+                .typeStyle(.meta)
                 .foregroundStyle(.mutedForeground)
             }
           }
@@ -530,7 +519,9 @@ private struct ComingLessonsRow: View {
       VStack(alignment: .leading, spacing: 2) {
         Text(
           "Your next lessons", tableName: "Today",
-          comment: "Holds the place of the day's lessons that aren't written yet")
+          comment: "Holds the place of the day's lessons that aren't written yet"
+        )
+        .typeStyle(.rowTitle)
 
         Group {
           switch coming {
@@ -550,7 +541,7 @@ private struct ComingLessonsRow: View {
             )
           }
         }
-        .typeStyle(.note)
+        .typeStyle(.meta)
         .foregroundStyle(.mutedForeground)
 
         if failed {
@@ -558,7 +549,7 @@ private struct ComingLessonsRow: View {
             "That didn't save. Try again.", tableName: "Today",
             comment: "A change couldn't be saved"
           )
-          .typeStyle(.note)
+          .typeStyle(.meta)
           .foregroundStyle(.destructiveText)
         }
       }
@@ -584,6 +575,7 @@ private struct PlusLessonRow: View {
         KindMark(kind: .lesson)
           .frame(minWidth: 20)
         Text(title)
+          .typeStyle(.rowTitle)
         Spacer(minLength: 8)
         Text("Plus", tableName: "Today", comment: "Marks a lesson that comes with Plus")
           .chip()
@@ -611,13 +603,16 @@ private struct FoldRow: View {
           .frame(minWidth: 20)
           .accessibilityHidden(true)
 
-        if isDone {
-          Text("\(count) done", tableName: "Today", comment: "Folded done blocks")
-        } else if isOpen {
-          Text("Show less", tableName: "Today", comment: "Folds the day's later blocks")
-        } else {
-          Text("+\(count) more", tableName: "Today", comment: "Folded later blocks")
+        Group {
+          if isDone {
+            Text("\(count) done", tableName: "Today", comment: "Folded done blocks")
+          } else if isOpen {
+            Text("Show less", tableName: "Today", comment: "Folds the day's later blocks")
+          } else {
+            Text("+\(count) more", tableName: "Today", comment: "Folded later blocks")
+          }
         }
+        .typeStyle(.rowTitle)
 
         Spacer()
 
