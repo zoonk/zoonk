@@ -213,7 +213,7 @@ struct TrueFalseStatementCard: View {
       .foregroundStyle(result == nil ? Color(.foreground) : .mutedForeground)
       .padding(20)
       .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
-      .panel(cornerRadius: 16)
+      .panel()
       .offset(x: offset)
       .rotationEffect(.degrees(reduceMotion ? 0 : Double(offset) * 0.06))
       .gesture(swipe, isEnabled: !isLocked && !statement.contains("|"))
@@ -479,7 +479,7 @@ struct NumericItemView: View {
             localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
           text: Binding(get: { typedText ?? NumericEntryParser.text(for: draft) }, set: type)
         )
-        .typeStyle(.readout.weight(.regular))
+        .typeStyle(.lessonText.monospacedDigit())
         .keyboardType(entry?.kind == .fraction ? .numbersAndPunctuation : .decimalPad)
         .submitLabel(.done)
         .focused($isFocused)
@@ -491,12 +491,10 @@ struct NumericItemView: View {
         }
 
         if let mark {
-          Image(systemName: mark == .right ? "checkmark" : "xmark")
-            .foregroundStyle(mark == .right ? Color.success : Color.destructive)
-            .accessibilityHidden(true)
+          FieldMark(mark: mark)
         }
       }
-      .modifier(AnswerFieldStyle(mark: mark))
+      .modifier(AnswerFieldStyle(mark: mark, isFocused: isFocused))
 
       if isInvalid {
         Text(invalidHint)
@@ -586,7 +584,7 @@ struct TypedItemView: View {
           localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
         text: Binding(get: { shown }, set: type)
       )
-      .typeStyle(.section.weight(.regular))
+      .typeStyle(.lessonText)
       .textInputAutocapitalization(.never)
       .autocorrectionDisabled()
       .submitLabel(.done)
@@ -597,12 +595,10 @@ struct TypedItemView: View {
       }
 
       if let mark {
-        Image(systemName: mark == .right ? "checkmark" : "xmark")
-          .foregroundStyle(mark == .right ? Color.success : Color.destructive)
-          .accessibilityHidden(true)
+        FieldMark(mark: mark)
       }
     }
-    .modifier(AnswerFieldStyle(mark: mark))
+    .modifier(AnswerFieldStyle(mark: mark, isFocused: isFocused))
     .onAppear { isFocused = !isLocked }
   }
 
@@ -619,20 +615,26 @@ struct TypedItemView: View {
   }
 }
 
+/// Main's answer field: an input 56pt tall whose line says the verdict once checked.
 private struct AnswerFieldStyle: ViewModifier {
   let mark: AnswerOptionResult?
+  let isFocused: Bool
 
   func body(content: Content) -> some View {
-    let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
-
     content
-      .padding(.horizontal, 14)
-      .frame(minHeight: 56)
-      .background(Color.card, in: shape)
-      .overlay(
-        shape.strokeBorder(
-          mark == .right ? Color.success : mark == .wrong ? Color.destructive : Color.border,
-          lineWidth: mark == nil ? 1 : 2))
+      .fieldBorder(
+        isFocused: isFocused, isRight: mark.map { $0 == .right }, minHeight: 56)
+  }
+}
+
+/// The verdict a checked field shows at its end, beside the words that say it.
+private struct FieldMark: View {
+  let mark: AnswerOptionResult
+
+  var body: some View {
+    Image(systemName: mark == .right ? "checkmark" : "xmark")
+      .foregroundStyle(mark == .right ? Color.successText : Color.destructiveText)
+      .accessibilityHidden(true)
   }
 }
 

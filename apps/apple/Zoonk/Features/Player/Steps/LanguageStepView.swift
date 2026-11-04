@@ -98,8 +98,7 @@ struct LessonAudioButton: View {
       switch style {
       case .prominent, .bar:
         button
-          .buttonStyle(.outline)
-          .buttonBorderShape(.circle)
+          .buttonStyle(.outline.icon)
           .controlSize(.large)
           .keyboardShortcut("p", modifiers: [])
       case .inline:
@@ -636,7 +635,7 @@ private struct ArrangeWordsView: View {
     }
     .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
     .padding(8)
-    .panel(cornerRadius: 16)
+    .panel()
 
     LessonWordBank {
       ForEach(exercise.wordBankOptions.indices, id: \.self) { index in
@@ -815,15 +814,10 @@ private struct CheckedWord: View {
   let isRight: Bool
 
   var body: some View {
-    let tone: Color = isRight ? .success : .destructive
-
     Text(word)
       .padding(.horizontal, 12)
       .padding(.vertical, 6)
-      .background(tone.opacity(0.15), in: .capsule)
-      .overlay {
-        Capsule().strokeBorder(tone, lineWidth: 1.5)
-      }
+      .answerSurface(isRight ? .right : .wrong, cornerRadius: Radius.lg)
       .accessibilityValue(Self.verdict(isRight: isRight))
   }
 

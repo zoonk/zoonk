@@ -146,7 +146,7 @@ struct ItemSupportView: View {
               CGFloat(image.width ?? 4) / CGFloat(max(image.height ?? 3, 1)), contentMode: .fit)
         }
       }
-      .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+      .clipShape(RoundedRectangle(cornerRadius: Radius.xl, style: .continuous))
       .accessibilityLabel(Text(verbatim: image.alt))
     }
 

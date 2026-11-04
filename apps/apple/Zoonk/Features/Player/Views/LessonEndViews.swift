@@ -162,36 +162,27 @@ struct LessonCompletionView: View {
     // With nothing answered (an explanation read again, a lesson without checks), no score shows.
     let answered = summary.correctCount + summary.incorrectCount
 
-    return VStack(alignment: .leading, spacing: 16) {
-      Grid(alignment: .leading, horizontalSpacing: 32, verticalSpacing: 4) {
-        GridRow {
-          if answered > 0 {
+    // Main's `MomentReadouts`: each number with its words beside it, on one baseline.
+    return VStack(alignment: .leading, spacing: 12) {
+      FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
+        if answered > 0 {
+          MomentReadout {
             Text("\(summary.correctCount)/\(answered)")
-              .typeStyle(.momentReadout)
-          }
-          if summary.brainPower > 0 {
-            EarnedNumber(value: summary.brainPower)
-              .typeStyle(.heroTitle)
-              .foregroundStyle(.brainText)
+          } words: {
+            Text("Right", tableName: "Player", comment: "Label under the lesson's score")
           }
         }
-        GridRow {
-          if answered > 0 {
-            Text("Right", tableName: "Player", comment: "Label under the lesson's score")
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-          }
-          if summary.brainPower > 0 {
+
+        if summary.brainPower > 0 {
+          MomentReadout(tint: .brainText) {
+            EarnedNumber(value: summary.brainPower)
+          } words: {
             Text(
               "Brain Power", tableName: "Player",
-              comment: "Label under the Brain Power a lesson earned"
-            )
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+              comment: "Label under the Brain Power a lesson earned")
           }
         }
       }
-      .accessibilityElement(children: .combine)
 
       if let reviewAt = summary.nextReviewAt {
         Text(

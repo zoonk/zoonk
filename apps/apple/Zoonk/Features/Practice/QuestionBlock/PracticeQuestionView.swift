@@ -200,8 +200,7 @@ struct PracticeCallout<Content: View>: View {
       .frame(maxWidth: .infinity, alignment: .leading)
     }
     .typeStyle(.note)
-    .padding(12)
-    .panel(cornerRadius: 12)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -245,19 +244,11 @@ enum PracticeVerdict: Equatable {
     }
   }
 
-  var tint: Color {
+  var tone: FeedbackTone {
     switch self {
-    case .right: .successText
-    case .wrong: .destructiveText
-    case .blank, .notSure: .mutedForeground
-    }
-  }
-
-  var systemImage: String {
-    switch self {
-    case .right: "checkmark.circle.fill"
-    case .wrong: "xmark.circle.fill"
-    case .blank, .notSure: "minus.circle.fill"
+    case .right: .right
+    case .wrong: .wrong
+    case .blank, .notSure: .neutral
     }
   }
 }
@@ -273,17 +264,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
-      HStack(alignment: .firstTextBaseline) {
-        Label {
-          Text(verdict.label)
-        } icon: {
-          Image(systemName: verdict.systemImage)
-        }
-        .typeStyle(.body.weight(.semibold))
-        .foregroundStyle(verdict.tint)
-
-        Spacer()
-
+      FeedbackVerdict(Text(verdict.label), tone: verdict.tone) {
         if streak >= 3 {
           Label {
             Text(
@@ -293,7 +274,6 @@ struct PracticeFeedbackPanel<Notes: View>: View {
             Image(systemName: "chevron.up.2")
           }
           .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -317,10 +297,8 @@ struct PracticeFeedbackPanel<Notes: View>: View {
 
       notes()
     }
-    .typeStyle(.reading)
-    .padding(16)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .panel(cornerRadius: 16)
+    .typeStyle(.body)
+    .feedbackPanel()
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text(

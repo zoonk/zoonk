@@ -243,7 +243,9 @@ private struct CodeTracerCanvas: View {
       .padding(.horizontal, 10)
       .padding(.vertical, 6)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(changed ? Color.vizHighlight.opacity(0.15) : .clear, in: .rect(cornerRadius: 10))
+      .background(
+        changed ? Color.vizHighlight.opacity(0.15) : .clear, in: .rect(cornerRadius: Radius.lg)
+      )
       .accessibilityElement(children: .combine)
     }
   }

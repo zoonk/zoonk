@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +53,7 @@ import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
@@ -396,7 +396,7 @@ private fun SpeakButton(
 ) {
     val audio = rememberSpokenAudio(speech, language)
     val label = speechActionLabel(audio.state, stringResource(R.string.conversation_listen_to, text))
-    FilledTonalIconButton(
+    OutlinedIconButton(
         onClick = { if (audio.isBusy) audio.cancel() else audio.speak(listOf(SpokenText(text, personal = personal))) },
         modifier = Modifier.semantics { contentDescription = label },
     ) {

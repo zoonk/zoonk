@@ -9,7 +9,7 @@ struct ChartsCanvas<Content: View>: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .background(.muted, in: .rect(cornerRadius: 16, style: .continuous))
+    .background(.muted, in: .rect(cornerRadius: Radius.xl, style: .continuous))
     .accessibilityElement(children: .contain)
   }
 }

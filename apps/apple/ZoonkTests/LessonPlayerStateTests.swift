@@ -59,6 +59,23 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.firstVerdicts, ["check": false])
   }
 
+  func testSegmentsKeepTheFirstVerdictAndShowTheRetrysOwn() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    XCTAssertEqual(state.segments, [.current, .ahead, .ahead, .ahead])
+
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "wrong")
+    XCTAssertEqual(state.segments, [.read, .read, .wrong, .ahead, .ahead])
+
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.segments, [.read, .read, .wrong, .read, .current])
+
+    try answerCheck(&state, optionId: "right")
+    XCTAssertEqual(state.segments, [.read, .read, .wrong, .read, .right])
+  }
+
   func testWorkedExampleRevealsOnePartPerContinue() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: [try step(workedExample)])
 

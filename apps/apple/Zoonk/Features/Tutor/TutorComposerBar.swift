@@ -70,7 +70,7 @@ struct TutorComposerBar: View {
         }
         .labelStyle(.iconOnly)
       }
-      .buttonStyle(.mainActionIcon)
+      .buttonStyle(.mainAction.icon)
       .controlSize(.small)
       .keyboardShortcut(.return, modifiers: .command)
       .disabled(!conversation.canSendDraft)

@@ -57,55 +57,44 @@ struct MilestoneCeremony: View {
   private var words: some View {
     VStack(spacing: 8) {
       Text(title)
-        .typeStyle(.pageTitle)
+        .typeStyle(.heroTitle)
         .multilineTextAlignment(.center)
         .accessibilityAddTraits(.isHeader)
 
       Text(detail)
-        .typeStyle(.body)
+        .typeStyle(.reading)
         .foregroundStyle(.mutedForeground)
         .multilineTextAlignment(.center)
     }
   }
 
+  /// Main's task actions: "Not now" beside the main action, stacking when they don't fit.
   private var buttons: some View {
-    VStack(spacing: 24) {
+    PracticeActionRow {
       if let glasses = newGlasses, let summary = learner.summary.value {
-        Button {
+        PracticeSecondaryButton(
+          title: LocalizedStringResource(
+            "Not now", table: "Session",
+            comment: "Closes a glasses ceremony without wearing them"),
+          action: onClose)
+
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Wear them", table: "Session",
+            comment: "Puts the glasses just earned on the buddy; \"them\" is the glasses")
+        ) {
           // The buddy wears them at once; the save finishes after the ceremony closes.
           Task {
             await buddyStore.save(
               BuddyChoice(kind: summary.buddy.kind, name: summary.buddyName, glasses: glasses))
           }
           onClose()
-        } label: {
-          Text(
-            "Wear them", tableName: "Session",
-            comment: "Puts the glasses just earned on the buddy; \"them\" is the glasses"
-          )
-          .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .keyboardShortcut(.defaultAction)
-
-        Button(action: onClose) {
-          Text(
-            "Not now", tableName: "Session",
-            comment: "Closes a glasses ceremony without wearing them"
-          )
-          .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.outline)
-        .controlSize(.large)
       } else {
-        Button(action: onClose) {
-          Text("Continue", tableName: "Session", comment: "Closes a milestone's ceremony")
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .keyboardShortcut(.defaultAction)
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Continue", table: "Session", comment: "Closes a milestone's ceremony"),
+          action: onClose)
       }
     }
   }

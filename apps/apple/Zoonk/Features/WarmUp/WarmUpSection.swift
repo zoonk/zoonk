@@ -35,13 +35,7 @@ struct WarmUpSection: View {
           let isLastCard = position == deck.cards.count - 1
 
           VStack(alignment: .leading, spacing: 4) {
-            Label {
-              Text(verdict.title)
-                .typeStyle(.body.weight(.semibold))
-            } icon: {
-              Image(systemName: verdict.symbol)
-            }
-            .foregroundStyle(verdict.words)
+            FeedbackVerdict(Text(verdict.title), tone: verdict.tone, symbol: verdict.symbol)
 
             Text(card.reveal)
           }

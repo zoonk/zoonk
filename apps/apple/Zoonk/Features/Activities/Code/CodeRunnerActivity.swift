@@ -304,7 +304,7 @@ private struct CodeRunnerOutput: View {
         }
       }
       .fixedSize(horizontal: false, vertical: true)
-      .panel(cornerRadius: 12)
+      .panel(cornerRadius: Radius.option)
 
       if let run {
         if isStale {

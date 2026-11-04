@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct LessonVerdictView: View {
+  @Environment(\.legibilityWeight) private var legibility
+
   let step: LessonStep
   let result: LessonStepResult
   let store: LessonPlayerStore
@@ -8,14 +10,14 @@ struct LessonVerdictView: View {
   var hyperdriveStreak: Int?
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
-        Text(verdict.title)
-          .typeStyle(.body.weight(.semibold))
-      } icon: {
-        Image(systemName: verdict.symbol)
+    VStack(alignment: .leading, spacing: 10) {
+      FeedbackVerdict(Text(verdict.title), tone: verdict.tone, symbol: verdict.symbol) {
+        if let hyperdriveStreak {
+          Text(
+            "\(hyperdriveStreak) right in a row", tableName: "Player",
+            comment: "Hyperdrive: right answers in a row")
+        }
       }
-      .foregroundStyle(verdict.words)
 
       if let spelling = result.spelling {
         LabeledText(
@@ -50,8 +52,10 @@ struct LessonVerdictView: View {
       }
 
       ForEach(result.corrections, id: \.self) { correction in
-        Text("\(Text(correction.wrong).strikethrough()) → \(Text(correction.right).bold())")
-          .typeStyle(.body)
+        Text(
+          "\(Text(correction.wrong).strikethrough()) → \(Text(correction.right).typeWeight(.bold, legibility: legibility))"
+        )
+        .typeStyle(.body)
       }
 
       if let keyPoints = result.keyPoints, !keyPoints.isEmpty {
@@ -80,27 +84,32 @@ struct LessonVerdictView: View {
         LessonExplainAnswerView(step: step, store: store)
       }
 
-      if hyperdriveStreak != nil || note != nil {
-        notes
-          .typeStyle(.note)
+      if let note {
+        Text(note)
+          .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
       }
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding()
-    .background(verdict.tint.opacity(0.15), in: .rect(cornerRadius: 20))
+    .feedbackPanel()
     .accessibilityElement(children: .contain)
   }
 
   @ViewBuilder
   private var correctAnswerLine: some View {
-    if !result.isCorrect, let correctAnswer = result.correctAnswer, step.kind != .typedAnswer {
+    if !result.isCorrect, let correctAnswer = result.correctAnswer,
+      !Self.marksItsAnswer.contains(step.kind)
+    {
       LabeledText(
         label: Text(
           "Correct answer", tableName: "Player", comment: "Before the right answer after a miss"),
         text: correctAnswer)
     }
   }
+
+  /// Steps whose options already mark the right one, and a typed answer, which shows its sample.
+  private static let marksItsAnswer: Set<LessonStepKind> = [
+    .typedAnswer, .hook, .check, .multipleChoice, .translation,
+  ]
 
   /// Main's activity feedback: after a missed choice, the picked option's reason, then the right
   /// option with its own.
@@ -111,21 +120,6 @@ struct LessonVerdictView: View {
     else { return nil }
 
     return reason
-  }
-
-  private var notes: Text {
-    let streak = hyperdriveStreak.map {
-      Text(
-        "\($0) right in a row", tableName: "Player", comment: "Hyperdrive: right answers in a row")
-    }
-    let next = note.map { Text($0) }
-
-    switch (streak, next) {
-    case (let streak?, let next?): return Text("\(streak)\u{00A0}· \(next)")
-    case (let streak?, nil): return streak
-    case (nil, let next?): return next
-    case (nil, nil): return Text(verbatim: "")
-    }
   }
 
   private var note: LocalizedStringResource? {
@@ -273,36 +267,9 @@ private struct LessonExplainAnswerView: View {
 
 /// What a checked answer was. A hook's guess is never wrong.
 struct LessonVerdict {
-  enum Tone {
-    case right
-    case neutral
-    case partial
-    case wrong
-  }
-
   let title: LocalizedStringResource
-  let symbol: String
-  let tone: Tone
-
-  /// Its fill's color.
-  var tint: Color {
-    switch tone {
-    case .right: .success
-    case .neutral: .mutedForeground
-    case .partial: .warning
-    case .wrong: .destructive
-    }
-  }
-
-  /// Its words' color, which reads on the fill.
-  var words: Color {
-    switch tone {
-    case .right: .successText
-    case .neutral: .mutedForeground
-    case .partial: .warningText
-    case .wrong: .destructiveText
-    }
-  }
+  var symbol: String?
+  let tone: FeedbackTone
 }
 
 extension LessonVerdict {
@@ -324,7 +291,7 @@ extension LessonVerdict {
         title: LocalizedStringResource(
           "Here's a good answer", table: "Player",
           comment: "\"I don't know yet\" shows a good answer"),
-        symbol: "text.bubble", tone: .neutral)
+        tone: .neutral)
     }
 
     if step.kind == .hook {
@@ -335,20 +302,19 @@ extension LessonVerdict {
       return result.spelling == nil
         ? LessonVerdict(
           title: LocalizedStringResource(
-            "Correct!", table: "Player", comment: "The answer was right"), symbol: "checkmark",
-          tone: .right)
+            "Correct!", table: "Player", comment: "The answer was right"), tone: .right)
         : LessonVerdict(
           title: LocalizedStringResource(
             "Right, watch the spelling", table: "Player",
             comment: "A right typed answer with a typo"),
-          symbol: "checkmark", tone: .right)
+          tone: .right)
     }
 
     if step.kind == .typedAnswer, !result.checked {
       return LessonVerdict(
         title: LocalizedStringResource(
           "Not checked this time", table: "Player", comment: "A typed answer that wasn't graded"),
-        symbol: "text.bubble", tone: .neutral)
+        tone: .neutral)
     }
 
     if let score = result.score, score > 0 {
@@ -356,13 +322,13 @@ extension LessonVerdict {
         title: LocalizedStringResource(
           "Almost there", table: "Player", comment: "A typed or spoken answer that was partly right"
         ),
-        symbol: "circle.lefthalf.filled", tone: .partial)
+        tone: .almost)
     }
 
     return LessonVerdict(
       title: LocalizedStringResource(
         "Not quite", table: "Player",
         comment: "Gentle verdict after a wrong answer, without saying it was almost right"),
-      symbol: "xmark", tone: .wrong)
+      tone: .wrong)
   }
 }

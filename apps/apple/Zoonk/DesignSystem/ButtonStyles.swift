@@ -3,7 +3,7 @@ import SwiftUI
 /// Main's buttons on a native `Button`, which keeps its role, keyboard shortcut, VoiceOver and
 /// pointer behavior. `controlSize` picks main's sizes: `.large` for a screen's action (44pt),
 /// `.regular` (36pt), `.small` beside text (30pt). A destructive role draws main's destructive
-/// button in any of them; `.mainActionIcon` is main's square icon button (`size="icon-sm"`). Glass
+/// button in any of them; `.icon` on any of them is main's square icon button (`size="icon"`). Glass
 /// stays on floating controls and toolbar items.
 struct ZoonkButtonStyle: ButtonStyle {
   enum Variant {
@@ -16,10 +16,13 @@ struct ZoonkButtonStyle: ButtonStyle {
   }
 
   let variant: Variant
-  var isSquare = false
+  var isIcon = false
+
+  /// Main's `size="icon"`: a square as tall as the size, for a label that is only an icon.
+  var icon: ZoonkButtonStyle { ZoonkButtonStyle(variant: variant, isIcon: true) }
 
   func makeBody(configuration: Configuration) -> some View {
-    ZoonkButton(configuration: configuration, variant: variant, isSquare: isSquare)
+    ZoonkButton(configuration: configuration, variant: variant, isIcon: isIcon)
   }
 }
 
@@ -27,7 +30,6 @@ extension ButtonStyle where Self == ZoonkButtonStyle {
   static var mainAction: ZoonkButtonStyle { ZoonkButtonStyle(variant: .main) }
   static var outline: ZoonkButtonStyle { ZoonkButtonStyle(variant: .outline) }
   static var ghost: ZoonkButtonStyle { ZoonkButtonStyle(variant: .ghost) }
-  static var mainActionIcon: ZoonkButtonStyle { ZoonkButtonStyle(variant: .main, isSquare: true) }
 }
 
 private struct ZoonkButton: View {
@@ -39,20 +41,20 @@ private struct ZoonkButton: View {
 
   let configuration: ButtonStyleConfiguration
   let variant: ZoonkButtonStyle.Variant
-  let isSquare: Bool
+  let isIcon: Bool
 
   var body: some View {
     let shape = RoundedRectangle(
-      cornerRadius: isSmall && !isSquare ? Radius.md : Radius.lg, style: .continuous)
+      cornerRadius: isSmall && !isIcon ? Radius.md : Radius.lg, style: .continuous)
 
     configuration.label
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
-      .padding(.horizontal, isSquare ? 0 : horizontalPadding)
-      .padding(.vertical, isSquare ? 0 : 6)
-      .frame(minWidth: isSquare ? height : nil, minHeight: height)
-      .frame(maxWidth: sizing == .flexible ? .infinity : nil)
+      .padding(.horizontal, isIcon ? 0 : horizontalPadding)
+      .padding(.vertical, isIcon ? 0 : 6)
+      .frame(minWidth: isIcon ? height : nil, minHeight: height)
+      .frame(maxWidth: sizing == .flexible && !isIcon ? .infinity : nil)
       .background(fill, in: shape)
       .overlay {
         if variant == .outline && !isDestructive {

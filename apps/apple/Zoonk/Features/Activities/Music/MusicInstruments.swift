@@ -9,7 +9,7 @@ struct MusicCanvas<Content: View>: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .panel(cornerRadius: 20)
+    .panel()
   }
 }
 

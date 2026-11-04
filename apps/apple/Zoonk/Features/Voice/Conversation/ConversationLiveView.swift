@@ -190,12 +190,17 @@ private struct CallTranscript: View {
         let text = turn.text.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if turn.speaker == .learner {
+          // Main's `LearnerBubble`: its tail corner points at the learner's side.
           Text(text)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(
-              Color.muted, in: .rect(cornerRadius: 16, style: .continuous)
+              Color.muted,
+              in: UnevenRoundedRectangle(
+                topLeadingRadius: Radius.option, bottomLeadingRadius: Radius.option,
+                bottomTrailingRadius: 4, topTrailingRadius: Radius.option, style: .continuous)
             )
+            .containerRelativeFrame(.horizontal, alignment: .trailing) { width, _ in width * 0.8 }
             .frame(maxWidth: .infinity, alignment: .trailing)
             .accessibilityLabel(
               Text(
@@ -258,11 +263,12 @@ private struct CallReply: View {
         Label {
           Text("Send", tableName: "Voice", comment: "Sends a typed reply")
         } icon: {
-          Image(systemName: "arrow.up")
+          Image(systemName: "paperplane")
         }
         .labelStyle(.iconOnly)
       }
-      .buttonStyle(.mainAction)
+      .buttonStyle(.mainAction.icon)
+      .controlSize(.large)
       .disabled(reply.trimmingCharacters(in: .whitespaces).isEmpty)
     }
   }
