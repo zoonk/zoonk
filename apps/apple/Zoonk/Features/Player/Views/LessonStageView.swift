@@ -259,6 +259,7 @@ struct LessonStageView: View {
           isCheckSlow = !Task.isCancelled
         }
       }
+      .announcesStatus(isCheckSlow && state.phase == .checking ? LessonCheckNote.slowLine : nil)
       .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
       .sensoryFeedback(trigger: countedVerdict(step)) { _, isCorrect in
@@ -337,13 +338,16 @@ private struct LessonCheckNote: View {
     }
 
     if isSlow, state.phase == .checking {
-      Text(
-        "Still checking. This is taking longer than usual.", tableName: "Player",
-        comment: "Grading the answer is taking longer than usual"
-      )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      Text(Self.slowLine)
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
     }
+  }
+
+  static var slowLine: String {
+    String(
+      localized: "Still checking. This is taking longer than usual.", table: "Player",
+      comment: "Grading the answer is taking longer than usual")
   }
 }
 

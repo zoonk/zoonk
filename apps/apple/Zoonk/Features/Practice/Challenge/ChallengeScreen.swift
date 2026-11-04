@@ -72,6 +72,7 @@ struct ChallengeScreen: View {
         isStartSlow = !Task.isCancelled
       }
     }
+    .announcesStatus(isStartSlow && isStarting && !isWriting ? Self.slowStartLine : nil)
     .onDisappear { action?.cancel() }
   }
 
@@ -212,11 +213,8 @@ struct ChallengeScreen: View {
       }
 
       if isStartSlow, isStarting, !isWriting {
-        Text(
-          "Still starting. This is taking longer than usual.", tableName: "Practice",
-          comment: "Starting a challenge is taking longer than usual."
-        )
-        .font(.subheadline).foregroundStyle(.secondary)
+        Text(Self.slowStartLine)
+          .font(.subheadline).foregroundStyle(.secondary)
       }
 
       if let startProblem {
@@ -796,6 +794,12 @@ struct ChallengeScreen: View {
 
   /// Past this, a start still running says so (main's `START_BOUNDS.slowMs`).
   private static let slowStart = Duration.seconds(10)
+
+  private static var slowStartLine: String {
+    String(
+      localized: "Still starting. This is taking longer than usual.", table: "Practice",
+      comment: "Starting a challenge is taking longer than usual.")
+  }
 
   private static let notDone = LocalizedStringResource(
     "That didn't go through. Try again in a moment.", table: "Practice",
