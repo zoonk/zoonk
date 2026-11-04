@@ -263,10 +263,12 @@ extension TutorFailure {
     case .guest:
       return thisMonth
         ? String(
-          localized: "You've used the free help you can get without an account. Create a free account to keep going.",
+          localized:
+            "You've used the free help you can get without an account. Create a free account to keep going.",
           table: "Tutor", comment: "A guest's help is used up")
         : String(
-          localized: "You've used today's free help. Create a free account to keep going.", table: "Tutor",
+          localized: "You've used today's free help. Create a free account to keep going.",
+          table: "Tutor",
           comment: "A guest's help for the day is used up")
     case .plus:
       return String(
@@ -275,10 +277,12 @@ extension TutorFailure {
     case .free:
       return thisMonth
         ? String(
-          localized: "You've used this month's help. It comes back next month, or get Plus to keep going now.",
+          localized:
+            "You've used this month's help. It comes back next month, or get Plus to keep going now.",
           table: "Tutor", comment: "A free learner's help for the month is used up")
         : String(
-          localized: "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
+          localized:
+            "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
           table: "Tutor", comment: "A free learner's help for the day is used up")
     }
   }

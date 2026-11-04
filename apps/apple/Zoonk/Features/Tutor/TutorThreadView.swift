@@ -91,7 +91,8 @@ private struct TutorConversationView<Header: View>: View {
 
       if asking != nil {
         announcePolitely(
-          String(localized: "Thinking…", table: "Tutor", comment: "The buddy is writing its answer"))
+          String(localized: "Thinking…", table: "Tutor", comment: "The buddy is writing its answer")
+        )
       }
     }
     .announcesStatus(conversation.missionMoment.map(TutorMissionMoment.said))

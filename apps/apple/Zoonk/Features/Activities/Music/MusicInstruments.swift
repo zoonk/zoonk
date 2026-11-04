@@ -10,7 +10,8 @@ struct MusicCanvas<Content: View>: View {
       audio.isUnavailable
       ? String(
         localized: "The sound couldn't play. You can still see every note.",
-        table: "ActivitiesMusic", comment: "Under an instrument when the device couldn't play sound")
+        table: "ActivitiesMusic", comment: "Under an instrument when the device couldn't play sound"
+      )
       : nil
 
     VStack(alignment: .leading, spacing: 12) {

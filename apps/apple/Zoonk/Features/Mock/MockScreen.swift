@@ -205,7 +205,8 @@ struct MockStepStatus: View {
 
   private var retrying: String {
     String(
-      localized: "Not saved yet\u{00A0}· retrying", table: "Mock", comment: "An answer waits to save")
+      localized: "Not saved yet\u{00A0}· retrying", table: "Mock",
+      comment: "An answer waits to save")
   }
 
   private var slow: String {

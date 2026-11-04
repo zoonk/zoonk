@@ -33,7 +33,8 @@ struct TutorTurnView: View {
   /// Main's conversation log reads an answer once it's written, never word by word.
   private var finished: String? {
     let answer = turn.answer.map {
-      TutorAnswerText.said(TutorAnswerBlock.blocks(of: $0, linksEnabled: false), buddyName: buddyName)
+      TutorAnswerText.said(
+        TutorAnswerBlock.blocks(of: $0, linksEnabled: false), buddyName: buddyName)
     }
 
     return switch turn.status {

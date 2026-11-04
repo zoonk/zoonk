@@ -66,7 +66,8 @@ private struct ExplanationView: View {
     content
       // Quiet during a retry, so one that goes through says it again.
       .announcesStatus(
-        explanation.lesson == nil && !isRetrying && !retryFailed ? stillWriting : nil)
+        explanation.lesson == nil && !isRetrying && !retryFailed ? stillWriting : nil
+      )
       .task {
         if readsAtOnce, !hasPlayed, let lesson = explanation.lesson {
           hasPlayed = true

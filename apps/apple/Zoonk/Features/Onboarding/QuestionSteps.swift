@@ -253,35 +253,41 @@ private struct PurposeQuestion: View {
       choices: [
         .init(
           value: "overview",
-          label: String(localized: "Get an overview", table: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Get an overview", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "The big ideas, no formulas", tableName: "Onboarding", comment: "Purpose choice detail")
         ),
         .init(
           value: "deep",
-          label: String(localized: "Understand it in depth", table: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Understand it in depth", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "From the basics to advanced", tableName: "Onboarding", comment: "Purpose choice detail"
           )),
         .init(
           value: "work",
-          label: String(localized: "Use it at work", table: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Use it at work", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Apply it to real projects", tableName: "Onboarding", comment: "Purpose choice detail")),
         .init(
           value: "careerChange",
-          label: String(localized: "Change careers", table: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Change careers", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Get ready for a new role", tableName: "Onboarding", comment: "Purpose choice detail")),
         .init(
           value: "refresh",
-          label: String(localized: "Refresh what I studied", table: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Refresh what I studied", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Pick up what you left behind", tableName: "Onboarding",
             comment: "Purpose choice detail")),
         .init(
           value: "other",
-          label: String(localized: "Something else", table: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Something else", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Tell us later, in your own words", tableName: "Onboarding",
             comment: "Purpose choice detail")),

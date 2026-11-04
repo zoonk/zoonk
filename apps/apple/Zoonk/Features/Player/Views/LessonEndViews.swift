@@ -510,7 +510,8 @@ struct LessonHelpLimitNote: View {
   static func message(_ refusal: LessonRunRefusal) -> String {
     switch refusal {
     case .slowDown:
-      String(localized: "Take a short break", table: "Player", comment: "Fair use spaces AI help out")
+      String(
+        localized: "Take a short break", table: "Player", comment: "Fair use spaces AI help out")
     case .limitReached(.guest, _):
       String(
         localized: "Save your progress to keep going", table: "Player",

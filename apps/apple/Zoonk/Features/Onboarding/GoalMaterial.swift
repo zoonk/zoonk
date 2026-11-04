@@ -242,7 +242,8 @@ struct MaterialAttachControls<Label: View>: View {
   }
 
   private static var adding: String {
-    String(localized: "Adding your material…", table: "Onboarding", comment: "While material is added")
+    String(
+      localized: "Adding your material…", table: "Onboarding", comment: "While material is added")
   }
 
   private func attach(_ file: URL) async throws -> AttachedSource {

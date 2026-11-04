@@ -421,7 +421,8 @@ private struct ListeningPlayerView: View {
       }
     }
     .announcesStatus(
-      announcement(answered: answered, playsLeft: playsLeft, isPlaying: isPlaying))
+      announcement(answered: answered, playsLeft: playsLeft, isPlaying: isPlaying)
+    )
     .onAppear { recordings.show(playsKey) }
     // The next question on another recording: this one's play ends with its questions.
     .onChange(of: playsKey) { previous, key in

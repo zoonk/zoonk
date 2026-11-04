@@ -156,7 +156,8 @@ private struct ChanceSimulationView: View {
     }
     // An explored simulation plays its first run as the screen opens.
     .announcesStatus(
-      isDone && (runIndex > 0 || context.phase != .explore) ? doneSummary(share: share) : nil)
+      isDone && (runIndex > 0 || context.phase != .explore) ? doneSummary(share: share) : nil
+    )
     .task(id: isRunning ? seed : nil) {
       guard isRunning, simulated?.seed != self.seed else {
         return
