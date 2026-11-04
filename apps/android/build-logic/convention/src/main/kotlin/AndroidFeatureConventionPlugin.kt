@@ -36,6 +36,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
 
                 "testImplementation"(testFixtures(project(":core:data")))
                 "testImplementation"(testFixtures(project(":core:navigation")))
+                "testImplementation"(testFixtures(project(":core:designsystem")))
                 "testImplementation"(platform(lib("androidx-compose-bom")))
                 listOf(
                     "androidx-compose-ui-test-junit4",
