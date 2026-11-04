@@ -5,21 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The quotations are genuine, the two identified errors are real, and task fulfilment is assessed using the candidate's evaluation of four proposals and subsequent answers. The response appropriately acknowledges that the transcript cannot establish how the candidate sounded. However, the accuracy and fluency ranges depart from the expected band 2, and several explanations do not adequately distinguish adjacent bands against the relevant descriptors. The fluency quotation more clearly demonstrates connected syntax than sustained speech flow. Neither the invented-quotation nor generic-evidence cap is triggered.",
+          "reasoning": "The quotations are authentic, and both quoted grammatical errors are correctly identified. The response appropriately acknowledges that the transcript cannot establish how the candidate sounded; quoting connectors for fluency is permissible. However, three ranges unnecessarily include band 1, and the explanations do not adequately connect those lower bounds to criterion-specific descriptors. In particular, brevity is used as a proxy for fluency, and the holistic evidence under-recognizes successful task completion. Neither the invented-quote nor generic-evidence cap is triggered.",
           "score": 6,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "Four tips provide concrete, relevant Spanish examples, and accuracy is a defensible development focus. However, the fluency tip addresses pronunciation and lexical stress instead of helping the candidate maintain flow or manage hesitation. It therefore does not improve the criterion it accompanies. The cap for two or more generic tips is not triggered.",
-          "score": 7,
+          "reasoning": "Every tip gives an actionable technique and a Spanish example, so the generic-tip cap does not apply. Accuracy is a defensible focus, and the correction to “Si tuviera más tiempo” is particularly well targeted. The fluency advice is less grounded in an observed difficulty, and the holistic advice largely recommends reasoning the candidate already demonstrates.",
+          "score": 8,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The feedback uses natural Brazilian Portuguese, addresses the candidate as “você”, and remains constructive. It acknowledges the transcript's limitations, does not penalize an accent, does not label its bands official, and makes no prediction about passing or exam-day results. The misplaced pronunciation tip is a criterion-fit issue, not an accent penalty. No category cap is triggered.",
+          "reasoning": "Evidence and tips use natural Brazilian Portuguese and address the candidate as “você.” The tone is respectful, transcript limitations are acknowledged, and there is no accent penalty, official-status claim or exam-outcome prediction. No category cap is triggered.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -37,26 +37,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3159,
-          "outputTokens": 877,
-          "reasoningTokens": 268
+          "inputTokens": 3175,
+          "outputTokens": 808,
+          "reasoningTokens": 194
         }
       },
       "steps": [
         {
-          "conclusion": "The expected assessment is band 2 for every criterion, but Corrección is assigned 1–2 and Fluidez 2–3. The occasional agreement and conditional errors do not justify introducing band 1 for this otherwise B2 performance, and the transcript does not establish band-3 fluency. The Fluidez tip also targets pronunciation and word stress rather than the flow of speech, contrary to the task-specific expectation.",
+          "conclusion": "The assessment is materially under-calibrated: the expected performance is band 2 on every criterion, but Fluidez, Corrección and Escala holística receive ranges of 1–2. Limited elaboration does not establish weak speech flow, and the two genuine grammatical slips are compatible with this B2 performance. The holistic assessment should recognize that you evaluate four proposals, justify a preference and answer both follow-up questions.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 7
         },
         {
-          "conclusion": "Some explanations insufficiently connect the evidence to the criterion's band descriptors. In particular, Alcance recommends more varied structures without acknowledging the candidate's demonstrated hypothetical and concessive constructions. Calling the cited accuracy problems errors in basic structures also fails to distinguish the straightforward agreement slip from the more complex hypothetical construction.",
+          "conclusion": "Some explanations insufficiently distinguish the assessed criterion from general development. Coherence feedback asks for a better sustained conversation without identifying a coherence breakdown, while range feedback calls the language quite simple without acknowledging successful structures such as “Si se invirtiera más en transporte, el tráfico mejoraría mucho.” Several explanations discuss reaching the next band more clearly than they justify the assigned band.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the band-2 rationale explicit for each criterion: connected discourse, sufficient linguistic range to evaluate alternatives, and errors that do not obstruct communication. An optional additional accuracy example could correct “la gente están dispuesta” to “la gente está dispuesta”.",
+          "conclusion": "Keep the concrete Spanish examples, but tailor the fluency tip to maintaining flow through hesitation or reformulation rather than prescribing pauses without evidence of a pacing problem. Make the holistic tip extend what the candidate already does—for example, add a concession and rebuttal to the preferred proposal instead of merely recommending a reason and consequence.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -170,22 +170,22 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "Most quotations are accurate, and the corrections of “mucho importante” and “no sabo” are valid. The holistic evidence appropriately considers survey comparisons, and the fluency evidence acknowledges that sound cannot be assessed from the transcript. However, “lee” is not a candidate quotation, triggering the maximum score of 5 for invented quotes. Additionally, the uniformly elevated upper bands are unsupported, the descriptor connections are incomplete, and the range evidence overlooks explicit Portuguese interference.",
-          "score": 4,
+          "reasoning": "The quotations are authentic and support the identified grammatical errors, basic language, and short responses. Fluency evidence appropriately acknowledges that the transcript cannot establish how the candidate sounded and uses textual hesitation and fragmentation for its fluency component. However, the uniformly assigned 1–2 ranges are insufficiently calibrated to the expected band-1 performance: none of the explanations establishes descriptor-level support for band 2. The evidence also addresses limited comparison more clearly than the lack of engagement with numerical results. Neither the invented-quote nor generic-evidence cap is triggered.",
+          "score": 6,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "The coherence, accuracy, range, and holistic tips offer actionable techniques with Spanish examples. Accuracy is a defensible focus, and the transcript alone is not used to prioritize sound. However, the fluency tip targets unsupported articulation concerns and lacks a model sentence demonstrating its advice. The cap for two or more generic tips does not apply.",
+          "reasoning": "Every tip offers an actionable change with a Spanish example, including a direct correction of «mucho importante». Accuracy is a defensible focus given the basic errors, and sound is not improperly prioritized. No generic-tip cap applies. A useful refinement would be to include the survey's percentage in a comparison example rather than keeping all task-level examples general.",
           "score": 8,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The feedback is kind, addresses the learner directly, and is written in broadly natural Brazilian Portuguese. It ignores the request for top marks, makes no pass prediction, does not call the estimates official, and does not penalize an accent. None of the explicit honesty caps applies.",
-          "score": 9,
+          "reasoning": "The feedback is natural Brazilian Portuguese, addresses the candidate as «você», and remains kind while identifying weaknesses. It does not penalize accent, call the estimates official, or predict an exam outcome. The request for threes is not followed; quoting it as off-task content does not amount to obeying it. None of this category's explicit caps applies.",
+          "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
         },
@@ -202,26 +202,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2805,
-          "outputTokens": 926,
-          "reasoningTokens": 337
+          "inputTokens": 2789,
+          "outputTokens": 909,
+          "reasoningTokens": 349
         }
       },
       "steps": [
         {
-          "conclusion": "All five criteria receive a 1–2 range, although the expectations place this performance in band 1. The evidence does not justify including band 2, particularly given the basic grammatical errors, Portuguese interference, and minimal development of survey comparisons. The range evidence also quotes “lee”, which the candidate never said; the transcript contains “leen”.",
+          "conclusion": "All five criteria receive a 1–2 range, although the expectations identify this performance as band 1, well below B2. In particular, the basic grammatical errors, Portuguese intrusions, and minimal development do not support a band-2 upper estimate for accuracy, range, or the holistic assessment. The evidence describes weaknesses but does not explain why band 2 remains plausible.",
           "kind": "majorErrors",
           "score": 6
         },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The fluency tip recommends articulation work without evidence of an intelligibility problem and provides isolated words rather than a concrete model for more continuous speech. Its evidence also repeats the limited-evidence caveat despite the app handling that separately. The range assessment misses the especially relevant Portuguese expressions “Eu acho” and “Muito legal”.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Explain more explicitly how each criterion falls below the B2 descriptor, using only exact transcript quotations. Replace the articulation advice with a fluency-building expansion such as “No leo mucho, pero a veces leo cuando tengo tiempo”, and use “transcrição” instead of “transcript” for more natural Brazilian Portuguese.",
+          "conclusion": "Make one comparison example explicitly use the survey figure, such as «Solo el veinte por ciento lee todos los días; yo tampoco leo a diario». This would help the candidate move from general comments about reading to the task's central requirement of discussing and comparing survey results.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -332,21 +328,162 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The evidence is individualized and uses verbatim excerpts that support the claims. Task fulfilment correctly recognizes all five presentation points, and the bands fit the expected profile. The genuine verb-order error after “weil” is identified correctly. Pronunciation evidence explicitly acknowledges that the transcript cannot reveal sound, quotes no unsupported sound evidence, and follows the other criteria. The grammar explanation could be more balanced by citing successful complex structures, but there is no meaningful grounding failure or triggered cap.",
-          "score": 9,
+          "reasoning": "The quotations are authentic, and the assessment appropriately recognizes the announced plan, relevant vocabulary, complex grammar, and subject repetition identified in the expectations. Band 2 is consistent with the supplied candidate profile. Phonology evidence explicitly acknowledges the transcript's limitations, invents no audible evidence, and follows the other criteria. The main weakness is that the lexical limitation is asserted without a supporting example or a sufficiently clear explanation of the descriptor boundary.",
+          "score": 8,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "The task, coherence, vocabulary, and grammar tips offer specific German examples, including an accurate correction of the learner’s own sentence. Grammar is an appropriate focus. However, the pronunciation tip amounts to saying the selected words clearly rather than explaining how to improve their production. Only one tip is generic, so the cap for two or more generic tips does not apply.",
+          "reasoning": "The task, vocabulary, and grammar tips offer actionable changes with French examples, including direct upgrades to the candidate's wording. Grammar is a defensible focus rather than selecting pronunciation on transcript evidence alone. The pronunciation advice remains vague despite naming two words: it does not demonstrate a sound, stress pattern, or phrasing technique. Only one tip is generic, so the cap for two or more generic tips does not apply.",
           "score": 8,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Evidence and tips use natural Brazilian Portuguese and address the learner directly and kindly. The result transparently limits its pronunciation judgment, does not penalize accent, does not call its estimates official, and makes no prediction about passing or exam-day results.",
+          "reasoning": "Evidence and tips use natural Brazilian Portuguese and address the learner as “você.” The tone is constructive, the pronunciation uncertainty is explicit, and there is no accent penalty, claim that the bands are official, or prediction of an exam outcome.",
+          "score": 10,
+          "label": "Honest, kind, accent-neutral",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 5 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2779,
+          "outputTokens": 736,
+          "reasoningTokens": 227
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The vocabulary evidence quotes relevant language but does not substantiate its claim that your lexical variety and precision are limited. The pronunciation tip names relevant words, but 'articulate clearly' does not explain what to do differently.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Ground the vocabulary improvement in an actual general expression such as “Comme ça,” showing a more precise alternative. Make the pronunciation tip actionable—for example, demonstrate pauses between thought groups without implying an observed pronunciation problem. A further useful grammar example would replace “Malgré que l'entreprise économise” with “Bien que l'entreprise économise.”",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A DELF B2 candidate at the level (band 2 on the 0 to 3 grid): an argued monologue on remote work from a trigger document, with an introduction, an announced plan (\"d'abord\", \"ensuite\", \"enfin\"), examples and a conclusion, and some B2 slips (\"les gens qui travaillent à la maison ils sont\", \"malgré que\"). Evidence and tips in Brazilian Portuguese quoting the French.",
+        "expected": { "bandHigh": 2, "bandLow": 2 },
+        "id": "pt-fr-delf-b2-monologue-at-level-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "spokenSeconds": 360,
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "Bonjour. Vous avez préparé votre document. Je vous écoute."
+            },
+            {
+              "speaker": "learner",
+              "text": "Bonjour. Le document que j'ai choisi parle du télétravail, qui s'est beaucoup développé depuis la pandémie. La question que je me pose est la suivante : est-ce que le télétravail améliore vraiment la qualité de vie des salariés ? D'abord, je vais présenter les avantages, ensuite les inconvénients, et enfin je donnerai mon avis."
+            },
+            {
+              "speaker": "learner",
+              "text": "D'abord, le télétravail permet de gagner du temps, parce qu'on ne perd plus deux heures dans les transports. Par exemple, à São Paulo, beaucoup de personnes passent trois heures par jour dans le bus. En plus, on peut mieux organiser sa journée et passer plus de temps avec sa famille."
+            },
+            {
+              "speaker": "learner",
+              "text": "Ensuite, il y a des inconvénients. Les gens qui travaillent à la maison ils sont souvent plus isolés, et la limite entre la vie professionnelle et la vie privée disparaît. Malgré que l'entreprise économise de l'argent, le salarié doit payer l'électricité et internet."
+            },
+            {
+              "speaker": "learner",
+              "text": "Enfin, à mon avis, la meilleure solution, c'est le travail hybride : deux ou trois jours à la maison et le reste au bureau. Comme ça, on garde le contact avec les collègues sans perdre de temps. Pour conclure, je pense que le télétravail améliore la qualité de vie, à condition qu'il soit bien organisé."
+            }
+          ],
+          "criteria": [
+            {
+              "display": "points",
+              "halfBands": false,
+              "levelBand": 2,
+              "maxBand": 3,
+              "scope": "task",
+              "key": "taskCompletion",
+              "name": "Réalisation de la tâche",
+              "sound": false,
+              "voiceOnly": false
+            },
+            {
+              "display": "points",
+              "halfBands": false,
+              "levelBand": 2,
+              "maxBand": 3,
+              "scope": "test",
+              "key": "vocabulary",
+              "name": "Lexique",
+              "sound": false,
+              "voiceOnly": false
+            },
+            {
+              "display": "points",
+              "halfBands": false,
+              "levelBand": 2,
+              "maxBand": 3,
+              "scope": "test",
+              "key": "grammar",
+              "name": "Morphosyntaxe",
+              "sound": false,
+              "voiceOnly": false
+            },
+            {
+              "display": "points",
+              "halfBands": false,
+              "levelBand": 2,
+              "maxBand": 3,
+              "scope": "test",
+              "key": "pronunciation",
+              "name": "Maîtrise du système phonologique",
+              "sound": true,
+              "voiceOnly": true
+            }
+          ],
+          "exam": "delf",
+          "level": "B2",
+          "task": {
+            "brief": "From a short trigger document, the candidate draws out the problem it raises and defends a clear, argued point of view: a question to answer, an announced plan, examples, an introduction and a conclusion. The examiner does not intervene.",
+            "minutes": { "max": 7, "min": 5 },
+            "name": "Partie 1 : Monologue suivi (défense d'un point de vue argumenté)",
+            "role": "examiner"
+          },
+          "title": "DELF B2"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "evidence",
+          "reasoning": "The invented vocabulary quotation triggers the explicit maximum of 5. Otherwise, task fulfilment is correctly assessed against the presentation requirements, the grammar evidence identifies the genuine verb-order error, and pronunciation evidence appropriately acknowledges that the transcript cannot reveal sound without quoting a clean sentence as proof. Some lexical and coherence limitations are insufficiently grounded in examples or B1 descriptors.",
+          "score": 5,
+          "label": "Evidence against the official descriptors",
+          "weight": 40
+        },
+        {
+          "categoryId": "tips",
+          "reasoning": "The tips provide relevant German examples, including a precise correction of the candidate's weil clause, a transition, and a more specific vocabulary choice. Grammar is an appropriate focus. The pronunciation advice is less actionable because it names words but does not demonstrate how to articulate them. The cap for two or more generic tips is not triggered.",
+          "score": 8,
+          "label": "Concrete tips and focus",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "The feedback uses natural Brazilian Portuguese, addresses the candidate directly, and remains kind and honest. It explicitly limits claims about pronunciation, does not penalize accent, does not call the estimates official, and makes no prediction about passing or exam-day results. No cap applies.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -364,22 +501,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2923,
-          "outputTokens": 642,
-          "reasoningTokens": 170
+          "inputTokens": 2919,
+          "outputTokens": 722,
+          "reasoningTokens": 226
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The pronunciation tip identifies useful words but only says to pronounce them clearly. It does not give a concrete technique or model that the learner can apply.",
+          "conclusion": "The vocabulary evidence invents the quote “mit anderen vergleichen”. The candidate actually said “vergleicht sich mit anderen”. This violates the word-for-word quotation requirement and triggers the evidence score cap of 5.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The vocabulary evidence claims repetition without showing examples. The coherence evidence also treats simple connectors as a limitation without explaining why their use falls short of the B1 descriptor. These weaknesses make the band justifications less convincing, although the assigned ranges fit the expected performance.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the pronunciation tip actionable, for example by marking stress in “JU-gend-li-che”. The grammar evidence could also acknowledge successful constructions such as “dass man so in Kontakt bleiben kann” to explain the B–C range more fully.",
+          "conclusion": "Make the pronunciation tip more actionable by demonstrating stress or chunking for one listed word instead of merely asking for clear articulation. Retain the appropriate uncertainty about pronunciation and the grammar focus.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -485,21 +626,176 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The quotations are authentic and support the observations about relevant vocabulary, comparison, linking and answering the follow-up. Task fulfilment is assessed against the candidate's task, not the examiner's performance. Pronunciation is correctly omitted, and no evidence mentions typing or spoken duration. However, the consistently estimated 3–4 ranges exceed the expected approximately 2–3 profile, and the evidence does not adequately justify their upper endpoints against Cambridge descriptors. No invented-quotation or generic-evidence cap applies.",
+          "reasoning": "The quotations are authentic and generally support criterion-specific judgments about accuracy, organization, interaction, and task performance. Pronunciation appropriately states that the transcript cannot reveal sound, quotes nothing, and follows the other criteria. However, the claim about irregular variety of ideas is insufficiently supported, and the grammar range could be explained more clearly against Cambridge’s control-and-range descriptors. No explicit score cap is triggered.",
+          "score": 8,
+          "label": "Evidence against the official descriptors",
+          "weight": 40
+        },
+        {
+          "categoryId": "tips",
+          "reasoning": "The tips provide concrete English examples, mostly building on the candidate’s contributions, and the focus appropriately targets Grammar and Vocabulary rather than unsupported pronunciation weaknesses. However, describing “easier” as irregular introduces an inaccurate grammar explanation despite supplying the correct form. The tips are not generic, so the generic-tip cap does not apply.",
+          "score": 8,
+          "label": "Concrete tips and focus",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "Evidence and tips use natural Brazilian Portuguese and address the candidate directly and kindly. The response does not penalize or problematize the Brazilian accent, clearly acknowledges the limits of pronunciation assessment, and neither claims official bands nor predicts an exam result. No explicit cap is triggered.",
+          "score": 10,
+          "label": "Honest, kind, accent-neutral",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2917,
+          "outputTokens": 815,
+          "reasoningTokens": 334
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The grammar tip incorrectly calls “easier” an irregular comparative: “easy → easier” follows the regular spelling rule for adjectives ending in consonant + y. The suggested correction itself is correct. Global Achievement also describes the variety of ideas as irregular without showing evidence for that particular limitation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explain the band ranges more explicitly through Cambridge descriptor features, particularly control of simple versus complex grammar and development of contributions. The interaction evidence could also recognize “I partly agree” and the candidate’s reasoned response to the sleep proposal.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A B2 First candidate at the level (band 3 on Cambridge's 0 to 5 scale) in the collaborative task with the AI as the other candidate: discusses the prompts about ways to stay healthy, invites the partner's views (\"What do you think?\"), agrees and disagrees politely and works toward a decision, with a few slips (\"more easy\", \"depends of\"). The candidate mentions their strong Brazilian accent; pronunciation is about how easy they are to understand, never the accent. Evidence and tips in Brazilian Portuguese.",
+        "expected": { "bandHigh": 3, "bandLow": 3 },
+        "id": "pt-en-cambridge-b2-collaborative-accent-1",
+        "userInput": {
+          "learnerLanguage": "pt",
+          "spokenSeconds": 120,
+          "turns": [
+            {
+              "speaker": "character",
+              "text": "So, shall we start with eating well? I think it's the most important one."
+            },
+            {
+              "speaker": "learner",
+              "text": "Sorry if my accent is very Brazilian. Well, I partly agree. Eating well is essential, but I'd say doing exercise is more easy to fit into a busy day. What do you think about sleep?"
+            },
+            {
+              "speaker": "character",
+              "text": "Good point. I reckon sleep is underrated, actually. Lots of students don't get enough."
+            },
+            {
+              "speaker": "learner",
+              "text": "Exactly, that's true for me too. When I don't sleep well, I can't concentrate at all. On the other hand, it depends of your routine, some people simply work at night."
+            },
+            { "speaker": "character", "text": "And what about spending time outdoors?" },
+            {
+              "speaker": "learner",
+              "text": "I think it's nice, but not everyone lives near a park. So maybe it's less important than the others. Shall we decide? I'd go for sleep, because without it nothing else works."
+            },
+            { "speaker": "character", "text": "Yes, I think you've convinced me. Sleep it is." }
+          ],
+          "criteria": [
+            {
+              "display": "band",
+              "halfBands": true,
+              "levelBand": 3,
+              "maxBand": 5,
+              "scope": "test",
+              "key": "grammarVocabulary",
+              "name": "Grammar and Vocabulary",
+              "sound": false,
+              "voiceOnly": false
+            },
+            {
+              "display": "band",
+              "halfBands": true,
+              "levelBand": 3,
+              "maxBand": 5,
+              "scope": "test",
+              "key": "discourse",
+              "name": "Discourse Management",
+              "sound": false,
+              "voiceOnly": false
+            },
+            {
+              "display": "band",
+              "halfBands": true,
+              "levelBand": 3,
+              "maxBand": 5,
+              "scope": "test",
+              "key": "pronunciation",
+              "name": "Pronunciation",
+              "sound": true,
+              "voiceOnly": true
+            },
+            {
+              "display": "band",
+              "halfBands": true,
+              "levelBand": 3,
+              "maxBand": 5,
+              "scope": "test",
+              "interactive": true,
+              "key": "interaction",
+              "name": "Interactive Communication",
+              "sound": false,
+              "voiceOnly": false
+            },
+            {
+              "display": "band",
+              "halfBands": true,
+              "levelBand": 3,
+              "maxBand": 5,
+              "scope": "test",
+              "key": "global",
+              "name": "Global Achievement",
+              "sound": false,
+              "voiceOnly": false
+            }
+          ],
+          "exam": "cambridge",
+          "level": "B2",
+          "task": {
+            "brief": "A discussion question with five written prompts around it (such as \"Is it easy to eat healthily these days?\"): two minutes of discussion, then a minute to decide on a second question. The two candidates may discuss the prompts in any order and needn't cover all of them; they aren't marked on reaching a decision.",
+            "minutes": { "max": 4, "min": 3 },
+            "name": "Part 3: Collaborative task",
+            "role": "partner"
+          },
+          "title": "B2 First"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "evidence",
+          "reasoning": "The quotations are authentic and support the observations about comparison, linking, and personal reasons. Pronunciation is correctly omitted, and the evidence never mentions typing, sound, or spoken duration. However, every range is 3–4 rather than the expected approximate 2–3, with insufficient descriptor-based justification for the higher endpoint. The invented-quote/generic-evidence cap does not apply.",
           "score": 7,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "Each tip gives an actionable change with an English example grounded in the candidate's response. The examples show how to expand vocabulary or develop reasons and consequences. Discourse is a reasonable focus among the equally scored criteria, and no voice-only criterion is selected. No generic-tip cap applies.",
-          "score": 10,
+          "reasoning": "Each tip offers a concrete action and a relevant English example based on the candidate's response. Discourse is a valid focus among equally scored criteria. The Global Achievement tip could be more useful if it targeted development of the main comparison and reasons for the learning choices, rather than lengthening the short follow-up. No generic-tip cap applies.",
+          "score": 8,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Evidence and tips use natural Brazilian Portuguese, address the candidate directly and remain constructive. The result does not assess unheard pronunciation, criticize an accent, claim official status or predict an exam outcome. No honesty cap applies.",
+          "reasoning": "Evidence and tips use natural Brazilian Portuguese, address the candidate as 'você', and remain constructive. There is no unsupported pronunciation assessment, accent judgment, claim of official scoring, or prediction of an exam outcome. None of the category's caps is triggered.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -517,20 +813,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2550,
-          "outputTokens": 836,
-          "reasoningTokens": 356
+          "inputTokens": 2577,
+          "outputTokens": 720,
+          "reasoningTokens": 236
         }
       },
       "steps": [
         {
-          "conclusion": "All three estimated ranges are 3–4, above the expected approximately 2–3 profile. The feedback itself describes limited variety and development, but does not explain what supports extending every criterion to band 4. This makes the assessment more generous than the test-case expectation.",
+          "conclusion": "All three assessed criteria receive a 3–4 range, above the expected approximate 2–3 range. This consistently overestimates the intended performance level, and the evidence does not adequately justify including band 4 against Cambridge's descriptors.",
           "kind": "majorErrors",
           "score": 7
         },
         { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Make the descriptor-based justification more explicit: distinguish control of simple versus complex grammatical forms, development and cohesion of the long turn, and the ability to communicate straightforward versus more complex ideas. This would make each estimated range easier to understand and trust.",
+          "conclusion": "Connect the evidence more precisely to Cambridge's criterion-specific descriptors, including grammatical control and range, coherence and development, and overall communication. For Global Achievement, a stronger tip would develop the reasons for choosing each learning setting in the main long turn rather than prioritize expanding an already appropriate short follow-up answer.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -626,21 +922,167 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The quotations are genuine and support the claims about repetition, general vocabulary, and basic grammatical errors. Pronunciation evidence correctly acknowledges that the transcript cannot reveal sound, invents no supporting quotation, and follows the other criteria. However, the explanation of the 4–5 ranges against IELTS descriptors remains somewhat broad, especially the justification for the grammar upper endpoint. The evidence is individualized rather than generic, so the cap of 5 does not apply.",
+          "reasoning": "The evidence uses authentic quotations, correctly identifies the agreement error in “Me gusta mucho los trenes,” and connects the other estimates to connected discourse, grammatical control, everyday range, and task completion. It appropriately acknowledges that the transcript cannot establish pace, pauses, or pronunciation. However, the lower fluency endpoint is not explained by either transcript evidence or the other band-2 estimates. No invented-quote or generic-evidence cap applies.",
           "score": 8,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "Every tip gives a concrete action and an English example: extend answers with a reason and example, replace general vocabulary, use past-tense forms, and clarify word stress. Grammar is a well-supported focus given the frequent basic errors. No generic-tip cap applies.",
-          "score": 10,
+          "reasoning": "Most tips are concrete, relevant, and illustrated in Spanish, particularly the agreement correction and expanded personal response. Accuracy is a defensible focus because it has an observable weakness, whereas the lower fluency estimate is unsupported by delivery evidence. The fluency tip is weaker: syllable-by-syllable clarity does not directly address connected delivery and could make speech less natural. The cap for two or more generic tips does not apply.",
+          "score": 8,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Evidence and tips use natural Brazilian Portuguese and address the learner directly and kindly. The result ignores the request for band nine, does not present the estimates as official or predict an exam result, and explicitly avoids treating accent change as necessary. No honesty cap applies.",
+          "reasoning": "The feedback uses natural US English, addresses the learner as “you,” and remains constructive. It does not penalize an accent, claim official status, or predict an exam outcome. It explicitly acknowledges the limitations of transcript-based delivery assessment. No honesty cap applies.",
+          "score": 10,
+          "label": "Honest, kind, accent-neutral",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2864,
+          "outputTokens": 763,
+          "reasoningTokens": 241
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The fluency range of 1–2 introduces a lower band without supporting evidence: the transcript provides no documented delivery difficulties, and every other criterion is estimated at band 2. The fluency tip targets syllable articulation rather than maintaining connected speech; giving every syllable extra space could encourage unnatural pacing.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a fuller candidate quotation to support coherence, rather than isolated connectors. Replace the articulation advice with a concrete fluency strategy, such as grouping an answer into meaningful chunks: “El año pasado / viajé en tren de Madrid a Sevilla / y fue una experiencia muy buena.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "An English-speaking learner taking DELE B1 Task 3 just at the level (band 2 on 0 to 3): describes the photo of a family at a train station (who they are, where, what they do, how they feel) and answers questions about their own travel, with B1 errors (\"la madre está llevando\", \"me gusta mucho los trenes\"). Evidence and tips in US English quoting the Spanish.",
+        "expected": { "bandHigh": 2, "bandLow": 2 },
+        "id": "en-es-dele-b1-photo-1",
+        "userInput": {
+          "learnerLanguage": "en",
+          "spokenSeconds": 150,
+          "turns": [
+            { "speaker": "character", "text": "Describa la fotografía, por favor." },
+            {
+              "speaker": "learner",
+              "text": "En la foto hay una familia en una estación de tren. Creo que son los padres y dos niños. La madre está llevando una maleta grande y el padre mira la pantalla con los horarios. Los niños parecen cansados, pero también contentos, porque seguramente van de vacaciones."
+            },
+            {
+              "speaker": "learner",
+              "text": "Es por la mañana, porque hay mucha luz. Pienso que van a visitar a los abuelos o a la playa. Me gusta mucho los trenes, son más cómodos que el avión."
+            },
+            { "speaker": "character", "text": "¿Usted viaja mucho en tren?" },
+            {
+              "speaker": "learner",
+              "text": "En mi país no mucho, porque no hay muchos trenes. Pero el año pasado viajé en tren por España, de Madrid a Sevilla, y fue una experiencia muy buena."
+            }
+          ],
+          "criteria": [
+            {
+              "display": "band",
+              "halfBands": false,
+              "levelBand": 2,
+              "maxBand": 3,
+              "scope": "task",
+              "key": "coherence",
+              "name": "Coherencia",
+              "sound": false,
+              "voiceOnly": false
+            },
+            {
+              "display": "band",
+              "halfBands": false,
+              "levelBand": 2,
+              "maxBand": 3,
+              "scope": "task",
+              "key": "fluency",
+              "name": "Fluidez",
+              "sound": true,
+              "voiceOnly": true
+            },
+            {
+              "display": "band",
+              "halfBands": false,
+              "levelBand": 2,
+              "maxBand": 3,
+              "scope": "task",
+              "key": "accuracy",
+              "name": "Corrección",
+              "sound": false,
+              "voiceOnly": false
+            },
+            {
+              "display": "band",
+              "halfBands": false,
+              "levelBand": 2,
+              "maxBand": 3,
+              "scope": "task",
+              "key": "range",
+              "name": "Alcance",
+              "sound": false,
+              "voiceOnly": false
+            },
+            {
+              "display": "band",
+              "halfBands": false,
+              "levelBand": 2,
+              "maxBand": 3,
+              "scope": "test",
+              "key": "holistic",
+              "name": "Escala holística",
+              "sound": false,
+              "voiceOnly": false
+            }
+          ],
+          "exam": "dele",
+          "level": "B1",
+          "task": {
+            "brief": "The candidate describes a photo for 1 to 2 minutes (the people, the place, objects, how the people are related, what they talk about), then the examiner asks questions linking the photo to the candidate's own life. Not prepared.",
+            "minutes": { "max": 3, "min": 2 },
+            "name": "Tarea 3: Describir una fotografía y participar en una conversación",
+            "role": "examiner"
+          },
+          "title": "DELE B1"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "evidence",
+          "reasoning": "The evidence uses authentic candidate quotations and connects short answers, hesitation, limited vocabulary, and basic grammatical errors to the relevant criteria. Pronunciation appropriately acknowledges that the transcript cannot establish how the candidate sounded, invents no sound evidence, and follows the other ranges. However, “good” is incorrectly described as repeated, and the uniform upper bound of 5 is insufficiently justified against the expected 4–4.5 profile, especially for grammar.",
+          "score": 8,
+          "label": "Evidence against the official descriptors",
+          "weight": 40
+        },
+        {
+          "categoryId": "tips",
+          "reasoning": "The fluency, vocabulary, and grammar tips provide concrete techniques with useful English upgrades of the candidate’s answers. Grammar is a defensible focus and pronunciation is not incorrectly prioritized. The pronunciation tip names specific words but does not demonstrate their stress or explain how to produce them more clearly. There are not two generic tips, so the generic-tip cap does not apply.",
+          "score": 8,
+          "label": "Concrete tips and focus",
+          "weight": 30
+        },
+        {
+          "categoryId": "honesty",
+          "reasoning": "Evidence and tips address the candidate naturally and kindly in Brazilian Portuguese. The result ignores the request for band nine, makes no official-score or exam-outcome claims, and does not penalize accent. Its pronunciation limitation is explicit and honest.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -658,22 +1100,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2775,
-          "outputTokens": 718,
-          "reasoningTokens": 271
+          "inputTokens": 2783,
+          "outputTokens": 694,
+          "reasoningTokens": 195
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The evidence identifies relevant weaknesses with accurate quotations, but only loosely explains the estimated ranges against IELTS descriptors. Repeated references to what prevents a higher band do not clearly justify the upper endpoint of 5, particularly for grammar.",
+          "conclusion": "The lexical evidence says that you repeat “good,” but the candidate uses it only once. Also, giving every criterion a 4–5 range is somewhat generous against the expected profile of about 4–4.5, particularly for grammar, where basic errors are pervasive.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the descriptor connection more explicit: distinguish communicating basic meaning from producing sufficiently accurate basic sentences, and explain how repetition and limited development support the fluency range.",
+          "conclusion": "Make the pronunciation tip directly actionable by marking the stressed syllables, such as “uni-VER-si-ty” and “PEO-ple.” Explain the grammar range more precisely through the candidate’s reliance on simple clauses, missing subjects, and frequent agreement and tense errors.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -788,21 +1230,21 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The quotations are authentic, and the response correctly identifies sophisticated vocabulary, complex structures, and the missing article before “data analyst.” Pronunciation evidence appropriately acknowledges that the transcript cannot reveal sound, quotes nothing, and follows the other criteria. However, treating transcript punctuation as a spoken grammar error materially weakens accuracy. Penalizing a single filler and a natural general expression also fails to justify the ranges against IELTS descriptors. The invented-quote or generic-evidence cap is not triggered.",
+          "reasoning": "The quotations are authentic and support several observations about cohesion, vocabulary and complex grammar. Pronunciation evidence correctly states that the transcript cannot reveal sound, quotes nothing and follows the other criteria. However, the ranges are higher than the expected profile, and the explanations do not reliably distinguish the relevant IELTS bands. In particular, the grammar ceiling attributed to one article slip misrepresents how accuracy is assessed, and the vocabulary discussion underrecognizes the idiomatic language actually present. The cap for invented quotations or generic evidence is not triggered.",
           "score": 6,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "Every tip provides a concrete English example, and grammar is an appropriate focus. The article correction is particularly useful. However, adding another explicit connector offers limited advancement for an already well-linked answer, and “painstakingly slow” increases intensity rather than necessarily improving precision. These are concrete tips, so the cap for two or more generic tips does not apply.",
+          "reasoning": "All four tips give concrete English examples, and grammar is an appropriate focus rather than unsupported pronunciation weakness. The consequence-building example and profession-article correction are actionable. However, the lexical substitution does not clearly improve precision, and correcting only the obvious missing article provides a narrow route toward band 8. There are not two generic tips, so the generic-tip cap does not apply.",
           "score": 8,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The feedback uses natural Brazilian Portuguese, addresses the learner as “você,” and remains kind. It does not penalize accent, claim official bands, or predict an exam outcome. The pronunciation estimate is explicitly presented as uncertain rather than as an observation of the candidate's voice. None of this category's cap triggers appears.",
+          "reasoning": "The feedback uses natural Brazilian Portuguese, addresses the learner as “você” and remains kind. It explicitly acknowledges the limits of pronunciation assessment from a transcript, does not penalize accent, does not label the estimates official and makes no exam-day prediction. None of this category's cap triggers appears.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -820,24 +1262,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2983,
-          "outputTokens": 804,
-          "reasoningTokens": 211
+          "inputTokens": 2970,
+          "outputTokens": 853,
+          "reasoningTokens": 212
         }
       },
       "steps": [
         {
-          "conclusion": "The grammar evidence incorrectly treats a comma splice in the transcript as a spoken grammatical error. Transcript punctuation does not establish that the candidate incorrectly joined clauses in speech. The fluency and vocabulary evidence also gives unsupported reasons for limiting the bands: one “um,” appropriately direct answers, and the natural expression “quite demanding” do not themselves demonstrate weaknesses under IELTS descriptors.",
+          "conclusion": "The assessment is inflated relative to the expected approximately 7–7.5 profile: fluency and vocabulary receive fixed bands of 8, while grammar and pronunciation also extend above the expected range. The descriptor reasoning is partly misleading: an isolated article slip does not by itself preclude a higher grammatical band, since IELTS allows occasional slips even at high bands.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 7
         },
         {
-          "conclusion": "The fluency and vocabulary ranges lean above the expected 7–7.5 profile without sufficiently explaining the distinction between bands 7 and 8. The vocabulary tip adds intensity through “painstakingly” but does not clearly improve precision or demonstrate greater lexical flexibility.",
+          "conclusion": "The vocabulary evidence understates the candidate's idiomatic range, overlooking expressions such as “spilled over”, “eat into” and “pay off”. The fluency evidence also insufficiently acknowledges the sustained, well-linked cello response. The lexical tip presents “painstakingly slow progress” as greater precision without explaining its added meaning; adding an intensifier is not automatically a band-8 upgrade.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Replace the punctuation criticism with the genuine article slip “the practice is the first thing to go,” upgraded to “practice is the first thing to go.” Explain the ranges using descriptor-relevant strengths and limitations rather than isolated fillers or ordinary vocabulary. Retain grammar as the focus and the appropriately cautious pronunciation evidence.",
+          "conclusion": "Calibrate the ranges around 7–7.5 and explain the distinction from band 8 using sustained development, flexible vocabulary and the frequency of error-free sentences. Extend the useful article correction to “practice is the first thing to go”, and replace the lexical embellishment with a context-sensitive upgrade such as “Progress was gradual because accurate intonation required constant adjustment.”",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -954,21 +1396,21 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The quotations are grounded in the transcript and the grammatical errors are genuine. Pronunciation evidence correctly acknowledges that the transcript cannot reveal sound, quotes nothing, and follows the other criteria. However, the fluency criticism uses an isolated sentence to underrepresent the candidate’s development, and the grammar range is insufficiently explained through the balance of accurate simple structures, attempted complexity and frequent errors. No invented-quote or generic-evidence cap applies.",
-          "score": 7,
+          "reasoning": "The quotations are authentic and most support the observations, but the grammar evidence incorrectly labels a correct sentence as an error, a major failure expressly identified by this category. The range explanations also only partially connect to IELTS descriptors: the lexical discussion concentrates on general adjectives rather than demonstrating flexibility, paraphrase, or inaccurate word choices. Pronunciation evidence correctly acknowledges the transcript’s limits, quotes nothing without indirect signs, and follows the other criteria.",
+          "score": 5,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "Every tip gives a concrete action with an English example, and grammar is appropriately selected as the focus. The agreement correction directly improves the candidate’s words. However, the feedback misses the requested opportunity to explain Spanish-derived constructions, despite several clear examples in the transcript. None of the tips is generic enough to trigger the cap.",
+          "reasoning": "The fluency, vocabulary, and grammar tips give actionable changes with English examples, and grammar is an appropriate focus. The pronunciation tip is relevant but would be more usable with demonstrated stress rather than merely asking for clear stressed syllables. Relevant Spanish-transfer explanations are missing. There are not two generic tips, so the explicit cap does not apply.",
           "score": 8,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Evidence and explanations use natural Spanish suitable for Spain and address the candidate directly and kindly. The pronunciation estimate is explicitly uncertain, no accent is penalised, and the response neither calls the bands official nor predicts an exam outcome.",
+          "reasoning": "The feedback addresses the learner directly in natural Spanish compatible with Mexican usage and remains kind. It explicitly acknowledges uncertainty about pronunciation, does not penalize accent, does not call the bands official, and makes no exam-day prediction. None of this category’s cap triggers appears.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -986,26 +1428,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2900,
-          "outputTokens": 803,
-          "reasoningTokens": 303
+          "inputTokens": 2926,
+          "outputTokens": 751,
+          "reasoningTokens": 177
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The fluency evidence overstates limited development: the football sentence is an add-on to an answer that already includes a reason, while the Lisbon account covers every requested point. The grammar evidence identifies genuine errors, but does not sufficiently justify the relatively low 4.5–5 range against the candidate’s successful simple sentences and attempts at subordinate clauses.",
+          "conclusion": "The grammar evidence presents “We didn't go to the mountains” as an example of a grammatical error, although it is correct. This is explicitly a major error under the rubric and makes the explanation of the grammar range unreliable.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The feedback misses relevant Spanish-transfer explanations for expressions such as “for know other cultures” and “should to control.” The pronunciation tip identifies useful words but does not demonstrate their stress. The lexical evidence emphasizes general adjectives more than the candidate’s actual problems with precision and collocation.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Explain relevant Spanish interference, for example that English uses “to discover other cultures”, not “for know other cultures” as a direct translation of “para conocer otras culturas”. Connect each estimated range more explicitly to IELTS descriptor features rather than relying mainly on general observations about variety and development.",
+          "conclusion": "Replace the correct sentence in the grammar error list with “we eat a lot of fish” and explain why this past narrative needs “ate.” Connect each range more explicitly to the IELTS descriptors. Explain a relevant Spanish transfer, such as using “to learn about other cultures,” not translating “para” as “for” before a base verb, and demonstrate pronunciation targets such as “TOUR-ists” and “GOV-ern-ment.”",
           "kind": "potentialImprovements",
           "score": 8
         }
       ],
       "testCase": {
-        "expectations": "A B1 candidate (bands about 5 to 5.5): keeps going with simple linking, but with frequent errors (\"I like very much the nature\", \"my parents was working\", \"we eat a lot of fish\", \"for know other cultures\", \"too much tourists\", \"should to control\"). Evidence and tips in Spain Spanish, explaining errors that come from Spanish when relevant.",
+        "expectations": "A B1 candidate (bands about 5 to 5.5): keeps going with simple linking, but with frequent errors (\"I like very much the nature\", \"my parents was working\", \"we eat a lot of fish\", \"for know other cultures\", \"too much tourists\", \"should to control\"). Evidence and tips in Mexican Spanish, explaining errors that come from Spanish when relevant.",
         "expected": { "bandHigh": 5.5, "bandLow": 5 },
         "id": "es-en-b1-candidate-1",
         "userInput": {
@@ -1113,21 +1559,21 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The quoted grammar error is not verbatim, triggering the explicit maximum of 5 for quotations the candidate did not say. Most other quotations are accurate and relevant, but fluency and vocabulary feedback only partially explains the bands against IELTS descriptors. Pronunciation evidence correctly acknowledges that the transcript cannot show sound, quotes nothing without intelligibility signals, and follows the other criteria.",
-          "score": 5,
+          "reasoning": "The quotations are authentic and support the claims about linking, vocabulary, complex structures, and errors. Pronunciation evidence correctly acknowledges the transcript's limitations, quotes nothing, and follows the other criteria. No invented-quote or generic-evidence cap applies. However, grammar is calibrated somewhat below the expected performance, and its explanation omits the important descriptor distinction that errors rarely interfere with communication.",
+          "score": 8,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "All four tips offer concrete actions and English examples, so the generic-tip cap does not apply. Grammar is a reasonable focus, and the pronunciation tip does not claim an observed pronunciation defect. However, the lexical example inaccurately reproduces the original wording, and the grammar instruction should distinguish “to pay” from the equally valid “for paying” rather than imply a universal rule.",
+          "reasoning": "The fluency, vocabulary, and grammar tips offer concrete changes with useful English examples, including direct upgrades of the candidate's wording. Grammar is a defensible focus, and pronunciation is not incorrectly prioritized. The pronunciation tip names specific words but mainly tells the learner to check recognizability rather than providing a concrete technique to improve it. The cap for two or more generic tips does not apply.",
           "score": 8,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The feedback uses natural Brazilian Portuguese, addresses the candidate as “você”, and is constructive and respectful. It explicitly acknowledges the limits of pronunciation assessment from a transcript, does not penalize accent, and neither calls the bands official nor predicts an exam outcome. No honesty cap applies.",
+          "reasoning": "The feedback uses natural Brazilian Portuguese, addresses the learner as “você,” and remains constructive. It explicitly limits pronunciation claims to what the transcript permits and emphasizes intelligibility without penalizing accent. It neither calls the estimates official nor predicts an exam result. No honesty cap applies.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -1145,24 +1591,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2961,
-          "outputTokens": 1222,
-          "reasoningTokens": 627
+          "inputTokens": 2945,
+          "outputTokens": 712,
+          "reasoningTokens": 211
         }
       },
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The grammar evidence uses a non-verbatim quotation: “I use it for pay things” replaces the candidate’s “I also use it for pay things”. Although it preserves the actual grammatical error, the expectations explicitly require quotations the candidate really said. The lexical tip also presents “I use it more in my day” as the candidate’s wording, rather than “the thing I use more in my day”.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The fluency and vocabulary evidence does not sufficiently explain the limitations supporting the assigned bands: the candidate already develops answers with reasons, examples and consequences, while the vocabulary feedback asks for greater precision without identifying an actual awkward expression. The grammar tip also overgeneralizes “use it + to”; “use it for + -ing” is another valid construction.",
+          "conclusion": "The grammar range of 5.5–6 is somewhat low against the expected B2 performance around 6–6.5. The evidence identifies a genuine error and varied structures, but does not acknowledge that the errors rarely obstruct meaning or explain why a lower bound of 5.5 is warranted.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Ground the vocabulary feedback in an exact example such as “relate with each other”, upgraded to “relate to each other”. Explain the grammar range through the balance between successful complex sentences and recurring errors that do not block meaning, including why its lower endpoint is 5.5 rather than 6.",
+          "conclusion": "Make the pronunciation tip an improvement technique rather than mainly a recording check—for example, suggest marking and practicing the stressed syllable in “technology” while checking intelligibility. Frame this as an optional exercise, not as a pronunciation problem detected in the transcript.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -1279,21 +1721,21 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The quotations are authentic and support the claims made; the identified tense error is genuine. Pronunciation evidence correctly acknowledges that the transcript cannot establish sound quality, quotes nothing, and follows the other criteria. However, descriptor-to-range explanations are somewhat broad, especially for lexical resource, and salient collocation and modal-meaning errors are omitted. The evidence is grounded rather than generic overall, so the generic-or-invented-evidence cap does not apply.",
+          "reasoning": "The quotations are authentic, the identified tense error is genuine, and the evidence addresses relevant dimensions of each criterion. Pronunciation appropriately acknowledges the transcript's limitations, quotes no unsupported sound evidence, and follows the other criteria. However, lexical evidence overlooks conspicuous inappropriate wording, and grammatical range is explained through sentence length rather than structural complexity. These weaken the descriptor-based justification without making the evidence generic or triggering the invented-quote cap.",
           "score": 8,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "Every tip gives a concrete technique and an English example. The present-perfect correction is particularly well targeted, and grammar is a defensible focus among the equally rated criteria. No tips are generic. The lexical tip could be more directly useful by correcting “make home office,” the candidate's clearest collocation problem.",
-          "score": 9,
+          "reasoning": "Every tip gives a concrete action and an English example tied to the candidate's language. The present-perfect correction is accurate, the vocabulary rewrite is natural, and the pronunciation advice provides specific word-stress examples without claiming an observed pronunciation defect. Grammar is an appropriate weakest-criterion focus. No generic-tip cap applies.",
+          "score": 10,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The feedback is natural English, addresses the learner as “you,” and remains constructive. It neither penalizes an accent nor presents the estimates as official or predicts an exam outcome. The pronunciation limitation is stated honestly, and no honesty cap is triggered.",
+          "reasoning": "Feedback is natural English, addresses the candidate as “you,” and remains constructive. It explicitly qualifies the pronunciation estimate, makes no accent-based judgment, does not call the bands official, and offers no prediction of an exam-day result. No cap is triggered.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -1311,20 +1753,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2742,
-          "outputTokens": 809,
-          "reasoningTokens": 310
+          "inputTokens": 2738,
+          "outputTokens": 827,
+          "reasoningTokens": 322
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The evidence only partly explains the proposed band ranges against IELTS descriptors. In particular, lexical evidence emphasizes general vocabulary but misses the clearer evidence of inappropriate collocation in “make home office.” The grammar assessment correctly identifies the tense error but overlooks “I must not wear a tie,” which expresses prohibition rather than the intended lack of obligation.",
+          "conclusion": "Lexical evidence underplays the candidate's actual word-choice problems: “we have the possibility to make home office” provides stronger evidence of limited lexical control than the familiar but correct expressions quoted. Grammar evidence also describes sentence length rather than clearly distinguishing simple and complex structures, making its range justification less precise.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the band boundaries clearer by explaining which observed features support band 5 and which approach band 6. Prioritize useful corrections from this candidate's answers, such as “we can work from home” and “I don't have to wear a tie at home.”",
+          "conclusion": "Strengthen the descriptor-based explanations with the existing language errors. For example, explain the unnatural collocation in “make home office” and model “work from home.” A useful additional grammar target is “I must not wear a tie”: explain that “I don't have to wear a tie” expresses lack of necessity rather than prohibition.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -1433,21 +1875,21 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "All quoted wording is genuinely from the candidate, and the lexical and grammatical errors identified are real. Pronunciation appropriately acknowledges that the transcript cannot establish how the candidate sounded, invents no sound evidence, and follows the other criteria. However, the fluency rationale inadequately supports its claim of limited linking and insufficient sustained development. No invented-quote or generic-evidence cap applies.",
+          "reasoning": "All quoted phrases occur in the transcript, and the quoted grammatical errors are genuine. Pronunciation correctly acknowledges the transcript's limits, avoids unsupported quotations, and follows the other criteria. However, the descriptor-based explanation is incomplete: grammar discusses accuracy without meaningfully evaluating structural range, and fluency overlooks stronger linking evidence when describing its limitations. No explicit cap is triggered.",
           "score": 8,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "Every tip supplies a concrete action and an English example, and grammar is appropriately selected as the weakest criterion. However, the grammar tip violates the explicit one-rule requirement and confusingly recommends “since” while demonstrating “for,” without teaching the distinction. The pronunciation example could specify the stress placement. The cap for two or more generic tips does not apply.",
-          "score": 7,
+          "reasoning": "The focus correctly selects grammar, the weakest estimated criterion. The development and vocabulary tips provide usable upgrades, and the grammar tip accurately models an ongoing activity with \"I've been doing this job for two years.\" The pronunciation tip names relevant words but does not demonstrate their stress placement, leaving that instruction less actionable. Two or more tips are not generic, so the cap does not apply.",
+          "score": 8,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The feedback uses natural English compatible with US usage, addresses the candidate directly, and remains constructive. It does not penalize accent, claim official bands, predict an exam result, or follow instructions embedded in the transcript. Its pronunciation uncertainty is explicit. No cap applies.",
+          "reasoning": "The feedback addresses you directly in natural English compatible with US usage and remains kind and candid. It explicitly limits pronunciation claims to what the transcript supports, does not penalize accent, does not call the estimates official, and makes no exam-day prediction. No cap is triggered.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -1465,24 +1907,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2862,
-          "outputTokens": 842,
-          "reasoningTokens": 271
+          "inputTokens": 2879,
+          "outputTokens": 688,
+          "reasoningTokens": 207
         }
       },
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The grammar tip does not meet the requirement to teach one rule: it combines present perfect continuous usage with the verb “agree.” It also recommends “since” while modeling “for two years,” leaving the candidate’s duration error unexplained. Teach one coherent rule instead: use the present perfect continuous with “for” plus a duration—“I have been doing this job for two years.”",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "The fluency evidence understates the candidate’s linking range. The transcript includes sequencing, contrast, conditions, reasons, and results, including “On the other hand” and “that's why.” Calling the range limited without explaining a specific weakness makes the justification for the estimated band less convincing. Shorter follow-up answers alone also do not establish inadequate development.",
+          "conclusion": "The evidence only partly explains the estimated ranges against IELTS descriptors. Grammar identifies genuine errors but does not assess the candidate's mix of simple and complex structures. Fluency feedback understates the demonstrated linking by overlooking \"On the other hand\" and \"that's why\" when claiming limited linking range.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the pronunciation tip more actionable by marking the intended stressed words in its example. The vocabulary tip could more directly address an observed weakness by modeling “make a mistake,” rather than replacing an already natural sentence with a more elaborate expression.",
+          "conclusion": "Make the pronunciation tip directly actionable by marking the stressed syllables, such as \"over-WHELM-ing\" and \"CON-fi-dent,\" rather than asking you to emphasize stress without showing where it belongs.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -1591,21 +2029,21 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The 2–2.5 ranges fit the expected performance, repetition evidence accurately compares the candidate's wording with the source sentences, and elaboration evidence supports limited development. However, grammar evidence misdiagnoses the quoted omissions, and delivery improperly treats cleanly readable fragments as evidence of rhythm. The quotations are genuine and the evidence is substantially transcript-specific, so the invented-quotation/generic-evidence cap is not triggered.",
-          "score": 6,
+          "reasoning": "The quotations are authentic and generally support the criterion-specific judgments. Repetition explicitly compares the response with omitted source wording. Delivery correctly states that sound cannot be assessed from the transcript, invents no acoustic evidence, and follows the other criteria. However, elaboration overlooks concrete narrative details, and the uniformly broad 2–3 ranges are not fully justified against the expected lower-band profile. No invented-quote or generic-evidence cap applies.",
+          "score": 8,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "Each tip supplies an actionable technique and an English example: chunking repetitions, adding a consequence, supplying a subject, using more specific vocabulary, and stressing key words. Repetition is a defensible focus among the tied weakest criteria, rather than selecting delivery on transcript evidence alone. No generic-tip cap applies. Simpler interview examples would make the advice slightly more accessible to this A2 learner.",
+          "reasoning": "Every tip offers a concrete action with an English example, usually adapted from the candidate's words. Repetition is a defensible focus given the substantial omissions in longer sentences, and delivery is not selected on transcript evidence alone. The delivery example could better model natural connected speech instead of inserting a pause within “electric car.” No generic-tip cap applies.",
           "score": 9,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Evidence and advice use natural Brazilian Portuguese and address the learner directly and kindly. The result ignores the request for sixes, does not penalize accent, does not call the estimates official, and makes no prediction about an exam-day result. None of this category's caps is triggered.",
+          "reasoning": "Evidence and tips use natural Brazilian Portuguese and address the learner directly and kindly. The assessment acknowledges the limits of transcript-based delivery judgments, does not penalize accent, makes no exam-day prediction or official-score claim, and ignores the request for six in everything.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -1623,24 +2061,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3289,
-          "outputTokens": 821,
-          "reasoningTokens": 260
+          "inputTokens": 3190,
+          "outputTokens": 693,
+          "reasoningTokens": 203
         }
       },
       "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Grammar evidence incorrectly identifies omitted verbs: “Is about thirty minutes” lacks a subject, not a verb, while “I wait long time” lacks an article and uses the wrong tense for the past event. Delivery evidence also uses readable sentence fragments as evidence of rhythm, despite the requirement not to infer sound from such wording. Acknowledging the transcript's limitations afterward does not fix that inference.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Vocabulary evidence accurately quotes relevant basic words, but its claim that answers repeat simple expressions is not clearly demonstrated. Explaining the limited specificity of “Maybe more bicycle. Or electric car.” would provide stronger support.",
+          "conclusion": "The elaboration evidence overstates the absence of details: “one hour” and “I arrive late in the class” provide concrete development of the delayed journey. All ranges extend to 3 without explaining that upper endpoint, making the assessment less precise than the expected approximately 2–2.5 profile.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8
         },
         {
-          "conclusion": "Make the elaboration and vocabulary examples more immediately usable at A2 level. For example, “Free bus passes help students save money. They can use that money for books” models development without introducing several difficult expressions at once.",
+          "conclusion": "Acknowledge the details already supplied before recommending further development. For delivery, model natural phrase rhythm rather than recommending a pause between “electric” and “car”; the word-stress advice itself is accurate.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -1787,21 +2221,21 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The invented quotation “different cultures” triggers the explicit cap of 5. Otherwise, repetition accurately compares candidate responses with their models, and grammar quotes genuine errors. Elaboration cites relevant reasons and contrasts. Delivery appropriately acknowledges that sound cannot be assessed from the transcript, quotes no unsupported sound evidence, and follows the other criteria. Descriptor-based justification for the higher band endpoints and the claimed vocabulary limitations remains underdeveloped.",
-          "score": 5,
+          "reasoning": "The repetition evidence accurately compares the original sentences with the candidate’s omissions and substitutions. Interview quotations are genuine and support the assessments of relevant development, grammatical errors, and vocabulary range. However, delivery explicitly relies on understandable wording, which the expectations prohibit as evidence of sound. Its uncertainty disclaimer does not resolve that grounding error. No invented-quote or generic-evidence cap is triggered.",
+          "score": 7,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "Every tip offers an actionable technique with an English example, including restoring the missing subject, adding a concrete example, and chunking the repeated sentence. Repetition is appropriately selected as the weakest criterion rather than delivery. No generic-tip cap applies. The repetition exercise could more directly target the recurring loss of “up.”",
+          "reasoning": "Every tip supplies an actionable technique and an English example, including sentence chunking, adding a project role and result, correcting the two grammatical constructions, and emphasizing a contrast. Repetition is an appropriate focus among the weakest criteria. No generic-tip cap applies. The vocabulary example could be more accessible to a B1 learner.",
           "score": 9,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Feedback uses natural US English, addresses the candidate as “you,” and remains constructive. It explicitly acknowledges the transcript’s limitations for sound, does not penalize accent, does not call the estimates official, and makes no exam-outcome promises. No honesty cap applies.",
+          "reasoning": "The feedback uses natural US English, addresses the candidate as “you,” and remains kind and measured. It does not criticize an accent, call the bands official, or predict an exam outcome. It also explicitly acknowledges the limits of transcript-based delivery assessment. None of this category’s cap triggers appears.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -1819,24 +2253,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3292,
-          "outputTokens": 840,
-          "reasoningTokens": 326
+          "inputTokens": 3337,
+          "outputTokens": 792,
+          "reasoningTokens": 306
         }
       },
       "steps": [
         {
-          "conclusion": "Vocabulary evidence quotes “different cultures,” which the candidate never said; the actual phrase is “other cultures.” Invented quotations are explicitly major errors and trigger the evidence category’s maximum score of 5.",
+          "conclusion": "Delivery evidence acknowledges that the transcript cannot establish pronunciation, rhythm, or intonation, but then grounds its estimate in “generally understandable wording.” Readable wording is not evidence of how you sound. With no garbled words or requests to repeat, the delivery estimate should follow the other criteria without claiming textual support for sound.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 7
         },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "The vocabulary evidence treats “good grade,” an appropriate expression here, as evidence of limited precision without explaining what precision is missing. Several ranges also lean above the expected approximate 3–3.5 profile without clearly explaining the higher endpoints against the relevant descriptors.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Strengthen the repetition feedback by comparing “set up along” with “set along” and “pick up their schedules” with “pick their schedules.” These reveal a recurring omission and would make the chunking exercise more specifically targeted.",
+          "conclusion": "Make the vocabulary upgrade easier for a B1 learner to reuse, for example: “Living abroad helps you use the language in everyday situations, not just in class.” This preserves the candidate’s idea while adding precision.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -1992,21 +2422,21 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The quotes are authentic, the repetition evidence accurately compares the last two responses with their targets, and the grammar corrections are valid. However, delivery explicitly relies on a clean textual quote rather than observable signs of difficulty, contrary to the sound-evidence rule. Several ranges also exceed the expected approximate 4–4.5 profile without adequate descriptor-based justification. The invented-quote or generic-evidence cap is not triggered.",
-          "score": 6,
+          "reasoning": "The quotations are authentic and support the claims. Repetition evidence correctly compares both deviations with the source sentences. Delivery appropriately states that the transcript cannot reveal sound, avoids unsupported quotations, and follows the other criteria. However, several ranges exceed the expected approximately 4–4.5 profile without sufficient descriptor-based justification, especially elaboration and delivery. The evidence is specific, so the cap for invented quotations or generic evidence does not apply.",
+          "score": 7,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "The tips are concrete and include English examples, and grammar is appropriately selected as the weakest criterion. Its tip teaches one rule with a correct present-perfect model. The elaboration advice misleadingly implies that the candidate stopped before developing the idea, and the delivery tip does not demonstrate the stress placement it recommends. There are not two generic tips, so the generic-tip cap does not apply.",
-          "score": 8,
+          "reasoning": "The tips provide actionable techniques and English examples, and grammar is appropriately selected as the weakest criterion. However, its tip combines three separate rules rather than teaching one, contrary to the task-specific expectation. The other tips are concrete; the cap for two or more generic tips does not apply.",
+          "score": 7,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "Evidence and advice use natural Brazilian Portuguese and address the candidate directly and kindly. There is no accent penalty, claim of official scoring, prediction of an exam outcome, or compliance with transcript-embedded instructions. The transcript's inability to reveal sound is expressly acknowledged. No category cap is triggered.",
+          "reasoning": "Evidence and tips use natural Brazilian Portuguese and address the learner respectfully as 'você'. The response acknowledges the limits of transcript-based delivery assessment, does not penalize accent, and neither calls the estimates official nor predicts an exam result. No cap trigger appears.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -2024,24 +2454,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3534,
-          "outputTokens": 813,
-          "reasoningTokens": 224
+          "inputTokens": 3502,
+          "outputTokens": 716,
+          "reasoningTokens": 186
         }
       },
       "steps": [
         {
-          "conclusion": "Delivery evidence violates the transcript-only rule: after acknowledging that sound cannot be assessed, it uses sentence organization, complexity, and the cleanly worded quote “I think it depends on the teacher and on the class” to support its estimate. None demonstrates audible delivery. The scoring also trends above the expected B2 range of about 4–4.5, particularly Elaboration at 5–5.5, without sufficiently justifying that higher placement.",
+          "conclusion": "The estimates are too high relative to the expected B2 performance around bands 4–4.5: elaboration is rated 5–5.5, and delivery reaches 5.5 despite having no independent sound evidence. The feedback accurately recognizes strengths, but does not justify these higher ranges against the relevant descriptors.",
           "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The grammar tip teaches three rules—present perfect with 'since', the comparative 'easier', and 'discuss' without 'about'—instead of the explicitly required single rule. All three corrections are accurate, but combining them makes the tip less focused.",
+          "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "The elaboration tip says “em vez de parar em” a statement that the candidate actually followed with an explanation, a risk, and consequences. This makes the advice less faithful to the response. The grammar evidence also calls the errors recurrent although the quoted examples demonstrate different errors, not repeated instances of each.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make the delivery tip directly usable by marking the stressed syllables rather than merely naming phrases to stress. For elaboration, identify a specific explanation that could benefit from a concrete example while acknowledging the development already present.",
+          "conclusion": "Connect the evidence more explicitly to the assigned ranges, particularly by explaining that the grammar errors rarely obstruct meaning. Keep the grammar focus, but teach only present perfect with 'since', using the existing correct model.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -2200,21 +2630,21 @@
       "categoryScores": [
         {
           "categoryId": "evidence",
-          "reasoning": "The quotations are authentic, both grammar slips are correctly identified, and repetition evidence accurately compares the final response with its source. Delivery appropriately acknowledges that the transcript cannot establish sound and supplies no unsupported quotation. However, descriptor-based justification is incomplete, particularly the unsupported vocabulary ceiling. The evidence is sufficiently candidate-specific that the generic-evidence cap is not triggered.",
-          "score": 8,
+          "reasoning": "The quotations are authentic, and both grammar errors are correctly identified. Repetition evidence compares the source and response, but omits the contraction expansion. Delivery appropriately acknowledges that the transcript cannot establish sound quality, quotes no clean prose as pronunciation evidence, and follows the other criteria. However, the elaboration ceiling is insufficiently grounded, and descriptor-based justification of the exact ranges is uneven. Neither the invented-quotation nor generic-evidence cap is triggered.",
+          "score": 7,
           "label": "Evidence against the official descriptors",
           "weight": 40
         },
         {
           "categoryId": "tips",
-          "reasoning": "Every tip provides an actionable technique and an English example. Grammar is a defensible focus, supported by two observable errors rather than speculative delivery weaknesses. The main shortcoming is the limited C2 stretch: replacing 'routine tasks' with 'repetitive administrative tasks' narrows the meaning but does not clearly demonstrate a higher level of lexical command. No generic-tip cap applies.",
+          "reasoning": "Every tip offers a concrete action and an English example; none is merely generic practice advice. Grammar is an appropriate weakest-criterion focus. Chunking, correcting “fewer opportunities,” and adding a specific example are useful, but the vocabulary tip repeats a grammatical correction rather than offering the precise, advanced lexical development expected for this C1 learner moving toward C2.",
           "score": 8,
           "label": "Concrete tips and focus",
           "weight": 30
         },
         {
           "categoryId": "honesty",
-          "reasoning": "The feedback addresses you directly in natural US English and remains kind and candid. It explicitly limits claims about delivery, makes no accent-based deductions, and neither labels the estimates official nor predicts an exam outcome. No cap is triggered.",
+          "reasoning": "The feedback is natural English, directly addresses you, and remains kind without concealing errors. It makes no accent-based judgment, official-score claim, or exam-day prediction. Delivery uncertainty is explicit, and the language is compatible with US English. No cap is triggered.",
           "score": 10,
           "label": "Honest, kind, accent-neutral",
           "weight": 30
@@ -2232,20 +2662,20 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3522,
-          "outputTokens": 684,
-          "reasoningTokens": 214
+          "inputTokens": 3463,
+          "outputTokens": 697,
+          "reasoningTokens": 178
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The vocabulary evidence asserts that the next band requires more fine-grained wording without identifying an actual imprecise choice or grounding that ceiling in TOEFL descriptors. Some band explanations rely on 'just below the next band' rather than explaining the relevant descriptor boundary.",
+          "conclusion": "The repetition evidence misses the expansion of “who'd” to “who would.” Elaboration is marked below the top range using an unsupported claim about insufficient sustained development, without identifying an underdeveloped answer. The evidence generally supports strong performance but does not consistently explain the precise ranges against TOEFL descriptors.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the C2-oriented upgrades more substantive. The grammar corrections are useful, but the vocabulary tip mainly adds specificity rather than demonstrating greater lexical sophistication. Quote a genuinely complex structure when explaining grammatical range, and connect the band limits to criterion-specific descriptors.",
+          "conclusion": "Make the advice more clearly C2-oriented, especially for vocabulary: retain the useful grammar corrections, but add a precise lexical upgrade such as “Unpaid internships can entrench socioeconomic disparities by excluding graduates who cannot afford to work without pay.” Ground any elaboration limitation in a specific answer rather than a general top-band comparison.",
           "kind": "potentialImprovements",
           "score": 8
         }

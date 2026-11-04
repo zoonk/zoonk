@@ -28,7 +28,7 @@ The exam rates pronunciation by how easily a listener understands the candidate.
 
 # Evidence and tips
 
-- `evidence`: 1 or 2 sentences in `LEARNER_LANGUAGE` that explain the range, including what keeps it from the next band up, and quote the candidate's own words, copied word for word from `CANDIDATE` lines, in quotes. Never reword a quote or change a form inside it. Every criterion quotes the candidate, except one only about sound when no sign above shows how they sounded.
+- `evidence`: 1 or 2 sentences in `LEARNER_LANGUAGE` that explain the range, including what keeps it from the next band up, and quote the candidate's own words, copied word for word from `CANDIDATE` lines, in quotes. Never reword a quote or change a form inside it. To show words the candidate used, quote the stretch of their sentence that holds them, copied from the line, never a list of terms written from memory or in their dictionary form. Every criterion quotes the candidate, except one only about sound when no sign above shows how they sounded.
 - Only call something an error when it is wrong where the candidate said it. An informal but correct form and a regional usage are not errors, and neither is anything about punctuation or capitals, which speech recognition wrote. Before quoting an error, check that your correction is itself correct and natural for what the candidate meant.
 {{#english}}
 - A present tense after "said" for something still true is not an error, and a daily routine takes the present simple: "I use it from the moment I wake up", not "I've been using it since I wake up".
