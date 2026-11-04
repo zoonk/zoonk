@@ -11,6 +11,8 @@ struct MockChooserScreen: View {
       }
     }
     .navigationTitle(Text("Take a mock exam", tableName: "Mock", comment: "Mock chooser title"))
+    .barTitleAfterHero(
+      String(localized: "Take a mock exam", table: "Mock", comment: "Mock chooser title"))
   }
 }
 
@@ -88,7 +90,10 @@ struct PlacementMockScreen: View {
                 "A mock exam to find your level", tableName: "Mock",
                 comment: "Placement mock title")
             )
-            .navigationBarTitleDisplayMode(.inline)
+            .barTitleAfterHero(
+              String(
+                localized: "A mock exam to find your level", table: "Mock",
+                comment: "Placement mock title"))
             .taskClose {
               Button(role: .close) { dismiss() }
             }
@@ -191,13 +196,12 @@ private struct MockChooser: View {
   @ViewBuilder
   private var intro: some View {
     Section {
-      VStack(alignment: .leading, spacing: 4) {
-        Text(view.examName)
-          .typeStyle(.data)
-          .foregroundStyle(.faint)
-        detail
-          .foregroundStyle(.mutedForeground)
-      }
+      PageHeader(
+        placement
+          ? Text(
+            "A mock exam to find your level", tableName: "Mock", comment: "Placement mock title")
+          : Text("Take a mock exam", tableName: "Mock", comment: "Mock chooser title"),
+        eyebrow: Text(view.examName), supporting: detail)
     }
 
     if let running = view.running, !placement {

@@ -25,7 +25,7 @@ private struct ActivityTiles: View {
     StatTileGrid(columns: [3, 2, 1], minimumWidth: minimumWidth) {
       StatTile(
         label: Text(
-          "Study days", tableName: "Progress", comment: "Tile: how many days the learner studied"),
+          "Days studied", tableName: "Progress", comment: "Tile: how many days the learner studied"),
         value: Text(summary.learningDays, format: .number),
         systemImage: "calendar.badge.checkmark", tone: .success,
         detail: Text(

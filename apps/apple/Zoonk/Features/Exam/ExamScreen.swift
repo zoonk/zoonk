@@ -98,6 +98,7 @@ private struct ExamList: View {
       callStart.cancel()
     }
     .navigationTitle(exam.examName)
+    .barTitleAfterHero(exam.examName)
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
         Menu {
@@ -163,16 +164,15 @@ private struct ExamHero: View {
 
   var body: some View {
     Section {
-      VStack(alignment: .leading, spacing: 6) {
-        eyebrow
+      PageHeader(Text(exam.examName), eyebrow: eyebrow)
+
+      // Main's `DetailFacts`: mono data under the title, which a header's supporting line isn't.
+      if !facts.isEmpty {
+        Text(facts.joinedFacts())
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
-        if !facts.isEmpty {
-          Text(facts.joinedFacts())
-            .typeStyle(.body.monospaced())
-        }
+          .listRowSeparator(.hidden)
       }
-      .accessibilityElement(children: .combine)
 
       if let options, options.offersMock {
         Button {
