@@ -11,14 +11,12 @@ struct AllCoursesView: View {
 
   var body: some View {
     ZoonkList {
-      // In the page, not the bar's subtitle: that has one line, which cuts this sentence on iPhone.
       Section {
-        Text(
-          "Start from a course, or tell Zoonk what you're getting ready for.",
-          tableName: "Courses", comment: "The line under the catalog's title"
-        )
-        .foregroundStyle(.mutedForeground)
-        .listRowBackground(Color.clear)
+        PageHeader(
+          Text(catalogTitle(category)),
+          supporting: Text(
+            "Start from a course, or tell Zoonk what you're getting ready for.",
+            tableName: "Courses", comment: "The line under the catalog's title"))
       }
       .listSectionMargins(.trailing, leadingPageMargin)
       .listSectionSpacing(.compact)

@@ -115,7 +115,7 @@ private struct ChapterLandingList: View {
 
         if let description = catalogText(detail.chapter?.description ?? chapter.description) {
           Text(description)
-            .typeStyle(.section.weight(.regular))
+            .typeStyle(.lead)
             .foregroundStyle(.mutedForeground)
         }
 

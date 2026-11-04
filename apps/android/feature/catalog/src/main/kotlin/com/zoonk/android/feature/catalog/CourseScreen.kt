@@ -42,6 +42,8 @@ import com.zoonk.android.ui.components.Subject
 import com.zoonk.android.ui.components.SubjectLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CourseResource
 import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.coroutines.launch
@@ -102,7 +104,6 @@ private fun courseBlocks(
                         promise = promise,
                         pace = pace,
                         onTryLesson = tryLesson?.takeUnless { beside }?.let { { scope.launch { showBlock("try") } } },
-                        headlineModifier = layout.headline,
                         modifier = modifier,
                     )
                 }
@@ -169,7 +170,6 @@ private fun CourseHero(
     pace: Long?,
     onTryLesson: (() -> Unit)?,
     modifier: Modifier = Modifier,
-    headlineModifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
     val language = catalogLanguage(locale)
@@ -233,11 +233,11 @@ private fun CourseHero(
             Spacer(Modifier.size(12.dp))
         }
 
-        Text(course.title, modifier = headlineModifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        Text(course.title, modifier = Modifier.pageTitle(), style = MaterialTheme.typography.displaySmall)
 
         if (!promise.isNullOrBlank()) {
             Spacer(Modifier.size(16.dp))
-            Text(promise, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            Text(promise, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.lead)
         }
 
         Spacer(Modifier.size(16.dp))
@@ -310,7 +310,7 @@ private fun CourseClosing(
         Text(
             stringResource(if (follows) R.string.catalog_closing_follows else R.string.catalog_closing_start),
             modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
         )
 
         if (!follows) {

@@ -52,7 +52,7 @@ internal fun OnboardingHeading(
         Text(
             text = title,
             modifier = Modifier.pageTitle().semantics { paneTitle = title },
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.headlineMedium,
         )
         if (description != null) {
             Text(text = description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)

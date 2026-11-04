@@ -54,6 +54,7 @@ private func planReadout(_ text: AttributedString, number: String) -> Attributed
 }
 
 private struct UndatedHeadline: View {
+  @Environment(\.legibilityWeight) private var legibilityWeight
   /// A plan ending within this many days names no month: its weeks already say when.
   private static let nearDays = 42
 
@@ -78,9 +79,11 @@ private struct UndatedHeadline: View {
       .foregroundStyle(.mutedForeground)
 
       if let endMonth {
+        let month = Text(endMonth).typeWeight(.bold, legibility: legibilityWeight)
+
         Label {
           Text(
-            "Starting today, you'd finish around \(Text(endMonth).bold()).", tableName: "Courses",
+            "Starting today, you'd finish around \(month).", tableName: "Courses",
             comment: "When a course's example plan ends: a month and year")
         } icon: {
           Image(systemName: "flag")

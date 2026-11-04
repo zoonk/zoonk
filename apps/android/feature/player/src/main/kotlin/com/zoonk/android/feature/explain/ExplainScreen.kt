@@ -75,6 +75,8 @@ import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.Explanation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -260,7 +262,7 @@ private fun ExplainHeading(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         eyebrow()
-        Text(title, modifier = Modifier.pageTitle(), style = MaterialTheme.typography.headlineSmall)
+        Text(title, modifier = Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
         subtitle?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
     }
 }
@@ -286,8 +288,8 @@ private fun Outline(titles: List<String>) {
             ) {
                 Text(
                     formatNumber((index + 1).toDouble(), locale),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.zoonk.faint,
+                    style = MaterialTheme.zoonkType.data,
                 )
                 if (title == null) {
                     Box(
@@ -462,8 +464,8 @@ internal fun ExplainEnding(
                         Row(Modifier.padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Text(
                                 formatNumber((index + 1).toDouble(), locale),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.zoonk.faint,
+                                style = MaterialTheme.zoonkType.data,
                             )
                             Text(sentence, style = MaterialTheme.typography.bodyMedium)
                         }

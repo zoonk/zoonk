@@ -5,20 +5,20 @@ struct CatalogScreen: View {
 
   var body: some View {
     AllCoursesView(category: $category)
-      .navigationTitle(title)
-      .navigationBarTitleDisplayMode(.large)
+      .navigationTitle(Text(catalogTitle(category)))
+      .barTitleAfterHero(String(localized: catalogTitle(category)))
       .catalogDestinations()
   }
+}
 
-  private var title: Text {
-    if let category {
-      Text(
-        "Courses in \(Text(category.localizedTitle))", tableName: "Courses",
-        comment: "Title of the catalog on one category, such as Courses in Science")
-    } else {
-      Text(
-        "Explore courses", tableName: "Courses",
-        comment: "Title of the public course catalog, as the goal switcher's Explore opens it.")
-    }
+func catalogTitle(_ category: CourseCategory?) -> LocalizedStringResource {
+  if let category {
+    LocalizedStringResource(
+      "Courses in \(String(localized: category.localizedTitle))", table: "Courses",
+      comment: "Title of the catalog on one category, such as Courses in Science")
+  } else {
+    LocalizedStringResource(
+      "Explore courses", table: "Courses",
+      comment: "Title of the public course catalog, as the goal switcher's Explore opens it.")
   }
 }

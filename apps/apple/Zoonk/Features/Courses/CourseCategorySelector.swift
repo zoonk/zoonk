@@ -80,8 +80,8 @@ private struct CourseCategoryButton: View {
 
         title
       }
-      .typeStyle(.body.weight(.semibold))
     }
+    .controlSize(.small)
   }
 
   @ViewBuilder

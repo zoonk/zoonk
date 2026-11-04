@@ -53,7 +53,6 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.EmptyState
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -61,6 +60,7 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkOutline
 import com.zoonk.api.models.PlanLinkOutlinePhasesInner
@@ -104,7 +104,7 @@ internal fun PlanLinkScreen(
                     modifier = Modifier.padding(padding),
                 ) { beside ->
                     Column(
-                        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+                        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 24.dp),
                         verticalArrangement = Arrangement.spacedBy(24.dp),
                     ) {
                         Heading(shown.value)
@@ -160,14 +160,18 @@ internal fun PlanLinkScreen(
 @Composable
 private fun Heading(link: PlanLink) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow(stringResource(R.string.planlink_eyebrow))
+        Text(
+            stringResource(R.string.planlink_eyebrow),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.titleSmall,
+        )
         Text(
             link.outline.subject?.title ?: stringResource(R.string.planlink_study_plan),
             modifier = Modifier.pageTitle(),
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.displaySmall,
         )
         link.outline.subject?.description?.let {
-            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.lead)
         }
     }
 }

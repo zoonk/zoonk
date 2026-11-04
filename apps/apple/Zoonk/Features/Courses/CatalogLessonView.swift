@@ -53,10 +53,11 @@ private struct CatalogLessonList: View {
             .typeStyle(.heroTitle)
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityAddTraits(.isHeader)
+            .heroTitle()
 
           if !value.description.isEmpty {
             Text(value.description)
-              .typeStyle(.section.weight(.regular))
+              .typeStyle(.lead)
               .foregroundStyle(.mutedForeground)
           }
 

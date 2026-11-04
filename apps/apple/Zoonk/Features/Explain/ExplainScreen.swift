@@ -75,23 +75,16 @@ private struct ExplanationView: View {
   private var content: some View {
     ZoonkList {
       Section {
-        VStack(alignment: .leading, spacing: 6) {
-          Text(
+        PageHeader(
+          Text(explanation.title),
+          eyebrow: Text(
             "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
             tableName: "Explain",
-            comment: "Eyebrow over a quick explanation's title: its kind and length"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          Text(explanation.title)
-            .typeStyle(.section)
-            .accessibilityAddTraits(.isHeader)
-          Text(
+            comment: "Eyebrow over a quick explanation's title: its kind and length"),
+          supporting: Text(
             "No plan to set up.", tableName: "Explain", comment: "Under a quick explanation's title"
           )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-        }
+        )
         .listRowBackground(Color.clear)
       }
 
