@@ -5,6 +5,7 @@ import {
   type LearnerSummaryState,
   getUntilChange,
   isSeedExpected,
+  isTapLearner,
 } from "./learner-snapshot";
 import {
   NOT_LOADED,
@@ -106,6 +107,27 @@ export function getLearnerGeneration(): number {
 export function getLearnerId(): LearnerId {
   const held = getHeldIdentity();
   return held ? held.userId : held;
+}
+
+async function getSettledLearnerId(): Promise<LearnerId> {
+  const read = store.inFlight;
+  const unsettled = store.verifying !== null || getHeldIdentity() === undefined;
+
+  if (read && unsettled) {
+    await read.promise;
+    return getSettledLearnerId();
+  }
+
+  return getLearnerId();
+}
+
+/**
+ * Call it with the tap. The check it returns says, once the tap's answer is in, whether the learner
+ * who made it (`rendered`: the one its page was drawn for, when it knows) still holds the session.
+ */
+export function learnerStaying(rendered?: string): () => Promise<boolean> {
+  const tapped = rendered ?? getLearnerId();
+  return async () => isTapLearner({ held: await getSettledLearnerId(), tapped });
 }
 
 /**

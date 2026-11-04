@@ -34,9 +34,9 @@ export async function sendDayOpen({
   stillHere,
 }: {
   input: OpenStudyDayInput;
-  stillHere: () => boolean;
+  stillHere: () => Promise<boolean>;
 }): Promise<DayOpenOutcome> {
   const first = await noteAppWrite(openStudyDayAction(input));
-  const again = first.status === "retryable" && stillHere();
+  const again = first.status === "retryable" && (await stillHere());
   return again ? noteAppWrite(openStudyDayAction(input)) : first;
 }

@@ -5,12 +5,12 @@
  */
 export async function answerHere<T>(
   request: Promise<T>,
-  stillHere: () => boolean,
+  stillHere: () => Promise<boolean>,
 ): Promise<{ answer: T } | boolean> {
   const answered = await request.then(
     (answer) => ({ answer }),
     () => false,
   );
 
-  return stillHere() ? answered : true;
+  return (await stillHere()) ? answered : true;
 }

@@ -8,7 +8,6 @@ import {
   stubSummaryReads,
   summaryOf,
 } from "./_test-utils/learner-page";
-import { isSameLearner } from "./learner-snapshot";
 
 const SEED_WAIT_MS = 10_000;
 
@@ -151,6 +150,12 @@ async function holdFirst() {
   return { reads, store };
 }
 
+function answerOf(check: () => Promise<boolean>) {
+  const answer = vi.fn();
+  void check().then(answer);
+  return answer;
+}
+
 describe("learner a tap was made for", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
@@ -161,49 +166,101 @@ describe("learner a tap was made for", () => {
     vi.unstubAllGlobals();
   });
 
-  it("is still the learner after a check of who holds the session finds them again", async () => {
+  it("waits for a check of who holds the session, then is still the learner when it finds them again", async () => {
     const { reads, store } = await holdFirst();
-    const tapped = store.getLearnerId();
-    const generation = store.getLearnerGeneration();
+    const stillHere = store.learnerStaying();
 
     store.mergeLearnerSummarySeed(seedFor(summaryOf("second")));
-    expect(isSameLearner(tapped, store.getLearnerId())).toBe(true);
+    const answer = answerOf(stillHere);
+    await settle();
+    expect(answer).not.toHaveBeenCalled();
 
     reads[1]?.resolve(answerFor(summaryOf("first")));
     await settle();
 
-    expect(store.getLearnerGeneration()).not.toBe(generation);
-    expect(isSameLearner(tapped, store.getLearnerId())).toBe(true);
+    expect(answer).toHaveBeenCalledWith(true);
   });
 
   it.each([
     { answer: answerFor(summaryOf("second")), found: "another account" },
     { answer: { readAt: Date.now(), status: "visitor" as const }, found: "no one signed in" },
-  ])("is someone else once that check finds $found", async ({ answer }) => {
+  ])("is someone else once a check still out when it's asked finds $found", async ({ answer }) => {
     const { reads, store } = await holdFirst();
-    const tapped = store.getLearnerId();
+    const stillHere = store.learnerStaying();
 
     store.mergeLearnerSummarySeed(seedFor(summaryOf("second")));
+    const asked = stillHere();
     reads[1]?.resolve(answer);
-    await settle();
 
-    expect(isSameLearner(tapped, store.getLearnerId())).toBe(false);
+    await expect(asked).resolves.toBe(false);
   });
 
-  it("is still the learner when it was made before the page's late seed was checked", async () => {
+  it("is still the learner held before a check that couldn't answer", async () => {
+    const { reads, store } = await holdFirst();
+    const stillHere = store.learnerStaying();
+
+    store.mergeLearnerSummarySeed(seedFor(summaryOf("second")));
+    reads[1]?.reject(new Error("offline"));
+
+    await expect(stillHere()).resolves.toBe(true);
+  });
+
+  it("is whoever the browser learns holds the session when no one was known at the tap", async () => {
     stubPage({ seeded: true });
     const reads = stubSummaryReads();
     const store = await loadStore();
 
     store.ensureLearnerSummary();
-    const tapped = store.getLearnerId();
+    const stillHere = store.learnerStaying();
 
     vi.advanceTimersByTime(SEED_WAIT_MS);
+    const answer = answerOf(stillHere);
+    await settle();
+    expect(answer).not.toHaveBeenCalled();
+
     reads[0]?.resolve(answerFor(summaryOf("first")));
     await settle();
 
     expect(store.getLearnerGeneration()).toBe(1);
-    expect(isSameLearner(tapped, store.getLearnerId())).toBe(true);
+    expect(answer).toHaveBeenCalledWith(true);
+  });
+
+  it("has left once the browser learns no one holds the session, when no one was known at the tap", async () => {
+    stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    const stillHere = store.learnerStaying();
+
+    vi.advanceTimersByTime(SEED_WAIT_MS);
+    reads[0]?.resolve({ readAt: Date.now(), status: "visitor" });
+
+    await expect(stillHere()).resolves.toBe(false);
+  });
+
+  it("is someone else once the browser learns another holds the session than the page was drawn for", async () => {
+    stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    const stillHere = store.learnerStaying("first");
+
+    vi.advanceTimersByTime(SEED_WAIT_MS);
+    reads[0]?.resolve(answerFor(summaryOf("second")));
+
+    await expect(stillHere()).resolves.toBe(false);
+  });
+
+  it("is the learner the page was drawn for while the browser knows no one yet", async () => {
+    stubPage({ seeded: true });
+    stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+
+    await expect(store.learnerStaying("first")()).resolves.toBe(true);
   });
 });
 

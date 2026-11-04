@@ -52,11 +52,16 @@ export function isSameIdentity(a: LearnerIdentity | null, b: LearnerIdentity | n
 export type LearnerId = string | null | undefined;
 
 /**
- * Checking again who holds the session changes nothing while it finds the same learner, and a learner
- * not known yet, on either side, can't be told apart from the other.
+ * Whether the learner who made a tap still holds the session. Only someone signed in taps, so one not
+ * known at the tap is whoever the browser then learns holds it, unless that's no one; while the
+ * browser knows no one yet, nothing says they left.
  */
-export function isSameLearner(a: LearnerId, b: LearnerId): boolean {
-  return a === undefined || b === undefined || a === b;
+export function isTapLearner({ held, tapped }: { held: LearnerId; tapped: LearnerId }): boolean {
+  if (held === undefined) {
+    return true;
+  }
+
+  return tapped === undefined ? held !== null : tapped === held;
 }
 
 export type LearnerStore = {

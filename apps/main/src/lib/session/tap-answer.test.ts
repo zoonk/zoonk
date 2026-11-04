@@ -8,19 +8,21 @@ function tab() {
     leave: () => {
       here = false;
     },
-    stillHere: () => here,
+    stillHere: async () => here,
   };
 }
 
 describe(answerHere, () => {
   it("hands over the answer while the learner is still there, even one with nothing to open", async () => {
-    await expect(answerHere(Promise.resolve(null), () => true)).resolves.toStrictEqual({
+    await expect(answerHere(Promise.resolve(null), async () => true)).resolves.toStrictEqual({
       answer: null,
     });
   });
 
   it("fails a request that never answered while the learner is still there", async () => {
-    await expect(answerHere(Promise.reject(new Error("offline")), () => true)).resolves.toBe(false);
+    await expect(answerHere(Promise.reject(new Error("offline")), async () => true)).resolves.toBe(
+      false,
+    );
   });
 
   it("has nothing to report once the learner left while the request was out, however it ended", async () => {

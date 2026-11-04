@@ -3,8 +3,7 @@
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { isSameLearner } from "@/lib/learner/learner-snapshot";
-import { getLearnerId } from "@/lib/learner/learner-store";
+import { learnerStaying } from "@/lib/learner/learner-store";
 import { LESSON_GENERATION_PARAM } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
@@ -87,10 +86,10 @@ export function getCurrentLocation(): string {
   return (localized ? `/${rest.join("/")}` : pathname) + search;
 }
 
-export function stayingHere(): () => boolean {
-  const learner = getLearnerId();
+export function stayingHere(learner?: string): () => Promise<boolean> {
+  const learnerHere = learnerStaying(learner);
   const origin = getCurrentLocation();
-  return () => isSameLearner(learner, getLearnerId()) && origin === getCurrentLocation();
+  return async () => (await learnerHere()) && origin === getCurrentLocation();
 }
 
 type SessionAddress = { blockId?: string; href: string };
@@ -259,9 +258,14 @@ function useOpenDestination() {
 export function useMissionLinks(
   goalId: string,
   {
+    learner,
     openStep,
     refresh,
-  }: { openStep?: (ref: DayBlockRef) => Promise<boolean>; refresh?: () => void } = {},
+  }: {
+    learner?: string;
+    openStep?: (ref: DayBlockRef) => Promise<boolean>;
+    refresh?: () => void;
+  } = {},
 ): MissionLinks {
   const go = useGoToStudyDestination({ refresh });
   const reread = useReread(refresh);
@@ -278,7 +282,7 @@ export function useMissionLinks(
         pronunciation: `/pronunciation?goal=${goalId}`,
       },
       openBlock: async (blockId) => {
-        const here = stayingHere();
+        const here = stayingHere(learner);
 
         const opened = await answerHere(
           noteAppWrite(
@@ -309,7 +313,7 @@ export function useMissionLinks(
       },
       openStep,
     }),
-    [go, goalId, openStep, reread],
+    [go, goalId, learner, openStep, reread],
   );
 }
 

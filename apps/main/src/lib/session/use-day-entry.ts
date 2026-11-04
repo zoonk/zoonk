@@ -16,13 +16,11 @@ export function useDayEntry(): DayEntry | null {
 function useEntryScope() {
   const pathname = usePathname();
   const search = useSearchParams().toString();
-  const summary = useLearnerSummary();
 
-  return {
-    href: search ? `${pathname}?${search}` : pathname,
-    learner: getLearnerId(),
-    userId: summary.status === "ready" ? summary.summary.identity.userId : null,
-  };
+  // Subscribed, so it draws again when who holds the session changes.
+  useLearnerSummary();
+
+  return { href: search ? `${pathname}?${search}` : pathname, learner: getLearnerId() };
 }
 
 export function useDayTap<Step extends { position: number; status: string }>(day: {

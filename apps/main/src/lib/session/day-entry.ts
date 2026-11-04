@@ -1,4 +1,4 @@
-import { type LearnerId, isSameLearner } from "@/lib/learner/learner-snapshot";
+import { type LearnerId, isTapLearner } from "@/lib/learner/learner-snapshot";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
 import { type NextStopTap } from "@zoonk/learn/session/next-stop";
@@ -38,7 +38,6 @@ export type DayEntry = {
   focusMain: boolean;
   href: string;
   id: number;
-  learner: LearnerId;
   next: boolean;
   result: TapResult | null;
   shown: boolean;
@@ -53,17 +52,13 @@ export type DayEntry = {
 export function hasLeftEntry({
   at,
   entry,
-  learner,
   origin,
 }: {
   at: string;
-  entry: Pick<DayEntry, "href" | "learner" | "shown">;
-  learner: LearnerId;
+  entry: Pick<DayEntry, "href" | "shown">;
   origin: string;
 }): boolean {
-  return (
-    !isSameLearner(entry.learner, learner) || (at !== entry.href && (entry.shown || at !== origin))
-  );
+  return at !== entry.href && (entry.shown || at !== origin);
 }
 
 /** While its POST is out it never lets go, so a slow reply still moves the screen on. */
@@ -81,13 +76,12 @@ function toDayDate(localDate: Date): string {
   return localDate.toISOString().slice(0, 10);
 }
 
-type EntryScope = { href: string; learner: LearnerId; userId: string | null };
+type EntryScope = { href: string; learner: LearnerId };
 
-function isCurrent({ entry, href, learner, userId }: EntryScope & { entry: DayEntry }) {
+function isCurrent({ entry, href, learner }: EntryScope & { entry: DayEntry }) {
   return (
     !entry.expired &&
-    isSameLearner(entry.learner, learner) &&
-    (userId === null || entry.day.shown.userId === userId) &&
+    isTapLearner({ held: learner, tapped: entry.day.shown.userId }) &&
     entry.href === href
   );
 }

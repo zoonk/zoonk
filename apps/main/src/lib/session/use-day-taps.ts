@@ -2,8 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { isSameLearner } from "@/lib/learner/learner-snapshot";
-import { getLearnerId } from "@/lib/learner/learner-store";
+import { learnerStaying } from "@/lib/learner/learner-store";
 import { type OpenStudyDayInput } from "@zoonk/core/sessions/open-day-contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback } from "react";
@@ -39,7 +38,7 @@ type TapRequest = {
   openInput: (fields: Pick<OpenStudyDayInput, "keepEmpty" | "target">) => OpenStudyDayInput;
   sessionId: string | null;
   step: TapStep;
-  stillHere: () => boolean;
+  stillHere: () => Promise<boolean>;
 };
 
 /** A day not opened yet opens with the step's work (`ref`), so no tap names an id the day doesn't have. */
@@ -75,15 +74,30 @@ function requestTap({
   return noteAppWrite(action).then(toDestinationResult, (): TapResult => ({ kind: "failed" }));
 }
 
-/** A failure that lands after the learner left the step's screen ends its entry: they never see it when they come back. */
-function settleEntry({ id, origin, result }: { id: number; origin: string; result: TapResult }) {
+/**
+ * An answer for a learner who's gone, or a failure that lands after the learner left the step's
+ * screen, ends its entry: they never see it when they come back.
+ */
+async function settleEntry({
+  id,
+  learnerHere,
+  origin,
+  result,
+}: {
+  id: number;
+  learnerHere: () => Promise<boolean>;
+  origin: string;
+  result: TapResult;
+}) {
+  const stayed = await learnerHere();
   const entry = getDayEntry();
 
   const left =
+    result.kind === "failed" &&
     entry?.id === id &&
-    hasLeftEntry({ at: getCurrentLocation(), entry, learner: getLearnerId(), origin });
+    hasLeftEntry({ at: getCurrentLocation(), entry, origin });
 
-  if (result.kind === "failed" && left) {
+  if (!stayed || left) {
     endDayEntry(id);
   } else {
     updateDayEntry(id, { result });
@@ -133,9 +147,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
   const tap = useCallback(
     async ({ next, step }: { next: boolean; step: TapStep }): Promise<boolean> => {
-      const learner = getLearnerId();
+      const learnerHere = learnerStaying(shown.userId);
       const origin = getCurrentLocation();
-      const here = stayingHere();
       const focusMain = isFocusOnControl();
 
       const href =
@@ -147,22 +160,14 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
             )
           : null;
 
-      const stillHere = () =>
-        isSameLearner(learner, getLearnerId()) && [origin, href].includes(getCurrentLocation());
+      const stillHere = async () =>
+        (await learnerHere()) && [origin, href].includes(getCurrentLocation());
 
       // Sent before navigating, so the navigation never holds it back.
       const answer = request({ next, step, stillHere });
 
       if (href) {
-        const entry = beginDayEntry({
-          day,
-          focusMain,
-          href,
-          learner,
-          next,
-          step,
-          tappedAt: Date.now(),
-        });
+        const entry = beginDayEntry({ day, focusMain, href, next, step, tappedAt: Date.now() });
 
         // Within the session screen the step replaces the one shown; Back still leads to Today.
         if (href !== origin && (origin === SESSION_PATH || origin.startsWith(`${SESSION_PATH}?`))) {
@@ -171,14 +176,14 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
           router.push(href);
         }
 
-        void answer.then((result) => settleEntry({ id: entry.id, origin, result }));
+        void answer.then((result) => settleEntry({ id: entry.id, learnerHere, origin, result }));
 
         return true;
       }
 
       const result = await answer;
 
-      if (!here()) {
+      if (!(await stillHere())) {
         return true;
       }
 
@@ -192,7 +197,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
   );
 
   const openKept = useCallback(
-    async (here: () => boolean): Promise<{ answer: string } | boolean> => {
+    async (here: () => Promise<boolean>): Promise<{ answer: string } | boolean> => {
       if (sessionId !== null) {
         return { answer: sessionId };
       }
@@ -213,7 +218,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
   return {
     addExtraTime: async () => {
-      const here = stayingHere();
+      const here = stayingHere(shown.userId);
       const kept = await openKept(here);
 
       if (typeof kept === "boolean") {
@@ -230,7 +235,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
       return typeof added === "boolean" ? added : applyHere(toDestinationResult(added.answer));
     },
     catchUp: async () => {
-      const here = stayingHere();
+      const here = stayingHere(shown.userId);
       const kept = await openKept(here);
 
       if (typeof kept === "boolean") {
@@ -255,7 +260,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
     next: (step: TapStep) => tap({ next: true, step }),
     open: (step: TapStep) => tap({ next: false, step }),
     prepareLessons: async () => {
-      const here = stayingHere();
+      const here = stayingHere(shown.userId);
 
       const prepared = await answerHere(
         noteAppWrite(prepareTodayLessonsAction({ goalId: day.shown.goalId })),

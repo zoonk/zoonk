@@ -2,8 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
-import { isSameLearner } from "@/lib/learner/learner-snapshot";
-import { getLearnerId } from "@/lib/learner/learner-store";
+import { learnerStaying } from "@/lib/learner/learner-store";
 import { runWhenIdle } from "@/lib/run-when-idle";
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/checkpoint-call-contract";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
@@ -27,11 +26,13 @@ export function CheckpointCallPreviewClient({
   buddy,
   dailyLimitReached,
   intro,
+  userId,
 }: {
   blockId: string;
   buddy: LearnBuddy;
   dailyLimitReached: boolean;
   intro: LanguageConversationIntro;
+  userId: string;
 }) {
   const router = useRouter();
 
@@ -82,15 +83,13 @@ export function CheckpointCallPreviewClient({
       onStart={async (audio) => {
         tappedAudio.current = audio;
         const mine = generation.current;
-        const learner = getLearnerId();
-
-        const isCurrent = () =>
-          mine === generation.current && isSameLearner(learner, getLearnerId());
+        const learnerHere = learnerStaying(userId);
+        const isCurrent = async () => (await learnerHere()) && mine === generation.current;
 
         const client = loadConversationClient();
         const started = await startCheckpointCallAction(blockId);
 
-        if (!isCurrent()) {
+        if (!(await isCurrent())) {
           return "cancelled";
         }
 
@@ -104,7 +103,7 @@ export function CheckpointCallPreviewClient({
 
         const Client = await client;
 
-        if (!isCurrent()) {
+        if (!(await isCurrent())) {
           return "cancelled";
         }
 
