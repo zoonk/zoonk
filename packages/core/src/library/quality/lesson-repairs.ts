@@ -139,8 +139,9 @@ function showsNothing(screen: TeachingScreen): boolean {
 }
 
 /**
- * A shared lesson's teaching screen still missing its planned visual after the fix pass gets a
- * picture of what its plan describes, as a bare plan screen does, so the lesson publishes with a
+ * A shared lesson's teaching screen still showing nothing after the fix pass gets a picture of what
+ * its plan describes, even when the plan named a table or a template: the owner chose a picture as
+ * the default for a shared teaching screen with nothing to look at. The lesson then publishes with a
  * visual on every step instead of being held back and, after repeated drafts, set aside unwritten.
  */
 export function pictureBareTeachingScreens({
