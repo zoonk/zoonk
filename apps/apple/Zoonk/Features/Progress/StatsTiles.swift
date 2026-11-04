@@ -62,7 +62,9 @@ struct StatTile<Icon: View>: View {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .padding(12)
-    .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(.border))
+    .overlay(
+      RoundedRectangle(cornerRadius: Radius.option, style: .continuous).strokeBorder(.border)
+    )
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(label)
     .accessibilityValue(accessibilityValue)

@@ -46,5 +46,7 @@ struct SectionFooter<Content: View>: View {
     content
       .font(.footnote)
       .foregroundStyle(.mutedForeground)
+      // A plain list draws a footer like a row, between hairlines main doesn't have.
+      .listRowSeparator(.hidden)
   }
 }

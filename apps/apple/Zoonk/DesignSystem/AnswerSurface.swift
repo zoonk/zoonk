@@ -11,7 +11,9 @@ enum AnswerTone {
 extension View {
   /// An answer option's or a tile's ground: at rest the stronger line; the learner's pick a 2pt ink
   /// ring on its tint; checked, a ring in its verdict's color on that color's tint.
-  func answerSurface(_ tone: AnswerTone, cornerRadius: CGFloat = 12, isPressed: Bool = false)
+  func answerSurface(
+    _ tone: AnswerTone, cornerRadius: CGFloat = Radius.option, isPressed: Bool = false
+  )
     -> some View
   {
     let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)

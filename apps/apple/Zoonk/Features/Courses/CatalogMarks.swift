@@ -104,7 +104,7 @@ struct CourseSubjectLabel: View {
       .padding(.horizontal, 8)
       .padding(.vertical, 3)
       .frame(minHeight: 22)
-      .background(colors.tint, in: .rect(cornerRadius: 8, style: .continuous))
+      .background(colors.tint, in: .rect(cornerRadius: Radius.md, style: .continuous))
       .fixedSize()
   }
 }

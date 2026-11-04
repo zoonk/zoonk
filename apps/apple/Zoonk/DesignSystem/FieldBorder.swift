@@ -8,7 +8,7 @@ extension View {
       .padding(.vertical, 8)
       .frame(minHeight: 40)
       .overlay {
-        RoundedRectangle(cornerRadius: 10, style: .continuous)
+        RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
           .strokeBorder(
             isFocused ? Color(.foreground) : .input, lineWidth: isFocused ? 2 : 1)
       }

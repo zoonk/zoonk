@@ -38,7 +38,8 @@ private struct ZoonkButton: View {
   let variant: ZoonkButtonStyle.Variant
 
   var body: some View {
-    let shape = RoundedRectangle(cornerRadius: isSmall ? 8 : 10, style: .continuous)
+    let shape = RoundedRectangle(
+      cornerRadius: isSmall ? Radius.md : Radius.lg, style: .continuous)
 
     configuration.label
       .font(isSmall ? .footnote.weight(.medium) : .subheadline.weight(.medium))

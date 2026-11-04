@@ -8,7 +8,7 @@ extension View {
       .padding(.horizontal, 8)
       .padding(.vertical, 3)
       .frame(minHeight: 22)
-      .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(.input))
+      .overlay(RoundedRectangle(cornerRadius: Radius.md, style: .continuous).strokeBorder(.input))
       .fixedSize()
   }
 }

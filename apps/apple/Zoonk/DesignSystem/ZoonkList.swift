@@ -23,7 +23,6 @@ private struct ZoonkList: ViewModifier {
       .listStyle(.plain)
       .scrollContentBackground(.hidden)
       .background(Color(.background))
-      .listRowSeparatorTint(.border)
       .listSectionSpacing(24)
       .readableColumn(horizontalSizeClass == .regular ? 768 : .infinity)
   }
@@ -31,7 +30,7 @@ private struct ZoonkList: ViewModifier {
 
 private struct RowHighlight: View {
   var body: some View {
-    RoundedRectangle(cornerRadius: 10, style: .continuous)
+    RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
       .fill(.muted)
       .padding(.horizontal, 6)
       .padding(.vertical, 2)

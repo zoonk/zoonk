@@ -3,7 +3,7 @@ import SwiftUI
 extension View {
   /// Main's `Surface`: one self-contained thing on the page, on `card` with a hairline and no
   /// shadow. Never inside another panel.
-  func panel(cornerRadius: CGFloat = 14) -> some View {
+  func panel(cornerRadius: CGFloat = Radius.xl) -> some View {
     let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 
     return background(.card, in: shape)

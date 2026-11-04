@@ -6,7 +6,10 @@
   /// accessibility sizes and right to left in a few screenshots. `=buttons`, `=lists` and the other
   /// section names open at that section.
   struct DebugComponentGallery: ViewModifier {
-    private let section = ProcessInfo.processInfo.environment["ZOONK_DEBUG_GALLERY"]
+    /// Also a launch argument (`-ZOONK_DEBUG_GALLERY lists`), which device tools can pass.
+    private let section =
+      ProcessInfo.processInfo.environment["ZOONK_DEBUG_GALLERY"]
+      ?? UserDefaults.standard.string(forKey: "ZOONK_DEBUG_GALLERY")
 
     func body(content: Content) -> some View {
       if let section {
@@ -91,9 +94,11 @@
       LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: 8)], spacing: 8) {
         ForEach(roles, id: \.0) { name, color in
           VStack(spacing: 4) {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
+            RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
               .fill(color)
-              .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(.border))
+              .overlay(
+                RoundedRectangle(cornerRadius: Radius.md, style: .continuous).strokeBorder(.border)
+              )
               .frame(height: 36)
             Text(verbatim: name)
               .font(.caption2)
@@ -127,7 +132,7 @@
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(surface, in: .rect(cornerRadius: 10))
+        .background(surface, in: .rect(cornerRadius: Radius.lg))
       }
     }
   }
