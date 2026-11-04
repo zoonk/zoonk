@@ -188,6 +188,13 @@ class MistakePracticeScreenshots {
         show("mistakes-small-book-done", fold = true, play = ::finish)
     }
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookDoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("mistakes-book-done-font200", fold = true, play = ::finish)
+    }
+
     private fun finish() {
         check()
         rule.onNodeWithContentDescription("End practice. What you answered counts.").performClick()

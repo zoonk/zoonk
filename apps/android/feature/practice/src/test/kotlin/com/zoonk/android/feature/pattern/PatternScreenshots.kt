@@ -187,6 +187,13 @@ class PatternScreenshots {
     @Config(qualifiers = "w707dp-h823dp-xhdpi")
     fun smallBookResult() = show("result-small-book", fold = true, play = ::finish)
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookResultAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("result-book-font200", fold = true, play = ::finish)
+    }
+
     private fun finish() {
         start()
         answer("agree")

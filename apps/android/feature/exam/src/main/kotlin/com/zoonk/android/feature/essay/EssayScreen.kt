@@ -111,6 +111,7 @@ import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -552,117 +553,119 @@ internal fun EssayGradeSteps(
     viewModel: EssayViewModel,
     navigator: AppNavigator,
 ) {
-    val rubric = EssayRubric.of(essay.rubric.value)
-    val tooShort = grade.zeroReason == EssayGrade.ZeroReason.TOO_SHORT
-    val count = if (tooShort) 1 else 2
-    var index by rememberSaveable { mutableIntStateOf(0) }
-    val shown = index.coerceIn(0, count - 1)
-    var comments by rememberSaveable { mutableStateOf(false) }
-    val heading = remember { FocusRequester() }
-    val moveFocus = rememberMoveFocus()
-    var announced by rememberSaveable { mutableIntStateOf(if (announce) NOT_YET else shown) }
+    ResultScreen {
+        val rubric = EssayRubric.of(essay.rubric.value)
+        val tooShort = grade.zeroReason == EssayGrade.ZeroReason.TOO_SHORT
+        val count = if (tooShort) 1 else 2
+        var index by rememberSaveable { mutableIntStateOf(0) }
+        val shown = index.coerceIn(0, count - 1)
+        var comments by rememberSaveable { mutableStateOf(false) }
+        val heading = remember { FocusRequester() }
+        val moveFocus = rememberMoveFocus()
+        var announced by rememberSaveable { mutableIntStateOf(if (announce) NOT_YET else shown) }
 
-    // Main's `focusStepTitle`: a new step takes TalkBack to its heading, and so does the grade once it's in or asked for.
-    LaunchedEffect(shown) {
-        if (shown != announced) {
-            announced = shown
-            moveFocus(heading)
-        }
-    }
-
-    var span by remember { mutableStateOf<PageSpan?>(null) }
-    // Above both layouts, so folding back to the steps finds the reading place the learner left.
-    val stepScroll = rememberScrollState()
-
-    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        // An open book shows both steps at once: the grade with its comments before the fold, the next step after it.
-        val pages = !tooShort && spreadFold(maxWidth, span) != null
-        val beside = !tooShort && supportingPaneBeside(maxWidth)
-        val step: @Composable (Modifier) -> Unit = { modifier ->
-            CompositionLocalProvider(LocalStepHeading provides heading) {
-                RunPage(modifier, stepScroll) {
-                    when {
-                        tooShort -> TooShort(closed)
-                        shown == 0 -> EssayGradeCard(grade, rubric)
-                        else -> NextStep(grade)
-                    }
-                }
-            }
-        }
-        val finalActions: @Composable FlowRowScope.(Modifier) -> Unit = { main ->
-            if (closed) {
-                Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = main) {
-                    Text(stringResource(R.string.essay_back_to_today))
-                }
-            } else {
-                OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
-                    Text(stringResource(R.string.essay_skip_rewrite))
-                }
-                Button(
-                    onClick = viewModel::rewrite,
-                    enabled = !finished,
-                    modifier = main,
-                ) { Text(stringResource(R.string.essay_rewrite)) }
+        // Main's `focusStepTitle`: a new step takes TalkBack to its heading, and so does the grade once it's in or asked for.
+        LaunchedEffect(shown) {
+            if (shown != announced) {
+                announced = shown
+                moveFocus(heading)
             }
         }
 
-        TaskScaffold(
-            onClose = navigator::closeTask,
-            title = { if (!pages) StepDots(count, shown) },
-            bottomBar = {
-                TaskActionBar {
-                    if (pages) {
-                        TaskActions(content = finalActions)
-                    } else {
-                        StepPagerActions(count, shown, onIndexChange = { index = it }, finalAction = finalActions)
-                    }
-                    if (pages || shown == count - 1) {
-                        if (finishFailed && !finishing) {
-                            Text(
-                                stringResource(R.string.essay_finish_failed),
-                                Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
+        var span by remember { mutableStateOf<PageSpan?>(null) }
+        // Above both layouts, so folding back to the steps finds the reading place the learner left.
+        val stepScroll = rememberScrollState()
+
+        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+            // An open book shows both steps at once: the grade with its comments before the fold, the next step after it.
+            val pages = !tooShort && spreadFold(maxWidth, span) != null
+            val beside = !tooShort && supportingPaneBeside(maxWidth)
+            val step: @Composable (Modifier) -> Unit = { modifier ->
+                CompositionLocalProvider(LocalStepHeading provides heading) {
+                    RunPage(modifier, stepScroll) {
+                        when {
+                            tooShort -> TooShort(closed)
+                            shown == 0 -> EssayGradeCard(grade, rubric)
+                            else -> NextStep(grade)
                         }
-                        if (!tooShort && !beside) {
-                            TextButton(onClick = { comments = true }, modifier = Modifier.fillMaxWidth()) {
-                                Text(stringResource(R.string.essay_see_comments), textAlign = TextAlign.Center)
+                    }
+                }
+            }
+            val finalActions: @Composable FlowRowScope.(Modifier) -> Unit = { main ->
+                if (closed) {
+                    Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = main) {
+                        Text(stringResource(R.string.essay_back_to_today))
+                    }
+                } else {
+                    OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
+                        Text(stringResource(R.string.essay_skip_rewrite))
+                    }
+                    Button(
+                        onClick = viewModel::rewrite,
+                        enabled = !finished,
+                        modifier = main,
+                    ) { Text(stringResource(R.string.essay_rewrite)) }
+                }
+            }
+
+            TaskScaffold(
+                onClose = navigator::closeTask,
+                title = { if (!pages) StepDots(count, shown) },
+                bottomBar = {
+                    TaskActionBar {
+                        if (pages) {
+                            TaskActions(content = finalActions)
+                        } else {
+                            StepPagerActions(count, shown, onIndexChange = { index = it }, finalAction = finalActions)
+                        }
+                        if (pages || shown == count - 1) {
+                            if (finishFailed && !finishing) {
+                                Text(
+                                    stringResource(R.string.essay_finish_failed),
+                                    Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                            }
+                            if (!tooShort && !beside) {
+                                TextButton(onClick = { comments = true }, modifier = Modifier.fillMaxWidth()) {
+                                    Text(stringResource(R.string.essay_see_comments), textAlign = TextAlign.Center)
+                                }
                             }
                         }
                     }
-                }
-            },
-        ) { padding ->
-            when {
-                tooShort -> {
-                    step(Modifier.padding(padding))
-                }
+                },
+            ) { padding ->
+                when {
+                    tooShort -> {
+                        step(Modifier.padding(padding))
+                    }
 
-                pages -> {
-                    ResultPages(
-                        modifier = Modifier.padding(padding),
-                        withMoment = false,
-                        columnModifier = Modifier.runColumn(),
-                        done = {
-                            CompositionLocalProvider(LocalStepHeading provides heading) { EssayGradeCard(grade, rubric) }
-                            Comments(grade)
-                        },
-                        next = { NextStep(grade) },
-                    )
-                }
+                    pages -> {
+                        ResultPages(
+                            modifier = Modifier.padding(padding),
+                            withMoment = false,
+                            columnModifier = Modifier.runColumn(),
+                            done = {
+                                CompositionLocalProvider(LocalStepHeading provides heading) { EssayGradeCard(grade, rubric) }
+                                Comments(grade)
+                            },
+                            next = { NextStep(grade) },
+                        )
+                    }
 
-                else -> {
-                    PageWithSupportingPane(
-                        supportingPane = { CommentsAside(grade) },
-                        modifier = Modifier.padding(padding),
-                    ) { step(Modifier) }
+                    else -> {
+                        PageWithSupportingPane(
+                            supportingPane = { CommentsAside(grade) },
+                            modifier = Modifier.padding(padding),
+                        ) { step(Modifier) }
+                    }
                 }
             }
         }
-    }
 
-    if (comments) CommentsSheet(grade) { comments = false }
+        if (comments) CommentsSheet(grade) { comments = false }
+    }
 }
 
 @Composable
