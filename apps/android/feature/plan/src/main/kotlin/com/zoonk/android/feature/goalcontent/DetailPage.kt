@@ -42,7 +42,7 @@ import com.zoonk.android.ui.scaffold.supportingPaneBeside
  * shows once it has scrolled under the bar. Where the page splits into panes, [aside] runs beside it
  * behind a hairline (main's aside from 72rem, an unfolded book's second page); otherwise [content]
  * places what it needs of it in the page. [ask] sits in the bar, as the buddy's face on a narrow page, unless [askInAside] and
- * the aside is showing.
+ * the aside is showing. The page's "⋯" goes in its [DetailHero], beside the main action, as main's.
  */
 @Composable
 internal fun DetailPage(
@@ -53,7 +53,6 @@ internal fun DetailPage(
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
     askInAside: Boolean = false,
-    menu: @Composable () -> Unit = {},
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     val listState = rememberLazyListState()
@@ -67,7 +66,6 @@ internal fun DetailPage(
             title = { BarTitle(title) },
             actions = {
                 if (ask != null && !(askInAside && asideBeside)) ask(if (wide) AskTutorAppearance.Button else AskTutorAppearance.Icon)
-                menu()
             },
         ) { padding ->
             DetailPageContent(listState, padding, if (asideBeside) aside else null, hero, content)
@@ -130,24 +128,34 @@ private fun DetailPageContent(
     }
 }
 
-/** The page's name and facts, with its main action under them on a narrow page and at their end on a wide one. */
+/**
+ * The page's name and facts, with its main action and its [menu] ("⋯") under them on a narrow page,
+ * the action filling the row, and at their end on a wide one (main's `DetailHero` and `DetailActions`).
+ */
 @Composable
 internal fun DetailHero(
     action: (@Composable (Modifier) -> Unit)?,
+    menu: (@Composable () -> Unit)?,
     text: @Composable ColumnScope.() -> Unit,
 ) {
     BoxWithConstraints(Modifier.fillMaxWidth().padding(horizontal = PAGE_PADDING)) {
         if (maxWidth >= WIDE_FROM) {
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp), verticalAlignment = Alignment.Bottom) {
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp), content = text)
-                action?.invoke(Modifier)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    action?.invoke(Modifier)
+                    menu?.invoke()
+                }
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 text()
-                if (action != null) {
+                if (action != null || menu != null) {
                     Spacer(Modifier.height(12.dp))
-                    action(Modifier.fillMaxWidth())
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        action?.invoke(Modifier.weight(1f))
+                        menu?.invoke()
+                    }
                 }
             }
         }

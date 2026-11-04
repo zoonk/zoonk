@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.theme.zoonkType
 import java.time.LocalDate
 import java.time.format.TextStyle
 
@@ -132,7 +133,7 @@ internal fun YearCalendar(
             days[selected].label,
             modifier = Modifier.clearAndSetSemantics {},
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.zoonkType.data,
         )
     }
 }

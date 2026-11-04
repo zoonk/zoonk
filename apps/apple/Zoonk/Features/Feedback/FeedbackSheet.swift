@@ -173,32 +173,15 @@ private struct FeedbackForm: View {
 
       if store.asksForEmail {
         Section {
-          TextField(
-            text: $store.email,
-            prompt: Text(
-              "you@example.com",
+          FormField(
+            title: Text(
+              "Email address",
               tableName: "Feedback",
-              comment: "Example email address in the feedback form.")
+              comment: "Email field label in the feedback form."),
+            isFocused: focusedField == .email
           ) {
-            Text(
-              "Email address",
-              tableName: "Feedback",
-              comment: "Email field label in the feedback form.")
+            emailField
           }
-          .focused($focusedField, equals: .email)
-          .textInputAutocapitalization(.never)
-          .keyboardType(.emailAddress)
-          .autocorrectionDisabled()
-          .textContentType(.emailAddress)
-          .submitLabel(.next)
-          .onSubmit {
-            focusedField = .message
-          }
-          .accessibilityLabel(
-            Text(
-              "Email address",
-              tableName: "Feedback",
-              comment: "Email field label in the feedback form."))
         } footer: {
           SectionFooter {
             Text(
@@ -210,19 +193,27 @@ private struct FeedbackForm: View {
       }
 
       Section {
-        MultilineTextField(
-          text: $store.message,
-          prompt: Text(
-            "How can we help you?",
-            tableName: "Feedback",
-            comment: "Placeholder in the feedback message field."),
-          label: Text(
+        FormField(
+          title: Text(
             "Message",
             tableName: "Feedback",
-            comment: "Message field label in the feedback form.")
-        )
-        .focused($focusedField, equals: .message)
-        .lineLimit(5...10)
+            comment: "Message field label in the feedback form."),
+          isFocused: focusedField == .message
+        ) {
+          MultilineTextField(
+            text: $store.message,
+            prompt: Text(
+              "How can we help you?",
+              tableName: "Feedback",
+              comment: "Placeholder in the feedback message field."),
+            label: Text(
+              "Message",
+              tableName: "Feedback",
+              comment: "Message field label in the feedback form.")
+          )
+          .focused($focusedField, equals: .message)
+          .lineLimit(5...10)
+        }
       } footer: {
         SectionFooter {
           if store.attachesScreen {
@@ -257,6 +248,35 @@ private struct FeedbackForm: View {
     .onChange(of: store.message) { _, _ in
       store.clearFailure()
     }
+  }
+
+  private var emailField: some View {
+    TextField(
+      text: $store.email,
+      prompt: Text(
+        "you@example.com",
+        tableName: "Feedback",
+        comment: "Example email address in the feedback form.")
+    ) {
+      Text(
+        "Email address",
+        tableName: "Feedback",
+        comment: "Email field label in the feedback form.")
+    }
+    .focused($focusedField, equals: .email)
+    .textInputAutocapitalization(.never)
+    .keyboardType(.emailAddress)
+    .autocorrectionDisabled()
+    .textContentType(.emailAddress)
+    .submitLabel(.next)
+    .onSubmit {
+      focusedField = .message
+    }
+    .accessibilityLabel(
+      Text(
+        "Email address",
+        tableName: "Feedback",
+        comment: "Email field label in the feedback form."))
   }
 
   private var confirmation: some View {

@@ -12,8 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -52,10 +53,12 @@ import com.zoonk.android.ui.theme.zoonkType
  * least 48dp tall. [highlighted] is the learner's place, on `muted` with `lg` corners reaching 10dp
  * past the words, as main's; a row with [expanded] opens what's under it, TalkBack hearing whether
  * it's open after [stateDescription]. [meta] (numbers, a date, the Plus mark) ends the headline and
- * moves under it when the words would get too little room. Rows reach the list's edges and inset their
- * own content by [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its
- * highlight still spans the list. [verticalAlignment] `Top` keeps the mark on the title's first line
- * when lines under it run long (main's `items-start`).
+ * moves under it when the words would get too little room. [trailing] is a control at the row's end,
+ * such as a switch or a button (main's `SettingRow`). [leading] is a mark at least a line tall, or a
+ * larger picture (an avatar). Rows reach the list's edges and inset their own content by
+ * [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
+ * spans the list. [verticalAlignment] `Top` keeps the mark on the title's first line when lines
+ * under it run long (main's `items-start`).
  */
 @Composable
 fun ListRow(
@@ -70,6 +73,7 @@ fun ListRow(
     leading: (@Composable () -> Unit)? = null,
     supporting: (@Composable () -> Unit)? = null,
     meta: (@Composable () -> Unit)? = null,
+    trailing: (@Composable () -> Unit)? = null,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
 ) {
     val openWords = expanded?.let { stringResource(if (it) R.string.disclosure_expanded else R.string.disclosure_collapsed) }
@@ -116,7 +120,12 @@ fun ListRow(
                 MaterialTheme.typography.titleSmall.lineHeight
                     .toDp()
             }
-        val markBox = if (verticalAlignment == Alignment.Top) Modifier.width(markSize()).height(firstLine) else Modifier.size(markSize())
+        val markBox =
+            if (verticalAlignment == Alignment.Top) {
+                Modifier.widthIn(min = markSize()).heightIn(min = firstLine)
+            } else {
+                Modifier.sizeIn(minWidth = markSize(), minHeight = markSize())
+            }
         CompositionLocalProvider(LocalContentColor provides quiet) {
             leading?.let { Box(markBox, contentAlignment = Alignment.Center) { it() } }
         }
@@ -152,6 +161,8 @@ fun ListRow(
                 tint = quiet,
             )
         }
+
+        trailing?.invoke()
     }
 }
 

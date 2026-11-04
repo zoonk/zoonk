@@ -72,6 +72,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
@@ -240,8 +241,8 @@ internal fun WebPlusPlan(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(if (standalone) R.string.subscription_plus else R.string.subscription_website),
-                Modifier.semantics { heading() },
-                style = if (standalone) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.titleMedium,
+                if (standalone) Modifier.pageTitle() else Modifier.semantics { heading() },
+                style = if (standalone) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.titleMedium,
             )
             if (standalone && subscription.state != State.UNPAID) {
                 val label = if (subscription.state == State.ENDING) R.string.subscription_ending else R.string.subscription_active
@@ -286,8 +287,8 @@ internal fun CurrentPlan(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(R.string.subscription_plus),
-                Modifier.semantics { heading() },
-                style = MaterialTheme.typography.headlineSmall,
+                Modifier.pageTitle(),
+                style = MaterialTheme.typography.headlineMedium,
             )
             LabelChip(stringResource(if (isEnding) R.string.subscription_ending else R.string.subscription_active))
         }
@@ -420,8 +421,8 @@ internal fun PlanOffer(
         PageColumn(maxWidth = if (sideBySide) TWO_PLANS_WIDTH else PAGE_WIDTH) {
             Text(
                 stringResource(R.string.subscription_offer_title),
-                Modifier.semantics { heading() },
-                style = MaterialTheme.typography.headlineSmall,
+                Modifier.pageTitle(),
+                style = MaterialTheme.typography.headlineMedium,
             )
 
             PlanColumns(sideBySide, verticalSpacing = 24.dp) {
@@ -668,7 +669,7 @@ internal fun PlanIncludes(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(summary, style = MaterialTheme.typography.titleMedium)
+        Text(summary, style = MaterialTheme.typography.titleLarge)
         items.forEach { item ->
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
                 Icon(

@@ -15,6 +15,9 @@ struct MindMapsScreen: View {
         .navigationTitle(
           Text("Mind maps", tableName: "MindMaps", comment: "Title of the mind maps page")
         )
+        .barTitleAfterHero(
+          String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
+        )
         .loads(list)
     }
   }
@@ -35,20 +38,20 @@ struct MindMapsScreen: View {
     case .loaded(let maps):
       ScrollView {
         VStack(alignment: .leading, spacing: 12) {
-          AccessibilityStack(alignment: .firstTextBaseline, stackedSpacing: 4) {
+          PageHeader(
+            Text("Mind maps", tableName: "MindMaps", comment: "Title of the mind maps page"),
+            eyebrow: Text(goal.title)
+          )
+          .padding(.bottom, 12)
+
+          SectionTitle(
             Text(
               "Chapters you finished", tableName: "MindMaps",
-              comment: "Heading of the chapters with mind maps"
-            )
-            .typeStyle(.body.weight(.semibold))
-            .frame(maxWidth: .infinity, alignment: .leading)
-
+              comment: "Heading of the chapters with mind maps")
+          ) {
             Text(
               "\(maps.chapters.count) chapters", tableName: "MindMaps",
-              comment: "How many chapters have mind maps"
-            )
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+              comment: "How many chapters have mind maps")
           }
 
           LazyVGrid(columns: columns, spacing: 16) {

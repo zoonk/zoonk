@@ -60,12 +60,15 @@ enum PlanSlotItem: Hashable {
   }
 }
 
-/// One thing at a time: "Not now" moves on to the next for as long as the app runs.
+/// One thing at a time: "Not now" moves on to the next for as long as the app runs. In the page's
+/// column it's main's suggestion line, its summary with "View" opening the whole suggestion in a
+/// sheet; beside the page (`isInline`) it's the whole suggestion.
 struct PlanSuggestionSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
 
   let context: PlanContext
+  var isInline = false
 
   var body: some View {
     let state = store.suggestionState(goalId: context.goal.id)
@@ -75,8 +78,18 @@ struct PlanSuggestionSection: View {
 
     if let item = items.first {
       Section {
-        slot(item)
-          .padding(.vertical, 4)
+        if isInline {
+          slot(item)
+            .padding(.vertical, 4)
+        } else {
+          let summary = summary(item)
+
+          // A new suggestion starts closed, so an answer in the sheet never shows the next one there.
+          SuggestionLine(summary: summary.text, systemImage: summary.systemImage) {
+            slot(item)
+          }
+          .id(item)
+        }
       } footer: {
         SectionFooter {
           if items.count > 1 {
@@ -209,6 +222,67 @@ struct PlanSuggestionSection: View {
       }
     case .freeWeekOver:
       FreeWeekOverNotice()
+    }
+  }
+
+  /// What the line says for each suggestion, as main's `SuggestionSummary`: its title, or for a pace
+  /// that's behind, how to catch up.
+  private func summary(_ item: PlanSlotItem) -> (text: Text, systemImage: String) {
+    switch item {
+    case .paused:
+      (
+        Text(
+          "\(context.goal.title) is paused", tableName: "Plan",
+          comment: "Title of the Plan's notice for a paused goal"), "pause"
+      )
+    case .choice(let choice) where choice.take > 1:
+      (
+        Text(
+          "\(choice.group): which ones will you take?", tableName: "Plan",
+          comment:
+            "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
+        ), "list.bullet"
+      )
+    case .choice(let choice):
+      (
+        Text(
+          "\(choice.group): which one will you take?", tableName: "Plan",
+          comment:
+            "Asks which option of an exam's choice, like its foreign language, the learner takes"),
+        "list.bullet"
+      )
+    case .pastDate:
+      (
+        Text(
+          "Your date came", tableName: "Plan",
+          comment: "Title of the Plan's notice when the goal's date came"),
+        "calendar.badge.exclamationmark"
+      )
+    case .fitLessons:
+      (context.plan.fitOffer.map(fitTitle) ?? Text(verbatim: ""), "sparkles")
+    case .coverage(let text):
+      (Text(text), "clock")
+    case .finished:
+      (
+        Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over"),
+        "checkmark.circle"
+      )
+    case .tooTight:
+      (
+        Text(
+          "Your plan no longer fits", tableName: "Plan",
+          comment: "Title of the Plan's notice when the plan no longer fits"),
+        "calendar.badge.clock"
+      )
+    case .behind(let text):
+      (Text(text), "calendar.badge.clock")
+    case .freeWeekOver:
+      (
+        Text(
+          "Your free week of exam prep is over", tableName: "Plan",
+          comment: "Title of the Plan's notice when a free exam plan's first week ended"),
+        "sparkles"
+      )
     }
   }
 
@@ -488,5 +562,61 @@ struct FreeWeekOverNotice: View {
         "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
         tableName: "Plan", comment: "What stays free and what Plus opens after the free week"),
       isInset: true)
+  }
+}
+
+/// Main's `SuggestionLine`: a panel with the suggestion's mark, its summary in two lines at most,
+/// and "View", which opens the whole suggestion in a sheet.
+private struct SuggestionLine<Content: View>: View {
+  let summary: Text
+  let systemImage: String
+  @ViewBuilder let content: Content
+
+  @State private var isOpen = false
+
+  var body: some View {
+    HStack(spacing: 10) {
+      Image(systemName: systemImage)
+        .foregroundStyle(.warning)
+        .accessibilityHidden(true)
+
+      summary
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .lineLimit(2)
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+      Button {
+        isOpen = true
+      } label: {
+        Text("View", tableName: "Plan", comment: "Opens the Plan's suggestion in full")
+      }
+      .buttonStyle(.outline)
+      .controlSize(.small)
+    }
+    .padding(.leading, 12)
+    .padding(.trailing, 8)
+    .padding(.vertical, 8)
+    .frame(minHeight: 48)
+    .panel()
+    .listRowSeparator(.hidden)
+    .sheet(isPresented: $isOpen) {
+      NavigationStack {
+        ScrollView {
+          content
+            .controlSize(.large)
+            .padding()
+        }
+        .toolbar {
+          ToolbarItem(placement: .topBarTrailing) {
+            Button(role: .close) {
+              isOpen = false
+            }
+          }
+        }
+      }
+      .presentationDetents([.medium, .large])
+      .zoonkStyles()
+    }
   }
 }

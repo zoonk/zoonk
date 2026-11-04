@@ -14,16 +14,9 @@ struct DataExportRow: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      HStack {
-        VStack(alignment: .leading, spacing: 2) {
-          title
-
-          description
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
-
-        Spacer()
+      AccessibilityStack(spacing: 12, stackedSpacing: 8) {
+        ListRow(title, description: description)
+          .frame(maxWidth: .infinity, alignment: .leading)
 
         Button {
           Task {
@@ -40,6 +33,7 @@ struct DataExportRow: View {
           }
         }
         .buttonStyle(.outline)
+        .controlSize(.small)
         .disabled(isPreparing)
         .accessibilityLabel(title)
       }

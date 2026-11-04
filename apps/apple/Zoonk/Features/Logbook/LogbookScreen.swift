@@ -332,7 +332,7 @@ private struct LogbookSteps: View {
         StatTileGrid(columns: [2, 1], minimumWidth: tileWidth) {
           StatTile(
             label: Text("Time", tableName: "Session", comment: "The week's study time"),
-            value: Text(studyDuration(minutes: recap.week.minutes)),
+            quantity: studyDuration(minutes: recap.week.minutes),
             systemImage: "clock")
           StatTile(
             label: Text("Questions", tableName: "Session", comment: "The week's questions"),

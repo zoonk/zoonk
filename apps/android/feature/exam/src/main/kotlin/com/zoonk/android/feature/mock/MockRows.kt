@@ -1,21 +1,15 @@
 package com.zoonk.android.feature.mock
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -27,9 +21,14 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamMockSummary
 import com.zoonk.api.models.MockOptions
 
@@ -56,8 +55,9 @@ fun MockSummaryRow(
 }
 
 /**
- * Main's list row for mocks, flush with the page's column: a mark, a title over a line, and a short
- * fact at the end, or under the line when [stacked].
+ * Main's list row for mocks in the page's column (the shared `ListRow`, reaching past the column's
+ * margin): a mark, a title over a line, and a short fact at the end, or under the line when
+ * [stacked]. [current] is the row the learner is on, on its fill, and TalkBack says so.
  */
 @Composable
 fun MockListRow(
@@ -68,29 +68,24 @@ fun MockListRow(
     onClick: (() -> Unit)?,
     stacked: Boolean,
     modifier: Modifier = Modifier,
+    current: Boolean = false,
 ) {
-    Row(
-        (if (onClick != null) modifier.fillMaxWidth().clickable(onClick = onClick) else modifier.fillMaxWidth())
-            .heightIn(min = 64.dp)
-            .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        leading()
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            ProvideTextStyle(MaterialTheme.typography.bodyLarge) { headline() }
-            Text(supporting, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-            // Under the line, the fact is the row's quietest words.
-            if (trailing != null && stacked) {
-                Text(
-                    trailing,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall.withTabularFigures(),
-                )
+    ListRow(
+        headline = headline,
+        modifier = modifier.bleed(LIST_ITEM_INSET),
+        onClick = onClick,
+        highlighted = current,
+        stateDescription = if (current) stringResource(R.string.exam_current) else null,
+        leading = leading,
+        supporting = {
+            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                Text(supporting)
+                // Under the line, the fact is the row's quietest words.
+                if (trailing != null && stacked) Text(trailing, style = factStyle())
             }
-        }
-        if (trailing != null && !stacked) Text(trailing, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factStyle())
-    }
+        },
+        meta = if (trailing != null && !stacked) ({ Text(trailing) }) else null,
+    )
 }
 
 /**
@@ -109,7 +104,7 @@ fun factsUnderLines(
 }
 
 @Composable
-private fun factStyle() = MaterialTheme.typography.labelMedium.withTabularFigures()
+private fun factStyle() = MaterialTheme.zoonkType.data
 
 /** Where a mock taken any time starts or continues; null when the goal offers none. */
 fun mockEntryRoute(options: MockOptions): AppRoute? =
@@ -121,11 +116,12 @@ fun MockEntryButton(
     options: MockOptions,
     onOpen: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
+    size: ButtonSize = LocalButtonSize.current,
 ) {
     val route = mockEntryRoute(options) ?: return
     val running = options.running != null
 
-    Button(onClick = { onOpen(route) }, modifier = modifier, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+    Button(onClick = { onOpen(route) }, modifier = modifier, size = size, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
         Icon(painterResource(R.drawable.ic_timer), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
         Text(
             text = stringResource(if (running) R.string.mock_continue else R.string.mock_take),

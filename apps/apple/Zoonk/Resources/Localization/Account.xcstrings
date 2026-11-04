@@ -10942,6 +10942,65 @@
         }
       }
     },
+    "Your name, username and account." : {
+      "comment" : "Under the Profile page's title: what the page changes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Name, dein Benutzername und dein Konto."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu nombre, nombre de usuario y cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton nom, ton nom d’utilisateur et ton compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo nome, il nome utente e il tuo account."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前、ユーザー名、アカウントの設定です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름, 사용자 이름, 계정 정보예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje imię, nazwa użytkownika i konto."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu nome, nome de usuário e conta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adın, kullanıcı adın ve hesabın."
+          }
+        }
+      }
+    },
     "Your purchase is safe and hasn't been finished yet. Restore purchases when you're back online." : {
       "comment" : "Explains that a transaction remains available after server synchronization fails",
       "localizations" : {

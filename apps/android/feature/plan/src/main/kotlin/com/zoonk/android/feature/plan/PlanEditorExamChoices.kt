@@ -16,6 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
@@ -28,7 +31,7 @@ import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionSaveError
-import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
@@ -148,19 +151,27 @@ fun PlanChoiceLines(
         choices.forEach { choice ->
             key(choice.group) {
                 val picked = choice.pickedNames()
+                val line =
+                    if (picked.isEmpty()) {
+                        examChoiceLeftOut(
+                            choice,
+                        )
+                    } else {
+                        stringResource(R.string.plan_choice_following, joinList(picked))
+                    }
+                val link = statusLink(stringResource(if (picked.isEmpty()) R.string.plan_choose else R.string.plan_choice_change), onChange)
+                val ink = MaterialTheme.colorScheme.onSurface
+                // One sentence with the change inline, as main's: "Following the Inglês syllabus · Change".
                 Text(
                     text =
-                        if (picked.isEmpty()) {
-                            examChoiceLeftOut(choice)
-                        } else {
-                            stringResource(R.string.plan_choice_following, joinList(picked))
+                        buildAnnotatedString {
+                            append(line)
+                            append(if (picked.isEmpty()) " " else "\u00A0·\u00A0")
+                            withStyle(SpanStyle(color = ink)) { append(link) }
                         },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                TextButton(onClick = onChange) {
-                    Text(stringResource(if (picked.isEmpty()) R.string.plan_choose else R.string.plan_choice_change))
-                }
             }
         }
     }

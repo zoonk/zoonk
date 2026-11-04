@@ -28,9 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +43,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -73,7 +70,9 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
 import kotlinx.coroutines.launch
@@ -182,11 +181,10 @@ internal fun MindMapsPage(
     val title = stringResource(R.string.navigation_mind_maps)
     val groups = groupBySubject(mindMaps.chapters)
     val gridState = rememberLazyGridState(initialFirstVisibleItemIndex = groups.gridIndexOf(subject) ?: 0)
-    val titleAway by remember { derivedStateOf { gridState.firstVisibleItemIndex > 0 } }
     val drawn = mindMaps.chapters.count { it.status == GoalMindMap.Status.READY }
     val capped = cap != null && drawn < mindMaps.chapters.size
 
-    PageScaffold(onBack = actions.back, title = { if (titleAway) Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
+    PageScaffold(onBack = actions.back, title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
         BoxWithConstraints(Modifier.fillMaxSize()) {
             val direction = LocalLayoutDirection.current
             LazyVerticalGrid(
@@ -249,14 +247,15 @@ private fun MindMapsHero(
         Eyebrow(mindMaps.goal.title)
         Text(
             stringResource(R.string.navigation_mind_maps),
-            Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleLarge,
+            Modifier.pageTitle(),
+            style = MaterialTheme.typography.headlineMedium,
         )
         if (mindMaps.chapters.isNotEmpty()) {
             Text(
                 pluralStringResource(R.plurals.mindmaps_count, drawn, formatNumber(drawn.toDouble(), currentLocale())),
+                Modifier.padding(top = 4.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
+                style = MaterialTheme.zoonkType.data,
             )
         }
         if (cap != null) MindMapLimit(cap, navigator, Modifier.padding(top = 16.dp))

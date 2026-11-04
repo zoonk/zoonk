@@ -51,8 +51,10 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import kotlinx.coroutines.flow.first
 import java.util.UUID
@@ -120,6 +122,7 @@ fun FeedbackForm(
             onClick = { form.send(accountEmail) },
             enabled = form.canSend(accountEmail),
             modifier = Modifier.align(Alignment.End),
+            size = ButtonSize.Small,
         ) {
             Text(stringResource(R.string.feedback_send))
             if (isSending) {
@@ -238,18 +241,26 @@ fun ReportProblemItem(
     )
 }
 
-/** A "More" button with only Report a problem, for a screen without a menu of its own. */
+/**
+ * A "More" button with only Report a problem, for a screen without a menu of its own: in its top app
+ * bar, or [inPage] as main's "⋯" beside a detail page's main action.
+ */
 @Composable
 fun ReportProblemMenu(
     app: AppContainer,
     target: FeedbackTarget,
+    inPage: Boolean = false,
 ) {
     val report = rememberReportProblem(app, target)
     var isOpen by rememberSaveable { mutableStateOf(false) }
 
     Box {
-        IconButton(onClick = { isOpen = true }) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.feedback_more))
+        if (inPage) {
+            OptionsButton(onClick = { isOpen = true }, contentDescription = stringResource(R.string.feedback_more), size = ButtonSize.Large)
+        } else {
+            IconButton(onClick = { isOpen = true }) {
+                Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.feedback_more))
+            }
         }
         DropdownMenu(expanded = isOpen, onDismissRequest = { isOpen = false }) {
             ReportProblemItem(report) { isOpen = false }

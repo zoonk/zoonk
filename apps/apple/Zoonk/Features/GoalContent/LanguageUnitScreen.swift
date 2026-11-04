@@ -227,12 +227,13 @@ private struct LanguageUnitContent: View {
       VStack(alignment: .leading, spacing: 6) {
         if let eyebrow {
           eyebrow
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+            .typeStyle(.eyebrow)
+            .foregroundStyle(.faint)
         }
 
         Text(unit.unit.title)
-          .typeStyle(.section)
+          .typeStyle(.pageTitle)
+          .accessibilityAddTraits(.isHeader)
           .heroTitle()
 
         if let description = unit.unit.description, !description.isEmpty {
@@ -273,6 +274,7 @@ private struct LanguageUnitContent: View {
                 state: lesson.state, title: lesson.title),
               number: index + 1)
           }
+          .currentRow(lesson.state == .next)
         }
       } header: {
         SectionTitle(

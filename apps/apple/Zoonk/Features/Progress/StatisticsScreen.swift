@@ -17,11 +17,7 @@ struct StatisticsScreen: View {
       StatsOverview()
     }
     .navigationTitle(Text(AppTab.statistics.title))
-    .navigationSubtitle(
-      Text(
-        "All goals", tableName: "Progress",
-        comment: "Under Statistics: its numbers cover every goal")
-    )
+    .barTitleAfterHero(String(localized: AppTab.statistics.title))
     .navigationDestination(for: StatsSection.self) { section in
       pushed(section)
     }
@@ -85,6 +81,12 @@ private struct StatsOverview: View {
       activity.summary.learningDays > 0 || progress.level.value != nil
     {
       StatsPage {
+        PageHeader(
+          Text(AppTab.statistics.title),
+          eyebrow: Text(
+            "All goals", tableName: "Progress",
+            comment: "Under Statistics: its numbers cover every goal"))
+
         OverviewTiles(
           activity: activity.summary, energy: progress.energy.value, level: progress.level.value,
           score: progress.score.value?.performance)
@@ -161,7 +163,8 @@ private struct OverviewTiles: View {
       TileLink(section: .activity) {
         StatTile(
           label: Text(
-            "Study days", tableName: "Progress", comment: "Tile: how many days the learner studied"),
+            "Days studied", tableName: "Progress",
+            comment: "Tile: how many days the learner studied"),
           value: Text(activity.learningDays, format: .number),
           systemImage: "chart.bar.fill", tone: .success,
           detail: Text(
@@ -365,10 +368,12 @@ private struct PatternsLinkRow: View {
       HStack(spacing: 12) {
         AccessibilityStack(spacing: 12, stackedSpacing: 4) {
           Text(StatsSection.patterns.title)
-            .foregroundStyle(.primary)
+            .typeStyle(.rowTitle)
+            .foregroundStyle(Color(.foreground))
             .frame(maxWidth: .infinity, alignment: .leading)
 
           Text(value)
+            .typeStyle(.body)
             .foregroundStyle(.mutedForeground)
             .multilineTextAlignment(isStacked ? .leading : .trailing)
         }
@@ -379,14 +384,13 @@ private struct PatternsLinkRow: View {
           .foregroundStyle(.faint)
           .accessibilityHidden(true)
       }
-      .padding(.horizontal)
-      .padding(.vertical, 12)
+      // Main's flat row on the page, not a box.
+      .padding(.vertical, 11)
       .frame(maxWidth: .infinity, minHeight: 44)
-      .panel(cornerRadius: 16)
-      .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+      .contentShape(.rect)
       .modifier(
         StatsSelection(
-          section: .patterns, shape: RoundedRectangle(cornerRadius: 16, style: .continuous)))
+          section: .patterns, shape: RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)))
     }
     .buttonStyle(.plain)
   }

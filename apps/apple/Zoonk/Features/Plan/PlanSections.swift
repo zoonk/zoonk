@@ -165,7 +165,7 @@ private struct RoadmapCompact: View {
               "\(currentIndex + 1) of \(phases.count)", tableName: "Plan",
               comment: "The learner's phase number of the plan's phases, under the roadmap"
             )
-            .monospacedDigit()
+            .typeStyle(.data)
           }
         } else {
           Text(
@@ -182,25 +182,29 @@ private struct RoadmapCompact: View {
             .imageScale(.small)
         }
       }
-      .typeStyle(.body)
+      .typeStyle(.meta)
     }
     .accessibilityElement(children: .combine)
   }
 
   private func position(phase: PlanPhase) -> Text {
     let today = context.plan.today
+    let title = Text(phase.title)
+      .typeWeight(.medium, legibility: legibilityWeight)
+      .foregroundStyle(Color(.foreground))
 
     guard let start = phase.startDate, let end = phase.endDate, start <= today else {
-      return Text(phase.title).typeWeight(.medium, legibility: legibilityWeight)
+      return title
     }
 
     let day = PlanDate.days(from: start, to: today) + 1
     let days = PlanDate.days(from: start, to: end) + 1
 
     return Text(
-      "\(Text(phase.title).typeWeight(.medium, legibility: legibilityWeight))\u{00A0}· day \(day) of \(days)",
-      tableName: "Plan",
-      comment: "Where the learner is: the phase's name, then its day of the phase's days")
+      "\(title)\u{00A0}· day \(day) of \(days)", tableName: "Plan",
+      comment: "Where the learner is: the phase's name, then its day of the phase's days"
+    )
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -210,20 +214,18 @@ struct PlanNumbersSection: View {
   let context: PlanContext
   let syllabus: GoalSyllabus?
 
+  @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
+
   var body: some View {
     let standing = standingNumber
 
     Section {
-      AccessibilityStack(alignment: .top, spacing: 16) {
+      StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
         if let standing {
           tile(standing) { context.show(.standing) }
         }
 
         if let pace = paceNumber {
-          if standing != nil {
-            Divider()
-          }
-
           tile(pace) { context.show(.pace) }
         }
       }
@@ -231,26 +233,23 @@ struct PlanNumbersSection: View {
     }
   }
 
+  /// Main's plan tiles: a stat tile's label and readout, a meter for a share, and the line under it.
   private func tile(_ number: PlanNumber, open: @escaping () -> Void) -> some View {
     Button(action: open) {
-      VStack(alignment: .leading, spacing: 2) {
-        Text(number.label)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-
-        Text(number.value)
-          .typeStyle(.readout)
-
-        if let detail = number.detail {
-          Text(detail)
-            .typeStyle(.note)
-            .foregroundStyle(
-              number.detailIsGain ? AnyShapeStyle(.successText) : AnyShapeStyle(.mutedForeground))
-        }
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
+      StatTile(
+        label: Text(number.label),
+        value: Text(number.value),
+        icon: { EmptyView() },
+        detail: number.detail.map {
+          Text($0).foregroundStyle(
+            number.detailIsGain ? AnyShapeStyle(.successText) : AnyShapeStyle(.mutedForeground))
+        },
+        meter: number.share,
+        meterFill: .success
+      )
       .contentShape(.rect)
     }
+    .accessibilityAddTraits(.isButton)
   }
 
   private var standingNumber: PlanNumber? {
@@ -276,7 +275,7 @@ struct PlanNumbersSection: View {
             : String(
               localized: "\(points) this week", table: "Plan",
               comment: "Preparation points lost this week"),
-        detailIsGain: points > 0)
+        detailIsGain: points > 0, share: preparation.value)
     }
 
     if context.goal.kind == .language {
@@ -300,7 +299,7 @@ struct PlanNumbersSection: View {
       label: String(
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
       value: goalProgressPercent(share),
-      detail: studiedText(lessons.done - lessons.known))
+      detail: studiedText(lessons.done - lessons.known), share: share)
   }
 
   /// Only the lessons studied: a long plan never leads with its total, which stays in the sheet,
@@ -390,6 +389,8 @@ private struct PlanNumber {
   var value: String
   var detail: String?
   var detailIsGain = false
+  /// From 0 to 1.
+  var share: Double?
 }
 
 func planStatusText(_ status: GoalPlan.Status) -> String {

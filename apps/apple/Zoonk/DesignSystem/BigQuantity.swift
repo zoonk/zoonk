@@ -13,17 +13,29 @@ struct BigQuantity: View {
   }
 
   var body: some View {
-    Self.parts(text).reduce(Text(verbatim: "")) { line, part in
+    Self.text(
+      text,
+      unitFont: Self.unitFont(dynamicTypeSize: dynamicTypeSize, legibilityWeight: legibilityWeight)
+    )
+    .typeStyle(.readout)
+    .foregroundStyle(Color(.foreground))
+  }
+
+  /// The quantity as one `Text` for a view that sets the readout role and its color itself, such as
+  /// a stat tile: its numbers take the role, its words `unitFont` in the secondary color.
+  nonisolated static func text(_ text: String, unitFont: Font) -> Text {
+    parts(text).reduce(Text(verbatim: "")) { line, part in
       part.isNumber
         ? Text("\(line)\(Text(verbatim: part.text))")
         : Text(
           "\(line)\(Text(verbatim: part.text).font(unitFont).foregroundStyle(.mutedForeground))")
     }
-    .typeStyle(.readout)
-    .foregroundStyle(Color(.foreground))
   }
 
-  private var unitFont: Font {
+  /// Main's `max(0.45em, 0.8125rem)` medium words beside a 24pt readout, Bold Text included.
+  static func unitFont(dynamicTypeSize: DynamicTypeSize, legibilityWeight: LegibilityWeight?)
+    -> Font
+  {
     var environment = EnvironmentValues()
     environment.dynamicTypeSize = dynamicTypeSize
     environment.legibilityWeight = legibilityWeight

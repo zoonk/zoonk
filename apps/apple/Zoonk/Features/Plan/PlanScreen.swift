@@ -39,7 +39,7 @@ private struct GoalPlanView: View {
       }
     }
     .navigationTitle(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
-    .navigationSubtitle(daysLeft(plan.value?.plan) ?? Text(verbatim: ""))
+    .navigationSubtitle(daysLeft(plan.value?.plan) ?? "")
   }
 
   @ViewBuilder
@@ -81,7 +81,7 @@ private struct GoalPlanView: View {
   }
 }
 
-private func daysLeft(_ plan: GoalPlan?) -> Text? {
+private func daysLeft(_ plan: GoalPlan?) -> String? {
   guard let plan, let targetDate = plan.schedule.targetDate, targetDate >= plan.today else {
     return nil
   }
@@ -89,18 +89,28 @@ private func daysLeft(_ plan: GoalPlan?) -> Text? {
   let days = PlanDate.days(from: plan.today, to: targetDate)
 
   if days == 0 {
-    return Text("The day is here", tableName: "Plan", comment: "Plan subtitle on the goal's day")
+    return String(
+      localized: "The day is here", table: "Plan", comment: "Plan subtitle on the goal's day")
   }
 
   if plan.schedule.targetDateEstimated {
-    return Text(
-      "~\(days) days left", tableName: "Plan",
+    return String(
+      localized: "~\(days) days left", table: "Plan",
       comment: "Plan subtitle: about how many days are left until the goal's estimated date")
   }
 
-  return Text(
-    "\(days) days left", tableName: "Plan",
+  return String(
+    localized: "\(days) days left", table: "Plan",
     comment: "Plan subtitle: how many days are left until the goal's date")
+}
+
+/// Main's eyebrow: the goal, then the days left until its date.
+private func planEyebrow(goal: LearnerGoal, plan: GoalPlan) -> Text {
+  guard let left = daysLeft(plan) else {
+    return Text(goal.title)
+  }
+
+  return Text(verbatim: "\(goal.title)\u{00A0}· \(left)")
 }
 
 /// A plan is built while the questions are still answered, on a time the learner hasn't chosen
@@ -156,12 +166,12 @@ private struct PlanContent: View {
       ZoonkList {
         header
         PlanRoadmapSection(context: context, structure: structure)
-        structureSections(context: context, structure: structure)
+        structureSections(context: context, structure: structure, namesChoices: false)
       }
     } secondary: {
       ZoonkList {
         PlanNumbersSection(context: context, syllabus: syllabus)
-        PlanSuggestionSection(context: context)
+        PlanSuggestionSection(context: context, isInline: true)
         NextOnPathSection(context: context)
         PlanMoreSection(goal: goal)
         PlanSettingsSection(context: context)
@@ -172,7 +182,7 @@ private struct PlanContent: View {
         PlanRoadmapSection(context: context, structure: structure)
         PlanNumbersSection(context: context, syllabus: syllabus)
         PlanSuggestionSection(context: context)
-        structureSections(context: context, structure: structure)
+        structureSections(context: context, structure: structure, namesChoices: true)
         NextOnPathSection(context: context)
         PlanMoreSection(goal: goal)
         PlanSettingsSection(context: context)
@@ -193,14 +203,21 @@ private struct PlanContent: View {
   private var header: some View {
     Section {
       PageHeader(
-        Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"), eyebrow: daysLeft(plan))
+        Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"),
+        eyebrow: planEyebrow(goal: goal, plan: plan))
     }
   }
 
   @ViewBuilder
-  private func structureSections(context: PlanContext, structure: GoalSyllabus?) -> some View {
+  private func structureSections(
+    context: PlanContext, structure: GoalSyllabus?, namesChoices: Bool
+  ) -> some View {
     if let structure {
-      PlanSyllabusSection(goalKind: goal.kind, syllabus: structure)
+      // Unpicked choices are the suggestion's; beside the page its settings name the pick.
+      PlanSyllabusSection(
+        goalKind: goal.kind, syllabus: structure,
+        choices: namesChoices ? context.plan.examChoices.filter { !$0.subjects.isEmpty } : [],
+        change: { context.adjust(.choice($0)) })
     } else {
       PlanPathSection(context: context, course: context.plan.libraryCourse)
     }

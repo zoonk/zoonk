@@ -23,12 +23,10 @@ struct PlanPathSection: View {
 
       if let course {
         NavigationLink(value: AppRoute.course(courseId: course.courseId, title: course.title)) {
-          Label {
+          PlanPathLink(systemImage: "books.vertical") {
             Text(
               "See the full course", tableName: "Plan",
               comment: "Opens the Library course the plan is built from")
-          } icon: {
-            Image(systemName: "books.vertical")
           }
         }
       }
@@ -492,12 +490,22 @@ private struct PlanCheckpointRow: View {
 struct PlanSyllabusSection: View {
   let goalKind: LearnerGoal.Kind
   let syllabus: GoalSyllabus
+  /// The exam's choices the plan follows, each named in a line with Change, as main's
+  /// `PlanChoiceLines`; beside the page the plan's settings name them instead.
+  var choices: [GoalPlan.ExamChoice] = []
+  var change: (_ group: String) -> Void = { _ in }
 
   var body: some View {
     let isExam = goalKind == .exam
 
     Section {
       PlanCompletedLessonsRow()
+
+      ForEach(choices) { choice in
+        if let line = choice.followingLine {
+          PlanChoiceLine(line: line) { change(choice.group) }
+        }
+      }
 
       ForEach(syllabus.subjects) { subject in
         NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
@@ -517,6 +525,8 @@ struct PlanSyllabusSection: View {
             Text("Lessons studied", tableName: "Plan", comment: "What the modules' bars measure")
           }
         }
+        // Main's legend for the bars is quiet words, not a mono fact.
+        .typeStyle(.small)
       }
     } footer: {
       SectionFooter {
@@ -534,6 +544,36 @@ struct PlanSyllabusSection: View {
   }
 }
 
+/// Main's `PlanChoiceLine`: one sentence naming what the plan follows, with Change inline.
+private struct PlanChoiceLine: View {
+  let line: String
+  let change: () -> Void
+
+  var body: some View {
+    let action = String(
+      localized: "Change", table: "Plan",
+      comment: "Opens the plan's settings to change the option of an exam's choice it follows")
+    var link = AttributedString(action)
+    link.link = URL(string: "zoonk-plan:change")
+    link.foregroundColor = Color(.foreground)
+    link.underlineStyle = .single
+
+    return Text(AttributedString("\(line)\u{00A0}· ") + link)
+      .typeStyle(.body)
+      .foregroundStyle(.mutedForeground)
+      .tint(Color(.foreground))
+      .environment(
+        \.openURL,
+        OpenURLAction { _ in
+          change()
+          return .handled
+        }
+      )
+      .accessibilityAction(named: Text(action)) { change() }
+      .listRowSeparator(.hidden)
+  }
+}
+
 /// Phones list the study places nowhere else, so the path leads to the lessons already done.
 private struct PlanCompletedLessonsRow: View {
   @Environment(LearnerSummaryStore.self) private var learner
@@ -544,15 +584,28 @@ private struct PlanCompletedLessonsRow: View {
       learner.summary.value?.places.completedLessons == true
     {
       NavigationLink(value: AppRoute.completedLessons) {
-        Label {
+        PlanPathLink(systemImage: "clock.arrow.circlepath") {
           Text(
             "Completed lessons", tableName: "Plan",
             comment: "Opens the page of the lessons the learner finished")
-        } icon: {
-          Image(systemName: "clock.arrow.circlepath")
         }
       }
     }
+  }
+}
+
+/// Main's `PathLinkRow`: a quiet way out of the path, in the secondary color.
+private struct PlanPathLink: View {
+  let systemImage: String
+  @ViewBuilder let title: Text
+
+  var body: some View {
+    Label {
+      title
+    } icon: {
+      Image(systemName: systemImage)
+    }
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -566,10 +619,11 @@ struct SyllabusSubjectRow: View {
     VStack(alignment: .leading, spacing: 6) {
       PlanPathRow {
         Text(subject.name)
+          .typeStyle(.rowTitle)
           .foregroundStyle(subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground)
       } value: {
         Text(share, format: .percent.precision(.fractionLength(0)))
-          .typeStyle(.body.monospaced())
+          .typeStyle(.data)
       }
 
       if subject.notPlannedReason != nil {

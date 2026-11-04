@@ -62,9 +62,8 @@ private struct LevelTiles: View {
     } else {
       StatTile(
         label: nextLevelLabel,
-        value: bigQuantity(
-          "\(level.bpToNextLevel.formatted()) \(String(localized: "Brain Power", table: "Progress", comment: "Brain Power, the points every lesson earns"))"
-        ),
+        quantity:
+          "\(level.bpToNextLevel.formatted()) \(String(localized: "Brain Power", table: "Progress", comment: "Brain Power, the points every lesson earns"))",
         systemImage: "chevron.up.2",
         meter: level.share
       )

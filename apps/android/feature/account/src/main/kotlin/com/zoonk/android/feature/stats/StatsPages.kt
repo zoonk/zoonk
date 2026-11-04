@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,10 +18,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,12 +51,16 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.components.rankBar
 import com.zoonk.android.ui.format.DateStyle
@@ -74,6 +75,7 @@ import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CurrentUserActivityResponseActivity
 import com.zoonk.api.models.CurrentUserProgressResponse
 import com.zoonk.api.models.CurrentUserProgressResponseLevel
@@ -199,7 +201,7 @@ private fun OverviewContent(
             { modifier ->
                 val lessons = progress.activity.totalLessonCompletions
                 StatTile(
-                    label = stringResource(R.string.stats_study_days),
+                    label = stringResource(R.string.stats_days_studied),
                     value = whole(progress.activity.learningDays, locale),
                     detail =
                         pluralStringResource(
@@ -253,17 +255,14 @@ private fun OverviewContent(
                 Beside(context.stats.patterns) { patterns ->
                     val summary = patterns?.let { patternsSummary(it) }
                     val names = listOfNotNull(summary?.let { bestDayName(it.days) }, summary?.let { bestTimeName(it.times) })
-                    OutlinedCard(onClick = { context.open(StatsPage.Patterns) }) {
-                        ListItem(
-                            headlineContent = { Text(stringResource(R.string.stats_patterns)) },
-                            supportingContent = {
-                                PatternValue(
-                                    names.factsLine().ifEmpty { stringResource(R.string.stats_not_yet) },
-                                )
-                            },
-                            trailingContent = { Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null) },
-                        )
-                    }
+                    ListRow(
+                        headline = { Text(stringResource(R.string.stats_patterns)) },
+                        modifier = Modifier.bleed(LIST_ITEM_INSET),
+                        onClick = { context.open(StatsPage.Patterns) },
+                        trailing = {
+                            PatternValue(names.factsLine().ifEmpty { stringResource(R.string.stats_not_yet) })
+                        },
+                    )
                 }
             }
         }
@@ -314,10 +313,14 @@ private fun PatternsOverview(
             TextButton(onClick = { context.open(StatsPage.Patterns) }) { Text(stringResource(R.string.stats_see_all)) }
         }
 
-        OutlinedCard {
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
             PatternRow(stringResource(R.string.stats_best_day), summary?.let { bestDayName(it.days) }, summary?.days?.bestScore(locale))
+            ListDivider()
             PatternRow(stringResource(R.string.stats_best_time), summary?.let { bestTimeName(it.times) }, summary?.times?.bestScore(locale))
-            spread?.let { PatternRow(stringResource(R.string.stats_week_spread), it, null) }
+            spread?.let {
+                ListDivider()
+                PatternRow(stringResource(R.string.stats_week_spread), it, null)
+            }
         }
 
         if (patterns != null && summary != null) PatternsNote(summary, patterns.minimumAnswers)
@@ -330,17 +333,13 @@ private fun PatternRow(
     value: String?,
     score: String?,
 ) {
-    ListItem(
-        headlineContent = { Text(label) },
-        trailingContent = {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    ListRow(
+        headline = { Text(label) },
+        trailing = {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 PatternValue(value ?: stringResource(R.string.stats_not_yet))
                 score?.let {
-                    Text(
-                        it,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
-                    )
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
                 }
             }
         },
@@ -695,7 +694,7 @@ internal fun ActivityPage(context: StatsContext) {
                 listOf(
                     { modifier ->
                         StatTile(
-                            label = stringResource(R.string.stats_study_days),
+                            label = stringResource(R.string.stats_days_studied),
                             value = whole(activity.learningDays, locale),
                             detail = stringResource(R.string.stats_any_day_studied),
                             tone = StatTone.Success,

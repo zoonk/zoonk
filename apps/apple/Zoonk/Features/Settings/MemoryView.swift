@@ -8,30 +8,26 @@ struct MemoryView: View {
   var body: some View {
     ZoonkList {
       Section {
-        Text(
-          "What Zoonk remembers to give you examples and plans that fit your life.",
-          tableName: "Settings", comment: "What the Memory page is for"
-        )
-        .foregroundStyle(.mutedForeground)
-        .listRowBackground(Color.clear)
+        PageHeader(
+          Text("Memory", tableName: "Settings", comment: "Title of the Memory page"),
+          supporting: Text(
+            "What Zoonk remembers to give you examples and plans that fit your life.",
+            tableName: "Settings", comment: "What the Memory page is for"))
       }
 
       if let memory = settings.memory.value {
         Section {
-          Toggle(isOn: enabledBinding(memory.enabled)) {
-            Text("Use memory", tableName: "Settings", comment: "Switch that turns memory on or off")
-
-            if memory.enabled {
-              Text(
+          SettingToggle(
+            isOn: enabledBinding(memory.enabled),
+            title: Text(
+              "Use memory", tableName: "Settings", comment: "Switch that turns memory on or off"),
+            description: memory.enabled
+              ? Text(
                 "Personal examples and plans that fit your week", tableName: "Settings",
                 comment: "What memory does while it's on")
-            } else {
-              Text(
+              : Text(
                 "Memory is off. Nothing new is learned, and these facts aren't used.",
-                tableName: "Settings", comment: "What happens while memory is off")
-            }
-          }
-          .tint(.success)
+                tableName: "Settings", comment: "What happens while memory is off"))
         } footer: {
           SectionFooter {
             if let deleted = settings.deletedFact {
@@ -104,6 +100,9 @@ struct MemoryView: View {
       }
     }
     .navigationTitle(Text("Memory", tableName: "Settings", comment: "Title of the Memory page"))
+    .barTitleAfterHero(
+      String(localized: "Memory", table: "Settings", comment: "Title of the Memory page")
+    )
     .overlay {
       SettingsLoadingState(state: settings.memory.state) {
         Task {
@@ -184,17 +183,12 @@ private struct MemoryFactRow: View {
 
   var body: some View {
     HStack(alignment: .firstTextBaseline) {
-      VStack(alignment: .leading, spacing: 2) {
-        Text(fact.statement)
-
-        Text(
+      ListRow(
+        Text(fact.statement),
+        description: Text(
           "\(fact.source.name)\u{00A0}· \(fact.createdAt.formatted(.dateTime.month(.abbreviated).day()))",
           tableName: "Settings",
-          comment: "Where a remembered fact came from and its day, as in “From a chat · Oct 11”"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-      }
+          comment: "Where a remembered fact came from and its day, as in “From a chat · Oct 11”"))
 
       Spacer(minLength: 0)
 
