@@ -9,6 +9,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,14 +46,16 @@ import kotlin.time.Duration.Companion.seconds
 val LocalShownOnTop = compositionLocalOf { false }
 
 /**
- * Marks a screen's own heading as its title where its top bar shows none, such as a detail page's
- * hero, so TalkBack and the keyboard start on it when the learner goes to the screen. One to a screen.
+ * Marks a screen's own heading as its title, such as a page's title in its content or a detail page's
+ * hero, so TalkBack and the keyboard start on it when the learner goes to the screen, and a
+ * [PageScaffold]'s bar names the page only once this heading scrolls under the bar. One to a screen.
  */
 @Composable
 fun Modifier.pageTitle(): Modifier {
-    val target = LocalTitleFocus.current?.heading ?: return semantics { heading() }
+    val focus = LocalTitleFocus.current ?: return semantics { heading() }
+    val target = focus.heading
     DisposableEffect(target) { onDispose { target.shown = false } }
-    return titleTarget(target)
+    return onGloballyPositioned { focus.headingBottom = it.localToScreen(Offset(0f, it.size.height.toFloat())).y }.titleTarget(target)
 }
 
 /** The scaffold around a screen's content, whose heading [pageTitle] marks. */
@@ -70,13 +73,17 @@ internal class TitleFocus {
     val heading = TitleTarget()
     var pageHasFocus by mutableStateOf(false)
 
-    // On screen: the page, and where its content starts under its top bar.
+    // On screen: the page, where its content starts under its top bar, and where its heading ends.
     var area: Rect? = null
-    var barBottom = 0f
+    var barBottom by mutableFloatStateOf(0f)
+    var headingBottom by mutableFloatStateOf(0f)
 
     fun content(): Rect? = area?.let { it.copy(top = maxOf(it.top, barBottom)) }
 
-    fun shownTitle(): TitleTarget? = listOf(bar, heading).firstOrNull { it.shown }
+    /** The page's heading is in view below its top bar, so the bar needn't name the page too. */
+    fun headingInView(): Boolean = heading.shown && headingBottom > barBottom
+
+    fun shownTitle(): TitleTarget? = listOf(heading, bar).firstOrNull { it.shown }
 }
 
 internal class TitleTarget {

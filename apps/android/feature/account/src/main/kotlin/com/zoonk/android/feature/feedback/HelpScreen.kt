@@ -31,6 +31,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -63,11 +64,7 @@ fun HelpScreen(
                         .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.feedback_help_description),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                PageHeader(stringResource(R.string.account_menu_help), stringResource(R.string.feedback_help_description))
 
                 FeedbackForm(app, viewModel { FeedbackViewModel(app.feedback, FeedbackTarget(screen = "support")) })
 

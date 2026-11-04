@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -226,7 +224,7 @@ internal fun SubjectPage(
     DetailPage(
         title = subject.name,
         onBack = actions.back,
-        hero = { SubjectHero(syllabus, subject, actions, it) },
+        hero = { SubjectHero(syllabus, subject, actions) },
         aside = { SubjectAside(syllabus, subject, today, actions.openMindMaps, ask) },
         ask = ask,
         askInAside = true,
@@ -261,7 +259,6 @@ private fun SubjectHero(
     syllabus: Syllabus,
     subject: SyllabusSubject,
     actions: SubjectActions,
-    onTitlePlaced: (LayoutCoordinates) -> Unit,
 ) {
     val next = subject.nextChapterId
     val action: (@Composable (Modifier) -> Unit)? =
@@ -271,8 +268,7 @@ private fun SubjectHero(
         Eyebrow(subjectEyebrow(syllabus, subject))
         Text(
             text = subject.name,
-            modifier =
-                Modifier.onGloballyPositioned(onTitlePlaced).pageTitle(),
+            modifier = Modifier.pageTitle(),
             style = MaterialTheme.typography.titleLarge,
         )
 

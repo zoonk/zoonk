@@ -40,6 +40,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -59,6 +60,9 @@ fun LicensesScreen(navigator: AppNavigator) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         } else {
             LazyColumn(Modifier.fillMaxSize(), contentPadding = padding, horizontalAlignment = Alignment.CenterHorizontally) {
+                item(contentType = "title") {
+                    PageTitleRow(stringResource(R.string.settings_licenses), Modifier.widthIn(max = 640.dp).padding(16.dp))
+                }
                 items(list, key = { it.uniqueId }) { library ->
                     ListItem(
                         headlineContent = { Text(library.name) },

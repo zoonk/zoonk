@@ -54,6 +54,7 @@ import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
@@ -93,11 +94,7 @@ fun MemoryScreen(
                         .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.memory_description),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                PageHeader(stringResource(R.string.settings_memory), stringResource(R.string.memory_description))
 
                 when (val state = memory) {
                     is LoadState.Loaded -> {

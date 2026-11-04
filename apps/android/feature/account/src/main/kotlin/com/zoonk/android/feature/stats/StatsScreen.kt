@@ -48,7 +48,9 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageDirective
 import kotlinx.coroutines.flow.combine
@@ -138,12 +140,11 @@ private fun StatsPageArea(
                 contentPadding = PaddingValues(horizontal = if (context.wide) 24.dp else 16.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                item(key = "scope") {
-                    Text(
-                        stringResource(R.string.stats_all_goals),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
+                item(key = "title") {
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Eyebrow(stringResource(R.string.stats_all_goals))
+                        PageTitleRow(stringResource(page.title))
+                    }
                 }
                 item(key = "content") {
                     when (state) {

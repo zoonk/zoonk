@@ -56,6 +56,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -89,11 +90,7 @@ fun ProfileScreen(
                         .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.settings_profile_description),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                PageHeader(stringResource(R.string.settings_profile), stringResource(R.string.settings_profile_description))
 
                 when {
                     signedIn == null -> {}

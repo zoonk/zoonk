@@ -94,6 +94,7 @@ import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.Readout
@@ -605,6 +606,7 @@ private fun HeadersAndEmptyStates() {
         PageTitleRow("Plan", verticalAlignment = Alignment.CenterVertically) {
             OutlinedButton(onClick = {}, size = ButtonSize.Small) { Text("Adjust plan") }
         }
+        PageHeader("Profile", "Your name and username, your data, and your account.")
         SectionHeader("This week")
         EmptyState(
             icon = R.drawable.ic_edit_square,

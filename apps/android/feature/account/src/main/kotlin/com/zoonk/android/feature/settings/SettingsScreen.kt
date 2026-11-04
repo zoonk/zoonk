@@ -36,6 +36,7 @@ import com.zoonk.android.feature.account.AccountAvatar
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -92,6 +93,7 @@ fun SettingsScreen(
                         .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
+                PageTitleRow(stringResource(R.string.account_menu_settings))
                 if (account != null) {
                     Group {
                         Row(

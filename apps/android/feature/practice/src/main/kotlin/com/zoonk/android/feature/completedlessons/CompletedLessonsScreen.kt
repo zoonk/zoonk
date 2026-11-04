@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,12 +69,11 @@ fun CompletedLessonsScreen(
     val goalId = read?.activeGoalId
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
-    val titleAway by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     val title = stringResource(R.string.navigation_completed_lessons)
 
     PageScaffold(
         onBack = { navigator.back() },
-        title = { if (titleAway) Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             when {

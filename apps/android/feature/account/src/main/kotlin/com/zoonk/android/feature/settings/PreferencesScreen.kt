@@ -80,6 +80,7 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
@@ -186,11 +187,7 @@ fun PreferencesScreen(
                         .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.settings_preferences_description),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                PageHeader(stringResource(R.string.settings_preferences), stringResource(R.string.settings_preferences_description))
 
                 when (val state = profile) {
                     is LoadState.Loaded -> {
