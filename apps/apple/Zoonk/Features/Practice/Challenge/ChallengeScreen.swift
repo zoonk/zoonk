@@ -43,7 +43,14 @@ struct ChallengeScreen: View {
         case .failed(let error):
           PracticeLoadFailureView(error: error) { Task { await read() } }
         case .loaded(let challenge):
-          intro(challenge)
+          if let blockId = callBlockId(challenge) {
+            PracticeRedirect {
+              dismiss()
+              hooks.navigate(.checkpoint(blockId: blockId, sessionId: sessionId))
+            }
+          } else {
+            intro(challenge)
+          }
         }
       }
       .navigationTitle(title)
@@ -255,7 +262,10 @@ struct ChallengeScreen: View {
           "See how it went", table: "Practice", comment: "Opens a finished checkpoint's result.")
       ) {
         dismiss()
-        hooks.navigate(.checkpoint(blockId: blockId, sessionId: sessionId))
+        hooks.navigate(
+          challenge.mock
+            ? .mock(blockId: blockId, sessionId: sessionId)
+            : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
     } else if challenge.status == .ready || challenge.status == .started {
       PracticeActionRow {
@@ -300,6 +310,15 @@ struct ChallengeScreen: View {
       || challenge.waitReason != nil
       || [.ready, .started].contains(challenge.status)
       || ([.done, .tried].contains(challenge.status) && challenge.blockId != nil)
+  }
+
+  /// A call that has its block opens on the call's own intro, as main's challenge page does.
+  private func callBlockId(_ challenge: Components.Schemas.Challenge) -> String? {
+    guard challenge.call != nil, challenge.status != .done, !challenge.locked else {
+      return nil
+    }
+
+    return challenge.blockId
   }
 
   private func isCheckpoint(_ challenge: Components.Schemas.Challenge) -> Bool {
@@ -595,16 +614,6 @@ struct ChallengeScreen: View {
       let challenge = try await practice.api.challenge(
         token: identity.bearerToken, planItemId: itemId)
       guard session.authenticatedSession == identity else { return }
-
-      // A call that has its block opens on the call's own intro, as main's challenge page does.
-      if challenge.call != nil, let blockId = challenge.blockId, challenge.status != .done,
-        !challenge.locked
-      {
-        dismiss()
-        hooks.navigate(.checkpoint(blockId: blockId, sessionId: sessionId))
-        return
-      }
-
       load = .loaded(challenge)
     } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
