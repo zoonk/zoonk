@@ -219,16 +219,11 @@ struct SessionSummaryView: View {
       SummaryBuddy(look: learner.summary.value?.buddy ?? BuddyLook())
 
       if summary.brainPower > 0 || !isStep {
-        HStack(alignment: .firstTextBaseline, spacing: 6) {
+        MomentReadout(tint: .brainText) {
           EarnedNumber(value: summary.brainPower)
-            .typeStyle(.momentReadout)
-            .foregroundStyle(.brainText)
-
+        } words: {
           Text("Brain Power", tableName: "Session", comment: "Brain Power earned")
-            .typeStyle(.body.weight(.medium))
-            .foregroundStyle(.mutedForeground)
         }
-        .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isStep ? .isHeader : [])
         .accessibilityFocused($focusedStep, equals: .rewards)
       } else if isStep {

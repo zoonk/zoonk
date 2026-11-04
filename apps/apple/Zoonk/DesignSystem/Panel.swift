@@ -10,6 +10,12 @@ extension View {
       .overlay(shape.strokeBorder(.border))
   }
 
+  /// Main's `bg-muted/50 rounded-xl`: a quiet filled well, with no line, for supporting content
+  /// inside a step (a picture's caption, a challenge's meters and outcome).
+  func well() -> some View {
+    background(Color.muted.opacity(0.5), in: .rect(cornerRadius: Radius.xl, style: .continuous))
+  }
+
   /// Main's goal box and composer: a panel with the field's `input` line, in ink while its words
   /// have focus, thicker with more contrast.
   func inputPanel(isFocused: Bool) -> some View {

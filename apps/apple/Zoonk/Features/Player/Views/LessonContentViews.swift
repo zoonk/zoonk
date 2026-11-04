@@ -161,7 +161,7 @@ struct LessonPictureView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.horizontal, 16)
       .padding(.vertical, 12)
-      .background(Color.muted.opacity(0.5), in: .rect(cornerRadius: Radius.xl, style: .continuous))
+      .well()
     }
   }
 

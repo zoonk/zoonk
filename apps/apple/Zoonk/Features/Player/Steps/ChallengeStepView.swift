@@ -141,7 +141,7 @@ struct ChallengeStepView: View {
                 move(meter.change, of: meter.meter)
               }
             }
-            .typeStyle(.note)
+            .typeStyle(.body)
 
             Meter(value: Double(meter.value), total: 100, fill: .mutedForeground)
           }
@@ -149,7 +149,7 @@ struct ChallengeStepView: View {
         }
       }
       .padding(16)
-      .panel()
+      .well()
     }
   }
 
@@ -368,7 +368,7 @@ struct ChallengeStepView: View {
     }
     .padding(16)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .panel()
+    .well()
   }
 
   private func debrief(
