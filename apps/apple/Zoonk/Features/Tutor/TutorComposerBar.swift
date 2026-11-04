@@ -27,7 +27,7 @@ struct TutorComposerBar: View {
             ? Text(
               "We couldn't send your last question. Try again.", tableName: "Tutor",
               comment: "Sending a question to the buddy failed")
-            : failure.message)
+            : Text(failure.message))
             .font(.footnote)
             .foregroundStyle(.destructive)
         }
@@ -133,7 +133,7 @@ struct TutorLimitNotice: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
-      failure.message
+      Text(failure.message)
         .font(.subheadline)
         .foregroundStyle(.secondary)
 

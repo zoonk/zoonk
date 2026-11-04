@@ -26,6 +26,32 @@ struct TutorTurnView: View {
         TutorMemoryUpdate(changes: changes, turnID: turn.id, conversation: conversation)
       }
     }
+    .announcesStatus(finished)
+    .announcesStatus(remembered)
+  }
+
+  /// Main's conversation log reads an answer once it's written, never word by word.
+  private var finished: String? {
+    let answer = turn.answer.map {
+      TutorAnswerText.said(TutorAnswerBlock.blocks(of: $0, linksEnabled: false), buddyName: buddyName)
+    }
+
+    return switch turn.status {
+    case .completed: answer ?? Self.noAnswer
+    case .failed: [answer, failureLine].compactMap(\.self).joinedSentences()
+    case .pending, .running: nil
+    }
+  }
+
+  /// Apart from the answer, so undoing it doesn't read the answer again.
+  private var remembered: String? {
+    guard turn.status == .completed, let changes = conversation.memoryChanges[turn.id],
+      !changes.isEmpty
+    else {
+      return nil
+    }
+
+    return TutorMemoryUpdate.line(changes)
   }
 
   private var question: some View {
@@ -76,17 +102,11 @@ struct TutorTurnView: View {
         }
 
         if let failure, failure.isLimit {
-          Text(
-            "This one wasn't answered.", tableName: "Tutor",
-            comment: "A question the learner's limit stopped"
-          )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          Text(failureLine)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
         } else {
-          (failure.map(answerFailureMessage)
-            ?? Text(
-              "We couldn't finish this answer.", tableName: "Tutor",
-              comment: "A buddy answer failed"))
+          Text(failureLine)
             .font(.subheadline)
             .foregroundStyle(.destructive)
 
@@ -108,7 +128,7 @@ struct TutorTurnView: View {
           }
         }
       } else if turn.status == .completed {
-        Text("No answer available.", tableName: "Tutor", comment: "A buddy answer that has no text")
+        Text(Self.noAnswer)
           .foregroundStyle(.secondary)
       } else {
         VStack(alignment: .leading, spacing: 12) {
@@ -140,14 +160,28 @@ struct TutorTurnView: View {
     .disabled(conversation.answeringID != nil)
   }
 
-  private func answerFailureMessage(_ failure: TutorFailure) -> Text {
+  private var failureLine: String {
+    guard let failure = conversation.answerFailures[turn.id] else {
+      return Self.unfinished
+    }
+
     switch failure {
+    case .signUpRequired, .limitReached:
+      return String(
+        localized: "This one wasn't answered.", table: "Tutor",
+        comment: "A question the learner's limit stopped")
     case .signedOut, .plusRequired, .gone, .slowDown:
-      failure.message
-    case .signUpRequired, .limitReached, .invalid, .conflict, .failed:
-      Text("We couldn't finish this answer.", tableName: "Tutor", comment: "A buddy answer failed")
+      return failure.message
+    case .invalid, .conflict, .failed:
+      return Self.unfinished
     }
   }
+
+  private static let unfinished = String(
+    localized: "We couldn't finish this answer.", table: "Tutor", comment: "A buddy answer failed")
+
+  private static let noAnswer = String(
+    localized: "No answer available.", table: "Tutor", comment: "A buddy answer that has no text")
 }
 
 /// Its links open only once the server checked them, so an answer still streaming reads without
@@ -173,10 +207,11 @@ struct TutorAnswerText: View {
     .frame(maxWidth: .infinity, alignment: .leading)
     .environment(\.openURL, OpenURLAction(handler: open))
     .accessibilityElement(children: .combine)
-    .accessibilityLabel(
-      Text(
-        verbatim:
-          "\(buddyName): \(blocks.map { String($0.text.characters) }.joined(separator: "\n"))"))
+    .accessibilityLabel(Text(verbatim: Self.said(blocks, buddyName: buddyName)))
+  }
+
+  static func said(_ blocks: [TutorAnswerBlock], buddyName: String) -> String {
+    "\(buddyName): \(blocks.map { String($0.text.characters) }.joined(separator: "\n"))"
   }
 
   @ViewBuilder

@@ -175,9 +175,7 @@ struct TutorMemoryUpdate: View {
             .foregroundStyle(.destructive)
       } else {
         Label {
-          Text(
-            "Memory updated: \(statement)", tableName: "Tutor",
-            comment: "What the buddy now remembers; the argument is the fact")
+          Text(Self.line(changes))
         } icon: {
           Image(systemName: "brain")
         }
@@ -214,7 +212,13 @@ struct TutorMemoryUpdate: View {
       comment: "Undoing a memory change failed")
   }
 
-  private var statement: String {
+  static func line(_ changes: [TutorMemoryChange]) -> String {
+    String(
+      localized: "Memory updated: \(statement(changes))", table: "Tutor",
+      comment: "What the buddy now remembers; the argument is the fact")
+  }
+
+  private static func statement(_ changes: [TutorMemoryChange]) -> String {
     let first = changes.first.flatMap { $0.fact?.statement ?? $0.previous?.statement } ?? ""
     let more = changes.count - 1
 
@@ -233,26 +237,36 @@ struct TutorMissionMoment: View {
   let moment: Components.Schemas.StudyMissionMoment
 
   var body: some View {
-    let done = moment.missions.filter { $0.status == .done }.count
-
     Label {
       VStack(alignment: .leading, spacing: 2) {
-        Text(
-          "Mission done", tableName: "Tutor",
-          comment: "Asking the buddy completed one of the day's missions"
-        )
-        .font(.subheadline.weight(.semibold))
-        Text(
-          "Today's missions: \(done) of \(moment.missions.count)", tableName: "Tutor",
-          comment: "The day's missions done, after asking the buddy"
-        )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        Text(Self.title)
+          .font(.subheadline.weight(.semibold))
+        Text(Self.progress(moment))
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
       }
     } icon: {
       Image(systemName: "checkmark.circle.fill")
         .foregroundStyle(.success)
     }
     .accessibilityElement(children: .combine)
+  }
+
+  static func said(_ moment: Components.Schemas.StudyMissionMoment) -> String {
+    [title, progress(moment)].joinedSentences()
+  }
+
+  private static var title: String {
+    String(
+      localized: "Mission done", table: "Tutor",
+      comment: "Asking the buddy completed one of the day's missions")
+  }
+
+  private static func progress(_ moment: Components.Schemas.StudyMissionMoment) -> String {
+    let done = moment.missions.filter { $0.status == .done }.count
+
+    return String(
+      localized: "Today's missions: \(done) of \(moment.missions.count)", table: "Tutor",
+      comment: "The day's missions done, after asking the buddy")
   }
 }

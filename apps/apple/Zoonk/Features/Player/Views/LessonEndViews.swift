@@ -227,6 +227,10 @@ struct LessonUnavailableView: View {
     }
   }
 
+  var said: String {
+    [String(localized: title), String(localized: description)].joinedSentences()
+  }
+
   @ViewBuilder
   private var actions: some View {
     switch refusal {
@@ -583,6 +587,21 @@ struct LessonWaitingView: View {
       case (nil, .setAside):
         EmptyView()
       }
+    }
+    .announcesStatus(notWrittenLine)
+  }
+
+  /// Main's not-written notice, read out when writing this lesson is refused or set aside.
+  private var notWrittenLine: String? {
+    guard holding == nil else {
+      return nil
+    }
+
+    return switch writing {
+    case .refused(let refusal):
+      [String(localized: description), LessonHelpLimitNote.message(refusal)].joinedSentences()
+    case .setAside: String(localized: description)
+    default: nil
     }
   }
 

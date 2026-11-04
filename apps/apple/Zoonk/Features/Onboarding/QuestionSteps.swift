@@ -180,7 +180,7 @@ struct StepButtons: View {
 struct ChoiceRows<Value: Hashable>: View {
   struct Choice {
     let value: Value
-    let label: Text
+    let label: String
     var detail: Text?
   }
 
@@ -188,6 +188,8 @@ struct ChoiceRows<Value: Hashable>: View {
   var picked: Value?
   var header: Text?
   var footer: Text?
+  /// The next question replaces this one, so VoiceOver says what was picked as it goes.
+  var movesOn = false
   let onPick: (Value) -> Void
 
   var body: some View {
@@ -195,10 +197,17 @@ struct ChoiceRows<Value: Hashable>: View {
       ForEach(choices, id: \.value) { choice in
         Button {
           onPick(choice.value)
+
+          if movesOn {
+            announcePolitely(
+              String(
+                localized: "You picked \(choice.label)", table: "Onboarding",
+                comment: "VoiceOver, as a one-answer question moves on: the answer picked"))
+          }
         } label: {
           HStack {
             VStack(alignment: .leading, spacing: 2) {
-              choice.label
+              Text(choice.label)
                 .foregroundStyle(.primary)
               if let detail = choice.detail {
                 detail
@@ -244,39 +253,40 @@ private struct PurposeQuestion: View {
       choices: [
         .init(
           value: "overview",
-          label: Text("Get an overview", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(localized: "Get an overview", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "The big ideas, no formulas", tableName: "Onboarding", comment: "Purpose choice detail")
         ),
         .init(
           value: "deep",
-          label: Text("Understand it in depth", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(localized: "Understand it in depth", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "From the basics to advanced", tableName: "Onboarding", comment: "Purpose choice detail"
           )),
         .init(
           value: "work",
-          label: Text("Use it at work", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(localized: "Use it at work", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Apply it to real projects", tableName: "Onboarding", comment: "Purpose choice detail")),
         .init(
           value: "careerChange",
-          label: Text("Change careers", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(localized: "Change careers", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Get ready for a new role", tableName: "Onboarding", comment: "Purpose choice detail")),
         .init(
           value: "refresh",
-          label: Text("Refresh what I studied", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(localized: "Refresh what I studied", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Pick up what you left behind", tableName: "Onboarding",
             comment: "Purpose choice detail")),
         .init(
           value: "other",
-          label: Text("Something else", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(localized: "Something else", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Tell us later, in your own words", tableName: "Onboarding",
             comment: "Purpose choice detail")),
-      ]
+      ],
+      movesOn: true
     ) { purpose in
       onAnswer(["purpose": purpose, "question": "purpose"])
     }
@@ -870,12 +880,13 @@ private struct ExamChoiceQuestion: View {
           choices: options.map { option in
             .init(
               value: option.name,
-              label: Text(option.shortName ?? option.name),
+              label: option.shortName ?? option.name,
               detail: option.shortName.flatMap { $0 == option.name ? nil : Text(option.name) })
           },
           picked: picks[choice.group]?.first,
           header: Text(choice.group),
-          footer: leftOut
+          footer: leftOut,
+          movesOn: takes == 1
         ) { name in
           picks[choice.group] = [name]
 
@@ -924,7 +935,7 @@ private struct LevelQuestion: View {
         "It only changes where your plan starts.", tableName: "Onboarding",
         comment: "Under the level question"))
 
-    ChoiceRows(choices: LevelChoices.all(testMinutes: testMinutes)) { level in
+    ChoiceRows(choices: LevelChoices.all(testMinutes: testMinutes), movesOn: true) { level in
       onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
     }
   }
@@ -958,30 +969,31 @@ enum LevelChoices {
     [
       .init(
         value: OwnLevel.none.rawValue,
-        label: Text(OwnLevel.none.label),
+        label: String(localized: OwnLevel.none.label),
         detail: Text(
           "From scratch, with everyday examples", tableName: "Onboarding",
           comment: "Level choice detail")),
       .init(
         value: OwnLevel.basic.rawValue,
-        label: Text(OwnLevel.basic.label),
+        label: String(localized: OwnLevel.basic.label),
         detail: Text("I know a few things", tableName: "Onboarding", comment: "Level choice detail")
       ),
       .init(
         value: OwnLevel.intermediate.rawValue,
-        label: Text(OwnLevel.intermediate.label),
+        label: String(localized: OwnLevel.intermediate.label),
         detail: Text(
           "We'll skip what you already know", tableName: "Onboarding",
           comment: "Level choice detail")),
       .init(
         value: OwnLevel.advanced.rawValue,
-        label: Text(OwnLevel.advanced.label),
+        label: String(localized: OwnLevel.advanced.label),
         detail: Text(
           "Only what's new or hard", tableName: "Onboarding", comment: "Level choice detail")),
       .init(
         value: quickTest,
-        label: Text(
-          "Not sure, give me a quick test", tableName: "Onboarding", comment: "Level choice"),
+        label: String(
+          localized: "Not sure, give me a quick test", table: "Onboarding",
+          comment: "Level choice"),
         detail: testMinutes.map { minutes in
           Text(
             "Adapts to your answers, about \(Duration.seconds(minutes * 60), format: .units(allowed: [.minutes], width: .wide))",

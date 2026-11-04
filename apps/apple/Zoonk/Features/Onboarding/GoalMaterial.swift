@@ -84,24 +84,24 @@ struct GoalMaterialSections: View {
           choices: [
             .init(
               value: MaterialIntent.exam,
-              label: Text(
-                "Prepare for an exam", tableName: "Onboarding",
+              label: String(
+                localized: "Prepare for an exam", table: "Onboarding",
                 comment: "Material intent: the learner wants to prepare for an exam on it"),
               detail: Text(
                 "Give a date and we'll plan up to it", tableName: "Onboarding",
                 comment: "Under the exam material intent")),
             .init(
               value: .understand,
-              label: Text(
-                "Understand this material", tableName: "Onboarding",
+              label: String(
+                localized: "Understand this material", table: "Onboarding",
                 comment: "Material intent: lessons that teach it"),
               detail: Text(
                 "Short lessons, in the right order", tableName: "Onboarding",
                 comment: "Under the understand material intent")),
             .init(
               value: .questions,
-              label: Text(
-                "Ask questions", tableName: "Onboarding",
+              label: String(
+                localized: "Ask questions", table: "Onboarding",
                 comment: "Material intent: answers from it"),
               detail: Text(
                 "Answers show the page they came from", tableName: "Onboarding",

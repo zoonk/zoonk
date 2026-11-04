@@ -17,13 +17,8 @@ struct ChallengeStepView: View {
       intro
     case (.intro, .turn):
       EmptyView()
-    case (.deciding(let node, _, let decisions, _), .screen):
-      meters(decisions)
-      conversation(decisions)
-      ForEach(Array(node.messages.enumerated()), id: \.offset) { _, message in
-        bubble(message)
-      }
-      LessonQuestionText(text: named(node.prompt))
+    case (.deciding(_, _, let decisions, _), .screen), (.ended(_, _, let decisions), .screen):
+      played(decisions, upcoming: upcoming(progress))
     case (.deciding(let node, let confirmed, _, let pending), .turn):
       LessonOptionList(
         options: node.choices.map { LessonOption(id: $0.id, text: named($0.text)) },
@@ -33,9 +28,6 @@ struct ChallengeStepView: View {
       ) { choiceId in
         store.select(.challenge(choiceIds: confirmed + [choiceId]))
       }
-    case (.ended(_, _, let decisions), .screen):
-      meters(decisions)
-      conversation(decisions)
     case (.ended(let ending, _, let decisions), .turn):
       if let result = state.currentResult {
         debrief(ending: ending, decisions: decisions, isCorrect: result.isCorrect)
@@ -108,6 +100,53 @@ struct ChallengeStepView: View {
       .font(.subheadline)
       .foregroundStyle(.secondary)
     }
+  }
+
+  /// One view while deciding and once ended, so what the last decision brings is read out too.
+  private func played(_ decisions: [ChallengeWalk.Decision], upcoming: ChallengeContent.Node?)
+    -> some View
+  {
+    VStack(alignment: .leading, spacing: 20) {
+      meters(decisions)
+      conversation(decisions)
+
+      if let upcoming {
+        ForEach(Array(upcoming.messages.enumerated()), id: \.offset) { _, message in
+          bubble(message)
+        }
+        LessonQuestionText(text: named(upcoming.prompt))
+      }
+    }
+    .announcesStatus(newest(decisions, upcoming: upcoming))
+  }
+
+  private func upcoming(_ progress: ChallengeProgress) -> ChallengeContent.Node? {
+    guard case .deciding(let node, _, _, _) = progress else {
+      return nil
+    }
+
+    return node
+  }
+
+  /// Main's conversation log reads what a decision brings, in the order it shows.
+  private func newest(_ decisions: [ChallengeWalk.Decision], upcoming: ChallengeContent.Node?)
+    -> String?
+  {
+    guard let latest = decisions.last else {
+      return nil
+    }
+
+    let jump = latest.choice.timeJump.map { [named($0.label)] } ?? []
+    let lines = latest.choice.replies.map(said) + jump + (upcoming?.messages ?? []).map(said)
+
+    return lines.isEmpty ? nil : lines.joinedSentences()
+  }
+
+  private func said(_ message: ChallengeContent.Message) -> String {
+    String(
+      localized:
+        "\(name(for: message.from)): \(LessonRichText.typeset(named(message.text)).said)",
+      table: "Player", comment: "VoiceOver: who said a message in a challenge, then what they said")
   }
 
   private func meters(_ decisions: [ChallengeWalk.Decision]) -> some View {
