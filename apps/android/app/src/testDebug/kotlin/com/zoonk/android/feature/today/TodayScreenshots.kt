@@ -44,6 +44,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.util.Locale
 
 /**
  * Review screenshots of Today's day states, written only on demand:
@@ -372,10 +373,10 @@ class TodayScreenshots {
         ): JsonObject =
             fixture(
                 "study-block",
-                "id" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c%04d".format(position),
+                "id" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c%04d".format(Locale.ROOT, position),
                 "kind" to kind,
                 "screen" to (if (kind == "learn") "lesson" else "session"),
-                "lessonId" to (if (kind == "learn") "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3d%04d".format(position) else null),
+                "lessonId" to (if (kind == "learn") "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3d%04d".format(Locale.ROOT, position) else null),
                 "position" to position,
                 "status" to status,
                 "title" to title,

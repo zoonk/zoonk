@@ -55,7 +55,6 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.mockShapeLabel
 import com.zoonk.android.feature.mock.rememberNow
 import com.zoonk.android.feature.mock.result.MockResult
-import com.zoonk.android.feature.questions.formatClock
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
@@ -64,6 +63,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
