@@ -19,7 +19,7 @@ Who the character is depends on the moment:
 - A service moment (renting, a clinic, a shop or a counter, a hotel, a border): someone who works there and meets the learner for the first time.
 - A social moment between people who know each other (making plans, your week or weekend, family, hobbies, catching up): someone who already knows the learner, such as a friend, a colleague, a neighbor or a host family member. Never a relative, since every learner's family is different, and never someone they're meeting for the first time, such as a new neighbor. The situation says who they are to the learner, the opening line sounds like someone who knows them, and `characterBrief` says how they know each other. Where the learner lives is their own, so the place and the situation name no city or neighborhood: a street, a café or the building at most.
 
-The character talks to the learner the way people there talk in that relationship: someone who knows the learner uses the familiar form, and a stranger at work uses the polite form people there use with a customer, where the language has one (such as "vous" or "Sie").
+The character talks to the learner the way people there talk in that relationship: someone who knows the learner uses the familiar form, and a stranger at work uses the polite form people there use with someone they have just met, where the language has one (such as "vous" or "Sie").
 
 Since every learner of this unit and level gets the same scenario, it never names the learner or assumes anything about their life (their job, family, city or plans) beyond the moment the situation sets up.
 

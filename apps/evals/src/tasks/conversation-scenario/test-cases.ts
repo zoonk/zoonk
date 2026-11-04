@@ -130,4 +130,71 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
       unitTitle: "Joining a gym",
     },
   },
+  {
+    expectations: `Brazilian learner of German at B1, at the doctor. A call to a German Praxis to book an appointment and explain symptoms and since when, with a German name and euros. The doctor or receptionist addresses the caller as "Sie" ("Wie kann ich Ihnen helfen?") in the opening line and the brief, never "du", and any hint that addresses them uses "Sie". Opening line and hints at B1. Title, situation and descriptions in Brazilian Portuguese.`,
+    id: "pt-de-b1-doctor",
+    userInput: {
+      canDo: [
+        "Marcar uma consulta",
+        "Explicar sintomas e desde quando",
+        "Entender as instruções do remédio",
+      ],
+      learnerLanguage: "pt",
+      level: "B1",
+      targetLanguage: "de",
+      unitDescription: "Marque uma consulta, explique o que está sentindo e entenda as instruções",
+      unitTitle: "No médico",
+    },
+  },
+  {
+    expectations: `US English speaker learning French at A2, renting an apartment in France. A call to a landlord about an appartement, with the loyer, charges and dépôt de garantie in euros. The landlord addresses the caller as "vous" ("Comment puis-je vous aider ?") in the opening line and the brief, never "tu", and any hint that addresses them uses "vous". Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    id: "en-fr-a2-renting",
+    userInput: {
+      canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "fr",
+      unitDescription:
+        "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+      unitTitle: "Renting an apartment",
+    },
+  },
+  {
+    expectations: `US English speaker learning Italian at A2, renting an apartment in Italy. A call to a landlord about an appartamento, with the affitto and the cauzione in euros. The landlord addresses the caller as "Lei" ("Come posso aiutarLa?") in the opening line and the brief, never "tu", and any hint that addresses them uses "Lei". Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    id: "en-it-a2-renting",
+    userInput: {
+      canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "it",
+      unitDescription:
+        "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+      unitTitle: "Renting an apartment",
+    },
+  },
+  {
+    expectations: `US English speaker learning Polish at A2, at the doctor. A call to a przychodnia to book an appointment and say what hurts, with a Polish name. The receptionist is polite with a stranger in the opening line and the brief, never "ty"; impersonal polite phrasing ("W czym mogę pomóc?") is fine, since the caller's gender is unknown. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    id: "en-pl-a2-doctor",
+    userInput: {
+      canDo: ["Book an appointment", "Say what hurts", "Ask about the time"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "pl",
+      unitDescription: "Book an appointment and say how you feel",
+      unitTitle: "At the doctor",
+    },
+  },
+  {
+    expectations: `US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord addresses the caller as "siz" ("Size nasıl yardımcı olabilirim?") in the opening line and the brief, never "sen", and any hint that addresses them uses "siz". Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    id: "en-tr-a2-renting",
+    userInput: {
+      canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "tr",
+      unitDescription:
+        "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+      unitTitle: "Renting an apartment",
+    },
+  },
 ];
