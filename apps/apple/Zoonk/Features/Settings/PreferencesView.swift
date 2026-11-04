@@ -9,6 +9,14 @@ struct PreferencesView: View {
 
   var body: some View {
     ZoonkList {
+      Section {
+        PageHeader(
+          Text("Preferences", tableName: "Account", comment: "Title of the Preferences page"),
+          supporting: Text(
+            "Your buddy, lessons and language, the way you like them.", tableName: "Settings",
+            comment: "Under the Preferences page's title: what the page changes"))
+      }
+
       if let preferences = settings.preferences.value {
         Section {
           IconLabeledContent {
@@ -24,6 +32,7 @@ struct PreferencesView: View {
               }
             }
             .buttonStyle(.outline)
+            .controlSize(.small)
           } title: {
             Text(preferences.buddy.displayName)
             Text(
@@ -41,13 +50,12 @@ struct PreferencesView: View {
         }
 
         Section {
-          Toggle(isOn: soundsBinding(preferences)) {
-            Text("Sounds", tableName: "Settings", comment: "Switch for the lessons' sounds")
-            Text(
+          SettingToggle(
+            isOn: soundsBinding(preferences),
+            title: Text("Sounds", tableName: "Settings", comment: "Switch for the lessons' sounds"),
+            description: Text(
               "When you get it right or finish", tableName: "Settings",
-              comment: "When the lessons' sounds play")
-          }
-          .tint(.success)
+              comment: "When the lessons' sounds play"))
 
           Picker(selection: dailyLimitBinding(preferences)) {
             Text("No limit", tableName: "Settings", comment: "Daily time limit option: none")
@@ -62,31 +70,33 @@ struct PreferencesView: View {
               .tag(Int?.some(minutes))
             }
           } label: {
-            Text(
-              "Daily time limit", tableName: "Settings",
-              comment: "Setting that ends the day's study after a time")
+            ListRow(
+              Text(
+                "Daily time limit", tableName: "Settings",
+                comment: "Setting that ends the day's study after a time"),
+              description: Text(
+                "Stop for the day after this much study.", tableName: "Settings",
+                comment: "Explains the daily time limit"))
           }
         } header: {
           SectionTitle(
             Text("Lessons", tableName: "Settings", comment: "Preferences section about lessons"))
-        } footer: {
-          SectionFooter {
-            Text(
-              "Stop for the day after this much study.", tableName: "Settings",
-              comment: "Explains the daily time limit")
-          }
         }
 
         Section {
-          Toggle(isOn: usageDataBinding) {
-            Text(
+          SettingToggle(
+            isOn: usageDataBinding,
+            title: Text(
               "Share usage data", tableName: "Settings",
-              comment: "Switch that lets Zoonk record how the learner uses it, for analytics")
-            Text(
+              comment: "Switch that lets Zoonk record how the learner uses it, for analytics"),
+            description: Text(
               "Shows us how you use Zoonk, so we can improve it", tableName: "Settings",
-              comment: "What sharing usage data does")
-          }
-          .tint(.success)
+              comment: "What sharing usage data does"))
+        } header: {
+          SectionTitle(
+            Text(
+              "Your data", tableName: "Settings",
+              comment: "Preferences section about the learner's data"))
         }
       }
 
@@ -96,10 +106,13 @@ struct PreferencesView: View {
             openURL(url)
           }
         } label: {
-          LabeledContent {
-            Text(appLanguageName)
-          } label: {
+          ListRow(
             Text("Language", tableName: "Settings", comment: "Row opening the app's language")
+          ) {
+            EmptyView()
+          } trailing: {
+            Text(appLanguageName)
+              .typeStyle(.meta)
           }
         }
         .foregroundStyle(.primary)
@@ -122,6 +135,8 @@ struct PreferencesView: View {
     .navigationTitle(
       Text("Preferences", tableName: "Account", comment: "Title of the Preferences page")
     )
+    .barTitleAfterHero(
+      String(localized: "Preferences", table: "Account", comment: "Title of the Preferences page"))
     .overlay {
       SettingsLoadingState(state: settings.preferences.state) {
         Task {
