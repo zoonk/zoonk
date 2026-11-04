@@ -32,6 +32,11 @@ sealed interface TodayTap {
         val position: Long,
     ) : TodayTap
 
+    /** A missions card row: it opens the same block as a queue row, but shows its wait and failure on itself. */
+    data class Mission(
+        val position: Long,
+    ) : TodayTap
+
     /** "Keep learning", "Practice for N minutes" and the up-next list's first row: one request. */
     data object KeepLearning : TodayTap
 
@@ -68,9 +73,9 @@ class TodayViewModel(
     fun openMission(
         read: TodayRead.Day,
         step: DayStep,
-    ) {
-        val blockId = step.id ?: return open(read, step, next = false)
-        run(read, TodayTap.Step(step.position)) { opener.openMission(blockId) }
+    ) = run(read, TodayTap.Mission(step.position)) {
+        val blockId = step.id
+        if (blockId == null) opener.open(read.day, step, false, read.today.goal.id) else opener.openMission(blockId)
     }
 
     fun keepLearning(read: TodayRead.Day) =
@@ -162,6 +167,7 @@ class TodayViewModel(
     /** Today left the screen (a task over it, another tab), so the next notice can show on return. */
     fun endVisit() {
         visit++
+        failed = null
         noticeHold = null
         planChangeAnswer = null
         planChangeFailedOn = null
@@ -169,7 +175,7 @@ class TodayViewModel(
         examChoiceFailedOn = null
     }
 
-    /** An answer that comes back after the learner left Today belongs to no card. */
+    /** An answer or a failed tap that comes back after the learner left Today belongs to no card or row. */
     var visit = 0
         private set
 
@@ -357,11 +363,12 @@ class TodayViewModel(
         if (pending != null) return
         pending = tap
         failed = null
+        val started = visit
 
         viewModelScope.launch {
             when (val result = write()) {
                 is MutationResult.Done -> result.value?.let { opened.send(TodayRoute(it, read.today.goal.id, read.day.localDate)) }
-                is MutationResult.Failed -> failed = tap
+                is MutationResult.Failed -> if (visit == started) failed = tap
                 MutationResult.Obsolete -> Unit
             }
 

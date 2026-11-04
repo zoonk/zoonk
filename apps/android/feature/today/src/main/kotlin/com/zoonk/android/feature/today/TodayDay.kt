@@ -156,6 +156,8 @@ fun TodayDay(
                     TodayNotice(TodayNoticeState(read, viewModel, navigator::open, plans, language?.value, onboarding), layout)
                 },
                 onMission = { opens -> openMission(opens, model, actions, today, scope) },
+                pending = { viewModel.pending },
+                failed = { viewModel.failed },
                 navigate = navigator::open,
                 standing = {
                     val openPlan = { navigator.open(AppRoute.Plan()) }
