@@ -36,7 +36,7 @@ export function LessonBody({ children }: { children: string }) {
 }
 
 export const SCREEN_CHIP_CLASS =
-  "text-muted-foreground ring-border inline-flex min-h-5.5 w-fit items-center gap-1.5 rounded-[0.375rem] px-2 py-0.5 text-xs font-medium ring-1 ring-inset [&_svg]:size-3.5";
+  "text-muted-foreground ring-border inline-flex min-h-5.5 w-fit items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset [&_svg]:size-3.5";
 
 export function LessonEyebrow({
   children,
