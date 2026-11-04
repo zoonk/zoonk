@@ -118,7 +118,7 @@ private struct RichTable: View {
   var body: some View {
     Group {
       if let visibleWidth, visibleWidth < narrowestWidth {
-        ScrollView(.horizontal) { cells }
+        ScrollView(.horizontal) { cells.frame(width: narrowestWidth, alignment: .leading) }
           .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
       } else {
         cells
