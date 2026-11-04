@@ -53,6 +53,7 @@ struct TodayDayView: View {
       }
     }
     .listStyle(.insetGrouped)
+    .announcesStatus(TodayDayStatus(view: view, writingStalled: writingStalled)?.announcement)
     .onAppear(perform: startVisit)
     .onChange(of: isCovered) {
       if !isCovered {

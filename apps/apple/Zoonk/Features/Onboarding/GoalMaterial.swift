@@ -208,6 +208,7 @@ struct MaterialAttachControls<Label: View>: View {
       label
     }
     .disabled(isAdding)
+    .announcesStatus(isAdding ? Self.adding : nil)
     .fileImporter(isPresented: $isImporting, allowedContentTypes: readableMaterialTypes) { result in
       if case .success(let file) = result {
         add { try await attach(file) }
@@ -229,7 +230,7 @@ struct MaterialAttachControls<Label: View>: View {
     if isAdding {
       HStack(spacing: 8) {
         ProgressView()
-        Text("Adding your material…", tableName: "Onboarding", comment: "While material is added")
+        Text(Self.adding)
       }
       .foregroundStyle(.secondary)
     }
@@ -238,6 +239,10 @@ struct MaterialAttachControls<Label: View>: View {
       Text(error)
         .foregroundStyle(.destructive)
     }
+  }
+
+  private static var adding: String {
+    String(localized: "Adding your material…", table: "Onboarding", comment: "While material is added")
   }
 
   private func attach(_ file: URL) async throws -> AttachedSource {
@@ -432,13 +437,12 @@ struct MaterialQuestionsView: View {
       if isAsking {
         HStack(spacing: 8) {
           ProgressView()
-          Text(
-            "Reading your material…", tableName: "Onboarding",
-            comment: "While a question about the learner's material is answered")
+          Text(Self.reading)
         }
         .foregroundStyle(.secondary)
       }
     }
+    .announcesStatus(isAsking ? Self.reading : turns.last.map(Self.spoken))
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(
@@ -485,6 +489,19 @@ struct MaterialQuestionsView: View {
 
   private var trimmed: String {
     question.trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+
+  private static var reading: String {
+    String(
+      localized: "Reading your material…", table: "Onboarding",
+      comment: "While a question about the learner's material is answered")
+  }
+
+  private static func spoken(_ turn: Turn) -> String {
+    switch turn.answer {
+    case .success(let answer): answer.answer
+    case .failure(let error): String(localized: message(for: error))
+    }
   }
 
   private func ask() {

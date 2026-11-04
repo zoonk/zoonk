@@ -24,6 +24,12 @@ struct FocusTestScreen: View {
 
   private var draftKey: String { "focus-test:\(goalId)" }
 
+  private static var undoneTitle: String {
+    String(
+      localized: "Your plan is back as it was", table: "Practice",
+      comment: "After undoing a focus test's change.")
+  }
+
   var body: some View {
     NavigationStack {
       Group {
@@ -56,6 +62,7 @@ struct FocusTestScreen: View {
           }
         }
       }
+      .announcesStatus(undone ? Self.undoneTitle : nil)
       .navigationTitle(
         Text("Focus test", tableName: "Practice", comment: "Title of a plan's focus test.")
       )
@@ -103,11 +110,8 @@ struct FocusTestScreen: View {
 
     return PracticeTaskLayout {
       if undone {
-        Text(
-          "Your plan is back as it was", tableName: "Practice",
-          comment: "After undoing a focus test's change."
-        )
-        .font(.largeTitle.bold())
+        Text(Self.undoneTitle)
+          .font(.largeTitle.bold())
       } else if !chosen.isEmpty {
         VStack(alignment: .leading, spacing: 6) {
           Text(
