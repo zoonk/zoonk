@@ -134,7 +134,11 @@ struct ChallengeStepView: View {
         .tint(.success)
       }
     }
-    .announcesStatus(moved.isEmpty ? nil : moved.formatted(.list(type: .and)))
+    .onChange(of: decisions.count) {
+      if !moved.isEmpty {
+        announcePolitely(moved.formatted(.list(type: .and)))
+      }
+    }
   }
 
   private func isGood(_ meter: ChallengeContent.Meter, change: Int) -> Bool {

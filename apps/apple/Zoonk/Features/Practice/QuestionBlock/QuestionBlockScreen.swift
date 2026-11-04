@@ -247,6 +247,7 @@ struct QuestionBlockView: View {
       }
 
       return [
+        run.timedOut ? DrillAnswerNotes.timesUp : nil,
         String(localized: verdict(feedback, answer: answer).label),
         correctLine(feedback, question: question).map(PracticeAnswerText.rightAnswerLine),
         run.detail.isNetScored(question) ? run.state.netTally.line : nil,
