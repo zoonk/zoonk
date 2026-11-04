@@ -53,7 +53,7 @@ export async function finishEmptyCheckpoint({
           throw new EmptyCheckpointUnchangedError("The empty checkpoint was already settled");
         }
 
-        await oweDaySettlement(tx, { block, timeZone, userId });
+        await oweDaySettlement(tx, { block, rewardMissions: false, timeZone, userId });
       }),
     );
 

@@ -46,11 +46,6 @@ export async function completeBlockMoment({
   timeZone: string;
   userId: string;
 }): Promise<StudyBlockCompletion> {
-  const settled = await settleSessionDay({ blockId, sessionId, source, timeZone, userId });
-  const { missionResult } = settled;
-  const bonus = getMissionBonus(settled.missions);
-  const fullMeal = missionResult.fullMealPaid ? bonus : 0;
-
   const bossWon =
     result.checkpoint && result.checkpoint.kind !== "weekly" && result.checkpoint.passed;
 
@@ -60,12 +55,27 @@ export async function completeBlockMoment({
     brainPower: { after: brainPowerBefore + result.brainPower, before: brainPowerBefore },
   };
 
-  const milestones = await awardMilestones({
+  // Before the day settles, so a settlement failure cannot lose them.
+  const earned = await awardMilestones({
     badges: reward.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
     brainPower: reward.brainPower,
-    brainPowerRewards: settled.fullMealReward ? [settled.fullMealReward] : [],
     userId,
   });
+
+  const settled = await settleSessionDay({ blockId, sessionId, source, timeZone, userId });
+  const { missionResult } = settled;
+  const bonus = getMissionBonus(settled.missions);
+  const fullMeal = missionResult.fullMealPaid ? bonus : 0;
+
+  const fullMealMilestones = settled.fullMealReward
+    ? await awardMilestones({
+        brainPower: null,
+        brainPowerRewards: [settled.fullMealReward],
+        userId,
+      })
+    : [];
+
+  const milestones = [...earned, ...fullMealMilestones];
 
   const blocks = settled.session.blocks;
 
