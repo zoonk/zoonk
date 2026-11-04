@@ -147,7 +147,7 @@ describe("a Plus learner's page reads", () => {
     expect(reads.rows).toBe(1);
   });
 
-  it("reads it once for a stopped exam session's summary", async () => {
+  it("reads it once for an unfinished exam session's summary", async () => {
     const { goal, user } = await signedInCourseGoal();
     await prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } });
     await subscribe(user);
