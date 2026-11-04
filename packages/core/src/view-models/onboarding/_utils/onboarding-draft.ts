@@ -13,10 +13,11 @@ import { getActiveGoalLimit } from "../../../entitlements/limits";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { getRequestInstant } from "../../../learner/facts/request-instant";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
+import { withPlannableDate } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type OnboardingDraftView } from "../onboarding-contract";
 import { goalUnderstandingViewSchema } from "../onboarding-view-schemas";
 import { type FoundExam } from "./exam-facts";
-import { getLearnerToday, toUnderstandingView, withPlannableDate } from "./understanding-view";
+import { getLearnerToday, toUnderstandingView } from "./understanding-view";
 
 /** The learner's own draft; another learner's reads as missing. */
 export async function findOwnedDraft({

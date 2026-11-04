@@ -9,7 +9,7 @@ import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { readTestedLanguage } from "../library/exams/blueprint-language";
 import { toIsoDate } from "../plans/planner/plan-calendar";
-import { assertTargetDates } from "../plans/target-date-range";
+import { assertTargetDates, withPlannableDate } from "../plans/target-date-range";
 import { getSession } from "../users/get-session";
 import { createGoal, selectCreatedGoal } from "./_utils/create-goal-records";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
@@ -91,24 +91,37 @@ async function chooseActiveGoalId({
   return (await findActiveGoalId(userId)) ?? mainId;
 }
 
-/** The day a new goal's date bounds count from, in the zone the request names. */
-export function getNewGoalToday(timeZone: string | undefined): string {
-  const zone = getAnswerTimeZone({ goal: null, timeZone });
-  return toIsoDate(getDateInTimeZone({ date: new Date(), timeZone: zone }));
+function isCardGoal(goal: GoalDraft): boolean {
+  const onboardingId = goal.details?.onboardingId;
+  return typeof onboardingId === "string" && onboardingId !== "";
 }
 
-function assertNewGoalDates(input: GoalCreateInput): void {
+/**
+ * A card's date can stop being ahead after the card was read (past midnight, or confirmed in
+ * another zone than the draft's), so a goal from a card (`details.onboardingId`) takes its date as
+ * the card reads it; a date no card gave is refused as sent.
+ */
+function readNewGoalDates(input: GoalCreateInput): GoalCreateInput {
+  const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
+  const today = toIsoDate(getDateInTimeZone({ date: new Date(), timeZone }));
+
+  const goals = input.goals.map((goal) =>
+    isCardGoal(goal) ? withPlannableDate({ draft: goal, today }) : goal,
+  );
+
   assertTargetDates({
     latestOnly: false,
-    targets: input.goals.map((goal, index) => ({
+    targets: goals.map((goal, index) => ({
       path: ["goals", index, "targetDate"],
       targetDate: goal.targetDate,
     })),
-    today: getNewGoalToday(input.timeZone),
+    today,
   });
+
+  return { ...input, goals };
 }
 
-export async function createGoals(input: GoalCreateInput): Promise<GoalCreateResult> {
+export async function createGoals(requested: GoalCreateInput): Promise<GoalCreateResult> {
   const session = await getSession();
 
   if (!session) {
@@ -116,8 +129,7 @@ export async function createGoals(input: GoalCreateInput): Promise<GoalCreateRes
   }
 
   const userId = session.user.id;
-
-  assertNewGoalDates(input);
+  const input = readNewGoalDates(requested);
 
   if (!(await hasValidReferences({ goals: input.goals, userId }))) {
     return { status: "invalidReference" };

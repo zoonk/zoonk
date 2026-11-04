@@ -4,10 +4,10 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type EntitlementTier } from "../../../entitlements/contract";
 import { getActiveGoalLimit } from "../../../entitlements/limits";
 import { type GoalCreateInput, type GoalDraft } from "../../../goals/goal-contract";
+import { withPlannableDate } from "../../../plans/target-date-range";
 import { type UnderstoodGoalView, type UnderstoodSchedule } from "../onboarding-contract";
 import { parseStoredUnderstanding } from "./onboarding-draft";
 import { readDetail } from "./onboarding-goals";
-import { withPlannableDate } from "./understanding-view";
 
 export type WaitingGoal = { id: string; input: GoalCreateInput; locked: boolean };
 

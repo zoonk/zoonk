@@ -6,7 +6,6 @@ import { findMeantExamDay, getKeptMonthStart } from "../../../exams/kept-month";
 import { type GoalDraft } from "../../../goals/goal-contract";
 import { DEFAULT_DAILY_MINUTES } from "../../../plans/daily-minutes";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
-import { getTargetDateBounds } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboarding-contract";
 import { type FoundExam, toExamFacts } from "./exam-facts";
 
@@ -22,23 +21,6 @@ type DetailValue = NonNullable<GoalDraft["details"]>[string];
 /** The learner's own date, so "this year" and "in March" read from where they are. */
 export function getLearnerToday(timeZone: string): string {
   return toIsoDate(getDateInTimeZone({ date: new Date(), timeZone }));
-}
-
-/**
- * A new goal takes only a date in `getTargetDateBounds`, so the card reads any other (today, a day
- * gone, one past the planner's reach) as no date, and setup asks for one.
- */
-export function withPlannableDate({
-  draft,
-  today,
-}: {
-  draft: GoalDraft;
-  today: string;
-}): GoalDraft {
-  const { max, min } = getTargetDateBounds(today);
-  const { targetDate, ...undated } = draft;
-
-  return targetDate && targetDate >= min && targetDate <= max ? draft : undated;
 }
 
 function compactDetails(details: Record<string, DetailValue | undefined>) {
