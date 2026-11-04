@@ -361,7 +361,7 @@ private fun TurnLayout(
                 shape = BUBBLE_SHAPE,
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
-                Text(question, Modifier.padding(horizontal = 12.dp, vertical = 8.dp), style = MaterialTheme.typography.bodyLarge)
+                Text(question, Modifier.padding(horizontal = 12.dp, vertical = 8.dp), style = MaterialTheme.zoonkType.message)
             }
         }
 

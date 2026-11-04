@@ -115,7 +115,7 @@ data class ZoonkTypography(
     val verdict: TextStyle,
     /** The word on a checked answer option (`ANSWER_TAG_CLASS`). */
     val tag: TextStyle,
-    /** The buddy's words on its page, its hello included; a panel's answers stay `bodyMedium`, as main's. */
+    /** The buddy's words on its page, its hello included, and the learner's bubble; a panel's answers stay `bodyMedium`, as main's. */
     val message: TextStyle,
 )
 
