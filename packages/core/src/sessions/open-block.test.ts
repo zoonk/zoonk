@@ -363,6 +363,31 @@ describe("the learner opens a study block", () => {
     await expect(opened).resolves.toStrictEqual({ opening: { kind: "changed" }, status: "ready" });
   });
 
+  it("a mission reads today in the learner's zone when the goal has none saved", async () => {
+    const user = await userFixture();
+    const { goal } = await sessionGoalFixture({ goal: { timezone: null }, userId: user.id });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: new Date("2026-09-30T00:00:00Z"),
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
+    mockSession(user.id);
+    vi.setSystemTime(new Date("2026-10-01T02:00:00Z"));
+
+    await expect(
+      openStudyBlock({
+        target: { blockId: block.id, kind: "mission" },
+        timeZone: "America/New_York",
+      }),
+    ).resolves.toStrictEqual({
+      opening: { blockId: block.id, kind: "session", sessionId: session.id },
+      status: "ready",
+    });
+  });
+
   it("a mission from a day that's over opens nothing, even a step left unstarted", async () => {
     const user = await userFixture();
     const { goal } = await sessionGoalFixture({ userId: user.id });

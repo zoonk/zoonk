@@ -160,7 +160,7 @@ async function openMission({
   target: Target<"mission">;
   timeZone: string | undefined;
 }): Promise<OpenStudyBlockResult> {
-  const day = await getSessionPageView({ blockId: target.blockId });
+  const day = await getSessionPageView({ blockId: target.blockId, timeZone });
 
   if (day.status === "unauthorized") {
     return { status: day.status };
