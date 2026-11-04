@@ -998,6 +998,113 @@
           "title": "DELF A2"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The situation comes first, the instructions use usted, and the four everyday planning goals fit a three-to-four-minute DELE A2 role-play. However, moving the setting to Granada and omitting the photograph's concrete context weakens the required continuation of Task 2. This is still the correct task format, so the wrong-format cap does not apply.",
+          "score": 7,
+          "label": "Like the exam's sheet",
+          "weight": 30
+        },
+        {
+          "categoryId": "material",
+          "reasoning": "The topic card supplies a usable, safe situation with coherent goals covering timing, route, preparation and an alternative plan. The suggested activities are plausible in Granada, and no supplied facts contradict the planning goals. A topic-based role-play does not need a new photograph, table or rental price list. The material can support the interaction, so the cap does not apply.",
+          "score": 9,
+          "label": "Material that works",
+          "weight": 25
+        },
+        {
+          "categoryId": "script",
+          "reasoning": "The English private brief supplies Spanish dialogue in a sensible order, consistently plays the friend, offers choices and forbids correction or evaluation. Its opening fits that role, and informal tú is natural between friends. However, fallback support is limited to the first goal, and the opening includes unnecessarily complex language for A2. The script does not contradict the candidate card or assigned role, so the cap does not apply.",
+          "score": 8,
+          "label": "The examiner's or partner's script",
+          "weight": 25
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The summary addresses the learner in Brazilian Portuguese, and the character role is also Portuguese. Instructions, prompts, place, opening and hints are Spanish; the private brief is English with its spoken lines in Spanish. There are no emojis or em dashes and no wrong-language fields.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2452,
+          "outputTokens": 1133,
+          "reasoningTokens": 490
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The continuation preserves the friends-and-cycling topic but changes the setting from Seville in the photograph to Granada. It also drops the paper map and rental stand, making the connection to the actual earlier material weaker than required. Planning a ride is an allowed scenario, but it should remain grounded in that scene.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The script provides a fallback question only for arranging the time, leaving less support if the candidate struggles with the other goals. The opening phrase 'Qué bien que tengamos tiempo libre' is also less straightforward than desirable for simple A2 Spanish.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Retain Seville and explicitly introduce the friends planning their ride with the map beside the rental bicycles. Add short fallback questions for the route, supplies and rainy-weather alternative, and simplify the opening to something like 'Tenemos tiempo libre este fin de semana'.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "DELE A2 Task 3 continues Task 2's photo of two friends checking a paper map at a bike rental stand: the role-play builds on that scene (renting bikes, asking the way or planning a ride), with the examiner playing someone in it such as the rental clerk or one of the friends, never an unrelated situation. Instructions in simple Spain Spanish with \"usted\" state the situation first; the goals on the card and the examiner's facts (prices in euros, times, conditions) fit it. Summary and role in Brazilian Portuguese. Found in code: a continuing task never received the earlier card's photos, so it could not link the role-play to them.",
+        "id": "pt-es-dele-a2-role-play-continues-photo-1",
+        "userInput": {
+          "exam": "dele",
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "paper": "Prueba 4: Expresión e interacción orales",
+          "previous": {
+            "instructions": [
+              "Observe la fotografía y descríbala durante dos o tres minutos.",
+              "Puede usar las preguntas como guía."
+            ],
+            "photos": [
+              {
+                "alt": "Duas amigas olham um mapa de papel ao lado de bicicletas de aluguel numa praça.",
+                "scene": "Two women in their twenties, one in a yellow raincoat and one in a denim jacket, stand beside a row of rental bicycles in a sunny city square in Seville, unfolding a paper map together and pointing at it, with orange trees and a cafe terrace behind them in soft morning light."
+              }
+            ],
+            "prompts": [
+              "¿Quiénes son las personas?",
+              "¿Dónde están?",
+              "¿Qué están haciendo?",
+              "¿Qué relación hay entre ellas?",
+              "¿Cómo se sienten?",
+              "¿Qué han hecho antes y qué van a hacer después?"
+            ],
+            "table": null,
+            "task": "Tarea 2: Descripción de una fotografía",
+            "text": null
+          },
+          "task": {
+            "brief": "A role-play with the examiner in an everyday situation linked to the Task 2 photo (such as planning a surprise party with a sibling): the examiner plays the other person, follows a plan for the dialogue and improvises from the candidate's answers.",
+            "minutes": 4,
+            "name": "Tarea 3: Diálogo en una situación simulada",
+            "role": "examiner",
+            "stimulus": "topic"
+          },
+          "title": "DELE A2"
+        }
+      }
     }
   ],
   "taskId": "exam-speaking-card"
