@@ -66,6 +66,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -226,23 +227,31 @@ internal fun MockStepFrame(
             }
         },
         aside = aside,
-    ) { padding -> StepColumn(Modifier.padding(padding), content) }
+    ) { padding -> StepColumn(Modifier.padding(padding), content = content) }
 }
 
+/**
+ * Scrolls on the whole pane, margins included, with the step held to a readable column on the page
+ * before a fold. A new [step] starts at its top.
+ */
 @Composable
-private fun StepColumn(
-    modifier: Modifier,
+internal fun StepColumn(
+    modifier: Modifier = Modifier,
+    step: Any? = null,
     content: @Composable () -> Unit,
 ) {
-    // The whole pane scrolls, margins included, with the step held to a readable column.
-    Box(modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-        Column(
-            Modifier
-                .widthIn(max = COLUMN_WIDTH)
-                .fillMaxWidth()
-                .padding(detailPagePadding()),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) { content() }
+    BeforeFold(modifier) { beforeFold ->
+        key(step) {
+            Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+                Column(
+                    Modifier
+                        .widthIn(max = COLUMN_WIDTH)
+                        .fillMaxWidth()
+                        .padding(detailPagePadding()),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                ) { content() }
+            }
+        }
     }
 }
 

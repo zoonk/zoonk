@@ -3,15 +3,18 @@ package com.zoonk.android.feature.mock.result
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.layout.FoldingFeature
 import androidx.window.testing.layout.FoldingFeature
@@ -223,6 +226,126 @@ class MockResultScreenshots {
         capture("result-speaking")
     }
 
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookEssayGraded() {
+        show(essaysOnly(gradedEssay()))
+        unfold()
+        capture("result-book-essay-graded")
+    }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookEssayNextStep() {
+        show(essaysOnly(gradedEssay()))
+        unfold()
+        capture("result-book-essay-next-step", continues = 1)
+    }
+
+    @Test
+    @Config(qualifiers = GALAXY)
+    fun galaxyEssayGraded() {
+        show(essaysOnly(gradedEssay()))
+        unfold()
+        capture("result-galaxy-essay-graded")
+    }
+
+    @Test
+    @Config(qualifiers = GALAXY)
+    fun galaxyEssayNextStep() {
+        show(essaysOnly(gradedEssay()))
+        unfold()
+        capture("result-galaxy-essay-next-step", continues = 1)
+    }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookEssayUngraded() {
+        show(essaysOnly(pendingEssay()))
+        unfold()
+        capture("result-book-essay-ungraded")
+    }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookSpeaking() {
+        show(speakingOnly())
+        unfold()
+        capture("result-book-speaking")
+    }
+
+    @Test
+    @Config(qualifiers = GALAXY)
+    fun galaxySpeaking() {
+        show(speakingOnly())
+        unfold()
+        capture("result-galaxy-speaking")
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookEssayGradedDarkMoreContrast() {
+        show(essaysOnly(gradedEssay()), dark = true, moreContrast = true)
+        unfold()
+        capture("result-book-essay-graded-dark-more-contrast")
+    }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookEssayGradedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show(essaysOnly(gradedEssay()))
+        unfold()
+        capture("result-book-essay-graded-font200")
+    }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookEssayGradedRightToLeft() {
+        show(essaysOnly(gradedEssay()), layoutDirection = LayoutDirection.Rtl)
+        unfold()
+        capture("result-book-essay-graded-rtl")
+    }
+
+    @Test
+    @Config(qualifiers = MEDIUM)
+    fun mediumEssayGraded() {
+        show(essaysOnly(gradedEssay()))
+        capture("result-medium-essay-graded")
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun expandedEssayGraded() {
+        show(essaysOnly(gradedEssay()))
+        capture("result-expanded-essay-graded")
+    }
+
+    @Test
+    @Config(qualifiers = MEDIUM)
+    fun mediumSpeaking() {
+        show(speakingOnly())
+        capture("result-medium-speaking")
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun expandedSpeaking() {
+        show(speakingOnly())
+        capture("result-expanded-speaking")
+    }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookWithAsideRightToLeft() {
+        show(enem(), layoutDirection = LayoutDirection.Rtl)
+        unfold()
+        capture("result-open-book-with-aside-rtl")
+    }
+
+    private fun speakingOnly() =
+        finishedMock(result = result(extra = """"total":0,"correct":0,"areas":[],"topics":[]"""), extra = """"speaking":$SPEAKING""")
+
     private fun enem() =
         finishedMock(
             result =
@@ -262,6 +385,7 @@ class MockResultScreenshots {
         afterFinish: MockExam? = null,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        layoutDirection: LayoutDirection = LayoutDirection.Ltr,
     ): FakeMockRunApi {
         val api = FakeMockRunApi(mock).also { it.afterFinish = afterFinish }
         compose.setContent {
@@ -279,7 +403,9 @@ class MockResultScreenshots {
                     }
                 }
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                Surface { MockScreen(AppRoute.Mock(RUN_BLOCK), app, rememberAppNavigator(), store) }
+                CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                    Surface { MockScreen(AppRoute.Mock(RUN_BLOCK), app, rememberAppNavigator(), store) }
+                }
             }
         }
         compose.waitForIdle()
@@ -313,6 +439,9 @@ class MockResultScreenshots {
     }
 
     private companion object {
+        const val BOOK = "w852dp-h883dp-xhdpi"
+        const val GALAXY = "w707dp-h823dp-xhdpi"
+        const val MEDIUM = "w700dp-h840dp-xhdpi"
         const val STATEMENT =
             """{"area":"Mathematics","citation":null,"context":null,"correctAnswer":"false","explanation":"Zero is even.",
             "format":"trueFalse","itemId":"$ITEM_TWO","learnerAnswer":"true","number":2,"outcome":"wrong",
