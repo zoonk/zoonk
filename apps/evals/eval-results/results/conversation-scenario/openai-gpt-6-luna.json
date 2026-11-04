@@ -50,21 +50,9 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Brazilian learner of US English at A2, renting an apartment. A call to a landlord or agent to ask about a flat and book a viewing, with objectives like asking the rent, asking what's included and booking a day. US name and dollars. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.",
@@ -132,11 +120,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The opening line has nine words, exceeding the explicit A1 limit of three to six words. Its vocabulary and structure are otherwise appropriate.",
           "kind": "minorErrors",
@@ -219,26 +203,14 @@
           "kind": "majorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "US English speaker learning Mexican Spanish at A2, renting an apartment in Mexico City. A call to a landlord (\"dueño\" or \"dueña\") about a \"departamento\", with pesos, Mexican vocabulary (\"renta\", \"depósito\", \"servicios\", \"departamento\", not \"piso\") and \"usted\". Opening line and hints short (A2). Title, situation and descriptions in US English.",
         "id": "en-es-a2-renting-1",
         "userInput": {
-          "canDo": [
-            "Call about an apartment",
-            "Ask what's included",
-            "Arrange a viewing"
-          ],
+          "canDo": ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
           "learnerLanguage": "en",
           "level": "A2",
           "targetLanguage": "es",
@@ -296,16 +268,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Consider changing “Escolher comida e bebida” to “Pedir comida e bebida” so the label directly matches the spoken ordering task rather than the act of choosing.",
           "kind": "potentialImprovements",
@@ -316,11 +280,7 @@
         "expectations": "US English speaker learning Brazilian Portuguese at A1, at a restaurant. A face-to-face order or a call to a restaurant, with a Brazilian name and reais. Opening line and hints very short (A1): \"Eu quero...\", \"A conta, por favor\". Brazilian words (\"cardápio\", not \"ementa\"). Title, situation and descriptions in US English.",
         "id": "en-pt-a1-restaurant-1",
         "userInput": {
-          "canDo": [
-            "Ask for a table",
-            "Order food and drinks",
-            "Ask for the bill"
-          ],
+          "canDo": ["Ask for a table", "Order food and drinks", "Ask for the bill"],
           "learnerLanguage": "en",
           "level": "A1",
           "targetLanguage": "pt",
@@ -562,9 +522,7 @@
         "expectations": "Brazilian learner of US English at A2, in a unit about chatting with neighbors, colleagues and new friends. The character already knows the learner: a friend, colleague or neighbor (role in Brazilian Portuguese), never a relative or someone they're meeting for the first time, and the situation says who they are to the learner. The objectives say what to do without giving anything away: no day, time or plan for the learner to propose and no hint of the character's twist (never \"Suggest coffee on Saturday at 10 and pick another time if she can't\"). The place and situation name no city or neighborhood, since that would be where the learner lives. Nothing names the learner or assumes facts about their life. US name. Opening line and hints short and simple (A2). Title, situation, role and descriptions in Brazilian Portuguese.",
         "id": "pt-en-a2-social-life-1",
         "userInput": {
-          "canDo": [
-            "Consigo conversar com vizinhos e colegas"
-          ],
+          "canDo": ["Consigo conversar com vizinhos e colegas"],
           "learnerLanguage": "pt",
           "level": "A2",
           "targetLanguage": "en",
@@ -786,31 +744,19 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The hints support requesting an appointment, describing pain, and asking about times, but none models choosing a slot, which the final objective requires. The brief's twist depends on the learner requesting exactly Tuesday at 10:00, so it is unlikely to arise in ordinary conversation.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "US English speaker learning Polish at A2, at the doctor. A call to a przychodnia to book an appointment and say what hurts, with a Polish name. The receptionist is polite with a stranger in the opening line and the brief, never \"ty\"; impersonal polite phrasing (\"W czym mogę pomóc?\") is fine, since the caller's gender is unknown. Opening line and hints short (A2). Title, situation and descriptions in US English.",
         "id": "en-pl-a2-doctor-1",
         "userInput": {
-          "canDo": [
-            "Book an appointment",
-            "Say what hurts",
-            "Ask about the time"
-          ],
+          "canDo": ["Book an appointment", "Say what hurts", "Ask about the time"],
           "learnerLanguage": "en",
           "level": "A2",
           "targetLanguage": "pl",
@@ -950,16 +896,8 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Give a building number or precise meeting point in the brief so Léa can finish the viewing arrangement with actionable directions rather than only a street and city.",
           "kind": "potentialImprovements",
@@ -970,11 +908,7 @@
         "expectations": "US English speaker learning French at A2, renting an apartment in France. A call to a landlord about an appartement, with the loyer, charges and dépôt de garantie in euros. The landlord never says \"tu\" to the caller: a line that addresses them, in the opening line or the hints, uses \"vous\" (\"Comment puis-je vous aider ?\"), and the brief tells the voice model to use \"vous\". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.",
         "id": "en-fr-a2-renting-1",
         "userInput": {
-          "canDo": [
-            "Call about an apartment",
-            "Ask what's included",
-            "Arrange a viewing"
-          ],
+          "canDo": ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
           "learnerLanguage": "en",
           "level": "A2",
           "targetLanguage": "fr",
@@ -1032,31 +966,19 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The deposit objective and hint use “deposito” instead of the explicitly requested “cauzione.” Although understandable, this misses the requested rental vocabulary. Use “Chiedere affitto e cauzione” and “Quanto costa l'affitto e quanto è la cauzione?”",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "US English speaker learning Italian at A2, renting an apartment in Italy. A call to a landlord about an appartamento, with the affitto and the cauzione in euros. The landlord never says \"tu\" to the caller: a line that addresses them, in the opening line or the hints, uses \"Lei\" (\"Come posso aiutarLa?\"), and the brief tells the voice model to use \"Lei\". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.",
         "id": "en-it-a2-renting-1",
         "userInput": {
-          "canDo": [
-            "Call about an apartment",
-            "Ask what's included",
-            "Arrange a viewing"
-          ],
+          "canDo": ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
           "learnerLanguage": "en",
           "level": "A2",
           "targetLanguage": "it",
@@ -1134,11 +1056,7 @@
         "expectations": "US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord never says \"sen\" to the caller: a line that addresses them, in the opening line or the hints, uses \"siz\" (\"Size nasıl yardımcı olabilirim?\"), and the brief tells the voice model to use \"siz\". An opening with no second-person form, such as \"Nasıl yardımcı olabilirim?\", is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.",
         "id": "en-tr-a2-renting-1",
         "userInput": {
-          "canDo": [
-            "Call about an apartment",
-            "Ask what's included",
-            "Arrange a viewing"
-          ],
+          "canDo": ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
           "learnerLanguage": "en",
           "level": "A2",
           "targetLanguage": "tr",
