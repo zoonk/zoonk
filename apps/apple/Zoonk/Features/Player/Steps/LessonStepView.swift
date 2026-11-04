@@ -268,13 +268,18 @@ private struct CheckStepView: View {
   var body: some View {
     switch part {
     case .screen:
+      StepMedia(step: step, visual: nil, asks: true)
+
       if let context = content.context {
         LessonTextBlocks(context)
           .foregroundStyle(.secondary)
       }
 
+      if let visual = content.visual {
+        LessonVisualView(visual: visual)
+      }
+
       LessonQuestionText(text: content.question)
-      StepMedia(step: step, visual: content.visual, asks: true)
     case .turn:
       LessonOptionList(
         options: content.options.map {

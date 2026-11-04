@@ -167,8 +167,9 @@ function LessonPicturePending({ alt, frame }: { alt?: string; frame: LessonPictu
 
   return (
     <MediaPending
+      scrollable
       className={cn(PICTURE_BOX_CLASS, PICTURE_FRAME_CLASS[frame])}
-      icon={<ImageIcon aria-hidden="true" className="size-6" />}
+      icon={<ImageIcon aria-hidden="true" className="size-6 shrink-0" />}
       style={pictureBoxStyle(DRAWN_PICTURE_SIZE.scene)}
     >
       <p role="status">{t("Drawing the picture…")}</p>
