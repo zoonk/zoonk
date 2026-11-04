@@ -7,6 +7,29 @@ import { contentStep } from "../preview/preview-steps";
 
 const ANSWER = "Compartilhado entre os dois átomos, no par de elétrons";
 
+function lessonWithAnswer(text: string) {
+  return buildLesson(
+    [
+      contentStep("check", {
+        content: {
+          basis: null,
+          options: [
+            { id: "shared", isCorrect: true, reason: "Os átomos compartilham o par.", text },
+            {
+              id: "single",
+              isCorrect: false,
+              reason: "O par é compartilhado.",
+              text: "Em apenas um dos átomos",
+            },
+          ],
+          question: "Onde está o par de elétrons compartilhado?",
+        },
+      }),
+    ],
+    { language: "pt" },
+  );
+}
+
 describe("checked answer readability", () => {
   it.each([
     { fontSize: "150%", keepsWordsWhole: true, width: 390 },
@@ -19,33 +42,7 @@ describe("checked answer readability", () => {
         const fontSize = document.documentElement.style.fontSize;
 
         try {
-          renderLessonPlayer({
-            lesson: buildLesson(
-              [
-                contentStep("check", {
-                  content: {
-                    basis: null,
-                    options: [
-                      {
-                        id: "shared",
-                        isCorrect: true,
-                        reason: "Os átomos compartilham o par.",
-                        text: ANSWER,
-                      },
-                      {
-                        id: "single",
-                        isCorrect: false,
-                        reason: "O par é compartilhado.",
-                        text: "Em apenas um dos átomos",
-                      },
-                    ],
-                    question: "Onde está o par de elétrons compartilhado?",
-                  },
-                }),
-              ],
-              { language: "pt" },
-            ),
-          });
+          renderLessonPlayer({ lesson: lessonWithAnswer(ANSWER) });
 
           const selected = page.getByRole("radio", { name: ANSWER });
           await selected.click();
@@ -93,6 +90,45 @@ describe("checked answer readability", () => {
 
           const option = selected.element();
           expect(option.scrollWidth).toBeLessThanOrEqual(option.clientWidth);
+        } finally {
+          document.documentElement.style.fontSize = fontSize;
+        }
+      });
+    },
+  );
+
+  it.each([
+    {
+      fontSize: "150%",
+      name: "short words",
+      text: "Em apenas um dos dois átomos que formam a ligação",
+      width: 350,
+    },
+    {
+      fontSize: "200%",
+      name: "Japanese",
+      text: "共有された電子対は二つの原子の間にあります",
+      width: 390,
+    },
+  ])(
+    "does not squeeze $name when feedback appears with enlarged text",
+    async ({ fontSize: enlargedFontSize, text, width }) => {
+      await atViewport({ height: 844, width }, async () => {
+        const fontSize = document.documentElement.style.fontSize;
+
+        try {
+          document.documentElement.style.fontSize = enlargedFontSize;
+          renderLessonPlayer({ lesson: lessonWithAnswer(text) });
+
+          const selected = page.getByRole("radio", { name: text });
+          const answer = selected.getByText(text, { exact: true });
+          await selected.click();
+          const beforeLines = answer.element().getClientRects().length;
+
+          await page.getByRole("button", { name: /^Check/u }).click();
+          await expect.element(selected.getByText("Your answer")).toBeVisible();
+
+          expect(answer.element().getClientRects()).toHaveLength(beforeLines);
         } finally {
           document.documentElement.style.fontSize = fontSize;
         }

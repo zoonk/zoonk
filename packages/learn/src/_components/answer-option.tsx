@@ -115,14 +115,14 @@ export function AnswerOption({
 
       <span
         className={cn(
-          "flex min-w-0 grow basis-1/2 flex-wrap items-start gap-x-3 gap-y-1",
+          "flex min-w-0 grow basis-1/2 flex-wrap items-start justify-between gap-x-3 gap-y-1",
           layout === "stacked" && "contents",
         )}
       >
         <span
           className={cn(
-            "flex min-w-0 flex-col",
-            layout === "stacked" ? "flex-1" : "grow basis-[min-content]",
+            "flex flex-col",
+            layout === "stacked" ? "min-w-0 flex-1" : "w-full max-w-max grow basis-1/2",
           )}
         >
           <SpokenMath>{children}</SpokenMath>
