@@ -2,9 +2,11 @@
   import SwiftUI
 
   /// `ZOONK_DEBUG_CHARACTERS=ceremony` opens a milestone's ceremony instead, and `=moments` a
-  /// result's missions.
+  /// result's missions; also a launch argument (`-ZOONK_DEBUG_CHARACTERS moments`).
   struct DebugCharacterGallery: ViewModifier {
-    private let mode = ProcessInfo.processInfo.environment["ZOONK_DEBUG_CHARACTERS"]
+    private let mode =
+      ProcessInfo.processInfo.environment["ZOONK_DEBUG_CHARACTERS"]
+      ?? UserDefaults.standard.string(forKey: "ZOONK_DEBUG_CHARACTERS")
 
     func body(content: Content) -> some View {
       if let mode {
