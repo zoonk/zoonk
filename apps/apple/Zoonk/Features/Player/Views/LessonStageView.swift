@@ -190,11 +190,13 @@ struct LessonStageView: View {
                 scroll.scrollTo(Self.checkNoteId, anchor: .bottom)
               }
             }
-            // Main shows the turn whole, or from its top once it's taller than the page, as it is
-            // at accessibility sizes.
+            // A worked example's newest step is its last. A challenge's turn is its newest
+            // decision, which main shows whole, or from its top once it's taller than the page, as
+            // it is at accessibility sizes.
             .onChange(of: addedBelow(step)) {
               withAnimation(reduceMotion ? nil : .default) {
-                scroll.scrollTo(Self.turnId, anchor: isStacked ? .top : .bottom)
+                scroll.scrollTo(
+                  Self.turnId, anchor: isStacked && step.kind == .challenge ? .top : .bottom)
               }
             }
             // Raising the keyboard reveals only a field's text; the learner's turn shows whole above

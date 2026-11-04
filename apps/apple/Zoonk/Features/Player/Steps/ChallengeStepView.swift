@@ -25,8 +25,8 @@ struct ChallengeStepView: View {
       ForEach(Array(node.messages.enumerated()), id: \.offset) { _, message in
         self.message(message)
       }
-      LessonQuestionText(text: named(node.prompt))
     case (.deciding(let node, let confirmed, _, let pending), .turn):
+      LessonQuestionText(text: named(node.prompt))
       LessonOptionList(
         options: node.choices.map { LessonOption(id: $0.id, text: named($0.text)) },
         selectedId: pending,
