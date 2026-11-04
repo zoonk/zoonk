@@ -2,36 +2,24 @@ package com.zoonk.android.feature.essay
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.data.ANA
-import com.zoonk.android.data.ApiError
-import com.zoonk.android.data.ApiException
-import com.zoonk.android.data.AppCache
-import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.android.data.DraftStore
-import com.zoonk.android.data.FakeSession
-import com.zoonk.android.data.LoadState
-import com.zoonk.android.feature.practice.UnusedSessionSteps
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.ApiJson
-import com.zoonk.api.models.Essay
-import com.zoonk.api.models.EssayGrade
-import com.zoonk.api.models.EssaySubmissionInput
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.awaitCancellation
-import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.builtins.serializer
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -42,7 +30,6 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
-import java.util.UUID
 
 /**
  * Review screenshots of the essay, written only on demand:
@@ -51,10 +38,13 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class EssayScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    @get:Rule
+    @get:Rule(order = 2)
     val drafts = TemporaryFolder()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -62,43 +52,20 @@ class EssayScreenshots {
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
 
-    private val texts =
-        "Texto I\n\nA mobilidade urbana no Brasil enfrenta desafios históricos: o crescimento desordenado das cidades, " +
-            "a prioridade dada ao transporte individual e a falta de integração entre os modais. Em muitas capitais, o tempo " +
-            "médio de deslocamento ultrapassa uma hora por dia.\n\nTexto II\n\nSegundo o IBGE, mais de 80% da população vive " +
-            "em áreas urbanas, o que pressiona o transporte público, a infraestrutura viária e a qualidade do ar."
-
-    private fun grade(tooShort: Boolean = false): String =
-        """{"criteria":[
-          {"comment":"Few slips in agreement.","example":null,"id":"c1","maxScore":200,"name":"c1","quote":null,"score":160},
-          {"comment":"On topic, with one outside reference.","example":null,"id":"c2","maxScore":200,"name":"c2","quote":null,"score":160},
-          {"comment":"The claims stand without support.","example":"Cite a figure from the IBGE.","id":"c3","maxScore":200,"name":"c3",
-           "quote":"Isso acontece porque as cidades cresceram.","score":120},
-          {"comment":"Good connectives.","example":null,"id":"c4","maxScore":200,"name":"c4","quote":null,"score":160},
-          {"comment":"The proposal lacks its means and detail.","example":null,"id":"c5","maxScore":200,"name":"c5","quote":null,"score":120}],
-        "enemInterventionElements":{"action":true,"agent":true,"detail":false,"effect":true,"means":false},
-        "nextStep":{"criterionId":"c3","text":"Back each claim with a fact or a figure, then say why it matters."},
-        "range":{"high":760,"low":680},"total":{"maxScore":1000,"score":720},"zeroReason":${if (tooShort) "\"tooShort\"" else "null"}}"""
-
-    private fun essay(
-        drafted: Boolean,
-        tooShort: Boolean,
-        status: String,
-    ): Essay {
-        val drafts =
-            if (drafted) {
-                """[{"grade":${grade(
-                    tooShort,
-                )},"submittedAt":"2026-10-30T10:00:00Z","text":"As cidades brasileiras cresceram sem planejamento."}]"""
-            } else {
-                "[]"
-            }
-        return ApiJson.decodeFromString(
-            Essay.serializer(),
-            """{"blockId":"00000000-0000-4000-8000-0000000000b1","context":${ApiJson.encodeToString(String.serializer(), texts)},
-            "drafts":$drafts,"gradesLeft":3,"question":"Escreva uma redação sobre os desafios da mobilidade urbana no Brasil.",
-            "rubric":"enem","sessionId":"00000000-0000-4000-8000-0000000000e1","status":"$status"}""",
-        )
+    // The publisher doesn't replay a fold to a screen composed after it, so it tells the shown screen, twice
+    // for a frame that's rebuilt as the fold changes its panes.
+    private fun unfold() {
+        repeat(2) {
+            rule.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
+                    ),
+                ),
+            )
+        }
+        rule.waitForIdle()
     }
 
     private fun show(
@@ -111,69 +78,47 @@ class EssayScreenshots {
         secondStep: Boolean = false,
         status: String = "active",
         refusal: String? = null,
+        withTexts: Boolean = true,
+        fold: Boolean = false,
+        dark: Boolean = false,
+        direction: LayoutDirection = LayoutDirection.Ltr,
     ) {
-        val read = essay(drafted, tooShort, status)
-        val api =
-            object : EssayApi {
-                override suspend fun essay(
-                    session: AuthenticatedSession,
-                    blockId: UUID,
-                    timeZone: String,
-                ) = read
-
-                override suspend fun submit(
-                    session: AuthenticatedSession,
-                    blockId: UUID,
-                    input: EssaySubmissionInput,
-                ): EssayGrade = refusal?.let { throw ApiException(ApiError.Unavailable, it, status = 403) } ?: awaitCancellation()
-
-                override suspend fun finish(
-                    session: AuthenticatedSession,
-                    sessionId: UUID,
-                    blockId: UUID,
-                    timeZone: String,
-                ) = error("Not used")
-            }
-        val cache =
-            AppCache(
-                FakeSession(AuthenticatedSession(ANA, "token", "local")),
-                CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
-            )
-        val store = EssayStore(api, cache, DraftStore(drafts.root, CoroutineScope(SupervisorJob()))) { "UTC" }
-        val viewModel = EssayViewModel(read.blockId, read.sessionId, store, null, UnusedSessionSteps)
-        runBlocking { viewModel.essay.refresh() }
-        viewModel.arrive((viewModel.essay.state.value as LoadState.Loaded<*>).value as Essay)
+        val read = essay(drafted, tooShort, status, withTexts)
+        val viewModel = essayViewModel(read, drafts.root, refusal)
         rule.waitForIdle()
         if (rewrite) viewModel.rewrite()
         if (text.isNotEmpty()) viewModel.write(text)
         if (grading || refusal != null) viewModel.send()
 
         rule.setContent {
-            ZoonkTheme {
-                val ui by viewModel.ui.collectAsStateWithLifecycle()
-                val navigator = rememberAppNavigator()
-                val grade = ui.grade
-                if (ui.closed && grade == null) {
-                    SkippedEssay(read, navigator)
-                } else if ((ui.mode == EssayMode.Grade || ui.closed) && grade != null) {
-                    EssayGradeSteps(
-                        read,
-                        grade,
-                        finished = false,
-                        closed = ui.closed,
-                        announce = false,
-                        finishing = false,
-                        finishFailed = false,
-                        viewModel,
-                        navigator,
-                    )
-                } else {
-                    EssayWrite(read, ui, finishing = false, finishFailed = false, viewModel, navigator)
+            ZoonkTheme(darkTheme = dark, moreContrast = dark) {
+                CompositionLocalProvider(LocalLayoutDirection provides direction) {
+                    val ui by viewModel.ui.collectAsStateWithLifecycle()
+                    val navigator = rememberAppNavigator()
+                    val grade = ui.grade
+                    if (ui.closed && grade == null) {
+                        SkippedEssay(read, navigator)
+                    } else if ((ui.mode == EssayMode.Grade || ui.closed) && grade != null) {
+                        EssayGradeSteps(
+                            read,
+                            grade,
+                            finished = false,
+                            closed = ui.closed,
+                            announce = false,
+                            finishing = false,
+                            finishFailed = false,
+                            viewModel,
+                            navigator,
+                        )
+                    } else {
+                        EssayWrite(read, ui, finishing = false, finishFailed = false, viewModel, navigator)
+                    }
                 }
             }
         }
         rule.mainClock.advanceTimeBy(1_000)
         if (secondStep) rule.onNodeWithText("Continue").performClick()
+        if (fold) unfold()
         write(name)
     }
 
@@ -245,4 +190,73 @@ class EssayScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneRewriteTooShort() = show("phone-rewrite-too-short", drafted = true, tooShort = true, rewrite = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookWrite() = show("essay-book-write", text = "A mobilidade urbana é um desafio.", withTexts = false, fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookWrite() = show("essay-small-book-write", text = "A mobilidade urbana é um desafio.", withTexts = false, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookWriteWithTexts() = show("essay-book-write-texts", text = "A mobilidade urbana é um desafio.", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookRewrite() = show("essay-book-rewrite", drafted = true, rewrite = true, withTexts = false, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookGrade() = show("essay-book-grade", drafted = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookGrade() = show("essay-small-book-grade", drafted = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookNextStep() = show("essay-book-next-step", drafted = true, secondStep = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookTooShort() = show("essay-book-too-short", drafted = true, tooShort = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookTooShort() = show("essay-small-book-too-short", drafted = true, tooShort = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookSkipped() = show("essay-book-skipped", status = "skipped", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookWriteDarkMoreContrast() =
+        show("essay-book-write-dark-more-contrast", text = "A mobilidade urbana é um desafio.", withTexts = false, fold = true, dark = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookRewriteAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("essay-book-rewrite-font200", drafted = true, rewrite = true, fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookWriteRightToLeft() =
+        show("essay-book-write-texts-rtl", text = "A mobilidade urbana é um desafio.", fold = true, direction = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookWriteWithTexts() = show("essay-small-book-write-texts", text = "A mobilidade urbana é um desafio.", fold = true)
+
+    @Test
+    @Config(qualifiers = "w700dp-h840dp-xhdpi")
+    fun mediumWrite() = show("essay-medium-write", text = "A mobilidade urbana é um desafio.")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookClosedTooShort() = show("essay-book-closed-too-short", drafted = true, tooShort = true, status = "completed", fold = true)
 }

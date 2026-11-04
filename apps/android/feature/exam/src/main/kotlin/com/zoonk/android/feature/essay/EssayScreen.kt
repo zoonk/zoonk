@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -45,6 +46,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
@@ -55,6 +57,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -102,10 +105,14 @@ import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.spaceAfterSentence
+import com.zoonk.android.ui.scaffold.PageFold
+import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.Essay
@@ -257,18 +264,31 @@ internal fun EssayWrite(
             }
         },
     ) { padding ->
-        if (texts == null && lastGrade == null) {
-            EssayWriteColumn(essay, ui, rubric, inlineTexts = null, fill = false, box, viewModel, Modifier.padding(padding))
-        } else {
+        var span by remember { mutableStateOf<PageSpan?>(null) }
+
+        BoxWithConstraints(Modifier.padding(padding).onPageSpan { span = it }) {
+            val fold = spreadFold(maxWidth, span)
+            // Across a fold the essay is a spread, so the texts lead with the prompt rather than beside the box.
+            val hasAside = fold == null && (texts != null || lastGrade != null)
+
             PageWithSupportingPane(
-                supportingPane = { EssayAside(texts, lastGrade, rubric) },
-                modifier = Modifier.padding(padding),
-            ) { beside -> EssayWriteColumn(essay, ui, rubric, inlineTexts = texts.takeUnless { beside }, fill = beside, box, viewModel) }
+                supportingPane =
+                    if (hasAside) {
+                        { EssayAside(texts, lastGrade, rubric) }
+                    } else {
+                        null
+                    },
+            ) { beside ->
+                EssayWriteColumn(essay, ui, rubric, inlineTexts = texts.takeUnless { beside }, fill = beside, fold, box, viewModel)
+            }
         }
     }
 }
 
-/** Beside the texts on a tall enough window, the box takes the column's rest, as main's on wide screens. */
+/**
+ * Beside the texts on a tall enough window, the box takes the column's rest, as main's on wide
+ * screens. Across a [fold] the prompt leads and the box faces it, above its Send.
+ */
 @Composable
 private fun EssayWriteColumn(
     essay: Essay,
@@ -276,11 +296,11 @@ private fun EssayWriteColumn(
     rubric: EssayRubric,
     inlineTexts: String?,
     fill: Boolean,
+    fold: PageFold?,
     box: FocusRequester,
     viewModel: EssayViewModel,
-    modifier: Modifier = Modifier,
 ) {
-    val above: @Composable ColumnScope.() -> Unit = {
+    val prompt: @Composable ColumnScope.() -> Unit = {
         inlineTexts?.let {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 SectionHeader(textsLabel(rubric))
@@ -291,22 +311,32 @@ private fun EssayWriteColumn(
             essay.context?.takeUnless { isLongText(it) }?.let { QuotedText(it) }
             QuestionTitle(essay.question)
         }
-        ui.grade?.let { RewriteGuide(it, viewModel::seeGrade) }
     }
+    val guide: @Composable ColumnScope.() -> Unit = { ui.grade?.let { RewriteGuide(it, viewModel::seeGrade) } }
+    // The one column keeps its own scroll, so folding back finds it where the learner left it.
+    val scroll = rememberScrollState()
+    val boxScroll = rememberScrollState()
 
-    BoxWithConstraints(modifier) {
+    BoxWithConstraints {
         if (fill && maxHeight >= FILL_HEIGHT) {
             Column(Modifier.fillMaxSize().padding(vertical = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Column(Modifier.runColumn().weight(1f), verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                    above()
+                    prompt()
+                    guide()
                     EssayBox(ui, rubric, box, viewModel::write, Modifier.weight(1f).heightIn(min = BOX_MIN_HEIGHT))
                 }
             }
         } else {
-            RunPage(Modifier) {
-                above()
+            // The box's page is the one column's place, so the draft keeps its cursor as the book opens or closes.
+            RunPage(
+                if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true },
+                if (fold == null) scroll else boxScroll,
+            ) {
+                if (fold == null) prompt()
+                guide()
                 EssayBox(ui, rubric, box, viewModel::write, Modifier.heightIn(min = BOX_HEIGHT))
             }
+            if (fold != null) RunPage(Modifier.width(fold.start).semantics { isTraversalGroup = true }, content = prompt)
         }
     }
 }
@@ -376,10 +406,15 @@ private fun EssayBox(
     modifier: Modifier = Modifier,
 ) {
     val label = if (ui.drafts.orEmpty().isNotEmpty()) stringResource(R.string.essay_rewrite_label) else writingName(rubric)
+    // The text is the view model's; the cursor is saved here, so it stays where it was through a fold.
+    var value by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(ui.text)) }
 
     OutlinedTextField(
-        value = ui.text,
-        onValueChange = onWrite,
+        value = value.copy(text = ui.text),
+        onValueChange = {
+            value = it
+            if (it.text != ui.text) onWrite(it.text)
+        },
         modifier = modifier.fillMaxWidth().focusRequester(focus),
         label = { Text(label) },
         supportingText = {

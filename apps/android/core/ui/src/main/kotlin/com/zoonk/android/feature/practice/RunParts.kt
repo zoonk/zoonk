@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.practice
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -174,13 +175,14 @@ private fun RunDone(
 @Composable
 fun RunPage(
     modifier: Modifier,
+    scroll: ScrollState = rememberScrollState(),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     BeforeFold(modifier) { beforeFold ->
         Column(
             beforeFold
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scroll)
                 .padding(vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
