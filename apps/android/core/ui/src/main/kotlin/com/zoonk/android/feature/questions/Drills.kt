@@ -43,6 +43,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -282,15 +283,6 @@ internal fun announcedSeconds(
         else -> announced
     }
 
-/** "0:45", as main's `formatClock` writes it. */
-fun formatClock(millis: Long): String {
-    val totalSeconds = ceil(millis / MILLIS_PER_SECOND.toDouble()).toLong()
-    val hours = totalSeconds / SECONDS_PER_HOUR
-    val minutes = totalSeconds / SECONDS_PER_MINUTE % MINUTES_PER_HOUR
-    val seconds = totalSeconds % SECONDS_PER_MINUTE
-    return if (hours > 0) "%d:%02d:%02d".format(hours, minutes, seconds) else "%d:%02d".format(minutes, seconds)
-}
-
 /** "I've read it. Show the answers", a read-carefully drill's main action before its options show. */
 @Composable
 fun ShowAnswersButton(
@@ -374,6 +366,3 @@ private val ANNOUNCED_SECONDS = setOf(10, 5)
 private const val WARNING_SECONDS = 10
 private const val TICK_MILLIS = 250L
 private const val MILLIS_PER_SECOND = 1_000L
-private const val SECONDS_PER_MINUTE = 60L
-private const val MINUTES_PER_HOUR = 60L
-private const val SECONDS_PER_HOUR = 3_600L

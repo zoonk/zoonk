@@ -73,8 +73,8 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedTextField
-import com.zoonk.android.ui.components.formatClock
 import com.zoonk.android.ui.format.WORDS_MARK
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures

@@ -34,8 +34,8 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.formatClock
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber

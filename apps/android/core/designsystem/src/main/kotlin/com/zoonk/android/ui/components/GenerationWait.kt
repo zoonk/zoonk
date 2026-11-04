@@ -51,6 +51,7 @@ import com.zoonk.android.data.PhaseStatus
 import com.zoonk.android.data.StepPlace
 import com.zoonk.android.data.progress
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.delay
@@ -410,15 +411,6 @@ private fun elapsed(
         phase.status == PhaseStatus.Active && following && clockOffsetMillis != null -> now - clockOffsetMillis - startedAt
         else -> null
     }?.coerceAtLeast(0)
-}
-
-/** Main's `formatClock`: "0:08", "1:02:03". */
-fun formatClock(millis: Long): String {
-    val total = (millis + 999) / 1000
-    val hours = total / 3600
-    val minutes = total / 60 % 60
-    val seconds = total % 60
-    return if (hours > 0) "%d:%02d:%02d".format(hours, minutes, seconds) else "%d:%02d".format(minutes, seconds)
 }
 
 private const val TICK_MILLIS = 1000L
