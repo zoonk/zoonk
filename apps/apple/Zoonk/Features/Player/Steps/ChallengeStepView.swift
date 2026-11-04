@@ -35,16 +35,14 @@ struct ChallengeStepView: View {
       ) { choiceId in
         store.select(.challenge(choiceIds: confirmed + [choiceId]))
       }
-    case (.ended(let ending, _, let decisions), .screen):
+    case (.ended(_, _, let decisions), .screen):
       meters(decisions)
       conversation(decisions)
-      // Once checked, the debrief opens with the outcome.
-      if state.currentResult == nil {
-        outcome(ending)
-      }
     case (.ended(let ending, _, let decisions), .turn):
       if let result = state.currentResult {
         debrief(ending: ending, decisions: decisions, isCorrect: result.isCorrect)
+      } else {
+        outcome(ending)
       }
     }
   }
