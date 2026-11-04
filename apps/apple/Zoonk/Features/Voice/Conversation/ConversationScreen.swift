@@ -16,6 +16,7 @@ struct ConversationScreen: View {
   @State private var started: String?
   /// The learner tapped Call on the intro: a call written first opens on its intro instead.
   @State private var callsNow = false
+  @State private var checkpointCall: Resource<LanguageCheckpointCall>?
 
   let source: Source
   /// A running mock's speaking task goes back to the mock without the call's own result: the mock's
@@ -53,20 +54,25 @@ struct ConversationScreen: View {
       }
     }
     .interactiveDismissDisabled(isInCall)
+    .onAppear {
+      if case .checkpoint(let blockId) = source, checkpointCall == nil {
+        checkpointCall = voice.checkpointCall(blockId: blockId)
+      }
+    }
   }
 
   @ViewBuilder
   private func checkpoint(_ blockId: String) -> some View {
-    let call = voice.checkpointCall(blockId: blockId)
-
     if let started {
       conversation(started, callsRightAway: callsNow)
-    } else if case .ready(let made)? = call.value {
-      conversation(made.conversationId, callsRightAway: false)
-    } else {
-      CheckpointCallIntro(call: call, blockId: blockId) { conversationId, callsNow in
-        self.callsNow = callsNow
-        started = conversationId
+    } else if let call = checkpointCall {
+      if case .ready(let made)? = call.value {
+        conversation(made.conversationId, callsRightAway: false)
+      } else {
+        CheckpointCallIntro(call: call, blockId: blockId) { conversationId, callsNow in
+          self.callsNow = callsNow
+          started = conversationId
+        }
       }
     }
   }
