@@ -152,6 +152,7 @@ private struct LogbookSteps: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(AppRouter.self) private var router
   @State private var current = LogbookStep.week
+  @ScaledMetric(relativeTo: .body) private var tileWidth = 150.0
   @AccessibilityFocusState private var focusedStep: LogbookStep?
 
   let recap: WeeklyRecap
@@ -328,22 +329,18 @@ private struct LogbookSteps: View {
 
     if !recap.isQuiet {
       Section {
-        IconLabeledContent {
-          Text(studyDuration(minutes: recap.week.minutes))
-            .monospacedDigit()
-        } title: {
-          Text("Time", tableName: "Session", comment: "The week's study time")
-        } icon: {
-          Image(systemName: "clock")
+        StatTileGrid(columns: [2, 1], minimumWidth: tileWidth) {
+          StatTile(
+            label: Text("Time", tableName: "Session", comment: "The week's study time"),
+            value: Text(studyDuration(minutes: recap.week.minutes)),
+            systemImage: "clock")
+          StatTile(
+            label: Text("Questions", tableName: "Session", comment: "The week's questions"),
+            value: Text(recap.week.questions, format: .number),
+            systemImage: "checklist")
         }
-
-        IconLabeledContent {
-          Text(recap.week.questions, format: .number)
-        } title: {
-          Text("Questions", tableName: "Session", comment: "The week's questions")
-        } icon: {
-          Image(systemName: "checklist")
-        }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
       }
     }
   }
@@ -354,17 +351,18 @@ private struct LogbookSteps: View {
     VStack(alignment: .leading, spacing: 6) {
       if let eyebrow {
         eyebrow
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          .typeStyle(.eyebrow)
+          .foregroundStyle(.faint)
       }
 
       title
-        .typeStyle(.heroTitle)
+        .typeStyle(.pageTitle)
         .accessibilityAddTraits(.isHeader)
         .accessibilityFocused($focusedStep, equals: step)
 
       if let detail {
         detail
+          .typeStyle(.reading)
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -440,17 +438,13 @@ private struct LogbookSteps: View {
     if recap.comparison.minutes > 0 {
       return Text(
         "\(studyDuration(minutes: recap.comparison.minutes)) more than the week before!",
-        tableName: "Session", comment: "More time than last week"
-      )
-      .foregroundStyle(.successText)
+        tableName: "Session", comment: "More time than last week")
     }
 
     if recap.comparison.questions > 0 {
       return Text(
         "\(recap.comparison.questions) more questions than the week before!",
-        tableName: "Session", comment: "More questions than last week"
-      )
-      .foregroundStyle(.successText)
+        tableName: "Session", comment: "More questions than last week")
     }
 
     return nil
