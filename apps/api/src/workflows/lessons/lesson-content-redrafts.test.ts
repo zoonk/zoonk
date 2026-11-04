@@ -23,8 +23,10 @@ type RecordedDraft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
 const recordedSpec = recordedOutput<RecordedSpec>("lesson-spec");
 const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 
+const ARGON = "google/gemini-4-argon";
 const SOL = "openai/gpt-6-sol";
 const SONNET = "anthropic/claude-sonnet-5.5";
+const TERRA = "openai/gpt-6.1-terra";
 
 const heldBack: RecordedDraft = {
   ...recordedDraft,
@@ -39,7 +41,7 @@ function mockDrafts(held: number) {
   Array.from({ length: held }).forEach(() =>
     vi
       .mocked(writeLessonDraft)
-      .mockImplementationOnce(async (params) => taskResult(heldBack, params.model ?? SOL)),
+      .mockImplementationOnce(async (params) => taskResult(heldBack, params.model)),
   );
 }
 
@@ -80,7 +82,7 @@ describe("lesson content redrafts", () => {
     vi.mocked(judgePicture).mockResolvedValue(true);
 
     vi.mocked(writeLessonDraft).mockImplementation(async (params) =>
-      taskResult(recordedDraft, params.model ?? SOL),
+      taskResult(recordedDraft, params.model),
     );
 
     vi.mocked(fixLessonDraft).mockResolvedValue(
@@ -102,7 +104,7 @@ describe("lesson content redrafts", () => {
 
     expect(vi.mocked(writeLessonDraft).mock.calls[1]?.[0]).toMatchObject({
       heldBackProblems: [expect.objectContaining({ screen: 2 })],
-      model: undefined,
+      model: SONNET,
     });
 
     expect(writeSteps()).toStrictEqual(["started", "completed", "started", "completed"]);
@@ -121,9 +123,9 @@ describe("lesson content redrafts", () => {
     ).resolves.toStrictEqual({ lessonId: lesson.id, status: "heldBack" });
 
     expect(vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.model)).toStrictEqual([
-      undefined,
-      undefined,
       SONNET,
+      SONNET,
+      TERRA,
     ]);
 
     const [stored, planItem] = await Promise.all([
@@ -175,8 +177,8 @@ describe("lesson content redrafts", () => {
     ).resolves.toMatchObject({ status: "heldBack" });
 
     expect(vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.model)).toStrictEqual([
-      undefined,
       SONNET,
+      ARGON,
     ]);
   });
 

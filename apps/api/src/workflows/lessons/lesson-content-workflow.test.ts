@@ -3,6 +3,7 @@ import { generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
+import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
 import { ensureQuickLessons } from "@zoonk/core/library/quick-lessons";
@@ -266,9 +267,17 @@ describe(lessonContentWorkflow, () => {
       async ({ picture }) => picture !== planned[decorative]?.visual,
     );
 
+    vi.mocked(fixLessonDraft).mockResolvedValue(
+      taskResult({ changedScreens: [], lesson: recordedDraft }),
+    );
+
     await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toMatchObject({
       status: "ready",
     });
+
+    expect(vi.mocked(fixLessonDraft).mock.calls[0]?.[0].problems).toStrictEqual([
+      expect.objectContaining({ screen: decorative, source: "code" }),
+    ]);
 
     const stored = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
 
@@ -569,7 +578,7 @@ describe(lessonContentWorkflow, () => {
     ]);
 
     expect(vi.mocked(generateLessonSpec).mock.calls[0]?.[0].model).toBe("openai/gpt-6-luna");
-    expect(vi.mocked(writeLessonDraft).mock.calls[0]?.[0].model).toBeUndefined();
+    expect(vi.mocked(writeLessonDraft).mock.calls[0]?.[0].model).toBe("openai/gpt-6.1-terra");
     expect(start).not.toHaveBeenCalledWith(lessonCheckWorkflow, expect.anything());
   });
 
