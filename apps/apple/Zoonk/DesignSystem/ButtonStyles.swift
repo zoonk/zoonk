@@ -65,8 +65,7 @@ private struct ZoonkButton: View {
       .opacity(configuration.isPressed && reduceMotion ? 0.8 : 1)
       .scaleEffect(configuration.isPressed && !reduceMotion ? 0.97 : 1)
       .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
-      // Small buttons still take 44pt to press, as main's `hit-area` does.
-      .contentShape(Rectangle().inset(by: -max(0, (44 - height) / 2)))
+      .contentShape(MinimumHitArea())
   }
 
   private var isSmall: Bool { controlSize <= .small }
@@ -114,5 +113,13 @@ private struct ZoonkButton: View {
     case .outline, .ghost:
       return configuration.isPressed ? .muted : .clear
     }
+  }
+}
+
+/// Grows a button's hit area to 44pt in each direction it's shorter than that, as main's `hit-area` does, and
+/// no further, so buttons side by side don't share the space between them.
+private struct MinimumHitArea: Shape {
+  func path(in rect: CGRect) -> Path {
+    Path(rect.insetBy(dx: -max(0, (44 - rect.width) / 2), dy: -max(0, (44 - rect.height) / 2)))
   }
 }
