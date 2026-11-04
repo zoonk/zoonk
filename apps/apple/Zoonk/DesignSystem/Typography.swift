@@ -61,7 +61,7 @@ extension TypeStyle {
   static let meta = TypeStyle(size: 12, relativeTo: .caption, weight: .regular)
   /// Minutes, counts, dates and a row's trailing value.
   static let data = meta.monospaced()
-  /// Over a page's title, in the secondary color.
+  /// Over a page's title, in the faint color.
   static let eyebrow = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: .regular, face: .mono, isUppercase: true)
   /// Uppercase, inside a panel only.
