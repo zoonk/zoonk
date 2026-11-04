@@ -112,7 +112,6 @@ internal class EndedCall(
 internal fun ConversationLive(
     conversation: LanguageConversation,
     call: LiveCallState,
-    usedHelp: Boolean,
     actions: LiveCallActions,
     ended: EndedCall? = null,
 ) {
@@ -171,7 +170,7 @@ internal fun ConversationLive(
         onClose = ended?.onClose ?: actions.onEnd,
         listState = listState,
         exitConfirmation = endFirst,
-        header = { CallClock(call) },
+        header = { CallClock(call, conversation.talkSeconds) },
         floating = {
             if (!following) {
                 ScrollToLatest {
@@ -191,7 +190,7 @@ internal fun ConversationLive(
             } else {
                 SpeakingCardView(examTask.card, conversation.targetLanguage, compact = true)
             }
-            if (usedHelp) Phrases(conversation)
+            if (call.usedHelp) Phrases(conversation)
         },
     ) { beside ->
         item(key = "character") {
@@ -225,9 +224,12 @@ internal fun ConversationLive(
 
 /** Main's header detail and task bar: the time talked, and a bar filling toward the call's length; neither shows before it connects. */
 @Composable
-private fun CallClock(call: LiveCallState) {
+private fun CallClock(
+    call: LiveCallState,
+    talkSeconds: Long,
+) {
     val started = call.phase != LiveCallPhase.Connecting && call.phase != LiveCallPhase.Idle
-    val share = if (call.talkSeconds > 0) call.elapsedSeconds.toFloat() / call.talkSeconds else 0f
+    val share = if (talkSeconds > 0) call.elapsedSeconds.toFloat() / talkSeconds else 0f
     Column(
         Modifier.callItem().padding(top = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

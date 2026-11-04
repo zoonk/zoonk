@@ -40,6 +40,7 @@ export async function createLiveCallSession(input: {
   greeting: string;
   sdp: string;
   instructions: string;
+  turns: readonly { speaker: string; text: string }[];
   voice: string;
 }) {
   assertTestEnvironment();

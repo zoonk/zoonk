@@ -76,7 +76,7 @@ Each role looks for what the others miss: the engineer for failure paths, data a
 - [Principal engineer and designer](references/review.md)
 - [Security researcher](references/security.md)
 
-You can't unsee how you built the change. For anything beyond a small fix, each review runs in a separate agent that didn't write it, given the diff range, the running app's URL and its checklist, all at once ([orchestration guide](../../guides/orchestration.md) for the models). For code, the principal engineer's review comes from the other model family ([cross-model review](../../../AGENTS.md#cross-model-review)); Claude Code's `/code-review` and `/security-review` run on Claude, so they don't count as that review of Opus's work, unless Claude is the only family available. The builder fixes what they find.
+You can't unsee how you built the change. For anything beyond a small fix, the reviews run once on the branch before the PR opens, each in a separate agent that didn't write it, all at once, given the diff range, the running app's URL and its checklist ([orchestration guide](../../guides/orchestration.md) for the models). Start only the roles the change needs: the principal engineer for code, the security researcher for the entry-points row in step 1, the designer for the screens row. Each tries to break the change and reports only what it can show or trace ([evidence before findings](../zoonk-code-review/SKILL.md#evidence-before-findings)). For code, the principal engineer's review comes from the other model family ([cross-model review](../../../AGENTS.md#cross-model-review)); Claude Code's `/code-review` and `/security-review` run on Claude, so they don't count as that review of Opus's work, unless Claude is the only family available. The builder fixes what they find.
 
 ## 6. Walk it as learners
 
@@ -101,4 +101,4 @@ Say what you ran and what it returned, so nobody has to run it again:
 
 ## Grow the loop
 
-When a person (or you) catches something by checking by hand, make it something the next agent measures: a rule in `scripts/verify/rules/`, a check in `scripts/verify/checks.mts`, a measurement in `scripts/verify/measure.mts` (each with its unit test), or a line in a reviewer's checklist. Prefer checks with a number and a line over judgment calls; an agent can tell whether a number passed.
+When a person (or you) catches something by checking by hand, make it something the next agent measures: a rule in `scripts/verify/rules/`, a check in `scripts/verify/checks.mts`, a measurement in `scripts/verify/measure.mts` (each with its unit test), or a line in a reviewer's checklist. Prefer checks with a number and a line over judgment calls; an agent can tell whether a number passed. When a review finds an input that breaks a pure function, the fix adds a property test over that kind of input ([zoonk-testing](../zoonk-testing/SKILL.md)), not only the one example.

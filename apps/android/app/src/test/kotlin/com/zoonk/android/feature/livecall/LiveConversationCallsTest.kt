@@ -7,6 +7,8 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.startOnLoopback
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LanguageConversationTurn
+import com.zoonk.api.models.LanguageConversationTurn.Speaker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -65,6 +67,32 @@ class LiveConversationCallsTest {
             val end = server.takeRequest(1, TimeUnit.SECONDS)
             assertEquals("/v1/language-conversations/$conversation/connections/$CONNECTION/end", end?.url?.encodedPath)
             assertEquals("Bearer token-a", end?.headers?.get("Authorization"))
+        }
+
+    @Test
+    fun theOfferCarriesTheCallSoFarOnlyWhenThereIsOne() =
+        runBlocking {
+            server.dispatcher =
+                object : Dispatcher() {
+                    override fun dispatch(request: RecordedRequest) =
+                        MockResponse
+                            .Builder()
+                            .code(201)
+                            .body("""{"sdp":"answer","sessionId":"sess_1"}""")
+                            .build()
+                }
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Unconfined))
+            val calls = LiveConversationCalls(conversation, ApiClients(server.url("/v1/"), apiHttpClient()), cache)
+
+            calls.redeem(CONNECTION, "offer", listOf(LanguageConversationTurn(Speaker.CHARACTER, "¿Qué desea?")))
+            calls.redeem(CONNECTION, "offer", emptyList())
+
+            val continued = server.takeRequest(1, TimeUnit.SECONDS)?.body?.utf8()
+            assertEquals(
+                """{"sdp":"offer","sessionConfig":{"providerOptions":{"zoonk":{"turns":[{"speaker":"character","text":"¿Qué desea?"}]}}}}""",
+                continued,
+            )
+            assertEquals("""{"sdp":"offer"}""", server.takeRequest(1, TimeUnit.SECONDS)?.body?.utf8())
         }
 
     private companion object {

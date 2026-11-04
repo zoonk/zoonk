@@ -2,6 +2,7 @@
 
 import {
   type ConversationTurn,
+  type LanguageConversationObjectiveCheckInput,
   type LanguageConversationView,
   type LanguageConversationObjectiveCheck as ObjectiveCheck,
 } from "@zoonk/core/language/conversations/contract";
@@ -29,20 +30,16 @@ const skipObjectiveChecks = () => Promise.resolve(null);
 
 function useObjectiveChecks({
   checkObjectives,
-  conversation,
   getTurns,
+  metBefore,
   onChecked,
 }: {
   checkObjectives: CheckObjectives;
-  conversation: LanguageConversationView;
   getTurns: () => ConversationTurn[];
+  metBefore: string[];
   onChecked: (check: ObjectiveCheck & { snapshotAt: number }) => void;
 }) {
-  const [metLabels, setMetLabels] = useState(() =>
-    conversation.objectives
-      .filter((objective) => objective.met)
-      .map((objective) => objective.label),
-  );
+  const [metLabels, setMetLabels] = useState(metBefore);
 
   const met = useRef(metLabels);
   const running = useRef(false);
@@ -116,12 +113,18 @@ function useObjectiveChecks({
 export function useCallObjectives({
   checkObjectives,
   conversation,
+  getConnectionId,
   getTurns,
+  metBefore,
   onResult,
 }: {
-  checkObjectives: CheckObjectives;
+  checkObjectives: (
+    input: LanguageConversationObjectiveCheckInput,
+  ) => Promise<ObjectiveCheck | null>;
   conversation: LanguageConversationView;
+  getConnectionId: () => string | null;
   getTurns: () => ConversationTurn[];
+  metBefore: string[];
   onResult: (result: ObjectiveCheckResult) => void;
 }) {
   const labels = useMemo(() => conversation.objectives.map((item) => item.label), [conversation]);
@@ -137,6 +140,14 @@ export function useCallObjectives({
     [labels, onResult],
   );
 
-  const check = conversation.examTask ? skipObjectiveChecks : checkObjectives;
-  return useObjectiveChecks({ checkObjectives: check, conversation, getTurns, onChecked });
+  const checkConnection = useCallback(
+    (turns: ConversationTurn[]) => {
+      const connectionId = getConnectionId();
+      return connectionId ? checkObjectives({ connectionId, turns }) : Promise.resolve(null);
+    },
+    [checkObjectives, getConnectionId],
+  );
+
+  const check = conversation.examTask ? skipObjectiveChecks : checkConnection;
+  return useObjectiveChecks({ checkObjectives: check, getTurns, metBefore, onChecked });
 }
