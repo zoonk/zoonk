@@ -112,9 +112,11 @@ internal fun MockResult(
         BoxWithConstraints {
             val fold = pageFold(maxWidth)
             val asideFits = supportingPaneBeside(maxWidth, panesTouch = true)
-            // An open book reads what happened before the fold, and what it means and what's next after it, with the way on.
+            // An open book reads how it went before the fold, and what's next after it, with the way on.
             val nextAfterFold = MockResultPart.Score in has && fold != null && asideFits
-            val hasAside = resultAsideParts(has).isNotEmpty() || nextAfterFold
+            // Main's aside, under its title: the plan and the mistakes. A fold adds the page after it even without them.
+            val mainAside = resultAsideParts(has).isNotEmpty()
+            val hasAside = mainAside || nextAfterFold
             // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
             val wide =
                 if (hasAside) {
@@ -251,7 +253,10 @@ internal fun MockResult(
                     bottomBar = actions.takeUnless { nextAfterFold },
                     aside =
                         if (hasAside) {
-                            TaskAside(title = stringResource(R.string.mock_result_after), footer = actions.takeIf { nextAfterFold }) {
+                            TaskAside(
+                                title = stringResource(R.string.mock_result_after).takeIf { mainAside },
+                                footer = actions.takeIf { nextAfterFold },
+                            ) {
                                 ResultAside(preparation) {
                                     if (offered.isNotEmpty()) {
                                         view.adapt?.let { adapt ->
