@@ -117,7 +117,11 @@ struct ChallengeStepView: View {
         LessonQuestionText(text: named(upcoming.prompt))
       }
     }
-    .announcesStatus(newest(decisions, upcoming: upcoming))
+    .onChange(of: decisions.count) { previous, count in
+      if count > previous, let line = newest(decisions, upcoming: upcoming) {
+        announcePolitely(line)
+      }
+    }
   }
 
   private func upcoming(_ progress: ChallengeProgress) -> ChallengeContent.Node? {
@@ -128,7 +132,8 @@ struct ChallengeStepView: View {
     return node
   }
 
-  /// Main's conversation log reads what a decision brings, in the order it shows.
+  /// Main's meters and conversation log read what a decision brings, in the order it shows: once
+  /// per decision, even one that brings the same as the last.
   private func newest(_ decisions: [ChallengeWalk.Decision], upcoming: ChallengeContent.Node?)
     -> String?
   {
@@ -136,10 +141,18 @@ struct ChallengeStepView: View {
       return nil
     }
 
+    let moved = ChallengeWalk.meters(content, decisions: decisions).filter { $0.change != 0 }.map {
+      "\(named($0.meter.label)) \($0.change.formatted(.number.sign(strategy: .always())))"
+    }
     let jump = latest.choice.timeJump.map { [named($0.label)] } ?? []
     let lines = latest.choice.replies.map(said) + jump + (upcoming?.messages ?? []).map(said)
 
-    return lines.isEmpty ? nil : lines.joinedSentences()
+    let parts = [
+      moved.isEmpty ? nil : moved.formatted(.list(type: .and)),
+      lines.isEmpty ? nil : lines.joinedSentences(),
+    ].compactMap(\.self)
+
+    return parts.isEmpty ? nil : parts.joined(separator: "\n")
   }
 
   private func said(_ message: ChallengeContent.Message) -> String {
@@ -150,13 +163,8 @@ struct ChallengeStepView: View {
   }
 
   private func meters(_ decisions: [ChallengeWalk.Decision]) -> some View {
-    let meters = ChallengeWalk.meters(content, decisions: decisions)
-    let moved = meters.filter { $0.change != 0 }.map {
-      "\(named($0.meter.label)) \($0.change.formatted(.number.sign(strategy: .always())))"
-    }
-
-    return VStack(alignment: .leading, spacing: 8) {
-      ForEach(meters, id: \.meter.id) { meter in
+    VStack(alignment: .leading, spacing: 8) {
+      ForEach(ChallengeWalk.meters(content, decisions: decisions), id: \.meter.id) { meter in
         Gauge(value: Double(meter.value), in: 0...100) {
           HStack {
             Text(named(meter.meter.label))
@@ -171,11 +179,6 @@ struct ChallengeStepView: View {
         }
         .gaugeStyle(.linearCapacity)
         .tint(.success)
-      }
-    }
-    .onChange(of: decisions.count) {
-      if !moved.isEmpty {
-        announcePolitely(moved.formatted(.list(type: .and)))
       }
     }
   }
