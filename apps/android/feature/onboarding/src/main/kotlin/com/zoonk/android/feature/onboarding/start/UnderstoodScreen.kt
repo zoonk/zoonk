@@ -239,7 +239,6 @@ internal class FactEdits(
 @Composable
 private fun FactRow(
     row: UnderstoodRow,
-    /** The draft's, which core counts a date fix's days in. */
     timeZone: String,
     editValue: String,
     editing: Boolean,

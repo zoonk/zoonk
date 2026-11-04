@@ -323,7 +323,6 @@ private struct RewritableWords: View {
 
 private struct UnderstoodRowView: View {
   let row: UnderstoodRow
-  /// The draft's, which core counts a date fix's days in.
   let timeZone: String
   let isEditing: Bool
   let onEdit: (Bool) -> Void
