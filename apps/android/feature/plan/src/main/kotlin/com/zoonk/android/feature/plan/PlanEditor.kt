@@ -66,14 +66,13 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
@@ -301,7 +300,7 @@ private fun SidePanel(
         }
     val width = pageFold(window)?.let { minOf(PANEL_WIDTH, window - it.end) } ?: PANEL_WIDTH
 
-    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
+    FullScreenDialog(onDismissRequest = onDismiss) {
         (LocalView.current.parent as? DialogWindowProvider)?.window?.setDimAmount(PANEL_DIM)
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterEnd) {
             Box(

@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,7 +16,10 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
 import com.zoonk.android.ui.scaffold.pageFold
 import kotlin.math.roundToInt
 
@@ -88,6 +92,29 @@ fun TimePickerDialog(
         dismissButton = dismissButton,
     ) {
         WindowAt(place)
+        content()
+    }
+}
+
+/**
+ * A dialog over the whole window, drawn behind the system bars. Its window decides the bars' icons
+ * and doesn't take the activity's, so they follow the light or dark theme here.
+ */
+@Composable
+fun FullScreenDialog(
+    onDismissRequest: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    Dialog(onDismissRequest, DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
+        val view = LocalView.current
+        val light = !isSystemInDarkTheme()
+        SideEffect {
+            val window = (view.parent as? DialogWindowProvider)?.window ?: return@SideEffect
+            WindowCompat.getInsetsController(window, view).run {
+                isAppearanceLightStatusBars = light
+                isAppearanceLightNavigationBars = light
+            }
+        }
         content()
     }
 }

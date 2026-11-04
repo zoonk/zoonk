@@ -100,7 +100,7 @@ Material's `shapes` and component defaults. Shape carries no meaning in the desi
 - **`StatusMessage`, `LoadFailedMessage`, `EmptyState`:** a screen that couldn't show (centered, the main action first) and a place with nothing yet (start-aligned, no card).
 - **Formatting (`ui/format`):** `formatNumber`, `formatAmount` (money and units, compact for axes), `formatPercent`, `formatProgressShare`, `formatDuration`, `formatMinutes`, `formatDate` with main's `DateStyle`s and `formatTimeOfDay` on the device's clock, all with `currentLocale()`. They write what main's `@zoonk/utils` writes.
 - **Plus locks:** the same screen locked with the subscribe action, never a different screen.
-- **Celebrations:** a full-screen `Dialog`, once, never on load, still when the animator duration scale is 0.
+- **Celebrations:** a `FullScreenDialog`, once, never on load, still when the animator duration scale is 0.
 
 ## Icons
 
