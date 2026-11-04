@@ -25,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -48,15 +47,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.isWideWindow
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.withWords
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.isOnBookPage
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.api.models.ExamSpeakingTask
 import com.zoonk.api.models.LanguageConversation
@@ -65,6 +65,10 @@ import com.zoonk.api.models.LanguageConversationIntroObjectivesInner
 import com.zoonk.api.models.SpeakingMockExam
 
 internal val CALL_COLUMN = 640.dp
+private val CALL_ITEM_MARGIN = 16.dp
+
+/** The task's bar keeps its own 16dp sides, so its actions line up with the items' text. */
+private val CALL_BAR_WIDTH = CALL_COLUMN - CALL_ITEM_MARGIN * 2
 private val AVATAR_MIN = 40.dp
 
 /**
@@ -86,7 +90,7 @@ internal fun CallFrame(
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val wide = isWideWindow() && !isOnBookPage()
     TaskScaffold(
         onClose = onClose,
         modifier = modifier,
@@ -99,7 +103,7 @@ internal fun CallFrame(
                         Box(
                             Modifier.fillMaxWidth(),
                             Alignment.Center,
-                        ) { Box(Modifier.widthIn(max = CALL_COLUMN), Alignment.CenterEnd) { bar() } }
+                        ) { Box(Modifier.widthIn(max = CALL_BAR_WIDTH).fillMaxWidth(), Alignment.CenterEnd) { bar() } }
                     }
                 }
             },
@@ -127,15 +131,15 @@ internal fun CallTitle(text: String) {
     Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
 }
 
-/** Whether the bar is on a wide window, where its main action keeps its own width. */
+/** Whether the bar is as wide as main's `lg` for a task, off a book's page, where its main action keeps its own width. */
 internal val LocalWideBar = staticCompositionLocalOf { false }
 
-/** A bar's main action: the bar's width on a phone, its own at the bar's end on wide windows. */
+/** A bar's main action: the bar's width on a phone and on a book's page, its own at the bar's end on wide windows. */
 @Composable
 internal fun Modifier.barAction(): Modifier = if (LocalWideBar.current) this else fillMaxWidth()
 
 /** One item of a call's column, at its reading width. */
-internal fun Modifier.callItem(): Modifier = widthIn(max = CALL_COLUMN).fillMaxWidth().padding(horizontal = 16.dp)
+internal fun Modifier.callItem(): Modifier = widthIn(max = CALL_COLUMN).fillMaxWidth().padding(horizontal = CALL_ITEM_MARGIN)
 
 @Composable
 internal fun conversationTitle(conversation: LanguageConversation): String =
