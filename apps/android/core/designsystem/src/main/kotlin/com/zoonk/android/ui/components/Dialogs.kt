@@ -3,7 +3,6 @@ package com.zoonk.android.ui.components
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.separatingHorizontalHingeBounds
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -17,6 +16,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
 import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import kotlin.math.roundToInt
 
 /**
@@ -115,7 +115,7 @@ private fun dialogPlace(): DialogPlace {
         val towardEnd = if (LocalLayoutDirection.current == LayoutDirection.Ltr) 1 else -1
         return DialogPlace(width = window - fold.end, x = fold.end / 2 * towardEnd, y = 0.dp)
     }
-    val tabletop = currentWindowAdaptiveInfoV2().windowPosture.separatingHorizontalHingeBounds.firstOrNull()
+    val tabletop = windowAdaptiveInfo().windowPosture.separatingHorizontalHingeBounds.firstOrNull()
     return DialogPlace(width = null, x = 0.dp, y = tabletop?.let { with(density) { (it.bottom / 2).toDp() } } ?: 0.dp)
 }
 

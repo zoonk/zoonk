@@ -20,6 +20,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.TodayGoal
@@ -126,22 +127,17 @@ class SessionSummaryScreenshots {
             }
         }
 
-        fun shown() {
-            compose.waitForIdle()
-            if (fold) {
-                folds.unfoldBook(compose.activity, compose::waitForIdle)
-            }
-        }
+        if (fold) compose.unfoldBook(folds)
         states.indices.forEach { state ->
             index = state
-            shown()
+            compose.waitForIdle()
             write("session-summary-${states[state].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
         index = 0
-        shown()
+        compose.waitForIdle()
         if (compose.onAllNodes(hasText("Continue")).fetchSemanticsNodes().isNotEmpty()) {
             compose.onNodeWithText("Continue").performClick()
-            shown()
+            compose.waitForIdle()
             write("session-summary-rewards-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
     }

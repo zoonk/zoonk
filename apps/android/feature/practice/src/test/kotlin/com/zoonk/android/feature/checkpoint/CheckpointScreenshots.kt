@@ -14,9 +14,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
@@ -27,6 +24,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.practice.studyFeedback
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Checkpoint
 import com.zoonk.api.models.StudyAnswerFeedback
@@ -121,27 +119,11 @@ class CheckpointScreenshots {
         rule.onNodeWithText("Confirm").performClick()
     }
 
-    /**
-     * Opens the book flat. Android tells a listener that starts after the fold about it; window-testing
-     * doesn't, so a frame rebuilt as the fold drops the duel's aside hears it again.
-     */
-    private fun unfold() =
-        repeat(2) {
-            rule.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                    ),
-                ),
-            )
-        }
-
     @Test
     @Config(qualifiers = "w852dp-h883dp-xxhdpi")
     fun bookRight() =
         show("book-right") {
-            unfold()
+            rule.unfoldBook(folds)
             confirm()
         }
 
@@ -197,7 +179,7 @@ class CheckpointScreenshots {
 
     @Test
     @Config(qualifiers = BOOK)
-    fun bookResultWon() = showWon("book-result-won", play = ::unfold)
+    fun bookResultWon() = showWon("book-result-won", play = { rule.unfoldBook(folds) })
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
@@ -306,7 +288,7 @@ class CheckpointScreenshots {
                 }
             }
         }
-        if (fold) unfold()
+        if (fold) rule.unfoldBook(folds)
         rule.mainClock.advanceTimeBy(10_000)
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
@@ -417,17 +399,21 @@ class CheckpointScreenshots {
                 kind = "weekly",
                 fields = arrayOf(noReward, "status" to "completed", "result" to JsonObject(weeklyDone - "kind" - "passMark")),
             ),
-            play = ::unfold,
+            play = { rule.unfoldBook(folds) },
         )
 
     @Test
     @Config(qualifiers = BOOK)
     fun bookResultRemoved() =
-        show("book-result-removed", checkpoint(fields = arrayOf("status" to "skipped", "endedWithoutQuestions" to true)), play = ::unfold)
+        show(
+            "book-result-removed",
+            checkpoint(fields = arrayOf("status" to "skipped", "endedWithoutQuestions" to true)),
+            play = { rule.unfoldBook(folds) },
+        )
 
     @Test
     @Config(qualifiers = BOOK)
-    fun bookQuestionsRemoved() = show("book-questions-removed", checkpoint(*emptyArray<JsonObject>()), play = ::unfold)
+    fun bookQuestionsRemoved() = show("book-questions-removed", checkpoint(*emptyArray<JsonObject>()), play = { rule.unfoldBook(folds) })
 }
 
 private const val BOOK = "w852dp-h883dp-xhdpi"

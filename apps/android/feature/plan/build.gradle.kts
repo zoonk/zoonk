@@ -22,5 +22,4 @@ dependencies {
     testFixturesImplementation(libs.androidx.compose.runtime)
 
     testImplementation(testFixtures(project(":feature:conversation")))
-    testImplementation(libs.androidx.window.testing)
 }

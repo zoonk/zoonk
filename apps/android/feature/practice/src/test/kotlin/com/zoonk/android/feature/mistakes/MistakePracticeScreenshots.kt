@@ -12,9 +12,6 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
@@ -22,6 +19,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,22 +55,6 @@ class MistakePracticeScreenshots {
 
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
-
-    // The publisher doesn't replay a fold to a screen composed after it, so it tells the shown screen, twice
-    // for a frame that's rebuilt as the fold changes its panes.
-    private fun unfold() {
-        repeat(2) {
-            rule.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                    ),
-                ),
-            )
-        }
-        rule.waitForIdle()
-    }
 
     private val lesson =
         JsonObject(
@@ -149,7 +131,7 @@ class MistakePracticeScreenshots {
         }
         play()
         rule.waitForIdle()
-        if (fold) unfold()
+        if (fold) rule.unfoldBook(folds)
         write(name)
     }
 

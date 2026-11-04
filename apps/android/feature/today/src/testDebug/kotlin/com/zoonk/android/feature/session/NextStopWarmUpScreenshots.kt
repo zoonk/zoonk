@@ -26,6 +26,7 @@ import com.zoonk.android.feature.warmup.WARM_UP_ID
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
 import com.zoonk.api.models.LessonReadiness
@@ -173,15 +174,8 @@ class NextStopWarmUpScreenshots {
                 )
             }
         }
-        shown(fold)
+        if (fold) compose.unfoldBook(folds) else compose.waitForIdle()
         write("next-stop-$name")
-    }
-
-    private fun shown(fold: Boolean) {
-        compose.waitForIdle()
-        if (fold) {
-            folds.unfoldBook(compose.activity, compose::waitForIdle)
-        }
     }
 
     private fun capture(
@@ -249,14 +243,14 @@ class NextStopWarmUpScreenshots {
         }
 
         compose.mainClock.advanceTimeBy(1_000)
-        shown(fold)
+        if (fold) compose.unfoldBook(folds) else compose.waitForIdle()
         write("first-lesson-wait-$name")
         compose.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
-        shown(fold)
+        compose.waitForIdle()
         write("first-lesson-wait-guessed-$name")
         status = LessonReadiness.Status.READY
         compose.mainClock.advanceTimeBy(5_000)
-        shown(fold)
+        compose.waitForIdle()
         write("first-lesson-wait-ready-$name")
     }
 

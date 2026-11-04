@@ -10,9 +10,6 @@ import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
@@ -29,6 +26,7 @@ import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.ChapterTestOutInput
 import com.zoonk.api.models.ChapterTestOutRecord
@@ -70,22 +68,6 @@ class TestOutScreenshots {
 
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
-
-    // The publisher doesn't replay a fold to a screen composed after it, so it tells the shown screen, twice
-    // for a frame that's rebuilt as the fold changes its panes.
-    private fun unfold() {
-        repeat(2) {
-            rule.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                    ),
-                ),
-            )
-        }
-        rule.waitForIdle()
-    }
 
     private val questions =
         listOf(
@@ -171,7 +153,7 @@ class TestOutScreenshots {
                 TestOutPreparing(viewModel, ui.copy(writing = writing), page.title, plusRequired, rememberAppNavigator())
             }
         }
-        if (fold) unfold()
+        if (fold) rule.unfoldBook(folds)
         write(name)
     }
 
@@ -210,7 +192,7 @@ class TestOutScreenshots {
             }
         }
         rule.mainClock.advanceTimeBy(10_000)
-        if (fold) unfold()
+        if (fold) rule.unfoldBook(folds)
         write(name)
     }
 

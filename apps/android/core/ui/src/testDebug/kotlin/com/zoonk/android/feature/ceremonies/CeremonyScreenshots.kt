@@ -11,12 +11,10 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Milestone
 import org.junit.Assume.assumeTrue
@@ -105,24 +103,10 @@ class CeremonyScreenshots {
                 }
             }
         }
+        if (fold) compose.unfoldBook(folds)
         milestones.indices.forEach { shown ->
             index = shown
             compose.waitForIdle()
-            // Each ceremony reads the window afresh, and the publisher doesn't replay a fold to a late reader.
-            if (fold) {
-                folds.overrideWindowLayoutInfo(
-                    TestWindowLayoutInfo(
-                        listOf(
-                            FoldingFeature(
-                                compose.activity,
-                                state = FoldingFeature.State.FLAT,
-                                orientation = FoldingFeature.Orientation.VERTICAL,
-                            ),
-                        ),
-                    ),
-                )
-                compose.waitForIdle()
-            }
             write("ceremony-${milestones[shown].first}-$name", compose.onNode(isDialog()).captureToImage().asAndroidBitmap())
         }
     }

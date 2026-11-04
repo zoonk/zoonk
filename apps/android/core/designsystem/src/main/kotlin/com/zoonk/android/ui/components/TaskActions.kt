@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 
 /** Main's `TaskActionBar`: as wide as the task's column on a narrow window, across it on a wide one, its lines at the end. */
 @Composable
@@ -60,7 +60,7 @@ fun Modifier.taskOption(): Modifier = if (isWideWindow()) this else fillMaxWidth
 
 /** Main's `lg` for a task: wide enough that its actions spread out and its aside shows beside it. */
 @Composable
-fun isWideWindow() = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+fun isWideWindow() = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
 /** Main's 40rem task column less its 16dp sides, so the bar lines up with the task's content. */
 private val TASK_COLUMN_WIDTH = 608.dp

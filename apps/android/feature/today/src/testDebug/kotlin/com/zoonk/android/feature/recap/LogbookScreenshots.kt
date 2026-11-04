@@ -14,7 +14,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
-import com.zoonk.android.feature.session.unfoldBook
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.WeeklyRecap
@@ -109,12 +109,10 @@ class LogbookScreenshots {
             }
         }
 
+        if (fold) compose.unfoldBook(folds)
         var step = 0
         while (true) {
             compose.waitForIdle()
-            if (fold) {
-                folds.unfoldBook(compose.activity, compose::waitForIdle)
-            }
             write("logbook-$step-$name", compose.onRoot().captureToImage().asAndroidBitmap())
             if (compose.onAllNodes(hasText("Continue")).fetchSemanticsNodes().isEmpty()) break
             compose.onNodeWithText("Continue").performClick()

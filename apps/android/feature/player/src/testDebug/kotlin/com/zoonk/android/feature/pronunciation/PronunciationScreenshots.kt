@@ -15,9 +15,6 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.AppCache
@@ -25,6 +22,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.audio.previewSpeech
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PronunciationAnswerGrade
@@ -172,24 +170,10 @@ class PronunciationScreenshots {
                 }
             }
         }
+        if (fold) compose.unfoldBook(folds)
         states.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            // Each screen reads the window afresh, and the publisher doesn't replay a fold to a late reader.
-            if (fold) {
-                folds.overrideWindowLayoutInfo(
-                    TestWindowLayoutInfo(
-                        listOf(
-                            FoldingFeature(
-                                compose.activity,
-                                state = FoldingFeature.State.FLAT,
-                                orientation = FoldingFeature.Orientation.VERTICAL,
-                            ),
-                        ),
-                    ),
-                )
-                compose.waitForIdle()
-            }
             write("${states[screen].name}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
     }
