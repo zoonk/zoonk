@@ -371,7 +371,7 @@ private struct GoalSwitcher: View {
     Binding(
       get: { shownGoal?.id == goal.id },
       set: { isOn in
-        guard isOn, shownGoal?.id != goal.id else {
+        guard isOn, pendingGoalId == nil, shownGoal?.id != goal.id else {
           return
         }
 
@@ -388,9 +388,7 @@ private struct GoalSwitcher: View {
             break
           }
 
-          if pendingGoalId == goal.id {
-            pendingGoalId = nil
-          }
+          pendingGoalId = nil
         }
       })
   }

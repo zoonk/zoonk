@@ -50,26 +50,28 @@ final class LearnerSummaryStoreTests: XCTestCase {
     XCTAssertEqual(requestCount, 2)
   }
 
-  func testASwitchTheLearnerReplacedSaysNothingWhenItFails() async {
+  func testAPickWhileASwitchIsSavingIsIgnored() async {
     let api = LearnerSummaryAPIStub(nextChanges: [.distantFuture, .distantFuture])
     let store = LearnerSummaryStore(
       api: api,
       cache: AppCache(session: .preview(account: .summaryTestAccount)))
 
     await store.summary.load()
-    await api.holdSwitch(to: "replaced", failingWith: .unavailable)
-    let replaced = Task { await store.switchGoal(to: "replaced") }
+    await api.holdSwitch(to: "saving", failingWith: .unavailable)
+    let saving = Task { await store.switchGoal(to: "saving") }
     await api.waitForHeldSwitch()
-    let latest = await store.switchGoal(to: "latest")
+    let ignored = await store.switchGoal(to: "ignored")
     await api.releaseHeldSwitch()
-    let replacedResult = await replaced.value
+    let savingResult = await saving.value
 
-    guard case .done = latest else {
-      return XCTFail("Expected the latest switch to save, got \(latest)")
+    guard case .obsolete = ignored else {
+      return XCTFail("Expected the pick made while saving to be ignored, got \(ignored)")
     }
-    guard case .obsolete = replacedResult else {
-      return XCTFail("Expected the replaced switch to say nothing, got \(replacedResult)")
+    guard case .failed = savingResult else {
+      return XCTFail("Expected the saving switch to say it failed, got \(savingResult)")
     }
+    let switchRequests = await api.switchRequests
+    XCTAssertEqual(switchRequests, ["saving"])
   }
 
   func testSignedOutLearnerHasNoSummaryRequest() async {
@@ -90,6 +92,7 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
   private var heldSwitch: (goalID: String, error: APIError)?
   private var heldSwitchRelease: CheckedContinuation<Void, Never>?
   private(set) var requestCount = 0
+  private(set) var switchRequests: [String] = []
 
   init(nextChanges: [Date], switchError: APIError? = nil) {
     self.nextChanges = nextChanges
@@ -119,6 +122,8 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
   }
 
   func switchGoal(token: String, goalID: String) async throws {
+    switchRequests.append(goalID)
+
     if let heldSwitch, heldSwitch.goalID == goalID {
       await withCheckedContinuation { heldSwitchRelease = $0 }
       throw heldSwitch.error

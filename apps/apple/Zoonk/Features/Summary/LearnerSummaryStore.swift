@@ -8,7 +8,7 @@ final class LearnerSummaryStore {
 
   private let api: any LearnerSummaryAPIClient
   private let cache: AppCache
-  private var switchesStarted = 0
+  private var isSwitching = false
 
   init(api: any LearnerSummaryAPIClient, cache: AppCache) {
     self.api = api
@@ -54,25 +54,28 @@ final class LearnerSummaryStore {
     }
   }
 
-  /// Done once the goal is the one the tabs show, with the summary read again for it. A switch the
-  /// learner replaced with a newer one meanwhile comes back `.obsolete`, so only their last choice
-  /// moves the screen or says it failed.
+  /// Done once the goal is the one the tabs show, with the summary read again for it. One switch
+  /// saves at a time: a pick while another is saving is ignored and comes back `.obsolete`.
   func switchGoal(to goalID: String) async -> MutationResult<Void> {
-    switchesStarted += 1
-    let attempt = switchesStarted
+    guard !isSwitching else {
+      return .obsolete
+    }
+
+    guard summary.value?.activeGoalID != goalID else {
+      return .done(())
+    }
+
+    isSwitching = true
+    defer { isSwitching = false }
 
     let result = await cache.mutate(invalidating: [.learningProfile]) { identity in
       try await api.switchGoal(token: identity.bearerToken, goalID: goalID)
-    }
-
-    guard attempt == switchesStarted else {
-      return .obsolete
     }
 
     if case .done = result {
       await summary.refresh()
     }
 
-    return attempt == switchesStarted ? result : .obsolete
+    return result
   }
 }
