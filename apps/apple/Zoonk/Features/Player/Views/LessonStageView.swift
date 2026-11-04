@@ -293,7 +293,7 @@ private struct LessonCheckNote: View {
       } icon: {
         Image(systemName: "pencil")
       }
-      .font(.subheadline.weight(.medium))
+      .typeStyle(.body.weight(.medium))
       .foregroundStyle(.destructive)
     }
 
@@ -302,7 +302,7 @@ private struct LessonCheckNote: View {
         "We couldn't check your answer this time. Try again.", tableName: "Player",
         comment: "The server couldn't grade a written or spoken answer"
       )
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
     }
   }
@@ -515,7 +515,7 @@ private struct LessonNotice: View {
       } icon: {
         Image(systemName: "bolt")
       }
-      .font(.caption.monospaced())
+      .typeStyle(.data)
       .foregroundStyle(.secondary)
     } else {
       switch state.notice {
@@ -528,7 +528,7 @@ private struct LessonNotice: View {
         } icon: {
           Image(systemName: "icloud.slash")
         }
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       case .writingSkipped:
         HStack(alignment: .firstTextBaseline) {
@@ -554,7 +554,7 @@ private struct LessonNotice: View {
             .buttonStyle(.borderless)
           }
         }
-        .font(.subheadline)
+        .typeStyle(.body)
       case .selfCorrect, nil:
         EmptyView()
       }

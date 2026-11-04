@@ -113,7 +113,7 @@ private struct MindMapOutlineView: View {
     List {
       Section {
         Text(outline.centralIdea)
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
         if let summary = outline.summary, !summary.isEmpty {
           Text("In short: \(summary)", tableName: "MindMaps", comment: "The map's summary")
@@ -128,13 +128,13 @@ private struct MindMapOutlineView: View {
           ForEach(branch.points, id: \.self) { point in
             HStack(alignment: .firstTextBaseline, spacing: 8) {
               Image(systemName: "circle.fill")
-                .font(.system(.caption2))
+                .typeStyle(.small)
                 .imageScale(.small)
                 .foregroundStyle(.tertiary)
                 .accessibilityHidden(true)
               Text(point)
             }
-            .font(.subheadline)
+            .typeStyle(.body)
           }
         } header: {
           Text(branch.title)

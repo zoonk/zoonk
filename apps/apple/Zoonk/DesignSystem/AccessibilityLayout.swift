@@ -96,11 +96,13 @@ struct SectionHeaderRow<Trailing: View>: View {
 }
 
 extension View {
-  /// The button shape and label style for accessibility sizes. Neither reaches into a
-  /// presentation, so the app's root and the root of each presented screen apply them.
+  /// The button shape and label style for accessibility sizes, which don't reach into a
+  /// presentation, and the type role of text without one: the app's root and the root of each
+  /// presented screen apply them.
   func accessibilitySizeStyles() -> some View {
     modifier(AccessibilityButtonShape())
       .labelStyle(StackingLabelStyle())
+      .typeStyle(.body)
   }
 }
 

@@ -28,7 +28,7 @@ struct TutorComposerBar: View {
               "We couldn't send your last question. Try again.", tableName: "Tutor",
               comment: "Sending a question to the buddy failed")
             : failure.message)
-            .font(.footnote)
+            .typeStyle(.note)
             .foregroundStyle(.destructive)
         }
 
@@ -104,7 +104,7 @@ struct TutorComposerBar: View {
         "Create a free account to start the conversation.", tableName: "Tutor",
         comment: "Guests and visitors can't talk to the buddy"
       )
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
 
       TutorRemedyButton(failure: .signUpRequired, retry: {})
@@ -134,7 +134,7 @@ struct TutorLimitNotice: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
       failure.message
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
 
       TutorRemedyButton(failure: failure, retry: {})

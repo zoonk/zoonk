@@ -160,7 +160,7 @@ struct PlanEffectDiff: View {
                 comment: "Spoken line of a change's diff, as it is"))
         }
       }
-      .font(.subheadline)
+      .typeStyle(.body)
     }
   }
 

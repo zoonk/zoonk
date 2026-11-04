@@ -70,10 +70,10 @@ struct ChallengeScreen: View {
       VStack(alignment: .leading, spacing: 8) {
         if let eyebrow = eyebrow(challenge) {
           Text(eyebrow)
-            .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+            .typeStyle(.note.weight(.medium)).foregroundStyle(.secondary)
         }
 
-        titleText(challenge).font(.largeTitle.bold())
+        titleText(challenge).typeStyle(.heroTitle)
 
         if won {
           if let result = challenge.result {
@@ -88,7 +88,7 @@ struct ChallengeScreen: View {
                   comment: "How a won challenge went, as in “8 of 10 right”.")
               }
             }
-            .font(.subheadline.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.secondary)
           }
         } else {
@@ -96,7 +96,7 @@ struct ChallengeScreen: View {
 
           if !facts(challenge).isEmpty {
             Text(facts(challenge).joinedFacts())
-              .font(.subheadline.monospacedDigit())
+              .typeStyle(.data)
               .foregroundStyle(.secondary)
           }
         }
@@ -132,14 +132,14 @@ struct ChallengeScreen: View {
                   "What he'll ask", table: "Practice",
                   comment: "Heading over a phase challenge's topics.")
           )
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
 
           ForEach(Array(challenge.topics.enumerated()), id: \.offset) { _, topic in
             HStack(alignment: .firstTextBaseline) {
               Text(topic.name)
               if let subject = topic.subject {
                 Spacer()
-                Text(subject).font(.footnote).foregroundStyle(.secondary)
+                Text(subject).typeStyle(.note).foregroundStyle(.secondary)
               }
             }
           }
@@ -147,7 +147,7 @@ struct ChallengeScreen: View {
       }
 
       if let rule = duelRule(challenge) {
-        Text(rule).font(.footnote).foregroundStyle(.secondary)
+        Text(rule).typeStyle(.note).foregroundStyle(.secondary)
       }
 
       if challenge.reward.brainPower > 0, !won {
@@ -181,23 +181,23 @@ struct ChallengeScreen: View {
               "Getting your challenge ready", tableName: "Practice",
               comment: "While a challenge's questions are written."
             )
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
             Text(
               "We're writing its questions. It starts here when they're ready.",
               tableName: "Practice",
               comment: "A challenge waits for its questions."
             )
-            .font(.subheadline).foregroundStyle(.secondary)
+            .typeStyle(.note).foregroundStyle(.secondary)
           }
         }
       }
 
       if let startProblem {
-        Text(startProblem).font(.subheadline).foregroundStyle(.destructive)
+        Text(startProblem).typeStyle(.body).foregroundStyle(.destructive)
       }
 
       if let moveProblem {
-        Text(moveProblem).font(.subheadline).foregroundStyle(.destructive)
+        Text(moveProblem).typeStyle(.body).foregroundStyle(.destructive)
       }
 
       if let moved, let date = challenge.date {
@@ -209,7 +209,7 @@ struct ChallengeScreen: View {
                 "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'."
             )
             Text(movedDetail(moved.effect))
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
           Spacer()
@@ -289,7 +289,7 @@ struct ChallengeScreen: View {
         "Opens after this phase's lessons", tableName: "Practice",
         comment: "A phase challenge waiting for earlier lessons."
       )
-      .font(.subheadline).foregroundStyle(.secondary)
+      .typeStyle(.note).foregroundStyle(.secondary)
     }
   }
 

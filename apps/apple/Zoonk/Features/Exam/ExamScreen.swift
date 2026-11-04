@@ -165,11 +165,11 @@ private struct ExamHero: View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
         eyebrow
-          .font(.caption.monospaced())
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
         if !facts.isEmpty {
           Text(facts.joinedFacts())
-            .font(.subheadline.monospacedDigit())
+            .typeStyle(.body.monospaced())
         }
       }
       .accessibilityElement(children: .combine)
@@ -261,7 +261,7 @@ private struct ExamHero: View {
             comment:
               "An exam with no sitting in the learner's month; the argument is a month like 'May'"
           )
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           Group {
             if noSitting.closest.count == 1 {
               Text(
@@ -801,7 +801,7 @@ private struct ExamFormatSection: View {
           }
 
           parts(day)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
         }
       }
@@ -942,7 +942,7 @@ private struct SpeakingMockSection: View {
               Text("TOEFL speaking mock", tableName: "Exam", comment: "A speaking mock's name")
             }
           }
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           Group {
             switch mock {
             case .ielts:
@@ -1034,7 +1034,7 @@ private struct ExamScoringSection: View {
         if let rule {
           Label {
             VStack(alignment: .leading, spacing: 4) {
-              Text(rule.title).font(.headline)
+              Text(rule.title).typeStyle(.body.weight(.semibold))
               Text(rule.rule).foregroundStyle(.secondary)
               if let calibration = exam.calibration,
                 calibration.sure.answered + calibration.unsure.answered > 0
@@ -1068,7 +1068,7 @@ private struct ExamScoringSection: View {
                   Text("Scored on its own scale", tableName: "Exam", comment: "Notice scale")
                 }
               }
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
               Text(
                 "From \(MockLabels.number(scale.min)) to \(MockLabels.number(scale.max)).",
                 tableName: "Exam", comment: "The scale's range"
@@ -1090,7 +1090,7 @@ private struct ExamScoringSection: View {
         if let passMarks = exam.passMarks {
           Label {
             VStack(alignment: .leading, spacing: 4) {
-              Text("To pass", tableName: "Exam", comment: "What it takes to pass").font(.headline)
+              Text("To pass", tableName: "Exam", comment: "What it takes to pass").typeStyle(.body.weight(.semibold))
               ForEach(passMarks.texts, id: \.self) { text in
                 Text(text).foregroundStyle(.secondary)
               }

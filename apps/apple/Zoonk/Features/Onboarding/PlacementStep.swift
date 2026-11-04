@@ -558,7 +558,7 @@ struct PlacementQuestionScreen<Media: View>: View {
       VStack(alignment: .leading, spacing: 4) {
         if let subject {
           Text(subject)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
         }
 
@@ -566,7 +566,7 @@ struct PlacementQuestionScreen<Media: View>: View {
           "Question \(number)", tableName: "Onboarding",
           comment: "Which placement question this is"
         )
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
       }
 
       ProgressView(value: progress)

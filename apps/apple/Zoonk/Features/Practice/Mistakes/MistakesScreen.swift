@@ -85,7 +85,7 @@ struct MistakesScreen: View {
     -> some View
   {
     listName(fixed: fixed, counts: counts)
-      .font(.headline)
+      .typeStyle(.body.weight(.semibold))
       .listRowBackground(Color.clear)
       .accessibilityAddTraits(.isHeader)
   }
@@ -252,7 +252,7 @@ private struct NotebookHeader: View {
         let tomorrow = list.availability.tomorrow
 
         Text(countsLine(ready: ready, tomorrow: tomorrow, fixed: list.counts.fixed))
-          .font(.subheadline.monospacedDigit())
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
 
         if ready == 0, tomorrow > 0 {
@@ -261,7 +261,7 @@ private struct NotebookHeader: View {
             tableName: "Practice",
             comment: "Why today's mistakes can't be practiced yet."
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
         }
 
@@ -338,7 +338,7 @@ private struct MistakeEntryView: View {
         Text(entryDate)
           .monospacedDigit()
       }
-      .font(.caption.weight(.medium))
+      .typeStyle(.meta.weight(.medium))
       .foregroundStyle(.secondary)
 
       if let set = try? snapshot.set.map({ try PracticeJSON.recode($0.value1) as PracticeItemSet })
@@ -351,7 +351,7 @@ private struct MistakeEntryView: View {
         image: try? snapshot.image.map { try PracticeJSON.recode($0.value1) },
         visual: try? snapshot.visual.map { try PracticeJSON.recode($0) })
 
-      ItemText(snapshot.question).font(.body.weight(.medium))
+      ItemText(snapshot.question).typeStyle(.body.weight(.medium))
 
       if let answer = TrueFalseWords.savedAnswer(snapshot.answer, labels: labels) {
         MistakeAnswerRow(text: answer, isRight: false)
@@ -362,7 +362,7 @@ private struct MistakeEntryView: View {
       }
 
       if let explanation = snapshot.explanation {
-        ItemText(explanation).font(.subheadline).foregroundStyle(.secondary)
+        ItemText(explanation).typeStyle(.note).foregroundStyle(.secondary)
       }
 
       actions
@@ -381,7 +381,7 @@ private struct MistakeEntryView: View {
             "Practice tomorrow", tableName: "Practice",
             comment: "A mistake from today, ready to practice tomorrow."
           )
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.secondary)
         }
 
@@ -479,10 +479,10 @@ struct MistakeAnswerRow: View {
             "Your answer", table: "Practice",
             comment: "Mark beside the learner's wrong pick once a question is graded.")
       )
-      .font(.caption.weight(.semibold))
+      .typeStyle(.meta.weight(.semibold))
       .foregroundStyle(isRight ? Color.success : Color.destructive)
     }
-    .font(.subheadline.weight(.medium))
+    .typeStyle(.body.weight(.medium))
     .padding(12)
     .background(
       (isRight ? Color.success : Color.destructive).opacity(0.1),
@@ -535,7 +535,7 @@ private struct PatternRow: View {
                 comment: "Notebook row for a typos-only pattern.")
               : pattern.title
           )
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
         }
       } icon: {

@@ -56,17 +56,17 @@ struct ChallengeStepView: View {
       } icon: {
         Image(systemName: "target")
       }
-      .font(.subheadline.weight(.medium))
+      .typeStyle(.note.weight(.medium))
       .foregroundStyle(.secondary)
 
       LessonQuestionText(text: named(content.title))
 
       VStack(alignment: .leading, spacing: 4) {
         Text("Your mission", tableName: "Player", comment: "Above a challenge's mission")
-          .font(.caption.weight(.medium))
+          .typeStyle(.meta.weight(.medium))
           .foregroundStyle(.secondary)
         LessonRichText(named(content.mission))
-          .font(.title3)
+          .typeStyle(.section.weight(.regular))
       }
 
       if let deadline = content.deadline {
@@ -75,16 +75,16 @@ struct ChallengeStepView: View {
       }
 
       Text("Your team", tableName: "Player", comment: "Above the people in a challenge")
-        .font(.caption.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.secondary)
 
       ForEach(Array(content.team.enumerated()), id: \.offset) { _, slot in
         Label {
           VStack(alignment: .leading) {
             Text(name(for: slot.id))
-              .font(.subheadline.weight(.medium))
+              .typeStyle(.note.weight(.medium))
             Text(slot.expertise)
-              .font(.footnote)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
         } icon: {
@@ -105,7 +105,7 @@ struct ChallengeStepView: View {
             comment: "Under a challenge's team")
         }
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
     }
   }
@@ -123,7 +123,7 @@ struct ChallengeStepView: View {
                   isGood(meter.meter, change: meter.change) ? .success : .destructive)
             }
           }
-          .font(.footnote)
+          .typeStyle(.note)
         }
         .gaugeStyle(.linearCapacity)
         .tint(.success)
@@ -142,7 +142,7 @@ struct ChallengeStepView: View {
         bubble(message)
       }
       LessonRichText(named(decision.choice.text))
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .trailing)
         .background(Color.accentColor.opacity(0.15), in: .rect(cornerRadius: 16))
@@ -151,7 +151,7 @@ struct ChallengeStepView: View {
       }
       if let jump = decision.choice.timeJump {
         Label(named(jump.label), systemImage: "clock.arrow.circlepath")
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
       }
     }
@@ -160,10 +160,10 @@ struct ChallengeStepView: View {
   private func bubble(_ message: ChallengeContent.Message) -> some View {
     VStack(alignment: .leading, spacing: 2) {
       Text(name(for: message.from))
-        .font(.caption.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.secondary)
       LessonRichText(named(message.text))
-        .font(.subheadline)
+        .typeStyle(.note)
     }
     .padding(12)
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -188,7 +188,7 @@ struct ChallengeStepView: View {
           )
           : Text("Challenge complete", tableName: "Player", comment: "Title after a challenge ends")
       }
-      .font(.title2.weight(.semibold))
+      .typeStyle(.pageTitle)
       .accessibilityAddTraits(.isHeader)
 
       LessonRichText(named(ending.outcome))
@@ -212,12 +212,12 @@ struct ChallengeStepView: View {
         Text(
           "Skills practiced", tableName: "Player", comment: "Above the skills a challenge trains"
         )
-        .font(.caption.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.secondary)
         FlowLayout(spacing: 8) {
           ForEach(content.skills) { skill in
             Text(skill.name)
-              .font(.footnote)
+              .typeStyle(.note)
               .padding(.horizontal, 10)
               .padding(.vertical, 4)
               .background(Color(.secondarySystemBackground), in: .capsule)
@@ -232,14 +232,14 @@ struct ChallengeStepView: View {
   {
     VStack(alignment: .leading, spacing: 8) {
       title
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
         .foregroundStyle(tint)
       ForEach(Array(notes.enumerated()), id: \.offset) { _, note in
         VStack(alignment: .leading, spacing: 2) {
           LessonRichText(named(note.text))
           if let example = note.example {
             LessonRichText(named(example))
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
         }

@@ -60,7 +60,7 @@ private struct CategorizeCanvas: View {
           "All sorted. Choose a card to move it.", tableName: "Activities",
           comment: "Every card of a sorting activity has a group; choosing a card moves it"
         )
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .focusable()
         .focused($focus, equals: .status)
         .accessibilityFocused($voiceOverFocus, equals: .status)
@@ -113,7 +113,7 @@ private struct CategorizeCanvas: View {
   private func dealtCard(_ card: CategorizeFields.Item) -> some View {
     HStack(spacing: 12) {
       Image(systemName: "line.3.horizontal")
-        .font(.body)
+        .typeStyle(.body)
         .foregroundStyle(.secondary)
         .accessibilityHidden(true)
 
@@ -125,7 +125,7 @@ private struct CategorizeCanvas: View {
             .accessibilityHidden(item.id != card.id)
         }
       }
-      .font(.title3.weight(.medium))
+      .typeStyle(.section.weight(.medium))
     }
     .multilineTextAlignment(.leading)
     .padding()
@@ -142,7 +142,7 @@ private struct CategorizeCanvas: View {
       "Which group does it belong in?", tableName: "Activities",
       comment: "Under the card to sort, above the groups it can go in"
     )
-    .font(.footnote)
+    .typeStyle(.note)
     .foregroundStyle(.secondary)
   }
 
@@ -162,7 +162,7 @@ private struct CategorizeCanvas: View {
       .contentShape(.rect)
     }
     .buttonStyle(.borderless)
-    .font(.subheadline)
+    .typeStyle(.body)
     .opacity(canUndo ? 1 : 0)
     .disabled(!canUndo)
     .accessibilityHidden(!canUndo)
@@ -180,7 +180,7 @@ private struct CategorizeCanvas: View {
       VStack(alignment: .leading, spacing: 4) {
         LessonRichText(group.label)
         LessonRichText(group.rule)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
         preview(group)
       }
@@ -239,7 +239,7 @@ private struct CategorizeCanvas: View {
           }
         }
       }
-      .font(.footnote)
+      .typeStyle(.note)
       .padding(.top, 4)
       .accessibilityHidden(true)
   }
@@ -252,10 +252,10 @@ private struct CategorizeCanvas: View {
     return VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
         LessonRichText(group.label)
-          .font(.body.weight(.medium))
+          .typeStyle(.body.weight(.medium))
           .accessibilityAddTraits(.isHeader)
         LessonRichText(group.rule)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
       }
 
@@ -264,7 +264,7 @@ private struct CategorizeCanvas: View {
           "No cards here", tableName: "Activities",
           comment: "A group of a sorting activity that no card was sorted into"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       } else {
         VStack(spacing: 0) {
@@ -309,7 +309,7 @@ private struct CategorizeCanvas: View {
     } label: {
       row(item) {
         Image(systemName: "chevron.up.chevron.down")
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
           .accessibilityHidden(true)
       }
@@ -344,7 +344,7 @@ private struct CategorizeCanvas: View {
         .frame(maxWidth: .infinity, alignment: .leading)
       trailing()
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .multilineTextAlignment(.leading)
     .padding(.horizontal, 12)
     .padding(.vertical, 10)
@@ -429,8 +429,7 @@ private struct CategorizeCanvas: View {
         "\(items.count - misplaced.count) of \(items.count) in the right group",
         tableName: "Activities", comment: "After checking a sorting activity"
       )
-      .font(.subheadline.weight(.semibold))
-      .monospacedDigit()
+      .typeStyle(.body.weight(.semibold).monospaced())
 
       ActivityReasonList(
         reasons: misplaced.map { item in

@@ -53,7 +53,7 @@ struct ConversationResultView: View {
       VStack(spacing: 8) {
         if let startFailure {
           startFailureText(startFailure)
-            .font(.subheadline)
+            .typeStyle(.body)
             .foregroundStyle(.destructive)
         }
 
@@ -234,7 +234,7 @@ struct ConversationResultView: View {
                 Text("Not this time", tableName: "Voice", comment: "A checkpoint call not passed")
               }
             }
-            .font(.title2.weight(.semibold))
+            .typeStyle(.section)
           }
 
           if showsStars {
@@ -245,7 +245,7 @@ struct ConversationResultView: View {
                     index < result.stars ? AnyShapeStyle(.energy) : AnyShapeStyle(.tertiary))
               }
             }
-            .font(.title2)
+            .typeStyle(.section.weight(.regular))
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
               Text("\(result.stars) of 3 stars", tableName: "Voice", comment: "A call's stars"))
@@ -317,7 +317,7 @@ private struct CallFeedbackSections: View {
 
       ForEach(feedback.wentWell, id: \.self) { phrase in
         Text(phrase)
-          .fontWeight(.medium)
+          .typeWeight(.medium)
           .typesettingLanguage(.init(identifier: language))
       }
     } header: {
@@ -337,7 +337,7 @@ private struct CallFeedbackSections: View {
             HStack(alignment: .firstTextBaseline) {
               LabeledContent {
                 Text(improve.better)
-                  .fontWeight(.medium)
+                  .typeWeight(.medium)
                   .typesettingLanguage(.init(identifier: language))
               } label: {
                 Text("Better", tableName: "Voice", comment: "A better way to say it")
@@ -347,7 +347,7 @@ private struct CallFeedbackSections: View {
             }
 
             Text(improve.why)
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
           .labeledContentStyle(.vertical)
@@ -365,13 +365,13 @@ private struct CallFeedbackSections: View {
           HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 2) {
               Text(item.word)
-                .fontWeight(.medium)
+                .typeWeight(.medium)
                 .typesettingLanguage(.init(identifier: language))
               Text(item.respelling)
-                .font(.subheadline.monospaced())
+                .typeStyle(.data)
                 .foregroundStyle(.secondary)
               Text(item.tip)
-                .font(.footnote)
+                .typeStyle(.note)
                 .foregroundStyle(.secondary)
             }
 
@@ -432,7 +432,7 @@ private struct VerticalLabeledContentStyle: LabeledContentStyle {
   func makeBody(configuration: Configuration) -> some View {
     VStack(alignment: .leading, spacing: 2) {
       configuration.label
-        .font(.caption.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.secondary)
       configuration.content
     }

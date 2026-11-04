@@ -355,7 +355,7 @@ private struct CallHeader: View {
             .frame(width: 8, height: 8)
 
           time
-            .font(.subheadline.monospacedDigit())
+            .typeStyle(.body.monospaced())
         }
         .opacity(call.liveSince == nil ? 0 : 1)
 
@@ -388,11 +388,11 @@ private struct CallEndedStatus: View {
       Label {
         VStack(alignment: .leading, spacing: 2) {
           Text(verbatim: title)
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
 
           if let detail {
             Text(verbatim: detail)
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
         }
@@ -485,7 +485,7 @@ private struct CallPhrases: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text("Phrases you can use", tableName: "Voice", comment: "Help's phrases during a call")
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
 
       ForEach(conversation.hints, id: \.self) { hint in
         Text(hint)
@@ -504,10 +504,10 @@ private struct CallGoals: View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
         Text("Goals of the call", tableName: "Voice", comment: "The call's goals while talking")
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
         Spacer()
         Text("\(met.count)/\(conversation.objectives.count)")
-          .font(.subheadline.monospacedDigit())
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
       }
       .accessibilityElement(children: .ignore)

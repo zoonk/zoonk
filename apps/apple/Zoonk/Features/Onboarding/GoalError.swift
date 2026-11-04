@@ -194,7 +194,7 @@ struct GoalLimitNoticeSection: View {
                 "More goals at once with Plus", tableName: "Onboarding",
                 comment: "Title of the notice that the free plan follows one goal at a time"
               )
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
 
               if upFront {
                 Text(

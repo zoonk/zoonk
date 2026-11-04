@@ -19,7 +19,7 @@ struct DataExportRow: View {
           title
 
           description
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
         }
 
@@ -49,7 +49,7 @@ struct DataExportRow: View {
           "We couldn't prepare the download. Try again.", tableName: "Settings",
           comment: "Shown when a data download failed"
         )
-        .font(.subheadline)
+        .typeStyle(.body)
         .foregroundStyle(.destructive)
       }
     }

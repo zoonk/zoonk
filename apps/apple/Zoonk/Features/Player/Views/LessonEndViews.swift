@@ -62,7 +62,7 @@ struct LessonCompletionView: View {
           Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
         }
       }
-      .font(.largeTitle.weight(.bold))
+      .typeStyle(.heroTitle)
       .accessibilityAddTraits(.isHeader)
     }
 
@@ -94,7 +94,7 @@ struct LessonCompletionView: View {
         "Nothing left to answer", tableName: "Player",
         comment: "Title of a lesson opened again with every step answered, before Finish saves it"
       )
-      .font(.title2.bold())
+      .typeStyle(.section)
       .accessibilityAddTraits(.isHeader)
 
       Text(
@@ -167,18 +167,18 @@ struct LessonCompletionView: View {
         GridRow {
           if answered > 0 {
             Text("\(summary.correctCount)/\(answered)")
-              .font(.largeTitle.weight(.semibold).monospacedDigit())
+              .typeStyle(.momentReadout)
           }
           if summary.brainPower > 0 {
             EarnedNumber(value: summary.brainPower)
-              .font(.largeTitle.weight(.semibold))
+              .typeStyle(.heroTitle)
               .foregroundStyle(.brain)
           }
         }
         GridRow {
           if answered > 0 {
             Text("Right", tableName: "Player", comment: "Label under the lesson's score")
-              .font(.subheadline)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
           if summary.brainPower > 0 {
@@ -186,7 +186,7 @@ struct LessonCompletionView: View {
               "Brain Power", tableName: "Player",
               comment: "Label under the Brain Power a lesson earned"
             )
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
           }
         }
@@ -199,7 +199,7 @@ struct LessonCompletionView: View {
           tableName: "Player",
           comment: "When the lesson's idea comes back for review"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
     }
@@ -362,12 +362,12 @@ private struct LessonGuestEndingView: View {
               Label {
                 VStack(alignment: .leading, spacing: 2) {
                   Text(course.title)
-                    .font(.headline)
+                    .typeStyle(.body.weight(.semibold))
                   Text(
                     "\(course.chapterCount) chapters\u{00A0}· about \(Duration.seconds(max(1, (course.minutes + 30) / 60) * 3600).formatted(.units(allowed: [.hours], width: .wide))) at your pace",
                     tableName: "Player", comment: "A course's size at the end of a guest's lesson"
                   )
-                  .font(.subheadline)
+                  .typeStyle(.note)
                   .foregroundStyle(.secondary)
                 }
               } icon: {
@@ -378,13 +378,13 @@ private struct LessonGuestEndingView: View {
             VStack(alignment: .leading, spacing: 6) {
               HStack(alignment: .firstTextBaseline) {
                 Text(fit.chapterTitle)
-                  .font(.caption.weight(.medium))
+                  .typeStyle(.meta.weight(.medium))
                 Spacer()
                 Text(
                   "\(fit.lessonNumber) of \(fit.lessonCount) lessons", tableName: "Player",
                   comment: "The lesson's place in its chapter"
                 )
-                .font(.caption.monospacedDigit())
+                .typeStyle(.data)
                 .foregroundStyle(.secondary)
               }
 
@@ -409,7 +409,7 @@ private struct LessonGuestEndingView: View {
       } icon: {
         Image(systemName: "calendar.badge.clock")
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
 
       VStack(spacing: 8) {
@@ -507,7 +507,7 @@ struct LessonHelpLimitNote: View {
           comment: "A learner used the day's AI help")
       }
     }
-    .font(.subheadline)
+    .typeStyle(.note)
     .foregroundStyle(.secondary)
   }
 }
@@ -663,7 +663,7 @@ struct LessonGuestGateView: View {
           Text(
             "We couldn't open this lesson", tableName: "Player", comment: "A lesson failed to open"
           )
-          .font(.footnote)
+          .typeStyle(.note)
           .foregroundStyle(.destructive)
         }
       } else {

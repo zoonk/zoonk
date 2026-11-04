@@ -86,7 +86,7 @@ private struct ProcessOrderCanvas: View {
     } label: {
       ProcessStepRow(position: index + 1, icon: step.icon, mark: .plain, isDraggable: true) {
         LessonRichText(step.text)
-          .fontWeight(.medium)
+          .typeWeight(.medium)
       }
     }
     .buttonStyle(ActivityTileStyle(mark: isSelected ? .selected : .plain))
@@ -170,7 +170,7 @@ private struct ProcessOrderCanvas: View {
         ProcessStepRow(position: index + 1, icon: step.icon, mark: mark) {
           VStack(alignment: .leading, spacing: 4) {
             LessonRichText(step.text)
-              .fontWeight(.medium)
+              .typeWeight(.medium)
             if let why = step.why {
               LessonRichText(why)
                 .foregroundStyle(.secondary)
@@ -180,12 +180,12 @@ private struct ProcessOrderCanvas: View {
                 "You had it at \(learnerPosition)", tableName: "Activities",
                 comment: "After the check: where the learner put a misplaced step"
               )
-              .font(.footnote.weight(.medium))
+              .typeStyle(.note.weight(.medium))
               .foregroundStyle(.destructive)
             }
           }
         }
-        .font(.subheadline)
+        .typeStyle(.body)
         .padding(12)
         .background(background(mark), in: .rect(cornerRadius: 12))
         .accessibilityElement(children: .combine)
@@ -235,7 +235,7 @@ private struct ProcessStepMarks: View {
   var body: some View {
     HStack(spacing: 10) {
       Text(position, format: .number)
-        .font(.footnote.weight(.semibold).monospacedDigit())
+        .typeStyle(.note.weight(.semibold).monospaced())
         .foregroundStyle(mark == .plain ? Color.primary : Color(.systemBackground))
         .frame(width: badge, height: badge)
         .background(fill, in: .circle)

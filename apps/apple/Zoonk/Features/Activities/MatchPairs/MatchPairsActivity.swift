@@ -21,6 +21,7 @@ private struct MatchPairsCanvas: View {
   let fields: MatchPairsFields
   let context: ActivityCanvasContext
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
   @ActivityState private var progress: MatchPairs.Progress
   @ActivityState("selection") private var selection: [MatchPairs.Side: String] = [:]
   @ActivityState("miss") private var miss: Miss? = nil
@@ -56,7 +57,7 @@ private struct MatchPairsCanvas: View {
             .foregroundStyle(.destructive)
         }
         .accessibilityLabel(missLine(miss, spoken: true))
-        .font(.subheadline)
+        .typeStyle(.body)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(Color.destructive.opacity(0.1), in: .rect(cornerRadius: 12))
@@ -94,7 +95,7 @@ private struct MatchPairsCanvas: View {
         comment: "Two picked cards don't match and there's no note on why")
 
     return Text(
-      "\(Text("Not quite:", tableName: "Activities", comment: "Before why two picked cards don't match").fontWeight(.semibold)) \(explanation)",
+      "\(Text("Not quite:", tableName: "Activities", comment: "Before why two picked cards don't match").typeWeight(.semibold, legibility: legibilityWeight)) \(explanation)",
       tableName: "Activities",
       comment: "Why two picked cards don't match, after a bold 'Not quite:'")
   }
@@ -240,7 +241,7 @@ private struct MatchPairsCanvas: View {
           "Missed on the first try", tableName: "Activities",
           comment: "Above the pairs a learner missed at first"
         )
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
         ActivityReasonList(
           reasons: missed.map { card in
             ActivityReasonList.Reason(
@@ -261,7 +262,7 @@ private struct MatchPairsCanvas: View {
           "Look-alikes with no match", tableName: "Activities",
           comment: "Above the trap cards after the check"
         )
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
         ActivityReasonList(
           reasons: traps.map { ActivityReasonList.Reason(id: $0.id, text: $0.text, why: $0.why) })
       }
@@ -288,7 +289,7 @@ private struct MatchCardStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     if state == .noMatch {
       configuration.label
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
         .multilineTextAlignment(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)

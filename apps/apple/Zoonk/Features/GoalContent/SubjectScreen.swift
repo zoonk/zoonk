@@ -150,17 +150,16 @@ private struct SubjectContent: View {
             Text("Module", tableName: "Plan", comment: "Eyebrow of a plan module's page")
           }
         }
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
 
         Text(subject.name)
-          .font(.title2.weight(.semibold))
+          .typeStyle(.section)
           .heroTitle()
 
         if !facts.isEmpty {
           Text(verbatim: facts.joinedFacts())
-            .font(.subheadline)
-            .monospacedDigit()
+            .typeStyle(.data)
             .foregroundStyle(.secondary)
         }
 
@@ -315,7 +314,7 @@ private struct SubjectChapterRow: View {
 
           if let line {
             line
-              .font(.caption)
+              .typeStyle(.meta)
               .foregroundStyle(.secondary)
           }
         }
@@ -447,7 +446,7 @@ private struct SubjectTopicRow: View {
 
         if topic.notPlannedReason != nil {
           Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
-            .font(.caption)
+            .typeStyle(.meta)
             .foregroundStyle(.secondary)
         }
       }
@@ -499,7 +498,7 @@ private struct SubjectNotPlannedNotice: View {
       } icon: {
         Image(systemName: "minus.circle")
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
 
       if reason == "skipped" {
@@ -526,7 +525,7 @@ private struct SubjectNotPlannedNotice: View {
           "That didn't work. Try again in a moment.", tableName: "Plan",
           comment: "Says the subject didn't come back into the plan"
         )
-        .font(.subheadline)
+        .typeStyle(.body)
         .foregroundStyle(.destructive)
       }
     }

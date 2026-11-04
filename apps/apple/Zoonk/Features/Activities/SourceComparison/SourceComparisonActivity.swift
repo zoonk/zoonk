@@ -150,7 +150,7 @@ private struct SourceComparisonCanvas: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       LessonRichText(fields.markPrompt)
-        .font(.subheadline.weight(.medium))
+        .typeStyle(.body.weight(.medium))
 
       ForEach(Array(fields.sources.enumerated()), id: \.element.id) { index, source in
         sourceCard(source, symbol: index.isMultiple(of: 2) ? "scroll" : "book")
@@ -205,7 +205,7 @@ private struct SourceComparisonCanvas: View {
         }
       }
     }
-    .font(.caption)
+    .typeStyle(.meta)
     .foregroundStyle(.secondary)
     .accessibilityHidden(true)
   }
@@ -221,9 +221,9 @@ private struct SourceComparisonCanvas: View {
       Label {
         VStack(alignment: .leading, spacing: 0) {
           Text(source.author)
-            .font(.subheadline.weight(.semibold))
+            .typeStyle(.note.weight(.semibold))
           Text(source.date)
-            .font(.caption)
+            .typeStyle(.meta)
             .foregroundStyle(.secondary)
         }
       } icon: {
@@ -258,11 +258,11 @@ private struct SourceComparisonCanvas: View {
 
       if let url = source.citation.url.flatMap(URL.init(string:)) {
         Link(citation, destination: url)
-          .font(.caption)
+          .typeStyle(.meta)
           .underline()
       } else {
         Text(citation)
-          .font(.caption)
+          .typeStyle(.meta)
           .foregroundStyle(.secondary)
       }
     }

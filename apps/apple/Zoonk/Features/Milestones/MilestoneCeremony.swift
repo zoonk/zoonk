@@ -57,12 +57,12 @@ struct MilestoneCeremony: View {
   private var words: some View {
     VStack(spacing: 8) {
       Text(title)
-        .font(.title.bold())
+        .typeStyle(.pageTitle)
         .multilineTextAlignment(.center)
         .accessibilityAddTraits(.isHeader)
 
       Text(detail)
-        .font(.body)
+        .typeStyle(.body)
         .foregroundStyle(.secondary)
         .multilineTextAlignment(.center)
     }

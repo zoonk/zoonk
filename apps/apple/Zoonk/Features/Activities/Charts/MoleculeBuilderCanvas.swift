@@ -75,14 +75,14 @@ struct MoleculeBuilderCanvas: View {
         "Target: \(MoleculeModel.formulaText(target))", tableName: "ActivitiesCharts",
         comment: "The molecule to build, like Target: CO₂"
       )
-      .font(.subheadline.weight(.medium))
+      .typeStyle(.body.weight(.medium))
       Spacer()
       if !build.atoms.isEmpty {
         Text(
           "Built: \(built)", tableName: "ActivitiesCharts",
           comment: "What the learner built so far, like Built: CO"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
     }
@@ -107,10 +107,10 @@ struct MoleculeBuilderCanvas: View {
   private func example(title: Text?) -> some View {
     if let structure = MoleculeModel.findStructure(target) {
       VStack(alignment: .leading, spacing: 8) {
-        title?.font(.subheadline.weight(.medium))
+        title?.typeStyle(.body.weight(.medium))
 
         if title == nil {
-          Text(verbatim: MoleculeModel.formulaText(target)).font(.headline)
+          Text(verbatim: MoleculeModel.formulaText(target)).typeStyle(.body.weight(.semibold))
         }
 
         MoleculeDrawing(
@@ -121,7 +121,7 @@ struct MoleculeBuilderCanvas: View {
           "\(MoleculeModel.bondCount(target)) bonds in all, counting a double bond as two.",
           tableName: "ActivitiesCharts", comment: "How many bonds a complete molecule has"
         )
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
       .accessibilityElement(children: .combine)
@@ -190,7 +190,7 @@ struct MoleculeBuilderCanvas: View {
           comment: "An atom with too many bonds"
         )
         .foregroundStyle(.destructive)
-        .fontWeight(.medium)
+        .typeWeight(.medium)
       } else if open > 0 {
         Text(
           "\(open) atoms have open bonds, shown as dots.", tableName: "ActivitiesCharts",
@@ -203,7 +203,7 @@ struct MoleculeBuilderCanvas: View {
           comment: "A complete molecule"
         )
         .foregroundStyle(.success)
-        .fontWeight(.medium)
+        .typeWeight(.medium)
       }
 
       if !isChecked && !build.atoms.isEmpty {
@@ -221,7 +221,7 @@ struct MoleculeBuilderCanvas: View {
         .foregroundStyle(.secondary)
       }
     }
-    .font(.subheadline)
+    .typeStyle(.body)
   }
 
   private func tools(selectedName: String?) -> some View {
@@ -263,12 +263,12 @@ struct MoleculeBuilderCanvas: View {
           add(element)
         } label: {
           VStack(spacing: 2) {
-            Text(verbatim: element).font(.headline)
+            Text(verbatim: element).typeStyle(.body.weight(.semibold))
             Text(
               "\(MoleculeModel.valence(of: element)) bonds", tableName: "ActivitiesCharts",
               comment: "How many bonds an element makes"
             )
-            .font(.caption)
+            .typeStyle(.meta)
             .foregroundStyle(.secondary)
           }
           .padding(.vertical, 6)
@@ -486,7 +486,7 @@ private struct MoleculeDrawing: View {
         atom.id == selectedId ? Color.primary : Color(.separator),
         lineWidth: atom.id == selectedId ? 3 : 1)
       Text(verbatim: atom.element)
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
         .foregroundStyle(style.text)
       ForEach(0..<max(open, 0), id: \.self) { index in
         let angle = Double(index) * 2 * .pi / Double(max(open, 1))

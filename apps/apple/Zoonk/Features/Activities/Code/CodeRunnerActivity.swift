@@ -159,13 +159,13 @@ private struct CodeRunnerCanvas: View {
         yourLines
       }
     }
-    .font(.caption)
+    .typeStyle(.meta)
     .foregroundStyle(.secondary)
   }
 
   private var fileName: some View {
     Text(verbatim: fields.fileName ?? fields.language.defaultFileName)
-      .monospaced()
+      .typeStyle(.data)
   }
 
   @ViewBuilder
@@ -318,7 +318,7 @@ private struct CodeRunnerOutput: View {
           if !run.errorOutput.isEmpty {
             ScrollView(.horizontal) {
               Text(verbatim: run.errorOutput.trimmingCharacters(in: .newlines))
-                .font(.caption.monospaced())
+                .typeStyle(.data)
                 .foregroundStyle(.secondary)
             }
           }
@@ -331,7 +331,7 @@ private struct CodeRunnerOutput: View {
                   comment:
                     "Gentle verdict after a wrong answer, above the feedback on its likely mistake"
                 )
-                .fontWeight(.semibold)
+                .typeWeight(.semibold)
                 .foregroundStyle(.destructive)
                 LessonRichText(mistake)
               }
@@ -339,7 +339,7 @@ private struct CodeRunnerOutput: View {
               Image(systemName: "xmark.circle")
                 .foregroundStyle(.destructive)
             }
-            .font(.subheadline)
+            .typeStyle(.body)
           }
         }
       }
@@ -351,7 +351,7 @@ private struct CodeRunnerOutput: View {
   ) -> some View {
     VStack(alignment: .leading, spacing: 2) {
       label()
-        .font(.caption.weight(.medium))
+        .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.secondary)
 
       ScrollView(.horizontal) {
@@ -372,7 +372,7 @@ private struct CodeRunnerOutput: View {
         Text(
           "Nothing printed", tableName: "ActivitiesCode", comment: "A program ran without printing"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       } else if expectedOutput != nil && !isStale {
         outputText(run.output)
@@ -393,14 +393,14 @@ private struct CodeRunnerOutput: View {
         "Run the code to see it", tableName: "ActivitiesCode",
         comment: "Before a program's first run"
       )
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
     }
   }
 
   private func outputText(_ text: String) -> some View {
     Text(verbatim: text.replacingOccurrences(of: "\\s+$", with: "", options: .regularExpression))
-      .font(.title3.monospaced().weight(.semibold))
+      .typeStyle(.section.monospaced())
       .textSelection(.enabled)
   }
 
@@ -412,7 +412,7 @@ private struct CodeRunnerOutput: View {
       } icon: {
         Image(systemName: "xmark.circle")
       }
-      .font(.subheadline.monospaced())
+      .typeStyle(.body.monospaced())
       .foregroundStyle(.destructive)
     }
   }

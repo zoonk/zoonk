@@ -103,7 +103,7 @@ private struct TodayStartGoal: View {
           VStack(alignment: .leading, spacing: 2) {
             Text(explanation.title)
             Text("Quick explanation", tableName: "Today", comment: "An unfinished explanation")
-              .font(.footnote)
+              .typeStyle(.note)
               .foregroundStyle(.secondary)
           }
         } icon: {

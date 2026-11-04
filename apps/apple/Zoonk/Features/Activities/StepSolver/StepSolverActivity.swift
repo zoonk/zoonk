@@ -93,7 +93,7 @@ private struct StepSolverCanvas: View {
 
     VStack(alignment: .leading, spacing: 16) {
       LessonRichText(fields.problem)
-        .fontWeight(.medium)
+        .typeWeight(.medium)
 
       ForEach(Array(fields.steps.enumerated()), id: \.element.id) { index, step in
         stepView(step, index: index, current: current, maxValue: maxValue)
@@ -124,7 +124,7 @@ private struct StepSolverCanvas: View {
             LessonRichText(step.prompt)
           }
         }
-        .font(isDone || isCurrent ? .body.weight(.semibold) : .body)
+        .typeStyle(isDone || isCurrent ? .body.weight(.semibold) : .body)
         .foregroundStyle(isDone || isCurrent ? .primary : .secondary)
 
         if isCurrent, !isChecked {
@@ -145,7 +145,7 @@ private struct StepSolverCanvas: View {
 
           if let lastWrong = wrongPicks.last {
             LessonRichText(lastWrong.reason)
-              .font(.subheadline)
+              .typeStyle(.body)
               .foregroundStyle(.destructive)
           }
         }
@@ -153,7 +153,7 @@ private struct StepSolverCanvas: View {
         if isDone, let correct = step.correct {
           StepSolverWork(step: step, maxValue: maxValue)
           LessonRichText(correct.reason)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
         }
 
@@ -163,7 +163,7 @@ private struct StepSolverCanvas: View {
           let picked = LessonRichText.typeset(first.text)
 
           firstPick(picked.quoted(spoken: false))
-            .font(.subheadline.weight(.medium))
+            .typeStyle(.body.weight(.medium))
             .foregroundStyle(.destructive)
             .accessibilityLabel(firstPick(picked.quoted(spoken: true)))
         }
@@ -218,7 +218,7 @@ private struct StepSolverMarker: View {
           .background(isWrong ? Color.destructive : Color.success, in: .circle)
       } else {
         Text(number, format: .number)
-          .font(.subheadline.weight(.semibold).monospacedDigit())
+          .typeStyle(.note.weight(.semibold).monospaced())
           .foregroundStyle(isCurrent ? Color(.systemBackground) : .secondary)
           .frame(width: size, height: size)
           .background(isCurrent ? Color.primary : .clear, in: .circle)
@@ -251,12 +251,12 @@ private struct StepSolverWork: View {
           .containerRelativeFrame(.horizontal) { width, _ in width * 0.6 * share }
 
         Text(ActivityNumberFormat.format(step.value, unit: step.unit))
-          .font(.subheadline.weight(.semibold).monospacedDigit())
+          .typeStyle(.body.weight(.semibold).monospaced())
       }
       .accessibilityHidden(true)
 
       LessonRichText(step.math)
-        .font(.body.monospaced())
+        .typeStyle(.body.monospaced())
     }
   }
 }

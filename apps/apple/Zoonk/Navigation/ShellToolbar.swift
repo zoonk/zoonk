@@ -128,7 +128,7 @@ private struct GoalSwitcherPlaceholder: View {
               .lineLimit(1)
           }
         }
-        .fontWeight(.semibold)
+        .typeWeight(.semibold)
       }
       .accessibilityLabel(
         Text(
@@ -146,7 +146,7 @@ private struct GoalSwitcherPlaceholder: View {
             .imageScale(.small)
         }
       }
-      .fontWeight(.semibold)
+      .typeWeight(.semibold)
       .placeholderShape()
     }
   }
@@ -203,7 +203,7 @@ private struct GoalSwitcher: View {
               .lineLimit(1)
           }
         }
-        .fontWeight(.semibold)
+        .typeWeight(.semibold)
       }
       .accessibilityLabel(startGoalTitle)
     } else {
@@ -304,7 +304,7 @@ private struct GoalSwitcher: View {
               .foregroundStyle(.secondary)
               .accessibilityHidden(true)
           }
-          .fontWeight(.semibold)
+          .typeWeight(.semibold)
         }
       }
       .accessibilityLabel(shownGoal.map { Text($0.title) } ?? startGoalTitle)

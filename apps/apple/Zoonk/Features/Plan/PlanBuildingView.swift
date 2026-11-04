@@ -22,7 +22,7 @@ struct PlanBuildingView: View {
 
               if let skillName = phase.skillName {
                 Text(skillName)
-                  .font(.footnote)
+                  .typeStyle(.note)
                   .foregroundStyle(.secondary)
                   .lineLimit(1)
               }

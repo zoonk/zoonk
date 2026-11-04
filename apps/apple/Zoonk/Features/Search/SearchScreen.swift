@@ -103,7 +103,7 @@ struct SearchScreen: View {
               VStack(alignment: .leading, spacing: 4) {
                 Text(chapter.title)
                 Text(chapter.courseTitle)
-                  .font(.subheadline)
+                  .typeStyle(.note)
                   .foregroundStyle(.secondary)
               }
             } icon: {

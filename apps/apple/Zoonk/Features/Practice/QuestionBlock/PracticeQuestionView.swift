@@ -164,7 +164,7 @@ struct QuestionTitle: View {
 
   var body: some View {
     ItemText(text)
-      .font(.title3.weight(.semibold))
+      .typeStyle(.section)
       .foregroundStyle(isMuted ? .secondary : .primary)
       .accessibilityAddTraits(.isHeader)
   }
@@ -180,7 +180,7 @@ struct QuestionNote<Content: View>: View {
     } icon: {
       Image(systemName: systemImage)
     }
-    .font(.footnote.weight(.medium))
+    .typeStyle(.note.weight(.medium))
     .foregroundStyle(.secondary)
   }
 }
@@ -199,7 +199,7 @@ struct PracticeCallout<Content: View>: View {
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     }
-    .font(.subheadline)
+    .typeStyle(.note)
     .padding(12)
     .background(
       Color(.secondarySystemGroupedBackground),
@@ -281,7 +281,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
         } icon: {
           Image(systemName: verdict.systemImage)
         }
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
         .foregroundStyle(verdict.tint)
 
         Spacer()
@@ -294,7 +294,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
           } icon: {
             Image(systemName: "chevron.up.2")
           }
-          .font(.footnote.monospacedDigit())
+          .typeStyle(.data)
           .foregroundStyle(.secondary)
         }
       }
@@ -319,7 +319,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
 
       notes()
     }
-    .font(.callout)
+    .typeStyle(.reading)
     .padding(16)
     .frame(maxWidth: .infinity, alignment: .leading)
     .background(
@@ -352,8 +352,7 @@ struct WorkedStepsView: View {
     VStack(alignment: .leading, spacing: 4) {
       ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
         Text(ItemTextBlock.inline(step))
-          .font(.callout.monospaced())
-          .fontWeight(index == steps.count - 1 ? .semibold : .regular)
+          .typeStyle(.reading.monospaced().weight(index == steps.count - 1 ? .semibold : .regular))
           .foregroundStyle(index == steps.count - 1 ? .primary : .secondary)
       }
     }

@@ -59,7 +59,7 @@ struct KindDot: View {
   var body: some View {
     Image(systemName: "circle.fill")
       .imageScale(.small)
-      .font(.caption2)
+      .typeStyle(.small)
       .foregroundStyle(kind == .lesson ? Color(.tertiaryLabel) : kind.color)
       .accessibilityHidden(true)
   }

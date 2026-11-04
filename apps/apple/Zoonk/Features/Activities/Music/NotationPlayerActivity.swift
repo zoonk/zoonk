@@ -166,7 +166,7 @@ private struct NotationPlayerCanvas: View {
           "This music couldn't be drawn.", tableName: "ActivitiesMusic",
           comment: "When a melody's notation can't be read"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
 
@@ -203,11 +203,11 @@ private struct NotationPlayerCanvas: View {
           ?? String(
             localized: "Melody", table: "ActivitiesMusic", comment: "A melody without a title")
       )
-      .font(.headline)
+      .typeStyle(.body.weight(.semibold))
 
       if let composer = tune.composer {
         Text(composer)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
       }
     }
@@ -270,7 +270,7 @@ private struct NotationPlayerCanvas: View {
               "\(bars) bars", tableName: "ActivitiesMusic", comment: "How many bars the melody has")
           }
         }
-        .font(.caption.monospacedDigit())
+        .typeStyle(.data)
         .foregroundStyle(.secondary)
       }
 
@@ -354,15 +354,15 @@ private struct NotationStaff: View {
     _ text: String, at point: CGPoint, kind: NotationDrawing.TextKind,
     shading: GraphicsContext.Shading, in context: inout GraphicsContext
   ) {
-    let font: Font =
+    let style: TypeStyle =
       switch kind {
-      case .chordSymbol: .caption
-      case .tabFret: .caption2.weight(.semibold).monospacedDigit()
-      case .tupletNumber: .caption2.italic()
-      case .endingNumber: .caption2
+      case .chordSymbol: .meta
+      case .tabFret: .small.weight(.semibold).monospaced()
+      case .tupletNumber: .small.italic()
+      case .endingNumber: .small
       }
 
-    var resolved = context.resolve(Text(text).font(font))
+    var resolved = context.resolve(Text(text).font(style.font(in: context.environment)))
     resolved.shading = shading
 
     switch kind {

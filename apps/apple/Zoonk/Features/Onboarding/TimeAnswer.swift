@@ -47,7 +47,7 @@ struct TimeAnswer: View {
         } label: {
           Text("Try again", tableName: "Onboarding", comment: "Asks again what a time covers")
         }
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
       } else if let offer {
         Button {
           onUseOffer(offer.minutes)
@@ -55,10 +55,10 @@ struct TimeAnswer: View {
           Self.offerLabel(offer)
             .multilineTextAlignment(.leading)
         }
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.body.weight(.semibold))
       }
     }
-    .font(.subheadline)
+    .typeStyle(.body)
     .buttonStyle(.borderless)
     .opacity(updating ? 0.5 : 1)
     .onChange(of: line.isBusy || updating ? nil : announcement) { _, words in

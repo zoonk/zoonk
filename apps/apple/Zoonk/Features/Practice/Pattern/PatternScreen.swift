@@ -55,12 +55,12 @@ struct PatternScreen: View {
             "Mistake pattern", tableName: "Practice",
             comment: "Eyebrow over a noticed mistake pattern."
           )
-          .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+          .typeStyle(.note.weight(.medium)).foregroundStyle(.secondary)
           Text(
             "Just typos", tableName: "Practice",
             comment: "Title when recent mistakes were only typos."
           )
-          .font(.largeTitle.bold())
+          .typeStyle(.heroTitle)
           Text(
             "Your recent mistakes were slips while typing, not a rule you're missing. There's nothing to practice.",
             tableName: "Practice", comment: "Why a typos pattern has nothing to practice."
@@ -291,8 +291,8 @@ private struct PatternIntroView: View {
           "We noticed a pattern", tableName: "Practice",
           comment: "Eyebrow over a noticed mistake pattern."
         )
-        .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
-        Text(pattern.title).font(.largeTitle.bold())
+        .typeStyle(.note.weight(.medium)).foregroundStyle(.secondary)
+        Text(pattern.title).typeStyle(.heroTitle)
         Text(
           "It came up \(pattern.occurrences) times in your recent answers.", tableName: "Practice",
           comment: "How often a mistake pattern came up."
@@ -308,7 +308,7 @@ private struct PatternIntroView: View {
             "Also came up in", tableName: "Practice",
             comment: "Heading over the other answers a pattern came up in."
           )
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
           ForEach(Array(pattern.examples.dropFirst().enumerated()), id: \.offset) { _, example in
             Text("“\(example.answer)”").foregroundStyle(.secondary)
           }
@@ -344,7 +344,7 @@ private struct PatternRuleView: View {
           .foregroundStyle(.success)
         }
         .labelStyle(PatternChangeLabelStyle())
-        .font(.callout)
+        .typeStyle(.reading)
       }
 
       ItemText(pattern.rule)
@@ -354,9 +354,9 @@ private struct PatternRuleView: View {
           ForEach(Array(pattern.contrast.enumerated()), id: \.offset) { index, row in
             if index > 0 { Divider() }
             HStack(alignment: .firstTextBaseline) {
-              Text(row.label).font(.subheadline.weight(.medium))
+              Text(row.label).typeStyle(.note.weight(.medium))
               Spacer()
-              Text(row.example).font(.subheadline).foregroundStyle(.secondary)
+              Text(row.example).typeStyle(.note).foregroundStyle(.secondary)
                 .multilineTextAlignment(.trailing)
             }
             .padding(.vertical, 8)
@@ -370,7 +370,7 @@ private struct PatternRuleView: View {
 private struct PatternChangeLabelStyle: LabelStyle {
   func makeBody(configuration: Configuration) -> some View {
     VStack(alignment: .leading, spacing: 2) {
-      configuration.icon.font(.caption.weight(.semibold))
+      configuration.icon.typeStyle(.meta.weight(.semibold))
       configuration.title.foregroundStyle(.primary)
     }
   }

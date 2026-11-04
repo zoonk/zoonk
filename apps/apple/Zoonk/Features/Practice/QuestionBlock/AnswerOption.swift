@@ -20,7 +20,7 @@ struct AnswerOption<Label: View>: View {
       HStack(alignment: .firstTextBaseline, spacing: 12) {
         if let marker {
           Text(marker, format: .number)
-            .font(.footnote.monospacedDigit())
+            .typeStyle(.data)
             .foregroundStyle(.secondary)
             .accessibilityHidden(true)
         }
@@ -36,7 +36,7 @@ struct AnswerOption<Label: View>: View {
 
           if let result {
             Text(resultLabel(result))
-              .font(.caption.weight(.semibold))
+              .typeStyle(.meta.weight(.semibold))
               .foregroundStyle(result == .right ? Color.success : Color.destructive)
           }
         }
@@ -71,7 +71,7 @@ struct AnswerOptionStyle: ButtonStyle {
     let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
 
     configuration.label
-      .font(.body.weight(.medium))
+      .typeStyle(.button)
       .foregroundStyle(.primary)
       .padding(.horizontal, 14)
       .padding(.vertical, 12)

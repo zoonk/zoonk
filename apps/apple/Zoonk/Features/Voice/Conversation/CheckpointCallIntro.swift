@@ -90,7 +90,7 @@ struct CheckpointCallIntro: View {
           "The call didn't start. Try again in a moment.", tableName: "Voice",
           comment: "Starting a checkpoint call failed"
         )
-        .font(.subheadline)
+        .typeStyle(.body)
         .foregroundStyle(.destructive)
       }
 
@@ -189,7 +189,7 @@ private struct StudyTimeUsedUp: View {
       "You've reached your daily time limit. You can make this call in your next session.",
       tableName: "Voice", comment: "The daily time limit is a setting that stops study for the day."
     )
-    .font(.footnote)
+    .typeStyle(.note)
     .foregroundStyle(.secondary)
     .frame(maxWidth: .infinity, alignment: .leading)
 

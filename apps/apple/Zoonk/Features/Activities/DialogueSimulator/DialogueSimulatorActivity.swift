@@ -56,7 +56,7 @@ private struct DialogueCanvas: View {
       } icon: {
         Image(systemName: "mappin")
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
 
       VStack(spacing: 10) {
@@ -102,7 +102,7 @@ private struct DialogueCanvas: View {
     return HStack(alignment: .bottom, spacing: 8) {
       if isThem {
         Image(systemName: "person.crop.circle.fill")
-          .font(.title2)
+          .typeStyle(.section.weight(.regular))
           .foregroundStyle(.purple)
           .accessibilityHidden(true)
       } else {
@@ -111,9 +111,9 @@ private struct DialogueCanvas: View {
 
       VStack(alignment: .leading, spacing: 2) {
         Text(line.text)
-          .fontWeight(.medium)
+          .typeWeight(.medium)
         Text(line.translation)
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
       }
       .padding(.horizontal, 14)

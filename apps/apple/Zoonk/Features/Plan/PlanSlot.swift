@@ -104,7 +104,7 @@ struct PlanSuggestionSection: View {
         description: Text(choice.leftOut.line),
         options: {
           Text.examPickLimit(choice.take)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
 
           ExamOptionToggles(
@@ -250,7 +250,7 @@ struct PlanSuggestionSection: View {
   ) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       Label {
-        title.font(.headline)
+        title.typeStyle(.body.weight(.semibold))
       } icon: {
         Image(systemName: systemImage)
           .foregroundStyle(.warning)
@@ -258,7 +258,7 @@ struct PlanSuggestionSection: View {
 
       if let description {
         description
-          .font(.subheadline)
+          .typeStyle(.note)
           .foregroundStyle(.secondary)
       }
 
@@ -358,7 +358,7 @@ private struct PlanPausedSlot: View {
           "\(context.goal.title) is paused", tableName: "Plan",
           comment: "Title of the Plan's notice for a paused goal"
         )
-        .font(.headline)
+        .typeStyle(.body.weight(.semibold))
       } icon: {
         Image(systemName: "pause")
           .foregroundStyle(.warning)
@@ -375,7 +375,7 @@ private struct PlanPausedSlot: View {
             comment: "Explains a paused goal")
         }
       }
-      .font(.subheadline)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
 
       Button {
@@ -408,7 +408,7 @@ private struct PlanFinishedSlot: View {
     VStack(alignment: .leading, spacing: 8) {
       Label {
         Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over")
-          .font(.headline)
+          .typeStyle(.body.weight(.semibold))
       } icon: {
         StatusMark(status: .done)
       }
@@ -417,7 +417,7 @@ private struct PlanFinishedSlot: View {
         Text(
           "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"
         )
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
 
         if let level = value.nextLevel {
@@ -437,7 +437,7 @@ private struct PlanFinishedSlot: View {
             router.open(.course(courseId: course.courseId, title: course.title))
           } label: {
             Label(course.title, systemImage: "books.vertical")
-              .font(.subheadline)
+              .typeStyle(.body)
           }
           .buttonStyle(.borderless)
         }
@@ -448,7 +448,7 @@ private struct PlanFinishedSlot: View {
           "That didn't work. Try again in a moment.", tableName: "Plan",
           comment: "Says the next level didn't start"
         )
-        .font(.subheadline)
+        .typeStyle(.body)
         .foregroundStyle(.destructive)
       }
     }

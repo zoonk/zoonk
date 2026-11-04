@@ -96,7 +96,7 @@ private struct BeforeAfterCanvas: View {
       } icon: {
         Image(systemName: "arrow.down")
       }
-      .font(.subheadline)
+      .typeStyle(.body)
 
       if showsAfter {
         stateCard(fields.after, other: fields.before, isAfter: true)
@@ -130,7 +130,7 @@ private struct BeforeAfterCanvas: View {
   {
     VStack(alignment: .leading, spacing: 12) {
       Text(state.label)
-        .font(.subheadline.weight(.semibold))
+        .typeStyle(.note.weight(.semibold))
         .foregroundStyle(.secondary)
         .accessibilityAddTraits(.isHeader)
 
@@ -139,7 +139,7 @@ private struct BeforeAfterCanvas: View {
       }
 
       LessonRichText(state.description)
-        .font(.subheadline)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -167,10 +167,10 @@ private struct BeforeAfterCanvas: View {
         Text(fact.label)
         Spacer(minLength: 8)
         Text(ActivityNumberFormat.format(fact.value, unit: fact.unit))
-          .fontWeight(.semibold)
+          .typeWeight(.semibold)
           .monospacedDigit()
       }
-      .font(.subheadline)
+      .typeStyle(.note)
 
       ProgressView(value: share)
         .tint(isAfter ? Color.mint : Color.secondary)
@@ -178,7 +178,7 @@ private struct BeforeAfterCanvas: View {
 
       if let change {
         changeText(change)
-          .font(.caption.weight(.semibold).monospacedDigit())
+          .typeStyle(.meta.weight(.semibold).monospaced())
           .foregroundStyle(fact.id == highlightId ? Color.success : .primary)
       }
     }

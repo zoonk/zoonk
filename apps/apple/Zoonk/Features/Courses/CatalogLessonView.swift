@@ -46,23 +46,23 @@ private struct CatalogLessonList: View {
       Section {
         VStack(alignment: .leading, spacing: 12) {
           Text(lesson.chapter.courseTitle)
-            .font(.subheadline)
+            .typeStyle(.note)
             .foregroundStyle(.secondary)
 
           Text(value.title)
-            .font(.largeTitle.bold())
+            .typeStyle(.heroTitle)
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityAddTraits(.isHeader)
 
           if !value.description.isEmpty {
             Text(value.description)
-              .font(.title3)
+              .typeStyle(.section.weight(.regular))
               .foregroundStyle(.secondary)
           }
 
           if case .text(let text) = value.firstScreen {
             LessonTextBlocks(text)
-              .font(.title3)
+              .typeStyle(.section.weight(.regular))
           }
         }
       }
@@ -76,7 +76,7 @@ private struct CatalogLessonList: View {
           }
 
           LessonTextBlocks(question)
-            .font(.headline)
+            .typeStyle(.body.weight(.semibold))
 
           ForEach(options) { option in
             Label {
@@ -84,7 +84,7 @@ private struct CatalogLessonList: View {
             } icon: {
               Image(systemName: "circle.fill")
                 .imageScale(.small)
-                .font(.caption2)
+                .typeStyle(.small)
                 .foregroundStyle(.tertiary)
                 .accessibilityHidden(true)
             }

@@ -224,7 +224,7 @@ struct PlanEditorLatestSection: View {
         case .applied(let change, let sentence):
           VStack(alignment: .leading, spacing: 4) {
             Text(sentence)
-              .font(.headline)
+              .typeStyle(.body.weight(.semibold))
 
             if let effect = planEffectText(change.effect, plan: plan) {
               Text(effect)
@@ -234,7 +234,7 @@ struct PlanEditorLatestSection: View {
             appliedLine(change)
               .foregroundStyle(.secondary)
           }
-          .font(.subheadline)
+          .typeStyle(.note)
 
           if change.canUndo {
             Button {

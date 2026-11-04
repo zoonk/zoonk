@@ -44,7 +44,7 @@ struct GeometryBoardCanvas: View {
         "Drag a corner to move it one grid step at a time.", tableName: "ActivitiesCharts",
         comment: "How to use a geometry board"
       )
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
 
       sumLine(reading)
@@ -68,7 +68,7 @@ struct GeometryBoardCanvas: View {
 
       if isChecked {
         LessonRichText(fields.invariant)
-          .font(.subheadline.weight(.medium))
+          .typeStyle(.body.weight(.medium))
       }
     }
   }
@@ -257,7 +257,8 @@ struct GeometryBoardCanvas: View {
           let text =
             index == reading.totalIndex && hidesTotal ? "?" : ActivityNumberFormat.format(value)
           canvas.drawChartsLabel(
-            Text(verbatim: text).font(.caption.weight(.semibold)).foregroundStyle(color),
+            Text(verbatim: text).font(TypeStyle.meta.weight(.semibold).font(in: canvas.environment))
+              .foregroundStyle(color),
             at: transform.point(center.0, center.1))
         }
       }
@@ -291,7 +292,9 @@ struct GeometryBoardCanvas: View {
       let unitOut = (outward.0 / length, outward.1 / length)
       let name = CGPoint(x: at.x + unitOut.0 * 22, y: at.y - unitOut.1 * 22)
       canvas.drawChartsLabel(
-        Text(verbatim: cornerName(index)).font(.caption.weight(.semibold)).foregroundStyle(
+        Text(verbatim: cornerName(index)).font(
+          TypeStyle.meta.weight(.semibold).font(in: canvas.environment)
+        ).foregroundStyle(
           .secondary), at: name)
 
       if fields.measure == .angleSum, index < reading.parts.count {
@@ -317,7 +320,8 @@ struct GeometryBoardCanvas: View {
         canvas.stroke(path, with: .style(color), lineWidth: 1.5)
         canvas.drawChartsLabel(
           Text(verbatim: ActivityNumberFormat.format(reading.parts[index], unit: "°"))
-            .font(.caption2.weight(.semibold).monospacedDigit()).foregroundStyle(color),
+            .font(TypeStyle.small.weight(.semibold).monospaced().font(in: canvas.environment))
+            .foregroundStyle(color),
           at: wedge.label)
       }
 
@@ -326,7 +330,8 @@ struct GeometryBoardCanvas: View {
         let middle = transform.point((point.x + next.x) / 2, (point.y + next.y) / 2)
         canvas.drawChartsLabel(
           Text(verbatim: ActivityNumberFormat.format(reading.parts[index]))
-            .font(.caption2.weight(.semibold).monospacedDigit()).foregroundStyle(.purple),
+            .font(TypeStyle.small.weight(.semibold).monospaced().font(in: canvas.environment))
+            .foregroundStyle(.purple),
           at: middle)
       }
     }
@@ -357,7 +362,7 @@ struct GeometryBoardCanvas: View {
         }
 
         Text(sumText(reading, total: total, isAnswer: isAnswer))
-          .font(.title2.weight(.semibold).monospacedDigit())
+          .typeStyle(.readout)
           .minimumScaleFactor(0.6)
           .lineLimit(2)
       }
@@ -460,7 +465,7 @@ private struct AngleFan: View {
         "Tear off the corners and put them side by side", tableName: "ActivitiesCharts",
         comment: "Above a geometry board's corners laid side by side"
       )
-      .font(.footnote)
+      .typeStyle(.note)
       .foregroundStyle(.secondary)
 
       HStack(alignment: .bottom, spacing: 12) {
@@ -509,7 +514,7 @@ private struct AngleFan: View {
               comment: "What a quadrilateral's angles fill")
           }
         }
-        .font(.footnote)
+        .typeStyle(.note)
         .foregroundStyle(.secondary)
       }
     }
