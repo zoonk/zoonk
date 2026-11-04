@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct LessonVerdictView: View {
+  @Environment(\.legibilityWeight) private var legibility
+
   let step: LessonStep
   let result: LessonStepResult
   let store: LessonPlayerStore
@@ -50,8 +52,10 @@ struct LessonVerdictView: View {
       }
 
       ForEach(result.corrections, id: \.self) { correction in
-        Text("\(Text(correction.wrong).strikethrough()) → \(Text(correction.right).bold())")
-          .typeStyle(.body)
+        Text(
+          "\(Text(correction.wrong).strikethrough()) → \(Text(correction.right).typeWeight(.bold, legibility: legibility))"
+        )
+        .typeStyle(.body)
       }
 
       if let keyPoints = result.keyPoints, !keyPoints.isEmpty {

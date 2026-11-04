@@ -75,6 +75,8 @@ struct PatternTableAnswer: Codable, Hashable, Sendable {
 }
 
 struct PatternTableCanvas: View {
+  @Environment(\.legibilityWeight) private var legibility
+
   let context: ActivityCanvasContext
   let fields: PatternTableFields
 
@@ -179,7 +181,7 @@ struct PatternTableCanvas: View {
       ? (stem, String(word.dropFirst(stem.count))) : (word, "")
 
     return Text(
-      "\(Text(verbatim: parts.0))\(Text(verbatim: parts.1).foregroundStyle(.vizAccent).bold())"
+      "\(Text(verbatim: parts.0))\(Text(verbatim: parts.1).foregroundStyle(.vizAccent).typeWeight(.bold, legibility: legibility))"
     )
     .typeStyle(.body)
   }
@@ -195,7 +197,8 @@ struct PatternTableCanvas: View {
       HStack(spacing: 1) {
         Text(verbatim: stem)
         if let chosen {
-          Text(verbatim: chosen).foregroundStyle(.vizAccent).bold()
+          Text(verbatim: chosen).foregroundStyle(.vizAccent).typeWeight(
+            .bold, legibility: legibility)
         } else {
           RoundedRectangle(cornerRadius: 2)
             .fill(isActive ? Color.vizAccent.opacity(0.25) : .clear)
