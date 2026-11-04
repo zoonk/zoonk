@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { type ClaimPlan, loadDatedClaims } from "../../learner/_utils/load-skill-claims";
+import { loadDatedClaims } from "../../learner/_utils/load-skill-claims";
+import { type ClaimEvent } from "../../learner/_utils/skill-claims";
 import { loadExamFacts } from "../../plans/_utils/planner-exam-facts";
 import { findAnnouncedSkillIds } from "../../plans/planner/announced-lessons";
 import { type PlanGraph } from "../../plans/planner/plan-state";
@@ -63,7 +64,7 @@ export async function loadPracticeClaims({
   goal,
   graph,
   now,
-  savedPlan,
+  readClaims,
   skillIds,
   today,
   userId,
@@ -71,14 +72,14 @@ export async function loadPracticeClaims({
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind">;
   graph: PlanGraph;
   now: Date;
-  savedPlan?: ClaimPlan | null;
+  readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
   /** The goal's skills practice may ask: the ones its plan or its test has. */
   skillIds: readonly string[];
   /** The learner-local date of the session, as a UTC-midnight label. */
   today: Date;
   userId: string;
 }): Promise<PracticeClaims> {
-  const claims = await loadDatedClaims({ goalId: goal.id, plan: savedPlan, skillIds, userId });
+  const claims = await loadDatedClaims({ goalId: goal.id, readClaims, skillIds, userId });
   const dueBefore = now.getTime() - DUE_AFTER_DAYS * DAY_MS;
 
   const toConfirm = [...claims].filter(([, { claim }]) => claim === "toConfirm");
@@ -113,26 +114,26 @@ export async function loadPracticeClaims({
 export async function loadReviewsAndClaims({
   claims: claimsInput,
   practiceLocked,
+  readClaims,
   review,
-  savedPlan,
 }: {
-  claims: Omit<Parameters<typeof loadPracticeClaims>[0], "savedPlan">;
+  claims: Omit<Parameters<typeof loadPracticeClaims>[0], "readClaims">;
   /** The day's session has no practice (see `ExamPrepAccess.trialEnded`). */
   practiceLocked: boolean;
+  /** A GET's request-wide claim events; without it, they're read fresh. */
+  readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
   review: Parameters<typeof loadReviewCapsules>[0];
-  /** A GET's saved plan; without it, the claims read it fresh. */
-  savedPlan?: ClaimPlan | null;
 }) {
   if (!practiceLocked) {
     const [capsules, claims] = await Promise.all([
       loadReviewCapsules(review),
-      loadPracticeClaims({ ...claimsInput, savedPlan }),
+      loadPracticeClaims({ ...claimsInput, readClaims }),
     ]);
 
     return { capsules, claims };
   }
 
-  const claims = await loadPracticeClaims({ ...claimsInput, savedPlan });
+  const claims = await loadPracticeClaims({ ...claimsInput, readClaims });
   const capsules = await loadReviewCapsules({ ...review, confirmSkillIds: [...claims.first] });
 
   return { capsules, claims };

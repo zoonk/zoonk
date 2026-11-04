@@ -207,8 +207,8 @@ export async function loadSessionBuildInput(
     loadReviewsAndClaims({
       claims: { goal, graph: plan.graph, now, skillIds: testSkillIds, today: localDate, userId },
       practiceLocked: access.trialEnded,
+      readClaims: context.readClaims,
       review,
-      savedPlan: context.savedPlan,
     }),
     loadMistakeDrills({
       examBlueprintId: goal.examBlueprintId,

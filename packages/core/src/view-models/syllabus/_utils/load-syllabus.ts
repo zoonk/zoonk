@@ -6,7 +6,7 @@ import {
   type LibrarySource,
   readSkillPrerequisiteMap,
 } from "../../../learner/_utils/plan-library-rows";
-import { listKnownSkills } from "../../../learner/_utils/skill-claims";
+import { type ClaimEvent, listKnownSkills } from "../../../learner/_utils/skill-claims";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { listTaughtStandInSkills } from "../../../lookahead/plan-outline-needs";
 import { hasPlanDeadline } from "../../../plans/_utils/plan-end";
@@ -108,10 +108,12 @@ export async function loadSyllabusInput(
     Partial<Pick<Goal, "details" | "primaryCourseId">>,
   {
     blueprint,
+    readClaims,
     savedPlan,
     taughtStandIns,
   }: {
     blueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>;
+    readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
     savedPlan?: SavedPlan | null;
     taughtStandIns?: Promise<Set<string>>;
   } = {},
@@ -137,12 +139,14 @@ export async function loadSyllabusInput(
       ),
       loadAreaCourses(graph, from),
       loadChapterTitles(plan.items, from),
-      loadClaimEvents({
-        goalId: goal.id,
-        plan: savedPlan,
-        skillIds: [...graphSkillIds],
-        userId: goal.userId,
-      }),
+      readClaims
+        ? readClaims([...graphSkillIds])
+        : loadClaimEvents({
+            goalId: goal.id,
+            plan: savedPlan,
+            skillIds: [...graphSkillIds],
+            userId: goal.userId,
+          }),
       readSkillPrerequisiteMap([...graphSkillIds], from),
       taughtStandIns ??
         listTaughtStandInSkills({

@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -7,6 +8,7 @@ import { countDatabaseRows } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAllowance } from "../../entitlements/get-allowance";
+import { type readClaimEvents } from "../../learner/facts/claim-events";
 import { type readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { type readSavedPlan } from "../../learner/facts/saved-plan";
 import { type readUsageTotals } from "../../learner/facts/usage-totals";
@@ -26,6 +28,15 @@ vi.mock("../../learner/facts/preparation-inputs", async (importOriginal) => {
   ]);
 
   return { ...actual, readPreparationInputs: keepRequestReads(actual.readPreparationInputs) };
+});
+
+vi.mock("../../learner/facts/claim-events", async (importOriginal) => {
+  const [actual, { keepRequestReads }] = await Promise.all([
+    importOriginal<{ readClaimEvents: typeof readClaimEvents }>(),
+    import("../../_test-utils/keep-request-reads"),
+  ]);
+
+  return { ...actual, readClaimEvents: keepRequestReads(actual.readClaimEvents) };
 });
 
 vi.mock("../../learner/facts/saved-plan", async (importOriginal) => {
@@ -86,6 +97,47 @@ describe("Today's render reads", () => {
 
     expect(reads.result.map((result) => result.status)).toStrictEqual(["ready", "ready"]);
     expect(reads.rows).toBe(skills.length);
+  });
+
+  it("reads an unopened day's claim answers once for its practice and the syllabus", async () => {
+    const user = await userFixture();
+
+    const { goal, plan, skills } = await sessionGoalFixture({
+      goal: { kind: "exam" },
+      userId: user.id,
+    });
+
+    const items = await prisma.item.findMany({
+      distinct: ["skillId"],
+      select: { id: true, skillId: true },
+      where: { skillId: { in: skills.map((skill) => skill.id) } },
+    });
+
+    await Promise.all([
+      layOutPlanFixture(plan.id),
+      ...items.map((item) =>
+        attemptFixture({
+          answeredAt: daysAgo(4),
+          itemId: item.id,
+          skillId: item.skillId,
+          userId: user.id,
+        }),
+      ),
+    ]);
+
+    mockSession(user.id);
+
+    const reads = await countDatabaseRows(
+      () =>
+        Promise.all([
+          getTodayView({ goalId: goal.id, timeZone: "UTC" }),
+          getSyllabusView({ goalId: goal.id }),
+        ]),
+      '"public"."attempts"."item_id" IS NOT NULL AND "public"."attempts"."skill_id" IN',
+    );
+
+    expect(reads.result.map((result) => result.status)).toStrictEqual(["ready", "ready"]);
+    expect(reads.rows).toBe(items.length);
   });
 
   it("counts usage once for an unopened day's missions and the allowance", async () => {

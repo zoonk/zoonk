@@ -156,17 +156,25 @@ async function loadAnswerEvents({
 }
 
 /** Includes basics skipped by choice, dated from that choice. */
-export async function loadDatedClaims(input: {
+export async function loadDatedClaims({
+  goalId,
+  readClaims,
+  skillIds,
+  userId,
+}: {
   goalId: string;
-  plan?: ClaimPlan | null;
+  /** A GET's request-wide claim events; without it, they're read fresh. */
+  readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
   skillIds: readonly string[];
   userId: string;
 }): Promise<Map<string, DatedClaim>> {
-  if (input.skillIds.length === 0) {
+  if (skillIds.length === 0) {
     return new Map();
   }
 
-  return readDatedClaims(await loadClaimEvents(input));
+  return readDatedClaims(
+    await (readClaims ? readClaims(skillIds) : loadClaimEvents({ goalId, skillIds, userId })),
+  );
 }
 
 export async function loadClaimEvents({
