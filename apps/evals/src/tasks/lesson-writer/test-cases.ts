@@ -3,6 +3,7 @@ import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { describeActivityTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { GLYCOLYSIS_SLIDES } from "../cite-material/material-fixtures";
 import { ACTIVITY_LESSON_SPECS } from "./activity-lesson-specs";
+import { BROAD_LESSONS } from "./broad-lesson-specs";
 import { BUDGET_LESSON_SPECS } from "./budget-lesson-specs";
 import { PRICE_IMPACT_CHAPTER_LESSONS, PRICE_IMPACT_SPEC } from "./chapter-lesson-specs";
 import { EXAM_PREP_LESSON } from "./exam-prep-lesson-spec";
@@ -56,6 +57,26 @@ const UNANSWERABLE_GUESS = `
   - Someone who reads only the guess's question, knowing nothing the lesson teaches, can't answer it: its setup never settles the answer by itself, and the right option is never the only one that echoes the question's words
   - The guess keeps its plan's idea, the one the next screen explains, and one wrong option is what a beginner's intuition says
 `;
+
+const BROAD_EXPECTATIONS = `
+  - Every sentence reads like natural speech, in the order a person would say it out loud, with its connecting words (because, so, but): no inverted or fronted clauses, no term defined between commas or in a clause of another sentence, no telegraphic sentences
+  - No sentence talks about the screen or the lesson ("Look at the table", "Follow the case below", "The next screen shows why")
+  - A comparison appears only where the plan names one; explanations say what happens, then why, then the term
+  - Each wrong option's reason says plainly what's wrong with it and what's true instead, in one or two short sentences; never "X is tempting because…, but…" squeezed into one
+  - A picture, table or chart shows only where the plan names one; a question planned with a picture shows it with every detail its answer depends on, never the answer itself
+`;
+
+const BROAD_CASES: TestCase<never, LessonWriterInput>[] = Object.entries(BROAD_LESSONS).map(
+  ([id, { context, spec }]) => ({
+    expectations: `
+      - MUST be in ${context.language === "pt" ? "Brazilian Portuguese" : "US English"}, at the ${context.level} level
+      ${BROAD_EXPECTATIONS}
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: `broad-${id}`,
+    userInput: toInput({ ...context, spec }),
+  }),
+);
 
 export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
@@ -118,8 +139,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     expectations: `
       - MUST be in US English, for beginners
       - The key's order is explained (broadest feature first) before the learner walks it
-      - The decision tree's case is the leaf the plan describes (long needles in bundles of two) and walking its answers reaches pine; the questions follow the explanation's key
-      - The activity asks for a picture of the case in its \`image\`, whose \`alt\` describes what the learner must look at (needles, bundles) without naming the tree
+      - The check after the key shows the twig the plan describes (long needles in bundles of two) in its \`image\`, whose \`alt\` describes what the learner must look at (needles, bundles) without naming the tree, and walking the key from it reaches pine
       - Screens without a planned Visual have no image
       - The check uses the planned trap (asking about lobes first), and the application stays on the same key
 
@@ -877,4 +897,5 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     id: "pt-renda-bruta-liquida-money-format",
     userInput: budgetLesson("pt-renda-bruta-liquida-beginner"),
   },
+  ...BROAD_CASES,
 ];

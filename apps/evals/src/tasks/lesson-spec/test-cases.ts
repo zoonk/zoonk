@@ -3,6 +3,7 @@ import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { BUDGET_LESSON_SPECS } from "../lesson-writer/budget-lesson-specs";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
+import { BROAD_SAMPLE_CASES } from "./broad-sample-cases";
 import { type LessonSpecExpected, VISUAL_TEST_CASES } from "./visual-test-cases";
 
 const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = listPlannerTemplates();
@@ -41,7 +42,7 @@ function budgetLesson(key: keyof typeof BUDGET_LESSON_SPECS): LessonSpecParams {
 }
 
 const UNANSWERABLE_GUESS = `
-  - Right after the first explanation, one guess predicts something about the scene's person that a beginner could get wrong, followed by another explanation or worked example
+  - Right after the first explanation, one guess predicts something a beginner could get wrong, followed by another explanation or worked example
   - Someone who reads only the guess's question, knowing nothing the lesson teaches, can't answer it: its setup never settles the answer by itself, and the right option is never the only one that echoes the question's words
 `;
 
@@ -695,6 +696,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     },
   },
   ...VISUAL_TEST_CASES,
+  ...BROAD_SAMPLE_CASES,
   {
     expectations: `
       - MUST be in natural Japanese: です・ます, never あなた
@@ -774,10 +776,9 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       - Explanation first, with at least two explanations or worked examples before the first check
       - One new term per screen: bens, direitos and obrigações were taught in the earlier lessons and are recalled in a few words, never defined again all on one screen together with patrimônio líquido and a caveat
       - The hard ideas the skill needs stay, each taught on its own screen before a check uses it, never left out: paying a debt with cash leaves the patrimônio líquido unchanged (the cash and the debt both go down), and the patrimônio líquido isn't the cash in the till. A case with the owner's personal belongings gets at most a one-sentence reminder of the earlier lesson's rule
-      - The amounts are shown with what the app draws (a table that adds up, a before-and-after table, a formula to play with), not pictures; a picture shows only a scene to see, such as the hook's business, and never carries numbers
-      - One person carries the example on every screen that needs someone
-      - Right after the first explanation, one guess predicts something about the scene's person that learners really get wrong, its question never containing its answer and never asking for a calculation the screen before just did; the guess is followed by another explanation or worked example
-      - The explanation where patrimônio líquido lands plans one everyday comparison chosen so it clicks, then the term and the line that keeps it precise: patrimônio líquido isn't the cash in the till
+      - The amounts are shown with what the app draws (a table that adds up, a before-and-after table, a formula to play with), not pictures; nothing here has to be seen, so the hook's business needs no picture, and a picture never carries numbers
+      - Right after the first explanation, one guess predicts something learners really get wrong, its question never containing its answer and never asking for a calculation the screen before just did; the guess is followed by another explanation or worked example
+      - The explanation where patrimônio líquido lands names it after its everyday meaning, with a comparison only if one truly maps, and the line that keeps it precise: patrimônio líquido isn't the cash in the till
       - Every check asks only what an earlier screen taught (a regression: an earlier plan's checks asked about ideas no screen had explained)
 
       ${SHARED_EXPECTATIONS}
@@ -829,14 +830,14 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese, for a total beginner in biology
-      - The hook is a scene that asks nothing: one real place full of life shown in a picture, ending on the question the lesson answers (how do the living things of a place fit together?), with no options
+      - The hook is a scene that asks nothing: one real place full of life, ending on the question the lesson answers (how do the living things of a place fit together?), with no options
       - Each explanation teaches one level (population, community, ecosystem), with one new term per screen; organismo was taught in an earlier lesson and is recalled in a few words, never introduced again on the screen that introduces espécie
       - A species is defined precisely (living beings alike enough to reproduce together and have fertile offspring), never as "related living beings"
       - The levels are something to see: the screens that teach them show pictures of the same place, each with the level the screen is about highlighted, one scene per picture
       - At least two explanations come before the first check, and the checks use only levels already taught
       - One person at most, and a town only if the idea needs it
-      - Right after the first explanation, one guess predicts something about the scene's person that learners really get wrong, its question never containing its answer and never asking for a calculation the screen before just did; the guess is followed by another explanation or worked example
-      - In this lesson about a place, most teaching screens show a picture of it (5 of 7 is good), never the same picture twice in a row
+      - Right after the first explanation, one guess predicts something learners really get wrong, its question never containing its answer and never asking for a calculation the screen before just did; the guess is followed by another explanation or worked example
+      - In this lesson about a place, the screens that teach a level show a picture of it, never the same picture twice in a row
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -885,8 +886,8 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       - The lesson keeps its nuances on their own screens: a regular income can change in amount and still be regular, regular doesn't mean guaranteed, and how often it comes decides the kind, not the kind of work
       - Income across months is shown with what the app draws (a table or a bar chart over months), and a picture only for a scene to see; no picture of two scenes at once
       - At most two checks or activities before the application, each after the idea it uses was taught
-      - Right after the first explanation, one guess predicts something about the scene's person that learners really get wrong, its question never containing its answer and never asking for a calculation the screen before just did; the guess is followed by another explanation or worked example
-      - The main idea plans one everyday comparison chosen so it clicks, then the term and its precision point (a regular income isn't a guaranteed one)
+      - Right after the first explanation, one guess predicts something learners really get wrong, its question never containing its answer and never asking for a calculation the screen before just did; the guess is followed by another explanation or worked example
+      - The main idea is named after its everyday meaning, with a comparison only if one truly maps, then its precision point (a regular income isn't a guaranteed one)
 
       ${SHARED_EXPECTATIONS}
     `,

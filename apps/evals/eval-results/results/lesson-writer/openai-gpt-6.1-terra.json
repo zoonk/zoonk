@@ -50,7 +50,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "“Progress bar” is used in the opening question and explanation without explaining what it is. For beginners, briefly describe it as an indicator showing how much of checkout is finished.",
           "kind": "minorErrors",
@@ -86,28 +90,37 @@
                 "activityTemplate": null,
                 "brief": "A UX goal names the change in people's experience ('fewer people give up at payment'), not the design that might cause it ('add a progress bar'). Explain with the checkout example.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which of three statements is a UX goal. Tempting wrong answer: 'Redesign the payment button', a solution phrased like a goal.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "findError",
                 "brief": "Spot the AI's mistake: a designer asked an AI assistant to turn interview notes into a UX goal for a food delivery app. The assistant's four steps read the notes, find that people abandon orders when the delivery fee appears late, then in step 2 decide the goal is 'show the fee on the home screen' (the mistake: a solution, not a change in experience), and in steps 3 and 4 build the success measure and the summary on that wrong goal.",
                 "kind": "activity",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Application: in a banking app, support tickets show people can't find where to change their card limit. Ask the learner to pick the UX goal among options that mix goals and solutions.",
                 "kind": "application",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null
               }
             ],
@@ -231,28 +244,38 @@
                 "activityTemplate": null,
                 "brief": "O coração tem quatro câmaras: dois átrios em cima, que recebem o sangue, e dois ventrículos embaixo, que bombeiam. O lado direito manda sangue para os pulmões; o esquerdo, para o corpo todo. O septo separa os dois lados.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio."
               },
               {
                 "activityTemplate": "labeledDiagram",
                 "brief": "O aprendiz arrasta os nomes átrio direito, átrio esquerdo, ventrículo direito, ventrículo esquerdo e septo para o desenho do coração visto de frente. Confusão provável: trocar direito e esquerdo, já que o lado direito do coração fica à esquerda de quem olha.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte qual câmara bombeia o sangue para o corpo todo. Resposta tentadora: o ventrículo direito. Certa: o ventrículo esquerdo, que tem a parede mais grossa porque empurra o sangue mais longe.",
                 "kind": "check",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Num exame, o médico ouve um sopro causado por um furo no septo. Pergunte o que acontece com o sangue. Resposta certa: sangue do lado esquerdo passa para o direito, e o sangue que vai para o corpo e para os pulmões se mistura.",
                 "kind": "application",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null
               }
             ],
@@ -336,7 +359,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The explanation overloads one beginner screen with root, fifth, major third, half step, and flat notation. It uses “half steps” before defining them, and the interval definitions lack the required everyday comparisons. The musical content is correct, but this presentation falls short of the one-new-term-per-screen expectation.",
           "kind": "minorErrors",
@@ -372,28 +399,36 @@
                 "activityTemplate": null,
                 "brief": "A major chord is a root, a major third (4 half steps up) and a fifth: C, E, G. Lower the middle note one half step and you get a minor chord: C, Eb, G. Major sounds bright; minor sounds darker.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "keyboardFretboard",
                 "brief": "By ear: the app plays an A minor chord (A, C, E) together, without naming it. The learner picks whether it was major or minor, then sees it on the keys. Tempting wrong answer: major, from not hearing the lowered third.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask which note changes when C major becomes C minor. Correct: E drops to Eb. Tempting wrong answer: G drops to Gb, the top note.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Maya plays G, B, D on her keyboard for a sad song and it sounds too bright. Ask which single key she should change (B to Bb) and why.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -469,7 +504,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The explanation introduces supply, demand, curves, and equilibrium together, without the required everyday comparisons. It also states the curve slopes and equilibrium changes without fully explaining their mechanism. The diet check's basis quote supports the rightward shift but does not explain why both equilibrium price and quantity rise.",
           "kind": "minorErrors",
@@ -505,28 +544,36 @@
                 "activityTemplate": null,
                 "brief": "O preço de equilíbrio fica onde a curva de oferta cruza a de demanda. Menos galinhas é menos oferta: a curva de oferta vai para a esquerda, e o cruzamento sobe para um preço maior com menos ovos vendidos.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "lineCrossing",
                 "brief": "O aprendiz arrasta a curva certa para mostrar a gripe aviária (oferta para a esquerda) e vê o novo preço de equilíbrio. Use números de exemplo marcados como exemplo. Erro tentador: mover a demanda para a direita, porque o preço subiu.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte o que acontece com o preço e a quantidade de ovos se uma dieta da moda fizer muita gente comer mais ovos. Certa: demanda para a direita, preço e quantidade sobem. Tentadora: a oferta aumenta.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma padaria em Recife vê o preço do trigo cair depois de uma safra recorde. Pergunte o que acontece com a oferta de pão e o seu preço, e por quê.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -602,7 +649,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The explanation introduces several technical terms together—gene, allele, dominant, and Punnett square—without the required everyday comparisons. The application has a null basis even though the earlier simulation feedback explicitly explains that chance spreads counts around 50.",
           "kind": "minorErrors",
@@ -638,28 +689,37 @@
                 "activityTemplate": null,
                 "brief": "Each parent passes one of its two alleles. P (purple) is dominant over p (white): Pp is purple, only pp is white. A Pp × pp cross gives Pp or pp, each half the time.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "combinationGrid",
                 "brief": "The learner fills the Punnett square for a purple Pp plant crossed with a white pp plant, then answers what share of the seeds grow white flowers (1 in 2). Tempting wrong answer: 1 in 4, from remembering the Pp × Pp cross.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "randomSimulation",
                 "brief": "Chance mode: plant batches of 100 seeds from the same Pp × pp cross, each white with chance 1/2. The learner guesses how often a batch has exactly 50 white flowers, then runs many batches: they land near 50, rarely on it (about 8% of the time). Tempting wrong answer: most of the time.",
                 "kind": "activity",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A gardener gets 47 white flowers out of 100 seeds from a Pp × pp cross. Ask whether the 1 in 2 prediction was wrong. Correct: no, chance spreads results around 50.",
                 "kind": "application",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null
               }
             ],
@@ -748,7 +808,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The explanations introduce several technical terms together rather than one at a time. CMC is referenced without expanding the mnemonic, and NADH, electrons and the respiratory chain receive compressed definitions without everyday comparisons. The location check is recall-only: the laboratory setting does not change the task of repeating the previously stated location.",
           "kind": "minorErrors",
@@ -785,28 +849,36 @@
                 "activityTemplate": null,
                 "brief": "A glicólise acontece no citoplasma (o C do macete CMC). Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como o empréstimo do slide.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Fase de rendimento: produz 4 ATP e 2 NADH (que levam elétrons à cadeia respiratória).",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte o saldo de ATP por glicose, com a pegadinha de responder 4.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte onde a glicólise acontece, com a pegadinha da mitocôndria.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -824,139 +896,6 @@
             "title": "Saldo de ATP da glicólise"
           },
           "activityTemplates": []
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The classifications are correctly presented as routes within a simplified key, with a caution that other trees can look similar. The activity follows Needles → Bundles → Pine, and both checks have exactly one correct answer under that key. Their reasons match their options.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 30
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "The language is short and accessible, and the key's broadest-first order is stated before the activity. However, 'needle bundles' is not explained when introduced; beginners need to know that the needles share a base rather than merely appearing close together. This triggers the cap of 8 for one unexplained term.",
-          "score": 8,
-          "label": "Clarity & plain words",
-          "weight": 25
-        },
-        {
-          "categoryId": "checks",
-          "reasoning": "The activity requires following the branching key rather than stopping at needles. The next check includes the planned lobes-first misconception, and the application requires selecting a tree together with its identifying reason. Feedback explains the branch distinctions, and both basis quotations identify the earlier sentences that determine the answers.",
-          "score": 9,
-          "label": "Checks & feedback",
-          "weight": 20
-        },
-        {
-          "categoryId": "fitAndApplication",
-          "reasoning": "The result uses US English and follows the planned sequence, including the final summary. The activity requests the correct paired-needle picture, and its alt describes the identifying features without naming pine. Screens without planned visuals have no images. The Seattle park application provides a concrete setting and stays on the same key. The hook fits the brief, though its reveal could connect more directly to the first leaf distinction.",
-          "score": 9,
-          "label": "Level, hook & application",
-          "weight": 25
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "4 of 6 parts passed. Screen 2: Uses an em dash: \"A **key** is a guide that asks one question at a time, starting with the broadest feature. First, look for needles or broad leaves. In this simple key, needle bundles lead to pine; single needles on a twig lead to spruce or fir. Broad leaves with rounded lobes—sections that stick out—lead to oak; pointed lobes lead to maple. Other trees can look similar, so check more features to be sure.\". Write it without one. Screen 5: Uses an em dash: \"Broad leaves with rounded lobes—sections that stick out—lead to oak; pointed lobes lead to maple.\". Write it without one.",
-          "score": 7,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 5468,
-          "outputTokens": 1002,
-          "reasoningTokens": 473
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The explanation introduces 'needle bundles' without explaining that the needles grow together from a shared base. That distinction is essential to using the key, but it becomes concrete only in the activity's image description.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make the hook's reveal more informative by naming the first useful contrast: thin needles versus wide, flat leaves. This would connect the opening guess directly to the key.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English, for beginners\n      - The key's order is explained (broadest feature first) before the learner walks it\n      - The decision tree's case is the leaf the plan describes (long needles in bundles of two) and walking its answers reaches pine; the questions follow the explanation's key\n      - The activity asks for a picture of the case in its `image`, whose `alt` describes what the learner must look at (needles, bundles) without naming the tree\n      - Screens without a planned Visual have no image\n      - The check uses the planned trap (asking about lobes first), and the application stays on the same key\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on in its `prompt` and its `alt` (learners who can't see the picture answer from the alt, which never names what the question asks them to recognize)\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-tree-key-beginner-1",
-        "userInput": {
-          "chapterTitle": "Trees and plants",
-          "courseTitle": "Nature around you",
-          "language": "en",
-          "level": "beginner",
-          "spec": {
-            "canDo": "Name a common tree from one of its leaves with a simple key",
-            "description": "Tell needles from broad leaves, then use a key one question at a time to name pines, spruces, oaks and maples.",
-            "estimatedMinutes": 4,
-            "screens": [
-              {
-                "activityTemplate": null,
-                "brief": "In a park, two trees look alike from far away, but one keeps its leaves all winter. Ask the learner to guess, without scoring, which part of a tree gives it away fastest.",
-                "kind": "hook",
-                "skills": [],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "A tree key asks one question at a time about what you can see. First: needles or broad leaves? Needles in bundles mean a pine; single needles on the twig mean a spruce or fir. Broad leaves with rounded lobes mean an oak; pointed lobes mean a maple.",
-                "kind": "explanation",
-                "skills": [0],
-                "visual": "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes."
-              },
-              {
-                "activityTemplate": "decisionTree",
-                "brief": "The learner walks a key to name the tree from a leaf they can see: long needles growing in bundles of two. Likely mistake: stopping at needles and saying spruce, without checking whether they grow in bundles.",
-                "kind": "activity",
-                "skills": [0],
-                "visual": "A pine twig with long needles growing in bundles of two, close up."
-              },
-              {
-                "activityTemplate": null,
-                "brief": "Ask which question a key should ask first about a maple leaf. Tempting wrong answer: whether its lobes are pointed. Right: whether it has needles or broad leaves, because a key narrows from the broadest feature down.",
-                "kind": "check",
-                "skills": [0],
-                "visual": null
-              },
-              {
-                "activityTemplate": null,
-                "brief": "On a walk, a friend finds a broad leaf with rounded lobes. Ask which tree the key leads to and why. Right: an oak, because broad leaves with rounded lobes lead there.",
-                "kind": "application",
-                "skills": [0],
-                "visual": null
-              }
-            ],
-            "skills": [
-              {
-                "description": "Use a branching key one question at a time, from the broadest feature to the finest, to name a common tree from a leaf.",
-                "example": "Needles in bundles of two lead to a pine; single needles lead to a spruce.",
-                "hard": false,
-                "name": "Name a tree with a leaf key",
-                "topic": "Identifying trees",
-                "useCase": "Naming trees on a walk or in a park from one leaf."
-              }
-            ],
-            "supportMode": "explanationFirst",
-            "title": "Name a tree from one leaf"
-          },
-          "activityTemplates": [
-            {
-              "description": "Walk a branching key one question at a time, like naming a tree from one leaf, to learn which features matter and in what order. Code walks the case's answers from the root and must reach the stated outcome. Fills: the questions and branches, the outcomes, and the case with its answer at each question. When seeing the case is how the key is used (a leaf, a rock, a bird), the screen's image is a picture of the case with the features the questions ask about, and its alt describes them without naming the outcome. Check kinds this template supports: interaction.",
-              "id": "decisionTree",
-              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"case\":{\"type\":\"object\",\"properties\":{\"answers\":{\"minItems\":1,\"maxItems\":15,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"branch\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"nodeId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"branch\",\"nodeId\"],\"additionalProperties\":false}},\"description\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"outcomeId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"answers\",\"description\",\"outcomeId\"],\"additionalProperties\":false},\"nodes\":{\"minItems\":3,\"maxItems\":15,\"type\":\"array\",\"items\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"branches\":{\"minItems\":2,\"maxItems\":4,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"next\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"label\",\"next\"],\"additionalProperties\":false}},\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"question\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"branches\",\"id\",\"kind\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"outcome\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"id\",\"kind\",\"label\"],\"additionalProperties\":false}]}},\"rootId\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40}},\"required\":[\"case\",\"nodes\",\"rootId\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"parts\":{\"minItems\":2,\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":80}}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"decisionTree\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
-            }
-          ]
         }
       }
     },
@@ -1009,7 +948,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The lesson assumes familiarity with loop syntax despite targeting learners who have never used loops. It never explains that `for n` takes each number in turn or that `print(n)` runs once for each number. This leaves beginners to infer how the ranges become printed output.",
           "kind": "minorErrors",
@@ -1045,28 +988,36 @@
                 "activityTemplate": null,
                 "brief": "range(start, stop) starts at start and stops before stop: range(1, 5) gives 1, 2, 3, 4. To reach 5, the stop is 6. The count of numbers is stop minus start.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out."
               },
               {
                 "activityTemplate": null,
                 "brief": "Ask what for n in range(2, 6): print(n) prints. Tempting wrong answer: 2, 3, 4, 5, 6. Right: 2, 3, 4, 5, because the stop isn't included.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "codeRunner",
                 "brief": "The learner fixes a Python loop that should print the numbers 1 to 5, one per line, but uses range(1, 5). Only the loop line is editable. Likely mistakes: range(0, 5), which prints 0 to 4, and range(1, 5) left as it is.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A countdown uses for n in range(10, 0, -1). Ask what the last number printed is. Tempting wrong answer: 0. Right: 1, because the stop is still left out when counting down.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -1182,42 +1133,54 @@
                 "activityTemplate": null,
                 "brief": "Troque a imagem de uma bolinha dando voltas pela de uma região onde o elétron pode ser encontrado. Essa região é chamada de nuvem eletrônica; ela não é uma trilha nem uma nuvem de matéria comum.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica."
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique que a atração puxa o elétron para perto, mas concentrar sua nuvem num espaço minúsculo exige mais energia. Compare com apertar algo que resiste a ficar confinado, sem sugerir que exista uma mola dentro do átomo.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia."
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte por que a atração do núcleo não basta para deixar o elétron espremido nele. Inclua a resposta tentadora, mas errada, de que o elétron escapa porque gira rápido como um planeta.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Mostre que o arranjo mais estável combina a atração pelo núcleo com o custo de confinar demais o elétron. Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva."
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça ao aprendiz que identifique o erro na frase: «O elétron não cai porque o núcleo o empurra para longe». Inclua como alternativa correta que o núcleo atrai o elétron, mas concentrá-lo demais exige energia.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Um celular é feito de átomos que não desabam sobre seus núcleos. Peça ao aprendiz que explique isso a alguém que imagina os elétrons como bolinhas prestes a cair, usando as ideias de atração, nuvem e custo de confinamento.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -1327,42 +1290,54 @@
                 "activityTemplate": null,
                 "brief": "A membrana é o contorno da célula: separa o dentro do fora e controla o que entra e o que sai. Compare com o portão de um condomínio que deixa passar só quem pode.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "Uma célula com a membrana em destaque no contorno."
               },
               {
                 "activityTemplate": null,
                 "brief": "O material genético guarda as instruções que a célula usa para funcionar e se dividir. Compare com o caderno de receitas de uma cozinha.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Pergunte qual parte decide se uma substância entra na célula. Inclua a resposta tentadora, mas errada, de que é o material genético, por guardar as instruções.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "O citoplasma preenche todo o espaço entre a membrana e o material genético: um gel feito quase todo de água, onde acontece boa parte do trabalho da célula, como tirar energia do açúcar.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "Uma célula com a membrana, o citoplasma preenchendo o interior e o material genético, as três partes rotuladas."
               },
               {
                 "activityTemplate": null,
                 "brief": "Descreva uma célula que perdeu quase todo o citoplasma e pergunte o que deixa de acontecer nela. Inclua a resposta tentadora, mas errada, de que ela só perde o formato.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles. Pergunte o que Iara precisa acrescentar, onde deve desenhar e por que isso completa o esquema. Inclua a resposta tentadora, mas errada, de desenhar uma segunda membrana por dentro.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -1472,63 +1447,87 @@
                 "activityTemplate": null,
                 "brief": "Peça que o aluno escolha o que acontece com o prazo em dois casos: dobrar a equipe para fazer o mesmo pedido; dobrar o pedido com a mesma equipe. Inclua a opção tentadora de que o prazo dobra nos dois casos.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes."
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a regra de três simples como um cálculo com duas grandezas e uma condição fixa. Para um mesmo muro, se a equipe dobra, o tempo cai pela metade; a relação é inversa.",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: 4 trabalhadores terminam um muro em 6 dias; 8 trabalhadores, no mesmo ritmo, levam quantos dias? Mantenha fixa a obra, monte 6 × 4/8 e obtenha 3 dias.",
                 "kind": "workedExample",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça que calcule: 2 impressoras fazem 80 etiquetas em 2 horas; quanto tempo levam para fazer 200 etiquetas, mantendo as mesmas impressoras? A relação é direta e a resposta é 5 horas; inclua 0,8 hora como erro tentador de inverter a razão.",
                 "kind": "check",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Agora duas grandezas mudam: a quantidade de etiquetas e o número de impressoras. Para achar o novo tempo, multiplique o tempo inicial pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
                 "kind": "explanation",
-                "skills": [2],
+                "skills": [
+                  2
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo: 3 impressoras fazem 240 etiquetas em 4 horas; quanto tempo 5 impressoras levam para fazer 600? Mostre o efeito direto das etiquetas e o inverso das impressoras: 4 × (600/240) × (3/5) = 6 horas.",
                 "kind": "workedExample",
-                "skills": [0, 2],
+                "skills": [
+                  0,
+                  2
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Peça que calcule: 2 máquinas fazem 120 peças em 3 horas; quanto tempo 4 máquinas levam para fazer 320 peças? A resposta é 4 horas; inclua 16 horas como erro tentador de tratar o número de máquinas como diretamente proporcional ao tempo.",
                 "kind": "check",
-                "skills": [0, 2],
+                "skills": [
+                  0,
+                  2
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma padaria assa 120 pães em 3 horas usando 2 fornos iguais. Peça que o aluno calcule quanto tempo levará para assar 300 pães com 3 fornos, no mesmo ritmo: 5 horas.",
                 "kind": "application",
-                "skills": [0, 1, 2],
+                "skills": [
+                  0,
+                  1,
+                  2
+                ],
                 "visual": null
               }
             ],
@@ -1614,7 +1613,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The hook asks “Como ela pode saber se os totais fecham?”, violating the explicit requirement that this beginner hook ask nothing. Also, the negative-equity explanation jumps directly to adding a negative amount without explaining that adding −R$ 3.000,00 means subtracting R$ 3.000,00, leaving a small instructional gap for total beginners.",
           "kind": "minorErrors",
@@ -1667,70 +1670,90 @@
                 "activityTemplate": null,
                 "brief": "Mostre uma tabela dos totais da empresa de Débora na mesma data: ativo de R$ 12.000,00, passivo de R$ 4.000,00 e patrimônio líquido de R$ 8.000,00. Lembre brevemente que o ativo reúne bens e direitos, o passivo reúne obrigações e o patrimônio líquido é a diferença entre eles.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "formulaModel",
                 "brief": "Apresente a equação patrimonial: ativo = passivo + patrimônio líquido. No modelo, use controles de R$ 0,00 a R$ 10.000,00 em passos de R$ 1.000,00 para passivo e patrimônio líquido, começando em R$ 4.000,00 e R$ 8.000,00; mostre o ativo como a soma e seu gráfico em função do passivo.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Resolva o caso de Débora: some o passivo de R$ 4.000,00 ao patrimônio líquido de R$ 8.000,00 para obter um ativo de R$ 12.000,00. Mostre que esse resultado é igual ao total do ativo registrado.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "formulaModel",
                 "brief": "No modelo ativo = passivo + patrimônio líquido, com os dois controles de R$ 0,00 a R$ 10.000,00 em passos de R$ 1.000,00, peça para ajustar o passivo a R$ 3.000,00 e o patrimônio líquido a R$ 5.000,00 e informar o ativo. A resposta é R$ 8.000,00; trate R$ 2.000,00 como erro de subtrair os valores.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Mostre que, quando falta o passivo, ele pode ser encontrado por ativo menos patrimônio líquido. Lembre que, quando falta o patrimônio líquido, ele é o ativo menos o passivo.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma empresa registra ativo de R$ 15.000,00 e patrimônio líquido de R$ 9.000,00. Peça o passivo e inclua R$ 24.000,00 como erro de somar os dois valores.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique que o patrimônio líquido pode ser zero: nesse caso, o ativo e o passivo têm o mesmo valor. Por exemplo, R$ 7.000,00 = R$ 7.000,00 + R$ 0,00.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique que, quando o passivo supera o ativo, o patrimônio líquido é negativo e a igualdade continua válida. Por exemplo, R$ 8.000,00 = R$ 11.000,00 + (−R$ 3.000,00).",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma empresa tem ativo de R$ 6.000,00 e passivo de R$ 9.000,00. Peça o patrimônio líquido que faz a igualdade fechar e inclua R$ 3.000,00 como erro de ignorar o sinal negativo.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Mostre uma tabela de conferência com ativo de R$ 20.000,00, passivo de R$ 14.000,00 e patrimônio líquido registrado de R$ 8.000,00. Informe que os dois primeiros totais estão corretos e peça o valor que corrige o patrimônio líquido; explique no retorno que a igualdade, sozinha, não garante que os registros estejam corretos.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -1846,70 +1869,90 @@
                 "activityTemplate": null,
                 "brief": "Explique que a contabilidade registra e organiza informações sobre a situação e as atividades de uma organização. Por exemplo, ela reúne dados sobre bens, dívidas e dinheiro que entra e sai.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente usuários da informação contábil como pessoas ou organizações que a utilizam. Um proprietário pode consultar entradas e saídas de dinheiro ao decidir se amplia as atividades da empresa.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Fábio é proprietário e quer decidir se amplia sua empresa. Pergunte quais informações contábeis podem ajudá-lo; inclua como alternativa tentadora a cor preferida dos clientes.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique que um credor é quem tem dinheiro a receber de uma organização ou considera emprestar a ela. Um banco pode examinar dívidas e entradas de dinheiro antes de decidir se concede um empréstimo.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Mostre que órgãos do governo também usam informações contábeis. Uma autoridade fiscal pode examiná-las para verificar se a empresa cumpriu obrigações tributárias.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": "matchPairs",
                 "brief": "Peça para associar cada usuário à decisão descrita: proprietário à ampliação da própria empresa; banco à concessão de um empréstimo; autoridade fiscal à verificação de obrigações tributárias. Inclua a troca entre banco e autoridade fiscal como erro tentador e explique que os usuários podem se interessar por informações semelhantes, embora tomem decisões diferentes.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente outros usuários: investidores podem avaliar se aplicam dinheiro na empresa, e trabalhadores podem observar sua situação ao decidir se permanecem nela. Ambos podem consultar informações contábeis para apoiar essas escolhas.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique que a mesma informação pode interessar a mais de um usuário. Por exemplo, as dívidas da empresa podem ajudar tanto um banco a avaliar um empréstimo quanto um investidor a avaliar uma aplicação.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Uma empresa informa que suas dívidas aumentaram. Pergunte quem pode usar essa informação ao decidir sobre a empresa: um banco, um investidor ou ambos; inclua a ideia tentadora de que cada informação serve a um único usuário.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Fábio considera ampliar sua empresa enquanto um banco avalia emprestar dinheiro a ela; há registros de entradas, saídas e dívidas. Peça para escolher a combinação de decisões que esses dados podem apoiar para os dois usuários, incluindo como alternativa tentadora a verificação de tributos pelo banco.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -2025,70 +2068,90 @@
                 "activityTemplate": null,
                 "brief": "Explique que a entidade contábil é a empresa considerada separadamente de seu dono. Mesmo que Renan seja o único proprietário, os bens e as dívidas dele não se confundem automaticamente com os da empresa.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Apresente a autonomia patrimonial como essa separação entre o patrimônio da empresa e o do proprietário. Explique que importa a quem pertence o bem ou a dívida e a quem a operação beneficia, não apenas de onde saiu o dinheiro.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Mostre passo a passo: Renan paga com dinheiro pessoal um material para a empresa e combina que ela o reembolsará. O material pertence à empresa, e a empresa fica devendo a Renan; o pagamento não torna o material uma compra pessoal.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Renan paga com dinheiro pessoal o conserto de um equipamento da empresa, com reembolso combinado. Peça para identificar a operação da empresa e inclua como erro tentador tratá-la como gasto pessoal porque ele pagou.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Retome a conta de casa: se a empresa a paga e Renan se compromete a devolver o valor, sai dinheiro da empresa e ela passa a ter um valor a receber dele. A conta continua sendo pessoal, não uma despesa da empresa.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique que nem todo pagamento pessoal feito pela empresa gera automaticamente um valor a receber: é preciso verificar o que foi combinado e documentado. Por exemplo, uma retirada de lucros não é uma despesa da empresa nem, por si só, uma dívida do proprietário com ela.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "A empresa paga uma conta pessoal de Renan, que se compromete a reembolsá-la. Peça para decidir o que a empresa tem após o pagamento; inclua como erro tentador registrar a conta como despesa da empresa.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Explique que uma dívida pessoal não vira dívida da empresa só porque a pessoa é dona dela. Da mesma forma, uma dívida da empresa não vira automaticamente dívida pessoal do dono; garantias e outras obrigações precisam ser verificadas.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Mostre que, quando Renan coloca dinheiro pessoal na empresa como investimento, o dinheiro passa a ser da empresa e aumenta a participação dele nela. Essa entrada não é uma venda da empresa.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               },
               {
                 "activityTemplate": null,
                 "brief": "Renan investe dinheiro pessoal na empresa; depois, ela paga uma conta de casa dele, com reembolso combinado. Peça para identificar o efeito de cada operação para a empresa e inclua como erro tentador tratar a entrada como venda e a conta como despesa da empresa.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null
               }
             ],
@@ -2158,7 +2221,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The hook has four sentences and ends with “Let’s find out,” rather than ending on the lesson question in one or two sentences. The formula appears before a concrete dollar-based explanation of dividing the change by the starting value. The activity introduces “percentage points” without explaining it. Several denominator-error reasons identify the incorrect calculation without explaining its appeal. The video-game check’s basis explains the minus sign but does not establish the denominator or the 20% magnitude.",
           "kind": "minorErrors",
@@ -2195,7 +2262,9 @@
                 "activityTemplate": null,
                 "brief": "Start concrete: a movie ticket went from $20 to $25. The change is new minus old: $25 - $20 = $5. Explain that $5 alone doesn't tell us if that's a big jump, because $5 on a $20 ticket feels bigger than $5 on a $500 TV.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top.",
                 "visualKind": "picture"
               },
@@ -2203,7 +2272,9 @@
                 "activityTemplate": null,
                 "brief": "Introduce percent change: compare the change to the ORIGINAL price, like asking 'how many cents of change per dollar we started with?' Show the recipe piece by piece: change ÷ original × 100. Stress that 'original' means the starting value, before the change.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "The formula 'percent change = (new − old) ÷ old × 100' with each piece labeled: 'the change', 'the starting value', 'turn into percent'.",
                 "visualKind": "picture"
               },
@@ -2211,7 +2282,9 @@
                 "activityTemplate": null,
                 "brief": "Work the ticket example step by step: change = 25 - 20 = 5; divide by original 20: 5 ÷ 20 = 0.25; times 100 = 25%. So the price went up 25%.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2219,7 +2292,9 @@
                 "activityTemplate": null,
                 "brief": "Learner calculates: a salary rose from $2,000 to $2,300 a month. What's the percent increase? Correct: 15%. Include the tempting wrong answer 13% (dividing $300 by the new salary $2,300).",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2227,7 +2302,9 @@
                 "activityTemplate": null,
                 "brief": "Show a decrease: a jacket goes from $80 to $60. Change = 60 - 80 = -20; -20 ÷ 80 = -0.25; × 100 = -25%. A minus sign means the price went down 25%. Point out we still divide by the starting price, $80.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "A bar for $80 with the top $20 section shaded and crossed out, leaving $60, labeled '20 out of 80 = 25% off'.",
                 "visualKind": "picture"
               },
@@ -2235,7 +2312,9 @@
                 "activityTemplate": null,
                 "brief": "Learner calculates: a video game drops from $50 to $40. What's the percent change? Correct: a 20% decrease. Include the tempting wrong answer 25% (dividing $10 by the new price $40).",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2243,7 +2322,9 @@
                 "activityTemplate": null,
                 "brief": "Return to the hook: $100 drops 50% to $50. A 50% rise from $50 is only $25, giving $75, not $100. To get back, the price must rise $50 on a base of $50: 50 ÷ 50 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50).",
                 "visualKind": "picture"
               },
@@ -2251,7 +2332,10 @@
                 "activityTemplate": "guessReveal",
                 "brief": "A stock falls 20%, from $100 to $80. Learner commits to an estimate of the percent rise needed to get back to $100, then sees the real answer: $20 ÷ $80 = 25%. Many will guess 20%; show how far off they were and why.",
                 "kind": "activity",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null,
                 "visualKind": "template"
               },
@@ -2259,7 +2343,10 @@
                 "activityTemplate": null,
                 "brief": "Your monthly pay of $3,000 is cut 10% during a slow season, then raised 10% later. Learner calculates each step ($3,000 → $2,700 → $2,970), finds they're still $30 short, and works out the percent rise actually needed from $2,700 to get back to $3,000 (about 11.1%).",
                 "kind": "application",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -2384,7 +2471,9 @@
                 "activityTemplate": null,
                 "brief": "Set up the model: V(x) = 0 for 0 < x < L and V = ∞ outside, so ψ = 0 outside the box. Continuity of ψ then gives the boundary conditions ψ(0) = 0 and ψ(L) = 0, just like a guitar string pinned at both ends.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "Potential diagram: a flat floor from 0 to L with infinitely tall walls, with ψ = 0 marked outside and pinned points at x = 0 and x = L.",
                 "visualKind": "picture"
               },
@@ -2392,7 +2481,9 @@
                 "activityTemplate": null,
                 "brief": "Inside the box the equation becomes −(ħ²/2m)ψ'' = Eψ, which is ψ'' = −k²ψ with k = √(2mE)/ħ. Its general solution is ψ(x) = A sin kx + B cos kx, the same oscillation as a vibrating string.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2400,7 +2491,9 @@
                 "activityTemplate": null,
                 "brief": "The learner applies ψ(0) = 0 to ψ = A sin kx + B cos kx and chooses which term survives. Include the tempting wrong answer 'the cos term survives because cos is maximal at 0', and give feedback that cos 0 = 1 forces B = 0.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2408,7 +2501,10 @@
                 "activityTemplate": null,
                 "brief": "Work through ψ(L) = 0: A sin kL = 0, and A ≠ 0 (otherwise there is no particle), so kL = nπ. Exclude n = 0 because ψ would vanish, and exclude negative n because they give the same state up to a sign. Substitute k_n = nπ/L into E = ħ²k²/2m to get E_n = n²π²ħ²/(2mL²) = n²h²/(8mL²).",
                 "kind": "workedExample",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": "A step-by-step derivation column with the key condition sin kL = 0 highlighted and the allowed k_n shown as evenly spaced points on a k axis.",
                 "visualKind": "picture"
               },
@@ -2416,7 +2512,10 @@
                 "activityTemplate": null,
                 "brief": "Ask why the lowest state is n = 1 rather than n = 0. Include the tempting wrong answer 'n = 0 is the ground state with zero energy', and explain that n = 0 gives ψ ≡ 0, so the particle can never be at rest and has a zero-point energy E_1 > 0.",
                 "kind": "check",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2424,7 +2523,9 @@
                 "activityTemplate": null,
                 "brief": "Normalizing ∫|ψ|²dx = 1 over the box gives A = √(2/L), so ψ_n(x) = √(2/L) sin(nπx/L). These are standing waves: ψ_n fits n half-wavelengths into L and has n − 1 interior nodes, and the level spacing grows as E_n ∝ n².",
                 "kind": "explanation",
-                "skills": [2],
+                "skills": [
+                  2
+                ],
                 "visual": "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked.",
                 "visualKind": "picture"
               },
@@ -2432,7 +2533,10 @@
                 "activityTemplate": "formulaModel",
                 "brief": "The learner moves a slider for n from 1 to 6 and watches ψ_n(x) and |ψ_n|² redraw, with E_n/E_1 displayed. Then ask how many nodes ψ_4 has (3) and what E_3/E_1 is (9, not 3).",
                 "kind": "activity",
-                "skills": [1, 2],
+                "skills": [
+                  1,
+                  2
+                ],
                 "visual": "Graph of ψ_n(x) and |ψ_n(x)|² on 0 to L with an n slider and a live readout of E_n/E_1.",
                 "visualKind": "picture"
               },
@@ -2440,7 +2544,9 @@
                 "activityTemplate": null,
                 "brief": "Treat an electron in a box with L = 1.0 nm: E_1 = h²/(8m_eL²) ≈ 6.0 × 10⁻²⁰ J ≈ 0.38 eV, and E_2 = 4E_1 ≈ 1.50 eV. The 2 → 1 photon has ΔE = 3E_1 ≈ 1.13 eV, so λ = hc/ΔE ≈ 1100 nm, in the near infrared.",
                 "kind": "workedExample",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2448,7 +2554,9 @@
                 "activityTemplate": null,
                 "brief": "The learner calculates E_1 for the same electron in a box half as wide, with L = 0.5 nm, and picks the answer ≈ 1.5 eV. Include the tempting wrong answer ≈ 0.75 eV, which assumes E ∝ 1/L instead of 1/L².",
                 "kind": "check",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2456,7 +2564,11 @@
                 "activityTemplate": null,
                 "brief": "Return to the quantum dots and model the confinement energy as a particle in a box, E ∝ 1/L². The learner predicts by what factor the confinement contribution grows from a 6 nm dot to a 3 nm dot (a factor of 4) and explains why smaller dots emit bluer light.",
                 "kind": "application",
-                "skills": [0, 1, 2],
+                "skills": [
+                  0,
+                  1,
+                  2
+                ],
                 "visual": "Side-by-side energy ladders for a 6 nm and a 3 nm box drawn to scale, with the emitted photon arrows colored red and blue.",
                 "visualKind": "picture"
               }
@@ -2548,7 +2660,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Some distractors do not meet the requirement for plausible confusions among law graduates. Most notably, making human-rights protection depend on first selecting lawyers creates an artificial dependency. The invented two-year threshold for assuming judicial powers is also weak. These options make elimination easier without testing the intended distinction.",
           "kind": "minorErrors",
@@ -2591,7 +2707,9 @@
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade institucional como a atuação voltada ao interesse de todos, não apenas ao de uma profissão. Pelo art. 44, I, do Estatuto da Advocacia, ela inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2599,7 +2717,9 @@
                 "activityTemplate": null,
                 "brief": "Lorena leva à OAB duas propostas: cobrar providências para reduzir a demora dos processos e defender advogados em questões da profissão. Pergunte quais podem corresponder a finalidades da OAB: só a primeira; só a segunda; as duas; nenhuma. Resposta: as duas; mostre-a após a escolha e deixe o porquê para a próxima tela.",
                 "kind": "guess",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2607,7 +2727,9 @@
                 "activityTemplate": null,
                 "brief": "Complete o alcance do art. 44, I, do Estatuto da Advocacia: a OAB deve pugnar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Use a cobrança de providências contra atrasos como exemplo, sem confundi-la com o poder de decidir processos.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2615,7 +2737,9 @@
                 "activityTemplate": null,
                 "brief": "Raimundo sugere que a OAB, diante da demora de um processo, passe a decidir o recurso no lugar dos juízes. Peça que o aluno julgue a proposta: a resposta correta é que cobrar melhorias na Justiça não autoriza a OAB a julgar; inclua como alternativa tentadora que combater a demora lhe dá esse poder.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2623,7 +2747,9 @@
                 "activityTemplate": null,
                 "brief": "Thaís afirma que a OAB só pode cobrar rapidez da Justiça se também demonstrar que alguma lei foi aplicada incorretamente. Peça que o aluno julgue a afirmação: ela é incorreta, pois a rápida administração da justiça é uma finalidade prevista por si; a resposta tentadora é tratar as duas atuações do art. 44, I, como requisitos cumulativos.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2631,7 +2757,9 @@
                 "activityTemplate": null,
                 "brief": "Apresente a finalidade corporativa como a atuação referente aos profissionais da advocacia. Pelo art. 44, II, do Estatuto da Advocacia, cabe à OAB promover, com exclusividade, a representação, a defesa, a seleção e a disciplina dos advogados em toda a República Federativa do Brasil; explique que a exclusividade qualifica essas atribuições, não limita todas as finalidades da OAB aos advogados.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2639,7 +2767,9 @@
                 "activityTemplate": null,
                 "brief": "Murilo lê que a OAB atua com exclusividade na seleção de advogados e conclui que ela não pode defender direitos humanos de pessoas que não sejam advogadas. Peça que o aluno identifique o erro: a exclusividade do art. 44, II, não elimina a finalidade institucional do inciso I; inclua como alternativa tentadora a aplicação da exclusividade a toda atuação da OAB.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2647,7 +2777,9 @@
                 "activityTemplate": null,
                 "brief": "Sabrina analisa três pedidos dirigidos à OAB: cobrar providências diante de violações de direitos humanos, promover a seleção de advogados e assumir o julgamento de recursos atrasados. Peça que escolha a classificação completa: o primeiro corresponde ao art. 44, I, o segundo ao art. 44, II, e o terceiro não decorre dessas finalidades. Inclua como alternativa tentadora classificar os dois primeiros como corporativos por serem dirigidos à OAB.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -2764,7 +2896,9 @@
                 "activityTemplate": null,
                 "brief": "Mostre que a luz do Sol é a principal entrada de energia nessa sequência: as algas usam parte dela para produzir alimento, no qual fica energia disponível para outros seres vivos. Use a comparação com carregar uma bateria: nem toda a luz recebida fica guardada.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2772,7 +2906,9 @@
                 "activityTemplate": null,
                 "brief": "Em Macapá, Nayara registra 1.000 unidades de energia nas algas, 120 nos crustáceos que as comem e 14 nos peixes que comem os crustáceos. Volte ao gráfico de Nayara e pergunte: se a energia continuar diminuindo, qual valor poderia aparecer no grupo que come esses peixes? Opções: 10, 120, 140, 1.000 ou 1.140 unidades; revele 10 assim que você escolher, sem explicar o motivo ainda.",
                 "kind": "guess",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2780,7 +2916,9 @@
                 "activityTemplate": null,
                 "brief": "Explique a respiração celular como o uso do alimento pelo organismo para manter o corpo funcionando, semelhante a um motor que usa combustível e libera calor. Além dessa energia liberada, partes que não são comidas não passam ao consumidor seguinte daquele caminho.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2788,7 +2926,9 @@
                 "activityTemplate": null,
                 "brief": "Renan, em Maringá, afirma que a energia diminui entre um grupo e outro porque é destruída durante a respiração celular. Peça que você avalie a afirmação e escolha a correção: parte da energia é liberada ao ambiente como calor; inclua como alternativa tentadora que toda a energia do alimento passa intacta ao próximo consumidor.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2796,7 +2936,9 @@
                 "activityTemplate": null,
                 "brief": "Apresente a pirâmide de energia como uma forma de comparar a energia disponível em cada nível trófico: sua base é maior porque a cada transferência chega menos energia ao grupo seguinte. Mostre um gráfico de barras com plantas: 900 unidades; insetos que as comem: 108; aves que comem os insetos: 15.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2804,7 +2946,9 @@
                 "activityTemplate": null,
                 "brief": "Esclareça que a diminuição não segue uma porcentagem obrigatória: quanto fica disponível ao próximo grupo depende, entre outras coisas, do alimento consumido e da energia usada pelos organismos. Portanto, não se deve aplicar automaticamente uma regra de transferência de 10% a toda sequência.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2812,7 +2956,9 @@
                 "activityTemplate": "categorize",
                 "brief": "Em uma sequência de taboas → caramujos → marrecos, peça que você separe os destinos da energia em «pode chegar ao próximo consumidor desse caminho» e «não chega ao próximo consumidor desse caminho». Use como itens: energia no corpo de caramujos comidos pelos marrecos; energia nas partes das taboas comidas pelos caramujos; calor liberado pelos caramujos; energia nas partes das taboas que nenhum caramujo come. A distinção importante é que algo não consumido nesse caminho não desaparece.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "template"
               },
@@ -2820,7 +2966,9 @@
                 "activityTemplate": null,
                 "brief": "Em Petrolina, Jussara avalia um açude com plantas aquáticas, moluscos que as comem, peixes pequenos que comem os moluscos e peixes predadores que comem os peixes pequenos. Mostre um gráfico de barras com 12.000, 1.600, 180 e 21 unidades de energia nesses grupos, respectivamente. Para obter mais energia na pesca a partir da mesma base de plantas, peça que você escolha entre capturar peixes pequenos ou predadores e justifique usando os dados e a perda de energia nas transferências; inclua a opção tentadora de escolher predadores por estarem no topo da sequência.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -2896,7 +3044,11 @@
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
         {
           "conclusion": "The guess substitutes everyday descriptions for the explicitly required classification “preciso, mas não exato,” including in its reveal. Two feedback anchors are insufficient: screen 9's quotation explains the margin but cannot distinguish the two options with a 0.2 cm margin, while screen 10's “Calcule a distância entre os extremos” does not explain how to identify the erroneous calculation. The midpoint rule for the central result is also introduced only after checks already use that concept.",
           "kind": "minorErrors",
@@ -2939,7 +3091,9 @@
                 "activityTemplate": null,
                 "brief": "Apresente a precisão como o agrupamento das leituras: quanto mais próximas umas das outras, maior a precisão. Mostre numa tabela, com referência de 20,0 cm, o grupo X (22,0; 22,1; 22,2 cm) e o grupo Y (19,0; 20,0; 21,0 cm): X é mais preciso. Deixe claro que a precisão sozinha não diz se o resultado está perto da referência.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "table"
               },
@@ -2947,7 +3101,9 @@
                 "activityTemplate": null,
                 "brief": "Um terceiro sensor de Renan lê 51,0; 51,0; 51,1 mm na peça de 50,0 mm. Pergunte o que ele é: preciso e exato; preciso, mas não exato; exato, mas não preciso; nem um nem outro. Resposta: preciso, mas não exato; a próxima tela mostra por quê.",
                 "kind": "guess",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2955,7 +3111,9 @@
                 "activityTemplate": null,
                 "brief": "Apresente a exatidão como a proximidade do resultado central à referência: Y se distribui em torno de 20,0 cm, e X se agrupa em torno de 22,1 cm. Mostre que agrupar leituras e acertar o alvo são avaliações diferentes.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2963,7 +3121,9 @@
                 "activityTemplate": null,
                 "brief": "Com referência de 5,00 V, o multímetro P leu 5,30; 5,31; 5,30 V e o multímetro Q leu 4,80; 5,00; 5,20 V. Mostre as leituras numa tabela e peça que o aluno escolha a descrição correta: P é mais preciso e Q tem o resultado central mais exato. Inclua como alternativa tentadora que o mais preciso também é o mais exato.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "table"
               },
@@ -2971,7 +3131,9 @@
                 "activityTemplate": null,
                 "brief": "Com referência de 100,0 g, o sensor C leu 98,0; 100,0; 102,0 g e o sensor D leu 103,0; 103,1; 103,2 g. Pergunte qual sensor repete quase o mesmo resultado, mas exige investigar seu desvio da referência. Resposta: D; inclua como alternativa tentadora escolher C por ter uma leitura igual à referência.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2979,7 +3141,9 @@
                 "activityTemplate": null,
                 "brief": "Apresente a incerteza como a margem que comunica a variação observada: com leituras de 8,0; 8,2; 8,4 cm, o meio entre os extremos é 8,2 cm e metade da distância entre eles é 0,2 cm, então a estimativa é 8,2 ± 0,2 cm. Esclareça que essa margem não garante que a referência esteja dentro dela.",
                 "kind": "explanation",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2987,7 +3151,9 @@
                 "activityTemplate": null,
                 "brief": "Jussara mede uma peça três vezes e obtém 18,6; 18,8; 19,0 mm. Mostre passo a passo o meio entre a menor e a maior leitura (18,8 mm), a distância entre os extremos (0,4 mm) e metade dela como margem (0,2 mm), chegando a 18,8 ± 0,2 mm.",
                 "kind": "workedExample",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -2995,7 +3161,9 @@
                 "activityTemplate": null,
                 "brief": "Dê três leituras da mesma medida, 11,7; 11,9; 12,1 cm, e peça o resultado central com a margem pelo procedimento de Jussara. Resposta: 11,9 ± 0,2 cm; inclua como alternativa tentadora 11,9 ± 0,4 cm, que usa a distância inteira entre os extremos como margem.",
                 "kind": "check",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3003,7 +3171,9 @@
                 "activityTemplate": null,
                 "brief": "Kauã estima a incerteza de 31,6; 32,0; 32,4 °C em quatro passos: o meio dos extremos é 32,0 °C; a distância entre eles é 0,4 °C; a metade é 0,2 °C; o resultado é 32,0 ± 0,2 °C. Peça que você encontre o primeiro passo errado: a distância é 0,8 °C, então o resultado é 32,0 ± 0,4 °C; inclua como alternativa tentadora apontar o último passo.",
                 "kind": "check",
-                "skills": [1],
+                "skills": [
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3011,7 +3181,10 @@
                 "activityTemplate": null,
                 "brief": "Na Termolab, em Joinville, Tainá escolhe um sensor para peças de referência 50,0 mm: o resultado central deve ficar a no máximo 0,2 mm dela, e a margem estimada deve ser de no máximo 0,2 mm. Mostre numa tabela as leituras do sensor A (49,5; 49,6; 49,7 mm) e do sensor B (49,8; 50,0; 50,2 mm) e peça que você escolha o sensor que atende às duas condições, com os resultados aproximados de A e B. Resposta: B (A: 49,6 ± 0,1 mm; B: 50,0 ± 0,2 mm); inclua como alternativa tentadora escolher A por ter a menor margem.",
                 "kind": "application",
-                "skills": [0, 1],
+                "skills": [
+                  0,
+                  1
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -3140,7 +3313,9 @@
                 "activityTemplate": null,
                 "brief": "Retome brevemente que um organismo é um ser vivo inteiro, como um sapo-cururu. Apresente espécie como um grupo de seres vivos semelhantes que podem se reproduzir entre si e gerar descendentes férteis; os sapos-cururus mostrados pertencem à mesma espécie.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "O lago com um sapo-cururu destacado e outros sapos-cururus da mesma espécie visíveis.",
                 "visualKind": "picture"
               },
@@ -3148,7 +3323,9 @@
                 "activityTemplate": null,
                 "brief": "Explique que uma população reúne os organismos de uma mesma espécie que vivem em uma área ao mesmo tempo. No lago, todos os sapos-cururus formam uma população.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "O lago com todos os sapos-cururus destacados como um grupo; plantas aquáticas e água ao redor.",
                 "visualKind": "picture"
               },
@@ -3156,7 +3333,9 @@
                 "activityTemplate": null,
                 "brief": "Uma pessoa junta a contagem de todos os sapos-cururus de dois lagos separados e chama o resultado de população de um dos lagos. Peça que identifique o erro: a população de cada lago reúne os sapos daquela área. Inclua a alternativa tentadora de que basta serem da mesma espécie, mesmo em áreas separadas.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3164,7 +3343,9 @@
                 "activityTemplate": null,
                 "brief": "Explique que uma comunidade reúne todas as populações de seres vivos de uma área. No lago, ela inclui tanto os sapos-cururus quanto os aguapés e os demais seres vivos presentes.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "O lago com sapos-cururus, aguapés e outros seres vivos destacados; água e solo ao redor sem destaque.",
                 "visualKind": "picture"
               },
@@ -3172,7 +3353,9 @@
                 "activityTemplate": null,
                 "brief": "Alguém junta os sapos-cururus e os aguapés do lago e diz que todos formam uma única população. Peça que avalie a afirmação: são populações de espécies diferentes. Inclua a alternativa tentadora de que todos formam uma população porque vivem no mesmo lago.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3180,7 +3363,9 @@
                 "activityTemplate": null,
                 "brief": "Explique que um ecossistema inclui a comunidade, os componentes não vivos do ambiente e as relações entre eles. No lago, os seres vivos se relacionam com a água, o solo e a luz; por exemplo, os aguapés usam água e luz.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": "O lago com sapos-cururus, aguapés, outros seres vivos, água e solo; luz do Sol chegando aos aguapés.",
                 "visualKind": "picture"
               },
@@ -3188,7 +3373,9 @@
                 "activityTemplate": "categorize",
                 "brief": "Peça que classifique quatro descrições do lago nos níveis organismo, população, comunidade e ecossistema: um sapo-cururu; todos os sapos-cururus do lago; todos os seres vivos do lago; e os seres vivos, a água, o solo, a luz e suas relações. Na devolutiva, contraste especialmente a comunidade com o ecossistema.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "template"
               },
@@ -3196,7 +3383,9 @@
                 "activityTemplate": null,
                 "brief": "Murilo quer estudar no lago como os seres vivos se relacionam com a água e a luz. Peça que escolha qual recorte atende ao objetivo e justifique: o ecossistema, com seres vivos, componentes não vivos e relações. Inclua como alternativa tentadora apenas a comunidade de seres vivos.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -3313,7 +3502,9 @@
                 "activityTemplate": "formulaModel",
                 "brief": "Explique que patrimônio líquido é o valor dos bens e direitos da empresa menos suas obrigações; é um valor contábil, não uma previsão do preço de venda. Mostre o modelo da oficina de Davi: patrimônio líquido = bens + direitos − obrigações, com controles de R$ 0,00 a R$ 10.000,00 para cada parcela, iniciando em R$ 6.000,00, R$ 2.000,00 e R$ 3.000,00, respectivamente; trace o patrimônio líquido conforme as obrigações variam.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "template"
               },
@@ -3321,7 +3512,9 @@
                 "activityTemplate": null,
                 "brief": "Resolva passo a passo com os valores da oficina de Davi: apresente uma tabela com bens de R$ 6.000,00, direitos de R$ 2.000,00 e obrigações de R$ 3.000,00. Some bens e direitos, obtendo R$ 8.000,00, e subtraia as obrigações para chegar ao patrimônio líquido de R$ 5.000,00.",
                 "kind": "workedExample",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3329,7 +3522,9 @@
                 "activityTemplate": null,
                 "brief": "Peça que calcule o patrimônio líquido de uma empresa com bens de R$ 4.000,00, direitos de R$ 1.000,00 e obrigações de R$ 2.000,00; mostre os três valores em uma tabela. A resposta é R$ 3.000,00; inclua R$ 5.000,00 como erro tentador por não descontar as obrigações.",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3337,7 +3532,9 @@
                 "activityTemplate": null,
                 "brief": "Explique que, se as obrigações forem maiores que a soma dos bens e direitos, o patrimônio líquido será negativo. Em uma tabela para a oficina de Davi, mostre bens e direitos de R$ 4.000,00, obrigações de R$ 5.000,00 e a diferença de −R$ 1.000,00: as obrigações superam os recursos em R$ 1.000,00.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3345,7 +3542,9 @@
                 "activityTemplate": "formulaModel",
                 "brief": "No modelo da oficina de Davi, mantenha bens em R$ 6.000,00 e direitos em R$ 2.000,00; permita variar as obrigações de R$ 0,00 a R$ 10.000,00 e trace o patrimônio líquido. Peça que mova as obrigações de R$ 3.000,00 para R$ 5.000,00 e identifique o novo patrimônio líquido, R$ 3.000,00; inclua R$ 10.000,00 como erro de somar a dívida.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "template"
               },
@@ -3353,7 +3552,9 @@
                 "activityTemplate": null,
                 "brief": "Davi confere os valores da oficina: dinheiro de R$ 1.000,00, ferramentas de R$ 7.000,00, valor a receber de cliente de R$ 2.000,00, dívida bancária de R$ 4.000,00 e valor devido a fornecedor de R$ 1.500,00; mostre-os em uma tabela. Peça o patrimônio líquido, R$ 4.500,00, e inclua R$ 8.500,00 como erro de descontar apenas o fornecedor.",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               }
@@ -3470,7 +3671,9 @@
                 "activityTemplate": null,
                 "brief": "Explique que receita é dinheiro que Igor recebe, como o salário do emprego ou o pagamento por um conserto.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3478,7 +3681,9 @@
                 "activityTemplate": null,
                 "brief": "Explique que uma receita regular volta a ser recebida em intervalos habituais; o valor pode mudar. Mostre uma tabela do salário de Igor: janeiro, fevereiro e março, com «recebido» em cada mês.",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3486,7 +3691,9 @@
                 "activityTemplate": null,
                 "brief": "Igor recebe pagamento por um serviço toda semana, mas o valor varia. Pergunte se essa receita é regular; a resposta é sim. Inclua como alternativa tentadora «Não, porque o valor muda».",
                 "kind": "check",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3494,7 +3701,9 @@
                 "activityTemplate": null,
                 "brief": "Explique que uma receita eventual acontece sem intervalos habituais, como o pagamento por consertos que aparecem de vez em quando. Mostre uma tabela dos consertos de Igor: janeiro, «recebeu»; fevereiro, «não recebeu»; março, «recebeu»; abril, «não recebeu».",
                 "kind": "explanation",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               },
@@ -3502,7 +3711,9 @@
                 "activityTemplate": "categorize",
                 "brief": "Peça para separar as receitas de Igor em «regulares» e «eventuais»: salário recebido todo mês e serviço pago toda semana vão em regulares; conserto recebido uma única vez e venda única de um objeto vão em eventuais. Pergunte em qual grupo fica cada uma e destaque a frequência como critério.",
                 "kind": "activity",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "template"
               },
@@ -3510,7 +3721,9 @@
                 "activityTemplate": null,
                 "brief": "Igor recebe salário todo mês e aceita consertos apenas quando aparecem clientes. Para pensar nas entradas dos próximos meses, peça que escolha entre «Considerar o salário regular e os consertos eventuais» (correta) e «Contar com consertos todo mês» (tentadora).",
                 "kind": "application",
-                "skills": [0],
+                "skills": [
+                  0
+                ],
                 "visual": null,
                 "visualKind": "none"
               }

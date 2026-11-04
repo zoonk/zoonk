@@ -230,10 +230,10 @@ export const ACTIVITY_LESSON_SPECS = {
         visualKind: "picture",
       },
       {
-        activityTemplate: "decisionTree",
+        activityTemplate: null,
         brief:
-          "The learner walks a key to name the tree from a leaf they can see: long needles growing in bundles of two. Likely mistake: stopping at needles and saying spruce, without checking whether they grow in bundles.",
-        kind: "activity",
+          "Show a twig with long needles growing in bundles of two and ask which tree the key leads to. Likely mistake: stopping at needles and saying spruce, without checking whether they grow in bundles.",
+        kind: "check",
         skills: [0],
         visual: "A pine twig with long needles growing in bundles of two, close up.",
         visualKind: "picture",
