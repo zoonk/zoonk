@@ -362,23 +362,12 @@ struct LessonActionBar: View {
   var body: some View {
     HStack(spacing: 12) {
       if state.canGoBack {
-        Button {
+        StepBackButton(
+          label: Text(
+            "Previous screen", tableName: "Player", comment: "Goes back one screen in the lesson")
+        ) {
           store.goBack()
-        } label: {
-          Label {
-            Text(
-              "Previous screen", tableName: "Player",
-              comment: "Goes back one screen in the lesson")
-          } icon: {
-            Image(systemName: "chevron.left")
-          }
-          .labelStyle(.iconOnly)
-          .frame(minHeight: 32)
         }
-        .buttonStyle(.bordered)
-        .buttonBorderShape(.circle)
-        .controlSize(.large)
-        .keyboardShortcut(.leftArrow, modifiers: [])
       }
 
       if step.isRead {

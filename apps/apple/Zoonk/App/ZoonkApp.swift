@@ -32,6 +32,12 @@ struct ZoonkApp: App {
   init() {
     ErrorReporting.start()
 
+    // On its light capsule the system draws the current page white and the others gray, so the
+    // dot that stands out is the wrong one. Main's step dots show the current step in the text
+    // color.
+    UIPageControl.appearance().currentPageIndicatorTintColor = .label
+    UIPageControl.appearance().pageIndicatorTintColor = .tertiaryLabel
+
     #if DEBUG
       let configuration = UITestConfiguration.current
       let dependencies = configuration?.dependencies ?? .live()
