@@ -119,16 +119,12 @@ async function loadDrillMaterial({
 
   const questionSkillIds = [...new Set(skillIds.flatMap((id) => [id, ownerOf.get(id) ?? id]))];
 
-  const query = {
-    include: { ...ITEM_IMAGE_INCLUDE, ...ITEM_SET_INCLUDE },
-    orderBy: { id: "asc" },
-  } as const;
-
   const where = { format: { in: [...GRADABLE_ITEM_FORMATS] }, skillId: { in: questionSkillIds } };
 
   const [bank, lessons] = await Promise.all([
     prisma.item.findMany({
-      ...query,
+      include: ITEM_IMAGE_INCLUDE,
+      orderBy: { id: "asc" },
       where: { ...where, ...getItemAudienceFilter({ examBlueprintId, field }) },
     }),
     findTeachingLessonIds({ skillIds, userId }),
@@ -142,16 +138,22 @@ async function loadDrillMaterial({
 
   const [originals, answered] = await Promise.all([
     outsideBankIds.length > 0
-      ? prisma.item.findMany({ ...query, where: { ...where, id: { in: outsideBankIds } } })
+      ? prisma.item.findMany({
+          include: { ...ITEM_IMAGE_INCLUDE, ...ITEM_SET_INCLUDE },
+          where: { ...where, id: { in: outsideBankIds } },
+        })
       : [],
     prisma.attempt.groupBy({ by: ["itemId"], where: { itemId: { in: [...bankIds] }, userId } }),
   ]);
 
-  const items = [...bank, ...originals];
   const seen = new Set(answered.map((attempt) => attempt.itemId));
-  const choices = items.map((item) => parseChoiceItem(item)).filter((item) => item !== null);
 
-  const sets = new Map(items.map((item) => [item.id, toItemSetView({ item })]));
+  const choices = [...bank, ...originals]
+    .map((item) => parseChoiceItem(item))
+    .filter((item) => item !== null);
+
+  // The audience filter leaves set questions out of the bank, so only an original has a set.
+  const sets = new Map(originals.map((item) => [item.id, toItemSetView({ item })]));
 
   return { bankIds, choices, lessons, seen, sets };
 }
