@@ -9,10 +9,16 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -43,7 +49,10 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class PronunciationScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -69,6 +78,33 @@ class PronunciationScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = capture("tablet")
+
+    @Test
+    @Config(qualifiers = "w700dp-h840dp-xhdpi")
+    fun medium() = capture("medium")
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun book() = capture("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDarkMoreContrast() = capture("book-dark-more-contrast", dark = true, moreContrast = true, fold = true)
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("book-font200", fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookRightToLeft() = capture("book-rtl", fold = true, layoutDirection = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun galaxyFold() = capture("galaxy-fold", fold = true)
 
     private val comesBack: PronunciationAnswerGrade =
         ApiJson.decodeFromString(
@@ -104,6 +140,8 @@ class PronunciationScreenshots {
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        fold: Boolean = false,
+        layoutDirection: LayoutDirection? = null,
     ) {
         val cache =
             AppCache(
@@ -126,7 +164,10 @@ class PronunciationScreenshots {
         compose.setContent {
             val model = models[index]
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
+                CompositionLocalProvider(
+                    LocalSnackbarHostState provides SnackbarHostState(),
+                    LocalLayoutDirection provides (layoutDirection ?: LocalLayoutDirection.current),
+                ) {
                     key(index) { PronunciationRoundScreen(model.round!!, model, previewSpeech(), rememberAppNavigator()) }
                 }
             }
@@ -134,6 +175,21 @@ class PronunciationScreenshots {
         states.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
+            // Each screen reads the window afresh, and the publisher doesn't replay a fold to a late reader.
+            if (fold) {
+                folds.overrideWindowLayoutInfo(
+                    TestWindowLayoutInfo(
+                        listOf(
+                            FoldingFeature(
+                                compose.activity,
+                                state = FoldingFeature.State.FLAT,
+                                orientation = FoldingFeature.Orientation.VERTICAL,
+                            ),
+                        ),
+                    ),
+                )
+                compose.waitForIdle()
+            }
             write("${states[screen].name}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
     }
@@ -145,5 +201,9 @@ class PronunciationScreenshots {
         val file = File(folder, "pronunciation-$name.png")
         file.parentFile?.mkdirs()
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    private companion object {
+        const val BOOK = "w852dp-h883dp-xhdpi"
     }
 }

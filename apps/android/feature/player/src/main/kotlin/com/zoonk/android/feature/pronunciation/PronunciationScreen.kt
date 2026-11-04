@@ -1,16 +1,22 @@
 package com.zoonk.android.feature.pronunciation
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -50,6 +56,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
@@ -82,7 +89,7 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberRecordTap
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.withoutFailure
-import com.zoonk.android.feature.player.LessonColumn
+import com.zoonk.android.feature.player.lessonColumnWidth
 import com.zoonk.android.feature.player.segmentParts
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.navigation.AppNavigator
@@ -102,7 +109,12 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.api.models.PronunciationAnswerGrade
 import com.zoonk.api.models.PronunciationRoundResult
 import java.time.ZoneId
@@ -224,54 +236,121 @@ private fun WordStep(
         haptics.performHapticFeedback(if (grade.isCorrect) HapticFeedbackType.Confirm else HapticFeedbackType.Reject)
     }
 
-    TaskScaffold(
-        onClose = navigator::closeTask,
-        modifier = Modifier.taskKeys(onEnter = { if (step.grade != null && !round.pending) model.next() }, onEscape = navigator::closeTask),
-        title = { Text(stringResource(R.string.pronunciation_title)) },
-        actions = {
-            if (step.grade == null && !model.microphoneOff) {
-                WordMenu(enabled = !round.pending && !recording, onSkip = model::next)
-            }
-        },
-        bottomBar = {
-            TaskActionBar {
-                if (round.finishFailed) SaveFailed(onRetry = model::finish)
-                WordActions(round, step, model, status, tapRecord)
-            }
-        },
-    ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
-            LessonColumn(Modifier.padding(top = 8.dp, bottom = 16.dp)) { RoundMeter(round) }
-            Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 16.dp)) {
-                LessonColumn {
-                    key(word.id) { WordCard(word, round.language, normal, slow, navigator) }
-                    val grade = step.grade
-                    when {
-                        grade != null -> {
-                            GradeNote(grade)
-                        }
+    SpreadScreen {
+        TaskScaffold(
+            onClose = navigator::closeTask,
+            modifier =
+                Modifier.taskKeys(onEnter = { if (step.grade != null && !round.pending) model.next() }, onEscape = navigator::closeTask),
+            title = { Text(stringResource(R.string.pronunciation_title)) },
+            actions = {
+                if (step.grade == null && !model.microphoneOff) {
+                    WordMenu(enabled = !round.pending && !recording, onSkip = model::next)
+                }
+            },
+            bottomBar = {
+                TaskActionBar {
+                    if (round.finishFailed) SaveFailed(onRetry = model::finish)
+                    WordActions(round, step, model, status, tapRecord)
+                }
+            },
+        ) { padding ->
+            WordPages(
+                Modifier.fillMaxSize().padding(padding),
+                meter = { RoundMeter(round) },
+                word = { key(word.id) { WordCard(word, round.language, normal, slow, navigator) } },
+            ) {
+                val grade = step.grade
+                when {
+                    grade != null -> {
+                        GradeNote(grade)
+                    }
 
-                        model.microphoneOff -> {
-                            MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
-                        }
+                    model.microphoneOff -> {
+                        MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
+                    }
 
-                        step.issue is VoiceIssue.Limited && !recording && !round.pending -> {
-                            LimitNotice(
-                                step.issue.limit,
-                                LimitSubject.Help,
-                                onCreateAccount = { navigator.open(AppRoute.Login) },
-                                onSeePlus = { navigator.open(AppRoute.Subscription) },
-                            )
-                        }
+                    step.issue is VoiceIssue.Limited && !recording && !round.pending -> {
+                        LimitNotice(
+                            step.issue.limit,
+                            LimitSubject.Help,
+                            onCreateAccount = { navigator.open(AppRoute.Login) },
+                            onSeePlus = { navigator.open(AppRoute.Subscription) },
+                        )
+                    }
 
-                        else -> {
-                            RecorderStatus(step.issue, pending = round.pending, recording = recording)
-                        }
+                    else -> {
+                        RecorderStatus(step.issue, pending = round.pending, recording = recording)
                     }
                 }
             }
         }
     }
+}
+
+/**
+ * A word as a spread, as a practice question: the [meter] and the [word] on the page before the split, the learner's
+ * [turn] on the page after it, above the docked actions. The turn's page is the one column's place.
+ */
+@Composable
+private fun WordPages(
+    modifier: Modifier,
+    meter: @Composable () -> Unit,
+    word: @Composable () -> Unit,
+    turn: @Composable ColumnScope.() -> Unit,
+) {
+    // The one column and the word's page share their scroll, so the reading place keeps as the book opens or closes.
+    val scroll = rememberScrollState()
+    val turnScroll = rememberScrollState()
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+
+    BoxWithConstraints(modifier.onPageSpan { span = it }) {
+        val fold = spreadFold(maxWidth, span)
+
+        Column(Modifier.fillMaxSize()) {
+            Box(
+                (if (fold == null) Modifier.fillMaxWidth() else Modifier.width(fold.start))
+                    .wrapContentWidth(if (fold == null) Alignment.CenterHorizontally else Alignment.End)
+                    .lessonColumnWidth()
+                    .padding(top = 8.dp, bottom = 16.dp),
+            ) { meter() }
+            Box(Modifier.weight(1f).fillMaxWidth()) {
+                val turnPage = if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }
+                WordPage(
+                    Modifier.fillMaxSize().then(turnPage),
+                    if (fold == null) scroll else turnScroll,
+                    if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
+                ) {
+                    if (fold == null) word()
+                    turn()
+                }
+                if (fold != null) {
+                    WordPage(
+                        Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true },
+                        scroll,
+                        Alignment.End,
+                    ) { word() }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WordPage(
+    modifier: Modifier,
+    scroll: ScrollState,
+    align: Alignment.Horizontal,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier
+            .verticalScroll(scroll)
+            .padding(bottom = 16.dp)
+            .wrapContentWidth(align)
+            .lessonColumnWidth(),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        content = content,
+    )
 }
 
 @Composable
@@ -543,6 +622,7 @@ private fun RoundEnd(
     onDone: () -> Unit,
 ) {
     val noWords = round.words.isEmpty()
+    val title = if (result == null) R.string.pronunciation_nothing_said else R.string.pronunciation_practice_done
 
     TaskScaffold(
         onClose = onDone,
@@ -554,38 +634,37 @@ private fun RoundEnd(
             }
         },
     ) { padding ->
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 24.dp),
-        ) {
-            LessonColumn(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
-                if (noWords) {
-                    Text(
-                        stringResource(R.string.pronunciation_no_words),
-                        Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                    return@LessonColumn
-                }
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        stringResource(if (result == null) R.string.pronunciation_nothing_said else R.string.pronunciation_practice_done),
-                        Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                    Text(
-                        stringResource(R.string.pronunciation_accent),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-                result?.let {
-                    MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
-                }
-            }
+        Box(Modifier.padding(padding).semantics { liveRegion = LiveRegionMode.Polite }) {
+            ResultPages(
+                withMoment = true,
+                columnModifier = Modifier.lessonColumnWidth(),
+                done = {
+                    if (noWords) {
+                        Text(
+                            stringResource(R.string.pronunciation_no_words),
+                            Modifier.semantics { heading() },
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                    } else {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                stringResource(title),
+                                Modifier.semantics { heading() },
+                                style = MaterialTheme.typography.headlineSmall,
+                            )
+                            Text(
+                                stringResource(R.string.pronunciation_accent),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                        result?.let {
+                            MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
+                        }
+                    }
+                },
+                next = {},
+            )
         }
     }
 }
