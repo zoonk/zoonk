@@ -46,8 +46,8 @@ struct DataExportRow: View {
 
       if failed {
         FailureLine(
-          String(
-            localized: "We couldn't prepare the download. Try again.", table: "Settings",
+          message: LocalizedStringResource(
+            "We couldn't prepare the download. Try again.", table: "Settings",
             comment: "Shown when a data download failed")
         )
         .font(.subheadline)

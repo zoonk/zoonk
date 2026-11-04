@@ -80,8 +80,8 @@ private struct ListenButtons: View {
           HelpLimitNotice(limit: limit)
         } else {
           FailureLine(
-            String(
-              localized: "The sound didn't play. Try again.", table: "Voice",
+            message: LocalizedStringResource(
+              "The sound didn't play. Try again.", table: "Voice",
               comment: "Playing a word's sound failed")
           )
           .font(.footnote)

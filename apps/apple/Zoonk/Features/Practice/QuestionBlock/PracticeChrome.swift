@@ -283,8 +283,8 @@ struct PracticeSaveError: View {
   var body: some View {
     HStack {
       FailureLine(
-        String(
-          localized: "Your answer wasn't saved. Check your connection.", table: "Practice",
+        message: LocalizedStringResource(
+          "Your answer wasn't saved. Check your connection.", table: "Practice",
           comment:
             "Shown over a run's actions when an answer or the finish didn't reach the server.")
       )

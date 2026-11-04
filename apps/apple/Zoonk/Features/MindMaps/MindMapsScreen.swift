@@ -148,7 +148,7 @@ private struct MindMapTile: View {
         .foregroundStyle(.secondary)
       } else if map.status == .available || map.status == .failed {
         if let failure = store.failures[map.chapterId] {
-          FailureLine(failureMessage(failure))
+          FailureLine(message: failureMessage(failure))
             .font(.footnote)
         } else if map.status == .failed {
           Text(

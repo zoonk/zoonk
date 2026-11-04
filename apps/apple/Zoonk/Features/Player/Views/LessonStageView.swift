@@ -296,8 +296,8 @@ private struct LessonCheckNote: View {
 
     if state.checkFailed {
       FailureLine(
-        String(
-          localized: "We couldn't check your answer this time. Try again.", table: "Player",
+        message: LocalizedStringResource(
+          "We couldn't check your answer this time. Try again.", table: "Player",
           comment: "The server couldn't grade a written or spoken answer")
       )
       .font(.subheadline)

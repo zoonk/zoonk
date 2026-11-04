@@ -138,8 +138,8 @@ struct TestOutScreen: View {
 
       if undo == .failed {
         FailureLine(
-          String(
-            localized: "We couldn't put the lessons back. Try again.", table: "Practice",
+          message: LocalizedStringResource(
+            "We couldn't put the lessons back. Try again.", table: "Practice",
             comment: "Undoing a test-out's skip failed.")
         )
         .font(.subheadline)

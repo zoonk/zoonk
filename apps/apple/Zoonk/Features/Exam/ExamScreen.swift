@@ -231,8 +231,8 @@ private struct ExamHero: View {
           }
           if dateFailed {
             FailureLine(
-              String(
-                localized: "That didn't go through. Try again in a moment.", table: "Exam",
+              message: LocalizedStringResource(
+                "That didn't go through. Try again in a moment.", table: "Exam",
                 comment: "Changing the date failed"))
           }
           Button {
@@ -292,8 +292,8 @@ private struct ExamHero: View {
 
         if dateFailed {
           FailureLine(
-            String(
-              localized: "That didn't go through. Try again in a moment.", table: "Exam",
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Exam",
               comment: "Changing the date failed"))
         }
       }
@@ -441,8 +441,8 @@ private struct ExamResultSection: View {
 
       if form.failed {
         FailureLine(
-          String(
-            localized: "That didn't go through. Try again in a moment.", table: "Exam",
+          message: LocalizedStringResource(
+            "That didn't go through. Try again in a moment.", table: "Exam",
             comment: "Saving the result failed"))
       }
 
@@ -995,7 +995,7 @@ private struct SpeakingMockSection: View {
         switch start.refusal {
         case .limit(let limit):
           FailureLine(
-            limit.period == .month
+            message: limit.period == .month
               ? String(
                 localized: "Not enough call time this month for this mock", table: "Exam",
                 comment: "The call time left this month can't fit the mock")
@@ -1006,8 +1006,8 @@ private struct SpeakingMockSection: View {
           EmptyView()
         case .some:
           FailureLine(
-            String(
-              localized: "The mock didn't start. Try again in a moment.", table: "Exam",
+            message: LocalizedStringResource(
+              "The mock didn't start. Try again in a moment.", table: "Exam",
               comment: "Starting the speaking mock failed"))
         }
       }

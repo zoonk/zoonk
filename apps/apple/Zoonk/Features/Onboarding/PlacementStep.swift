@@ -198,8 +198,8 @@ struct PlacementStep: View {
     if failed {
       Section {
         FailureLine(
-          String(
-            localized: "That didn't save. Try again.", table: "Onboarding",
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
             comment: "A change couldn't be saved"))
       }
     }
@@ -580,8 +580,8 @@ struct PlacementQuestionScreen<Media: View>: View {
 
       if failed {
         FailureLine(
-          String(
-            localized: "That didn't save. Try again.", table: "Onboarding",
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
             comment: "A change couldn't be saved"))
       }
     } actions: {

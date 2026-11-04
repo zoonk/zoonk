@@ -176,15 +176,15 @@ struct MockStepStatus: View {
         .foregroundStyle(.secondary)
       case .refused:
         FailureLine(
-          String(
-            localized: "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
+          message: LocalizedStringResource(
+            "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
       case .saved, .saving:
         EmptyView()
       }
 
       if run.failed {
         FailureLine(
-          run.queue.status == .saved
+          message: run.queue.status == .saved
             ? String(
               localized: "That didn't go through. Your answers are saved. Try again in a moment.",
               table: "Mock", comment: "A mock step failed; the answers are saved")

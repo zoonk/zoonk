@@ -392,12 +392,16 @@ private struct PlanPausedSlot: View {
         FailureLine(
           message: LocalizedStringResource(
             "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
-            table: "Plan", comment: "Explains why resuming a goal failed on the free plan"))
+            table: "Plan", comment: "Explains why resuming a goal failed on the free plan")
+        )
+        .font(.footnote)
       case .failed:
         FailureLine(
           message: LocalizedStringResource(
             "That didn't save. Try again.", table: "Plan",
-            comment: "Resuming the paused goal didn't save"))
+            comment: "Resuming the paused goal didn't save")
+        )
+        .font(.footnote)
       case .saved, nil:
         EmptyView()
       }
@@ -473,8 +477,8 @@ private struct PlanFinishedSlot: View {
 
       if failed {
         FailureLine(
-          String(
-            localized: "That didn't work. Try again in a moment.", table: "Plan",
+          message: LocalizedStringResource(
+            "That didn't work. Try again in a moment.", table: "Plan",
             comment: "Says the next level didn't start")
         )
         .font(.subheadline)

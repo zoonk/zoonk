@@ -28,8 +28,8 @@ struct TutorPlanChangeCard: View {
 
         if failed {
           FailureLine(
-            String(
-              localized: "We couldn't save your answer. Try again.", table: "Tutor",
+            message: LocalizedStringResource(
+              "We couldn't save your answer. Try again.", table: "Tutor",
               comment: "Answering a plan change the buddy proposed failed")
           )
           .font(.footnote)

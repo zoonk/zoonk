@@ -84,7 +84,7 @@ struct TutorTurnView: View {
           .foregroundStyle(.secondary)
         } else {
           if let failure {
-            FailureLine(answerFailureMessage(failure))
+            FailureLine(message: answerFailureMessage(failure))
               .font(.subheadline)
           } else {
             // An answer that failed before this visit is part of the thread, not news to announce.

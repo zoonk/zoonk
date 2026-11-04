@@ -499,7 +499,7 @@ struct NumericItemView: View {
       .modifier(AnswerFieldStyle(mark: mark))
 
       if isInvalid {
-        FailureLine(String(localized: invalidHint))
+        FailureLine(message: invalidHint)
           .font(.subheadline)
       } else if let rule {
         Text(rule)

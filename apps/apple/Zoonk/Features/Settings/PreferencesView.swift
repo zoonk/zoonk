@@ -186,8 +186,8 @@ struct SettingsSaveError: View {
   var body: some View {
     Section {
       FailureLine(
-        String(
-          localized: "That didn't save. Try again.", table: "Settings",
+        message: LocalizedStringResource(
+          "That didn't save. Try again.", table: "Settings",
           comment: "Shown when a setting change didn't save"),
         systemImage: "exclamationmark.circle")
     }

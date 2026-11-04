@@ -756,8 +756,8 @@ private struct MockEssaySections: View {
       case .failed, .idle:
         if run.essayGrading == .failed {
           FailureLine(
-            String(
-              localized: "That didn't go through. Try again in a moment.", table: "Mock",
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Mock",
               comment: "Grading failed"))
         } else {
           Text("It hasn't been graded yet.", tableName: "Mock", comment: "An ungraded essay")
@@ -1008,8 +1008,8 @@ private struct MockPlanSection: View {
       } else {
         if answers.byOffer.values.contains(.failed) {
           FailureLine(
-            String(
-              localized: "That didn't go through. Try again in a moment.", table: "Mock",
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Mock",
               comment: "Applying the plan change failed"))
         }
 

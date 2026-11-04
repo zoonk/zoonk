@@ -121,8 +121,8 @@ struct PlanAlphabetRow: View {
 
       if failed {
         FailureLine(
-          String(
-            localized: "That didn't work. Try again in a moment.", table: "Plan",
+          message: LocalizedStringResource(
+            "That didn't work. Try again in a moment.", table: "Plan",
             comment: "Says skipping the alphabet failed"))
       }
     }

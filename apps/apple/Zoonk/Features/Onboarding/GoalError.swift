@@ -153,7 +153,7 @@ struct GoalErrorSection: View {
       }
     } else {
       Section {
-        FailureLine(String(localized: error.message))
+        FailureLine(message: error.message)
       }
     }
   }

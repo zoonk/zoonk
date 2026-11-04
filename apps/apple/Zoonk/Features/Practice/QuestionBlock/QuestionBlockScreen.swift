@@ -483,8 +483,8 @@ private struct PauseSuggestionView: View {
 
       if failed {
         FailureLine(
-          String(
-            localized: "We couldn't stop the session. Try again.", table: "Practice",
+          message: LocalizedStringResource(
+            "We couldn't stop the session. Try again.", table: "Practice",
             comment: "Stopping the session failed.")
         )
         .font(.subheadline)

@@ -556,8 +556,8 @@ private struct PlanToolChoiceSheet: View {
 
           if failed {
             FailureLine(
-              String(
-                localized: "That didn't save. Try again.", table: "Plan",
+              message: LocalizedStringResource(
+                "That didn't save. Try again.", table: "Plan",
                 comment: "The tool choice didn't save; Save tries again"))
           }
         }

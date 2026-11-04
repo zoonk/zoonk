@@ -259,8 +259,8 @@ private struct BuddyContent: View {
 
       if store.saveFailed {
         FailureLine(
-          String(
-            localized: "We couldn't save your buddy. Try again.", table: "Buddy",
+          message: LocalizedStringResource(
+            "We couldn't save your buddy. Try again.", table: "Buddy",
             comment: "Saving the buddy failed")
         )
         .font(.footnote)

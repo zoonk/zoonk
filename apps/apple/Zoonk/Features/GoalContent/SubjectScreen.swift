@@ -523,8 +523,8 @@ private struct SubjectNotPlannedNotice: View {
 
       if failed {
         FailureLine(
-          String(
-            localized: "That didn't work. Try again in a moment.", table: "Plan",
+          message: LocalizedStringResource(
+            "That didn't work. Try again in a moment.", table: "Plan",
             comment: "Says the subject didn't come back into the plan")
         )
         .font(.subheadline)

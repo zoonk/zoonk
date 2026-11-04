@@ -80,7 +80,7 @@ struct QuestionForm<Content: View>: View {
       if failed {
         Section {
           FailureLine(
-            failure
+            message: failure
               ?? String(
                 localized: "That didn't save. Try again.", table: "Onboarding",
                 comment: "A change couldn't be saved"))

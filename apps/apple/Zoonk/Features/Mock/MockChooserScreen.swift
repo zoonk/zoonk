@@ -417,16 +417,15 @@ private struct MockChooser: View {
       .foregroundStyle(.secondary)
     case .notEnoughQuestions?:
       FailureLine(
-        String(
-          localized:
-            "There aren't enough questions for this mock yet. Try the full exam or another subject.",
+        message: LocalizedStringResource(
+          "There aren't enough questions for this mock yet. Try the full exam or another subject.",
           table: "Mock", comment: "Too few questions for a mock")
       )
       .font(.subheadline)
     case .failed?:
       FailureLine(
-        String(
-          localized: "We couldn't start the mock. Try again.", table: "Mock",
+        message: LocalizedStringResource(
+          "We couldn't start the mock. Try again.", table: "Mock",
           comment: "Start failed")
       )
       .font(.subheadline)

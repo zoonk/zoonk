@@ -52,7 +52,7 @@ struct ConversationResultView: View {
     .safeAreaBar(edge: .bottom) {
       VStack(spacing: 8) {
         if let startFailure {
-          FailureLine(startFailureMessage(startFailure))
+          FailureLine(message: startFailureMessage(startFailure))
             .font(.subheadline)
         }
 

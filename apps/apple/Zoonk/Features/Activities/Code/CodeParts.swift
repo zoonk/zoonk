@@ -64,8 +64,8 @@ struct CodeRunBar: View {
     if status == .failed {
       VStack(alignment: .leading, spacing: 8) {
         FailureLine(
-          String(
-            localized: "\(runtimeName) didn't load. Check your connection and try again.",
+          message: LocalizedStringResource(
+            "\(runtimeName) didn't load. Check your connection and try again.",
             table: "ActivitiesCode", comment: "A code runtime (Python) failed to download")
         )
         .font(.subheadline)

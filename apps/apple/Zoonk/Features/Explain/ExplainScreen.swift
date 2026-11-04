@@ -173,8 +173,8 @@ private struct ExplanationView: View {
     } footer: {
       if retryFailed {
         FailureLine(
-          String(
-            localized: "We couldn't get this started.", table: "Explain",
+          message: LocalizedStringResource(
+            "We couldn't get this started.", table: "Explain",
             comment: "A slow explanation couldn't be asked again"))
       } else {
         Text(

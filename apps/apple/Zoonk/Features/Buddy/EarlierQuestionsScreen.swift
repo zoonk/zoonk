@@ -46,8 +46,8 @@ struct EarlierQuestionsScreen: View {
 
           if store.olderFailed {
             FailureLine(
-              String(
-                localized: "Something went wrong. Try again.", table: "Buddy",
+              message: LocalizedStringResource(
+                "Something went wrong. Try again.", table: "Buddy",
                 comment: "Older earlier questions couldn't be read"))
           }
         }

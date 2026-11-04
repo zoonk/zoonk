@@ -158,8 +158,8 @@ struct FocusTestScreen: View {
 
       if undoFailed {
         FailureLine(
-          String(
-            localized: "We couldn't undo it. Try again.", table: "Practice",
+          message: LocalizedStringResource(
+            "We couldn't undo it. Try again.", table: "Practice",
             comment: "Undoing a focus test's change failed.")
         )
         .font(.subheadline)

@@ -774,15 +774,15 @@ private struct WebPlusSection: View {
 
         if failed {
           FailureLine(
-            AttributedString(
-              localized: "We couldn't keep Plus. Try again or email hello@zoonk.com.",
+            message: LocalizedStringResource(
+              "We couldn't keep Plus. Try again or email hello@zoonk.com.",
               table: "Account",
               comment: "Turning the stopped renewal of Plus bought on the web back on failed"))
         }
       }
     } else if failed {
       FailureLine(
-        AttributedString(
+        message: AttributedString(
           localized:
             "We couldn't cancel Plus. Try again or email \(AttributedString.supportEmail).",
           table: "Account",

@@ -87,8 +87,8 @@ struct CheckpointCallIntro: View {
     VStack(spacing: 8) {
       if didFail {
         FailureLine(
-          String(
-            localized: "The call didn't start. Try again in a moment.", table: "Voice",
+          message: LocalizedStringResource(
+            "The call didn't start. Try again in a moment.", table: "Voice",
             comment: "Starting a checkpoint call failed")
         )
         .font(.subheadline)

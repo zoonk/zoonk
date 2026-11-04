@@ -24,7 +24,7 @@ struct TutorComposerBar: View {
 
         if let failure = conversation.askFailure {
           FailureLine(
-            failure == .failed
+            message: failure == .failed
               ? String(
                 localized: "We couldn't send your last question. Try again.", table: "Tutor",
                 comment: "Sending a question to the buddy failed")

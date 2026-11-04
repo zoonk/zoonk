@@ -321,14 +321,13 @@ private struct TodayGoalPaused: View {
 
         if failure == .limitReached {
           FailureLine(
-            String(
-              localized:
-                "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
+            message: LocalizedStringResource(
+              "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
               table: "Today", comment: "Why resuming the goal failed on the free plan"))
         } else if failure != nil {
           FailureLine(
-            String(
-              localized: "Couldn't save. Check your connection and try again.", table: "Today",
+            message: LocalizedStringResource(
+              "Couldn't save. Check your connection and try again.", table: "Today",
               comment: "Resuming the goal failed"))
         }
       }

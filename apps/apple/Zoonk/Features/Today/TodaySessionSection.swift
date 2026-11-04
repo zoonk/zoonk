@@ -324,6 +324,7 @@ struct TodayMainAction: View {
 
       if failed {
         FailureLine(message: failure)
+          .font(.footnote)
       }
     }
   }
@@ -417,7 +418,9 @@ struct BlockRow: View {
             FailureLine(
               message: LocalizedStringResource(
                 "We couldn't open this step. Try again.", table: "Today",
-                comment: "Under a step of the day, or a mission, that didn't open"))
+                comment: "Under a step of the day, or a mission, that didn't open")
+            )
+            .font(.footnote)
           }
 
           if !block.isFinished {
@@ -569,6 +572,7 @@ private struct ComingLessonsRow: View {
             message: LocalizedStringResource(
               "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
           )
+          .font(.footnote)
         }
       }
 

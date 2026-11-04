@@ -351,8 +351,8 @@ private struct NextStopView: View {
 
         if failed {
           FailureLine(
-            String(
-              localized: "We couldn't open the next step. Try again.", table: "Session",
+            message: LocalizedStringResource(
+              "We couldn't open the next step. Try again.", table: "Session",
               comment: "Opening or stopping failed")
           )
           .font(.footnote)
@@ -428,8 +428,8 @@ private struct NextStopView: View {
     if writing == .failed || lessonStatus == "failed" {
       return AnyView(
         FailureLine(
-          String(
-            localized: "We couldn't write this lesson.", table: "Session",
+          message: LocalizedStringResource(
+            "We couldn't write this lesson.", table: "Session",
             comment: "Writing a lesson failed")))
     }
 

@@ -304,13 +304,13 @@ private struct EssayContent: View {
     Group {
       if finishFailed {
         FailureLine(
-          String(
-            localized: "That didn't go through. Try again in a moment.", table: "Essay",
+          message: LocalizedStringResource(
+            "That didn't go through. Try again in a moment.", table: "Essay",
             comment: "Finishing the block failed"))
       } else if writer.status == .failed {
         FailureLine(
-          String(
-            localized: "That didn't go through. Your text is still here. Try again in a moment.",
+          message: LocalizedStringResource(
+            "That didn't go through. Your text is still here. Try again in a moment.",
             table: "Essay", comment: "Grading failed"))
       } else if writer.isWriting, writer.status == .dailyLimitReached {
         VStack(alignment: .leading, spacing: 2) {

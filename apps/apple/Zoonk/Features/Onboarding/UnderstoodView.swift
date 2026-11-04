@@ -366,8 +366,8 @@ private struct UnderstoodRowView: View {
 
       if failed {
         FailureLine(
-          String(
-            localized: "That didn't save. Try again.", table: "Onboarding",
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
             comment: "A change couldn't be saved")
         )
         .font(.footnote)
@@ -508,8 +508,8 @@ private struct RowEditor: View {
 
       if failed {
         FailureLine(
-          String(
-            localized: "That didn't save. Try again.", table: "Onboarding",
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
             comment: "A change couldn't be saved")
         )
         .font(.footnote)
@@ -698,8 +698,8 @@ private struct InstrumentOutcome: View {
         case nil:
           if joinFailed {
             FailureLine(
-              String(
-                localized: "That didn't save. Try again.", table: "Onboarding",
+              message: LocalizedStringResource(
+                "That didn't save. Try again.", table: "Onboarding",
                 comment: "A change couldn't be saved"))
           }
         }

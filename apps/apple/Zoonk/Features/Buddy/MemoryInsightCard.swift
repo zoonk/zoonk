@@ -24,8 +24,8 @@ struct MemoryInsightCard: View {
 
         if failed {
           FailureLine(
-            String(
-              localized: "We couldn't save your answer. Try again.", table: "Buddy",
+            message: LocalizedStringResource(
+              "We couldn't save your answer. Try again.", table: "Buddy",
               comment: "Answering an insight failed")
           )
           .font(.footnote)

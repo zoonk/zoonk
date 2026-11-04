@@ -279,7 +279,7 @@ private struct SpeakingPaperView: View {
 
       // Only the open task starts, so a failure is said right under its button.
       if let startFailure {
-        FailureLine(startFailureMessage(startFailure))
+        FailureLine(message: startFailureMessage(startFailure))
           .font(.subheadline)
       }
     }

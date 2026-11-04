@@ -316,8 +316,8 @@ private struct RevealNoticeDay: View {
   private var failure: some View {
     if failed {
       FailureLine(
-        String(
-          localized: "That didn't go through. Try again in a moment.", table: "Exam",
+        message: LocalizedStringResource(
+          "That didn't go through. Try again in a moment.", table: "Exam",
           comment: "Changing the date failed"))
     }
   }

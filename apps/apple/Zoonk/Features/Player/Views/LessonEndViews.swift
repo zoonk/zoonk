@@ -661,8 +661,8 @@ struct LessonGuestGateView: View {
 
         if startFailed {
           FailureLine(
-            String(
-              localized: "We couldn't open this lesson", table: "Player",
+            message: LocalizedStringResource(
+              "We couldn't open this lesson", table: "Player",
               comment: "A lesson failed to open")
           )
           .font(.footnote)

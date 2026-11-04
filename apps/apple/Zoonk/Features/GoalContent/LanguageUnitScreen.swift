@@ -565,21 +565,21 @@ struct PracticeCallSection: View {
         if case .limit(let limit) = outcome {
           if limit.period == .month {
             FailureLine(
-              String(
-                localized: "Not enough call time this month.", table: "Plan",
+              message: LocalizedStringResource(
+                "Not enough call time this month.", table: "Plan",
                 comment: "The plan's call time this month is used"))
           } else {
             FailureLine(
-              String(
-                localized: "Not enough call time today.", table: "Plan",
+              message: LocalizedStringResource(
+                "Not enough call time today.", table: "Plan",
                 comment: "The plan's call time today is used"))
           }
         } else if outcome == .failed || outcome == .callInProgress
           || outcome == .previousConnectionClosing || outcome == .ended
         {
           FailureLine(
-            String(
-              localized: "The call didn't start. Try again in a moment.", table: "Plan",
+            message: LocalizedStringResource(
+              "The call didn't start. Try again in a moment.", table: "Plan",
               comment: "Says the practice call didn't start"))
         }
       }

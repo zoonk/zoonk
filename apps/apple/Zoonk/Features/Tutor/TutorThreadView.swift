@@ -165,8 +165,8 @@ private struct TutorConversationView<Header: View>: View {
       VStack(spacing: 8) {
         if conversation.earlierFailed {
           FailureLine(
-            String(
-              localized: "Couldn't load earlier messages. Try again.", table: "Tutor",
+            message: LocalizedStringResource(
+              "Couldn't load earlier messages. Try again.", table: "Tutor",
               comment: "Earlier messages of the conversation couldn't be read")
           )
           .font(.footnote)

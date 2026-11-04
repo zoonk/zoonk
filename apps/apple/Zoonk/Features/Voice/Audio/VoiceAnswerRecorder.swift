@@ -47,7 +47,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
     if case .limit(let limit) = issue, !recorder.isRecording {
       HelpLimitNotice(limit: limit)
     } else if issue == .failed, !recorder.isRecording, let hint {
-      FailureLine(hint)
+      FailureLine(message: hint)
         .font(.subheadline)
     } else if let hint {
       Text(hint)

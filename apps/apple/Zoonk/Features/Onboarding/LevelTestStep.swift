@@ -87,8 +87,8 @@ struct LevelTestStep: View {
     if failed {
       Section {
         FailureLine(
-          String(
-            localized: "That didn't work. Try again in a moment.", table: "Onboarding",
+          message: LocalizedStringResource(
+            "That didn't work. Try again in a moment.", table: "Onboarding",
             comment: "Starting or skipping the level test failed"))
       }
     }
@@ -375,8 +375,8 @@ private struct LevelTestIntro: View {
       if failed {
         Section {
           FailureLine(
-            String(
-              localized: "That didn't work. Try again in a moment.", table: "Onboarding",
+            message: LocalizedStringResource(
+              "That didn't work. Try again in a moment.", table: "Onboarding",
               comment: "Starting or skipping the level test failed"))
         }
       }
@@ -650,8 +650,8 @@ private struct LevelTestDone: View {
       if failed {
         Section {
           FailureLine(
-            String(
-              localized: "That didn't work. Try again in a moment.", table: "Onboarding",
+            message: LocalizedStringResource(
+              "That didn't work. Try again in a moment.", table: "Onboarding",
               comment: "Starting or skipping the level test failed"))
         }
       }

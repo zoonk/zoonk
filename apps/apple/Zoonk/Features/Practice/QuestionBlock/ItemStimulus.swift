@@ -362,8 +362,8 @@ private struct ListeningPlayerView: View {
 
       if recordings.failed.contains(playsKey) {
         FailureLine(
-          String(
-            localized: "The recording didn't load. Check your connection and try again.",
+          message: LocalizedStringResource(
+            "The recording didn't load. Check your connection and try again.",
             table: "Practice", comment: "Shown when a set's recording fails to load.")
         )
         .font(.footnote)

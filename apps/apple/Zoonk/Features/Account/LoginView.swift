@@ -140,78 +140,75 @@ struct AccountFailureMessage: View {
   @ViewBuilder
   var body: some View {
     if let failure {
-      FailureLine(message(for: failure), systemImage: "exclamationmark.circle")
+      FailureLine(message: message(for: failure), systemImage: "exclamationmark.circle")
         .font(.footnote)
         .multilineTextAlignment(.center)
         .accessibilityElement(children: .combine)
     }
   }
 
-  /// Attributed, so the email address in a message stays a link.
-  private func message(for failure: AccountFailure) -> AttributedString {
+  private func message(for failure: AccountFailure) -> LocalizedStringResource {
     switch failure {
     case .botDetected:
-      AttributedString(
-        localized: "A security check blocked this request. Try again or contact hello@zoonk.com.",
+      LocalizedStringResource(
+        "A security check blocked this request. Try again or contact hello@zoonk.com.",
         table: "Account",
         comment:
           "Recovery when the security check blocks a sign-in or a verification code; avoids the verb on the Verify and delete button"
       )
     case .emailCodeDelivery:
-      AttributedString(
-        localized:
-          "Zoonk couldn't send the verification code. Try again or contact hello@zoonk.com.",
+      LocalizedStringResource(
+        "Zoonk couldn't send the verification code. Try again or contact hello@zoonk.com.",
         table: "Account",
         comment: "Generic email verification code delivery failure")
     case .accountDeletion:
-      AttributedString(
-        localized: "Zoonk couldn't delete your account. Try again or contact hello@zoonk.com.",
+      LocalizedStringResource(
+        "Zoonk couldn't delete your account. Try again or contact hello@zoonk.com.",
         table: "Account",
         comment: "Generic account deletion failure message")
     case .accountMismatch:
-      AttributedString(
-        localized: "That code belongs to a different account. Request a new code for this account.",
+      LocalizedStringResource(
+        "That code belongs to a different account. Request a new code for this account.",
         table: "Account",
         comment: "Error shown when an account deletion code belongs to a different account")
     case .invalidCode:
-      AttributedString(
-        localized: "That code is invalid or expired. Request a new code and try again.",
+      LocalizedStringResource(
+        "That code is invalid or expired. Request a new code and try again.",
         table: "Account",
         comment: "Error shown when an email verification code is invalid or expired")
     case .invalidEmail:
-      AttributedString(
-        localized: "Enter a valid email address.",
+      LocalizedStringResource(
+        "Enter a valid email address.",
         table: "Account",
         comment: "Error shown when an email address is invalid")
     case .disposableEmail:
-      AttributedString(
-        localized:
-          "Temporary email addresses aren't supported. Use another email or a privacy alias.",
+      LocalizedStringResource(
+        "Temporary email addresses aren't supported. Use another email or a privacy alias.",
         table: "Account",
         comment: "Temporary inbox rejection; persistent privacy aliases remain supported")
     case .network:
-      AttributedString(
-        localized: "Zoonk couldn't connect. Check your connection and try again.",
+      LocalizedStringResource(
+        "Zoonk couldn't connect. Check your connection and try again.",
         table: "Account",
         comment: "Error shown when an account request cannot reach the service")
     case .rateLimited:
-      AttributedString(
-        localized: "Too many tries. Wait a minute, then try again.",
+      LocalizedStringResource(
+        "Too many tries. Wait a minute, then try again.",
         table: "Account",
         comment: "Error shown when sign-in attempts are temporarily rate limited")
     case .usernameTaken:
-      AttributedString(
-        localized: "That username is already taken.",
+      LocalizedStringResource(
+        "That username is already taken.",
         table: "Account",
         comment: "Error shown when a chosen username is unavailable")
     case .validation:
-      AttributedString(
-        localized: "Check the information and try again.",
+      LocalizedStringResource(
+        "Check the information and try again.",
         table: "Account",
         comment: "Error shown when profile information is invalid")
     case .signIn:
-      AttributedString(
-        localized: "Zoonk couldn't sign you in. Try again or contact hello@zoonk.com.",
+      LocalizedStringResource(
+        "Zoonk couldn't sign you in. Try again or contact hello@zoonk.com.",
         table: "Account",
         comment: "Generic sign-in failure message")
     }
