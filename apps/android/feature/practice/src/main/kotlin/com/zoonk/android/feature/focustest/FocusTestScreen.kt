@@ -309,6 +309,7 @@ internal fun FocusTestQuestions(
                     LimitSubject.Help,
                     onCreateAccount = { navigator.open(AppRoute.Login) },
                     onSeePlus = { navigator.open(AppRoute.Subscription) },
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 )
             } else {
                 GenerationWait(GenerationKind.FocusTestQuestions, run, viewModel::retryWriting.takeIf { viewModel.canRestart }) {
