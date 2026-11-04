@@ -1,6 +1,9 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { findActiveSubscriptionForUser } from "../../auth/subscription";
+import {
+  type findActiveSubscription,
+  findActiveSubscriptionForUser,
+} from "../../auth/subscription";
 import {
   arePhaseChallengesRequired,
   shouldRefillAfterEntitlementLapse,
@@ -27,11 +30,13 @@ class RefillInputsChangedError extends Error {
 export async function planEntitlementLapseRefill({
   goal,
   phaseChallengesRequired,
+  readSubscription,
   session,
   timeZone,
 }: {
   goal: Goal;
   phaseChallengesRequired?: boolean;
+  readSubscription?: typeof findActiveSubscription;
   session: Omit<StudySessionRow, "goal">;
   timeZone: string;
 }): Promise<EntitlementRefill | null> {
@@ -47,7 +52,11 @@ export async function planEntitlementLapseRefill({
 
   const required =
     phaseChallengesRequired ??
-    (await arePhaseChallengesRequired({ goalKind: goal.kind, userId: session.userId }));
+    (await arePhaseChallengesRequired({
+      goalKind: goal.kind,
+      readSubscription,
+      userId: session.userId,
+    }));
 
   if (
     !shouldRefillAfterEntitlementLapse({

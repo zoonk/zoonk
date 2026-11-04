@@ -1,6 +1,7 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { type findActiveSubscription } from "../../auth/subscription";
 import { countUsage } from "../../entitlements/_utils/usage-counts";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { type GoalPlan, getSkillOwners, loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
@@ -131,7 +132,7 @@ async function readyMistakes({
 
 type MissionContext = Pick<
   Parameters<typeof loadDayMissionFacts>[0],
-  "dayPlan" | "goal" | "localDate" | "selection" | "userId"
+  "dayPlan" | "goal" | "localDate" | "readSubscription" | "selection" | "userId"
 >;
 
 function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
@@ -150,12 +151,12 @@ function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
 }
 
 async function loadMissionContext(input: MissionContext) {
-  const { dayPlan, goal, localDate, selection, userId } = input;
+  const { dayPlan, goal, localDate, readSubscription, selection, userId } = input;
 
   const [plan, goalPlan, tier, limit, recent] = await Promise.all([
     readMissionPlan(input),
     dayPlan?.goalPlan ?? loadGoalPlan(goal.id, selection?.source),
-    dayPlan?.tier ?? getLearnerTier(userId),
+    dayPlan?.tier ?? getLearnerTier(userId, readSubscription),
     dayPlan?.limit ?? loadDailyTimeLimitStatus({ date: localDate, userId }),
     prisma.studySession.findMany({
       orderBy: [{ localDate: "desc" }, { id: "desc" }],
@@ -177,6 +178,7 @@ export async function loadDayMissionFacts({
   now = new Date(),
   plannedMinutes,
   readPreparation,
+  readSubscription,
   selection,
   timeZone,
   userId,
@@ -190,6 +192,7 @@ export async function loadDayMissionFacts({
   now?: Date;
   plannedMinutes: number;
   readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
+  readSubscription?: typeof findActiveSubscription;
   selection?: SelectedDayPlan;
   timeZone: string;
   userId: string;
@@ -198,6 +201,7 @@ export async function loadDayMissionFacts({
     dayPlan,
     goal,
     localDate,
+    readSubscription,
     selection,
     userId,
   });
@@ -244,7 +248,16 @@ export async function loadDayMissionFacts({
     }),
     languageCandidates({ blocks, goal, items, now, tier, userId }),
     tier === "guest" ? null : countUsage({ client: prisma, kind: "tutorMessage", now, userId }),
-    weakSpotCandidate({ blocks, goal, goalPlan, now, plannedMinutes, readPreparation, userId }),
+    weakSpotCandidate({
+      blocks,
+      goal,
+      goalPlan,
+      now,
+      plannedMinutes,
+      readPreparation,
+      readSubscription,
+      userId,
+    }),
     loadExamStructure(goal, { blueprint }),
   ]);
 

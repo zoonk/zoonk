@@ -1,4 +1,5 @@
 import "server-only";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { readBlockPayload } from "../block-payload";
 import { getStoredBlockWait } from "../block-wait";
@@ -32,6 +33,7 @@ export async function getDayFirstSteps({
     goal: session.goal,
     localDate: session.localDate,
     plannedMinutes: session.plannedMinutes,
+    readSubscription: readActiveSubscription,
     timeZone,
     userId: session.userId,
   });
