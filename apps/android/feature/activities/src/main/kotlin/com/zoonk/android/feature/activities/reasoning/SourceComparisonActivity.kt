@@ -294,7 +294,7 @@ private fun passageColors() =
         unmarked = MaterialTheme.zoonk.vizAccent,
         marked = MaterialTheme.zoonk.vizHighlight.copy(alpha = SOFT),
         correct = MaterialTheme.colorScheme.tertiary.copy(alpha = PASSAGE_TINT),
-        incorrect = MaterialTheme.colorScheme.error.copy(alpha = PASSAGE_TINT),
+        incorrect = MaterialTheme.zoonk.destructive.copy(alpha = PASSAGE_TINT),
         missed = MaterialTheme.colorScheme.onTertiaryContainer,
     )
 
