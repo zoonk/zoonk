@@ -2638,6 +2638,72 @@
         }
       }
     },
+    "linkedInCertificationName" : {
+      "comment" : "LinkedIn's field for the certificate's name, labeled as in LinkedIn's \"Add license or certification\" form",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Name"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nome"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nazwa"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nome"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ad"
+          }
+        }
+      }
+    },
     "My %@ placement result on Zoonk: %@." : {
       "comment" : "Suggested text for sharing a placement result: the language, then the level",
       "localizations" : {
@@ -2704,7 +2770,7 @@
       }
     },
     "Name" : {
-      "comment" : "LinkedIn's field for the certificate's name\nThe name on the learner's certificates",
+      "comment" : "Labels the learner's full name, as their certificates print it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2721,31 +2787,31 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nom"
+            "value" : "Nom complet"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nome"
+            "value" : "Nome e cognome"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "名前"
+            "value" : "氏名"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이름"
+            "value" : "성명"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nazwa"
+            "value" : "Imię i nazwisko"
           }
         },
         "pt" : {
@@ -2757,7 +2823,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ad"
+            "value" : "Ad soyad"
           }
         }
       }

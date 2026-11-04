@@ -15,8 +15,11 @@ struct CertificateLinkedInSheet: View {
         Section {
           field(
             Text(
-              "Name", tableName: "Certificates",
-              comment: "LinkedIn's field for the certificate's name"),
+              LocalizedStringResource(
+                "linkedInCertificationName", defaultValue: "Name", table: "Certificates",
+                comment:
+                  "LinkedIn's field for the certificate's name, labeled as in LinkedIn's \"Add license or certification\" form"
+              )),
             value: credentialName)
           field(
             Text(

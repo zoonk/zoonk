@@ -91,7 +91,13 @@ function OwnerNameRow({ facts, owner }: { facts: CertificateFacts; owner: Certif
   }
 
   return (
-    <DetailRow label={t("Name")}>
+    <DetailRow
+      label={t({
+        description: "Labels the learner's full name, as their certificates print it",
+        id: "certificateRecipientName",
+        message: "Name",
+      })}
+    >
       {facts.recipientName}
       <Button className="ml-2 font-[550]" onClick={() => setOpen(true)} variant="link">
         {t("Change")}

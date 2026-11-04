@@ -257,7 +257,8 @@ private struct CertificateDetail: View {
             }
           } label: {
             Text(
-              "Name", tableName: "Certificates", comment: "The name on the learner's certificates"
+              "Name", tableName: "Certificates",
+              comment: "Labels the learner's full name, as their certificates print it"
             )
             .foregroundStyle(.primary)
           }

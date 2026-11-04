@@ -1340,8 +1340,6 @@ msgid "Buddy"
 msgstr "Compagnon"
 
 #: src/buddies/buddy-picker.tsx
-#: src/certificates/certificate-details.tsx
-#: src/certificates/certificate-linkedin.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nom"
@@ -1567,6 +1565,12 @@ msgctxt "LbAVCO"
 msgid "Certificate ID"
 msgstr "Identifiant du certificat"
 
+#. Labels the learner's full name, as their certificates print it
+#: src/certificates/certificate-details.tsx
+msgctxt "certificateRecipientName"
+msgid "Name"
+msgstr "Nom complet"
+
 #: src/certificates/certificate-details.tsx
 #: src/onboarding/entry/paste-link.tsx
 msgctxt "JBWS0c"
@@ -1671,6 +1675,12 @@ msgstr "LinkedIn ouvre son formulaire d’ajout de licence ou de certification. 
 msgctxt "Gsc9HO"
 msgid "Copy the name"
 msgstr "Copier le nom"
+
+#. LinkedIn's field for the certificate's name, labeled as in LinkedIn's "Add license or certification" form
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "linkedInCertificationName"
+msgid "Name"
+msgstr "Nom"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "Stmjvy"
