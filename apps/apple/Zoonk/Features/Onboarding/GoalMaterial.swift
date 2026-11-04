@@ -464,8 +464,7 @@ struct MaterialQuestionsView: View {
           }
         }
         .padding(.vertical, 10)
-        .padding(.horizontal, 14)
-        .background(.background, in: .rect(cornerRadius: 22))
+        .padding(.leading, 10)
 
         Button(action: ask) {
           Label {
@@ -480,6 +479,8 @@ struct MaterialQuestionsView: View {
         .controlSize(.large)
         .disabled(trimmed.isEmpty || isAsking)
       }
+      .padding(6)
+      .goalBox(isFocused: isFocused)
       .padding()
       .keepsOffFold()
       .background(.bar)

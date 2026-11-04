@@ -107,31 +107,50 @@ struct GoalEntrySections<Attachment: View>: View {
     }
 
     Section {
-      AccessibilityStack(alignment: .top) {
-        Text(
-          "I want to", tableName: "Onboarding",
-          comment: "The goal box's label, before the learner's words"
-        )
-        .foregroundStyle(.mutedForeground)
-        .accessibilityHidden(true)
-
-        MultilineTextField(
-          text: $words, prompt: Text(placeholder),
-          label: Text(
+      VStack(spacing: 0) {
+        AccessibilityStack(alignment: .firstTextBaseline, spacing: 8) {
+          Text(
             "I want to", tableName: "Onboarding",
-            comment: "The goal box's label, before the learner's words"),
-          onSubmit: submit
-        )
-        .lineLimit(1...6)
-        .focused($isFocused)
-        .submitLabel(.send)
-        .onChange(of: words) { _, value in
-          if value.count > maxLength {
-            words = String(value.prefix(maxLength))
+            comment: "The goal box's label, before the learner's words"
+          )
+          .typeStyle(.lead.weight(.medium))
+          .foregroundStyle(Color(.foreground))
+          .accessibilityHidden(true)
+          .onTapGesture { isFocused = true }
+
+          MultilineTextField(
+            text: $words, prompt: Text(placeholder).foregroundStyle(.mutedForeground),
+            label: Text(
+              "I want to", tableName: "Onboarding",
+              comment: "The goal box's label, before the learner's words"),
+            onSubmit: submit
+          )
+          .typeStyle(.lead)
+          .lineLimit(1...6)
+          .focused($isFocused)
+          .submitLabel(.send)
+          .onChange(of: words) { _, value in
+            if value.count > maxLength {
+              words = String(value.prefix(maxLength))
+            }
           }
         }
-        .keepsOffFold()
+        .padding(10)
+
+        Button(action: submit) {
+          Text(
+            "Build my plan", tableName: "Onboarding",
+            comment: "Sends the typed goal to start building a plan")
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+        .frame(maxWidth: .infinity, alignment: .trailing)
       }
+      .padding(6)
+      .goalBox(isFocused: isFocused)
+      .keepsOffFold()
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
     } header: {
       if isSection {
         SectionTitle(
@@ -142,21 +161,6 @@ struct GoalEntrySections<Attachment: View>: View {
     }
 
     attachment()
-
-    Section {
-      Button(action: submit) {
-        Text(
-          "Build my plan", tableName: "Onboarding",
-          comment: "Sends the typed goal to start building a plan"
-        )
-        .frame(maxWidth: .infinity)
-      }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .keepsOffFold()
-      .listRowInsets(.vertical, 0)
-      .listRowBackground(Color.clear)
-    }
 
     if let error {
       GoalErrorSection(error: error)
@@ -244,13 +248,8 @@ struct GoalExamplesSection: View {
         Button {
           onPick(String(localized: example.label))
         } label: {
-          VStack(alignment: .leading) {
-            Text(example.label)
-              .foregroundStyle(.primary)
-            Text(example.kind)
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-          }
+          ListRow(Text(example.label), description: Text(example.kind))
+            .disclosureChevron()
         }
       }
     } header: {
@@ -328,6 +327,31 @@ struct GoalExamplesSection: View {
             "The kind of an example goal: a short explanation of one question, and its length")
       ),
     ]
+  }
+}
+
+extension View {
+  /// Main's goal box, also around the box for questions on material: `card` with the field's
+  /// line, `xl` corners, the line in ink while the words have focus.
+  func goalBox(isFocused: Bool) -> some View {
+    modifier(GoalBoxFrame(isFocused: isFocused))
+  }
+}
+
+private struct GoalBoxFrame: ViewModifier {
+  let isFocused: Bool
+
+  @Environment(\.colorSchemeContrast) private var contrast
+
+  func body(content: Content) -> some View {
+    let shape = RoundedRectangle(cornerRadius: Radius.xl, style: .continuous)
+    let focusWidth: CGFloat = contrast == .increased ? 3 : 2
+
+    content
+      .background(.card, in: shape)
+      .overlay(
+        shape.strokeBorder(
+          isFocused ? Color(.foreground) : .input, lineWidth: isFocused ? focusWidth : 1))
   }
 }
 
