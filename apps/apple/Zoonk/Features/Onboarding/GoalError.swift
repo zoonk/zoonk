@@ -214,6 +214,7 @@ struct GoalLimitNoticeSection: View {
           Image(systemName: "sparkles")
             .foregroundStyle(.tint)
         }
+        .announcesAlert(upFront ? nil : String(localized: reason.message))
 
         Button {
           router.present(.subscription)

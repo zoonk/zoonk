@@ -137,6 +137,7 @@ struct TutorLimitNotice: View {
       Text(failure.message)
         .font(.subheadline)
         .foregroundStyle(.secondary)
+        .announcesAlert(failure.message)
 
       TutorRemedyButton(failure: failure, retry: {})
     }
