@@ -1,6 +1,7 @@
 import "server-only";
 import { type GoalUnderstanding } from "@zoonk/ai/tasks/goals/understand-goal";
 import { type OnboardingDraft, type TransactionClient, prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
 import {
   type AnalyticsGoalKind,
@@ -10,6 +11,9 @@ import { trackLearnerEvents } from "../../../analytics/track-learner-event";
 import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
 import { getActiveGoalLimit } from "../../../entitlements/limits";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
+import { getRequestInstant } from "../../../learner/facts/request-instant";
+import { toIsoDate } from "../../../plans/planner/plan-calendar";
+import { withPlannableDate } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type OnboardingDraftView } from "../onboarding-contract";
 import { goalUnderstandingViewSchema } from "../onboarding-view-schemas";
 import { type FoundExam } from "./exam-facts";
@@ -53,6 +57,27 @@ export function parseStoredUnderstanding(value: unknown): GoalUnderstandingView 
   return goalUnderstandingViewSchema.safeParse(value).data ?? null;
 }
 
+/** On read, not when the card is saved: a card's date can become today overnight. */
+function withPlannableDates({
+  today,
+  understanding,
+}: {
+  today: string;
+  understanding: GoalUnderstandingView;
+}): GoalUnderstandingView {
+  if (understanding.status !== "goals") {
+    return understanding;
+  }
+
+  return {
+    ...understanding,
+    goals: understanding.goals.map((goal) => ({
+      ...goal,
+      draft: withPlannableDate({ draft: goal.draft, today }),
+    })),
+  };
+}
+
 /** The lock follows the learner's plan as it is now, so subscribing unlocks the rest of the card. */
 export async function toDraftView({
   draft,
@@ -61,10 +86,12 @@ export async function toDraftView({
   draft: OnboardingDraft;
   goalId: string | null;
 }): Promise<OnboardingDraftView> {
-  const understanding =
+  const stored =
     draft.status === "understood" ? parseStoredUnderstanding(draft.understanding) : null;
 
-  const viewer = await readEntitlementViewer();
+  const [viewer, now] = await Promise.all([readEntitlementViewer(), getRequestInstant()]);
+  const today = toIsoDate(getDateInTimeZone({ date: now, timeZone: draft.timeZone }));
+  const understanding = stored && withPlannableDates({ today, understanding: stored });
 
   return {
     activeGoalLimit: getActiveGoalLimit(viewer?.tier ?? "guest"),
