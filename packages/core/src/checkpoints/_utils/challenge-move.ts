@@ -170,7 +170,7 @@ export async function applyChallengeMove({
             return unchanged(null);
           }
 
-          await oweStartedDaySettlements(tx, [block.sessionId]);
+          await oweStartedDaySettlements(tx, [block]);
           return null;
         })
       : null,

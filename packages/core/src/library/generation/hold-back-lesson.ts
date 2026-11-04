@@ -82,10 +82,7 @@ export async function moveOnWithoutLesson(
     },
   });
 
-  await oweStartedDaySettlements(
-    tx,
-    blocks.map((block) => block.sessionId),
-  );
+  await oweStartedDaySettlements(tx, blocks);
 
   await tx.planItem.updateMany({
     data: { status: "skipped" },

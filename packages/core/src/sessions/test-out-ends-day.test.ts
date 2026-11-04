@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   studySessionBlockFixture,
@@ -8,7 +8,6 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
-import { waitForBlockedStatement } from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { getChapterTestOut } from "../learner/test-out/get-chapter-test-out";
@@ -21,6 +20,44 @@ import { sessionGoalFixture } from "./_test-utils/session-goal";
 import { skipTestedOutBlocks } from "./_utils/skip-tested-out-blocks";
 import { readBlockPayload } from "./block-payload";
 import { startStudyBlock } from "./start-study-block";
+
+/** A started day with one lesson open and one waiting, which a test-out and a set-aside take. */
+async function startedDayOfTwoLessons() {
+  const user = await userFixture();
+  const { goal, lessons, planItems } = await sessionGoalFixture({ lessons: 2, userId: user.id });
+  const [tested, setAside] = lessons;
+  const testedItemId = planItems[0]?.id ?? "";
+  const now = new Date();
+
+  const session = await studySessionFixture({
+    goalId: goal.id,
+    startedAt: now,
+    status: "active",
+    userId: user.id,
+  });
+
+  await Promise.all([
+    studySessionBlockFixture({
+      lessonId: tested?.id,
+      position: 0,
+      sessionId: session.id,
+      startedAt: now,
+      status: "active",
+    }),
+    studySessionBlockFixture({ lessonId: setAside?.id, position: 1, sessionId: session.id }),
+    prisma.planItem.update({
+      data: { completedAt: now, status: "testedOut" },
+      where: { id: testedItemId },
+    }),
+  ]);
+
+  return {
+    session,
+    setAside: (tx: TransactionClient) => moveOnWithoutLesson(tx, setAside?.id ?? "", randomUUID()),
+    testOut: () => skipTestedOutBlocks({ goalId: goal.id, planItemIds: [testedItemId] }),
+    user,
+  };
+}
 
 const PASSED = { outcome: { lessonsSkipped: 1, passed: true }, status: "ready" };
 
@@ -148,52 +185,39 @@ describe("a started day whose last open lesson a test-out takes away", () => {
   });
 
   it("completes when the day's other lesson is set aside while the test-out skips this one", async () => {
-    const user = await userFixture();
-    const { goal, lessons, planItems } = await sessionGoalFixture({ lessons: 2, userId: user.id });
-    const [tested, setAside] = lessons;
-    const testedItemId = planItems[0]?.id ?? "";
-    const now = new Date();
-
-    const session = await studySessionFixture({
-      goalId: goal.id,
-      startedAt: now,
-      status: "active",
-      userId: user.id,
-    });
-
-    await Promise.all([
-      studySessionBlockFixture({
-        lessonId: tested?.id,
-        position: 0,
-        sessionId: session.id,
-        startedAt: now,
-        status: "active",
-      }),
-      studySessionBlockFixture({ lessonId: setAside?.id, position: 1, sessionId: session.id }),
-      prisma.planItem.update({
-        data: { completedAt: now, status: "testedOut" },
-        where: { id: testedItemId },
-      }),
-    ]);
-
-    const holding = Promise.withResolvers<number>();
+    const { session, setAside, testOut, user } = await startedDayOfTwoLessons();
+    const holding = Promise.withResolvers<null>();
     const release = Promise.withResolvers<null>();
 
+    // Each write sees the other's block still open.
     const settingAside = prisma.$transaction(async (tx) => {
-      await moveOnWithoutLesson(tx, setAside?.id ?? "", randomUUID());
-      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
-      holding.resolve(backend?.pid ?? 0);
+      await setAside(tx);
+      holding.resolve(null);
       await release.promise;
     });
 
-    const pid = await holding.promise;
-    const skipping = skipTestedOutBlocks({ goalId: goal.id, planItemIds: [testedItemId] });
-
-    // Each sees the other's block still open; the skip waits for the set-aside's owed settlement.
-    await Promise.race([skipping, waitForBlockedStatement(pid, /follow_ups/u).catch(() => null)]);
-
+    await holding.promise;
+    await testOut();
     release.resolve(null);
-    await Promise.all([settingAside, skipping]);
+    await settingAside;
+    await runOwedSettlements(user.id);
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+    ).resolves.toMatchObject({ endedAt: expect.any(Date), status: "completed" });
+  });
+
+  it("owes a settlement for each write that takes the day's blocks", async () => {
+    const { session, setAside, testOut, user } = await startedDayOfTwoLessons();
+
+    await prisma.$transaction((tx) => setAside(tx));
+    await testOut();
+
+    // The API drops a settlement whose key is already running, which may have read the day too early.
+    await expect(
+      prisma.followUp.count({ where: { kind: "settleSessionDay", userId: user.id } }),
+    ).resolves.toBe(2);
+
     await runOwedSettlements(user.id);
 
     await expect(

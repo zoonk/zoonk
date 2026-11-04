@@ -10,7 +10,7 @@ function getFollowUpKey(followUp: FollowUp): string {
     case "prepareSession":
       return followUp.input.sessionId;
     case "settleSessionDay":
-      return followUp.input.blockId ?? followUp.input.sessionId;
+      return followUp.input.blockId ?? followUp.input.removedBlockId ?? followUp.input.sessionId;
     case "prepareGoalLessons":
     case "rememberOnboarding":
       return followUp.input.goalId;

@@ -314,7 +314,7 @@ async function replaceNotStartedBlocks({
         where: { id: session.id },
       });
 
-      await oweStartedDaySettlements(transaction, planned.length > 0 ? [] : [session.id]);
+      await oweStartedDaySettlements(transaction, planned.length > 0 ? [] : replaced);
 
       return "rebuilt";
     },

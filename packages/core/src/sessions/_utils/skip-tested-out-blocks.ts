@@ -80,9 +80,6 @@ export async function skipTestedOutBlocks({
       return unchanged(null);
     }
 
-    await oweStartedDaySettlements(
-      tx,
-      blocks.map((block) => block.sessionId),
-    );
+    await oweStartedDaySettlements(tx, blocks);
   });
 }

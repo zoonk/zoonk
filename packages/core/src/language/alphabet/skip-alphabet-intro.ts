@@ -97,10 +97,7 @@ export async function skipAlphabetIntro(goalId: string): Promise<SkipAlphabetInt
           },
         });
 
-        await oweStartedDaySettlements(
-          tx,
-          blocks.map((block) => block.sessionId),
-        );
+        await oweStartedDaySettlements(tx, blocks);
       }
 
       await tx.goal.update({
