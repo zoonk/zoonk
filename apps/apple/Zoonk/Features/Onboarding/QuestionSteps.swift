@@ -103,23 +103,8 @@ struct StepHeader: View {
 
   var body: some View {
     Section {
-      VStack(alignment: .leading, spacing: 6) {
-        if let subject {
-          Text(subject)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
-
-        title
-          .typeStyle(.section)
-          .accessibilityAddTraits(.isHeader)
-
-        if let description {
-          description
-            .foregroundStyle(.mutedForeground)
-        }
-      }
-      .listRowBackground(Color.clear)
+      PageHeader(title, eyebrow: subject.map { Text(verbatim: $0) }, supporting: description)
+        .listRowBackground(Color.clear)
     }
   }
 }
@@ -857,17 +842,18 @@ private struct ExamChoiceQuestion: View {
 
       if choice.take > 1 {
         Section {
+          Text.examPickLimit(choice.take)
+            .typeStyle(.body)
+            .foregroundStyle(.mutedForeground)
+            .listRowSeparator(.hidden)
+
           ExamOptionToggles(
             options: options, take: choice.take,
             picked: Binding(
               get: { picks[choice.group] ?? [] },
               set: { picks[choice.group] = $0 }))
         } header: {
-          VStack(alignment: .leading, spacing: 2) {
-            Text(choice.group)
-            Text.examPickLimit(choice.take)
-              .typeWeight(.regular)
-          }
+          SectionTitle(Text(choice.group))
         } footer: {
           SectionFooter {
             leftOut
