@@ -41,7 +41,7 @@ struct AccountAvatar: View {
       }
     }
     .frame(width: size, height: size)
-    .background(.quaternary, in: Circle())
+    .background(.muted, in: Circle())
     .clipShape(Circle())
     .contentShape(Circle())
   }
@@ -55,12 +55,12 @@ struct AccountAvatar: View {
     if let user {
       Text(getInitial(user: user))
         .font(.system(size: size * 0.42, weight: .semibold))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     } else {
       Image(systemName: "person.crop.circle.fill")
         .resizable()
         .symbolRenderingMode(.hierarchical)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 

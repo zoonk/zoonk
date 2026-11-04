@@ -51,17 +51,17 @@ struct TutorPanel: View {
 
         scope.panelDescription
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         if let quote {
           Text(quoteLine(quote))
             .font(.footnote)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .lineLimit(3)
             .padding(.leading, 10)
             .overlay(alignment: .leading) {
               Rectangle()
-                .fill(.separator)
+                .fill(.border)
                 .frame(width: 2)
             }
         }
@@ -134,7 +134,7 @@ struct TutorAskButton: View {
         button
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .accessibilityLabel(Text(scope.askLabel(name)))
     // The panel gives way to the place it opens, which would otherwise open under it.
     .sheet(isPresented: $isPresented, onDismiss: openPlaceAfterPanel) {

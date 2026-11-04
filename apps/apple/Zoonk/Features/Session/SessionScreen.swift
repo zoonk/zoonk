@@ -104,7 +104,7 @@ private struct SessionContent: View {
           } label: {
             Text("Try again", tableName: "Session", comment: "Retries loading the session")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
         .lonePage()
       default:
@@ -124,6 +124,7 @@ private struct SessionContent: View {
             }
             .listRowBackground(Color.clear)
           }
+          .zoonkList()
         } else {
           ProgressView()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -219,12 +220,14 @@ private struct NextStopView: View {
       List {
         daySoFar
       }
+      .zoonkList()
     } secondary: {
       List {
         upNext
         warmUpCard(deckID)
         actions(isHeld: held != nil)
       }
+      .zoonkList()
       .warmUpDeck(deckID)
       .warmUpHoldBar(held, label: startLabel)
     } single: {
@@ -234,6 +237,7 @@ private struct NextStopView: View {
         warmUpCard(deckID)
         actions(isHeld: held != nil)
       }
+      .zoonkList()
       .warmUpDeck(deckID)
       .warmUpHoldBar(held, label: startLabel)
     }
@@ -274,7 +278,7 @@ private struct NextStopView: View {
           tableName: "Session", comment: "How far the day's session is"
         )
         .font(.subheadline.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         MeterParts(parts: day.meterParts)
       }
@@ -292,7 +296,7 @@ private struct NextStopView: View {
           lessonLine
         }
       } header: {
-        Text("Up next", tableName: "Session", comment: "The session's next block")
+        SectionTitle(Text("Up next", tableName: "Session", comment: "The session's next block"))
       }
 
       if case .refused(let refusal) = writing {
@@ -345,7 +349,7 @@ private struct NextStopView: View {
           }
           .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.large)
         .disabled(isStopping || isOpening)
 
@@ -355,7 +359,7 @@ private struct NextStopView: View {
             comment: "Opening or stopping failed"
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
     }
@@ -431,7 +435,7 @@ private struct NextStopView: View {
           "We couldn't write this lesson.", tableName: "Session",
           comment: "Writing a lesson failed"
         )
-        .foregroundStyle(.destructive))
+        .foregroundStyle(.destructiveText))
     }
 
     guard isLessonWorkRunning else {
@@ -446,7 +450,7 @@ private struct NextStopView: View {
       } icon: {
         ProgressView()
       }
-      .foregroundStyle(.secondary))
+      .foregroundStyle(.mutedForeground))
   }
 
   /// Mirrors core's `findAlternativeStudyBlock`.
@@ -609,7 +613,7 @@ private struct MomentSummary: View {
       if moment.ownBrainPower > 0 {
         Text("+\(moment.ownBrainPower) Brain Power", tableName: "Session", comment: "Earned")
           .font(.headline.monospacedDigit())
-          .foregroundStyle(.brain)
+          .foregroundStyle(.brainText)
       }
 
       if moment.total > 0 {
@@ -618,7 +622,7 @@ private struct MomentSummary: View {
           comment: "Questions right in the block just finished"
         )
         .monospacedDigit()
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       if let date = moment.comesBackOn.flatMap(studyDate) {
@@ -626,7 +630,7 @@ private struct MomentSummary: View {
           "Review on \(date.formatted(.studyDay.month(.abbreviated).day()))", tableName: "Session",
           comment: "When the block's lesson comes back"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }

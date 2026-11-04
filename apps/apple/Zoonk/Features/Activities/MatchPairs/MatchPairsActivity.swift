@@ -289,7 +289,7 @@ private struct MatchCardStyle: ButtonStyle {
     if state == .noMatch {
       configuration.label
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .multilineTextAlignment(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 12)
@@ -297,7 +297,7 @@ private struct MatchCardStyle: ButtonStyle {
         .frame(minHeight: 44)
         .overlay {
           RoundedRectangle(cornerRadius: 12)
-            .strokeBorder(Color(.separator), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            .strokeBorder(Color.border, style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
         }
     } else {
       ActivityTileStyle(mark: state.mark).makeBody(configuration: configuration)

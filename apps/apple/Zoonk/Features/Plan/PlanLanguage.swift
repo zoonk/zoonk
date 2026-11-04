@@ -63,6 +63,7 @@ struct LanguageLevelSheet: View {
         }
       }
     }
+    .zoonkList()
     .navigationTitle(
       Text("Your level", tableName: "Plan", comment: "Title of the language level sheet")
     )
@@ -102,7 +103,7 @@ struct PlanAlphabetRow: View {
             }
           }
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } icon: {
         Image(systemName: "character.book.closed")
@@ -124,7 +125,7 @@ struct PlanAlphabetRow: View {
           "That didn't work. Try again in a moment.", tableName: "Plan",
           comment: "Says skipping the alphabet failed"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
   }

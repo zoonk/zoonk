@@ -63,7 +63,7 @@ struct MilestoneCeremony: View {
 
       Text(detail)
         .font(.body)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .multilineTextAlignment(.center)
     }
   }
@@ -96,7 +96,7 @@ struct MilestoneCeremony: View {
           )
           .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.large)
       } else {
         Button(action: onClose) {
@@ -238,7 +238,7 @@ struct MilestoneStage: View {
   }
 
   private var disc: Color {
-    guard let belt, belt != .white, belt != .black else { return Color(.tertiarySystemFill) }
+    guard let belt, belt != .white, belt != .black else { return Color.muted }
     return belt.color.opacity(colorScheme == .dark ? 0.25 : 0.2)
   }
 

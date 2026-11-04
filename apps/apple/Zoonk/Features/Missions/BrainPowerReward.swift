@@ -20,7 +20,7 @@ struct BrainPowerReward: View {
         }
         .labelStyle(.titleAndIcon)
         .font(.subheadline.weight(.semibold).monospacedDigit())
-        .foregroundStyle(earned ? Color(.systemBackground) : .brain)
+        .foregroundStyle(earned ? Color(.background) : .brainText)
         .padding(.horizontal, earned ? 6 : 0)
         .padding(.vertical, earned ? 2 : 0)
         .background {
@@ -31,7 +31,7 @@ struct BrainPowerReward: View {
 
         Text("Brain Power", tableName: "Today", comment: "Under the missions' bonus")
           .font(.caption2)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .buttonStyle(.plain)
@@ -54,7 +54,7 @@ struct BrainPowerReward: View {
           tableName: "Today", comment: "What Brain Power is; the number is the missions' bonus"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
       .padding()
       .frame(idealWidth: 280)

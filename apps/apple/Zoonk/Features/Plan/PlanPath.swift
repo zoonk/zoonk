@@ -42,8 +42,6 @@ struct PlanPathSection: View {
             "\(done) of \(phases.count) phases done", tableName: "Plan",
             comment: "Phases done of the plan's phases"
           )
-          .font(.footnote)
-          .foregroundStyle(.secondary)
           .monospacedDigit()
         }
       }
@@ -176,7 +174,7 @@ private struct PlanPhaseRow: View {
           Image(systemName: showsAll ? "minus" : "plus")
         }
       }
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -194,7 +192,7 @@ private struct PlanPhaseRow: View {
         comment: "Note under a phase whose lessons are still being written"
       )
       .font(.footnote)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -233,12 +231,12 @@ private struct PlanPhaseRow: View {
               : phase.title
           )
           .fontWeight(phase.state == .current ? .semibold : .regular)
-          .foregroundStyle(phase.state == .done ? .secondary : .primary)
+          .foregroundStyle(phase.state == .done ? .mutedForeground : .primary)
 
           if let meta {
             meta
               .font(.caption)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
@@ -371,7 +369,7 @@ private struct PlanChapterRow: View {
       }
     } else {
       content
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -384,7 +382,7 @@ private struct PlanChapterRow: View {
           if let note {
             note
               .font(.caption)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
@@ -520,18 +518,18 @@ struct PlanSyllabusSection: View {
             Text("Lessons studied", tableName: "Plan", comment: "What the modules' bars measure")
           }
         }
-        .font(.footnote)
-        .foregroundStyle(.secondary)
       }
     } footer: {
-      if isExam {
-        Text(
-          "\(syllabus.subjects.count) subjects", tableName: "Plan",
-          comment: "How many subjects the exam has")
-      } else {
-        Text(
-          "\(syllabus.subjects.count) modules", tableName: "Plan",
-          comment: "How many modules the plan has")
+      SectionFooter {
+        if isExam {
+          Text(
+            "\(syllabus.subjects.count) subjects", tableName: "Plan",
+            comment: "How many subjects the exam has")
+        } else {
+          Text(
+            "\(syllabus.subjects.count) modules", tableName: "Plan",
+            comment: "How many modules the plan has")
+        }
       }
     }
   }
@@ -569,7 +567,7 @@ struct SyllabusSubjectRow: View {
     VStack(alignment: .leading, spacing: 6) {
       PlanPathRow {
         Text(subject.name)
-          .foregroundStyle(subject.notPlannedReason == nil ? .primary : .secondary)
+          .foregroundStyle(subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground)
       } value: {
         Text(share, format: .percent.precision(.fractionLength(0)))
           .font(.subheadline)
@@ -579,10 +577,9 @@ struct SyllabusSubjectRow: View {
       if subject.notPlannedReason != nil {
         Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
           .font(.caption)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       } else {
-        ProgressView(value: share)
-          .tint(.success)
+        Meter(value: share, fill: .success)
           .accessibilityHidden(true)
       }
     }
@@ -601,7 +598,7 @@ struct PlanPathRow<Title: View, Value: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
 
       value
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .fixedSize()
     }
   }
@@ -631,7 +628,7 @@ struct PlanChallengeLabel: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
           when?
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if explains {
@@ -647,7 +644,7 @@ struct PlanChallengeLabel: View {
             }
           }
           .font(.caption)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
       // In a list row's button it otherwise gets one line's height and truncates its title.

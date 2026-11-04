@@ -43,7 +43,7 @@ struct CatalogStartActions: View {
       if let note {
         note
           .font(.footnote)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       } else if session.authenticatedSession == nil {
         Text(
           "Start free, no account needed.",
@@ -51,7 +51,7 @@ struct CatalogStartActions: View {
           comment: "Note under a course's start buttons for someone who isn't signed in"
         )
         .font(.footnote)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -87,7 +87,7 @@ struct CatalogStartActions: View {
           "Try a lesson", tableName: "Courses",
           comment: "Opens one of the course's lessons to try before starting a plan")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
   }
 

@@ -34,7 +34,7 @@ struct CompletedLessonsScreen: View {
               CompletedLessonRow(lesson: lesson)
             }
           } header: {
-            Text(day.title)
+            SectionTitle(Text(day.title))
           }
         }
 
@@ -52,6 +52,7 @@ struct CompletedLessonsScreen: View {
           }
         }
       }
+      .zoonkList()
       .lonePage()
     case .empty:
       ContentUnavailableView {
@@ -122,7 +123,7 @@ private struct CompletedLessonRow: View {
         if let chapterTitle = lesson.chapterTitle {
           Text(chapterTitle)
             .font(.footnote)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)

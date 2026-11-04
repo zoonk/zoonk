@@ -58,7 +58,7 @@ struct PlusNotice<Action: View>: View {
         if let description {
           description
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if showsSeePlus {
@@ -66,14 +66,14 @@ struct PlusNotice<Action: View>: View {
             SeePlusButton()
             action
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.small)
           .padding(.top, 8)
         }
       }
     } icon: {
       Image(systemName: "sparkles")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 }
@@ -119,5 +119,6 @@ struct SeePlusButton: View {
     PlusNotice(description: Text(verbatim: "Your whole exam plan, every day to the exam"))
       .listRowInsets(EdgeInsets())
   }
+  .zoonkList()
   .environment(AppRouter())
 }

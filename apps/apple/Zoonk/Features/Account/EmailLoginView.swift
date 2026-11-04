@@ -8,7 +8,7 @@ struct EmailLoginView: View {
   @State private var hasSentCode = false
 
   var body: some View {
-    Form {
+    List {
       Section {
         TextField(
           text: $email,
@@ -56,11 +56,13 @@ struct EmailLoginView: View {
           .disabled(session.isWorking)
         }
       } footer: {
-        if hasSentCode {
-          Text(
-            "We sent a sign-in code to your email. It expires in 5 minutes.",
-            tableName: "Account",
-            comment: "Explains where the email code was sent and when it expires")
+        SectionFooter {
+          if hasSentCode {
+            Text(
+              "We sent a sign-in code to your email. It expires in 5 minutes.",
+              tableName: "Account",
+              comment: "Explains where the email code was sent and when it expires")
+          }
         }
       }
 
@@ -104,6 +106,7 @@ struct EmailLoginView: View {
         }
       }
     }
+    .zoonkList()
     .navigationTitle(
       Text("Email sign-in", tableName: "Account", comment: "Email login navigation title")
     )

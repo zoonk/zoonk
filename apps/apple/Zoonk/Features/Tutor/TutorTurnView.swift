@@ -33,15 +33,13 @@ struct TutorTurnView: View {
       if showsAbout {
         turn.about.label
           .font(.caption)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       Text(turn.question)
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .background(
-          Color(.secondarySystemBackground), in: .rect(cornerRadius: 18, style: .continuous)
-        )
+        .panel(cornerRadius: 18)
         .textSelection(.enabled)
     }
     .frame(maxWidth: .infinity, alignment: .trailing)
@@ -67,7 +65,7 @@ struct TutorTurnView: View {
           "Get answer", tableName: "Tutor",
           comment: "Asks the buddy for an answer that wasn't written yet")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .disabled(conversation.answeringID != nil)
     case .failed:
       VStack(alignment: .leading, spacing: 12) {
@@ -81,14 +79,14 @@ struct TutorTurnView: View {
             comment: "A question the learner's limit stopped"
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         } else {
           (failure.map(answerFailureMessage)
             ?? Text(
               "We couldn't finish this answer.", tableName: "Tutor",
               comment: "A buddy answer failed"))
             .font(.subheadline)
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
 
           TutorRemedyButton(failure: failure ?? .failed) {
             Task { await conversation.retryAnswer(turn.id) }
@@ -109,11 +107,11 @@ struct TutorTurnView: View {
         }
       } else if turn.status == .completed {
         Text("No answer available.", tableName: "Tutor", comment: "A buddy answer that has no text")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       } else {
         VStack(alignment: .leading, spacing: 12) {
           Text("Thinking…", tableName: "Tutor", comment: "The buddy is writing its answer")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .accessibilityAddTraits(.updatesFrequently)
 
           if turn.status == .running && !isStreamingHere {
@@ -136,7 +134,7 @@ struct TutorTurnView: View {
         Image(systemName: "arrow.clockwise")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .disabled(conversation.answeringID != nil)
   }
 

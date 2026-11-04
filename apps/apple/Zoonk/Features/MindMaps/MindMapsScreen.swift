@@ -48,7 +48,7 @@ struct MindMapsScreen: View {
               comment: "How many chapters have mind maps"
             )
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
 
           LazyVGrid(columns: columns, spacing: 16) {
@@ -93,7 +93,7 @@ struct MindMapsScreen: View {
         } label: {
           Text("Try again", tableName: "MindMaps", comment: "Retries")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     case .idle, .loading:
@@ -116,7 +116,7 @@ private struct MindMapTile: View {
       Button {
         router.open(.mindMap(chapterId: map.chapterId))
       } label: {
-        Color(.secondarySystemBackground)
+        Color.card
           .aspectRatio(4 / 3, contentMode: .fit)
           .overlay {
             picture
@@ -132,7 +132,7 @@ private struct MindMapTile: View {
 
       Text("Chapter \(map.position)", tableName: "MindMaps", comment: "A chapter's number")
         .font(.caption.monospaced())
-        .foregroundStyle(.tertiary)
+        .foregroundStyle(.faint)
 
       Text(map.title)
         .font(.subheadline.weight(.medium))
@@ -145,18 +145,18 @@ private struct MindMapTile: View {
           ProgressView()
         }
         .font(.footnote)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       } else if map.status == .available || map.status == .failed {
         if let failure = store.failures[map.chapterId] {
           failureText(failure)
             .font(.footnote)
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
         } else if map.status == .failed {
           Text(
             "It couldn't be made this time.", tableName: "MindMaps", comment: "A map that failed"
           )
           .font(.footnote)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         Button {
@@ -168,7 +168,7 @@ private struct MindMapTile: View {
             Text("Create", tableName: "MindMaps", comment: "Makes the chapter's mind map")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.small)
       }
     }

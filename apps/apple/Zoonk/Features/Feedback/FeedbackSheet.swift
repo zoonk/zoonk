@@ -158,7 +158,7 @@ private struct FeedbackForm: View {
   }
 
   private var form: some View {
-    Form {
+    List {
       if !isReport {
         Section {
           Text(
@@ -166,7 +166,7 @@ private struct FeedbackForm: View {
             tableName: "Feedback",
             comment: "Introduction shown above the feedback fields."
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .listRowBackground(Color.clear)
         }
       }
@@ -200,10 +200,12 @@ private struct FeedbackForm: View {
               tableName: "Feedback",
               comment: "Email field label in the feedback form."))
         } footer: {
-          Text(
-            "We'll use this email to contact you.",
-            tableName: "Feedback",
-            comment: "Explains why the feedback form asks for an email address.")
+          SectionFooter {
+            Text(
+              "We'll use this email to contact you.",
+              tableName: "Feedback",
+              comment: "Explains why the feedback form asks for an email address.")
+          }
         }
       }
 
@@ -222,14 +224,16 @@ private struct FeedbackForm: View {
         .focused($focusedField, equals: .message)
         .lineLimit(5...10)
       } footer: {
-        if store.attachesScreen {
-          Label {
-            Text(
-              "This screen is attached",
-              tableName: "Feedback",
-              comment: "Says the message is sent with the page it was written on")
-          } icon: {
-            Image(systemName: "paperclip")
+        SectionFooter {
+          if store.attachesScreen {
+            Label {
+              Text(
+                "This screen is attached",
+                tableName: "Feedback",
+                comment: "Says the message is sent with the page it was written on")
+            } icon: {
+              Image(systemName: "paperclip")
+            }
           }
         }
       }
@@ -241,11 +245,12 @@ private struct FeedbackForm: View {
           } icon: {
             Image(systemName: "exclamationmark.triangle")
           }
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
           .accessibilityAddTraits(.isStaticText)
         }
       }
     }
+    .zoonkList()
     .disabled(store.state == .submitting)
     .onChange(of: store.email) { _, _ in
       store.clearFailure()

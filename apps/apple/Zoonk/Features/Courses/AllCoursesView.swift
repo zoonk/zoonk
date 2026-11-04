@@ -17,7 +17,7 @@ struct AllCoursesView: View {
           "Start from a course, or tell Zoonk what you're getting ready for.",
           tableName: "Courses", comment: "The line under the catalog's title"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .listRowBackground(Color.clear)
       }
       .listSectionMargins(.trailing, leadingPageMargin)
@@ -39,6 +39,7 @@ struct AllCoursesView: View {
 
       CatalogCourses(category: category, isAtHinge: leadingPageMargin != nil)
     }
+    .zoonkList()
     // Section margins count from the list's whole bounds, which run under the vertical bar.
     .onGeometryChange(for: CGFloat?.self) { proxy in
       PaneSpace(proxy).hinge.map {
@@ -119,7 +120,7 @@ private struct CourseCatalogEmptyView: View {
             Image(systemName: "plus")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     }
     .lonePage()

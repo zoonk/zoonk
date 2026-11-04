@@ -123,7 +123,7 @@ struct ActivityGuessScaleView: View {
         Text(format(scale.max))
       }
       .font(.caption.monospacedDigit())
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .accessibilityHidden(true)
 
       Text(
@@ -131,7 +131,7 @@ struct ActivityGuessScaleView: View {
         comment: "The real value revealed after a guess"
       )
       .font(.headline.monospacedDigit())
-      .foregroundStyle(Color.success)
+      .foregroundStyle(Color.successText)
     }
   }
 
@@ -151,7 +151,7 @@ private struct GuessScaleBar: View {
       let y = size.height / 2
       let track = Path(
         roundedRect: CGRect(x: 0, y: y - 3, width: size.width, height: 6), cornerRadius: 3)
-      context.fill(track, with: .color(Color(.systemFill)))
+      context.fill(track, with: .color(Color.surface3))
 
       let actualX = size.width * actualShare
 

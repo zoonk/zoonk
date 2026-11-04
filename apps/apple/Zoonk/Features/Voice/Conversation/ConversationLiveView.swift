@@ -36,7 +36,7 @@ struct ConversationLiveView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .scenePadding()
       }
-      .background(Color(.secondarySystemBackground))
+      .background(Color(.background))
     } single: {
       callColumn(besideAside: false)
     }
@@ -194,7 +194,7 @@ private struct CallTranscript: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(
-              Color(.secondarySystemFill), in: .rect(cornerRadius: 16, style: .continuous)
+              Color.muted, in: .rect(cornerRadius: 16, style: .continuous)
             )
             .frame(maxWidth: .infinity, alignment: .trailing)
             .accessibilityLabel(
@@ -233,7 +233,8 @@ private struct CallReply: View {
           localized: "Or type your reply", table: "Voice", comment: "Placeholder for a typed reply"),
         text: $reply
       )
-      .textFieldStyle(.roundedBorder)
+      .textFieldStyle(.plain)
+      .fieldBorder(isFocused: isFocused)
       .focused($isFocused)
       // The learner chose to type: the field takes the place of "Type instead", focus included.
       .onAppear {
@@ -287,7 +288,7 @@ private struct CallControls: View {
         .labelStyle(.iconOnly)
     }
     .lineLimit(1)
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
   }
 
@@ -351,7 +352,7 @@ private struct CallHeader: View {
       VStack(spacing: 4) {
         HStack(spacing: 6) {
           Circle()
-            .fill(call.phase == .live ? AnyShapeStyle(.success) : AnyShapeStyle(.tertiary))
+            .fill(call.phase == .live ? AnyShapeStyle(.success) : AnyShapeStyle(.faint))
             .frame(width: 8, height: 8)
 
           time
@@ -359,7 +360,7 @@ private struct CallHeader: View {
         }
         .opacity(call.liveSince == nil ? 0 : 1)
 
-        ProgressView(value: progress, total: talk)
+        Meter(value: progress, total: talk)
           .frame(width: 96)
       }
       .accessibilityElement(children: .ignore)
@@ -393,7 +394,7 @@ private struct CallEndedStatus: View {
           if let detail {
             Text(verbatim: detail)
               .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
@@ -508,7 +509,7 @@ private struct CallGoals: View {
         Spacer()
         Text("\(met.count)/\(conversation.objectives.count)")
           .font(.subheadline.monospacedDigit())
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
       .accessibilityElement(children: .ignore)
       .accessibilityAddTraits(.isHeader)
@@ -528,7 +529,7 @@ private struct CallGoals: View {
             .typesettingLanguage(.init(identifier: conversation.targetLanguage))
         } icon: {
           Image(systemName: isMet ? "checkmark.circle.fill" : "circle")
-            .foregroundStyle(isMet ? AnyShapeStyle(.success) : AnyShapeStyle(.tertiary))
+            .foregroundStyle(isMet ? AnyShapeStyle(.success) : AnyShapeStyle(.faint))
         }
         .accessibilityValue(
           isMet ? Text("Done", tableName: "Voice", comment: "VoiceOver: a goal is met") : Text(""))

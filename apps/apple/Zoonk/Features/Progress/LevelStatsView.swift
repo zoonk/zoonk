@@ -160,7 +160,7 @@ private struct BeltProgression: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .background {
         RoundedRectangle(cornerRadius: 16, style: .continuous)
-          .fill(isNeutral ? Color(.tertiarySystemFill) : Color(.secondarySystemGroupedBackground))
+          .fill(isNeutral ? Color.muted : Color.card)
           .overlay {
             if !isNeutral {
               RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -185,7 +185,7 @@ private struct BeltProgression: View {
         comment: "The learner's level within their belt, of the belt's 10 levels"
       )
       .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
   }
@@ -203,7 +203,7 @@ private struct NextBeltView: View {
         )
         .font(.caption.weight(.medium))
         .textCase(.uppercase)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         HStack(spacing: 8) {
           BeltDot(belt: next.belt)
@@ -221,7 +221,7 @@ private struct NextBeltView: View {
         )
         .font(.caption)
         .monospacedDigit()
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
       .multilineTextAlignment(alignment == .trailing ? .trailing : .leading)
       .accessibilityElement(children: .combine)

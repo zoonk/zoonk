@@ -98,7 +98,7 @@ struct LessonAudioButton: View {
       switch style {
       case .prominent, .bar:
         button
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .buttonBorderShape(.circle)
           .controlSize(.large)
           .keyboardShortcut("p", modifiers: [])
@@ -127,7 +127,7 @@ struct LessonAudioButton: View {
       case .inline:
         content
           .imageScale(.large)
-          .foregroundStyle(isPlaying ? .primary : .secondary)
+          .foregroundStyle(isPlaying ? Color(.foreground) : .mutedForeground)
           .frame(minWidth: 44, minHeight: 44)
           .contentShape(.rect)
       }
@@ -231,10 +231,10 @@ private struct VocabularyView: View {
             LessonAudioButton(url: exercise.promptAudio, style: .inline)
           }
           if let romanization = word.romanization {
-            Text(romanization).foregroundStyle(.secondary)
+            Text(romanization).foregroundStyle(.mutedForeground)
           }
           if let pronunciation = word.pronunciation {
-            Text(pronunciation).font(.callout).foregroundStyle(.secondary)
+            Text(pronunciation).font(.callout).foregroundStyle(.mutedForeground)
           }
         }
 
@@ -269,7 +269,7 @@ struct LessonWordHints: View {
     if let note = hints.note {
       VStack(alignment: .leading, spacing: 2) {
         Text("Usage:", tableName: "Player", comment: "Before a word's usage note")
-          .font(.caption.weight(.medium)).foregroundStyle(.secondary)
+          .font(.caption.weight(.medium)).foregroundStyle(.mutedForeground)
         Text(note)
       }
     }
@@ -279,7 +279,7 @@ struct LessonWordHints: View {
         Text(
           "Pronunciation tip:", tableName: "Player", comment: "Before a word's pronunciation tip"
         )
-        .font(.caption.weight(.medium)).foregroundStyle(.secondary)
+        .font(.caption.weight(.medium)).foregroundStyle(.mutedForeground)
         Text(tip)
       }
     }
@@ -307,7 +307,7 @@ private struct AlphabetView: View {
             Text(readingAid).font(.title3.weight(.medium))
           }
           if let pronunciation = content.pronunciation {
-            Text(pronunciation).foregroundStyle(.secondary)
+            Text(pronunciation).foregroundStyle(.mutedForeground)
           }
         }
         LessonAudioButton(url: exercise.promptAudio, style: .inline)
@@ -319,7 +319,7 @@ private struct AlphabetView: View {
         ForEach(forms, id: \.self) { form in
           VStack {
             Text(form.symbol).font(.title)
-            Text(form.label).font(.caption).foregroundStyle(.secondary)
+            Text(form.label).font(.caption).foregroundStyle(.mutedForeground)
           }
           .accessibilityElement(children: .combine)
         }
@@ -337,7 +337,7 @@ private struct MultipleChoiceView: View {
     switch part {
     case .screen:
       if let text = exercise.content.context {
-        LessonRichText(text).foregroundStyle(.secondary)
+        LessonRichText(text).foregroundStyle(.mutedForeground)
       }
 
       if let question = exercise.content.question {
@@ -499,7 +499,7 @@ private struct FillBlankView: View {
         answers[index] = ""
         context.select(answers.allSatisfy(\.isEmpty) ? nil : .fillBlank(userAnswers: answers))
       } label: {
-        blankWord(word, line: .secondary)
+        blankWord(word, line: .mutedForeground)
       }
       .buttonStyle(.plain)
       .disabled(context.isLocked || word.isEmpty)
@@ -627,7 +627,7 @@ private struct ArrangeWordsView: View {
           } label: {
             Text(word)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .tint(.primary)
           .disabled(context.isLocked)
           .accessibilityFocused($focus, equals: .placed(index))
@@ -636,7 +636,7 @@ private struct ArrangeWordsView: View {
     }
     .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
     .padding(8)
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .panel(cornerRadius: 16)
 
     LessonWordBank {
       ForEach(exercise.wordBankOptions.indices, id: \.self) { index in
@@ -903,7 +903,7 @@ private struct MatchColumnsView: View {
         comment: "Every pair of a match exercise is matched"
       )
       .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 

@@ -165,7 +165,7 @@ struct QuestionTitle: View {
   var body: some View {
     ItemText(text)
       .font(.title3.weight(.semibold))
-      .foregroundStyle(isMuted ? .secondary : .primary)
+      .foregroundStyle(isMuted ? .mutedForeground : .primary)
       .accessibilityAddTraits(.isHeader)
   }
 }
@@ -181,7 +181,7 @@ struct QuestionNote<Content: View>: View {
       Image(systemName: systemImage)
     }
     .font(.footnote.weight(.medium))
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -192,7 +192,7 @@ struct PracticeCallout<Content: View>: View {
   var body: some View {
     HStack(alignment: .firstTextBaseline, spacing: 10) {
       Image(systemName: systemImage)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
       VStack(alignment: .leading, spacing: 4) {
         content()
@@ -201,9 +201,7 @@ struct PracticeCallout<Content: View>: View {
     }
     .font(.subheadline)
     .padding(12)
-    .background(
-      Color(.secondarySystemGroupedBackground),
-      in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+    .panel(cornerRadius: 12)
   }
 }
 
@@ -249,9 +247,9 @@ enum PracticeVerdict: Equatable {
 
   var tint: Color {
     switch self {
-    case .right: .success
-    case .wrong: .destructive
-    case .blank, .notSure: .secondary
+    case .right: .successText
+    case .wrong: .destructiveText
+    case .blank, .notSure: .mutedForeground
     }
   }
 
@@ -295,7 +293,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
             Image(systemName: "chevron.up.2")
           }
           .font(.footnote.monospacedDigit())
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -322,10 +320,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
     .font(.callout)
     .padding(16)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(
-      Color(.secondarySystemGroupedBackground),
-      in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-    )
+    .panel(cornerRadius: 16)
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text(
@@ -354,7 +349,7 @@ struct WorkedStepsView: View {
         Text(ItemTextBlock.inline(step))
           .font(.callout.monospaced())
           .fontWeight(index == steps.count - 1 ? .semibold : .regular)
-          .foregroundStyle(index == steps.count - 1 ? .primary : .secondary)
+          .foregroundStyle(index == steps.count - 1 ? Color(.foreground) : .mutedForeground)
       }
     }
     .accessibilityElement(children: .combine)

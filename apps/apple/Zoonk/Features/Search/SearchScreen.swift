@@ -19,18 +19,21 @@ struct SearchScreen: View {
       List {
         groupSections(leadingGroups)
       }
+      .zoonkList()
     } secondary: {
       List {
         groupSections(trailingGroups)
         catalogSection
         groupSections(trailingFallback)
       }
+      .zoonkList()
     } single: {
       List {
         groupSections(groups)
         catalogSection
         groupSections(fallback.map { [$0] } ?? [])
       }
+      .zoonkList()
     }
     .navigationTitle(Text(AppTab.search.title))
     // On a phone the tab bar doesn't turn the search tab into a field, so it stays under the
@@ -82,7 +85,7 @@ struct SearchScreen: View {
           .foregroundStyle(.primary)
         }
       } header: {
-        Text(group.title)
+        SectionTitle(Text(group.title))
       }
     }
   }
@@ -104,7 +107,7 @@ struct SearchScreen: View {
                 Text(chapter.title)
                 Text(chapter.courseTitle)
                   .font(.subheadline)
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
               }
             } icon: {
               Image(systemName: "rectangle.stack")
@@ -112,7 +115,8 @@ struct SearchScreen: View {
           }
         }
       } header: {
-        Text("In the catalog", tableName: "Search", comment: "Search results from the catalog")
+        SectionTitle(
+          Text("In the catalog", tableName: "Search", comment: "Search results from the catalog"))
       }
     }
   }

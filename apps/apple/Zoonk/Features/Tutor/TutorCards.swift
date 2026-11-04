@@ -20,7 +20,7 @@ struct TutorPlanChangeCard: View {
         if let status = statusLine {
           status
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .accessibilityFocused($isResultFocused)
         }
 
@@ -32,7 +32,7 @@ struct TutorPlanChangeCard: View {
             comment: "Answering a plan change the buddy proposed failed"
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -75,7 +75,7 @@ struct TutorPlanChangeCard: View {
           Text("Not now", tableName: "Tutor", comment: "Declines a plan change the buddy proposed")
             .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .disabled(isSaving)
     case .applied where change.canUndo:
@@ -88,7 +88,7 @@ struct TutorPlanChangeCard: View {
           Image(systemName: "arrow.uturn.backward")
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .disabled(isSaving)
     case .applied, .declined, .undone, .replaced:
       EmptyView()
@@ -175,7 +175,7 @@ struct TutorMemoryUpdate: View {
             "Couldn't undo. It changed since.", tableName: "Tutor",
             comment: "Undoing a memory change failed"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
       } else {
         Label {
           Text(
@@ -203,7 +203,7 @@ struct TutorMemoryUpdate: View {
       }
     }
     .font(.footnote)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 
   private var statement: String {
@@ -239,7 +239,7 @@ struct TutorMissionMoment: View {
           comment: "The day's missions done, after asking the buddy"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     } icon: {
       Image(systemName: "checkmark.circle.fill")

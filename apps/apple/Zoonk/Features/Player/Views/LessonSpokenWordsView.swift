@@ -15,7 +15,7 @@ struct LessonSpokenWordsView: View {
     VStack(alignment: .leading, spacing: 8) {
       Text("What we heard", tableName: "Player", comment: "Above a spoken answer's words as heard")
         .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       FlowLayout(spacing: 6) {
         ForEach(Array(heard.words.enumerated()), id: \.offset) { _, word in
@@ -73,7 +73,7 @@ struct LessonSpokenWordsView: View {
     }
     .padding(.leading, 12)
     .overlay(alignment: .leading) {
-      Rectangle().fill(.separator).frame(width: 2)
+      Rectangle().fill(.border).frame(width: 2)
     }
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
@@ -92,7 +92,7 @@ struct LessonSpokenWordsView: View {
           comment: "How a word to practice sounds, spelled for the learner"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -121,7 +121,7 @@ struct LessonSpokenWordsView: View {
           }
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.small)
     }
   }
@@ -160,15 +160,15 @@ private struct HeardWordText: View {
       switch word.status {
       case .correct:
         Text(word.text)
-          .foregroundStyle(.success)
+          .foregroundStyle(.successText)
       case .different:
         Text(word.text)
           .underline(pattern: .dot, color: .destructive)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
       case .missed:
         Text(word.text)
           .strikethrough()
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .accessibilityLabel(label)

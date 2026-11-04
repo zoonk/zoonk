@@ -68,7 +68,7 @@ struct ShellGate<Content: View>: View {
       ScrollView {
         VStack(alignment: .leading, spacing: 24) {
           Text(description)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           gate
         }
@@ -144,6 +144,7 @@ struct ShellGate<Content: View>: View {
       List {
         GoalStartEntry(part: .examples, goal: $goal)
       }
+      .zoonkList()
     } content: { _ in
       List {
         Section {
@@ -152,12 +153,13 @@ struct ShellGate<Content: View>: View {
             tableName: "Navigation",
             comment: "Explains what starting a goal does, on a page that needs one"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
         .listRowBackground(Color.clear)
 
         GoalStartEntry(part: .box, goal: $goal)
       }
+      .zoonkList()
     }
   }
 }

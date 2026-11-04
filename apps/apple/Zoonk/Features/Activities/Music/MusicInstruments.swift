@@ -9,7 +9,7 @@ struct MusicCanvas<Content: View>: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 20, style: .continuous))
+    .panel(cornerRadius: 20)
   }
 }
 
@@ -26,7 +26,7 @@ struct MusicSoundButton: View {
         Image(systemName: "speaker.wave.2")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .buttonBorderShape(.capsule)
     .disabled(isDisabled)
   }
@@ -43,7 +43,7 @@ struct MusicSoundNote: View {
         comment: "Under an instrument when the device couldn't play sound"
       )
       .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 }
@@ -75,25 +75,25 @@ struct NoteMark: View {
   private var fill: Color {
     switch kind {
     case .correct: .success
-    case .heard, .new: .mint
+    case .heard, .new: .vizAccent
     case .kept: .primary
-    case .missed, .removed, .wrong: Color(.systemBackground)
+    case .missed, .removed, .wrong: Color(.background)
     }
   }
 
   private var textColor: Color {
     switch kind {
-    case .correct, .heard, .new, .kept: Color(.systemBackground)
-    case .missed: .success
-    case .removed: .secondary
-    case .wrong: .destructive
+    case .correct, .heard, .new, .kept: Color(.background)
+    case .missed: .successText
+    case .removed: .mutedForeground
+    case .wrong: .destructiveText
     }
   }
 
   private var border: Color? {
     switch kind {
     case .missed: .success
-    case .removed: .secondary
+    case .removed: .mutedForeground
     case .wrong: .destructive
     case .correct, .heard, .new, .kept: nil
     }
@@ -301,7 +301,7 @@ struct GuitarFretboard: View {
         HStack(spacing: 0) {
           Text(MusicLabels.display(MusicLabels.stringNames[string]))
             .font(.caption.weight(.medium))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .frame(width: nameWidth)
             .accessibilityHidden(true)
 
@@ -326,7 +326,7 @@ struct GuitarFretboard: View {
         ForEach(frets, id: \.self) { fret in
           Text(fret, format: .number)
             .font(.caption.monospacedDigit())
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .frame(minWidth: 44, maxWidth: .infinity)
         }
       }
@@ -343,7 +343,7 @@ struct GuitarFretboard: View {
       if fret == nil {
         Text(Self.mutedMark)
           .font(.subheadline.weight(.semibold))
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       } else if fret == 0 {
         Circle().strokeBorder(.primary, lineWidth: 2).frame(width: 14, height: 14)
       }
@@ -360,7 +360,10 @@ struct GuitarFretboard: View {
       } label: {
         Text(Self.mutedMark)
           .font(.subheadline.weight(.semibold))
-          .foregroundStyle(current == nil ? AnyShapeStyle(.primary) : AnyShapeStyle(.quaternary))
+          .foregroundStyle(
+            current == nil
+              ? AnyShapeStyle(.primary) : AnyShapeStyle(Color(.foreground).opacity(0.2))
+          )
           .frame(width: 44, height: rowHeight)
           .contentShape(.rect)
       }
@@ -370,7 +373,8 @@ struct GuitarFretboard: View {
       } label: {
         Circle()
           .strokeBorder(
-            current == 0 ? AnyShapeStyle(.primary) : AnyShapeStyle(.quaternary), lineWidth: 2
+            current == 0 ? AnyShapeStyle(.primary) : AnyShapeStyle(Color(.foreground).opacity(0.2)),
+            lineWidth: 2
           )
           .background(Circle().fill(current == 0 ? Color.primary.opacity(0.1) : .clear))
           .frame(width: 14, height: 14)
@@ -379,7 +383,7 @@ struct GuitarFretboard: View {
       }
       .overlay(alignment: .trailing) {
         Rectangle()
-          .fill(firstFret == 1 ? AnyShapeStyle(.primary.opacity(0.7)) : AnyShapeStyle(.separator))
+          .fill(firstFret == 1 ? AnyShapeStyle(.primary.opacity(0.7)) : AnyShapeStyle(.border))
           .frame(width: firstFret == 1 ? 4 : 2)
       }
 
@@ -412,7 +416,7 @@ struct GuitarFretboard: View {
   private func fretCell(string: Int, fret: Int, height: CGFloat) -> some View {
     ZStack {
       Rectangle()
-        .fill(.secondary.opacity(0.5))
+        .fill(.mutedForeground.opacity(0.5))
         .frame(height: 1)
 
       if voicing[string] == fret, fret > 0 {
@@ -421,7 +425,7 @@ struct GuitarFretboard: View {
     }
     .frame(minWidth: 44, maxWidth: .infinity, minHeight: height, maxHeight: .infinity)
     .overlay(alignment: .trailing) {
-      Rectangle().fill(.separator).frame(width: 2)
+      Rectangle().fill(.border).frame(width: 2)
     }
     .overlay(alignment: .leading) {
       if onChange == nil, fret == firstFret, firstFret == 1 {

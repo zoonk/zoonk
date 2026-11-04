@@ -105,7 +105,7 @@ private struct ChanceSimulationView: View {
     ChartsCanvas {
       HStack(alignment: .top) {
         VStack(alignment: .leading, spacing: 2) {
-          Text(verbatim: runsLabel).font(.subheadline).foregroundStyle(.secondary)
+          Text(verbatim: runsLabel).font(.subheadline).foregroundStyle(.mutedForeground)
           ChartsCaption(fields.hitLabel)
 
           if isRunning, let guess {
@@ -131,7 +131,7 @@ private struct ChanceSimulationView: View {
           comment: "Before a simulation runs"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, minHeight: 128)
       } else if case .sharedBirthday = fields.model {
@@ -201,7 +201,7 @@ private struct ChanceSimulationView: View {
         Image(systemName: "arrow.counterclockwise")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
   }
 
@@ -218,7 +218,8 @@ private struct ChanceSimulationView: View {
     return Chart(bars, id: \.outcome) { bar in
       BarMark(x: .value(verbatim: "outcome", bar.outcome), y: .value(verbatim: "count", bar.count))
         .foregroundStyle(
-          ChanceModel.isHit(fields.model, bar.outcome) ? Color.orange : Color.secondary.opacity(0.4)
+          ChanceModel.isHit(fields.model, bar.outcome)
+            ? Color.vizHighlight : Color.mutedForeground.opacity(0.4)
         )
     }
     .chartXScale(domain: (Double(first) - 0.5)...(Double(last) + 0.5))
@@ -256,20 +257,20 @@ private struct ChanceSimulationView: View {
               comment: "The learner's guess next to a simulation"
             )
             .font(.caption2)
-            .foregroundStyle(isGuessRight ? Color.success : .destructive)
+            .foregroundStyle(isGuessRight ? Color.successText : .destructiveText)
           }
       }
 
       ForEach(ChanceModel.runningShare(hits, points: 200), id: \.x) { point in
         LineMark(x: .value(verbatim: "run", point.x), y: .value(verbatim: "share", point.y))
-          .foregroundStyle(.mint)
+          .foregroundStyle(.vizAccent)
       }
     }
     .chartXScale(domain: 0...fields.runs)
     .chartYScale(domain: 0...1)
     .chartYAxis {
       AxisMarks(values: [0, 0.5, 1]) { value in
-        AxisGridLine()
+        AxisGridLine().foregroundStyle(.vizGrid)
         AxisValueLabel {
           if let share = value.as(Double.self) {
             Text(verbatim: ActivityNumberFormat.format(share * 100, unit: "%", digits: 0))
@@ -420,7 +421,7 @@ private struct SamplingSimulationView: View {
               xStart: .value(verbatim: "from", bin.from), xEnd: .value(verbatim: "to", bin.to),
               yStart: .value(verbatim: "count", 0), yEnd: .value(verbatim: "count", bin.count)
             )
-            .foregroundStyle(Color.secondary.opacity(0.25))
+            .foregroundStyle(Color.mutedForeground.opacity(0.25))
           }
         }
 
@@ -429,7 +430,7 @@ private struct SamplingSimulationView: View {
             xStart: .value(verbatim: "from", bin.from), xEnd: .value(verbatim: "to", bin.to),
             yStart: .value(verbatim: "count", 0), yEnd: .value(verbatim: "count", bin.count)
           )
-          .foregroundStyle(Color.mint.opacity(0.8))
+          .foregroundStyle(Color.vizAccent.opacity(0.8))
         }
 
         if isDone {
@@ -437,11 +438,11 @@ private struct SamplingSimulationView: View {
             xStart: .value(verbatim: "from", range.lowerBound),
             xEnd: .value(verbatim: "to", range.upperBound)
           )
-          .foregroundStyle(Color.mint.opacity(0.1))
+          .foregroundStyle(Color.vizAccent.opacity(0.1))
         }
 
         RuleMark(x: .value(verbatim: "truth", truth))
-          .foregroundStyle(.orange)
+          .foregroundStyle(.vizHighlight)
           .lineStyle(StrokeStyle(lineWidth: 2))
           .annotation(position: .top) {
             Text(
@@ -449,7 +450,7 @@ private struct SamplingSimulationView: View {
               comment: "The population's real value on a sampling chart"
             )
             .font(.caption2.weight(.medium))
-            .foregroundStyle(.orange)
+            .foregroundStyle(.vizHighlight)
           }
       }
       .chartXScale(domain: domain)
@@ -457,7 +458,7 @@ private struct SamplingSimulationView: View {
       .chartYAxis(.hidden)
       .chartXAxis {
         AxisMarks(values: .automatic(desiredCount: 4)) { value in
-          AxisGridLine()
+          AxisGridLine().foregroundStyle(.vizGrid)
           AxisValueLabel {
             if let x = value.as(Double.self) {
               Text(verbatim: valueText(x, digits: digits))
@@ -473,9 +474,10 @@ private struct SamplingSimulationView: View {
       if comparison != nil {
         HStack(spacing: 16) {
           legend(
-            Color.secondary.opacity(0.25), text: ActivityNumberFormat.format(Double(smallest)),
+            Color.mutedForeground.opacity(0.25),
+            text: ActivityNumberFormat.format(Double(smallest)),
             isCurrent: false)
-          legend(.mint, text: ActivityNumberFormat.format(Double(size)), isCurrent: true)
+          legend(.vizAccent, text: ActivityNumberFormat.format(Double(size)), isCurrent: true)
         }
         .accessibilityHidden(true)
       }
@@ -572,14 +574,14 @@ private struct SamplingSimulationView: View {
         comment: "Above a sampling simulation's margin of error"
       )
       .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       ChartsCaption(fields.populationLabel)
     }
   }
 
   /// The margin turns soft blue once the sample is big enough: done, which is never green.
   private func marginReadout(_ margin: Double, isDone: Bool) -> some View {
-    ChartsReadout(text: marginText(margin), style: isDone ? .success : .secondary)
+    ChartsReadout(text: marginText(margin), style: isDone ? .successText : .mutedForeground)
       .accessibilityHidden(true)
   }
 
@@ -589,7 +591,7 @@ private struct SamplingSimulationView: View {
       Text(verbatim: text)
     }
     .font(.caption.monospacedDigit().weight(isCurrent ? .medium : .regular))
-    .foregroundStyle(isCurrent ? .primary : .secondary)
+    .foregroundStyle(isCurrent ? Color(.foreground) : .mutedForeground)
   }
 
   private func progress(shown: Int, isDone: Bool) -> some View {
@@ -607,7 +609,7 @@ private struct SamplingSimulationView: View {
       }
     }
     .font(.subheadline.monospacedDigit())
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 
   private func runAgain(isDone: Bool) -> some View {
@@ -621,7 +623,7 @@ private struct SamplingSimulationView: View {
         Image(systemName: "arrow.counterclockwise")
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
     .disabled(!isDone)
   }
@@ -656,7 +658,7 @@ private struct SamplingSimulationView: View {
         tableName: "ActivitiesCharts", comment: "How much a margin of error shrinks as samples grow"
       )
       .font(.footnote)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
     .padding()
     .frame(maxWidth: .infinity, alignment: .leading)

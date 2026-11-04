@@ -97,7 +97,7 @@ struct MindMapScreen: View {
         } label: {
           Text("Try again", tableName: "MindMaps", comment: "Retries")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     case .idle, .loading:
@@ -117,7 +117,7 @@ private struct MindMapOutlineView: View {
 
         if let summary = outline.summary, !summary.isEmpty {
           Text("In short: \(summary)", tableName: "MindMaps", comment: "The map's summary")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -130,17 +130,18 @@ private struct MindMapOutlineView: View {
               Image(systemName: "circle.fill")
                 .font(.system(.caption2))
                 .imageScale(.small)
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(.faint)
                 .accessibilityHidden(true)
               Text(point)
             }
             .font(.subheadline)
           }
         } header: {
-          Text(branch.title)
+          SectionTitle(Text(branch.title))
         }
       }
     }
+    .zoonkList()
   }
 }
 

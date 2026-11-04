@@ -60,7 +60,7 @@ private struct SetPlace: View {
       }
     }
     .font(.caption.weight(.medium))
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -106,7 +106,7 @@ private struct SetTextView: View {
             Image(systemName: expanded ? "chevron.up" : "chevron.down")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.small)
       }
 
@@ -115,12 +115,12 @@ private struct SetTextView: View {
       }
 
       if let source = set.source {
-        Text(source).font(.caption).foregroundStyle(.secondary)
+        Text(source).font(.caption).foregroundStyle(.mutedForeground)
       }
     }
     .padding(.leading, 14)
     .overlay(alignment: .leading) {
-      Rectangle().fill(Color(.separator)).frame(width: 2)
+      Rectangle().fill(Color.border).frame(width: 2)
     }
     .accessibilityElement(children: .contain)
   }
@@ -133,7 +133,7 @@ struct ItemSupportView: View {
 
   var body: some View {
     if let context {
-      ItemText(context).font(.callout).foregroundStyle(.secondary)
+      ItemText(context).font(.callout).foregroundStyle(.mutedForeground)
     }
 
     if let image, let url = URL(string: image.url) {
@@ -141,7 +141,7 @@ struct ItemSupportView: View {
         if let picture = phase.image {
           picture.resizable().scaledToFit()
         } else {
-          Color(.secondarySystemFill)
+          Color.muted
             .aspectRatio(
               CGFloat(image.width ?? 4) / CGFloat(max(image.height ?? 3, 1)), contentMode: .fit)
         }
@@ -191,7 +191,7 @@ struct PracticeVisualView: View {
         .frame(minHeight: 200)
 
         if let source = chart.source {
-          Text(source).font(.caption).foregroundStyle(.secondary)
+          Text(source).font(.caption).foregroundStyle(.mutedForeground)
         }
       }
     case .timeline(let timeline):
@@ -200,11 +200,11 @@ struct PracticeVisualView: View {
 
         ForEach(Array(timeline.events.enumerated()), id: \.offset) { _, event in
           HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Text(event.date).font(.footnote.monospacedDigit()).foregroundStyle(.secondary)
+            Text(event.date).font(.footnote.monospacedDigit()).foregroundStyle(.mutedForeground)
             VStack(alignment: .leading, spacing: 2) {
               Text(event.label).font(.callout.weight(.medium))
               if let detail = event.detail {
-                Text(detail).font(.footnote).foregroundStyle(.secondary)
+                Text(detail).font(.footnote).foregroundStyle(.mutedForeground)
               }
             }
           }
@@ -290,13 +290,13 @@ private struct RecordingProgress: View {
       let elapsed = min(SetRecordings.shared.elapsed(key), length)
 
       VStack(alignment: .leading, spacing: 4) {
-        ProgressView(value: elapsed, total: length)
+        Meter(value: elapsed, total: length)
         Text(
           "\(clock(elapsed)) of \(clock(length))", tableName: "Practice",
           comment: "How far a recording has played, as in “0:42 of 3:19”."
         )
         .font(.caption.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
       .accessibilityElement(children: .combine)
     }
@@ -338,7 +338,7 @@ private struct ListeningPlayerView: View {
 
       Text(rule(answered: answered, playsLeft: playsLeft, isPlaying: isPlaying))
         .font(.footnote)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       Button(action: play) {
         Label {
@@ -353,7 +353,7 @@ private struct ListeningPlayerView: View {
           Image(systemName: isPlaying ? "waveform" : "play.fill")
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .disabled(isPlaying || (!answered && playsLeft == 0) || listening.audio == nil)
 
       if let durationMs = listening.audio?.durationMs, durationMs > 0 {
@@ -366,7 +366,7 @@ private struct ListeningPlayerView: View {
           comment: "Shown when a set's recording fails to load."
         )
         .font(.footnote)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
 
       if let questions, !questions.prompts.isEmpty {
@@ -376,7 +376,7 @@ private struct ListeningPlayerView: View {
               Text("\(index + 1). \(ItemTextBlock.plain(prompt))")
                 .font(.footnote)
                 .fontWeight(index == questions.current ? .medium : .regular)
-                .foregroundStyle(index == questions.current ? .primary : .secondary)
+                .foregroundStyle(index == questions.current ? Color(.foreground) : .mutedForeground)
             }
           }
           .frame(maxWidth: .infinity, alignment: .leading)

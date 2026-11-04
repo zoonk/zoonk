@@ -255,7 +255,7 @@ private struct ScoreTrend: View {
           comment: "In place of the Score trend before the learner has answers"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -267,7 +267,7 @@ extension ScoreTrend {
     if let score {
       Text(metricPercent(score.performance.score))
         .font(.subheadline.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 }
@@ -305,9 +305,7 @@ private struct PatternsOverview: View {
         }
       }
       .padding(.horizontal)
-      .background(
-        Color(.secondarySystemGroupedBackground),
-        in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+      .panel(cornerRadius: 16)
 
       if let patterns {
         PatternsNote(patterns: patterns)
@@ -371,23 +369,20 @@ private struct PatternsLinkRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
           Text(value)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .multilineTextAlignment(isStacked ? .leading : .trailing)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
 
         Image(systemName: "chevron.forward")
           .font(.footnote.weight(.semibold))
-          .foregroundStyle(.tertiary)
+          .foregroundStyle(.faint)
           .accessibilityHidden(true)
       }
       .padding(.horizontal)
       .padding(.vertical, 12)
       .frame(maxWidth: .infinity, minHeight: 44)
-      .background(
-        Color(.secondarySystemGroupedBackground),
-        in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-      )
+      .panel(cornerRadius: 16)
       .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
       .modifier(
         StatsSelection(

@@ -25,6 +25,7 @@ struct FarTopicSheet: View {
       List {
         content(outline)
       }
+      .zoonkList()
       .navigationTitle(Text(title))
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
@@ -61,13 +62,13 @@ struct FarTopicSheet: View {
             "We couldn't reach the server. Check your connection.", tableName: "Plan",
             comment: "A far topic's lessons couldn't be asked for"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         } else {
           Text(
             "A topic's lessons are planned two weeks before you get to it. You can see this one's now.",
             tableName: "Plan", comment: "Explains a far topic's lessons"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         if request == .limit {
@@ -94,7 +95,7 @@ struct FarTopicSheet: View {
         "There's nothing left to prepare for this topic.", tableName: "Plan",
         comment: "A far topic with nothing to outline"
       )
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     case .idle, .loading:
       ProgressView()
     }
@@ -108,7 +109,7 @@ struct FarTopicSheet: View {
     } icon: {
       ProgressView()
     }
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 
   private func ask(_ outline: Resource<SkillOutline>) async {

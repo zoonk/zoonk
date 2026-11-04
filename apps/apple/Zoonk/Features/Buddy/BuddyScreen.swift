@@ -52,7 +52,7 @@ struct BuddyScreen: View {
       } label: {
         Text("Try again", tableName: "Buddy", comment: "Reads the buddy's day again")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
     .lonePage()
     .navigationTitle(Text(summary.buddyDisplayName))
@@ -263,7 +263,7 @@ private struct BuddyContent: View {
           comment: "Saving the buddy failed"
         )
         .font(.footnote)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
 
       if !status.buddy.picked {
@@ -278,7 +278,7 @@ private struct BuddyContent: View {
             Image(systemName: "face.smiling")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     }
     .accessibilityElement(children: .contain)
@@ -393,7 +393,7 @@ private struct BuddyContent: View {
     }
     .labelStyle(.titleAndIcon)
     .font(.subheadline.monospacedDigit())
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
     .contentShape(.rect)
   }
 

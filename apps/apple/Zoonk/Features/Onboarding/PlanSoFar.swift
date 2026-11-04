@@ -11,7 +11,7 @@ struct PlanSoFar: View {
           VStack(alignment: .leading, spacing: 2) {
             Text(fact.label)
               .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
 
             Text(fact.value)
               .monospacedDigit()
@@ -19,24 +19,26 @@ struct PlanSoFar: View {
             if let note = fact.note {
               Text(note)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
 
             if let daysLeft = fact.daysLeft {
               Text(daysLeft)
                 .font(.caption)
                 .monospacedDigit()
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
           .accessibilityElement(children: .combine)
         }
       } header: {
-        Text(
-          "Your plan so far", tableName: "Onboarding",
-          comment: "Heading over what the learner's answers have set for their plan")
+        SectionTitle(
+          Text(
+            "Your plan so far", tableName: "Onboarding",
+            comment: "Heading over what the learner's answers have set for their plan"))
       }
     }
+    .zoonkList()
   }
 }
 

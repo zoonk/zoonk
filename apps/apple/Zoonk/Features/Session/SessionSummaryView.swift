@@ -33,7 +33,7 @@ struct SessionSummaryView: View {
           } label: {
             Text("Try again", tableName: "Session", comment: "Retries loading the summary")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
         .lonePage()
       } else {
@@ -56,16 +56,19 @@ struct SessionSummaryView: View {
         List {
           dayResult(summary)
         }
+        .zoonkList()
         .celebratesOnce(id: visit)
       } secondary: {
         List {
           onward(summary)
         }
+        .zoonkList()
       } single: {
         List {
           dayResult(summary)
           onward(summary)
         }
+        .zoonkList()
         .celebratesOnce(id: visit)
       }
     }
@@ -87,7 +90,7 @@ struct SessionSummaryView: View {
             comment: "Time studied in a session stopped for today"
           )
           .monospacedDigit()
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .listRowBackground(Color.clear)
@@ -110,7 +113,8 @@ struct SessionSummaryView: View {
           Text(skill.name)
         }
       } header: {
-        Text("Skills that rose", tableName: "Session", comment: "Skills that moved up")
+        SectionTitle(
+          Text("Skills that rose", tableName: "Session", comment: "Skills that moved up"))
       }
     }
 
@@ -122,7 +126,7 @@ struct SessionSummaryView: View {
           KindMark(kind: .lesson)
         }
       } header: {
-        Text("Tomorrow", tableName: "Session", comment: "Tomorrow's lesson")
+        SectionTitle(Text("Tomorrow", tableName: "Session", comment: "Tomorrow's lesson"))
       }
     }
 
@@ -144,7 +148,7 @@ struct SessionSummaryView: View {
             Text("Keep going", tableName: "Session", comment: "Goes on with a stopped session")
               .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.large)
           .disabled(isAddingTime)
         }
@@ -156,7 +160,7 @@ struct SessionSummaryView: View {
             Text("See mistakes", tableName: "Session", comment: "Opens the mistakes notebook")
               .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.large)
           .disabled(isAddingTime)
         }
@@ -180,7 +184,7 @@ struct SessionSummaryView: View {
             }
             .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.large)
           .disabled(isAddingTime)
         }
@@ -191,7 +195,7 @@ struct SessionSummaryView: View {
             comment: "Adding time failed"
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
     }
@@ -413,11 +417,11 @@ private struct EarnedToday: View {
           HStack(alignment: .firstTextBaseline, spacing: 6) {
             EarnedNumber(value: summary.brainPower)
               .font(.largeTitle.weight(.semibold))
-              .foregroundStyle(.brain)
+              .foregroundStyle(.brainText)
 
             Text("Brain Power", tableName: "Session", comment: "Brain Power earned")
               .font(.subheadline.weight(.medium))
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
           .accessibilityElement(children: .combine)
         }
@@ -427,7 +431,7 @@ private struct EarnedToday: View {
             if let missionsBonus {
               Text(missionsBonus, format: .number.sign(strategy: .always()))
                 .monospacedDigit()
-                .foregroundStyle(.brain)
+                .foregroundStyle(.brainText)
             }
           } title: {
             Text("Today's missions", tableName: "Session", comment: "The missions' header")
@@ -447,7 +451,7 @@ private struct EarnedToday: View {
                 comment: "How many belt levels the session added"
               )
               .monospacedDigit()
-              .foregroundStyle(.success)
+              .foregroundStyle(.successText)
             } title: {
               Text(
                 "\(beltName(stripes.after.color) ?? stripes.after.color), level \(stripes.after.level)",
@@ -472,7 +476,7 @@ private struct EarnedToday: View {
           }
         }
       } header: {
-        Text("Earned today", tableName: "Session", comment: "What the session earned")
+        SectionTitle(Text("Earned today", tableName: "Session", comment: "What the session earned"))
       }
     }
   }

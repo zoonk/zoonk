@@ -57,11 +57,13 @@ private struct ChapterLandingList: View {
         header
         lessons
       }
+      .zoonkList()
     } secondary: {
       List {
         strip
         learnAndStart
       }
+      .zoonkList()
     } single: {
       List {
         header
@@ -69,6 +71,7 @@ private struct ChapterLandingList: View {
         lessons
         learnAndStart
       }
+      .zoonkList()
     }
   }
 
@@ -105,7 +108,7 @@ private struct ChapterLandingList: View {
           SubjectGlyph(subject: course?.course.subject)
         }
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         Text(chapter.title)
           .font(.largeTitle.bold())
@@ -116,7 +119,7 @@ private struct ChapterLandingList: View {
         if let description = catalogText(detail.chapter?.description ?? chapter.description) {
           Text(description)
             .font(.title3)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         PlanLine(startsHere: startsHere)
@@ -153,8 +156,9 @@ private struct ChapterLandingList: View {
       Section {
         ForEach(objectives, id: \.self) { CheckLine(text: $0) }
       } header: {
-        Text(
-          "What you'll learn", tableName: "Courses", comment: "Header of what a chapter teaches")
+        SectionTitle(
+          Text(
+            "What you'll learn", tableName: "Courses", comment: "Header of what a chapter teaches"))
       }
     }
 
@@ -185,7 +189,7 @@ private struct ChapterLandingList: View {
               tableName: "Courses", comment: "Under a course page's last call")
           }
         }
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         ChapterStart(
           chapter: chapter, hasLesson: hasLesson, startsHere: startsHere, tryLessonID: nil
@@ -245,7 +249,7 @@ private struct ChapterStrip: View {
           tableName: "Courses", comment: "Where a chapter sits in its course, and its level"
         )
         .font(.footnote.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
       .padding(.vertical, 4)
 
@@ -262,9 +266,10 @@ private struct ChapterStrip: View {
         }
       }
     } header: {
-      Text(
-        "Where this chapter sits in the course", tableName: "Courses",
-        comment: "Header of where a chapter sits in its course")
+      SectionTitle(
+        Text(
+          "Where this chapter sits in the course", tableName: "Courses",
+          comment: "Header of where a chapter sits in its course"))
     }
   }
 
@@ -321,7 +326,7 @@ private struct ChapterLessonsSection: View {
             HStack(alignment: .firstTextBaseline, spacing: 12) {
               Text(offset + 1, format: .number)
                 .font(.footnote.monospacedDigit())
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(.faint)
               Text(lesson.displayTitle())
                 .foregroundStyle(.primary)
             }
@@ -329,9 +334,8 @@ private struct ChapterLessonsSection: View {
         }
       }
     } header: {
-      CatalogSectionHeader {
-        Text("Lessons", tableName: "Courses", comment: "Header of a chapter's lessons")
-      } detail: {
+      SectionTitle(Text("Lessons", tableName: "Courses", comment: "Header of a chapter's lessons"))
+      {
         Text(facts)
       }
     }

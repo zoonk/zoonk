@@ -74,7 +74,8 @@ struct PlanRoadmapSection: View {
         }
       } header: {
         if listsPhases {
-          Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases")
+          SectionTitle(
+            Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases"))
         }
       }
     }
@@ -126,7 +127,7 @@ private struct RoadmapPhaseRow: View {
       }
       .font(.subheadline)
       .monospacedDigit()
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(
@@ -170,13 +171,13 @@ private struct RoadmapCompact: View {
             "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",
             tableName: "Plan", comment: "Phases done of the plan's phases, once none is current"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           Spacer()
         }
 
         if opens {
           Image(systemName: "chevron.right")
-            .foregroundStyle(.tertiary)
+            .foregroundStyle(.faint)
             .imageScale(.small)
         }
       }
@@ -233,7 +234,7 @@ struct PlanNumbersSection: View {
       VStack(alignment: .leading, spacing: 2) {
         Text(number.label)
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         Text(number.value)
           .font(.title2.weight(.semibold))
@@ -243,7 +244,7 @@ struct PlanNumbersSection: View {
           Text(detail)
             .font(.footnote)
             .foregroundStyle(
-              number.detailIsGain ? AnyShapeStyle(.success) : AnyShapeStyle(.secondary))
+              number.detailIsGain ? AnyShapeStyle(.successText) : AnyShapeStyle(.mutedForeground))
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -530,8 +531,10 @@ struct NextOnPathSection: View {
 
         finishRow
       } header: {
-        Text(
-          "Next on your path", tableName: "Plan", comment: "Section of what comes next on the plan")
+        SectionTitle(
+          Text(
+            "Next on your path", tableName: "Plan",
+            comment: "Section of what comes next on the plan"))
       }
     }
   }
@@ -636,7 +639,8 @@ struct PlanMoreSection: View {
           }
         }
       } header: {
-        Text("More", tableName: "Plan", comment: "Section of other places the Plan leads to")
+        SectionTitle(
+          Text("More", tableName: "Plan", comment: "Section of other places the Plan leads to"))
       }
     }
   }
@@ -670,7 +674,7 @@ struct PlanSettingsSection: View {
           label: Text(choice.group), value: choiceValue(choice), section: .choice(choice.group))
       }
     } header: {
-      Text("Your plan", tableName: "Plan", comment: "Section of the plan's settings")
+      SectionTitle(Text("Your plan", tableName: "Plan", comment: "Section of the plan's settings"))
     }
   }
 
@@ -687,7 +691,7 @@ struct PlanSettingsSection: View {
   private func choiceValue(_ choice: GoalPlan.ExamChoice) -> Text {
     guard let picked = choice.pickedNames else {
       return Text("Choose", tableName: "Plan", comment: "An exam choice not made yet")
-        .foregroundStyle(.warning)
+        .foregroundStyle(.warningText)
     }
 
     return Text(picked)

@@ -53,7 +53,7 @@ struct WarmUpSection: View {
               "That's all for now.", tableName: "Onboarding",
               comment: "Under a warm-up's last answer: there are no more guesses"
             )
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .id(Self.lastRow)
           } else if !visit.isHolding {
             Button {
@@ -64,7 +64,7 @@ struct WarmUpSection: View {
                 "Next guess", tableName: "Onboarding",
                 comment: "Shows the next warm-up question while the plan or lesson is written")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
             .keyboardShortcut(.defaultAction)
             .id(Self.lastRow)
           }
@@ -79,10 +79,12 @@ struct WarmUpSection: View {
             .accessibilityHidden(true)
         }
       } footer: {
-        if picked == nil {
-          Text(
-            "Getting it wrong now helps you remember later.", tableName: "Onboarding",
-            comment: "Under a warm-up question: a guess never counts")
+        SectionFooter {
+          if picked == nil {
+            Text(
+              "Getting it wrong now helps you remember later.", tableName: "Onboarding",
+              comment: "Under a warm-up question: a guess never counts")
+          }
         }
       }
       .task(id: deck.id) { visit.show(deck, card: position) }

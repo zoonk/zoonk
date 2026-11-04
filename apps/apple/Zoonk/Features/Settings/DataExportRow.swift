@@ -20,7 +20,7 @@ struct DataExportRow: View {
 
           description
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         Spacer()
@@ -39,7 +39,7 @@ struct DataExportRow: View {
               "Download", tableName: "Settings", comment: "Downloads a file of the learner's data")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .disabled(isPreparing)
         .accessibilityLabel(title)
       }
@@ -50,7 +50,7 @@ struct DataExportRow: View {
           comment: "Shown when a data download failed"
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
     .fileExporter(

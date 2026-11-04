@@ -294,7 +294,7 @@ private struct LessonCheckNote: View {
         Image(systemName: "pencil")
       }
       .font(.subheadline.weight(.medium))
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
     }
 
     if state.checkFailed {
@@ -303,7 +303,7 @@ private struct LessonCheckNote: View {
         comment: "The server couldn't grade a written or spoken answer"
       )
       .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 }
@@ -332,7 +332,7 @@ struct LessonActionBar: View {
           .labelStyle(.iconOnly)
           .frame(minHeight: 32)
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .buttonBorderShape(.circle)
         .controlSize(.large)
         .keyboardShortcut(.leftArrow, modifiers: [])
@@ -516,7 +516,7 @@ private struct LessonNotice: View {
         Image(systemName: "bolt")
       }
       .font(.caption.monospaced())
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     } else {
       switch state.notice {
       case .answerNotSaved:
@@ -529,7 +529,7 @@ private struct LessonNotice: View {
           Image(systemName: "icloud.slash")
         }
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       case .writingSkipped:
         HStack(alignment: .firstTextBaseline) {
           Label {
@@ -539,7 +539,7 @@ private struct LessonNotice: View {
           } icon: {
             Image(systemName: "pencil.slash")
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
           Spacer(minLength: 8)
 

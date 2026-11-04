@@ -216,7 +216,7 @@ private struct CodeTracerCanvas: View {
       VStack(alignment: .leading, spacing: 2) {
         Text(verbatim: name)
           .font(.caption.monospaced())
-          .foregroundStyle(changed ? AnyShapeStyle(.orange) : AnyShapeStyle(.secondary))
+          .foregroundStyle(changed ? AnyShapeStyle(.vizHighlight) : AnyShapeStyle(.mutedForeground))
 
         HStack(alignment: .firstTextBaseline, spacing: 4) {
           if changed, let previous {
@@ -225,7 +225,7 @@ private struct CodeTracerCanvas: View {
               comment: "A variable's value before it changed"
             )
             .font(.caption.monospaced())
-            .foregroundStyle(.orange)
+            .foregroundStyle(.vizHighlight)
           }
 
           if let value {
@@ -236,14 +236,14 @@ private struct CodeTracerCanvas: View {
               "not set", tableName: "ActivitiesCode", comment: "A variable before a program sets it"
             )
             .font(.body)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
       }
       .padding(.horizontal, 10)
       .padding(.vertical, 6)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(changed ? Color.orange.opacity(0.15) : .clear, in: .rect(cornerRadius: 10))
+      .background(changed ? Color.vizHighlight.opacity(0.15) : .clear, in: .rect(cornerRadius: 10))
       .accessibilityElement(children: .combine)
     }
   }
@@ -253,7 +253,7 @@ private struct CodeTracerCanvas: View {
       position
         .font(.caption.weight(.medium))
         .monospacedDigit()
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       Spacer()
 
@@ -283,7 +283,7 @@ private struct CodeTracerCanvas: View {
       .disabled(step >= lastStep || isBlocked)
     }
     .labelStyle(.iconOnly)
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
   }
 
   private var hint: Text {
@@ -363,7 +363,7 @@ private struct CodeTracerCanvas: View {
           Label {
             VStack(alignment: .leading, spacing: 2) {
               LessonRichText(pause.question)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
 
               Group {
                 if isRight {

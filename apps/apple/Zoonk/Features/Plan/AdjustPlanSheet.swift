@@ -36,7 +36,7 @@ struct AdjustPlanSheet: View {
   var body: some View {
     NavigationStack {
       ScrollViewReader { proxy in
-        Form {
+        List {
           PlanEditorLatestSection(editor: editor, plan: plan)
 
           PlanDateSection(
@@ -59,6 +59,7 @@ struct AdjustPlanSheet: View {
 
           AdjustPlanSections(editor: editor, goal: goal, plan: plan)
         }
+        .zoonkList()
         .disabled(editor.isSaving)
         .onAppear {
           if section == .everything {
@@ -131,7 +132,8 @@ struct AdjustPlanSheet: View {
         .disabled(studies && studyCount == 1)
       }
     } header: {
-      Text("Study days", tableName: "Plan", comment: "Setting: the days of the week to study")
+      SectionTitle(
+        Text("Study days", tableName: "Plan", comment: "Setting: the days of the week to study"))
     }
     .tint(.success)
   }
@@ -228,11 +230,11 @@ struct PlanEditorLatestSection: View {
 
             if let effect = planEffectText(change.effect, plan: plan) {
               Text(effect)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
 
             appliedLine(change)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
           .font(.subheadline)
 

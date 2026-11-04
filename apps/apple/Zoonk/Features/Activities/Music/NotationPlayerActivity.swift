@@ -167,7 +167,7 @@ private struct NotationPlayerCanvas: View {
           comment: "When a melody's notation can't be read"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       MusicSoundNote(audio: audio)
@@ -208,7 +208,7 @@ private struct NotationPlayerCanvas: View {
       if let composer = tune.composer {
         Text(composer)
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -256,8 +256,7 @@ private struct NotationPlayerCanvas: View {
       .controlSize(.large)
 
       VStack(alignment: .leading, spacing: 6) {
-        ProgressView(value: Double(bar ?? 0), total: Double(max(bars, 1)))
-          .tint(.purple)
+        Meter(value: Double(bar ?? 0), total: Double(max(bars, 1)), fill: .vizSecondary)
           .accessibilityHidden(true)
 
         Group {
@@ -271,7 +270,7 @@ private struct NotationPlayerCanvas: View {
           }
         }
         .font(.caption.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       Picker(selection: $tempo) {
@@ -327,7 +326,7 @@ private struct NotationStaff: View {
       Canvas { context, _ in
         for item in drawing.items {
           let shading: GraphicsContext.Shading =
-            item.element != nil && item.element == playing ? .color(.mint) : .foreground
+            item.element != nil && item.element == playing ? .color(.vizAccent) : .foreground
 
           switch item.mark {
           case .fill(let path):
@@ -371,7 +370,7 @@ private struct NotationStaff: View {
       let knockout = CGRect(
         x: point.x - size.width / 2 - 1, y: point.y - size.height / 2, width: size.width + 2,
         height: size.height)
-      context.fill(Path(knockout), with: .color(Color(.secondarySystemBackground)))
+      context.fill(Path(knockout), with: .color(Color.card))
       context.draw(resolved, at: point, anchor: .center)
     case .chordSymbol:
       context.draw(resolved, at: point, anchor: .bottomLeading)

@@ -41,7 +41,7 @@ struct TodaySessionSection: View {
       if let freshStart {
         Text(freshStart)
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       mockFunding
@@ -132,7 +132,7 @@ struct TodaySessionSection: View {
         }
       }
       .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -176,9 +176,9 @@ struct TodaySessionSection: View {
             comment: "Skips the next lesson's chapter with its test"
           )
           .font(.footnote)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
-        .listRowBackground(NextRowBackground())
+        .currentRow()
         .listRowSeparator(.hidden, edges: .top)
       }
     }
@@ -222,7 +222,7 @@ struct TodaySessionSection: View {
       }
       .tint(.primary)
       .disabled(busy != nil)
-      .listRowBackground(isNext ? NextRowBackground() : nil)
+      .currentRow(isNext)
     } else {
       row
     }
@@ -324,7 +324,7 @@ struct TodayMainAction: View {
       if failed {
         failure
           .font(.footnote)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
       }
     }
   }
@@ -376,7 +376,7 @@ private struct DayProgressRow: View {
           comment: "The time still to go in today's session"
         )
         .font(.subheadline.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       MeterParts(parts: session.meterParts)
@@ -407,13 +407,13 @@ struct BlockRow: View {
         VStack(alignment: .leading, spacing: 2) {
           Text(block.displayTitle)
             .font(isNext ? .body.weight(.semibold) : .body)
-            .foregroundStyle(block.isFinished ? .secondary : .primary)
+            .foregroundStyle(block.isFinished ? .mutedForeground : .primary)
 
           if !block.isFinished {
             ForEach(lines, id: \.self) { line in
               Text(line)
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
         }
@@ -443,7 +443,7 @@ struct BlockRow: View {
 
         Text(studyDuration(minutes: block.estimatedMinutes))
           .font(.footnote.monospacedDigit())
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -551,7 +551,7 @@ private struct ComingLessonsRow: View {
           }
         }
         .font(.footnote)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         if failed {
           Text(
@@ -559,7 +559,7 @@ private struct ComingLessonsRow: View {
             comment: "A change couldn't be saved"
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
 
@@ -607,7 +607,7 @@ private struct FoldRow: View {
     } label: {
       HStack(spacing: 12) {
         Image(systemName: isDone ? "checkmark" : "ellipsis")
-          .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.secondary))
+          .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.mutedForeground))
           .frame(minWidth: 20)
           .accessibilityHidden(true)
 
@@ -631,7 +631,7 @@ private struct FoldRow: View {
           .font(.footnote)
           .accessibilityHidden(true)
       }
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
     .tint(.primary)
   }
@@ -766,7 +766,7 @@ private struct TodayDayStatus: View {
 
         if let clause {
           Text(clause)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if changesLimit {
@@ -775,7 +775,7 @@ private struct TodayDayStatus: View {
       }
     } icon: {
       Image(systemName: systemImage)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
     .font(.subheadline)
   }
@@ -797,15 +797,6 @@ private struct TodayDayStatus: View {
   }
 }
 
-/// A system fill over the row's own background, so it reads on dark rows (where a fill alone shows
-/// the black page through it) and grows with Increase Contrast.
-struct NextRowBackground: View {
-  var body: some View {
-    Color(.secondarySystemGroupedBackground)
-      .overlay(Color(.tertiarySystemFill))
-  }
-}
-
 /// Today shows the saved plan, and starting the session fits it to today's time, so the day that
 /// opens can differ from the one shown.
 private struct TodayEarlierWorkSection: View {
@@ -820,7 +811,7 @@ private struct TodayEarlierWorkSection: View {
           tableName: "Today", comment: "Why the day that opens can differ from the one shown"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         ForEach(Array(items.enumerated()), id: \.offset) { _, item in
           Text(item.title)

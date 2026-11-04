@@ -9,7 +9,7 @@ struct ChartsCanvas<Content: View>: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .background(.fill.quaternary, in: .rect(cornerRadius: 16, style: .continuous))
+    .background(.muted, in: .rect(cornerRadius: 16, style: .continuous))
     .accessibilityElement(children: .contain)
   }
 }
@@ -148,7 +148,7 @@ struct ChartsCaption: View {
   var body: some View {
     Text(verbatim: text)
       .font(.footnote)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -208,7 +208,7 @@ private struct ChartsLabelHalo: TextRenderer {
       var halo = context
       halo.addFilter(
         .shadow(
-          color: Color(.systemBackground), radius: 0, x: cos(angle) * width,
+          color: Color(.background), radius: 0, x: cos(angle) * width,
           y: sin(angle) * width, options: .shadowOnly))
       label(&halo)
     }

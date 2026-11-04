@@ -39,7 +39,7 @@ struct CitationNote: View {
   private var source: some View {
     Text(citation.text)
       .font(.caption.weight(.medium))
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
   }
 
   @ViewBuilder private var chip: some View {
@@ -81,9 +81,9 @@ struct SourcesChip: View {
       // `ViewThatFits` would squeeze the chip beside the citation instead of below it.
       .labelStyle(.titleAndIcon)
       .font(.footnote)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.small)
     .buttonSizing(dynamicTypeSize.isAccessibilitySize ? .flexible : .automatic)
     .popover(isPresented: $showsSource) {
@@ -110,7 +110,7 @@ private struct SourceDetails: View {
 
           checked
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let url = url.flatMap(URL.init(string:)) {

@@ -373,7 +373,7 @@ private struct SubscriptionMarketingContent: View {
           comment: "What Zoonk Plus includes, in one line"
         )
         .font(.title3)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       PlusBenefits()
@@ -391,14 +391,14 @@ private struct SubscriptionMarketingContent: View {
             "We couldn't load what the free plan includes.", tableName: "Account",
             comment: "The free plan's limits failed to load on the Plus screen"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
           Button {
             Task { await freePlan.refresh() }
           } label: {
             Text("Try again", tableName: "Account", comment: "Loads the free plan's limits again")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
       case .idle, .loading:
         EmptyView()
@@ -439,7 +439,7 @@ struct PlusBenefits: View {
       title
     } icon: {
       Image(systemName: "checkmark")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
     }
   }
@@ -499,7 +499,7 @@ struct PlusStatusView: View {
 
           if let dateLine {
             dateLine
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .listRowBackground(Color.clear)
@@ -508,9 +508,10 @@ struct PlusStatusView: View {
       Section {
         PlusBenefits()
       } header: {
-        Text(
-          "Every goal\u{00A0}· every lesson", tableName: "Account",
-          comment: "What Zoonk Plus includes, in one line")
+        SectionTitle(
+          Text(
+            "Every goal\u{00A0}· every lesson", tableName: "Account",
+            comment: "What Zoonk Plus includes, in one line"))
       }
 
       if isWebsite {
@@ -525,6 +526,7 @@ struct PlusStatusView: View {
         }
       }
     }
+    .zoonkList()
     .loads(settings.webPlus, refreshable: false)
     .refreshable {
       await reloadPlan()
@@ -626,22 +628,24 @@ struct PlusStatusView: View {
         Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
       }
     } footer: {
-      switch StoreSubscriptionProvider(rawValue: subscription.provider) {
-      case .apple:
-        Text(
-          "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings.",
-          tableName: "Account", comment: "Where Plus bought in the App Store is changed")
-      case .google:
-        Text(
-          "Use Google Play on an Android device to change or cancel this subscription.",
-          tableName: "Account",
-          comment:
-            "Explains how to manage a Google-owned subscription without linking to external purchasing"
-        )
-      case nil:
-        Text(
-          "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
-          tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
+      SectionFooter {
+        switch StoreSubscriptionProvider(rawValue: subscription.provider) {
+        case .apple:
+          Text(
+            "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings.",
+            tableName: "Account", comment: "Where Plus bought in the App Store is changed")
+        case .google:
+          Text(
+            "Use Google Play on an Android device to change or cancel this subscription.",
+            tableName: "Account",
+            comment:
+              "Explains how to manage a Google-owned subscription without linking to external purchasing"
+          )
+        case nil:
+          Text(
+            "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
+            tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
+        }
       }
     }
   }
@@ -660,7 +664,7 @@ private struct UnpaidPlusView: View {
 
           if let dateLine = web.dateLine {
             dateLine
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .listRowBackground(Color.clear)
@@ -668,6 +672,7 @@ private struct UnpaidPlusView: View {
 
       WebPlusSection(web: web, beside: false)
     }
+    .zoonkList()
     .navigationTitle(Text.zoonkPlus)
     .toolbarTitleDisplayMode(.inline)
   }
@@ -688,7 +693,7 @@ private struct WebPlusSection: View {
     Section {
       if beside, let dateLine = web.dateLine {
         dateLine
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if web.state == .ending {
@@ -754,12 +759,15 @@ private struct WebPlusSection: View {
       }
     } header: {
       if beside {
-        Text(
-          "Website subscription", tableName: "Account",
-          comment: "Plus bought on the website, shown beside a store purchase")
+        SectionTitle(
+          Text(
+            "Website subscription", tableName: "Account",
+            comment: "Plus bought on the website, shown beside a store purchase"))
       }
     } footer: {
-      footer
+      SectionFooter {
+        footer
+      }
     }
   }
 
@@ -778,7 +786,7 @@ private struct WebPlusSection: View {
             tableName: "Account",
             comment: "Turning the stopped renewal of Plus bought on the web back on failed"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
     } else if failed {
@@ -788,7 +796,7 @@ private struct WebPlusSection: View {
         comment:
           "Canceling Plus bought on the web failed; the argument is the email address to write to"
       )
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
     }
   }
 
@@ -865,7 +873,7 @@ private struct FreePlanCard: View {
               )
               .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
             .controlSize(.large)
 
             note(
@@ -910,7 +918,7 @@ private struct FreePlanCard: View {
             ].joinedFacts()
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         item(
@@ -950,7 +958,7 @@ private struct FreePlanCard: View {
   private func note(_ text: Text) -> some View {
     text
       .font(.footnote)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
   }
 
   private func item(_ title: Text) -> some View {
@@ -958,7 +966,7 @@ private struct FreePlanCard: View {
       title
     } icon: {
       Image(systemName: "checkmark")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
     }
   }
@@ -981,7 +989,7 @@ private struct PlusQuestions: View {
             "Under the pricing questions' title; the argument is the email address to write to"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       DisclosureGroup {
@@ -1105,7 +1113,7 @@ private struct PlusQuestions: View {
 
   private func answer(_ text: Text) -> some View {
     text
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .frame(maxWidth: .infinity, alignment: .leading)
   }
 
@@ -1118,7 +1126,7 @@ private struct PlusQuestions: View {
         .font(.caption2)
         .accessibilityHidden(true)
     }
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 }
 

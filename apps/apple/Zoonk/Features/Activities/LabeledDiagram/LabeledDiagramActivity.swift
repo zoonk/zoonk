@@ -174,7 +174,7 @@ private struct LabeledDiagramCanvas: View {
                 .foregroundStyle(Color.primary)
               if let feedback = fields.mixUpFeedback(correct: slot.label, placed: placed) {
                 LessonRichText(feedback)
-                  .foregroundStyle(Color.secondary)
+                  .foregroundStyle(Color.mutedForeground)
               }
             }
           } else if let placed {
@@ -190,7 +190,7 @@ private struct LabeledDiagramCanvas: View {
                 Text(verbatim: "")
               }
             }
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
       }

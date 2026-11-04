@@ -36,7 +36,7 @@ struct LessonVerdictView: View {
             comment: "A typed answer that wasn't graded, before the sample answer"
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         LabeledText(
@@ -83,7 +83,7 @@ struct LessonVerdictView: View {
       if hyperdriveStreak != nil || note != nil {
         notes
           .font(.footnote)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -168,7 +168,7 @@ private struct LabeledText: View {
     VStack(alignment: .leading, spacing: 2) {
       label
         .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       LessonRichText(text)
         .font(.body.weight(.medium))
     }
@@ -185,14 +185,14 @@ private struct LessonKeyPointsView: View {
         comment: "How many key points a typed answer stated"
       )
       .font(.caption.weight(.medium))
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       ForEach(keyPoints, id: \.self) { point in
         Label {
           LessonRichText(point.text)
         } icon: {
           Image(systemName: point.met ? "checkmark.circle" : "circle.dashed")
-            .foregroundStyle(point.met ? .success : .secondary)
+            .foregroundStyle(point.met ? .success : .mutedForeground)
         }
         .font(.subheadline)
         .accessibilityLabel(
@@ -224,7 +224,7 @@ private struct LessonExplainAnswerView: View {
           comment: "Title above why a typed answer is wrong"
         )
         .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         LessonTextBlocks(explanation)
           .font(.subheadline)
       }
@@ -250,7 +250,7 @@ private struct LessonExplainAnswerView: View {
             }
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .disabled(state == .loading)
 
         switch state {
@@ -260,7 +260,7 @@ private struct LessonExplainAnswerView: View {
             comment: "The explanation of a typed answer failed"
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         case .refused(let refusal):
           LessonHelpLimitNote(refusal: refusal)
         default:
@@ -288,7 +288,7 @@ extension LessonVerdict {
       : LessonVerdict(
         title: LocalizedStringResource(
           "Here's the answer", table: "Player", comment: "A hook's guess missed"),
-        symbol: "sparkles", tint: .secondary)
+        symbol: "sparkles", tint: .mutedForeground)
   }
 
   static func of(_ result: LessonStepResult, step: LessonStep) -> LessonVerdict {
@@ -297,7 +297,7 @@ extension LessonVerdict {
         title: LocalizedStringResource(
           "Here's a good answer", table: "Player",
           comment: "\"I don't know yet\" shows a good answer"),
-        symbol: "text.bubble", tint: .secondary)
+        symbol: "text.bubble", tint: .mutedForeground)
     }
 
     if step.kind == .hook {
@@ -321,7 +321,7 @@ extension LessonVerdict {
       return LessonVerdict(
         title: LocalizedStringResource(
           "Not checked this time", table: "Player", comment: "A typed answer that wasn't graded"),
-        symbol: "text.bubble", tint: .secondary)
+        symbol: "text.bubble", tint: .mutedForeground)
     }
 
     if let score = result.score, score > 0 {

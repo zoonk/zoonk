@@ -100,13 +100,13 @@ struct ActivityReasonList: View {
           LessonRichText(reason.text)
           if let why = reason.why {
             LessonRichText(why)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .font(.subheadline)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+        .panel(cornerRadius: 12)
         .accessibilityElement(children: .combine)
       }
     }
@@ -123,7 +123,7 @@ struct ActivityCaption: View {
   var body: some View {
     text
       .font(.footnote)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .monospacedDigit()
   }
 }

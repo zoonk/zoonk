@@ -85,7 +85,7 @@ struct PlanLinkScreen: View {
   private func plan(_ link: Components.Schemas.PlanLink) -> some View {
     let outline = link.outline
 
-    return Form {
+    return List {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text(
@@ -93,7 +93,7 @@ struct PlanLinkScreen: View {
             comment: "Eyebrow over a shared plan's subject"
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           Group {
             if let subject = outline.subject?.title {
               Text(subject)
@@ -107,7 +107,7 @@ struct PlanLinkScreen: View {
 
           if let description = outline.subject?.description {
             Text(description)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
 
           Text(
@@ -115,7 +115,7 @@ struct PlanLinkScreen: View {
             tableName: "PlanLink", comment: "What starting from a shared plan does"
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
         .listRowBackground(Color.clear)
       }
@@ -135,7 +135,7 @@ struct PlanLinkScreen: View {
       if let error {
         Section {
           Text(error.message)
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
         }
       }
 
@@ -169,17 +169,23 @@ struct PlanLinkScreen: View {
           } icon: {
             Text(index + 1, format: .number)
               .monospacedDigit()
-              .foregroundStyle(index == 0 ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
+              .foregroundStyle(index == 0 ? AnyShapeStyle(.tint) : AnyShapeStyle(.mutedForeground))
           }
         }
       } header: {
-        Text("A study plan", tableName: "PlanLink", comment: "Header over a shared plan's phases")
+        SectionTitle(
+          Text("A study plan", tableName: "PlanLink", comment: "Header over a shared plan's phases")
+        )
       } footer: {
-        Text(
-          "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study\u{00A0}· \(outline.phases.count) phases\u{00A0}· \(outline.skillCount) skills",
-          tableName: "PlanLink", comment: "A shared plan's size: its study time, phases and skills")
+        SectionFooter {
+          Text(
+            "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study\u{00A0}· \(outline.phases.count) phases\u{00A0}· \(outline.skillCount) skills",
+            tableName: "PlanLink",
+            comment: "A shared plan's size: its study time, phases and skills")
+        }
       }
     }
+    .zoonkList()
   }
 
   private func start() {

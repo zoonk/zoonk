@@ -17,20 +17,21 @@ struct TodayUpNextSection: View {
           Spacer(minLength: 8)
           Text(studyDuration(minutes: lesson.minutes))
             .font(.footnote.monospacedDigit())
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if index == 0 {
           Button(action: keepLearning) { row }
             .tint(.primary)
             .disabled(isBusy)
-            .listRowBackground(NextRowBackground())
+            .currentRow()
         } else {
           row
         }
       }
     } header: {
-      Text("Up next in your plan", tableName: "Today", comment: "The plan's next lessons")
+      SectionTitle(
+        Text("Up next in your plan", tableName: "Today", comment: "The plan's next lessons"))
     }
 
     Section {
@@ -245,7 +246,7 @@ struct TodayPlanChangeSection: View {
           comment: "Answering a plan change failed"
         )
         .font(.footnote)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
     .onChange(of: shown.decision) {
@@ -341,12 +342,12 @@ struct TodayPlanChangeSection: View {
 
     if !effect.isEmpty {
       Text(effect.joinedSentences())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
 
     if let date = change.officialDate?.date {
       Text(officialDateLine(PlanDate.text(date, today: view.session.localDate)))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
 
     ButtonRow {
@@ -366,7 +367,7 @@ struct TodayPlanChangeSection: View {
         declineLabel
           .frame(maxWidth: .infinity)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
     .disabled(isSaving)
   }
@@ -474,7 +475,8 @@ struct TodayMissionsSection: View {
       }
     } header: {
       if !earned {
-        Text("Today's missions", tableName: "Today", comment: "Today's missions header")
+        SectionTitle(
+          Text("Today's missions", tableName: "Today", comment: "Today's missions header"))
       }
     }
   }
@@ -528,7 +530,7 @@ struct TodayWeekSection: View {
 
   private var week: StudyWeek { view.session.week }
 
-  private var title: some View {
+  private var title: Text {
     Text("This week", tableName: "Today", comment: "The week's header")
   }
 
@@ -546,7 +548,7 @@ struct TodayWeekSection: View {
 
     if let line = Self.numbers(days: days, time: hasTime ? (studied, planned) : nil) {
       Text(verbatim: line)
-        .font(.footnote.monospacedDigit())
+        .monospacedDigit()
         .accessibilityLabel(
           [
             days,
@@ -598,17 +600,8 @@ struct TodayWeekSection: View {
         WeekChallengeRow(challenge: challenge, date: date)
       }
     } header: {
-      ViewThatFits(in: .horizontal) {
-        HStack {
-          title
-          Spacer()
-          numbers
-        }
-
-        VStack(alignment: .leading, spacing: 2) {
-          title
-          numbers
-        }
+      SectionTitle(title) {
+        numbers
       }
     }
   }
@@ -634,7 +627,7 @@ private struct WeekChallengeRow: View {
             comment: "When a free plan's full review is and what it asks"
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } icon: {
         KindMark(kind: .review)
@@ -659,7 +652,7 @@ private struct WeekChallengeRow: View {
           : Text("Weekly challenge", tableName: "Today", comment: "The week's challenge")
         Text(facts)
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .monospacedDigit()
       }
     } icon: {
@@ -702,7 +695,7 @@ private struct WeekDayMark: View {
 
       Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
         .font(.caption2.weight(day.isToday ? .bold : .regular))
-        .foregroundStyle(day.isToday ? .primary : .secondary)
+        .foregroundStyle(day.isToday ? Color(.foreground) : .mutedForeground)
     }
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(label(weekday: date?.formatted(.studyDay.weekday(.wide)) ?? day.date))
@@ -714,7 +707,7 @@ private struct WeekDayMark: View {
   private var ring: some View {
     if !day.studied && (day.kind == "beforeStart" || day.kind == "afterEnd") && !day.isToday {
       Image(systemName: "minus")
-        .foregroundStyle(.quaternary)
+        .foregroundStyle(Color(.foreground).opacity(0.2))
     } else {
       let lineWidth = ringSize / 12
 
@@ -920,7 +913,7 @@ struct TodayProgressSection: View {
             if let detail {
               detail
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
 
@@ -933,14 +926,14 @@ struct TodayProgressSection: View {
           }
           .labelStyle(.titleOnly)
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(.rect)
       }
       .tint(.primary)
     } header: {
-      title
+      SectionTitle(title)
     }
   }
 
@@ -965,7 +958,7 @@ struct TodayProgressSection: View {
 
     return [
       MeterParts.Part(weight: Double(lessons.done - known), fill: .color(.success)),
-      MeterParts.Part(weight: Double(known), fill: .color(.secondary)),
+      MeterParts.Part(weight: Double(known), fill: .color(.mutedForeground)),
       MeterParts.Part(weight: Double(today), fill: .current),
       MeterParts.Part(weight: Double(rest), fill: .track),
     ].filter { $0.weight > 0 }
@@ -981,7 +974,7 @@ struct TodayProgressSection: View {
 
     return points > 0
       ? Text("+\(points) this week", tableName: "Today", comment: "Preparation gained this week")
-        .foregroundStyle(.success)
+        .foregroundStyle(.successText)
       : Text("\(points) this week", tableName: "Today", comment: "Preparation lost this week")
   }
 
@@ -1024,7 +1017,7 @@ struct TodayPracticeSection: View {
                     "The speaking paper's exam and level, as in B1 Preliminary tasks on a call"
                 )
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
               }
             } icon: {
               KindMark(kind: .conversation)
@@ -1049,7 +1042,7 @@ struct TodayPracticeSection: View {
             Text("Mistakes notebook", tableName: "Today", comment: "Opens the mistakes notebook")
             Text("Redo what you got wrong", tableName: "Today", comment: "The notebook's line")
               .font(.footnote)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         } icon: {
           KindMark(kind: .mistakes)
@@ -1068,7 +1061,7 @@ struct TodayPracticeSection: View {
                 comment: "The completed lessons page's line"
               )
               .font(.footnote)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
             }
           } icon: {
             KindMark(kind: .lesson)
@@ -1076,7 +1069,7 @@ struct TodayPracticeSection: View {
         }
       }
     } header: {
-      Text("Practice anytime", tableName: "Today", comment: "Practice section header")
+      SectionTitle(Text("Practice anytime", tableName: "Today", comment: "Practice section header"))
     }
   }
 }
@@ -1137,7 +1130,7 @@ struct TodayLanguagePracticeSection: View {
           title
           detail
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       } icon: {
         Image(systemName: systemImage)
@@ -1203,7 +1196,7 @@ private struct TodayMockRow: View {
         if let detail {
           detail
             .font(.footnote)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     } icon: {

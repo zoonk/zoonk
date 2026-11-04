@@ -15,7 +15,7 @@ struct PronunciationWordView: View {
 
         if let romanization = word.romanization {
           Text(romanization)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let respelling = word.respelling {
@@ -24,7 +24,7 @@ struct PronunciationWordView: View {
             tableName: "Voice", comment: "Introduces how to spell the word's sound"
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -33,7 +33,7 @@ struct PronunciationWordView: View {
       if let tip = word.tip {
         Text(tip)
           .font(.footnote)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .accessibilityElement(children: .contain)
@@ -84,7 +84,7 @@ private struct ListenButtons: View {
             comment: "Playing a word's sound failed"
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
     }
@@ -114,7 +114,7 @@ private struct ListenButtons: View {
     } label: {
       label()
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.small)
   }
 

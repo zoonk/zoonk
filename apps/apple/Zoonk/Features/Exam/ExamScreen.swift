@@ -56,7 +56,7 @@ private struct ExamContent: View {
         } label: {
           Text("Try again", tableName: "Exam", comment: "Button to retry loading")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     case .loaded(let view):
@@ -81,11 +81,13 @@ private struct ExamList: View {
         moment
         ExamProgressSection(exam: exam)
       }
+      .zoonkList()
     } secondary: {
       List {
         ExamMocksSection(exam: exam, options: options)
         about
       }
+      .zoonkList()
     } single: {
       List {
         moment
@@ -93,6 +95,7 @@ private struct ExamList: View {
         ExamProgressSection(exam: exam)
         about
       }
+      .zoonkList()
     }
     .onDisappear {
       callStart.cancel()
@@ -166,7 +169,7 @@ private struct ExamHero: View {
       VStack(alignment: .leading, spacing: 6) {
         eyebrow
           .font(.caption.monospaced())
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         if !facts.isEmpty {
           Text(facts.joinedFacts())
             .font(.subheadline.monospacedDigit())
@@ -205,8 +208,10 @@ private struct ExamHero: View {
         .listRowSeparator(.hidden)
       }
     } footer: {
-      if let note = dateNote {
-        Text(note)
+      SectionFooter {
+        if let note = dateNote {
+          Text(note)
+        }
       }
     }
 
@@ -234,14 +239,14 @@ private struct ExamHero: View {
               "That didn't go through. Try again in a moment.", tableName: "Exam",
               comment: "Changing the date failed"
             )
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
           }
           Button {
             Task { await useDate(noticeDay.date) }
           } label: {
             Text("Use this date", tableName: "Exam", comment: "Moves the plan to the notice's day")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .disabled(usingDate)
         }
       }
@@ -273,7 +278,7 @@ private struct ExamHero: View {
                 tableName: "Exam", comment: "The closest sittings to pick from")
             }
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         ForEach(noSitting.closest, id: \.self) { closest in
@@ -296,7 +301,7 @@ private struct ExamHero: View {
             "That didn't go through. Try again in a moment.", tableName: "Exam",
             comment: "Changing the date failed"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
     }
@@ -446,7 +451,7 @@ private struct ExamResultSection: View {
           "That didn't go through. Try again in a moment.", tableName: "Exam",
           comment: "Saving the result failed"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
 
       Button {
@@ -456,11 +461,14 @@ private struct ExamResultSection: View {
       }
       .disabled(form.saving || (parsedScore == nil && form.passed == .unknown))
     } header: {
-      Text("How did it go?", tableName: "Exam", comment: "Asks for the official result")
+      SectionTitle(
+        Text("How did it go?", tableName: "Exam", comment: "Asks for the official result"))
     } footer: {
-      Text(
-        "Add your official result when it comes out. You can change it later.", tableName: "Exam",
-        comment: "Under the official result form")
+      SectionFooter {
+        Text(
+          "Add your official result when it comes out. You can change it later.", tableName: "Exam",
+          comment: "Under the official result form")
+      }
     }
   }
 
@@ -659,7 +667,7 @@ private struct ExamProgressSection: View {
           .chartYScale(domain: min(0, progress.mocks.map(\.percent).min() ?? 0)...100)
           .chartYAxis {
             AxisMarks(values: [0, 50, 100]) { value in
-              AxisGridLine()
+              AxisGridLine().foregroundStyle(.vizGrid)
               AxisValueLabel {
                 if let percent = value.as(Int.self) {
                   Text((Double(percent) / 100).formatted(.percent))
@@ -685,7 +693,7 @@ private struct ExamProgressSection: View {
                 Text(share.formatted(.percent))
                 if trends {
                   Text(subject.change.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? "–")
-                    .foregroundStyle(subject.change == nil ? .secondary : .primary)
+                    .foregroundStyle(subject.change == nil ? .mutedForeground : .primary)
                     .accessibilityLabel(
                       subject.change.map {
                         Text("Since the first mock: \($0)", tableName: "Exam", comment: "A change")
@@ -697,8 +705,7 @@ private struct ExamProgressSection: View {
               Text(subject.name)
             }
 
-            ProgressView(value: min(max(share, 0), 1))
-              .tint(.success)
+            Meter(value: min(max(share, 0), 1), fill: .success)
               .accessibilityHidden(true)
           }
         }
@@ -711,7 +718,9 @@ private struct ExamProgressSection: View {
           }
         }
       } footer: {
-        Text(progressLine(progress))
+        SectionFooter {
+          Text(progressLine(progress))
+        }
       }
     }
   }
@@ -802,15 +811,18 @@ private struct ExamFormatSection: View {
 
           parts(day)
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     } header: {
       switch exam.format.count {
-      case 1: Text("The exam day", tableName: "Exam", comment: "A one-day exam's format")
-      case 2: Text("The two days", tableName: "Exam", comment: "A two-day exam's format")
+      case 1:
+        SectionTitle(Text("The exam day", tableName: "Exam", comment: "A one-day exam's format"))
+      case 2:
+        SectionTitle(Text("The two days", tableName: "Exam", comment: "A two-day exam's format"))
       default:
-        Text("The \(exam.format.count) days", tableName: "Exam", comment: "An exam's days")
+        SectionTitle(
+          Text("The \(exam.format.count) days", tableName: "Exam", comment: "An exam's days"))
       }
     }
   }
@@ -822,7 +834,7 @@ private struct ExamFormatSection: View {
     HStack(alignment: .firstTextBaseline) {
       if exam.format.count > 1, date != nil {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if let date {
@@ -889,10 +901,12 @@ private struct ExamMapSection: View {
         }
       }
     } header: {
-      Text("What's on the exam", tableName: "Exam", comment: "The exam's subjects")
+      SectionTitle(Text("What's on the exam", tableName: "Exam", comment: "The exam's subjects"))
     } footer: {
-      if map.hasFrequency {
-        Text("From past exams", tableName: "Exam", comment: "Where topic counts come from")
+      SectionFooter {
+        if map.hasFrequency {
+          Text("From past exams", tableName: "Exam", comment: "Where topic counts come from")
+        }
       }
     }
   }
@@ -955,7 +969,7 @@ private struct SpeakingMockSection: View {
                 tableName: "Exam", comment: "What the TOEFL speaking mock is")
             }
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } icon: {
         KindDot(kind: .conversation)
@@ -969,7 +983,7 @@ private struct SpeakingMockSection: View {
               "It's the same for everyone right now. Try again later.", tableName: "Exam",
               comment: "Why calls are paused"
             )
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         } icon: {
           Image(systemName: "phone.down")
@@ -1008,7 +1022,7 @@ private struct SpeakingMockSection: View {
                 comment: "The call time left today can't fit the mock")
             }
           }
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         case nil:
           EmptyView()
         case .some:
@@ -1016,7 +1030,7 @@ private struct SpeakingMockSection: View {
             "The mock didn't start. Try again in a moment.", tableName: "Exam",
             comment: "Starting the speaking mock failed"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
     }
@@ -1035,7 +1049,7 @@ private struct ExamScoringSection: View {
           Label {
             VStack(alignment: .leading, spacing: 4) {
               Text(rule.title).font(.headline)
-              Text(rule.rule).foregroundStyle(.secondary)
+              Text(rule.rule).foregroundStyle(.mutedForeground)
               if let calibration = exam.calibration,
                 calibration.sure.answered + calibration.unsure.answered > 0
               {
@@ -1073,13 +1087,13 @@ private struct ExamScoringSection: View {
                 "From \(MockLabels.number(scale.min)) to \(MockLabels.number(scale.max)).",
                 tableName: "Exam", comment: "The scale's range"
               )
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
               if let pass = scale.passScore {
                 Text(
                   "To pass: \(MockLabels.number(pass)) or more.", tableName: "Exam",
                   comment: "The pass score"
                 )
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
               }
             }
           } icon: {
@@ -1092,7 +1106,7 @@ private struct ExamScoringSection: View {
             VStack(alignment: .leading, spacing: 4) {
               Text("To pass", tableName: "Exam", comment: "What it takes to pass").font(.headline)
               ForEach(passMarks.texts, id: \.self) { text in
-                Text(text).foregroundStyle(.secondary)
+                Text(text).foregroundStyle(.mutedForeground)
               }
             }
           } icon: {
@@ -1100,7 +1114,7 @@ private struct ExamScoringSection: View {
           }
         }
       } header: {
-        Text("How the score works", tableName: "Exam", comment: "The exam's scoring")
+        SectionTitle(Text("How the score works", tableName: "Exam", comment: "The exam's scoring"))
       }
     }
   }

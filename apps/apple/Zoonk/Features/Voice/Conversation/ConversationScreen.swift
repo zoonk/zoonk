@@ -170,7 +170,7 @@ struct CallLoadFailed: View {
       Button(action: retry) {
         Text("Try again", tableName: "Voice", comment: "Button to retry loading")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
   }
 }

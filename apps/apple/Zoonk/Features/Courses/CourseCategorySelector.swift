@@ -63,7 +63,7 @@ private struct CourseCategoryButton: View {
       if isSelected {
         button.buttonStyle(.mainAction)
       } else {
-        button.buttonStyle(.bordered)
+        button.buttonStyle(.outline)
       }
     }
     .accessibilityAddTraits(isSelected ? .isSelected : [])

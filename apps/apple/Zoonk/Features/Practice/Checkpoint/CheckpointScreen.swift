@@ -176,7 +176,7 @@ struct CheckpointScreen: View {
                   comment: "A checkpoint keeps its answers until it ends.")
               }
             }
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -435,7 +435,7 @@ private struct CheckpointRewards: View {
       LabeledContent {
         Text("+\(brainPower)", tableName: "Practice", comment: "Brain Power a challenge added.")
           .monospacedDigit()
-          .foregroundStyle(.brain)
+          .foregroundStyle(.brainText)
       } label: {
         Label {
           Text("Brain Power", tableName: "Practice", comment: "A challenge's Brain Power reward.")

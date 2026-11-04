@@ -23,7 +23,7 @@ struct MissionsSummary: View {
           "Today's +\(bonus) Brain Power is already earned.", tableName: "Today",
           comment: "Another goal already earned the day's missions reward"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     } else {
       VStack(alignment: .leading, spacing: 12) {

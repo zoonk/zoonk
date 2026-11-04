@@ -56,7 +56,7 @@ private struct FindErrorCanvas: View {
           }
         }
         .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         LessonRichText(fields.problem)
       }
@@ -91,7 +91,7 @@ private struct FindErrorCanvas: View {
           }
 
           LessonRichText(fields.why)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
         .font(.subheadline)
       }
@@ -107,12 +107,12 @@ private struct FindErrorCanvas: View {
       HStack(alignment: .firstTextBaseline, spacing: 12) {
         Text(index + 1, format: .number)
           .font(.footnote.weight(.semibold).monospacedDigit())
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         VStack(alignment: .leading, spacing: 4) {
           LessonRichText(step.text)
             .strikethrough(mark == .right)
-            .foregroundStyle(mark == .right ? .secondary : .primary)
+            .foregroundStyle(mark == .right ? .mutedForeground : .primary)
 
           if mark == .right {
             LessonRichText(fields.correction)

@@ -19,10 +19,10 @@ private struct SuggestionChip: View {
 
   var body: some View {
     configuration.label
-      .foregroundStyle(isEnabled ? .primary : .secondary)
+      .foregroundStyle(isEnabled ? Color(.foreground) : .mutedForeground)
       .padding(.horizontal, 14)
       .padding(.vertical, 10)
-      .background(Color(.tertiarySystemFill), in: .capsule)
+      .background(Color.muted, in: .capsule)
       .opacity(configuration.isPressed ? 0.6 : 1)
       // The capsule hugs the label; pressing reaches Apple's 44-point minimum around it.
       .frame(minHeight: 44)

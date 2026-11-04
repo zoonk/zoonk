@@ -47,6 +47,7 @@ struct ConversationResultView: View {
         DayMomentSections(result: day)
       }
     }
+    .zoonkList()
     .milestoneCeremony(day?.ceremony)
     .onDisappear { again?.cancel() }
     .safeAreaBar(edge: .bottom) {
@@ -54,7 +55,7 @@ struct ConversationResultView: View {
         if let startFailure {
           startFailureText(startFailure)
             .font(.subheadline)
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
         }
 
         mainAction
@@ -242,7 +243,7 @@ struct ConversationResultView: View {
               ForEach(0..<3, id: \.self) { index in
                 Image(systemName: index < result.stars ? "star.fill" : "star")
                   .foregroundStyle(
-                    index < result.stars ? AnyShapeStyle(.energy) : AnyShapeStyle(.tertiary))
+                    index < result.stars ? AnyShapeStyle(.energy) : AnyShapeStyle(.faint))
               }
             }
             .font(.title2)
@@ -272,7 +273,7 @@ struct ConversationResultView: View {
         IconLabeledContent {
           Text(result.brainPower, format: .number.sign(strategy: .always()))
             .monospacedDigit()
-            .foregroundStyle(.brain)
+            .foregroundStyle(.brainText)
         } title: {
           Text("Brain Power", tableName: "Voice", comment: "Points earned label")
         } icon: {
@@ -282,14 +283,16 @@ struct ConversationResultView: View {
         }
       }
     } footer: {
-      if conversation.kind == .checkpoint, !result.passed {
-        Text(
-          "Nothing is lost: the call comes back so you can try again.", tableName: "Voice",
-          comment: "A checkpoint call that didn't pass")
-      } else if showsStars {
-        Text(
-          "A star for finishing, one for getting everything across and one without Help.",
-          tableName: "Voice", comment: "How a call's stars are earned")
+      SectionFooter {
+        if conversation.kind == .checkpoint, !result.passed {
+          Text(
+            "Nothing is lost: the call comes back so you can try again.", tableName: "Voice",
+            comment: "A checkpoint call that didn't pass")
+        } else if showsStars {
+          Text(
+            "A star for finishing, one for getting everything across and one without Help.",
+            tableName: "Voice", comment: "How a call's stars are earned")
+        }
       }
     }
   }
@@ -321,7 +324,8 @@ private struct CallFeedbackSections: View {
           .typesettingLanguage(.init(identifier: language))
       }
     } header: {
-      Text("What went well", tableName: "Voice", comment: "A call result's first part")
+      SectionTitle(
+        Text("What went well", tableName: "Voice", comment: "A call result's first part"))
     }
 
     if feedback.improve != nil || !missed.isEmpty || !feedback.pronunciation.isEmpty {
@@ -348,7 +352,7 @@ private struct CallFeedbackSections: View {
 
             Text(improve.why)
               .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
           .labeledContentStyle(.vertical)
         }
@@ -357,7 +361,7 @@ private struct CallFeedbackSections: View {
           Label {
             Text(objective.label).typesettingLanguage(.init(identifier: language))
           } icon: {
-            Image(systemName: "circle").foregroundStyle(.tertiary)
+            Image(systemName: "circle").foregroundStyle(.faint)
           }
         }
 
@@ -369,10 +373,10 @@ private struct CallFeedbackSections: View {
                 .typesettingLanguage(.init(identifier: language))
               Text(item.respelling)
                 .font(.subheadline.monospaced())
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
               Text(item.tip)
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
 
             Spacer()
@@ -381,7 +385,7 @@ private struct CallFeedbackSections: View {
           }
         }
       } header: {
-        Text("To improve", tableName: "Voice", comment: "A call result's second part")
+        SectionTitle(Text("To improve", tableName: "Voice", comment: "A call result's second part"))
       }
     }
   }
@@ -419,7 +423,7 @@ struct SpeakButton: View {
       }
       .labelStyle(.iconOnly)
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .onDisappear { voice.player.stop(owner: owner) }
   }
 }
@@ -433,7 +437,7 @@ private struct VerticalLabeledContentStyle: LabeledContentStyle {
     VStack(alignment: .leading, spacing: 2) {
       configuration.label
         .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       configuration.content
     }
   }

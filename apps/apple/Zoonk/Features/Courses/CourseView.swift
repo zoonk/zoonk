@@ -56,15 +56,18 @@ private struct CourseLandingList: View {
       List {
         pitch
       }
+      .zoonkList()
     } secondary: {
       List {
         contents
       }
+      .zoonkList()
     } single: {
       List {
         pitch
         contents
       }
+      .zoonkList()
     }
   }
 
@@ -165,7 +168,7 @@ private struct CourseHeroSection: View {
         if let promise {
           Text(promise)
             .font(.title3)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         PlanLine(startsHere: false)
@@ -201,7 +204,7 @@ private struct CourseExamEyebrow: View {
       }
     }
     .font(.footnote.monospacedDigit())
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 
   private var dates: String {
@@ -256,7 +259,7 @@ struct PlanLine: View {
         .accessibilityHidden(true)
     }
     .font(.subheadline)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -270,7 +273,8 @@ private struct CourseFitSections: View {
           Text(line)
         }
       } header: {
-        Text("Who it's for", tableName: "Courses", comment: "Header of who a course is for")
+        SectionTitle(
+          Text("Who it's for", tableName: "Courses", comment: "Header of who a course is for"))
       }
     }
 
@@ -280,9 +284,10 @@ private struct CourseFitSections: View {
           CheckLine(text: line)
         }
       } header: {
-        Text(
-          "What you'll be able to do", tableName: "Courses",
-          comment: "Header of what a course makes someone able to do")
+        SectionTitle(
+          Text(
+            "What you'll be able to do", tableName: "Courses",
+            comment: "Header of what a course makes someone able to do"))
       }
     }
   }
@@ -334,7 +339,7 @@ private struct CourseClosingSection: View {
             "A few quick questions, then your plan and your first lesson.", tableName: "Courses",
             comment: "Under a course page's last call"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         CatalogStartActions(courseID: courseID, goal: goal, tryLessonID: nil)

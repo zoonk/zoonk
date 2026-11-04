@@ -24,7 +24,7 @@ struct CourseArtwork: View {
       }
     }
     .aspectRatio(1, contentMode: .fit)
-    .background(Color(uiColor: .secondarySystemGroupedBackground))
+    .background(Color.card)
     .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
     .contentShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
     .accessibilityHidden(true)
@@ -56,11 +56,11 @@ struct CourseArtwork: View {
   }
 
   private var fallbackBackground: Color {
-    symbolTint?.opacity(0.12) ?? Color(uiColor: .tertiarySystemFill)
+    symbolTint?.opacity(0.12) ?? Color.muted
   }
 
   private var fallbackForeground: Color {
-    symbolTint?.mix(with: .primary, by: 0.35) ?? Color(uiColor: .secondaryLabel)
+    symbolTint?.mix(with: .primary, by: 0.35) ?? Color.mutedForeground
   }
 }
 

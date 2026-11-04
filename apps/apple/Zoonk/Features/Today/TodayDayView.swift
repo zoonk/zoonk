@@ -39,11 +39,13 @@ struct TodayDayView: View {
         notice
         day
       }
+      .zoonkList()
     } secondary: {
       List {
         aside
         TodayPracticeSection(view: view, language: language)
       }
+      .zoonkList()
     } single: {
       List {
         day
@@ -51,8 +53,9 @@ struct TodayDayView: View {
         aside
         TodayPracticeSection(view: view, language: language)
       }
+      .zoonkList()
     }
-    .listStyle(.insetGrouped)
+
     .onAppear(perform: startVisit)
     .onChange(of: isCovered) {
       if !isCovered {

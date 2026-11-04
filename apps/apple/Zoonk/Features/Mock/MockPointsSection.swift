@@ -14,7 +14,7 @@ struct MockPointsSection: View {
           Image(systemName: verdict.met ? "checkmark" : "xmark")
         }
         .font(.subheadline.weight(.medium))
-        .foregroundStyle(verdict.met ? AnyShapeStyle(.primary) : AnyShapeStyle(.destructive))
+        .foregroundStyle(verdict.met ? AnyShapeStyle(.primary) : AnyShapeStyle(.destructiveText))
       }
 
       ForEach(points.tests, id: \.name) { test in
@@ -39,19 +39,22 @@ struct MockPointsSection: View {
               Text(requirement)
             }
             .foregroundStyle(
-              test.met == false ? AnyShapeStyle(.destructive) : AnyShapeStyle(.secondary))
+              test.met == false ? AnyShapeStyle(.destructiveText) : AnyShapeStyle(.mutedForeground))
           }
         }
         .accessibilityElement(children: .combine)
       }
     } header: {
-      Text("By test", tableName: "Mock", comment: "Each test's points in a mock's result")
+      SectionTitle(
+        Text("By test", tableName: "Mock", comment: "Each test's points in a mock's result"))
     } footer: {
-      let lines = [points.projection].compactMap { $0 } + points.unjudged.map(\.line)
+      SectionFooter {
+        let lines = [points.projection].compactMap { $0 } + points.unjudged.map(\.line)
 
-      if !lines.isEmpty {
-        VStack(alignment: .leading, spacing: 4) {
-          ForEach(lines, id: \.self) { Text($0) }
+        if !lines.isEmpty {
+          VStack(alignment: .leading, spacing: 4) {
+            ForEach(lines, id: \.self) { Text($0) }
+          }
         }
       }
     }

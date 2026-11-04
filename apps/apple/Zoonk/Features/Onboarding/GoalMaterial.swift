@@ -47,7 +47,7 @@ struct GoalMaterialSections: View {
             "Create a free account to add a PDF, a photo of your notes or any text to your goal.",
             tableName: "Onboarding", comment: "Why a guest can't add material yet"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
           Button {
             router.present(.signIn)
@@ -66,15 +66,18 @@ struct GoalMaterialSections: View {
       }
     } header: {
       if !material.isEmpty {
-        Text(
-          "Your material", tableName: "Onboarding",
-          comment: "Header over the material attached to a goal")
+        SectionTitle(
+          Text(
+            "Your material", tableName: "Onboarding",
+            comment: "Header over the material attached to a goal"))
       }
     } footer: {
-      if canAttach, material.isEmpty {
-        Text(
-          "Your plan and lessons will use it.", tableName: "Onboarding",
-          comment: "Under the way to add material")
+      SectionFooter {
+        if canAttach, material.isEmpty {
+          Text(
+            "Your plan and lessons will use it.", tableName: "Onboarding",
+            comment: "Under the way to add material")
+        }
       }
     }
 
@@ -110,9 +113,10 @@ struct GoalMaterialSections: View {
           picked: intent
         ) { intent = $0 }
       } header: {
-        Text(
-          "What do you want to do?", tableName: "Onboarding",
-          comment: "Header over what to do with attached material")
+        SectionTitle(
+          Text(
+            "What do you want to do?", tableName: "Onboarding",
+            comment: "Header over what to do with attached material"))
       }
     }
   }
@@ -231,12 +235,12 @@ struct MaterialAttachControls<Label: View>: View {
         ProgressView()
         Text("Adding your material…", tableName: "Onboarding", comment: "While material is added")
       }
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
     }
 
     if let error {
       Text(error)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
     }
   }
 
@@ -355,7 +359,7 @@ private struct PasteMaterialRow: View {
         Button(role: .cancel, action: onCancel) {
           Text("Cancel", tableName: "Onboarding", comment: "Closes the box for pasted material")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .controlSize(.small)
     }
@@ -420,11 +424,11 @@ struct MaterialQuestionsView: View {
                 Image(systemName: "doc.text")
               }
               .font(.footnote)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
             }
           case .failure(let error):
             Text(Self.message(for: error))
-              .foregroundStyle(.destructive)
+              .foregroundStyle(.destructiveText)
           }
         }
       }
@@ -436,9 +440,10 @@ struct MaterialQuestionsView: View {
             "Reading your material…", tableName: "Onboarding",
             comment: "While a question about the learner's material is answered")
         }
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
+    .zoonkList()
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(

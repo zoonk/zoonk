@@ -37,7 +37,7 @@ struct SuggestedGoalSection: View {
         .font(.headline)
 
         Text("Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       Button {
@@ -55,7 +55,7 @@ struct SuggestedGoalSection: View {
         Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
           .frame(maxWidth: .infinity)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.large)
     } header: {
       Label {
@@ -65,12 +65,14 @@ struct SuggestedGoalSection: View {
         Image(systemName: "safari")
       }
     } footer: {
-      if failed {
-        Text(
-          "We couldn't save your answer. Try again.", tableName: "Today",
-          comment: "Answering the suggested goal failed"
-        )
-        .foregroundStyle(.destructive)
+      SectionFooter {
+        if failed {
+          Text(
+            "We couldn't save your answer. Try again.", tableName: "Today",
+            comment: "Answering the suggested goal failed"
+          )
+          .foregroundStyle(.destructiveText)
+        }
       }
     }
     .disabled(answering != nil)
@@ -147,11 +149,11 @@ struct TodayExamChoiceSection: View {
             .font(.headline)
 
             Text(choice.leftOut.line)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
 
             if choice.take > 1 {
               Text.examPickLimit(choice.take)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           }
         } icon: {
@@ -191,7 +193,7 @@ struct TodayExamChoiceSection: View {
         "That didn't save. Try again.", tableName: "Today", comment: "A change couldn't be saved"
       )
       .font(.footnote)
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
     }
   }
 
@@ -250,7 +252,7 @@ struct TodayUploadRequestSection: View {
             Text(title)
               .font(.headline)
             Text(description)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         } icon: {
           Image(systemName: "doc.text.magnifyingglass")
@@ -290,7 +292,7 @@ struct TodayUploadRequestSection: View {
               comment: "A change couldn't be saved"
             )
             .font(.footnote)
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
           }
         }
       }

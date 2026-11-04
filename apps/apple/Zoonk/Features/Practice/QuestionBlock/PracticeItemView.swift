@@ -145,7 +145,7 @@ struct PickRule: View {
       }
     }
     .font(.subheadline.weight(.medium))
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -208,16 +208,10 @@ struct TrueFalseStatementCard: View {
   var body: some View {
     ItemText(statement)
       .font(.title3.weight(.semibold))
-      .foregroundStyle(result == nil ? .primary : .secondary)
+      .foregroundStyle(result == nil ? Color(.foreground) : .mutedForeground)
       .padding(20)
       .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
-      .background(
-        Color(.secondarySystemGroupedBackground),
-        in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Color(.separator))
-      )
+      .panel(cornerRadius: 16)
       .offset(x: offset)
       .rotationEffect(.degrees(reduceMotion ? 0 : Double(offset) * 0.06))
       .gesture(swipe, isEnabled: !isLocked && !statement.contains("|"))
@@ -383,7 +377,7 @@ private struct PairBadge: View {
   var body: some View {
     Text(number, format: .number)
       .font(.caption.monospacedDigit().weight(.semibold))
-      .foregroundStyle(Color(.systemBackground))
+      .foregroundStyle(Color(.background))
       .frame(minWidth: 24, minHeight: 24)
       .background(Color.primary, in: Circle())
       .accessibilityHidden(true)
@@ -405,7 +399,7 @@ struct OrderItemView: View {
         comment: "Instruction above an ordering question."
       )
       .font(.subheadline.weight(.medium))
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
         let place = placed.firstIndex(of: index)
@@ -471,7 +465,7 @@ struct NumericItemView: View {
     VStack(alignment: .leading, spacing: 8) {
       HStack(spacing: 8) {
         if let unit, unit.position == .prefix {
-          Text(unit.symbol).foregroundStyle(.secondary)
+          Text(unit.symbol).foregroundStyle(.mutedForeground)
         }
 
         TextField(
@@ -487,7 +481,7 @@ struct NumericItemView: View {
         .onSubmit(submit)
 
         if let unit, unit.position == .suffix {
-          Text(unit.symbol).foregroundStyle(.secondary)
+          Text(unit.symbol).foregroundStyle(.mutedForeground)
         }
 
         if let mark {
@@ -501,11 +495,11 @@ struct NumericItemView: View {
       if isInvalid {
         Text(invalidHint)
           .font(.subheadline)
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
       } else if let rule {
         Text(rule)
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .onAppear { isFocused = !isLocked }
@@ -628,10 +622,10 @@ private struct AnswerFieldStyle: ViewModifier {
     content
       .padding(.horizontal, 14)
       .frame(minHeight: 56)
-      .background(Color(.secondarySystemGroupedBackground), in: shape)
+      .background(Color.card, in: shape)
       .overlay(
         shape.strokeBorder(
-          mark == .right ? Color.success : mark == .wrong ? Color.destructive : Color(.separator),
+          mark == .right ? Color.success : mark == .wrong ? Color.destructive : Color.border,
           lineWidth: mark == nil ? 1 : 2))
   }
 }

@@ -116,7 +116,7 @@ struct PatternTableCanvas: View {
             VStack(alignment: .leading, spacing: 0) {
               Text(verbatim: row.label).font(.subheadline.weight(.medium))
               if let meaning = row.labelMeaning {
-                Text(verbatim: meaning).font(.caption).foregroundStyle(.secondary)
+                Text(verbatim: meaning).font(.caption).foregroundStyle(.mutedForeground)
               }
             }
 
@@ -168,7 +168,7 @@ struct PatternTableCanvas: View {
     VStack(alignment: .leading, spacing: 0) {
       Text(verbatim: word).font(.headline)
       if let meaning {
-        Text(verbatim: meaning).font(.caption).foregroundStyle(.secondary)
+        Text(verbatim: meaning).font(.caption).foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -179,7 +179,7 @@ struct PatternTableCanvas: View {
       ? (stem, String(word.dropFirst(stem.count))) : (word, "")
 
     return Text(
-      "\(Text(verbatim: parts.0))\(Text(verbatim: parts.1).foregroundStyle(.mint).bold())"
+      "\(Text(verbatim: parts.0))\(Text(verbatim: parts.1).foregroundStyle(.vizAccent).bold())"
     )
     .font(.body)
   }
@@ -195,12 +195,12 @@ struct PatternTableCanvas: View {
       HStack(spacing: 1) {
         Text(verbatim: stem)
         if let chosen {
-          Text(verbatim: chosen).foregroundStyle(.mint).bold()
+          Text(verbatim: chosen).foregroundStyle(.vizAccent).bold()
         } else {
           RoundedRectangle(cornerRadius: 2)
-            .fill(isActive ? Color.mint.opacity(0.25) : .clear)
+            .fill(isActive ? Color.vizAccent.opacity(0.25) : .clear)
             .overlay(alignment: .bottom) {
-              Rectangle().fill(isActive ? Color.mint : Color.secondary).frame(height: 2)
+              Rectangle().fill(isActive ? Color.vizAccent : Color.mutedForeground).frame(height: 2)
             }
             .frame(width: 36, height: 20)
         }
@@ -209,7 +209,7 @@ struct PatternTableCanvas: View {
       .padding(.horizontal, 8)
       .overlay {
         RoundedRectangle(cornerRadius: 10, style: .continuous)
-          .strokeBorder(isActive ? Color.mint : .clear, lineWidth: 2)
+          .strokeBorder(isActive ? Color.vizAccent : .clear, lineWidth: 2)
       }
       .contentShape(.rect)
     }
@@ -230,12 +230,12 @@ struct PatternTableCanvas: View {
 
     return VStack(alignment: .leading, spacing: 2) {
       Text(verbatim: stem + (chosen ?? "…"))
-        .foregroundStyle(isRight ? Color.success : .destructive)
+        .foregroundStyle(isRight ? Color.successText : .destructiveText)
         .strikethrough(!isRight && chosen != nil)
 
       if !isRight, let expected {
         Text(verbatim: stem + expected)
-          .foregroundStyle(.success)
+          .foregroundStyle(.successText)
           .accessibilityLabel(
             Text(
               "Correct answer: \(stem + expected)", tableName: "ActivitiesCharts",

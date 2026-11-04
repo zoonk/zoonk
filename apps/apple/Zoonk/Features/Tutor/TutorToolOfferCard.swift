@@ -47,7 +47,7 @@ struct TutorToolOfferCard: View {
         if let description = content.description {
           description
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if content.locked {
@@ -60,14 +60,14 @@ struct TutorToolOfferCard: View {
             } label: {
               label
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           case .practiceCall(let label):
             Button {
               isCallOpen = true
             } label: {
               label
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
         }
       }
@@ -96,6 +96,7 @@ struct TutorToolOfferCard: View {
               isCallOpen = false
             }
           }
+          .zoonkList()
           .navigationTitle(Text(call.unitTitle))
           .navigationBarTitleDisplayMode(.inline)
           .toolbar {

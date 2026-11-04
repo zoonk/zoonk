@@ -78,7 +78,7 @@ struct PatternTesterCanvas: View {
             .textSelection(.enabled)
         }
         .font(.footnote)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .task(id: pattern) {
@@ -104,7 +104,7 @@ struct PatternTesterCanvas: View {
 
       HStack(spacing: 2) {
         if isRegex {
-          Text(verbatim: "/").foregroundStyle(.secondary)
+          Text(verbatim: "/").foregroundStyle(.mutedForeground)
         }
 
         TextField(text: Binding(get: { pattern }, set: change), selection: $selection) {
@@ -118,7 +118,7 @@ struct PatternTesterCanvas: View {
         .disabled(isChecked)
 
         if isRegex {
-          Text(verbatim: "/").foregroundStyle(.secondary)
+          Text(verbatim: "/").foregroundStyle(.mutedForeground)
         }
       }
       .font(.title3.monospaced())
@@ -126,7 +126,7 @@ struct PatternTesterCanvas: View {
       .frame(minHeight: 52)
       .background(.background, in: .rect(cornerRadius: 12, style: .continuous))
       .overlay {
-        RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Color(.separator))
+        RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Color.border)
       }
     }
     .font(.subheadline.weight(.medium))
@@ -235,7 +235,7 @@ struct PatternTesterCanvas: View {
               .font(.body.monospaced())
               .frame(minWidth: 28, minHeight: 28)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .accessibilityLabel(Text(verbatim: snippet.name))
         }
       }
@@ -259,7 +259,7 @@ struct PatternTesterCanvas: View {
           tableName: "ActivitiesCharts", comment: "A regex that doesn't compile or is unsafe"
         )
         .font(.footnote)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
 
       sampleList(
@@ -280,7 +280,7 @@ struct PatternTesterCanvas: View {
     _ title: Text, samples: [String], results: [PatternSampleResult]?, shouldMatch: Bool
   ) -> some View {
     VStack(alignment: .leading, spacing: 6) {
-      title.font(.footnote.weight(.medium)).foregroundStyle(.secondary)
+      title.font(.footnote.weight(.medium)).foregroundStyle(.mutedForeground)
 
       ForEach(Array(samples.enumerated()), id: \.offset) { index, sample in
         let result = results?[index]
@@ -316,7 +316,7 @@ struct PatternTesterCanvas: View {
     let after = part(match.upperBound..<units.count)
 
     return Text(
-      "\(Text(verbatim: before))\(Text(verbatim: found).underline().foregroundStyle(.mint))\(Text(verbatim: after))"
+      "\(Text(verbatim: before))\(Text(verbatim: found).underline().foregroundStyle(.vizAccent))\(Text(verbatim: after))"
     )
   }
 
@@ -344,7 +344,7 @@ struct PatternTesterCanvas: View {
       Image(systemName: passes ? "checkmark" : "xmark")
     }
     .font(.footnote.weight(.medium))
-    .foregroundStyle(passes ? Color.success : .destructive)
+    .foregroundStyle(passes ? Color.successText : .destructiveText)
   }
 
   private func formulaExamples(_ formula: PatternTesterFields.Formula) -> some View {
@@ -364,7 +364,7 @@ struct PatternTesterCanvas: View {
           comment: "Column of the learner's formula result")
       }
       .font(.footnote.weight(.medium))
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       ForEach(Array(formula.examples.enumerated()), id: \.offset) { index, example in
         let result = results?[index]
@@ -432,7 +432,7 @@ struct PatternTesterCanvas: View {
           Image(systemName: "lightbulb")
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     }
   }
 

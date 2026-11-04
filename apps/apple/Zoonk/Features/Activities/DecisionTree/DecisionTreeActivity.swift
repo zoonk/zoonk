@@ -43,12 +43,12 @@ private struct DecisionTreeCanvas: View {
           comment: "Above the case a decision tree is walked for"
         )
         .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         LessonRichText(fields.case.description)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(12)
-      .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+      .panel(cornerRadius: 12)
       .accessibilityElement(children: .combine)
 
       if case .question? = current {
@@ -61,7 +61,7 @@ private struct DecisionTreeCanvas: View {
             comment: "Above the outcomes a decision tree can still reach"
           )
           .font(.caption.weight(.medium))
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           Text(possible.map(\.label).joinedFacts())
             .font(.subheadline)
         }
@@ -73,7 +73,7 @@ private struct DecisionTreeCanvas: View {
           ForEach(Array(steps.enumerated()), id: \.offset) { _, step in
             HStack(alignment: .firstTextBaseline, spacing: 8) {
               Image(systemName: "checkmark")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
                 .accessibilityHidden(true)
               LessonRichText(step.question)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -92,7 +92,7 @@ private struct DecisionTreeCanvas: View {
           HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text(steps.count + 1, format: .number)
               .font(.subheadline.weight(.semibold).monospacedDigit())
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
               .accessibilityHidden(true)
             LessonRichText(node.question)
               .font(.headline)
@@ -121,13 +121,13 @@ private struct DecisionTreeCanvas: View {
             comment: "Above the outcome a decision tree walk reached"
           )
           .font(.caption.weight(.semibold))
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           Text(node.label)
             .font(.title3.weight(.semibold))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color.mint.opacity(0.15), in: .rect(cornerRadius: 12))
+        .background(Color.vizAccent.opacity(0.15), in: .rect(cornerRadius: 12))
         .accessibilityElement(children: .combine)
       default:
         EmptyView()
@@ -145,7 +145,7 @@ private struct DecisionTreeCanvas: View {
             Image(systemName: "arrow.uturn.backward")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
 
       if isChecked, let expected = DecisionTreeWalk.casePath(fields) {
@@ -189,7 +189,7 @@ private struct DecisionTreeCanvas: View {
             } else if index == missedAt {
               Image(systemName: "xmark").foregroundStyle(Color.destructive)
             } else {
-              Image(systemName: "circle").foregroundStyle(.tertiary)
+              Image(systemName: "circle").foregroundStyle(.faint)
             }
           }
           .accessibilityHidden(true)
@@ -203,7 +203,7 @@ private struct DecisionTreeCanvas: View {
                 "You chose \(learnerBranch)", tableName: "Activities",
                 comment: "After the check: the branch the learner took where the walk went wrong"
               )
-              .foregroundStyle(.destructive)
+              .foregroundStyle(.destructiveText)
             }
           }
         }

@@ -114,7 +114,7 @@ private struct CategorizeCanvas: View {
     HStack(spacing: 12) {
       Image(systemName: "line.3.horizontal")
         .font(.body)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .accessibilityHidden(true)
 
       ZStack(alignment: .leading) {
@@ -129,10 +129,10 @@ private struct CategorizeCanvas: View {
     }
     .multilineTextAlignment(.leading)
     .padding()
-    .background(Color(.systemBackground), in: .rect(cornerRadius: 16))
+    .background(Color(.background), in: .rect(cornerRadius: 16))
     .overlay {
       RoundedRectangle(cornerRadius: 16)
-        .strokeBorder(.separator)
+        .strokeBorder(.border)
     }
     .draggable(ActivityDragItem(id: card.id))
   }
@@ -143,7 +143,7 @@ private struct CategorizeCanvas: View {
       comment: "Under the card to sort, above the groups it can go in"
     )
     .font(.footnote)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 
   /// Always laid out, so it appearing after the first card moves nothing.
@@ -181,7 +181,7 @@ private struct CategorizeCanvas: View {
         LessonRichText(group.label)
         LessonRichText(group.rule)
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         preview(group)
       }
     }
@@ -232,7 +232,7 @@ private struct CategorizeCanvas: View {
                 comment: "On a group: how many more cards are in it besides the one shown"
               )
               .monospacedDigit()
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
               .previewChip()
               .fixedSize()
             }
@@ -256,7 +256,7 @@ private struct CategorizeCanvas: View {
           .accessibilityAddTraits(.isHeader)
         LessonRichText(group.rule)
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       if inGroup.isEmpty {
@@ -265,7 +265,7 @@ private struct CategorizeCanvas: View {
           comment: "A group of a sorting activity that no card was sorted into"
         )
         .font(.footnote)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       } else {
         VStack(spacing: 0) {
           ForEach(inGroup) { item in
@@ -276,17 +276,17 @@ private struct CategorizeCanvas: View {
             row(item)
           }
         }
-        .background(Color(.systemBackground))
+        .background(Color(.background))
         .clipShape(.rect(cornerRadius: 12))
         .overlay {
           RoundedRectangle(cornerRadius: 12)
-            .strokeBorder(.separator)
+            .strokeBorder(.border)
         }
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .panel(cornerRadius: 16)
   }
 
   private func movableRow(_ item: CategorizeFields.Item, from group: CategorizeFields.Group)
@@ -451,10 +451,10 @@ extension View {
   fileprivate func previewChip() -> some View {
     padding(.horizontal, 8)
       .padding(.vertical, 3)
-      .background(Color(.systemBackground), in: .rect(cornerRadius: 6))
+      .background(Color(.background), in: .rect(cornerRadius: 6))
       .overlay {
         RoundedRectangle(cornerRadius: 6)
-          .strokeBorder(.separator)
+          .strokeBorder(.border)
       }
   }
 }

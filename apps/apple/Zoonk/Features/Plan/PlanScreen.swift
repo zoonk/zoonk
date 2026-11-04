@@ -71,7 +71,7 @@ private struct GoalPlanView: View {
         } label: {
           Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     case .idle, .loading:
@@ -157,6 +157,7 @@ private struct PlanContent: View {
         PlanRoadmapSection(context: context, structure: structure)
         structureSections(context: context, structure: structure)
       }
+      .zoonkList()
     } secondary: {
       List {
         PlanNumbersSection(context: context, syllabus: syllabus)
@@ -165,6 +166,7 @@ private struct PlanContent: View {
         PlanMoreSection(goal: goal)
         PlanSettingsSection(context: context)
       }
+      .zoonkList()
     } single: {
       List {
         PlanRoadmapSection(context: context, structure: structure)
@@ -175,6 +177,7 @@ private struct PlanContent: View {
         PlanMoreSection(goal: goal)
         PlanSettingsSection(context: context)
       }
+      .zoonkList()
     }
     .modifier(PlanToolbar(context: context))
     .planSheets($sheet, context: context, syllabus: syllabus)

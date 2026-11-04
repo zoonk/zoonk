@@ -209,29 +209,3 @@ func firstSentence(_ text: String?) -> String? {
   }
   return sentence ?? text
 }
-
-struct CatalogSectionHeader<Title: View, Detail: View>: View {
-  @ViewBuilder let title: Title
-  @ViewBuilder let detail: Detail
-
-  var body: some View {
-    ViewThatFits(in: .horizontal) {
-      HStack(alignment: .firstTextBaseline) {
-        title
-        Spacer(minLength: 12)
-        detailText
-          .lineLimit(1)
-      }
-
-      VStack(alignment: .leading, spacing: 2) {
-        title
-        detailText
-      }
-    }
-  }
-
-  private var detailText: some View {
-    detail
-      .font(.footnote.monospacedDigit())
-  }
-}

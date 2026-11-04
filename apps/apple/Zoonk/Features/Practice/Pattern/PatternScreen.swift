@@ -55,7 +55,7 @@ struct PatternScreen: View {
             "Mistake pattern", tableName: "Practice",
             comment: "Eyebrow over a noticed mistake pattern."
           )
-          .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+          .font(.subheadline.weight(.medium)).foregroundStyle(.mutedForeground)
           Text(
             "Just typos", tableName: "Practice",
             comment: "Title when recent mistakes were only typos."
@@ -65,7 +65,7 @@ struct PatternScreen: View {
             "Your recent mistakes were slips while typing, not a rule you're missing. There's nothing to practice.",
             tableName: "Practice", comment: "Why a typos pattern has nothing to practice."
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } actions: {
         doneButton
@@ -291,13 +291,13 @@ private struct PatternIntroView: View {
           "We noticed a pattern", tableName: "Practice",
           comment: "Eyebrow over a noticed mistake pattern."
         )
-        .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+        .font(.subheadline.weight(.medium)).foregroundStyle(.mutedForeground)
         Text(pattern.title).font(.largeTitle.bold())
         Text(
           "It came up \(pattern.occurrences) times in your recent answers.", tableName: "Practice",
           comment: "How often a mistake pattern came up."
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       PatternRuleView(pattern: pattern)
@@ -310,7 +310,7 @@ private struct PatternIntroView: View {
           )
           .font(.headline)
           ForEach(Array(pattern.examples.dropFirst().enumerated()), id: \.offset) { _, example in
-            Text("“\(example.answer)”").foregroundStyle(.secondary)
+            Text("“\(example.answer)”").foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -332,7 +332,7 @@ private struct PatternRuleView: View {
               "You said", tableName: "Practice",
               comment: "Label of the learner's slip in a pattern.")
           }
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
 
           Label {
             Text(example.correctAnswer)
@@ -341,7 +341,7 @@ private struct PatternRuleView: View {
               "Correct version", tableName: "Practice",
               comment: "Label of the corrected sentence in a pattern.")
           }
-          .foregroundStyle(.success)
+          .foregroundStyle(.successText)
         }
         .labelStyle(PatternChangeLabelStyle())
         .font(.callout)
@@ -356,7 +356,7 @@ private struct PatternRuleView: View {
             HStack(alignment: .firstTextBaseline) {
               Text(row.label).font(.subheadline.weight(.medium))
               Spacer()
-              Text(row.example).font(.subheadline).foregroundStyle(.secondary)
+              Text(row.example).font(.subheadline).foregroundStyle(.mutedForeground)
                 .multilineTextAlignment(.trailing)
             }
             .padding(.vertical, 8)

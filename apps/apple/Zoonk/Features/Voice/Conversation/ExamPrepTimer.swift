@@ -30,7 +30,7 @@ struct ExamPrepTimer: View {
           } else {
             Text(prepLine)
               .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -41,7 +41,7 @@ struct ExamPrepTimer: View {
           } label: {
             Text("Start preparing", tableName: "Voice", comment: "Starts the preparation clock")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         } else {
           Button {
             startedAt = Date.now.timeIntervalSince1970
@@ -64,7 +64,7 @@ struct ExamPrepTimer: View {
           comment: "The preparation clock ran out"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       } else {
         Text(timerInterval: start...deadline, countsDown: true)
           .font(.title2.weight(.semibold).monospacedDigit())

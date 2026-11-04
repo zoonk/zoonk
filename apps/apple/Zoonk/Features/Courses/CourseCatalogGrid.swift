@@ -40,12 +40,14 @@ struct CourseCatalogGrid: View {
         }
       }
     } footer: {
-      if page.canLoadMore {
-        CourseGridLoadMoreView(
-          failure: courseGridLoadMoreFailure(catalog.loadMoreFailure),
-          isLoading: catalog.isLoadingMore
-        ) {
-          await catalog.loadMoreCourses(category: category)
+      SectionFooter {
+        if page.canLoadMore {
+          CourseGridLoadMoreView(
+            failure: courseGridLoadMoreFailure(catalog.loadMoreFailure),
+            isLoading: catalog.isLoadingMore
+          ) {
+            await catalog.loadMoreCourses(category: category)
+          }
         }
       }
     }
@@ -164,7 +166,7 @@ private struct CourseCell: View {
         if let lead = firstSentence(course.description) {
           Text(lead)
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
         }
 
@@ -173,7 +175,7 @@ private struct CourseCell: View {
         {
           Text(length)
             .font(.footnote.monospacedDigit())
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .padding(.top, 2)
         }
       }
@@ -222,7 +224,7 @@ struct CourseGridLoadMoreView: View {
                 ? "wifi.exclamationmark" : "exclamationmark.triangle")
           }
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
           Button {
             Task {
@@ -234,7 +236,7 @@ struct CourseGridLoadMoreView: View {
               tableName: "Courses",
               comment: "Retries loading catalog content after a failure.")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
       } else if isLoading {
         ProgressView()

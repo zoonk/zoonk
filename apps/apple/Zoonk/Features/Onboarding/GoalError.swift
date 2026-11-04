@@ -147,7 +147,7 @@ struct GoalErrorSection: View {
     } else {
       Section {
         Text(error.message)
-          .foregroundStyle(error.needsAccount ? Color.primary : Color.destructive)
+          .foregroundStyle(error.needsAccount ? Color.primary : Color.destructiveText)
 
         if error.needsAccount {
           CreateAccountButton()

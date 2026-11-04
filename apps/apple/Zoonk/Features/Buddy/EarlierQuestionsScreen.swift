@@ -24,7 +24,7 @@ struct EarlierQuestionsScreen: View {
             "You have no earlier questions.", tableName: "Buddy",
             comment: "The learner has no earlier questions"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         case .loaded(let page):
           ForEach(page.questions, id: \.id) { question in
             EarlierQuestionRow(question: question)
@@ -49,17 +49,18 @@ struct EarlierQuestionsScreen: View {
               "Something went wrong. Try again.", tableName: "Buddy",
               comment: "Older earlier questions couldn't be read"
             )
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
           }
         }
       } header: {
-        Text(
-          "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread.",
-          tableName: "Buddy", comment: "What the earlier questions page holds"
-        )
-        .textCase(nil)
+        SectionTitle(
+          Text(
+            "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread.",
+            tableName: "Buddy", comment: "What the earlier questions page holds"
+          ))
       }
     }
+    .zoonkList()
     .navigationTitle(
       Text("Earlier questions", tableName: "Buddy", comment: "Title of the earlier questions page")
     )
@@ -74,7 +75,7 @@ private struct EarlierQuestionRow: View {
     VStack(alignment: .leading, spacing: 8) {
       source
         .font(.caption)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       Text(question.question)
         .font(.headline)
@@ -89,7 +90,7 @@ private struct EarlierQuestionRow: View {
           comment: "An earlier question without its answer"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .padding(.vertical, 4)

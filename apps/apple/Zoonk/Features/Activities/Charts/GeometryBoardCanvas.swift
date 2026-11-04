@@ -45,7 +45,7 @@ struct GeometryBoardCanvas: View {
         comment: "How to use a geometry board"
       )
       .font(.footnote)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       sumLine(reading)
         .accessibilityHidden(true)
@@ -62,7 +62,7 @@ struct GeometryBoardCanvas: View {
             Image(systemName: "arrow.counterclockwise")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .controlSize(.large)
       }
 
@@ -131,7 +131,7 @@ struct GeometryBoardCanvas: View {
       }
     }
 
-    return ChartsHandle(tint: .mint, isEnabled: !isChecked)
+    return ChartsHandle(tint: .vizAccent, isEnabled: !isChecked)
       .accessibilityElement(children: .ignore)
       .accessibilityLabel(
         Text(
@@ -202,10 +202,10 @@ struct GeometryBoardCanvas: View {
 
   static func color(_ tone: GeometryBoardModel.Tone) -> Color {
     switch tone {
-    case .accent: .mint
-    case .highlight: .orange
-    case .secondary: .purple
-    case .neutral: .secondary
+    case .accent: .vizAccent
+    case .highlight: .vizHighlight
+    case .secondary: .vizSecondary
+    case .neutral: .mutedForeground
     }
   }
 
@@ -237,7 +237,7 @@ struct GeometryBoardCanvas: View {
         path.addLine(to: transform.point(bounds.maxX, y))
       }
     }
-    canvas.stroke(grid, with: .style(Color(.separator).opacity(0.5)), lineWidth: 0.5)
+    canvas.stroke(grid, with: .style(Color.vizGrid.opacity(0.5)), lineWidth: 0.5)
 
     if fields.measure == .pythagoras {
       for (index, square) in GeometryBoardModel.sideSquares(points).enumerated() {
@@ -267,7 +267,7 @@ struct GeometryBoardCanvas: View {
       path.addLines(points.map { transform.point($0.x, $0.y) })
       path.closeSubpath()
     }
-    canvas.fill(shape, with: .style(Color.mint.opacity(fields.measure == .area ? 0.25 : 0.12)))
+    canvas.fill(shape, with: .style(Color.vizAccent.opacity(fields.measure == .area ? 0.25 : 0.12)))
     canvas.stroke(shape, with: .style(.primary), lineWidth: 2)
 
     let angles = GeometryBoardModel.interiorAngles(points)
@@ -292,7 +292,7 @@ struct GeometryBoardCanvas: View {
       let name = CGPoint(x: at.x + unitOut.0 * 22, y: at.y - unitOut.1 * 22)
       canvas.drawChartsLabel(
         Text(verbatim: cornerName(index)).font(.caption.weight(.semibold)).foregroundStyle(
-          .secondary), at: name)
+          .mutedForeground), at: name)
 
       if fields.measure == .angleSum, index < reading.parts.count {
         let previous = transform.point(
@@ -326,7 +326,7 @@ struct GeometryBoardCanvas: View {
         let middle = transform.point((point.x + next.x) / 2, (point.y + next.y) / 2)
         canvas.drawChartsLabel(
           Text(verbatim: ActivityNumberFormat.format(reading.parts[index]))
-            .font(.caption2.weight(.semibold).monospacedDigit()).foregroundStyle(.purple),
+            .font(.caption2.weight(.semibold).monospacedDigit()).foregroundStyle(.vizSecondary),
           at: middle)
       }
     }
@@ -345,8 +345,8 @@ struct GeometryBoardCanvas: View {
     if fields.measure == .area {
       HStack(alignment: .firstTextBaseline) {
         Text("Area", tableName: "ActivitiesCharts", comment: "Label of a shape's area")
-          .foregroundStyle(.secondary)
-        ChartsReadout(text: total, style: isAnswer ? .success : .primary)
+          .foregroundStyle(.mutedForeground)
+        ChartsReadout(text: total, style: isAnswer ? .successText : .primary)
       }
     } else {
       VStack(alignment: .leading, spacing: 12) {
@@ -374,7 +374,7 @@ struct GeometryBoardCanvas: View {
     }
     var totalText = AttributedString(total)
     totalText.foregroundColor =
-      isAnswer ? Color.success : fields.measure == .pythagoras ? Color.orange : .primary
+      isAnswer ? Color.successText : fields.measure == .pythagoras ? Color.vizHighlight : .primary
     sum += AttributedString(" = ") + totalText
     return sum
   }
@@ -461,7 +461,7 @@ private struct AngleFan: View {
         comment: "Above a geometry board's corners laid side by side"
       )
       .font(.footnote)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       HStack(alignment: .bottom, spacing: 12) {
         Canvas { canvas, size in
@@ -481,7 +481,7 @@ private struct AngleFan: View {
               }
               path.closeSubpath()
             }
-            let color = colors.indices.contains(index) ? colors[index] : .secondary
+            let color = colors.indices.contains(index) ? colors[index] : .mutedForeground
             canvas.fill(path, with: .style(color.opacity(0.18)))
             canvas.stroke(path, with: .style(color), lineWidth: 1.5)
             start += sweep
@@ -510,7 +510,7 @@ private struct AngleFan: View {
           }
         }
         .font(.footnote)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .accessibilityHidden(true)

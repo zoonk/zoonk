@@ -27,13 +27,13 @@ struct RhythmTapPad: View {
           comment: "Under the rhythm pad, with a hardware keyboard"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .frame(maxWidth: .infinity, minHeight: 128)
     .padding()
     .accessibilityHidden(true)
-    .background(Color(.tertiarySystemFill), in: .rect(cornerRadius: 20, style: .continuous))
+    .background(Color.muted, in: .rect(cornerRadius: 20, style: .continuous))
     .opacity(isActive ? 1 : 0.6)
     .scaleEffect(isPressed && !reduceMotion ? 0.98 : 1)
     .animation(.snappy(duration: 0.1), value: isPressed)

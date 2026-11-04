@@ -158,6 +158,7 @@ private struct GoalStartFlow: View {
               GoalMaterialSections(material: $material, intent: $intent)
             })
         }
+        .zoonkList()
         .onboardingColumn()
         .closesTask()
         .barName(title)
@@ -210,6 +211,7 @@ private struct GoalStartFlow: View {
           .frame(maxWidth: .infinity)
           .listRowBackground(Color.clear)
       }
+      .zoonkList()
       .task(id: id) {
         await open(id)
       }
@@ -340,6 +342,7 @@ private struct DraftView: View {
         GoalErrorSection(error: retryError)
       }
     }
+    .zoonkList()
   }
 
   private func retry() async {
@@ -384,8 +387,10 @@ struct TypedGoalSection: View {
       Text(goal)
         .textSelection(.enabled)
     } header: {
-      Text(
-        "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal")
+      SectionTitle(
+        Text(
+          "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal"
+        ))
     }
   }
 }

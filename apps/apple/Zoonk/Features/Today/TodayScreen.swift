@@ -61,7 +61,7 @@ struct TodayScreen: View {
         } label: {
           Text("Try again", tableName: "Today", comment: "Retries loading Today")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
       .lonePage()
     default:
@@ -85,11 +85,13 @@ private struct TodayStartGoal: View {
       List {
         GoalStartEntry(part: .examples, goal: $goal)
       }
+      .zoonkList()
     } content: { isBeside in
       List {
         resume
         GoalStartEntry(part: isBeside ? .form : .whole, goal: $goal)
       }
+      .zoonkList()
     }
     .loads(onboarding.resume, refreshable: false)
     .navigationSubtitle(Text(Date.now, format: .dateTime.weekday(.abbreviated).month().day()))
@@ -104,11 +106,11 @@ private struct TodayStartGoal: View {
             Text(explanation.title)
             Text("Quick explanation", tableName: "Today", comment: "An unfinished explanation")
               .font(.footnote)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         } icon: {
           Image(systemName: "play")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         Button {
@@ -119,9 +121,10 @@ private struct TodayStartGoal: View {
             comment: "Opens the learner's unfinished quick explanation")
         }
       } header: {
-        Text(
-          "Your quick explanation", tableName: "Today",
-          comment: "The learner's unfinished quick explanation")
+        SectionTitle(
+          Text(
+            "Your quick explanation", tableName: "Today",
+            comment: "The learner's unfinished quick explanation"))
       }
     }
 
@@ -137,9 +140,10 @@ private struct TodayStartGoal: View {
             comment: "Opens the goal the learner typed and hasn't confirmed yet")
         }
       } header: {
-        Text(
-          "What you wrote", tableName: "Onboarding",
-          comment: "Header over the learner's typed goal")
+        SectionTitle(
+          Text(
+            "What you wrote", tableName: "Onboarding",
+            comment: "Header over the learner's typed goal"))
       }
     }
   }
@@ -152,6 +156,7 @@ private struct TodaySuggestedGoal: View {
     List {
       SuggestedGoalSection(suggestion: suggestion)
     }
+    .zoonkList()
     .navigationSubtitle(
       Text("Welcome back", tableName: "Today", comment: "Greets a learner back with no goal"))
   }
@@ -216,7 +221,7 @@ private struct TodayPreparing: View {
             } label: {
               Text("Try again", tableName: "Today", comment: "Retries loading Today")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
         }
         .task(id: "\(goalID):\(attempt)") {
@@ -324,13 +329,13 @@ private struct TodayGoalPaused: View {
             "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
             tableName: "Today", comment: "Why resuming the goal failed on the free plan"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         } else if failure != nil {
           Text(
             "Couldn't save. Check your connection and try again.", tableName: "Today",
             comment: "Resuming the goal failed"
           )
-          .foregroundStyle(.destructive)
+          .foregroundStyle(.destructiveText)
         }
       }
     } actions: {
@@ -365,7 +370,7 @@ private struct TodayGoalPaused: View {
     if prominent {
       button.buttonStyle(.mainAction).controlSize(.large)
     } else {
-      button.buttonStyle(.bordered).controlSize(.large)
+      button.buttonStyle(.outline).controlSize(.large)
     }
   }
 

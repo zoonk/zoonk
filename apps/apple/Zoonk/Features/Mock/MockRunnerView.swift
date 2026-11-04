@@ -206,7 +206,7 @@ private struct MockQuestionMeta: View {
       }
     }
     .font(.caption.monospaced())
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(accessibilityPlace)
   }
@@ -332,7 +332,7 @@ private struct MockEssayBox: View {
         .frame(minHeight: 280)
         .scrollContentBackground(.hidden)
         .padding(8)
-        .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+        .panel(cornerRadius: 12)
         .disabled(isLocked)
         .accessibilityLabel(Text((view.essayRubric ?? .custom).writingName))
         .accessibilityHint(EssayWords.hint(words))
@@ -340,7 +340,7 @@ private struct MockEssayBox: View {
       if words > 0 {
         EssayWords.text(words)
           .font(.caption.monospaced())
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -376,7 +376,7 @@ private struct FlagButton: View {
     .labelStyle(
       typeSize.isAccessibilitySize ? AnyLabelStyle(.iconOnly) : AnyLabelStyle(.titleAndIcon)
     )
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
     .tint(flagged ? .warning : nil)
     .disabled(run.timeUp || run.pending)
@@ -406,7 +406,7 @@ private struct MovesNote: View {
       }
     }
     .font(.footnote)
-    .foregroundStyle(.secondary)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -430,7 +430,7 @@ private struct ItemClock: ViewModifier {
               Spacer()
               Text(timerInterval: Date.now...max(deadline, .now), countsDown: true)
                 .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
                 .accessibilityLabel(
                   Text(
                     "Time left for this question", tableName: "Mock",
@@ -547,11 +547,13 @@ private struct MockAnswerSheet: View {
           row(question, at: index)
         }
       } header: {
-        Text("Questions", tableName: "Mock", comment: "The answer sheet's questions")
+        SectionTitle(Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
       } footer: {
-        Text(
-          "No feedback until the end, like on exam day.", tableName: "Mock",
-          comment: "Under the answer sheet")
+        SectionFooter {
+          Text(
+            "No feedback until the end, like on exam day.", tableName: "Mock",
+            comment: "Under the answer sheet")
+        }
       }
 
       if view.sections.count > 1 {
@@ -574,16 +576,17 @@ private struct MockAnswerSheet: View {
             .fontWeight(section.status == .current ? .semibold : .regular)
           }
         } header: {
-          Text("Sections", tableName: "Mock", comment: "The mock's sections")
+          SectionTitle(Text("Sections", tableName: "Mock", comment: "The mock's sections"))
         }
       }
     }
+    .zoonkList()
     .safeAreaBar(edge: .bottom) {
       Button(action: onHandIn) {
         Text("Hand in", tableName: "Mock", comment: "Hands in from the answer sheet")
           .frame(maxWidth: .infinity)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
       .controlSize(.large)
       .disabled(run.pending || !run.moves.canAdvance && run.position == run.questions.count - 1)
       .scenePadding(.horizontal)
@@ -620,7 +623,7 @@ private struct MockAnswerSheet: View {
         }
 
         Image(systemName: answered ? "circle.fill" : "circle")
-          .foregroundStyle(answered ? .primary : .tertiary)
+          .foregroundStyle(answered ? Color(.foreground) : .faint)
           .accessibilityLabel(
             answered
               ? Text("Answered", tableName: "Mock", comment: "An answered question")
@@ -628,6 +631,6 @@ private struct MockAnswerSheet: View {
       }
     }
     .disabled(!run.moves.canOpen(index) || run.timeUp)
-    .listRowBackground(isCurrent ? Color(.tertiarySystemFill) : nil)
+    .currentRow(isCurrent)
   }
 }

@@ -67,16 +67,19 @@ struct ConversationIntro<Footer: View>: View {
       List {
         situation
       }
+      .zoonkList()
     } secondary: {
       List {
         task
       }
+      .zoonkList()
       .safeAreaBar(edge: .bottom) { startBar }
     } single: {
       List {
         situation
         task
       }
+      .zoonkList()
       .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
     }
   }
@@ -93,13 +96,13 @@ struct ConversationIntro<Footer: View>: View {
           comment: "A call's length and level, over its title"
         )
         .font(.caption.monospaced())
-        .foregroundStyle(.tertiary)
+        .foregroundStyle(.faint)
 
         Text(intro.speakingTask?.task.name ?? intro.title)
           .font(.title2.weight(.semibold))
 
         Text(intro.speakingTask?.card.summary ?? intro.situation)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         if !intro.callsCharacter {
           Text(
@@ -107,7 +110,7 @@ struct ConversationIntro<Footer: View>: View {
             comment: "An exam task's call stops by itself at about its length"
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       }
       .listRowBackground(Color.clear)
@@ -139,19 +142,23 @@ struct ConversationIntro<Footer: View>: View {
               .typesettingLanguage(.init(identifier: intro.targetLanguage))
             Text(objective.description)
               .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } header: {
-        Text(
-          "What to get across", tableName: "Voice", comment: "The call's goals, before it starts")
-      } footer: {
-        Label {
+        SectionTitle(
           Text(
-            "Turn your sound on. The microphone is on only during the call.", tableName: "Voice",
-            comment: "Before a call: what it needs from the learner's device")
-        } icon: {
-          Image(systemName: "mic")
+            "What to get across", tableName: "Voice", comment: "The call's goals, before it starts")
+        )
+      } footer: {
+        SectionFooter {
+          Label {
+            Text(
+              "Turn your sound on. The microphone is on only during the call.", tableName: "Voice",
+              comment: "Before a call: what it needs from the learner's device")
+          } icon: {
+            Image(systemName: "mic")
+          }
         }
       }
     }
@@ -241,7 +248,7 @@ struct CallMicrophoneOff: View {
 
       Self.text(name: name)
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .accessibilityElement(children: .combine)
@@ -270,7 +277,7 @@ struct CallMicrophoneOff: View {
       Text("Open Settings", tableName: "Voice", comment: "Button that opens the app's settings")
         .frame(maxWidth: .infinity)
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .controlSize(.large)
   }
 }
@@ -301,7 +308,8 @@ private struct HowTheCallWorks: View {
           tableName: "Voice", comment: "How a call works: step 3")
       }
     } header: {
-      Text("How the call works", tableName: "Voice", comment: "Before a call: what will happen")
+      SectionTitle(
+        Text("How the call works", tableName: "Voice", comment: "Before a call: what will happen"))
     }
   }
 
@@ -325,9 +333,9 @@ struct CharacterRow: View {
       Text(character.name.prefix(1).uppercased())
         .font(.subheadline.weight(.medium))
         .frame(minWidth: 32, minHeight: 32)
-        .background(Color(.secondarySystemFill), in: .circle)
+        .background(Color.muted, in: .circle)
         .overlay {
-          Circle().strokeBorder(isTalking ? Color.secondary : .clear, lineWidth: 1.5)
+          Circle().strokeBorder(isTalking ? Color.mutedForeground : .clear, lineWidth: 1.5)
         }
         .accessibilityHidden(true)
 
@@ -348,7 +356,7 @@ struct CharacterRow: View {
           }
         }
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .accessibilityElement(children: .combine)
@@ -408,16 +416,17 @@ private struct ExamTaskCard: View {
         AsyncImage(url: URL(string: photo.url)) { image in
           image.resizable().scaledToFit()
         } placeholder: {
-          Color(.secondarySystemFill)
+          Color.muted
             .aspectRatio(4 / 3, contentMode: .fit)
         }
         .clipShape(.rect(cornerRadius: 8, style: .continuous))
         .accessibilityLabel(photo.alt)
       }
     } header: {
-      Text(
-        "Task \(task.number) of \(task.taskCount)", tableName: "Voice",
-        comment: "Which task of the exam's speaking paper this is")
+      SectionTitle(
+        Text(
+          "Task \(task.number) of \(task.taskCount)", tableName: "Voice",
+          comment: "Which task of the exam's speaking paper this is"))
     }
     .typesettingLanguage(.init(identifier: task.language))
   }

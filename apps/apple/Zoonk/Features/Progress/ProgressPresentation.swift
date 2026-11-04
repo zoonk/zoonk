@@ -231,7 +231,7 @@ func bigQuantity(_ text: String) -> Text {
   while let match = remainder.firstMatch(of: number) {
     var unit = AttributedString(remainder[remainder.startIndex..<match.range.lowerBound])
     unit.font = .subheadline.weight(.medium)
-    unit.foregroundColor = .secondary
+    unit.foregroundColor = .mutedForeground
     attributed += unit
     attributed += AttributedString(remainder[match.range])
     remainder = remainder[match.range.upperBound...]
@@ -239,7 +239,7 @@ func bigQuantity(_ text: String) -> Text {
 
   var tail = AttributedString(remainder)
   tail.font = .subheadline.weight(.medium)
-  tail.foregroundColor = .secondary
+  tail.foregroundColor = .mutedForeground
   attributed += tail
 
   return Text(attributed)

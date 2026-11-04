@@ -49,7 +49,9 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
     } else if let hint {
       Text(hint)
         .font(.subheadline)
-        .foregroundStyle(issue == .failed && !recorder.isRecording ? .destructive : .secondary)
+        .foregroundStyle(
+          issue == .failed && !recorder.isRecording ? .destructiveText : .mutedForeground
+        )
         .accessibilityAddTraits(.updatesFrequently)
     }
   }

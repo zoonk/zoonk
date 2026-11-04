@@ -19,7 +19,8 @@ struct CoursePlanSections: View {
           fitting: fitting, minutes: minutes, published: published)
       }
     } header: {
-      Text("Example plan", tableName: "Courses", comment: "Header of a course's example plan")
+      SectionTitle(
+        Text("Example plan", tableName: "Courses", comment: "Header of a course's example plan"))
     }
 
     if case .toEnd(_, _, let firstDay) = estimate.reach, !firstDay.isEmpty {
@@ -42,7 +43,7 @@ private struct PlanCaption: View {
 private func planReadout(_ text: AttributedString, number: String) -> AttributedString {
   var readout = text
   readout.font = .title3.weight(.medium)
-  readout.foregroundColor = .secondary
+  readout.foregroundColor = .mutedForeground
 
   if let range = readout.range(of: number) {
     readout[range].font = .largeTitle.weight(.semibold).monospacedDigit()
@@ -74,7 +75,7 @@ private struct UndatedHeadline: View {
         "to finish the whole course at \(minutes) minutes a day, Monday to Friday, from scratch.",
         tableName: "Courses", comment: "Under the weeks a course's example plan takes"
       )
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       if let endMonth {
         Label {
@@ -83,7 +84,7 @@ private struct UndatedHeadline: View {
             comment: "When a course's example plan ends: a month and year")
         } icon: {
           Image(systemName: "flag")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .accessibilityHidden(true)
         }
         .padding(.top, 4)
@@ -129,11 +130,11 @@ private struct DatedHeadline: View {
           number: studyTime))
 
       holds
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       if let coverage = estimate.coverage {
         fit(coverage)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .padding(.vertical, 4)
@@ -219,19 +220,21 @@ private struct PlanFirstDay: View {
           tableName: "Courses", comment: "The rest of an example plan's first day, folded"
         )
         .font(.footnote.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     } header: {
-      CatalogSectionHeader {
+      SectionTitle(
         Text("Today", tableName: "Courses", comment: "Header of an example plan's first day")
-      } detail: {
+      ) {
         Text(
           "\(lessons.count) lessons\u{00A0}· \(studyDuration(minutes: Int(minutes(of: lessons[...]).rounded())))",
           tableName: "Courses",
           comment: "How many lessons an example plan's first day has, and how long")
       }
     } footer: {
-      PlanCaption()
+      SectionFooter {
+        PlanCaption()
+      }
     }
   }
 
@@ -272,11 +275,11 @@ private struct PlanWorkloadSection: View {
           }
         }
       } header: {
-        CatalogSectionHeader {
+        SectionTitle(
           Text(
             "What fills the time", tableName: "Courses",
             comment: "Header of an example plan's workload")
-        } detail: {
+        ) {
           if parts.count > 1 {
             Text(
               "\(catalogDurationText(minutes: Int(estimate.scheduledMinutes.rounded()))) in all",
@@ -284,27 +287,30 @@ private struct PlanWorkloadSection: View {
           }
         }
       } footer: {
-        VStack(alignment: .leading, spacing: 6) {
-          if estimate.workload.practiceMinutes.rounded() > 0 {
-            Text(
-              "What you studied comes back right before you'd forget it.", tableName: "Courses",
-              comment: "Why an example plan has reviews")
-          }
+        SectionFooter {
+          VStack(alignment: .leading, spacing: 6) {
+            if estimate.workload.practiceMinutes.rounded() > 0 {
+              Text(
+                "What you studied comes back right before you'd forget it.", tableName: "Courses",
+                comment: "Why an example plan has reviews")
+            }
 
-          if let after = estimate.afterDeadlineMinutes, after.rounded() > 0 {
-            Text(
-              "Of this, \(catalogDurationText(minutes: Int(after.rounded()))) comes after the exam.",
-              tableName: "Courses", comment: "How much of an exam plan's time comes after the exam")
-          }
+            if let after = estimate.afterDeadlineMinutes, after.rounded() > 0 {
+              Text(
+                "Of this, \(catalogDurationText(minutes: Int(after.rounded()))) comes after the exam.",
+                tableName: "Courses",
+                comment: "How much of an exam plan's time comes after the exam")
+            }
 
-          if estimate.workload.unwrittenLessonMinutes > 0 {
-            Text(
-              "Lessons not written yet are written as you reach them.", tableName: "Courses",
-              comment: "Under an example plan with lessons still to be written")
-          }
+            if estimate.workload.unwrittenLessonMinutes > 0 {
+              Text(
+                "Lessons not written yet are written as you reach them.", tableName: "Courses",
+                comment: "Under an example plan with lessons still to be written")
+            }
 
-          if showsCaption {
-            PlanCaption()
+            if showsCaption {
+              PlanCaption()
+            }
           }
         }
       }
@@ -324,12 +330,12 @@ private struct PlanWorkloadSection: View {
 
     return [
       Part(
-        fill: Color(.secondaryLabel), id: "lessons", kinds: [.lesson],
+        fill: Color.mutedForeground, id: "lessons", kinds: [.lesson],
         label: LocalizedStringResource(
           "Lessons", table: "Courses", comment: "A part of an example plan's time"),
         minutes: workload.lessonMinutes),
       Part(
-        fill: Color(.tertiaryLabel), id: "unwritten", kinds: [.lesson],
+        fill: Color.faint, id: "unwritten", kinds: [.lesson],
         label: LocalizedStringResource(
           "Lessons not written yet", table: "Courses", comment: "A part of an example plan's time"),
         minutes: workload.unwrittenLessonMinutes),

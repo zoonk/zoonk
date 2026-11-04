@@ -141,7 +141,7 @@ struct TestOutScreen: View {
           "We couldn't put the lessons back. Try again.", tableName: "Practice",
           comment: "Undoing a test-out's skip failed."
         )
-        .font(.subheadline).foregroundStyle(.destructive)
+        .font(.subheadline).foregroundStyle(.destructiveText)
       }
     } actions: {
       if let changeId = result.changeId, undo != .done {

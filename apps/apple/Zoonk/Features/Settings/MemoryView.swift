@@ -12,7 +12,7 @@ struct MemoryView: View {
           "What Zoonk remembers to give you examples and plans that fit your life.",
           tableName: "Settings", comment: "What the Memory page is for"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .listRowBackground(Color.clear)
       }
 
@@ -33,10 +33,12 @@ struct MemoryView: View {
           }
           .tint(.success)
         } footer: {
-          if let deleted = settings.deletedFact {
-            MemoryUpdatedNotice(fact: deleted, status: settings.undoStatus) {
-              Task {
-                await settings.undoDeletion()
+          SectionFooter {
+            if let deleted = settings.deletedFact {
+              MemoryUpdatedNotice(fact: deleted, status: settings.undoStatus) {
+                Task {
+                  await settings.undoDeletion()
+                }
               }
             }
           }
@@ -58,7 +60,7 @@ struct MemoryView: View {
                 tableName: "Settings", comment: "Memory page without facts while memory is off")
             }
           }
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         ForEach(MemoryFact.Category.allCases, id: \.self) { category in
@@ -74,7 +76,7 @@ struct MemoryView: View {
                 }
               }
             } header: {
-              category.name
+              SectionTitle(category.name)
             }
           }
         }
@@ -92,12 +94,16 @@ struct MemoryView: View {
             await settings.exportMemory()
           }
         } footer: {
-          Text(
-            "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
-            tableName: "Settings", comment: "Note about sensitive details at the Memory page's end")
+          SectionFooter {
+            Text(
+              "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
+              tableName: "Settings",
+              comment: "Note about sensitive details at the Memory page's end")
+          }
         }
       }
     }
+    .zoonkList()
     .navigationTitle(Text("Memory", tableName: "Settings", comment: "Title of the Memory page"))
     .overlay {
       SettingsLoadingState(state: settings.memory.state) {
@@ -188,7 +194,7 @@ private struct MemoryFactRow: View {
           comment: "Where a remembered fact came from and its day, as in “From a chat · Oct 11”"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
 
       Spacer(minLength: 0)
@@ -211,7 +217,7 @@ private struct MemoryFactRow: View {
         }
       } label: {
         Image(systemName: "ellipsis")
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .frame(minWidth: 44, minHeight: 44)
           .contentShape(.rect)
       }
@@ -258,7 +264,7 @@ private struct MemoryUpdatedNotice: View {
           "Couldn't undo. It changed since.", tableName: "Settings",
           comment: "Says a deleted fact couldn't come back"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
     .font(.footnote)

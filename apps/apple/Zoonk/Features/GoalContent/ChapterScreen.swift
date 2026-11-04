@@ -32,7 +32,7 @@ struct ChapterScreen: View {
             } label: {
               Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
           .lonePage()
         case .idle, .loading:
@@ -116,11 +116,13 @@ private struct ChapterContent: View {
         header
         lessonsSection
       }
+      .zoonkList()
     } secondary: {
       List {
         practiceSection
         referenceSection
       }
+      .zoonkList()
     } single: {
       List {
         header
@@ -128,6 +130,7 @@ private struct ChapterContent: View {
         practiceSection
         referenceSection
       }
+      .zoonkList()
     }
     .onDisappear {
       practiceTask?.cancel()
@@ -143,7 +146,7 @@ private struct ChapterContent: View {
       VStack(alignment: .leading, spacing: 6) {
         eyebrow
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         Text(chapter.chapter.title)
           .font(.title2.weight(.semibold))
@@ -152,7 +155,7 @@ private struct ChapterContent: View {
         if !lessons.isEmpty {
           facts(done: done)
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let next = lessons.first(where: { $0.state == .next }) {
@@ -228,7 +231,7 @@ private struct ChapterContent: View {
                 comment: "What the chapter's test-out does"
               )
               .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .disclosureChevron()
@@ -254,11 +257,12 @@ private struct ChapterContent: View {
           if let practiceNote {
             practiceNote
               .font(.subheadline)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } header: {
-        Text("Practice", tableName: "Plan", comment: "Section of a chapter's practice")
+        SectionTitle(
+          Text("Practice", tableName: "Plan", comment: "Section of a chapter's practice"))
       }
     }
   }
@@ -419,9 +423,10 @@ private struct ChapterReferenceSection: View {
         }
       }
     } header: {
-      Text(
-        "For reference", tableName: "Plan",
-        comment: "Section of a chapter with its mind map and summaries, to look back at")
+      SectionTitle(
+        Text(
+          "For reference", tableName: "Plan",
+          comment: "Section of a chapter with its mind map and summaries, to look back at"))
     }
   }
 
@@ -452,7 +457,7 @@ struct LessonSummaries: View {
         ForEach(summary.ideas, id: \.self) { idea in
           Text((try? AttributedString(markdown: idea)) ?? AttributedString(idea))
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }

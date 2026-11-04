@@ -156,7 +156,7 @@ struct BeltDot: View {
   var body: some View {
     Circle()
       .fill(belt.color)
-      .strokeBorder(.secondary.opacity(0.35), lineWidth: 1)
+      .strokeBorder(Color.mutedForeground.opacity(0.35), lineWidth: 1)
       .frame(width: size, height: size)
       .accessibilityHidden(true)
   }
@@ -168,7 +168,7 @@ struct StatsLine: View {
   var body: some View {
     text
       .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .frame(maxWidth: 560, alignment: .leading)
   }
 }

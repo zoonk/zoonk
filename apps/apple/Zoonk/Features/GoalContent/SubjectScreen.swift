@@ -34,7 +34,7 @@ struct SubjectScreen: View {
               } label: {
                 Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
               }
-              .buttonStyle(.bordered)
+              .buttonStyle(.outline)
             }
             .lonePage()
           default:
@@ -100,11 +100,13 @@ private struct SubjectContent: View {
         header
         chaptersSection
       }
+      .zoonkList()
     } secondary: {
       List {
         numbers
         topics
       }
+      .zoonkList()
     } single: {
       List {
         header
@@ -112,6 +114,7 @@ private struct SubjectContent: View {
         topics
         chaptersSection
       }
+      .zoonkList()
     }
   }
 
@@ -151,7 +154,7 @@ private struct SubjectContent: View {
           }
         }
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
         Text(subject.name)
           .font(.title2.weight(.semibold))
@@ -161,7 +164,7 @@ private struct SubjectContent: View {
           Text(verbatim: facts.joinedFacts())
             .font(.subheadline)
             .monospacedDigit()
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         if let reason = subject.notPlannedReason, !reason.isEmpty {
@@ -274,8 +277,7 @@ private struct SubjectContent: View {
         label
       }
 
-      ProgressView(value: share)
-        .tint(.success)
+      Meter(value: share, fill: .success)
         .accessibilityHidden(true)
     }
     .accessibilityElement(children: .combine)
@@ -300,7 +302,7 @@ private struct SubjectChapterRow: View {
       }
     } else {
       content
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -311,12 +313,12 @@ private struct SubjectChapterRow: View {
       Label {
         VStack(alignment: .leading, spacing: 2) {
           Text(verbatim: "\(chapter.position). \(chapter.title)")
-            .foregroundStyle(chapter.state == .done ? .secondary : .primary)
+            .foregroundStyle(chapter.state == .done ? .mutedForeground : .primary)
 
           if let line {
             line
               .font(.caption)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
@@ -383,11 +385,10 @@ private struct SubjectTopicsSection: View {
         }
       } header: {
         if index == 0 {
-          HStack(alignment: .firstTextBaseline) {
-            Text("Topics", tableName: "Plan", comment: "Section of a subject's topics")
+          SectionTitle(Text("Topics", tableName: "Plan", comment: "Section of a subject's topics"))
+          {
 
             if let studied = subject.topicsStudied {
-              Spacer()
               Text(
                 "\(studied) of \(subject.topics.count) topics", tableName: "Plan",
                 comment: "Topics studied of the subject's topics"
@@ -396,7 +397,7 @@ private struct SubjectTopicsSection: View {
             }
           }
         } else if let heading {
-          Text(heading)
+          SectionTitle(Text(heading))
         }
       }
     }
@@ -423,7 +424,7 @@ private struct SubjectTopicRow: View {
             }
           } else {
             Text(chapter.title)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       } label: {
@@ -437,7 +438,7 @@ private struct SubjectTopicRow: View {
       VStack(alignment: .leading, spacing: 2) {
         HStack {
           Text(topic.name)
-            .foregroundStyle(topic.notPlannedReason == nil ? .primary : .secondary)
+            .foregroundStyle(topic.notPlannedReason == nil ? Color(.foreground) : .mutedForeground)
 
           if topic.frequency == "high" {
             Text("Appears a lot", tableName: "Plan", comment: "A topic past exams ask often")
@@ -448,7 +449,7 @@ private struct SubjectTopicRow: View {
         if topic.notPlannedReason != nil {
           Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
             .font(.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     } icon: {
@@ -500,7 +501,7 @@ private struct SubjectNotPlannedNotice: View {
         Image(systemName: "minus.circle")
       }
       .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       if reason == "skipped" {
         Button {
@@ -509,7 +510,7 @@ private struct SubjectNotPlannedNotice: View {
           Text(
             "Bring it back", tableName: "Plan", comment: "Puts a skipped subject back in the plan")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
         .disabled(isRestoring)
       } else if reason == "time" {
         Button {
@@ -518,7 +519,7 @@ private struct SubjectNotPlannedNotice: View {
           Text(
             "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
 
       if failed {
@@ -527,7 +528,7 @@ private struct SubjectNotPlannedNotice: View {
           comment: "Says the subject didn't come back into the plan"
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
   }

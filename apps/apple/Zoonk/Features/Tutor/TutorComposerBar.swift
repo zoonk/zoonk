@@ -29,7 +29,7 @@ struct TutorComposerBar: View {
               comment: "Sending a question to the buddy failed")
             : failure.message)
             .font(.footnote)
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.destructiveText)
         }
 
         composer
@@ -105,7 +105,7 @@ struct TutorComposerBar: View {
         comment: "Guests and visitors can't talk to the buddy"
       )
       .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       TutorRemedyButton(failure: .signUpRequired, retry: {})
     }
@@ -135,7 +135,7 @@ struct TutorLimitNotice: View {
     VStack(alignment: .leading, spacing: 10) {
       failure.message
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
 
       TutorRemedyButton(failure: failure, retry: {})
     }
@@ -157,17 +157,17 @@ struct TutorRemedyButton: View {
       } label: {
         Text("Create a free account", tableName: "Tutor", comment: "Opens sign-up from the buddy")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     case .seePlus:
       SeePlusButton()
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
     case .signIn:
       Button {
         places.open(.account)
       } label: {
         Text("Sign in", tableName: "Tutor", comment: "Opens sign-in after the session expired")
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     case .tryAgain:
       Button(action: retry) {
         Label {
@@ -176,7 +176,7 @@ struct TutorRemedyButton: View {
           Image(systemName: "arrow.clockwise")
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.outline)
     case .none:
       EmptyView()
     }

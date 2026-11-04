@@ -83,7 +83,7 @@ struct MoleculeBuilderCanvas: View {
           comment: "What the learner built so far, like Built: CO"
         )
         .font(.subheadline)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -122,7 +122,7 @@ struct MoleculeBuilderCanvas: View {
           tableName: "ActivitiesCharts", comment: "How many bonds a complete molecule has"
         )
         .font(.footnote)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
       .accessibilityElement(children: .combine)
       .accessibilityValue(Text(verbatim: describe(structure)))
@@ -183,26 +183,26 @@ struct MoleculeBuilderCanvas: View {
           "Tap an element to add its first atom.", tableName: "ActivitiesCharts",
           comment: "An empty molecule build"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       } else if let over {
         Text(
           "\(name(over)) has more bonds than it can make.", tableName: "ActivitiesCharts",
           comment: "An atom with too many bonds"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
         .fontWeight(.medium)
       } else if open > 0 {
         Text(
           "\(open) atoms have open bonds, shown as dots.", tableName: "ActivitiesCharts",
           comment: "Atoms that still need bonds"
         )
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       } else {
         Text(
           "Every atom has all its bonds.", tableName: "ActivitiesCharts",
           comment: "A complete molecule"
         )
-        .foregroundStyle(.success)
+        .foregroundStyle(.successText)
         .fontWeight(.medium)
       }
 
@@ -218,7 +218,7 @@ struct MoleculeBuilderCanvas: View {
               comment: "How to start bonding atoms")
           }
         }
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
       }
     }
     .font(.subheadline)
@@ -253,7 +253,7 @@ struct MoleculeBuilderCanvas: View {
             "Remove the selected atom", tableName: "ActivitiesCharts",
             comment: "Removes the selected atom"))
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
   }
 
   private func palette(selectedName: String?) -> some View {
@@ -269,7 +269,7 @@ struct MoleculeBuilderCanvas: View {
               comment: "How many bonds an element makes"
             )
             .font(.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           }
           .padding(.vertical, 6)
         }
@@ -483,7 +483,7 @@ private struct MoleculeDrawing: View {
     let circle = ZStack {
       Circle().fill(style.fill)
       Circle().strokeBorder(
-        atom.id == selectedId ? Color.primary : Color(.separator),
+        atom.id == selectedId ? Color.primary : Color.border,
         lineWidth: atom.id == selectedId ? 3 : 1)
       Text(verbatim: atom.element)
         .font(.headline)

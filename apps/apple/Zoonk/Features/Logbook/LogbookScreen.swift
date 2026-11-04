@@ -115,7 +115,7 @@ struct LogbookScreen: View {
             } label: {
               Text("Try again", tableName: "Session", comment: "Retries loading")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.outline)
           }
           .lonePage()
         default:
@@ -164,6 +164,7 @@ private struct LogbookSteps: View {
       List {
         page(.week)
       }
+      .zoonkList()
     } secondary: {
       List {
         ForEach(steps.filter { $0 != .week }, id: \.self) { step in
@@ -177,18 +178,20 @@ private struct LogbookSteps: View {
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets())
       }
+      .zoonkList()
     } single: {
       TabView(selection: $current) {
         ForEach(steps, id: \.self) { step in
           List {
             page(step)
           }
+          .zoonkList()
           .tag(step)
         }
       }
       .tabViewStyle(.page(indexDisplayMode: steps.count > 1 ? .always : .never))
       .indexViewStyle(.page(backgroundDisplayMode: .always))
-      .background(Color(.systemGroupedBackground))
+      .background(Color(.background))
       .safeAreaBar(edge: .bottom) {
         action(steps)
           .controlSize(.large)
@@ -285,7 +288,7 @@ private struct LogbookSteps: View {
             Text("Trap hunter badges", tableName: "Session", comment: "Badges earned this week")
           } icon: {
             Image(systemName: "rosette")
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -355,7 +358,7 @@ private struct LogbookSteps: View {
       if let eyebrow {
         eyebrow
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
 
       title
@@ -365,7 +368,7 @@ private struct LogbookSteps: View {
 
       if let detail {
         detail
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .listRowBackground(Color.clear)
@@ -442,7 +445,7 @@ private struct LogbookSteps: View {
         "\(studyDuration(minutes: recap.comparison.minutes)) more than the week before!",
         tableName: "Session", comment: "More time than last week"
       )
-      .foregroundStyle(.success)
+      .foregroundStyle(.successText)
     }
 
     if recap.comparison.questions > 0 {
@@ -450,7 +453,7 @@ private struct LogbookSteps: View {
         "\(recap.comparison.questions) more questions than the week before!",
         tableName: "Session", comment: "More questions than last week"
       )
-      .foregroundStyle(.success)
+      .foregroundStyle(.successText)
     }
 
     return nil
@@ -466,7 +469,7 @@ private struct TurnaroundChart: View {
 
     Chart {
       RuleMark(y: .value(rightAnswers, 0.0))
-        .foregroundStyle(Color(.separator))
+        .foregroundStyle(Color.border)
 
       ForEach(days, id: \.offset) { index, point in
         if let accuracy = point.accuracy {
@@ -534,11 +537,12 @@ private struct WeekRings: View {
         VStack(spacing: 4) {
           Image(systemName: studied ? "checkmark.circle.fill" : "circle")
             .font(.title3)
-            .foregroundStyle(studied ? AnyShapeStyle(.success) : AnyShapeStyle(.quaternary))
+            .foregroundStyle(
+              studied ? AnyShapeStyle(.success) : AnyShapeStyle(Color(.foreground).opacity(0.2)))
 
           Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
             .font(.caption2)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)

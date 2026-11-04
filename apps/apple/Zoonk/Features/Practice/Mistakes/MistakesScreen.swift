@@ -24,6 +24,7 @@ struct MistakesScreen: View {
         listTitle(fixed: true, counts: fixed.value?.counts)
         MistakeListSections(resource: fixed, goalId: goalId, fixed: true)
       }
+      .zoonkList()
       .loads(fixed)
     } content: { isBeside in
       let showsFixedHere = showsFixed && !isBeside
@@ -46,10 +47,11 @@ struct MistakesScreen: View {
 
         MistakeListSections(resource: shown, goalId: goalId, fixed: showsFixedHere)
       }
+      .zoonkList()
       .readableColumn(isBeside ? .infinity : PracticeLayout.readableWidth, alignment: .leading)
       .loads(shown)
     }
-    .listStyle(.insetGrouped)
+
     .navigationTitle(
       Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
     )
@@ -136,7 +138,7 @@ private struct MistakeListSections: View {
 
       if list.data.isEmpty {
         Section {
-          Text(emptyText).foregroundStyle(.secondary)
+          Text(emptyText).foregroundStyle(.mutedForeground)
         }
       }
 
@@ -253,7 +255,7 @@ private struct NotebookHeader: View {
 
         Text(countsLine(ready: ready, tomorrow: tomorrow, fixed: list.counts.fixed))
           .font(.subheadline.monospacedDigit())
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
 
         if ready == 0, tomorrow > 0 {
           Text(
@@ -262,7 +264,7 @@ private struct NotebookHeader: View {
             comment: "Why today's mistakes can't be practiced yet."
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         if ready > 0 {
@@ -339,7 +341,7 @@ private struct MistakeEntryView: View {
           .monospacedDigit()
       }
       .font(.caption.weight(.medium))
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       if let set = try? snapshot.set.map({ try PracticeJSON.recode($0.value1) as PracticeItemSet })
       {
@@ -362,7 +364,7 @@ private struct MistakeEntryView: View {
       }
 
       if let explanation = snapshot.explanation {
-        ItemText(explanation).font(.subheadline).foregroundStyle(.secondary)
+        ItemText(explanation).font(.subheadline).foregroundStyle(.mutedForeground)
       }
 
       actions
@@ -382,7 +384,7 @@ private struct MistakeEntryView: View {
             comment: "A mistake from today, ready to practice tomorrow."
           )
           .font(.caption)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
 
         if let skillId {
@@ -393,7 +395,7 @@ private struct MistakeEntryView: View {
               "Practice this skill", tableName: "Practice",
               comment: "Practices only this skill's mistakes.")
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
         }
 
         if let lesson = mistake.lesson {
@@ -480,7 +482,7 @@ struct MistakeAnswerRow: View {
             comment: "Mark beside the learner's wrong pick once a question is graded.")
       )
       .font(.caption.weight(.semibold))
-      .foregroundStyle(isRight ? Color.success : Color.destructive)
+      .foregroundStyle(isRight ? Color.successText : Color.destructiveText)
     }
     .font(.subheadline.weight(.medium))
     .padding(12)
@@ -536,11 +538,11 @@ private struct PatternRow: View {
               : pattern.title
           )
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
         }
       } icon: {
         Image(systemName: pattern.isTypos ? "keyboard" : "sparkles")
-          .foregroundStyle(pattern.isTypos ? Color.secondary : Color.warning)
+          .foregroundStyle(pattern.isTypos ? Color.mutedForeground : Color.warning)
       }
     }
   }

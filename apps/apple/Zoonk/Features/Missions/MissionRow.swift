@@ -239,13 +239,13 @@ struct MissionRow: View {
   private var text: some View {
     VStack(alignment: .leading, spacing: 2) {
       Text(mission.name(buddy: buddyName))
-        .foregroundStyle((mission.isDone && justDone == nil) || waits ? .secondary : .primary)
+        .foregroundStyle((mission.isDone && justDone == nil) || waits ? .mutedForeground : .primary)
 
       if !mission.isDone, !detail.isEmpty {
         Text(verbatim: detail.joinedFacts())
           .font(.footnote)
           .monospacedDigit()
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -255,7 +255,7 @@ struct MissionRow: View {
     if justDone != nil {
       Text("Just done", tableName: "Today", comment: "A mission the result just completed")
         .font(.caption.weight(.medium))
-        .foregroundStyle(.success)
+        .foregroundStyle(.successText)
     }
 
     if !mission.isDone, !waits, mission.opens?.kind == "block" {

@@ -330,7 +330,7 @@ private struct SettingsHubView: View {
 
                 Text(account.user.email)
                   .font(.subheadline)
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
               }
             }
           }
@@ -347,7 +347,7 @@ private struct SettingsHubView: View {
                 Text(appLanguageName)
               }
             }
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
           } label: {
             Text("Preferences", tableName: "Account", comment: "Settings row for Preferences")
           }
@@ -358,7 +358,7 @@ private struct SettingsHubView: View {
             if let count = settings.memory.value?.facts.count {
               Text(count, format: .number)
                 .monospacedDigit()
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.mutedForeground)
             }
           } label: {
             Text("Memory", tableName: "Account", comment: "Settings row for what Zoonk remembers")
@@ -400,6 +400,7 @@ private struct SettingsHubView: View {
           } label: {
             Text("Log out", tableName: "Account", comment: "Account log-out action")
           }
+          .foregroundStyle(.destructiveText)
           .disabled(session.isWorking)
         }
       }
@@ -410,6 +411,7 @@ private struct SettingsHubView: View {
         }
       }
     }
+    .zoonkList()
     .loads(settings.preferences, settings.memory, refreshable: false)
   }
 
@@ -439,7 +441,7 @@ private struct AccountSectionLink<Label: View>: View {
         label
       }
       .foregroundStyle(.primary)
-      .listRowBackground(isShown ? Color(.tertiarySystemFill) : nil)
+      .currentRow(isShown)
       .accessibilityAddTraits(isShown ? .isSelected : [])
     } else {
       NavigationLink(value: destination) {

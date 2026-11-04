@@ -163,14 +163,14 @@ private struct PatternRow: View {
         if let hours {
           Text(hours)
             .font(.caption2.monospacedDigit())
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
             .fixedSize()
         }
       }
 
       Text(answers)
         .font(.caption.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
     }
   }
 
@@ -187,7 +187,7 @@ private struct PatternRow: View {
   private var share: some View {
     Text(performance.totalAnswers > 0 ? wholePercent(performance.score) : "–")
       .font(.subheadline.monospacedDigit())
-      .foregroundStyle(isCounted ? Color.primary : Color.secondary)
+      .foregroundStyle(isCounted ? Color.primary : Color.mutedForeground)
   }
 
   private var answers: String {
@@ -231,9 +231,7 @@ private struct WeekPatterns: View {
         }
       }
       .padding(.horizontal)
-      .background(
-        Color(.secondarySystemGroupedBackground),
-        in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+      .panel(cornerRadius: 16)
     }
   }
 }
@@ -262,9 +260,7 @@ private struct DayPatterns: View {
         }
       }
       .padding(.horizontal)
-      .background(
-        Color(.secondarySystemGroupedBackground),
-        in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+      .panel(cornerRadius: 16)
     }
   }
 }
@@ -275,7 +271,7 @@ struct PatternsNote: View {
   var body: some View {
     Text(sentences.joinedSentences())
       .font(.footnote)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
       .frame(maxWidth: .infinity, alignment: .leading)
   }
 

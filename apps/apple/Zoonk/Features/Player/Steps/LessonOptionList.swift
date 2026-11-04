@@ -68,7 +68,7 @@ struct LessonOptionList: View {
         if let detail = option.detail {
           Text(detail)
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -229,11 +229,11 @@ struct LessonWordTile: View {
         if let romanization {
           Text(romanization)
             .font(.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
       }
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.outline)
     .opacity(isUsed ? 0.3 : 1)
     .disabled(isUsed)
   }

@@ -18,12 +18,12 @@ struct PlanBuildingView: View {
           Label {
             VStack(alignment: .leading, spacing: 2) {
               Text(phase.title)
-                .foregroundStyle(phase.state == .todo ? .secondary : .primary)
+                .foregroundStyle(phase.state == .todo ? .mutedForeground : .primary)
 
               if let skillName = phase.skillName {
                 Text(skillName)
                   .font(.footnote)
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(.mutedForeground)
                   .lineLimit(1)
               }
             }
@@ -36,13 +36,16 @@ struct PlanBuildingView: View {
           }
         }
       } header: {
-        Text(
-          "\(goal.title)\u{00A0}· Building your plan", tableName: "Plan",
-          comment: "Eyebrow of the Plan while the goal's plan is being built")
+        SectionTitle(
+          Text(
+            "\(goal.title)\u{00A0}· Building your plan", tableName: "Plan",
+            comment: "Eyebrow of the Plan while the goal's plan is being built"))
       } footer: {
-        Text(
-          "It usually takes a minute or two. Your plan opens here as soon as it's ready.",
-          tableName: "Plan", comment: "Explains that the plan appears on its own once it's built")
+        SectionFooter {
+          Text(
+            "It usually takes a minute or two. Your plan opens here as soon as it's ready.",
+            tableName: "Plan", comment: "Explains that the plan appears on its own once it's built")
+        }
       }
 
       if run.status == .missing || run.status == .failed {
@@ -72,6 +75,7 @@ struct PlanBuildingView: View {
         }
       }
     }
+    .zoonkList()
     .task(id: run.generationId ?? goal.id) {
       await follow()
     }

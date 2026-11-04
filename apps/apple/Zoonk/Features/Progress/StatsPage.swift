@@ -13,7 +13,7 @@ struct StatsPage<Content: View>: View {
       .frame(maxWidth: 1_100)
       .frame(maxWidth: .infinity)
     }
-    .background(Color(.systemGroupedBackground))
+    .background(Color(.background))
   }
 }
 
@@ -62,7 +62,7 @@ struct StatsEmpty: View {
       .buttonStyle(.mainAction)
     }
     .lonePage()
-    .background(Color(.systemGroupedBackground))
+    .background(Color(.background))
   }
 }
 
@@ -71,7 +71,7 @@ struct StatsLoading: View {
   var body: some View {
     ProgressView()
       .frame(maxWidth: .infinity, maxHeight: .infinity)
-      .background(Color(.systemGroupedBackground))
+      .background(Color(.background))
       .accessibilityLabel(
         Text(
           "Loading statistics", tableName: "Progress",
@@ -113,7 +113,7 @@ struct StatsFailure: View {
       .buttonStyle(.mainAction)
     }
     .lonePage()
-    .background(Color(.systemGroupedBackground))
+    .background(Color(.background))
   }
 }
 

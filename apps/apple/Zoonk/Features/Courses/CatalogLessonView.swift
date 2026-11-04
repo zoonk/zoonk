@@ -47,7 +47,7 @@ private struct CatalogLessonList: View {
         VStack(alignment: .leading, spacing: 12) {
           Text(lesson.chapter.courseTitle)
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
 
           Text(value.title)
             .font(.largeTitle.bold())
@@ -57,7 +57,7 @@ private struct CatalogLessonList: View {
           if !value.description.isEmpty {
             Text(value.description)
               .font(.title3)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
 
           if case .text(let text) = value.firstScreen {
@@ -72,7 +72,7 @@ private struct CatalogLessonList: View {
         Section {
           if let context, !context.isEmpty {
             LessonTextBlocks(context)
-              .foregroundStyle(.secondary)
+              .foregroundStyle(.mutedForeground)
           }
 
           LessonTextBlocks(question)
@@ -85,7 +85,7 @@ private struct CatalogLessonList: View {
               Image(systemName: "circle.fill")
                 .imageScale(.small)
                 .font(.caption2)
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(.faint)
                 .accessibilityHidden(true)
             }
           }
@@ -104,9 +104,11 @@ private struct CatalogLessonList: View {
               .accessibilityHidden(true)
           }
         } footer: {
-          Text(
-            "You answer it as the lesson starts.", tableName: "Courses",
-            comment: "Under a lesson's first question, shown before starting it")
+          SectionFooter {
+            Text(
+              "You answer it as the lesson starts.", tableName: "Courses",
+              comment: "Under a lesson's first question, shown before starting it")
+          }
         }
       }
 
@@ -126,15 +128,17 @@ private struct CatalogLessonList: View {
         .buttonStyle(.mainAction)
         .controlSize(.large)
       } footer: {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(
-            "\(value.estimatedMinutes) minutes", tableName: "Courses",
-            comment: "How long a lesson takes")
-
-          if session.authenticatedSession == nil {
+        SectionFooter {
+          VStack(alignment: .leading, spacing: 2) {
             Text(
-              "No sign-up needed.", tableName: "Courses",
-              comment: "Under a lesson's length for someone who isn't signed in")
+              "\(value.estimatedMinutes) minutes", tableName: "Courses",
+              comment: "How long a lesson takes")
+
+            if session.authenticatedSession == nil {
+              Text(
+                "No sign-up needed.", tableName: "Courses",
+                comment: "Under a lesson's length for someone who isn't signed in")
+            }
           }
         }
       }
@@ -174,8 +178,10 @@ private struct CatalogLessonList: View {
           }
         }
       } header: {
-        Text("In this course", tableName: "Courses", comment: "Header of a lesson's place")
+        SectionTitle(
+          Text("In this course", tableName: "Courses", comment: "Header of a lesson's place"))
       }
     }
+    .zoonkList()
   }
 }

@@ -25,7 +25,7 @@ struct LoginView: View {
             tableName: "Account",
             comment: "Explains the benefit of signing in"
           )
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
           .multilineTextAlignment(.center)
         }
 
@@ -70,7 +70,7 @@ struct LoginView: View {
             .background(.background)
             .overlay {
               RoundedRectangle(cornerRadius: authenticationButtonCornerRadius)
-                .strokeBorder(.secondary, lineWidth: 1)
+                .strokeBorder(.mutedForeground, lineWidth: 1)
             }
             .clipShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
             .contentShape(RoundedRectangle(cornerRadius: authenticationButtonCornerRadius))
@@ -94,7 +94,7 @@ struct LoginView: View {
             "Legal agreement below the sign-in methods; the arguments are the links to the terms of service and the privacy policy"
         )
         .font(.footnote)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.mutedForeground)
         .multilineTextAlignment(.center)
       }
       .frame(maxWidth: 480)
@@ -146,7 +146,7 @@ struct AccountFailureMessage: View {
         Image(systemName: "exclamationmark.circle")
       }
       .font(.footnote)
-      .foregroundStyle(.destructive)
+      .foregroundStyle(.destructiveText)
       .multilineTextAlignment(.center)
       .accessibilityElement(children: .combine)
     }

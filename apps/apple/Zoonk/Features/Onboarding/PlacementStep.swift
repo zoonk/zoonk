@@ -170,7 +170,7 @@ struct PlacementStep: View {
   }
 
   private func mockRunning(_ mockID: String) -> some View {
-    Form {
+    List {
       StepHeader(
         title: Text(
           "Your mock exam is waiting", tableName: "Onboarding",
@@ -191,6 +191,7 @@ struct PlacementStep: View {
         onContinue: { router.open(.mock(blockId: mockID)) },
         onSkip: { stopMock(mockID) })
     }
+    .zoonkList()
     .onboardingColumn()
   }
 
@@ -201,7 +202,7 @@ struct PlacementStep: View {
           "That didn't save. Try again.", tableName: "Onboarding",
           comment: "A change couldn't be saved"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     }
   }
@@ -216,7 +217,7 @@ struct PlacementStep: View {
   }
 
   private var intro: some View {
-    Form {
+    List {
       StepHeader(
         subject: subject,
         title: Text(
@@ -248,6 +249,7 @@ struct PlacementStep: View {
         finish(fromScratch: true)
       }
     }
+    .zoonkList()
     .onboardingColumn()
     .disabled(isSaving || isStarting)
     .environment(\.isSavingAnswer, isStarting)
@@ -258,7 +260,7 @@ struct PlacementStep: View {
     comment: "Title of placement's wait once its questions are ready, for a learner still guessing")
 
   private func waiting(holding: WarmUpHolding?) -> some View {
-    Form {
+    List {
       if holding == nil {
         StepHeader(
           title: Text(
@@ -304,17 +306,20 @@ struct PlacementStep: View {
             )
             .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.bordered)
+          .buttonStyle(.outline)
           .controlSize(.large)
           .listRowInsets(EdgeInsets())
           .listRowBackground(Color.clear)
         } footer: {
-          Text(
-            "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
-            comment: "Under Skip for now")
+          SectionFooter {
+            Text(
+              "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
+              comment: "Under Skip for now")
+          }
         }
       }
     }
+    .zoonkList()
     .warmUpDeck(warmUpID)
     .warmUpHoldBar(
       holding,
@@ -328,7 +333,7 @@ struct PlacementStep: View {
   }
 
   private func outcome(title: Text, description: Text) -> some View {
-    Form {
+    List {
       StepHeader(title: title, description: description)
 
       saveFailure
@@ -340,6 +345,7 @@ struct PlacementStep: View {
         finish(fromScratch: false)
       }
     }
+    .zoonkList()
     .onboardingColumn()
     .disabled(isSaving)
   }
@@ -559,7 +565,7 @@ struct PlacementQuestionScreen<Media: View>: View {
         if let subject {
           Text(subject)
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.mutedForeground)
         }
 
         Text(
@@ -569,8 +575,7 @@ struct PlacementQuestionScreen<Media: View>: View {
         .font(.subheadline.weight(.semibold))
       }
 
-      ProgressView(value: progress)
-        .tint(.success)
+      Meter(value: progress, fill: .success)
         .accessibilityHidden(true)
 
       media()
@@ -584,7 +589,7 @@ struct PlacementQuestionScreen<Media: View>: View {
           "That didn't save. Try again.", tableName: "Onboarding",
           comment: "A change couldn't be saved"
         )
-        .foregroundStyle(.destructive)
+        .foregroundStyle(.destructiveText)
       }
     } actions: {
       PracticeMainButton(

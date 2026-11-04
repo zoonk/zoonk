@@ -57,7 +57,7 @@ private struct DialogueCanvas: View {
         Image(systemName: "mappin")
       }
       .font(.subheadline)
-      .foregroundStyle(.secondary)
+      .foregroundStyle(.mutedForeground)
 
       VStack(spacing: 10) {
         ForEach(Array(fields.lines.enumerated()), id: \.offset) { _, line in
@@ -91,7 +91,7 @@ private struct DialogueCanvas: View {
             Image(systemName: "speaker.wave.2")
           }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.outline)
       }
     }
   }
@@ -103,7 +103,7 @@ private struct DialogueCanvas: View {
       if isThem {
         Image(systemName: "person.crop.circle.fill")
           .font(.title2)
-          .foregroundStyle(.purple)
+          .foregroundStyle(.vizSecondary)
           .accessibilityHidden(true)
       } else {
         Spacer(minLength: 40)
@@ -114,12 +114,12 @@ private struct DialogueCanvas: View {
           .fontWeight(.medium)
         Text(line.translation)
           .font(.subheadline)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.mutedForeground)
       }
       .padding(.horizontal, 14)
       .padding(.vertical, 10)
       .background(
-        isThem ? Color(.secondarySystemBackground) : Color.mint.opacity(0.15),
+        isThem ? Color.card : Color.vizAccent.opacity(0.15),
         in: .rect(cornerRadius: 16)
       )
       .accessibilityElement(children: .combine)
