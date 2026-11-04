@@ -98,6 +98,7 @@ private struct GoalStartFlow: View {
   @State private var sending: Task<Void, Never>?
   @State private var material: [AttachedSource] = []
   @State private var intent: MaterialIntent?
+  @State private var materialDraft = MaterialDraft()
 
   init(
     sentGoal: SentGoal?, prefill: String?, draftID: String?, needsAccount: Bool,
@@ -154,8 +155,11 @@ private struct GoalStartFlow: View {
             words: $words, error: error, limit: limit,
             canSubmitEmpty: !material.isEmpty && intent != nil,
             onSubmit: submit,
+            attach: {
+              GoalMaterialButton(material: $material, draft: $materialDraft)
+            },
             attachment: {
-              GoalMaterialSections(material: $material, intent: $intent)
+              GoalMaterialSections(material: $material, intent: $intent, draft: $materialDraft)
             })
         }
         .onboardingColumn()
