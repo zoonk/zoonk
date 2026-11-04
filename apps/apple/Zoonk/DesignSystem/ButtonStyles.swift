@@ -3,7 +3,8 @@ import SwiftUI
 /// Main's buttons on a native `Button`, which keeps its role, keyboard shortcut, VoiceOver and
 /// pointer behavior. `controlSize` picks main's sizes: `.large` for a screen's action (44pt),
 /// `.regular` (36pt), `.small` beside text (30pt). A destructive role draws main's destructive
-/// button in any of them. Glass stays on floating controls and toolbar items.
+/// button in any of them; `.mainActionIcon` is main's square icon button (`size="icon-sm"`). Glass
+/// stays on floating controls and toolbar items.
 struct ZoonkButtonStyle: ButtonStyle {
   enum Variant {
     /// Ink fill: one per area.
@@ -15,9 +16,10 @@ struct ZoonkButtonStyle: ButtonStyle {
   }
 
   let variant: Variant
+  var isSquare = false
 
   func makeBody(configuration: Configuration) -> some View {
-    ZoonkButton(configuration: configuration, variant: variant)
+    ZoonkButton(configuration: configuration, variant: variant, isSquare: isSquare)
   }
 }
 
@@ -25,6 +27,7 @@ extension ButtonStyle where Self == ZoonkButtonStyle {
   static var mainAction: ZoonkButtonStyle { ZoonkButtonStyle(variant: .main) }
   static var outline: ZoonkButtonStyle { ZoonkButtonStyle(variant: .outline) }
   static var ghost: ZoonkButtonStyle { ZoonkButtonStyle(variant: .ghost) }
+  static var mainActionIcon: ZoonkButtonStyle { ZoonkButtonStyle(variant: .main, isSquare: true) }
 }
 
 private struct ZoonkButton: View {
@@ -36,18 +39,19 @@ private struct ZoonkButton: View {
 
   let configuration: ButtonStyleConfiguration
   let variant: ZoonkButtonStyle.Variant
+  let isSquare: Bool
 
   var body: some View {
     let shape = RoundedRectangle(
-      cornerRadius: isSmall ? Radius.md : Radius.lg, style: .continuous)
+      cornerRadius: isSmall && !isSquare ? Radius.md : Radius.lg, style: .continuous)
 
     configuration.label
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
-      .padding(.horizontal, horizontalPadding)
-      .padding(.vertical, 6)
-      .frame(minHeight: height)
+      .padding(.horizontal, isSquare ? 0 : horizontalPadding)
+      .padding(.vertical, isSquare ? 0 : 6)
+      .frame(minWidth: isSquare ? height : nil, minHeight: height)
       .frame(maxWidth: sizing == .flexible ? .infinity : nil)
       .background(fill, in: shape)
       .overlay {
