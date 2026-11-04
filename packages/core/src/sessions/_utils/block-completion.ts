@@ -25,7 +25,6 @@ type BlockResult = Pick<
 
 type MilestoneReward = NonNullable<BlockPayload["milestoneReward"]>;
 
-/** What a block's own reward counts toward milestones. */
 export function getBlockMilestoneAwards({
   payload,
   reward,
