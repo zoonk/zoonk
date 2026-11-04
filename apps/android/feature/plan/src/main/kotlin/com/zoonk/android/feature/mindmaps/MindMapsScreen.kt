@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -202,7 +203,7 @@ internal fun MindMapsPage(
         BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
             val direction = LocalLayoutDirection.current
             val start = padding.calculateStartPadding(direction) + MARGIN
-            val grid = tileGrid(maxWidth, pageFold(maxWidth, span), start)
+            val grid = tileGrid(maxWidth, pageFold(maxWidth, span), start, LocalDensity.current.fontScale.coerceAtLeast(1f))
             LazyVerticalGrid(
                 columns = grid.columns,
                 state = gridState,
@@ -263,16 +264,19 @@ private class TileGrid(
 )
 
 /**
- * Main's grid on a page [width] wide whose grid starts [start] from its edge. Across a book's [fold] each page holds the
- * tiles a row its width allows, as many and as wide on both, with the fold between them, so folding moves nothing.
+ * Main's grid on a page [width] wide whose grid starts [start] from its edge, its tiles growing with the text past its
+ * default size ([textScale]). Across a book's [fold] each page holds the tiles a row its width allows, as many and as
+ * wide on both, with the fold between them, so folding moves nothing.
  */
 private fun tileGrid(
     width: Dp,
     fold: PageFold?,
     start: Dp,
+    textScale: Float,
 ): TileGrid {
+    val tileMin = TILE_MIN * textScale
     if (fold == null) {
-        val columns = if (width < WIDE_FROM) GridCells.Fixed(narrowColumns(width - MARGIN * 2)) else GridCells.Adaptive(TILE_MIN)
+        val columns = if (width < WIDE_FROM) GridCells.Fixed(narrowColumns(width - MARGIN * 2, textScale)) else GridCells.Adaptive(tileMin)
         return TileGrid(columns, Arrangement.spacedBy(tileSpacing(width)), Modifier)
     }
 
@@ -280,7 +284,8 @@ private fun tileGrid(
     val page = minOf(fold.start, width - fold.end)
     val spacing = tileSpacing(page)
     val room = page - MARGIN * 2
-    val perPage = if (page < WIDE_FROM) narrowColumns(room) else ((room + spacing) / (TILE_MIN + spacing)).toInt().coerceAtLeast(1)
+    val perPage =
+        if (page < WIDE_FROM) narrowColumns(room, textScale) else ((room + spacing) / (tileMin + spacing)).toInt().coerceAtLeast(1)
     val around = AroundFold(leading, gap = fold.end - fold.start + MARGIN * 2, perPage, spacing)
 
     return TileGrid(around, around, Modifier.wrapContentWidth(Alignment.Start).width(leading))
@@ -289,10 +294,14 @@ private fun tileGrid(
 private fun tileSpacing(width: Dp): Dp = if (width < WIDE_FROM) 12.dp else 16.dp
 
 /**
- * Main's two tiles a row on a phone, where [room] is at least the narrowest phone's. A narrower room, such as a book's
- * page beside the rail, holds one, so a tile keeps room for its button's label on one line.
+ * Main's two tiles a row on a phone, where [room] is at least the narrowest phone's, scaled with the text. A narrower
+ * room, such as a book's page beside the rail or a phone at a large text size, holds one, so a tile keeps room for its
+ * button's label.
  */
-private fun narrowColumns(room: Dp): Int = if (room >= NARROWEST_PHONE - MARGIN * 2) 2 else 1
+private fun narrowColumns(
+    room: Dp,
+    textScale: Float,
+): Int = if (room >= (NARROWEST_PHONE - MARGIN * 2) * textScale) 2 else 1
 
 /**
  * [perPage] tiles a page on each side of a fold, all as wide, the ones before it ending at [leading] and the ones after
