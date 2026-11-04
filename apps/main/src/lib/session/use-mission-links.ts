@@ -6,8 +6,8 @@ import { type MissionLinks } from "@zoonk/learn/buddy";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback, useMemo } from "react";
 import { openStudyBlockAction, saveMissionDayAction } from "./study-session-actions";
-import { answerHere } from "./tap-answer";
-import { stayingHere, useGoToStudyDestination, useReread } from "./use-study-navigation";
+import { answerHere, openingHere } from "./tap-answer";
+import { useGoToStudyDestination, useReread } from "./use-study-navigation";
 
 /**
  * Opens one of today's blocks from a link to it. Resolves like `useGoToStudyDestination`, except that
@@ -22,7 +22,7 @@ export function useOpenMissionBlock({
 
   return useCallback(
     async (blockId: string): Promise<boolean | "changed"> => {
-      const here = stayingHere(learner);
+      const here = openingHere(learner);
 
       const opened = await answerHere(
         noteAppWrite(
@@ -45,7 +45,7 @@ export function useOpenMissionBlock({
         return false;
       }
 
-      return opened.answer.kind === "changed" ? "changed" : go(opened.answer);
+      return opened.answer.kind === "changed" ? "changed" : go(opened.answer, { here });
     },
     [go, learner, reread],
   );

@@ -36,6 +36,8 @@ export type DayEntry = {
   day: TapDay;
   expired: boolean;
   focusMain: boolean;
+  /** Taken after the tap's own navigation, so only a later one counts as leaving. */
+  here: () => Promise<boolean>;
   href: string;
   id: number;
   next: boolean;

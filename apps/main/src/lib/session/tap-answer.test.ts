@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { answerHere } from "./tap-answer";
+import { answerHere, noteNavigationStart, openingHere, stayingHere } from "./tap-answer";
+
+const NEVER = new Promise<never>(() => {});
 
 function tab() {
   let here = true;
@@ -36,5 +38,22 @@ describe(answerHere, () => {
 
     await expect(answering).resolves.toBe(true);
     await expect(rejecting).resolves.toBe(true);
+  });
+
+  it("stops waiting the moment the learner starts a navigation, long before its page shows", async () => {
+    const here = stayingHere();
+    const waiting = answerHere(NEVER, here);
+    noteNavigationStart();
+
+    await expect(here()).resolves.toBe(false);
+    await expect(waiting).resolves.toBe(true);
+  });
+
+  it("lets the newest open win over one still waiting", async () => {
+    const waiting = answerHere(NEVER, openingHere());
+    const newest = openingHere();
+
+    await expect(waiting).resolves.toBe(true);
+    await expect(newest()).resolves.toBe(true);
   });
 });

@@ -29,6 +29,7 @@ function entry(overrides: Partial<DayEntry> = {}): DayEntry {
     },
     expired: false,
     focusMain: true,
+    here: async () => true,
     href: HREF,
     id: 1,
     next: true,
