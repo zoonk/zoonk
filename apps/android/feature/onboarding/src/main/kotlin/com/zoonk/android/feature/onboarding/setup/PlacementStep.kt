@@ -19,7 +19,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -80,6 +79,7 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
@@ -396,7 +396,7 @@ internal fun ColumnScope.PlacementQuestion(
                     value = typed,
                     onValueChange = { typedWords?.set(0, it.take(MAX_TYPED_ANSWER)) },
                     modifier = Modifier.fillMaxWidth().focusRequester(typedFocus),
-                    label = { Text(stringResource(R.string.onboarding_placement_your_answer)) },
+                    label = stringResource(R.string.onboarding_placement_your_answer),
                     minLines = 3,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(onSend = { confirm() }),

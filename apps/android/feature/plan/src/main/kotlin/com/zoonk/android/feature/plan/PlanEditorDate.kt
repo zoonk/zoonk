@@ -11,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
@@ -26,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.DatePickerDialog
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -74,7 +74,7 @@ internal fun PlanDateSection(
                     }
                 },
             readOnly = true,
-            label = { Text(stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_deadline)) },
+            label = stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_deadline),
             trailingIcon = {
                 IconButton(onClick = { drafts.datePicking = true }) {
                     Icon(painterResource(R.drawable.ic_calendar_month), contentDescription = stringResource(R.string.plan_pick_date))

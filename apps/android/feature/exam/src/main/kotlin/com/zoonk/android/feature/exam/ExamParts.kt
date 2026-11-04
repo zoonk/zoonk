@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -44,6 +43,7 @@ import com.zoonk.android.feature.plan.noticeDayText
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -268,7 +268,7 @@ internal fun ExamResultSection(
                 value = score,
                 onValueChange = { score = it },
                 modifier = Modifier.weight(1f),
-                label = { Text(field) },
+                label = field,
                 supportingText = scoreError?.let { { Text(it) } },
                 isError = scoreError != null,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
@@ -279,7 +279,7 @@ internal fun ExamResultSection(
                     value = maxScore,
                     onValueChange = { maxScore = it },
                     modifier = Modifier.weight(1f),
-                    label = { Text(stringResource(R.string.exam_out_of)) },
+                    label = stringResource(R.string.exam_out_of),
                     isError = maxError,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
                     singleLine = true,

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -89,6 +88,7 @@ import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.format.currencyFor
 import com.zoonk.android.ui.format.currentLocale
@@ -284,7 +284,7 @@ private fun NumericCheckField(
                 },
                 modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
                 readOnly = locked,
-                label = { Text(stringResource(R.string.player_your_answer)) },
+                label = stringResource(R.string.player_your_answer),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),
