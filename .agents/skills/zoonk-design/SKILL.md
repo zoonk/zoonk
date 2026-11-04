@@ -1,6 +1,6 @@
 ---
 name: zoonk-design
-description: Design, implement, or assess Zoonk interfaces with clear hierarchy, low cognitive effort, and a coherent visual language.
+description: Design, implement, or assess Zoonk interfaces on the web, iOS and Android with clear hierarchy, low cognitive effort, and one coherent visual language across all three.
 license: MIT
 metadata:
   author: zoonk
@@ -92,4 +92,4 @@ For substantial features, walk the running product as contrasting learner person
 - [Apple Human Interface Guidelines](../apple-human-interface-guidelines/SKILL.md) for Apple UI.
 - [Android Material guidelines](../android-material-guidelines/SKILL.md) for Android UI.
 
-Native apps use what their platform provides by default (system colors and Material roles, the system type scale, SF Symbols and Material Symbols, default components and adaptive layouts) instead of re-implementing this web design system, so the OS handles resizing, font scaling, contrast, accessibility, dark mode and new devices. This skill still defines meaning there: hierarchy, structure, and which color means progress, wrong or Brain Power (never green for done, ink for the primary action). Express it through the closest platform API; add a custom style or asset only where none carries it (belts, characters), and make it adapt too. The class names, pixel sizes and components above are the web's.
+Native apps are Zoonk's design inside native components, so a learner who switches phones finds the same app. The content layer is the same on web, iOS and Android, from one source: colors, type roles, radii, list and row anatomy, page structure, marks, meters, characters and moments. `globals.css` generates each app's palette and radii in every mode, each app holds main's type roles once (Geist and Geist Mono), and each builds main's shared pieces once (the page header, section titles, lists and rows, buttons, panels, meters, chips, answer options, fields), so screens use roles and pieces, never a hex value, a size or a radius of their own. The chrome layer stays the platform's, tinted with Zoonk's ink and never repainted: navigation containers and bars, tab bars and rails, toolbars, sheets, alerts, menus, pickers, text editing, gestures, Liquid Glass and Material's containers. That keeps what the OS gives for free: resizing, font scaling, Bold Text, more contrast, dark mode, screen readers and new devices. Icons stay each platform's set (SF Symbols, Material Symbols), the closest match to main's. The class names and pixel sizes above are the web's; the [Apple](../apple-human-interface-guidelines/SKILL.md) and [Android](../android-material-guidelines/SKILL.md) skills map each one to its native role and piece.
