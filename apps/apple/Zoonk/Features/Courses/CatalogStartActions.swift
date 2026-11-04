@@ -33,7 +33,7 @@ struct CatalogStartActions: View {
           return
         }
 
-        if await learner.switchGoal(to: switchingTo), !Task.isCancelled {
+        if case .done = await learner.switchGoal(to: switchingTo), !Task.isCancelled {
           router.showRoot(of: .today)
         }
 

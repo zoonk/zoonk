@@ -180,13 +180,27 @@ private struct GoalSwitcher: View {
   @Environment(OnboardingStore.self) private var onboarding
   @State private var pendingGoalId: String?
   @State private var isStartingWaitingGoal = false
+  @State private var failure = Failure.switchGoal
+  @State private var showsFailure = false
   /// Caps a long goal title so it truncates in the bar instead of moving to its overflow menu.
   @ScaledMetric(relativeTo: .body) private var maxTitleWidth: CGFloat = 140
 
   let summary: LearnerSummary
   let isCompact: Bool
 
+  /// Said in an alert, since the menu the learner chose from has closed.
+  private enum Failure {
+    case start
+    case switchGoal
+  }
+
   var body: some View {
+    menu
+      .alert(failureTitle, isPresented: $showsFailure) {}
+  }
+
+  @ViewBuilder
+  private var menu: some View {
     let followed = summary.followedGoals
     let explanations = summary.openExplanations
 
@@ -315,6 +329,19 @@ private struct GoalSwitcher: View {
     }
   }
 
+  private var failureTitle: Text {
+    switch failure {
+    case .start:
+      Text(
+        "We couldn't start this goal. Try again.", tableName: "Navigation",
+        comment: "A goal waiting in the goal switcher didn't start")
+    case .switchGoal:
+      Text(
+        "That didn't save. Try again.", tableName: "Navigation",
+        comment: "Switching to another goal in the goal switcher didn't save")
+    }
+  }
+
   private func start(_ goal: LearnerWaitingGoal) {
     guard !goal.locked else {
       router.present(.subscription)
@@ -326,8 +353,12 @@ private struct GoalSwitcher: View {
     Task {
       defer { isStartingWaitingGoal = false }
 
-      if let goalID = try? await onboarding.startWaitingGoal(goal) {
-        router.open(.goalSetup(goalId: goalID))
+      do {
+        router.open(.goalSetup(goalId: try await onboarding.startWaitingGoal(goal)))
+      } catch is CancellationError {
+      } catch {
+        failure = .start
+        showsFailure = true
       }
     }
   }
@@ -347,8 +378,16 @@ private struct GoalSwitcher: View {
         pendingGoalId = goal.id
 
         Task {
-          await learner.switchGoal(to: goal.id)
-          router.popToRoots()
+          switch await learner.switchGoal(to: goal.id) {
+          case .done:
+            router.popToRoots()
+          case .failed:
+            failure = .switchGoal
+            showsFailure = true
+          case .obsolete:
+            break
+          }
+
           pendingGoalId = nil
         }
       })
