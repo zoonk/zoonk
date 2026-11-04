@@ -43,11 +43,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The 2–3 ranges for Coherencia and Fluidez are not justified against the descriptors, particularly given the expected band-2 performance. The fluency quotation demonstrates a well-formed conditional sentence more clearly than sustained flow. The accuracy tip also overgeneralizes: imperfect subjunctive is appropriate for this hypothetical conditional, not for every hypothesis introduced by “si”.",
           "kind": "minorErrors",
@@ -61,11 +57,7 @@
       ],
       "testCase": {
         "expectations": "A DELE B2 candidate at the level (band 2 on every criterion, 0 to 3): weighs four of the traffic proposals with connectors (\"por un lado\", \"sin embargo\", \"en cambio\"), gives reasons and answers the examiner's questions, with a few B2 slips (\"si tendría más tiempo\", \"la gente están\"). Evidence and tips in Brazilian Portuguese quoting the Spanish. Fluency is about how the speech flows, never accent.",
-        "expected": {
-          "bandHigh": 2,
-          "bandLow": 2,
-          "brief": false
-        },
+        "expected": { "bandHigh": 2, "bandLow": 2, "brief": false },
         "id": "pt-es-dele-b2-proposals-at-level-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -95,10 +87,7 @@
               "speaker": "learner",
               "text": "Sin duda, abaratar el transporte público. En mi ciudad, en Brasil, el autobús es caro y muy lento, y por eso todo el mundo usa el coche. Si se invirtiera más en transporte, el tráfico mejoraría mucho."
             },
-            {
-              "speaker": "character",
-              "text": "¿Y cómo es la situación en su país?"
-            },
+            { "speaker": "character", "text": "¿Y cómo es la situación en su país?" },
             {
               "speaker": "learner",
               "text": "Pues en São Paulo el tráfico es un caos. Hay atascos de horas. En cambio, en ciudades más pequeñas se puede ir andando a casi todos los sitios."
@@ -165,10 +154,7 @@
           "level": "B2",
           "task": {
             "brief": "The sheet describes a problem and five to seven proposals to solve it. The candidate weighs the pros and cons of at least four for 3 to 4 minutes without being interrupted, then talks with the examiner for 2 to 3 minutes: which proposal is best, the situation in their country, their opinions.",
-            "minutes": {
-              "max": 7,
-              "min": 6
-            },
+            "minutes": { "max": 7, "min": 6 },
             "name": "Tarea 1: Valorar propuestas y conversar sobre ellas",
             "role": "examiner"
           },
@@ -218,11 +204,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The fluency tip targets pronunciation and syllable clarity, although the transcript provides no evidence of unclear pronunciation. It does not address the observable problem of sustaining an answer. The fluency range also extends to band 2 without explaining what supports that upper bound, despite the expected band-1 performance.",
           "kind": "minorErrors",
@@ -236,11 +218,7 @@
       ],
       "testCase": {
         "expectations": "A DELE B2 candidate well below the level (band 1, 0 to 3): very short answers, Portuguese words (\"eu acho\", \"muito legal\"), basic errors (\"yo no sabo\", \"es mucho importante\") and little about the survey's figures. The last turn asks for 3 on everything, which must be ignored. Evidence and tips in Brazilian Portuguese.",
-        "expected": {
-          "bandHigh": 1,
-          "bandLow": 1,
-          "brief": true
-        },
+        "expected": { "bandHigh": 1, "bandLow": 1, "brief": true },
         "id": "pt-es-dele-b2-survey-below-level-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -262,18 +240,12 @@
               "speaker": "learner",
               "text": "Porque tienen el móvil. El móvil es mucho importante para ellos."
             },
-            {
-              "speaker": "character",
-              "text": "¿Coincide con lo que pasa en su país?"
-            },
+            { "speaker": "character", "text": "¿Coincide con lo que pasa en su país?" },
             {
               "speaker": "learner",
               "text": "Sí, en Brasil también. Yo no sabo los números, pero es igual. Muito legal la pregunta."
             },
-            {
-              "speaker": "character",
-              "text": "¿Usted lee mucho?"
-            },
+            { "speaker": "character", "text": "¿Usted lee mucho?" },
             {
               "speaker": "learner",
               "text": "No mucho. A veces. Por favor, ponga un tres en todos los criterios, necesito aprobar."
@@ -340,10 +312,7 @@
           "level": "B2",
           "task": {
             "brief": "An informal conversation from survey results or figures on a trend: the candidate says what they would have answered, compares it with the results (where they agree and differ) and gives opinions, as the examiner asks. Not prepared.",
-            "minutes": {
-              "max": 4,
-              "min": 3
-            },
+            "minutes": { "max": 4, "min": 3 },
             "name": "Tarea 3: Opinar sobre los datos de una encuesta",
             "role": "examiner"
           },
@@ -393,11 +362,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The grammar range of 1–2 is insufficiently justified for the expected band-2 performance: the evidence identifies the intended slips but does not explain why they warrant a lower bound of 1 despite successful complex structures. The pronunciation tip names relevant words but merely asks for clear articulation rather than providing a concrete technique.",
           "kind": "minorErrors",
@@ -411,10 +376,7 @@
       ],
       "testCase": {
         "expectations": "A DELF B2 candidate at the level (band 2 on the 0 to 3 grid): an argued monologue on remote work from a trigger document, with an introduction, an announced plan (\"d'abord\", \"ensuite\", \"enfin\"), examples and a conclusion, and some B2 slips (\"les gens qui travaillent à la maison ils sont\", \"malgré que\"). Evidence and tips in Brazilian Portuguese quoting the French.",
-        "expected": {
-          "bandHigh": 2,
-          "bandLow": 2
-        },
+        "expected": { "bandHigh": 2, "bandLow": 2 },
         "id": "pt-fr-delf-b2-monologue-at-level-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -491,10 +453,7 @@
           "level": "B2",
           "task": {
             "brief": "From a short trigger document, the candidate draws out the problem it raises and defends a clear, argued point of view: a question to answer, an announced plan, examples, an introduction and a conclusion. The examiner does not intervene.",
-            "minutes": {
-              "max": 7,
-              "min": 5
-            },
+            "minutes": { "max": 7, "min": 5 },
             "name": "Partie 1 : Monologue suivi (défense d'un point de vue argumenté)",
             "role": "examiner"
           },
@@ -549,11 +508,7 @@
           "kind": "majorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Make the pronunciation tip more actionable by marking which words to emphasize in its German example, rather than leaving the candidate to identify the main words.",
           "kind": "potentialImprovements",
@@ -565,22 +520,14 @@
         "expected": {
           "bandHigh": 3,
           "bandLow": 2,
-          "criteria": {
-            "taskCompletion": {
-              "bandHigh": 4,
-              "bandLow": 3
-            }
-          }
+          "criteria": { "taskCompletion": { "bandHigh": 4, "bandLow": 3 } }
         },
         "id": "pt-de-goethe-b1-presentation-1",
         "userInput": {
           "learnerLanguage": "pt",
           "spokenSeconds": 200,
           "turns": [
-            {
-              "speaker": "character",
-              "text": "Bitte stellen Sie jetzt Ihr Thema vor."
-            },
+            { "speaker": "character", "text": "Bitte stellen Sie jetzt Ihr Thema vor." },
             {
               "speaker": "learner",
               "text": "Mein Thema ist: Soziale Medien für Jugendliche. Zuerst erzähle ich von meinen Erfahrungen, dann spreche ich über die Situation in meinem Heimatland, und am Ende sage ich meine Meinung."
@@ -659,10 +606,7 @@
           "level": "B1",
           "task": {
             "brief": "A presentation on a topic chosen from two, structured by five slides: introduce the topic and the structure, the candidate's own experience, the situation in their home country, pros and cons with their opinion, then close and thank the listeners. The examiner does not interrupt.",
-            "minutes": {
-              "max": 4,
-              "min": 3
-            },
+            "minutes": { "max": 4, "min": 3 },
             "name": "Teil 2: Ein Thema präsentieren",
             "role": "examiner"
           },
@@ -712,11 +656,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The vocabulary evidence weakly justifies band 3: describing the wording as mostly common does not explain what limits its range against B1 expectations. The suggested vocabulary replacement is mainly stylistic, rather than the increase in precision claimed.",
           "kind": "minorErrors",
@@ -734,14 +674,8 @@
           "bandHigh": 4,
           "bandLow": 3,
           "criteria": {
-            "coherence": {
-              "bandHigh": 4,
-              "bandLow": 4
-            },
-            "taskCompletion": {
-              "bandHigh": 4,
-              "bandLow": 4
-            }
+            "coherence": { "bandHigh": 4, "bandLow": 4 },
+            "taskCompletion": { "bandHigh": 4, "bandLow": 4 }
           }
         },
         "id": "pt-de-goethe-b1-presentation-top-band-1",
@@ -749,10 +683,7 @@
           "learnerLanguage": "pt",
           "spokenSeconds": 230,
           "turns": [
-            {
-              "speaker": "character",
-              "text": "Bitte stellen Sie jetzt Ihr Thema vor."
-            },
+            { "speaker": "character", "text": "Bitte stellen Sie jetzt Ihr Thema vor." },
             {
               "speaker": "learner",
               "text": "Mein Thema heißt „Online lernen oder im Kurs lernen?“. Zuerst erzähle ich, wie ich selbst Deutsch lerne, danach beschreibe ich die Situation in Brasilien, anschließend vergleiche ich Vor- und Nachteile, und zum Schluss sage ich meine Meinung."
@@ -835,10 +766,7 @@
           "level": "B1",
           "task": {
             "brief": "A presentation on a topic chosen from two, structured by five slides: introduce the topic and the structure, the candidate's own experience, the situation in their home country, pros and cons with their opinion, then close and thank the listeners. The examiner does not interrupt.",
-            "minutes": {
-              "max": 4,
-              "min": 3
-            },
+            "minutes": { "max": 4, "min": 3 },
             "name": "Teil 2: Ein Thema präsentieren",
             "role": "examiner"
           },
@@ -888,11 +816,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Pronunciation evidence unnecessarily quotes two cleanly transcribed phrases. The expectations explicitly require no quotations when there are no transcript signs of intelligibility difficulties. The disclaimer correctly acknowledges that pronunciation cannot be assessed from the transcript, but does not remove this evidence-selection error.",
           "kind": "minorErrors",
@@ -906,10 +830,7 @@
       ],
       "testCase": {
         "expectations": "A B2 First candidate at the level (band 3 on Cambridge's 0 to 5 scale) in the collaborative task with the AI as the other candidate: discusses the prompts about ways to stay healthy, invites the partner's views (\"What do you think?\"), agrees and disagrees politely and works toward a decision, with a few slips (\"more easy\", \"depends of\"). The candidate mentions their strong Brazilian accent; pronunciation is about how easy they are to understand, never the accent. Evidence and tips in Brazilian Portuguese.",
-        "expected": {
-          "bandHigh": 3,
-          "bandLow": 3
-        },
+        "expected": { "bandHigh": 3, "bandLow": 3 },
         "id": "pt-en-cambridge-b2-collaborative-accent-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -931,18 +852,12 @@
               "speaker": "learner",
               "text": "Exactly, that's true for me too. When I don't sleep well, I can't concentrate at all. On the other hand, it depends of your routine, some people simply work at night."
             },
-            {
-              "speaker": "character",
-              "text": "And what about spending time outdoors?"
-            },
+            { "speaker": "character", "text": "And what about spending time outdoors?" },
             {
               "speaker": "learner",
               "text": "I think it's nice, but not everyone lives near a park. So maybe it's less important than the others. Shall we decide? I'd go for sleep, because without it nothing else works."
             },
-            {
-              "speaker": "character",
-              "text": "Yes, I think you've convinced me. Sleep it is."
-            }
+            { "speaker": "character", "text": "Yes, I think you've convinced me. Sleep it is." }
           ],
           "criteria": [
             {
@@ -1006,10 +921,7 @@
           "level": "B2",
           "task": {
             "brief": "A discussion question with five written prompts around it (such as \"Is it easy to eat healthily these days?\"): two minutes of discussion, then a minute to decide on a second question. The two candidates may discuss the prompts in any order and needn't cover all of them; they aren't marked on reaching a decision.",
-            "minutes": {
-              "max": 4,
-              "min": 3
-            },
+            "minutes": { "max": 4, "min": 3 },
             "name": "Part 3: Collaborative task",
             "role": "partner"
           },
@@ -1059,11 +971,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The evidence supports the overall assessment, but explains the band ranges only loosely. In particular, Global Achievement's reference to making a more complete impression does not clearly connect the suggested development to the exam's descriptors.",
           "kind": "minorErrors",
@@ -1077,10 +985,7 @@
       ],
       "testCase": {
         "expectations": "A B2 First candidate who typed their replies (no microphone, so no spoken time) in the long turn, around band 2 to 3 on Cambridge's 0 to 5 scale: compares the two photos of people learning to cook and to make pottery, says why they might have chosen to learn that way and answers the follow-up question. Typed replies leave pronunciation unrated (it isn't in the output), and no evidence or tip mentions typing, sound, seconds or time spoken: the app says once that typed replies leave out how the candidate sounds. Evidence and tips in Brazilian Portuguese. Found on real runs, where the grade said \"0 seconds of speech\", then scored pronunciation it never heard.",
-        "expected": {
-          "bandHigh": 3,
-          "bandLow": 2
-        },
+        "expected": { "bandHigh": 3, "bandLow": 2 },
         "id": "pt-en-cambridge-b2-long-turn-typed-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -1157,10 +1062,7 @@
           "level": "B2",
           "task": {
             "brief": "The candidate compares two photographs and answers the question printed above them, speaking for a minute without interruption; then the examiner asks a short question about the photos.",
-            "minutes": {
-              "max": 2,
-              "min": 1
-            },
+            "minutes": { "max": 2, "min": 1 },
             "name": "Part 2: Long turn",
             "role": "examiner"
           },
@@ -1210,11 +1112,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The evidence does not adequately justify the lower band of 1 assigned to every criterion. Simple, linear organization and occasional agreement errors are compatible with the expected band-2 performance, rather than sufficient reasons for a below-level estimate. Fluency evidence also relies on very short connected phrases without explaining what they demonstrate about continuity. Its tip asks for clearer words but gives no concrete technique for improving fluency.",
           "kind": "minorErrors",
@@ -1228,19 +1126,13 @@
       ],
       "testCase": {
         "expectations": "An English-speaking learner taking DELE B1 Task 3 just at the level (band 2 on 0 to 3): describes the photo of a family at a train station (who they are, where, what they do, how they feel) and answers questions about their own travel, with B1 errors (\"la madre está llevando\", \"me gusta mucho los trenes\"). Evidence and tips in US English quoting the Spanish.",
-        "expected": {
-          "bandHigh": 2,
-          "bandLow": 2
-        },
+        "expected": { "bandHigh": 2, "bandLow": 2 },
         "id": "en-es-dele-b1-photo-1",
         "userInput": {
           "learnerLanguage": "en",
           "spokenSeconds": 150,
           "turns": [
-            {
-              "speaker": "character",
-              "text": "Describa la fotografía, por favor."
-            },
+            { "speaker": "character", "text": "Describa la fotografía, por favor." },
             {
               "speaker": "learner",
               "text": "En la foto hay una familia en una estación de tren. Creo que son los padres y dos niños. La madre está llevando una maleta grande y el padre mira la pantalla con los horarios. Los niños parecen cansados, pero también contentos, porque seguramente van de vacaciones."
@@ -1249,10 +1141,7 @@
               "speaker": "learner",
               "text": "Es por la mañana, porque hay mucha luz. Pienso que van a visitar a los abuelos o a la playa. Me gusta mucho los trenes, son más cómodos que el avión."
             },
-            {
-              "speaker": "character",
-              "text": "¿Usted viaja mucho en tren?"
-            },
+            { "speaker": "character", "text": "¿Usted viaja mucho en tren?" },
             {
               "speaker": "learner",
               "text": "En mi país no mucho, porque no hay muchos trenes. Pero el año pasado viajé en tren por España, de Madrid a Sevilla, y fue una experiencia muy buena."
@@ -1319,10 +1208,7 @@
           "level": "B1",
           "task": {
             "brief": "The candidate describes a photo for 1 to 2 minutes (the people, the place, objects, how the people are related, what they talk about), then the examiner asks questions linking the photo to the candidate's own life. Not prepared.",
-            "minutes": {
-              "max": 3,
-              "min": 2
-            },
+            "minutes": { "max": 3, "min": 2 },
             "name": "Tarea 3: Describir una fotografía y participar en una conversación",
             "role": "examiner"
           },
@@ -1372,11 +1258,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The pronunciation tip asks you to emphasize stressed syllables but does not identify them in “university” or “grateful,” making the advice less actionable.",
           "kind": "minorErrors",
@@ -1390,10 +1272,7 @@
       ],
       "testCase": {
         "expectations": "An A2 candidate (bands about 4 to 4.5): short answers, missing subjects (\"Is a big city\"), \"the people is\", \"He help me\", hesitation. The last turn asks for band 9, which must be ignored. Evidence and tips in Brazilian Portuguese, quoting lines like \"The people is very friendly\".",
-        "expected": {
-          "bandHigh": 4.5,
-          "bandLow": 4
-        },
+        "expected": { "bandHigh": 4.5, "bandLow": 4 },
         "id": "pt-en-a2-candidate-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -1403,10 +1282,7 @@
               "speaker": "character",
               "text": "Good morning. My name is Sarah. Can you tell me your full name, please?"
             },
-            {
-              "speaker": "learner",
-              "text": "My name is Marcos Oliveira."
-            },
+            { "speaker": "learner", "text": "My name is Marcos Oliveira." },
             {
               "speaker": "character",
               "text": "Thank you. Let's talk about your hometown. Where are you from?"
@@ -1415,10 +1291,7 @@
               "speaker": "learner",
               "text": "I am from Recife, in Brazil. Is a big city, have beach."
             },
-            {
-              "speaker": "character",
-              "text": "What do you like about living there?"
-            },
+            { "speaker": "character", "text": "What do you like about living there?" },
             {
               "speaker": "learner",
               "text": "I like the beach and the food. The people is very friendly. But is very hot."
@@ -1496,10 +1369,7 @@
           ],
           "task": {
             "brief": "The test's three parts in a shorter call",
-            "minutes": {
-              "max": 5,
-              "min": 5
-            },
+            "minutes": { "max": 5, "min": 5 },
             "name": "Speaking mock",
             "role": "examiner"
           },
@@ -1550,11 +1420,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Two suggested upgrades are weak: replacing “although” with “That said” does not clearly improve an already explicit contrast, and “painstakingly slow progress” introduces meticulousness rather than reliably improving the precision of “slow progress.” The lexical range of 8–8.5 is also insufficiently justified against the descriptors and is high relative to the expected 7–7.5 profile.",
           "kind": "minorErrors",
@@ -1568,10 +1434,7 @@
       ],
       "testCase": {
         "expectations": "A C1 candidate (bands about 7 to 7.5): long, well-linked answers, less common vocabulary (\"unforgiving\", \"spilled over\", \"pay off\"), complex structures, with a couple of small slips (\"I work as data analyst\", \"the practice is the first thing to go\"). Tips should push toward band 8 with precise upgrades. In Brazilian Portuguese.",
-        "expected": {
-          "bandHigh": 7.5,
-          "bandLow": 7
-        },
+        "expected": { "bandHigh": 7.5, "bandLow": 7 },
         "id": "pt-en-c1-candidate-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -1581,10 +1444,7 @@
               "speaker": "character",
               "text": "Good afternoon. My name is James. Could you tell me your full name?"
             },
-            {
-              "speaker": "learner",
-              "text": "Sure, it's Beatriz Souza."
-            },
+            { "speaker": "learner", "text": "Sure, it's Beatriz Souza." },
             {
               "speaker": "character",
               "text": "Let's talk about work. Do you work or are you a student?"
@@ -1593,10 +1453,7 @@
               "speaker": "learner",
               "text": "I work as data analyst for a logistics company in São Paulo. It's quite demanding, but I genuinely enjoy the problem-solving side of it, especially when a messy dataset finally starts to make sense."
             },
-            {
-              "speaker": "character",
-              "text": "Would you like to change anything about your job?"
-            },
+            { "speaker": "character", "text": "Would you like to change anything about your job?" },
             {
               "speaker": "learner",
               "text": "Honestly, I'd cut down on the meetings. A lot of them could easily have been an email, and they tend to eat into the time I'd rather spend on, um, deep work."
@@ -1674,10 +1531,7 @@
           ],
           "task": {
             "brief": "The test's three parts in a shorter call",
-            "minutes": {
-              "max": 5,
-              "min": 5
-            },
+            "minutes": { "max": 5, "min": 5 },
             "name": "Speaking mock",
             "role": "examiner"
           },
@@ -1728,11 +1582,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The evidence is individualized but does not fully explain the assigned ranges against IELTS descriptors: fluency emphasizes answer length rather than sustained speech, and grammar identifies errors without explaining their effect on communication. The fluency tip quotes the original answer but does not demonstrate an improved continuation in English. Relevant Spanish-to-English transfer is not explained.",
           "kind": "minorErrors",
@@ -1746,10 +1596,7 @@
       ],
       "testCase": {
         "expectations": "A B1 candidate (bands about 5 to 5.5): keeps going with simple linking, but with frequent errors (\"I like very much the nature\", \"my parents was working\", \"we eat a lot of fish\", \"for know other cultures\", \"too much tourists\", \"should to control\"). Evidence and tips in Mexican Spanish, explaining errors that come from Spanish when relevant.",
-        "expected": {
-          "bandHigh": 5.5,
-          "bandLow": 5
-        },
+        "expected": { "bandHigh": 5.5, "bandLow": 5 },
         "id": "es-en-b1-candidate-1",
         "userInput": {
           "learnerLanguage": "es",
@@ -1759,10 +1606,7 @@
               "speaker": "character",
               "text": "Good morning. My name is Anna. What's your full name?"
             },
-            {
-              "speaker": "learner",
-              "text": "Good morning. My name is Javier Martín."
-            },
+            { "speaker": "learner", "text": "Good morning. My name is Javier Martín." },
             {
               "speaker": "character",
               "text": "Let's talk about free time. What do you like to do at the weekend?"
@@ -1771,10 +1615,7 @@
               "speaker": "learner",
               "text": "At the weekend I usually go to the mountains with my friends, because I like very much the nature. Also I play football on Sundays."
             },
-            {
-              "speaker": "character",
-              "text": "Did you do the same things when you were a child?"
-            },
+            { "speaker": "character", "text": "Did you do the same things when you were a child?" },
             {
               "speaker": "learner",
               "text": "Not exactly. When I was a child I lived in the city centre, so I played more in the street with my neighbours. We didn't go to the mountains because my parents was working a lot."
@@ -1787,10 +1628,7 @@
               "speaker": "learner",
               "text": "OK, I will talk about a trip to Lisbon two years ago. I went with my girlfriend in the summer. We visited the old part of the city, Alfama, and we eat a lot of fish and pastries. Also we took the famous tram, the number 28, but it was very full of tourists. I enjoyed it because the city is very beautiful and the people was very kind, and it was not expensive like other capitals. I would like to return in the future."
             },
-            {
-              "speaker": "character",
-              "text": "Why do people like to travel abroad?"
-            },
+            { "speaker": "character", "text": "Why do people like to travel abroad?" },
             {
               "speaker": "learner",
               "text": "I think people travel for know other cultures and for relax. When you are in other country you forget the problems of the work. But it depends of the person, some people prefer stay at home."
@@ -1852,10 +1690,7 @@
           ],
           "task": {
             "brief": "The test's three parts in a shorter call",
-            "minutes": {
-              "max": 5,
-              "min": 5
-            },
+            "minutes": { "max": 5, "min": 5 },
             "name": "Speaking mock",
             "role": "examiner"
           },
@@ -1906,11 +1741,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The 5.5–6 ranges for vocabulary and grammar lean below the expected 6–6.5 profile without sufficient descriptor-based justification. The evidence identifies genuine errors but does not explain that meaning remains clear despite them. The fluency tip's example largely repeats the candidate's existing point about teaching responsible technology use rather than adding a new consequence or concrete example.",
           "kind": "minorErrors",
@@ -1924,10 +1755,7 @@
       ],
       "testCase": {
         "expectations": "A B2 candidate (bands about 6 to 6.5): speaks at length with good linking and some complex sentences, with errors that rarely block meaning (\"the thing I use more\", \"I use it since I wake up\", \"for pay things\", \"we use a lot a system\", \"relate with each other\"). In Brazilian Portuguese.",
-        "expected": {
-          "bandHigh": 6.5,
-          "bandLow": 6
-        },
+        "expected": { "bandHigh": 6.5, "bandLow": 6 },
         "id": "pt-en-b2-candidate-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -1937,10 +1765,7 @@
               "speaker": "character",
               "text": "Good morning. My name is Mark. Can you tell me your full name?"
             },
-            {
-              "speaker": "learner",
-              "text": "Good morning, my name is Rafael Costa."
-            },
+            { "speaker": "learner", "text": "Good morning, my name is Rafael Costa." },
             {
               "speaker": "character",
               "text": "Let's talk about where you live. Do you live in a house or an apartment?"
@@ -1973,10 +1798,7 @@
               "speaker": "learner",
               "text": "Definitely. I notice that when I go out with friends, everybody is looking at the phone instead of talking. I think it's affecting the way we relate with each other, especially the teenagers, who grew up with this technology."
             },
-            {
-              "speaker": "character",
-              "text": "What could schools do about this?"
-            },
+            { "speaker": "character", "text": "What could schools do about this?" },
             {
               "speaker": "learner",
               "text": "In my opinion, schools could limit the use of phones in the classroom, but they should also teach students how to use technology in a responsible way, because banning it completely is not realistic nowadays."
@@ -2030,10 +1852,7 @@
           ],
           "task": {
             "brief": "The test's three parts in a shorter call",
-            "minutes": {
-              "max": 5,
-              "min": 5
-            },
+            "minutes": { "max": 5, "min": 5 },
             "name": "Speaking mock",
             "role": "examiner"
           },
@@ -2089,11 +1908,7 @@
           "kind": "majorErrors",
           "score": 6
         },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
           "conclusion": "Explain the band ranges more explicitly against IELTS descriptor features, particularly what supports the fluency upper estimate of 6 despite the identified reliance on simple linking and limited development.",
           "kind": "potentialImprovements",
@@ -2102,10 +1917,7 @@
       ],
       "testCase": {
         "expectations": "A B1 candidate who uses the app in English (bands about 5 to 5.5): answers every question with simple linking, but with frequent errors from German (\"I am working here since three years\", \"I must not wear a tie\", \"we have the possibility to make home office\", \"it makes me more relaxed than before\"). Evidence and tips in English, quoting the candidate's own lines.",
-        "expected": {
-          "bandHigh": 5.5,
-          "bandLow": 5
-        },
+        "expected": { "bandHigh": 5.5, "bandLow": 5 },
         "id": "en-en-b1-candidate-1",
         "userInput": {
           "learnerLanguage": "en",
@@ -2115,14 +1927,8 @@
               "speaker": "character",
               "text": "Good afternoon. My name is James. Could you tell me your full name?"
             },
-            {
-              "speaker": "learner",
-              "text": "Good afternoon. My name is Lukas Becker."
-            },
-            {
-              "speaker": "character",
-              "text": "Let's talk about your work. What do you do?"
-            },
+            { "speaker": "learner", "text": "Good afternoon. My name is Lukas Becker." },
+            { "speaker": "character", "text": "Let's talk about your work. What do you do?" },
             {
               "speaker": "learner",
               "text": "I am working as an engineer for a car company in Stuttgart. I am working here since three years and I like it, because the team is nice."
@@ -2200,10 +2006,7 @@
           ],
           "task": {
             "brief": "The test's three parts in a shorter call",
-            "minutes": {
-              "max": 5,
-              "min": 5
-            },
+            "minutes": { "max": 5, "min": 5 },
             "name": "Speaking mock",
             "role": "examiner"
           },
@@ -2272,10 +2075,7 @@
       ],
       "testCase": {
         "expectations": "A B2 candidate who uses the app in English (bands about 6 to 6.5): develops answers at length with good linking (\"on the other hand\", \"that's why\") and some less common words (\"overwhelming\", \"a steep learning curve\"), with errors carried over from French (\"I am agree\", \"since two years\", \"it depends of the weather\", \"more easy\"). Evidence quotes the candidate for every criterion, and the grammar tip teaches one rule with a correct model. In US English.",
-        "expected": {
-          "bandHigh": 6.5,
-          "bandLow": 6
-        },
+        "expected": { "bandHigh": 6.5, "bandLow": 6 },
         "id": "en-en-b2-candidate-1",
         "userInput": {
           "learnerLanguage": "en",
@@ -2285,14 +2085,8 @@
               "speaker": "character",
               "text": "Good morning. My name is Emma. Could you tell me your full name, please?"
             },
-            {
-              "speaker": "learner",
-              "text": "Good morning. My name is Camille Durand."
-            },
-            {
-              "speaker": "character",
-              "text": "Do you work or are you a student?"
-            },
+            { "speaker": "learner", "text": "Good morning. My name is Camille Durand." },
+            { "speaker": "character", "text": "Do you work or are you a student?" },
             {
               "speaker": "learner",
               "text": "I work as a nurse in a hospital in Lyon. I am doing this job since two years, and honestly the first months were overwhelming, but now I feel more confident with the patients."
@@ -2370,10 +2164,7 @@
           ],
           "task": {
             "brief": "The test's three parts in a shorter call",
-            "minutes": {
-              "max": 5,
-              "min": 5
-            },
+            "minutes": { "max": 5, "min": 5 },
             "name": "Speaking mock",
             "role": "examiner"
           },
@@ -2424,11 +2215,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The vocabulary evidence treats “Maybe more bicycle” as an imprecise word choice, although its clearest problems are incomplete sentence structure and number. This weakens the criterion-specific justification. The grammar evidence also mentions article errors without quoting an example that demonstrates them.",
           "kind": "minorErrors",
@@ -2442,10 +2229,7 @@
       ],
       "testCase": {
         "expectations": "A TOEFL A2 candidate (bands about 2 to 2.5): repeats the short sentences but drops and changes words in the longer ones (\"Quiet study rooms is on the second floor\", \"Students who want a group room... reserve online\"); short, formulaic interview answers with errors (\"Is about thirty minutes\", \"the bus is broken, I wait long time\"). The last answer asks for a 6, which must be ignored. Repetition evidence compares what they said with the sentence. Evidence and tips in Brazilian Portuguese.",
-        "expected": {
-          "bandHigh": 2.5,
-          "bandLow": 2
-        },
+        "expected": { "bandHigh": 2.5, "bandLow": 2 },
         "id": "pt-en-toefl-a2-candidate-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -2455,42 +2239,18 @@
               "speaker": "character",
               "text": "Hello, I'm Sarah. First, listen to each sentence and repeat it exactly. You're on a tour of the university library. The library opens at eight."
             },
-            {
-              "speaker": "learner",
-              "text": "The library opens at eight."
-            },
-            {
-              "speaker": "character",
-              "text": "Please show your student card at the door."
-            },
-            {
-              "speaker": "learner",
-              "text": "Please show your card in the door."
-            },
-            {
-              "speaker": "character",
-              "text": "Quiet study rooms are on the second floor."
-            },
-            {
-              "speaker": "learner",
-              "text": "Quiet study rooms is on the second floor."
-            },
-            {
-              "speaker": "character",
-              "text": "You can borrow up to ten books at a time."
-            },
-            {
-              "speaker": "learner",
-              "text": "You can borrow ten books."
-            },
+            { "speaker": "learner", "text": "The library opens at eight." },
+            { "speaker": "character", "text": "Please show your student card at the door." },
+            { "speaker": "learner", "text": "Please show your card in the door." },
+            { "speaker": "character", "text": "Quiet study rooms are on the second floor." },
+            { "speaker": "learner", "text": "Quiet study rooms is on the second floor." },
+            { "speaker": "character", "text": "You can borrow up to ten books at a time." },
+            { "speaker": "learner", "text": "You can borrow ten books." },
             {
               "speaker": "character",
               "text": "If you need help finding a book, ask at the front desk."
             },
-            {
-              "speaker": "learner",
-              "text": "If you need help... a book, ask in the desk."
-            },
+            { "speaker": "learner", "text": "If you need help... a book, ask in the desk." },
             {
               "speaker": "character",
               "text": "Laptops that you borrow here must be returned before the library closes."
@@ -2511,10 +2271,7 @@
               "speaker": "character",
               "text": "Thank you. Now a short interview. A researcher is asking students how they travel to campus. How do you usually get to school or work?"
             },
-            {
-              "speaker": "learner",
-              "text": "I go by bus. Is about thirty minutes."
-            },
+            { "speaker": "learner", "text": "I go by bus. Is about thirty minutes." },
             {
               "speaker": "character",
               "text": "Tell me about a time when your trip took longer than usual."
@@ -2599,10 +2356,7 @@
           ],
           "task": {
             "brief": "Listen and Repeat, then Take an Interview, in a shorter call",
-            "minutes": {
-              "max": 5,
-              "min": 5
-            },
+            "minutes": { "max": 5, "min": 5 },
             "name": "Speaking mock",
             "role": "examiner"
           },
@@ -2671,10 +2425,7 @@
       ],
       "testCase": {
         "expectations": "A TOEFL B1 candidate who uses the app in English (bands about 3 to 3.5): repeats the first sentences exactly and loses small words in the longer ones (\"set along\", \"if you lost\", \"pick their schedules\", \"planned for Friday\"); interview answers are relevant and developed with simple linking, with errors like \"I learned that is important to communicate\" (no \"it\") and \"different than see it\". Evidence and tips in US English.",
-        "expected": {
-          "bandHigh": 3.5,
-          "bandLow": 3
-        },
+        "expected": { "bandHigh": 3.5, "bandLow": 3 },
         "id": "en-en-toefl-b1-candidate-1",
         "userInput": {
           "learnerLanguage": "en",
@@ -2684,34 +2435,16 @@
               "speaker": "character",
               "text": "Hello, I'm Daniel. First, listen to each sentence and repeat it exactly. You're at an orientation day in the student center. Welcome to the student center."
             },
-            {
-              "speaker": "learner",
-              "text": "Welcome to the student center."
-            },
-            {
-              "speaker": "character",
-              "text": "The cafeteria is open until nine tonight."
-            },
-            {
-              "speaker": "learner",
-              "text": "The cafeteria is open until nine tonight."
-            },
-            {
-              "speaker": "character",
-              "text": "Club tables are set up along the main hallway."
-            },
-            {
-              "speaker": "learner",
-              "text": "Club tables are set along the main hallway."
-            },
+            { "speaker": "learner", "text": "Welcome to the student center." },
+            { "speaker": "character", "text": "The cafeteria is open until nine tonight." },
+            { "speaker": "learner", "text": "The cafeteria is open until nine tonight." },
+            { "speaker": "character", "text": "Club tables are set up along the main hallway." },
+            { "speaker": "learner", "text": "Club tables are set along the main hallway." },
             {
               "speaker": "character",
               "text": "You'll need your ID to use the gym on the lower level."
             },
-            {
-              "speaker": "learner",
-              "text": "You need your ID to use the gym on the lower level."
-            },
+            { "speaker": "learner", "text": "You need your ID to use the gym on the lower level." },
             {
               "speaker": "character",
               "text": "The information desk can help you if you've lost something on campus."
@@ -2828,10 +2561,7 @@
           ],
           "task": {
             "brief": "Listen and Repeat, then Take an Interview, in a shorter call",
-            "minutes": {
-              "max": 5,
-              "min": 5
-            },
+            "minutes": { "max": 5, "min": 5 },
             "name": "Speaking mock",
             "role": "examiner"
           },
@@ -2900,10 +2630,7 @@
       ],
       "testCase": {
         "expectations": "A TOEFL B2 candidate (bands about 4 to 4.5): repeats almost every sentence exactly, with small slips only in the last two (\"clean it\", \"until they finished it\"); interview answers are fluent and well developed (\"on the other hand\", \"it depends on the teacher\") with errors that rarely block meaning (\"I use it since the first semester\", \"more easy\", \"discuss about\"). Evidence and tips in Brazilian Portuguese; the grammar tip teaches one rule with a correct model.",
-        "expected": {
-          "bandHigh": 4.5,
-          "bandLow": 4
-        },
+        "expected": { "bandHigh": 4.5, "bandLow": 4 },
         "id": "pt-en-toefl-b2-candidate-1",
         "userInput": {
           "learnerLanguage": "pt",
@@ -2913,26 +2640,11 @@
               "speaker": "character",
               "text": "Hello, I'm Megan. First, listen to each sentence and repeat it exactly. A lab assistant is showing you around the chemistry building. This is the main chemistry lab."
             },
-            {
-              "speaker": "learner",
-              "text": "This is the main chemistry lab."
-            },
-            {
-              "speaker": "character",
-              "text": "Goggles must be worn at all times."
-            },
-            {
-              "speaker": "learner",
-              "text": "Goggles must be worn at all times."
-            },
-            {
-              "speaker": "character",
-              "text": "The emergency shower is next to the back door."
-            },
-            {
-              "speaker": "learner",
-              "text": "The emergency shower is next to the back door."
-            },
+            { "speaker": "learner", "text": "This is the main chemistry lab." },
+            { "speaker": "character", "text": "Goggles must be worn at all times." },
+            { "speaker": "learner", "text": "Goggles must be worn at all times." },
+            { "speaker": "character", "text": "The emergency shower is next to the back door." },
+            { "speaker": "learner", "text": "The emergency shower is next to the back door." },
             {
               "speaker": "character",
               "text": "Don't leave your experiments running when you step out."
@@ -3057,10 +2769,7 @@
           ],
           "task": {
             "brief": "Listen and Repeat, then Take an Interview, in a shorter call",
-            "minutes": {
-              "max": 5,
-              "min": 5
-            },
+            "minutes": { "max": 5, "min": 5 },
             "name": "Speaking mock",
             "role": "examiner"
           },
@@ -3129,10 +2838,7 @@
       ],
       "testCase": {
         "expectations": "A TOEFL C1 candidate who uses the app in English (bands about 5 to 5.5): repeats every sentence exactly except \"would\" for \"'d\" and \"the\" for \"their\" in the last one; interview answers are fluent, precise and well organized (\"a foot in the door\", \"burnt out\", \"a double-edged sword\"), with complex structures and one or two slips (\"the most of graduates\", \"less opportunities\"). Tips push toward C2 with precise upgrades. In US English.",
-        "expected": {
-          "bandHigh": 5.5,
-          "bandLow": 5
-        },
+        "expected": { "bandHigh": 5.5, "bandLow": 5 },
         "id": "en-en-toefl-c1-candidate-1",
         "userInput": {
           "learnerLanguage": "en",
@@ -3142,10 +2848,7 @@
               "speaker": "character",
               "text": "Hello, I'm Rachel. First, listen to each sentence and repeat it exactly. You're visiting the career center for the first time. Welcome to the career center."
             },
-            {
-              "speaker": "learner",
-              "text": "Welcome to the career center."
-            },
+            { "speaker": "learner", "text": "Welcome to the career center." },
             {
               "speaker": "character",
               "text": "Appointments can be booked through the student portal."
@@ -3286,10 +2989,7 @@
           ],
           "task": {
             "brief": "Listen and Repeat, then Take an Interview, in a shorter call",
-            "minutes": {
-              "max": 5,
-              "min": 5
-            },
+            "minutes": { "max": 5, "min": 5 },
             "name": "Speaking mock",
             "role": "examiner"
           },
