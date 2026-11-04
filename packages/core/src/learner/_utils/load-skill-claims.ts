@@ -176,13 +176,16 @@ export async function loadDatedClaims({
 export async function loadPlanClaimEvents({
   goalId,
   plan,
+  skillIds,
 }: {
   goalId: string;
   plan?: ClaimPlan | null;
+  /** A fresh read for these skills only skips history no asked skill needs; GETs share every skill's. */
+  skillIds?: ReadonlySet<string>;
 }): Promise<ClaimEvent[]> {
   const [planEvents, passedOver, undone] = await Promise.all([
     loadPlanEvents({ goalId, known: plan }),
-    loadPassedOverClaims({ goalId, known: plan }),
+    loadPassedOverClaims({ goalId, known: plan, skillIds }),
     loadUndoneTestOuts(goalId),
   ]);
 
@@ -204,7 +207,7 @@ export async function loadClaimEvents({
   const asked = new Set(skillIds);
 
   const [fromPlan, answers] = await Promise.all([
-    planEvents ?? loadPlanClaimEvents({ goalId }),
+    planEvents ?? loadPlanClaimEvents({ goalId, skillIds: asked }),
     loadAnswerEvents({ skillIds, userId }),
   ]);
 
