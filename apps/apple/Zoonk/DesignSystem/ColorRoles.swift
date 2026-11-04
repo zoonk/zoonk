@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Main's color roles from `globals.css`, which `pnpm --filter apple palette` writes to
+/// Main's color roles from `globals.css`, which `pnpm palette` writes to
 /// `Resources/Assets.xcassets/Palette` with light, dark and both more-contrast appearances. A mark,
 /// fill or icon takes a role; colored words take its `-text` role. Ink and its pairs are
 /// `Color(.foreground)`, `Color(.primary)` and `Color(.primaryForeground)`, since SwiftUI's own
