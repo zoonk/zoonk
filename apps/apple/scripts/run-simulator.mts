@@ -1,12 +1,11 @@
 import { spawnSync } from "node:child_process";
 import path from "node:path";
-import { waitForTurn } from "../../../scripts/dev/queue.mts";
+import { MAX_BOOTED_SIMULATORS, leaseSimulator, releaseLease } from "./leases.mts";
 import {
   type DeviceFamily,
   type Simulator,
   appleDirectory,
   getNewestSimulators,
-  isLeased,
   listSimulators,
   readCommand,
   runCommand,
@@ -31,11 +30,7 @@ function getRuntimeName(runtimeIdentifier: string) {
   return runtimeIdentifier.split(".SimRuntime.").at(-1)?.replaceAll("-", " ") ?? runtimeIdentifier;
 }
 
-function bootSimulator(device: Simulator) {
-  if (device.state === "Shutdown") {
-    runCommand({ arguments: ["simctl", "boot", device.udid], command: "xcrun" });
-  }
-
+function waitUntilBooted(device: Simulator) {
   runCommand({ arguments: ["simctl", "bootstatus", device.udid, "-b"], command: "xcrun" });
 }
 
@@ -112,28 +107,37 @@ function installAndLaunchApp({ appPath, device }: { appPath: string; device: Sim
   });
 }
 
+/** Leased until the app runs, so no test run or hold takes the simulator in the meantime. */
 async function runSimulator(family: DeviceFamily) {
-  const { devices, runtimeIdentifier } = getNewestSimulators({ catalog: listSimulators(), family });
-  const device = devices.find(({ udid }) => !isLeased(udid));
+  const { runtimeIdentifier } = getNewestSimulators({ catalog: listSimulators(), family });
 
-  if (!device) {
-    throw new Error(`Every ${family} simulator is running tests. Try again when one finishes.`);
-  }
+  const { lease, turn } = await leaseSimulator({
+    describeWait: (booted) =>
+      `Waiting for a free ${family} simulator, with at most ${MAX_BOOTED_SIMULATORS} booted at ` +
+      `once (booted now: ${booted.map(({ name }) => name).join(", ")}).\n`,
+    getCandidates: () => getNewestSimulators({ catalog: listSimulators(), family }).devices,
+    isTestRun: false,
+  });
 
-  process.stdout.write(
-    `Building ${APP_SCHEME} for ${device.name} (${getRuntimeName(runtimeIdentifier)})...\n`,
-  );
-
-  const turn = await waitForTurn();
+  const { device } = lease;
 
   try {
-    bootSimulator(device);
-    buildApp(device);
+    process.stdout.write(
+      `Building ${APP_SCHEME} for ${device.name} (${getRuntimeName(runtimeIdentifier)})...\n`,
+    );
+
+    try {
+      waitUntilBooted(device);
+      buildApp(device);
+    } finally {
+      turn?.release();
+    }
+
+    installAndLaunchApp({ appPath: getAppPath(), device });
   } finally {
-    turn?.release();
+    releaseLease(lease);
   }
 
-  installAndLaunchApp({ appPath: getAppPath(), device });
   process.stdout.write(`${APP_SCHEME} is running on ${device.name}.\n`);
 }
 

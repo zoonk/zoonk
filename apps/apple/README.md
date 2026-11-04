@@ -37,7 +37,7 @@ From the repository root, add `-C apps/apple`, for example `make -C apps/apple c
 
 To check a Release build, run `make build CONFIGURATION=Release`.
 
-`make test` and `make ui-test` lease one of Xcode's own iPhone simulators for each run, trying iPhone 17 last since `pnpm iphone` prefers it: they boot a shut-down one, or reuse one a killed run left booted, and shut it down when the run ends, so several checkouts can test at once. They wait while three simulators are booted. Before you drive one of those iPhones by hand, such as in a walk, hold it with `pnpm iphone:hold "iPhone 17e"` (a name or udid) for as long as you use it, so a test run can't take it: the hold boots the simulator if it's shut down, waits while a test run has it, and leaves it booted when you stop it. To test on a simulator you choose, such as one you keep booted, pass its destination:
+`make test` and `make ui-test` lease one of Xcode's own iPhone simulators for each run, trying iPhone 17 last since `pnpm iphone` prefers it: they boot a shut-down one, or reuse one a killed run left booted, and shut it down when the run ends, so several checkouts can test at once. They wait while three simulators are booted. `pnpm iphone` and `pnpm ipad` lease a simulator the same way until the app launches, then leave it booted. Before you drive one of those iPhones by hand, such as in a walk, hold it with `pnpm iphone:hold "iPhone 17e"` (a name or udid) for as long as you use it, so a test run can't take it: the hold boots the simulator if it's shut down, waits while something else has it, and leaves it booted when it stops. To test on a simulator you choose, such as one you keep booted, pass its destination:
 
 ```sh
 make test TEST_DESTINATION='platform=iOS Simulator,id=<udid>'

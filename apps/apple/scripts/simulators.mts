@@ -1,6 +1,4 @@
 import { spawnSync } from "node:child_process";
-import { statSync } from "node:fs";
-import { homedir } from "node:os";
 import path from "node:path";
 
 export type DeviceFamily = "ipad" | "iphone";
@@ -13,7 +11,7 @@ export type Simulator = {
   udid: string;
 };
 
-export type SimulatorCatalog = { devices: Record<string, Simulator[]> };
+type SimulatorCatalog = { devices: Record<string, Simulator[]> };
 
 const DEVICE_TYPE_PREFIXES = {
   ipad: "com.apple.CoreSimulator.SimDeviceType.iPad-",
@@ -26,17 +24,6 @@ const PREFERRED_DEVICE_TYPES = {
 } satisfies Record<DeviceFamily, string>;
 
 export const appleDirectory = path.resolve(import.meta.dirname, "..");
-
-const leaseDirectory = path.join(homedir(), ".cache", "zoonk", "simulators");
-
-export function getLeasePath(name: string) {
-  return path.join(leaseDirectory, name);
-}
-
-/** Whether a test run or a hold is using the simulator, or a killed run left it: its lease names it. */
-export function isLeased(udid: string) {
-  return (statSync(getLeasePath(udid), { throwIfNoEntry: false })?.size ?? 0) > 0;
-}
 
 export function runCommand({
   arguments: commandArguments,
