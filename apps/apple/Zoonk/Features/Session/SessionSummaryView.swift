@@ -515,8 +515,9 @@ private struct SummaryTiles: View {
       if showsBrainPower {
         StatTile(
           label: Text("Brain Power", tableName: "Session", comment: "Brain Power earned"),
-          value: Text(summary.brainPower, format: .number.sign(strategy: .always())),
-          systemImage: "brain", tone: .brain, detail: belt)
+          value: EarnedNumber(value: summary.brainPower), tone: .brain,
+          icon: { Image(systemName: "brain") }, detail: belt,
+          spokenValue: Text(summary.brainPower, format: .number.sign(strategy: .always())))
       }
     }
   }
