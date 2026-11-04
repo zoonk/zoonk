@@ -32,7 +32,10 @@ struct LessonStageView: View {
     guard let step = state.currentStep, let result = state.currentResult, !step.showsOwnResult
     else { return }
 
-    announceUrgently(String(localized: LessonVerdict.of(result, step: step).title))
+    var announcement = AttributedString(
+      String(localized: LessonVerdict.of(result, step: step).title))
+    announcement.accessibilitySpeechAnnouncementPriority = .high
+    AccessibilityNotification.Announcement(announcement).post()
   }
 
   private func visit(_ step: LessonStep) -> String {

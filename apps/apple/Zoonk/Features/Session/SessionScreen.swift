@@ -503,10 +503,12 @@ private struct NextStopView: View {
   /// VoiceOver says it however busy it is. It lands on Start once the wait moves on, so a learner
   /// still on the card can't open the lesson with a tap meant for an answer.
   private func offerWrittenLesson() {
-    announceUrgently(
+    var announcement = AttributedString(
       String(
         localized: "Your lesson is ready.", table: "Session",
         comment: "A lesson written while the learner waited, offered with Start"))
+    announcement.accessibilitySpeechAnnouncementPriority = .high
+    AccessibilityNotification.Announcement(announcement).post()
   }
 
   private func stop() {

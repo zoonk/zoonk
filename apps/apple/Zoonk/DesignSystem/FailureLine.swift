@@ -47,15 +47,8 @@ extension View {
   func announcesAlert(_ message: String?) -> some View {
     onChange(of: message, initial: true) {
       if let message {
-        announceUrgently(message)
+        AccessibilityNotification.Announcement(message).post()
       }
     }
   }
-}
-
-/// VoiceOver says it at once, over what it's reading, and nothing cuts it off.
-func announceUrgently(_ text: String) {
-  var announcement = AttributedString(text)
-  announcement.accessibilitySpeechAnnouncementPriority = .high
-  AccessibilityNotification.Announcement(announcement).post()
 }
