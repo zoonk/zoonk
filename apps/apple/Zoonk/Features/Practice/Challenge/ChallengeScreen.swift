@@ -40,6 +40,8 @@ struct ChallengeScreen: View {
         switch load {
         case .loading:
           ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+        case .failed(.notFound):
+          PracticeRedirect { hooks.navigate(.today) }
         case .failed(let error):
           PracticeLoadFailureView(error: error) { Task { await read() } }
         case .loaded(let challenge):
@@ -607,7 +609,11 @@ struct ChallengeScreen: View {
 
       load = .loaded(challenge)
     } catch let error as APIError {
-      if error == .unauthorized { await session.expire(identity) }
+      if error == .unauthorized {
+        await session.expire(identity)
+      } else if session.authenticatedSession != identity {
+        return
+      }
       load = .failed(error)
     } catch {
       load = .failed(.unavailable)

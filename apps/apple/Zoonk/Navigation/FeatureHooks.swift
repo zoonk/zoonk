@@ -17,8 +17,12 @@ extension PracticeHooks {
           router.open(.challenge(planItemId: planItemId, sessionId: sessionId))
         case .mock(let blockId, let sessionId):
           router.open(.mock(blockId: blockId, sessionId: sessionId))
+        case .plan:
+          router.showRoot(of: .plan)
         case .subscription:
           router.present(.subscription)
+        case .today:
+          router.showRoot(of: .today)
         }
       },
       askButton: { target in
