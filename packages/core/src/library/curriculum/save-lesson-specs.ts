@@ -29,8 +29,16 @@ type SplitContext = {
   workflowRunId: string;
 };
 
+/**
+ * A plan keeps when it was planned, so a one-time reset after a planner change can plan again only
+ * the lessons planned before it.
+ */
 function toSpecData(spec: LessonSpec) {
-  return { canDo: spec.canDo, estimatedMinutes: spec.estimatedMinutes, spec };
+  return {
+    canDo: spec.canDo,
+    estimatedMinutes: spec.estimatedMinutes,
+    spec: { ...spec, plannedAt: new Date().toISOString() },
+  };
 }
 
 async function saveSplitLessons({
