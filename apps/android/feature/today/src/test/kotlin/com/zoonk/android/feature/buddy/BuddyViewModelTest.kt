@@ -28,6 +28,7 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.JsonObject
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import java.util.UUID
@@ -61,11 +62,46 @@ class BuddyViewModelTest {
                 }
             val vm = buddy(study, status)
 
-            vm.openMission(MissionOpens.Block(blockId = BLOCK, position = null), GOAL)
+            vm.openMission(BuddyTap(MissionOpens.Block(blockId = BLOCK, position = null)), GOAL)
             advanceUntilIdle()
 
             assertEquals(1, study.targets.size)
             assertEquals(1, statusReads)
+        }
+
+    /** A first step can open the same block as a mission: only the tapped row says it failed, until the learner leaves. */
+    @Test
+    fun aFailedOpenStaysOnTheTappedRowUntilTheVisitEnds() =
+        runTest(dispatcher) {
+            val study = FakeStudyApi()
+            study.failures += ApiException(ApiError.Network)
+            val vm = buddy(study, NoStatusApi)
+            val firstStep = BuddyTap(MissionOpens.Block(blockId = BLOCK, position = null), firstStep = true)
+
+            vm.openMission(firstStep, GOAL)
+            advanceUntilIdle()
+
+            assertNull(vm.opening)
+            assertEquals(firstStep, vm.openFailed)
+
+            vm.endVisit()
+
+            assertNull(vm.openFailed)
+        }
+
+    @Test
+    fun aFailureThatLandsAfterTheLearnerLeftSaysNothing() =
+        runTest(dispatcher) {
+            val study = FakeStudyApi()
+            study.failures += ApiException(ApiError.Network)
+            val vm = buddy(study, NoStatusApi)
+
+            vm.openMission(BuddyTap(MissionOpens.Block(blockId = BLOCK, position = null)), GOAL)
+            vm.endVisit()
+            advanceUntilIdle()
+
+            assertNull(vm.opening)
+            assertNull(vm.openFailed)
         }
 
     private fun TestScope.buddy(
@@ -78,6 +114,13 @@ class BuddyViewModelTest {
             LearningProfileStore(NoProfileApi, cache),
             StudyOpener(study, { _, _ -> error("Not used") }, cache, { "UTC" }),
         )
+    }
+
+    private object NoStatusApi : BuddyApi {
+        override suspend fun status(
+            session: AuthenticatedSession,
+            timeZone: String,
+        ): BuddyStatus = error("Not used")
     }
 
     private object NoProfileApi : LearningProfileApi {
