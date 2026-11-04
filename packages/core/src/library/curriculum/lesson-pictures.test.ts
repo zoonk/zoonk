@@ -35,7 +35,7 @@ const screens = [
 
 function kindsAfterDropping(
   dropped: number[],
-  visualFloor: "drawn" | "none" | "pictures",
+  visualFloor: "drawn" | "pictures",
   planned: LessonScreen[] = screens,
 ) {
   const [spec] = dropDecorativePictures({
@@ -55,12 +55,13 @@ describe(dropDecorativePictures, () => {
     expect(kinds?.[3]).toStrictEqual(["table", null]);
   });
 
-  it("drops a private lesson's decorative picture where what the app draws already meets its floor", () => {
-    const table = { ...plain("explanation"), visualKind: "table" as const };
-    const drawn = screens.map((screen, index) => (index === 1 || index === 5 ? table : screen));
+  it("drops a private lesson's decorative picture where its floor is met, and draws a table where not", () => {
+    expect(kindsAfterDropping([3], "drawn")?.[3]).toStrictEqual(["none", null]);
 
-    expect(kindsAfterDropping([3], "drawn", drawn)?.[3]).toStrictEqual(["none", null]);
-    expect(kindsAfterDropping([3], "drawn")?.[3]).toStrictEqual(["table", null]);
+    const kinds = kindsAfterDropping([1, 3], "drawn");
+
+    expect(kinds?.[1]).toStrictEqual(["table", null]);
+    expect(kinds?.[3]).toStrictEqual(["none", null]);
   });
 
   it("judges a picture shown on several screens once, and drops it from all of them", () => {
@@ -71,12 +72,12 @@ describe(dropDecorativePictures, () => {
       listPlannedPictures({ specs: [lessonOf(shared)] }).map((item) => item.screen),
     ).toStrictEqual([1, 5]);
 
-    const kinds = kindsAfterDropping([1], "none", shared);
+    const kinds = kindsAfterDropping([1], "pictures", shared);
 
     expect(kinds?.slice(1, 4)).toStrictEqual([
-      ["none", null],
-      ["none", null],
-      ["none", null],
+      ["table", null],
+      ["table", null],
+      ["table", null],
     ]);
   });
 

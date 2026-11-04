@@ -264,7 +264,7 @@ export function splitLessonSpec({
   language,
   level,
   spec,
-  visualFloor = "none",
+  visualFloor = "pictures",
 }: {
   language: string;
   level: CourseLevel;

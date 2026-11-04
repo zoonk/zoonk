@@ -1,9 +1,9 @@
 /**
- * Every lesson shows a visual on about one teaching screen in three, at every level. A shared lesson
- * also opens on its story's picture. A private lesson's pictures serve one learner, so its floor is
- * met with what the app draws where it can, and class material brings its own figures.
+ * A lesson's audience decides its visuals: a shared lesson shows one on every teaching screen, and
+ * one for a single learner, private or built from their class material, on one in two, met with
+ * what the app draws where it can, since its pictures would serve that learner alone.
  */
-export type VisualFloor = "pictures" | "drawn" | "none";
+export type VisualFloor = "pictures" | "drawn";
 
 export function getVisualFloor({
   isPrivate,
@@ -12,9 +12,5 @@ export function getVisualFloor({
   isPrivate?: boolean;
   material?: string;
 }): VisualFloor {
-  if (material) {
-    return "none";
-  }
-
-  return isPrivate ? "drawn" : "pictures";
+  return isPrivate || material ? "drawn" : "pictures";
 }

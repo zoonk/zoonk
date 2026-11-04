@@ -109,7 +109,6 @@ function buildSystemPrompt(params: LessonSpecParams): string {
     variants: {
       exams: (params.exams?.length ?? 0) > 0,
       experienced: !novice,
-      floor: visualFloor !== "none",
       material: Boolean(params.material),
       novice,
       pictures: visualFloor === "pictures",

@@ -16,37 +16,11 @@ export const LESSON_VISUAL_KINDS = [
 
 export type LessonVisualKind = (typeof LESSON_VISUAL_KINDS)[number];
 
-const DRAWN_VISUAL_KINDS: ReadonlySet<LessonVisualKind> = new Set([
-  "table",
-  "chart",
-  "timeline",
-  "template",
-]);
-
 export function isTeachingScreen(kind: LessonScreenKind): boolean {
   return kind === "explanation" || kind === "workedExample";
 }
 
-/**
- * Every teaching screen of a shared lesson shows a visual. A private lesson serves one learner, so
- * to keep its cost down one in two shows one, and only what the app draws counts.
- */
-const TEACHING_SCREENS_PER_VISUAL: Record<Exclude<VisualFloor, "none">, number> = {
-  drawn: 2,
-  pictures: 1,
-};
-
-function countsTowardFloor({
-  screen,
-  visualFloor,
-}: {
-  screen: LessonScreen;
-  visualFloor: VisualFloor;
-}): boolean {
-  return visualFloor === "drawn"
-    ? DRAWN_VISUAL_KINDS.has(screen.visualKind)
-    : screen.visualKind !== "none";
-}
+const TEACHING_SCREENS_PER_VISUAL: Record<VisualFloor, number> = { drawn: 2, pictures: 1 };
 
 export function getTeachingVisualShortfall({
   screens,
@@ -55,12 +29,8 @@ export function getTeachingVisualShortfall({
   screens: readonly LessonScreen[];
   visualFloor: VisualFloor;
 }): number {
-  if (visualFloor === "none") {
-    return 0;
-  }
-
   const teaching = screens.filter((screen) => isTeachingScreen(screen.kind));
-  const shown = teaching.filter((screen) => countsTowardFloor({ screen, visualFloor })).length;
+  const shown = teaching.filter((screen) => screen.visualKind !== "none").length;
   const needed = Math.ceil(teaching.length / TEACHING_SCREENS_PER_VISUAL[visualFloor]);
 
   return Math.max(0, needed - shown);
@@ -77,7 +47,7 @@ function getTeachingVisualIssue({
 
   const detail =
     visualFloor === "drawn"
-      ? `${missing} more explanations or worked examples need a table, a chart, a timeline or a template: one in two shows one.`
+      ? `${missing} more explanations or worked examples need a visual, what the app draws first: one in two shows one.`
       : `${missing} explanations or worked examples show nothing: every one shows the visual that teaches its idea best.`;
 
   return missing > 0 && { code: "teachingVisual" as const, detail };
@@ -126,7 +96,7 @@ export function withSceneVisual(screen: LessonScreen): LessonScreen {
 /**
  * Teaching screens a plan still leaves bare after planning again get a visual: in a shared lesson a
  * picture of what the screen describes, which the picture judge turns into a table when a picture
- * wouldn't teach; in a private lesson a table, as far as its floor needs.
+ * wouldn't teach; in a lesson for one learner a table, never a picture, as far as its floor needs.
  */
 export function fillTeachingVisuals({
   spec,

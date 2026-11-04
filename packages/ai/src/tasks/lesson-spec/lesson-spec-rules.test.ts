@@ -65,7 +65,7 @@ function getCodes(
   lesson: LessonSpec,
   level: CourseLevel = "beginner",
   novice = false,
-  visualFloor: VisualFloor = novice ? "pictures" : "none",
+  visualFloor: VisualFloor | undefined = novice ? "pictures" : undefined,
 ) {
   return getLessonSpecIssues({ level, novice, spec: lesson, visualFloor }).map(
     (issue) => issue.code,
@@ -193,7 +193,13 @@ describe(getLessonSpecIssues, () => {
 
     expect(getCodes(early)).toStrictEqual([]);
     expect(getCodes(questionFirst, "advanced")).toContain("earlyCheck");
-    expect(getCodes(oneScreenFirst, "beginner", true, "none")).toContain("earlyCheck");
+
+    expect(
+      getLessonSpecIssues({ level: "beginner", novice: true, spec: oneScreenFirst }).map(
+        (issue) => issue.code,
+      ),
+    ).toContain("earlyCheck");
+
     expect(getCodes(oneScreenFirst, "advanced")).not.toContain("earlyCheck");
     expect(getCodes(spec(illustratedScreens), "beginner", true)).toStrictEqual([]);
   });
@@ -230,7 +236,7 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(showing(everyOne), "beginner", true)).toStrictEqual([]);
   });
 
-  it("counts what the app draws toward the floor, and only that in a private lesson, one in two", () => {
+  it("counts any visual toward the floor: every teaching screen when shared, one in two for one learner", () => {
     const drawn = validScreens.map((item, index) => {
       if (index === 0 || index === 1) {
         return { ...item, visualKind: "table" as const };
@@ -254,10 +260,10 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(spec(drawn), "beginner", true)).toStrictEqual([]);
     expect(getCodes(spec(halfDrawn), "beginner", true, "drawn")).toStrictEqual([]);
     expect(getCodes(spec(halfDrawn), "beginner", true)).toStrictEqual(["teachingVisual"]);
-    expect(getCodes(spec(pictured), "beginner", true, "drawn")).toStrictEqual(["teachingVisual"]);
+    expect(getCodes(spec(pictured), "beginner", true, "drawn")).toStrictEqual([]);
   });
 
-  it("asks every lesson but one built on class material for visuals on its teaching screens", () => {
+  it("asks every lesson for visuals on its teaching screens", () => {
     expect(getCodes(spec(validScreens), "beginner", true)).toStrictEqual(["teachingVisual"]);
 
     expect(getCodes(spec(validScreens), "intermediate", false, "pictures")).toStrictEqual([
@@ -267,8 +273,6 @@ describe(getLessonSpecIssues, () => {
     expect(getCodes(spec(validScreens), "beginner", true, "drawn")).toStrictEqual([
       "teachingVisual",
     ]);
-
-    expect(getCodes(spec(validScreens), "beginner", true, "none")).toStrictEqual([]);
 
     const explored = validScreens.map((item, index) =>
       index === 1 || index === 5 ? picture(item, index) : item,

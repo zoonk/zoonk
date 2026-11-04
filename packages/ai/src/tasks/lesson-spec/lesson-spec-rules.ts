@@ -226,7 +226,7 @@ function getShapeIssues({
 }: {
   novice: boolean;
   spec: LessonSpec;
-  visualFloor: VisualFloor;
+  visualFloor?: VisualFloor;
 }) {
   const { screens } = spec;
   const hooks = screens.filter((screen) => screen.kind === "hook").length;
@@ -252,7 +252,7 @@ function getShapeIssues({
       detail: "An activity screen has no template from the catalog.",
     },
     getGuessIssue(spec),
-    ...getVisualFloorIssues({ screens, visualFloor }),
+    ...(visualFloor ? getVisualFloorIssues({ screens, visualFloor }) : []),
   ].filter((issue) => issue !== false);
 }
 
@@ -308,12 +308,15 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
   ];
 }
 
-/** `novice` is `readsNoviceRules` for the lesson, and `visualFloor` is `getVisualFloor`. */
+/**
+ * `novice` is `readsNoviceRules` for the lesson, and `visualFloor` is `getVisualFloor`, whose floor
+ * is checked when given.
+ */
 export function getLessonSpecIssues({
   level,
   novice = false,
   spec,
-  visualFloor = "none",
+  visualFloor,
 }: {
   level: CourseLevel;
   novice?: boolean;

@@ -196,14 +196,14 @@ describe(generateLessonSpec, () => {
     expect(generateText).toHaveBeenCalledTimes(5);
   });
 
-  it("gives a teaching screen both plans left bare a visual: a picture when shared, a table when private", async () => {
+  it("gives teaching screens both plans left bare a visual: a picture each when shared, tables to one in two when private", async () => {
     const bare = oneSkillLesson({
       kinds: ["hook", "explanation", "guess", "explanation", "check", "application"],
       title: "Bare",
     });
 
     const screens = bare.screens.map((screen, index) =>
-      index === 3 ? { ...screen, visual: null, visualKind: "none" } : screen,
+      index === 1 || index === 3 ? { ...screen, visual: null, visualKind: "none" } : screen,
     );
 
     const plan = createGenerateTextResult({ lessons: [{ ...bare, screens }] });
@@ -230,8 +230,10 @@ describe(generateLessonSpec, () => {
     const [own] = privatePlan.data.lessons;
 
     expect(generateText).toHaveBeenCalledTimes(4);
+    expect(shared?.screens[1]).toMatchObject({ visual: "explanation", visualKind: "picture" });
     expect(shared?.screens[3]).toMatchObject({ visual: "explanation", visualKind: "picture" });
-    expect(own?.screens[3]).toMatchObject({ visual: null, visualKind: "table" });
+    expect(own?.screens[1]).toMatchObject({ visual: null, visualKind: "table" });
+    expect(own?.screens[3]).toMatchObject({ visual: null, visualKind: "none" });
   });
 
   it("plans a quick lesson as one lesson, never split, with the quick lesson rules only for it", async () => {
