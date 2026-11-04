@@ -212,6 +212,7 @@ struct PracticeMainButton: View {
       HStack(spacing: 8) {
         if isBusy {
           ProgressView()
+            .controlSize(.small)
         }
         Text(title)
       }
