@@ -786,6 +786,7 @@ private struct TodayDayStatus: View {
           } label: {
             Text("See today's summary", tableName: "Today", comment: "Opens today's summary")
               .fontWeight(.semibold)
+              .underline()
               .multilineTextAlignment(.leading)
           }
           .buttonStyle(.borderless)

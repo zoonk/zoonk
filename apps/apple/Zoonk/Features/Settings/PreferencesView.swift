@@ -177,6 +177,7 @@ struct ChangeLimitButton: View {
     } label: {
       Text("Change limit", tableName: "Settings", comment: "Opens the daily time limit setting")
         .fontWeight(.semibold)
+        .underline()
     }
     .buttonStyle(.borderless)
   }
