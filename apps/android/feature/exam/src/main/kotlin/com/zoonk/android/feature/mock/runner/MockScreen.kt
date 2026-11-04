@@ -93,7 +93,7 @@ fun MockScreen(
 
         when {
             loaded == null -> {
-                TaskScaffold(onClose = { navigator.closeTask() }) { padding ->
+                TaskScaffold(onClose = { navigator.closeTask() }, lonePage = true) { padding ->
                     Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                         val current = state
                         when {
@@ -227,6 +227,7 @@ internal fun MockStepFrame(
             }
         },
         aside = aside,
+        lonePage = true,
     ) { padding -> StepColumn(Modifier.padding(padding), content = content) }
 }
 

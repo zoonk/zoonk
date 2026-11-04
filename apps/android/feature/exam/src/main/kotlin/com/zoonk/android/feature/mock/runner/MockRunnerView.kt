@@ -125,11 +125,7 @@ internal fun MockRunnerView(
         aside =
             TaskAside(
                 title = stringResource(R.string.mock_answer_sheet),
-                footer = {
-                    OutlinedButton(onClick = handIn, enabled = !run.pending, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.mock_hand_in))
-                    }
-                },
+                footer = { SheetHandIn(run, onClick = handIn) },
             ) {
                 SheetCounts(run)
                 SectionClock(current.deadline, large = true)
@@ -180,20 +176,26 @@ internal fun MockRunnerView(
                 }
                 HorizontalDivider(Modifier.padding(top = 16.dp))
                 Box(Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
-                    OutlinedButton(
-                        onClick = {
-                            sheetOpen = false
-                            handIn()
-                        },
-                        enabled = !run.pending,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text(stringResource(R.string.mock_hand_in)) }
+                    SheetHandIn(run) {
+                        sheetOpen = false
+                        handIn()
+                    }
                 }
             }
         }
     }
 
     if (confirming) HandInDialog(run, onDismiss = { confirming = false }, onHandIn = { viewModel.submitSection() })
+}
+
+@Composable
+private fun SheetHandIn(
+    run: MockRun,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(onClick = onClick, enabled = !run.pending, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+        Text(stringResource(R.string.mock_hand_in))
+    }
 }
 
 @Composable
