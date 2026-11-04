@@ -84,6 +84,20 @@ class LessonPlayerFlowTest {
         )
     }
 
+    /** A start that fails shows at once, even while the lesson's read is slow to come back. */
+    @Test
+    fun aFailedStartShowsWithoutWaitingForTheLessonsRead() {
+        play(listOf(explanationStep("idea"), summaryStep("end")))
+        harness.cache.invalidate(setOf(DataDomain.Goals))
+        api.lessonGate = CompletableDeferred()
+        api.startFailures = 1
+
+        harness.viewModel = openAgain()
+
+        rule.waitUntil { viewModel.state.value?.run is LessonRun.Refused }
+        api.lessonGate?.complete(Unit)
+    }
+
     /** Android closing the app in the background keeps a typed answer the learner hasn't checked. */
     @Test
     fun aTypedAnswerComesBackAfterAndroidClosesTheAppInTheBackground() {
