@@ -127,7 +127,7 @@ internal fun LazyListScope.todaySession(
     if (next != null) {
         sessionQueue(model, next, viewModel, actions, folds, wide)
     } else {
-        items(day.steps, key = { "step-${it.position}" }, contentType = { "step" }) { step ->
+        itemsIndexed(day.steps, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
             val replay = step.lessonToReplay
             StepRow(
                 model,
@@ -137,9 +137,10 @@ internal fun LazyListScope.todaySession(
                 busy = false,
                 onOpen = { replay?.let { actions.navigate(AppRoute.Lesson(it.toString())) } },
                 Modifier.pageRow(),
+                divider = index != day.steps.lastIndex || day.plusLessons.isNotEmpty(),
             )
         }
-        plusLessons(day.plusLessons, actions, visible = day.plusLessons.size)
+        plusLessons(day.plusLessons, actions, visible = day.plusLessons.size, endsList = true)
     }
 
     item(key = "status", contentType = "status") { TodayDayStatus(model, actions, Modifier.pageItem().padding(top = 12.dp)) }
@@ -216,6 +217,12 @@ private fun LazyListScope.sessionQueue(
     val more = (upcoming - rows).coerceAtLeast(0)
     val shownAfter = if (folds.moreOpen) queue.after else queue.after.take(rows)
     val pending = (viewModel.pending as? TodayTap.Step)?.position
+    val showsComing = coming > 0 && (folds.moreOpen || queue.after.size < rows)
+    val plusShown =
+        (if (folds.moreOpen) model.day.plusLessons.size else (rows - queue.after.size - coming).coerceAtLeast(0))
+            .coerceAtMost(model.day.plusLessons.size)
+    // The list's last row has no hairline under it, as main's `last:border-b-0`; above "+N more" it keeps one.
+    val endsList = more == 0 || folds.moreOpen
 
     item(key = "queue-top", contentType = "spacer") { Box(Modifier.padding(top = 12.dp)) }
 
@@ -235,6 +242,7 @@ private fun LazyListScope.sessionQueue(
     val rowsShown = (if (!foldsDone || folds.doneOpen) queue.done else emptyList()) + queue.before + next + shownAfter
 
     val beforeNext = rowsShown.indexOf(next) - 1
+    val stepsEnd = endsList && !showsComing && plusShown == 0
 
     itemsIndexed(rowsShown, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
         val isNext = step.position == next.position
@@ -248,19 +256,17 @@ private fun LazyListScope.sessionQueue(
             onOpen = { if (replay != null) actions.navigate(AppRoute.Lesson(replay.toString())) else actions.open(step) },
             modifier = Modifier.pageRow(),
             onNavigate = actions.navigate,
-            divider = index != beforeNext,
+            divider = index != beforeNext && !(stepsEnd && index == rowsShown.lastIndex),
         )
     }
 
-    if (coming > 0 && (folds.moreOpen || queue.after.size < rows)) {
-        item(key = "coming", contentType = "coming") { ComingLessonsRow(model, viewModel, actions, Modifier.pageRow()) }
+    if (showsComing) {
+        item(key = "coming", contentType = "coming") {
+            ComingLessonsRow(model, viewModel, actions, Modifier.pageRow(), divider = !endsList || plusShown > 0)
+        }
     }
 
-    plusLessons(
-        model.day.plusLessons,
-        actions,
-        visible = if (folds.moreOpen) model.day.plusLessons.size else (rows - queue.after.size - coming).coerceAtLeast(0),
-    )
+    plusLessons(model.day.plusLessons, actions, visible = plusShown, endsList = endsList)
 
     if (more > 0) {
         item(key = "fold-more", contentType = "fold") {
@@ -281,11 +287,14 @@ private fun LazyListScope.plusLessons(
     titles: List<String>,
     actions: TodayActionHandlers,
     visible: Int,
+    endsList: Boolean,
 ) {
-    items(titles.take(visible).withIndex().toList(), key = { "plus-${it.index}" }, contentType = { "plus" }) { (_, title) ->
+    val shown = titles.take(visible)
+    items(shown.withIndex().toList(), key = { "plus-${it.index}" }, contentType = { "plus" }) { (index, title) ->
         QueueRow(
             onClick = { actions.navigate(AppRoute.Subscription) },
             modifier = Modifier.pageRow(),
+            divider = !endsList || index != shown.lastIndex,
             leading = { KindMark(LearnKind.Lesson) },
             meta = { PlusMark() },
         ) {
@@ -304,10 +313,12 @@ private fun ComingLessonsRow(
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
     modifier: Modifier,
+    divider: Boolean,
 ) {
     QueueRow(
         onClick = null,
         modifier = modifier,
+        divider = divider,
         leading = { KindMark(LearnKind.Lesson) },
         supporting = { ComingLessonsLine(model, viewModel, actions) },
     ) {
