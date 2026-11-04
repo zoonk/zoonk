@@ -17,7 +17,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -345,11 +344,6 @@ internal fun NextStop(
     val startFocus = remember { FocusRequester() }
     var screenFocused by remember { mutableStateOf(false) }
     val instead = alternative?.takeIf { !ready && goalId != null }
-    // Main stacks the actions full width below its large breakpoint once an alternative joins them.
-    val stacked =
-        instead != null &&
-            !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-    val actionWidth = if (stacked) Modifier.fillMaxWidth() else Modifier
 
     LaunchedEffect(step.position, waiting, step.screen) {
         when {
@@ -393,40 +387,46 @@ internal fun NextStop(
                             SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
                             else -> Unit
                         }
-                        FlowRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            onStop?.let {
-                                OutlinedButton(
-                                    onClick = it,
-                                    modifier = actionWidth,
-                                    enabled = !busy,
-                                ) { Text(stringResource(R.string.session_next_stop)) }
-                            }
-                            startsFor?.let { goal ->
-                                LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
-                                Button(
-                                    onClick = { viewModel.start(day, step, goal) },
-                                    Modifier.focusRequester(startFocus),
-                                    enabled = !busy,
-                                ) {
-                                    Text(stringResource(R.string.session_next_start))
+                        // Main stacks the actions full width below its large breakpoint once an alternative joins them;
+                        // here that's the width of the page the bar sits on, which is a phone's beside a fold.
+                        BoxWithConstraints(Modifier.fillMaxWidth()) {
+                            val stacked = instead != null && maxWidth < WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
+                            val actionWidth = if (stacked) Modifier.fillMaxWidth() else Modifier
+                            FlowRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                onStop?.let {
+                                    OutlinedButton(
+                                        onClick = it,
+                                        modifier = actionWidth,
+                                        enabled = !busy,
+                                    ) { Text(stringResource(R.string.session_next_stop)) }
                                 }
-                            }
-                            instead?.let { other ->
-                                Button(
-                                    onClick = { goalId?.let { viewModel.start(day, other, it) } },
-                                    modifier = actionWidth,
-                                    enabled = !busy,
-                                ) {
-                                    Text(
-                                        stringResource(
-                                            if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
-                                            blockTitle(other),
-                                        ),
-                                    )
+                                startsFor?.let { goal ->
+                                    LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
+                                    Button(
+                                        onClick = { viewModel.start(day, step, goal) },
+                                        Modifier.focusRequester(startFocus),
+                                        enabled = !busy,
+                                    ) {
+                                        Text(stringResource(R.string.session_next_start))
+                                    }
+                                }
+                                instead?.let { other ->
+                                    Button(
+                                        onClick = { goalId?.let { viewModel.start(day, other, it) } },
+                                        modifier = actionWidth,
+                                        enabled = !busy,
+                                    ) {
+                                        Text(
+                                            stringResource(
+                                                if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
+                                                blockTitle(other),
+                                            ),
+                                        )
+                                    }
                                 }
                             }
                         }
