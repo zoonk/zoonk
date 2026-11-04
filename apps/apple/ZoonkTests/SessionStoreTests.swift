@@ -1158,7 +1158,6 @@ final class SessionStoreTests: XCTestCase {
         deletion: AccountDeletionRequirements(hasAppleAccount: false),
         subscription: subscription),
       user: AccountUser(
-        displayUsername: "learner",
         email: "learner@zoonk.test",
         id: userID,
         image: nil,

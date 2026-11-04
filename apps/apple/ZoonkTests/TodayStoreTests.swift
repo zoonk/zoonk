@@ -660,7 +660,7 @@ private func signedInCache() -> AppCache {
         account: AccountAccess(
           deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
         user: AccountUser(
-          displayUsername: "learner", email: "learner@zoonk.test", id: "today-test-user",
+          email: "learner@zoonk.test", id: "today-test-user",
           image: nil, name: "Learner", username: "learner"))))
 }
 
