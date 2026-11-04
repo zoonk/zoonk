@@ -12,6 +12,7 @@ import { type readActiveSubscription } from "../learner/facts/subscription";
 import { getLearnerSummary } from "../learner/summary/get-learner-summary";
 import { getBuddyStatus } from "../milestones/get-buddy-status";
 import { getWeeklyRecap } from "../milestones/get-weekly-recap";
+import { getStudySessionSummary } from "../sessions/get-study-session-summary";
 import { signedInCourseGoal } from "./_test-utils/course-goal";
 import { getChapterView } from "./chapter/get-chapter-view";
 import { getFieldMapView } from "./map/get-field-map-view";
@@ -143,6 +144,27 @@ describe("a Plus learner's page reads", () => {
     const [recap] = reads.result;
 
     expect(recap.status).toBe("ready");
+    expect(reads.rows).toBe(1);
+  });
+
+  it("reads it once for a stopped exam session's summary", async () => {
+    const { goal, user } = await signedInCourseGoal();
+    await prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } });
+    await subscribe(user);
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+
+    const reads = await countDatabaseRows(
+      () =>
+        Promise.all([
+          getStudySessionSummary({ input: {}, sessionId: session.id }),
+          getLearnerSummary(),
+        ]),
+      SUBSCRIPTION_ROWS,
+    );
+
+    const [summary] = reads.result;
+
+    expect(summary.status).toBe("ready");
     expect(reads.rows).toBe(1);
   });
 });

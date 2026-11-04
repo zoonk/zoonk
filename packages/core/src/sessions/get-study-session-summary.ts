@@ -3,6 +3,7 @@ import { type Milestone, prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { io } from "next/cache";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { readActiveSubscription } from "../learner/facts/subscription";
 import { loadCeremony } from "../milestones/load-ceremony";
 import { measureSessionState } from "./_utils/capture-snapshot";
 import { isCurrentSession } from "./_utils/current-session";
@@ -101,7 +102,16 @@ async function measureSummaryState({
 }): Promise<SessionState> {
   const end = session.status === "completed" ? readSessionEnd(session.endSnapshot) : null;
 
-  return end ?? measureSessionState({ goalId: session.goalId, now: new Date(), timeZone, userId });
+  return (
+    end ??
+    measureSessionState({
+      goalId: session.goalId,
+      now: new Date(),
+      readSubscription: readActiveSubscription,
+      timeZone,
+      userId,
+    })
+  );
 }
 
 /** Requires ownership; completed sessions replay saved end state while stopped sessions reflect current progress. */
