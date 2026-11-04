@@ -90,7 +90,7 @@ struct TodayDayView: View {
     Section {
       PageHeader(Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine) {
         if let dayTime {
-          Readout(dayTime)
+          BigQuantity(dayTime)
         }
       }
     }
