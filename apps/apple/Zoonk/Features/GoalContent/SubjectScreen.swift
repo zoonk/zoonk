@@ -13,8 +13,8 @@ struct SubjectScreen: View {
       let subject = syllabus.value?.subjects.first { $0.key == subjectKey }
 
       Group {
-        if let subject {
-          SubjectContent(goal: goal, subject: subject)
+        if let view = syllabus.value, let subject {
+          SubjectContent(goal: goal, syllabus: view, subject: subject)
         } else {
           switch syllabus.state {
           case .idle, .loading:
@@ -93,6 +93,7 @@ private struct SubjectContent: View {
   @State private var showsAllChapters = false
 
   let goal: LearnerGoal
+  let syllabus: GoalSyllabus
   let subject: SyllabusSubject
 
   var body: some View {
@@ -232,7 +233,7 @@ private struct SubjectContent: View {
   @ViewBuilder
   private var topics: some View {
     if !subject.topics.isEmpty {
-      SubjectTopicsSection(goal: goal, subject: subject)
+      SubjectTopicsSection(goal: goal, syllabus: syllabus, subject: subject)
     }
   }
 
@@ -459,6 +460,7 @@ private struct SubjectDoneChapters: View {
 
 private struct SubjectTopicsSection: View {
   let goal: LearnerGoal
+  let syllabus: GoalSyllabus
   let subject: SyllabusSubject
 
   var body: some View {
@@ -475,13 +477,17 @@ private struct SubjectTopicsSection: View {
         }
       } header: {
         if index == 0 {
-          SectionTitle(Text("Topics", tableName: "Plan", comment: "Section of a subject's topics"))
-          {
-
+          SectionTitle(title) {
             if let studied = subject.topicsStudied {
               Text(
                 "\(studied) of \(subject.topics.count) topics", tableName: "Plan",
                 comment: "Topics studied of the subject's topics"
+              )
+              .monospacedDigit()
+            } else {
+              Text(
+                "\(subject.topics.count) topics", tableName: "Plan",
+                comment: "How many topics a subject has"
               )
               .monospacedDigit()
             }
@@ -491,6 +497,22 @@ private struct SubjectTopicsSection: View {
         }
       }
     }
+  }
+
+  private var title: Text {
+    if syllabus.fromMaterial {
+      return Text(
+        "Topics in your material", tableName: "Plan",
+        comment: "Section of a subject's topics, from the learner's own material")
+    }
+
+    return syllabus.examDocument == .notice
+      ? Text(
+        "Topics in the notice", tableName: "Plan",
+        comment: "Section of a subject's topics, from the exam's official notice")
+      : Text(
+        "Topics in the official guide", tableName: "Plan",
+        comment: "Section of a subject's topics, from the exam's official guide")
   }
 }
 
