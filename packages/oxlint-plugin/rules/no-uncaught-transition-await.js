@@ -170,6 +170,16 @@ function valueSettles(node, scan, { returned = false } = {}) {
     return storedValueSettles(node, scan, { returned });
   }
 
+  // A promise made by hand rejects only through its executor's `reject`.
+  if (node.type === "NewExpression" && node.callee.type === "Identifier") {
+    const [executor] = node.arguments;
+
+    return (
+      node.callee.name !== "Promise" ||
+      (FUNCTIONS.has(executor?.type) && executor.params.length < 2)
+    );
+  }
+
   return (
     node.type !== "CallExpression" ||
     (returned && isGlobal(node.callee, scan)) ||
