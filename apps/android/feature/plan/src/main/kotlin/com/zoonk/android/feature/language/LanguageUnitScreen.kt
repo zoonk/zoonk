@@ -23,7 +23,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -81,6 +80,7 @@ import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TestOutRow
 import com.zoonk.android.ui.components.TestOutScope
@@ -92,6 +92,7 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.LanguageUnit
 import com.zoonk.api.models.LanguageUnitLessonsInner
@@ -180,7 +181,7 @@ private fun UnitEntry(
                 }
 
                 else -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                    PageLoading()
                 }
             }
         }
@@ -212,7 +213,7 @@ internal fun UnitPage(
     listState: LazyListState = rememberLazyListState(),
 ) {
     val lessons = remember(unit) { unit.lessons.map { it.listed() } }
-    val compact = !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val compact = !windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val padding = PaddingValues(horizontal = (if (compact) 16.dp else 24.dp) - LIST_ITEM_INSET, vertical = 24.dp)
     val aboutLabel = stringResource(R.string.language_unit_about)
     val openLesson = { id: UUID -> actions.open(AppRoute.Lesson(id.toString())) }

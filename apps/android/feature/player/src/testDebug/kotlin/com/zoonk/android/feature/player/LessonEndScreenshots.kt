@@ -10,9 +10,6 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
@@ -30,6 +27,7 @@ import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonFit
@@ -166,20 +164,7 @@ class LessonEndScreenshots {
                 }
             }
         }
-        compose.waitForIdle()
-        if (fold) {
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(
-                            compose.activity,
-                            state = FoldingFeature.State.FLAT,
-                            orientation = FoldingFeature.Orientation.VERTICAL,
-                        ),
-                    ),
-                ),
-            )
-        }
+        if (fold) compose.unfoldBook(folds) else compose.waitForIdle()
         compose.mainClock.advanceTimeBy(10_000)
         compose.waitForIdle()
         write(name, compose.onRoot().captureToImage().asAndroidBitmap())

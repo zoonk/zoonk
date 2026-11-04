@@ -61,6 +61,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
@@ -106,7 +107,7 @@ fun MockScreen(
                             }
 
                             else -> {
-                                CircularProgressIndicator()
+                                PageLoading()
                             }
                         }
                     }

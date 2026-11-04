@@ -111,6 +111,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.DateStyle
@@ -143,7 +144,7 @@ fun PronunciationScreen(
 
     if (owner == null || goalId == null) {
         TaskScaffold(onClose = navigator::closeTask, title = { Text(stringResource(R.string.pronunciation_title)) }) { padding ->
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            PageLoading(Modifier.padding(padding))
         }
         return
     }
@@ -207,7 +208,7 @@ internal fun PronunciationTask(
 
     TaskScaffold(onClose = navigator::closeTask, title = { Text(stringResource(R.string.pronunciation_title)) }) { padding ->
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-            if (fresh == false) LoadFailedMessage(onRetry = { attempt++ }) else CircularProgressIndicator()
+            if (fresh == false) LoadFailedMessage(onRetry = { attempt++ }) else PageLoading()
         }
     }
 }

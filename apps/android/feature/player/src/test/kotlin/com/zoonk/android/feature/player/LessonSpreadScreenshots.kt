@@ -13,9 +13,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.language.alphabet
@@ -25,6 +22,7 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepVisual
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.api.ApiJson
 import kotlinx.serialization.decodeFromString
 import org.junit.Assume.assumeTrue
@@ -75,16 +73,7 @@ class LessonSpreadScreenshots {
             withTutor = withTutor,
             withSpeech = true,
         )
-        if (open) {
-            rule.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                    ),
-                ),
-            )
-        }
+        if (open) rule.unfoldBook(folds)
         then()
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()

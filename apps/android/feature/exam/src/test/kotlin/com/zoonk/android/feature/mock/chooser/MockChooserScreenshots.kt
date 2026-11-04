@@ -12,9 +12,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
@@ -27,6 +24,7 @@ import com.zoonk.android.feature.exam.GOAL
 import com.zoonk.android.feature.exam.mockOptions
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -129,20 +127,7 @@ class MockChooserScreenshots {
                 }
             }
         }
-        if (fold) {
-            compose.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(
-                            compose.activity,
-                            state = FoldingFeature.State.FLAT,
-                            orientation = FoldingFeature.Orientation.VERTICAL,
-                        ),
-                    ),
-                ),
-            )
-        }
+        if (fold) compose.unfoldBook(folds)
         compose.mainClock.advanceTimeBy(WRITING_FOR)
         write(name, compose.onRoot().captureToImage().asAndroidBitmap())
     }

@@ -16,9 +16,6 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
@@ -34,6 +31,7 @@ import com.zoonk.android.feature.mock.runner.RUN_BLOCK
 import com.zoonk.android.feature.mock.runner.runningMock
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.MockExam
 import kotlinx.coroutines.CompletableDeferred
@@ -162,7 +160,7 @@ class MockResultScreenshots {
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun openBookWithoutAside() {
         show(finishedMock(extra = """"purpose":"placement","review":[$MISSED,$STATEMENT]"""))
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-open-book-without-aside")
     }
 
@@ -171,7 +169,7 @@ class MockResultScreenshots {
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun openBookPerfect() {
         show(finishedMock(result = result(extra = """"correct":3,"blank":0"""), extra = """"purpose":"placement","review":[]"""))
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-open-book-perfect")
     }
 
@@ -179,7 +177,7 @@ class MockResultScreenshots {
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun openBookWithAside() {
         show(enem())
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-open-book-with-aside")
     }
 
@@ -230,7 +228,7 @@ class MockResultScreenshots {
     @Config(qualifiers = BOOK)
     fun bookEssayGraded() {
         show(essaysOnly(gradedEssay()))
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-book-essay-graded")
     }
 
@@ -238,7 +236,7 @@ class MockResultScreenshots {
     @Config(qualifiers = BOOK)
     fun bookEssayNextStep() {
         show(essaysOnly(gradedEssay()))
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-book-essay-next-step", continues = 1)
     }
 
@@ -246,7 +244,7 @@ class MockResultScreenshots {
     @Config(qualifiers = GALAXY)
     fun galaxyEssayGraded() {
         show(essaysOnly(gradedEssay()))
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-galaxy-essay-graded")
     }
 
@@ -254,7 +252,7 @@ class MockResultScreenshots {
     @Config(qualifiers = GALAXY)
     fun galaxyEssayNextStep() {
         show(essaysOnly(gradedEssay()))
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-galaxy-essay-next-step", continues = 1)
     }
 
@@ -262,7 +260,7 @@ class MockResultScreenshots {
     @Config(qualifiers = BOOK)
     fun bookEssayUngraded() {
         show(essaysOnly(pendingEssay()))
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-book-essay-ungraded")
     }
 
@@ -270,7 +268,7 @@ class MockResultScreenshots {
     @Config(qualifiers = BOOK)
     fun bookSpeaking() {
         show(speakingOnly())
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-book-speaking")
     }
 
@@ -278,7 +276,7 @@ class MockResultScreenshots {
     @Config(qualifiers = GALAXY)
     fun galaxySpeaking() {
         show(speakingOnly())
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-galaxy-speaking")
     }
 
@@ -286,7 +284,7 @@ class MockResultScreenshots {
     @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
     fun bookEssayGradedDarkMoreContrast() {
         show(essaysOnly(gradedEssay()), dark = true, moreContrast = true)
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-book-essay-graded-dark-more-contrast")
     }
 
@@ -295,7 +293,7 @@ class MockResultScreenshots {
     fun bookEssayGradedAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
         show(essaysOnly(gradedEssay()))
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-book-essay-graded-font200")
     }
 
@@ -303,7 +301,7 @@ class MockResultScreenshots {
     @Config(qualifiers = BOOK)
     fun bookEssayGradedRightToLeft() {
         show(essaysOnly(gradedEssay()), layoutDirection = LayoutDirection.Rtl)
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-book-essay-graded-rtl")
     }
 
@@ -339,7 +337,7 @@ class MockResultScreenshots {
     @Config(qualifiers = BOOK)
     fun bookWithAsideRightToLeft() {
         show(enem(), layoutDirection = LayoutDirection.Rtl)
-        unfold()
+        compose.unfoldBook(folds)
         capture("result-open-book-with-aside-rtl")
     }
 
@@ -410,12 +408,6 @@ class MockResultScreenshots {
         }
         compose.waitForIdle()
         return api
-    }
-
-    private fun unfold() {
-        val fold = FoldingFeature(compose.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
-        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
-        compose.waitForIdle()
     }
 
     private fun capture(

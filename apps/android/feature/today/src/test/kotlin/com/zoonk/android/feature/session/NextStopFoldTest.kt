@@ -19,6 +19,7 @@ import com.zoonk.android.feature.warmup.WARM_UP_ID
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
 import com.zoonk.api.models.LessonReadiness
@@ -42,10 +43,6 @@ class NextStopFoldTest {
 
     @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
-
-    private fun unfold() {
-        folds.unfoldBook(rule.activity, rule::waitForIdle)
-    }
 
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
@@ -99,7 +96,7 @@ class NextStopFoldTest {
         rule.waitForIdle()
         rule.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
 
-        unfold()
+        rule.unfoldBook(folds)
         val answer = rule.onNodeWithText("Here's the answer").getUnclippedBoundsInRoot()
         assertTrue("the guessed card is on the page after the fold: $answer", answer.left >= 426.dp)
 
@@ -107,7 +104,7 @@ class NextStopFoldTest {
         restoration.emulateSavedInstanceStateRestore()
         rule.onNodeWithText("Here's the answer").assertExists()
 
-        unfold()
+        rule.unfoldBook(folds)
         rule.onNodeWithText("Here's the answer").assertExists()
     }
 

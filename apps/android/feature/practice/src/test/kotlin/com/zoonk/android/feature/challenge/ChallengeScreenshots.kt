@@ -13,9 +13,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
@@ -25,6 +22,7 @@ import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Challenge
 import com.zoonk.api.models.ChallengeGeneration
@@ -140,27 +138,11 @@ class ChallengeScreenshots {
                 }
             }
         }
-        if (fold) unfold()
+        if (fold) rule.unfoldBook(folds)
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
-
-    /**
-     * Opens the book flat. The publisher tells only what listens when it publishes, and a frame rebuilt
-     * as the fold moves its aside listens anew, so it publishes again once that settles.
-     */
-    private fun unfold() =
-        repeat(2) {
-            rule.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                    ),
-                ),
-            )
-        }
 
     private val leftOutEffect =
         com.zoonk.api.ApiJson.decodeFromString(

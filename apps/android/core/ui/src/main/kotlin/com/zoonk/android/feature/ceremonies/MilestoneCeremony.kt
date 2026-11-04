@@ -53,6 +53,7 @@ import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.api.models.Milestone
@@ -112,6 +113,7 @@ fun MilestoneCeremony(
         onDismissRequest = ::close,
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
+        HoldUntilFoldsRead()
         Surface(Modifier.fillMaxSize()) {
             val words =
                 @Composable {
