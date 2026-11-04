@@ -130,6 +130,30 @@ class DraftStoreTest {
         }
 
     @Test
+    fun aScreensFlushCancelledMidwayStillLandsTheSave() =
+        runTest {
+            val io = HeldDispatcher(StandardTestDispatcher(testScheduler))
+            val drafts = DraftStore(folder.root, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)), io = io)
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn { "token-a" }
+            val essay = drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer())
+            essay.save(EssayDraft("earlier"))
+            essay.saveDebounced(EssayDraft("latest"))
+            runCurrent()
+            io.held = true
+            advanceTimeBy(500)
+            runCurrent()
+            val stopping = launch { essay.flush() }
+            runCurrent()
+            stopping.cancel()
+            io.release()
+            advanceUntilIdle()
+            sessions.signOut()
+            sessions.signIn { "token-a" }
+            assertEquals(EssayDraft("latest"), drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).value.first())
+        }
+
+    @Test
     fun aGuestsPendingSaveMovesWithTheGuestToTheAccount() =
         runTest {
             val drafts = drafts()

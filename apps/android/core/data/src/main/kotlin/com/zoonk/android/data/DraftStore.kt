@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.Serializer
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -14,7 +15,6 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -187,11 +188,7 @@ class DraftStore(
 
         suspend fun flush(key: String? = null) {
             val saves = if (key == null) pending.values.toList() else listOfNotNull(pending[key])
-            for (save in saves) {
-                if (!pending.remove(save.key, save)) continue
-                save.job.cancel()
-                write(save.key, save.entry)
-            }
+            saves.forEach { it.land() }
         }
 
         suspend fun close(flush: Boolean) {
@@ -201,17 +198,24 @@ class DraftStore(
             pending.clear()
         }
 
-        /** Stays in [pending] until its write lands, so a flush that cancels it midway writes it again. */
+        /** Only its own job writes it, so a flush that's cancelled while waiting for it can't drop it. */
         private inner class PendingSave(
             val key: String,
             val entry: JsonElement,
         ) {
+            private val asked = CompletableDeferred<Unit>()
+
             val job =
                 sessionScope.launch(start = CoroutineStart.LAZY) {
-                    delay(debounce)
+                    withTimeoutOrNull(debounce) { asked.await() }
                     write(key, entry)
                     pending.remove(key, this@PendingSave)
                 }
+
+            suspend fun land() {
+                asked.complete(Unit)
+                job.join()
+            }
         }
     }
 
