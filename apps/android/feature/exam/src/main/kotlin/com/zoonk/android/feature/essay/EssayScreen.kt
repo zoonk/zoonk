@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -109,6 +110,7 @@ import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -568,11 +570,17 @@ internal fun EssayGradeSteps(
         }
     }
 
-    BoxWithConstraints {
+    var span by remember { mutableStateOf<PageSpan?>(null) }
+    // Above both layouts, so folding back to the steps finds the reading place the learner left.
+    val stepScroll = rememberScrollState()
+
+    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+        // An open book shows both steps at once: the grade with its comments before the fold, the next step after it.
+        val pages = !tooShort && spreadFold(maxWidth, span) != null
         val beside = !tooShort && supportingPaneBeside(maxWidth)
         val step: @Composable (Modifier) -> Unit = { modifier ->
             CompositionLocalProvider(LocalStepHeading provides heading) {
-                RunPage(modifier) {
+                RunPage(modifier, stepScroll) {
                     when {
                         tooShort -> TooShort(closed)
                         shown == 0 -> EssayGradeCard(grade, rubric)
@@ -581,29 +589,34 @@ internal fun EssayGradeSteps(
                 }
             }
         }
+        val finalActions: @Composable FlowRowScope.(Modifier) -> Unit = { main ->
+            if (closed) {
+                Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = main) {
+                    Text(stringResource(R.string.essay_back_to_today))
+                }
+            } else {
+                OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
+                    Text(stringResource(R.string.essay_skip_rewrite))
+                }
+                Button(
+                    onClick = viewModel::rewrite,
+                    enabled = !finished,
+                    modifier = main,
+                ) { Text(stringResource(R.string.essay_rewrite)) }
+            }
+        }
 
         TaskScaffold(
             onClose = navigator::closeTask,
-            title = { StepDots(count, shown) },
+            title = { if (!pages) StepDots(count, shown) },
             bottomBar = {
                 TaskActionBar {
-                    StepPagerActions(count, shown, onIndexChange = { index = it }) { main ->
-                        if (closed) {
-                            Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = main) {
-                                Text(stringResource(R.string.essay_back_to_today))
-                            }
-                        } else {
-                            OutlinedButton(onClick = viewModel::finish, enabled = !finishing) {
-                                Text(stringResource(R.string.essay_skip_rewrite))
-                            }
-                            Button(
-                                onClick = viewModel::rewrite,
-                                enabled = !finished,
-                                modifier = main,
-                            ) { Text(stringResource(R.string.essay_rewrite)) }
-                        }
+                    if (pages) {
+                        TaskActions(content = finalActions)
+                    } else {
+                        StepPagerActions(count, shown, onIndexChange = { index = it }, finalAction = finalActions)
                     }
-                    if (shown == count - 1) {
+                    if (pages || shown == count - 1) {
                         if (finishFailed && !finishing) {
                             Text(
                                 stringResource(R.string.essay_finish_failed),
@@ -621,10 +634,30 @@ internal fun EssayGradeSteps(
                 }
             },
         ) { padding ->
-            if (tooShort) {
-                step(Modifier.padding(padding))
-            } else {
-                PageWithSupportingPane(supportingPane = { CommentsAside(grade) }, modifier = Modifier.padding(padding)) { step(Modifier) }
+            when {
+                tooShort -> {
+                    step(Modifier.padding(padding))
+                }
+
+                pages -> {
+                    ResultPages(
+                        modifier = Modifier.padding(padding),
+                        withMoment = false,
+                        columnModifier = Modifier.runColumn(),
+                        done = {
+                            CompositionLocalProvider(LocalStepHeading provides heading) { EssayGradeCard(grade, rubric) }
+                            Comments(grade)
+                        },
+                        next = { NextStep(grade) },
+                    )
+                }
+
+                else -> {
+                    PageWithSupportingPane(
+                        supportingPane = { CommentsAside(grade) },
+                        modifier = Modifier.padding(padding),
+                    ) { step(Modifier) }
+                }
             }
         }
     }
@@ -731,11 +764,15 @@ private fun CommentsAside(grade: EssayGrade) {
                 .verticalScroll(rememberScrollState())
                 .padding(detailPagePadding())
                 .semantics { paneTitle = label },
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            SectionHeader(label)
-            CriterionComments(grade)
-        }
+        ) { Comments(grade) }
+    }
+}
+
+@Composable
+private fun Comments(grade: EssayGrade) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        SectionHeader(stringResource(R.string.essay_comments))
+        CriterionComments(grade)
     }
 }
 

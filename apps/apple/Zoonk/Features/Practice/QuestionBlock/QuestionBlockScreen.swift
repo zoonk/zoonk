@@ -515,7 +515,6 @@ private struct BlockFinishedView: View {
   private var result: some View {
     PracticeTaskLayout {
       PracticeResultTitle(title: title)
-    } response: {
       PracticeResultNumbers(
         correct: completion.correct, total: completion.total,
         brainPower: completion.ownBrainPower,

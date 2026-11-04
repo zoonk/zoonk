@@ -259,4 +259,15 @@ class EssayScreenshots {
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun bookClosedTooShort() = show("essay-book-closed-too-short", drafted = true, tooShort = true, status = "completed", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookClosedGrade() = show("essay-book-closed-grade", drafted = true, status = "completed", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookGradeAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("essay-book-grade-font200", drafted = true, fold = true)
+    }
 }

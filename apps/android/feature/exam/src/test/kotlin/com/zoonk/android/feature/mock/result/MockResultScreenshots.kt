@@ -166,7 +166,7 @@ class MockResultScreenshots {
         capture("result-open-book-without-aside")
     }
 
-    /** Nothing to review: the areas and what the mock showed take the page after the fold. */
+    /** Nothing to review: the areas and what the mock showed stay with the score before the fold, the notes after it. */
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun openBookPerfect() {
