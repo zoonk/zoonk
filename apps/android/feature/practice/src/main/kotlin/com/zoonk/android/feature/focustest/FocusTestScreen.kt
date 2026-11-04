@@ -69,11 +69,13 @@ import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.PressFocus
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberMoveFocus
+import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
@@ -125,10 +127,17 @@ fun FocusTestScreen(
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     val loaded by viewModel.test.collectShown()
-    val replacement = remember { FocusRequester() }
-    val moveFocus = rememberMoveFocus()
-    var requested by rememberSaveable { mutableStateOf(false) }
-    val waiting = ui.started && ui.writing && ui.questions.isEmpty()
+    val run by viewModel.run.collectAsStateWithLifecycle()
+    val focus =
+        rememberPressFocus(
+            when {
+                ui.outcome != null || (ui.started && ui.questions.isNotEmpty()) -> null
+                ui.started && ui.writing -> if (run.status == GenerationRun.Status.Failed) "failed" else "wait"
+                ui.startFailed -> "failed"
+                ui.refused != null -> "limit"
+                else -> "start"
+            },
+        )
 
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
 
@@ -140,16 +149,10 @@ fun FocusTestScreen(
     when (val read = loaded) {
         is LoadState.Loaded -> {
             LaunchedEffect(read.value) { viewModel.arrive(read.value) }
-            LaunchedEffect(waiting, ui.startFailed, ui.refused) {
-                if (requested && (waiting || ui.startFailed || ui.refused != null)) {
-                    requested = false
-                    moveFocus(replacement)
-                }
-            }
             when {
                 ui.started && ui.questions.isNotEmpty() -> FocusTestQuestions(read.value, ui, viewModel, app, navigator, close)
-                ui.started && ui.writing -> FocusTestWriting(viewModel, close, replacement)
-                else -> FocusTestIntro(read.value, ui, viewModel, navigator, replacement) { requested = true }
+                ui.started && ui.writing -> FocusTestWriting(viewModel, close, focus)
+                else -> FocusTestIntro(read.value, ui, viewModel, navigator, focus.requester, focus.press)
             }
         }
 
@@ -214,7 +217,7 @@ internal fun FocusTestIntro(
                             stringResource(if (ui.starting) R.string.focustest_starting else R.string.focustest_start),
                             busy = ui.starting,
                             enabled = true,
-                            modifier = width,
+                            modifier = replacementFocus?.let { width.focusRequester(it) } ?: width,
                         ) { start() }
                     }
                 }
@@ -240,10 +243,14 @@ internal fun FocusTestIntro(
 private fun FocusTestWriting(
     viewModel: FocusTestViewModel,
     onClose: () -> Unit,
-    titleFocus: FocusRequester,
+    focus: PressFocus,
 ) {
     val run by viewModel.run.collectAsStateWithLifecycle()
-    FocusTestWaitScreen(run, viewModel::retryWriting.takeIf { viewModel.canRestart }, onClose, titleFocus)
+    val retry = {
+        focus.press()
+        viewModel.retryWriting()
+    }
+    FocusTestWaitScreen(run, retry.takeIf { viewModel.canRestart }, onClose, focus.requester)
 }
 
 @Composable

@@ -51,7 +51,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
@@ -122,10 +121,10 @@ internal fun PracticeChooser(
                 if (shown is ChooserStatus.Short) startWith(shown.outcome) else stringResource(R.string.mock_chooser_start),
                 busy,
                 enabled = option != null,
-                modifier,
+                modifier.focus(replacementFocus),
             ) { start() }
         } else {
-            SeePlusButton(navigator, modifier, stringResource(R.string.mock_chooser_plus), replacementFocus)
+            SeePlusButton(navigator, modifier.focus(replacementFocus))
         }
     }
 
@@ -222,9 +221,14 @@ internal fun PlacementChooser(
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
         if (open) {
-            StartButton(stringResource(R.string.mock_chooser_placement_start), busy, enabled = option != null, modifier) { start() }
+            StartButton(
+                stringResource(R.string.mock_chooser_placement_start),
+                busy,
+                enabled = option != null,
+                modifier.focus(replacementFocus),
+            ) { start() }
         } else {
-            SeePlusButton(navigator, modifier, stringResource(R.string.mock_chooser_placement_plus), replacementFocus)
+            SeePlusButton(navigator, modifier.focus(replacementFocus))
         }
     }
 
@@ -429,17 +433,14 @@ private fun StartButton(
     )
 }
 
+private fun Modifier.focus(requester: FocusRequester?): Modifier = requester?.let { focusRequester(it) } ?: this
+
 @Composable
 private fun SeePlusButton(
     navigator: AppNavigator,
     modifier: Modifier,
-    description: String,
-    focus: FocusRequester?,
 ) {
-    Button(
-        onClick = { navigator.open(AppRoute.Subscription) },
-        modifier = (focus?.let { modifier.focusRequester(it) } ?: modifier).semantics { stateDescription = description },
-    ) {
+    Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = modifier) {
         Text(stringResource(R.string.mock_chooser_see_plus))
     }
 }

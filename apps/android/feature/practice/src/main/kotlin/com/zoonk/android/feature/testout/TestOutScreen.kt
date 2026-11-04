@@ -15,11 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -71,7 +68,7 @@ import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.rememberMoveFocus
+import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -245,19 +242,22 @@ internal fun TestOutPreparing(
     val run by viewModel.run.collectAsStateWithLifecycle()
     val waiting = ui.writing || ui.startFailed
     val locked = plusRequired || ui.plusRequired
-    val replacement = remember { FocusRequester() }
-    val moveFocus = rememberMoveFocus()
-    var requested by rememberSaveable { mutableStateOf(false) }
+    val focus =
+        rememberPressFocus(
+            when {
+                waiting -> if (ui.startFailed || run.status == GenerationRun.Status.Failed) "failed" else "wait"
+                locked -> "plus"
+                ui.refused != null -> "limit"
+                else -> "start"
+            },
+        )
     val start = {
-        requested = true
+        focus.press()
         viewModel.start()
     }
-
-    LaunchedEffect(waiting, locked, ui.refused) {
-        if (requested && (waiting || locked || ui.refused != null)) {
-            requested = false
-            moveFocus(replacement)
-        }
+    val retryWriting = {
+        focus.press()
+        viewModel.retryWriting()
     }
 
     TaskScaffold(
@@ -267,7 +267,7 @@ internal fun TestOutPreparing(
             if (waiting) {
                 null
             } else {
-                { TaskActionBar { StartActions(ui, locked, navigator, replacement, start) } }
+                { TaskActionBar { StartActions(ui, locked, navigator, focus.requester, start) } }
             },
     ) { padding ->
         RunPage(Modifier.padding(padding)) {
@@ -275,12 +275,12 @@ internal fun TestOutPreparing(
                 GenerationWait(
                     kind = GenerationKind.TestOutQuestions,
                     run = if (ui.writing) run else GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted),
-                    onRetry = if (ui.writing) viewModel::retryWriting.takeIf { viewModel.canRestart } else start,
+                    onRetry = if (ui.writing) retryWriting.takeIf { viewModel.canRestart } else start,
                 ) {
                     RunIntro(
                         stringResource(R.string.testout_writing_title),
                         stringResource(R.string.testout_writing_detail),
-                        titleFocus = replacement,
+                        titleFocus = focus.requester,
                     )
                 }
             } else {
@@ -331,7 +331,7 @@ private fun StartActions(
                     stringResource(if (ui.starting) R.string.testout_starting else R.string.testout_start),
                     busy = ui.starting,
                     enabled = true,
-                    modifier = width,
+                    modifier = width.focusRequester(replacementFocus),
                     onClick = onStart,
                 )
             }
