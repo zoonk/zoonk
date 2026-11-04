@@ -37,6 +37,25 @@ function markedScreens({ lessonId, prompts }: { lessonId: string; prompts: strin
   );
 }
 
+function runStatuses(initial: Record<string, string>): Record<string, string> {
+  const statuses = { ...initial };
+
+  vi.mocked(getRun).mockImplementation(
+    (runId) =>
+      ({
+        exists: Promise.resolve(true),
+        status: Promise.resolve(statuses[runId] ?? "completed"),
+      }) as never,
+  );
+
+  return statuses;
+}
+
+async function linkPicture(stepId?: string) {
+  const asset = await mediaAssetFixture();
+  await prisma.step.update({ data: { mediaAssetId: asset.id }, where: { id: stepId } });
+}
+
 const rejectedCheck = { data: { ...passedCheck.data, passed: false, problems: ["wrong object"] } };
 
 function lessonPictures(lessonId: string) {
@@ -193,22 +212,13 @@ describe(lessonImagesWorkflow, () => {
       prompts: [`atlas ${randomUUID()}`, `sextant ${randomUUID()}`],
     });
 
-    const running = { exists: Promise.resolve(true), status: Promise.resolve("running") };
-    vi.mocked(getRun).mockReturnValue(running as never);
+    const statuses = runStatuses({ "drawing-run": "running" });
     mockHookConflict({ returnValue: Promise.resolve(null), runId: "drawing-run" });
 
     vi.mocked(sleep).mockImplementationOnce(async () => {
-      const asset = await mediaAssetFixture();
-
-      await prisma.step.update({
-        data: { mediaAssetId: asset.id },
-        where: { id: drawnByOther?.id },
-      });
-
-      vi.mocked(getRun).mockReturnValue({
-        ...running,
-        status: Promise.resolve("completed"),
-      } as never);
+      await linkPicture(drawnByOther?.id);
+      statuses["drawing-run"] = "completed";
+      mockHookConflict(null);
     });
 
     await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
@@ -223,6 +233,38 @@ describe(lessonImagesWorkflow, () => {
     await expect(prisma.step.findUniqueOrThrow({ where: { id: left?.id } })).resolves.toMatchObject(
       { mediaAssetId: expect.any(String) },
     );
+  });
+
+  it("takes its turn after another waiting run that took the token first, drawing nothing it drew", async () => {
+    const lesson = await libraryLessonFixture();
+
+    const [missing] = await markedScreens({
+      lessonId: lesson.id,
+      prompts: [`quill ${randomUUID()}`],
+    });
+
+    const statuses = runStatuses({ "drawing-run": "running", "waiting-run": "running" });
+    mockHookConflict({ returnValue: Promise.resolve(null), runId: "drawing-run" });
+
+    vi.mocked(sleep)
+      .mockImplementationOnce(async () => {
+        statuses["drawing-run"] = "completed";
+        mockHookConflict({ returnValue: Promise.resolve(null), runId: "waiting-run" });
+      })
+      .mockImplementationOnce(async () => {
+        await linkPicture(missing?.id);
+        statuses["waiting-run"] = "completed";
+        mockHookConflict(null);
+      });
+
+    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      failed: 0,
+      generated: 0,
+      reused: 0,
+    });
+
+    expect(sleep).toHaveBeenCalledTimes(2);
+    expect(generateLessonImage).not.toHaveBeenCalled();
   });
 
   it("reuses a picture of the same scene and draws the rest", async () => {

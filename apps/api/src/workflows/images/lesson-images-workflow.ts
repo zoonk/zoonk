@@ -1,5 +1,5 @@
 import { getWorkflowMetadata } from "workflow";
-import { claimRunToken, joinRun } from "../_shared/run-token";
+import { waitForRunToken } from "../_shared/run-token";
 import { checkPicture } from "./check-picture";
 import {
   type ImageAnalytics,
@@ -35,11 +35,7 @@ export async function lessonImagesWorkflow({
 
   const { workflowRunId } = getWorkflowMetadata();
   const context = { contentScope: "shared" as const, traceId: workflowRunId, ...analytics };
-  const { conflict } = await claimRunToken(`lesson-images:${lessonId}`);
-
-  if (conflict) {
-    await joinRun(conflict);
-  }
+  await waitForRunToken(`lesson-images:${lessonId}`);
 
   const [stepIds, options] = await Promise.all([
     listLessonImageStepsStep(lessonId),
