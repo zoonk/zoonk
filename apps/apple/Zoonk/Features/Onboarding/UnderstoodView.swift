@@ -563,7 +563,7 @@ private struct RowEditor: View {
       case .text:
         trimmed
       case .date:
-        date.formatted(.iso8601.year().month().day().timeZone(separator: .omitted))
+        isoDay(date)
       case .time:
         date.formatted(
           .verbatim(
