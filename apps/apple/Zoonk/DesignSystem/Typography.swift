@@ -1,10 +1,13 @@
-import CoreText
 import SwiftUI
 import UIKit
 
 /// Main's type roles: Geist for words and Geist Mono for data, at the sizes, weights and tracking
 /// main measures at 390pt. App text takes a role with `typeStyle(_:)` instead of `font(_:)`;
 /// system UI (bars, alerts, menus, pickers, the keyboard) keeps the system font.
+///
+/// Weights are Geist's named ones, as SwiftUI builds them with `Font.custom`: on iOS a weight
+/// change inside a text (Markdown's bold, `typeWeight(_:legibility:)`) can't move a font pinned
+/// between them, so main's 550 to 640 take the nearest.
 struct TypeStyle: Hashable, Sendable {
   enum Face: Hashable, Sendable {
     case sans
@@ -15,8 +18,7 @@ struct TypeStyle: Hashable, Sendable {
   var size: Double
   /// The text style whose Dynamic Type growth this size follows.
   var relativeTo: Font.TextStyle
-  /// Geist's `wght` axis, as main's `font-weight`.
-  var weight: Double
+  var weight: Font.Weight
   /// In em, as main's `letter-spacing`; main's body sets −0.006em under every role without its own.
   var tracking = -0.006
   var face = Face.sans
@@ -29,61 +31,66 @@ struct TypeStyle: Hashable, Sendable {
 
 extension TypeStyle {
   /// Main's `text-headline`: a course's, chapter's or lesson's name on its page, a ceremony.
-  static let heroTitle = TypeStyle(size: 34, relativeTo: .largeTitle, weight: 640, tracking: -0.035)
+  static let heroTitle = TypeStyle(
+    size: 34, relativeTo: .largeTitle, weight: .semibold, tracking: -0.035)
   /// Main's `text-title`.
-  static let pageTitle = TypeStyle(size: 30, relativeTo: .title, weight: 620, tracking: -0.035)
+  static let pageTitle = TypeStyle(
+    size: 30, relativeTo: .title, weight: .semibold, tracking: -0.035)
   /// Main's `text-section`.
-  static let section = TypeStyle(size: 20, relativeTo: .title3, weight: 600, tracking: -0.02)
+  static let section = TypeStyle(size: 20, relativeTo: .title3, weight: .semibold, tracking: -0.02)
   /// A lesson's question.
-  static let question = TypeStyle(size: 19, relativeTo: .title3, weight: 560, tracking: -0.02)
+  static let question = TypeStyle(
+    size: 19, relativeTo: .title3, weight: .semibold, tracking: -0.02)
   /// A lesson's running text.
-  static let lessonText = TypeStyle(size: 18, relativeTo: .body, weight: 400, lineHeight: 1.625)
+  static let lessonText = TypeStyle(
+    size: 18, relativeTo: .body, weight: .regular, lineHeight: 1.625)
   /// Main's `text-lead`, in the secondary color.
-  static let lead = TypeStyle(size: 17, relativeTo: .body, weight: 400, tracking: -0.01)
+  static let lead = TypeStyle(size: 17, relativeTo: .body, weight: .regular, tracking: -0.01)
   /// Running text read for itself: the buddy's words, a question's context, Today's queue.
-  static let reading = TypeStyle(size: 16, relativeTo: .callout, weight: 400)
+  static let reading = TypeStyle(size: 16, relativeTo: .callout, weight: .regular)
   /// A long answer the learner writes, main's essay box: reading size with relaxed lines.
-  static let writing = TypeStyle(size: 16, relativeTo: .callout, weight: 400, lineHeight: 1.625)
+  static let writing = TypeStyle(
+    size: 16, relativeTo: .callout, weight: .regular, lineHeight: 1.625)
   /// A screen's action.
-  static let button = TypeStyle(size: 15, relativeTo: .subheadline, weight: 500)
+  static let button = TypeStyle(size: 15, relativeTo: .subheadline, weight: .medium)
   /// Text in the app; text without a role takes it.
-  static let body = TypeStyle(size: 14, relativeTo: .subheadline, weight: 400)
-  static let rowTitle = TypeStyle(size: 14, relativeTo: .subheadline, weight: 500)
+  static let body = TypeStyle(size: 14, relativeTo: .subheadline, weight: .regular)
+  static let rowTitle = TypeStyle(size: 14, relativeTo: .subheadline, weight: .medium)
   /// Main's `PageSectionTitle`: a page's block, in the primary color.
   static let sectionTitle = TypeStyle(
-    size: 14, relativeTo: .subheadline, weight: 600, tracking: -0.01)
+    size: 14, relativeTo: .subheadline, weight: .semibold, tracking: -0.01)
   /// A button beside text, main's `size="sm"`.
-  static let smallButton = TypeStyle(size: 13, relativeTo: .footnote, weight: 500)
+  static let smallButton = TypeStyle(size: 13, relativeTo: .footnote, weight: .medium)
   /// A note under a block, a hint.
-  static let note = TypeStyle(size: 13, relativeTo: .footnote, weight: 400)
+  static let note = TypeStyle(size: 13, relativeTo: .footnote, weight: .regular)
   /// A row's description, in the secondary color.
-  static let meta = TypeStyle(size: 12, relativeTo: .caption, weight: 400)
+  static let meta = TypeStyle(size: 12, relativeTo: .caption, weight: .regular)
   /// Minutes, counts, dates and a row's trailing value.
   static let data = meta.monospaced()
   /// Over a page's title, in the secondary color.
   static let eyebrow = TypeStyle(
-    size: 11.5, relativeTo: .caption2, weight: 400, face: .mono, isUppercase: true)
+    size: 11.5, relativeTo: .caption2, weight: .regular, face: .mono, isUppercase: true)
   /// Uppercase, inside a panel only.
   static let label = TypeStyle(
-    size: 11.5, relativeTo: .caption2, weight: 550, tracking: 0.04, isUppercase: true)
-  /// A checked answer's verdict, main's `FeedbackVerdict`, in its tone's word color.
-  static let verdict = TypeStyle(size: 15, relativeTo: .subheadline, weight: 550)
-  /// The word on a checked answer option, main's `ANSWER_TAG_CLASS`.
-  static let tag = TypeStyle(size: 11.5, relativeTo: .caption2, weight: 550)
+    size: 11.5, relativeTo: .caption2, weight: .medium, tracking: 0.04, isUppercase: true)
+  /// A checked answer's verdict, main's `FeedbackVerdict` (550), in its tone's word color.
+  static let verdict = TypeStyle(size: 15, relativeTo: .subheadline, weight: .medium)
+  /// The word on a checked answer option, main's `ANSWER_TAG_CLASS` (550).
+  static let tag = TypeStyle(size: 11.5, relativeTo: .caption2, weight: .medium)
   /// A chip's word, main's `CHIP_CLASS`.
-  static let chip = TypeStyle(size: 11.5, relativeTo: .caption2, weight: 500)
+  static let chip = TypeStyle(size: 11.5, relativeTo: .caption2, weight: .medium)
   /// Plot labels and marks too small for `meta`.
-  static let small = TypeStyle(size: 11, relativeTo: .caption2, weight: 400)
+  static let small = TypeStyle(size: 11, relativeTo: .caption2, weight: .regular)
   /// A block's one big number, its unit beside it in `.body` and the secondary color.
   static let readout = TypeStyle(
-    size: 24, relativeTo: .title2, weight: 600, tracking: -0.04, isTabular: true)
+    size: 24, relativeTo: .title2, weight: .semibold, tracking: -0.04, isTabular: true)
   /// The number a moment or a result leads with.
   static let momentReadout = TypeStyle(
-    size: 40, relativeTo: .largeTitle, weight: 600, tracking: -0.04, isTabular: true)
+    size: 40, relativeTo: .largeTitle, weight: .semibold, tracking: -0.04, isTabular: true)
 
   func weight(_ weight: Font.Weight) -> TypeStyle {
     var style = self
-    style.weight = weight.axisValue
+    style.weight = weight
     return style
   }
 
@@ -112,18 +119,13 @@ extension TypeStyle {
   }
 
   /// For a font inside an `AttributedString`, which can't read the environment: it grows with
-  /// Dynamic Type, but Bold Text doesn't add to it and its weight rounds to Geist's named one.
+  /// Dynamic Type, but Bold Text doesn't add to it.
   var attributeFont: Font {
-    let font = Font.custom(
-      face == .mono ? "Geist Mono" : "Geist", size: size, relativeTo: relativeTo
-    )
-    .weight(Font.Weight.standard.min { abs($0.axisValue - weight) < abs($1.axisValue - weight) }!)
-
-    return isItalic ? font.italic() : font
+    styled(.custom(family, size: size, relativeTo: relativeTo), weight: weight)
   }
 
   /// For text that can't take `typeStyle(_:)`, such as text a `Canvas` resolves.
-  @MainActor func font(in environment: EnvironmentValues) -> Font {
+  func font(in environment: EnvironmentValues) -> Font {
     font(
       pointSize: pointSize(environment.dynamicTypeSize), legibility: environment.legibilityWeight)
   }
@@ -137,18 +139,20 @@ extension TypeStyle {
 
   /// SwiftUI doesn't add weight to a custom font for Bold Text, so this adds what iOS adds to the
   /// system font: two steps, regular reading as semibold.
-  @MainActor fileprivate func font(pointSize: Double, legibility: LegibilityWeight?) -> Font {
-    let key = GeistFont(
-      face: face, isItalic: isItalic, isTabular: isTabular && face == .sans, size: pointSize,
-      weight: legibility == .bold ? min(weight + 200, 900) : weight)
+  fileprivate func font(pointSize: Double, legibility: LegibilityWeight?) -> Font {
+    styled(
+      .custom(family, fixedSize: pointSize),
+      weight: legibility == .bold ? weight.withBoldText : weight)
+  }
 
-    if let font = GeistFont.cache[key] {
-      return font
-    }
+  private var family: String {
+    face == .mono ? "Geist Mono" : "Geist"
+  }
 
-    let font = Font(key.makeFont())
-    GeistFont.cache[key] = font
-    return font
+  private func styled(_ font: Font, weight: Font.Weight) -> Font {
+    let font = font.weight(weight)
+    let italic = isItalic ? font.italic() : font
+    return isTabular && face == .sans ? italic.monospacedDigit() : italic
   }
 }
 
@@ -169,6 +173,34 @@ extension Text {
   /// view passes `legibilityWeight`, so the piece stays heavier than the bolder text around it.
   func typeWeight(_ weight: Font.Weight, legibility: LegibilityWeight?) -> Text {
     fontWeight(legibility == .bold ? weight.withBoldText : weight)
+  }
+
+  /// `Text(_:)` for Markdown in a type role. SwiftUI draws strong emphasis as the font's bold face,
+  /// and Geist from semibold up already counts as bold, as regular text does under Bold Text; so
+  /// each strong run takes `typeWeight(.bold, legibility:)` instead.
+  init(_ text: AttributedString, legibility: LegibilityWeight?) {
+    let runs = text.runs[\.inlinePresentationIntent]
+
+    guard runs.contains(where: { $0.0?.contains(.stronglyEmphasized) == true }) else {
+      self.init(text)
+      return
+    }
+
+    var pieces = LocalizedStringKey.StringInterpolation(
+      literalCapacity: 0, interpolationCount: runs.count)
+
+    for (intent, range) in runs {
+      var piece = AttributedString(text[range])
+
+      if let intent, intent.contains(.stronglyEmphasized) {
+        piece.inlinePresentationIntent = intent.subtracting(.stronglyEmphasized)
+        pieces.appendInterpolation(Text(piece).typeWeight(.bold, legibility: legibility))
+      } else {
+        pieces.appendInterpolation(Text(piece))
+      }
+    }
+
+    self.init(LocalizedStringKey(stringInterpolation: pieces))
   }
 }
 
@@ -194,10 +226,27 @@ private struct TypeStyleModifier: ViewModifier {
       .environment(\.typeStyle, style)
 
     if let lineHeight = style.lineHeight {
-      styled.lineSpacing(max(0, (lineHeight - GeistFont.lineHeight(of: style.face)) * pointSize))
+      styled.lineSpacing(max(0, (lineHeight - style.face.ownLineHeight) * pointSize))
     } else {
       styled
     }
+  }
+}
+
+extension TypeStyle.Face {
+  /// A line's own height as a multiple of the size, as text lays it out.
+  fileprivate var ownLineHeight: Double {
+    switch self {
+    case .sans: Self.sansLineHeight
+    case .mono: Self.monoLineHeight
+    }
+  }
+
+  private static let sansLineHeight = lineHeight(of: "Geist-Regular")
+  private static let monoLineHeight = lineHeight(of: "GeistMono-Regular")
+
+  private static func lineHeight(of postScriptName: String) -> Double {
+    (UIFont(name: postScriptName, size: 100)?.lineHeight ?? 121) / 100
   }
 }
 
@@ -211,77 +260,17 @@ private struct TypeWeightModifier: ViewModifier {
   }
 }
 
-private struct GeistFont: Hashable {
-  @MainActor static var cache: [GeistFont: Font] = [:]
-  @MainActor private static var lineHeights: [TypeStyle.Face: Double] = [:]
-
-  /// A line's own height as a multiple of the size, as text lays it out.
-  @MainActor static func lineHeight(of face: TypeStyle.Face) -> Double {
-    if let lineHeight = lineHeights[face] {
-      return lineHeight
-    }
-
-    let font = GeistFont(face: face, isItalic: false, isTabular: false, size: 100, weight: 400)
-      .makeFont()
-    let lineHeight = (CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font)) / 100
-    lineHeights[face] = lineHeight
-    return lineHeight
-  }
-
-  let face: TypeStyle.Face
-  let isItalic: Bool
-  let isTabular: Bool
-  let size: Double
-  let weight: Double
-
-  private var postScriptName: String {
-    switch (face, isItalic) {
-    case (.sans, false): "Geist-Regular"
-    case (.sans, true): "Geist-Italic"
-    case (.mono, false): "GeistMono-Regular"
-    case (.mono, true): "GeistMono-Italic"
-    }
-  }
-
-  func makeFont() -> CTFont {
-    let weightAxis = "wght".utf8.reduce(0) { $0 << 8 | Int($1) }
-    var attributes: [CFString: Any] = [
-      kCTFontNameAttribute: postScriptName,
-      kCTFontVariationAttribute: [weightAxis: weight],
+extension Font.Weight {
+  fileprivate var withBoldText: Font.Weight {
+    let weights: [Font.Weight] = [
+      .ultraLight, .thin, .light, .regular, .medium, .semibold, .bold, .heavy, .black,
     ]
 
-    if isTabular {
-      attributes[kCTFontFeatureSettingsAttribute] = [
-        [kCTFontOpenTypeFeatureTag: "tnum", kCTFontOpenTypeFeatureValue: 1]
-      ]
+    guard let index = weights.firstIndex(of: self) else {
+      return self
     }
 
-    return CTFontCreateWithFontDescriptor(
-      CTFontDescriptorCreateWithAttributes(attributes as CFDictionary), size, nil)
-  }
-}
-
-extension Font.Weight {
-  fileprivate var axisValue: Double {
-    switch self {
-    case .ultraLight: 100
-    case .thin: 200
-    case .light: 300
-    case .medium: 500
-    case .semibold: 600
-    case .bold: 700
-    case .heavy: 800
-    case .black: 900
-    default: 400
-    }
-  }
-
-  fileprivate static let standard: [Font.Weight] = [
-    .ultraLight, .thin, .light, .regular, .medium, .semibold, .bold, .heavy, .black,
-  ]
-
-  fileprivate var withBoldText: Font.Weight {
-    Self.standard.first { $0.axisValue >= min(axisValue + 200, 900) } ?? .black
+    return weights[min(index + 2, weights.count - 1)]
   }
 }
 

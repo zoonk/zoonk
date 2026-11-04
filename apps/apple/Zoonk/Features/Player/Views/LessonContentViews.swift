@@ -5,13 +5,15 @@ struct LessonRichText: View {
   let text: String
   let literalNumbers: Bool
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   init(_ text: String, literalNumbers: Bool = false) {
     self.text = text
     self.literalNumbers = literalNumbers
   }
 
   var body: some View {
-    Text(Self.typeset(text, literalNumbers: literalNumbers))
+    Text(Self.typeset(text, literalNumbers: literalNumbers), legibility: legibilityWeight)
   }
 
   static func typeset(_ text: String, literalNumbers: Bool = false) -> RichInline {

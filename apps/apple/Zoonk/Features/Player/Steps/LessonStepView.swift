@@ -198,6 +198,7 @@ private struct ExplanationStepView: View {
 /// learner's page, right above the button that shows the next one.
 private struct WorkedExampleStepView: View {
   @Environment(\.isPaneSplit) private var isPaneSplit
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let step: LessonStep
   let content: WorkedExampleContent
@@ -244,7 +245,7 @@ private struct WorkedExampleStepView: View {
           VStack(alignment: .leading, spacing: 4) {
             LessonTextBlocks(solved.text)
             if let math = solved.math {
-              Text(LessonMath.typeset(math))
+              Text(LessonMath.typeset(math), legibility: legibilityWeight)
             }
           }
         }

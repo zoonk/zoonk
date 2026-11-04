@@ -82,6 +82,8 @@ private struct StepSolverCanvas: View {
 
   @ActivityState("picks") private var picks: StepSolver.Picks = [:]
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   private var isChecked: Bool {
     if case .checked = context.phase { true } else { false }
   }
@@ -162,10 +164,11 @@ private struct StepSolverCanvas: View {
         {
           let picked = LessonRichText.typeset(first.text)
 
-          firstPick(picked.quoted(spoken: false))
+          firstPick(picked.quoted(spoken: false, legibility: legibilityWeight))
             .typeStyle(.body.weight(.medium))
             .foregroundStyle(.destructiveText)
-            .accessibilityLabel(firstPick(picked.quoted(spoken: true)))
+            .accessibilityLabel(
+              firstPick(picked.quoted(spoken: true, legibility: legibilityWeight)))
         }
       }
     }

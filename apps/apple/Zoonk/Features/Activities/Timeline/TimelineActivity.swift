@@ -232,8 +232,9 @@ private struct TimelineCanvas: View {
   private func gap(from earlier: (String, Int), to later: (String, Int), spoken: Bool) -> Text {
     let years = TimelineScale.yearsBetween(earlier.1, later.1)
     let rounded = TimelineScale.roundedGap(years)
-    let from = LessonRichText.typeset(earlier.0).quoted(spoken: spoken)
-    let to = LessonRichText.typeset(later.0).quoted(spoken: spoken)
+    let from = LessonRichText.typeset(earlier.0).quoted(
+      spoken: spoken, legibility: legibilityWeight)
+    let to = LessonRichText.typeset(later.0).quoted(spoken: spoken, legibility: legibilityWeight)
 
     return Text(
       "\(gapText(years: years, rounded: rounded)) from \(from) (\(formatYear(earlier.1))) to \(to) (\(formatYear(later.1)))",
@@ -359,9 +360,12 @@ private struct TimelineAxis: View {
           x(mark.year) < size.width / 3
           ? .leading : x(mark.year) > size.width * 2 / 3 ? .trailing : .center
         context.draw(
-          Text(LessonRichText.typeset(mark.label).text)
-            .font(TypeStyle.meta.font(in: context.environment)).foregroundStyle(
-              color == .mutedForeground ? .mutedForeground : .primary),
+          Text(
+            LessonRichText.typeset(mark.label).text,
+            legibility: context.environment.legibilityWeight
+          )
+          .font(TypeStyle.meta.font(in: context.environment)).foregroundStyle(
+            color == .mutedForeground ? .mutedForeground : .primary),
           at: CGPoint(x: x(mark.year), y: y), anchor: anchor)
       }
     }

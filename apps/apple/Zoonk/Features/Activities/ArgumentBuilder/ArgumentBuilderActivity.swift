@@ -359,9 +359,11 @@ private struct QuoteText: View {
   let text: String
   let citation: String
 
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text(LessonRichText.typeset("“\(text)”"))
+      Text(LessonRichText.typeset("“\(text)”"), legibility: legibilityWeight)
       Text(citation)
         .typeStyle(.meta)
         .foregroundStyle(.mutedForeground)
