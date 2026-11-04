@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Main's `ListGroup` as a page's `List`: flat rows with a hairline in `border` between them, as wide
-/// as the column, and space rather than a line between sections. Where the width is regular it's
+/// Main's `ListGroup` as a page's `List`: flat rows with a hairline between them, as wide as the
+/// column, and space rather than a line between sections. Where the width is regular it's
 /// one centered column at most 768pt wide, as main's tablet portrait; a pane is narrower, so it keeps
 /// its own width. The page is the system background, which a plain list's rows paint.
 struct ZoonkList<Content: View>: View {
@@ -11,10 +11,9 @@ struct ZoonkList<Content: View>: View {
 
   var body: some View {
     List {
-      // Row and section traits reach a list's rows only from inside it; a row that sets its own
-      // keeps it.
+      // Row and section traits reach a list's rows only from inside it. A separator tint set here
+      // would bring back the hairline a footer hides above itself, so hairlines keep the system's.
       content
-        .listRowSeparatorTint(.border)
         .listSectionSeparator(.hidden)
         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
     }
