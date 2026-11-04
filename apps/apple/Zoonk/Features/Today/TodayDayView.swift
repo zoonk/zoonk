@@ -28,6 +28,7 @@ struct TodayDayView: View {
     case catchUp
     case keepLearning
     case main
+    case mission(Int)
     case planChange
     case prepare
   }
@@ -55,7 +56,9 @@ struct TodayDayView: View {
     .listStyle(.insetGrouped)
     .onAppear(perform: startVisit)
     .onChange(of: isCovered) {
-      if !isCovered {
+      if isCovered {
+        tapTask?.cancel()
+      } else {
         startVisit()
       }
     }
@@ -95,13 +98,15 @@ struct TodayDayView: View {
     }
 
     if !view.upNextLessons.isEmpty {
-      TodayUpNextSection(view: view, isBusy: busy == .keepLearning) {
+      TodayUpNextSection(
+        view: view, isBusy: busy == .keepLearning, failed: failed == .keepLearning
+      ) {
         run(.keepLearning) { await store.addExtraTime(in: view) }
       }
     }
 
     TodayMoreSection(
-      view: view, busy: busy,
+      view: view, busy: busy, failed: failed,
       addTime: { run(.keepLearning) { await store.addExtraTime(in: view) } },
       catchUp: {
         perform(.catchUp) { await store.catchUp(in: view) }
@@ -195,7 +200,7 @@ struct TodayDayView: View {
   @ViewBuilder
   private var aside: some View {
     if !view.session.missions.isEmpty {
-      TodayMissionsSection(view: view, open: openMission)
+      TodayMissionsSection(view: view, busy: busy, failed: failed, open: openMission)
     }
 
     TodayWeekSection(view: view)
@@ -249,13 +254,13 @@ struct TodayDayView: View {
   }
 
   private func openMission(_ block: StudyBlock) {
-    run(.block(block.position)) {
+    run(.mission(block.position)) {
       await store.open(block, as: .mission, in: view)
     }
   }
 
-  /// A tap whose screen went (another day, another tab) or whose learner left is cancelled and opens
-  /// nothing.
+  /// A tap whose screen went (another day, another tab, a task over it) or whose learner left is
+  /// cancelled: it opens nothing and says nothing.
   private func run(_ tap: Tap, _ action: @escaping () async -> MutationResult<StudyDestination>) {
     guard busy == nil else {
       return
