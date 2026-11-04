@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -498,7 +499,7 @@ private fun RequestTile(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f)
+                    .squareOrTaller()
                     .drawBehind {
                         drawRoundRect(
                             color = dash,
@@ -555,6 +556,16 @@ private fun RequestTile(
         if (limit != null && !capped) MindMapLimit(limit, navigator)
     }
 }
+
+/** As tall as it's wide, or taller where its content needs it, as large text can. */
+private fun Modifier.squareOrTaller(): Modifier =
+    layout { measurable, constraints ->
+        val placeable =
+            measurable.measure(
+                constraints.copy(minHeight = constraints.maxWidth.coerceIn(constraints.minHeight, constraints.maxHeight)),
+            )
+        layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+    }
 
 private val TILE_CORNER = 12.dp
 private val TILE_SHAPE = RoundedCornerShape(TILE_CORNER)
