@@ -120,13 +120,25 @@ async function loadAnswerEvents({
       answeredAt: true,
       isCorrect: true,
       isPlacement: true,
-      item: { select: { format: true } },
+      itemId: true,
       skillId: true,
       studySessionId: true,
     },
     take: MAX_ANSWERS,
     where: { itemId: { not: null }, skillId: { in: [...skillIds] }, stepId: null, userId },
   });
+
+  const itemIds = [...new Set(answers.flatMap((answer) => answer.itemId ?? []))];
+
+  const trueFalse =
+    itemIds.length > 0
+      ? await prisma.item.findMany({
+          select: { id: true },
+          where: { format: "trueFalse", id: { in: itemIds } },
+        })
+      : [];
+
+  const trueFalseIds = new Set(trueFalse.map((item) => item.id));
 
   return answers.flatMap((answer): ClaimEvent[] =>
     answer.skillId
@@ -136,7 +148,7 @@ async function loadAnswerEvents({
             isCorrect: answer.isCorrect,
             kind: answer.studySessionId && !answer.isPlacement ? "practice" : "test",
             skillId: answer.skillId,
-            trueFalse: answer.item?.format === "trueFalse",
+            trueFalse: answer.itemId !== null && trueFalseIds.has(answer.itemId),
           },
         ]
       : [],
@@ -144,20 +156,17 @@ async function loadAnswerEvents({
 }
 
 /** Includes basics skipped by choice, dated from that choice. */
-export async function loadDatedClaims({
-  goalId,
-  skillIds,
-  userId,
-}: {
+export async function loadDatedClaims(input: {
   goalId: string;
+  plan?: ClaimPlan | null;
   skillIds: readonly string[];
   userId: string;
 }): Promise<Map<string, DatedClaim>> {
-  if (skillIds.length === 0) {
+  if (input.skillIds.length === 0) {
     return new Map();
   }
 
-  return readDatedClaims(await loadClaimEvents({ goalId, skillIds, userId }));
+  return readDatedClaims(await loadClaimEvents(input));
 }
 
 export async function loadClaimEvents({

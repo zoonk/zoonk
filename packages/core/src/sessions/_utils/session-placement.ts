@@ -3,6 +3,7 @@ import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
+import { type SavedPlan } from "../../learner/facts/saved-plan";
 import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
 import {
   PLACEMENT_WEEK_DAYS,
@@ -21,6 +22,8 @@ export type SessionDayContext = {
   goal: Goal;
   localDate: Date;
   now: Date;
+  /** The goal's saved plan when a GET already read it; without it, it's read fresh. */
+  savedPlan?: SavedPlan | null;
   timeZone: string;
   userId: string;
 };

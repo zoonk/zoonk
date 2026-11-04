@@ -1,5 +1,6 @@
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import "server-only";
+import { readCatchUpItems } from "../../learner/facts/catch-up-items";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
@@ -14,7 +15,6 @@ import { toDayViewFields } from "./day-view-fields";
 import { hasLessonRoom } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
-import { getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-plan";
@@ -52,7 +52,6 @@ export async function loadUnstartedDayView({
     missionViews,
     earned,
     plusLessons,
-    outlines,
   ] = await Promise.all([
     loadStudyWeek({
       localDate,
@@ -78,7 +77,6 @@ export async function loadUnstartedDayView({
       localDate,
       userId,
     }),
-    getDayOutlines({ goal, graph: day.plan.graph, localDate, now }),
   ]);
 
   const missions = missionViews.map((mission) => asDayMission(mission));
@@ -96,7 +94,7 @@ export async function loadUnstartedDayView({
       plannedMinutes: day.plannedMinutes,
     }),
     missions,
-    outlines,
+    outlines: day.plan.outlines,
     plusLessons,
     session: {
       blocks,
@@ -121,6 +119,7 @@ export async function loadUnstartedDayView({
       examTomorrow: fields.examTomorrow,
       freshStart: day.input.freshStart,
       goalId: goal.id,
+      readItems: () => readCatchUpItems(userId, goal.id),
       selectedItems,
       trialEnded: fields.examAccess.trialEnded,
     }),

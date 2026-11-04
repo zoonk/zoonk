@@ -10,10 +10,6 @@ import { listKnownSkills } from "../../../learner/_utils/skill-claims";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { listTaughtStandInSkills } from "../../../lookahead/plan-outline-needs";
 import { hasPlanDeadline } from "../../../plans/_utils/plan-end";
-import {
-  type PlanReadContext,
-  getPlanReadItemKey,
-} from "../../../plans/_utils/plan-read-projection";
 import { getWrittenPracticeView } from "../../../plans/_utils/written-practice-view";
 import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
@@ -82,24 +78,10 @@ function fromSavedPlan(goal: Partial<Pick<Goal, "primaryCourseId">>, saved: Save
 
 function readSyllabusPlan(
   goal: Pick<Goal, "id"> & Partial<Pick<Goal, "primaryCourseId">>,
-  {
-    savedPlan,
-    selectedPlan,
-  }: { savedPlan?: SavedPlan | null; selectedPlan?: Pick<PlanReadContext, "items" | "state"> },
+  savedPlan?: SavedPlan | null,
 ) {
   if (savedPlan !== undefined) {
     return fromSavedPlan(goal, savedPlan);
-  }
-
-  if (selectedPlan) {
-    return {
-      goal: { primaryCourseId: goal.primaryCourseId ?? null },
-      graph: selectedPlan.state.graph,
-      items: selectedPlan.items
-        .filter((item) => LEARN_KINDS.has(item.kind))
-        .map((item) => ({ ...item, id: item.id ?? getPlanReadItemKey(item) })),
-      settings: selectedPlan.state.settings,
-    };
   }
 
   return prisma.plan.findUnique({
@@ -127,17 +109,15 @@ export async function loadSyllabusInput(
   {
     blueprint,
     savedPlan,
-    selectedPlan,
     taughtStandIns,
   }: {
     blueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>;
     savedPlan?: SavedPlan | null;
-    selectedPlan?: Pick<PlanReadContext, "items" | "state">;
     taughtStandIns?: Promise<Set<string>>;
   } = {},
 ): Promise<SyllabusInput | null> {
   const [plan, notice] = await Promise.all([
-    readSyllabusPlan(goal, { savedPlan, selectedPlan }),
+    readSyllabusPlan(goal, savedPlan),
     loadNotice(goal, blueprint, savedPlan ? readExamPicks(savedPlan.settings) : undefined),
   ]);
 

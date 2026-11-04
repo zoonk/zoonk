@@ -3,6 +3,8 @@ import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readPreparationInputs } from "../../learner/facts/preparation-inputs";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { readUsageTotals } from "../../learner/facts/usage-totals";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { type DayView } from "../day-view";
 import { loadUnstartedDayView } from "./load-unstarted-day";
@@ -54,17 +56,19 @@ export async function readStudyDay({
     };
   }
 
-  const selection = await readSavedDayPlan({ goal, now, timeZone });
+  const savedPlan = await readSavedPlan(userId, goal.id);
+  const selection = await readSavedDayPlan({ goal, now, saved: savedPlan, timeZone });
 
   if (!selection) {
     return null;
   }
 
-  const context = { blueprint, goal, localDate, now, timeZone, userId };
+  const context = { blueprint, goal, localDate, now, savedPlan, timeZone, userId };
 
   const day = await planStudyDay({
     ...context,
     readPreparation: () => readPreparationInputs(userId, goal.id),
+    readUsage: () => readUsageTotals(userId),
     selection,
   });
 

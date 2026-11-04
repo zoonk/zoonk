@@ -3,7 +3,9 @@ import { type Mistake, type MistakeCause, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag } from "../cache/tags";
+import { readExamPicks } from "../exams/choices/exam-choices";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { readSavedPlan } from "../learner/facts/saved-plan";
 import { getOwnedGoal } from "../learner/get-owned-goal";
 import { readExamBlueprint } from "../library/exams/read-exam-blueprint";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
@@ -96,9 +98,10 @@ export async function listCurrentUserMistakes(
 
   const goal = owned?.status === "ready" ? owned.goal : null;
 
-  const [skillIds, blueprint] = await Promise.all([
+  const [skillIds, blueprint, savedPlan] = await Promise.all([
     getScopeSkillIds(input),
     goal?.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
+    goal?.examBlueprintId ? readSavedPlan(userId, goal.id) : null,
   ]);
 
   const scope = { userId, ...(skillIds ? { skillId: { in: skillIds } } : {}) };
@@ -119,7 +122,7 @@ export async function listCurrentUserMistakes(
       where: { ...scope, cause: input.cause, status: input.status },
     }),
     countMistakes(scope),
-    goal ? loadExamStructure(goal, { blueprint }) : null,
+    goal ? loadExamStructure(goal, { blueprint, picks: readExamPicks(savedPlan?.settings) }) : null,
     loadMistakePracticeAvailability({
       blueprint,
       goal,

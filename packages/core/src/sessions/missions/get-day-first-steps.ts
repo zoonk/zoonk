@@ -1,4 +1,5 @@
 import "server-only";
+import { readUsageTotals } from "../../learner/facts/usage-totals";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { readBlockPayload } from "../block-payload";
 import { getStoredBlockWait } from "../block-wait";
@@ -32,6 +33,7 @@ export async function getDayFirstSteps({
     goal: session.goal,
     localDate: session.localDate,
     plannedMinutes: session.plannedMinutes,
+    readUsage: () => readUsageTotals(session.userId),
     timeZone,
     userId: session.userId,
   });
