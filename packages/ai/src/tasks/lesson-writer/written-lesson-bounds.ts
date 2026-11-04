@@ -13,7 +13,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /** Ends at the last whole word that fits, so a description loses its tail, never half a word. */
-export function shortenAtWord(text: string, max: number): string {
+function shortenAtWord(text: string, max: number): string {
   if (text.length <= max) {
     return text;
   }

@@ -14,7 +14,7 @@ function findScreenTables(screen: WrittenScreen): MarkdownTable[] {
   return getScreenTexts(screen).flatMap((piece) => findMarkdownTables(piece.text));
 }
 
-export function showsTable(screen: WrittenScreen): boolean {
+function showsTable(screen: WrittenScreen): boolean {
   return findScreenTables(screen).some((table) => table.rows.length > 0);
 }
 
