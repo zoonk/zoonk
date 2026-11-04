@@ -177,6 +177,11 @@ export function TaskFrame({
     | { label: string; segments?: readonly TaskSegment[]; value: number };
 }) {
   const asideRoot = aside ? getTaskAsideRootProps({ width: aside.width }) : null;
+  const frame = useRef<HTMLDivElement>(null);
+  const body = useRef<HTMLElement>(null);
+  const bar = useRef<HTMLDivElement>(null);
+
+  useFocusOnRemovedControl(frame, () => bar.current ?? body.current);
 
   return (
     <div
@@ -187,6 +192,7 @@ export function TaskFrame({
       )}
       data-aside={asideRoot?.["data-aside"]}
       data-slot="task-frame"
+      ref={frame}
     >
       <TaskHeader className="bg-background sticky top-0">
         <TaskHeaderBar>
@@ -221,13 +227,19 @@ export function TaskFrame({
       </TaskHeader>
 
       <main
-        className={cn("flex flex-1 flex-col", fit && FIT_CLASS[fit].body)}
+        className={cn("flex flex-1 flex-col outline-none", fit && FIT_CLASS[fit].body)}
         data-slot="task-frame-body"
+        ref={body}
+        tabIndex={-1}
       >
         {fit === "always" ? children : <TaskBody>{children}</TaskBody>}
       </main>
 
-      {footer && <TaskFooter>{footer}</TaskFooter>}
+      {footer && (
+        <TaskActionBar className="outline-none" ref={bar} tabIndex={-1}>
+          {footer}
+        </TaskActionBar>
+      )}
 
       {aside && (
         <TaskAside footer={aside.footer} label={aside.label} meta={aside.meta} title={aside.title}>
@@ -235,17 +247,6 @@ export function TaskFrame({
         </TaskAside>
       )}
     </div>
-  );
-}
-
-function TaskFooter({ children }: { children: React.ReactNode }) {
-  const bar = useRef<HTMLDivElement>(null);
-  useFocusOnRemovedControl(bar);
-
-  return (
-    <TaskActionBar className="outline-none" ref={bar} tabIndex={-1}>
-      {children}
-    </TaskActionBar>
   );
 }
 
