@@ -18,6 +18,7 @@ import {
   ListRowTitle,
 } from "./list-group";
 import { PlusMark } from "./plus-lock";
+import { StatusRegion } from "./status-region";
 
 export type TestOutStart =
   | { limit: HelpLimit; status: "refused" }
@@ -38,32 +39,32 @@ export function useTestOutStart(onStart: () => Promise<TestOutStart>) {
 }
 
 export function TestOutStartStatus({
+  className,
   isPending,
   result,
 }: {
+  className?: string;
   isPending: boolean;
   result: TestOutStart | null;
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
 
-  if (result?.status === "refused") {
-    return <HelpLimitNotice limit={result.limit} linkComponent={LearnLink} routes={routes} />;
-  }
+  return (
+    <StatusRegion className={className}>
+      {result?.status === "refused" && (
+        <HelpLimitNotice limit={result.limit} linkComponent={LearnLink} routes={routes} />
+      )}
 
-  if (result?.status === "plusRequired") {
-    return <FreeWeekOverNotice />;
-  }
+      {result?.status === "plusRequired" && <FreeWeekOverNotice />}
 
-  if (result?.status === "failed" && !isPending) {
-    return (
-      <p className="text-muted-foreground text-sm" role="status">
-        {t("That didn't work. Try again in a moment.")}
-      </p>
-    );
-  }
-
-  return null;
+      {result?.status === "failed" && !isPending && (
+        <p className="text-muted-foreground text-sm">
+          {t("That didn't work. Try again in a moment.")}
+        </p>
+      )}
+    </StatusRegion>
+  );
 }
 
 export function TestOutStartLink({
@@ -123,9 +124,11 @@ export function TestOutStartRow({
         </ListRowContent>
       </ListRowButton>
 
-      <div className="empty:hidden in-data-[list=panel]:px-4 [&:has(>*)]:pb-3">
-        <TestOutStartStatus isPending={isPending} result={result} />
-      </div>
+      <TestOutStartStatus
+        className="in-data-[list=panel]:px-4 [&:has(>*)]:pb-3"
+        isPending={isPending}
+        result={result}
+      />
     </>
   );
 }

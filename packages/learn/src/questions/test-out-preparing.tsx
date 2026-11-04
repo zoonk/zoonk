@@ -7,6 +7,7 @@ import {
 import { useExtracted } from "next-intl";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { type HelpLimit, HelpLimitNotice } from "../_components/help-limit-notice";
+import { StatusRegion } from "../_components/status-region";
 import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
@@ -47,27 +48,29 @@ function TestOutStart({
   const t = useExtracted();
   const routes = useLearnRoutes();
 
-  if (plusRequired) {
-    return (
-      <>
-        <FreeWeekOverNotice cta={false} />
+  return (
+    <>
+      <StatusRegion>
+        {plusRequired && <FreeWeekOverNotice cta={false} />}
+        {!plusRequired && limit && (
+          <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
+        )}
+      </StatusRegion>
+
+      {plusRequired && (
         <TaskActions>
           <TaskMainLink href={routes.upgrade}>{t("See Plus")}</TaskMainLink>
         </TaskActions>
-      </>
-    );
-  }
+      )}
 
-  if (limit) {
-    return <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />;
-  }
-
-  return (
-    <TaskActions>
-      <TaskMainButton busy={starting} onClick={onStart}>
-        {starting ? t("Starting…") : t("Start the test")}
-      </TaskMainButton>
-    </TaskActions>
+      {!plusRequired && !limit && (
+        <TaskActions>
+          <TaskMainButton busy={starting} onClick={onStart}>
+            {starting ? t("Starting…") : t("Start the test")}
+          </TaskMainButton>
+        </TaskActions>
+      )}
+    </>
   );
 }
 

@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { PlusNotice } from "../_components/plus-lock";
+import { StatusRegion } from "../_components/status-region";
 import { StudyTimeUsedUpActions } from "../_components/study-time-used-up";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween } from "../_utils/iso-date";
@@ -293,10 +294,6 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   }
 }
 
-/**
- * Where it stands is one polite region that stays in the bar while empty, so the line that replaces
- * a refused Start is read out.
- */
 export function ChallengeFooter() {
   const { challenge } = useChallengeScreen();
   const movable = useMovable();
@@ -305,9 +302,7 @@ export function ChallengeFooter() {
 
   return (
     <>
-      <div aria-atomic="true" aria-live="polite" className="empty:absolute" role="status">
-        {line}
-      </div>
+      <StatusRegion>{line}</StatusRegion>
       {actions}
       {!startShows && <MoveFailed />}
       {!startShows && movable && (

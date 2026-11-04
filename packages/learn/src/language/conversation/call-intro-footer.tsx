@@ -6,6 +6,7 @@ import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { StatusRegion } from "../../_components/status-region";
 import { StudyTimeUsedUpActions, StudyTimeUsedUpNote } from "../../_components/study-time-used-up";
 import { TaskActions } from "../../_components/task-layout";
 import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challenge-plus-lock";
@@ -129,14 +130,7 @@ export function CallIntroFooter({
 
   return (
     <>
-      <div
-        aria-atomic="true"
-        aria-live="polite"
-        className="outline-none empty:absolute"
-        ref={status}
-        role="status"
-        tabIndex={-1}
-      >
+      <StatusRegion className="outline-none" ref={status} tabIndex={-1}>
         {start === "dailyLimitReached" && (
           <StudyTimeUsedUpNote>
             {t({
@@ -154,7 +148,7 @@ export function CallIntroFooter({
             {t("Allow the microphone to talk with {name}.", { name })}
           </p>
         )}
-      </div>
+      </StatusRegion>
 
       {microphone.problem && start !== "dailyLimitReached" && start !== "plusRequired" ? (
         <TaskActions>
