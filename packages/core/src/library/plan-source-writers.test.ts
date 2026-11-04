@@ -74,6 +74,7 @@ import {
   drawTestImage,
   mockDrawnImages,
   mockImageChecks,
+  mockImageScene,
   resetImageModels,
   testScene,
 } from "./media/_test-utils/image-mocks";
@@ -1233,6 +1234,7 @@ async function pictureCase(): Promise<WriterCase> {
   storeBlobUploads();
   resetImageModels();
   mockImageChecks([false, false, false]);
+  mockImageScene(testScene());
   mockDrawnImages([image, image]);
 
   return {

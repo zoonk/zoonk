@@ -1,7 +1,12 @@
 import "server-only";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
-import { imageSceneSchema } from "@zoonk/ai/tasks/images/scene-schema";
-import { type ImageCanvas, getImagePalette } from "@zoonk/ai/tasks/images/style";
+import { generateImageScene } from "@zoonk/ai/tasks/images/scene";
+import {
+  type ImageScene,
+  describeImageScene,
+  imageSceneSchema,
+} from "@zoonk/ai/tasks/images/scene-schema";
+import { type ImageCanvas, type ImagePalette, getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { prisma } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -9,7 +14,13 @@ import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../../cache/tag
 import { readStoredImage } from "../../images/read-stored-image";
 import { toProvenanceData } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
-import { type DrawnImage, drawCheckedImage, reviewImage } from "./_utils/draw-checked-image";
+import { CURRENT_STEPS } from "../lessons/lesson-versions";
+import {
+  type DrawnImage,
+  drawCheckedImage,
+  drawImage,
+  reviewImage,
+} from "./_utils/draw-checked-image";
 import { type ImageAnalytics } from "./_utils/draw-library-image";
 import { uploadImageFile } from "./_utils/save-image-asset";
 
@@ -58,13 +69,20 @@ async function findLessonTags(assetId: string): Promise<string[]> {
   return steps.map((step) => getLibraryLessonCacheTag(step.lessonId));
 }
 
-async function replacePicture({ asset, drawn }: { asset: CheckedAsset; drawn: DrawnImage }) {
+type RedrawnImage = DrawnImage & { scene: ImageScene };
+
+async function replacePicture({ asset, drawn }: { asset: CheckedAsset; drawn: RedrawnImage }) {
   const file = await uploadImageFile({ image: drawn.image, ownerId: asset.ownerId });
   const now = new Date();
 
   await prisma.$transaction([
     prisma.mediaAsset.update({
-      data: { ...file, ...toProvenanceData(drawn.provenance) },
+      data: {
+        ...file,
+        ...toProvenanceData(drawn.provenance),
+        prompt: describeImageScene(drawn.scene),
+        scene: drawn.scene,
+      },
       where: { id: asset.id },
     }),
     prisma.step.updateMany({ data: { updatedAt: now }, where: usesPicture(asset.id) }),
@@ -100,6 +118,105 @@ async function removePicture(asset: CheckedAsset) {
   });
 }
 
+/** Every scene shows a picture, so a scene's picture is replaced and never taken out of use. */
+async function showsScene(assetId: string): Promise<boolean> {
+  const scene = await prisma.step.findFirst({
+    select: { id: true },
+    where: {
+      ...CURRENT_STEPS,
+      content: { equals: "text", path: ["variant"] },
+      kind: "hook",
+      mediaAssetId: assetId,
+    },
+  });
+
+  return scene !== null;
+}
+
+type Redraw = {
+  alt?: string | null;
+  analytics?: ImageAnalytics;
+  asset: CheckedAsset;
+  canvas: ImageCanvas;
+  language: string;
+  palette: ImagePalette;
+};
+
+/**
+ * A picture that fails its check usually followed a plan that contradicts its alt, so redrawing
+ * that plan fails the same way. Labels stay as they were: screens and questions point at them.
+ */
+async function planSceneAgain({
+  alt,
+  analytics,
+  asset,
+  findings,
+  language,
+}: Redraw & { findings: string[] }): Promise<ImageScene> {
+  const { data } = await generateImageScene({
+    alt,
+    analytics,
+    findings,
+    language,
+    request: alt ?? describeImageScene(asset.scene),
+    textAllowed: asset.scene.labels.length > 0,
+  });
+
+  return { ...data, labels: asset.scene.labels };
+}
+
+/**
+ * A scene's last resort: its people and place alone, with no text and no detail its alt could
+ * contradict, so it isn't held to the alt and the scene always keeps a picture.
+ */
+async function drawSceneSetting({
+  alt,
+  analytics,
+  asset,
+  canvas,
+  language,
+  palette,
+}: Redraw): Promise<RedrawnImage | null> {
+  const { data: scene } = await generateImageScene({
+    alt: null,
+    analytics,
+    language,
+    request: `Only the people and the place of this moment, seen whole from a few steps away, with nothing shown up close: ${alt ?? describeImageScene(asset.scene)}`,
+    textAllowed: false,
+  });
+
+  const drawn = await drawImage({ analytics, canvas, language, palette, scene });
+  return drawn && { ...drawn, scene };
+}
+
+async function redraw({
+  findings,
+  ...input
+}: Redraw & { findings: string[] }): Promise<RedrawnImage | null> {
+  const [scene, isScene] = await Promise.all([
+    planSceneAgain({ ...input, findings }),
+    showsScene(input.asset.id),
+  ]);
+
+  const checked = await drawCheckedImage({
+    alt: input.alt,
+    analytics: input.analytics,
+    attempts: isScene ? 1 : undefined,
+    canvas: input.canvas,
+    corrections: findings,
+    language: input.language,
+    palette: input.palette,
+    scene,
+    serviceTier: CHECK_TIER,
+  });
+
+  if (checked) {
+    return { ...checked, scene };
+  }
+
+  return isScene ? drawSceneSetting(input) : null;
+}
+
 /** Internal workflow bridge for pictures drawn by an existing generation workflow. */
 export async function checkImageAsset({
   alt,
@@ -133,15 +250,14 @@ export async function checkImageAsset({
     return { status: "passed" };
   }
 
-  const drawn = await drawCheckedImage({
+  const drawn = await redraw({
     alt,
     analytics,
+    asset,
     canvas: getAssetCanvas(asset),
-    corrections: review.problems,
+    findings: review.problems,
     language,
     palette: getImagePalette(asset.palette),
-    scene: asset.scene,
-    serviceTier: CHECK_TIER,
   });
 
   const lessonTags = await findLessonTags(asset.id);

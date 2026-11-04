@@ -243,4 +243,41 @@ export const TEST_CASES: ImageSceneCase[] = [
       textAllowed: true,
     },
   },
+  {
+    expectations:
+      "Fábio's hand, seen close, with a small cut on its skin and tiny rod and round microbes entering the cut. The hand is the focal object: ALT names a hand, so a magnified view keeps the hand and never becomes a skin cross-section without it. No text.",
+    expected: { labels: "none", layout: "single" },
+    id: "hand-cut-microbes-pt",
+    userInput: {
+      alt: "Mão com um pequeno corte na pele e micróbios minúsculos entrando pelo corte.",
+      context:
+        "Imunologia › Reconhecimento e imunidade inata › Drenagem linfática e vigilância esplênica",
+      language: "pt",
+      request:
+        "Ilustração científica simples da mão de um homem adulto com um pequeno corte na pele, vista ampliada, com micróbios minúsculos (bactérias em forma de bastão e de esfera) entrando pelo corte. Sem texto.",
+      screenText:
+        "Fábio corta a mão numa lata e micróbios entram pelo corte. As células de defesa que vão reagir estão longe dali. Como partes desses micróbios chegam até elas?",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "The last picture showed a skin cross-section with no hand, so the new plan makes Fábio's hand with its small cut the focal object, with tiny microbes entering the cut, and drops the cross-section. No text.",
+    expected: { labels: "none", layout: "single" },
+    id: "hand-cut-microbes-findings-pt",
+    userInput: {
+      alt: "Mão com um pequeno corte na pele e micróbios minúsculos entrando pelo corte.",
+      context:
+        "Imunologia › Reconhecimento e imunidade inata › Drenagem linfática e vigilância esplênica",
+      findings: [
+        "ALT describes a hand with a small cut on the skin, but the image shows a skin cross-section block with no hand",
+      ],
+      language: "pt",
+      request:
+        "Ilustração científica simples da mão de um homem adulto com um pequeno corte na pele, vista ampliada, com micróbios minúsculos (bactérias em forma de bastão e de esfera) entrando pelo corte. Sem texto.",
+      screenText:
+        "Fábio corta a mão numa lata e micróbios entram pelo corte. As células de defesa que vão reagir estão longe dali. Como partes desses micróbios chegam até elas?",
+      textAllowed: true,
+    },
+  },
 ];

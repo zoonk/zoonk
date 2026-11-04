@@ -53,8 +53,9 @@ function formatLabels({ language, scene }: Pick<ImageCheckInput, "language" | "s
 }
 
 /**
- * Pictures are shown as soon as they're drawn and checked after: a failed one is drawn again and
- * replaced, and a screen whose redraws fail too goes without one.
+ * Pictures are shown as soon as they're drawn and checked after: a failed one is planned and drawn
+ * again and replaced. A screen whose redraws fail too goes without one, except a scene, which keeps
+ * a picture of its people and place.
  */
 export async function checkLessonImage({
   alt,

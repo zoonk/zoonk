@@ -11,6 +11,8 @@ import {
   drawTestImage,
   mockDrawnImages,
   mockImageChecks,
+  mockImageScene,
+  mockImageScenes,
   testScene,
 } from "./_test-utils/image-mocks";
 import { checkImageAsset } from "./check-image-asset";
@@ -68,6 +70,7 @@ describe(checkImageAsset, () => {
   it("replaces a picture its check rejects with a redraw that passes, wherever it's shown", async () => {
     const { asset, item, step } = await shownPicture();
     mockImageChecks([false, true]);
+    mockImageScene(testScene());
     const drawSpy = mockDrawnImages([await drawTestImage()]);
 
     await expect(checkImageAsset({ assetId: asset.id })).resolves.toStrictEqual({
@@ -91,9 +94,78 @@ describe(checkImageAsset, () => {
     expect(screen.updatedAt.getTime()).toBeGreaterThan(step.updatedAt.getTime());
   });
 
+  it("plans a rejected picture's scene again from its alt and the check's findings, and draws that", async () => {
+    const { asset } = await shownPicture();
+    const alt = "Mão com um pequeno corte na pele e micróbios entrando pelo corte.";
+    const replanned = testScene({ focalObject: `a ${randomUUID()} hand with a small cut` });
+    mockImageChecks([false, true]);
+    const sceneSpy = mockImageScene(replanned);
+    const drawSpy = mockDrawnImages([await drawTestImage()]);
+
+    await expect(checkImageAsset({ alt, assetId: asset.id })).resolves.toStrictEqual({
+      status: "replaced",
+    });
+
+    expect(sceneSpy).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ alt, findings: ["shows a different object"] }),
+    );
+
+    expect(drawSpy).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ scene: replanned }));
+
+    await expect(
+      prisma.mediaAsset.findUniqueOrThrow({ where: { id: asset.id } }),
+    ).resolves.toMatchObject({ scene: replanned });
+  });
+
+  it("keeps a scene's picture when its redraw fails too, drawing its person and place instead", async () => {
+    const [asset, lesson] = await Promise.all([
+      mediaAssetFixture({ scene: testScene({ focalObject: `a ${randomUUID()} skin section` }) }),
+      libraryLessonFixture(),
+    ]);
+
+    const alt = "Mão com um pequeno corte na pele e micróbios entrando pelo corte.";
+
+    const scene = await libraryStepFixture({
+      content: {
+        image: { alt, prompt: "A hand with a small cut" },
+        text: "Fábio corta a mão.",
+        variant: "text",
+      },
+      kind: "hook",
+      lessonId: lesson.id,
+      mediaAssetId: asset.id,
+    });
+
+    const setting = testScene({ focalObject: `a ${randomUUID()} man in his kitchen` });
+    mockImageChecks([false, false, false]);
+    const sceneSpy = mockImageScenes([testScene({ focalObject: "a hand with a cut" }), setting]);
+    const drawSpy = mockDrawnImages([await drawTestImage(), await drawTestImage()]);
+
+    await expect(checkImageAsset({ alt, assetId: asset.id })).resolves.toStrictEqual({
+      status: "replaced",
+    });
+
+    expect(drawSpy).toHaveBeenCalledTimes(2);
+    expect(checkLessonImage).toHaveBeenCalledTimes(2);
+
+    expect(sceneSpy).toHaveBeenLastCalledWith(
+      expect.objectContaining({ alt: null, textAllowed: false }),
+    );
+
+    const [stored, screen] = await Promise.all([
+      prisma.mediaAsset.findUniqueOrThrow({ where: { id: asset.id } }),
+      prisma.step.findUniqueOrThrow({ where: { id: scene.id } }),
+    ]);
+
+    expect(stored).toMatchObject({ scene: setting });
+    expect(stored.url).not.toBe(asset.url);
+    expect(screen.mediaAssetId).toBe(asset.id);
+  });
+
   it("takes a picture out of use when its redraws fail too, dropping the questions about it", async () => {
     const { asset, item, step } = await shownPicture();
     mockImageChecks([false, false, false]);
+    mockImageScene(testScene());
     mockDrawnImages([await drawTestImage(), await drawTestImage()]);
 
     await expect(checkImageAsset({ assetId: asset.id })).resolves.toStrictEqual({
@@ -133,6 +205,7 @@ describe(checkImageAsset, () => {
     });
 
     mockImageChecks([false, false, false]);
+    mockImageScene(testScene());
     const drawSpy = mockDrawnImages([await drawTestImage(), await drawTestImage()]);
 
     await expect(checkImageAsset({ assetId: asset.id })).resolves.toStrictEqual({

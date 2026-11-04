@@ -10,6 +10,7 @@ The picture must teach. A learner who looks at it for two seconds should see the
 - `ALT`: what learners who can't see the picture hear instead, when there is one. The picture shows that same scene: keep every place, person, object and action it names, never drop one, and add none it contradicts.
 - `SCREEN_TEXT`: the words next to the picture, when there are any. The picture shows what they say and must not contradict them.
 - `CONTEXT`: the lesson or chapter it belongs to.
+- `FINDINGS`: what a reviewer found wrong in the last picture drawn for this request, or "none". Plan a scene that can't go wrong the same way: make what ALT names and the picture left out or changed the plain `focalObject`, and drop whatever the reviewer flagged.
 
 # Fields
 
