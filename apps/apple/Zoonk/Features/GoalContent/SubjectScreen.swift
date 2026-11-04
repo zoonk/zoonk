@@ -150,11 +150,12 @@ private struct SubjectContent: View {
             Text("Module", tableName: "Plan", comment: "Eyebrow of a plan module's page")
           }
         }
-        .typeStyle(.note)
+        .typeStyle(.eyebrow)
         .foregroundStyle(.mutedForeground)
 
         Text(subject.name)
-          .typeStyle(.section)
+          .typeStyle(.pageTitle)
+          .accessibilityAddTraits(.isHeader)
           .heroTitle()
 
         if !facts.isEmpty {

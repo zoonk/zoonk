@@ -142,16 +142,17 @@ private struct ChapterContent: View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
         eyebrow
-          .typeStyle(.note)
+          .typeStyle(.eyebrow)
           .foregroundStyle(.mutedForeground)
 
         Text(chapter.chapter.title)
-          .typeStyle(.section)
+          .typeStyle(.pageTitle)
+          .accessibilityAddTraits(.isHeader)
           .heroTitle()
 
         if !lessons.isEmpty {
           facts(done: done)
-            .typeStyle(.note)
+            .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
         }
 
