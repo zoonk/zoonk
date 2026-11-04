@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// Main's `BigQuantity`: a quantity the eye lands on, its numbers in the readout role with tabular
+/// Main's `BigQuantity` (Android's `Readout`): a quantity the eye lands on, its numbers in the readout role with tabular
 /// figures and its words ("min left", "/ 5 hr") smaller and medium in the secondary color.
-struct Readout: View {
+struct BigQuantity: View {
   let text: String
 
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
