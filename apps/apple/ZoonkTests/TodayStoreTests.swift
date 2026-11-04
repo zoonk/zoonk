@@ -122,6 +122,15 @@ final class TodayStoreTests: XCTestCase {
     guard case .obsolete = await left.value else {
       return XCTFail("a screen the learner left says nothing")
     }
+
+    let covered = Task { await router.open(blockID: "b1") }
+    await api.waitForHeldOpening()
+    router.present(.account())
+    await api.releaseOpening()
+
+    guard case .obsolete = await covered.value else {
+      return XCTFail("a sheet the learner opened meanwhile hears nothing")
+    }
   }
 
   func testAMissionLinksSessionWinsOverAnEarlierDayTodayStillShows() async throws {

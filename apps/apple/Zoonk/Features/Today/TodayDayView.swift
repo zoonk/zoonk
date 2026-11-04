@@ -368,10 +368,11 @@ extension AppRouter {
   static func openingTodayBlocks(today: TodayStore) -> BlockOpener {
     { blockID, router in
       let tab = router.selectedTab
-      let shown = (router.tasks, router.path(for: tab).wrappedValue)
+      let shown = (router.tasks, router.path(for: tab).wrappedValue, router.sheet)
       let result = await today.open(blockID: blockID)
 
-      guard router.selectedTab == tab, shown == (router.tasks, router.path(for: tab).wrappedValue)
+      guard router.selectedTab == tab,
+        shown == (router.tasks, router.path(for: tab).wrappedValue, router.sheet)
       else {
         return .obsolete
       }
