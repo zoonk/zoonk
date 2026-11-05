@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.Serializer
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -14,7 +15,6 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -24,12 +24,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import java.io.File
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.concurrent.ConcurrentHashMap
@@ -42,15 +44,17 @@ data class LearnerDrafts(
     val entries: Map<String, JsonElement> = emptyMap(),
 )
 
-/** [moveFrom] is a guest whose drafts move into [next]'s; any other previous account's are deleted. */
+/** [moveFrom] is a guest whose drafts move into [next]'s; [forget] is an account nobody can sign in to again. */
 data class DraftsChange(
     val next: String?,
     val moveFrom: String? = null,
+    val forget: String? = null,
 )
 
 /**
- * Keeps only the current account's file on device and writes it on [io]. A handle stays bound to
- * the account whose session opened it, so a late save from one learner never reaches the next.
+ * Keeps each account's file on device until it's forgotten, so signing in again finds the drafts, as
+ * main and Apple keep unsent work, and writes it on [io]. A handle stays bound to the account whose
+ * session opened it, so a late save from one learner never reaches the next.
  */
 class DraftStore(
     private val directory: File,
@@ -69,25 +73,28 @@ class DraftStore(
     ): DraftHandle<T> = DraftHandle(this, session.accountId, key, serializer)
 
     /**
-     * Runs [transition] under the lock handles wait on, then moves the files: the same account keeps
-     * its file and handles, a guest's upgrade flushes and merges into the account's (the guest's
-     * entries winning), and any other change closes and deletes the old file.
+     * Runs [transition] under the lock handles wait on, then switches files: the same account keeps
+     * its handles, the previous account's pending saves land in its file, a guest's upgrade merges
+     * into the account's (the guest's entries winning), and a forgotten account's file is deleted.
      */
     suspend fun follow(transition: suspend () -> DraftsChange?) {
         lock.withLock {
             val change = transition() ?: return
             val previous = current
-            if (previous?.accountId == change.next) return
+            val switching = previous?.accountId != change.next
+            if (!switching && change.forget == null) return
             // [transition] already published the session, so a caller cancelled now must not leave it without drafts.
             withContext(NonCancellable) {
-                current = null
-                previous?.close(flush = previous.accountId == change.moveFrom)
+                if (switching) {
+                    current = null
+                    previous?.close(flush = previous.accountId != change.forget)
+                }
                 withContext(io) {
                     directory.mkdirs()
                     if (change.next != null && change.moveFrom != null) merge(change.moveFrom, into = change.next)
-                    directory.listFiles()?.filter { it.name != change.next?.let(::fileName) }?.forEach { it.delete() }
+                    listOfNotNull(change.moveFrom, change.forget).forEach { File(directory, fileName(it)).delete() }
                 }
-                current = change.next?.let { AccountDrafts(it) }
+                if (switching) current = change.next?.let { AccountDrafts(it) }
             }
         }
     }
@@ -163,6 +170,8 @@ class DraftStore(
             } catch (e: CancellationException) {
                 // A closed file drops the write; only the caller's own cancellation propagates.
                 currentCoroutineContext().ensureActive()
+            } catch (e: IOException) {
+                // A disk that refuses a draft leaves it on screen for a later save; it never crashes the app.
             }
         }
 
@@ -182,11 +191,7 @@ class DraftStore(
 
         suspend fun flush(key: String? = null) {
             val saves = if (key == null) pending.values.toList() else listOfNotNull(pending[key])
-            for (save in saves) {
-                if (!pending.remove(save.key, save)) continue
-                save.job.cancel()
-                write(save.key, save.entry)
-            }
+            saves.forEach { it.land() }
         }
 
         suspend fun close(flush: Boolean) {
@@ -196,16 +201,24 @@ class DraftStore(
             pending.clear()
         }
 
-        /** Whichever of the debounce and a flush removes it from [pending] writes it. */
+        /** Only its own job writes it, so a flush that's cancelled while waiting for it can't drop it. */
         private inner class PendingSave(
             val key: String,
             val entry: JsonElement,
         ) {
+            private val asked = CompletableDeferred<Unit>()
+
             val job =
                 sessionScope.launch(start = CoroutineStart.LAZY) {
-                    delay(debounce)
-                    if (pending.remove(key, this@PendingSave)) write(key, entry)
+                    withTimeoutOrNull(debounce) { asked.await() }
+                    write(key, entry)
+                    pending.remove(key, this@PendingSave)
                 }
+
+            suspend fun land() {
+                asked.complete(Unit)
+                job.join()
+            }
         }
     }
 
