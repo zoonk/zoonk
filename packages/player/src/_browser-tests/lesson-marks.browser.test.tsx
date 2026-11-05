@@ -148,6 +148,21 @@ describe("lesson marks", () => {
       .toMatchTextContent(/Reading the cloud.*The darker the cloud/u);
   });
 
+  it("keeps a numbered list's numbers when its middle step is the example", async () => {
+    const steps = "1. Heat the water.\n2. Add the salt.\n3. Stir until it dissolves.";
+
+    const explanation = contentStep("explanation", {
+      content: { text: steps },
+      marks: marks({ example: "2. Add the salt.", ideaIndex: 0 }),
+    });
+
+    renderLessonPlayer({ lesson: buildLesson([explanation], { summary: MAP }) });
+    await expect.element(page.getByText("Add the salt.")).toBeVisible();
+
+    const lists = [...document.querySelectorAll<HTMLOListElement>("main ol")];
+    expect(lists.map((list) => list.start)).toStrictEqual([1, 2, 3]);
+  });
+
   it("plays a lesson written before marks as plain text", async () => {
     const plainMap = { ...MAP, ideas: MAP.ideas.map(({ label, text }) => ({ label, text })) };
     renderLessonPlayer({ lesson: lesson({ summary: plainMap, tagged: false }) });

@@ -3028,7 +3028,7 @@ msgctxt "G8bo_b"
 msgid "Not in your material"
 msgstr "Non è nel tuo materiale"
 
-#. Read by screen readers before a diagram of boxes inside boxes, the smallest first.
+#. Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population.
 #: src/lesson/_components/lesson-map.tsx
 msgctxt "pHv5DW"
 msgid "Each level sits inside the next one."

@@ -22,13 +22,13 @@ export function OrientationStrip({ step }: { step: PlayableLibraryStep }) {
   return (
     <PlayerContentFrame className="pt-4">
       <div
-        className="border-border flex items-center gap-3 border-b pb-3"
+        className="border-border @container/strip flex items-center gap-3 border-b pb-3"
         data-slot="orientation-strip"
       >
         <IdeaMiniMap count={ideas.length} current={index} />
 
         <div className="flex min-w-0 flex-col">
-          <p className="text-muted-foreground font-mono text-xs whitespace-nowrap tabular-nums">
+          <p className="text-muted-foreground font-mono text-xs text-balance tabular-nums">
             {t({
               description:
                 "Above a lesson screen: which of the lesson map's ideas the screen teaches, such as 'Idea 2 of 4'.",
@@ -43,7 +43,13 @@ export function OrientationStrip({ step }: { step: PlayableLibraryStep }) {
           )}
         </div>
 
-        {idea.icon && <LessonIconImage className="ms-auto size-11" icon={idea.icon} size={44} />}
+        {idea.icon && (
+          <LessonIconImage
+            className="ms-auto hidden size-11 @[16rem]/strip:block"
+            icon={idea.icon}
+            size={44}
+          />
+        )}
       </div>
     </PlayerContentFrame>
   );

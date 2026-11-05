@@ -11,13 +11,6 @@ import { LessonRichText } from "./lesson-rich-text";
 
 type MapIdea = LessonMapData["ideas"][number];
 
-const LEVEL_CLASSES = [
-  "rounded-[14px] p-3",
-  "rounded-[11px] p-[11px]",
-  "rounded-[9px] p-2.5",
-  "rounded-[7px] p-2.5",
-] as const;
-
 function IdeaContent({ idea, number }: { idea: MapIdea; number: number }) {
   return (
     <>
@@ -161,60 +154,25 @@ function MindMap({ ideas, title }: { ideas: readonly MapIdea[]; title: string })
   );
 }
 
-function NestedLevel({ ideas, index }: { ideas: readonly MapIdea[]; index: number }) {
-  const idea = ideas[index];
-
-  if (!idea) {
-    return null;
-  }
-
-  const depth = ideas.length - 1 - index;
-  const isInnermost = index === 0;
-
-  return (
-    <div
-      className={cn(
-        "flex flex-col",
-        LEVEL_CLASSES[Math.min(depth, LEVEL_CLASSES.length - 1)],
-        isInnermost ? "bg-muted" : "border-foreground/50 contrast-more:border-foreground border",
-      )}
-      data-slot="lesson-map-level"
-    >
-      {!isInnermost && (
-        <div className="mb-2.5">
-          <NestedLevel ideas={ideas} index={index - 1} />
-        </div>
-      )}
-      <IdeaContent idea={idea} number={index + 1} />
-    </div>
-  );
-}
-
-function NestedMap({ ideas }: { ideas: readonly MapIdea[] }) {
+function NestingNote() {
   const t = useExtracted();
 
   return (
-    <div>
-      <p className="sr-only">
-        {t({
-          description:
-            "Read by screen readers before a diagram of boxes inside boxes, the smallest first.",
-          message: "Each level sits inside the next one.",
-        })}
-      </p>
-      <NestedLevel ideas={ideas} index={ideas.length - 1} />
-    </div>
+    <p className="text-muted-foreground mt-4 text-center text-sm">
+      {t({
+        description:
+          "Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population.",
+        message: "Each level sits inside the next one.",
+      })}
+    </p>
   );
 }
 
 export function LessonMap({ map, title }: { map: LessonMapData; title: string }) {
   return (
     <div className="w-full" data-shape={map.shape} data-slot="lesson-map">
-      {map.shape === "nested" ? (
-        <NestedMap ideas={map.ideas} />
-      ) : (
-        <MindMap ideas={map.ideas} title={title} />
-      )}
+      <MindMap ideas={map.ideas} title={title} />
+      {map.shape === "nested" && <NestingNote />}
     </div>
   );
 }

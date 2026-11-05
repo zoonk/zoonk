@@ -73,7 +73,7 @@ function OpeningMapIdea({
         )}
       </PopoverTrigger>
 
-      <PopoverContent className="w-64 gap-1">
+      <PopoverContent className="w-64 max-w-(--available-width) gap-1">
         <PopoverTitle className="text-muted-foreground font-mono text-xs font-normal tabular-nums">
           {name}
         </PopoverTitle>
