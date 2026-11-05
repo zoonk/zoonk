@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// Without the idea's name: the screen's title is its only heading, and a name could use a term the
+/// screen hasn't taught yet.
 struct LessonIdeaStrip: View {
   @Environment(\.stacksContent) private var isStacked
 
@@ -7,32 +9,23 @@ struct LessonIdeaStrip: View {
   let index: Int
 
   var body: some View {
-    let idea = summary.ideas[index]
-
     HStack(spacing: 12) {
       if !isStacked {
         LessonIdeaMiniMap(count: summary.ideas.count, current: index)
       }
 
-      VStack(alignment: .leading, spacing: 2) {
-        Text(
-          "Idea \(index + 1) of \(summary.ideas.count)", tableName: "Player",
-          comment:
-            "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\"."
-        )
-        .font(.caption.monospaced())
-        .foregroundStyle(.secondary)
-
-        if let label = idea.label {
-          Text(label)
-            .font(.headline)
-        }
-      }
+      Text(
+        "Idea \(index + 1) of \(summary.ideas.count)", tableName: "Player",
+        comment:
+          "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"%lld ideas to discover in this lesson\"."
+      )
+      .font(.caption.monospaced())
+      .foregroundStyle(.secondary)
       .frame(maxWidth: .infinity, alignment: .leading)
 
       // The idea's icon can come after the strip shows, so its place is kept for it.
       ZStack {
-        if let icon = idea.icon {
+        if let icon = summary.ideas[index].icon {
           LessonIconImage(icon: icon, size: 44)
         }
       }
