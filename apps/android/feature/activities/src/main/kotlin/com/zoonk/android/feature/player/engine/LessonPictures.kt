@@ -31,15 +31,20 @@ fun LessonPlayerState.isWaitingForMarks(
 /**
  * Pictures drawn and marks tagged since the lesson opened; then, with their wait over, screens stop
  * waiting and a numbered picture's question that never got it is left out (main's
- * `getLostNumberedScreens`). Marks reach only the screens ahead, so the one on view never moves
- * under the learner; the map takes its `about` lines and icons at once.
+ * `getLostNumberedScreens`). The screen on view keeps its marks until the learner leaves it
+ * ([heldMarks]); the map takes its `about` lines and icons at once.
  */
 fun LessonPlayerState.withLateContent(
     fresh: List<LessonStep>,
     openedAt: Long,
     now: Long,
 ): LessonPlayerState {
-    val shown = queue.take(position + 1).toSet()
+    val onView = queue.getOrNull(position)
+    val held =
+        fresh
+            .filter { it.id == onView }
+            .mapNotNull { read -> read.marks?.takeIf { it != steps[read.id]?.marks }?.let { read.id to it } }
+            .toMap()
     val drawn =
         steps.mapValues { (id, step) ->
             val read = fresh.firstOrNull { it.id == id }
@@ -58,7 +63,7 @@ fun LessonPlayerState.withLateContent(
                             image = if (step.imagePending) read.image ?: step.image else step.image,
                             imagePending = step.imagePending && read.imagePending,
                             optionPictures = if (step.imagePending) step.optionPictures + read.optionPictures else step.optionPictures,
-                            marks = if (id in shown) step.marks else read.marks ?: step.marks,
+                            marks = if (id == onView) step.marks else read.marks ?: step.marks,
                         )
                     }
                 }
@@ -66,5 +71,17 @@ fun LessonPlayerState.withLateContent(
         }
     val lost = drawn.values.filter { it.picture?.required == true && it.image == null && !it.imagePending }.map(LessonStep::id)
 
-    return copy(steps = drawn).skipSteps(lost, now)
+    return copy(steps = drawn, heldMarks = heldMarks + held).skipSteps(lost, now)
+}
+
+/** The marks held for a screen reach it once another screen is on view. */
+fun LessonPlayerState.releasingHeldMarks(): LessonPlayerState {
+    val onView = queue.getOrNull(position)
+    val released = heldMarks.filterKeys { it != onView }
+    if (released.isEmpty()) return this
+
+    return copy(
+        steps = steps.mapValues { (id, step) -> released[id]?.let { step.copy(marks = it) } ?: step },
+        heldMarks = heldMarks - released.keys,
+    )
 }

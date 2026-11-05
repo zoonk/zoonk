@@ -754,7 +754,7 @@ class LessonPlayerReducerTest {
     }
 
     @Test
-    fun lateMarksReachOnlyTheScreensAheadAndTheMapAtOnce() {
+    fun lateMarksWaitForTheLearnerToLeaveTheScreenOnViewWhileTheMapTakesThemAtOnce() {
         val opened = play(listOf(explanationStep("seen"), explanationStep("ahead"), lessonMapStep()), started())
         val marks = StepMarks(example = null, icon = null, ideaIndex = 0, underline = "Idea")
         val map = lessonMapStep().content as StepContent.Map
@@ -782,6 +782,7 @@ class LessonPlayerReducerTest {
                 ?.single()
                 ?.about,
         )
+        assertEquals(marks, read.then(LessonAction.Continue).steps["seen"]?.marks)
     }
 
     @Test

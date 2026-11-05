@@ -104,6 +104,12 @@ fun reduce(
     state: LessonPlayerState,
     action: LessonAction,
     now: Long,
+): LessonPlayerState = act(state, action, now).releasingHeldMarks()
+
+private fun act(
+    state: LessonPlayerState,
+    action: LessonAction,
+    now: Long,
 ): LessonPlayerState =
     when (action) {
         is LessonAction.SelectAnswer -> {

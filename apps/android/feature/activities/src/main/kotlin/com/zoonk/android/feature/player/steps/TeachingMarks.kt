@@ -42,6 +42,7 @@ import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.richtext.plainText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LessonIcon
 import com.zoonk.api.models.LessonMap
@@ -102,7 +103,8 @@ internal fun IdeaStrip(
                 )
                 idea.label?.let { Text(it, style = MaterialTheme.typography.titleMedium) }
             }
-            idea.icon?.let { LessonIconImage(it, STRIP_ICON) }
+            // The icon's room is kept while it's drawn, so its arrival never moves the name.
+            Box(Modifier.size(STRIP_ICON)) { idea.icon?.let { LessonIconImage(it, STRIP_ICON) } }
         }
         HorizontalDivider()
     }
@@ -207,8 +209,7 @@ internal fun TeachingText(
     val example = remember(text, marks?.example) { splitExample(text, marks?.example) }
     val underline = marks?.underline?.takeIf { it.isNotBlank() }
     val icon = marks?.icon
-    // One underline at most: the first part of the text that shows the phrase whole.
-    val underlined = (example?.parts ?: listOf(text)).firstOrNull { underline != null && it.contains(underline) }
+    val underlined = remember(example, text, underline) { underlinedPart(example?.parts ?: listOf(text), underline) }
     val body =
         @Composable { part: String ->
             RichText(
@@ -244,6 +245,12 @@ internal data class ExampleSplit(
 ) {
     val parts get() = listOf(before, example, after)
 }
+
+/** One underline at most: the first part whose words, read without their marks, show the phrase. */
+internal fun underlinedPart(
+    parts: List<String>,
+    underline: String?,
+): String? = underline?.let { phrase -> parts.firstOrNull { plainText(it).contains(phrase) } }
 
 internal fun splitExample(
     text: String,

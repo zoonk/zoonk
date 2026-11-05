@@ -262,6 +262,24 @@ class RichTextParserTest {
     }
 
     @Test
+    fun underlinesAPhraseThatRunsThroughABoldTermByItsShownWords() {
+        val blocks = parseRichBlocks("Essa unidade se chama **célula** e forma todo ser vivo.")
+
+        assertEquals(
+            listOf(
+                listOf(
+                    text("Essa unidade se "),
+                    RichSegment(Text, "chama ", underlined = true),
+                    RichSegment(Bold, "célula", underlined = true),
+                    RichSegment(Text, " e forma", underlined = true),
+                    text(" todo ser vivo."),
+                ),
+            ),
+            (underlineRichBlocks(blocks, "chama célula e forma").single() as RichBlock.Paragraph).lines,
+        )
+    }
+
+    @Test
     fun marksNothingWhenNoLineShowsTheQuoteOrTheQuoteCutsAMarkInTwo() {
         val blocks = parseRichBlocks("A **bold** idea.\n\n- One item")
 

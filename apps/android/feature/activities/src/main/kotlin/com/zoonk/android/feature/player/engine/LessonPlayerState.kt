@@ -7,6 +7,7 @@ import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.LibraryLessonCompletion
+import com.zoonk.api.models.StepMarks
 import kotlin.time.Instant
 
 enum class LessonPhase { Playing, Checking, Feedback, Completed }
@@ -117,6 +118,8 @@ data class LessonPlayerState(
     val stepStartedAt: Long = 0,
     val unavailableStepIds: List<String> = emptyList(),
     val writingRestore: WritingRestore? = null,
+    /** Marks that arrived for the screen on view, which it takes once the learner is on another screen, so it never moves under them. */
+    val heldMarks: Map<String, StepMarks> = emptyMap(),
 ) {
     val currentStep: LessonStep? get() = queue.getOrNull(position)?.let(steps::get)
 
