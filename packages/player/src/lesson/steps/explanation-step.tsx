@@ -3,12 +3,13 @@
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { LessonVisual } from "@zoonk/learn/visual";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
 import { ActivityExplore } from "../../activities/activity-explore";
 import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonStepPicture, useIsExploredPictureLost } from "../_components/lesson-pictures";
 import { LessonRichText } from "../_components/lesson-rich-text";
-import { LESSON_BODY_CLASS } from "../_components/lesson-step-text";
+import { LESSON_BODY_CLASS, useTermHighlighter } from "../_components/lesson-step-text";
 import { CornerIcon, MarkedText, hasExampleFrame } from "../_components/marked-text";
 import { ExplainingScreenHelp } from "../controls/ask-buddy-offer";
 import { ExampleLine } from "./example-line";
@@ -20,6 +21,7 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
   const exploredPictureLost = useIsExploredPictureLost(step);
   const ideaId = useId();
   const spoken = useSpokenText();
+  const highlighter = useTermHighlighter();
   const idea = content.title ? `${content.title}\n\n${content.text}` : content.text;
 
   return (
@@ -33,7 +35,11 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
             </SpokenMath>
           </h2>
         )}
-        <MarkedText className={LESSON_BODY_CLASS} marks={marks} text={content.text} />
+        <MarkedText
+          className={cn(LESSON_BODY_CLASS, highlighter)}
+          marks={marks}
+          text={content.text}
+        />
       </div>
 
       <LessonStepPicture className="order-first" hero priority step={step} />

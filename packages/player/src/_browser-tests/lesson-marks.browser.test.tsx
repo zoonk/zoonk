@@ -78,6 +78,18 @@ async function next() {
   await page.getByRole("button", { name: /^Next/u }).click();
 }
 
+const NO_BACKGROUND = "rgba(0, 0, 0, 0)";
+
+async function newTermBackground(lessonOptions: Parameters<typeof buildLesson>[1]) {
+  renderLessonPlayer({
+    lesson: buildLesson([teachingStep("explanation", { marks: null })], lessonOptions),
+  });
+
+  const term = page.getByText("cloud of possibilities", { exact: true });
+  await expect.element(term).toBeVisible();
+  return getComputedStyle(term.element()).backgroundColor;
+}
+
 describe("lesson marks", () => {
   it("opens on the lesson's ideas, each saying what it covers without its answer", async () => {
     const { onExit } = renderLessonPlayer({ lesson: lesson() });
@@ -285,5 +297,15 @@ describe("lesson marks", () => {
     await expect.element(strip()).not.toBeInTheDocument();
     await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
     expect(underlined()).toStrictEqual([]);
+  });
+
+  it("puts a knowledge lesson's new term on the highlighter, even before its marks", async () => {
+    await expect(newTermBackground({})).resolves.not.toBe(NO_BACKGROUND);
+  });
+
+  it("keeps a language lesson's bold plain, as before marks existed", async () => {
+    await expect(newTermBackground({ language: "pt", targetLanguage: "en" })).resolves.toBe(
+      NO_BACKGROUND,
+    );
   });
 });

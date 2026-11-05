@@ -7,7 +7,7 @@ import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { LESSON_BODY_CLASS } from "../_components/lesson-step-text";
+import { LESSON_BODY_CLASS, useTermHighlighter } from "../_components/lesson-step-text";
 import { MarkedText } from "../_components/marked-text";
 import { type StepOf } from "./lesson-step-view-props";
 
@@ -75,12 +75,13 @@ export function WorkedExampleContent({
   const t = useExtracted();
   const isDone = revealed >= content.steps.length;
   const endRef = useNewestStepInView(revealed);
+  const highlighter = useTermHighlighter();
   // oxlint-disable-next-line react/hook-use-state -- Read once as the screen opens, never updated.
   const [openedWith] = useState(revealed);
 
   return (
     <div
-      className="highlight-strong flex w-full flex-col gap-5 lg:max-w-xl"
+      className={cn(highlighter, "flex w-full flex-col gap-5 lg:max-w-xl")}
       data-slot="worked-example"
     >
       <MarkedText className={LESSON_BODY_CLASS} marks={marks} text={content.problem} />
