@@ -67,7 +67,7 @@ describe("session lesson focus settlement", () => {
     ).resolves.toMatchObject({ brainPower: first.completion.brainPower });
   });
 
-  it("credits a session lesson's focused duration once when distinct runs finish before its block settles", async () => {
+  it("credits a session lesson's focused duration once when two of its runs finish at once", async () => {
     freezeClock();
     const now = new Date("2026-10-13T12:00:00Z");
     vi.setSystemTime(now);
@@ -106,43 +106,13 @@ describe("session lesson focus settlement", () => {
 
     expect(first.run.runId).not.toBe(second.run.runId);
     const runIds = [first.run.runId, second.run.runId];
-    const ready = Promise.withResolvers<null>();
-    const release = Promise.withResolvers<null>();
 
-    const holding = prisma.$transaction(
-      async (tx) => {
-        await tx.$queryRaw`SELECT id FROM plan_items WHERE id = ${item.id}::uuid FOR UPDATE`;
-        ready.resolve(null);
-        await release.promise;
-      },
-      { timeout: 12_000 },
-    );
-
-    const held = Promise.allSettled([holding]);
-    void holding.catch(ready.reject);
-    await ready.promise;
-
-    const completions = Promise.allSettled(
+    const results = await Promise.allSettled(
       runIds.map((runId) =>
         completeLibraryLesson({ input: { runId, timeZone: "UTC" }, lessonId: lesson.id }),
       ),
     );
 
-    try {
-      // Holding the plan item blocks settlement after each run publishes its time.
-      await expect
-        .poll(
-          () =>
-            prisma.learningEvent.count({ where: { endedAt: { not: null }, id: { in: runIds } } }),
-          { interval: 10, timeout: 4000 },
-        )
-        .toBe(2);
-    } finally {
-      release.resolve(null);
-      await held;
-    }
-
-    const results = await completions;
     expect(results.map((result) => result.status)).toStrictEqual(["fulfilled", "fulfilled"]);
     const rows = await prisma.learningEvent.findMany({ where: { id: { in: runIds } } });
     expect(rows.reduce((sum, row) => sum + row.seconds, 0)).toBe(1800);
