@@ -19,6 +19,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.memory.MemoryUndo
+import com.zoonk.android.feature.memory.memoryUndo
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.PlanChange
@@ -227,11 +228,11 @@ class TutorViewModel internal constructor(
 
     fun undoMemory(turnId: String) {
         val changes = state.value.memoryChanges[turnId] ?: return
-        if ((state.value.memoryUndos[turnId] ?: MemoryUndo.Offered) != MemoryUndo.Offered) return
+        if (!(state.value.memoryUndos[turnId] ?: MemoryUndo.Offered).canUndo) return
         mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to MemoryUndo.Undoing)) }
         viewModelScope.launch {
-            val undone = store.undoMemory(changes.map { it.shown.reference })
-            mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to if (undone) MemoryUndo.Undone else MemoryUndo.Failed)) }
+            val undo = store.undoMemory(changes.map { it.shown.reference }).memoryUndo()
+            mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to undo)) }
         }
     }
 

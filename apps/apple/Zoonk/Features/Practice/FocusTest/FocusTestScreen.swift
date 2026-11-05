@@ -39,6 +39,8 @@ struct FocusTestScreen: View {
           switch load {
           case .loading:
             ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+          case .failed(.notFound):
+            PracticeRedirect { hooks.navigate(.plan) }
           case .failed(let error):
             PracticeLoadFailureView(error: error) { Task { await read() } }
           case .loaded(let test):
@@ -48,7 +50,9 @@ struct FocusTestScreen: View {
                 hint: { $0.area ?? "" },
                 upcomingTotal: test.needsItems.isEmpty
                   ? nil : test.areas.count * test.questionsPerArea,
-                upcomingEnded: writingEnded, isPending: isSubmitting, failed: submitFailed
+                upcomingEnded: writingEnded,
+                upcomingLimit: (writeFailure as? PracticeAPIError)?.helpLimit,
+                isPending: isSubmitting, failed: submitFailed
               ) { answers in Task { await submit(answers) } }
             } else {
               intro(test)
@@ -65,6 +69,7 @@ struct FocusTestScreen: View {
       }
     }
     .task(id: session.authenticatedSession) { await read() }
+    .clearsRefusal { writeFailure = nil }
   }
 
   private func intro(_ test: FocusTestQuestions) -> some View {
@@ -157,11 +162,12 @@ struct FocusTestScreen: View {
       PracticeResultNumbers(day: DayResult(result))
 
       if undoFailed {
-        Text(
-          "We couldn't undo it. Try again.", tableName: "Practice",
-          comment: "Undoing a focus test's change failed."
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't undo it. Try again.", table: "Practice",
+            comment: "Undoing a focus test's change failed.")
         )
-        .font(.subheadline).foregroundStyle(.destructive)
+        .font(.subheadline)
       }
     } actions: {
       if let changeId = result.changeId, !undone {
@@ -198,7 +204,11 @@ struct FocusTestScreen: View {
       questions += test.questions.filter { !known.contains($0.itemId) }
       load = .loaded(test)
     } catch let error as APIError {
-      if error == .unauthorized { await session.expire(identity) }
+      if error == .unauthorized {
+        await session.expire(identity)
+      } else if session.authenticatedSession != identity {
+        return
+      }
       load = .failed(error)
     } catch {
       load = .failed(.unavailable)
@@ -235,10 +245,10 @@ struct FocusTestScreen: View {
       if case .loaded(let updated) = load, !updated.needsItems.isEmpty { writingEnded = true }
     case .refused(let refusal):
       writingEnded = true
-      if questions.isEmpty { writeFailure = refusal }
+      writeFailure = refusal
     case .failed(let error):
       writingEnded = true
-      if questions.isEmpty { writeFailure = error }
+      writeFailure = error
     case .obsolete:
       break
     }

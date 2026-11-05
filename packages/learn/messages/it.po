@@ -512,6 +512,12 @@ msgctxt "KPL2U8"
 msgid "Step {current, number} of {total, number}"
 msgstr "Passaggio {current, number} di {total, number}"
 
+#: src/_components/step-open-failed.tsx
+#: src/session/next-stop.tsx
+msgctxt "xpHtfD"
+msgid "We couldn't open this step. Try again."
+msgstr "Non siamo riusciti ad aprire questo passaggio. Riprova."
+
 #: src/_components/steps.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
@@ -6485,6 +6491,11 @@ msgctxt "_718cU"
 msgid "Couldn't undo. It changed since."
 msgstr "Impossibile annullare. Il dato è cambiato nel frattempo."
 
+#: src/memory/memory-updated.tsx
+msgctxt "GGUKxA"
+msgid "Couldn't undo. Try again."
+msgstr "Impossibile annullare. Riprova."
+
 #: src/mind-maps/mind-map-card.tsx
 msgctxt "FZBGji"
 msgid "Full screen"
@@ -12172,11 +12183,6 @@ msgstr "Prova invece: {title}"
 msgctxt "ZqQr3A"
 msgid "While you wait: {title}"
 msgstr "Nell’attesa, prova: {title}"
-
-#: src/session/next-stop.tsx
-msgctxt "xpHtfD"
-msgid "We couldn't open this step. Try again."
-msgstr "Non siamo riusciti ad aprire questo passaggio. Riprova."
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx

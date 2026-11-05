@@ -16,7 +16,7 @@ export const ANSWER_TAG_TONE: Record<AnswerOptionResult, string> = {
   wrong: "text-destructive-text",
 };
 
-export const ANSWER_TAG_CLASS = "shrink-0 text-[0.71875rem] font-[550]";
+export const ANSWER_TAG_CLASS = "min-w-0 text-[0.71875rem] leading-snug font-[550]";
 
 export const ANSWER_OPTION_CLASS =
-  "rounded-option relative flex w-full items-start gap-3 px-3.5 py-3.25 text-left text-[0.9375rem] leading-6 font-medium";
+  "rounded-option relative flex w-full items-start gap-3 px-3.5 py-3.25 text-left text-[0.9375rem] leading-6 font-medium wrap-break-word";

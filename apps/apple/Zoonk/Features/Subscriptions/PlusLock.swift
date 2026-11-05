@@ -90,6 +90,25 @@ extension PlusNotice where Action == EmptyView {
   }
 }
 
+struct FreeWeekOverNotice: View {
+  static let title = LocalizedStringResource(
+    "Your free week of exam prep is over", table: "Subscriptions",
+    comment: "Title of the notice when a free exam plan's first week ended")
+  static let description = LocalizedStringResource(
+    "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
+    table: "Subscriptions",
+    comment: "What stays free and what Plus opens once a free exam plan's first week ended")
+
+  var showsSeePlus = true
+  var isInset = false
+
+  var body: some View {
+    PlusNotice(
+      title: Text(Self.title), description: Text(Self.description), showsSeePlus: showsSeePlus,
+      isInset: isInset)
+  }
+}
+
 struct SeePlusButton: View {
   @Environment(AppRouter.self) private var router
 

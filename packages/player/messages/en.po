@@ -4163,6 +4163,11 @@ msgctxt "YtFTtA"
 msgid "Open link"
 msgstr "Open link"
 
+#: src/questions/tutor-markdown.tsx
+msgctxt "xpHtfD"
+msgid "We couldn't open this step. Try again."
+msgstr "We couldn't open this step. Try again."
+
 #. Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since
 #: src/questions/tutor-markdown.tsx
 msgctxt "GYMJ1y"

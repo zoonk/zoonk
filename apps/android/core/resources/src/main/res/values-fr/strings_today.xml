@@ -59,7 +59,7 @@
   "today_insight_time_moved": "5d5bfffa679ccbe67c493c74ee1b477ca82440ed3445c5735a0bf6cf99dc390b",
   "today_insight_time_stays": "ea0d4b386b1cb52839456a79c9f9411d6d47b6a62d9523085c6a087ccb3fec74",
   "today_keep_learning": "3d49c9787f34bb599dc953ca71ca33acee3776b12c3ca14461db25bd7a12c5ae",
-  "today_keep_learning_failed": "4a8aaa1afdc1211e0e7d16c41e91dce42bbf1b4422b903e35fd724e930fe4c05",
+  "today_keep_learning_failed": "a1226d56743154792d5a5ef203b63819023b7652baafabaa4899d4cfc70ef2cf",
   "today_keep_my_time": "ffc14057b4b11be582d567d06b49d857b02338d68d45b3abb417a1a58822c1bf",
   "today_lessons_not_written": "e522eccf1b080e07d8804c11bd0a493ae8fa84f8266b2e255e5b67298ca02f9a",
   "today_limit_reached": "5e898c758e0bc70c24017e6a9225dcef132c16948794954d8f41044936115e81",
@@ -156,6 +156,7 @@
   "today_step_next": "273d0caa15be65f720ff38083694a300389ac8ccdaaba078169e006611e06bf5",
   "today_step_often_tested": "8e01f7e3b3ce0dbc0bd95b275b1c78da3a8c315e74240b5c981b2b91e78d79dd",
   "today_step_often_tested_label": "449fb16cd7c35bbb8d666439a74ddc6fc6d22ecb647b768f4ae4d765472991a3",
+  "today_step_open_failed": "86e7f5cf0d7b91ebf8b5d7cf6d6c7cc628d05980eca9276541e4db269b7aa9f1",
   "today_step_skipped": "cb24182ca6ea0f088d8d5b38f56bbd05e8cbb4acb8bdf4419ddf57ea1053c4ca",
   "today_steps_done": "068c0feff1c4c8c2b813b0166027f92d226a9f0bdd7aefd6fd0ad9bcff9394dd",
   "today_study_everything": "a443e2bdfcb281f9aa76749ce4dd24200c5ef7625662dd305b9697b3923e5eb3",
@@ -327,7 +328,8 @@
     <string name="today_lessons_not_written">Les leçons du jour ne sont pas encore prêtes.</string>
     <string name="today_get_lessons">Obtenir les leçons du jour</string>
     <string name="today_open_failed">Impossible d’ouvrir la prochaine étape. Réessaie.</string>
-    <string name="today_keep_learning_failed">Impossible d’ouvrir tes prochaines leçons. Réessaie.</string>
+    <string name="today_step_open_failed">Impossible d’ouvrir cette étape. Réessaie.</string>
+    <string name="today_keep_learning_failed">Nous n’avons pas pu ouvrir tes prochaines leçons. Réessaie.</string>
     <string name="today_welcome_back">Te revoilà</string>
     <!-- %1$s is a course's title. -->
     <string name="today_suggested_goal_question">Continuer %1$s ?</string>

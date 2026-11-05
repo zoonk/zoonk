@@ -55,16 +55,15 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.mockShapeLabel
 import com.zoonk.android.feature.mock.rememberNow
 import com.zoonk.android.feature.mock.result.MockResult
-import com.zoonk.android.feature.questions.formatClock
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -92,19 +91,15 @@ fun MockScreen(
 
         when {
             loaded == null -> {
-                TaskScaffold(onClose = { navigator.closeTask() }) { padding ->
-                    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                        val current = state
-                        when {
-                            current is LoadState.Failed && current.error != ApiError.NotFound -> {
+                val current = state
+                if ((current as? LoadState.Failed)?.error == ApiError.NotFound || current is LoadState.Empty) {
+                    TaskNotFound(navigator)
+                } else {
+                    TaskScaffold(onClose = { navigator.closeTask() }) { padding ->
+                        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                            if (current is LoadState.Failed) {
                                 LoadFailedMessage(onRetry = { scope.launch { opening.mock.refresh() } })
-                            }
-
-                            current is LoadState.Failed || current is LoadState.Empty -> {
-                                MockNotFound(navigator)
-                            }
-
-                            else -> {
+                            } else {
                                 CircularProgressIndicator()
                             }
                         }
@@ -147,22 +142,6 @@ fun MockScreen(
 internal class MockOpening(
     val mock: Resource<OpenedMock>,
 ) : ViewModel()
-
-@Composable
-private fun MockNotFound(navigator: AppNavigator) {
-    StatusMessage(
-        icon = R.drawable.ic_search_off,
-        title = stringResource(R.string.mock_not_found_title),
-        description = stringResource(R.string.mock_not_found_description),
-    ) {
-        Button(
-            onClick = {
-                navigator.closeTask()
-                navigator.showRoot(AppTab.Today)
-            },
-        ) { Text(stringResource(R.string.mock_go_to_today)) }
-    }
-}
 
 @Composable
 private fun MockRunScreen(

@@ -84,6 +84,25 @@ describe(orderGoalCourses, () => {
       { key: "c", title: "Course C" },
     ]);
   });
+
+  it.each([
+    ["a", "b", "c"],
+    ["b", "c", "a"],
+    ["c", "a", "b"],
+  ])("keeps the first studied course primary when catalog order is %s, %s, %s", (...keys) => {
+    const courses = keys.flatMap((key) => graph.courses.filter((course) => course.key === key));
+
+    const skills = [
+      skill({ course: "b", key: "subject-core" }),
+      skill({ course: "a", key: "supporting-foundation" }),
+      skill({ course: "b", key: "subject-mechanism" }),
+    ];
+
+    expect(orderGoalCourses({ ...graph, courses, skills })).toStrictEqual([
+      { key: "b", title: "Course B" },
+      { key: "a", title: "Course A" },
+    ]);
+  });
 });
 
 describe(toGoalCourses, () => {

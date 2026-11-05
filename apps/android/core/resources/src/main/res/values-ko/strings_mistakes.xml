@@ -13,7 +13,6 @@
   "mistakes_empty_open": "87e818e7ef719131084b089123eca9f49f6fdce266aaf07765feaa63a896d9f9",
   "mistakes_fixed_count": "004f31b554f6deafe3613e9fecf584bc999dd5c44d475f1ac0f71a000df3dfa2",
   "mistakes_more_failed": "757ce2a0ccb2e6dff9298cc6f76cf0bfe05624945f82ec11fc1e2abc84c8e78b",
-  "mistakes_not_found_description": "39dea559655461425f7f1e78e81984dc57fcd5b8d37b58470eb4dbc8b0e8b660",
   "mistakes_notebook_title": "d40cf5ca793f470a5d20fd433667d7df2541444580babf55a2324da5a6fa51d1",
   "mistakes_nothing_description": "4f162d4982938abfa5fa323591dcdc93b7ecf38c624cf8468c9be86d5495015d",
   "mistakes_nothing_title": "82d12cceabba49b1cafea36d00ba9da95bb9e6b27a9a7b3f0fcc6536c78ccba2",
@@ -41,7 +40,6 @@
     <plurals name="mistakes_practice_fixed">
         <item quantity="other">오답 %d개를 고쳤어요</item>
     </plurals>
-    <string name="mistakes_not_found_description">이미 고쳤거나 삭제된 문제일 수 있어요.</string>
     <string name="mistakes_nothing_title">아직 연습할 문제가 없어요</string>
     <string name="mistakes_nothing_description">틀린 문제는 다음 날부터 다시 연습할 수 있어요.</string>
     <string name="mistakes_notebook_title">오답 노트</string>

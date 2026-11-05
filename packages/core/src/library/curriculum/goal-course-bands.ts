@@ -90,17 +90,13 @@ function mergePrivateBands(need: GoalCourseNeed): GoalCourseNeed {
 
 export function orderGoalCourses(graph: GoalSkillGraph): { key: string; title: string }[] {
   const courses = graph.courses.flatMap((course) => {
-    const phases = graph.skills
-      .filter((skill) => skill.course === course.key)
-      .map((skill) => skill.phase);
+    const position = graph.skills.findIndex((skill) => skill.course === course.key);
 
-    return phases.length > 0
-      ? [{ firstPhase: Math.min(...phases), key: course.key, title: course.title }]
-      : [];
+    return position === -1 ? [] : [{ key: course.key, position, title: course.title }];
   });
 
   return courses
-    .toSorted((a, b) => a.firstPhase - b.firstPhase)
+    .toSorted((a, b) => a.position - b.position)
     .map(({ key, title }) => ({ key, title }));
 }
 

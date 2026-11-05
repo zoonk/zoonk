@@ -11,7 +11,6 @@ final class VoiceServices {
   @ObservationIgnored private var speakingPapers:
     [String: Resource<Components.Schemas.SpeakingPaper>] =
       [:]
-  @ObservationIgnored private var checkpointCalls: [String: Resource<LanguageCheckpointCall>] = [:]
   @ObservationIgnored private var conversations: [String: Resource<LanguageConversation>] = [:]
 
   init(clients: APIClientFactory, cache: AppCache) {
@@ -81,12 +80,11 @@ final class VoiceServices {
     return conversation
   }
 
+  /// A new read each time, which the call's screen keeps while it's open: as main reads the call on
+  /// every visit, a call opened again never acts on what the last visit read, such as earlier
+  /// blocks that are done by now or a load that failed.
   func checkpointCall(blockId: String) -> Resource<LanguageCheckpointCall> {
-    if let call = checkpointCalls[blockId] {
-      return call
-    }
-
-    let call = cache.resource(
+    cache.resource(
       audience: .signedIn, domains: [.userProgress, .userSession, .userSubscription]
     ) { [liveCalls] session -> LanguageCheckpointCall? in
       guard let session else {
@@ -95,8 +93,5 @@ final class VoiceServices {
 
       return try await liveCalls.checkpointCall(blockId: blockId, token: session.bearerToken)
     }
-
-    checkpointCalls[blockId] = call
-    return call
   }
 }

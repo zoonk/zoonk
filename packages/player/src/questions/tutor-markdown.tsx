@@ -87,11 +87,12 @@ const LESSON_QUESTION_LINK_SAFETY = {
 
 /**
  * Set `verified` only after the saved answer's links have been checked against their allowlist.
- * `openBlock` resolves to `closed` when nothing opened because the step isn't free to start anymore.
+ * `openBlock` resolves to false when it couldn't open, to `changed` when nothing opened because the
+ * step isn't free to start anymore, and to true otherwise.
  */
 export type TutorAnswerLinks = {
   Link: PlayerLinkComponent;
-  openBlock?: (blockId: string) => Promise<"closed" | null>;
+  openBlock?: (blockId: string) => Promise<boolean | "changed">;
   verified: boolean;
 };
 
@@ -104,7 +105,10 @@ function isPlainClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
 
-type AnswerLinks = Omit<TutorAnswerLinks, "openBlock"> & { openBlock?: (blockId: string) => void };
+type AnswerLinks = Omit<TutorAnswerLinks, "openBlock"> & {
+  openBlock?: (blockId: string) => void;
+  openingBlockId: string | null;
+};
 
 const TutorAnswerLinksContext = createContext<AnswerLinks | null>(null);
 
@@ -115,7 +119,7 @@ function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
     return children;
   }
 
-  const { Link, openBlock } = links;
+  const { Link, openBlock, openingBlockId } = links;
   const blockId = readTutorBlockLink(href);
 
   const onClick =
@@ -129,13 +133,29 @@ function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
       : undefined;
 
   return (
-    <Link href={href} onClick={onClick} prefetch={false}>
+    <Link
+      aria-busy={(blockId !== null && blockId === openingBlockId) || undefined}
+      className="aria-busy:opacity-60"
+      href={href}
+      onClick={onClick}
+      prefetch={false}
+    >
       {children}
     </Link>
   );
 }
 
 const TUTOR_ANSWER_COMPONENTS: Components = { a: TutorAnswerLink };
+
+function BlockOpenFailed() {
+  const t = useExtracted();
+
+  return (
+    <p className="text-destructive-text mt-2 text-sm" role="alert">
+      {t("We couldn't open this step. Try again.")}
+    </p>
+  );
+}
 
 // Streamdown's code and table scrollers carry their own border and background, which the sideways
 // fade would fade with them, so their outer card is the one frame. A table keeps its words whole
@@ -159,33 +179,38 @@ export function TutorMarkdown({
 }) {
   const t = useExtracted();
   const plugins = useMarkdownPlugins({ isStreaming, text: answer });
-  const [closed, setClosed] = useState(false);
-  const [opening, setOpening] = useState(false);
+  const [openingBlockId, setOpeningBlockId] = useState<string | null>(null);
+  const [opened, setOpened] = useState<boolean | "changed" | null>(null);
 
   const openBlock = appLinks?.openBlock;
 
   // One open at a time per answer, so an earlier tap's result never replaces a later one's.
-  const links: AnswerLinks | undefined = appLinks && {
-    ...appLinks,
-    openBlock:
-      openBlock &&
-      (async (blockId) => {
-        if (opening) {
-          return;
-        }
+  const links: AnswerLinks | null = appLinks
+    ? {
+        ...appLinks,
+        openBlock:
+          openBlock &&
+          ((blockId) => {
+            if (openingBlockId) {
+              return;
+            }
 
-        setOpening(true);
-        setClosed(false);
+            setOpeningBlockId(blockId);
+            setOpened(null);
 
-        const { data: result } = await safeAsync(() => openBlock(blockId));
-
-        setOpening(false);
-        setClosed(result === "closed");
-      }),
-  };
+            // Not a transition: React would hold a navigation the learner starts meanwhile until the
+            // open settles, and then the open would win.
+            void safeAsync(() => openBlock(blockId)).then(({ data }) => {
+              setOpeningBlockId(null);
+              setOpened(data ?? false);
+            });
+          }),
+        openingBlockId,
+      }
+    : null;
 
   return (
-    <TutorAnswerLinksContext value={links ?? null}>
+    <TutorAnswerLinksContext value={links}>
       <Streamdown
         animated={isAnimating}
         className={TUTOR_MARKDOWN_CLASS}
@@ -202,8 +227,10 @@ export function TutorMarkdown({
         {answer}
       </Streamdown>
 
+      {opened === false && <BlockOpenFailed />}
+
       <div role="status">
-        {closed && (
+        {opened === "changed" && (
           <p className="text-muted-foreground mt-2 text-sm">
             {t({
               description:

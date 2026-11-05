@@ -411,6 +411,7 @@ private struct CallEndedStatus: View {
           announcePolitely([title, detail].compactMap(\.self).joinedSentences())
         }
       }
+      .announcesAlert(state == .closing || state == .failed ? title : nil)
 
       if state == .closing || state == .failed {
         Button(action: onRetry) {

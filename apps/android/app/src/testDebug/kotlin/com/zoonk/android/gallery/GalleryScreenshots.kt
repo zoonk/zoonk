@@ -16,13 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -33,6 +33,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.util.Locale
 
 /**
  * Review screenshots of the gallery, written only on demand:
@@ -88,7 +89,7 @@ class GalleryScreenshots {
     ) {
         compose.setContent { ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { ComponentGallery() } }
         compose.waitForIdle()
-        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun captureSections(
@@ -110,7 +111,10 @@ class GalleryScreenshots {
             index = section
             compose.waitForIdle()
             val slug = gallerySections[section].title.lowercase().replace(' ', '-')
-            write("$prefix-${"%02d".format(section + 1)}-$slug", compose.onNodeWithTag(SHOT).captureToImage().asAndroidBitmap())
+            write(
+                "$prefix-${"%02d".format(Locale.ROOT, section + 1)}-$slug",
+                compose.onNodeWithTag(SHOT).captureRender().asAndroidBitmap(),
+            )
         }
     }
 
