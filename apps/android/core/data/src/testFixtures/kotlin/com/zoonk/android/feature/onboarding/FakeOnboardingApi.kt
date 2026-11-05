@@ -10,7 +10,6 @@ import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
-import com.zoonk.api.models.CertificateFacts
 import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.Generation
 import com.zoonk.api.models.Goal
@@ -20,7 +19,6 @@ import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestGeneration
-import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import com.zoonk.api.models.LanguageLevelTestSpokenResultHeard
 import com.zoonk.api.models.MaterialQuestionAnswer
@@ -402,7 +400,6 @@ class FakeOnboardingApi : OnboardingApi {
     val levelTestAnswers = mutableListOf<LanguageLevelTestAnswerInput>()
     var replyLost = false
     var finishedLevelTests = 0
-    var placementCertificate: CertificateFacts? = null
 
     /** Holds the level test's reads until it completes, or fails them when it completes exceptionally. */
     var levelTestGate: CompletableDeferred<Unit>? = null
@@ -450,10 +447,9 @@ class FakeOnboardingApi : OnboardingApi {
     override suspend fun finishLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-    ): LanguageLevelTestResult {
+    ) {
         writeFailure?.let { throw it }
         finishedLevelTests++
-        return LanguageLevelTestResult(certificate = placementCertificate, levels = emptyList())
     }
 }
 

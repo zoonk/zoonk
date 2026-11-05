@@ -17,7 +17,7 @@ import com.zoonk.api.models.OwnedCertificate
 import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.roundToInt
 
-enum class CertificateKind { Course, LanguageLevel, Placement }
+enum class CertificateKind { Course, LanguageLevel }
 
 /**
  * What names a certificate, the same in a completion's facts and in the learner's list, so the
@@ -38,14 +38,9 @@ val OwnedCertificate.naming: CertificateName
 val CertificateFacts.naming: CertificateName
     get() = CertificateName(code, kindOf(kind.value), title, targetLanguage, level?.value)
 
-private fun kindOf(value: String) =
-    when (value) {
-        "course" -> CertificateKind.Course
-        "languageLevel" -> CertificateKind.LanguageLevel
-        else -> CertificateKind.Placement
-    }
+private fun kindOf(value: String) = if (value == "languageLevel") CertificateKind.LanguageLevel else CertificateKind.Course
 
-/** The language a level or placement certifies, capitalized as a title: "Spanish", pt "Espanhol". */
+/** The language a level certifies, capitalized as a title: "Spanish", pt "Espanhol". */
 @Composable
 @ReadOnlyComposable
 fun CertificateName.languageWord(): String {
@@ -53,7 +48,6 @@ fun CertificateName.languageWord(): String {
     return targetLanguage?.let { languageName(it, locale).replaceFirstChar { first -> first.titlecase(locale) } }.orEmpty()
 }
 
-/** A course's title, or "Spanish B1" for a level or a placement, which [kindWord] tells apart. */
 @Composable
 @ReadOnlyComposable
 fun CertificateName.words(): String =
@@ -62,23 +56,14 @@ fun CertificateName.words(): String =
         else -> stringResource(R.string.certificates_language_level, languageWord(), level.orEmpty())
     }
 
-@Composable
-@ReadOnlyComposable
-fun OwnedCertificate.kindWord(): String =
-    stringResource(
-        if (naming.kind ==
-            CertificateKind.Placement
-        ) {
-            R.string.certificates_kind_placement
-        } else {
-            R.string.certificates_kind_completion
-        },
-    )
-
 /** "Certificate of completion · Nov 3, 2026", as lists show it. */
 @Composable
 @ReadOnlyComposable
-fun OwnedCertificate.kindLine(): String = factsLine(kindWord(), formatDate(completedOn.toJavaLocalDate(), currentLocale(), DateStyle.Short))
+fun OwnedCertificate.kindLine(): String =
+    factsLine(
+        stringResource(R.string.certificates_kind_completion),
+        formatDate(completedOn.toJavaLocalDate(), currentLocale(), DateStyle.Short),
+    )
 
 /** What the picture says, for TalkBack: main's page heading and the day it was earned. */
 @Composable
@@ -89,24 +74,20 @@ fun OwnedCertificate.pictureLabel(): String {
     val heading =
         when {
             recipient == null -> {
-                factsLine(kindWord(), naming.words())
+                factsLine(stringResource(R.string.certificates_kind_completion), naming.words())
             }
 
             naming.kind == CertificateKind.Course -> {
                 stringResource(R.string.certificates_alt_course, recipient, title.orEmpty())
             }
 
-            naming.kind == CertificateKind.LanguageLevel -> {
+            else -> {
                 stringResource(
                     R.string.certificates_alt_level,
                     recipient,
                     level,
                     naming.languageWord(),
                 )
-            }
-
-            else -> {
-                stringResource(R.string.certificates_alt_placement, recipient, naming.languageWord(), level)
             }
         }
     val day = formatDate(completedOn.toJavaLocalDate(), currentLocale(), DateStyle.LongYear)
@@ -152,22 +133,8 @@ fun OwnedCertificate.caption(): String {
         CertificateKind.LanguageLevel -> {
             stringResource(R.string.certificates_caption_level, level, naming.languageWord())
         }
-
-        CertificateKind.Placement -> {
-            stringResource(R.string.certificates_caption_placement, naming.languageWord(), level)
-        }
     }
 }
-
-/** The name LinkedIn's form takes: the course, "Spanish B1", or "Spanish B1 placement result". */
-@Composable
-@ReadOnlyComposable
-fun OwnedCertificate.linkedInName(): String =
-    if (naming.kind == CertificateKind.Placement) {
-        stringResource(R.string.certificates_linkedin_placement_name, naming.languageWord(), level?.value.orEmpty())
-    } else {
-        naming.words()
-    }
 
 /** Main's download name, "Ana Souza - Quantum physics from scratch - Zoonk.png", safe as a file name. */
 @Composable

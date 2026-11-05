@@ -60,7 +60,7 @@ fun LinkedInSheet(
     val context = LocalContext.current
     val fields =
         listOf(
-            stringResource(R.string.certificates_linkedin_name) to certificate.linkedInName(),
+            stringResource(R.string.certificates_linkedin_name) to certificate.naming.words(),
             stringResource(R.string.certificates_linkedin_organization) to stringResource(R.string.app_name),
             stringResource(R.string.certificates_linkedin_credential_id) to formatCertificateCode(certificate.code),
             stringResource(R.string.certificates_linkedin_credential_url) to certificate.url.toString(),
