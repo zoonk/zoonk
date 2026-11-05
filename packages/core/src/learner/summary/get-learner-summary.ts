@@ -121,6 +121,7 @@ function getPlaces({
 }): LearnerSummaryPlaces {
   if (!goal || !activeGoal) {
     return {
+      certificates: facts.hasCertificates,
       completedLessons: false,
       exam: false,
       mindMaps: false,
@@ -134,6 +135,7 @@ function getPlaces({
     : null;
 
   return {
+    certificates: facts.hasCertificates,
     completedLessons: facts.completedLessonGoalIds.includes(goal.id),
     exam: goal.kind === "exam",
     mindMaps: facts.mindMapGoalIds.includes(goal.id),

@@ -215,12 +215,12 @@ class FakePlanApi : PlanApi {
         return writeOutline()
     }
 
-    override suspend fun studyNext(
+    override suspend fun end(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): StudyNext? {
+    ): GoalEnd {
         studyNextReads++
-        return studyNext
+        return GoalEnd(studyNext, certificates = null)
     }
 
     override suspend fun continueAtNextLevel(

@@ -182,6 +182,13 @@ private func places(_ summary: LearnerSummary) -> SearchGroup {
       action: .open(.logbook)),
     place(.statistics, route: .statistics),
     SearchItem(
+      id: "certificates",
+      title: String(
+        localized: "Certificates", table: "Search",
+        comment: "Search row for the learner's certificates"),
+      systemImage: "rosette",
+      action: .present(.account(.certificates))),
+    SearchItem(
       id: "courses",
       title: String(
         localized: "Explore courses", table: "Search", comment: "Search row for the catalog"),

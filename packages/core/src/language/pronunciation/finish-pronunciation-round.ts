@@ -42,7 +42,7 @@ function getRoundSeconds(answers: readonly RoundAnswer[]): number {
 
 function toRoundResult(
   event: Pick<LearningEvent, "brainPower" | "correctAnswers" | "incorrectAnswers">,
-): Omit<PronunciationRoundResult, "ceremony" | "missionMoment" | "reached"> {
+): Omit<PronunciationRoundResult, "ceremony" | "certificates" | "missionMoment" | "reached"> {
   return {
     brainPower: event.brainPower,
     correct: event.correctAnswers,

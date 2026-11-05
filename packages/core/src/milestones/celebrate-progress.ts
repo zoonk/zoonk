@@ -1,10 +1,9 @@
 import "server-only";
 import { type ProgressChange } from "../sessions/_utils/session-progress";
-import { serializeMilestone } from "../sessions/completion-contract";
 import { type ProgressCelebration } from "../sessions/progress-celebration";
 import { NOTHING_REACHED, getReached } from "../sessions/reached";
 import { awardMilestones } from "./award-milestones";
-import { loadCeremony } from "./load-ceremony";
+import { loadResultMoments } from "./load-ceremony";
 import { type BrainPowerReward } from "./milestone-reward";
 
 type DaySettlement = { fullMealPaid: boolean; fullMealReward: BrainPowerReward | null };
@@ -25,7 +24,7 @@ export async function celebrateProgress({
 
   const day = settleDay ? await settleDay() : null;
   const bonus = day?.fullMealPaid ? day.fullMealReward : null;
-  const ceremony = await loadCeremony(userId);
+  const moments = await loadResultMoments(userId);
 
   const reached = progress
     ? getReached({
@@ -37,5 +36,5 @@ export async function celebrateProgress({
       })
     : NOTHING_REACHED;
 
-  return { ceremony: ceremony ? serializeMilestone(ceremony) : null, reached };
+  return { ...moments, reached };
 }

@@ -431,6 +431,10 @@ struct PlusBenefits: View {
         Text(
           "Higher limits for speaking calls", tableName: "Account",
           comment: "Zoonk Plus benefit: more speaking call time, never a number"))
+      benefit(
+        Text(
+          "A certificate for every level you finish", tableName: "Account",
+          comment: "Zoonk Plus benefit: certificates for finished course and language levels"))
     }
   }
 

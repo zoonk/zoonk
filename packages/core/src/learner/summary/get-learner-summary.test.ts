@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { certificateFixture } from "@zoonk/testing/fixtures/certificates";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
@@ -173,7 +174,13 @@ describe(getLearnerSummary, () => {
       level: null,
       missions: null,
       nextChangeAt: new Date("2026-03-11T00:00:00.000Z").getTime(),
-      places: { completedLessons: false, exam: false, mindMaps: false, speaking: false },
+      places: {
+        certificates: false,
+        completedLessons: false,
+        exam: false,
+        mindMaps: false,
+        speaking: false,
+      },
       readAt: NOW.getTime(),
       tier: "free",
       timeZone: null,
@@ -545,12 +552,23 @@ describe(getLearnerSummary, () => {
     const summary = await getLearnerSummary();
 
     expect(summary?.places).toStrictEqual({
+      certificates: false,
       completedLessons: false,
       exam: true,
       mindMaps: true,
       readyMistakes: 0,
       speaking: false,
     });
+  });
+
+  it("lists certificates once the learner holds one, whatever the active goal", async () => {
+    const { user } = await learnerWithGoal();
+    const before = await getLearnerSummary();
+
+    await certificateFixture({ userId: user.id });
+    const after = await getLearnerSummary();
+
+    expect([before?.places.certificates, after?.places.certificates]).toStrictEqual([false, true]);
   });
 
   it("lists completed lessons once the goal has a finished lesson", async () => {

@@ -287,7 +287,9 @@ class SubscriptionStore(
 
     private companion object {
         val OTHER_ACCOUNT_CODES = setOf("GOOGLE_PLAY_ACCOUNT_MISMATCH", "GOOGLE_PLAY_SUBSCRIPTION_CONFLICT")
-        val SUBSCRIPTION_DOMAINS = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession)
+
+        // Subscribing issues the certificates the learner already earned.
+        val SUBSCRIPTION_DOMAINS = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession, DataDomain.Certificates)
     }
 }
 
