@@ -263,9 +263,12 @@ describe("lesson marks", () => {
     await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
     expect(page.getByRole("main").getByRole("listitem").elements()).toHaveLength(3);
     expect(underlined()).toStrictEqual(["Add the salt"]);
-    expect(
-      document.querySelectorAll('[data-slot="lesson-text"] [data-slot="lesson-icon"]'),
-    ).toHaveLength(1);
+
+    const cornerIcons = document.querySelectorAll(
+      '[data-slot="lesson-text"] [data-slot="lesson-icon"]',
+    );
+
+    expect(cornerIcons).toHaveLength(1);
   });
 
   it("plays a lesson written before marks as plain text", async () => {
