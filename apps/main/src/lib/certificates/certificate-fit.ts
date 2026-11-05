@@ -157,7 +157,7 @@ function getSheetGraphKind(view: CertificateView): SheetGraphKind {
     return "ladder";
   }
 
-  return view.graph.zones.some((zone) => zone.chapters > 0) ? "labelledRoute" : "route";
+  return view.graph.label ? "labelledRoute" : "route";
 }
 
 export type FittedSheet = {

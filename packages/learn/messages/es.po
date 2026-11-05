@@ -120,8 +120,6 @@ msgstr "Hoy"
 
 #: src/_components/create-account-link.tsx
 #: src/_components/help-limit-notice.tsx
-#: src/certificates/certificate-moment-parts.tsx
-#: src/certificates/certificate-page.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -1533,9 +1531,12 @@ msgid "Copy"
 msgstr "Copiar"
 
 #: src/certificates/certificate-details.tsx
-msgctxt "CgT-Q3"
-msgid "Levels"
-msgstr "Niveles"
+#: src/journey/journey-hero.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+#: src/today/today-preparation.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Nivel"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "95stPq"
@@ -1592,6 +1593,12 @@ msgctxt "QshKyk"
 msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
 msgstr "Cualquier persona que tenga el enlace puede ver este certificado. Su página no aparece en los resultados de búsqueda."
 
+#. A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name.
+#: src/certificates/certificate-labels.ts
+msgctxt "LD0O-X"
+msgid "{course} · {level}"
+msgstr "{course} · {level}"
+
 #. A language and a CEFR level, such as "Spanish B1": a certificate's name.
 #: src/certificates/certificate-labels.ts
 msgctxt "ZP9lOu"
@@ -1603,12 +1610,6 @@ msgstr "{language} {level}"
 msgctxt "8QINPM"
 msgid "about {duration}"
 msgstr "aproximadamente {duration}"
-
-#. The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.
-#: src/certificates/certificate-labels.ts
-msgctxt "LZF2Ia"
-msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
-msgstr "De {from, select, overview {panorama general} beginner {principiante} intermediate {intermedio} other {avanzado}} a {to, select, overview {panorama general} beginner {principiante} intermediate {intermedio} other {avanzado}}"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "ZfBPq3"
@@ -1691,6 +1692,26 @@ msgctxt "CEB03t"
 msgid "Open LinkedIn"
 msgstr "Abrir LinkedIn"
 
+#: src/certificates/certificate-lock.tsx
+msgctxt "oL0rU6"
+msgid "Locked"
+msgstr "Bloqueado"
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "rS5epi"
+msgid "Get your certificate with Plus"
+msgstr "Obtén tu certificado con Plus"
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "QIyGxo"
+msgid "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends."
+msgstr "Plus te da un certificado por cada nivel que completes, para imprimir y compartir. Los certificados que obtengas siguen siendo tuyos aunque termine tu suscripción a Plus."
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "Oe9wC5"
+msgid "Certificates come with Plus"
+msgstr "Plus incluye certificados"
+
 #: src/certificates/certificate-meaning.tsx
 msgctxt "l4zQLP"
 msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs."
@@ -1705,6 +1726,11 @@ msgstr "Los niveles se ajustan al CEFR (Common European Framework of Reference f
 msgctxt "X1QrOq"
 msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
 msgstr "Zoonk mide cada habilidad (lectura, escucha, expresión oral, expresión escrita) a partir de las respuestas de cada persona en las lecciones y las prácticas. Un nivel se completa cuando todas las habilidades que mejoraron con esas respuestas alcanzan el siguiente nivel, así que este certificado se emitió cuando cada una llegó a {level}."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "j5jrUM"
+msgid "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it."
+msgstr "Zoonk emite este certificado cuando una persona completa todos los capítulos de un nivel de un curso, estudiando cada lección o aprobando su prueba, y supera todos los desafíos de ese nivel."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "9Bnhaw"
@@ -1788,11 +1814,6 @@ msgid "Your {list} certificates are ready."
 msgstr "Tus certificados de {list} están listos."
 
 #: src/certificates/certificate-moment-copy.ts
-msgctxt "5g51Cu"
-msgid "{count, plural, one {Create a free account to keep your certificate and put your name on it.} other {Create a free account to keep your certificates and put your name on them.}}"
-msgstr "{count, plural, one {Crea una cuenta gratis para conservar tu certificado y ponerle tu nombre.} other {Crea una cuenta gratis para conservar tus certificados y ponerles tu nombre.}}"
-
-#: src/certificates/certificate-moment-copy.ts
 msgctxt "_QSets"
 msgid "They're saved in Certificates."
 msgstr "Están guardados en Certificados."
@@ -1856,11 +1877,6 @@ msgstr "Certificado verificado · emitido por Zoonk"
 msgctxt "faSg-e"
 msgid "Certificate of completion, issued on {date}."
 msgstr "Certificado de finalización, emitido el {date}."
-
-#: src/certificates/certificate-page.tsx
-msgctxt "oyh3QA"
-msgid "Create a free account to keep your certificate and put your name on it."
-msgstr "Crea una cuenta gratis para conservar tu certificado y ponerle tu nombre."
 
 #: src/certificates/certificate-page.tsx
 msgctxt "CXRlIo"
@@ -1976,9 +1992,9 @@ msgid "No certificates yet"
 msgstr "Aún no tienes certificados"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "YdN3p3"
-msgid "Finish a course or a language level and its certificate shows up here, free to print and share."
-msgstr "Completa un curso o un nivel de un idioma y su certificado aparecerá aquí para imprimirlo y compartirlo gratis."
+msgctxt "_eLagx"
+msgid "Your certificates show up here when you finish a level or a plan."
+msgstr "Tus certificados aparecerán aquí cuando completes un nivel o un plan."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -4469,9 +4485,20 @@ msgid "Get your certificate"
 msgstr "Obtener tu certificado"
 
 #: src/journey/course-certificate.tsx
+msgctxt "QlJQMD"
+msgid "View certificates"
+msgstr "Ver certificados"
+
+#: src/journey/course-certificate.tsx
 msgctxt "koWpue"
 msgid "View certificate"
 msgstr "Ver certificado"
+
+#. A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end
+#: src/journey/course-certificate.tsx
+msgctxt "4S7nHA"
+msgid "{level} complete"
+msgstr "{level} completado"
 
 #. A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead
 #: src/journey/course-certificate.tsx
@@ -4633,13 +4660,6 @@ msgstr "Preparación"
 msgctxt "Z1VCaI"
 msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
 msgstr "{studied, plural, =0 {Aún no estudiaste ninguna lección} one {# lección estudiada} other {# lecciones estudiadas}}"
-
-#: src/journey/journey-hero.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-#: src/today/today-preparation.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Nivel"
 
 #: src/journey/journey-hero.tsx
 #: src/onboarding/plan-receipt.tsx

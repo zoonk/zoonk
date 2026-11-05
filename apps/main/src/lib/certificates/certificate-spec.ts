@@ -87,7 +87,6 @@ export const SHEET = {
     squareRadius: 3,
     station: 3.6,
     stroke: 3,
-    tick: 1.5,
     width: 979,
   },
   /** Two pixels per unit: twice the widest place a certificate shows on screen. */
@@ -156,7 +155,6 @@ export const SHARE = {
       squareRadius: 3,
       station: 4.5,
       stroke: 4,
-      tick: 1.5,
       width: 1032,
     },
     title: {
@@ -201,7 +199,6 @@ export const SHARE = {
       squareRadius: 3,
       station: 5,
       stroke: 4.5,
-      tick: 1.5,
       width: 848,
     },
     stats: { above: 60, gap: 72, labelGap: 10, labelSize: 25, size: 80, unitGap: 8, unitSize: 34 },

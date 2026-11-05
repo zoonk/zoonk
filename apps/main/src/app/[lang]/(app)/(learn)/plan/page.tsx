@@ -174,7 +174,7 @@ async function JourneyContent() {
         }
       }
       buddy={buddy}
-      certificate={end?.certificate ?? null}
+      certificates={end?.certificates ?? null}
       completedLessons={completedLessons}
       goal={{ kind: goal.kind, title: goal.title }}
       goalId={goal.id}

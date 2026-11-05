@@ -3041,6 +3041,11 @@ msgid "Higher limits for speaking calls"
 msgstr "スピーキング練習の会話をより多く利用できます"
 
 #: src/components/pricing/plus-benefits.tsx
+msgctxt "udRZBr"
+msgid "A certificate for every level you finish"
+msgstr "レベルを修了するたびに証明書を取得"
+
+#: src/components/pricing/plus-benefits.tsx
 msgctxt "joZG7W"
 msgid "Every goal · every lesson"
 msgstr "すべての目標 · すべてのレッスン"
@@ -3574,17 +3579,11 @@ msgctxt "PrhNZj"
 msgid "Level completed · aligned with the CEFR"
 msgstr "レベル修了・CEFRに準拠"
 
-#. A course certificate's span when the plan held one level, such as “Beginner level”.
+#. A course level certificate's level, such as “Beginner level”.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "XmHKKJ"
 msgid "{level} level"
 msgstr "{level}レベル"
-
-#. The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "LZF2Ia"
-msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
-msgstr "{from, select, overview {概要} beginner {初級} intermediate {中級} other {上級}}から{to, select, overview {概要} beginner {初級} intermediate {中級} other {上級}}まで"
 
 #. Above the topics a finished course covered, on its certificate.
 #: src/lib/certificates/certificate-view.ts
@@ -3592,11 +3591,17 @@ msgctxt "fAGVcM"
 msgid "Topics covered"
 msgstr "学習したトピック"
 
-#. The fine print on a course certificate.
+#. The fine print on a course level's certificate.
 #: src/lib/certificates/certificate-view.ts
-msgctxt "fDd8ap"
-msgid "Awarded for finishing every lesson and challenge of this course on Zoonk."
-msgstr "Zoonkでこのコースのすべてのレッスンとチャレンジを終えた方に授与されます。"
+msgctxt "anftNZ"
+msgid "Awarded for finishing every lesson and challenge of this level on Zoonk."
+msgstr "Zoonkでこのレベルのすべてのレッスンとチャレンジを修了した証として発行されます。"
+
+#. The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "Sadn8K"
+msgid "Awarded for finishing every lesson and challenge of a study plan on Zoonk."
+msgstr "Zoonkで学習計画に含まれるすべてのレッスンとチャレンジを修了した証として発行されます。"
 
 #: src/lib/public/public-labels.ts
 msgctxt "3Rx6Qo"

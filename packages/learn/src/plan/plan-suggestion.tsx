@@ -66,7 +66,7 @@ function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
   const timeItems = useTimeItems();
   const status = plan.status?.kind;
   const finished = host.next !== null;
-  const claimable = host.certificate !== null && host.certificate.href === null;
+  const claimable = Boolean(host.certificates?.unclaimed.length);
 
   const items: (SlotItem | false)[] = [
     !finished && claimable && { key: "courseComplete", kind: "courseComplete" },
@@ -234,14 +234,21 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
     case "choice":
       return <ExamChoiceSuggestion item={item} />;
     case "courseComplete":
-      return host.certificate && <CourseCompleteSuggestion onClaim={host.certificate.onClaim} />;
+      return (
+        host.certificates && (
+          <CourseCompleteSuggestion
+            onClaim={host.certificates.onClaim}
+            unclaimed={host.certificates.unclaimed}
+          />
+        )
+      );
     case "coverage":
       return <CoverageSuggestion coverage={coverage} />;
     case "finished":
       return (
         host.next && (
           <StudyNextSuggestion
-            certificate={host.certificate}
+            certificates={host.certificates}
             courseHref={host.courseHref}
             next={host.next}
           />

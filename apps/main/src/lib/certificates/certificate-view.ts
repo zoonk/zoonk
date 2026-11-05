@@ -1,8 +1,8 @@
 import "server-only";
 import { getCategoryNames } from "@/lib/categories/category";
-import { getLevelLabels } from "@/lib/public/public-labels";
 import { type CertificateFacts, type CertifiedLevel } from "@zoonk/core/certificates/contract";
 import { getCertificateDisplayUrl, getCertificateLinks } from "@zoonk/utils/certificate-links";
+import { getCourseLevelNames } from "@zoonk/utils/course-level-names";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { getBaseUrl } from "@zoonk/utils/origin";
@@ -28,9 +28,10 @@ const NEXT_BAND: Record<CertifiedLevel, string> = {
   C1: "C2",
 };
 
+/** A course's route has a station per topic, labelled with its level on a level's certificate. */
 export type CertificateGraph =
   | { kind: "ladder"; filled: number; reached: string | null }
-  | { kind: "route"; topics: number; zones: { chapters: number; label: string }[] };
+  | { kind: "route"; label: string | null; stations: number };
 
 type CommonView = {
   date: string;
@@ -72,13 +73,6 @@ function getTitleRuns(facts: CertificateFacts): TextRun[] {
     { color: CERTIFICATE_COLORS.ink, text: `${getTargetLanguageName(facts)} ` },
     { color: CERTIFICATE_COLORS.successText, text: facts.level ?? "" },
   ];
-}
-
-/** What a certificate certifies, in one line: the course title, or "Spanish B1". */
-export function getCertificateFileTitle(facts: CertificateFacts): string {
-  return getTitleRuns(facts)
-    .map((run) => run.text)
-    .join("");
 }
 
 async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> {
@@ -142,67 +136,49 @@ async function getLanguageLevelView(input: KindInput): Promise<KindView> {
   };
 }
 
-/** "Beginner to Advanced · 36 chapters", or "Beginner level · 12 chapters" for one level. */
+/** "Beginner level · 12 chapters" on a level's certificate, "12 chapters" on a plan's. */
 async function getCourseMeta({
+  level,
   locale,
-  zones,
+  topics,
 }: {
+  level: string | null;
   locale: string;
-  zones: { chapters: number; label: string; level: string }[];
+  topics: number;
 }): Promise<string> {
   const t = await getExtracted({ locale });
-  const [first] = zones;
-  const last = zones.at(-1);
-  const chapters = zones.reduce((sum, zone) => sum + zone.chapters, 0);
 
-  const oneLevel =
-    first &&
+  const levelLine =
+    level &&
     t({
-      description:
-        "A course certificate's span when the plan held one level, such as “Beginner level”.",
+      description: "A course level certificate's level, such as “Beginner level”.",
       message: "{level} level",
-      values: { level: first.label },
-    });
-
-  const levels =
-    first &&
-    last &&
-    t({
-      description:
-        "The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.",
-      message:
-        "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}",
-      values: { from: first.level, to: last.level },
+      values: { level },
     });
 
   const chapterCount =
-    chapters > 0 &&
+    topics > 0 &&
     t({
       description: "How many chapters a finished course's plan held.",
       message: "{count, plural, one {# chapter} other {# chapters}}",
-      values: { count: chapters },
+      values: { count: topics },
     });
 
-  return [zones.length === 1 ? oneLevel : levels, chapterCount].filter(Boolean).join(" · ");
+  return [levelLine, chapterCount].filter(Boolean).join(" · ");
 }
 
 async function getCourseView(input: KindInput): Promise<KindView> {
   const { facts, locale } = input;
 
-  const zones = await getLevelLabels(locale).then((levelLabels) =>
-    facts.courseLevels.map((courseLevel) => ({
-      chapters: courseLevel.chapters,
-      label: levelLabels[courseLevel.level],
-      level: courseLevel.level,
-    })),
-  );
+  const level = facts.courseLevel && getCourseLevelNames(facts.language)[facts.courseLevel];
+  const topics = facts.topics.length;
 
   const [t, categoryNames, studyFacts, stats, meta] = await Promise.all([
     getExtracted({ locale }),
     getCategoryNames(locale),
     getStudyFacts(input),
     getStudyStats(input),
-    getCourseMeta({ locale, zones }),
+    getCourseMeta({ level, locale, topics }),
   ]);
 
   const shown = getShownTopics(facts.topics);
@@ -218,11 +194,17 @@ async function getCourseView(input: KindInput): Promise<KindView> {
         ? { kind: "topics", label, topics: shown, total: facts.topics.length }
         : null,
     facts: studyFacts,
-    finePrint: t({
-      description: "The fine print on a course certificate.",
-      message: "Awarded for finishing every lesson and challenge of this course on Zoonk.",
-    }),
-    graph: { kind: "route", topics: facts.topics.length, zones },
+    finePrint: level
+      ? t({
+          description: "The fine print on a course level's certificate.",
+          message: "Awarded for finishing every lesson and challenge of this level on Zoonk.",
+        })
+      : t({
+          description:
+            "The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists.",
+          message: "Awarded for finishing every lesson and challenge of a study plan on Zoonk.",
+        }),
+    graph: { kind: "route", label: level, stations: topics },
     meta,
     stats,
     subject: facts.category

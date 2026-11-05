@@ -2,18 +2,14 @@ import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { PublicPage } from "@/components/public/public-page";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
-import { getAppLocale } from "@/i18n/locale";
-import { getPathname } from "@/i18n/navigation";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
-import { type CertificateFacts } from "@zoonk/core/certificates/contract";
+import { type CertificateFacts, normalizeCertificateCode } from "@zoonk/core/certificates/contract";
 import { listCurrentUserCertificates } from "@zoonk/core/certificates/list";
 import { getPublicCertificate } from "@zoonk/core/certificates/public";
-import { getSession } from "@zoonk/core/users/session";
 import { CertificateVerified } from "@zoonk/learn/certificates/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getCertificateLinks } from "@zoonk/utils/certificate-links";
-import { getLanguageName } from "@zoonk/utils/languages";
+import { getCertificateLinks, getCertificateName } from "@zoonk/utils/certificate-links";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -24,8 +20,33 @@ import "./certificate-print.css";
 
 type Props = PageProps<"/[lang]/c/[code]">;
 
-/** One read per request, shared by the metadata and the page. */
-const readCertificate = cache((code: string) => getPublicCertificate(code));
+/**
+ * One read per request, shared by the metadata and the page. A locked certificate is only its
+ * owner's: anyone else gets the page an unknown code gets.
+ */
+const readCertificate = cache(async (code: string) => {
+  const normalized = normalizeCertificateCode(code);
+
+  if (!normalized) {
+    return null;
+  }
+
+  const [facts, owned] = await Promise.all([
+    getPublicCertificate(normalized),
+    listCurrentUserCertificates(),
+  ]);
+
+  const own =
+    owned.status === "ready"
+      ? owned.certificates.find((certificate) => certificate.code === normalized)
+      : undefined;
+
+  if (own?.locked) {
+    return { facts: own, locked: true, owner: true };
+  }
+
+  return facts && { facts, locked: false, owner: Boolean(own) };
+});
 
 /** The page's own origin, so a preview's links and pictures point at the preview. */
 function getLinks(facts: CertificateFacts) {
@@ -33,10 +54,7 @@ function getLinks(facts: CertificateFacts) {
 }
 
 function getMetadataTitle(facts: CertificateFacts): string {
-  const certificate =
-    facts.title ??
-    `${facts.targetLanguage ? getLanguageName({ targetLanguage: facts.targetLanguage, userLanguage: facts.language }) : ""} ${facts.level ?? ""}`.trim();
-
+  const certificate = getCertificateName(facts);
   return facts.recipientName ? `${facts.recipientName} · ${certificate}` : certificate;
 }
 
@@ -44,11 +62,17 @@ function getMetadataTitle(facts: CertificateFacts): string {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = await getExtracted();
   const { code } = await params;
-  const facts = await readCertificate(code);
+  const read = await readCertificate(code);
   const robots = { follow: false, index: false };
 
-  if (!facts) {
+  if (!read) {
     return { robots, title: t("We couldn't find this certificate") };
+  }
+
+  const { facts } = read;
+
+  if (read.locked) {
+    return { robots, title: getMetadataTitle(facts) };
   }
 
   const { imageUrls } = getLinks(facts);
@@ -65,39 +89,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-async function readOwner(code: string) {
-  const [session, owned] = await Promise.all([getSession(), listCurrentUserCertificates()]);
-  const isOwner = owned.status === "ready" && owned.certificates.some((item) => item.code === code);
-
-  if (!session || !isOwner) {
-    return null;
-  }
-
-  return { account: session.user.isAnonymous ? ("guest" as const) : ("account" as const) };
-}
-
 async function CertificateBody({ params }: Props) {
   const { code } = await params;
-  const facts = await readCertificate(code);
+  const read = await readCertificate(code);
 
-  if (!facts) {
+  if (!read) {
     return <CertificateNotFound />;
   }
 
-  const [owner, locale] = await Promise.all([readOwner(facts.code), getAppLocale()]);
-  const links = getLinks(facts);
-  const pagePath = getPathname({ href: links.path, locale });
+  const { facts } = read;
 
   return (
     <CertificateView
       facts={facts}
-      links={links}
-      owner={
-        owner && {
-          account: owner.account,
-          signUpHref: `${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(pagePath)}`,
-        }
-      }
+      links={read.locked ? null : getLinks(facts)}
+      owner={read.owner}
       startHref={facts.courseId ? getCourseStartHref({ courseId: facts.courseId }) : null}
     />
   );

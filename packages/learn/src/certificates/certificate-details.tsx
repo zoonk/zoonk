@@ -12,8 +12,9 @@ import {
 } from "@zoonk/utils/certificate-links";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
+import { useLevelName } from "../course/use-level-name";
 import { useSkillName } from "../language/_utils/use-skill-name";
-import { useCertificateDate, useCourseLevels, useStudyTime } from "./certificate-labels";
+import { useCertificateDate, useStudyTime } from "./certificate-labels";
 import { CertificateNameDialog } from "./certificate-name";
 import { type CertificateOwner } from "./certificate-page";
 
@@ -41,12 +42,13 @@ function DetailRow({
   );
 }
 
-function useFactRows(facts: CertificateFacts) {
+/** A locked certificate's code isn't the learner's to share yet. */
+function useFactRows({ facts, locked }: { facts: CertificateFacts; locked: boolean }) {
   const t = useExtracted();
   const format = useFormatter();
   const date = useCertificateDate();
   const studyTime = useStudyTime();
-  const courseLevels = useCourseLevels();
+  const levelName = useLevelName();
   const skillName = useSkillName();
 
   const skills = facts.skillLevels.map(({ label, skill }) => ({
@@ -55,10 +57,8 @@ function useFactRows(facts: CertificateFacts) {
     value: label,
   }));
 
-  const levels = courseLevels(facts.courseLevels);
-
   const rows = [
-    facts.kind === "course" && levels && { label: t("Levels"), mono: false, value: levels },
+    facts.courseLevel && { label: t("Level"), mono: false, value: levelName(facts.courseLevel) },
     ...(facts.kind === "course" ? [] : skills),
     { label: t("Completed"), mono: true, value: date.short(facts.completedOn) },
     facts.lessonsStudied
@@ -68,7 +68,7 @@ function useFactRows(facts: CertificateFacts) {
       ? { label: t("Passed by test"), mono: true, value: format.number(facts.lessonsTestedOut) }
       : null,
     facts.minutes ? { label: t("Study time"), mono: true, value: studyTime(facts.minutes) } : null,
-    { label: t("Certificate ID"), mono: true, value: formatCertificateCode(facts.code) },
+    !locked && { label: t("Certificate ID"), mono: true, value: formatCertificateCode(facts.code) },
   ];
 
   return rows.filter((row) => typeof row === "object" && row !== null);
@@ -78,7 +78,7 @@ function OwnerNameRow({ facts, owner }: { facts: CertificateFacts; owner: Certif
   const t = useExtracted();
   const [open, setOpen] = useState(false);
 
-  if (owner.account === "guest" || !facts.recipientName) {
+  if (!facts.recipientName) {
     return null;
   }
 
@@ -123,18 +123,22 @@ function OwnerLinkRow({ links }: { links: CertificateLinks }) {
   );
 }
 
-/** Also the picture's text equivalent: everything the certificate says, as text. */
+/**
+ * Also the picture's text equivalent: everything the certificate says, as text. A locked one
+ * (`links` null) shows what was done, without the name, code or link that make it a credential.
+ */
 export function CertificateDetails({
   facts,
   links,
   owner,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks;
+  links: CertificateLinks | null;
   owner: CertificateOwner | null;
 }) {
   const t = useExtracted();
-  const rows = useFactRows(facts);
+  const rows = useFactRows({ facts, locked: !links });
+  const shared = owner && links;
 
   return (
     <section aria-labelledby="certificate-details" className="flex flex-col">
@@ -142,15 +146,15 @@ export function CertificateDetails({
         {t("Details")}
       </h2>
       <dl className="flex flex-col">
-        {owner && <OwnerNameRow facts={facts} owner={owner} />}
+        {shared && <OwnerNameRow facts={facts} owner={owner} />}
         {rows.map((row) => (
           <DetailRow key={row.label} label={row.label} mono={row.mono}>
             {row.value}
           </DetailRow>
         ))}
-        {owner?.account === "account" && <OwnerLinkRow links={links} />}
+        {shared && <OwnerLinkRow links={links} />}
       </dl>
-      {owner && (
+      {shared && (
         <p className="text-muted-foreground border-border border-t pt-2.5 text-xs text-pretty">
           {t("Anyone with the link can see this certificate. Its page doesn't show up in search.")}
         </p>

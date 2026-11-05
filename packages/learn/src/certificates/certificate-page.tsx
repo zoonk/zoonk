@@ -2,19 +2,13 @@
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { PendingLink } from "@zoonk/ui/patterns/links/pending";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
-import {
-  BadgeCheckIcon,
-  ChevronLeftIcon,
-  DownloadIcon,
-  PrinterIcon,
-  UserPlusIcon,
-} from "lucide-react";
+import { BadgeCheckIcon, ChevronLeftIcon, DownloadIcon, PrinterIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LearnLink } from "../learn-link";
 import { useCertificateDate, useCertificateSentence } from "./certificate-labels";
-import { type CertificateAccount } from "./certificate-moment-copy";
+import { CertificatePlusNotice, LockedCertificateSheet } from "./certificate-lock";
 import { CertificateNameField, type SaveCertificateName } from "./certificate-name";
 import {
   AddToLinkedInButton,
@@ -24,11 +18,7 @@ import {
 import { CertificateSheet } from "./certificate-sheet";
 
 /** What only the certificate's owner sees on its page. */
-export type CertificateOwner = {
-  account: CertificateAccount;
-  saveName: SaveCertificateName;
-  signUpHref: string;
-};
+export type CertificateOwner = { saveName: SaveCertificateName };
 
 export function CertificatesBackLink({ href }: { href: string }) {
   const t = useExtracted();
@@ -59,18 +49,23 @@ export function CertificateVerified() {
   );
 }
 
-export function CertificateIntro({ facts }: { facts: CertificateFacts }) {
+/** A locked certificate (only its owner sees it) isn't issued yet, so it claims neither. */
+export function CertificateIntro({ facts, locked }: { facts: CertificateFacts; locked: boolean }) {
   const t = useExtracted();
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
 
   return (
     <div className="flex flex-col">
-      <CertificateVerified />
-      <h1 className="text-headline mt-3.5 max-w-4xl">{sentence(facts)}</h1>
-      <p className="text-lead mt-2.5">
-        {t("Certificate of completion, issued on {date}.", { date: date.long(facts.completedOn) })}
-      </p>
+      {!locked && <CertificateVerified />}
+      <h1 className={cn("text-headline max-w-4xl", !locked && "mt-3.5")}>{sentence(facts)}</h1>
+      {!locked && (
+        <p className="text-lead mt-2.5">
+          {t("Certificate of completion, issued on {date}.", {
+            date: date.long(facts.completedOn),
+          })}
+        </p>
+      )}
     </div>
   );
 }
@@ -82,26 +77,13 @@ export function CertificateOwnerActions({
   owner,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks;
+  links: CertificateLinks | null;
   owner: CertificateOwner;
 }) {
   const t = useExtracted();
 
-  if (owner.account === "guest") {
-    return (
-      <div className="flex flex-col items-start gap-3">
-        <p className="text-muted-foreground text-sm">
-          {t("Create a free account to keep your certificate and put your name on it.")}
-        </p>
-        <PendingLink
-          className={buttonVariants({ size: "lg", variant: "outline" })}
-          href={owner.signUpHref}
-          icon={<UserPlusIcon aria-hidden="true" />}
-        >
-          {t("Create a free account")}
-        </PendingLink>
-      </div>
-    );
+  if (!links) {
+    return <CertificatePlusNotice className="max-w-xl" />;
   }
 
   if (!facts.recipientName) {
@@ -138,10 +120,14 @@ export function CertificatePaper({
   links,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks;
+  links: CertificateLinks | null;
 }) {
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
+
+  if (!links) {
+    return <LockedCertificateSheet className="rounded-lg" facts={facts} />;
+  }
 
   return (
     <a

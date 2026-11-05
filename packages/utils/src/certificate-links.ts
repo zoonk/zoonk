@@ -56,7 +56,13 @@ export function getCertificateImageVersion(recipientName: string | null): string
   return hashSeed(`${CERTIFICATE_DESIGN_VERSION}:${recipientName ?? ""}`).toString(VERSION_RADIX);
 }
 
-function getCertificateName(input: CertificateLinkInput): string {
+/** In the certificate's own language: "Python · Beginner", "Python", or "Spanish B1". */
+export function getCertificateName(
+  input: Pick<
+    CertificateLinkInput,
+    "courseLevel" | "language" | "level" | "targetLanguage" | "title"
+  >,
+): string {
   if (input.title && input.courseLevel) {
     return `${input.title} · ${getCourseLevelNames(input.language)[input.courseLevel]}`;
   }
