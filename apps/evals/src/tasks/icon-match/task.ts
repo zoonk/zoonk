@@ -6,7 +6,6 @@ import { type IconMatchExpected, TEST_CASES } from "./test-cases";
 const MIN_SCORE = 6;
 const SCORE_RANGE = 4;
 
-/** A wrong reuse misleads learners and a needless drawing only costs a cent, so both count. */
 const scoreIconMatch: TaskScorer<IconMatchExpected> = ({ output, testCase }) => {
   const reuse = JSON.parse(output) as (string | null)[];
   const expected = testCase.expected?.reuse ?? [];

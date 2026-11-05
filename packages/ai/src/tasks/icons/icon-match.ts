@@ -53,7 +53,10 @@ function formatNeed({ candidates, need, usedFor }: IconMatchNeed, index: number)
   ].join("\n");
 }
 
-/** In the order of `needs`: a library icon's id, only one of that need's own candidates, or null. */
+/**
+ * In the order of `needs`: a library icon's id, only one of that need's own candidates, or null.
+ * The prompt keeps the no-training filter: library icons may come from private lessons.
+ */
 export async function matchLessonIcons({
   analytics,
   model = defaultModel,
@@ -82,7 +85,6 @@ export async function matchLessonIcons({
         providerOptions,
         reasoning,
       }),
-    libraryInput: true,
     systemPrompt,
     task: "icon-match",
   });

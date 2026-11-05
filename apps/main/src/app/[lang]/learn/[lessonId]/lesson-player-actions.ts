@@ -67,7 +67,6 @@ export async function getLessonPicturesAction(
   return data;
 }
 
-/** Polled while the lesson's marks are on their way; the API's workflow writes them. */
 export async function getLessonMarksAction(lessonId: string): Promise<LessonMarks | null> {
   if (!idSchema.safeParse(lessonId).success) {
     return null;

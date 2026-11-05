@@ -71,7 +71,6 @@ function neighborsOf({ width }: RawImage, pixel: number): number[] {
   ];
 }
 
-/** Clears the light background a model drew around the subject, from the edges inward. */
 function clearDrawnBackground(image: RawImage): RawImage {
   const data = Buffer.from(image.data);
   const seen = new Uint8Array(image.width * image.height);

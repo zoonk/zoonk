@@ -2,7 +2,6 @@ import sharp from "sharp";
 
 const CIRCLE = `<circle cx="256" cy="256" r="160" fill="#F4B740" stroke="#000" stroke-width="16"/>`;
 
-/** A drawn circle on a transparent square, or on an opaque `background`. */
 export function drawnIcon({ background }: { background?: string } = {}): Promise<Buffer> {
   const fill = background ? `<rect width="512" height="512" fill="${background}"/>` : "";
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">${fill}${CIRCLE}</svg>`;

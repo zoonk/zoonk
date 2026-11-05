@@ -14,7 +14,6 @@ export const iconNeedSchema = z.object({
 const savedStepMarksSchema = z.object({
   example: z.string().nullable(),
   iconId: z.uuid().nullable(),
-  /** What tagging asked the icon library for. */
   iconNeed: iconNeedSchema.nullable().optional(),
   /** The icon `iconNeed` asks for isn't linked or given up yet. */
   iconPending: z.boolean(),
@@ -57,7 +56,6 @@ export function isTaggedScreen(screen: MarkedScreen): boolean {
   }
 }
 
-/** The text a screen's underline and example quote. */
 export function getMarkedText(screen: MarkedScreen): string | null {
   if (screen.kind === "explanation") {
     return screen.content.text;
@@ -95,6 +93,12 @@ export function toStepMarks({
   };
 }
 
+/**
+ * A question's idea names its answer ("Procarionte" on a guess before its explanation), so only
+ * teaching screens carry marks to the players; tagging still stores the idea of every screen.
+ */
+const NO_MARKS: StepMarks = { example: null, icon: null, ideaIndex: null, underline: null };
+
 /** Keeps only what still fits the screen's content, which a learner's own version may change. */
 export function fitStepMarks({
   marks,
@@ -103,7 +107,11 @@ export function fitStepMarks({
   marks: StepMarks;
   screen: MarkedScreen;
 }): StepMarks {
-  const text = getMarkedText(screen) ?? "";
+  const text = getMarkedText(screen);
+
+  if (text === null) {
+    return NO_MARKS;
+  }
 
   return {
     example: marks.example && isExampleQuote({ quote: marks.example, text }) ? marks.example : null,

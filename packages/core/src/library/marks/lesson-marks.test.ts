@@ -158,13 +158,13 @@ describe(tagLessonMarks, () => {
 });
 
 describe(pickLessonIcons, () => {
-  it("reuses a drawn icon of the same name or the one the reuse check picks, and claims the rest to draw", async () => {
+  it("reuses a drawn icon of the same name or the one the reuse check picks, and leaves the rest to draw", async () => {
     const [sameName, similar] = await Promise.all([
       lessonIconFixture({ name: uniqueName("hourglass") }),
       lessonIconFixture({ name: uniqueName("balance scale"), tags: ["justice", "scales"] }),
     ]);
 
-    const fresh = uniqueName("rubber stamp");
+    const fresh = need(uniqueName("rubber stamp"));
     const synonym = { ...need(uniqueName("scales of justice")), searchWords: ["justice"] };
 
     vi.mocked(matchLessonIcons).mockImplementation(async ({ needs }) => ({
@@ -175,20 +175,18 @@ describe(pickLessonIcons, () => {
       userPrompt: "",
     }));
 
-    const runId = `run-${randomUUID()}`;
-
     const picked = await pickLessonIcons({
       requests: [
-        ...[sameName.name, fresh].map((name) => ({ need: need(name), usedFor: "a screen" })),
+        { need: need(sameName.name), usedFor: "a screen" },
+        { need: fresh, usedFor: "a screen" },
         { need: synonym, usedFor: "a screen about the courts" },
       ],
-      runId,
     });
 
     expect(picked).toStrictEqual([
-      { iconId: sameName.id, name: sameName.name, state: "ready" },
-      { iconId: expect.any(String), name: fresh, state: "draw" },
-      { iconId: similar.id, name: synonym.name, state: "ready" },
+      { iconId: sameName.id, name: sameName.name, need: need(sameName.name) },
+      { iconId: null, name: fresh.name, need: fresh },
+      { iconId: similar.id, name: synonym.name, need: synonym },
     ]);
 
     expect(
@@ -196,20 +194,17 @@ describe(pickLessonIcons, () => {
     ).not.toContain(sameName.name);
   });
 
-  it("waits for a name another run is drawing instead of drawing it twice", async () => {
-    const drawing = await lessonIconFixture({
+  it("skips a name the model failed to draw for an earlier lesson, without paying for it again", async () => {
+    const failed = await lessonIconFixture({
       name: uniqueName("compass"),
       smallUrl: null,
-      status: "running",
+      status: "failed",
       url: null,
     });
 
     await expect(
-      pickLessonIcons({
-        requests: [{ need: need(drawing.name), usedFor: "a screen" }],
-        runId: "another-run",
-      }),
-    ).resolves.toStrictEqual([{ iconId: drawing.id, name: drawing.name, state: "wait" }]);
+      pickLessonIcons({ requests: [{ need: need(failed.name), usedFor: "a screen" }] }),
+    ).resolves.toStrictEqual([]);
 
     expect(matchLessonIcons).not.toHaveBeenCalled();
   });

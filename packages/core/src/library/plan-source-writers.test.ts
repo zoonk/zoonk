@@ -335,6 +335,24 @@ const REGISTRY: Record<string, Registration[]> = {
   "library/listening/voice-listening-set.ts": [
     { verdict: "marks", why: "a voiced set joins the recordings", writes: ["itemSet.updateMany"] },
   ],
+  "library/marks/lesson-icons.ts": [
+    {
+      fields: ["summary"],
+      readElsewhere: { "plans/_utils/replan.ts": "a plan's posted summary" },
+      verdict: "excluded",
+      why: "links the map's icons, which no plan reads",
+      writes: ["lesson.updateMany"],
+    },
+  ],
+  "library/marks/tag-lesson-marks.ts": [
+    {
+      fields: ["summary"],
+      readElsewhere: { "plans/_utils/replan.ts": "a plan's posted summary" },
+      verdict: "excluded",
+      why: "adds the map's about lines and icon needs, which no plan reads",
+      writes: ["lesson.updateMany"],
+    },
+  ],
   "library/media/check-image-asset.ts": [
     { verdict: "marks", why: "removes bank items", writes: ["item.deleteMany"] },
     {

@@ -90,7 +90,6 @@ function buildUserPrompt({
   ].join("\n\n");
 }
 
-/** One call per lesson. Code keeps only quotes the screens really have (`normalizeLessonMarks`). */
 export async function tagLesson({
   analytics,
   ideas,

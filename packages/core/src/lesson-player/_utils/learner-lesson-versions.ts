@@ -40,7 +40,6 @@ function isVersionedStep(step: PlayableLibraryStep): step is VersionedStep {
   return VERSIONED_KINDS.has(step.kind);
 }
 
-/** A learner's own version keeps the marks whose quotes it still has. */
 function withFittedMarks(step: VersionedStep): VersionedStep {
   return step.marks ? { ...step, marks: fitStepMarks({ marks: step.marks, screen: step }) } : step;
 }
