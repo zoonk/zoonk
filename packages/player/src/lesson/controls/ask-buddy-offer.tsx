@@ -53,7 +53,7 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
   );
 }
 
-export function StrugglePauseOffer({ step }: { step: ExplainingStep }) {
+function StrugglePauseOffer({ step }: { step: ExplainingStep }) {
   const { screen } = useLessonPlayer();
   const isStuck = useStrugglePause(step);
 
