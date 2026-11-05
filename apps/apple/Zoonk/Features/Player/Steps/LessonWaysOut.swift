@@ -270,7 +270,8 @@ struct LessonDidntGetIt: View {
   let store: LessonPlayerStore
 
   var body: some View {
-    if tutor.panel != nil {
+    // A guest can't talk with the buddy yet: the tap would ask them to sign up instead.
+    if tutor.panel != nil, !store.isGuest {
       Button {
         store.ask(suggestionId: "simpler", sendsAtOnce: true)
       } label: {

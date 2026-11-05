@@ -121,6 +121,41 @@ final class StepMarksTests: XCTestCase {
       state.steps["first"]?.marks, StepMarks(ideaIndex: 0, underline: "Cells make up"))
   }
 
+  func testALateIconLeavesTheLayoutTheScreenInViewAlreadyShows() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [try explanation("first", marks: #"{"ideaIndex": 0, "example": "Cells."}"#)],
+      hasMap: true)
+    let icon =
+      #"{"url": "https://cdn.test/cell-256.webp", "smallUrl": "https://cdn.test/cell-96.webp"}"#
+
+    state.applyMarks(from: [
+      try explanation("first", marks: #"{"ideaIndex": 0, "example": "Cells.", "icon": \#(icon)}"#)
+    ])
+
+    XCTAssertEqual(state.steps["first"]?.marks, StepMarks(ideaIndex: 0, example: "Cells."))
+  }
+
+  func testAnExampleInsideANumberedListWithWindowsLineEndingsLeavesTheListWhole() {
+    let parts = LessonTextParts(
+      "1. Heat the water.\r\n2. Add the tea.\r\n3. Pour it into a cup.",
+      marks: StepMarks(example: "2. Add the tea."))
+
+    XCTAssertNil(parts.example)
+  }
+
+  func testHeldMarksShowOnceAnotherScreenComesFirst() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try check("check"), try explanation("explanation")])
+
+    state.applyMarks(from: [try check("check", marks: #"{"ideaIndex": 1}"#)])
+    XCTAssertNil(state.steps["check"]?.marks?.ideaIndex)
+
+    state.explainFirst()
+    XCTAssertEqual(state.currentStep?.id, "explanation")
+    XCTAssertEqual(state.steps["check"]?.marks?.ideaIndex, 1)
+  }
+
   @MainActor
   func testMarksCountTheTextAsDrawnInUTF16() {
     let drawn = LessonRichText.typeset("O 🐱 come **ração** todo dia").text
@@ -150,6 +185,16 @@ final class StepMarksTests: XCTestCase {
       """
       {"id": "\(id)", "position": 0, "kind": "explanation", "marks": \(marks),
        "content": {"title": null, "text": "Cells make up living things."}}
+      """)
+  }
+
+  private func check(_ id: String, marks: String = "null") throws -> LessonStep {
+    try step(
+      """
+      {"id": "\(id)", "position": 0, "kind": "check", "marks": \(marks),
+       "content": {"question": "Capital of France?", "basis": null, "options": [
+         {"id": "right", "isCorrect": true, "reason": "It is.", "text": "Paris"},
+         {"id": "wrong", "isCorrect": false, "reason": "That's Lyon.", "text": "Lyon"}]}}
       """)
   }
 }

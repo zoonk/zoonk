@@ -99,6 +99,20 @@ private struct HookStepView: View {
   let context: LessonStepContext
   let part: LessonStepPart
   let openingMap: LessonSummary?
+  /// A map that comes while the scene is read shows from the next visit, so the scene doesn't move.
+  @State private var showsOpeningMap: Bool
+
+  init(
+    step: LessonStep, content: HookContent, context: LessonStepContext, part: LessonStepPart,
+    openingMap: LessonSummary?
+  ) {
+    self.step = step
+    self.content = content
+    self.context = context
+    self.part = part
+    self.openingMap = openingMap
+    _showsOpeningMap = State(initialValue: openingMap != nil)
+  }
 
   var body: some View {
     switch part {
@@ -131,7 +145,7 @@ private struct HookStepView: View {
       LessonTextBlocks(content.text ?? "")
         .font(.body)
 
-      if let openingMap {
+      if showsOpeningMap, let openingMap {
         // On one page the map takes the room the scene leaves at its bottom.
         Spacer(minLength: 8)
         LessonOpeningMap(summary: openingMap)

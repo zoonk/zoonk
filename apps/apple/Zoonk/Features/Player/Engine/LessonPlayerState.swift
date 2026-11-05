@@ -73,7 +73,9 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var steps: [String: LessonStep]
   let lessonOrder: [String]
   let hasMap: Bool
-  private(set) var queue: [String]
+  private(set) var queue: [String] {
+    didSet { showHeldMarks() }
+  }
   private(set) var position = 0 {
     didSet { showHeldMarks() }
   }
@@ -709,7 +711,7 @@ struct LessonPlayerState: Equatable, Sendable {
   }
 
   /// Late marks reach the screen in view only as far as they draw on its text, so nothing moves
-  /// while the learner reads; its strip, example frame and icon show from the next visit.
+  /// while the learner reads: its strip, example frame and icon stay as shown until the next visit.
   mutating func applyMarks(from fresh: [LessonStep]) {
     for step in fresh {
       guard let current = steps[step.id], current.marks != step.marks else {
@@ -717,7 +719,13 @@ struct LessonPlayerState: Equatable, Sendable {
       }
 
       if step.id == currentStep?.id {
-        steps[step.id] = current.withMarks(step.marks.map { StepMarks(underline: $0.underline) })
+        let shown = current.marks
+        steps[step.id] = current.withMarks(
+          step.marks.map {
+            StepMarks(
+              ideaIndex: shown?.ideaIndex, underline: $0.underline, example: shown?.example,
+              icon: shown?.icon)
+          })
         heldMarks = HeldMarks(stepId: step.id, marks: step.marks)
       } else {
         steps[step.id] = current.withMarks(step.marks)
