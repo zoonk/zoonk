@@ -157,10 +157,11 @@ describe("learning profile request facts", () => {
 
     const profileReads = vi.spyOn(prisma.userLearningProfile, "findUnique");
 
-    const supplied = await findLearningProfileView(user.id, Promise.resolve(profile));
+    const supplied = await countDatabaseStatements(() =>
+      findLearningProfileView(user.id, Promise.resolve(profile)),
+    );
 
-    expect(supplied).toMatchObject({ soundsEnabled: false });
-
+    expect(supplied).toMatchObject({ result: { soundsEnabled: false }, writes: 0 });
     expect(profileReads).not.toHaveBeenCalled();
 
     await prisma.userLearningProfile.update({

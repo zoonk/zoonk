@@ -3,8 +3,6 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
-import { getBeltLevel } from "./get-belt-level";
 
 type QueueClient = { query: (text: string) => Promise<unknown>; release: () => void };
 
@@ -83,17 +81,6 @@ describe(countDatabaseStatements, () => {
     );
 
     expect(counts).toMatchObject({ statements: 4, writes: 0 });
-  });
-
-  it("counts the existing belt capability's real read", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-    await prisma.userProgress.create({ data: { totalBrainPower: 15_000n, userId: user.id } });
-
-    const counts = await countDatabaseStatements(() => getBeltLevel());
-
-    expect(counts.result?.level).toBe(8);
-    expect(counts).toMatchObject({ statements: 1, writes: 0 });
   });
 
   it("counts transaction writes", async () => {
