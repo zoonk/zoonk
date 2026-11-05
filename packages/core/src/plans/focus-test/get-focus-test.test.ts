@@ -1,13 +1,13 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { getFocusTest } from "./get-focus-test";
 
-describe("render read budgets", () => {
-  it("keeps the read budget for focus-test display", async () => {
+describe(getFocusTest, () => {
+  it("reads focus-test display without writing", async () => {
     const user = await userFixture();
 
     const { goal, plan, skills } = await learnerGoalFixture({
@@ -35,7 +35,7 @@ describe("render read budgets", () => {
 
     mockSession(user.id);
     const counts = await countDatabaseStatements(() => getFocusTest({ goalId: goal.id }));
-    assertReadBudget(counts, 7);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 });

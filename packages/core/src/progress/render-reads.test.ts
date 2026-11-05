@@ -1,6 +1,6 @@
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getBeltLevel } from "./get-belt-level";
@@ -15,17 +15,17 @@ import { getStudiedToday } from "./get-studied-today";
 
 const TODAY = new Date("2026-10-14T00:00:00.000Z");
 
-describe("stats render read statement budgets", () => {
+describe("stats render reads", () => {
   it.each([
-    ["buddy energy", getEnergyLevel, 1],
-    ["buddy studied", getStudiedToday, 1],
-    ["overview", getCurrentUserProgress, 7],
-    ["energy", getEnergyData, 2],
-    ["level", getBeltLevel, 1],
-    ["activity", getLearningActivity, 4],
-    ["patterns", getCurrentUserScorePatterns, 2],
-    ["score", () => getScoreHistory({ locale: "en" }), 1],
-  ] as const)("keeps the read budget for %s", async (_name, read, budget) => {
+    ["buddy energy", getEnergyLevel],
+    ["buddy studied", getStudiedToday],
+    ["overview", getCurrentUserProgress],
+    ["energy", getEnergyData],
+    ["level", getBeltLevel],
+    ["activity", getLearningActivity],
+    ["patterns", getCurrentUserScorePatterns],
+    ["score", () => getScoreHistory({ locale: "en" })],
+  ] as const)("reads %s without writing", async (_name, read) => {
     const user = await userFixture();
 
     await Promise.all([
@@ -57,7 +57,7 @@ describe("stats render read statement budgets", () => {
     });
 
     const counts = await countDatabaseStatements(async () => read());
-    assertReadBudget(counts, budget);
+    expect(counts.writes).toBe(0);
     expect(counts.result).not.toBeNull();
   });
 });

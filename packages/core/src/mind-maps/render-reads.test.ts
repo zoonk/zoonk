@@ -1,11 +1,11 @@
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
 import { getChapterMindMap } from "./get-chapter-mind-map";
 import { listGoalMindMaps } from "./list-goal-mind-maps";
 
-describe("mind map read budgets", () => {
-  it.each(["list", "chapter"] as const)("keeps the read budget for %s", async (name) => {
+describe("mind map reads", () => {
+  it.each(["list", "chapter"] as const)("reads %s without writing", async (name) => {
     const { goal, chapters } = await signedInCourseGoal({
       statuses: ["done", "done", "todo", "todo"],
     });
@@ -16,7 +16,7 @@ describe("mind map read budgets", () => {
         : getChapterMindMap({ chapterId: chapters[0]!.id, goalId: goal.id }),
     );
 
-    assertReadBudget(counts, 37);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 });

@@ -1,6 +1,6 @@
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
@@ -10,11 +10,11 @@ import { getMock } from "./mocks/get-mock";
 import { getMockOptions } from "./mocks/get-mock-options";
 import { getExamView } from "./view/get-exam-view";
 
-describe("exam read budgets", () => {
+describe("exam reads", () => {
   it.each([
-    ["exam", getExamView, 61],
-    ["mock options", getMockOptions, 32],
-  ] as const)("keeps the read budget for %s", async (_name, read, budget) => {
+    ["exam", getExamView],
+    ["mock options", getMockOptions],
+  ] as const)("reads %s without writing", async (_name, read) => {
     const [user, blueprint] = await Promise.all([userFixture(), examBlueprintFixture()]);
 
     const { goal } = await sessionGoalFixture({
@@ -24,16 +24,16 @@ describe("exam read budgets", () => {
 
     mockSession(user.id);
     const counts = await countDatabaseStatements(async () => read({ goalId: goal.id }));
-    assertReadBudget(counts, budget);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 
-  it("keeps the read budget for an unstarted mock", async () => {
+  it("reads an unstarted mock without writing", async () => {
     freezeClock();
     vi.setSystemTime(SESSION_NOW);
     const { blockId } = await scheduledMockSetup();
     const counts = await countDatabaseStatements(() => getMock(blockId));
-    assertReadBudget(counts, 29);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 });

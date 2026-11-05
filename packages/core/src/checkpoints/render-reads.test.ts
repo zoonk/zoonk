@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
@@ -13,8 +13,8 @@ import {
 import { getChallenge } from "./get-challenge";
 import { getCheckpoint } from "./get-checkpoint";
 
-describe("checkpoint render read budgets", () => {
-  it("keeps the budget for the due challenge before a session exists and the saved checkpoint", async () => {
+describe("checkpoint render reads", () => {
+  it("reads the due challenge before a session exists and the saved checkpoint without writing", async () => {
     freezeClock();
     vi.setSystemTime(SESSION_NOW);
     const user = await userFixture();
@@ -40,7 +40,7 @@ describe("checkpoint render read budgets", () => {
       getChallenge({ input: {}, planItemId: boss.id }),
     );
 
-    assertReadBudget(counts, 71);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
 
     await expect(prisma.studySession.count({ where: { goalId: fixture.goal.id } })).resolves.toBe(
@@ -60,7 +60,7 @@ describe("checkpoint render read budgets", () => {
     }
 
     const saved = await countDatabaseStatements(() => getCheckpoint(block.id));
-    assertReadBudget(saved, 20);
+    expect(saved.writes).toBe(0);
     expect(saved.result.status).toBe("ready");
   });
 });

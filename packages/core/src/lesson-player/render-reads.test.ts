@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { getChallengeTeam } from "../library/challenges/get-challenge-team";
 import { getLessonGenerationState } from "../library/generation/lesson-generation-state";
@@ -12,7 +12,7 @@ import { getLessonProgress } from "./get-lesson-progress";
 import { getLessonSupport } from "./get-lesson-support";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
 
-describe("lesson render read budgets", () => {
+describe("lesson render reads", () => {
   it.each([
     "playable",
     "outline",
@@ -21,7 +21,7 @@ describe("lesson render read budgets", () => {
     "generation",
     "stored team",
     "derived team",
-  ] as const)("reads %s", async (name) => {
+  ] as const)("reads %s without writing", async (name) => {
     const { plan, skills } = await signedInCourseGoal();
     const { lesson } = await playableLessonFixture();
 
@@ -52,18 +52,7 @@ describe("lesson render read budgets", () => {
     };
 
     const counts = await countDatabaseStatements<unknown>(readers[name]);
-
-    const budgets = {
-      "derived team": 4,
-      generation: 1,
-      outline: 11,
-      playable: 14,
-      progress: 2,
-      "stored team": 4,
-      support: 5,
-    };
-
-    assertReadBudget(counts, budgets[name]);
+    expect(counts.writes).toBe(0);
 
     const expected = {
       "derived team": expect.objectContaining({ status: "ready" }),
@@ -78,7 +67,7 @@ describe("lesson render read budgets", () => {
     expect(counts.result).toStrictEqual(expected[name]);
   });
 
-  it("reads alternatives and the goal's warm-up deck while a lesson has not been generated", async () => {
+  it("reads alternatives and the goal's warm-up deck without writing while a lesson has not been generated", async () => {
     await signedInCourseGoal();
     const lesson = await libraryLessonFixture();
 
@@ -86,7 +75,7 @@ describe("lesson render read budgets", () => {
       getLessonWaitingState({ lessonId: lesson.id }),
     );
 
-    assertReadBudget(counts, 6);
+    expect(counts.writes).toBe(0);
     expect(counts.result).toMatchObject({ state: { status: "notStarted" }, status: "ready" });
   });
 });

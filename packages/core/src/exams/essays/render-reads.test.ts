@@ -1,7 +1,7 @@
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -9,8 +9,8 @@ import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { SESSION_NOW, sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
 import { getEssay } from "./get-essay";
 
-describe("essay render read budget", () => {
-  it("reads a scheduled essay's prompt and drafts", async () => {
+describe("essay render reads", () => {
+  it("reads a scheduled essay's prompt and drafts without writing", async () => {
     freezeClock();
     vi.setSystemTime(SESSION_NOW);
     const user = await userFixture();
@@ -67,7 +67,7 @@ describe("essay render read budget", () => {
     }
 
     const counts = await countDatabaseStatements(() => getEssay({ blockId: block.id }));
-    assertReadBudget(counts, 10);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 });

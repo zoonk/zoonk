@@ -7,7 +7,7 @@ import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { getMistakePractice } from "./get-mistake-practice";
 import { listCurrentUserMistakes } from "./list-current-user-mistakes";
 
-describe("mistake read budgets", () => {
+describe("mistake reads", () => {
   it.each(["practice", "list"] as const)("reads %s without writing", async (name) => {
     const user = await userFixture();
 

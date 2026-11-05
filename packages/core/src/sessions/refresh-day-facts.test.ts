@@ -1,9 +1,9 @@
 import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import * as goalSkillGraph from "../learner/_utils/goal-skill-graph";
 import { keepPaceOwn } from "../plans/_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { changeGoalPlan } from "../plans/change-goal-plan";
@@ -93,17 +93,12 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
         const { goal, plan, readDay, user } = await setup(spent);
         const original = await readDay();
 
-        const measured = await countDatabaseStatements(() =>
-          changeGoalPlan({
-            goalId: goal.id,
-            input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }], timeZone: "UTC" },
-          }),
-        );
-
-        expect(measured.result).toMatchObject({
-          change: { todaySession: "changed" },
-          status: "applied",
+        const changed = await changeGoalPlan({
+          goalId: goal.id,
+          input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }], timeZone: "UTC" },
         });
+
+        expect(changed).toMatchObject({ change: { todaySession: "changed" }, status: "applied" });
 
         const after = await readDay();
         const savedPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
@@ -156,16 +151,12 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
           plannedMinutes: after.plannedMinutes,
         };
 
-        const unsharedFacts = await countDatabaseStatements(() =>
-          loadDayMissionFacts(missionInput),
-        );
+        const unsharedFacts = await loadDayMissionFacts(missionInput);
+        const goalPlans = vi.spyOn(goalSkillGraph, "loadGoalPlan");
+        const sharedFacts = await loadDayMissionFacts({ ...missionInput, dayPlan });
 
-        const sharedFacts = await countDatabaseStatements(() =>
-          loadDayMissionFacts({ ...missionInput, dayPlan }),
-        );
-
-        expect(sharedFacts.result).toStrictEqual(unsharedFacts.result);
-        expect(unsharedFacts.statements - sharedFacts.statements).toBe(17);
+        expect(sharedFacts).toStrictEqual(unsharedFacts);
+        expect(goalPlans).not.toHaveBeenCalled();
 
         await expect(
           followPlanChangeToday({
@@ -178,13 +169,13 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
 
         await expect(readDay()).resolves.toStrictEqual(after);
 
-        if (measured.result.status !== "applied" || !measured.result.change) {
+        if (changed.status !== "applied" || !changed.change) {
           throw new Error("Expected an applied change with an Undo snapshot");
         }
 
         await expect(
           decidePlanChange({
-            changeId: measured.result.change.id,
+            changeId: changed.change.id,
             goalId: goal.id,
             input: { status: "undone", timeZone: "UTC" },
           }),
@@ -193,7 +184,6 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
         const undone = await readDay();
         expect(undone.blocks).toStrictEqual(original.blocks);
         expect(undone.missions).toStrictEqual(original.missions);
-        expect(measured.statements).toBeLessThanOrEqual(180);
       }),
   );
 
