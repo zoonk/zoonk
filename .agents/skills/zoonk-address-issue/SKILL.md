@@ -100,10 +100,10 @@ A valid issue doesn't always need a PR:
 
 ## 5. Address it
 
-Judge the kind from what the issue asks, not from its type, label or title.
+Whatever the kind, the fix or approach an issue suggests is one idea, not the plan. Work out the best way to solve the problem, and when it differs from the issue's suggestion, say why in the PR. Judge the kind from what the issue asks, not from its type, label or title.
 
 - **Bug** (something doesn't do what it's meant to): fix it. Find the root cause rather than patching the symptom the issue shows, and start from a regression test that fails for the right reason ([zoonk-testing](../zoonk-testing/SKILL.md)). A bug in a dependency gets a workaround here and an upstream report ([zoonk-upstream-issue](../zoonk-upstream-issue/SKILL.md)).
-- **Enhancement** (something Zoonk does that should work better, or a specific piece of work): research the best way to do it. The approach the issue suggests is one idea, not the plan. Find the need behind it, look at how strong products solve the same need, and check what our dependencies already offer ([zoonk-capability-research](../zoonk-capability-research/SKILL.md)). Build the simplest approach that serves learners best, and when it differs from the issue's suggestion, say why in the PR. If it needs a product decision, such as changing what learners pay for or removing something they use, bring it to the user first.
+- **Enhancement** (something Zoonk does that should work better, or a specific piece of work): research the best way to do it. Find the need behind it, look at how strong products solve the same need, and check what our dependencies already offer ([zoonk-capability-research](../zoonk-capability-research/SKILL.md)). Build the simplest approach that serves learners best. If it needs a product decision, such as changing what learners pay for or removing something they use, bring it to the user first.
 - **New feature** (something Zoonk doesn't do at all, such as a new flow, screen, kind of content or platform): discuss it before any plan, design or code. Bring the user the need behind it and who has it, what Zoonk does today, the decisions it needs, the options and your recommendation. Once they decide, build it like an enhancement.
 
 A bug or enhancement ends like any task ([root instructions](../../../AGENTS.md#finishing-a-task)), with `Fixes #<n>` in the PR body so GitHub links the PR and closes the issue when it merges.
