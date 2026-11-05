@@ -195,7 +195,7 @@
     <string name="player_know_this">Je connais déjà</string>
     <!-- Names a small diagram of this lesson's main ideas, drawn by the app: the lesson's last screen, a menu item and a sheet title. Not the chapter's mind map. -->
     <string name="player_lesson_map">Schéma de la leçon</string>
-    <!-- For TalkBack: read before a lesson map whose ideas are levels, each drawn inside the next, smallest first. -->
+    <!-- Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population. -->
     <string name="player_lesson_map_nested">Chaque niveau est à l’intérieur du suivant.</string>
     <!-- Above a lesson's teaching screen or question: which of the lesson map's ideas it belongs to, with the idea's name under it. A position, not a count. -->
     <string name="player_idea_position">Notion %1$s sur %2$s</string>
