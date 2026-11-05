@@ -70,6 +70,7 @@
     <string name="subscription_benefit_mocks">Mock exams, timed like the real one</string>
     <string name="subscription_benefit_buddy">An AI study buddy whenever you\'re stuck</string>
     <string name="subscription_benefit_calls">Higher limits for speaking calls</string>
+    <string name="subscription_benefit_certificates">A certificate for every level you finish</string>
     <string name="subscription_start_free">Start free</string>
     <string name="subscription_no_card_needed">No card needed.</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->

@@ -133,7 +133,6 @@ function OutcomeStep({ rows, showsReview }: { rows: ResultRows; showsReview: boo
 export function CheckpointResultView() {
   const t = useExtracted();
   const { checkpoint, duel, hrefs, renderCeremony } = useCheckpointScreen();
-  const ceremony = duel.state.completion?.ceremony ?? null;
   const name = useCheckpointEyebrow(checkpoint);
   const outcome = useCheckpointOutcome();
   const rows = useResultRows();
@@ -166,7 +165,10 @@ export function CheckpointResultView() {
             <NoVerdictStep />
           ),
           id: "outcome",
-          moment: getCeremonyMoment({ milestone: ceremony, render: renderCeremony }),
+          moment: getCeremonyMoment({
+            moments: duel.state.completion ?? null,
+            render: renderCeremony,
+          }),
         },
       ]}
     />

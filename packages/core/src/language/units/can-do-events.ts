@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { type AnalyticsEvent } from "../../analytics/events";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { conversationScenarioSchema } from "../conversations/conversation-contract";
@@ -10,14 +10,16 @@ type UnitGoal = Pick<Goal, "id">;
 
 async function loadWonCallUnitIds({
   chapterIds,
+  db = prisma,
   exceptId,
   userId,
 }: {
   chapterIds: readonly string[];
+  db?: TransactionClient;
   exceptId?: string;
   userId: string;
 }): Promise<Set<string>> {
-  const calls = await prisma.languageConversation.findMany({
+  const calls = await db.languageConversation.findMany({
     select: { chapterId: true, objectivesMet: true, scenario: true },
     where: {
       chapterId: { in: [...chapterIds] },
@@ -39,14 +41,17 @@ async function loadWonCallUnitIds({
 }
 
 export async function loadDoneUnitIds({
+  db,
   units,
   userId,
 }: {
+  db?: TransactionClient;
   units: readonly LanguageUnit[];
   userId: string;
 }): Promise<Set<string>> {
   const wonCalls = await loadWonCallUnitIds({
     chapterIds: units.map((unit) => unit.chapterId),
+    db,
     userId,
   });
 

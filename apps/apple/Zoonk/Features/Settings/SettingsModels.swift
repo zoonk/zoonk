@@ -115,6 +115,7 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
   }
 
   enum Source: Equatable, Sendable {
+    case call
     case chat
     case noticed
     case onboarding
@@ -172,6 +173,7 @@ extension MemoryFact {
     let source: Source =
       switch (fact.origin, fact.source?.value1.kind) {
       case (.noticed, _): .noticed
+      case (_, .call): .call
       case (_, .chat): .chat
       case (_, .onboarding): .onboarding
       case (_, .session): .session

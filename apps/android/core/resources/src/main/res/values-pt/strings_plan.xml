@@ -217,6 +217,7 @@
   "plan_continues_on": "16475ec917870135beb1685243954340e989a45660abea94f481d0b81c18ff0f",
   "plan_continues_today": "58600e0f166ebc2eebdedeafdc87b46bfc6e3f85d1ad2067eba1c557d0bba132",
   "plan_couldnt_check_changes": "966f712d6cd1aa13a37e1e47ae9e6dc8a8d0176ccf95c7a0caa9286ac180bdb9",
+  "plan_course_complete": "fffd132ed6f54acf6812655e67a89c87997a7bffad845c5b0c00c6d2b8e2a371",
   "plan_coverage": "e2ba9f1ee532c26c9a85e3e5236284a3b5bfcbb6973cfc035d6dad59e1284e8c",
   "plan_coverage_caption": "b60256184e637df7ae9d4f52dbeaad5ffc43f189df99c308fccaf57606d693a3",
   "plan_covered_not_enough": "81a4a16fdc2e712036c8ff330cf0f332424154bc7edbabed215d89fae66f43e7",
@@ -317,6 +318,7 @@
   "plan_lessons_on_the_way": "4b3376bc6b04e979b3fdd626837cb49dfd3df94895b96b0e22f925895b116bd5",
   "plan_lessons_studied": "81d34b985808033c19c1f89b8b392c5a26ae25fe6c4129df86d41b423793a37c",
   "plan_level": "b09744509e407a5798b0303a350765d958172654bba1df9e489642aa73d501b9",
+  "plan_level_complete": "e48318aaa179260c8f3836f583b976395697d39cdbf33cadc63b6a3e2e68bc06",
   "plan_long_term_memory": "e889641f9dc6225c3572cf31f4738b368fe452c1a5afcf4e5dc23dff71ac267c",
   "plan_loss_this_week": "02b87797123ca737f1e05dfe9958b4a1f8e74e236b03a7666aec71fa965e2915",
   "plan_mastery": "863c6e53096b8d47cac83e398c634803ce8fe27d83c7fac72900c736aa94a6d6",
@@ -1633,4 +1635,8 @@
     <string name="plan_finished_title">Você concluiu seu plano</string>
     <string name="plan_study_next">Veja o que estudar agora.</string>
     <string name="plan_continue_at">Continuar em %1$s</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
+    <string name="plan_course_complete">Curso concluído</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
+    <string name="plan_level_complete">%1$s concluído</string>
 </resources>

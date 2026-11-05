@@ -63,6 +63,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentBuddy
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.player.LessonTitle
@@ -156,7 +157,17 @@ fun CheckpointScreen(
 
         else -> {
             if (shown.state.showsResult) {
-                MomentAfterCeremony(app, shown.state.completion?.ceremony) { buddy -> DuelResult(shown, viewModel, app, buddy) }
+                MomentAfterCeremony(
+                    app,
+                    shown.state.completion?.ceremony,
+                    shown.state.completion
+                        ?.certificates
+                        .orEmpty()
+                        .map { it.naming },
+                    onSeePlus = { navigator.open(AppRoute.Subscription) },
+                ) { buddy ->
+                    DuelResult(shown, viewModel, app, buddy)
+                }
             } else {
                 DuelPlay(shown, viewModel, app)
             }

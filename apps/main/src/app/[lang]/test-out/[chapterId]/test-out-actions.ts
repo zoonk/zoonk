@@ -25,6 +25,7 @@ export async function submitTestOutAction(
 
   return {
     ceremony: outcome.ceremony,
+    certificates: outcome.certificates,
     changeId: outcome.changeId,
     correct: outcome.correct,
     passed: outcome.passed,

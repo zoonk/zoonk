@@ -962,4 +962,8 @@
     <string name="plan_finished_title">You finished your plan</string>
     <string name="plan_study_next">Here\'s what to study next.</string>
     <string name="plan_continue_at">Continue at %1$s</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
+    <string name="plan_course_complete">Course complete</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
+    <string name="plan_level_complete">%1$s complete</string>
 </resources>

@@ -22,6 +22,7 @@
   "memory_fact_source": "2efc6248821d436441090be9ecaf1704dd03caded6cf3e0b3f39943008e4fa00",
   "memory_save_failed": "5559ecf6ba3ffb331fc7a16e9753087b5922089b178930db5dd1daa852cf158a",
   "memory_sensitive_note": "f788b11c7cbcec3d872349c523d2c06d228fb6d0bc76ae227311603fdb8a1137",
+  "memory_source_call": "a0cbecf395171f63656c4f5f5737e7eec8f117afa75b233e759bac17865645ac",
   "memory_source_chat": "0ea68b3e634f578522feef39e7aa457dd5b46a5870c96cb756c72268ebfeaf6e",
   "memory_source_noticed": "ece509397b15d56b5d3aabbbd1a20a98e9af48bb9b3fd660b4f27bc5f6f7dbe9",
   "memory_source_onboarding": "71c1f46a4eb70cf8684e564d8ac546ddbb4276dd3cbddb70c1aeb46259989c63",
@@ -34,13 +35,13 @@
   "memory_updated_more": "2a7fa74cb7a372f52bf8e0370feddf87171a4c14521e6008b1a9bb537940e3ab",
   "memory_use": "f5e1bee57b5fbfaa9b4f3ff355301ac7d374dece2d091e54060e6a9b02c83d60",
   "memory_use_off": "9bd26e3ee0262341cd951f4c59f315098ea6870deaa1605e2b7831ecae8ae3e6",
-  "memory_use_on": "61174645c4180607da24d8727cd89141ddfd0fbf62adf510ac2daf2d25c8415a"
+  "memory_use_on": "02523f6d9409760a10fb10f38323b406e2d93082f6759b01e723d1a89138ca4b"
 }
 -->
 <resources>
     <string name="memory_description">生活に合った例や学習計画を用意するために、Zoonkが覚えている情報です。</string>
     <string name="memory_use">メモリを使う</string>
-    <string name="memory_use_on">身近な例や、1週間の予定に合う学習計画</string>
+    <string name="memory_use_on">身近な例、1週間の予定に合った学習計画、近況を踏まえた会話</string>
     <string name="memory_use_off">メモリはオフです。新しい情報は保存されず、ここにある情報も使われません。</string>
     <string name="memory_empty_on">まだ何もありません。学習やチャットを進めると、Zoonkが学習をサポートするための短いメモがここに表示されます。</string>
     <string name="memory_empty_off">メモはありません。メモリがオフの間、Zoonkはメモを保存しません。</string>
@@ -54,6 +55,8 @@
     <string name="memory_category_context">状況</string>
     <string name="memory_source_noticed">利用状況からわかったこと</string>
     <string name="memory_source_you">教えてもらったこと</string>
+    <!-- Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor. -->
+    <string name="memory_source_call">会話から</string>
     <string name="memory_source_chat">チャットから</string>
     <string name="memory_source_onboarding">初期設定から</string>
     <string name="memory_source_session">学習から</string>

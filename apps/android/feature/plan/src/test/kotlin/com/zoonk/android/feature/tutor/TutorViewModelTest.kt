@@ -13,6 +13,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.plan.planChange
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -64,16 +66,72 @@ class TutorViewModelTest {
         scope: TutorScope = this.scope,
         cache: AppCache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)),
         saved: SavedStateHandle = SavedStateHandle(),
+        openMission: suspend (UUID) -> MutationResult<AppRoute?> = { MutationResult.Obsolete },
     ): TutorViewModel =
         TutorViewModel(
             scope,
             TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) },
             saved,
+            openMission,
         ).also { it.thread.load() }
 
     private val TutorViewModel.turns get() =
         thread.state.value.value!!
             .turns
+
+    @Test
+    fun aStepLinkOpensOneAtATimeAndSaysWhyWhenItDidnt() =
+        runTest(dispatcher) {
+            val asked = mutableListOf<UUID>()
+            var answer = CompletableDeferred<MutationResult<AppRoute?>>()
+            val vm =
+                conversation(openMission = {
+                    asked += it
+                    answer.await()
+                })
+            val routes = mutableListOf<AppRoute>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.blockRoutes.collect { routes += it } }
+
+            vm.openBlock("turn-1", BLOCK)
+            vm.openBlock("turn-2", BLOCK)
+            advanceUntilIdle()
+            assertEquals(listOf(BLOCK), asked)
+
+            answer.complete(MutationResult.Done(null))
+            advanceUntilIdle()
+            assertEquals(BlockNotice("turn-1", closed = true), vm.blockNotice)
+
+            answer = CompletableDeferred()
+            vm.openBlock("turn-2", BLOCK)
+            assertNull(vm.blockNotice)
+            answer.complete(MutationResult.Failed(ApiError.Network))
+            advanceUntilIdle()
+            assertEquals(BlockNotice("turn-2", closed = false), vm.blockNotice)
+
+            answer = CompletableDeferred()
+            vm.openBlock("turn-2", BLOCK)
+            answer.complete(MutationResult.Done(AppRoute.Today))
+            advanceUntilIdle()
+            assertEquals(listOf<AppRoute>(AppRoute.Today), routes)
+            assertNull(vm.blockNotice)
+            assertFalse(vm.isOpeningBlock)
+
+            answer = CompletableDeferred()
+            vm.openBlock("turn-2", BLOCK)
+            advanceUntilIdle()
+            vm.leave()
+            answer.complete(MutationResult.Done(AppRoute.Exam))
+            advanceUntilIdle()
+            assertEquals("a step that opens after the learner left leads nowhere", listOf<AppRoute>(AppRoute.Today), routes)
+
+            answer = CompletableDeferred()
+            vm.openBlock("turn-2", BLOCK)
+            advanceUntilIdle()
+            vm.leave()
+            answer.complete(MutationResult.Failed(ApiError.Network))
+            advanceUntilIdle()
+            assertNull("nor says anything once they come back", vm.blockNotice)
+        }
 
     @Test
     fun sendingAddsTheQuestionAndStreamsItsAnswer() =
@@ -576,5 +634,6 @@ class TutorViewModelTest {
     private companion object {
         const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val OTHER_CHANGE = "9a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        val BLOCK: UUID = UUID.fromString("5d1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f")
     }
 }

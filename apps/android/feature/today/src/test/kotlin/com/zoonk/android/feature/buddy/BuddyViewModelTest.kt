@@ -11,18 +11,23 @@ import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.feature.session.FakeStudyApi
 import com.zoonk.android.feature.session.MissionOpens
+import com.zoonk.android.feature.session.SESSION
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.opening
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.BuddyStatus
 import com.zoonk.api.models.LearningProfile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.JsonObject
@@ -104,6 +109,43 @@ class BuddyViewModelTest {
             assertNull(vm.openFailed)
         }
 
+    @Test
+    fun aMissionOpensWhereItsBlockStartedWhileThePageStays() =
+        runTest(dispatcher) {
+            val vm = buddy(opensALesson(), NoStatusApi)
+
+            vm.openMission(BuddyTap(MissionOpens.Block(blockId = BLOCK, position = null)), GOAL)
+            advanceUntilIdle()
+
+            assertEquals(1, shownRoutes(vm).size)
+        }
+
+    @Test
+    fun aMissionOpenedAfterTheLearnerLeftOpensNothingWhenTheyComeBack() =
+        runTest(dispatcher) {
+            val vm = buddy(opensALesson(), NoStatusApi)
+
+            vm.openMission(BuddyTap(MissionOpens.Block(blockId = BLOCK, position = null)), GOAL)
+            vm.endVisit()
+            advanceUntilIdle()
+
+            assertEquals(emptyList<AppRoute>(), shownRoutes(vm))
+        }
+
+    private fun opensALesson() =
+        FakeStudyApi().apply {
+            openings =
+                listOf(opening("lesson", "lessonId" to LESSON, "sessionId" to SESSION.toString()))
+        }
+
+    /** The page collects routes only while it shows, as `BuddyScreen` does. */
+    private fun TestScope.shownRoutes(vm: BuddyViewModel): List<AppRoute> {
+        val routes = mutableListOf<AppRoute>()
+        backgroundScope.launch { vm.routes.toList(routes) }
+        runCurrent()
+        return routes
+    }
+
     private fun TestScope.buddy(
         study: FakeStudyApi,
         status: BuddyApi,
@@ -134,6 +176,7 @@ class BuddyViewModelTest {
 
     private companion object {
         const val GOAL = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"
+        const val LESSON = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d78"
         val BLOCK: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d77")
     }
 }

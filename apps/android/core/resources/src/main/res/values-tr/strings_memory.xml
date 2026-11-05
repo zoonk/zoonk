@@ -22,6 +22,7 @@
   "memory_fact_source": "94b8dc4cce9ab293bbc2cfb8c0af6400a2c661f566403f9d4a71a4e9347d1a7c",
   "memory_save_failed": "2527ad064bc705744237c50baee045ec4be37b8b9bf3ab1f627d38846f194f1a",
   "memory_sensitive_note": "ce743725986539614eca057a3e58215d568cda207959866a168c60c095cd56cd",
+  "memory_source_call": "5ea07bf0aca7b9c900e210d64f0300a1420c2fb58c90234fb0a1afb43c4c6fef",
   "memory_source_chat": "6cd391c29c64ddd8264d288ab4e6a1e7dcb2013169aaecfcb7afbbf60d106460",
   "memory_source_noticed": "0baff256ae9981bf0671e473d83fe8760e067ee5cb7ecfa1768bafab25bfd361",
   "memory_source_onboarding": "0304cfaa217c1bbe3dc93b7c7c0fb5c5da3ba9c3f3338167555c88785e05825b",
@@ -34,13 +35,13 @@
   "memory_updated_more": "3914d990c58e02e19a95c59ab322cfdf5662c343e86a6bde605dad9d2b10fdd3",
   "memory_use": "297c66e29db9f2d54b3fc26538ee0bdc4ee18b6df1a56806e7d6ef1baa921137",
   "memory_use_off": "f8e2eac56b5ecc9d33df19af5577ff9db6f4d37f7f9834ec757aff7cf9cbca98",
-  "memory_use_on": "fda53db809487efa2f40b3209ae81ead0a1cdfff67972f1b5582faae5080df9f"
+  "memory_use_on": "e2b91c9362701adffdaef91eebb5084fcc7afe2894d66996b00ccd0e8aabc73d"
 }
 -->
 <resources>
     <string name="memory_description">Hayatına uygun örnekler ve planlar sunmak için Zoonk’un seninle ilgili hatırladıkları.</string>
     <string name="memory_use">Belleği kullan</string>
-    <string name="memory_use_on">Sana özel örnekler ve haftana uygun planlar</string>
+    <string name="memory_use_on">Sana özel örnekler, haftana uygun planlar ve hayatındaki gelişmeleri hatırlayan sohbetler</string>
     <string name="memory_use_off">Bellek kapalı. Seninle ilgili yeni bir şey öğrenmiyoruz ve bu bilgileri kullanmıyoruz.</string>
     <string name="memory_empty_on">Henüz bir şey yok. Çalışıp sohbet ettikçe Zoonk’un sana daha iyi öğretmesini sağlayan kısa notlar burada görünür.</string>
     <string name="memory_empty_off">Burada bir şey yok. Bellek kapalıyken Zoonk seninle ilgili not tutmaz.</string>
@@ -54,6 +55,8 @@
     <string name="memory_category_context">Bağlam</string>
     <string name="memory_source_noticed">Etkinliklerinden fark ettik</string>
     <string name="memory_source_you">Bize anlattın</string>
+    <!-- Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor. -->
+    <string name="memory_source_call">Sesli sohbetten</string>
     <string name="memory_source_chat">Bir sohbetten</string>
     <string name="memory_source_onboarding">Başlangıç adımlarından</string>
     <string name="memory_source_session">Bir çalışmadan</string>

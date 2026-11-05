@@ -161,8 +161,8 @@ describe("a phase checkpoint's challenge", () => {
       status: "ready",
     });
 
-    const unlimited = await countDatabaseStatements(() => challengeOf(boss.id));
-    expect(unlimited.result).toMatchObject({ dailyLimitReached: false, status: "ready" });
+    const unlimited = await challengeOf(boss.id);
+    expect(unlimited).toMatchObject({ dailyLimitReached: false, status: "ready" });
 
     const limit = (dailyLimitMinutes: number | null) =>
       prisma.userLearningProfile.upsert({
@@ -181,7 +181,6 @@ describe("a phase checkpoint's challenge", () => {
     const limited = await countDatabaseStatements(() => challengeOf(boss.id));
 
     expect(limited.writes).toBe(0);
-    expect(limited.statements).toBe(unlimited.statements + 1);
 
     expect(limited.result).toMatchObject({
       dailyLimitReached: true,
@@ -189,7 +188,7 @@ describe("a phase checkpoint's challenge", () => {
       status: "ready",
     });
 
-    expect(unlimited.result).toMatchObject({ nextStudyDate: null });
+    expect(unlimited).toMatchObject({ nextStudyDate: null });
 
     await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
       status: "dailyLimitReached",

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { hasEarlierQuestions, listEarlierQuestions } from "./list-earlier-questions";
@@ -120,7 +121,7 @@ describe(listEarlierQuestions, () => {
     });
   });
 
-  it("pages through a long history, oldest last", async () => {
+  it("pages through a long history, oldest last, without writing", async () => {
     const user = await userFixture();
     const start = Date.parse("2026-01-01T00:00:00Z");
 
@@ -136,19 +137,25 @@ describe(listEarlierQuestions, () => {
 
     mockSession(user.id);
 
-    const first = await listEarlierQuestions();
-    const firstPage = first.status === "ready" ? first : null;
+    const presence = await countDatabaseStatements(hasEarlierQuestions);
+    const first = await countDatabaseStatements(() => listEarlierQuestions());
+    const firstPage = first.result.status === "ready" ? first.result : null;
 
+    expect(presence.result).toBe(true);
     expect(firstPage?.questions).toHaveLength(PAGE_SIZE);
     expect(firstPage?.questions[0]?.question).toBe(`Question ${PAGE_SIZE + 1}`);
 
-    await expect(
+    const next = await countDatabaseStatements(() =>
       listEarlierQuestions({ cursor: firstPage?.nextCursor ?? "" }),
-    ).resolves.toMatchObject({
+    );
+
+    expect(next.result).toMatchObject({
       nextCursor: null,
       questions: [{ question: "Question 1" }],
       status: "ready",
     });
+
+    expect([presence.writes, first.writes, next.writes]).toStrictEqual([0, 0, 0]);
 
     await expect(listEarlierQuestions({ cursor: randomUUID() })).resolves.toStrictEqual({
       status: "invalidCursor",

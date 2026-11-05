@@ -36,6 +36,22 @@ async function moveMilestones({ guestUserId, transaction, userId }: GuestLinkCon
   `;
 }
 
+/** A guest's certificates are never issued, so on a key the account holds the account's row stays. */
+async function moveCertificates({ guestUserId, transaction, userId }: GuestLinkContext) {
+  await transaction.$executeRaw`
+    WITH guest_rows AS (
+      DELETE FROM certificates
+      WHERE user_id = ${guestUserId}::uuid
+      RETURNING *
+    )
+    INSERT INTO certificates (id, user_id, kind, key, code, goal_id, course_id, language, target_language, level, course_level, title, details, completed_on, shown_at, issued_at, created_at)
+    SELECT id, ${userId}::uuid, kind, key, code, goal_id, course_id, language, target_language, level, course_level, title, details, completed_on, shown_at, issued_at, created_at
+    FROM guest_rows
+    ORDER BY kind, key
+    ON CONFLICT (user_id, kind, key) DO NOTHING
+  `;
+}
+
 async function moveUsageRecords({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`
     WITH guest_rows AS (
@@ -145,6 +161,7 @@ async function moveStepExampleLines({ guestUserId, transaction, userId }: GuestL
 export async function moveKeyedRows(context: GuestLinkContext) {
   await moveLearnerSkills(context);
   await moveMilestones(context);
+  await moveCertificates(context);
   await moveUsageRecords(context);
   await moveLearnerSources(context);
   await moveLearnerWords(context);

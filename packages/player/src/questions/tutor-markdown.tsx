@@ -85,10 +85,14 @@ const LESSON_QUESTION_LINK_SAFETY = {
   renderModal: renderExternalLinkConfirmation,
 } as const;
 
-/** Set `verified` only after the saved answer's links have been checked against their allowlist. */
+/**
+ * Set `verified` only after the saved answer's links have been checked against their allowlist.
+ * `openBlock` resolves to false when it couldn't open, to `changed` when nothing opened because the
+ * step isn't free to start anymore, and to true otherwise.
+ */
 export type TutorAnswerLinks = {
   Link: PlayerLinkComponent;
-  openBlock?: (blockId: string) => Promise<boolean>;
+  openBlock?: (blockId: string) => Promise<boolean | "changed">;
   verified: boolean;
 };
 
@@ -101,49 +105,36 @@ function isPlainClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
 
-const TutorAnswerLinksContext = createContext<
-  (TutorAnswerLinks & { setOpenFailed: (failed: boolean) => void }) | null
->(null);
+type AnswerLinks = Omit<TutorAnswerLinks, "openBlock"> & {
+  openBlock?: (blockId: string) => void;
+  openingBlockId: string | null;
+};
+
+const TutorAnswerLinksContext = createContext<AnswerLinks | null>(null);
 
 function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
   const links = use(TutorAnswerLinksContext);
-  const [opening, setOpening] = useState(false);
 
   if (!links?.verified || !href || !isTutorAppPath(href)) {
     return children;
   }
 
-  const { Link, openBlock, setOpenFailed } = links;
+  const { Link, openBlock, openingBlockId } = links;
   const blockId = readTutorBlockLink(href);
 
   const onClick =
     blockId && openBlock
       ? (event: MouseEvent<HTMLAnchorElement>) => {
-          if (!isPlainClick(event)) {
-            return;
+          if (isPlainClick(event)) {
+            event.preventDefault();
+            openBlock(blockId);
           }
-
-          event.preventDefault();
-
-          if (opening) {
-            return;
-          }
-
-          setOpening(true);
-          setOpenFailed(false);
-
-          // Not a transition: React would hold a navigation the learner starts meanwhile until the
-          // open settles, and then the open would win.
-          void safeAsync(() => openBlock(blockId)).then(({ data: opened }) => {
-            setOpening(false);
-            setOpenFailed(!opened);
-          });
         }
       : undefined;
 
   return (
     <Link
-      aria-busy={opening || undefined}
+      aria-busy={(blockId !== null && blockId === openingBlockId) || undefined}
       className="aria-busy:opacity-60"
       href={href}
       onClick={onClick}
@@ -186,9 +177,37 @@ export function TutorMarkdown({
   isAnimating: boolean;
   isStreaming: boolean;
 }) {
+  const t = useExtracted();
   const plugins = useMarkdownPlugins({ isStreaming, text: answer });
-  const [openFailed, setOpenFailed] = useState(false);
-  const links = appLinks ? { ...appLinks, setOpenFailed } : null;
+  const [openingBlockId, setOpeningBlockId] = useState<string | null>(null);
+  const [opened, setOpened] = useState<boolean | "changed" | null>(null);
+
+  const openBlock = appLinks?.openBlock;
+
+  // One open at a time per answer, so an earlier tap's result never replaces a later one's.
+  const links: AnswerLinks | null = appLinks
+    ? {
+        ...appLinks,
+        openBlock:
+          openBlock &&
+          ((blockId) => {
+            if (openingBlockId) {
+              return;
+            }
+
+            setOpeningBlockId(blockId);
+            setOpened(null);
+
+            // Not a transition: React would hold a navigation the learner starts meanwhile until the
+            // open settles, and then the open would win.
+            void safeAsync(() => openBlock(blockId)).then(({ data }) => {
+              setOpeningBlockId(null);
+              setOpened(data ?? false);
+            });
+          }),
+        openingBlockId,
+      }
+    : null;
 
   return (
     <TutorAnswerLinksContext value={links}>
@@ -208,7 +227,19 @@ export function TutorMarkdown({
         {answer}
       </Streamdown>
 
-      {openFailed && <BlockOpenFailed />}
+      {opened === false && <BlockOpenFailed />}
+
+      <div role="status">
+        {opened === "changed" && (
+          <p className="text-muted-foreground mt-2 text-sm">
+            {t({
+              description:
+                "Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since",
+              message: "This step isn't available anymore.",
+            })}
+          </p>
+        )}
+      </div>
     </TutorAnswerLinksContext>
   );
 }

@@ -24,6 +24,7 @@
   "subscription_available_with_plus": "8f56e870d9478a420e1d7c1a1d9fc67233d9faacd4096649cb4041b83bd91206",
   "subscription_benefit_buddy": "de49ac157e537c1a1079558a35a24922077698d46b39d868be686119cd786e03",
   "subscription_benefit_calls": "2f3b39568ab09e6b7b54659223384dea1ad1c62c0737cffc53094fa4a5127313",
+  "subscription_benefit_certificates": "40e6ca5ed419d28f383f162328903993b64e07195db5dc71356241756311e45e",
   "subscription_benefit_exam": "8b5ad07c831d5eb4589c67161c6308c1b6008071abffd8483d75657fdd9acabb",
   "subscription_benefit_mocks": "6dcbb151102b48c27d112fbbdb321172ec7f7173b697a31ed4db04694787d517",
   "subscription_benefits_summary": "f3716f932134c8f696e302fdb6ee7e6c05df7fb53dad232471154fefa62c5156",
@@ -168,6 +169,7 @@
     <string name="subscription_benefit_mocks">Egzaminy próbne z limitem czasu jak na prawdziwym egzaminie</string>
     <string name="subscription_benefit_buddy">Kumpel do nauki z AI zawsze, gdy potrzebujesz pomocy</string>
     <string name="subscription_benefit_calls">Wyższe limity rozmów do ćwiczenia mówienia</string>
+    <string name="subscription_benefit_certificates">Certyfikat za każdy ukończony poziom</string>
     <string name="subscription_start_free">Zacznij za darmo</string>
     <string name="subscription_no_card_needed">Nie potrzebujesz karty.</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->

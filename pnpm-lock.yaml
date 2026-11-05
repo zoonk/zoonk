@@ -827,6 +827,9 @@ importers:
       nuqs:
         specifier: 'catalog:'
         version: 2.10.2(next@16.4.3(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)
+      qr:
+        specifier: 0.7.2
+        version: 0.7.2
       react:
         specifier: 'catalog:'
         version: 19.3.1
@@ -839,6 +842,9 @@ importers:
       server-only:
         specifier: 'catalog:'
         version: 0.0.1
+      sharp:
+        specifier: 'catalog:'
+        version: 0.35.5(@types/node@26.6.6)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -1282,6 +1288,9 @@ importers:
       '@ai-sdk/openai':
         specifier: 4.0.106
         version: 4.0.106(zod@4.6.7)
+      '@zoonk/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@zoonk/core':
         specifier: workspace:*
         version: link:../core
@@ -8294,6 +8303,10 @@ packages:
   pyodide@314.0.7:
     resolution: {integrity: sha512-0YvXxEhfEdpLfb/XkM2BFAeMROq0iMUX2bzzH9pOttyMcWkwq+HbE5uyuGD82LN7y2q+SNvi/6V5JEsOlD2R1A==}
     engines: {node: '>=18.0.0'}
+
+  qr@0.7.2:
+    resolution: {integrity: sha512-yovYRuacJBJkG9fWSwcB2bKZhr58c04DpOXguDU+rAAoJZdi6/J3DtlomkKqdd1MutIptIK+kigWmT7LKz8y7A==}
+    engines: {node: '>= 20.19.0'}
 
   query-selector-shadow-dom@1.0.1:
     resolution: {integrity: sha512-lT5yCqEBgfoMYpf3F2xQRK7zEr1rhIIZuceDK6+xRkJQ4NMbHTwXqk4NkwDwQMNqXgG9r9fyHnzwNVs6zV5KRw==}
@@ -15974,6 +15987,8 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  qr@0.7.2: {}
 
   query-selector-shadow-dom@1.0.1: {}
 

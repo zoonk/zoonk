@@ -1,5 +1,5 @@
 import "server-only";
-import { type CourseLevel, type PlanItem, prisma } from "@zoonk/db";
+import { type CourseLevel, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 
 type LanguageUnitLesson = {
   completedAt: Date | null;
@@ -30,8 +30,11 @@ function getDoneLessons(items: readonly PlanUnitItem[]): Map<string, Date | null
   );
 }
 
-export async function loadLanguageUnits(goal: { id: string }): Promise<LanguageUnit[]> {
-  const items = await prisma.planItem.findMany({
+export async function loadLanguageUnits(
+  goal: { id: string },
+  db: TransactionClient = prisma,
+): Promise<LanguageUnit[]> {
+  const items = await db.planItem.findMany({
     orderBy: { position: "asc" },
     select: { chapterId: true, completedAt: true, lessonId: true, status: true },
     where: { plan: { goalId: goal.id } },
@@ -39,7 +42,7 @@ export async function loadLanguageUnits(goal: { id: string }): Promise<LanguageU
 
   const chapterIds = [...new Set(items.flatMap((item) => item.chapterId ?? []))];
 
-  const chapters = await prisma.chapter.findMany({
+  const chapters = await db.chapter.findMany({
     include: {
       lessons: {
         include: { lesson: { select: { id: true, title: true } } },
