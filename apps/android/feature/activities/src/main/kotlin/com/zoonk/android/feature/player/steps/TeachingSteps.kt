@@ -92,7 +92,7 @@ import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
-import com.zoonk.android.ui.components.isWideWindow
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.richtext.MathText
@@ -133,7 +133,7 @@ object FillsView
 /**
  * A word bank's screen. In one narrow column the bank sits at the bottom of the view, just above the
  * actions, so it stays under the learner's thumb while the answer grows; once the screen outgrows the
- * view, the bank follows its content. A wide window keeps it under the answer.
+ * view, the bank follows its content. A wide layout ([isWideLayout]) keeps it under the answer.
  */
 @Composable
 internal fun WordBankScene(
@@ -141,7 +141,7 @@ internal fun WordBankScene(
     bank: @Composable () -> Unit,
 ) {
     Column(
-        Modifier.fillMaxWidth().then(if (isWideWindow()) Modifier else Modifier.layoutId(FillsView)),
+        Modifier.fillMaxWidth().then(if (isWideLayout()) Modifier else Modifier.layoutId(FillsView)),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         QuestionScene(question)
@@ -181,7 +181,7 @@ internal fun FactHookView(
     }
 
     Column(
-        Modifier.fillMaxWidth().then(if (isWideWindow()) Modifier else Modifier.layoutId(FillsView)),
+        Modifier.fillMaxWidth().then(if (isWideLayout()) Modifier else Modifier.layoutId(FillsView)),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         scene()

@@ -500,9 +500,8 @@ private struct BlockFinishedView: View {
   let close: () -> Void
 
   var body: some View {
-    PracticeTaskLayout {
+    PracticeTaskLayout(isResult: true) {
       PracticeResultTitle(title: title)
-    } response: {
       PracticeResultNumbers(
         correct: completion.correct, total: completion.total,
         brainPower: completion.ownBrainPower,

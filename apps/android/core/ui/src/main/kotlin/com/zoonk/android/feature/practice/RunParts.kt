@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.practice
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,12 +46,16 @@ import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import java.time.Instant
@@ -129,21 +134,22 @@ private fun timeMachineText(
 
 /**
  * A run's result in place of its questions: the title first and saving while [saving], so nothing
- * moves when the score arrives.
+ * moves when the score arrives, then [content], the numbers and the day's moment. Where the screen
+ * splits ([ResultPages]) all of it takes the page before the split, and the way on the page after.
  */
 @Composable
-internal fun RunDone(
+private fun RunDone(
     title: String,
     saving: Boolean,
+    detail: String?,
     modifier: Modifier = Modifier,
-    detail: String? = null,
     content: @Composable () -> Unit,
 ) {
-    Box(modifier.fillMaxWidth().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-        Column(
-            Modifier.runColumn().padding(vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-        ) {
+    ResultPages(
+        modifier = modifier,
+        withMoment = !saving,
+        columnModifier = Modifier.runColumn(),
+        done = {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
                 detail?.let {
@@ -165,23 +171,31 @@ internal fun RunDone(
             } else {
                 content()
             }
-        }
-    }
+        },
+        next = {},
+    )
 }
 
+/**
+ * A screen of a run with one decision, its action in the docked bar (an intro, a wait, a note): its
+ * column keeps to the page before an unfolded book's fold, and the page after it holds only the way on.
+ */
 @Composable
 fun RunPage(
     modifier: Modifier,
+    scroll: ScrollState = rememberScrollState(),
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+    BeforeFold(modifier) { beforeFold ->
+        Column(
+            beforeFold
+                .fillMaxSize()
+                .verticalScroll(scroll)
+                .padding(vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+        }
     }
 }
 
@@ -218,26 +232,26 @@ fun RunFinished(
     actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    TaskScaffold(
-        onClose = onClose,
-        title = { headerTitle?.let { LessonTitle(it) } },
-        bottomBar = {
-            TaskActionBar {
-                if (actions != null) {
-                    actions()
-                } else {
-                    TaskActions { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+    ResultScreen {
+        TaskScaffold(
+            onClose = onClose,
+            title = { headerTitle?.let { LessonTitle(it) } },
+            bottomBar = {
+                TaskActionBar {
+                    if (actions != null) {
+                        actions()
+                    } else {
+                        TaskActions { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+                    }
                 }
-            }
-        },
-    ) { padding -> RunDone(title, saving, Modifier.fillMaxSize().padding(padding), detail, content) }
+            },
+        ) { padding -> RunDone(title, saving, detail, modifier = Modifier.padding(padding), content = content) }
+    }
 }
 
 @Composable
 fun RunLoading(onClose: () -> Unit) {
-    TaskScaffold(onClose = onClose) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-    }
+    TaskScaffold(onClose = onClose) { padding -> PageLoading(Modifier.padding(padding)) }
 }
 
 @Composable

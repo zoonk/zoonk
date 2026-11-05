@@ -4326,12 +4326,12 @@ msgstr "Kütüphane’de kurs arıyoruz…"
 #: src/language/level-test/level-test-preparing.tsx
 msgctxt "rZi01R"
 msgid "Preparing your level test"
-msgstr "Seviye testini hazırlıyoruz"
+msgstr "Seviye tespit testini hazırlıyoruz"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "ebo_zh"
 msgid "Writing the level test questions"
-msgstr "Seviye testi sorularını hazırlıyoruz"
+msgstr "Seviye tespit testi sorularını hazırlıyoruz"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "CUwgbT"
@@ -11818,7 +11818,7 @@ msgstr "Planının dışında: {topics}."
 #: src/plan/use-coverage-sentence.ts
 msgctxt "iNSgWW"
 msgid "Your placement answers changed what fits by your date."
-msgstr "Seviye belirlemede verdiğin cevaplar, hedef tarihine kadar neleri tamamlayabileceğini değiştirdi."
+msgstr "Seviye tespit testindeki cevaplarına göre hedef tarihine kadar tamamlayabileceklerin değişti."
 
 #: src/plan/use-effect-counts.ts
 msgctxt "_K4MVL"

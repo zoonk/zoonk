@@ -3,6 +3,7 @@ package com.zoonk.android.feature.challenge
 import android.text.format.DateFormat
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -23,8 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -87,8 +90,12 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatTimeOfDay
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Challenge
@@ -224,30 +231,31 @@ private fun WritingScreen(
 ) {
     val run by viewModel.run.collectAsStateWithLifecycle()
     TaskScaffold(onClose = onClose) { padding ->
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            GenerationWait(
-                kind = GenerationKind.ChallengeQuestions,
-                run = run,
-                onRetry = viewModel::retryWriting.takeIf { viewModel.canRestart },
-                modifier = Modifier.widthIn(max = CONTENT_WIDTH),
+        BeforeFold(Modifier.padding(padding)) { beforeFold ->
+            Column(
+                beforeFold
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
-                    stringResource(R.string.challenge_writing_title),
-                    modifier = Modifier.semantics { heading() },
-                    style = MaterialTheme.typography.headlineSmall,
-                )
-                Text(
-                    stringResource(R.string.challenge_writing_detail),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
+                GenerationWait(
+                    kind = GenerationKind.ChallengeQuestions,
+                    run = run,
+                    onRetry = viewModel::retryWriting.takeIf { viewModel.canRestart },
+                    modifier = Modifier.widthIn(max = CONTENT_WIDTH),
+                ) {
+                    Text(
+                        stringResource(R.string.challenge_writing_title),
+                        modifier = Modifier.semantics { heading() },
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    Text(
+                        stringResource(R.string.challenge_writing_detail),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
             }
         }
     }
@@ -305,11 +313,17 @@ private fun CenteredColumn(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(
-        modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
+    BeforeFold(modifier) { beforeFold ->
+        Column(
+            beforeFold.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(
+                Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                content = content,
+            )
+        }
     }
 }
 
@@ -320,17 +334,23 @@ private fun IntroScreen(
     actions: ChallengeActions,
 ) {
     val aside = asideFor(challenge)
+    var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    TaskScaffold(
-        onClose = actions::close,
-        bottomBar = { TaskActionBar { ChallengeFooter(challenge, ui, actions) } },
-        aside = aside?.let { TaskAside(title = it.title) { it.content(false) } },
-    ) { padding ->
-        CenteredColumn(Modifier.padding(padding)) {
-            Intro(challenge)
-            if (!taskAsideBeside()) aside?.content?.invoke(true)
-            // A card this size scrolls with the intro; the bar under it keeps only its action.
-            if (plusRequired(challenge, ui)) PlusRequiredNotice(challenge, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+        // An open book reads the intro and what it covers on one page, and its way on on the other.
+        val beside = aside?.takeIf { pageFold(maxWidth, span) == null }
+
+        TaskScaffold(
+            onClose = actions::close,
+            bottomBar = { TaskActionBar { ChallengeFooter(challenge, ui, actions) } },
+            aside = beside?.let { TaskAside(title = it.title) { it.content(false) } },
+        ) { padding ->
+            CenteredColumn(Modifier.padding(padding)) {
+                Intro(challenge)
+                if (!taskAsideBeside()) aside?.content?.invoke(true)
+                // A card this size scrolls with the intro; the bar under it keeps only its action.
+                if (plusRequired(challenge, ui)) PlusRequiredNotice(challenge, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+            }
         }
     }
 }

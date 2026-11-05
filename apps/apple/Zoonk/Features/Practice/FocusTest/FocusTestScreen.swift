@@ -103,7 +103,32 @@ struct FocusTestScreen: View {
   private func resultView(_ result: Components.Schemas.FocusTestResult) -> some View {
     let chosen = result.areas.filter(\.chosen).map(\.label)
 
-    return PracticeTaskLayout {
+    return PracticeTaskLayout(isResult: true) {
+      VStack(alignment: .leading, spacing: 12) {
+        Text(
+          "How you did", tableName: "Practice",
+          comment: "Heading over a focus test's results by subject."
+        )
+        .font(.largeTitle.bold())
+
+        ForEach(result.areas, id: \.name) { area in
+          HStack(spacing: 12) {
+            Text(area.label).frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: 3) {
+              ForEach(Array(area.answers.enumerated()), id: \.offset) { _, isCorrect in
+                Capsule().fill(isCorrect ? Color.success : Color.destructive).frame(
+                  width: 14, height: 4)
+              }
+            }
+            Text("\(area.correct)/\(area.total)").font(.subheadline.monospacedDigit())
+              .foregroundStyle(.secondary)
+          }
+          .accessibilityElement(children: .combine)
+        }
+      }
+
+      PracticeResultNumbers(day: DayResult(result))
+    } response: {
       if undone {
         Text(
           "Your plan is back as it was", tableName: "Practice",
@@ -132,31 +157,6 @@ struct FocusTestScreen: View {
           .foregroundStyle(.secondary)
         }
       }
-    } response: {
-      VStack(alignment: .leading, spacing: 12) {
-        Text(
-          "How you did", tableName: "Practice",
-          comment: "Heading over a focus test's results by subject."
-        )
-        .font(.headline)
-
-        ForEach(result.areas, id: \.name) { area in
-          HStack(spacing: 12) {
-            Text(area.label).frame(maxWidth: .infinity, alignment: .leading)
-            HStack(spacing: 3) {
-              ForEach(Array(area.answers.enumerated()), id: \.offset) { _, isCorrect in
-                Capsule().fill(isCorrect ? Color.success : Color.destructive).frame(
-                  width: 14, height: 4)
-              }
-            }
-            Text("\(area.correct)/\(area.total)").font(.subheadline.monospacedDigit())
-              .foregroundStyle(.secondary)
-          }
-          .accessibilityElement(children: .combine)
-        }
-      }
-
-      PracticeResultNumbers(day: DayResult(result))
 
       if undoFailed {
         FailureLine(

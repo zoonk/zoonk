@@ -15,6 +15,7 @@ struct LessonCompletionView: View {
     PaneSplit {
       page {
         moment
+        dayMoment
 
         if let lesson, let summary = lesson.summary {
           LessonMapSection(
@@ -23,7 +24,6 @@ struct LessonCompletionView: View {
       }
     } secondary: {
       page {
-        dayMoment
         guestEndingView
       }
       .safeAreaBar(edge: .bottom) { actionBar }

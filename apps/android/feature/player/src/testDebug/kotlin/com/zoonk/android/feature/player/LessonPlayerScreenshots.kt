@@ -16,9 +16,6 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import coil3.ImageLoader
 import coil3.asImage
@@ -57,6 +54,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
@@ -132,6 +130,10 @@ class LessonPlayerScreenshots {
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun book() = capture("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("small-book", fold = true)
 
     private val steps =
         listOf(
@@ -395,24 +397,10 @@ class LessonPlayerScreenshots {
                 }
             }
         }
+        if (fold) compose.unfoldBook(folds)
         states.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            // Each state composes the player anew, and the publisher only tells what's listening when it publishes.
-            if (fold) {
-                folds.overrideWindowLayoutInfo(
-                    TestWindowLayoutInfo(
-                        listOf(
-                            FoldingFeature(
-                                compose.activity,
-                                state = FoldingFeature.State.FLAT,
-                                orientation = FoldingFeature.Orientation.VERTICAL,
-                            ),
-                        ),
-                    ),
-                )
-                compose.waitForIdle()
-            }
             write("${states[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }

@@ -40,7 +40,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.IntState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -130,7 +129,6 @@ import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalPrivatePictures
@@ -138,6 +136,7 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedIconButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -146,6 +145,7 @@ import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.LearnerSummaryBuddy
@@ -183,79 +183,6 @@ internal fun LessonColumnBeforeFold(content: @Composable ColumnScope.() -> Unit)
 }
 
 /**
- * A lesson's end as the shared foldables rule lays out a result: what was [done], then what's [next]
- * beside the way on. [withMoment] is whether its moment is on screen yet, which waits for the save.
- * The lesson's [map] sits under what was done on a spread; one column keeps it behind ⋮.
- */
-@Composable
-internal fun LessonEndPages(
-    withMoment: Boolean,
-    done: @Composable ColumnScope.() -> Unit,
-    next: @Composable ColumnScope.() -> Unit,
-    map: StepContent.Map? = null,
-) {
-    // The moment plays once: made again after a fold or a rotation, the end shows it as it finished.
-    var played by rememberSaveable { mutableStateOf(false) }
-    val plays = remember { !played }
-    SideEffect { if (withMoment) played = true }
-    // The one column keeps its own scroll, so folding back finds it where the learner left it.
-    val scroll = rememberScrollState()
-    val doneScroll = rememberScrollState()
-    val nextScroll = rememberScrollState()
-    var span by remember { mutableStateOf<PageSpan?>(null) }
-
-    CelebrationScope(play = plays) {
-        BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
-            val fold = spreadFold(maxWidth, span)
-
-            if (fold == null) {
-                EndPage(Modifier.fillMaxSize(), scroll, Alignment.CenterHorizontally) {
-                    done()
-                    next()
-                }
-            } else {
-                EndPage(Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true }, doneScroll, Alignment.End) {
-                    done()
-                    if (map != null) {
-                        HorizontalDivider()
-                        Text(
-                            stringResource(R.string.player_lesson_map),
-                            Modifier.semantics { heading() },
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        LessonMapView(map)
-                    }
-                }
-                EndPage(
-                    Modifier.fillMaxSize().padding(start = fold.end).semantics { isTraversalGroup = true },
-                    nextScroll,
-                    Alignment.Start,
-                    next,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun EndPage(
-    modifier: Modifier,
-    scroll: ScrollState,
-    align: Alignment.Horizontal,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Column(
-        modifier
-            .verticalScroll(scroll)
-            .padding(vertical = 24.dp)
-            .wrapContentWidth(align)
-            .lessonColumnWidth(),
-        verticalArrangement = Arrangement.spacedBy(COLUMN_SPACING),
-        content = content,
-    )
-}
-
-/**
  * A [LessonColumn] as tall as the view at least: the part with the [FillsView] id stretches over
  * the height the other parts leave, never shorter than its own content. An empty part takes no gap,
  * so a page whose screen draws nothing on it starts level with the page beside it. A page of a
@@ -289,7 +216,7 @@ private fun StepColumn(
     }
 }
 
-private fun Modifier.lessonColumnWidth() = widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = COLUMN_PADDING)
+internal fun Modifier.lessonColumnWidth() = widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = COLUMN_PADDING)
 
 private val COLUMN_WIDTH = 640.dp
 private val COLUMN_PADDING = 20.dp
@@ -429,7 +356,7 @@ fun LessonPlayer(
     // Escape leaves as back does, so leaving with an unsent answer asks first.
     val leave = { backDispatcher?.onBackPressed() ?: exits.close() }
 
-    SpreadScreen {
+    SpreadScreen(result = state?.phase == LessonPhase.Completed && state.run !is LessonRun.Refused) {
         TaskScaffold(
             onClose = exits::close,
             modifier =
@@ -512,7 +439,7 @@ fun LessonPlayer(
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {
                 if (state == null || screen == null) {
-                    Starting()
+                    PageLoading()
                 } else {
                     Segments(screen.segments, state)
                     val spread = spreadShows()
@@ -601,11 +528,6 @@ private fun handleKey(
 private val DIGIT_KEYS = listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine)
 
 @Composable
-private fun Starting() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-}
-
-@Composable
 private fun Segments(
     segments: List<Segment>,
     state: LessonPlayerState,
@@ -613,14 +535,24 @@ private fun Segments(
     val parts = segmentParts(segments)
     val label = stringResource(R.string.player_progress)
     val done = if (state.phase == LessonPhase.Completed) segments.size else state.position
+    var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    LessonColumn(
-        Modifier.padding(bottom = 8.dp).semantics {
-            contentDescription = label
-            progressBarRangeInfo = ProgressBarRangeInfo(done.toFloat(), 0f..segments.size.coerceAtLeast(1).toFloat())
-        },
-    ) {
-        MeterParts(parts)
+    BoxWithConstraints(Modifier.fillMaxWidth().onPageSpan { span = it }) {
+        // A refused run's gate keeps to the page before a fold, not a wide window's split, and the progress keeps over it.
+        val fold = if (state.run is LessonRun.Refused) pageFold(maxWidth, span) else spreadFold(maxWidth, span)
+
+        Box(
+            (if (fold == null) Modifier.fillMaxWidth() else Modifier.width(fold.start))
+                .wrapContentWidth(if (fold == null) Alignment.CenterHorizontally else Alignment.End)
+                .lessonColumnWidth()
+                .padding(bottom = 8.dp)
+                .semantics {
+                    contentDescription = label
+                    progressBarRangeInfo = ProgressBarRangeInfo(done.toFloat(), 0f..segments.size.coerceAtLeast(1).toFloat())
+                },
+        ) {
+            MeterParts(parts)
+        }
     }
 }
 

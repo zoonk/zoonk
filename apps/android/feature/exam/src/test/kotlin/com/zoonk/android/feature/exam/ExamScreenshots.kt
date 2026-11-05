@@ -9,6 +9,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -38,7 +42,10 @@ import kotlin.time.Duration.Companion.minutes
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class ExamScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -78,6 +85,25 @@ class ExamScreenshots {
     fun medium() = capture("exam-medium")
 
     @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("exam-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("exam-small-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDark() = capture("exam-book-dark", dark = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h1766dp-xhdpi")
+    fun bookAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("exam-book-font200", fold = true)
+    }
+
+    @Test
     @Config(qualifiers = "w1280dp-h1400dp-land-xhdpi")
     fun expanded() = capture("exam-expanded")
 
@@ -90,6 +116,7 @@ class ExamScreenshots {
         dark: Boolean = false,
         moreContrast: Boolean = false,
         exam: String = PREPARING,
+        fold: Boolean = false,
     ) {
         val api = FakeExamApi(exam(exam))
         val mocks =
@@ -125,9 +152,27 @@ class ExamScreenshots {
                 }
             }
         }
+        if (fold) unfold()
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
+
+    /** Opens the book flat, telling again what the fold composed, as a device tells every new reader. */
+    private fun unfold() =
+        repeat(2) {
+            compose.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(
+                            compose.activity,
+                            state = FoldingFeature.State.FLAT,
+                            orientation = FoldingFeature.Orientation.VERTICAL,
+                        ),
+                    ),
+                ),
+            )
+        }
 
     private fun write(
         name: String,

@@ -505,14 +505,15 @@ private struct MockSpeakingView: View {
   }
 
   private func taskRow(_ task: MockSpeaking.Task, number: Int) -> some View {
-    HStack {
+    AccessibilityStack {
       VStack(alignment: .leading, spacing: 2) {
         Text("Task \(number)", tableName: "Mock", comment: "A speaking task's number")
           .font(.caption.monospaced())
           .foregroundStyle(.secondary)
         Text(task.name)
       }
-      Spacer()
+      .frame(maxWidth: .infinity, alignment: .leading)
+
       if task.status == .completed {
         Label {
           Text("Done", tableName: "Mock", comment: "A speaking task that's done")
@@ -529,6 +530,8 @@ private struct MockSpeakingView: View {
         .buttonStyle(.bordered)
       }
     }
+    // The Done label would otherwise start the row's separator under its title.
+    .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
   }
 
   private var handInLabel: Text {

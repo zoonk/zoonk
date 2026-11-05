@@ -12,7 +12,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
@@ -44,6 +43,7 @@ import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.findMarkdownTableLines
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 
 /**
  * Main's `LessonStepPicture`: the picture, centered in a compact window and start-aligned otherwise,
@@ -57,7 +57,7 @@ fun StepPicture(
 ) {
     val image = step.image
     val picture = step.picture
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val modifier = Modifier.fillMaxWidth().wrapContentWidth(if (wide) Alignment.Start else Alignment.CenterHorizontally)
 
     when {

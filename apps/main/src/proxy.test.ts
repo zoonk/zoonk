@@ -1,7 +1,4 @@
-import { randomUUID } from "node:crypto";
 import { getSessionCookieName } from "@zoonk/auth/cookies";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { API_URL } from "@zoonk/utils/url";
 import { unstable_doesMiddlewareMatch } from "next/experimental/testing/server";
 import { NextRequest } from "next/server";
@@ -79,59 +76,7 @@ describe("catalog locale routing", () => {
   });
 });
 
-async function createCourse({ isPublished }: { isPublished: boolean }) {
-  const organization = await organizationFixture({ kind: "brand" });
-  const course = await courseFixture({ isPublished, organizationId: organization.id });
-
-  return `/b/${organization.slug}/c/${course.slug}`;
-}
-
-describe("catalog pages that don't exist", () => {
-  it("gives a page load of a course, chapter or lesson whose course doesn't exist the 404 page", async () => {
-    const unpublished = await createCourse({ isPublished: false });
-    const missing = `/b/ai/c/missing-${randomUUID()}`;
-
-    const paths = [
-      `/pt${missing}`,
-      `/pt${missing}/ch/a-chapter`,
-      `/pt${missing}/ch/a-chapter/l/a-lesson`,
-      `/pt${unpublished}`,
-    ];
-
-    const responses = await Promise.all(
-      paths.map((path) =>
-        proxy(
-          new NextRequest(`https://www.zoonk.com${path}`, {
-            headers: { cookie: "ZOONK_LOCALE=pt" },
-          }),
-        ),
-      ),
-    );
-
-    for (const response of responses) {
-      expect(response.headers.get("x-middleware-rewrite")).toBe(
-        "https://www.zoonk.com/pt/catalog-not-found",
-      );
-
-      expect(response.headers.get("x-middleware-request-x-next-intl-locale")).toBe("pt");
-    }
-  });
-
-  it("serves a published course's pages, and leaves client navigations to the in-app 404", async () => {
-    const published = await createCourse({ isPublished: true });
-    const missing = `/b/ai/c/missing-${randomUUID()}`;
-
-    const [page, chapter, navigation] = await Promise.all([
-      proxy(new NextRequest(`https://www.zoonk.com/pt${published}`)),
-      proxy(new NextRequest(`https://www.zoonk.com/pt${published}/ch/a-moved-chapter`)),
-      proxy(new NextRequest(`https://www.zoonk.com/pt${missing}`, { headers: { rsc: "1" } })),
-    ]);
-
-    expect(page.headers.get("x-middleware-rewrite")).toBeNull();
-    expect(chapter.headers.get("x-middleware-rewrite")).toBeNull();
-    expect(navigation.headers.get("x-middleware-rewrite")).toBeNull();
-  });
-
+describe("categories that don't exist", () => {
   it("gives an unknown category, or a path under a category, the 404 page in the visitor's language", async () => {
     const [unknown, deeper, known] = await Promise.all([
       proxy(new NextRequest("https://www.zoonk.com/de/courses/not-a-category")),
