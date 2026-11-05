@@ -1,6 +1,9 @@
 import { spawnSync } from "node:child_process";
+import { homedir } from "node:os";
+import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { isDeviceCrash } from "./crash-reports.mts";
+import { openExclusiveLock } from "./exclusive-lock.mts";
 
 // Stops at the first alert that isn't a simulator or emulator crash: a Mac app's crash is for a
 // person to read.
@@ -8,9 +11,10 @@ import { isDeviceCrash } from "./crash-reports.mts";
 const ALERT_TITLE = /^(?<name>.+) quit unexpectedly\.$/u;
 const MAX_ALERTS = 500;
 const NEXT_ALERT_WAIT_MS = 1500;
+const LOCK_PATH = path.join(homedir(), ".cache", "zoonk", "close-device-crash-alerts.lock");
 
 function runAppleScript({ args = [], script }: { args?: string[]; script: string }) {
-  const result = spawnSync("osascript", ["-e", script, ...args], { encoding: "utf8" });
+  const result = spawnSync("osascript", ["-e", script, "--", ...args], { encoding: "utf8" });
 
   if (result.status !== 0) {
     throw new Error(result.stderr.trim() || `osascript exited with status ${result.status ?? 1}.`);
@@ -38,7 +42,7 @@ function getAlertProcessName() {
     .find((name) => name !== undefined);
 }
 
-/** Another closer, or the person, may have closed the alert, showing a Mac app's in its place. */
+/** The person may have closed the alert since it was read, showing a Mac app's in its place. */
 function ignoreAlert(processName: string) {
   const result = runAppleScript({
     args: [`${processName} quit unexpectedly.`],
@@ -93,6 +97,8 @@ async function closeDeviceCrashAlerts() {
 }
 
 try {
+  // Two closers could read the same alert, and the second's click would land on the alert after it.
+  openExclusiveLock({ lockPath: LOCK_PATH });
   await closeDeviceCrashAlerts();
 } catch (error) {
   process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);

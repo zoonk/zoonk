@@ -1,17 +1,10 @@
 import { spawnSync } from "node:child_process";
-import {
-  closeSync,
-  constants,
-  fstatSync,
-  ftruncateSync,
-  mkdirSync,
-  openSync,
-  writeSync,
-} from "node:fs";
+import { closeSync, constants, fstatSync, ftruncateSync, writeSync } from "node:fs";
 import { availableParallelism, loadavg } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { findSimulatorAppCrashes, listCrashReports } from "../../../scripts/dev/crash-reports.mts";
+import { openExclusiveLock } from "../../../scripts/dev/exclusive-lock.mts";
 import { applyCommandExit, runForegroundCommand } from "../../../scripts/dev/process.mts";
 import { type QueueTurn, waitForTurn } from "../../../scripts/dev/queue.mts";
 import {
@@ -27,9 +20,6 @@ import {
 const BUSY_MAX_BOOTED_SIMULATORS = 3;
 const QUIET_MAX_BOOTED_SIMULATORS = 6;
 const POLL_MS = 5000;
-// macOS's open(2) flag for an exclusive lock, which Node doesn't export. The kernel keeps the lock
-// until every process holding the file closes it, however they exit.
-const O_EXLOCK = 0x20;
 
 const CLOSE_CRASH_ALERTS_SCRIPT = path.resolve(
   import.meta.dirname,
@@ -57,17 +47,9 @@ function getBootedSimulators(catalog: SimulatorCatalog) {
     .filter((device) => !isShutDown(device));
 }
 
-/** Lock files stay in place: removing one lets a run lock it while another locks its replacement. */
-function openLocked({ flags, name }: { flags: number; name: string }) {
-  const lockPath = getLeasePath(name);
-  mkdirSync(path.dirname(lockPath), { recursive: true });
-  // oxlint-disable-next-line no-bitwise -- open(2) takes its flags as bits
-  return openSync(lockPath, constants.O_RDWR | constants.O_CREAT | O_EXLOCK | flags);
-}
-
 function tryLocking(device: Simulator): number | undefined {
   try {
-    return openLocked({ flags: constants.O_NONBLOCK, name: device.udid });
+    return openExclusiveLock({ flags: constants.O_NONBLOCK, lockPath: getLeasePath(device.udid) });
   } catch (error) {
     if (error instanceof Error && "code" in error && error.code === "EAGAIN") {
       return undefined;
@@ -141,7 +123,7 @@ function tryLeasing(device: Simulator): Lease | undefined {
  * none boots past the limit.
  */
 function leaseSimulator() {
-  const choosing = openLocked({ flags: 0, name: "choosing" });
+  const choosing = openExclusiveLock({ lockPath: getLeasePath("choosing") });
 
   try {
     // iPhone 17 last: `pnpm iphone` and older checkouts' `make test` pick it by name.
