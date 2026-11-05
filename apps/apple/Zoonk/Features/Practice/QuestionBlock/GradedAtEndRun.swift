@@ -251,9 +251,7 @@ struct PracticeQuestionsPreparingView: View {
   @Environment(\.practiceHooks) private var hooks
   @AccessibilityFocusState private var focus: Focus?
 
-  private enum Focus { case limit, start, title }
-
-  private var needsPlus: Bool { failure as? PracticeAPIError == .plusRequired }
+  private enum Focus { case notice, start, title }
 
   var body: some View {
     PracticeTaskLayout {
@@ -278,12 +276,21 @@ struct PracticeQuestionsPreparingView: View {
           ProgressView().padding(.top, 8)
         }
 
-        if let failure, limit == nil {
-          FailureLine(message: failureText(failure)).font(.subheadline)
+        if isPlusRequired {
+          FreeWeekOverNotice(showsSeePlus: false, isInset: true)
+            .accessibilityElement(children: .combine)
+            .accessibilityFocused($focus, equals: .notice)
+        } else if failure != nil, limit == nil {
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't write your test. Try again.", table: "Practice",
+              comment: "Writing a test's questions failed.")
+          )
+          .font(.subheadline)
         }
       }
     } actions: {
-      if needsPlus {
+      if isPlusRequired {
         PracticeMainButton(
           title: LocalizedStringResource(
             "See Plus", table: "Practice",
@@ -291,13 +298,12 @@ struct PracticeQuestionsPreparingView: View {
         ) {
           hooks.navigate(.subscription)
         }
-        .accessibilityFocused($focus, equals: .start)
       } else {
         if let limit {
           HelpLimitNotice(limit: limit)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
-            .accessibilityFocused($focus, equals: .limit)
+            .accessibilityFocused($focus, equals: .notice)
         }
 
         if !isWriting, limit?.isShortBreak ?? true {
@@ -317,37 +323,24 @@ struct PracticeQuestionsPreparingView: View {
         focus = .title
       }
     }
-    .onChange(of: failure.map(failureText)) { _, line in
-      guard line != nil else { return }
+    .onChange(of: failure as? PracticeAPIError) { _, refusal in
+      guard refusal != nil else { return }
 
-      // A failure line reads itself out beside the Start that comes back. A limit's notice
-      // doesn't: beside Start (a short break) it's read out; in Start's place it takes focus, as
-      // See Plus does.
-      if let limit {
-        if limit.isShortBreak {
-          AccessibilityNotification.Announcement(limit.message).post()
-        } else {
-          focus = .limit
-        }
-      } else if needsPlus {
-        focus = .start
+      // A failure line reads itself out beside the Start that comes back. A notice doesn't: beside
+      // Start (a short break) it's read out; in Start's place (a limit, or Plus) it takes focus.
+      if let limit, limit.isShortBreak {
+        AccessibilityNotification.Announcement(limit.message).post()
+      } else if limit != nil || isPlusRequired {
+        focus = .notice
       }
     }
   }
 
-  private var limit: HelpLimit? {
-    (failure as? PracticeAPIError)?.helpLimit
+  private var isPlusRequired: Bool {
+    failure as? PracticeAPIError == .plusRequired
   }
 
-  private func failureText(_ failure: any Error) -> LocalizedStringResource {
-    switch failure as? PracticeAPIError {
-    case .plusRequired:
-      LocalizedStringResource(
-        "This test comes with Plus.", table: "Practice", comment: "A test that needs Plus.")
-    default:
-      LocalizedStringResource(
-        "We couldn't write your test. Try again.", table: "Practice",
-        comment: "Writing a test's questions failed.")
-    }
+  private var limit: HelpLimit? {
+    (failure as? PracticeAPIError)?.helpLimit
   }
 }

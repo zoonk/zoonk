@@ -174,7 +174,7 @@ struct TodayDayView: View {
       }
     case .examAccess:
       Section {
-        FreeWeekOverNotice()
+        FreeWeekOverNotice(isInset: true)
       }
     case .examChoice:
       TodayExamChoiceSection(

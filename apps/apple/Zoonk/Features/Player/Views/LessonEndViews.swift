@@ -272,9 +272,7 @@ struct LessonUnavailableView: View {
       LocalizedStringResource(
         "Take a short break", table: "Player", comment: "Fair use spaces new lessons out")
     case .plusRequired:
-      LocalizedStringResource(
-        "Your free week of exam prep is over", table: "Player",
-        comment: "A free exam plan past its first week")
+      FreeWeekOverNotice.title
     case .limitReached(.guest, _):
       LocalizedStringResource(
         "Save your progress to keep going", table: "Player", comment: "A guest used their lessons")
@@ -307,9 +305,7 @@ struct LessonUnavailableView: View {
         "New lessons open again in \(Duration.seconds(seconds).formatted(.units(allowed: [.minutes, .seconds], width: .wide)))",
         table: "Player", comment: "How long until the next lesson opens")
     case .plusRequired:
-      LocalizedStringResource(
-        "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
-        table: "Player", comment: "A free exam plan past its first week")
+      FreeWeekOverNotice.description
     case .limitReached(.guest, _):
       LocalizedStringResource(
         "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you.",

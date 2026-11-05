@@ -13840,65 +13840,6 @@
         }
       }
     },
-    "This test comes with Plus." : {
-      "comment" : "A test that needs Plus.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieser Test ist in Plus enthalten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta prueba está incluida en Plus."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce test est inclus dans Plus."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questo test è incluso in Plus."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このテストはPlusで利用できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 테스트는 Plus에 포함돼 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ten test jest dostępny w pakiecie Plus."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este teste está incluído no Plus."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu test Plus’a dahil."
-          }
-        }
-      }
-    },
     "This week's topics" : {
       "comment" : "Heading over a weekly challenge's topics.",
       "localizations" : {
