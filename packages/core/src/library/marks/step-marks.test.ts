@@ -25,6 +25,15 @@ describe(canShowIcon, () => {
   it("shows no icon beside a table in the explanation's text", () => {
     expect(canShowIcon(explanation(TABLE_TEXT))).toBe(false);
   });
+
+  it("shows no icon beside a table right after a line of prose with a pipe in it", () => {
+    const text = ["Choose A | B.", "| Item | Count |", "| --- | --- |", "| A | 2 |"].join("\n");
+    expect(canShowIcon(explanation(text))).toBe(false);
+  });
+
+  it("keeps the icon when a pipe only appears in prose", () => {
+    expect(canShowIcon(explanation("Choose A | B, whichever costs less."))).toBe(true);
+  });
 });
 
 describe(fitStepMarks, () => {
