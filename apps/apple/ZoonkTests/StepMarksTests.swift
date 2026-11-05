@@ -163,17 +163,32 @@ final class StepMarksTests: XCTestCase {
     let marks = InlineMarks(drawn, underline: "come ração", highlightsTerms: true)
 
     XCTAssertEqual(marks.terms, [10..<15], "the emoji takes two UTF-16 units")
-    XCTAssertEqual(marks.underline, 5..<15, "through the bold term, found in the drawn text")
+    XCTAssertEqual(
+      marks.underline, [5..<9, 10..<15],
+      "its words, through the bold term, found in the drawn text, without the spaces a line can break at"
+    )
     XCTAssertEqual(
       InlineMarks(drawn, underline: "não está aqui", highlightsTerms: false), InlineMarks())
   }
 
-  func testTheEndMapPutsTwoIdeasAboveItsTitleAndTheRestBelowInPairs() {
-    let rows = [2, 3, 5].map { LessonMindMapRows(count: $0) }
+  func testIdeasSitInReadingOrderAroundTheMapsCenter() {
+    let slot = { (column: Int, row: Int) in LessonIdeaSlot(column: column, row: row) }
 
-    XCTAssertEqual(rows.map(\.above), [[[0]], [[0, 1]], [[0, 1]]])
-    XCTAssertEqual(rows.map(\.below), [[[1]], [[2]], [[2, 3], [4]]])
-    XCTAssertFalse(LessonMindMapRows.fits(6), "a sixth idea would sit behind the others' lines")
+    XCTAssertEqual(LessonIdeaSlot.slots(count: 2), [slot(-1, 1), slot(1, 1)])
+    XCTAssertEqual(LessonIdeaSlot.slots(count: 3), [slot(-1, -1), slot(1, -1), slot(0, 1)])
+    XCTAssertEqual(
+      LessonIdeaSlot.slots(count: 5),
+      [slot(-1, -1), slot(1, -1), slot(-1, 1), slot(1, 1), slot(0, 2)])
+    XCTAssertEqual(LessonIdeaSlot.rows(of: LessonIdeaSlot.slots(count: 5)), -1...2)
+    XCTAssertEqual(LessonIdeaSlot.rows(of: LessonIdeaSlot.slots(count: 2)), 0...1)
+
+    for count in 1...8 {
+      let slots = LessonIdeaSlot.slots(count: count)
+      XCTAssertEqual(
+        slots,
+        slots.sorted { ($0.row, $0.column) < ($1.row, $1.column) },
+        "VoiceOver reads by position, so \(count) ideas must sit in number order")
+    }
   }
 
   private func step(_ json: String) throws -> LessonStep {

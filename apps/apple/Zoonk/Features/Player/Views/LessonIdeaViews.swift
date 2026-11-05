@@ -1,24 +1,7 @@
 import SwiftUI
 
-/// Where the lesson's ideas sit around their center, numbered clockwise: two face each other, an odd
-/// count starts at the top, and four take the corners, as the opening map draws them.
-enum LessonIdeaRing {
-  static func angle(of index: Int, count: Int) -> Angle {
-    let start = count.isMultiple(of: 2) ? -90 - 180 / Double(count) : -90
-    return .degrees(start + Double(index) * 360 / Double(max(count, 1)))
-  }
-
-  /// On an ellipse with these radii around `center`.
-  static func point(of index: Int, count: Int, center: CGPoint, radii: CGSize) -> CGPoint {
-    let angle = angle(of: index, count: count).radians
-    return CGPoint(
-      x: center.x + radii.width * cos(angle), y: center.y + radii.height * sin(angle))
-  }
-}
-
 struct LessonIdeaStrip: View {
   @Environment(\.stacksContent) private var isStacked
-  @ScaledMetric(relativeTo: .headline) private var mapSize: CGFloat = 40
 
   let summary: LessonSummary
   let index: Int
@@ -29,7 +12,6 @@ struct LessonIdeaStrip: View {
     HStack(spacing: 12) {
       if !isStacked {
         LessonIdeaMiniMap(count: summary.ideas.count, current: index)
-          .frame(width: mapSize, height: mapSize)
       }
 
       VStack(alignment: .leading, spacing: 2) {
@@ -76,17 +58,24 @@ extension LessonStep {
 
 /// This idea in progress blue: the learner's place in the lesson.
 private struct LessonIdeaMiniMap: View {
+  @ScaledMetric(relativeTo: .headline) private var scale: CGFloat = 1.25
+
   let count: Int
   let current: Int
 
+  private static let gaps = CGSize(width: 14, height: 12)
+  private static let margin: CGFloat = 6
+
   var body: some View {
+    let slots = LessonIdeaSlot.slots(count: count)
+    let rows = LessonIdeaSlot.rows(of: slots)
+    let scale = scale
+    let gaps = CGSize(width: Self.gaps.width * scale, height: Self.gaps.height * scale)
+    let margin = Self.margin * scale
+
     Canvas { context, size in
-      let center = CGPoint(x: size.width / 2, y: size.height / 2)
-      let node = size.width * 0.1
-      let radii = CGSize(width: size.width / 2 - node * 1.6, height: size.height / 2 - node * 1.6)
-      let points = (0..<count).map {
-        LessonIdeaRing.point(of: $0, count: count, center: center, radii: radii)
-      }
+      let center = CGPoint(x: size.width / 2, y: margin + CGFloat(-rows.lowerBound) * gaps.height)
+      let points = LessonIdeaSlot.points(of: slots, around: center, gaps: gaps)
 
       for point in points {
         var spoke = Path()
@@ -96,20 +85,24 @@ private struct LessonIdeaMiniMap: View {
           spoke, with: .style(.tertiary), style: StrokeStyle(lineWidth: 1, dash: [2, 2]))
       }
 
-      context.fill(Self.dot(at: center, radius: node * 0.8), with: .style(.secondary))
+      context.fill(Self.dot(at: center, radius: 2 * scale), with: .style(.secondary))
 
       for (index, point) in points.enumerated() {
         if index == current {
           context.fill(
-            Self.dot(at: point, radius: node * 1.6), with: .color(.success.opacity(0.25)))
-          context.fill(Self.dot(at: point, radius: node), with: .color(.success))
+            Self.dot(at: point, radius: 6 * scale), with: .color(.success.opacity(0.25)))
+          context.fill(Self.dot(at: point, radius: 3.5 * scale), with: .color(.success))
         } else {
-          context.fill(Self.dot(at: point, radius: node), with: .style(.background))
+          context.fill(Self.dot(at: point, radius: 3 * scale), with: .style(.background))
           context.stroke(
-            Self.dot(at: point, radius: node), with: .style(.secondary), lineWidth: 1)
+            Self.dot(at: point, radius: 3 * scale), with: .style(.secondary), lineWidth: 1)
         }
       }
     }
+    .frame(
+      width: gaps.width * 2 + margin * 2,
+      height: CGFloat(rows.count - 1) * gaps.height + margin * 2
+    )
     .accessibilityHidden(true)
   }
 
@@ -122,23 +115,37 @@ private struct LessonIdeaMiniMap: View {
 
 /// A number opens what its idea is about, never its answer, which the lesson hasn't taught yet.
 struct LessonOpeningMap: View {
-  @ScaledMetric(relativeTo: .body) private var height: CGFloat = 200
-
   let summary: LessonSummary
 
+  private static let gaps = CGSize(width: 92, height: 80)
+  private static let centerSize: CGFloat = 14
+
   var body: some View {
+    let slots = LessonIdeaSlot.slots(count: summary.ideas.count)
+    let rows = LessonIdeaSlot.rows(of: slots)
+    let node = LessonOpeningIdea.size
+    let size = CGSize(
+      width: Self.gaps.width * 2 + node, height: CGFloat(rows.count - 1) * Self.gaps.height + node)
+    let center = CGPoint(
+      x: size.width / 2, y: node / 2 + CGFloat(-rows.lowerBound) * Self.gaps.height)
+    let points = LessonIdeaSlot.points(of: slots, around: center, gaps: Self.gaps)
+
     VStack(spacing: 8) {
-      LessonIdeaRingLayout(count: summary.ideas.count) {
-        center
+      ZStack {
+        Self.spokes(from: center, to: points)
+
+        Circle()
+          .fill(.secondary)
+          .frame(width: Self.centerSize, height: Self.centerSize)
+          .position(center)
+          .accessibilityHidden(true)
 
         ForEach(Array(summary.ideas.enumerated()), id: \.offset) { index, idea in
           LessonOpeningIdea(index: index, idea: idea)
+            .position(points[index])
         }
       }
-      .background { spokes }
-      // Room for the ring, which doesn't grow past what large text needs around its numbers.
-      .frame(height: min(height, 260))
-      .frame(maxWidth: 360)
+      .frame(width: size.width, height: size.height)
 
       Text(
         "\(summary.ideas.count) ideas to discover in this lesson", tableName: "Player",
@@ -153,20 +160,12 @@ struct LessonOpeningMap: View {
     .accessibilityElement(children: .contain)
   }
 
-  private let centerSize: CGFloat = 14
-
-  private var spokes: some View {
-    Canvas { context, size in
-      let count = summary.ideas.count
-      let middle = CGPoint(x: size.width / 2, y: size.height / 2)
-      let node = LessonOpeningIdea.size
-      let radii = LessonIdeaRingLayout.radii(in: size, node: CGSize(width: node, height: node))
-
-      for index in 0..<count {
-        let end = LessonIdeaRing.point(of: index, count: count, center: middle, radii: radii)
-        let length = hypot(end.x - middle.x, end.y - middle.y)
+  private static func spokes(from center: CGPoint, to points: [CGPoint]) -> some View {
+    Canvas { context, _ in
+      for end in points {
+        let length = hypot(end.x - center.x, end.y - center.y)
         let from = centerSize / 2 + 4
-        let to = length - node / 2
+        let to = length - LessonOpeningIdea.size / 2
 
         guard to > from else {
           continue
@@ -174,8 +173,8 @@ struct LessonOpeningMap: View {
 
         let along = { (distance: CGFloat) in
           CGPoint(
-            x: middle.x + (end.x - middle.x) * distance / length,
-            y: middle.y + (end.y - middle.y) * distance / length)
+            x: center.x + (end.x - center.x) * distance / length,
+            y: center.y + (end.y - center.y) * distance / length)
         }
         var spoke = Path()
         spoke.move(to: along(from))
@@ -185,13 +184,6 @@ struct LessonOpeningMap: View {
       }
     }
     .accessibilityHidden(true)
-  }
-
-  private var center: some View {
-    Circle()
-      .fill(.secondary)
-      .frame(width: centerSize, height: centerSize)
-      .accessibilityHidden(true)
   }
 }
 
@@ -274,42 +266,5 @@ private struct LessonOpeningIdea: View {
   private var number: some View {
     Text(index + 1, format: .number)
       .font(.footnote.weight(.semibold).monospacedDigit())
-  }
-}
-
-private struct LessonIdeaRingLayout: Layout {
-  let count: Int
-
-  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-    proposal.replacingUnspecifiedDimensions(by: CGSize(width: 320, height: 200))
-  }
-
-  func placeSubviews(
-    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
-  ) {
-    guard let center = subviews.first else {
-      return
-    }
-
-    let middle = CGPoint(x: bounds.midX, y: bounds.midY)
-    center.place(at: middle, anchor: .center, proposal: .unspecified)
-
-    let ideas = subviews.dropFirst()
-    let largest = ideas.map { $0.sizeThatFits(.unspecified) }.reduce(CGSize.zero) {
-      CGSize(width: max($0.width, $1.width), height: max($0.height, $1.height))
-    }
-    let radii = Self.radii(in: bounds.size, node: largest)
-
-    for (index, idea) in ideas.enumerated() {
-      idea.place(
-        at: LessonIdeaRing.point(of: index, count: count, center: middle, radii: radii),
-        anchor: .center, proposal: .unspecified)
-    }
-  }
-
-  static func radii(in size: CGSize, node: CGSize) -> CGSize {
-    CGSize(
-      width: max(size.width / 2 - node.width / 2 - 8, 0),
-      height: max(size.height / 2 - node.height / 2, 0))
   }
 }

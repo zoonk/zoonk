@@ -67,19 +67,48 @@ extension LessonSummary {
   }
 }
 
-/// Which of the lesson's ideas the end map puts above its title and which below, row by row, in
-/// reading order. Two to five ideas fit: every connector then runs clear of the other ideas.
-struct LessonMindMapRows: Equatable {
-  let above: [[Int]]
-  let below: [[Int]]
+/// Where a lesson-map idea sits around the map's center, as main's `getIdeaSlots` places it: with
+/// three or more ideas the first two sit above the center, the rest below in pairs, and a last idea
+/// without a pair is centered. The strip's mini map, the opening map and the end map all place ideas
+/// this way, so an idea keeps its place from the first screen to the last, and the slots run in
+/// reading order, which is the order VoiceOver reads them by their position.
+struct LessonIdeaSlot: Equatable {
+  /// -1 leading, 0 centered, 1 trailing.
+  let column: Int
+  /// The center's row is 0.
+  let row: Int
 
-  static func fits(_ count: Int) -> Bool {
-    (2...5).contains(count)
+  static func slots(count: Int) -> [LessonIdeaSlot] {
+    let above = count > 2 ? 2 : 0
+    let below = count - above
+
+    return (0..<count).map { index in
+      guard index >= above else {
+        return LessonIdeaSlot(column: index == 0 ? -1 : 1, row: -1)
+      }
+
+      let place = index - above
+      let isLastAlone = place == below - 1 && !below.isMultiple(of: 2)
+
+      return LessonIdeaSlot(
+        column: isLastAlone ? 0 : place.isMultiple(of: 2) ? -1 : 1, row: 1 + place / 2)
+    }
   }
 
-  init(count: Int) {
-    let first = count > 2 ? 2 : 1
-    above = [Array(0..<min(first, count))]
-    below = stride(from: first, to: count, by: 2).map { Array($0..<min($0 + 2, count)) }
+  /// The rows the slots span, the center's included.
+  static func rows(of slots: [LessonIdeaSlot]) -> ClosedRange<Int> {
+    let rows = slots.map(\.row)
+    return min(0, rows.min() ?? 0)...max(0, rows.max() ?? 0)
+  }
+
+  /// Where each slot's idea sits around `center`, these gaps apart.
+  static func points(of slots: [LessonIdeaSlot], around center: CGPoint, gaps: CGSize)
+    -> [CGPoint]
+  {
+    slots.map { slot in
+      CGPoint(
+        x: center.x + CGFloat(slot.column) * gaps.width,
+        y: center.y + CGFloat(slot.row) * gaps.height)
+    }
   }
 }

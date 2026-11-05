@@ -132,43 +132,26 @@ struct LessonMapView: View {
   let summary: LessonSummary
 
   var body: some View {
-    switch summary.shape {
-    case .hub where summary.isTagged && LessonMindMapRows.fits(summary.ideas.count):
+    VStack(spacing: 16) {
       LessonMindMap(title: title, ideas: summary.ideas)
-    case .hub: LessonMapHub(title: title, ideas: summary.ideas)
-    case .nested: LessonMapNested(ideas: summary.ideas)
+
+      if summary.shape == .nested {
+        Text(
+          "Each level sits inside the next one.", tableName: "Player",
+          comment:
+            "Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population."
+        )
+        .font(.footnote)
+        .foregroundStyle(.secondary)
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
+      }
     }
   }
 }
 
-private struct LessonMapIdea: View {
-  let idea: LessonSummary.Idea
-
-  var body: some View {
-    HStack(alignment: .firstTextBaseline, spacing: 10) {
-      if let icon = idea.icon {
-        LessonIconImage(icon: icon, size: 32)
-          .alignmentGuide(.firstTextBaseline) { $0.height / 2 + 6 }
-      }
-
-      VStack(alignment: .leading, spacing: 2) {
-        if let label = idea.label {
-          Text(label)
-            .font(.headline)
-
-          LessonRichText(idea.text)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-        } else {
-          LessonRichText(idea.text)
-        }
-      }
-    }
-    .accessibilityElement(children: .combine)
-  }
-}
-
-/// Large text, a narrow pane and maps with more ideas than it holds read as the tree instead.
+/// Two columns of ideas around the title, or one under it where large text or a narrow pane would
+/// squeeze two.
 private struct LessonMindMap: View {
   @Environment(\.stacksContent) private var isStacked
   @ScaledMetric(relativeTo: .subheadline) private var minimumIdeaWidth: CGFloat = 150
@@ -176,47 +159,27 @@ private struct LessonMindMap: View {
   let title: String
   let ideas: [LessonSummary.Idea]
 
-  private let spacing: CGFloat = 10
-
   var body: some View {
-    if isStacked {
-      LessonMapHub(title: title, ideas: ideas)
-    } else {
-      let width = minimumIdeaWidth * 2 + spacing
+    LessonMindMapLayout(
+      slots: LessonIdeaSlot.slots(count: ideas.count),
+      minimumColumnWidth: isStacked ? .infinity : minimumIdeaWidth
+    ) {
+      Text(title)
+        .font(.subheadline.weight(.semibold))
+        .multilineTextAlignment(.center)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 14)
+        .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+        .anchorPreference(key: LessonMindMapAnchors.self, value: .bounds) {
+          LessonMindMapAnchors(center: $0)
+        }
+        .accessibilitySortPriority(1)
 
-      ViewThatFits(in: .horizontal) {
-        branches
-          .frame(minWidth: width, idealWidth: width, maxWidth: .infinity)
-        LessonMapHub(title: title, ideas: ideas)
-      }
-    }
-  }
-
-  private var branches: some View {
-    let rows = LessonMindMapRows(count: ideas.count)
-
-    return Grid(horizontalSpacing: spacing, verticalSpacing: 18) {
-      ForEach(rows.above, id: \.self) { row in
-        ideaRow(row)
-      }
-
-      GridRow {
-        Text(title)
-          .font(.subheadline.weight(.semibold))
-          .multilineTextAlignment(.center)
-          .padding(.vertical, 8)
-          .padding(.horizontal, 14)
-          .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
-          .frame(maxWidth: 260)
+      ForEach(Array(ideas.enumerated()), id: \.offset) { index, idea in
+        LessonMindMapIdea(number: index + 1, idea: idea)
           .anchorPreference(key: LessonMindMapAnchors.self, value: .bounds) {
-            LessonMindMapAnchors(center: $0)
+            LessonMindMapAnchors(ideas: [index: $0])
           }
-          .gridCellColumns(2)
-          .accessibilitySortPriority(1)
-      }
-
-      ForEach(rows.below, id: \.self) { row in
-        ideaRow(row)
       }
     }
     .backgroundPreferenceValue(LessonMindMapAnchors.self) { anchors in
@@ -228,18 +191,6 @@ private struct LessonMindMap: View {
       }
     }
     .accessibilityElement(children: .contain)
-  }
-
-  private func ideaRow(_ row: [Int]) -> some View {
-    GridRow {
-      ForEach(row, id: \.self) { index in
-        LessonMindMapIdea(number: index + 1, idea: ideas[index])
-          .anchorPreference(key: LessonMindMapAnchors.self, value: .bounds) {
-            LessonMindMapAnchors(ideas: [index: $0])
-          }
-          .gridCellColumns(row.count == 1 ? 2 : 1)
-      }
-    }
   }
 
   private static func connectors(from center: CGRect, to ideas: [CGRect]) -> Path {
@@ -260,6 +211,80 @@ private struct LessonMindMap: View {
     }
 
     return path
+  }
+}
+
+/// Main's mind-map grid: the title in the center's row and each idea in its slot, the ideas in a row
+/// as tall as its tallest and a lone one half the width, centered. Where a column would be narrower
+/// than `minimumColumnWidth`, the title comes first and the ideas follow it in one column. Its
+/// subviews are the title, then the ideas in order.
+private struct LessonMindMapLayout: Layout {
+  let slots: [LessonIdeaSlot]
+  let minimumColumnWidth: CGFloat
+
+  private let spacing = CGSize(width: 10, height: 18)
+  private let maximumTitleWidth: CGFloat = 260
+
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    let width = proposal.width ?? 320
+    return CGSize(width: width, height: frames(width: width, subviews).map(\.maxY).max() ?? 0)
+  }
+
+  func placeSubviews(
+    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+  ) {
+    for (subview, frame) in zip(subviews, frames(width: bounds.width, subviews)) {
+      subview.place(
+        at: CGPoint(x: bounds.minX + frame.minX, y: bounds.minY + frame.minY),
+        proposal: ProposedViewSize(frame.size))
+    }
+  }
+
+  /// The title's frame, then each idea's.
+  private func frames(width: CGFloat, _ subviews: Subviews) -> [CGRect] {
+    guard let title = subviews.first else {
+      return []
+    }
+
+    let column = (width - spacing.width) / 2
+    let isSplit = column >= minimumColumnWidth
+    let titleSize = title.sizeThatFits(
+      ProposedViewSize(width: min(width, maximumTitleWidth), height: nil))
+    let ideas: [(row: Int, x: CGFloat, width: CGFloat)] = slots.enumerated().map { index, slot in
+      guard isSplit else {
+        return (index + 1, 0, width)
+      }
+
+      switch slot.column {
+      case ..<0: return (slot.row, 0, column)
+      case 0: return (slot.row, (width - column) / 2, column)
+      default: return (slot.row, column + spacing.width, column)
+      }
+    }
+    var rowHeights = [0: titleSize.height]
+
+    for (subview, idea) in zip(subviews.dropFirst(), ideas) {
+      let height = subview.sizeThatFits(ProposedViewSize(width: idea.width, height: nil)).height
+      rowHeights[idea.row] = max(rowHeights[idea.row, default: 0], height)
+    }
+
+    var tops: [Int: CGFloat] = [:]
+    var top: CGFloat = 0
+
+    for row in rowHeights.keys.sorted() {
+      tops[row] = top
+      top += rowHeights[row, default: 0] + spacing.height
+    }
+
+    let titleFrame = CGRect(
+      origin: CGPoint(x: (width - titleSize.width) / 2, y: tops[0, default: 0]), size: titleSize)
+
+    return [titleFrame]
+      + ideas.map { idea in
+        CGRect(
+          x: idea.x, y: tops[idea.row, default: 0], width: idea.width,
+          height: rowHeights[idea.row, default: 0])
+      }
   }
 }
 
@@ -313,110 +338,5 @@ private struct LessonMindMapAnchors: PreferenceKey {
     let next = nextValue()
     value.center = next.center ?? value.center
     value.ideas.merge(next.ideas) { _, new in new }
-  }
-}
-
-private struct LessonMapHub: View {
-  /// Where a branch's tick meets its first line: about half a lowercase letter above the baseline.
-  @ScaledMetric(relativeTo: .body) private var tickRise: CGFloat = 5
-
-  let title: String
-  let ideas: [LessonSummary.Idea]
-
-  var body: some View {
-    let tickRise = tickRise
-
-    VStack(alignment: .leading, spacing: 0) {
-      Text(title)
-        .font(.headline)
-        .padding(.vertical, 6)
-        .padding(.horizontal, 11)
-        .background(Color(.tertiarySystemFill), in: .rect(cornerRadius: 9, style: .continuous))
-
-      VStack(alignment: .leading, spacing: 14) {
-        ForEach(Array(ideas.enumerated()), id: \.offset) { _, idea in
-          HStack(alignment: .firstTextBaseline, spacing: 5) {
-            Rectangle()
-              .fill(.separator)
-              .frame(width: 9, height: 1)
-              .alignmentGuide(.firstTextBaseline) { $0[.bottom] + tickRise }
-              .anchorPreference(key: LastTick.self, value: .bounds) { $0 }
-
-            LessonMapIdea(idea: idea)
-          }
-        }
-      }
-      .padding(.top, 14)
-      .overlayPreferenceValue(LastTick.self, alignment: .topLeading) { tick in
-        GeometryReader { proxy in
-          if let tick {
-            Rectangle()
-              .fill(.separator)
-              .frame(width: 1, height: proxy[tick].midY)
-          }
-        }
-      }
-      .padding(.leading, 12)
-    }
-  }
-}
-
-private struct LastTick: PreferenceKey {
-  static let defaultValue: Anchor<CGRect>? = nil
-
-  static func reduce(value: inout Anchor<CGRect>?, nextValue: () -> Anchor<CGRect>?) {
-    value = nextValue() ?? value
-  }
-}
-
-/// Boxes inside boxes, the smallest first, so reading order is the order the lesson zooms out in.
-private struct LessonMapNested: View {
-  let ideas: [LessonSummary.Idea]
-
-  var body: some View {
-    if !ideas.isEmpty {
-      LessonMapLevel(ideas: ideas[...], depth: 0)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(
-          Text(
-            "Each level sits inside the next one.", tableName: "Player",
-            comment: "VoiceOver, before the levels of a lesson map drawn as boxes inside boxes"))
-    }
-  }
-}
-
-private struct LessonMapLevel: View {
-  /// From the innermost to this level, the last.
-  let ideas: ArraySlice<LessonSummary.Idea>
-  let depth: Int
-
-  private var isInnermost: Bool { ideas.count == 1 }
-  private var radius: CGFloat { [14, 11, 9, 7][min(depth, 3)] }
-  private var padding: CGFloat { [12, 11, 10, 10][min(depth, 3)] }
-
-  var body: some View {
-    let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
-
-    VStack(alignment: .leading, spacing: 10) {
-      if !isInnermost {
-        LessonMapLevel(ideas: ideas.dropLast(), depth: depth + 1)
-      }
-
-      if let idea = ideas.last {
-        LessonMapIdea(idea: idea)
-      }
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(padding)
-    .background {
-      if isInnermost {
-        shape.fill(Color(.tertiarySystemFill))
-      }
-    }
-    .overlay {
-      if !isInnermost {
-        shape.strokeBorder(.separator)
-      }
-    }
   }
 }

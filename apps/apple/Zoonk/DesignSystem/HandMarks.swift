@@ -10,21 +10,24 @@ struct RichTextMarks: Equatable {
 /// In UTF-16 offsets of the text as drawn, which is how `Text.Layout` numbers the characters its
 /// glyphs come from.
 struct InlineMarks: Equatable {
-  var underline: Range<Int>?
+  /// The underlined phrase's words, so a line that breaks after one ends the line's stroke at the
+  /// word, not at the space after it.
+  var underline: [Range<Int>] = []
   var terms: [Range<Int>] = []
 
-  var isEmpty: Bool { underline == nil && terms.isEmpty }
+  var isEmpty: Bool { underline.isEmpty && terms.isEmpty }
 
-  init(underline: Range<Int>? = nil, terms: [Range<Int>] = []) {
+  init(underline: [Range<Int>] = [], terms: [Range<Int>] = []) {
     self.underline = underline
     self.terms = terms
   }
 
   /// `underline` is the phrase as drawn, without its markup.
   init(_ text: AttributedString, underline: String?, highlightsTerms: Bool) {
-    self.underline = underline.flatMap { phrase in
-      text.range(of: phrase).map { Self.offsets(of: $0, in: text) }
-    }
+    self.underline =
+      underline.flatMap { phrase in
+        text.range(of: phrase).map { Self.words(in: Self.offsets(of: $0, in: text), of: text) }
+      } ?? []
 
     guard highlightsTerms else {
       return
@@ -41,6 +44,29 @@ struct InlineMarks: Equatable {
   {
     let start = String(text.characters[text.startIndex..<range.lowerBound]).utf16.count
     return start..<(start + String(text.characters[range]).utf16.count)
+  }
+
+  private static func words(in range: Range<Int>, of text: AttributedString) -> [Range<Int>] {
+    let units = Array(String(text.characters).utf16)
+    var words: [Range<Int>] = []
+    var start: Int?
+
+    for offset in range {
+      let isSpace = Unicode.Scalar(units[offset])?.properties.isWhitespace == true
+
+      if isSpace, let wordStart = start {
+        words.append(wordStart..<offset)
+        start = nil
+      } else if !isSpace, start == nil {
+        start = offset
+      }
+    }
+
+    if let start {
+      words.append(start..<range.upperBound)
+    }
+
+    return words
   }
 }
 
@@ -72,11 +98,21 @@ struct HandMarksRenderer: TextRenderer {
       return
     }
 
-    for (index, (line, glyphs)) in zip(layout, lines).enumerated() {
+    let underlined = lines.map { glyphs in
+      Self.span(of: marks.underline, in: glyphs, from: start)
+    }
+    let underline = zip(layout, underlined).first { $0.1 != nil }.map { line, _ in
+      HandUnderline(
+        widths: underlined.compactMap { $0.map { $0.upperBound - $0.lowerBound } },
+        unit: line.typographicBounds.descent / 9)
+    }
+    var slices = underline?.slices.makeIterator()
+
+    for ((line, glyphs), span) in zip(zip(layout, lines), underlined) {
       let bounds = line.typographicBounds
 
       for term in marks.terms {
-        if let span = Self.span(of: term, in: glyphs, from: start) {
+        if let span = Self.span(of: [term], in: glyphs, from: start) {
           let rect = CGRect(
             x: span.lowerBound - 3, y: bounds.origin.y - bounds.ascent * 0.86,
             width: span.upperBound - span.lowerBound + 6,
@@ -87,10 +123,10 @@ struct HandMarksRenderer: TextRenderer {
         }
       }
 
-      if let underline = marks.underline,
-        let span = Self.span(of: underline, in: glyphs, from: start)
-      {
-        Self.stroke(under: span, of: bounds, line: index, isStrong: isStrong, in: &context)
+      if let span, let slice = slices?.next(), let underline {
+        Self.stroke(
+          slice, of: underline,
+          at: CGPoint(x: span.lowerBound, y: bounds.origin.y), isStrong: isStrong, in: &context)
       }
 
       context.draw(line)
@@ -98,10 +134,13 @@ struct HandMarksRenderer: TextRenderer {
   }
 
   private static func span(
-    of range: Range<Int>, in glyphs: [Text.Layout.RunSlice], from start: Text.Layout.CharacterIndex
+    of ranges: [Range<Int>], in glyphs: [Text.Layout.RunSlice],
+    from start: Text.Layout.CharacterIndex
   ) -> ClosedRange<CGFloat>? {
     let marked = glyphs.filter { glyph in
-      glyph.characterIndices.contains { range.contains(start.distance(to: $0)) }
+      glyph.characterIndices.contains { index in
+        ranges.contains { $0.contains(start.distance(to: index)) }
+      }
     }
     let edges = marked.map { $0.typographicBounds.rect }
 
@@ -112,36 +151,78 @@ struct HandMarksRenderer: TextRenderer {
     return minX...maxX
   }
 
-  /// The concept's pen stroke, a 200 by 12 drawing stretched to the phrase; alternate lines waver
-  /// differently, as a hand would.
   private static func stroke(
-    under span: ClosedRange<CGFloat>, of bounds: Text.Layout.TypographicBounds, line: Int,
-    isStrong: Bool, in context: inout GraphicsContext
+    _ slice: HandUnderline.Slice, of underline: HandUnderline, at origin: CGPoint, isStrong: Bool,
+    in context: inout GraphicsContext
   ) {
-    let unit = bounds.descent / 9
-    let width = span.upperBound - span.lowerBound
-    let lift: CGFloat = line.isMultiple(of: 2) ? 0 : 0.8
-    let point = { (x: CGFloat, y: CGFloat) in
-      CGPoint(
-        x: span.lowerBound + x / 200 * width,
-        y: bounds.origin.y + bounds.descent * 0.2 + (y + lift) * unit)
+    let place = { (points: [CGPoint]) in
+      var path = Path()
+      path.addLines(points.map { CGPoint(x: origin.x + $0.x, y: origin.y + $0.y) })
+      return path
     }
 
-    var pen = Path()
-    pen.move(to: point(2, 7.5))
-    pen.addCurve(to: point(98, 6.5), control1: point(30, 4.5), control2: point(62, 9))
-    pen.addCurve(to: point(198, 7), control1: point(134, 4), control2: point(168, 4.5))
-
-    var pass = Path()
-    pass.move(to: point(8, 10))
-    pass.addCurve(to: point(192, 9), control1: point(52, 8), control2: point(122, 10.5))
-
-    let weight = max(1.5, bounds.descent * 0.5)
     context.stroke(
-      pen, with: .color(.warning),
-      style: StrokeStyle(lineWidth: weight, lineCap: .round, lineJoin: .round))
+      place(slice.pen), with: .color(.warning),
+      style: StrokeStyle(lineWidth: underline.weight, lineCap: .round, lineJoin: .round))
     context.stroke(
-      pass, with: .color(.warning.opacity(isStrong ? 1 : 0.65)),
-      style: StrokeStyle(lineWidth: weight / 2, lineCap: .round))
+      place(slice.pass), with: .color(.warning.opacity(isStrong ? 1 : 0.65)),
+      style: StrokeStyle(lineWidth: underline.weight / 2, lineCap: .round, lineJoin: .round))
+  }
+}
+
+/// Lousa's hand-drawn underline: a pen stroke and a lighter second pass along the whole phrase. Its
+/// wave keeps one length for the text's size, so a phrase that wraps gives each line its slice of the
+/// same stroke instead of the whole squiggle squeezed into each, and only the phrase's real end lifts
+/// into the closing flick, never a line break.
+struct HandUnderline: Equatable {
+  /// In points: across from where the phrase starts on its line, down from the line's baseline.
+  struct Slice: Equatable {
+    let pen: [CGPoint]
+    let pass: [CGPoint]
+  }
+
+  let slices: [Slice]
+  let weight: CGFloat
+
+  /// `widths` are the phrase's widths on its lines, in order; `unit` is a ninth of the text's descent.
+  init(widths: [CGFloat], unit: CGFloat) {
+    let length = widths.reduce(0, +) / unit
+    let inset = min(8, length * 0.06)
+    let starts = widths.indices.map { widths[..<$0].reduce(0, +) / unit }
+
+    slices = zip(starts, widths).map { start, width in
+      let end = start + width / unit
+      let trace = { (from: CGFloat, to: CGFloat, height: (CGFloat) -> CGFloat) -> [CGPoint] in
+        guard to > from else {
+          return []
+        }
+
+        let count = max(Int(((to - from) / 4).rounded(.up)), 1)
+
+        return (0...count).map { step in
+          let distance = from + (to - from) * CGFloat(step) / CGFloat(count)
+          return CGPoint(x: (distance - start) * unit, y: height(distance) * unit)
+        }
+      }
+
+      return Slice(
+        pen: trace(start, end) { Self.pen(at: $0, along: length) },
+        pass: trace(max(start, inset), min(end, length - inset), Self.pass(at:)))
+    }
+    weight = max(1.5, unit * 4.5)
+  }
+
+  /// How far below the baseline the pen is, in units, `distance` units along a phrase `length` long.
+  /// Its wave depends only on the distance; the phrase's length only places the closing flick.
+  static func pen(at distance: CGFloat, along length: CGFloat) -> CGFloat {
+    let flick = min(28, length * 0.35)
+    let lift = max(0, distance - (length - flick)) / max(flick, 1)
+
+    return 8.8 + 1.4 * sin(2 * .pi * distance / 160 + 0.6)
+      + 0.6 * sin(2 * .pi * distance / 91 + 2.1) - 3.5 * lift * lift
+  }
+
+  private static func pass(at distance: CGFloat) -> CGFloat {
+    11.4 + 0.7 * sin(2 * .pi * distance / 210 + 1.7)
   }
 }
