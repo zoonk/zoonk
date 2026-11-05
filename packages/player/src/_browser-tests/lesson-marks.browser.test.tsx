@@ -6,6 +6,7 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { nextFrames } from "../_test-utils/tutor-api";
 import { buildLesson } from "../preview/preview-lesson";
 import { contentStep, teachingStep } from "../preview/preview-steps";
 
@@ -64,10 +65,49 @@ function strip() {
   return page.getByRole("main").getByText(/^Idea \d of \d$/u);
 }
 
-function shownIdeas() {
+function shownStrips() {
   return [...document.querySelectorAll('[data-slot="orientation-strip"]')]
     .filter((shown) => shown.checkVisibility())
-    .map((shown) => shown.querySelector("p")?.textContent);
+    .map((shown) => shown.textContent);
+}
+
+function boxOf(text: string) {
+  return page.getByRole("main").getByText(text, { exact: true }).element().getBoundingClientRect();
+}
+
+function endMapLabels() {
+  return MAP.ideas.map(({ label = "" }) => {
+    const { left, top } = boxOf(label);
+    return { left, top };
+  });
+}
+
+function endMapIcons() {
+  return document.querySelectorAll('[data-slot="lesson-map"] [data-slot="lesson-icon"]');
+}
+
+function withoutIcon(idea: LessonMap["ideas"][number]) {
+  return { ...idea, icon: null };
+}
+
+async function openEndMapWhileTagsArrive(summary: LessonMap) {
+  const arrival = Promise.withResolvers<LessonMarks>();
+  const opened = buildLesson(lesson().steps, { marksPending: true, summary });
+  const getLessonMarks = vi.fn(() => arrival.promise);
+
+  renderLessonPlayer({ adapters: { ...buildAdapters(opened), getLessonMarks }, lesson: opened });
+  await next();
+  await next();
+  await answerCheck();
+
+  await expect.element(page.getByRole("main").getByText("Reading the cloud")).toBeVisible();
+  return arrival;
+}
+
+async function answerCheck() {
+  await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await page.getByRole("button", { name: /^Continue/u }).click();
 }
 
 function underlined() {
@@ -112,8 +152,8 @@ describe("lesson marks", () => {
     renderLessonPlayer({ lesson: lesson() });
     await next();
 
-    await expect.element(strip()).toHaveTextContent("Idea 1 of 2");
-    await expect.element(page.getByText("A cloud, not an orbit")).toBeVisible();
+    await expect.poll(shownStrips).toStrictEqual(["Idea 1 of 2"]);
+    await expect.element(page.getByText("A cloud, not an orbit")).not.toBeInTheDocument();
     expect(underlined()).toStrictEqual(["a map of where it might be"]);
 
     await expect.element(page.getByText("Example", { exact: true })).toBeVisible();
@@ -144,12 +184,10 @@ describe("lesson marks", () => {
     await next();
     await next();
 
-    await expect.element(strip()).toHaveTextContent("Idea 2 of 2");
-    await expect.element(page.getByText("Reading the cloud")).toBeVisible();
+    await expect.poll(shownStrips).toStrictEqual(["Idea 2 of 2"]);
+    await expect.element(page.getByText("Reading the cloud")).not.toBeInTheDocument();
 
-    await page.getByRole("radio", { name: RIGHT_OPTION }).click();
-    await page.getByRole("button", { name: /^Check/u }).click();
-    await page.getByRole("button", { name: /^Continue/u }).click();
+    await answerCheck();
 
     const map = page.getByRole("main");
     await expect.element(map.getByRole("heading", { name: "Lesson map" })).toBeVisible();
@@ -216,11 +254,31 @@ describe("lesson marks", () => {
     await expect.element(strip()).toHaveTextContent("Idea 2 of 2");
 
     await page.getByRole("button", { name: "Previous screen" }).click();
-    await expect.poll(shownIdeas).toStrictEqual(["Idea 1 of 2"]);
+    await expect.poll(shownStrips).toStrictEqual(["Idea 1 of 2"]);
     expect(underlined()).toStrictEqual(["a map of where it might be"]);
 
     await page.getByRole("button", { name: "Previous screen" }).click();
     await expect.element(page.getByText("2 ideas to discover in this lesson")).toBeVisible();
+  });
+
+  it("keeps each idea's icon room on the end map, so icons drawn after it opened move nothing", async () => {
+    const arrival = await openEndMapWhileTagsArrive({ ...MAP, ideas: MAP.ideas.map(withoutIcon) });
+    const before = endMapLabels();
+
+    arrival.resolve({ marksPending: false, steps: [], summary: MAP });
+    await expect.poll(() => endMapIcons().length).toBe(MAP.ideas.length);
+    expect(endMapLabels()).toStrictEqual(before);
+  });
+
+  it("keeps the end map's icon room when its tags end with no icon or about line", async () => {
+    const untold = { ...MAP, ideas: MAP.ideas.map(({ label, text }) => ({ label, text })) };
+    const arrival = await openEndMapWhileTagsArrive(untold);
+    const before = endMapLabels();
+
+    arrival.resolve({ marksPending: false, steps: [], summary: untold });
+    await arrival.promise;
+    await nextFrames();
+    expect(endMapLabels()).toStrictEqual(before);
   });
 
   it("keeps reading marks after a few failed reads, within the screens' picture wait", async () => {
@@ -297,6 +355,11 @@ describe("lesson marks", () => {
     await expect.element(strip()).not.toBeInTheDocument();
     await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
     expect(underlined()).toStrictEqual([]);
+
+    await next();
+    await answerCheck();
+    const [first] = plainMap.ideas;
+    expect(boxOf(first?.label ?? "").left).toBe(boxOf(first?.text ?? "").left);
   });
 
   it("puts a knowledge lesson's new term on the highlighter, even before its marks", async () => {

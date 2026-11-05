@@ -6,16 +6,31 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 import { type IdeaSlot, getIdeaSlots, getSlotRows } from "../_utils/idea-slots";
+import { useLessonPlayerConfig } from "../lesson-player-context";
 import { LessonIconImage } from "./lesson-icon";
 import { LessonRichText } from "./lesson-rich-text";
 
 type MapIdea = LessonMapData["ideas"][number];
 
-function IdeaContent({ idea, number }: { idea: MapIdea; number: number }) {
+const ICON_SLOT_CLASS = "-ms-1 size-9 shrink-0";
+
+function IdeaContent({
+  idea,
+  keepsIconRoom,
+  number,
+}: {
+  idea: MapIdea;
+  keepsIconRoom: boolean;
+  number: number;
+}) {
   return (
     <>
       <span className="flex min-h-9 items-center gap-2">
-        {idea.icon && <LessonIconImage className="-ms-1 size-9" icon={idea.icon} size={36} />}
+        {idea.icon ? (
+          <LessonIconImage className={ICON_SLOT_CLASS} icon={idea.icon} size={36} />
+        ) : (
+          keepsIconRoom && <span aria-hidden="true" className={ICON_SLOT_CLASS} />
+        )}
         <span className="flex min-w-0 flex-col">
           <span aria-hidden="true" className="text-faint font-mono text-xs tabular-nums">
             {number}
@@ -99,8 +114,25 @@ function slotPlacement({
   return { "--map-column": columns[slot.column], "--map-row": slot.row - first + 1 };
 }
 
+/**
+ * A tagged lesson's ideas keep their icon's room from the first frame for as long as the map shows,
+ * so an icon that comes late, or never, moves nothing.
+ */
+function useKeepsIconRoom(ideas: readonly MapIdea[]): boolean {
+  const { lesson } = useLessonPlayerConfig();
+  const isTagged = lesson.marksPending || ideas.some((idea) => idea.about || idea.icon);
+  const [keeps, setKeeps] = useState(isTagged);
+
+  if (isTagged && !keeps) {
+    setKeeps(true);
+  }
+
+  return isTagged || keeps;
+}
+
 function MindMap({ ideas, title }: { ideas: readonly MapIdea[]; title: string }) {
   const { paths, ref } = useBranchPaths();
+  const keepsIconRoom = useKeepsIconRoom(ideas);
   const slots = getIdeaSlots(ideas.length);
   const { first } = getSlotRows(slots);
 
@@ -143,7 +175,7 @@ function MindMap({ ideas, title }: { ideas: readonly MapIdea[]; title: string })
                   key={key}
                   style={slotPlacement({ first, slot })}
                 >
-                  <IdeaContent idea={idea} number={index + 1} />
+                  <IdeaContent idea={idea} keepsIconRoom={keepsIconRoom} number={index + 1} />
                 </li>
               )
             );
