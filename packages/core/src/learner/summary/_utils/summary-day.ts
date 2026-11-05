@@ -9,6 +9,7 @@ import { getSessionBar } from "../../../sessions/_utils/session-view";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { countMissions } from "../../../sessions/missions";
 import { getDayMissions } from "../../../sessions/missions/get-day-missions";
+import { readActiveSubscription } from "../../facts/subscription";
 import { type LearnerSummaryToday } from "../learner-summary-contract";
 
 export type SavedSession = StudySession & { blocks: StudySessionBlock[] };
@@ -131,7 +132,13 @@ export async function loadActiveGoalDay({
   const carried = day && day.localDate.getTime() !== localDate.getTime();
 
   const refill = day
-    ? await planEntitlementLapseRefill({ goal, phaseChallengesRequired, session: day, timeZone })
+    ? await planEntitlementLapseRefill({
+        goal,
+        phaseChallengesRequired,
+        readSubscription: readActiveSubscription,
+        session: day,
+        timeZone,
+      })
     : null;
 
   return {

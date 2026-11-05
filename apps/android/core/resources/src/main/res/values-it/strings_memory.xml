@@ -22,6 +22,7 @@
   "memory_fact_source": "92ea104036ccfdb28c411e90aa029ab87dae4a7933576cb9b4cf1071ef392c42",
   "memory_save_failed": "314650bfb5a5edebd8709c2c38f78085de4a64ab169b69b4c9967310e797da66",
   "memory_sensitive_note": "6188c6ae163518a7af5ed8a41e8e484019fd98d3654f261c95ffd85a9180aa61",
+  "memory_source_call": "b295bd10f23aebca04ee685833fe91dc6eba79d452be7d3adc8e59f12285ffd8",
   "memory_source_chat": "882467a24f3b126331834325074ee828b7cdf73df43a3dd31f679dda68ed5612",
   "memory_source_noticed": "748ef28b1b6873ab6845695a8f92b75967e667bb7bacfd1ea568b2a7bab47e4f",
   "memory_source_onboarding": "e060f7c98e9715a2859e3aad4e780412da632062bff1de5acf5cfe25fd2aa0af",
@@ -34,13 +35,13 @@
   "memory_updated_more": "29d2f532148da7e5bd46edb58fb8443aaae86f2ff0fabbcae92beedbae17f85d",
   "memory_use": "63f13feffebb2a3114960e3c294cf68b2ecf908faeeb0201f9bb1272da17d5e5",
   "memory_use_off": "661a746546335757afc714f05e5328db9d8220fcb240ec94bfb17282cbb3d735",
-  "memory_use_on": "66b6aa48d414dfd3bb2b3e78272478c5d51b68fea9380224eaf6c55cac31787a"
+  "memory_use_on": "0cf31e3d15d4e2dfea9971aa7fbec7cb044d763fa46be9b425e427cab0fe104c"
 }
 -->
 <resources>
     <string name="memory_description">Quello che Zoonk ricorda di te per proporti esempi e piani adatti alla tua vita.</string>
     <string name="memory_use">Usa la memoria</string>
-    <string name="memory_use_on">Esempi personalizzati e piani adatti alla tua settimana</string>
+    <string name="memory_use_on">Esempi su misura per te, piani adatti alla tua settimana e conversazioni che tengono conto delle tue novità</string>
     <string name="memory_use_off">La memoria è disattivata. Non memorizziamo nuove informazioni né usiamo quelle presenti.</string>
     <string name="memory_empty_on">Ancora nulla. Mentre studi e chatti, qui compaiono brevi note che aiutano Zoonk a insegnarti meglio.</string>
     <string name="memory_empty_off">Qui non c’è nulla. Zoonk non conserva note su di te quando la memoria è disattivata.</string>
@@ -54,6 +55,8 @@
     <string name="memory_category_context">Contesto</string>
     <string name="memory_source_noticed">Lo abbiamo notato dalla tua attività</string>
     <string name="memory_source_you">Ce l’hai detto tu</string>
+    <!-- Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor. -->
+    <string name="memory_source_call">Da una conversazione</string>
     <string name="memory_source_chat">Da una chat</string>
     <string name="memory_source_onboarding">Dalla configurazione iniziale</string>
     <string name="memory_source_session">Da una sessione di studio</string>

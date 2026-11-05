@@ -346,7 +346,14 @@ internal fun FocusTestResult(
     val moveFocus = rememberMoveFocus()
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }) { buddy ->
+    MomentAfterCeremony(
+        app,
+        outcome.ceremony.takeIf {
+            ui.celebrate
+        },
+        outcome.certificates,
+        { navigator.open(AppRoute.Subscription) },
+    ) { buddy ->
         BoxWithConstraints(Modifier.onPageSpan { span = it }) {
             // Where the result splits, both steps show at once: how the learner did before the fold, the new focus after it.
             val whole = spreadFold(maxWidth, span) != null

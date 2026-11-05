@@ -53,6 +53,7 @@ function graded(answerId: string, fixed = false) {
 const SUMMARY: MistakePracticeSummary = {
   brainPower: 20,
   ceremony: null,
+  certificates: [],
   correct: 2,
   missionMoment: null,
   reached: NOTHING_REACHED,

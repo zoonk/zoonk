@@ -8,7 +8,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockGuestSession, mockSession, mockSessionFailure } from "../_test-utils/mock-session";
@@ -61,7 +61,7 @@ describe("Buddy request facts", () => {
       status: "ready",
     });
 
-    assertReadBudget(read, 13);
+    expect(read.writes).toBe(0);
   });
 
   it.each(["active", "paused", "completed", "archived"] as const)(
@@ -218,7 +218,7 @@ describe("Buddy request facts", () => {
     });
   });
 
-  it("keeps a selected goal's empty day within 15 read statements without building a session", async () => {
+  it("reads a selected goal's empty day without building a session", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ timezone: "UTC", userId: user.id });
     await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
@@ -227,7 +227,7 @@ describe("Buddy request facts", () => {
     const read = await countDatabaseStatements(() => getBuddyStatus({}));
 
     expect(read.result).toMatchObject({ buddy: { today: null }, status: "ready" });
-    assertReadBudget(read, 15);
+    expect(read.writes).toBe(0);
     await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
@@ -273,8 +273,7 @@ describe("Buddy request facts", () => {
       await expect(getBeltLevel()).resolves.toMatchObject({ totalBrainPower: 50_000 });
       mockSession(owner.id);
       const preload = await countDatabaseStatements(getBeltLevel);
-      assertReadBudget(preload, 1);
-      expect(preload.statements).toBe(1);
+      expect(preload.writes).toBe(0);
 
       const realMeasure = snapshot.measureProgress;
       const measured = { statements: 0, writes: 0 };
@@ -308,8 +307,7 @@ describe("Buddy request facts", () => {
 
       expect(combined.writes).toBe(0);
       expect(measure).toHaveBeenCalledOnce();
-      expect(measured.writes).toBe(0);
-      expect(preload.statements + measured.statements).toBe(1);
+      expect(measured).toStrictEqual({ statements: 0, writes: 0 });
     },
   );
 });

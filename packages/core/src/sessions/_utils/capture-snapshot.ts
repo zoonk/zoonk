@@ -1,6 +1,7 @@
 import "server-only";
 import { type UserProgress, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { type findActiveSubscription } from "../../auth/subscription";
 import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { measurePreparation } from "../../preparation/section-preparation";
 import { projectPersistedEnergy } from "../../progress/energy";
@@ -11,10 +12,12 @@ import { type SessionSnapshot, type SessionState } from "./session-snapshot";
 async function measureGoal({
   goalId,
   now,
+  readSubscription,
   userId,
 }: {
   goalId: string | null;
   now: Date;
+  readSubscription?: typeof findActiveSubscription;
   userId: string;
 }): Promise<Pick<SessionState, "preparation" | "progress" | "skillStates">> {
   if (!goalId) {
@@ -22,7 +25,7 @@ async function measureGoal({
   }
 
   const [inputs, lessons] = await Promise.all([
-    loadPreparationInputs({ goalId, now, userId }),
+    loadPreparationInputs({ goalId, now, subscription: await readSubscription?.(userId), userId }),
     loadGoalLessons(goalId),
   ]);
 
@@ -66,16 +69,19 @@ export async function measureProgress({
 export async function measureSessionState({
   goalId,
   now,
+  readSubscription,
   timeZone,
   userId,
 }: {
   goalId: string | null;
   now: Date;
+  /** A GET passes `readActiveSubscription`; without it, the subscription is read fresh. */
+  readSubscription?: typeof findActiveSubscription;
   timeZone: string;
   userId: string;
 }): Promise<SessionState> {
   const [goal, progress] = await Promise.all([
-    measureGoal({ goalId, now, userId }),
+    measureGoal({ goalId, now, readSubscription, userId }),
     measureProgress({ now, timeZone, userId }),
   ]);
 

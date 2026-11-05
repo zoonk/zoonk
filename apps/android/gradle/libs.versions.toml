@@ -51,6 +51,9 @@ aboutLibraries = "15.3.0"
 # Speech clips and recorded answers.
 media3 = "1.11.1"
 
+# Printing certificates.
+androidxPrint = "1.1.0"
+
 # Live calls.
 webrtc = "150.7871.04"
 
@@ -137,6 +140,9 @@ googleid = { module = "com.google.android.libraries.identity.googleid:googleid",
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutines" }
 play-integrity = { module = "com.google.android.play:integrity", version.ref = "playIntegrity" }
 aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
+
+# Printing certificates.
+androidx-print = { module = "androidx.print:print", version.ref = "androidxPrint" }
 
 # Speech clips and recorded answers.
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }

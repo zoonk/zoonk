@@ -81,6 +81,7 @@ export async function finishEmptyCheckpoint({
       brainPower: 0,
       capsulesOpened: 0,
       ceremony: null,
+      certificates: [],
       checkpoint: null,
       comesBackOn: null,
       completedMissions: settled.missionResult.completed,

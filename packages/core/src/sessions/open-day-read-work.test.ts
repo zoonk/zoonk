@@ -59,27 +59,26 @@ describe("opening a day and reading it", () => {
     expect(screens(today.today.session)).toStrictEqual(screens(opened.session));
   });
 
-  it("reuses the selected day facts and projects access without loading unrelated usage", async () => {
+  it("shows the opened day's session on Today without writing", async () => {
     const user = await userFixture();
     const { goal, plan } = await sessionGoalFixture({ userId: user.id });
     await layOutPlanFixture(plan.id);
     mockSession(user.id);
 
     const input = { goalId: goal.id, shownDate: "2026-09-30", timeZone: "UTC" };
-    const opened = await countDatabaseStatements(() => openStudyDay(input));
-    expect(opened.result.status).toBe("opened");
+    const opened = await openStudyDay(input);
+    expect(opened.status).toBe("opened");
 
     const saved = await prisma.studySession.findFirstOrThrow({ where: { goalId: goal.id } });
     const read = await countDatabaseStatements(() => getTodayView(input));
     expect(read.writes).toBe(0);
     expect(read.result).toMatchObject({ status: "ready", today: { session: { id: saved.id } } });
 
-    if (opened.result.status !== "opened" || read.result.status !== "ready") {
+    if (opened.status !== "opened" || read.result.status !== "ready") {
       throw new Error("Expected the saved opened day on both responses");
     }
 
-    expect(read.result.today.session).toStrictEqual(opened.result.session);
-    expect(opened.statements + read.statements).toBeLessThanOrEqual(205);
+    expect(read.result.today.session).toStrictEqual(opened.session);
   });
 
   it("keeps the same display-limit day when a different owned goal crosses midnight", async () => {

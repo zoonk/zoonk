@@ -41,7 +41,7 @@ class BuddyViewModel internal constructor(
     var openFailed by mutableStateOf<BuddyTap?>(null)
         private set
 
-    /** A failure that comes back after the learner left the page, or moved to another goal, belongs to no row. */
+    /** An answer that comes back after the learner left the page, or moved to another goal, belongs to no row and opens nothing. */
     private var visit = 0
 
     private val opened = Channel<AppRoute>(Channel.BUFFERED)
@@ -93,7 +93,7 @@ class BuddyViewModel internal constructor(
         viewModelScope.launch {
             try {
                 when (val result = opener.openMission(blockId)) {
-                    is MutationResult.Done -> result.value?.let(opened::trySend) ?: store.status.refresh()
+                    is MutationResult.Done -> result.value?.let { if (visit == started) opened.trySend(it) } ?: store.status.refresh()
                     is MutationResult.Failed -> if (visit == started) openFailed = tap
                     MutationResult.Obsolete -> Unit
                 }

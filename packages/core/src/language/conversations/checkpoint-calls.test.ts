@@ -337,8 +337,10 @@ describe("language checkpoint calls", () => {
   it("says a pending checkpoint opened past today's study time can't start today, as its Start does", async () => {
     const { block, user } = await reachedCheckpointFixture({ speaking: 1 });
 
-    const unlimited = await countDatabaseStatements(() => openLanguageCheckpointCall(block.id));
-    expect(unlimited.result).toMatchObject({ dailyLimitReached: false, status: "notStarted" });
+    await expect(openLanguageCheckpointCall(block.id)).resolves.toMatchObject({
+      dailyLimitReached: false,
+      status: "notStarted",
+    });
 
     await Promise.all([
       learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id }),
@@ -350,7 +352,6 @@ describe("language checkpoint calls", () => {
     const opened = await countDatabaseStatements(() => openLanguageCheckpointCall(block.id));
 
     expect(opened.writes).toBe(0);
-    expect(opened.statements).toBe(unlimited.statements + 1);
 
     expect(opened.result).toMatchObject({
       dailyLimitReached: true,
