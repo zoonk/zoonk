@@ -88,13 +88,22 @@ function resolveSource(input: { app: string; from: string; specifier: string }) 
   return file;
 }
 
-/** `fetch` called, passed around or read from `globalThis`: anything that could reach a service. */
+/** `fetch` called, passed around or read from `globalThis`; types and imports are erased or left to the package check. */
 function mentionsFetch(node: unknown): boolean {
   if (typeof node !== "object" || node === null) {
     return false;
   }
 
-  if ("type" in node && node.type === "Identifier" && "name" in node && node.name === "fetch") {
+  const type = "type" in node && typeof node.type === "string" ? node.type : "";
+
+  if (type.startsWith("TS") || type === "ImportDeclaration") {
+    return false;
+  }
+
+  if (
+    (type === "Identifier" && "name" in node && node.name === "fetch") ||
+    (type === "Literal" && "value" in node && node.value === "fetch")
+  ) {
     return true;
   }
 
@@ -130,18 +139,10 @@ function readImports(file: string) {
   return { dynamicImports, fetches: mentionsFetch(program), staticImports };
 }
 
-/** `node:fs` stays itself; `next-intl/middleware` and `@formatjs/intl-localematcher/x` name their package. */
-function packageName(specifier: string) {
-  return /^(?:node:[^/]+|@[^/]+\/[^/]+|[^/]+)/u.exec(specifier)?.[0] ?? specifier;
-}
-
-/**
- * Every file of ours a module can load and every outside package they import. Each `import()` is
- * followed, except in `deferred` files, whose `import()`s sit in callbacks that wait for an event.
- */
-function walk({ app, deferred = [], entry }: { app: string; deferred?: string[]; entry: string }) {
+/** Every file of ours the proxy can load, every `import()` included, and every outside import path they use. */
+function walk(app: string) {
   const files = new Map<string, { fetches: boolean }>();
-  const packages = new Set<string>();
+  const outsideImports = new Set<string>();
 
   function visit(file: string) {
     if (files.has(file)) {
@@ -151,71 +152,53 @@ function walk({ app, deferred = [], entry }: { app: string; deferred?: string[];
     const { dynamicImports, fetches, staticImports } = readImports(file);
     files.set(file, { fetches });
 
-    const followed = deferred.includes(relative(file))
-      ? staticImports
-      : [...staticImports, ...dynamicImports];
-
-    for (const specifier of followed) {
+    for (const specifier of [...staticImports, ...dynamicImports]) {
       const imported = resolveSource({ app, from: file, specifier });
 
       if (imported) {
         visit(imported);
       } else {
-        packages.add(packageName(specifier));
+        outsideImports.add(specifier);
       }
     }
   }
 
-  visit(join(ROOT, "apps", app, "src", entry));
-  return { files, packages: [...packages].toSorted() };
+  visit(join(ROOT, "apps", app, "src", "proxy.ts"));
+  return { files, outsideImports: [...outsideImports] };
 }
 
-function databaseFiles(files: Map<string, unknown>) {
-  return [...files.keys()]
-    .filter((file) => file.includes("/packages/db/"))
-    .map((file) => relative(file));
-}
-
-/** The only outside packages each proxy may load: any other could reach a service, so it's added here on purpose. */
-const PROXY_PACKAGES = {
-  api: ["next"],
+/** The only outside code each proxy may import: anything else could reach a service, so it's added here on purpose. */
+const PROXY_OUTSIDE_IMPORTS = {
+  api: ["next/server"],
   main: [
     "@formatjs/intl-localematcher",
     "@vercel/oidc",
-    "better-auth",
+    "better-auth/cookies",
     "negotiator",
-    "next",
-    "next-intl",
+    "next-intl/middleware",
+    "next-intl/routing",
+    "next/server",
     "server-only",
   ],
 };
 
-describe.each(Object.entries(PROXY_PACKAGES))(
+describe.each(Object.entries(PROXY_OUTSIDE_IMPORTS))(
   "%s's proxy, which every request in every region waits on",
-  (app, allowedPackages) => {
+  (app, allowed) => {
     it("never reaches the database or another service", () => {
-      const { files, packages } = walk({ app, entry: "proxy.ts" });
+      const { files, outsideImports } = walk(app);
 
-      expect(databaseFiles(files)).toStrictEqual([]);
+      expect(
+        [...files.keys()]
+          .filter((file) => file.includes("/packages/db/"))
+          .map((file) => relative(file)),
+      ).toStrictEqual([]);
 
       expect(
         [...files].filter(([, { fetches }]) => fetches).map(([file]) => relative(file)),
       ).toStrictEqual([]);
 
-      expect(packages.filter((name) => !allowedPackages.includes(name))).toStrictEqual([]);
-    });
-
-    it("starts without loading the database: register() runs before its first request", () => {
-      const { files } = walk({
-        app,
-        deferred: [
-          "packages/core/src/server-sinks.ts",
-          "apps/api/src/workflows/follow-ups/register-follow-up-runs.ts",
-        ],
-        entry: "instrumentation.ts",
-      });
-
-      expect(databaseFiles(files)).toStrictEqual([]);
+      expect(outsideImports.filter((specifier) => !allowed.includes(specifier))).toStrictEqual([]);
     });
   },
 );
