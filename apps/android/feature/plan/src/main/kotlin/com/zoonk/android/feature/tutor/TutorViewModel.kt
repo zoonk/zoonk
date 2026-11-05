@@ -206,6 +206,7 @@ class TutorViewModel internal constructor(
      * which goes first, as on main.
      */
     fun ask(suggestion: TutorSuggestion) {
+        val written = draft.text.toString()
         screenAsk?.cancel()
         screenAsk =
             viewModelScope.launch {
@@ -214,7 +215,12 @@ class TutorViewModel internal constructor(
                         .first { it.value != null }
                         .value
                         ?.turns ?: return@launch
-                if (unresolved == null && state.value.canAsk(turns)) send(suggestion) else offer(suggestion)
+                when {
+                    unresolved == null && state.value.canAsk(turns) -> send(suggestion)
+
+                    // What the learner wrote while the conversation loaded is theirs to send.
+                    draft.text.toString() == written -> offer(suggestion)
+                }
             }
     }
 
