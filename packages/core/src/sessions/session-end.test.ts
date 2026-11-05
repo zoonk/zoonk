@@ -9,6 +9,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { markCertificateShown } from "../certificates/mark-certificate-shown";
+import { checkOffLesson } from "./_test-utils/check-off-lesson";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   DAY_MS,
@@ -64,6 +65,7 @@ describe("ending a session", () => {
         seconds: 125,
         userId: user.id,
       }),
+      checkOffLesson({ lessonId: lessons[0]?.id ?? "", userId: user.id }),
       learningEventFixture({
         contentIds: { lessonId: lessons[2]?.id ?? "" },
         endedAt: new Date(),

@@ -144,8 +144,11 @@ export async function finishLessonRun({
       (await completeRunBlock(tx, {
         block,
         brainPower: score.brainPower,
+        lessonId,
         now: completedAt,
         run: currentRun,
+        timeZone,
+        userId,
       }));
 
     const explanationsFinished = await finishExplanations(tx, { lessonId, userId });

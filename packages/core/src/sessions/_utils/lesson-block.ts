@@ -1,29 +1,18 @@
 import "server-only";
-import { type StudySessionBlock, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { getString } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import { loadLessonReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
-import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
 import { readBlockPayload } from "../block-payload";
 import { capReviewDay, getCapsuleOpening } from "../capsules";
 import { oweDaySettlement } from "../settle-owed-session-day";
-import {
-  type CheckedLanguageGoal,
-  completeLessonPlanItems,
-  scheduleLessonCanDos,
-} from "./plan-items";
 import { type StudySessionRow } from "./study-session-access";
 
 const lessonIdsSchema = z.object({ lessonId: z.string() });
-
-/** Replaying a completed block must roll back its early learner mark. */
-class LessonBlockUnchangedError extends Error {
-  override name = "LessonBlockUnchangedError";
-}
 
 export function readFinishedLessonId(contentIds: unknown): string | null {
   return lessonIdsSchema.safeParse(contentIds).data?.lessonId ?? null;
@@ -109,63 +98,55 @@ export async function findLessonFinish({
   );
 }
 
-/** Returns false when already done; lesson rewards were paid by its completion and must not be added again. */
-export async function markLessonBlockDone({
-  block,
-  brainPower,
-  lessonId,
-  timeZone,
-  userId,
-}: {
+/** Call in the transaction that closes the block's lesson run, or under the learner's mark for a block that run missed. Returns false when it was already done. */
+export async function completeLessonBlock(
+  tx: TransactionClient,
+  {
+    block,
+    brainPower,
+    lessonId,
+    now,
+    timeZone,
+    userId,
+  }: {
+    block: Pick<StudySessionBlock, "id" | "lessonId" | "sessionId">;
+    brainPower: number;
+    lessonId: string | null;
+    now: Date;
+    timeZone: string;
+    userId: string;
+  },
+): Promise<boolean> {
+  const { count } = await tx.studySessionBlock.updateMany({
+    data: {
+      brainPower,
+      completedAt: now,
+      lessonId: block.lessonId ?? lessonId,
+      status: "completed",
+    },
+    where: { id: block.id, status: { in: ["active", "pending"] } },
+  });
+
+  if (count === 0) {
+    return false;
+  }
+
+  await oweDaySettlement(tx, { block, timeZone, userId });
+  return true;
+}
+
+/** For a block its lesson's run didn't complete; that run already paid the lesson and checked off its plan items. */
+export function markLessonBlockDone(input: {
   block: StudySessionBlock;
   brainPower: number;
   lessonId: string | null;
   timeZone: string;
   userId: string;
 }): Promise<boolean> {
-  const { data: result, error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
-      await markLearnerChanged(tx, { planInputs: true, userId });
-
-      const now = new Date();
-
-      const { count } = await tx.studySessionBlock.updateMany({
-        data: {
-          brainPower,
-          completedAt: now,
-          lessonId: block.lessonId ?? lessonId,
-          status: "completed",
-        },
-        where: { id: block.id, status: { in: ["active", "pending"] } },
-      });
-
-      if (count === 0) {
-        throw new LessonBlockUnchangedError("The lesson block was already settled");
-      }
-
-      await oweDaySettlement(tx, { block, timeZone, userId });
-
-      const goals: CheckedLanguageGoal[] = lessonId
-        ? await completeLessonPlanItems(tx, { lessonId, now, userId })
-        : [];
-
-      return { languageGoals: goals };
-    }),
-  );
-
-  if (error instanceof LessonBlockUnchangedError) {
-    return false;
-  }
-
-  if (error) {
-    throw error;
-  }
-
-  if (lessonId) {
-    scheduleLessonCanDos({ goals: result.languageGoals, lessonId, userId });
-  }
-
-  return true;
+  return writeLearnerChange({ planInputs: true, userId: input.userId }, async (tx) => {
+    const done = await completeLessonBlock(tx, { ...input, now: new Date() });
+    return done || unchanged(false);
+  });
 }
 
 /** Returns a learner-local UTC-midnight label, never later than the goal's date. */

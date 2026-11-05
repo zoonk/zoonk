@@ -3,6 +3,7 @@ import { type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { findDayLessonBlock } from "../../sessions/_utils/day-lesson-block";
+import { completeLessonBlock } from "../../sessions/_utils/lesson-block";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { serializeStudyBlockCompletion } from "../../sessions/completion-contract";
 import { NOTHING_REACHED } from "../../sessions/reached";
@@ -53,24 +54,39 @@ export async function lockRunBlock({
 
 type RunBlock = NonNullable<Awaited<ReturnType<typeof lockRunBlock>>>;
 
-/** Commits the block with the run that finished it, so a failed settlement still leaves it done and a retry on a later day still settles its day. */
+/** Commits the block with the run that finished it, so a failed settlement still leaves it done and its day owed, and a retry on a later day still settles that day. */
 export async function completeRunBlock(
   tx: TransactionClient,
   {
     block,
     brainPower,
+    lessonId,
     now,
     run,
-  }: { block: RunBlock; brainPower: number; now: Date; run: LearningEvent },
+    timeZone,
+    userId,
+  }: {
+    block: RunBlock;
+    brainPower: number;
+    lessonId: string;
+    now: Date;
+    run: LearningEvent;
+    timeZone: string;
+    userId: string;
+  },
 ): Promise<boolean> {
-  if (block.status !== "active" && block.status !== "pending") {
+  const done = await completeLessonBlock(tx, {
+    block,
+    brainPower,
+    lessonId,
+    now,
+    timeZone,
+    userId,
+  });
+
+  if (!done) {
     return false;
   }
-
-  await tx.studySessionBlock.update({
-    data: { brainPower, completedAt: now, status: "completed" },
-    where: { id: block.id },
-  });
 
   await tx.learningEvent.update({
     data: {

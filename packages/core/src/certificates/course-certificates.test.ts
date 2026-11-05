@@ -21,8 +21,8 @@ import { updateGoal } from "../goals/update-goal";
 import { testOutKnownPlanItems } from "../learner/_utils/known-skills";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { celebrateProgress } from "../milestones/celebrate-progress";
+import { checkOffLesson } from "../sessions/_test-utils/check-off-lesson";
 import { completePlanItem } from "../sessions/_utils/plan-items";
-import { settleFinishedLesson } from "../sessions/settle-finished-lesson";
 import { reconcileAppleSubscription } from "../subscriptions/reconcile-apple-subscription";
 import { getFieldMapView } from "../view-models/map/get-field-map-view";
 import { claimCourseCertificate } from "./claim-course-certificate";
@@ -151,11 +151,7 @@ function finishLesson(fixture: CourseGoal, item = lastTodo(fixture)) {
     throw new Error("Expected a lesson item");
   }
 
-  return settleFinishedLesson({
-    lessonId: item.lessonId,
-    timeZone: TIME_ZONE,
-    userId: fixture.user.id,
-  });
+  return checkOffLesson({ lessonId: item.lessonId, userId: fixture.user.id });
 }
 
 function listCertificates(userId: string) {
