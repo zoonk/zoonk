@@ -25,12 +25,14 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.StudyMissionMoment
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
@@ -162,8 +164,12 @@ class TutorViewModel internal constructor(
     /** Where an answer's step link leads once it opened, even after the answer scrolled away or the screen was made again. */
     val blockRoutes: Flow<AppRoute> = openedBlocks.receiveAsFlow()
 
-    /** The learner left the conversation, so a step link's open still on its way leads and says nothing when it lands. */
+    /**
+     * The learner left the conversation, so a step link's open still on its way leads and says
+     * nothing when it lands, and a screen's ask still waiting for the conversation isn't sent.
+     */
     fun leave() {
+        screenAsk?.cancel()
         leadsWhereTapped = false
         blockNotice = null
         do {
@@ -193,6 +199,32 @@ class TutorViewModel internal constructor(
 
     /** A lesson's own suggestion goes by its id, so its shared answer is reused. */
     fun send(suggestion: TutorSuggestion) = ask(suggestion.label, suggestion.id)
+
+    /**
+     * A suggestion the learner asked for from the screen ("I didn't get this"): sent once the
+     * conversation has loaded, or put in the composer while an earlier question is unanswered,
+     * which goes first, as on main.
+     */
+    fun ask(suggestion: TutorSuggestion) {
+        val written = draft.text.toString()
+        screenAsk?.cancel()
+        screenAsk =
+            viewModelScope.launch {
+                val turns =
+                    thread.state
+                        .first { it.value != null }
+                        .value
+                        ?.turns ?: return@launch
+                when {
+                    unresolved == null && state.value.canAsk(turns) -> send(suggestion)
+
+                    // What the learner wrote while the conversation loaded is theirs to send.
+                    draft.text.toString() == written -> offer(suggestion)
+                }
+            }
+    }
+
+    private var screenAsk: Job? = null
 
     /** A lesson's suggestion put in the composer, ready to send; sent as it is, it still goes by its id. */
     fun offer(suggestion: TutorSuggestion) {
@@ -540,6 +572,13 @@ data class SendingQuestion(
 data class TutorSuggestion(
     val label: String,
     val id: String? = null,
+)
+
+/** A suggestion a screen hands the buddy as it opens: put in its composer, or [asked] at once. */
+@Immutable
+data class TutorOffer(
+    val suggestion: TutorSuggestion,
+    val asked: Boolean = false,
 )
 
 /** Main's backoff: 1 s doubling up to 5 s, each within 20% either way. */

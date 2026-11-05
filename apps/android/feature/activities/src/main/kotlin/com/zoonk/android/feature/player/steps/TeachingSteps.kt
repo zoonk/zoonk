@@ -154,16 +154,38 @@ private fun BodyText(text: String) {
     RichText(text = text, style = MaterialTheme.typography.bodyLarge)
 }
 
+/**
+ * The opening scene. Once a knowledge lesson's map is tagged, its opening map follows the scene's
+ * words, at the foot of one narrow column, where the screen has room left.
+ */
 @Composable
 internal fun FactHookView(
     step: LessonStep,
     content: StepContent.Fact,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
-    ReadScene {
-        if (part.showsTurn) StepPicture(step, PictureFrame.Hero)
-        if (part.showsScreen) BodyText(content.content.text)
-        if (part.showsTurn) LessonStepVisual(content.content.visual)
+    val scene =
+        @Composable {
+            ReadScene {
+                if (part.showsTurn) StepPicture(step, PictureFrame.Hero)
+                if (part.showsScreen) BodyText(content.content.text)
+                if (part.showsTurn) LessonStepVisual(content.content.visual)
+            }
+        }
+    val map = marking?.map?.takeIf { part.showsScreen && it.opensLesson }
+
+    if (map == null) {
+        scene()
+        return
+    }
+
+    Column(
+        Modifier.fillMaxWidth().then(if (isWideWindow()) Modifier else Modifier.layoutId(FillsView)),
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+        scene()
+        OpeningMap(map, Modifier.padding(top = QUESTION_SPACING))
     }
 }
 
@@ -176,13 +198,21 @@ internal fun GuessHookView(
     locked: Boolean,
     actions: StepActions,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
     val guess = content.content
 
     HookScene(
         // Only a drawn picture gives up height: the placeholder and a picture's description need theirs.
         viewHeight = LocalStepViewHeight.current.takeIf { step.image != null },
-        chip = { if (part.showsScreen) LabelChip(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome) },
+        chip = {
+            if (part.showsScreen) {
+                Column(verticalArrangement = Arrangement.spacedBy(QUESTION_SPACING)) {
+                    if (marking != null) IdeaStrip(marking.map, step.marks)
+                    LabelChip(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome)
+                }
+            }
+        },
         picture = { if (part.showsScreen) StepPicture(step, PictureFrame.Question) },
         question = {
             if (part.showsScreen) {
@@ -254,29 +284,35 @@ internal fun ExplanationView(
     content: StepContent.Explanation,
     actions: StepActions,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
     val explanation = content.content
 
     ReadScene {
+        if (part.showsScreen && marking != null) IdeaStrip(marking.map, step.marks)
         if (part.showsTurn) StepPicture(step, PictureFrame.Hero)
         if (part.showsScreen) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                explanation.title?.let { title ->
-                    RichInlineText(
-                        text = title,
-                        modifier = Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-                BodyText(explanation.text)
-            }
+            TeachingText(
+                explanation.title,
+                explanation.text,
+                step.marks.takeIf { marking != null },
+                marksTerms =
+                    marking != null,
+            )
         }
         if (part.showsTurn) {
             LessonStepVisual(explanation.visual)
             content.explore?.takeUnless { step.isExploredPictureLost }?.let { ExploredActivityCanvas(it, actions.cantListen) }
         }
         if (part.showsScreen && explanation.exampleLineSlot != null) actions.exampleLine(step.id)?.let { ExampleLine(it) }
+        if (part.showsScreen && marking != null) DidntGetItButton()
     }
+}
+
+@Composable
+private fun DidntGetItButton() {
+    val ask = LocalAskSimpler.current ?: return
+    GhostAction(R.drawable.ic_contact_support, stringResource(R.string.player_didnt_get_it), ask)
 }
 
 /** Main's `ExampleLine`: the explanation's idea in the learner's own life, once it's written; nothing when none fits. */
@@ -307,6 +343,7 @@ internal fun WorkedExampleView(
     content: StepContent.WorkedExample,
     revealed: Int,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
     val worked = content.content
     val steps = worked.steps.take(revealed)
@@ -323,11 +360,12 @@ internal fun WorkedExampleView(
     // above the button that shows the next one.
     ReadScene {
         if (part.showsScreen) {
+            if (marking != null) IdeaStrip(marking.map, step.marks)
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 LabelChip(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
                 worked.title?.let { QuestionText(it) }
             }
-            BodyText(worked.problem)
+            TeachingText(title = null, text = worked.problem, marks = step.marks.takeIf { marking != null }, marksTerms = marking != null)
             StepPicture(step, PictureFrame.Inline)
             LessonStepVisual(worked.visual)
         }
@@ -382,6 +420,7 @@ internal fun WorkedExampleView(
                     }
                 }
             }
+            if (marking != null) DidntGetItButton()
         }
     }
 }
@@ -395,10 +434,12 @@ internal fun CheckView(
     screen: LessonScreen,
     actions: StepActions,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
     val check = content.content
 
     QuestionScene {
+        if (part.showsScreen && marking != null) screen.step?.let { IdeaStrip(marking.map, it.marks) }
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 screen.step?.let { StepPicture(it, PictureFrame.Question) }
@@ -487,6 +528,7 @@ internal fun TypedAnswerView(
     screen: LessonScreen,
     actions: StepActions,
     part: StepPart,
+    marking: LessonMarking?,
 ) {
     val typed = content.content
     val isNumber = isNumberAnswer(typed.acceptedAnswers)
@@ -495,6 +537,7 @@ internal fun TypedAnswerView(
     val text = (answer as? LessonAnswer.Typed)?.text.orEmpty()
 
     QuestionScene {
+        if (part.showsScreen && marking != null) IdeaStrip(marking.map, step.marks)
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (inOwnWords) LabelChip(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)

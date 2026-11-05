@@ -62,10 +62,12 @@
   "player_course_size": "f7c11363ef876898e671fef03eb22d2e60e4d38bdf5a38a357a9ceaa46ea20af",
   "player_create_account_to_save": "b78a0c1098056d0066c081a8f4339791696fb010072a1364da17fbed017dbc03",
   "player_create_free_account": "e942b235b8aab8063d041672f53cd2149b378bf331ecebbed158350c4e101251",
+  "player_didnt_get_it": "393ba213dfbdcb15520e6bde8fdadd7439e79b225822ba98539d85b814b61ad1",
   "player_done": "1d377f03544eac42c690dbe068d79c9dfdbc78a5588e8114fc50541c4c351195",
   "player_dont_know_yet": "c3e07971d778f9f0873d721b656f1da0e773a414951be31ae7ee75a387b5be67",
   "player_drawing_picture": "bbe51661ed264e3ab80bd61924c2caee20654938f11366a8e237cb13fba14a78",
   "player_enter_hint": "4143d892e106c39102448fdab42a194fd5feeeaa157ae06c73be2754bcb9b684",
+  "player_example": "ef8f6e1d27661b6da067e186e44c9fd464421fc525f450997df4369698712486",
   "player_explain_answer": "294d15b6123747096d33709bac165bc9fe53f6ee3154e585bdf67a9dff7aa4e0",
   "player_explain_answer_failed": "386af5625c972ac6221ae2949dc8a1bc5ca6233ed636ca409e75e4a48d8d21ac",
   "player_explain_answer_title": "03e637c930834e4c82b8de0802aa8cb4e402dd5ef8aebe13c1258f733373fd63",
@@ -83,6 +85,7 @@
   "player_guest_save_note": "c82a9e4783dcda584d54879e29ba747a43f55f588d9cbd91195ad42f09464e4e",
   "player_how_to_say": "635d20b1aa497a4fab77bf9c12543482c1983fd6cc39930c8a48ca0d51ab8337",
   "player_hyperdrive_streak": "aec071f9abf8c3a6dd78ccc1fd4a891ccad7eeb3f44205d3f439ce8d8effc3f6",
+  "player_idea_position": "4585c24dca5c75fcffde6e7cceb30f58db5f31932afaae66def1b0becc754e63",
   "player_in_your_own_words": "8452c9555d0e7793e4bb17ade24489b46bce419ae4e015e0fe1483728642fab0",
   "player_keep_writing": "1738a521549f9acd86df222980bb7239ebb4b0bfd91131614fd6175ebfcbb35b",
   "player_key_point_missing": "d1505696ca44eaad9495d0fbece2a1f24a3cc0c8ae8e4c1448bd906d0760120c",
@@ -116,6 +119,9 @@
   "player_offer_tricky": "70e94f5832c4f0026325afb45a41a41ccec0f440767ad1f97b55358679f9a4fd",
   "player_open_failed": "870de9fa9acdfdb2ec1add47ef0c5569891dc87ba421b32fc49ada6d365e6c1b",
   "player_opening_lesson": "63f60303b73d28ed3f33641d86b9ff6e279527bf7882857a3b981f6daea86a8c",
+  "player_opening_map_idea": "98e59585566e46622cb6e07358d4d795d06af0b85be62e7319b5c8de5d77494c",
+  "player_opening_map_ideas": "6d310ec12150095533f04efa02b0bb5db848bd726ab02a124e0aa260e177cc02",
+  "player_opening_map_show": "9abce7b4494bf684af2baede067737960778655e004f42c295be08cd56b28784",
   "player_part_of": "6b799f8504ed4a349eaadc3bcae08da3813387118effbb74c97125683ce3f69b",
   "player_phase_plan": "aedb534dba419fcdb54b54bd26a5c099eb0aae26f787b3d1544b1345d234fef6",
   "player_phase_plan_line_1": "ff09397317067111d7b8b8d11eb196258c041024509952c90501ba7224df5ad4",
@@ -191,6 +197,22 @@
     <string name="player_lesson_map">Mapa da aula</string>
     <!-- For TalkBack: read before a lesson map whose ideas are levels, each drawn inside the next, smallest first. -->
     <string name="player_lesson_map_nested">Cada nível fica dentro do próximo.</string>
+    <!-- Above a lesson's teaching screen or question: which of the lesson map's ideas it belongs to, with the idea's name under it. A position, not a count. -->
+    <string name="player_idea_position">Ideia %1$s de %2$s</string>
+    <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
+    <string name="player_example">Exemplo</string>
+    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
+    <plurals name="player_opening_map_ideas">
+        <item quantity="one">%1$s ideia para descobrir nesta aula</item>
+        <item quantity="many">%1$s ideias para descobrir nesta aula</item>
+        <item quantity="other">%1$s ideias para descobrir nesta aula</item>
+    </plurals>
+    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
+    <string name="player_opening_map_idea">Ideia %1$s</string>
+    <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
+    <string name="player_opening_map_show">Ver o que ela aborda</string>
+    <!-- A quiet button under a lesson's explanation for a learner who didn't understand it; the buddy then explains it more simply. Casual and short, as the learner would say it (Portuguese: "Não entendi"). -->
+    <string name="player_didnt_get_it">Não entendi</string>
     <string name="player_progress">Progresso da aula</string>
     <string name="player_leave_title">Sair por enquanto?</string>
     <string name="player_leave_description">Sua resposta ainda não foi conferida, então não será salva.</string>

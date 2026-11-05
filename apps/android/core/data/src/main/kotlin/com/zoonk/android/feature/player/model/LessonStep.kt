@@ -39,6 +39,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfMinTolerance
 import com.zoonk.api.models.ScreenPicture
+import com.zoonk.api.models.StepMarks
 
 // The contract's names for each screen's content, so code reads by meaning, not by union position.
 typealias ActivityStepContent = PlayableLibraryStepAnyOfContent
@@ -195,7 +196,9 @@ sealed interface StepContent {
 /**
  * [imagePending] while the screen's picture is still being drawn; its wait started at
  * [pictureWaitStartedAt] (epoch milliseconds), so reopening the lesson doesn't restart it.
- * [position] is its place in the lesson as written, which a question's `basis` names.
+ * [position] is its place in the lesson as written, which a question's `basis` names. [marks] say
+ * which of the lesson map's ideas a teaching screen or question is about and how its text is
+ * marked; a screen written before they existed has none.
  */
 @Immutable
 data class LessonStep(
@@ -209,6 +212,7 @@ data class LessonStep(
     val citation: StepCitation? = null,
     val picture: ScreenPicture? = null,
     val position: Int = 0,
+    val marks: StepMarks? = null,
 ) {
     val kind: StepKind get() = content.kind
 }

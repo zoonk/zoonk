@@ -344,6 +344,69 @@ class TutorViewModelTest {
         }
 
     @Test
+    fun aScreensAskWaitsInTheComposerWhileAnEarlierQuestionIsUnanswered() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            val simpler = TutorSuggestion("Explain it more simply", "simpler")
+            api.refusal = ApiException(ApiError.Network)
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceUntilIdle()
+
+            vm.ask(simpler)
+            advanceUntilIdle()
+
+            assertEquals(listOf("Why?"), api.asked.map { it.question })
+            assertEquals("Explain it more simply", vm.draft.text.toString())
+        }
+
+    @Test
+    fun aScreensAskDropsWhenTheLearnerLeavesBeforeTheConversationLoads() =
+        runTest(dispatcher) {
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+            vm.leave()
+            vm.thread.load()
+            advanceUntilIdle()
+
+            assertTrue(api.asked.isEmpty())
+        }
+
+    @Test
+    fun aScreensAskKeepsWhatTheLearnerTypedWhileTheConversationLoaded() =
+        runTest(dispatcher) {
+            api.thread = TutorThread(listOf(turn("q1", TutorTurn.Status.Running, null)), hasMore = false, nextCursor = null)
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val store = TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) }
+            val vm = TutorViewModel(scope, store, SavedStateHandle()) { MutationResult.Obsolete }
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+            vm.draft.setTextAndPlaceCursorAtEnd("What's a cell wall?")
+            vm.thread.load()
+            advanceUntilIdle()
+
+            assertEquals("What's a cell wall?", vm.draft.text.toString())
+            assertTrue(api.asked.isEmpty())
+        }
+
+    @Test
+    fun aScreensAskGoesAtOnceWhenNothingIsUnanswered() =
+        runTest(dispatcher) {
+            val vm = conversation()
+
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+
+            assertEquals(listOf("simpler"), api.asked.map { it.suggestion })
+            assertEquals("", vm.draft.text.toString())
+        }
+
+    @Test
     fun aConflictReadsTheConversationAgain() =
         runTest(dispatcher) {
             val vm = conversation()

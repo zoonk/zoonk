@@ -7,6 +7,21 @@
     <string name="player_lesson_map">Lesson map</string>
     <!-- For TalkBack: read before a lesson map whose ideas are levels, each drawn inside the next, smallest first. -->
     <string name="player_lesson_map_nested">Each level sits inside the next one.</string>
+    <!-- Above a lesson's teaching screen or question: which of the lesson map's ideas it belongs to, with the idea's name under it. A position, not a count. -->
+    <string name="player_idea_position">Idea %1$s of %2$s</string>
+    <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
+    <string name="player_example">Example</string>
+    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
+    <plurals name="player_opening_map_ideas">
+        <item quantity="one">%1$s idea to discover in this lesson</item>
+        <item quantity="other">%1$s ideas to discover in this lesson</item>
+    </plurals>
+    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
+    <string name="player_opening_map_idea">Idea %1$s</string>
+    <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
+    <string name="player_opening_map_show">See what it covers</string>
+    <!-- A quiet button under a lesson's explanation for a learner who didn't understand it; the buddy then explains it more simply. Casual and short, as the learner would say it (Portuguese: "Não entendi"). -->
+    <string name="player_didnt_get_it">I didn\'t get this</string>
     <string name="player_progress">Lesson progress</string>
     <string name="player_leave_title">Leave for now?</string>
     <string name="player_leave_description">Your answer hasn\'t been checked, so it won\'t be kept.</string>

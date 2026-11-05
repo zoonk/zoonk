@@ -62,10 +62,12 @@
   "player_course_size": "422db32ce0fc0faf46e37b4a2d331b279d4e5889459282f4bddf2714f308b970",
   "player_create_account_to_save": "b5518fb7f0ebb1d7681a5836c6ec9fad55c027ff12e9dba27caf0381f3bbd5dc",
   "player_create_free_account": "eda4f36ad296b1e3f01082f4746dd0763634857a6ace477cf7e2af8b2ea9e9e6",
+  "player_didnt_get_it": "585dacdb268e26e2f9a4d426c313b637d10901bd1c36ca2946291841d3b8c4af",
   "player_done": "697efb2878041c16960287cced06fe0a85e4be34e0ba3a19ff5a34df02a57dd6",
   "player_dont_know_yet": "28e2260534b8216d3ace4459d370ec241093e1d8930c7ce10dc60f453451d48b",
   "player_drawing_picture": "683f4921bd17f0dfc72b519de50b30ca69caba42ae6ed9b9df366ccf4e63929a",
   "player_enter_hint": "b24b318a5bc6902ff891b1324d9da77b3c070b291ff1f42f76ffff5d6d046a2b",
+  "player_example": "08028c0372b2ebce9683bb0a20aad5c3d0da642e34e3f6a09def3c0f9a24cf37",
   "player_explain_answer": "82ae2dd957f9a26490278c6a69c8fa543d7f02099248f4b129dc20f7ce9bce2d",
   "player_explain_answer_failed": "9259bbbd8dd7cb34b54822d90200604b8b3ac4f41ae239870a7fac0a71dc1a27",
   "player_explain_answer_title": "0fa2266d246239b02d0a9bed0b62e2c9b7b93063f06ada8d4afe28db17dea646",
@@ -83,6 +85,7 @@
   "player_guest_save_note": "b0b633821f86ef8e6e907423959a3e2fc07f584d7f625bc3d99fb9b966a00029",
   "player_how_to_say": "badc9184d5969cac2974d9902fd210aea15640d2c4f3547fb1df8d467921d7b1",
   "player_hyperdrive_streak": "b6d5b7f81b61d0d21a2cc43ae576739d06be521641690f5c92fb6a2a20b27eef",
+  "player_idea_position": "4eb3d2138a46ef7560e9245d61ec28a017cffb9ee8f5ab33b940974619d6a91a",
   "player_in_your_own_words": "dcc06bab3f5e7ab90af3845352784775bcf2368f878f9844f0021ab6e6b142ea",
   "player_keep_writing": "67fa4dbd179dad2fbdabb6b512d626fb659c3e019cb906bcb164d2ed86e44245",
   "player_key_point_missing": "6473558aaba55ddfecc25d613e07209b5bdcccc21969f758f419ccfa4948e822",
@@ -116,6 +119,9 @@
   "player_offer_tricky": "a11fc80a555409235e6d43b60cb117f4fa77f79d25f8e28bf86262380ed29b5c",
   "player_open_failed": "1e5b88b39dcf0baaf3a9c086b52b33fe848624e2d3baf8f9b7a64a6ab7d7ba6d",
   "player_opening_lesson": "93a1a95fac960dea805841cba36cb2798df9781534e7671fe01312cfc0be691a",
+  "player_opening_map_idea": "40f6c1aa9f29849073cb09f7ac60b28ccab29be0355e61926a52f0600711c893",
+  "player_opening_map_ideas": "625eaecc917287dd8150856451c3ab447aded980128f7487a69eb6e835222b73",
+  "player_opening_map_show": "fbf3228b7bbebe65741b778352f356f3959fef8191c9ca0b6eae38c62452bcf3",
   "player_part_of": "401ba3aa3f710678f9cb3b3b8022424ea40f51340f0413596cea7e7ed5e6bbf3",
   "player_phase_plan": "313130240643a35889136e30a17b47e03f0083815abe3000586508ec64a99383",
   "player_phase_plan_line_1": "85a2508f21b5639cb487aef3d6d8acfa9d32ff2e2998c78f1b0a01aa39a0c028",
@@ -191,6 +197,20 @@
     <string name="player_lesson_map">レッスンマップ</string>
     <!-- For TalkBack: read before a lesson map whose ideas are levels, each drawn inside the next, smallest first. -->
     <string name="player_lesson_map_nested">各階層は、次の階層の中に入っています。</string>
+    <!-- Above a lesson's teaching screen or question: which of the lesson map's ideas it belongs to, with the idea's name under it. A position, not a count. -->
+    <string name="player_idea_position">ポイント%1$s（全%2$s個）</string>
+    <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
+    <string name="player_example">例</string>
+    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
+    <plurals name="player_opening_map_ideas">
+        <item quantity="other">このレッスンで学ぶ%1$s個のポイント</item>
+    </plurals>
+    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
+    <string name="player_opening_map_idea">ポイント%1$s</string>
+    <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
+    <string name="player_opening_map_show">内容を見る</string>
+    <!-- A quiet button under a lesson's explanation for a learner who didn't understand it; the buddy then explains it more simply. Casual and short, as the learner would say it (Portuguese: "Não entendi"). -->
+    <string name="player_didnt_get_it">よくわからない</string>
     <string name="player_progress">レッスンの進行状況</string>
     <string name="player_leave_title">いったん中断しますか？</string>
     <string name="player_leave_description">まだ答え合わせをしていないため、回答は保存されません。</string>

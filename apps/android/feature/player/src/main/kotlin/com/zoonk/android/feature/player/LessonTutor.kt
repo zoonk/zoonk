@@ -44,15 +44,17 @@ import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.toApi
 import com.zoonk.android.feature.tutor.TutorAvatar
 import com.zoonk.android.feature.tutor.TutorIdentity
+import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.api.models.LessonTutorSuggestion
 import kotlinx.coroutines.delay
 
 /**
  * The buddy beside a lesson: who it is, the lesson's suggestions, whether the learner can ask it (a
  * guest can't yet, so nothing offers it beside a screen), and its ask button, whose conversation shows
- * while `open`, with [offer] in its composer once.
+ * while `open`, taking [offer] once: in its composer, or asked at once.
  */
 @Immutable
 class LessonTutor(
@@ -63,13 +65,15 @@ class LessonTutor(
         scope: TutorScope,
         worded: Boolean,
         open: Boolean,
-        offer: TutorSuggestion?,
+        offer: TutorOffer?,
         onOfferTaken: () -> Unit,
         onOpenChange: (Boolean) -> Unit,
     ) -> Unit,
 )
 
 enum class BuddyOfferReason { Misses, Pause }
+
+internal val SIMPLER_SUGGESTION = LessonTutorSuggestion.Id.SIMPLER.value
 
 /** Main's `AskBuddyOffer`: after two misses on one idea, or a long pause on an explanation. */
 @Composable
