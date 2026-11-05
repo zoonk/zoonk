@@ -158,8 +158,9 @@ export function ChooserStartButton({
   return (
     <Button
       aria-keyshortcuts="Enter"
-      className={cn(DETAIL_PRIMARY_CLASS, "font-[560]", busy && "disabled:opacity-100")}
+      className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
       disabled={isDisabled}
+      focusableWhenDisabled
       onClick={onClick}
       ref={ref}
       size="lg"

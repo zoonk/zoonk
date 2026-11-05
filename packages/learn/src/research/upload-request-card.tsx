@@ -146,6 +146,7 @@ export function UploadRequestCard({
         <div className="flex flex-wrap gap-2">
           <Button
             disabled={isPending}
+            focusableWhenDisabled
             onClick={() => setState("uploading")}
             size="sm"
             variant="outline"
@@ -156,6 +157,7 @@ export function UploadRequestCard({
 
           <Button
             disabled={isPending}
+            focusableWhenDisabled
             onClick={() =>
               run(async () => ((await actions.dismiss()) ? null : "failed"), "dismissed")
             }

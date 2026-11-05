@@ -22,6 +22,7 @@ export function UndoButton({
       <Button
         className={TASK_OPTION_CLASS}
         disabled={pending}
+        focusableWhenDisabled
         onClick={onUndo}
         size="xl"
         variant="ghost"

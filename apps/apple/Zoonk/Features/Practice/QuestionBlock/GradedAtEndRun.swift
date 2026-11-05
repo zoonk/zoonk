@@ -244,10 +244,14 @@ struct PracticeQuestionsPreparingView: View {
   let detail: LocalizedStringResource
   let writingDetail: LocalizedStringResource
   var facts: [String] = []
+  let isStarting: Bool
   let isWriting: Bool
   var failure: (any Error)?
   let start: () -> Void
   @Environment(\.practiceHooks) private var hooks
+  @AccessibilityFocusState private var focus: Focus?
+
+  private enum Focus { case notice, start, title }
 
   var body: some View {
     PracticeTaskLayout {
@@ -259,6 +263,7 @@ struct PracticeQuestionsPreparingView: View {
               comment: "Title while a test's questions are written.") : title
         )
         .font(.title2.bold())
+        .accessibilityFocused($focus, equals: .title)
         Text(isWriting ? writingDetail : detail).foregroundStyle(.secondary)
 
         if !isWriting {
@@ -273,6 +278,8 @@ struct PracticeQuestionsPreparingView: View {
 
         if isPlusRequired {
           FreeWeekOverNotice(showsSeePlus: false, isInset: true)
+            .accessibilityElement(children: .combine)
+            .accessibilityFocused($focus, equals: .notice)
         } else if failure != nil, limit == nil {
           FailureLine(
             message: LocalizedStringResource(
@@ -295,6 +302,8 @@ struct PracticeQuestionsPreparingView: View {
         if let limit {
           HelpLimitNotice(limit: limit)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
+            .accessibilityFocused($focus, equals: .notice)
         }
 
         if !isWriting, limit?.isShortBreak ?? true {
@@ -302,8 +311,27 @@ struct PracticeQuestionsPreparingView: View {
             title: LocalizedStringResource(
               "Start the test", table: "Practice",
               comment: "Asks for a test's questions and starts it."),
-            action: start)
+            isBusy: isStarting, action: start
+          )
+          .accessibilityFocused($focus, equals: .start)
         }
+      }
+    }
+    // Only the learner's tap starts the wait or sets a failure, so focus never moves on opening.
+    .onChange(of: isWriting) { _, isWriting in
+      if isWriting {
+        focus = .title
+      }
+    }
+    .onChange(of: failure as? PracticeAPIError) { _, refusal in
+      guard refusal != nil else { return }
+
+      // A failure line reads itself out beside the Start that comes back. A notice doesn't: beside
+      // Start (a short break) it's read out; in Start's place (a limit, or Plus) it takes focus.
+      if let limit, limit.isShortBreak {
+        AccessibilityNotification.Announcement(limit.message).post()
+      } else if limit != nil || isPlusRequired {
+        focus = .notice
       }
     }
   }

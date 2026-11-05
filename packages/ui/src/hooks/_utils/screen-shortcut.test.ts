@@ -94,6 +94,15 @@ describe(isScreenShortcut, () => {
     expect(isScreenShortcut(pressOn(slider, { key: "ArrowLeft" }))).toBe(false);
     expect(isScreenShortcut(pressOn(document.body, { key: "Enter", repeat: true }))).toBe(false);
   });
+
+  it("takes keys on a waiting button that kept focus, though it stops every key but Tab", () => {
+    const waiting = mount('<button data-target aria-disabled="true" type="button">Start</button>');
+    waiting.addEventListener("keydown", (event) => event.preventDefault());
+
+    expect(isScreenShortcut(pressOn(waiting, { key: "Escape" }))).toBe(true);
+    expect(isScreenShortcut(pressOn(waiting, { key: "2" }))).toBe(true);
+    expect(isScreenShortcut(pressOn(waiting, { key: "Enter" }))).toBe(false);
+  });
 });
 
 describe(getNumberKeyIndex, () => {

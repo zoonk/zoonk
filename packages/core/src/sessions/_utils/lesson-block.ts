@@ -10,6 +10,7 @@ import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
 import { readBlockPayload } from "../block-payload";
 import { capReviewDay, getCapsuleOpening } from "../capsules";
+import { oweDaySettlement } from "../settle-owed-session-day";
 import {
   type CheckedLanguageGoal,
   completeLessonPlanItems,
@@ -113,11 +114,13 @@ export async function markLessonBlockDone({
   block,
   brainPower,
   lessonId,
+  timeZone,
   userId,
 }: {
   block: StudySessionBlock;
   brainPower: number;
   lessonId: string | null;
+  timeZone: string;
   userId: string;
 }): Promise<boolean> {
   const { data: result, error } = await safeAsync(() =>
@@ -139,6 +142,8 @@ export async function markLessonBlockDone({
       if (count === 0) {
         throw new LessonBlockUnchangedError("The lesson block was already settled");
       }
+
+      await oweDaySettlement(tx, { block, timeZone, userId });
 
       const goals: CheckedLanguageGoal[] = lessonId
         ? await completeLessonPlanItems(tx, { lessonId, now, userId })
