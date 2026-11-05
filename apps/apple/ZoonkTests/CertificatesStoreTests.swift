@@ -138,6 +138,6 @@ extension CurrentAccount {
     account: AccountAccess(
       deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
     user: AccountUser(
-      displayUsername: "learner", email: "learner@zoonk.test", id: "certificates-test-user",
+      email: "learner@zoonk.test", id: "certificates-test-user",
       image: nil, name: "Ana Souza", username: "learner"))
 }

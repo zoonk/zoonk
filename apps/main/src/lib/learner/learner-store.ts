@@ -1,14 +1,17 @@
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import {
+  type LearnerId,
   type LearnerSummarySeedValue,
   type LearnerSummaryState,
   getUntilChange,
   isSeedExpected,
+  isTapLearner,
 } from "./learner-snapshot";
 import {
   NOT_LOADED,
   accept,
   fail,
+  getHeldIdentity,
   install,
   readLearnerSummary,
   readOrGuess,
@@ -98,6 +101,33 @@ export function mergeLearnerSummarySeed(seed: LearnerSummarySeedValue): void {
 
 export function getLearnerGeneration(): number {
   return store.generation;
+}
+
+/** While a check of who holds the session is out, still the learner held before it. */
+export function getLearnerId(): LearnerId {
+  const held = getHeldIdentity();
+  return held ? held.userId : held;
+}
+
+async function getSettledLearnerId(): Promise<LearnerId> {
+  const read = store.inFlight;
+  const unsettled = store.verifying !== null || getHeldIdentity() === undefined;
+
+  if (read && unsettled) {
+    await read.promise;
+    return getSettledLearnerId();
+  }
+
+  return getLearnerId();
+}
+
+/**
+ * Call it with the tap. The check it returns says, once the tap's answer is in, whether the learner
+ * who made it (`rendered`: the one its page was drawn for, when it knows) still holds the session.
+ */
+export function learnerStaying(rendered?: string): () => Promise<boolean> {
+  const tapped = rendered ?? getLearnerId();
+  return async () => isTapLearner({ held: await getSettledLearnerId(), tapped });
 }
 
 /**

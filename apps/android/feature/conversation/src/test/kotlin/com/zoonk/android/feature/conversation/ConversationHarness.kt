@@ -80,12 +80,13 @@ internal class ConversationHarness {
             ConversationViewModel(
                 conversationId = conversationId,
                 store = store,
-                newCall = { task ->
+                newCall = { task, soFar ->
                     LiveCall(
                         task,
                         client,
                         { microphone, signals -> FakeTransport(microphone, signals).also(transports::add) },
                         scope,
+                        soFar = soFar,
                     )
                 },
                 ongoing = OngoingCalls(context, scope),

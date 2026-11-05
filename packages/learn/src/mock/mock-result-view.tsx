@@ -2,7 +2,7 @@
 
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import {
   StepCard,
   StepDetail,
@@ -19,7 +19,7 @@ import { DayMoment } from "../session/day-moment";
 import { getCeremonyMoment } from "../session/moment-ceremony";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
-import { useMockTitle } from "./mock-labels";
+import { useMockNumber, useMockTitle } from "./mock-labels";
 import { MockLeftOutNote, MockScoreNote, useMockShortLine } from "./mock-notes";
 import {
   MockNextRow,
@@ -49,15 +49,15 @@ import { MockSizeNote } from "./mock-size-note";
 
 function useScore(result: MockResult): { label: string; value: string } {
   const t = useExtracted();
-  const format = useFormatter();
+  const number = useMockNumber();
   const range = useMockRange();
 
   if (result.points) {
     return {
       label: t("Points"),
       value: t("{correct} of {total}", {
-        correct: format.number(result.points.earned, { maximumFractionDigits: 2 }),
-        total: format.number(result.points.asked, { maximumFractionDigits: 2 }),
+        correct: number(result.points.earned),
+        total: number(result.points.asked),
       }),
     };
   }
@@ -69,14 +69,14 @@ function useScore(result: MockResult): { label: string; value: string } {
   if (result.net) {
     return {
       label: t("Net score out of {max}", { max: String(result.net.max) }),
-      value: format.number(result.net.net, { maximumFractionDigits: 2 }),
+      value: number(result.net.net),
     };
   }
 
   return {
     label: t("Right answers"),
     value: t("{correct} of {total}", {
-      correct: format.number(result.correct, { maximumFractionDigits: 2 }),
+      correct: number(result.correct),
       total: String(result.total),
     }),
   };
@@ -84,6 +84,7 @@ function useScore(result: MockResult): { label: string; value: string } {
 
 function DeltaLine({ result }: { result: MockResult }) {
   const t = useExtracted();
+  const number = useMockNumber();
   const current = result.irt?.score ?? result.net?.net ?? null;
 
   // `previous` measures net answers, never points, so a points headline can't take its delta.
@@ -101,8 +102,8 @@ function DeltaLine({ result }: { result: MockResult }) {
     <p className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs tabular-nums [&>svg]:size-3.5 [&>svg]:shrink-0">
       {change > 0 ? <TrendingUpIcon aria-hidden="true" /> : <TrendingDownIcon aria-hidden="true" />}
       {change > 0
-        ? t("+{change} since the last one", { change: String(change) })
-        : t("{change} since the last one", { change: String(change) })}
+        ? t("+{change} since the last one", { change: number(change) })
+        : t("{change} since the last one", { change: number(change) })}
     </p>
   );
 }

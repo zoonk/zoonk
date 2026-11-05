@@ -14,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -30,6 +29,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalCertificate
@@ -147,7 +147,7 @@ class PlanScreenshots {
         sheets.keys.forEach { name ->
             shown = name
             compose.waitForIdle()
-            write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+            write(name, compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 
@@ -180,7 +180,7 @@ class PlanScreenshots {
                 setUp()
             }
             compose.waitForIdle()
-            write("far-topic-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("far-topic-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
 
         shot("available") { topics.open(flask) }
@@ -412,7 +412,7 @@ class PlanScreenshots {
         shots.keys.forEach { name ->
             shown = name
             compose.waitForIdle()
-            write("$name-$suffix", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("$name-$suffix", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 
@@ -509,7 +509,7 @@ class PlanScreenshots {
         parts.keys.forEach { name ->
             shown = name
             compose.waitForIdle()
-            write("$name-$suffix", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("$name-$suffix", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 
@@ -543,7 +543,7 @@ class PlanScreenshots {
             }
         }
         compose.waitForIdle()
-        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     @Test
@@ -591,7 +591,7 @@ class PlanScreenshots {
             }
         }
         compose.waitForIdle()
-        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** The prerequisites' and a tool's sheets, drawn here as they show in their sheets. */
@@ -656,19 +656,19 @@ class PlanScreenshots {
             }
         }
         compose.waitForIdle()
-        write("$prefix-bases", compose.onRoot().captureToImage().asAndroidBitmap())
+        write("$prefix-bases", compose.onRoot().captureRender().asAndroidBitmap())
 
         compose.onNodeWithText("Get a recommendation").performClick()
         compose.onNodeWithText("Quick lesson").performClick()
         compose.mainClock.advanceTimeBy(1_000)
         compose.waitForIdle()
-        write("$prefix-bases-changed", compose.onRoot().captureToImage().asAndroidBitmap())
+        write("$prefix-bases-changed", compose.onRoot().captureRender().asAndroidBitmap())
 
         sheet = "tool"
         compose.waitForIdle()
         compose.onNodeWithText("I'll set it up").performClick()
         compose.waitForIdle()
-        write("$prefix-tool", compose.onRoot().captureToImage().asAndroidBitmap())
+        write("$prefix-tool", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun capture(
@@ -678,7 +678,7 @@ class PlanScreenshots {
     ) {
         show(dark, moreContrast)
         compose.waitForIdle()
-        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun show(

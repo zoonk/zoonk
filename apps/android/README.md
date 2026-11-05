@@ -1,6 +1,6 @@
 # Zoonk for Android
 
-Native Kotlin/Jetpack Compose app for phones, tablets, and foldables. Every page of the web app has a typed route; a route whose feature isn't built yet shows a placeholder.
+Native Kotlin/Jetpack Compose app for phones, tablets, and foldables. Every page of the web app has a typed route that opens its screen.
 
 ## Setup
 
@@ -51,6 +51,14 @@ curl -s "$API/v1/email-sign-in-codes" -H 'Content-Type: application/json' -d '{"
 curl -s "$API/v1/sessions/email-code" -H 'Content-Type: application/json' -d '{"email":"<email>","code":"<code>"}'
 adb shell am broadcast -a com.zoonk.debug.SIGN_IN -n com.zoonk.debug/com.zoonk.android.app.DebugSignInReceiver --es token <token>
 ```
+
+To open a page, send main's URL to `MainActivity` by name; a running app takes it in place, so don't force-stop the app first:
+
+```sh
+adb shell am start -a android.intent.action.VIEW -d 'https://www.zoonk.com/<path>' -n com.zoonk.debug/com.zoonk.android.MainActivity
+```
+
+Without `-n`, a path outside the app's link filter opens the browser, and launching `com.zoonk.debug` without its activity finds two launcher activities (LeakCanary adds one) and can leave the home screen up.
 
 ## Structure
 

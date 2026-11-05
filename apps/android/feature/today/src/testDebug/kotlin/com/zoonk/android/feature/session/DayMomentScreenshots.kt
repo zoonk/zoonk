@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
@@ -18,6 +17,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.missions.MissionMomentFacts
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.MistakePatternPracticeResultReachedLevel
 import com.zoonk.api.models.StudyMission
@@ -77,7 +77,7 @@ class DayMomentScreenshots {
         moments.indices.forEach { moment ->
             index = moment
             compose.waitForIdle()
-            write("day-moment-${moments[moment].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("day-moment-${moments[moment].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

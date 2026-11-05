@@ -3,7 +3,6 @@ package com.zoonk.android.feature.conversation
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -14,9 +13,11 @@ import com.zoonk.android.feature.livecall.CallReservation
 import com.zoonk.android.feature.livecall.LiveServerEvent
 import com.zoonk.android.feature.livecall.characterSays
 import com.zoonk.android.feature.livecall.learnerSays
+import com.zoonk.android.feature.livecall.setup
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.testing.captureRender
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -82,6 +83,61 @@ class ConversationScreenshots {
         shot("problem-dropped-phone")
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectPaused() = reconnectRefused(CallReservation.CallsPaused, "paused")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectInProgress() = reconnectRefused(CallReservation.CallInProgress, "in-progress")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectLimited() = reconnectRefused(CallReservation.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)), "limit")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun reconnectPlusRequired() = reconnectRefused(CallReservation.PlusRequired, "plus")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-mdpi")
+    fun reconnectInProgressTablet() = reconnectRefused(CallReservation.CallInProgress, "in-progress-tablet")
+
+    private fun reconnectRefused(
+        refusal: CallReservation,
+        name: String,
+    ) {
+        val harness = ConversationHarness()
+        harness.client.reservations = ArrayDeque(listOf(CallReservation.Ready(setup()), refusal))
+        harness.show(compose)
+        harness.goLive(compose)
+        harness.transport.onEvent(characterSays("¡Hola! Bienvenido al Café Central. ¿Qué le pongo?"))
+        harness.transport.onLost()
+        compose.onNodeWithText("Call again").performClick()
+        shot("reconnect-$name")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun calledAgain() {
+        val harness = ConversationHarness()
+        harness.client.reservations =
+            ArrayDeque(listOf(CallReservation.Ready(setup()), CallReservation.Ready(setup(talkSeconds = 120, continuesCall = true))))
+        harness.show(compose)
+        harness.goLive(compose)
+        harness.transport.onEvent(characterSays("¡Hola! Bienvenido al Café Central. ¿Qué le pongo?"))
+        harness.transport.onEvent(learnerSays("Hola, quería un café con leche, por favor.", 1000.0, 3200.0))
+        harness.transport.onEvent(characterSays("Muy bien. ¿Algo más?"))
+        shot("again-0-before-drop-phone")
+        harness.transport.onLost()
+        shot("again-1-dropped-phone")
+        compose.onNodeWithText("Call again").performClick()
+        shot("again-2-calling-phone")
+        harness.transport.onEvent(LiveServerEvent.Started)
+        harness.transport.onEvent(characterSays("Perdone, se cortó. Un café con leche, entonces. ¿Algo más?"))
+        shot("again-3-live-phone")
+    }
+
     private fun walk(
         name: String,
         dark: Boolean = false,
@@ -113,7 +169,7 @@ class ConversationScreenshots {
 
     private fun shot(name: String) {
         compose.waitForIdle()
-        val bitmap = compose.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }

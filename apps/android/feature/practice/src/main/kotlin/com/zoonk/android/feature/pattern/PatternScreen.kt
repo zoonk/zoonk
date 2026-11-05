@@ -56,7 +56,6 @@ import com.zoonk.android.feature.practice.RunIntro
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunMeter
-import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.runAccount
@@ -71,6 +70,7 @@ import com.zoonk.android.feature.session.ReachedFacts
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
@@ -105,7 +105,7 @@ fun PatternScreen(
 ) {
     val patternId = remember(route.patternId) { runCatching { UUID.fromString(route.patternId) }.getOrNull() }
     if (patternId == null) {
-        RunNotFound(navigator::closeTask)
+        TaskNotFound(navigator)
         return
     }
     val viewModel =
@@ -117,7 +117,7 @@ fun PatternScreen(
     BackHandler(onBack = viewModel::leave)
 
     when (val drill = state) {
-        null -> PatternRead(viewModel, onClose = viewModel::leave)
+        null -> PatternRead(viewModel, navigator, onClose = viewModel::leave)
         else -> PatternContent(drill, viewModel, app) { navigator.open(AppRoute.Login) }
     }
 }
@@ -126,6 +126,7 @@ fun PatternScreen(
 @Composable
 private fun PatternRead(
     viewModel: PatternViewModel,
+    navigator: AppNavigator,
     onClose: () -> Unit,
 ) {
     val loaded by viewModel.pattern.collectShown()
@@ -139,7 +140,7 @@ private fun PatternRead(
 
         is LoadState.Failed -> {
             if (read.error == ApiError.NotFound) {
-                RunNotFound(onClose)
+                TaskNotFound(navigator)
             } else {
                 RunLoadFailed(onClose, onRetry = { scope.launch { viewModel.pattern.refresh() } })
             }

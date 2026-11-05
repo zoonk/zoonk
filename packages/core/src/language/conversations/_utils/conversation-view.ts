@@ -160,12 +160,15 @@ function toResult({
   };
 }
 
-export function buildLiveCall(
+type LiveCall = { instructions: string; script: LiveCallScript };
+
+/** Null when the conversation can't be called; otherwise builds its call, new or continued. */
+export function getLiveCallBuilder(
   row: Pick<
     LanguageConversation,
     "kind" | "language" | "level" | "scenario" | "status" | "targetLanguage"
   >,
-): { instructions: string; script: LiveCallScript } | null {
+): ((continuesCall: boolean) => LiveCall) | null {
   const data = readSavedScenario(row);
   const role = data ? toLiveRole(data) : null;
 
@@ -181,16 +184,19 @@ export function buildLiveCall(
     targetLanguage: row.targetLanguage,
   };
 
-  return {
-    instructions: buildLiveConversationInstructions(params),
+  const examiner =
+    role.kind === "examTask" ? role.examTask.task.role === "examiner" : role.kind !== "unit";
+
+  return (continuesCall) => ({
+    instructions: buildLiveConversationInstructions({ ...params, continuesCall }),
     script: buildLiveCallScript({
       character: data.character,
-      examiner:
-        role.kind === "examTask" ? role.examTask.task.role === "examiner" : role.kind !== "unit",
+      continuesCall,
+      examiner,
       language: getLiveConversationLanguageName(params),
       openingLine: data.openingLine,
     }),
-  };
+  });
 }
 
 export function toConversationView({

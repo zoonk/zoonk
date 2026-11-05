@@ -1,7 +1,7 @@
 import { type LiveCallCue } from "./live-call-script";
 import { type LiveCallSession } from "./live-call-session";
 
-/** A cue sent while the call is closing is dropped. */
+/** False when the session no longer takes cues, as when its connection was just lost. */
 export function sendLiveCallCue({
   cue,
   delegationId = null,
@@ -12,7 +12,7 @@ export function sendLiveCallCue({
   delegationId?: string | null;
   eventId?: string;
   session: LiveCallSession;
-}) {
+}): boolean {
   try {
     void session
       .sendEvent({
@@ -23,8 +23,10 @@ export function sendLiveCallCue({
         type: "context-append",
       })
       .catch(() => null);
+
+    return true;
   } catch {
-    // The session stopped accepting cues: the call is ending.
+    return false;
   }
 }
 

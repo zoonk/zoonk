@@ -135,7 +135,7 @@ export function TodayClient({
     [steps, taps],
   );
 
-  const missionLinks = useMissionLinks(today.goal.id, { openStep, refresh });
+  const missionLinks = useMissionLinks(today.goal.id, { learner: userId, openStep, refresh });
   const [answeredUpload, setAnsweredUpload] = useState<GoalUploadRequest | null>(null);
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
   const startTestOut = useStartTestOut();

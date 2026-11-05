@@ -56,17 +56,17 @@ fun understoodDraft(
     understanding: String = goalsUnderstanding(),
 ): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalLimit":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understood","understanding":$understanding}""",
+        """{"activeGoalLimit":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understood","timeZone":"UTC","understanding":$understanding}""",
     )
 
 fun failedDraft(): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalLimit":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"pass the bar exam","status":"failed","understanding":null}""",
+        """{"activeGoalLimit":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"pass the bar exam","status":"failed","timeZone":"UTC","understanding":null}""",
     )
 
 fun readingDraft(prompt: String = "pass the bar exam"): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalLimit":null,"generationId":"run-1","goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understanding","understanding":null}""",
+        """{"activeGoalLimit":null,"generationId":"run-1","goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understanding","timeZone":"UTC","understanding":null}""",
     )
 
 fun goalsUnderstanding(

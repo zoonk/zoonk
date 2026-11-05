@@ -18,7 +18,7 @@
     "start:app": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsrs --noEmit"
   },
   "dependencies": {
     "@sentry/nextjs": "catalog:",

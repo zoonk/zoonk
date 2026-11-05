@@ -294,6 +294,38 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.completion?.status, .failed)
   }
 
+  func testResyncBringsBackAQuestionWhosePictureCameAfterItWasLeftOut() throws {
+    let lost = check(id: "numbered").replacingOccurrences(
+      of: "\"imagePending\": false",
+      with: #""imagePending": true, "picture": {"alt": "A flower", "required": true}"#)
+    let drawn = try step(
+      check(id: "numbered").replacingOccurrences(
+        of: "\"image\": null",
+        with:
+          #""image": {"id": "img", "url": "https://example.com/a.png", "alt": "A flower", "width": 4, "height": 3}"#
+      ))
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(check(id: "check")), try step(lost), try step(summary)])
+    state.startRun(runId: "run", answers: [])
+    state.leaveOutLostPictures(openedAt: Date.now.addingTimeInterval(-10 * 60))
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+
+    let saved = [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)]
+    var optional = state
+    optional.resync(answers: saved, optionalStepIds: ["numbered"], lesson: [drawn])
+    XCTAssertEqual(optional.completion?.status, .failed, "the run no longer needs it")
+
+    state.resync(answers: saved, lesson: [drawn])
+
+    XCTAssertEqual(state.currentStep?.id, "numbered")
+    XCTAssertEqual(state.currentStep?.image?.url, "https://example.com/a.png")
+    XCTAssertEqual(state.notice, .pictureReady)
+    XCTAssertEqual(state.phase, .playing)
+  }
+
   func testLateConfirmationOfAnEarlierAttemptChangesNothing() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
     state.continueLesson()
@@ -916,11 +948,12 @@ final class LocalizedNumberTests: XCTestCase {
 
     let english = Locale(identifier: "en_US")
     XCTAssertEqual(
-      formatLocalizedNumber(0.000075, fractionDigits: fractionDigitsFor(0.000075), locale: english),
+      ActivityNumberFormat.format(
+        0.000075, digits: fractionDigitsFor(0.000075), locale: english),
       "0.000075")
     XCTAssertEqual(
-      formatLocalizedNumber(
-        1e-10, fractionDigits: fractionDigitsFor(1e-10), locale: Locale(identifier: "pt_BR")),
+      ActivityNumberFormat.format(
+        1e-10, digits: fractionDigitsFor(1e-10), locale: Locale(identifier: "pt_BR")),
       "0,0000000001")
   }
 
@@ -929,9 +962,12 @@ final class LocalizedNumberTests: XCTestCase {
     let absolute = ActivityCheck.Tolerance(kind: .absolute, value: 0.0001)
     let closer = exactFractionDigitsFor(expected: 0.125, tolerance: absolute, value: 0.1254)
 
-    XCTAssertEqual(formatLocalizedNumber(0.1254, fractionDigits: closer, locale: english), "0.1254")
     XCTAssertEqual(
-      formatLocalizedNumber(0.1254, fractionDigits: closer, locale: Locale(identifier: "pt_BR")),
+      ActivityNumberFormat.format(
+        0.1254, digits: closer, locale: english), "0.1254")
+    XCTAssertEqual(
+      ActivityNumberFormat.format(
+        0.1254, digits: closer, locale: Locale(identifier: "pt_BR")),
       "0,1254")
 
     let cases: [(expected: Double, tolerance: ActivityCheck.Tolerance, value: Double)] = [
@@ -945,8 +981,10 @@ final class LocalizedNumberTests: XCTestCase {
     for (expected, tolerance, value) in cases {
       let digits = exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
       XCTAssertNotEqual(
-        formatLocalizedNumber(value, fractionDigits: digits, locale: english),
-        formatLocalizedNumber(expected, fractionDigits: digits, locale: english))
+        ActivityNumberFormat.format(
+          value, digits: digits, locale: english),
+        ActivityNumberFormat.format(
+          expected, digits: digits, locale: english))
     }
   }
 
@@ -955,23 +993,25 @@ final class LocalizedNumberTests: XCTestCase {
     let fine = ActivityCheck.Tolerance(kind: .absolute, value: 0.00001)
 
     XCTAssertEqual(
-      formatLocalizedNumber(
-        0.12543, fractionDigits: exactFractionDigitsFor(expected: 0.12543, tolerance: fine),
+      ActivityNumberFormat.format(
+        0.12543, digits: exactFractionDigitsFor(expected: 0.12543, tolerance: fine),
         locale: english), "0.12543")
     XCTAssertEqual(
-      formatLocalizedNumber(
+      ActivityNumberFormat.format(
         0.12543 + .ulpOfOne,
-        fractionDigits: exactFractionDigitsFor(
+        digits: exactFractionDigitsFor(
           expected: 0.12543, tolerance: fine, value: 0.12543 + .ulpOfOne), locale: english),
       "0.12543")
 
     let reading = exactFractionDigitsFor(
       expected: 72.5, tolerance: .init(kind: .absolute, value: 0.5), value: 72.475746)
     XCTAssertEqual(
-      formatLocalizedNumber(
-        72.475746, fractionDigits: reading, locale: Locale(identifier: "pt_BR")),
+      ActivityNumberFormat.format(
+        72.475746, digits: reading, locale: Locale(identifier: "pt_BR")),
       "72,48")
-    XCTAssertEqual(formatLocalizedNumber(-2.5, fractionDigits: 2, locale: english), "\u{2212}2.5")
+    XCTAssertEqual(
+      ActivityNumberFormat.format(
+        -2.5, digits: 2, locale: english), "\u{2212}2.5")
   }
 
   func testAnythingButOnePlainNumberIsNoAnswer() {

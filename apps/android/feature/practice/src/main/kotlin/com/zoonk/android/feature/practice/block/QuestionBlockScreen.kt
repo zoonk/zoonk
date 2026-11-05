@@ -34,7 +34,6 @@ import com.zoonk.android.feature.practice.RunFinished
 import com.zoonk.android.feature.practice.RunFrame
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
-import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.RunPhase
 import com.zoonk.android.feature.practice.RunQuestion
 import com.zoonk.android.feature.practice.RunSegments
@@ -54,6 +53,7 @@ import com.zoonk.android.feature.session.toDayStep
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.TaskActions
@@ -106,7 +106,7 @@ fun QuestionBlock(
     val key = remember(sessionId, blockId) { blockKey(sessionId, blockId) }
     if (key == null) {
         BackHandler(onBack = onClose)
-        RunNotFound(onClose)
+        TaskNotFound(navigator)
         return
     }
     val viewModel =
@@ -150,14 +150,14 @@ internal fun QuestionBlockContent(
 
         is LoadState.Failed -> {
             if (state.error == ApiError.NotFound) {
-                RunNotFound(close)
+                TaskNotFound(navigator)
             } else {
                 RunLoadFailed(close, onRetry = viewModel::reread)
             }
         }
 
         LoadState.Empty -> {
-            RunNotFound(close)
+            TaskNotFound(navigator)
         }
 
         else -> {

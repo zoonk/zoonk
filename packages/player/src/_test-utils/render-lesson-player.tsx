@@ -18,6 +18,7 @@ import { render } from "./render";
 import { speechClips } from "./speech-clips";
 
 export function TestLink({
+  "aria-busy": busy,
   "aria-keyshortcuts": keyShortcuts,
   children,
   className,
@@ -27,6 +28,7 @@ export function TestLink({
 }: Parameters<PlayerLinkComponent>[0]) {
   return (
     <a
+      aria-busy={busy}
       aria-keyshortcuts={keyShortcuts}
       className={className}
       href={href}

@@ -23,8 +23,8 @@ final class PlanStore {
   @ObservationIgnored private var syllabi: [String: Resource<GoalSyllabus>] = [:]
   /// What the learner opened on a plan's path, kept above the panes a fold rebuilds.
   private var phaseDisclosures: [String: [Int: PhaseDisclosure]] = [:]
-  /// What the learner put off or set going among a plan's suggestions, kept the same way, for the
-  /// session that did it.
+  /// What the learner paged to, put off or set going among a plan's suggestions, kept the same way,
+  /// for the session that did it.
   private var suggestionStates: [SuggestionKey: SuggestionState] = [:]
 
   struct PhaseDisclosure {
@@ -38,6 +38,7 @@ final class PlanStore {
     var choiceDrafts: [String: [String]] = [:]
     var dismissed: Set<PlanSlotItem> = []
     var isWorking = false
+    var position = 0
   }
 
   struct SuggestionKey: Hashable {

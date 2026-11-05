@@ -63,9 +63,9 @@ struct ConversationIntro<Footer: View>: View {
   @ViewBuilder let footer: Footer
 
   var body: some View {
-    PaneSplit(isSpread: true) {
+    PaneSplit {
       List {
-        situation
+        about
       }
     } secondary: {
       List {
@@ -74,7 +74,7 @@ struct ConversationIntro<Footer: View>: View {
       .safeAreaBar(edge: .bottom) { startBar }
     } single: {
       List {
-        situation
+        about
         task
       }
       .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
@@ -82,7 +82,7 @@ struct ConversationIntro<Footer: View>: View {
   }
 
   @ViewBuilder
-  private var situation: some View {
+  private var about: some View {
     let length = Duration.seconds(intro.minutes * 60).formatted(
       .units(allowed: [.minutes], width: .abbreviated))
 
@@ -117,21 +117,21 @@ struct ConversationIntro<Footer: View>: View {
     Section {
       CharacterRow(intro: intro, isTalking: false)
     }
+
+    if let examTask = intro.speakingTask {
+      if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
+        ExamPrepTimer(cardId: conversationId, task: examTask.task)
+      }
+    } else if intro.callsCharacter {
+      HowTheCallWorks(intro: intro)
+    }
   }
 
   @ViewBuilder
   private var task: some View {
     if let examTask = intro.speakingTask {
-      if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
-        ExamPrepTimer(cardId: conversationId, task: examTask.task)
-      }
-
       ExamTaskCard(task: examTask)
     } else {
-      if intro.callsCharacter {
-        HowTheCallWorks(intro: intro)
-      }
-
       Section {
         ForEach(intro.objectives, id: \.label) { objective in
           VStack(alignment: .leading, spacing: 2) {
@@ -172,13 +172,15 @@ struct CallStartFooter: View {
   let callee: String?
   let onStart: () -> Void
 
+  static var plusRequired: Text {
+    Text(
+      "Challenge calls come with Plus. Your plan keeps going without them.",
+      tableName: "Voice", comment: "A checkpoint call or exam speaking task needs Plus")
+  }
+
   var body: some View {
     if isLocked {
-      PlusNotice(
-        description: Text(
-          "Challenge calls come with Plus. Your plan keeps going without them.",
-          tableName: "Voice", comment: "A checkpoint call or exam speaking task needs Plus"),
-        showsSeePlus: false)
+      PlusNotice(description: Self.plusRequired, showsSeePlus: false)
 
       SeePlusButton()
         .frame(maxWidth: .infinity)
@@ -221,19 +223,25 @@ struct CallMicrophoneOff: View {
   let name: String
   let onType: () -> Void
 
+  static var title: Text {
+    Text(
+      "Your microphone is off", tableName: "Voice", comment: "The learner blocked the microphone")
+  }
+
+  static func text(name: String) -> Text {
+    Text(
+      "Allow the microphone in Settings to talk with \(name), or do this call by typing.",
+      tableName: "Voice", comment: "How to do a call with the microphone blocked")
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text(
-        "Your microphone is off", tableName: "Voice", comment: "The learner blocked the microphone"
-      )
-      .font(.headline)
+      Self.title
+        .font(.headline)
 
-      Text(
-        "Allow the microphone in Settings to talk with \(name), or do this call by typing.",
-        tableName: "Voice", comment: "How to do a call with the microphone blocked"
-      )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      Self.text(name: name)
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .accessibilityElement(children: .combine)

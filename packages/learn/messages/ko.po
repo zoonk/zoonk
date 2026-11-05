@@ -399,6 +399,7 @@ msgstr "{done, number}/{total, number}"
 #: src/generation/generation-wait.tsx
 #: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/call-problem.tsx
+#: src/language/conversation/dropped-call-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/mind-map-card.tsx
 #: src/mind-maps/mind-map-tiles.tsx
@@ -517,6 +518,12 @@ msgstr "출처 열기"
 msgctxt "KPL2U8"
 msgid "Step {current, number} of {total, number}"
 msgstr "{current, number}단계, 전체 {total, number}단계"
+
+#: src/_components/step-open-failed.tsx
+#: src/session/next-stop.tsx
+msgctxt "xpHtfD"
+msgid "We couldn't open this step. Try again."
+msgstr "이 단계를 열지 못했어요. 다시 시도해 보세요."
 
 #: src/_components/steps.tsx
 #: src/language/conversation/call-problem.tsx
@@ -5478,6 +5485,7 @@ msgid "Allow the microphone to talk with {name}."
 msgstr "{name}와(과) 대화하려면 마이크 사용을 허용해 주세요."
 
 #: src/language/conversation/call-intro-footer.tsx
+#: src/language/conversation/dropped-call-screen.tsx
 msgctxt "KBc0tZ"
 msgid "Type instead"
 msgstr "글로 대화하기"
@@ -5553,70 +5561,6 @@ msgid "It ended when you started another call."
 msgstr "다른 대화를 시작해서 이 대화가 끝났어요."
 
 #: src/language/conversation/call-problem.tsx
-msgctxt "bSm8pu"
-msgid "Start a new call to keep practicing."
-msgstr "새 대화를 시작해서 계속 연습해 보세요."
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "ZXosfu"
-msgid "This call has ended"
-msgstr "이 대화가 끝났어요"
-
-#. Under the title "Calls are paused": the pause applies to every learner, not only this one.
-#: src/language/conversation/call-problem.tsx
-#: src/language/exam-speaking/speaking-paper-section.tsx
-#: src/language/progress/speaking-mock-card.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "bpY1F_"
-msgid "It's the same for everyone right now. Try again later."
-msgstr "지금은 모두 대화를 이용할 수 없어요. 나중에 다시 시도해 보세요."
-
-#: src/language/conversation/call-problem.tsx
-#: src/language/exam-speaking/speaking-paper-section.tsx
-#: src/language/exam-speaking/speaking-task-row.tsx
-#: src/language/progress/speaking-mock-card.tsx
-#: src/language/unit/practice-conversation.tsx
-msgctxt "hFgARl"
-msgid "Calls are paused"
-msgstr "대화가 일시 중지됐어요"
-
-#. Another call is still running: this ends it and starts the call on this screen.
-#: src/language/conversation/call-problem.tsx
-msgctxt "MAatFa"
-msgid "End that call and start this one"
-msgstr "진행 중인 대화 끝내고 새 대화 시작하기"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "1ZMIpa"
-msgid "It's open in another tab or on another device. Ending it from here skips its feedback."
-msgstr "다른 탭이나 기기에서 대화가 진행 중이에요. 여기서 끝내면 그 대화에 대한 피드백은 받을 수 없어요."
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "0LuKMT"
-msgid "You're already in a call"
-msgstr "이미 대화 중이에요"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "ycr28Y"
-msgid "End the call"
-msgstr "대화 끝내기"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "p5AWJt"
-msgid "Call again"
-msgstr "다시 연결하기"
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "253hZZ"
-msgid "Call again, or end the call to get feedback on what you said."
-msgstr "다시 연결하거나 대화를 끝내고 지금까지 말한 내용에 대한 피드백을 받아 보세요."
-
-#: src/language/conversation/call-problem.tsx
-msgctxt "VCAZn4"
-msgid "The call dropped"
-msgstr "대화 연결이 끊겼어요"
-
-#: src/language/conversation/call-problem.tsx
 msgctxt "OheLSd"
 msgid "This happens sometimes. Try again in a moment."
 msgstr "가끔 이런 일이 생겨요. 잠시 후 다시 시도해 보세요."
@@ -5655,6 +5599,50 @@ msgstr "아직 대화를 마무리하고 있어요. 잠시 후 다시 시도해 
 msgctxt "HBlKaW"
 msgid "We couldn't save the call."
 msgstr "대화를 저장하지 못했어요."
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "1ZMIpa"
+msgid "It's open in another tab or on another device. Ending it from here skips its feedback."
+msgstr "다른 탭이나 기기에서 대화가 진행 중이에요. 여기서 끝내면 그 대화에 대한 피드백은 받을 수 없어요."
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "0LuKMT"
+msgid "You're already in a call"
+msgstr "이미 대화 중이에요"
+
+#. Under the title "Calls are paused": the pause applies to every learner, not only this one.
+#: src/language/conversation/call-refusal-copy.ts
+#: src/language/exam-speaking/speaking-paper-section.tsx
+#: src/language/progress/speaking-mock-card.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "bpY1F_"
+msgid "It's the same for everyone right now. Try again later."
+msgstr "지금은 모두 대화를 이용할 수 없어요. 나중에 다시 시도해 보세요."
+
+#: src/language/conversation/call-refusal-copy.ts
+#: src/language/exam-speaking/speaking-paper-section.tsx
+#: src/language/exam-speaking/speaking-task-row.tsx
+#: src/language/progress/speaking-mock-card.tsx
+#: src/language/unit/practice-conversation.tsx
+msgctxt "hFgARl"
+msgid "Calls are paused"
+msgstr "대화가 일시 중지됐어요"
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "bSm8pu"
+msgid "Start a new call to keep practicing."
+msgstr "새 대화를 시작해서 계속 연습해 보세요."
+
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "ZXosfu"
+msgid "This call has ended"
+msgstr "이 대화가 끝났어요"
+
+#. Another call is still running: this ends it and starts the call on this screen.
+#: src/language/conversation/call-refusal-copy.ts
+msgctxt "MAatFa"
+msgid "End that call and start this one"
+msgstr "진행 중인 대화 끝내고 새 대화 시작하기"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "T1FmHH"
@@ -5889,6 +5877,26 @@ msgstr "아직 말하지 않은 내용"
 msgctxt "Ogdmi_"
 msgid "Words to practice saying"
 msgstr "발음을 연습할 단어"
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "253hZZ"
+msgid "Call again, or end the call to get feedback on what you said."
+msgstr "다시 연결하거나 대화를 끝내고 지금까지 말한 내용에 대한 피드백을 받아 보세요."
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "ycr28Y"
+msgid "End the call"
+msgstr "대화 끝내기"
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "p5AWJt"
+msgid "Call again"
+msgstr "다시 연결하기"
+
+#: src/language/conversation/dropped-call-screen.tsx
+msgctxt "VCAZn4"
+msgid "The call dropped"
+msgstr "대화 연결이 끊겼어요"
 
 #: src/language/conversation/speaking-mock-result.tsx
 msgctxt "UVsIGR"
@@ -7039,6 +7047,11 @@ msgstr "변경 사항을 되돌렸어요"
 msgctxt "_718cU"
 msgid "Couldn't undo. It changed since."
 msgstr "그사이 내용이 바뀌어서 되돌릴 수 없어요."
+
+#: src/memory/memory-updated.tsx
+msgctxt "GGUKxA"
+msgid "Couldn't undo. Try again."
+msgstr "되돌리지 못했어요. 다시 시도해 보세요."
 
 #: src/mind-maps/mind-map-card.tsx
 msgctxt "FZBGji"
@@ -12712,11 +12725,6 @@ msgstr "대신 학습하기: {title}"
 msgctxt "ZqQr3A"
 msgid "While you wait: {title}"
 msgstr "기다리는 동안: {title}"
-
-#: src/session/next-stop.tsx
-msgctxt "xpHtfD"
-msgid "We couldn't open this step. Try again."
-msgstr "이 단계를 열지 못했어요. 다시 시도해 보세요."
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx

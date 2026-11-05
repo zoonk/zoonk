@@ -38,13 +38,18 @@ enum ActivityNumberFormat {
       style = style.notation(.compactName)
     }
 
-    let number = typographicMinus(value.formatted(style))
+    let number = display(value, style)
 
     guard let unit, !unit.isEmpty else {
       return number
     }
 
     return attachedUnits.contains(unit) ? number + unit : "\(number)\u{00A0}\(unit)"
+  }
+
+  /// Main's `formatLocalizedNumber` with `percent`.
+  static func percent(_ ratio: Double, digits: Int, locale: Locale) -> String {
+    display(ratio, .percent.precision(.fractionLength(0...digits)).locale(locale))
   }
 
   static func displayDigits(_ value: Double, unit: String? = nil) -> Int {
@@ -85,7 +90,7 @@ enum ActivityNumberFormat {
       style = style.notation(.compactName)
     }
 
-    return typographicMinus(value.formatted(style))
+    return display(value, style)
   }
 
   /// The money part of a unit and what follows it: "R$ por metro" is money per meter, so it reads
@@ -138,9 +143,15 @@ enum ActivityNumberFormat {
       ?? (unit.count == 3 && unit.allSatisfy { $0.isASCII && $0.isUppercase } ? unit : nil)
   }
 
-  /// A typographic minus reads as a sign, not a hyphen.
-  private static func typographicMinus(_ text: String) -> String {
-    text.replacingOccurrences(of: "-", with: "\u{2212}")
+  /// Main's `signDisplay: "negative"`, which Swift's sign strategies lack: a number that reads as
+  /// zero, like -0 or -0.0001 at two decimals, takes no sign, and a minus is typographic.
+  private static func display<Style: FormatStyle>(_ value: Double, _ style: Style) -> String
+  where Style.FormatInput == Double, Style.FormatOutput == String {
+    let text = value.formatted(style)
+    let readsAsZero =
+      value.isFinite && !text.contains { (1...9).contains($0.wholeNumberValue ?? 0) }
+    let shown = readsAsZero ? 0.0.formatted(style) : text
+    return shown.replacingOccurrences(of: "-", with: "\u{2212}")
   }
 
   static func fractionDigits(_ value: Double) -> Int {

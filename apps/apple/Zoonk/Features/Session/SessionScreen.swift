@@ -350,12 +350,12 @@ private struct NextStopView: View {
         .disabled(isStopping || isOpening)
 
         if failed {
-          Text(
-            "We couldn't open the next step. Try again.", tableName: "Session",
-            comment: "Opening or stopping failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't open the next step. Try again.", table: "Session",
+              comment: "Opening or stopping failed")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       }
     }
@@ -427,11 +427,10 @@ private struct NextStopView: View {
 
     if writing == .failed || lessonStatus == "failed" {
       return AnyView(
-        Text(
-          "We couldn't write this lesson.", tableName: "Session",
-          comment: "Writing a lesson failed"
-        )
-        .foregroundStyle(.destructive))
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't write this lesson.", table: "Session",
+            comment: "Writing a lesson failed")))
     }
 
     guard isLessonWorkRunning else {

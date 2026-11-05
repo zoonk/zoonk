@@ -37,7 +37,7 @@ describe("mistake read budgets", () => {
         : listCurrentUserMistakes({ goalId: goal.id, limit: 50, offset: 0, status: "open" }),
     );
 
-    assertReadBudget(counts, name === "practice" ? 24 : 32);
+    assertReadBudget(counts, name === "practice" ? 24 : 26);
     expect(counts.result.status).toBe("ready");
   });
 

@@ -73,7 +73,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.10.1",
@@ -86,6 +86,7 @@
     "@types/mdast": "4.0.4",
     "@types/negotiator": "0.6.5",
     "@zoonk/tsconfig": "workspace:*",
+    "fast-check": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

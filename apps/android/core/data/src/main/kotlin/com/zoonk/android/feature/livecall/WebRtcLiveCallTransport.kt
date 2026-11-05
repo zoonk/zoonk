@@ -90,9 +90,9 @@ class WebRtcLiveCallTransport(
         if (microphone) main.post(listen)
     }
 
-    override fun send(command: LiveClientCommand) {
-        val open = channel?.takeIf { it.state() == DataChannel.State.OPEN } ?: return
-        open.send(DataChannel.Buffer(ByteBuffer.wrap(command.json.encodeToByteArray()), false))
+    override fun send(command: LiveClientCommand): Boolean {
+        val open = channel?.takeIf { it.state() == DataChannel.State.OPEN } ?: return false
+        return open.send(DataChannel.Buffer(ByteBuffer.wrap(command.json.encodeToByteArray()), false))
     }
 
     override fun silence() {

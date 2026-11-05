@@ -8,6 +8,7 @@ import { readMockStructure } from "../../exams/mocks/_utils/read-mock-structure"
 import { countPlannedQuestions, outlineMock } from "../../exams/mocks/mock-plan";
 import { type GoalPlanSource } from "../../learner/_utils/goal-plan-source";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
+import { readFinishedMockCount } from "../../learner/facts/finished-mocks";
 import { readMockEssays } from "../../learner/facts/mock-essays";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
@@ -59,6 +60,7 @@ export async function loadMockCard({
 
   const planned = await planWeeklyMock({
     essays,
+    finishedMocks: readFinishedMockCount(goal.userId, goal.id),
     goal,
     identity,
     savedPlan: saved ?? undefined,

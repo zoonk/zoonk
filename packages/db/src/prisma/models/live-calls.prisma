@@ -24,6 +24,8 @@ model LiveCallConnection {
   conversationId    String             @map("conversation_id") @db.Uuid
   state             LiveCallState      @default(reserved)
   heldSeconds       Int                @map("held_seconds")
+  /// Admitted inside the call's talk window, so it carries on the call so far instead of starting over.
+  continuesCall     Boolean            @default(false) @map("continues_call")
   costMicros        Int                @map("cost_micros")
   deadlineAt        DateTime           @map("deadline_at")
   providerSessionId String?            @unique @map("provider_session_id")

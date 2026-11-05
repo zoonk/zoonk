@@ -103,7 +103,7 @@ test.describe("Profile Setup Flow", () => {
     const prefix = `e2enamed${Date.now()}`;
     const email = `${prefix}@zoonk.test`;
     const callback = `/auth/callback?redirectTo=${encodeURIComponent(REDIRECT_URL)}`;
-    const unnamed = { displayUsername: null, name: "Named Learner", username: null };
+    const unnamed = { name: "Named Learner", username: null };
 
     await prisma.user.create({ data: { email, emailVerified: true, name: "Named Learner" } });
 

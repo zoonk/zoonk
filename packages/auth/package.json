@@ -24,6 +24,7 @@
     "./native-sessions": "./src/native-sessions.ts",
     "./permissions": "./src/permissions.ts",
     "./play-integrity-contract": "./src/play-integrity/play-integrity-contract.ts",
+    "./profile-update": "./src/profile-update.ts",
     "./session-hint": "./src/session-hint.ts",
     "./username-rules": "./src/username-rules.ts",
     "./user-blobs": "./src/user-blobs.ts",
@@ -38,16 +39,16 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
-    "@better-auth/prisma-adapter": "1.7.14",
-    "@better-auth/stripe": "1.7.14",
+    "@better-auth/prisma-adapter": "1.7.16",
+    "@better-auth/stripe": "1.7.16",
     "@vercel/blob": "2.8.2",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "better-auth": "1.7.14",
+    "better-auth": "1.7.16",
     "botid": "catalog:",
     "jose": "catalog:",
     "mailchecker": "6.0.21",

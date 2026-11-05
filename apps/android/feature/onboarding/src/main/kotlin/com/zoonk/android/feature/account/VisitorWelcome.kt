@@ -33,12 +33,12 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.start.GoalErrorAlert
 import com.zoonk.android.feature.onboarding.start.GoalSenderViewModel
-import com.zoonk.android.feature.onboarding.start.appLanguage
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.rememberGoalExamples
+import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 
 /**
@@ -53,7 +53,7 @@ fun VisitorWelcome(
     modifier: Modifier = Modifier,
 ) {
     val sender = viewModel { GoalSenderViewModel(app.onboarding, app.analytics) }
-    val language = appLanguage()
+    val language = currentLocale().language
 
     VisitorWelcome(
         navigator = navigator,

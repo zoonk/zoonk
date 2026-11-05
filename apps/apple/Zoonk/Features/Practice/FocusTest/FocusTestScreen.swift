@@ -10,6 +10,7 @@ struct FocusTestScreen: View {
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<FocusTestQuestions> = .loading
   @State private var started = false
+  @State private var isStarting = false
   @State private var isWriting = false
   @State private var writingEnded = false
   @State private var writeFailure: (any Error)?
@@ -31,6 +32,8 @@ struct FocusTestScreen: View {
           switch load {
           case .loading:
             ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+          case .failed(.notFound):
+            PracticeRedirect { hooks.navigate(.plan) }
           case .failed(let error):
             PracticeLoadFailureView(error: error) { Task { await read() } }
           case .loaded(let test):
@@ -40,7 +43,9 @@ struct FocusTestScreen: View {
                 hint: { $0.area ?? "" },
                 upcomingTotal: test.needsItems.isEmpty
                   ? nil : test.areas.count * test.questionsPerArea,
-                upcomingEnded: writingEnded, isPending: isSubmitting, failed: submitFailed
+                upcomingEnded: writingEnded,
+                upcomingLimit: (writeFailure as? PracticeAPIError)?.helpLimit,
+                isPending: isSubmitting, failed: submitFailed
               ) { answers in Task { await submit(answers) } }
             } else {
               intro(test)
@@ -60,6 +65,7 @@ struct FocusTestScreen: View {
       certificates: result?.certificates ?? [], ceremony: result?.ceremony?.value1
     )
     .task(id: session.authenticatedSession) { await read() }
+    .clearsRefusal { writeFailure = nil }
   }
 
   private func intro(_ test: FocusTestQuestions) -> some View {
@@ -89,7 +95,7 @@ struct FocusTestScreen: View {
             "About \(Duration.seconds(minutes * 60).formatted(.units(allowed: [.minutes], width: .wide)))",
           table: "Practice", comment: "About how long a test takes."),
       ],
-      isWriting: isWriting && questions.isEmpty, failure: writeFailure
+      isStarting: isStarting, isWriting: isWriting && questions.isEmpty, failure: writeFailure
     ) { Task { await start(test) } }
   }
 
@@ -152,11 +158,12 @@ struct FocusTestScreen: View {
       PracticeResultNumbers(day: DayResult(result))
 
       if undoFailed {
-        Text(
-          "We couldn't undo it. Try again.", tableName: "Practice",
-          comment: "Undoing a focus test's change failed."
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't undo it. Try again.", table: "Practice",
+            comment: "Undoing a focus test's change failed.")
         )
-        .font(.subheadline).foregroundStyle(.destructive)
+        .font(.subheadline)
       }
     } actions: {
       if let changeId = result.changeId, !undone {
@@ -193,7 +200,11 @@ struct FocusTestScreen: View {
       questions += test.questions.filter { !known.contains($0.itemId) }
       load = .loaded(test)
     } catch let error as APIError {
-      if error == .unauthorized { await session.expire(identity) }
+      if error == .unauthorized {
+        await session.expire(identity)
+      } else if session.authenticatedSession != identity {
+        return
+      }
       load = .failed(error)
     } catch {
       load = .failed(.unavailable)
@@ -207,16 +218,20 @@ struct FocusTestScreen: View {
       return
     }
 
-    isWriting = true
+    isStarting = true
     writeFailure = nil
     started = !questions.isEmpty
-    defer { isWriting = false }
+    defer {
+      isStarting = false
+      isWriting = false
+    }
 
     let goalId = goalId
     let written = await practice.write(.answered) { identity in
       if case .generating(let generationId) = try await practice.api.writeFocusTest(
         token: identity.bearerToken, goalId: goalId)
       {
+        isWriting = true
         try await practice.api.waitForQuestions(
           token: identity.bearerToken, generationId: generationId,
           readyStep: "focusTestQuestionsReady")
@@ -230,10 +245,10 @@ struct FocusTestScreen: View {
       if case .loaded(let updated) = load, !updated.needsItems.isEmpty { writingEnded = true }
     case .refused(let refusal):
       writingEnded = true
-      if questions.isEmpty { writeFailure = refusal }
+      writeFailure = refusal
     case .failed(let error):
       writingEnded = true
-      if questions.isEmpty { writeFailure = error }
+      writeFailure = error
     case .obsolete:
       break
     }

@@ -114,10 +114,12 @@ final class OnboardingStore {
     return nil
   }
 
+  /// In the draft's `timeZone`, which counted the learner's today for the card's dates.
   func createGoals(
     _ goals: [Components.Schemas.GoalDraftOutput],
     schedule: Components.Schemas.GoalUnderstanding.Case1Payload.SchedulePayload,
-    sourceIDs: [String]
+    sourceIDs: [String],
+    timeZone: String
   ) async throws -> String {
     try await create(
       .init(
@@ -126,7 +128,7 @@ final class OnboardingStore {
         sourceIds: sourceIDs.isEmpty ? nil : sourceIDs,
         studyDays: schedule.studyDays,
         studyTime: schedule.studyTime,
-        timeZone: TimeZone.current.identifier))
+        timeZone: timeZone))
   }
 
   func startWaitingGoal(_ goal: LearnerWaitingGoal) async throws -> String {

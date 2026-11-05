@@ -1,6 +1,7 @@
 import "server-only";
 import { auth } from "@zoonk/auth";
 import { findAvailableUsername } from "@zoonk/auth/available-username";
+import { type ProfileUpdate } from "@zoonk/auth/profile-update";
 import { normalizeUsername } from "@zoonk/auth/username-rules";
 import { type User, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
@@ -9,13 +10,10 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserSessionCacheTag } from "../cache/tags";
 import { getSession } from "./get-session";
 
-export type CurrentUserUpdate = { name?: string; username?: string };
-
 export type CurrentUser = Pick<
   User,
   | "analyticsDisabled"
   | "createdAt"
-  | "displayUsername"
   | "email"
   | "emailVerified"
   | "id"
@@ -29,7 +27,6 @@ function toCurrentUser(user: User): CurrentUser {
   return {
     analyticsDisabled: user.analyticsDisabled,
     createdAt: user.createdAt,
-    displayUsername: user.displayUsername,
     email: user.email,
     emailVerified: user.emailVerified,
     id: user.id,
@@ -68,8 +65,8 @@ function getSessionUserUpdate({
   input,
 }: {
   currentUser: CurrentUser;
-  input: CurrentUserUpdate;
-}): CurrentUserUpdate {
+  input: ProfileUpdate;
+}): ProfileUpdate {
   const name = input.name?.trim();
   const username = input.username === undefined ? undefined : normalizeUsername(input.username);
 
@@ -79,12 +76,12 @@ function getSessionUserUpdate({
   };
 }
 
-function hasSessionUserUpdate(input: CurrentUserUpdate): boolean {
+function hasSessionUserUpdate(input: ProfileUpdate): boolean {
   return Object.keys(input).length > 0;
 }
 
 /** Requires sign-in; updates through Better Auth and returns the fresh account after cache invalidation. */
-export async function updateCurrentUser({ input }: { input: CurrentUserUpdate }) {
+export async function updateCurrentUser({ input }: { input: ProfileUpdate }) {
   const session = await getSession();
 
   if (!session) {

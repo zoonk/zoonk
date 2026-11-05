@@ -24,6 +24,7 @@ struct TestOutScreen: View {
   @Environment(LearnerSummaryStore.self) private var summary
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<TestOutLoad> = .loading
+  @State private var isStarting = false
   @State private var isWriting = false
   @State private var writeFailure: (any Error)?
   @State private var isSubmitting = false
@@ -44,6 +45,8 @@ struct TestOutScreen: View {
           resultView(result)
         } else {
           switch load {
+          case .loading where summary.summary.value != nil && goalId == nil:
+            PracticeRedirect { hooks.navigate(.today) }
           case .loading:
             ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
           case .failed(let error):
@@ -88,6 +91,7 @@ struct TestOutScreen: View {
     )
     .onDisappear { openResult = nil }
     .task(id: "\(session.authenticatedSession?.bearerToken ?? ""):\(goalId ?? "")") { await read() }
+    .clearsRefusal { writeFailure = nil }
   }
 
   private func preparing(failure: (any Error)?) -> some View {
@@ -102,7 +106,7 @@ struct TestOutScreen: View {
         "We're writing a few questions on this chapter. The test opens here when they're ready.",
         table: "Practice",
         comment: "While a test-out's questions are written."),
-      isWriting: isWriting, failure: failure
+      isStarting: isStarting, isWriting: isWriting, failure: failure
     ) { Task { await write() } }
   }
 
@@ -132,11 +136,12 @@ struct TestOutScreen: View {
         day: DayResult(result))
 
       if undo == .failed {
-        Text(
-          "We couldn't put the lessons back. Try again.", tableName: "Practice",
-          comment: "Undoing a test-out's skip failed."
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't put the lessons back. Try again.", table: "Practice",
+            comment: "Undoing a test-out's skip failed.")
         )
-        .font(.subheadline).foregroundStyle(.destructive)
+        .font(.subheadline)
       }
     } actions: {
       if let changeId = result.changeId, undo != .done {
@@ -222,9 +227,12 @@ struct TestOutScreen: View {
   private func write() async {
     guard let goalId else { return }
 
-    isWriting = true
+    isStarting = true
     writeFailure = nil
-    defer { isWriting = false }
+    defer {
+      isStarting = false
+      isWriting = false
+    }
 
     let chapterId = chapterId
     switch await practice.write(
@@ -234,6 +242,7 @@ struct TestOutScreen: View {
           token: identity.bearerToken, goalId: goalId, chapterId: chapterId)
 
         if case .generating(let generationId) = start {
+          isWriting = true
           try await practice.api.waitForQuestions(
             token: identity.bearerToken, generationId: generationId,
             readyStep: "testOutQuestionsReady")

@@ -9,7 +9,6 @@ import {
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PromptAudioButton } from "../components/prompt-audio-button";
@@ -80,8 +79,9 @@ export function LessonActionBar() {
 
         <Button
           aria-keyshortcuts="Enter"
-          className={cn(TASK_MAIN_ACTION_CLASS, primary.busy && "disabled:opacity-100")}
+          className={TASK_MAIN_ACTION_CLASS}
           disabled={primary.disabled}
+          focusableWhenDisabled
           id={LESSON_PRIMARY_ID}
           onClick={runPrimary}
           size="xl"

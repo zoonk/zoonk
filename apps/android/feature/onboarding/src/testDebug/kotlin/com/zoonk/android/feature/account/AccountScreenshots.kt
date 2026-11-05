@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
@@ -34,6 +33,7 @@ import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.feature.subscription.SubscriptionScreen
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -96,7 +96,7 @@ class AccountScreenshots {
         screens.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            write("${screens[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("${screens[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

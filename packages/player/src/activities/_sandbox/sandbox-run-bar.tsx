@@ -47,6 +47,7 @@ export function SandboxRunBar({
           <Button
             aria-label={t("Start over with the original code")}
             disabled={isRunning}
+            focusableWhenDisabled
             onClick={onReset}
             size="icon-lg"
             variant="outline"
@@ -58,6 +59,7 @@ export function SandboxRunBar({
         <Button
           className="flex-1"
           disabled={isRunning}
+          focusableWhenDisabled
           onClick={onRun}
           size="lg"
           variant={hasRun ? "outline" : "default"}

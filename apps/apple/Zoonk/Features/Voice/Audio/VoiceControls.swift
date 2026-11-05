@@ -67,7 +67,7 @@ struct HelpLimitNotice: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text(message)
+      Text(limit.message)
         .font(.subheadline)
         .foregroundStyle(.secondary)
 
@@ -86,9 +86,11 @@ struct HelpLimitNotice: View {
       }
     }
   }
+}
 
-  private var message: String {
-    switch limit {
+extension HelpLimit {
+  var message: String {
+    switch self {
     case .slowDown:
       return String(
         localized: "Take a short break, then try again.", table: "Voice",

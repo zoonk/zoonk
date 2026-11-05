@@ -73,6 +73,17 @@ final class ChartsActivitiesTests: XCTestCase {
       ActivityNumberFormat.format(1_200_000, digits: 1, compact: true, locale: english), "1.2M")
   }
 
+  func testANumberThatReadsAsZeroTakesNoSign() {
+    let english = Locale(identifier: "en_US")
+
+    XCTAssertEqual(ActivityNumberFormat.format(-9.81 * 0, locale: english), "0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.0001, digits: 2, locale: english), "0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.0, compact: true, locale: english), "0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.001, unit: "$", locale: english), "$0")
+    XCTAssertEqual(ActivityNumberFormat.format(-0.5, locale: english), "\u{2212}0.5")
+    XCTAssertEqual(ActivityNumberFormat.format(-.infinity, locale: english), "\u{2212}∞")
+  }
+
   func testMeasuresChartSpans() throws {
     let fields: ChartReaderFields = try decode(
       """
@@ -456,6 +467,8 @@ final class ChartsActivitiesTests: XCTestCase {
       {"angleUnit":"degrees","frame":"A seat.","show":["sin","tan"],"startAngle":0}
       """)
     XCTAssertEqual(fields.value(.sin, degrees: 30)!, 0.5, accuracy: 1e-12)
+    XCTAssertEqual(fields.value(.sin, degrees: 360), 0, "Not what rounding π leaves")
+    XCTAssertEqual(fields.value(.tan, degrees: 180), 0)
     XCTAssertNil(fields.value(.cos, degrees: 30), "Not shown")
     XCTAssertNil(fields.value(.tan, degrees: 90), "Undefined")
   }

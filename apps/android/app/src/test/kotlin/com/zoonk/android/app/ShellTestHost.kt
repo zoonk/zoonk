@@ -23,7 +23,7 @@ import com.zoonk.android.data.summary
 import com.zoonk.android.feature.feedback.rememberSendFeedback
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.navigation.RoutePlaceholder
+import com.zoonk.android.navigation.RouteFrame
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryPlaces
@@ -88,13 +88,13 @@ class ShellTestActivity : ComponentActivity() {
 }
 
 private fun testEntries(navigator: AppNavigator): (NavKey) -> NavEntry<NavKey> =
-    entryProvider(fallback = { key -> NavEntry(key) { RoutePlaceholder(key as AppRoute, navigator) } }) {
+    entryProvider(fallback = { key -> NavEntry(key) { RouteText(key as AppRoute, navigator) } }) {
         entry<AppRoute.Today> { CountedList("today") }
         entry<AppRoute.Plan> { CountedList("plan") }
         entry<AppRoute.Buddy> { CountedList("buddy") }
         entry<AppRoute.Chapter> { route ->
             viewModel { CountingViewModel("chapter:${route.chapterId}") }
-            RoutePlaceholder(route, navigator)
+            RouteText(route, navigator)
         }
     }
 
@@ -122,4 +122,12 @@ private fun CountedList(name: String) {
     ) {
         items(100) { index -> Text("$name $index", Modifier.testTag("row:$name:$index").padding(16.dp)) }
     }
+}
+
+@Composable
+private fun RouteText(
+    route: AppRoute,
+    navigator: AppNavigator,
+) {
+    RouteFrame(route, navigator) { Text(route.toString(), Modifier.padding(it)) }
 }

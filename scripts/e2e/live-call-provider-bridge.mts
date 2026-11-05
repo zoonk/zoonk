@@ -29,6 +29,7 @@ async function bodyOf(
   closeMode: Session["closeMode"] | null;
   greeting: string | null;
   sdp: string | null;
+  turns: number;
 }> {
   const body: unknown = JSON.parse(await text(request));
 
@@ -44,6 +45,7 @@ async function bodyOf(
         : null,
     greeting: "greeting" in body && typeof body.greeting === "string" ? body.greeting : null,
     sdp: "sdp" in body && typeof body.sdp === "string" ? body.sdp : null,
+    turns: "turns" in body && Array.isArray(body.turns) ? body.turns.length : 0,
   };
 }
 
@@ -89,10 +91,12 @@ async function createSession({
 
   sessions.set(id, session);
 
-  // The browser's fake peer hears the startup greeting through its answer, as OpenAI hears it.
+  // The browser's fake peer hears the startup greeting and how many earlier turns came before it
+  // through its answer, as OpenAI hears them.
   if (!realPeer) {
     const greeting = body.greeting ? `a=x-e2e-greeting:${JSON.stringify(body.greeting)}\r\n` : "";
-    json(response, { sdp: `${TEST_LIVE_SDP_ANSWER}${greeting}`, sessionId: id });
+    const turns = `a=x-e2e-turns:${body.turns}\r\n`;
+    json(response, { sdp: `${TEST_LIVE_SDP_ANSWER}${greeting}${turns}`, sessionId: id });
   }
 }
 
