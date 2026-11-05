@@ -1,6 +1,5 @@
 import { replaceEmDashes } from "@zoonk/utils/string";
 
-/** What a screen or an idea asks the shared icon library for, in English. */
 export type IconNeed = { description: string; name: string; searchWords: string[] };
 
 const MAX_NAME_WORDS = 4;

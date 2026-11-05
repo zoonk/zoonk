@@ -1,24 +1,19 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
 import { type PickedIcon } from "@zoonk/core/library/marks/icons";
-import { getWorkflowMetadata, sleep } from "workflow";
+import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
-import { repeatUntil } from "../_shared/repeat-until";
 import { waitForRunToken } from "../_shared/run-token";
 import {
   drawLessonIconStep,
   failLessonIconStep,
   linkLessonIconsStep,
   pickLessonIconsStep,
-  readIconStatesStep,
   tagLessonMarksStep,
 } from "./steps/lesson-marks-steps";
 
 export type LessonMarksInput = { analytics?: ContentAnalytics; lessonId: string; wait?: CallWait };
 
 export type LessonMarksResult = { drawn: number; failed: number; icons: number };
-
-const WAIT_INTERVAL = "5s";
-const MAX_WAITS = 36;
 
 type IconContext = {
   contentScope: "personal" | "shared";
@@ -30,55 +25,31 @@ type IconContext = {
 async function drawIcon({
   analytics,
   icon,
-  runId,
 }: {
   analytics: IconContext;
   icon: PickedIcon;
-  runId: string;
-}): Promise<boolean> {
+}): Promise<{ iconId: string | null; name: string }> {
   try {
-    return (await drawLessonIconStep({ analytics, iconId: icon.iconId, runId })) === "completed";
+    const drawn = await drawLessonIconStep({ analytics, need: icon.need });
+    return { iconId: drawn.status === "completed" ? drawn.id : null, name: icon.name };
   } catch {
-    await failLessonIconStep({ iconId: icon.iconId, runId });
-    return false;
+    await failLessonIconStep(icon.need);
+    return { iconId: null, name: icon.name };
   }
-}
-
-/** Another lesson's run is drawing these; the lesson links whatever they end up as. */
-async function waitForOtherRuns(icons: readonly PickedIcon[]): Promise<void> {
-  const iconIds = icons.map((icon) => icon.iconId);
-
-  if (iconIds.length === 0) {
-    return;
-  }
-
-  await repeatUntil({
-    done: (states) => !states.includes("running"),
-    run: async () => {
-      await sleep(WAIT_INTERVAL);
-      return readIconStatesStep(iconIds);
-    },
-    times: MAX_WAITS,
-  });
 }
 
 async function pickIcons({
-  analytics,
   lessonId,
   ...input
 }: Parameters<typeof pickLessonIconsStep>[0] & { lessonId: string }): Promise<PickedIcon[]> {
   try {
-    return await pickLessonIconsStep({ analytics, ...input });
+    return await pickLessonIconsStep(input);
   } catch (error) {
     await linkLessonIconsStep({ lessonId, picked: [] });
     throw error;
   }
 }
 
-/**
- * Tags a written lesson, then picks and draws its icons, one model call per step. The lesson plays
- * without them meanwhile; each write makes its next read show what's ready.
- */
 export async function lessonMarksWorkflow({
   analytics,
   lessonId,
@@ -102,28 +73,20 @@ export async function lessonMarksWorkflow({
 
   const context = { ...learner, contentScope: tagged.contentScope, traceId: workflowRunId };
 
-  const picked = await pickIcons({
-    analytics: context,
+  const picked = await pickIcons({ analytics: context, lessonId, requests: tagged.requests, wait });
+
+  const drawn = await Promise.all(
+    picked.filter((icon) => !icon.iconId).map((icon) => drawIcon({ analytics: context, icon })),
+  );
+
+  await linkLessonIconsStep({
     lessonId,
-    requests: tagged.requests,
-    runId: workflowRunId,
-    wait,
+    picked: [...picked.filter((icon) => icon.iconId), ...drawn],
   });
 
-  const [drawn] = await Promise.all([
-    Promise.all(
-      picked
-        .filter((icon) => icon.state === "draw")
-        .map((icon) => drawIcon({ analytics: context, icon, runId: workflowRunId })),
-    ),
-    waitForOtherRuns(picked.filter((icon) => icon.state === "wait")),
-  ]);
-
-  await linkLessonIconsStep({ lessonId, picked });
-
   return {
-    drawn: drawn.filter(Boolean).length,
-    failed: drawn.filter((ok) => !ok).length,
+    drawn: drawn.filter((icon) => icon.iconId).length,
+    failed: drawn.filter((icon) => !icon.iconId).length,
     icons: picked.length,
   };
 }

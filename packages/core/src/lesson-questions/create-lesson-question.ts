@@ -180,7 +180,8 @@ async function persistLessonQuestion({
       }),
     ]);
 
-    after(() => trackLearnerEvents({ events: [getTutorAskedEvent({ input, subject })], userId }));
+    const event = getTutorAskedEvent({ input, subject, suggestion: asked.suggestion });
+    after(() => trackLearnerEvents({ events: [event], userId }));
 
     return getCreateLessonQuestionOutcome({ question: created, requestFingerprint });
   });

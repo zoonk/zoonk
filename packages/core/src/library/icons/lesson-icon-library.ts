@@ -9,12 +9,17 @@ import { LESSON_ICON_DOCUMENT } from "../identity/_utils/search-documents";
 import { findRankedIds, orderByIds, toTextSearch } from "../identity/_utils/text-search-sql";
 import { toIconFiles } from "./_utils/icon-files";
 
-/** Longer than a drawing step and its retries take, so only a run that died loses its claim. */
-const STALE_CLAIM_MS = 900_000;
+export type IconRow = { id: string; name: string; status: GenerationStatus };
 
-export type IconRow = { id: string; name: string; runId: string; status: GenerationStatus };
+const iconRowSelect = { id: true, name: true, status: true } as const;
 
-const iconRowSelect = { id: true, name: true, runId: true, status: true } as const;
+type DrawnFiles = {
+  generatedAt: Date;
+  model: string;
+  promptVersion: string;
+  smallUrl: string;
+  url: string;
+};
 
 export function findIconsByName(names: readonly string[]): Promise<IconRow[]> {
   return names.length === 0
@@ -28,7 +33,6 @@ export function findIconsById(ids: readonly string[]): Promise<IconRow[]> {
     : prisma.lessonIcon.findMany({ select: iconRowSelect, where: { id: { in: [...ids] } } });
 }
 
-/** Drawn icons sharing a word with the need's name or search words, best first. */
 export async function searchIconCandidates(need: IconNeed): Promise<IconCandidate[]> {
   const search = toTextSearch({
     language: "en",
@@ -53,53 +57,40 @@ export async function searchIconCandidates(need: IconNeed): Promise<IconCandidat
   return orderByIds(ids, icons);
 }
 
-/**
- * One run draws each name: the unique name decides who claimed it first, and a claim whose run
- * stopped long ago passes to the next run that needs it.
- */
-export async function claimLessonIcon({
+async function keepIcon({
+  drawn,
   need,
-  runId,
 }: {
+  drawn: DrawnFiles | null;
   need: IconNeed;
-  runId: string;
-}): Promise<IconRow & { mine: boolean }> {
-  const now = new Date();
-  const stale = new Date(now.getTime() - STALE_CLAIM_MS);
-
-  await prisma.$executeRaw`
-    INSERT INTO lesson_icons (name, tags, description, run_id, style_version, created_at, updated_at)
-    VALUES (${need.name}, ${need.searchWords}::text[], ${need.description}, ${runId}, ${LESSON_ICON_STYLE_VERSION}, ${now}, ${now})
-    ON CONFLICT (name) DO UPDATE SET run_id = EXCLUDED.run_id, updated_at = EXCLUDED.updated_at
-    WHERE lesson_icons.status = 'running' AND lesson_icons.updated_at < ${stale}`;
-
-  const icon = await prisma.lessonIcon.findUniqueOrThrow({
-    select: iconRowSelect,
-    where: { name: need.name },
+}): Promise<IconRow> {
+  // Two lessons drawing a new name at once both pay for a drawing: the first row stays, and the
+  // other run's uploaded files are left unused.
+  await prisma.lessonIcon.createMany({
+    data: {
+      description: need.description,
+      name: need.name,
+      status: drawn ? "completed" : "failed",
+      styleVersion: LESSON_ICON_STYLE_VERSION,
+      tags: need.searchWords,
+      ...drawn,
+    },
+    skipDuplicates: true,
   });
 
-  return { ...icon, mine: icon.status === "running" && icon.runId === runId };
+  return prisma.lessonIcon.findUniqueOrThrow({ select: iconRowSelect, where: { name: need.name } });
 }
 
-/** Internal workflow bridge. Draws a claimed icon once; another run's claim is left alone. */
-export async function drawLessonIcon({
+async function drawFiles({
   analytics,
-  iconId,
-  runId,
+  need,
 }: {
   analytics?: AiGenerationContext;
-  iconId: string;
-  runId: string;
-}): Promise<GenerationStatus | null> {
-  const icon = await prisma.lessonIcon.findUnique({ where: { id: iconId } });
-
-  if (!icon || icon.status !== "running" || icon.runId !== runId) {
-    return icon?.status ?? null;
-  }
-
-  const { data, provenance } = await generateLessonIconImage({ analytics, need: icon });
+  need: IconNeed;
+}): Promise<DrawnFiles> {
+  const { data, provenance } = await generateLessonIconImage({ analytics, need });
   const files = await toIconFiles(data.image.uint8Array);
-  const slug = icon.name.replaceAll(" ", "-");
+  const slug = need.name.replaceAll(" ", "-");
 
   const [large, small] = await Promise.all([
     uploadImage({ fileName: `library/icons/${slug}-256.webp`, image: files.large }),
@@ -114,25 +105,32 @@ export async function drawLessonIcon({
     throw small.error;
   }
 
-  const saved = await prisma.lessonIcon.updateMany({
-    data: {
-      generatedAt: new Date(provenance.generatedAt),
-      model: provenance.model,
-      promptVersion: provenance.promptVersion,
-      smallUrl: small.data,
-      status: "completed",
-      url: large.data,
-    },
-    where: { id: iconId, runId, status: "running" },
+  return {
+    generatedAt: new Date(provenance.generatedAt),
+    model: provenance.model,
+    promptVersion: provenance.promptVersion,
+    smallUrl: small.data,
+    url: large.data,
+  };
+}
+
+/** Internal workflow bridge: the library's row for the name, drawn first when it has none. */
+export async function drawLessonIcon({
+  analytics,
+  need,
+}: {
+  analytics?: AiGenerationContext;
+  need: IconNeed;
+}): Promise<IconRow> {
+  const existing = await prisma.lessonIcon.findUnique({
+    select: iconRowSelect,
+    where: { name: need.name },
   });
 
-  return saved.count > 0 ? "completed" : null;
+  return existing ?? keepIcon({ drawn: await drawFiles({ analytics, need }), need });
 }
 
 /** After its step's retries, so later lessons skip the name instead of paying for it again. */
-export async function failLessonIcon({ iconId, runId }: { iconId: string; runId: string }) {
-  await prisma.lessonIcon.updateMany({
-    data: { status: "failed" },
-    where: { id: iconId, runId, status: "running" },
-  });
+export function failLessonIcon(need: IconNeed): Promise<IconRow> {
+  return keepIcon({ drawn: null, need });
 }
