@@ -37,7 +37,7 @@ export const certificateSchema = z
     id: "Certificate",
   });
 
-export const ownedCertificateSchema = z
+const ownedCertificateSchema = z
   .object({
     ...ownedCertificateShape,
     imageUrls: certificateLinksShape.imageUrls.nullable(),

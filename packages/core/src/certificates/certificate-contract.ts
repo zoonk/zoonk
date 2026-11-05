@@ -147,7 +147,7 @@ export const ownedCertificateShape = {
     }),
 };
 
-export const ownedCertificateFactsSchema = z
+const ownedCertificateFactsSchema = z
   .object(ownedCertificateShape)
   .meta({ description: "One of the learner's own certificates", id: "OwnedCertificateFacts" });
 
