@@ -156,6 +156,7 @@
   "today_step_next": "565ec18b1fea89f3c8e3846f16c35926b4d93874d974a9a584b4a2a312b41228",
   "today_step_often_tested": "a97731e5a441a4c9c97afed54e0ac2aa46da575ca4ac9a39d41e2bc8e6be7764",
   "today_step_often_tested_label": "39021eb31e673986a362e561023be7f5dd780de2b46d8d057d73a8b8955d3e7e",
+  "today_step_open_failed": "5049e930375960e8f1fbf788b5c4565e4ff97ce8c9bb55fa9055c8690dbf7375",
   "today_step_skipped": "fbfd1aa78263311f89a86ae3706664a1bda6790c5f2d0e726a5458cc3d31255c",
   "today_steps_done": "44eed3b4e1c49b1387911e2186be2ea09de0ad1a4f4b60eb44e70d5152785c21",
   "today_study_everything": "ad01ce0f97c54a269dcbe75cb978e380a7ffa3a110a255c85856954c767fe78a",
@@ -307,6 +308,7 @@
     <string name="today_lessons_not_written">今日のレッスンはまだ作成されていません。</string>
     <string name="today_get_lessons">今日のレッスンを準備する</string>
     <string name="today_open_failed">次のステップを開けませんでした。もう一度お試しください。</string>
+    <string name="today_step_open_failed">このステップを開けませんでした。もう一度お試しください。</string>
     <string name="today_keep_learning_failed">次のレッスンを開けませんでした。もう一度お試しください。</string>
     <string name="today_welcome_back">おかえりなさい</string>
     <!-- %1$s is a course's title. -->

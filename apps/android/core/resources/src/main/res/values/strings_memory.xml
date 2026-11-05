@@ -41,4 +41,5 @@
     <string name="memory_undo">Undo</string>
     <string name="memory_change_undone">Change undone</string>
     <string name="memory_undo_failed">Couldn\'t undo. It changed since.</string>
+    <string name="memory_undo_retry">Couldn\'t undo. Try again.</string>
 </resources>

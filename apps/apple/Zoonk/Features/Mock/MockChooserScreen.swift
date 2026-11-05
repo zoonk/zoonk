@@ -408,8 +408,20 @@ private struct MockChooser: View {
       }
     case .short?:
       outcomeLines.foregroundStyle(.secondary)
-    case .notEnoughQuestions?, .failed?:
-      outcomeLines.foregroundStyle(.destructive)
+    case .notEnoughQuestions?:
+      FailureLine(
+        message: LocalizedStringResource(
+          "There aren't enough questions for this mock yet. Try the full exam or another subject.",
+          table: "Mock", comment: "Too few questions for a mock")
+      )
+      .font(.subheadline)
+    case .failed?:
+      FailureLine(
+        message: LocalizedStringResource(
+          "We couldn't start the mock. Try again.", table: "Mock",
+          comment: "Start failed")
+      )
+      .font(.subheadline)
     case .refused(let limit)?:
       HelpLimitNotice(limit: limit)
     }
@@ -422,7 +434,8 @@ private struct MockChooser: View {
     .font(.subheadline)
   }
 
-  /// What the last Start led to, in words: VoiceOver stays on Start and hears it.
+  /// What the last Start led to, in words: VoiceOver stays on Start and hears it. A failure is a
+  /// `FailureLine`, which reads itself out.
   private var outcome: [String] {
     switch status {
     case .short(_, let examQuestions, let limit, let minutes, let questions):
@@ -449,22 +462,9 @@ private struct MockChooser: View {
           table: "Mock", comment: "A mock that can ask only part of its questions"),
         more,
       ]
-    case .notEnoughQuestions:
-      return [
-        String(
-          localized:
-            "There aren't enough questions for this mock yet. Try the full exam or another subject.",
-          table: "Mock", comment: "Too few questions for a mock")
-      ]
-    case .failed:
-      return [
-        String(
-          localized: "We couldn't start the mock. Try again.", table: "Mock",
-          comment: "Start failed")
-      ]
     case .refused(let limit):
       return [limit.message]
-    case .choosing, .writing, .plusRequired:
+    case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed:
       return []
     }
   }

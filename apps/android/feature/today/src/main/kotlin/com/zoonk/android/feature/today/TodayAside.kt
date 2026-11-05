@@ -25,6 +25,9 @@ internal class TodayAsideState(
     val practice: @Composable () -> Unit,
     val notice: @Composable (SuggestionLayout) -> Unit,
     val onMission: (MissionOpens) -> Unit,
+    /** The tap Today waits for and the one that failed, read where a mission row shows them. */
+    val pending: () -> TodayTap?,
+    val failed: () -> TodayTap?,
     val navigate: (AppRoute) -> Unit,
     /** The goal's standing, beside the page only, as main hides it on phones. */
     val standing: @Composable () -> Unit = {},
@@ -49,6 +52,8 @@ internal fun TodayAside(
             onOpen = aside.onMission,
             brainPower = aside.brainPower,
             blockOf = { mission -> model.blockOf(mission) },
+            opening = { mission -> model.missionTap(mission)?.equals(aside.pending()) == true },
+            openFailed = { mission -> model.missionTap(mission)?.equals(aside.failed()) == true },
             // Where the queue sits right above, it marks each mission's block and the card keeps only its status.
             rowsInQueue = !beside && model.day.missions.onlyOpenBlocks(),
             collapseWhenDone = true,
@@ -79,6 +84,8 @@ internal fun TodayDayModel.blockOf(mission: DayMission): DayStep? {
     val opens = mission.opens as? MissionOpens.Block ?: return null
     return day.steps.firstOrNull { if (opens.blockId != null) it.id == opens.blockId else it.position == opens.position }
 }
+
+private fun TodayDayModel.missionTap(mission: DayMission): TodayTap? = blockOf(mission)?.let { TodayTap.Mission(it.position) }
 
 private fun List<DayMission>.onlyOpenBlocks(): Boolean =
     all {

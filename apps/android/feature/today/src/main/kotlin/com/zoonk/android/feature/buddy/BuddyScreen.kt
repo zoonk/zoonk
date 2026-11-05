@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.buddy
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -165,11 +167,28 @@ fun BuddyPage(
     val composer = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
     var asking by remember { mutableStateOf(false) }
+    // The day's sheet stays open while a mission's block opens, so its row shows the wait or the failure, and closes once a tap leads somewhere.
+    var dayOpen by rememberSaveable { mutableStateOf(false) }
     // Asking the buddy happens in this page's own composer, so its mission puts the cursor there.
-    val onMission: (MissionOpens) -> Unit = { opens -> if (opens == MissionOpens.Buddy) asking = true else vm.openMission(opens, goalId) }
+    val onMission: (BuddyTap) -> Unit = { tap ->
+        if (tap.opens == MissionOpens.Buddy) {
+            dayOpen = false
+            asking = true
+        } else {
+            vm.openMission(tap, goalId)
+        }
+    }
+    val taps = BuddyDayTaps(onMission, vm.opening, vm.openFailed)
     val earlier by app.earlierQuestions.questions.collectShown()
+    val activity = LocalActivity.current
 
-    LaunchedEffect(vm) { vm.routes.collect(navigator::open) }
+    DisposableEffect(vm, goalId) { onDispose { if (activity?.isChangingConfigurations != true) vm.endVisit() } }
+    LaunchedEffect(vm) {
+        vm.routes.collect {
+            dayOpen = false
+            navigator.open(it)
+        }
+    }
     LaunchedEffect(asking) {
         if (!asking) return@LaunchedEffect
         composer.requestFocus()
@@ -201,7 +220,7 @@ fun BuddyPage(
         )
 
     PageWithSupportingPane(
-        supportingPane = { BuddyDayPane(status, look, name, onMission, onGlasses = { wearing = true }, navigator, app) },
+        supportingPane = { BuddyDayPane(status, look, name, taps, onGlasses = { wearing = true }, navigator, app) },
     ) { beside ->
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             Column(Modifier.widthIn(max = BUDDY_COLUMN_WIDTH).weight(1f)) {
@@ -211,7 +230,7 @@ fun BuddyPage(
                     name,
                     status,
                     Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp),
-                    line = if (beside) null else ({ BuddyTodayLine(status, look, name, onMission, navigator) }),
+                    line = if (beside) null else ({ BuddyTodayLine(status, look, name, taps, dayOpen, { dayOpen = it }, navigator) }),
                     menu = {
                         BuddyMenu(
                             status,
@@ -224,7 +243,6 @@ fun BuddyPage(
                     },
                 )
                 if (vm.saveFailed && !editing) SaveFailed(Modifier.padding(horizontal = 16.dp))
-                if (vm.openFailed) OpenFailed(Modifier.padding(horizontal = 16.dp))
                 TutorPanel(tutor, access, TutorIdentity(name, look), routes, Modifier.weight(1f), page = page)
             }
         }
@@ -439,16 +457,6 @@ internal fun GlassesSheet(
 private fun SaveFailed(modifier: Modifier = Modifier) {
     Text(
         stringResource(R.string.buddy_page_save_failed),
-        modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = MaterialTheme.colorScheme.error,
-        style = MaterialTheme.typography.bodyMedium,
-    )
-}
-
-@Composable
-private fun OpenFailed(modifier: Modifier = Modifier) {
-    Text(
-        stringResource(R.string.buddy_page_open_failed),
         modifier.semantics { liveRegion = LiveRegionMode.Polite },
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,

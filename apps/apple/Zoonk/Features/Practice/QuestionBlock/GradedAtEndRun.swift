@@ -11,6 +11,7 @@ struct GradedAtEndRun: View {
   var upcomingTotal: Int?
   /// The writing stopped short: the learner can finish with the answers given.
   var upcomingEnded = false
+  var upcomingLimit: HelpLimit?
   var isPending: Bool
   var failed: Bool
   let onFinish: ([PracticeChoiceAnswer]) -> Void
@@ -126,6 +127,11 @@ struct GradedAtEndRun: View {
           isBusy: isPending
         ) { onFinish(answers) }
       } else if upcomingEnded, !failed {
+        if let upcomingLimit {
+          HelpLimitNotice(limit: upcomingLimit)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
         PracticeMainButton(
           title: LocalizedStringResource(
             "Finish with these answers", table: "Practice",
@@ -245,7 +251,7 @@ struct PracticeQuestionsPreparingView: View {
   @Environment(\.practiceHooks) private var hooks
   @AccessibilityFocusState private var focus: Focus?
 
-  private enum Focus { case failure, start, title }
+  private enum Focus { case limit, start, title }
 
   private var needsPlus: Bool { failure as? PracticeAPIError == .plusRequired }
 
@@ -272,9 +278,8 @@ struct PracticeQuestionsPreparingView: View {
           ProgressView().padding(.top, 8)
         }
 
-        if let failure {
-          Text(failureText(failure)).font(.subheadline).foregroundStyle(.destructive)
-            .accessibilityFocused($focus, equals: .failure)
+        if let failure, limit == nil {
+          FailureLine(message: failureText(failure)).font(.subheadline)
         }
       }
     } actions: {
@@ -286,14 +291,24 @@ struct PracticeQuestionsPreparingView: View {
         ) {
           hooks.navigate(.subscription)
         }
-      } else if !isWriting {
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "Start the test", table: "Practice",
-            comment: "Asks for a test's questions and starts it."),
-          isBusy: isStarting, action: start
-        )
         .accessibilityFocused($focus, equals: .start)
+      } else {
+        if let limit {
+          HelpLimitNotice(limit: limit)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
+            .accessibilityFocused($focus, equals: .limit)
+        }
+
+        if !isWriting, limit?.isShortBreak ?? true {
+          PracticeMainButton(
+            title: LocalizedStringResource(
+              "Start the test", table: "Practice",
+              comment: "Asks for a test's questions and starts it."),
+            isBusy: isStarting, action: start
+          )
+          .accessibilityFocused($focus, equals: .start)
+        }
       }
     }
     // Only the learner's tap starts the wait or sets a failure, so focus never moves on opening.
@@ -303,15 +318,25 @@ struct PracticeQuestionsPreparingView: View {
       }
     }
     .onChange(of: failure.map(failureText)) { _, line in
-      guard let line else { return }
+      guard line != nil else { return }
 
-      // A learner still on Start stays there to try again; otherwise the line took their place.
-      if !needsPlus, focus == .start {
-        AccessibilityNotification.Announcement(String(localized: line)).post()
-      } else {
-        focus = .failure
+      // A failure line reads itself out beside the Start that comes back. A limit's notice
+      // doesn't: beside Start (a short break) it's read out; in Start's place it takes focus, as
+      // See Plus does.
+      if let limit {
+        if limit.isShortBreak {
+          AccessibilityNotification.Announcement(limit.message).post()
+        } else {
+          focus = .limit
+        }
+      } else if needsPlus {
+        focus = .start
       }
     }
+  }
+
+  private var limit: HelpLimit? {
+    (failure as? PracticeAPIError)?.helpLimit
   }
 
   private func failureText(_ failure: any Error) -> LocalizedStringResource {
@@ -319,10 +344,6 @@ struct PracticeQuestionsPreparingView: View {
     case .plusRequired:
       LocalizedStringResource(
         "This test comes with Plus.", table: "Practice", comment: "A test that needs Plus.")
-    case .limitReached:
-      LocalizedStringResource(
-        "You've used today's AI help. Try again tomorrow.", table: "Practice",
-        comment: "A test's questions can't be written: the AI allowance is spent.")
     default:
       LocalizedStringResource(
         "We couldn't write your test. Try again.", table: "Practice",

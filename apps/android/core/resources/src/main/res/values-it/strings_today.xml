@@ -156,6 +156,7 @@
   "today_step_next": "d458a0ee541e7c27fe8805daba778aa518e1c52603e5773e91abedf0034e8745",
   "today_step_often_tested": "3ac469796282ce08b4a7078ccd87ecd2300b4e888abc46efdf53b4a7662d9f05",
   "today_step_often_tested_label": "15bf54ace7ae87d8889c94f538dbff252c5dddb22732647440991718148d3d2c",
+  "today_step_open_failed": "96ed344c35396769770ffe62e3c51007293eedab82d087353562d2691ae2df72",
   "today_step_skipped": "f5c628048b68bf638aaed23afb9b6b91eb3213c811f37057ef0d099c6e4702b8",
   "today_steps_done": "aa89457283d96cf636b79a93da6c71fe4bad703b0c356ba1edac361437bbe36e",
   "today_study_everything": "84aacf3579ee334831743a8eb0e490ec063c6b0b822eea82302226349a58cc81",
@@ -327,6 +328,7 @@
     <string name="today_lessons_not_written">Non abbiamo ancora preparato le lezioni di oggi.</string>
     <string name="today_get_lessons">Ricevi le lezioni di oggi</string>
     <string name="today_open_failed">Non siamo riusciti ad aprire il passaggio successivo. Riprova.</string>
+    <string name="today_step_open_failed">Non siamo riusciti ad aprire questo passaggio. Riprova.</string>
     <string name="today_keep_learning_failed">Non siamo riusciti ad aprire le tue prossime lezioni. Riprova.</string>
     <string name="today_welcome_back">Che bello rivederti</string>
     <!-- %1$s is a course's title. -->

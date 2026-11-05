@@ -27,7 +27,9 @@ final class LearnerSummaryStoreTests: XCTestCase {
     await store.summary.load()
     let switched = await store.switchGoal(to: "goal")
 
-    XCTAssertFalse(switched)
+    guard case .failed(.unavailable) = switched else {
+      return XCTFail("Expected the switch to fail, got \(switched)")
+    }
     let requestCount = await api.requestCount
     XCTAssertEqual(requestCount, 1)
   }
@@ -41,7 +43,9 @@ final class LearnerSummaryStoreTests: XCTestCase {
     await store.summary.load()
     let switched = await store.switchGoal(to: "goal")
 
-    XCTAssertTrue(switched)
+    guard case .done = switched else {
+      return XCTFail("Expected the switch to save, got \(switched)")
+    }
     let requestCount = await api.requestCount
     XCTAssertEqual(requestCount, 2)
   }

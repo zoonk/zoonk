@@ -17150,65 +17150,6 @@
         }
       }
     },
-    "You've used today's AI help. Try again tomorrow." : {
-      "comment" : "A test's questions can't be written: the AI allowance is spent.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast deine KI-Hilfe für heute aufgebraucht. Versuch es morgen noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya usaste toda la ayuda de IA de hoy. Inténtalo de nuevo mañana."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as utilisé toute l’aide de l’IA pour aujourd’hui. Réessaie demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito gli aiuti dell’IA per oggi. Riprova domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日のAIの利用上限に達しました。明日もう一度試してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘의 AI 도움 한도를 다 썼어요. 내일 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limit pomocy AI na dziś jest wyczerpany. Spróbuj ponownie jutro."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você usou toda a ajuda de IA de hoje. Tente de novo amanhã."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü yapay zekâ desteği hakkın bitti. Yarın tekrar dene."
-          }
-        }
-      }
-    },
     "Your answer" : {
       "comment" : "Mark beside the learner's wrong pick once a question is graded.\nPlaceholder of an answer field.",
       "localizations" : {
