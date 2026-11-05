@@ -45,9 +45,9 @@
   "subscription_free": "6430c9ff058610b9cc2e62334400b88550249fce68abe8ee9baacbc699b26227",
   "subscription_free_buddy": "49dec0e5581fddfc390f5c9e2c2bf4f01d618fe98572cf018096c1e07028a724",
   "subscription_free_calls": "b5d61cafa258c69bbf7c545d92ba84e5d0a6cd21b4e796063a7a6a60bc718418",
-  "subscription_free_exam": "dcfbe8a62de17cc63150bbc18f26ebfbdb77392edc8621ba18855e9f8dd555b5",
-  "subscription_free_exam_day": "364b1cc570dce6d7e4f4ae1dfd79dfdc0add8a1752eec072c3fa849d92f37d3d",
-  "subscription_free_exam_week": "24e2ff266782714ed21825c5a5bc5f69bb1bf120ef3328018dc45c500386c034",
+  "subscription_free_exam": "dcd4ac13a6f6e89343b9869fd12fb19f380b4bf3674d215ee38215aa784c0e4e",
+  "subscription_free_exam_day": "d55b198ac570f5576c1bd799fe28d7631742818dcb5dea54ec1c98c85f3d2f77",
+  "subscription_free_exam_week": "be1ad51c5ee8fa1693e73d0c1be643f2e9db050b0045cee1ab03498136ea7b89",
   "subscription_free_goals": "ac42274fce93d94ac3026d18384afb0cbe09302103478cdccff87e96c1ad693a",
   "subscription_free_lessons_a_month": "5fed4d3ae499fc85d0da04c90522a24c59d4520748a8e08e04195750a80dd5ed",
   "subscription_free_plan": "fc1c5f19add4fcf1f572383da20da9c843584fecec225cc1f017b2692ad28669",
@@ -184,12 +184,12 @@
         <item quantity="other">ayda %d ders</item>
     </plurals>
     <string name="subscription_free_plan">Hedefine ve belirlediğin tarihe uygun bir plan</string>
-    <string name="subscription_free_exam_week">Sınav için: seviye belirleme testi, planın ve bu planın ilk haftası</string>
-    <string name="subscription_free_exam_day">Sınav için: seviye belirleme testi, planın ve bu planın ilk günü</string>
+    <string name="subscription_free_exam_week">Sınav için: seviye tespit testi, planın ve ilk haftası</string>
+    <string name="subscription_free_exam_day">Sınav için: seviye tespit testi, planın ve ilk günü</string>
     <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
     <plurals name="subscription_free_exam">
-        <item quantity="one">Sınav için: seviye belirleme testi, planın ve bu planın ilk %d günü</item>
-        <item quantity="other">Sınav için: seviye belirleme testi, planın ve bu planın ilk %d günü</item>
+        <item quantity="one">Sınav için: seviye tespit testi, planın ve ilk %d günü</item>
+        <item quantity="other">Sınav için: seviye tespit testi, planın ve ilk %d günü</item>
     </plurals>
     <plurals name="subscription_free_buddy">
         <item quantity="one">Yapay zekâ ders arkadaşı: günde %d mesaj</item>

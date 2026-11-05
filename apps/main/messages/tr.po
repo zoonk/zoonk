@@ -3003,7 +3003,7 @@ msgstr "Hedefine ve belirlediğin tarihe uygun bir plan"
 #: src/components/pricing/free-plan.tsx
 msgctxt "Bj_ci-"
 msgid "For an exam: the diagnostic, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}"
-msgstr "Sınav için: seviye belirleme testi, planın ve {days, plural, =7 {ilk haftası} one {ilk günü} other {ilk # günü}}"
+msgstr "Sınav için: seviye tespit testi, planın ve {days, plural, =7 {ilk haftası} one {ilk günü} other {ilk # günü}}"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "5ZDN6U"
@@ -3222,7 +3222,7 @@ msgstr "Koşullar"
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "4YTeTA"
 msgid "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}"
-msgstr "{days, plural, =7 {Seviye belirleme ve 1. hafta} one {Seviye belirleme ve 1. gün} other {Seviye belirleme ve ilk # gün}}"
+msgstr "{days, plural, =7 {Seviye tespit testi ve 1. hafta} one {Seviye tespit testi ve #. gün} other {Seviye tespit testi ve ilk # gün}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "NsXWWN"
@@ -3247,7 +3247,7 @@ msgstr "Sınav planı"
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "2ZZIpk"
 msgid "{days, plural, =7 {Free: the diagnostic and week 1 · Plus: every week after it to exam day, with mock exams} one {Free: the diagnostic and day 1 · Plus: every day after it to exam day, with mock exams} other {Free: the diagnostic and the first # days · Plus: every day after them to exam day, with mock exams}}"
-msgstr "{days, plural, =7 {Ücretsiz: seviye belirleme ve 1. hafta · Plus: sınav gününe kadar kalan tüm haftalar, deneme sınavları dahil} one {Ücretsiz: seviye belirleme ve 1. gün · Plus: sınav gününe kadar kalan tüm günler, deneme sınavları dahil} other {Ücretsiz: seviye belirleme ve ilk # gün · Plus: sınav gününe kadar kalan tüm günler, deneme sınavları dahil}}"
+msgstr "{days, plural, =7 {Ücretsiz: seviye tespit testi ve 1. hafta · Plus: sınav gününe kadar kalan tüm haftalar ve deneme sınavları} one {Ücretsiz: seviye tespit testi ve #. gün · Plus: sınav gününe kadar kalan tüm günler ve deneme sınavları} other {Ücretsiz: seviye tespit testi ve ilk # gün · Plus: sınav gününe kadar kalan tüm günler ve deneme sınavları}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "Q-aTo1"
@@ -3277,7 +3277,7 @@ msgstr "Ödeme yapmadan önce tüm planını gör."
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "PH2HUb"
 msgid "For an exam, the diagnostic, your plan and its first week are free. Plus keeps you going to exam day, with mock exams along the way."
-msgstr "Sınava hazırlıkta seviye belirleme testi, planın ve ilk haftası ücretsiz. Plus ile sınav gününe kadar çalışmaya devam eder, bu süreçte deneme sınavları da çözersin."
+msgstr "Sınava hazırlanırken seviye tespit testi, planın ve ilk haftası ücretsiz. Plus ile sınav gününe kadar çalışmaya devam eder, bu süreçte deneme sınavları da çözersin."
 
 #: src/components/pricing/subscribe-button.tsx
 msgctxt "iB3ixY"
