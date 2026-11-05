@@ -5,7 +5,7 @@ import { type LessonMarks } from "@zoonk/core/lesson-player/playable-lesson";
 import { type StepMarks } from "@zoonk/core/library/marks/contract";
 import { usePoll } from "@zoonk/learn/poll";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { isLanguageStep } from "./_utils/lesson-steps";
 import { useLessonPlayerConfig } from "./lesson-player-context";
 import {
@@ -68,8 +68,9 @@ export function useArrivingMarks({
 }
 
 /**
- * The screen the learner is reading keeps the marks it opened with, so nothing moves under their
- * eyes; marks that arrive meanwhile show on every other screen and on the next visit to this one.
+ * The screen the learner is reading keeps the layout it opened with: an arriving underline shows in
+ * place, while its strip, example frame and icon wait for the next visit, so nothing moves under
+ * their eyes.
  */
 export function useShownMarks({
   isShown,
@@ -87,5 +88,25 @@ export function useShownMarks({
     setView({ isShown, marks: latest });
   }
 
-  return isShown ? view.marks : latest;
+  const opened = view.marks;
+  const underline = latest?.underline ?? null;
+
+  return useMemo(() => {
+    if (!isShown) {
+      return latest;
+    }
+
+    if (!opened && !underline) {
+      return null;
+    }
+
+    return opened?.underline === underline
+      ? opened
+      : {
+          example: opened?.example ?? null,
+          icon: opened?.icon ?? null,
+          ideaIndex: opened?.ideaIndex ?? null,
+          underline,
+        };
+  }, [isShown, latest, opened, underline]);
 }

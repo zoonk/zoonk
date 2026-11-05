@@ -6,7 +6,6 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
-import { nextFrames } from "../_test-utils/tutor-api";
 import { buildLesson } from "../preview/preview-lesson";
 import { contentStep, teachingStep } from "../preview/preview-steps";
 
@@ -167,7 +166,7 @@ describe("lesson marks", () => {
     expect(underlined()).toStrictEqual(["a cloud of possibilities: a map"]);
   });
 
-  it("fills in marks that arrive after the lesson opened, without changing the screen being read", async () => {
+  it("fills in marks that arrive after the lesson opened, only the underline on the screen being read", async () => {
     const tagged = lesson();
     const [scene, explanation, check] = tagged.steps;
     const arrival = Promise.withResolvers<LessonMarks>();
@@ -197,10 +196,9 @@ describe("lesson marks", () => {
       summary: MAP,
     });
 
-    await arrival.promise;
-    await nextFrames();
+    await expect.poll(underlined).toStrictEqual(["a map of where it might be"]);
     await expect.element(strip()).not.toBeInTheDocument();
-    expect(underlined()).toStrictEqual([]);
+    await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
 
     await next();
     await expect.element(strip()).toHaveTextContent("Idea 2 of 2");
