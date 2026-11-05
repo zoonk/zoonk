@@ -18,11 +18,14 @@ export const memoryCategorySchema = z
     id: "MemoryCategory",
   });
 
-const MEMORY_SOURCE_KINDS = ["onboarding", "chat", "session"] as const;
+const MEMORY_SOURCE_KINDS = ["onboarding", "chat", "session", "call"] as const;
 
 export const memorySourceSchema = z
   .object({
-    id: z.string().nullable().meta({ description: "The goal, conversation or study session id" }),
+    id: z
+      .string()
+      .nullable()
+      .meta({ description: "The goal, tutor question, study session or call id" }),
     kind: z.enum(MEMORY_SOURCE_KINDS),
   })
   .meta({ id: "MemorySource" });
