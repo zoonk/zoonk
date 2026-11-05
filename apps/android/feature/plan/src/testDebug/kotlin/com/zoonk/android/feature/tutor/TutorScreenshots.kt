@@ -127,7 +127,7 @@ class TutorScreenshots {
         val vm =
             TutorViewModel(
                 TutorScope.Plan("goal"),
-                TutorStore(api, cache, session, { true }) { _, _, _ -> MutationResult.Obsolete },
+                TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, _ -> MutationResult.Obsolete },
                 SavedStateHandle(),
             )
         val routes = TutorRoutes(createAccount = {}, signIn = {}, seePlus = {}, open = {}, startCall = callStarter { CallStart.Failed })

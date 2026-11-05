@@ -6,6 +6,10 @@ import { useState, useTransition } from "react";
 import { useSteady } from "../_utils/use-steady";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
 
+/**
+ * `action` resolves to false only for a failure to show: one that stops because the learner left
+ * resolves true, so the screen they left never reports it when they come back.
+ */
 export function useSessionAction({
   action,
   enterKey = false,

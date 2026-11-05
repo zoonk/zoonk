@@ -8,6 +8,7 @@ import { getSessionBlockReturn } from "@/lib/session/session-block-return";
 import { withQuery } from "@/lib/with-query";
 import { getCheckpoint } from "@zoonk/core/checkpoints/get";
 import { openLanguageCheckpointCall } from "@zoonk/core/language/conversations/start";
+import { getSession } from "@zoonk/core/users/session";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -52,7 +53,11 @@ async function CheckpointContent({ params, searchParams }: Props) {
   const [{ blockId, lang }, query] = await Promise.all([params, searchParams]);
 
   // Its read is cached for the learner's browser, so a link's prefetch draws the call.
-  const [call, buddy] = await Promise.all([openLanguageCheckpointCall(blockId), getLearnerBuddy()]);
+  const [call, buddy, session] = await Promise.all([
+    openLanguageCheckpointCall(blockId),
+    getLearnerBuddy(),
+    getSession(),
+  ]);
 
   if (call.status === "earlierFirst") {
     redirect({ href: "/today", locale: lang });
@@ -62,7 +67,7 @@ async function CheckpointContent({ params, searchParams }: Props) {
     redirect({ href: `/conversation/${call.conversationId}`, locale: lang });
   }
 
-  if (call.status === "notStarted") {
+  if (call.status === "notStarted" && session) {
     return (
       <MainLearnProvider>
         <CheckpointCallPreviewClient
@@ -70,6 +75,7 @@ async function CheckpointContent({ params, searchParams }: Props) {
           buddy={buddy}
           dailyLimitReached={call.dailyLimitReached}
           intro={call.intro}
+          userId={session.user.id}
         />
       </MainLearnProvider>
     );

@@ -220,11 +220,11 @@ struct ChallengeScreen: View {
       }
 
       if let startProblem {
-        Text(startProblem).font(.subheadline).foregroundStyle(.destructive)
+        FailureLine(message: startProblem).font(.subheadline)
       }
 
       if let moveProblem {
-        Text(moveProblem).font(.subheadline).foregroundStyle(.destructive)
+        FailureLine(message: moveProblem).font(.subheadline)
       }
 
       if let moved, let date = challenge.date {

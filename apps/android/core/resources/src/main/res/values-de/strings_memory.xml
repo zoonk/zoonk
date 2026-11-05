@@ -29,6 +29,7 @@
   "memory_source_you": "803ddbb090651199d1109da5339aaeee67176b78012a38364980abc1336ece72",
   "memory_undo": "b592cff653daf11ea9610f59989aae6c2f581150897d839bd36201dbef2da839",
   "memory_undo_failed": "ac922ed930e8a08154d95dc0f9d3e544ecb0e8b68476a0b658cc6c4d7019a8fa",
+  "memory_undo_retry": "631c6054121112a8e6974bb3a1f45a080bcb50c2dc75fcd21ee7abcf9d608f11",
   "memory_updated": "4a142d4a8877ed27695f5df9ae6c71375c12f184ed27451f3ba8d031849e63a2",
   "memory_updated_more": "5def2e4f944c2a00696253739021ef1548ba9c1e6562b158cca077dde68bac1f",
   "memory_use": "3a4de16106f2a8433d5a89624c8108789115571668e08e41fa237a749f4353dc",
@@ -78,4 +79,5 @@
     <string name="memory_undo">Rückgängig machen</string>
     <string name="memory_change_undone">Änderung rückgängig gemacht</string>
     <string name="memory_undo_failed">Das ließ sich nicht rückgängig machen. Der Eintrag wurde inzwischen geändert.</string>
+    <string name="memory_undo_retry">Das ließ sich nicht rückgängig machen. Versuch es noch einmal.</string>
 </resources>

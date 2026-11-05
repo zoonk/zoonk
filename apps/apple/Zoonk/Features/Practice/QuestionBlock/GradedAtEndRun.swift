@@ -274,11 +274,12 @@ struct PracticeQuestionsPreparingView: View {
         if isPlusRequired {
           FreeWeekOverNotice(showsSeePlus: false, isInset: true)
         } else if failure != nil, limit == nil {
-          Text(
-            "We couldn't write your test. Try again.", tableName: "Practice",
-            comment: "Writing a test's questions failed."
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't write your test. Try again.", table: "Practice",
+              comment: "Writing a test's questions failed.")
           )
-          .font(.subheadline).foregroundStyle(.destructive)
+          .font(.subheadline)
         }
       }
     } actions: {

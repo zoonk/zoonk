@@ -156,6 +156,7 @@
   "today_step_next": "317052c506c42893e1b6bd18e50c9b8bdbdd8277d7a0130bcc6a9f0be8a9af89",
   "today_step_often_tested": "06cb37a99b9d43eff8b5d05cda3af07a25e25ec7a1d03f08eff51ff7116f2540",
   "today_step_often_tested_label": "9f3e7636c5f6337296eb0e44fd852a3761b87e589ff53cd66ec8ab3deecfa9f1",
+  "today_step_open_failed": "aaaab4b249fef3513e8ac1aaab9468ab2dba6786adf6d2dbec8c8c46218fe01d",
   "today_step_skipped": "267b6025019b0fba857c29c3dedcb32770c0676fa8c4a6a449c92349f0af0f1e",
   "today_steps_done": "d08d13c3ca7ae8d07242b5f2b43951285fe476f01bed7dc17af50f1283b9e45c",
   "today_study_everything": "01f964591cb2a84e5a3c2b55d85f4078561b6a746868329c8732b45d07a5cc6c",
@@ -307,6 +308,7 @@
     <string name="today_lessons_not_written">오늘 레슨은 아직 만들어지지 않았어요.</string>
     <string name="today_get_lessons">오늘의 레슨 준비하기</string>
     <string name="today_open_failed">다음 단계를 열지 못했어요. 다시 시도해 보세요.</string>
+    <string name="today_step_open_failed">이 단계를 열지 못했어요. 다시 시도해 보세요.</string>
     <string name="today_keep_learning_failed">다음 레슨을 열지 못했어요. 다시 시도해 보세요.</string>
     <string name="today_welcome_back">다시 만나서 반가워요</string>
     <!-- %1$s is a course's title. -->

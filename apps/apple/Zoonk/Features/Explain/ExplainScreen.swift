@@ -172,11 +172,10 @@ private struct ExplanationView: View {
       .disabled(isRetrying)
     } footer: {
       if retryFailed {
-        Text(
-          "We couldn't get this started.", tableName: "Explain",
-          comment: "A slow explanation couldn't be asked again"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't get this started.", table: "Explain",
+            comment: "A slow explanation couldn't be asked again"))
       } else {
         Text(
           "Still writing your explanation. It shows up here as soon as it's ready.",
