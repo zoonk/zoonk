@@ -21,6 +21,7 @@ struct TestOutScreen: View {
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
+  @Environment(\.practiceHooks) private var hooks
   @Environment(LearnerSummaryStore.self) private var summary
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<TestOutLoad> = .loading

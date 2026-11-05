@@ -7,6 +7,7 @@ struct FocusTestScreen: View {
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
+  @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<FocusTestQuestions> = .loading
   @State private var started = false
