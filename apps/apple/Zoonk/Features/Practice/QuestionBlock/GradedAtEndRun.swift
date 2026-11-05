@@ -11,6 +11,7 @@ struct GradedAtEndRun: View {
   var upcomingTotal: Int?
   /// The writing stopped short: the learner can finish with the answers given.
   var upcomingEnded = false
+  var upcomingLimit: HelpLimit?
   var isPending: Bool
   var failed: Bool
   let onFinish: ([PracticeChoiceAnswer]) -> Void
@@ -126,6 +127,11 @@ struct GradedAtEndRun: View {
           isBusy: isPending
         ) { onFinish(answers) }
       } else if upcomingEnded, !failed {
+        if let upcomingLimit {
+          HelpLimitNotice(limit: upcomingLimit)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
         PracticeMainButton(
           title: LocalizedStringResource(
             "Finish with these answers", table: "Practice",
@@ -267,8 +273,12 @@ struct PracticeQuestionsPreparingView: View {
 
         if isPlusRequired {
           FreeWeekOverNotice(showsSeePlus: false, isInset: true)
-        } else if let failure {
-          Text(failureText(failure)).font(.subheadline).foregroundStyle(.destructive)
+        } else if failure != nil, limit == nil {
+          Text(
+            "We couldn't write your test. Try again.", tableName: "Practice",
+            comment: "Writing a test's questions failed."
+          )
+          .font(.subheadline).foregroundStyle(.destructive)
         }
       }
     } actions: {
@@ -280,12 +290,19 @@ struct PracticeQuestionsPreparingView: View {
         ) {
           hooks.navigate(.subscription)
         }
-      } else if !isWriting {
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "Start the test", table: "Practice",
-            comment: "Asks for a test's questions and starts it."),
-          action: start)
+      } else {
+        if let limit {
+          HelpLimitNotice(limit: limit)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
+        if !isWriting, limit?.isShortBreak ?? true {
+          PracticeMainButton(
+            title: LocalizedStringResource(
+              "Start the test", table: "Practice",
+              comment: "Asks for a test's questions and starts it."),
+            action: start)
+        }
       }
     }
   }
@@ -294,16 +311,7 @@ struct PracticeQuestionsPreparingView: View {
     failure as? PracticeAPIError == .plusRequired
   }
 
-  private func failureText(_ failure: any Error) -> LocalizedStringResource {
-    switch failure as? PracticeAPIError {
-    case .limitReached:
-      LocalizedStringResource(
-        "You've used today's AI help. Try again tomorrow.", table: "Practice",
-        comment: "A test's questions can't be written: the AI allowance is spent.")
-    default:
-      LocalizedStringResource(
-        "We couldn't write your test. Try again.", table: "Practice",
-        comment: "Writing a test's questions failed.")
-    }
+  private var limit: HelpLimit? {
+    (failure as? PracticeAPIError)?.helpLimit
   }
 }
