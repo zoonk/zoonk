@@ -507,9 +507,12 @@ private struct MockSpeakingView: View {
   private func taskRow(_ task: MockSpeaking.Task, number: Int) -> some View {
     AccessibilityStack {
       VStack(alignment: .leading, spacing: 2) {
-        Text("Task \(number)", tableName: "Mock", comment: "A speaking task's number")
-          .font(.caption.monospaced())
-          .foregroundStyle(.secondary)
+        Text(
+          "Task \(number)\u{00A0}· \(speakingTaskMinutes(min: task.minutes.min, max: task.minutes.max))",
+          tableName: "Mock", comment: "A speaking task's number and how long it lasts"
+        )
+        .font(.caption.monospaced())
+        .foregroundStyle(.secondary)
         Text(task.name)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
