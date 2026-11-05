@@ -482,12 +482,12 @@ private struct PauseSuggestionView: View {
       .disabled(isStopping)
 
       if failed {
-        Text(
-          "We couldn't stop the session. Try again.", tableName: "Practice",
-          comment: "Stopping the session failed."
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't stop the session. Try again.", table: "Practice",
+            comment: "Stopping the session failed.")
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
       }
     }
   }
@@ -515,7 +515,6 @@ private struct BlockFinishedView: View {
   private var result: some View {
     PracticeTaskLayout {
       PracticeResultTitle(title: title)
-    } response: {
       PracticeResultNumbers(
         correct: completion.correct, total: completion.total,
         brainPower: completion.ownBrainPower,

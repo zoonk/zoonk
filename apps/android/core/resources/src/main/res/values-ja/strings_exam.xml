@@ -44,7 +44,6 @@
   "exam_format_one_day": "57913ce075937c8cff821d7b6291229adc08c9c52dd390fcb214c5bdb2d571eb",
   "exam_format_parts_questions": "f942e7f1b359dfc677339af4217bf3151d0df61bf78a9bc155a94d6e3079b29c",
   "exam_format_two_days": "7f4a6a842003a56a77499c342120a2f85b064ed73248b6def152f750842b6082",
-  "exam_go_to_today": "72d1606b62ef9102641728650198cb6ead8f2feb5c70b7d326609ceedd579067",
   "exam_how_did_it_go": "c4b9efa43b1b3d9ba74e6fb491818e890c3277cc36f74205838b82efe1e29c54",
   "exam_latest_mock": "c3b8a4f4b7591ce695a03d2b8e27fe868434fc26c41f8b402d58f2fcf74b312e",
   "exam_mock_answered": "25685b0954157e67841e7c7f7662cc3deb98ae8dd0779604df52e50ff6037013",
@@ -61,8 +60,6 @@
   "exam_no_sitting_detail_one": "498c1d4e1f1b3f51e8e88af406900813ffdae49dff2f1ec3145d3c419e069a71",
   "exam_no_sitting_detail_several": "e0c48f19be3c0a58732680e41f657f8248b75d72993adf4d34dc734321b8ea9c",
   "exam_no_sitting_title": "8f34753173c1880b65c0aac811fd3657324fd17b709ef32f00831f8c5402a9ca",
-  "exam_not_found_description": "0890bd72d33acbd670675a44bb4ca306c6621533ce7906f76cb4e4977eab2033",
-  "exam_not_found_title": "0bf83ed01583e0b473cfdb89d615428ff3acbae5a58dc5e655fe9ecc4be92112",
   "exam_out_of": "c2539c17a7e3658e9c867c2c92a0f100e1005c7d6dd3b90bf8b613d538fd2106",
   "exam_pass_marks_language": "65abc4262539684578869753fa9a4e0ac9cbad2845a0b031ea9d8248faf763f4",
   "exam_passed_no": "56674f316a3506879c808195055ca3a39c80744c9b0b7108f6959b0d4628d5b8",
@@ -285,7 +282,4 @@
     <string name="exam_cutoff_source">%1$s（出典：%2$s）</string>
     <!-- %1$s is the learner's goal, such as "Medicine at USP". -->
     <string name="exam_cutoff_goal">目標：%1$s</string>
-    <string name="exam_not_found_title">ページが見つかりませんでした</string>
-    <string name="exam_not_found_description">リンクが古いか、正しく入力されていない可能性があります。</string>
-    <string name="exam_go_to_today">「今日」へ移動する</string>
 </resources>

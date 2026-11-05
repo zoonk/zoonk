@@ -3,7 +3,6 @@
 {
   "practice_already_answered": "6fbf9650ba31736e65cd8cb09794893efcfa4039b2c4ea534935ef7ccb7b7234",
   "practice_check": "b78a5076b4f52ceaac4445f275d88e7f51e114abed08619cf9a1997f27bae5f5",
-  "practice_close": "68830891a34fd3d3cd83bdb99bea235a138084fbcbafa25389243bfa14080c3d",
   "practice_continue": "5fc1a36b7fc4a343603f0b44066b245c21083857702ddb03b9b441895890d669",
   "practice_count": "e36009a5656da244c3d3da14fb83fcb6619858de20f2f6f0dd6800e6764df4d2",
   "practice_done_review": "4763ea35e7d60ee1beb35c1b434502f5771c5cd14afd4c9ae21eb80d22705728",
@@ -18,8 +17,6 @@
   "practice_net_tally": "16df3b6f3a2999f6ec11707201e547a65487bb083534b67f579038387a7ae06e",
   "practice_net_wrong": "b9b03d9f30e99f32d2c4376f66b4cc95ae3f676de4603e65868078b249b3fac9",
   "practice_next": "8999e2bdefb4b90bdf069bfa0cb387b20503ab2373be5ee28b0bcd40a370c237",
-  "practice_not_found_description": "e7ae9fb227161324f8cab2ee43357d5534b82aaa6ffca58651c0135c57bdb6ed",
-  "practice_not_found_title": "d41aa2ec79c4b930bce9aa91fd3e81143dffe0c9ec552552ff167abf6fe14fea",
   "practice_pause_failed": "21ab244a1cf28a077681e63d7c4f21d3b332deacf3c1a8f1d3e956a2d2f89741",
   "practice_pause_stop": "68c9afebf796071923a9a55324fa7952c7658de2995602b044eed4d170ac35ce",
   "practice_pause_text": "cb67f57edb3adea809c1953db89afd75aa70c766ce7fd4b7f068f6e48a7cfbb0",
@@ -78,7 +75,4 @@
     <string name="practice_pause_failed">Wir konnten die Lerneinheit nicht beenden. Versuch es noch einmal.</string>
     <string name="practice_done_title">Übung abgeschlossen</string>
     <string name="practice_done_review">Wiederholung abgeschlossen</string>
-    <string name="practice_not_found_title">Diese Fragen sind nicht mehr verfügbar</string>
-    <string name="practice_not_found_description">Sie sind möglicherweise abgelaufen oder wurden verschoben. Unter Heute findest du, was als Nächstes ansteht.</string>
-    <string name="practice_close">Schließen</string>
 </resources>

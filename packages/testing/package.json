@@ -45,7 +45,7 @@
     "./fixtures/words": "./src/fixtures/words.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@zoonk/db": "workspace:*",

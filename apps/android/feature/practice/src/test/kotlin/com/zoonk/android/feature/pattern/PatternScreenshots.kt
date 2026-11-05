@@ -6,7 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -15,11 +14,10 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.MistakePattern
 import org.junit.Assume.assumeTrue
@@ -50,22 +48,6 @@ class PatternScreenshots {
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
 
-    // The publisher doesn't replay a fold to a screen composed after it, so it tells the shown screen, twice
-    // for a frame that's rebuilt as the fold changes its panes.
-    private fun unfold() {
-        repeat(2) {
-            rule.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                    ),
-                ),
-            )
-        }
-        rule.waitForIdle()
-    }
-
     private fun show(
         name: String,
         kind: MistakePattern.Kind = MistakePattern.Kind.PATTERN,
@@ -88,9 +70,9 @@ class PatternScreenshots {
         }
         play()
         rule.waitForIdle()
-        if (fold) unfold()
+        if (fold) rule.unfoldBook(folds)
         val root = if (sheet) rule.onNode(isDialog()) else rule.onRoot()
-        val bitmap = root.captureToImage().asAndroidBitmap()
+        val bitmap = root.captureRender().asAndroidBitmap()
         File(
             folder,
             "pattern-$name.png",

@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.today
 
 import androidx.activity.compose.LocalActivity
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +18,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -60,6 +60,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
@@ -102,7 +103,7 @@ fun TodayDay(
     onboarding: OnboardingStore? = null,
     refreshIfChanged: suspend () -> Boolean,
 ) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val poll =
         pollWhile(
             active = read.day.isWaitingForLessons(read.today.lessonStatus),
@@ -112,7 +113,7 @@ fun TodayDay(
         )
     val model = remember(read, poll.stalled) { TodayDayModel(read, poll.stalled) }
     val activity = LocalActivity.current
-    DisposableEffect(viewModel) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
+    DisposableEffect(viewModel, read.noticeVisit()) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
     TrackShown(AnalyticsEvent.TodayViewed)
     // Here rather than in the notice, which a lazy list or a layout change can compose again within one visit.
     viewModel.noticeEvent(read)?.let { TrackShown(it) }
@@ -156,6 +157,8 @@ fun TodayDay(
                     TodayNotice(TodayNoticeState(read, viewModel, navigator::open, plans, language?.value, onboarding), layout)
                 },
                 onMission = { opens -> openMission(opens, model, actions, today, scope) },
+                pending = { viewModel.pending },
+                failed = { viewModel.failed },
                 navigate = navigator::open,
                 standing = {
                     val openPlan = { navigator.open(AppRoute.Plan()) }
@@ -264,20 +267,11 @@ internal fun TodayAction(
 ) {
     if (!model.hasAction) return
 
-    val pending = viewModel.pending
     val status = rememberActionStatus(model, viewModel)
-    val tap =
-        when {
-            model.pastDate != null -> null
-            model.state == StudySession.State.PREPARE -> TodayTap.Prepare
-            model.keepLearning || model.state == StudySession.State.AHEAD -> TodayTap.KeepLearning
-            model.state == StudySession.State.UNDERWAY -> TodayTap.Continue
-            else -> null
-        }
 
     Column(modifier, horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         val buttonModifier = if (docked) Modifier.fillMaxWidth() else Modifier
-        val busy = tap != null && pending == tap
+        val busy = status.tap != null && viewModel.pending == status.tap
 
         when {
             model.pastDate != null -> {
@@ -314,17 +308,18 @@ internal fun TodayAction(
             }
         }
 
-        // Beside the title there's no room under the button: the day's meta line says it instead.
-        if (docked) TodayActionStatus(status)
+        // Beside the title, Continue's words go on the day's meta line, as main's do.
+        if (docked || status.tap != TodayTap.Continue) TodayActionStatus(status)
     }
 }
 
-/** What the day's action is waiting for, or that it failed. */
+/** What the day's action is waiting for, or why it failed. */
 internal class ActionStatus(
+    val tap: TodayTap?,
     val wait: WaitState,
-    val failed: TodayTap?,
+    @StringRes val failure: Int?,
 ) {
-    val speaking: Boolean get() = wait != WaitState.None || failed != null
+    val speaking: Boolean get() = wait != WaitState.None || failure != null
 }
 
 @Composable
@@ -341,7 +336,14 @@ internal fun rememberActionStatus(
             else -> null
         }
     val wait = rememberWaitState(tap != null && viewModel.pending == tap)
-    return ActionStatus(wait, tap?.takeIf { viewModel.failed == it })
+    val failure =
+        when {
+            tap == null || viewModel.failed != tap -> null
+            tap == TodayTap.Continue -> R.string.today_open_failed
+            tap == TodayTap.KeepLearning && model.keepLearning -> R.string.today_keep_learning_failed
+            else -> R.string.today_save_failed
+        }
+    return ActionStatus(tap, wait, failure)
 }
 
 @Composable
@@ -351,16 +353,9 @@ internal fun TodayActionStatus(
 ) {
     OpeningWaitLine(status.wait, modifier)
 
-    if (status.failed != null) {
+    if (status.failure != null) {
         Text(
-            text =
-                stringResource(
-                    when (status.failed) {
-                        TodayTap.Continue -> R.string.today_open_failed
-                        TodayTap.Prepare -> R.string.today_save_failed
-                        else -> R.string.today_keep_learning_failed
-                    },
-                ),
+            text = stringResource(status.failure),
             modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,

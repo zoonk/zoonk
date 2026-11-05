@@ -28,6 +28,7 @@ struct TodayDayView: View {
     case catchUp
     case keepLearning
     case main
+    case mission(Int)
     case planChange
     case prepare
   }
@@ -55,7 +56,9 @@ struct TodayDayView: View {
     .listStyle(.insetGrouped)
     .onAppear(perform: startVisit)
     .onChange(of: isCovered) {
-      if !isCovered {
+      if isCovered {
+        tapTask?.cancel()
+      } else {
         startVisit()
       }
     }
@@ -95,13 +98,15 @@ struct TodayDayView: View {
     }
 
     if !view.upNextLessons.isEmpty {
-      TodayUpNextSection(view: view, isBusy: busy == .keepLearning) {
+      TodayUpNextSection(
+        view: view, isBusy: busy == .keepLearning, failed: failed == .keepLearning
+      ) {
         run(.keepLearning) { await store.addExtraTime(in: view) }
       }
     }
 
     TodayMoreSection(
-      view: view, busy: busy,
+      view: view, busy: busy, failed: failed,
       addTime: { run(.keepLearning) { await store.addExtraTime(in: view) } },
       catchUp: {
         perform(.catchUp) { await store.catchUp(in: view) }
@@ -169,7 +174,7 @@ struct TodayDayView: View {
       }
     case .examAccess:
       Section {
-        FreeWeekOverNotice()
+        FreeWeekOverNotice(isInset: true)
       }
     case .examChoice:
       TodayExamChoiceSection(
@@ -195,7 +200,7 @@ struct TodayDayView: View {
   @ViewBuilder
   private var aside: some View {
     if !view.session.missions.isEmpty {
-      TodayMissionsSection(view: view, open: openMission)
+      TodayMissionsSection(view: view, busy: busy, failed: failed, open: openMission)
     }
 
     TodayWeekSection(view: view)
@@ -249,13 +254,13 @@ struct TodayDayView: View {
   }
 
   private func openMission(_ block: StudyBlock) {
-    run(.block(block.position)) {
+    run(.mission(block.position)) {
       await store.open(block, as: .mission, in: view)
     }
   }
 
-  /// A tap whose screen went (another day, another tab) or whose learner left is cancelled and opens
-  /// nothing.
+  /// A tap whose screen went (another day, another tab, a task over it) or whose learner left is
+  /// cancelled: it opens nothing and says nothing.
   private func run(_ tap: Tap, _ action: @escaping () async -> MutationResult<StudyDestination>) {
     guard busy == nil else {
       return
@@ -364,34 +369,32 @@ struct TodayDayView: View {
 
 extension AppRouter {
   /// A mission's block no longer free to start shows Today as it stands. Nothing opens when it
-  /// couldn't, or once the learner moved on.
+  /// couldn't, or once the learner moved on, which comes back `obsolete` so nothing says it failed.
   static func openingTodayBlocks(today: TodayStore) -> BlockOpener {
     { blockID, router in
-      let tab = router.selectedTab
-      let shown = (router.tasks, router.path(for: tab).wrappedValue)
+      let shown = router.shown
+      let result = await today.open(blockID: blockID)
 
-      Task {
-        let result = await today.open(blockID: blockID)
-
-        guard router.selectedTab == tab, shown == (router.tasks, router.path(for: tab).wrappedValue)
-        else {
-          return
-        }
-
-        switch result {
-        case .done(.changed):
-          router.showRoot(of: .today)
-        case .done(let destination):
-          router.openStudy(destination)
-        case .failed, .obsolete:
-          break
-        }
+      guard shown == router.shown else {
+        return .obsolete
       }
+
+      switch result {
+      case .done(.changed):
+        router.showRoot(of: .today)
+      case .done(let destination):
+        router.openStudy(destination)
+      case .failed, .obsolete:
+        break
+      }
+
+      return result
     }
   }
 
   /// Anything but a question block opens its own screen over the session, so closing it goes on with
-  /// the day. `changed` opens nothing: the screen the learner tapped on reads again.
+  /// the day; a question block plays in the session, which comes to the front. `changed` opens
+  /// nothing: the screen the learner tapped on reads again.
   func openStudy(_ destination: StudyDestination) {
     switch destination {
     case .questionBlock(let blockID):
@@ -405,7 +408,9 @@ extension AppRouter {
     }
 
     guard let step = destination.step else {
-      if !tasks.contains(.session) {
+      if let session = tasks.firstIndex(of: .session) {
+        task(at: session + 1).wrappedValue = nil
+      } else {
         open(.session)
       }
 

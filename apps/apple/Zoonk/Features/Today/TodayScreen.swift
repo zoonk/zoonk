@@ -12,7 +12,17 @@ struct TodayScreen: View {
 
   @ViewBuilder
   private var content: some View {
-    if session.authenticatedSession == nil {
+    if session.state == .signedOut(sessionEnded: true) {
+      // The plan is still in the account, so this leads back to it instead of a first goal built
+      // again as a guest.
+      SignInGate(sessionEnded: true)
+        .described(
+          by: LocalizedStringResource(
+            "Each day's lessons, reviews and practice for your goal.", table: "Today",
+            comment: "What Today is for, above the way to log back in after a session ended")
+        )
+        .lonePage()
+    } else if session.authenticatedSession == nil {
       // Signed out, Today is the app's front door, as main's home page is the web's.
       TodayStartGoal()
         .onAppear {
@@ -320,17 +330,15 @@ private struct TodayGoalPaused: View {
         }
 
         if failure == .limitReached {
-          Text(
-            "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
-            tableName: "Today", comment: "Why resuming the goal failed on the free plan"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
+              table: "Today", comment: "Why resuming the goal failed on the free plan"))
         } else if failure != nil {
-          Text(
-            "Couldn't save. Check your connection and try again.", tableName: "Today",
-            comment: "Resuming the goal failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "Couldn't save. Check your connection and try again.", table: "Today",
+              comment: "Resuming the goal failed"))
         }
       }
     } actions: {

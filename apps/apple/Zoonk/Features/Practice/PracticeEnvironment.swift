@@ -14,7 +14,9 @@ enum PracticeDestination: Equatable, Sendable {
   case mistakePractice(skillId: String?)
   case mock(blockId: String, sessionId: String?)
   case pattern(patternId: String)
+  case plan
   case subscription
+  case today
 }
 
 struct PracticeAskTarget: Equatable, Sendable {
@@ -28,13 +30,23 @@ struct PracticeAskTarget: Equatable, Sendable {
   let missed: Bool
 }
 
+/// A language unit's checkpoint is a live call, which main's checkpoint page reads before the
+/// checkpoint.
+struct PracticeCheckpointCall: Sendable {
+  let read:
+    @MainActor @Sendable (_ blockId: String, _ token: String) async throws ->
+      Components.Schemas.LanguageCheckpointCall
+  /// The call's screen brings its own title, close and intro.
+  let screen: @MainActor @Sendable (_ blockId: String) -> AnyView
+}
+
 /// Each hook is a no-op until set. A reference, so views never re-render for it.
 final class PracticeHooks: Sendable {
   let navigate: @MainActor @Sendable (PracticeDestination) -> Void
   /// Nil hides Ask.
   let askButton: (@MainActor @Sendable (PracticeAskTarget) -> AnyView)?
-  /// Nil says the challenge isn't ready here.
-  let checkpointCall: (@MainActor @Sendable (_ blockId: String, _ sessionId: String?) -> AnyView)?
+  /// Nil reads every checkpoint as a duel or the week's challenge.
+  let checkpointCall: PracticeCheckpointCall?
   /// Nil shows the result alone.
   let ceremony:
     (
@@ -46,7 +58,7 @@ final class PracticeHooks: Sendable {
   init(
     navigate: @escaping @MainActor @Sendable (PracticeDestination) -> Void = { _ in },
     askButton: (@MainActor @Sendable (PracticeAskTarget) -> AnyView)? = nil,
-    checkpointCall: (@MainActor @Sendable (String, String?) -> AnyView)? = nil,
+    checkpointCall: PracticeCheckpointCall? = nil,
     ceremony: (
       @MainActor @Sendable (Components.Schemas.Milestone, @escaping @MainActor () -> Void) ->
         AnyView

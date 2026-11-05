@@ -67,7 +67,7 @@ class TutorViewModelTest {
     ): TutorViewModel =
         TutorViewModel(
             scope,
-            TutorStore(api, cache, session, { true }) { _, _, status -> decision(status) },
+            TutorStore(api, cache, session, { MutationResult.Done(Unit) }) { _, _, status -> decision(status) },
             saved,
         ).also { it.thread.load() }
 
