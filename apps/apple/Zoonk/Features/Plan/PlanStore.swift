@@ -120,8 +120,12 @@ final class PlanStore {
     }
   }
 
+  /// Subscribing unlocks its certificates.
   func planEnd(goalId: String) -> Resource<PlanEnd> {
-    resource(&planEnds, goalId) { api, token in
+    resource(
+      &planEnds, goalId,
+      domains: [.certificates, .goals, .learnerModel, .userProgress, .userSubscription]
+    ) { api, token in
       try await api.planEnd(token: token, goalId: goalId)
     }
   }

@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Every certificate the learner earned, newest first, in one list.
+/// Every certificate the learner earned, newest first, in one list. Without Plus, one notice says
+/// what Plus does for them, and the locked ones carry its mark.
 struct CertificatesScreen: View {
   @Environment(CertificatesStore.self) private var store
   @ScaledMetric(relativeTo: .body) private var pictureWidth = 84.0
@@ -12,14 +13,18 @@ struct CertificatesScreen: View {
       switch store.list.state {
       case .loaded(let certificates):
         List {
+          CertificatesPlusSection()
+
           Section {
             ForEach(certificates) { certificate in
               row(certificate)
             }
           } footer: {
-            Text(
-              "Print, download or share your certificates anytime.", tableName: "Certificates",
-              comment: "Under the learner's certificates")
+            if certificates.contains(where: { $0.issued != nil }) {
+              Text(
+                "Print, download or share your certificates anytime.", tableName: "Certificates",
+                comment: "Under the learner's certificates")
+            }
           }
         }
       case .empty:
@@ -37,14 +42,21 @@ struct CertificatesScreen: View {
     .loads(store.list)
   }
 
-  private func row(_ certificate: Certificate) -> some View {
+  private func row(_ certificate: OwnedCertificate) -> some View {
     Button {
       open(certificate.id)
     } label: {
       HStack(spacing: 12) {
-        CertificatePicture(url: certificate.pictures.screen, size: .thumbnail)
-          .frame(width: pictureWidth)
-          .accessibilityHidden(true)
+        Group {
+          switch certificate {
+          case .issued(let issued):
+            CertificatePicture(url: issued.pictures.screen, size: .thumbnail)
+          case .locked(let facts):
+            LockedCertificateCard(facts: facts, size: .thumbnail)
+          }
+        }
+        .frame(width: pictureWidth)
+        .accessibilityHidden(true)
 
         VStack(alignment: .leading, spacing: 2) {
           Text(certificate.facts.name)
@@ -55,8 +67,27 @@ struct CertificatesScreen: View {
             .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+
+        if certificate.facts.locked {
+          PlusMark()
+        }
       }
       .disclosureChevron()
+    }
+  }
+}
+
+/// While the learner isn't on Plus, in the empty state too.
+private struct CertificatesPlusSection: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+
+  var body: some View {
+    if let tier = learner.summary.value?.tier, tier != .plus {
+      Section {
+        CertificatePlusNotice(isList: true)
+          .listRowInsets(EdgeInsets())
+          .listRowBackground(Color.clear)
+      }
     }
   }
 }
@@ -80,7 +111,7 @@ private struct EmptyCertificates: View {
           }
         } description: {
           Text(
-            "Finish a course or a language level and its certificate shows up here, free to print and share.",
+            "Finish a course level or a language level and its certificate shows up here.",
             tableName: "Certificates", comment: "How the learner earns certificates")
         } actions: {
           Button {
@@ -95,6 +126,8 @@ private struct EmptyCertificates: View {
         }
       }
       .listRowBackground(Color.clear)
+
+      CertificatesPlusSection()
 
       if let upNext = store.upNext.value {
         Section {

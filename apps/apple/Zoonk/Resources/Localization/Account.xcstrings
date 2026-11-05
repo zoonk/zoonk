@@ -1179,6 +1179,65 @@
         }
       }
     },
+    "A certificate for every level you finish" : {
+      "comment" : "Zoonk Plus benefit: certificates for finished course and language levels",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Zertifikat für jedes Level, das du abschließt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un certificado por cada nivel que completes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un certificat pour chaque niveau terminé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un certificato per ogni livello che completi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レベルを修了するたびに証明書を取得"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레벨을 마칠 때마다 받는 인증서"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certyfikat za każdy ukończony poziom"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um certificado para cada nível que você concluir"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamladığın her seviye için bir sertifika"
+          }
+        }
+      }
+    },
     "A plan for your goal and your date" : {
       "comment" : "Free plan: a plan for the learner's goal",
       "localizations" : {

@@ -267,7 +267,8 @@ struct MilestoneStage: View {
 
 extension View {
   /// The certificates a result earned, then its milestone, rarest first: each opens once wherever
-  /// it shows, full screen, and is marked shown.
+  /// it shows, full screen, and is marked shown. A certificate left through See Plus isn't, so it
+  /// plays again after the next task.
   func completionMoments(certificates: [CertificateFacts] = [], milestone: Milestone? = nil)
     -> some View
   {
@@ -282,7 +283,8 @@ extension View {
 
   /// A result as the generated client decodes it.
   func completionMoments(
-    certificates: [Components.Schemas.CertificateFacts], ceremony: Components.Schemas.Milestone?
+    certificates: [Components.Schemas.OwnedCertificateFacts],
+    ceremony: Components.Schemas.Milestone?
   ) -> some View {
     completionMoments(
       certificates: certificates.isEmpty ? [] : (try? StudyJSON.recode(certificates)) ?? [],
@@ -298,16 +300,25 @@ private struct CompletionMoments: Hashable, Identifiable {
 }
 
 private struct CompletionMomentsPresenter: ViewModifier {
+  @Environment(AppRouter.self) private var router
   @Environment(CertificatesStore.self) private var certificates
   @Environment(StudySessionStore.self) private var sessions
 
   let earned: CompletionMoments
 
   @State private var shown: CompletionMoments?
+  /// A result plays once on its screen, even when the screen appears again.
+  @State private var played: CompletionMoments?
+  @State private var opensPlus = false
 
   func body(content: Content) -> some View {
     content
       .onChange(of: earned, initial: true) { _, earned in
+        guard earned != played else {
+          return
+        }
+
+        played = earned
         let new = CompletionMoments(
           certificates: certificates.claimMoments(earned.certificates),
           milestone: earned.milestone.flatMap { sessions.claimCeremony($0) ? $0 : nil })
@@ -316,12 +327,27 @@ private struct CompletionMomentsPresenter: ViewModifier {
           shown = new
         }
       }
-      .fullScreenCover(item: $shown) { moments in
-        CompletionMomentsView(moments: moments) {
-          shown = nil
-        }
+      // Plus opens once the moment is gone: a screen under a cover can't present.
+      .fullScreenCover(item: $shown, onDismiss: openPlus) { moments in
+        CompletionMomentsView(
+          moments: moments,
+          onSeePlus: {
+            opensPlus = true
+            shown = nil
+          },
+          onClose: { shown = nil }
+        )
         .accessibilitySizeStyles()
       }
+  }
+
+  private func openPlus() {
+    guard opensPlus else {
+      return
+    }
+
+    opensPlus = false
+    router.present(.subscription)
   }
 }
 
@@ -329,11 +355,12 @@ private struct CompletionMomentsView: View {
   @State private var certificatesClosed = false
 
   let moments: CompletionMoments
+  let onSeePlus: () -> Void
   let onClose: () -> Void
 
   var body: some View {
     if !moments.certificates.isEmpty, !certificatesClosed {
-      CertificateCeremony(certificates: moments.certificates) {
+      CertificateCeremony(certificates: moments.certificates, onSeePlus: onSeePlus) {
         if moments.milestone == nil {
           onClose()
         } else {

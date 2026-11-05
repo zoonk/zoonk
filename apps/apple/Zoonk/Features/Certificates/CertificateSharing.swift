@@ -76,28 +76,29 @@ extension CertificateFacts {
 
       if lessons == 0 {
         return String(
-          localized: "I just finished \(title ?? "") on Zoonk.",
+          localized: "I just finished \(name) on Zoonk.",
           table: "Certificates",
           comment:
-            "Suggested text for sharing a course certificate whose lessons were all passed by test: the course"
+            "Suggested text for sharing a course certificate whose lessons were all passed by test: the course or its level, such as Python · Beginner"
         )
       }
 
       if let minutes, minutes > 0 {
         return String(
           localized:
-            "I just finished \(title ?? "") on Zoonk: \(lessons) lessons and about \(studyTime(minutes)) of study.",
+            "I just finished \(name) on Zoonk: \(lessons) lessons and about \(studyTime(minutes)) of study.",
           table: "Certificates",
           comment:
-            "Suggested text for sharing a course certificate: the course, the lessons studied, then about how long they took, such as \"41 hours\""
+            "Suggested text for sharing a course certificate: the course or its level (Python · Beginner), the lessons studied, then about how long they took, such as \"41 hours\""
         )
       }
 
       return String(
-        localized: "I just finished \(title ?? "") on Zoonk: \(lessons) lessons.",
+        localized: "I just finished \(name) on Zoonk: \(lessons) lessons.",
         table: "Certificates",
         comment:
-          "Suggested text for sharing a course certificate: the course, then the lessons studied")
+          "Suggested text for sharing a course certificate: the course or its level (Python · Beginner), then the lessons studied"
+      )
     case .languageLevel:
       return String(
         localized: "I just completed level \(level ?? "") in \(languageName) on Zoonk.",
@@ -109,7 +110,7 @@ extension CertificateFacts {
 }
 
 /// "41 hours", or "45 minutes" under an hour.
-private func studyTime(_ minutes: Int) -> String {
+func studyTime(_ minutes: Int) -> String {
   let measurement =
     minutes < 60
     ? Measurement(value: Double(minutes), unit: UnitDuration.minutes)

@@ -27,12 +27,14 @@ struct PlusMark: View {
 /// - `showsSeePlus: false` drops the button where the screen's main action already is
 ///   `SeePlusButton`.
 /// - `isInset` drops the panel inside a `List` row or a card that already has one.
+/// - `seePlus` replaces opening Plus where the screen must close first (a full-screen moment).
 /// - `action` is the free way, after "See Plus" (the free plan's one goal: their Plan).
 struct PlusNotice<Action: View>: View {
   var title: Text?
   var description: Text?
   var showsSeePlus = true
   var isInset = false
+  var seePlus: (() -> Void)?
   @ViewBuilder var action: Action
 
   var body: some View {
@@ -63,7 +65,7 @@ struct PlusNotice<Action: View>: View {
 
         if showsSeePlus {
           HStack {
-            SeePlusButton()
+            SeePlusButton(action: seePlus)
             action
           }
           .buttonStyle(.bordered)
@@ -80,10 +82,12 @@ struct PlusNotice<Action: View>: View {
 
 extension PlusNotice where Action == EmptyView {
   init(
-    title: Text? = nil, description: Text? = nil, showsSeePlus: Bool = true, isInset: Bool = false
+    title: Text? = nil, description: Text? = nil, showsSeePlus: Bool = true, isInset: Bool = false,
+    seePlus: (() -> Void)? = nil
   ) {
     self.init(
-      title: title, description: description, showsSeePlus: showsSeePlus, isInset: isInset
+      title: title, description: description, showsSeePlus: showsSeePlus, isInset: isInset,
+      seePlus: seePlus
     ) {
       EmptyView()
     }
@@ -112,9 +116,16 @@ struct FreeWeekOverNotice: View {
 struct SeePlusButton: View {
   @Environment(AppRouter.self) private var router
 
+  /// Replaces opening Plus here.
+  var action: (() -> Void)?
+
   var body: some View {
     Button {
-      router.present(.subscription)
+      if let action {
+        action()
+      } else {
+        router.present(.subscription)
+      }
     } label: {
       Text(
         "See Plus", tableName: "Subscriptions",

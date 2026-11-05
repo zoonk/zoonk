@@ -13,7 +13,7 @@ enum PlanSlotItem: Hashable {
   case paused
   case tooTight
 
-  /// `courseComplete` while the finished course's certificate isn't written yet.
+  /// `courseComplete` while a finished part's certificate isn't written yet.
   static func items(
     plan: GoalPlan, isPaused: Bool, isExam: Bool, courseComplete: Bool
   ) -> [PlanSlotItem] {
@@ -74,10 +74,11 @@ struct PlanSuggestionSection: View {
   var body: some View {
     let state = store.suggestionState(goalId: context.goal.id)
     let isExam = context.goal.kind == .exam
-    let certificate = isExam ? store.planEnd(goalId: context.goal.id).value?.certificate : nil
+    let certificates =
+      isExam ? store.planEnd(goalId: context.goal.id).value?.certificates : nil
     let items = PlanSlotItem.items(
       plan: context.plan, isPaused: context.isPaused, isExam: isExam,
-      courseComplete: certificate != nil && certificate?.code == nil
+      courseComplete: !(certificates?.unclaimed.isEmpty ?? true)
     ).filter { !state.dismissed.contains($0) }
     let index = min(state.position, max(items.count - 1, 0))
 
@@ -501,7 +502,7 @@ private struct PlanPausedSlot: View {
   }
 }
 
-/// Writes the course's certificate; the Plan plays its moment.
+/// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment.
 private struct CertificateClaimButton: View {
   @State private var isClaiming = false
   @State private var failed = false
@@ -511,7 +512,7 @@ private struct CertificateClaimButton: View {
   var body: some View {
     let failure = String(
       localized: "That didn't save. Try again.", table: "Plan",
-      comment: "The course's certificate couldn't be written; Get your certificate tries again")
+      comment: "The plan's certificate couldn't be written; Get your certificate tries again")
 
     Button {
       Task {
@@ -527,7 +528,7 @@ private struct CertificateClaimButton: View {
       Label {
         Text(
           "Get your certificate", tableName: "Plan",
-          comment: "Writes the certificate of the plan's finished course and shows it")
+          comment: "Writes the certificate of the plan's finished course or level and shows it")
       } icon: {
         Image(systemName: "rosette")
       }
@@ -539,6 +540,52 @@ private struct CertificateClaimButton: View {
       Text(failure)
         .font(.subheadline)
         .foregroundStyle(.destructive)
+    }
+  }
+}
+
+/// One certificate opens; several open Certificates.
+private struct PlanCertificatesButton: View {
+  @Environment(AppRouter.self) private var router
+
+  let context: PlanContext
+  let earned: [PlanEnd.Certificates.Earned]
+
+  var body: some View {
+    if let only = earned.first, earned.count == 1 {
+      Button {
+        context.show(.certificate(code: only.code))
+      } label: {
+        label(
+          Text(
+            "View certificate", tableName: "Plan",
+            comment: "Opens the certificate of the finished plan's course or level"))
+      }
+      .buttonStyle(.bordered)
+    } else if !earned.isEmpty {
+      Button {
+        router.present(.account(.certificates))
+      } label: {
+        label(
+          Text(
+            "View certificates", tableName: "Plan",
+            comment: "Opens the learner's certificates, from a plan that earned several"))
+      }
+      .buttonStyle(.bordered)
+    }
+  }
+
+  private func label(_ title: Text) -> some View {
+    HStack {
+      Label {
+        title
+      } icon: {
+        Image(systemName: "rosette")
+      }
+
+      if earned.contains(where: \.locked) {
+        PlusMark()
+      }
     }
   }
 }
@@ -562,23 +609,12 @@ private struct PlanFinishedSlot: View {
         StatusMark(status: .done)
       }
 
-      if let certificate = end.value?.certificate {
-        if let code = certificate.code {
-          Button {
-            context.show(.certificate(code: code))
-          } label: {
-            Label {
-              Text(
-                "View certificate", tableName: "Plan",
-                comment: "Opens the certificate of the finished plan's course")
-            } icon: {
-              Image(systemName: "rosette")
-            }
-          }
-          .buttonStyle(.bordered)
-        } else {
+      if let certificates = end.value?.certificates {
+        if !certificates.unclaimed.isEmpty {
           CertificateClaimButton(context: context)
         }
+
+        PlanCertificatesButton(context: context, earned: certificates.earned)
       }
 
       if let value = end.value?.next, value.nextLevel != nil || !value.related.isEmpty {

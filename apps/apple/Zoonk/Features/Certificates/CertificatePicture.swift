@@ -8,7 +8,6 @@ struct CertificatePicture: View {
     case page = 2048
   }
 
-  @Environment(\.colorScheme) private var colorScheme
   @Environment(\.imageLoader) private var images
   /// The last picture loaded, kept while a renamed certificate's new one loads.
   @State private var loaded: UIImage?
@@ -20,7 +19,6 @@ struct CertificatePicture: View {
 
   var body: some View {
     let image = url.flatMap { cached($0) } ?? loaded
-    let corner = size == .thumbnail ? 4.0 : 6.0
 
     ZStack {
       if let image {
@@ -31,16 +29,7 @@ struct CertificatePicture: View {
         MediaPendingFill(pulses: isLoading)
       }
     }
-    .aspectRatio(CertificateFacts.aspectRatio, contentMode: .fit)
-    .clipShape(.rect(cornerRadius: corner, style: .continuous))
-    .overlay {
-      RoundedRectangle(cornerRadius: corner, style: .continuous)
-        .strokeBorder(colorScheme == .dark ? Color.white.opacity(0.1) : Color(.separator))
-    }
-    .shadow(
-      color: size == .page && colorScheme == .light ? .black.opacity(0.08) : .clear,
-      radius: 16, y: 6
-    )
+    .certificateFrame(size)
     .task(id: url) {
       guard let url, let images else {
         return
@@ -60,5 +49,68 @@ struct CertificatePicture: View {
 
   private func cached(_ url: URL) -> UIImage? {
     images?.cachedImage(for: url, token: nil, maxPixelSize: size.rawValue)
+  }
+}
+
+/// A locked certificate in its picture's place: its frame, a lock, and on a page its name and date.
+struct LockedCertificateCard: View {
+  let facts: CertificateFacts
+  var size = CertificatePicture.Size.page
+
+  var body: some View {
+    VStack(spacing: 8) {
+      Image(systemName: "lock.fill")
+        .font(size == .page ? .title : .body)
+        .foregroundStyle(.secondary)
+
+      if size == .page {
+        Text(facts.name)
+          .font(.headline)
+          .multilineTextAlignment(.center)
+
+        Text(facts.completedOnDay)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+      }
+    }
+    .padding()
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(.fill.tertiary)
+    .certificateFrame(size)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(
+      Text(
+        "\(facts.name), locked", tableName: "Certificates",
+        comment: "VoiceOver for a certificate that comes with Plus: its name, then that it's locked"
+      ))
+  }
+}
+
+extension View {
+  /// The certificate's sheet: A4 landscape, rounded, and outlined in light and dark alike.
+  fileprivate func certificateFrame(_ size: CertificatePicture.Size) -> some View {
+    modifier(CertificateFrame(size: size))
+  }
+}
+
+private struct CertificateFrame: ViewModifier {
+  @Environment(\.colorScheme) private var colorScheme
+
+  let size: CertificatePicture.Size
+
+  func body(content: Content) -> some View {
+    let corner = size == .thumbnail ? 4.0 : 6.0
+
+    content
+      .aspectRatio(CertificateFacts.aspectRatio, contentMode: .fit)
+      .clipShape(.rect(cornerRadius: corner, style: .continuous))
+      .overlay {
+        RoundedRectangle(cornerRadius: corner, style: .continuous)
+          .strokeBorder(colorScheme == .dark ? Color.white.opacity(0.1) : Color(.separator))
+      }
+      .shadow(
+        color: size == .page && colorScheme == .light ? .black.opacity(0.08) : .clear,
+        radius: 16, y: 6
+      )
   }
 }

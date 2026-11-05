@@ -98,7 +98,6 @@ filter:
     - finishLanguageLevelTest
     - finishMock
     - getCatalogLesson
-    - getCertificate
     - getChallenge
     - getChallengeTeam
     - getChapter
