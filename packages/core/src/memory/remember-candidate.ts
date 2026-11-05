@@ -81,7 +81,7 @@ async function applyDecision({
   }
 
   if (action.action === "remove") {
-    const removed = await removeMemoryFact({ factId: target.id, userId });
+    const removed = await removeMemoryFact({ by: fact.source, factId: target.id, userId });
     return removed ? { action: "removed", fact: null, previous: toMemoryFactView(removed) } : null;
   }
 

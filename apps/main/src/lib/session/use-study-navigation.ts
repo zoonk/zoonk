@@ -3,15 +3,12 @@
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
 import { LESSON_GENERATION_PARAM } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
-import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
-import { type MissionLinks } from "@zoonk/learn/buddy";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { LESSON_LIMIT_PARAM, toLessonLimitParam } from "./lesson-limit-param";
 import { SESSION_BLOCK_PARAM } from "./session-block-param";
 import { SESSION_GOAL_PARAM } from "./session-goal-param";
@@ -20,9 +17,9 @@ import { SESSION_STOPPED_HREF, SESSION_STOPPED_PARAM } from "./session-stopped-p
 import {
   addExtraStudyBlockAction,
   openStudyBlockAction,
-  saveMissionDayAction,
   stopStudySessionAction,
 } from "./study-session-actions";
+import { answerHere, openingHere } from "./tap-answer";
 
 export const SESSION_PATH = "/session";
 
@@ -65,7 +62,7 @@ export function getSessionHref({
   return query ? (`${SESSION_PATH}?${query}` as const) : SESSION_PATH;
 }
 
-function useReread(refresh?: () => void) {
+export function useReread(refresh?: () => void) {
   const router = useRouter();
 
   return useCallback(() => {
@@ -86,6 +83,11 @@ export function getCurrentLocation(): string {
 }
 
 type SessionAddress = { blockId?: string; href: string };
+
+type StudyGoing = {
+  here: () => Promise<boolean>;
+  onSessionAddress?: (address: SessionAddress) => void;
+};
 
 /** On the session screen already, it reads itself again in place: a new address would draw the frame first. */
 function useOpenSession() {
@@ -127,33 +129,38 @@ function useOpenUnwrittenLesson() {
   return useCallback(
     async (
       destination: Extract<StudyBlockOpening, { kind: "unwrittenLesson" }>,
-      onSessionAddress?: (address: SessionAddress) => void,
+      { here, onSessionAddress }: StudyGoing,
     ): Promise<boolean> => {
-      const openedFrom = getCurrentLocation();
-      const generation = getLearnerGeneration();
-      const answer = await askToWriteLesson(destination.lessonId);
+      const asked = await answerHere(askToWriteLesson(destination.lessonId), here);
 
-      const stillHere = () =>
-        openedFrom === getCurrentLocation() && generation === getLearnerGeneration();
+      if (typeof asked === "boolean") {
+        return asked;
+      }
 
-      if (answer.status === "failed" || !stillHere()) {
+      const { answer } = asked;
+
+      if (answer.status === "failed") {
         return false;
       }
 
       if (answer.status === "ready") {
-        const written = await noteAppWrite(
-          openStudyBlockAction({
-            target: { blockId: destination.blockId, kind: "block" },
-            timeZone: getLocalTimeZone(),
-          }),
+        const written = await answerHere(
+          noteAppWrite(
+            openStudyBlockAction({
+              target: { blockId: destination.blockId, kind: "block" },
+              timeZone: getLocalTimeZone(),
+            }),
+          ),
+          here,
         );
 
-        if (!stillHere()) {
-          return false;
+        if (typeof written === "boolean") {
+          return written;
         }
 
-        if (written?.kind === "lesson") {
-          router.push(`/learn/${written.lessonId}?session=${written.sessionId}`);
+        if (written.answer?.kind === "lesson") {
+          const { lessonId, sessionId } = written.answer;
+          router.push(`/learn/${lessonId}?session=${sessionId}`);
           return true;
         }
       }
@@ -177,6 +184,10 @@ function useOpenUnwrittenLesson() {
   );
 }
 
+/**
+ * Resolves to false when it couldn't open, and true otherwise, also when the learner left before the
+ * answer: a tap they left has nothing to report.
+ */
 export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = {}) {
   const router = useRouter();
   const openSession = useOpenSession();
@@ -186,14 +197,18 @@ export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = 
   return useCallback(
     async (
       destination: StudyBlockOpening | null,
-      { onSessionAddress }: { onSessionAddress?: (address: SessionAddress) => void } = {},
+      { here, onSessionAddress }: StudyGoing,
     ): Promise<boolean> => {
+      if (!(await here())) {
+        return true;
+      }
+
       if (!destination) {
         return false;
       }
 
       if (destination.kind === "unwrittenLesson") {
-        return openUnwrittenLesson(destination, onSessionAddress);
+        return openUnwrittenLesson(destination, { here, onSessionAddress });
       }
 
       if (destination.kind === "lesson") {
@@ -225,66 +240,16 @@ export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = 
   );
 }
 
-function useOpenDestination({ refresh }: { refresh?: () => void } = {}) {
-  const go = useGoToStudyDestination({ refresh });
+export function useOpenDestination() {
+  const go = useGoToStudyDestination();
 
   return useCallback(
     async (action: () => Promise<StudyBlockOpening | null>): Promise<boolean> => {
-      const openedFrom = getCurrentLocation();
-      const destination = await action();
-
-      return openedFrom === getCurrentLocation() ? go(destination) : false;
+      const here = openingHere();
+      const opened = await answerHere(action(), here);
+      return typeof opened === "boolean" ? opened : go(opened.answer, { here });
     },
     [go],
-  );
-}
-
-export function useMissionLinks(
-  goalId: string,
-  {
-    openStep,
-    refresh,
-  }: { openStep?: (ref: DayBlockRef) => Promise<boolean>; refresh?: () => void } = {},
-): MissionLinks {
-  const navigate = useOpenDestination({ refresh });
-  const reread = useReread(refresh);
-
-  return useMemo(
-    () => ({
-      hrefs: {
-        areaPractice: (areaId) => `/content/chapters/${areaId}`,
-        buddy: "/buddy",
-        call: (chapterId) => `/content/units/${chapterId}`,
-        mistakesPractice: "/mistakes/practice",
-        mockChooser: "/mock/new",
-        pattern: (patternId) => `/pattern/${patternId}`,
-        pronunciation: `/pronunciation?goal=${goalId}`,
-      },
-      openBlock: async (blockId) => {
-        const openedFrom = getCurrentLocation();
-
-        const opened = await navigate(() =>
-          noteAppWrite(
-            openStudyBlockAction({
-              target: { blockId, kind: "mission" },
-              timeZone: getLocalTimeZone(),
-            }),
-          ),
-        );
-
-        if (!opened && openedFrom === getCurrentLocation()) {
-          reread();
-        }
-
-        return opened;
-      },
-      // Fired with the tap, never awaited: the page opens at once (see `saveMissionDayAction`).
-      openPage: () => {
-        saveMissionDayAction({ goalId, timeZone: getLocalTimeZone() }).catch(() => null);
-      },
-      openStep,
-    }),
-    [goalId, navigate, openStep, reread],
   );
 }
 
@@ -301,13 +266,18 @@ export function useStudyNavigation(sessionId: string) {
         openStudyBlockAction({ target: { kind: "next", sessionId }, timeZone: getLocalTimeZone() }),
       ),
     stop: async () => {
-      const stopped = await stopStudySessionAction(input());
+      const here = openingHere();
+      const stopped = await answerHere(stopStudySessionAction(input()), here);
 
-      if (stopped) {
+      if (typeof stopped === "boolean") {
+        return stopped;
+      }
+
+      if (stopped.answer) {
         router.push(SESSION_STOPPED_HREF);
       }
 
-      return stopped;
+      return stopped.answer;
     },
   };
 }

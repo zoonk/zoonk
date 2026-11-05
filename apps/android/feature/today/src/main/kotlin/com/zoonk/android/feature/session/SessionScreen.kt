@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +49,9 @@ import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonNotWrittenNotice
 import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.player.LessonWritingProgress
@@ -61,6 +64,7 @@ import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
@@ -70,7 +74,6 @@ import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
-import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -205,7 +208,7 @@ private fun SavedDay(
         }
 
         LoadState.Empty -> {
-            TaskScaffold(onClose = navigator::closeTask) { padding -> NotFoundMessage(navigator::closeTask, Modifier.padding(padding)) }
+            TaskNotFound(navigator)
         }
 
         else -> {
@@ -241,6 +244,14 @@ private fun SessionSummaryContent(
     if (!stopped && !summary.finished) {
         LaunchedEffect(session.id) { viewModel.readUnfinished(session.id) }
         SessionLoading(navigator::closeTask)
+        return
+    }
+
+    // A completion whose answer was lost brings its certificates back here, before the session's milestone.
+    val certificates = summary.certificates.map { it.naming }
+    var certificatesClosed by rememberSaveable(certificates.map { it.code }) { mutableStateOf(false) }
+    if (certificates.isNotEmpty() && !certificatesClosed) {
+        CertificateCeremony(app, certificates, { certificatesClosed = true }, { navigator.open(AppRoute.Subscription) }, app.timeSource)
         return
     }
 

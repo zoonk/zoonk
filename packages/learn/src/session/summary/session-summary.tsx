@@ -1,9 +1,9 @@
 "use client";
 
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
+import { type MomentCeremony } from "../moment-ceremony";
 import { type StudySessionSummary } from "../session-types";
 import {
-  type CeremonyRenderer,
   type SessionSummaryActions,
   SessionSummaryProvider,
   type SummaryGoalKind,
@@ -29,7 +29,7 @@ export function SessionSummary({
   exitHref: string;
   goalKind: SummaryGoalKind;
   mistakesHref?: string | null;
-  renderCeremony?: CeremonyRenderer;
+  renderCeremony?: MomentCeremony;
   signUpHref?: string | null;
   stopped?: boolean;
   summary: StudySessionSummary;

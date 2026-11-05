@@ -87,7 +87,7 @@ export function PracticeDone({
   const comesBack = summary ? summary.correct < summary.total : fixed === 0;
 
   return (
-    <MomentAfterCeremony milestone={ceremony} render={renderCeremony}>
+    <MomentAfterCeremony moments={summary} render={renderCeremony}>
       <TaskBody>
         <MomentHeader
           detail={comesBack && t("The rest come back another day, when they stick better.")}

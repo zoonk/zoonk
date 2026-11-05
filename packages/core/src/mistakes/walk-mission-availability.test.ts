@@ -1,12 +1,19 @@
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { listeningGoalFixture, listeningSetFixture } from "@zoonk/testing/fixtures/listening";
-import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  choiceItemContent,
+  itemFixture,
+  itemSetFixture,
+  skillFixture,
+} from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { loadDayMissionFacts } from "../sessions/missions/day-facts";
 import { mistakeListInputSchema } from "./contract";
 import { getMistakePractice } from "./get-mistake-practice";
 import { listCurrentUserMistakes } from "./list-current-user-mistakes";
@@ -143,5 +150,96 @@ describe("mistake mission and notebook availability", () => {
     await expect(
       listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId: goal.id })),
     ).resolves.toMatchObject({ availability: { ready: 2, tomorrow: 0 } });
+  });
+
+  it("doesn't offer an older mistake through today's mistake's passage question on its skill", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
+    const user = await userFixture();
+
+    const { goal, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [1],
+      userId: user.id,
+    });
+
+    const skillId = skills[0]!.id;
+    const set = await itemSetFixture();
+    const passageQuestion = await itemFixture({ setId: set.id, setPosition: 0, skillId });
+
+    await Promise.all([
+      mistakeFixture({ createdAt: new Date("2026-10-12"), skillId, userId: user.id }),
+      mistakeFixture({
+        createdAt: new Date("2026-10-13T11:00:00Z"),
+        itemId: passageQuestion.id,
+        skillId,
+        userId: user.id,
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    const [notebook, missions, practice] = await Promise.all([
+      listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId: goal.id })),
+      loadDayMissionFacts({
+        blocks: [],
+        goal,
+        localDate: new Date("2026-10-13"),
+        plannedMinutes: 20,
+        timeZone: "UTC",
+        userId: user.id,
+      }),
+      getMistakePractice({ goalId: goal.id }),
+    ]);
+
+    expect(notebook).toMatchObject({ availability: { ready: 0, tomorrow: 1 } });
+    expect(missions.readyMistakeCount).toBe(0);
+    expect(practice).toMatchObject({ practice: [], status: "ready" });
+  });
+
+  it("doesn't offer a finer skill's mistake through another mistake's passage question on its goal skill", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
+    const user = await userFixture();
+
+    const { goal, planItems, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [1],
+      userId: user.id,
+    });
+
+    const goalSkillId = skills[0]!.id;
+    const [finer, set] = await Promise.all([skillFixture(), itemSetFixture()]);
+
+    const [passageQuestion] = await Promise.all([
+      itemFixture({ setId: set.id, setPosition: 0, skillId: goalSkillId }),
+      lessonSkillFixture({ lessonId: planItems[0]!.lessonId!, skillId: finer.id }),
+    ]);
+
+    await Promise.all([
+      mistakeFixture({ createdAt: new Date("2026-10-12"), skillId: finer.id, userId: user.id }),
+      mistakeFixture({
+        createdAt: new Date("2026-10-12"),
+        itemId: passageQuestion.id,
+        skillId: goalSkillId,
+        userId: user.id,
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    const scope = { goalId: goal.id, skillId: finer.id };
+
+    const [notebook, practice] = await Promise.all([
+      listCurrentUserMistakes(mistakeListInputSchema.parse(scope)),
+      getMistakePractice(scope),
+    ]);
+
+    expect(notebook).toMatchObject({
+      availability: { ready: 0, tomorrow: 0 },
+      mistakes: [{ practiceAvailable: false }],
+    });
+
+    expect(practice).toMatchObject({ practice: [], status: "ready" });
   });
 });

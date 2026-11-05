@@ -46,7 +46,7 @@ function expireAt(id: number, expiry: number, { unlessApplied }: { unlessApplied
 }
 
 export function beginDayEntry(
-  input: Omit<DayEntry, "applied" | "expired" | "id" | "result">,
+  input: Omit<DayEntry, "applied" | "expired" | "id" | "result" | "shown">,
 ): DayEntry {
   const entry: DayEntry = {
     ...input,
@@ -54,6 +54,7 @@ export function beginDayEntry(
     expired: false,
     id: registry.nextId,
     result: null,
+    shown: false,
   };
 
   registry.nextId += 1;
@@ -80,6 +81,12 @@ export function updateDayEntry(id: number, fields: Partial<Pick<DayEntry, "href"
 
 export function markDayEntryApplied(id: number): void {
   patch(id, { applied: true });
+}
+
+export function markDayEntryShown(id: number): void {
+  if (!registry.entry?.shown) {
+    patch(id, { shown: true });
+  }
 }
 
 export function moveDayEntry(id: number, { blockId, href }: { blockId?: string; href: string }) {

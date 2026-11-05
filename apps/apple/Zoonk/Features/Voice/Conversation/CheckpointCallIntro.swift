@@ -71,7 +71,7 @@ struct CheckpointCallIntro: View {
       .scenePadding()
       .frame(maxHeight: .infinity)
     case .empty, .failed(.notFound), .loaded(.notLanguage):
-      CallNotHere()
+      NotFoundView()
     case .failed(let error) where error != .unauthorized:
       CallLoadFailed {
         Task { await call.refresh() }
@@ -86,12 +86,12 @@ struct CheckpointCallIntro: View {
   private func startButton(writesFirst: Bool, callee: String?) -> some View {
     VStack(spacing: 8) {
       if didFail {
-        Text(
-          "The call didn't start. Try again in a moment.", tableName: "Voice",
-          comment: "Starting a checkpoint call failed"
+        FailureLine(
+          message: LocalizedStringResource(
+            "The call didn't start. Try again in a moment.", table: "Voice",
+            comment: "Starting a checkpoint call failed")
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
       }
 
       Button {

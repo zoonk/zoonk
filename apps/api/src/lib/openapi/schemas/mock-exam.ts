@@ -1,3 +1,4 @@
+import { unshownCertificatesSchema } from "@zoonk/core/certificates/contract";
 import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rules";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
 import { essayGradeSchema } from "@zoonk/core/exams/essays/contract";
@@ -124,6 +125,7 @@ export const mockViewResponseSchema = z
         description:
           "Once it's over, the one milestone the learner hasn't been shown yet (a belt it crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null before it's over and once it's been shown",
       }),
+    certificates: unshownCertificatesSchema,
     checklist: z.array(z.enum(EXAM_DAY_CHECKLIST)),
     current: z
       .object({

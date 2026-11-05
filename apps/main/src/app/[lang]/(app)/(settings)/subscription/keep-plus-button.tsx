@@ -35,6 +35,7 @@ export function KeepPlusButton() {
         aria-busy={pending}
         className="w-max"
         disabled={pending}
+        focusableWhenDisabled
         onClick={keep}
         size="sm"
         variant="outline"

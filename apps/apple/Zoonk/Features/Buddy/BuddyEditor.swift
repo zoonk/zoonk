@@ -153,11 +153,10 @@ struct BuddyGlassesPicker: View {
     NavigationStack {
       List {
         if store.saveFailed {
-          Text(
-            "We couldn't save your buddy. Try again.", tableName: "Buddy",
-            comment: "Saving the buddy failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't save your buddy. Try again.", table: "Buddy",
+              comment: "Saving the buddy failed"))
         }
 
         ForEach(status.glasses, id: \.glasses) { option in

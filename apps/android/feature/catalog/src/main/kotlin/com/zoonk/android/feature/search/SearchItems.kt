@@ -257,6 +257,12 @@ private fun learnerGroups(
                 SearchAction.Open(AppRoute.CompletedLessons),
                 PlaceIcon.CompletedLessons.icon,
             ).takeIf { places?.completedLessons == true },
+            SearchItem(
+                "certificates",
+                stringResource(R.string.certificates_title),
+                SearchAction.Open(AppRoute.Certificates),
+                PlaceIcon.Certificates.icon,
+            ),
             SearchItem("exam", stringResource(R.string.navigation_exam), SearchAction.Open(AppRoute.Exam), PlaceIcon.Exam.icon).takeIf {
                 places?.exam ==
                     true

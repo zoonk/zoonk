@@ -4,12 +4,6 @@ import Observation
 @MainActor
 @Observable
 final class SettingsStore {
-  enum UndoStatus: Equatable {
-    case failed
-    case idle
-    case undone
-  }
-
   let preferences: Resource<LearningPreferences>
   let memory: Resource<LearnerMemory>
   let allowance: Resource<PlanAllowance>
@@ -22,7 +16,7 @@ final class SettingsStore {
     var owner: AuthenticatedSession
     var saveFailed = false
     var deletedFact: MemoryFact?
-    var undoStatus = UndoStatus.idle
+    var undoStatus: MemoryUndo?
   }
 
   private var notice: Notice?
@@ -35,8 +29,8 @@ final class SettingsStore {
     currentNotice?.deletedFact
   }
 
-  var undoStatus: UndoStatus {
-    currentNotice?.undoStatus ?? .idle
+  var undoStatus: MemoryUndo? {
+    currentNotice?.undoStatus
   }
 
   private let api: any SettingsAPIClient
@@ -148,23 +142,24 @@ final class SettingsStore {
     if case .done(let deleted) = result {
       setNotice {
         $0.deletedFact = deleted
-        $0.undoStatus = .idle
+        $0.undoStatus = nil
       }
     }
   }
 
   /// Waits its turn behind the memory's other changes, so the restored fact stays once they settle.
   func undoDeletion() async {
-    guard let deleted = deletedFact else {
+    guard let deleted = deletedFact, undoStatus?.canUndo ?? true else {
       return
     }
 
+    setNotice { $0.undoStatus = .undoing }
     let unchanged = { (memory: LearnerMemory) in memory }
 
     let result = await memorySaves.save(unchanged, invalidating: [.memory]) { [api] in
       try await api.restoreMemoryFact(token: $0.bearerToken, factId: deleted.id)
     } confirm: {
-      $0.restoring($1)
+      $0.restoring($1 ?? [])
     }
 
     // A deletion made meanwhile has its own notice and its own undo.
@@ -173,12 +168,12 @@ final class SettingsStore {
     }
 
     switch result {
-    case .done:
-      setNotice { $0.undoStatus = .undone }
+    case .done(let restored):
+      setNotice { $0.undoStatus = restored == nil ? .changedSince : .undone }
     case .failed:
       setNotice { $0.undoStatus = .failed }
     case .obsolete, nil:
-      break
+      setNotice { $0.undoStatus = nil }
     }
   }
 

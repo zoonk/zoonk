@@ -128,6 +128,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":core:data")))
     testImplementation(testFixtures(project(":core:navigation")))
+    testImplementation(testFixtures(project(":core:designsystem")))
     testImplementation(testFixtures(project(":feature:account")))
     testImplementation(testFixtures(project(":feature:activities")))
     testImplementation(testFixtures(project(":feature:conversation")))

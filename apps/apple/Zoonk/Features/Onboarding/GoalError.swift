@@ -144,14 +144,16 @@ struct GoalErrorSection: View {
   var body: some View {
     if let limit = error.limit, limit.isPlusLimit {
       GoalLimitNoticeSection(reason: limit)
-    } else {
+    } else if error.needsAccount {
       Section {
         Text(error.message)
-          .foregroundStyle(error.needsAccount ? Color.primary : Color.destructive)
+          .announcesAlert(String(localized: error.message))
 
-        if error.needsAccount {
-          CreateAccountButton()
-        }
+        CreateAccountButton()
+      }
+    } else {
+      Section {
+        FailureLine(message: error.message)
       }
     }
   }
@@ -212,6 +214,7 @@ struct GoalLimitNoticeSection: View {
           Image(systemName: "sparkles")
             .foregroundStyle(.tint)
         }
+        .announcesAlert(upFront ? nil : String(localized: reason.message))
 
         Button {
           router.present(.subscription)

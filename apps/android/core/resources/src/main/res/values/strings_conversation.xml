@@ -29,8 +29,6 @@
     <string name="conversation_mic_off">Allow the microphone in Settings to talk with %1$s, or do this call by typing.</string>
     <!-- Starts the call without the microphone, answering by typing. -->
     <string name="conversation_type_instead">Type instead</string>
-    <string name="conversation_not_found_title">We couldn\'t find this call</string>
-    <string name="conversation_not_found_description">The link may be old or mistyped.</string>
 
     <!-- Read before what the learner said in the call's transcript. -->
     <string name="conversation_you_said">You: %1$s</string>

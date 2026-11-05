@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../../cache/tags";
+import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
@@ -78,7 +79,7 @@ export async function getChapterView({
   // Subscribing opens the lessons a free exam plan held for Plus.
   cacheTag(getUserSubscriptionCacheTag(goal.userId));
 
-  const access = await loadExamPrepAccess({ goal });
+  const access = await loadExamPrepAccess({ goal, readViewer: readEntitlementViewer });
 
   const [studied, openMistakes, plusOnlyLessonIds, blockedTestOutChapters] = await Promise.all([
     loadStudiedSkills({ skillIds, userId: goal.userId }),

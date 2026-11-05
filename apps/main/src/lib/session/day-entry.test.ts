@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type DayEntry, findDayTap, getEntryExpiry } from "./day-entry";
+import { type DayEntry, findDayTap, getEntryExpiry, hasLeftEntry } from "./day-entry";
 
 const NOW = Date.parse("2026-10-15T12:00:00.000Z");
 const DAY_ENDS_AT = Date.parse("2026-10-16T00:00:00.000Z");
@@ -29,11 +29,12 @@ function entry(overrides: Partial<DayEntry> = {}): DayEntry {
     },
     expired: false,
     focusMain: true,
-    generation: 3,
+    here: async () => true,
     href: HREF,
     id: 1,
     next: true,
     result: null,
+    shown: false,
     step: {
       blockId: null,
       position: 0,
@@ -45,7 +46,7 @@ function entry(overrides: Partial<DayEntry> = {}): DayEntry {
   };
 }
 
-const scope = { generation: 3, href: HREF, userId: "learner" };
+const scope = { href: HREF, learner: "learner" };
 
 describe(getEntryExpiry, () => {
   it("holds a tap while its POST is out, however slow, so its reply still moves the screen on", () => {
@@ -99,12 +100,16 @@ describe(findDayTap, () => {
     expect(findDayTap({ ...scope, day, entry: failed })?.tap.state).toBe("failed");
   });
 
-  it("draws nothing with no tap, for another identity, or on another page", () => {
+  it("draws nothing with no tap, for another identity, once signed out, or on another page", () => {
     expect(findDayTap({ ...scope, day, entry: null })).toBeNull();
-    expect(findDayTap({ ...scope, day, entry: entry(), generation: 4 })).toBeNull();
-    expect(findDayTap({ ...scope, day, entry: entry(), userId: "someone-else" })).toBeNull();
+    expect(findDayTap({ ...scope, day, entry: entry(), learner: null })).toBeNull();
+    expect(findDayTap({ ...scope, day, entry: entry(), learner: "someone-else" })).toBeNull();
 
     expect(findDayTap({ ...scope, day, entry: entry(), href: "/session?goal=goal-y" })).toBeNull();
+  });
+
+  it("draws a tap for the learner its day was drawn for while the browser knows no one yet", () => {
+    expect(findDayTap({ ...scope, day, entry: entry(), learner: undefined })?.step).toBe(blocks[0]);
   });
 
   it("draws nothing once the tap expired", () => {
@@ -132,5 +137,24 @@ describe(findDayTap, () => {
     );
 
     expect(findDayTap({ ...scope, day: { ...day, blocks: done }, entry: entry() })).toBeNull();
+  });
+});
+
+describe(hasLeftEntry, () => {
+  const TODAY = "/today";
+  const tapped = { at: HREF, entry: entry(), origin: TODAY };
+
+  it("keeps a tap while the learner is on its screen, or still on their way there", () => {
+    expect(hasLeftEntry(tapped)).toBe(false);
+    expect(hasLeftEntry({ ...tapped, at: TODAY })).toBe(false);
+    expect(hasLeftEntry({ ...tapped, entry: entry({ shown: true }) })).toBe(false);
+  });
+
+  it("lets go once they're back where they tapped after the step showed", () => {
+    expect(hasLeftEntry({ ...tapped, at: TODAY, entry: entry({ shown: true }) })).toBe(true);
+  });
+
+  it("lets go once they're anywhere else", () => {
+    expect(hasLeftEntry({ ...tapped, at: "/plan" })).toBe(true);
   });
 });

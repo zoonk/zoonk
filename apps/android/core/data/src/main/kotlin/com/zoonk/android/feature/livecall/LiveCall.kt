@@ -146,6 +146,9 @@ class LiveCall(
     private var checkTiming = CheckTiming()
     private var checking = false
 
+    /** The latest check's note for the character, until the ending sends it. */
+    private var note: LiveCallCue? = null
+
     /** Without [microphone] the call runs on typed replies. Starting again cancels a start still on its way. */
     fun start(
         microphone: Boolean,
@@ -508,6 +511,11 @@ class LiveCall(
                     send(script.cues.checkIn.command())
                 }
 
+                LiveCallEnding.Step.SendNote -> {
+                    note?.let { send(it.command()) }
+                    note = null
+                }
+
                 is LiveCallEnding.Step.SayGoodbye -> {
                     val cue = if (step.reason == EndingReason.Done) script.cues.goodbyeDone else script.cues.goodbye
                     // Measured: said aloud at once, a goodbye talked over a learner pausing mid-answer;
@@ -571,7 +579,12 @@ class LiveCall(
             if (check.objectivesMet.size > mutableState.value.metLabels.size) {
                 mutableState.update { it.copy(metLabels = check.objectivesMet) }
             }
-            if (machine.reason == null) check.progress?.let { send(it.command()) }
+            if (machine.reason == null) {
+                check.progress?.let {
+                    note = it
+                    machine.noteArrived()
+                }
+            }
             if (check.goodbye) machine.saidGoodbye(checkedAt)
             if (task.objectives.isNotEmpty() && check.objectivesMet.containsAll(task.objectives)) {
                 now()?.let(machine::goalsMet)

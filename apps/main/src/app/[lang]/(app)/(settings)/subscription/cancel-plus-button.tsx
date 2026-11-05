@@ -62,7 +62,7 @@ export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
         )}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>{t("Go back")}</AlertDialogCancel>
-          <Button aria-busy={pending} disabled={pending} onClick={cancel}>
+          <Button aria-busy={pending} disabled={pending} focusableWhenDisabled onClick={cancel}>
             {pending && (
               <Loader2Icon aria-hidden="true" className="animate-spin motion-reduce:animate-none" />
             )}

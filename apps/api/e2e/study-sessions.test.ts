@@ -373,7 +373,14 @@ test.describe("Study sessions API", () => {
       data: { target: { blockId: learn?.id, kind: "mission" }, timeZone: "UTC" },
     });
 
-    expect(hidden.status()).toBe(404);
+    await expect(
+      readBody({ response: hidden, schema: studyBlockOpeningSchema }),
+    ).resolves.toStrictEqual({ kind: "changed" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: learn?.id } }),
+    ).resolves.toMatchObject({ status: "pending" });
+
     await Promise.all([api.dispose(), stranger.api.dispose()]);
   });
 
