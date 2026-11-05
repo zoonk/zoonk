@@ -139,9 +139,11 @@ test.describe("Certificates API", () => {
     });
 
     expect(notFinished.status()).toBe(409);
+
     await expect(notFinished.json()).resolves.toMatchObject({
       error: { code: "COURSE_NOT_FINISHED" },
     });
+
     await apiContext.dispose();
   });
 });
