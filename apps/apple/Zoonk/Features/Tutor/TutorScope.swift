@@ -38,16 +38,6 @@ enum TutorScope: Hashable, Sendable {
     }
   }
 
-  /// The lesson's own suggestions, sent by id so everyone who taps one shares its answer.
-  var lessonSuggestions: [TutorSuggestion] {
-    switch self {
-    case .lesson(_, _, let suggestions), .step(_, _, _, _, let suggestions):
-      suggestions
-    case .plan, .subject, .chapter, .mock, .item:
-      []
-    }
-  }
-
   /// Mirrors main's `isAboutCheckedAnswer`.
   var isAboutCheckedAnswer: Bool {
     switch self {

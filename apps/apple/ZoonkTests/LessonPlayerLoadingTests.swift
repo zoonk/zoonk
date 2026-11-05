@@ -226,7 +226,9 @@ private func markedLesson(isTagged: Bool) throws -> PlayableLesson {
 
   return PlayableLesson(
     id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
-    steps: steps, summary: nil, tutorSuggestions: [], marksPending: !isTagged)
+    steps: steps, summary: nil,
+    tutorSuggestions: [.init(id: .simpler, label: "Explain it more simply")],
+    marksPending: !isTagged)
 }
 
 extension CurrentAccount {

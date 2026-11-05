@@ -106,7 +106,7 @@ struct LessonScreenHelp: View {
       .foregroundStyle(.secondary)
 
       FlowLayout {
-        ForEach((store.lesson?.tutorSuggestions ?? []).prefix(2), id: \.id) { suggestion in
+        ForEach(store.suggestionsBeside.prefix(2), id: \.id) { suggestion in
           Button {
             store.ask(suggestionId: suggestion.id.rawValue)
           } label: {
@@ -260,6 +260,13 @@ extension LessonStep {
     let words = WordCount.count(text)
     let readingSeconds = Double(words) / 150 * 60
     return .seconds(max(45, readingSeconds * 3))
+  }
+}
+
+extension PlayableLesson {
+  /// Every explanation and worked example of a knowledge lesson.
+  func offersDidntGetIt(on step: LessonStep) -> Bool {
+    step.isExplaining && targetLanguage == nil
   }
 }
 

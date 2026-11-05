@@ -422,7 +422,7 @@ struct LessonAskPanel: View {
           lessonId: lesson.id, stepId: stepId,
           stepNumber: store.state.flatMap { $0.currentStep == nil ? nil : $0.position + 1 },
           answer: store.state?.answerInView, stepIds: store.state?.lessonOrder ?? [],
-          suggestions: lesson.tutorSuggestions,
+          suggestions: isBeside ? store.suggestionsBeside : lesson.tutorSuggestions,
           startingOffer: store.startingOffer(about: stepId)),
         isBeside)
     }

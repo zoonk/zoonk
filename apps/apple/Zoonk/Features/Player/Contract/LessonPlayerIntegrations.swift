@@ -160,6 +160,7 @@ struct LessonTutorScope: Hashable, Sendable {
   var answer: LessonAnswer?
   /// The lesson's screens, for a question about the whole lesson.
   var stepIds: [String] = []
+  /// The ones the panel offers, which the starting offer needn't be among.
   let suggestions: [Components.Schemas.LessonTutorSuggestion]
   /// The suggestion to start with (`simpler` when the learner seems stuck), if any.
   var startingOffer: LessonTutorOffer?
@@ -167,7 +168,7 @@ struct LessonTutorScope: Hashable, Sendable {
 
 /// Each tap that offers a suggestion is its own offer, so it's put in the composer, or asked, once.
 struct LessonTutorOffer: Hashable, Sendable {
-  let suggestionId: String
+  let suggestion: Components.Schemas.LessonTutorSuggestion
   let stepId: String?
   var sendsAtOnce = false
   let id = UUID()

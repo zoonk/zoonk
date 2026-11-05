@@ -85,7 +85,7 @@ struct LessonStageView: View {
         let recap = state.recap
         let map = store.lesson?.taggedSummary
         let teachesKnowledge = store.lesson?.targetLanguage == nil
-        let offersDidntGetIt = step.isExplaining && teachesKnowledge
+        let offersDidntGetIt = store.lesson?.offersDidntGetIt(on: step) == true
 
         HStack(spacing: 0) {
           if let pages = spread {
