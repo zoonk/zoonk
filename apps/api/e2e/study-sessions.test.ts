@@ -270,11 +270,17 @@ test.describe("Study sessions API", () => {
     expect(early.status()).toBe(409);
     expect(await early.json()).toMatchObject({ error: { code: "LESSON_NOT_FINISHED" } });
 
-    await learningEventFixture({
-      brainPower: 20,
-      contentIds: { lessonId: lessons[1]?.id ?? "" },
-      userId,
-    });
+    await Promise.all([
+      learningEventFixture({
+        brainPower: 20,
+        contentIds: { lessonId: lessons[1]?.id ?? "" },
+        userId,
+      }),
+      prisma.planItem.updateMany({
+        data: { completedAt: new Date(), status: "done" },
+        where: { lessonId: lessons[1]?.id ?? "" },
+      }),
+    ]);
 
     const lessonDone = await readBody({
       response: await api.post(`${learnPath}/completions`, { data: {} }),
