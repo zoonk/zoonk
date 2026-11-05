@@ -12,11 +12,7 @@ struct LessonMapStage: View {
 
   var body: some View {
     stage
-      .background {
-        if store.lesson?.isTagged == true {
-          LessonPaper()
-        }
-      }
+      .background { LessonPaper() }
   }
 
   @ViewBuilder

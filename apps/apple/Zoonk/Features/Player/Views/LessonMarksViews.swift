@@ -138,7 +138,8 @@ struct LessonIconImage: View {
   }
 }
 
-/// Lousa's dotted paper behind a tagged lesson's screens. More contrast keeps the page plain.
+/// Lousa's dotted paper behind a knowledge lesson's reading screens and its map. A question keeps a
+/// plain page, which reads as the learner's turn. More contrast keeps every page plain.
 struct LessonPaper: View {
   @Environment(\.colorSchemeContrast) private var contrast
 

@@ -14,7 +14,8 @@ struct LessonStepView: View {
   var body: some View {
     content
       .environment(store.work(for: step.id, round: state.rounds[step.id] ?? 0))
-      .environment(\.highlightsLessonTerms, step.marks != nil && step.isExplained)
+      .environment(
+        \.highlightsLessonTerms, step.isExplaining && store.lesson?.targetLanguage == nil)
   }
 
   @ViewBuilder

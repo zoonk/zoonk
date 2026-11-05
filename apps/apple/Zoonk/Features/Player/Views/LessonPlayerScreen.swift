@@ -139,6 +139,9 @@ private struct LessonPlayerContent: View {
         return activityRenderers.renderer(for: content.template) == nil
       }
       await store.load()
+    }
+    // Per opening: a lesson written on the learner's tap opens after `load()` has returned.
+    .task(id: store.openedAt) {
       await store.followLateContent()
     }
     // A visitor who starts the lesson as a guest gets the session first and the summary after it.

@@ -49,19 +49,15 @@ struct LessonTextParts: Equatable {
 }
 
 extension PlayableLesson {
-  /// A lesson written before tagging, and every language lesson, looks as it always did.
-  var isTagged: Bool {
-    steps.contains { $0.marks != nil } || summary?.isTagged == true
-  }
-
   /// The API's wait: marks come within a late picture's wait from when the lesson was written.
   func isWaitingForMarks(openedAt: Date, now: Date = .now) -> Bool {
     let start = steps.map { $0.waitStart(openedAt: openedAt) }.min() ?? openedAt
     return marksPending && now.timeIntervalSince(start) < LessonStep.lateWait
   }
 
+  /// The map the opening scene and the strip draw from, once tagging has reached the lesson.
   var taggedSummary: LessonSummary? {
-    isTagged ? summary : nil
+    steps.contains { $0.marks != nil } || summary?.isTagged == true ? summary : nil
   }
 }
 
