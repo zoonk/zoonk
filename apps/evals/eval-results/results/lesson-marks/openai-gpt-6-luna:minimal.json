@@ -530,21 +530,13 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "The example marked on screen 1 restates the OAB's human-rights protection role rather than presenting a concrete incident or situation. The words “Por exemplo” do not make this general description a concrete case; it would be better left unmarked.",
           "kind": "minorErrors",
           "score": 7
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - In Brazilian Portuguese, a law lesson for the OAB exam\n      - About lines name each purpose's topic without listing what the statute says it includes\n      - Icons are generic legal or civic objects tied to each screen's case, never the OAB's logo or a flag\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
@@ -668,11 +660,7 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
           "conclusion": "Some underlines emphasize supporting details rather than the screen's main teaching point: “o tempo cai pela metade” highlights the introductory case instead of regra de três simples, while “A divisão das impressoras fica invertida” highlights only one component of the compound calculation. The ruler is weakly connected to simple proportion, and the hourglass represents time without distinguishing direct and inverse relationships.",
           "kind": "minorErrors",
@@ -822,11 +810,7 @@
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - In Spanish (Mexico), for beginners in economics\n      - \"No todos suben\" about line doesn't say not every price has to rise; \"Más pesos\" doesn't say more pesos don't guarantee buying more\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
@@ -1140,21 +1124,9 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - In US English, for beginners\n      - \"Getting back\" about line doesn't say the rise back is a bigger percent\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
@@ -1426,21 +1398,9 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - In US English, a beginner programming lesson\n      - \"Reach 5\" about line doesn't say range(1, 6) stops before 6\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
@@ -1451,10 +1411,7 @@
               "label": "Start and stop",
               "text": "In `range(start, stop)`, counting starts at the start and leaves out the stop, even when counting down."
             },
-            {
-              "label": "Reach 5",
-              "text": "`range(1, 6)` reaches 5 because it stops before 6."
-            },
+            { "label": "Reach 5", "text": "`range(1, 6)` reaches 5 because it stops before 6." },
             {
               "label": "Number of values",
               "text": "When counting up by ones, the number of values is stop minus start."
@@ -1534,31 +1491,16 @@
         }
       },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - In US English, for beginners in biology\n      - About lines don't say which chambers receive or pump blood\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "en-heart-chambers-1",
         "userInput": {
           "ideas": [
-            {
-              "label": "Atria",
-              "text": "The two upper chambers, the atria, receive blood."
-            },
+            { "label": "Atria", "text": "The two upper chambers, the atria, receive blood." },
             {
               "label": "Ventricles",
               "text": "The two lower chambers, the ventricles, pump blood out: the right to the lungs and the left to the whole body."
@@ -2116,21 +2058,14 @@
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - In Japanese, for beginners in physics\n      - Every explanation has its own visual, so no screen gets an icon; every idea has one\n      - \"支点からの距離\" about line doesn't say moving the effort farther from the fulcrum takes less force\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "ja-teko-1",
         "userInput": {
           "ideas": [
-            {
-              "label": "支点",
-              "text": "支点は、てこが回る中心です。"
-            },
+            { "label": "支点", "text": "支点は、てこが回る中心です。" },
             {
               "label": "力点と作用点",
               "text": "力点はてこを動かす力を加える場所で、作用点はてこが相手に力を加える場所です。"

@@ -20,13 +20,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "reuse": [
-            "lib-scale",
-            null,
-            "lib-drop"
-          ]
-        },
+        "expected": { "reuse": ["lib-scale", null, "lib-drop"] },
         "id": "en-same-thing-other-name-1",
         "language": "en",
         "userInput": {
@@ -37,29 +31,19 @@
                   "description": "A brass balance scale with two pans level",
                   "id": "lib-scale",
                   "name": "balance scale",
-                  "tags": [
-                    "justice",
-                    "scales",
-                    "weigh"
-                  ]
+                  "tags": ["justice", "scales", "weigh"]
                 },
                 {
                   "description": "A tall glass office building",
                   "id": "lib-building",
                   "name": "office building",
-                  "tags": [
-                    "company",
-                    "business"
-                  ]
+                  "tags": ["company", "business"]
                 }
               ],
               "need": {
                 "description": "A balance scale, the symbol of justice",
                 "name": "scales of justice",
-                "searchWords": [
-                  "law",
-                  "justice"
-                ]
+                "searchWords": ["law", "justice"]
               },
               "usedFor": "a screen: a judge must weigh both sides before deciding"
             },
@@ -69,29 +53,19 @@
                   "description": "A pink piggy bank with a coin going into its slot",
                   "id": "lib-piggy",
                   "name": "piggy bank",
-                  "tags": [
-                    "savings",
-                    "coin",
-                    "save"
-                  ]
+                  "tags": ["savings", "coin", "save"]
                 },
                 {
                   "description": "A short stack of gold coins",
                   "id": "lib-coins",
                   "name": "stack of coins",
-                  "tags": [
-                    "money",
-                    "savings"
-                  ]
+                  "tags": ["money", "savings"]
                 }
               ],
               "need": {
                 "description": "A glass jar with coins inside",
                 "name": "savings jar",
-                "searchWords": [
-                  "savings",
-                  "jar"
-                ]
+                "searchWords": ["savings", "jar"]
               },
               "usedFor": "a screen: Maya keeps her spare change in a jar on the shelf"
             },
@@ -101,20 +75,13 @@
                   "description": "One blue water drop",
                   "id": "lib-drop",
                   "name": "water drop",
-                  "tags": [
-                    "water",
-                    "liquid",
-                    "rain"
-                  ]
+                  "tags": ["water", "liquid", "rain"]
                 }
               ],
               "need": {
                 "description": "A single drop of water",
                 "name": "water droplet",
-                "searchWords": [
-                  "water",
-                  "drop"
-                ]
+                "searchWords": ["water", "drop"]
               },
               "usedFor": "the lesson map's idea: water moves up from the roots"
             }
@@ -141,13 +108,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "reuse": [
-            null,
-            null,
-            "lib-coins"
-          ]
-        },
+        "expected": { "reuse": [null, null, "lib-coins"] },
         "id": "en-part-variant-or-generic-1",
         "language": "en",
         "userInput": {
@@ -158,29 +119,19 @@
                   "description": "One gold coin seen from the front",
                   "id": "lib-coin",
                   "name": "coin",
-                  "tags": [
-                    "money",
-                    "cent"
-                  ]
+                  "tags": ["money", "cent"]
                 },
                 {
                   "description": "A pink piggy bank with a coin going into its slot",
                   "id": "lib-piggy",
                   "name": "piggy bank",
-                  "tags": [
-                    "savings",
-                    "coin",
-                    "save"
-                  ]
+                  "tags": ["savings", "coin", "save"]
                 }
               ],
               "need": {
                 "description": "A tall stack of coins",
                 "name": "stack of coins",
-                "searchWords": [
-                  "money",
-                  "coins"
-                ]
+                "searchWords": ["money", "coins"]
               },
               "usedFor": "a screen: the interest piles up year after year"
             },
@@ -190,29 +141,19 @@
                   "description": "A tall glass office building",
                   "id": "lib-building",
                   "name": "office building",
-                  "tags": [
-                    "company",
-                    "business"
-                  ]
+                  "tags": ["company", "business"]
                 },
                 {
                   "description": "A small house with a red roof",
                   "id": "lib-house",
                   "name": "house",
-                  "tags": [
-                    "home",
-                    "family"
-                  ]
+                  "tags": ["home", "family"]
                 }
               ],
               "need": {
                 "description": "A city hall with columns and a clock",
                 "name": "city hall",
-                "searchWords": [
-                  "government",
-                  "town hall",
-                  "building"
-                ]
+                "searchWords": ["government", "town hall", "building"]
               },
               "usedFor": "a screen: the mayor's office sets the local tax"
             },
@@ -222,28 +163,19 @@
                   "description": "A short stack of gold coins",
                   "id": "lib-coins",
                   "name": "stack of coins",
-                  "tags": [
-                    "money",
-                    "savings"
-                  ]
+                  "tags": ["money", "savings"]
                 },
                 {
                   "description": "One gold coin seen from the front",
                   "id": "lib-coin",
                   "name": "coin",
-                  "tags": [
-                    "money",
-                    "cent"
-                  ]
+                  "tags": ["money", "cent"]
                 }
               ],
               "need": {
                 "description": "A pile of gold coins",
                 "name": "pile of coins",
-                "searchWords": [
-                  "money",
-                  "savings"
-                ]
+                "searchWords": ["money", "savings"]
               },
               "usedFor": "a screen: everything the business keeps adds up"
             }
@@ -270,12 +202,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "reuse": [
-            "lib-meter",
-            null
-          ]
-        },
+        "expected": { "reuse": ["lib-meter", null] },
         "id": "pt-conta-de-luz-1",
         "language": "pt",
         "userInput": {
@@ -286,31 +213,19 @@
                   "description": "A glowing light bulb",
                   "id": "lib-bulb",
                   "name": "light bulb",
-                  "tags": [
-                    "idea",
-                    "electricity",
-                    "lamp"
-                  ]
+                  "tags": ["idea", "electricity", "lamp"]
                 },
                 {
                   "description": "A household electricity meter with a dial",
                   "id": "lib-meter",
                   "name": "electricity meter",
-                  "tags": [
-                    "power",
-                    "utility bill",
-                    "energy"
-                  ]
+                  "tags": ["power", "utility bill", "energy"]
                 }
               ],
               "need": {
                 "description": "A home electricity meter",
                 "name": "electric meter",
-                "searchWords": [
-                  "electricity",
-                  "power",
-                  "utility"
-                ]
+                "searchWords": ["electricity", "power", "utility"]
               },
               "usedFor": "a screen: Você gasta R$ 150,00 para pagar a luz de casa, um serviço necessário."
             },
@@ -320,21 +235,13 @@
                   "description": "A glowing light bulb",
                   "id": "lib-bulb",
                   "name": "light bulb",
-                  "tags": [
-                    "idea",
-                    "electricity",
-                    "lamp"
-                  ]
+                  "tags": ["idea", "electricity", "lamp"]
                 }
               ],
               "need": {
                 "description": "A wall power outlet with two holes",
                 "name": "power outlet",
-                "searchWords": [
-                  "socket",
-                  "plug",
-                  "electricity"
-                ]
+                "searchWords": ["socket", "plug", "electricity"]
               },
               "usedFor": "a screen: A tomada fornece energia para a geladeira da cozinha."
             }
@@ -361,13 +268,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "reuse": [
-            null,
-            "lib-tree",
-            null
-          ]
-        },
+        "expected": { "reuse": [null, "lib-tree", null] },
         "id": "pt-plantas-e-imas-1",
         "language": "pt",
         "userInput": {
@@ -378,28 +279,19 @@
                   "description": "One green leaf with visible veins",
                   "id": "lib-leaf",
                   "name": "green leaf",
-                  "tags": [
-                    "plant",
-                    "nature"
-                  ]
+                  "tags": ["plant", "nature"]
                 },
                 {
                   "description": "A round green tree",
                   "id": "lib-tree",
                   "name": "tree",
-                  "tags": [
-                    "plant",
-                    "forest"
-                  ]
+                  "tags": ["plant", "forest"]
                 }
               ],
               "need": {
                 "description": "A green cactus in a small pot",
                 "name": "cactus",
-                "searchWords": [
-                  "plant",
-                  "desert"
-                ]
+                "searchWords": ["plant", "desert"]
               },
               "usedFor": "a screen: O cacto guarda água no caule para aguentar a seca."
             },
@@ -409,28 +301,19 @@
                   "description": "A round green tree",
                   "id": "lib-tree",
                   "name": "tree",
-                  "tags": [
-                    "plant",
-                    "forest"
-                  ]
+                  "tags": ["plant", "forest"]
                 },
                 {
                   "description": "One green leaf with visible veins",
                   "id": "lib-leaf",
                   "name": "green leaf",
-                  "tags": [
-                    "plant",
-                    "nature"
-                  ]
+                  "tags": ["plant", "nature"]
                 }
               ],
               "need": {
                 "description": "A leafy tree",
                 "name": "tree",
-                "searchWords": [
-                  "plant",
-                  "forest"
-                ]
+                "searchWords": ["plant", "forest"]
               },
               "usedFor": "the lesson map's idea: As árvores tiram carbono do ar."
             },
@@ -440,20 +323,13 @@
                   "description": "A red horseshoe magnet",
                   "id": "lib-magnet",
                   "name": "horseshoe magnet",
-                  "tags": [
-                    "magnetism",
-                    "attract"
-                  ]
+                  "tags": ["magnetism", "attract"]
                 }
               ],
               "need": {
                 "description": "A round compass with a red needle",
                 "name": "compass",
-                "searchWords": [
-                  "north",
-                  "navigation",
-                  "magnet"
-                ]
+                "searchWords": ["north", "navigation", "magnet"]
               },
               "usedFor": "a screen: A agulha da bússola aponta para o norte magnético."
             }
