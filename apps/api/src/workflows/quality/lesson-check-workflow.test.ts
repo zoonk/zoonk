@@ -13,6 +13,7 @@ import { writeLessonContent } from "../../../../../packages/core/src/_test-utils
 import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
+import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
 import { type LessonCheckInput, lessonCheckWorkflow } from "./lesson-check-workflow";
 import { citePublishedLessonStep } from "./steps/lesson-check-steps";
 import type * as CheckSteps from "./steps/lesson-check-steps";
@@ -111,7 +112,7 @@ describe(lessonCheckWorkflow, () => {
     expect(start).not.toHaveBeenCalled();
   });
 
-  it("publishes the fix of what its reviewer found as the next version, then draws the pictures it lacks", async () => {
+  it("publishes the fix of what its reviewer found as the next version, then draws the pictures it lacks and tags it", async () => {
     const { input, lesson } = await publishedLesson();
     vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
 
@@ -135,9 +136,13 @@ describe(lessonCheckWorkflow, () => {
       text: expect.stringContaining("A vaccine never gives you the disease."),
     });
 
-    expect(start).toHaveBeenCalledExactlyOnceWith(lessonImagesWorkflow, [
+    expect(start).toHaveBeenCalledTimes(2);
+
+    expect(start).toHaveBeenCalledWith(lessonImagesWorkflow, [
       { analytics: { contentScope: "shared" }, lessonId: lesson.id },
     ]);
+
+    expect(start).toHaveBeenCalledWith(lessonMarksWorkflow, [{ lessonId: lesson.id }]);
   });
 
   it("drafts a version no fix put right afresh, and takes a wrong one out of play when no draft passes", async () => {

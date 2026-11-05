@@ -6,7 +6,7 @@ import {
   type SavedLessonMapIdea,
   readLessonMap,
   readPlayableLessonMap,
-  readSavedLessonMapIdeas,
+  readSavedLessonMap,
 } from "../../library/lessons/lesson-map";
 import {
   type SavedStepMarks,
@@ -77,7 +77,7 @@ export async function withLessonMarks({
     return { marksPending: false, steps, summary: readLessonMap(summary) };
   }
 
-  const ideas = readSavedLessonMapIdeas(summary) ?? [];
+  const ideas = readSavedLessonMap(summary)?.ideas ?? [];
   const saved = new Map(rows.map((row) => [row.id, readSavedStepMarks(row.marks)]));
 
   const icons = await loadLessonIcons([
