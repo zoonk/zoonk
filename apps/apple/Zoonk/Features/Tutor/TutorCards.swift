@@ -27,12 +27,12 @@ struct TutorPlanChangeCard: View {
         actions
 
         if failed {
-          Text(
-            "We couldn't save your answer. Try again.", tableName: "Tutor",
-            comment: "Answering a plan change the buddy proposed failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't save your answer. Try again.", table: "Tutor",
+              comment: "Answering a plan change the buddy proposed failed")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -171,13 +171,12 @@ struct TutorMemoryUpdate: View {
       switch undo {
       case .undone:
         Text("Change undone", tableName: "Tutor", comment: "A memory change was undone")
-      case .failed:
-        Text(
-          "Couldn't undo. It changed since.", tableName: "Tutor",
-          comment: "Undoing a memory change failed"
-        )
-        .foregroundStyle(.destructive)
-      case .undoing, nil:
+      case .changedSince:
+        FailureLine(
+          message: LocalizedStringResource(
+            "Couldn't undo. It changed since.", table: "Tutor",
+            comment: "Undoing a memory change failed"))
+      case .failed, .undoing, nil:
         Label {
           Text(
             "Memory updated: \(statement)", tableName: "Tutor",
@@ -187,14 +186,19 @@ struct TutorMemoryUpdate: View {
         }
 
         Button {
-          Task {
-            await conversation.undoMemory(of: turnID)
-          }
+          Task { await conversation.undoMemory(of: turnID) }
         } label: {
           Text("Undo", tableName: "Tutor", comment: "Undoes what the buddy remembered")
         }
         .buttonStyle(.borderless)
         .disabled(undo == .undoing)
+
+        if undo == .failed {
+          FailureLine(
+            message: LocalizedStringResource(
+              "Couldn't undo. Try again.", table: "Tutor",
+              comment: "Undoing a memory change didn't go through, and Undo stays to try again"))
+        }
       }
     }
     .font(.footnote)

@@ -29,6 +29,7 @@
   "memory_source_you": "1e03ebe2320e4119389358657cb559d7e504b18ca368353ada880681699a7fcb",
   "memory_undo": "974e13c3fd62cc2a0111f005731fc8f166d33af65a00907b7387c7b1cec12807",
   "memory_undo_failed": "597a1efdcb7e2fdb0612a5ca5bc08d1085083a10c65a1d0a7549b99a1366cfee",
+  "memory_undo_retry": "808772fd83fa5e72f21a6b56bb32a3c815a8d1f6c79de772be047d6a5ffc6201",
   "memory_updated": "1806c4632943665e0ee90d1352cad6e5f3205e777f7fe65f66a1cf38a1ee850d",
   "memory_updated_more": "2914d54b079390bc8bc38f7c1bfa85a256ff3261910d35c4043e44a827afdd51",
   "memory_use": "1243783609b6dcae5fd006a871c8e7d54c34286909170b1f0f1710c543b5f35b",
@@ -79,4 +80,5 @@
     <string name="memory_undo">Desfazer</string>
     <string name="memory_change_undone">Alteração desfeita</string>
     <string name="memory_undo_failed">Não foi possível desfazer. A informação mudou desde então.</string>
+    <string name="memory_undo_retry">Não foi possível desfazer. Tente de novo.</string>
 </resources>

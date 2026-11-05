@@ -168,25 +168,22 @@ struct MockStepStatus: View {
         }
         .foregroundStyle(.secondary)
       case .refused:
-        Text("Your last answer wasn't saved.", tableName: "Mock", comment: "A refused save")
-          .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
       case .saved, .saving:
         EmptyView()
       }
 
       if run.failed {
-        Group {
-          if run.queue.status == .saved {
-            Text(
-              "That didn't go through. Your answers are saved. Try again in a moment.",
-              tableName: "Mock", comment: "A mock step failed; the answers are saved")
-          } else {
-            Text(
-              "That didn't go through. Try again in a moment.", tableName: "Mock",
-              comment: "A mock step failed")
-          }
-        }
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: run.queue.status == .saved
+            ? String(
+              localized: "That didn't go through. Your answers are saved. Try again in a moment.",
+              table: "Mock", comment: "A mock step failed; the answers are saved")
+            : String(
+              localized: "That didn't go through. Try again in a moment.", table: "Mock",
+              comment: "A mock step failed"))
       } else if run.slow {
         Text(
           "Still handing it in. This is taking longer than usual.", tableName: "Mock",

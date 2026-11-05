@@ -120,6 +120,7 @@
     <string name="today_lessons_not_written">Today\'s lessons aren\'t written yet.</string>
     <string name="today_get_lessons">Get today\'s lessons</string>
     <string name="today_open_failed">We couldn\'t open the next step. Try again.</string>
+    <string name="today_step_open_failed">We couldn\'t open this step. Try again.</string>
     <string name="today_keep_learning_failed">We couldn\'t open your next lessons. Try again.</string>
 
     <string name="today_welcome_back">Welcome back</string>
