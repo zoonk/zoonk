@@ -23,13 +23,30 @@ function isInNumberedList({ end, start, text }: { end: number; start: number; te
   return lines.some((line) => NUMBERED_LINE.test(line));
 }
 
-/** Core keeps `example` an exact substring with balanced markup, so each part parses on its own. */
-function splitAtExample({ example, text }: { example: string | null; text: string }): TextPart[] {
+/** Where the example sits in the text, or null when the screen shows no frame. */
+function findFramedExample({ marks, text }: { marks: StepMarks | null; text: string }) {
+  const example = marks?.example;
   const start = example ? text.indexOf(example) : -1;
 
-  if (!example || start === -1 || isInNumberedList({ end: start + example.length, start, text })) {
+  return example && start !== -1 && !isInNumberedList({ end: start + example.length, start, text })
+    ? { example, start }
+    : null;
+}
+
+/** Without a frame, the screen's icon sits on the text's corner instead. */
+export function hasExampleFrame({ marks, text }: { marks: StepMarks | null; text: string }) {
+  return findFramedExample({ marks, text }) !== null;
+}
+
+/** Core keeps `example` an exact substring with balanced markup, so each part parses on its own. */
+function splitAtExample({ marks, text }: { marks: StepMarks | null; text: string }): TextPart[] {
+  const framed = findFramedExample({ marks, text });
+
+  if (!framed) {
     return [{ isExample: false, text }];
   }
+
+  const { example, start } = framed;
 
   return [
     { isExample: false, text: text.slice(0, start) },
@@ -83,7 +100,7 @@ export function MarkedText({
   marks: StepMarks | null;
   text: string;
 }) {
-  const parts = splitAtExample({ example: marks?.example ?? null, text });
+  const parts = splitAtExample({ marks, text });
   const underline = marks?.underline ?? null;
 
   const underlined = underline

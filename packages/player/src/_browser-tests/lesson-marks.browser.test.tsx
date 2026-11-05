@@ -249,7 +249,12 @@ describe("lesson marks", () => {
 
     const explanation = contentStep("explanation", {
       content: { text: steps },
-      marks: marks({ example: "2. Add the salt.", ideaIndex: 0, underline: "Add the salt" }),
+      marks: marks({
+        example: "2. Add the salt.",
+        icon: inlineIcon("S"),
+        ideaIndex: 0,
+        underline: "Add the salt",
+      }),
     });
 
     renderLessonPlayer({ lesson: buildLesson([explanation], { summary: MAP }) });
@@ -258,6 +263,9 @@ describe("lesson marks", () => {
     await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
     expect(page.getByRole("main").getByRole("listitem").elements()).toHaveLength(3);
     expect(underlined()).toStrictEqual(["Add the salt"]);
+    expect(
+      document.querySelectorAll('[data-slot="lesson-text"] [data-slot="lesson-icon"]'),
+    ).toHaveLength(1);
   });
 
   it("plays a lesson written before marks as plain text", async () => {

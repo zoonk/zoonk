@@ -9,14 +9,14 @@ import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonStepPicture, useIsExploredPictureLost } from "../_components/lesson-pictures";
 import { LessonRichText } from "../_components/lesson-rich-text";
 import { LESSON_BODY_CLASS } from "../_components/lesson-step-text";
-import { CornerIcon, MarkedText } from "../_components/marked-text";
+import { CornerIcon, MarkedText, hasExampleFrame } from "../_components/marked-text";
 import { ExplainingScreenHelp } from "../controls/ask-buddy-offer";
 import { ExampleLine } from "./example-line";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
 export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explanation">>) {
   const { content, marks } = step;
-  const cornerIcon = marks?.example ? null : marks?.icon;
+  const cornerIcon = hasExampleFrame({ marks, text: content.text }) ? null : marks?.icon;
   const exploredPictureLost = useIsExploredPictureLost(step);
   const ideaId = useId();
   const spoken = useSpokenText();
