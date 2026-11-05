@@ -13,7 +13,7 @@ Publishing a stable GitHub release deploys production: the release workflow chec
 
 ## 1. Pick the commit and the version
 
-Choose both once, before reading what changed, and keep them.
+Choose both once and keep them. You can start reading what changed while a CI run you wait for finishes.
 
 - **Last release:** the newest published stable release whose tag is on `main` (`gh release list --exclude-drafts --exclude-pre-releases`, then `git merge-base --is-ancestor <tag> origin/main`). A hotfix's tag sits on its own branch, so the release before it is the base.
 - **Release commit:** the newest commit in `git log --first-parent origin/main` whose CI passed (`gh run list --workflow ci.yml --commit <sha>`). When the newest commit's run is still going, wait for that run only, and keep that commit even if `main` moves on. When it failed, take the newest commit that passed and name the ones left out in the handoff.
@@ -25,9 +25,9 @@ A hotfix follows [releases and hotfixes](../../../.github/DEPLOYMENTS.md#release
 
 ## 2. Read what changed
 
-Each commit on `main` is a squashed PR whose number ends its subject: `git log --first-parent --format='%h %s' <last release tag>..<release commit>`. Sort them by the paths they touch (`git show --name-only --format= <commit>`) rather than by the scope in their title, which can hide a web change. Read the description of every PR that might reach learners (`gh pr view <number> --json title,body`), and open its diff when the description doesn't say what changed for them.
+Each commit on `main` is a squashed PR whose number ends its subject: `git log --first-parent --format='%h %s' <last release tag>..<release commit>`. Sort them by the paths they touch (`git show --name-only --format= <commit>`) rather than by the scope in their title, which can hide a web change. AI prompts are Markdown files, but they change what learners get. Read the description of every PR that might reach learners (`gh pr view <number> --json title,body`), and open its diff when the description doesn't say what changed for them.
 
-On a long range, group the PRs that clearly belong together, then split the reading across subagents by product area, such as calls, lessons, Today and plans, and accounts. Each returns, per PR: what a learner notices before and after (or nothing), whether the problem existed at the last release, any numbers the PR measured, and the related PRs it saw.
+With more than a few dozen PRs to read, group the ones that clearly belong together, then split the reading across subagents by product area, such as calls, lessons, Today and plans, and accounts. Give each the leave-out rules below and what the store lookups found. Each returns, per PR: what a learner notices before and after (or nothing), whether the problem existed at the last release, any numbers the PR measured, and the related PRs it saw.
 
 Leave out what learners don't get from this release:
 
