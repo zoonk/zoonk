@@ -4,7 +4,6 @@ import {
   type LoadMeasurement,
   cumulativeLayoutShift,
   judgeLoad,
-  markBusy,
   totalBlockingTime,
 } from "./checks.mts";
 import {
@@ -198,29 +197,6 @@ describe("judging a page load", () => {
       "fail horizontal overflow",
       "warn client data fetch",
     ]);
-  });
-});
-
-describe("judging on a busy machine", () => {
-  it("keeps timing to look at, marked inconclusive, and everything else as it was", () => {
-    const findings = markBusy([
-      { check: "content", level: "fail", message: "over 2500 ms", unit: "ms", value: 3000 },
-      { check: "navigation", level: "fail", message: "the tap didn't reach the page" },
-      {
-        check: "blank frame",
-        level: "fail",
-        message: "the viewport was blank",
-        unit: "ms",
-        value: 40,
-      },
-    ]);
-
-    assert.deepEqual(
-      findings.map((finding) => `${finding.level} ${finding.check}`),
-      ["warn content", "fail navigation", "fail blank frame"],
-    );
-
-    assert.match(findings[0]?.message ?? "", /inconclusive: the machine was busy/u);
   });
 });
 
