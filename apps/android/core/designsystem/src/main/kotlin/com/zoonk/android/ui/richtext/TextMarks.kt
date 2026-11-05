@@ -124,7 +124,7 @@ internal fun underlineStroke(
     em: Float,
 ): UnderlineStroke {
     val length = spans.sumOf { (it.right - it.left).toDouble() }.toFloat()
-    val curl = minOf(em * CURL_LENGTH, length / 3)
+    val curl = minOf(em * CURL_LENGTH, length / 3, spans.lastOrNull()?.let { it.right - it.left } ?: 0f)
 
     return UnderlineStroke(
         pen =

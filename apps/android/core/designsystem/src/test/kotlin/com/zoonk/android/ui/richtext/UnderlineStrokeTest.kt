@@ -34,6 +34,9 @@ class UnderlineStrokeTest {
 
         assertEquals(alongLonger(200), pen[0].last().y - 50f, 0.001f)
         assertTrue(pen[1].last().y - 100f < alongLonger(260) - em * 0.1f)
+
+        val shortLastLine = underlineStroke(listOf(LineSpan(100f, 300f, 50f), LineSpan(0f, 4f, 100f)), em).pen
+        assertEquals(alongLonger(200), shortLastLine[0].last().y - 50f, 0.001f)
     }
 
     @Test
