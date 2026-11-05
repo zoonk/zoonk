@@ -206,7 +206,7 @@ struct PlanSuggestionSection: View {
         }
       }
     case .freeWeekOver:
-      FreeWeekOverNotice()
+      FreeWeekOverNotice(isInset: true)
     }
   }
 
@@ -504,19 +504,5 @@ func planLevelName(_ level: String) -> String {
   case "beginner": String(localized: "Beginner", table: "Plan", comment: "A course level")
   case "intermediate": String(localized: "Intermediate", table: "Plan", comment: "A course level")
   default: String(localized: "Advanced", table: "Plan", comment: "A course level")
-  }
-}
-
-/// A free exam plan's first week ended, on the Plan and Today.
-struct FreeWeekOverNotice: View {
-  var body: some View {
-    PlusNotice(
-      title: Text(
-        "Your free week of exam prep is over", tableName: "Plan",
-        comment: "Title of the Plan's notice when a free exam plan's first week ended"),
-      description: Text(
-        "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
-        tableName: "Plan", comment: "What stays free and what Plus opens after the free week"),
-      isInset: true)
   }
 }

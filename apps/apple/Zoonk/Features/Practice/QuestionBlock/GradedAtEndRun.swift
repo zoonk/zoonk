@@ -271,12 +271,19 @@ struct PracticeQuestionsPreparingView: View {
           ProgressView().padding(.top, 8)
         }
 
-        if let failure, limit == nil {
-          FailureLine(message: failureText(failure)).font(.subheadline)
+        if isPlusRequired {
+          FreeWeekOverNotice(showsSeePlus: false, isInset: true)
+        } else if failure != nil, limit == nil {
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't write your test. Try again.", table: "Practice",
+              comment: "Writing a test's questions failed.")
+          )
+          .font(.subheadline)
         }
       }
     } actions: {
-      if failure as? PracticeAPIError == .plusRequired {
+      if isPlusRequired {
         PracticeMainButton(
           title: LocalizedStringResource(
             "See Plus", table: "Practice",
@@ -301,19 +308,11 @@ struct PracticeQuestionsPreparingView: View {
     }
   }
 
-  private var limit: HelpLimit? {
-    (failure as? PracticeAPIError)?.helpLimit
+  private var isPlusRequired: Bool {
+    failure as? PracticeAPIError == .plusRequired
   }
 
-  private func failureText(_ failure: any Error) -> LocalizedStringResource {
-    switch failure as? PracticeAPIError {
-    case .plusRequired:
-      LocalizedStringResource(
-        "This test comes with Plus.", table: "Practice", comment: "A test that needs Plus.")
-    default:
-      LocalizedStringResource(
-        "We couldn't write your test. Try again.", table: "Practice",
-        comment: "Writing a test's questions failed.")
-    }
+  private var limit: HelpLimit? {
+    (failure as? PracticeAPIError)?.helpLimit
   }
 }
