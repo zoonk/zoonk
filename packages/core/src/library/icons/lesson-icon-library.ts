@@ -9,7 +9,7 @@ import { LESSON_ICON_DOCUMENT } from "../identity/_utils/search-documents";
 import { findRankedIds, orderByIds, toTextSearch } from "../identity/_utils/text-search-sql";
 import { toIconFiles } from "./_utils/icon-files";
 
-/** Longer than a drawing step and its retries take, so only a run that died loses its claim. */
+/** Longer than one drawing attempt takes; each attempt renews the claim, so only a dead run loses it. */
 const STALE_CLAIM_MS = 600_000;
 
 export type IconRow = { id: string; name: string; runId: string; status: GenerationStatus };
@@ -90,9 +90,14 @@ export async function drawLessonIcon({
   iconId: string;
   runId: string;
 }): Promise<GenerationStatus | null> {
+  const renewed = await prisma.lessonIcon.updateMany({
+    data: { updatedAt: new Date() },
+    where: { id: iconId, runId, status: "running" },
+  });
+
   const icon = await prisma.lessonIcon.findUnique({ where: { id: iconId } });
 
-  if (!icon || icon.status !== "running" || icon.runId !== runId) {
+  if (!icon || renewed.count === 0) {
     return icon?.status ?? null;
   }
 

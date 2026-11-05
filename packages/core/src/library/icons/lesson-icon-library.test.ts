@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { generateLessonIconImage } from "@zoonk/ai/tasks/icons/image";
 import { prisma } from "@zoonk/db";
 import { lessonIconFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { blankIcon, drawnIcon } from "./_test-utils/icon-images";
 import {
@@ -99,6 +99,41 @@ describe(searchIconCandidates, () => {
 describe(drawLessonIcon, () => {
   beforeEach(() => {
     storeBlobUploads();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("renews its claim on every attempt, so a run still retrying keeps it and only a stopped one loses it", async () => {
+    const minute = 60_000;
+    const start = Date.now();
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    const need = needFor(`relay baton ${randomUUID().slice(0, 4)}`.replaceAll(/\d/gu, "q"));
+    const [owner, other] = [`run-${randomUUID()}`, `run-${randomUUID()}`];
+    const claim = await claimLessonIcon({ need, runId: owner });
+    vi.mocked(generateLessonIconImage).mockRejectedValue(new Error("Provider unavailable"));
+
+    vi.setSystemTime(start + 9 * minute);
+
+    await expect(drawLessonIcon({ iconId: claim.id, runId: owner })).rejects.toThrow(
+      "Provider unavailable",
+    );
+
+    vi.setSystemTime(start + 11 * minute);
+
+    await expect(claimLessonIcon({ need, runId: other })).resolves.toMatchObject({
+      mine: false,
+      runId: owner,
+    });
+
+    vi.setSystemTime(start + 20 * minute);
+
+    await expect(claimLessonIcon({ need, runId: other })).resolves.toMatchObject({
+      mine: true,
+      runId: other,
+    });
   });
 
   it("draws a claimed icon into its two files once, and leaves another run's claim alone", async () => {

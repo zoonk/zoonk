@@ -1,8 +1,13 @@
 /** A `$` after a capital is a currency sign ("R$ 30"), which the rich text leaves as text. */
 const MARKUP = /[*`|\n]|(?<!\p{Lu})\$/u;
-const SENTENCE_END = /[.!?…:;。！？]["'”’»)\]」』]*$/u;
-const SENTENCE_START_AFTER = /(?:[.!?…:;]["'”’»)\]」』]*\s+|[。！？]["'”’»)\]」』]*\s*|\n\s*)$/u;
-const CLOSES_WITHOUT_SPACE = /[。！？]["'”’»)\]」』]*$/u;
+const SENTENCE_END = /[.!?…:;]["'”’»)\]」』]*$/u;
+const CJK_SENTENCE_END = /[。！？]$/u;
+/** After a CJK quotation's own 。 the sentence goes on (「ありがとう。」と言った), so only a bare 。 ends one. */
+const CJK_SENTENCE_BREAK = /[。！？]\s*$/u;
+const SENTENCE_BREAK = /[.!?…:;]["'”’»)\]」』]*\s+$/u;
+const LINE_BREAK = /\n\s*$/u;
+/** In cased scripts a sentence never starts lowercase: "She said “Hello.” and left." */
+const LOWERCASE_START = /^\p{Ll}/u;
 const BOLD = "**";
 
 /**
@@ -22,14 +27,27 @@ function countBold(text: string): number {
   return text.split(BOLD).length - 1;
 }
 
-function startsSentence(before: string): boolean {
-  return before.trim() === "" || SENTENCE_START_AFTER.test(before);
+function startsSentence({ before, quote }: { before: string; quote: string }): boolean {
+  if (before.trim() === "") {
+    return true;
+  }
+
+  return (
+    !LOWERCASE_START.test(quote) &&
+    (SENTENCE_BREAK.test(before) || CJK_SENTENCE_BREAK.test(before) || LINE_BREAK.test(before))
+  );
 }
 
 function endsSentence({ after, quote }: { after: string; quote: string }): boolean {
+  const next = after.trimStart();
+
+  if (next === "") {
+    return true;
+  }
+
   return (
-    after.trim() === "" ||
-    (SENTENCE_END.test(quote) && (/^\s/u.test(after) || CLOSES_WITHOUT_SPACE.test(quote)))
+    !LOWERCASE_START.test(next) &&
+    ((SENTENCE_END.test(quote) && /^\s/u.test(after)) || CJK_SENTENCE_END.test(quote))
   );
 }
 
@@ -48,7 +66,7 @@ export function isExampleQuote({ quote, text }: { quote: string; text: string })
 
   return (
     countBold(quote) % 2 === 0 &&
-    startsSentence(text.slice(0, start)) &&
+    startsSentence({ before: text.slice(0, start), quote }) &&
     endsSentence({ after, quote })
   );
 }

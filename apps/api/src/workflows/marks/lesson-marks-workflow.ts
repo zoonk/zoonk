@@ -142,7 +142,11 @@ export async function lessonMarksWorkflow({
         })
       : [];
 
-  const redrawn = await drawAll({ analytics: context, icons: retaken, runId: workflowRunId });
+  const [redrawn] = await Promise.all([
+    drawAll({ analytics: context, icons: retaken, runId: workflowRunId }),
+    waitForOtherRuns(retaken.filter((icon) => icon.state === "wait")),
+  ]);
+
   const settled = [...picked.filter((icon) => !stalledNames.has(icon.name)), ...retaken];
   const outcomes = [...drawn, ...redrawn];
 

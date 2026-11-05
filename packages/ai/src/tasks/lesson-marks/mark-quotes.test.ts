@@ -35,6 +35,24 @@ describe(isExampleQuote, () => {
     expect(isExampleQuote({ quote: "Ana ganha R$ 3.000 por mês.", text })).toBe(false);
   });
 
+  it("doesn't take a sentence that goes on after a quotation for two", () => {
+    const japanese = "店員は「ありがとう。」と言った。次の人が来た。";
+    const english = "She said “Hello.” and left. Next came Ana.";
+    const french = "Il a dit « Bonjour. » et il est parti. Ana est venue.";
+
+    expect(isExampleQuote({ quote: "と言った。", text: japanese })).toBe(false);
+    expect(isExampleQuote({ quote: "店員は「ありがとう。」", text: japanese })).toBe(false);
+
+    expect(isExampleQuote({ quote: "店員は「ありがとう。」と言った。", text: japanese })).toBe(
+      true,
+    );
+
+    expect(isExampleQuote({ quote: "and left.", text: english })).toBe(false);
+    expect(isExampleQuote({ quote: "She said “Hello.”", text: english })).toBe(false);
+    expect(isExampleQuote({ quote: "Next came Ana.", text: english })).toBe(true);
+    expect(isExampleQuote({ quote: "et il est parti.", text: french })).toBe(false);
+  });
+
   it("reads sentences that end without a space, as Japanese does", () => {
     const japanese = "給料には総額がある。たとえば、アナは月に30万円もらう。手取りはもっと少ない。";
 
