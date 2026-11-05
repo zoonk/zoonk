@@ -1,8 +1,8 @@
 /** A `$` after a capital is a currency sign ("R$ 30"), which the rich text leaves as text. */
 const MARKUP = /[*`|\n]|(?<!\p{Lu})\$/u;
 const SENTENCE_END = /[.!?…:;。！？]["'”’»)\]」』]*$/u;
-const SENTENCE_START_AFTER = /(?:[.!?…:;]["'”’»)\]」』]*\s+|[。！？」』]\s*|\n\s*)$/u;
-const CLOSES_WITHOUT_SPACE = /[。！？」』]$/u;
+const SENTENCE_START_AFTER = /(?:[.!?…:;]["'”’»)\]」』]*\s+|[。！？]["'”’»)\]」』]*\s*|\n\s*)$/u;
+const CLOSES_WITHOUT_SPACE = /[。！？]["'”’»)\]」』]*$/u;
 const BOLD = "**";
 
 /**

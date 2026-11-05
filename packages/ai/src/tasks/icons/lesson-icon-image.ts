@@ -1,8 +1,8 @@
 import "server-only";
+import { generateImage } from "ai";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runImageTaskGeneration } from "../../provenance/run-image-generation";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
-import { generateImageWithSafetyRetry } from "../_utils/generate-image-with-safety-retry";
 import { type IconNeed } from "./icon-need";
 import stylePrompt from "./lesson-icon-style.prompt.md";
 
@@ -30,6 +30,11 @@ export type LessonIconImageParams = {
   useFallback?: boolean;
 };
 
+/**
+ * One image call, so its workflow step pays for one drawing per try. Icons are generic objects, so
+ * a safety refusal is rare and the drawing is recorded as failed. The prompt keeps the no-training
+ * filter: the icon's name may come from a private lesson.
+ */
 export async function generateLessonIconImage({
   analytics,
   model = defaultModel,
@@ -37,17 +42,15 @@ export async function generateLessonIconImage({
   quality = DEFAULT_QUALITY,
   useFallback = true,
 }: LessonIconImageParams) {
-  const input = `${need.name}: ${need.description}`;
+  const prompt = buildIconPrompt({ input: `${need.name}: ${need.description}` });
 
   const { provenance, result } = await runImageTaskGeneration({
     analytics,
     generate: ({ promptTraining }) =>
-      generateImageWithSafetyRetry({
-        analytics,
-        buildPrompt: buildIconPrompt,
-        input,
+      generateImage({
         maxImagesPerCall: 1,
         model,
+        prompt,
         providerOptions: buildImageProviderOptions({
           background: "transparent",
           promptTraining,
@@ -57,12 +60,11 @@ export async function generateLessonIconImage({
         }),
         size: ICON_SIZE,
       }),
-    libraryInput: true,
     promptVersion: `icon-style-v${LESSON_ICON_STYLE_VERSION}`,
     requestedModel: model,
     systemPrompt: stylePrompt,
     task: "lesson-icon",
   });
 
-  return { data: { image: result.image }, prompt: buildIconPrompt({ input }), provenance };
+  return { data: { image: result.image }, prompt, provenance };
 }

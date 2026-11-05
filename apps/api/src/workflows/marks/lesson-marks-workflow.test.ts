@@ -6,7 +6,7 @@ import { uploadImage } from "@zoonk/core/images/upload";
 import { readSavedLessonMap } from "@zoonk/core/library/lessons/map";
 import { prisma } from "@zoonk/db";
 import { lessonIconFixture, playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { drawnIcon } from "./_test-utils/icon-results";
 import { lessonMarksWorkflow } from "./lesson-marks-workflow";
@@ -86,6 +86,10 @@ describe(lessonMarksWorkflow, () => {
     vi.mocked(uploadImage).mockImplementation(({ fileName }) =>
       Promise.resolve({ data: `https://blob.test/${randomUUID()}/${fileName}`, error: null }),
     );
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("tags a written lesson, draws each new icon once in its own step and links it to every screen and idea", async () => {
@@ -195,6 +199,43 @@ describe(lessonMarksWorkflow, () => {
       steps: [
         { iconId: drawing.id, iconPending: false },
         { iconId: drawing.id, iconPending: false },
+      ],
+    });
+  });
+
+  it("draws an icon itself when the run that claimed it stopped, once its claim is stale", async () => {
+    const [cloud, nucleus] = [uniqueName(), uniqueName()];
+    taggedAs({ cloud, nucleus });
+    const lesson = await markedLesson();
+
+    const stopped = await lessonIconFixture({
+      name: cloud,
+      runId: "a-run-that-stopped",
+      smallUrl: null,
+      status: "running",
+      url: null,
+    });
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    vi.mocked(sleep).mockImplementation(async () => {
+      vi.setSystemTime(Date.now() + 60_000);
+    });
+
+    await expect(lessonMarksWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      drawn: 2,
+      failed: 0,
+      icons: 2,
+    });
+
+    await expect(
+      prisma.lessonIcon.findUniqueOrThrow({ where: { id: stopped.id } }),
+    ).resolves.toMatchObject({ runId: "test-run-id", status: "completed" });
+
+    await expect(linkedIcons(lesson.id)).resolves.toMatchObject({
+      steps: [
+        { iconId: stopped.id, iconPending: false },
+        { iconId: stopped.id, iconPending: false },
       ],
     });
   });

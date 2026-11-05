@@ -43,5 +43,17 @@ describe(isExampleQuote, () => {
     );
 
     expect(isExampleQuote({ quote: "アナは月に30万円もらう。", text: japanese })).toBe(false);
+
+    const quoted = "たとえば、アナは「パン」を買う。税金は別だ。";
+
+    expect(isExampleQuote({ quote: "を買う。", text: quoted })).toBe(false);
+    expect(isExampleQuote({ quote: "税金は別だ。", text: quoted })).toBe(true);
+
+    expect(
+      isExampleQuote({
+        quote: "店員は「ありがとう。」と言った。",
+        text: "店員は「ありがとう。」と言った。次の人が来た。",
+      }),
+    ).toBe(true);
   });
 });

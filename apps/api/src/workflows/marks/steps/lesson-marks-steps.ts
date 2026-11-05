@@ -47,11 +47,13 @@ export async function failLessonIconStep(input: { iconId: string; runId: string 
   await failLessonIcon(input);
 }
 
-export async function readIconStatesStep(iconIds: string[]): Promise<GenerationStatus[]> {
+export async function readIconStatesStep(
+  iconIds: string[],
+): Promise<{ id: string; status: GenerationStatus }[]> {
   "use step";
 
   const icons = await findIconsById(iconIds);
-  return icons.map((icon) => icon.status);
+  return icons.map(({ id, status }) => ({ id, status }));
 }
 
 export async function linkLessonIconsStep(input: {

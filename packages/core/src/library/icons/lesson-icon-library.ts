@@ -10,7 +10,7 @@ import { findRankedIds, orderByIds, toTextSearch } from "../identity/_utils/text
 import { toIconFiles } from "./_utils/icon-files";
 
 /** Longer than a drawing step and its retries take, so only a run that died loses its claim. */
-const STALE_CLAIM_MS = 900_000;
+const STALE_CLAIM_MS = 600_000;
 
 export type IconRow = { id: string; name: string; runId: string; status: GenerationStatus };
 

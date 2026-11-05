@@ -17,8 +17,9 @@ export type LessonMarksInput = { analytics?: ContentAnalytics; lessonId: string;
 
 export type LessonMarksResult = { drawn: number; failed: number; icons: number };
 
-const WAIT_INTERVAL = "5s";
-const MAX_WAITS = 36;
+const WAIT_INTERVAL = "10s";
+/** Past the claim's stale window in core (`claimLessonIcon`), so a dead run's icon can be retaken. */
+const MAX_WAITS = 66;
 
 type IconContext = {
   contentScope: "personal" | "shared";
@@ -44,21 +45,39 @@ async function drawIcon({
   }
 }
 
-async function waitForOtherRuns(icons: readonly PickedIcon[]): Promise<void> {
-  const iconIds = icons.map((icon) => icon.iconId);
+function drawAll({
+  analytics,
+  icons,
+  runId,
+}: {
+  analytics: IconContext;
+  icons: readonly PickedIcon[];
+  runId: string;
+}): Promise<boolean[]> {
+  return Promise.all(
+    icons
+      .filter((icon) => icon.state === "draw")
+      .map((icon) => drawIcon({ analytics, icon, runId })),
+  );
+}
 
-  if (iconIds.length === 0) {
-    return;
+/** The icons another run still draws when the wait ends. */
+async function waitForOtherRuns(icons: readonly PickedIcon[]): Promise<PickedIcon[]> {
+  if (icons.length === 0) {
+    return [];
   }
 
-  await repeatUntil({
-    done: (states) => !states.includes("running"),
+  const states = await repeatUntil({
+    done: (current) => current.every((icon) => icon.status !== "running"),
     run: async () => {
       await sleep(WAIT_INTERVAL);
-      return readIconStatesStep(iconIds);
+      return readIconStatesStep(icons.map((icon) => icon.iconId));
     },
     times: MAX_WAITS,
   });
+
+  const running = new Set(states.flatMap((icon) => (icon.status === "running" ? [icon.id] : [])));
+  return icons.filter((icon) => running.has(icon.iconId));
 }
 
 async function pickIcons({
@@ -105,20 +124,33 @@ export async function lessonMarksWorkflow({
     wait,
   });
 
-  const [drawn] = await Promise.all([
-    Promise.all(
-      picked
-        .filter((icon) => icon.state === "draw")
-        .map((icon) => drawIcon({ analytics: context, icon, runId: workflowRunId })),
-    ),
+  const [drawn, stalled] = await Promise.all([
+    drawAll({ analytics: context, icons: picked, runId: workflowRunId }),
     waitForOtherRuns(picked.filter((icon) => icon.state === "wait")),
   ]);
 
-  await linkLessonIconsStep({ lessonId, picked });
+  const stalledNames = new Set(stalled.map((icon) => icon.name));
+
+  const retaken =
+    stalled.length > 0
+      ? await pickIcons({
+          analytics: context,
+          lessonId,
+          requests: tagged.requests.filter((request) => stalledNames.has(request.need.name)),
+          runId: workflowRunId,
+          wait,
+        })
+      : [];
+
+  const redrawn = await drawAll({ analytics: context, icons: retaken, runId: workflowRunId });
+  const settled = [...picked.filter((icon) => !stalledNames.has(icon.name)), ...retaken];
+  const outcomes = [...drawn, ...redrawn];
+
+  await linkLessonIconsStep({ lessonId, picked: settled });
 
   return {
-    drawn: drawn.filter(Boolean).length,
-    failed: drawn.filter((ok) => !ok).length,
-    icons: picked.length,
+    drawn: outcomes.filter(Boolean).length,
+    failed: outcomes.filter((ok) => !ok).length,
+    icons: settled.length,
   };
 }
