@@ -176,6 +176,26 @@ final class StepMarksTests: XCTestCase {
     XCTAssertFalse(LessonMindMapRows.fits(6), "a sixth idea would sit behind the others' lines")
   }
 
+  func testIdeasSitInReadingOrderAroundTheMapsCenter() {
+    let slot = { (column: Int, row: Int) in LessonIdeaSlot(column: column, row: row) }
+
+    XCTAssertEqual(LessonIdeaSlot.slots(count: 2), [slot(-1, 1), slot(1, 1)])
+    XCTAssertEqual(LessonIdeaSlot.slots(count: 3), [slot(-1, -1), slot(1, -1), slot(0, 1)])
+    XCTAssertEqual(
+      LessonIdeaSlot.slots(count: 5),
+      [slot(-1, -1), slot(1, -1), slot(-1, 1), slot(1, 1), slot(0, 2)])
+    XCTAssertEqual(LessonIdeaSlot.rows(of: LessonIdeaSlot.slots(count: 5)), -1...2)
+    XCTAssertEqual(LessonIdeaSlot.rows(of: LessonIdeaSlot.slots(count: 2)), 0...1)
+
+    for count in 1...8 {
+      let slots = LessonIdeaSlot.slots(count: count)
+      XCTAssertEqual(
+        slots,
+        slots.sorted { ($0.row, $0.column) < ($1.row, $1.column) },
+        "VoiceOver reads by position, so \(count) ideas must sit in number order")
+    }
+  }
+
   private func step(_ json: String) throws -> LessonStep {
     try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
   }
