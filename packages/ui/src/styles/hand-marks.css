@@ -17,27 +17,53 @@
 }
 
 /*
- * A drawing in a data URL can't read the page's variables, so each stroke repeats that mode's
- * `--warning` (look here).
+ * One pen stroke at a fixed wavelength for the text size: a phrase that wraps shows each line's
+ * slice of the same stroke (`slice` is the default `box-decoration-break`), and the closing curl
+ * sits after the phrase's last character, so a line break never gets one. The curl is an empty
+ * inline box rather than an inline-block, which would let the punctuation after the phrase wrap
+ * away from it. A drawing in a data URL can't read the page's variables, so each stroke repeats
+ * that mode's `--warning` (look here).
  */
 @utility hand-underline {
   padding-bottom: 0.2em;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7.5C30 4.5 62 9 98 6.5S168 4.5 198 7' fill='none' stroke='oklch(0.74 0.14 70)' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M8 10C52 8 122 10.5 192 9' fill='none' stroke='oklch(0.74 0.14 70)' stroke-width='1.5' stroke-linecap='round' opacity='.65'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 216 12'%3E%3Cpath d='M0 7C18 5.6 36 5.6 54 6.9S90 8.6 108 7.2 144 5.5 162 6.8 198 8.4 216 7' fill='none' stroke='oklch(0.74 0.14 70)' stroke-width='2.8'/%3E%3C/svg%3E");
   background-position: 0 100%;
-  background-repeat: no-repeat;
-  background-size: 100% 0.5em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
+  background-repeat: repeat-x;
+  background-size: 9em 0.5em;
+
+  &::after {
+    content: "";
+    padding-inline-end: 0.3em;
+    padding-bottom: 0.2em;
+    margin-inline-end: -0.3em;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7.2 12'%3E%3Cpath d='M0 7C1.4 7.3 2.8 7.1 4 6.1S5.9 3.9 5.3 3.4' fill='none' stroke='oklch(0.74 0.14 70)' stroke-width='2.8' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-size: 0.3em 0.5em;
+    pointer-events: none;
+  }
 
   @variant dark {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7.5C30 4.5 62 9 98 6.5S168 4.5 198 7' fill='none' stroke='oklch(0.83 0.12 80)' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M8 10C52 8 122 10.5 192 9' fill='none' stroke='oklch(0.83 0.12 80)' stroke-width='1.5' stroke-linecap='round' opacity='.65'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 216 12'%3E%3Cpath d='M0 7C18 5.6 36 5.6 54 6.9S90 8.6 108 7.2 144 5.5 162 6.8 198 8.4 216 7' fill='none' stroke='oklch(0.83 0.12 80)' stroke-width='2.8'/%3E%3C/svg%3E");
+
+    &::after {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7.2 12'%3E%3Cpath d='M0 7C1.4 7.3 2.8 7.1 4 6.1S5.9 3.9 5.3 3.4' fill='none' stroke='oklch(0.83 0.12 80)' stroke-width='2.8' stroke-linecap='round'/%3E%3C/svg%3E");
+    }
   }
 
   @media (prefers-contrast: more) {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7.5C30 4.5 62 9 98 6.5S168 4.5 198 7' fill='none' stroke='oklch(0.473 0.137 46.201)' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M8 10C52 8 122 10.5 192 9' fill='none' stroke='oklch(0.473 0.137 46.201)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 216 12'%3E%3Cpath d='M0 7C18 5.6 36 5.6 54 6.9S90 8.6 108 7.2 144 5.5 162 6.8 198 8.4 216 7' fill='none' stroke='oklch(0.473 0.137 46.201)' stroke-width='2.8'/%3E%3C/svg%3E");
+
+    &::after {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7.2 12'%3E%3Cpath d='M0 7C1.4 7.3 2.8 7.1 4 6.1S5.9 3.9 5.3 3.4' fill='none' stroke='oklch(0.473 0.137 46.201)' stroke-width='2.8' stroke-linecap='round'/%3E%3C/svg%3E");
+    }
 
     @variant dark {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7.5C30 4.5 62 9 98 6.5S168 4.5 198 7' fill='none' stroke='oklch(0.879 0.169 91.605)' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M8 10C52 8 122 10.5 192 9' fill='none' stroke='oklch(0.879 0.169 91.605)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 216 12'%3E%3Cpath d='M0 7C18 5.6 36 5.6 54 6.9S90 8.6 108 7.2 144 5.5 162 6.8 198 8.4 216 7' fill='none' stroke='oklch(0.879 0.169 91.605)' stroke-width='2.8'/%3E%3C/svg%3E");
+
+      &::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7.2 12'%3E%3Cpath d='M0 7C1.4 7.3 2.8 7.1 4 6.1S5.9 3.9 5.3 3.4' fill='none' stroke='oklch(0.879 0.169 91.605)' stroke-width='2.8' stroke-linecap='round'/%3E%3C/svg%3E");
+      }
     }
   }
 }

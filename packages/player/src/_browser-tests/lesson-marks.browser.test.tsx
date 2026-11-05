@@ -78,6 +78,18 @@ async function next() {
   await page.getByRole("button", { name: /^Next/u }).click();
 }
 
+const NO_BACKGROUND = "rgba(0, 0, 0, 0)";
+
+async function newTermBackground(lessonOptions: Parameters<typeof buildLesson>[1]) {
+  renderLessonPlayer({
+    lesson: buildLesson([teachingStep("explanation", { marks: null })], lessonOptions),
+  });
+
+  const term = page.getByText("cloud of possibilities", { exact: true });
+  await expect.element(term).toBeVisible();
+  return getComputedStyle(term.element()).backgroundColor;
+}
+
 describe("lesson marks", () => {
   it("opens on the lesson's ideas, each saying what it covers without its answer", async () => {
     const { onExit } = renderLessonPlayer({ lesson: lesson() });
@@ -285,5 +297,48 @@ describe("lesson marks", () => {
     await expect.element(strip()).not.toBeInTheDocument();
     await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
     expect(underlined()).toStrictEqual([]);
+  });
+
+  it("puts a knowledge lesson's new term on the highlighter, even before its marks", async () => {
+    await expect(newTermBackground({})).resolves.not.toBe(NO_BACKGROUND);
+  });
+
+  it("keeps the punctuation after an underlined phrase on its last word's line", async () => {
+    await page.viewport(447, 900);
+
+    const text =
+      "Remember that the electron spreads as a **cloud of possibilities** around the nucleus. This tells us where it might be.";
+
+    renderLessonPlayer({
+      lesson: buildLesson([
+        contentStep("explanation", {
+          content: { text },
+          marks: marks({
+            example: text,
+            icon: inlineIcon("E"),
+            underline: "the electron spreads as a cloud of possibilities around the nucleus",
+          }),
+        }),
+      ]),
+    });
+
+    await expect.element(page.getByText("cloud of possibilities", { exact: true })).toBeVisible();
+    await document.fonts.ready;
+
+    const phrase = document.querySelector('[data-slot="underline"]');
+    const following = phrase?.nextElementSibling?.firstChild ?? document.body;
+    const lastLine = [...(phrase?.getClientRects() ?? [])].at(-1);
+    const period = document.createRange();
+    period.setStart(following, 0);
+    period.setEnd(following, 1);
+
+    expect(period.toString()).toBe(".");
+    expect(period.getBoundingClientRect().top).toBeCloseTo(lastLine?.top ?? Number.NaN, 0);
+  });
+
+  it("keeps a language lesson's bold plain, as before marks existed", async () => {
+    await expect(newTermBackground({ language: "pt", targetLanguage: "en" })).resolves.toBe(
+      NO_BACKGROUND,
+    );
   });
 });

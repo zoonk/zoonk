@@ -1,4 +1,5 @@
 import { isExampleQuote, isUnderlineQuote } from "@zoonk/ai/tasks/lesson-marks/quotes";
+import { isMarkdownTableStart } from "@zoonk/utils/markdown-table";
 import { z } from "zod";
 import { type LessonIcon } from "../icons/lesson-icon-contract";
 import { type StepContentByKind } from "../steps/contract/step-contract";
@@ -64,13 +65,19 @@ export function getMarkedText(screen: MarkedScreen): string | null {
   return screen.kind === "workedExample" ? screen.content.problem : null;
 }
 
-/** Icons add to a screen's visuals and never compete with one. */
+/** The players draw a table wherever one starts, even right under a line with a pipe in it. */
+function showsTable(text: string): boolean {
+  return text.split(/\r?\n/u).some((_, index, lines) => isMarkdownTableStart(lines, index));
+}
+
+/** Icons add to a screen's visuals and never compete with one, a table in its text included. */
 export function canShowIcon(screen: MarkedScreen): boolean {
   return (
     screen.kind === "explanation" &&
     !screen.content.image &&
     !screen.content.visual &&
-    !screen.content.explore
+    !screen.content.explore &&
+    !showsTable(screen.content.text)
   );
 }
 
