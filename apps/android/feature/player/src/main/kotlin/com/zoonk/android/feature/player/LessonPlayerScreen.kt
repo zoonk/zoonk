@@ -718,7 +718,7 @@ private fun Content(
                 BoxWithConstraints(
                     Modifier
                         .fillMaxSize()
-                        .then(if (language.languages.isLanguageLesson) Modifier else Modifier.dottedPaper())
+                        .then(if (language.languages.isLanguageLesson || !step.isReadStep) Modifier else Modifier.dottedPaper())
                         .onPageSpan { span = it }
                         .pointerInput(screen.canGoBack, screen.canGoForward) {
                             var travelled = 0f

@@ -346,6 +346,7 @@ internal fun WorkedExampleView(
     marking: LessonMarking?,
 ) {
     val worked = content.content
+    val marksTerms = marking != null
     val steps = worked.steps.take(revealed)
     val isDone = revealed >= worked.steps.size
     val newest = remember { BringIntoViewRequester() }
@@ -365,7 +366,7 @@ internal fun WorkedExampleView(
                 LabelChip(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
                 worked.title?.let { QuestionText(it) }
             }
-            TeachingText(title = null, text = worked.problem, marks = step.marks.takeIf { marking != null }, marksTerms = marking != null)
+            TeachingText(title = null, text = worked.problem, marks = step.marks.takeIf { marking != null }, marksTerms = marksTerms)
             StepPicture(step, PictureFrame.Inline)
             LessonStepVisual(worked.visual)
         }
@@ -396,7 +397,7 @@ internal fun WorkedExampleView(
                                 style = MaterialTheme.typography.bodyLarge.withTabularFigures(),
                             )
                             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                RichText(text = line.text, style = MaterialTheme.typography.bodyLarge)
+                                RichText(text = line.text, style = MaterialTheme.typography.bodyLarge, marksTerms = marksTerms)
                                 line.math?.let { MathText(it) }
                             }
                         }
@@ -416,7 +417,7 @@ internal fun WorkedExampleView(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelLarge,
                         )
-                        BodyText(worked.result)
+                        RichText(text = worked.result, style = MaterialTheme.typography.bodyLarge, marksTerms = marksTerms)
                     }
                 }
             }
