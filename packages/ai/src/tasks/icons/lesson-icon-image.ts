@@ -23,7 +23,6 @@ function buildIconPrompt({ input }: { input: string }): string {
 
 export type LessonIconImageParams = {
   need: Pick<IconNeed, "description" | "name">;
-  abortSignal?: AbortSignal;
   analytics?: AiGenerationContext;
   model?: string;
   quality?: ImageGenerationQuality;
@@ -37,7 +36,6 @@ export type LessonIconImageParams = {
  * filter: the icon's name may come from a private lesson.
  */
 export async function generateLessonIconImage({
-  abortSignal,
   analytics,
   model = defaultModel,
   need,
@@ -50,7 +48,6 @@ export async function generateLessonIconImage({
     analytics,
     generate: ({ promptTraining }) =>
       generateImage({
-        abortSignal,
         maxImagesPerCall: 1,
         model,
         prompt,

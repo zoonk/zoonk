@@ -6,8 +6,7 @@ import { uploadImage } from "@zoonk/core/images/upload";
 import { readSavedLessonMap } from "@zoonk/core/library/lessons/map";
 import { prisma } from "@zoonk/db";
 import { lessonIconFixture, playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { sleep } from "workflow";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { drawnIcon } from "./_test-utils/icon-results";
 import { lessonMarksWorkflow } from "./lesson-marks-workflow";
 
@@ -88,10 +87,6 @@ describe(lessonMarksWorkflow, () => {
     );
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   it("tags a written lesson, draws each new icon once in its own step and links it to every screen and idea", async () => {
     const [cloud, nucleus] = [uniqueName(), uniqueName()];
     taggedAs({ cloud, nucleus });
@@ -161,34 +156,38 @@ describe(lessonMarksWorkflow, () => {
     });
   });
 
-  it("waits for an icon another lesson's run is drawing instead of drawing it again, then links it", async () => {
+  it("links the same library row in two lessons that draw the same new name at once", async () => {
+    const [cloud, nucleus] = [uniqueName(), uniqueName()];
+    taggedAs({ cloud, nucleus });
+    const [first, second] = await Promise.all([markedLesson(), markedLesson()]);
+
+    await Promise.all([
+      lessonMarksWorkflow({ lessonId: first.id }),
+      lessonMarksWorkflow({ lessonId: second.id }),
+    ]);
+
+    const icon = await prisma.lessonIcon.findUniqueOrThrow({ where: { name: cloud } });
+
+    await expect(linkedIcons(first.id)).resolves.toMatchObject({
+      steps: [{ iconId: icon.id }, { iconId: icon.id }],
+    });
+
+    await expect(linkedIcons(second.id)).resolves.toMatchObject({
+      steps: [{ iconId: icon.id }, { iconId: icon.id }],
+    });
+  });
+
+  it("skips a name an earlier lesson failed to draw, without paying for it again", async () => {
     const [cloud, nucleus] = [uniqueName(), uniqueName()];
     taggedAs({ cloud, nucleus });
     const lesson = await markedLesson();
 
-    const drawing = await lessonIconFixture({
-      name: cloud,
-      runId: "another-lesson-run",
-      smallUrl: null,
-      status: "running",
-      url: null,
-    });
-
-    vi.mocked(sleep).mockImplementationOnce(async () => {
-      await prisma.lessonIcon.update({
-        data: {
-          smallUrl: "https://blob.test/96.webp",
-          status: "completed",
-          url: "https://blob.test/256.webp",
-        },
-        where: { id: drawing.id },
-      });
-    });
+    await lessonIconFixture({ name: cloud, smallUrl: null, status: "failed", url: null });
 
     await expect(lessonMarksWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
       drawn: 1,
       failed: 0,
-      icons: 2,
+      icons: 1,
     });
 
     expect(
@@ -197,98 +196,8 @@ describe(lessonMarksWorkflow, () => {
 
     await expect(linkedIcons(lesson.id)).resolves.toMatchObject({
       steps: [
-        { iconId: drawing.id, iconPending: false },
-        { iconId: drawing.id, iconPending: false },
-      ],
-    });
-  });
-
-  it("draws an icon itself when the run that claimed it stopped, once its claim is stale", async () => {
-    const [cloud, nucleus] = [uniqueName(), uniqueName()];
-    taggedAs({ cloud, nucleus });
-    const lesson = await markedLesson();
-
-    const stopped = await lessonIconFixture({
-      name: cloud,
-      runId: "a-run-that-stopped",
-      smallUrl: null,
-      status: "running",
-      url: null,
-    });
-
-    vi.useFakeTimers({ toFake: ["Date"] });
-
-    vi.mocked(sleep).mockImplementation(async () => {
-      vi.setSystemTime(Date.now() + 60_000);
-    });
-
-    await expect(lessonMarksWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
-      drawn: 2,
-      failed: 0,
-      icons: 2,
-    });
-
-    await expect(
-      prisma.lessonIcon.findUniqueOrThrow({ where: { id: stopped.id } }),
-    ).resolves.toMatchObject({ runId: "test-run-id", status: "completed" });
-
-    await expect(linkedIcons(lesson.id)).resolves.toMatchObject({
-      steps: [
-        { iconId: stopped.id, iconPending: false },
-        { iconId: stopped.id, iconPending: false },
-      ],
-    });
-  });
-
-  it("waits again when another lesson's run retakes the stalled icon first, then links it", async () => {
-    const [cloud, nucleus] = [uniqueName(), uniqueName()];
-    taggedAs({ cloud, nucleus });
-    const lesson = await markedLesson();
-
-    const stalled = await lessonIconFixture({
-      name: cloud,
-      runId: "a-run-that-stopped",
-      smallUrl: null,
-      status: "running",
-      url: null,
-    });
-
-    vi.useFakeTimers({ toFake: ["Date"] });
-    let sleeps = 0;
-
-    vi.mocked(sleep).mockImplementation(async () => {
-      sleeps += 1;
-      vi.setSystemTime(Date.now() + 60_000);
-
-      if (sleeps === 66) {
-        await prisma.lessonIcon.update({
-          data: { runId: "another-lesson-run", updatedAt: new Date() },
-          where: { id: stalled.id },
-        });
-      }
-
-      if (sleeps === 67) {
-        await prisma.lessonIcon.update({
-          data: {
-            smallUrl: "https://blob.test/96.webp",
-            status: "completed",
-            url: "https://blob.test/256.webp",
-          },
-          where: { id: stalled.id },
-        });
-      }
-    });
-
-    await lessonMarksWorkflow({ lessonId: lesson.id });
-
-    expect(
-      vi.mocked(generateLessonIconImage).mock.calls.map(([input]) => input.need.name),
-    ).toStrictEqual([nucleus]);
-
-    await expect(linkedIcons(lesson.id)).resolves.toMatchObject({
-      steps: [
-        { iconId: stalled.id, iconPending: false },
-        { iconId: stalled.id, iconPending: false },
+        { iconId: null, iconPending: false },
+        { iconId: null, iconPending: false },
       ],
     });
   });

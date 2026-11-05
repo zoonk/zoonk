@@ -217,7 +217,7 @@ describe(getPlayableLibraryLesson, () => {
 
   it("drops marks the screen can't show: a quote it doesn't have, half a sentence, an idea past the map, an icon beside a picture, an icon not drawn yet", async () => {
     const icon = await lessonIconFixture();
-    const drawing = await lessonIconFixture({ smallUrl: null, status: "running", url: null });
+    const drawing = await lessonIconFixture({ smallUrl: null, status: "failed", url: null });
     const text = playableStepContent.explanation.text;
 
     const marks = {

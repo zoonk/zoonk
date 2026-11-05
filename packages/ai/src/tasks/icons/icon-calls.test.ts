@@ -1,4 +1,3 @@
-import { generateImage } from "ai";
 import { describe, expect, it, vi } from "vitest";
 import { runUnderPromptTrainingRule } from "../../data-protection";
 import { matchLessonIcons } from "./icon-match";
@@ -40,17 +39,5 @@ describe("icon library calls", () => {
     expect(
       vi.mocked(runUnderPromptTrainingRule).mock.calls.map(([input]) => input.libraryInput),
     ).toStrictEqual([undefined, undefined]);
-  });
-
-  it("stop drawing when the caller's attempt runs out", async () => {
-    const abortSignal = AbortSignal.timeout(1000);
-
-    await expect(generateLessonIconImage({ abortSignal, need })).rejects.toThrow(
-      "stopped before the call",
-    );
-
-    expect(generateImage).toHaveBeenCalledWith(
-      expect.objectContaining({ abortSignal, maxImagesPerCall: 1 }),
-    );
   });
 });
