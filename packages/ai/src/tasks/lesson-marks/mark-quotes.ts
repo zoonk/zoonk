@@ -1,12 +1,21 @@
-const MARKUP = /[*$`|\n]/u;
+/** A `$` after a capital is a currency sign ("R$ 30"), which the rich text leaves as text. */
+const MARKUP = /[*`|\n]|(?<!\p{Lu})\$/u;
 const SENTENCE_END = /[.!?…:;。！？]["'”’»)\]」』]*$/u;
 const SENTENCE_START_AFTER = /(?:[.!?…:;]["'”’»)\]」』]*\s+|[。！？」』]\s*|\n\s*)$/u;
 const CLOSES_WITHOUT_SPACE = /[。！？」』]$/u;
 const BOLD = "**";
 
-/** Plain words the rendered text shows as they are, so a quote inside a bold run still matches. */
+/**
+ * Plain words the rendered text shows together: the text's own characters once its bold marks are
+ * removed, so an underline may start, end or run through a bold term.
+ */
 export function isUnderlineQuote({ quote, text }: { quote: string; text: string }): boolean {
-  return quote.length > 0 && quote.trim() === quote && !MARKUP.test(quote) && text.includes(quote);
+  return (
+    quote.length > 0 &&
+    quote.trim() === quote &&
+    !MARKUP.test(quote) &&
+    text.replaceAll(BOLD, "").includes(quote)
+  );
 }
 
 function countBold(text: string): number {

@@ -18,7 +18,7 @@ type ProviderOptionsResult = {
 
 type ImageProviderOptionsResult = {
   gateway: Pick<GatewayProviderOptions, "models">;
-  openai: { output_format: "webp"; quality: ImageGenerationQuality };
+  openai: { background?: "transparent"; output_format: "webp"; quality: ImageGenerationQuality };
 };
 
 function buildGatewayProviderOptions({
@@ -86,11 +86,13 @@ function getImageFallbackModels({
 
 /** Evals turn `useFallback` off, so each image comes from the model under test. */
 export function buildImageProviderOptions({
+  background,
   promptTraining,
   quality,
   size,
   useFallback,
 }: {
+  background?: "transparent";
   promptTraining: boolean;
   quality: ImageGenerationQuality;
   size: string;
@@ -98,7 +100,7 @@ export function buildImageProviderOptions({
 }): ImageProviderOptionsResult {
   return {
     gateway: { models: getImageFallbackModels({ promptTraining, size, useFallback }) },
-    openai: { output_format: "webp", quality },
+    openai: { ...(background ? { background } : {}), output_format: "webp", quality },
   };
 }
 
