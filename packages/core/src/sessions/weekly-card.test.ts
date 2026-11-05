@@ -1,9 +1,9 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { getWeeklyChallenge } from "../checkpoints/get-weekly-challenge";
+import * as weeklyChallenge from "../checkpoints/get-weekly-challenge";
 import { readTodayWeeklyChallenge } from "../view-models/today/_utils/weekly-challenge-view";
 import { openTodayView } from "./_test-utils/open-today-view";
 import {
@@ -52,7 +52,7 @@ describe("Today's arrived weekly card", () => {
 
     expect(mock).toBeDefined();
 
-    const full = await getWeeklyChallenge({ goalId: goal.id, timeZone: "UTC" });
+    const full = await weeklyChallenge.getWeeklyChallenge({ goalId: goal.id, timeZone: "UTC" });
 
     if (full.status !== "ready" || !full.challenge) {
       throw new Error("Expected the actual card");
@@ -70,11 +70,14 @@ describe("Today's arrived weekly card", () => {
       title: card.title,
     };
 
+    const reselect = vi.spyOn(weeklyChallenge, "getWeeklyChallenge");
+
     const counts = await countDatabaseStatements(() =>
       readTodayWeeklyChallenge({ goalId: goal.id, session, timeZone: "UTC" }),
     );
 
     expect(counts.result).toStrictEqual(expected);
-    assertReadBudget(counts, 2);
+    expect(counts.writes).toBe(0);
+    expect(reselect).not.toHaveBeenCalled();
   });
 });

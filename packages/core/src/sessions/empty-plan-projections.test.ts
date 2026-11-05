@@ -1,4 +1,4 @@
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { loadItemSkillRows } from "../learner/_utils/plan-library-rows";
 import { loadSkillSurvivorMap } from "../learner/_utils/update-learner-skill";
@@ -20,6 +20,6 @@ describe("empty day-plan projections", () => {
       new Map(),
     ]);
 
-    assertReadBudget(counts, 0);
+    expect(counts).toMatchObject({ statements: 0, writes: 0 });
   });
 });

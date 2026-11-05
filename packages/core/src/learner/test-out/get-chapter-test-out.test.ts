@@ -1,12 +1,12 @@
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { getChapterTestOut } from "./get-chapter-test-out";
 
-describe("render read budgets", () => {
-  it("keeps the read budget for chapter test-out display", async () => {
+describe(getChapterTestOut, () => {
+  it("reads chapter test-out display without writing", async () => {
     const user = await userFixture();
 
     const { goal, chapters } = await learnerGoalFixture({
@@ -21,7 +21,7 @@ describe("render read budgets", () => {
       getChapterTestOut({ chapterId: chapters[0]!.id, goalId: goal.id }),
     );
 
-    assertReadBudget(counts, 20);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 });

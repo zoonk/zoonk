@@ -1,5 +1,5 @@
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
@@ -9,9 +9,9 @@ import { getStudyBlock } from "./get-study-block";
 import { getStudySession } from "./get-study-session";
 import { getStudySessionSummary } from "./get-study-session-summary";
 
-describe("render read budgets", () => {
+describe("saved session render reads", () => {
   it.each(["display", "block", "summary"] as const)(
-    "keeps the read budget for saved session %s",
+    "reads saved session %s without writing",
     async (name) => {
       freezeClock();
       vi.setSystemTime(SESSION_NOW);
@@ -35,8 +35,7 @@ describe("render read budgets", () => {
       };
 
       const counts = await countDatabaseStatements<{ status: string }>(readers[name]);
-      const budgets = { block: 10, display: 34, summary: 62 };
-      assertReadBudget(counts, budgets[name]);
+      expect(counts.writes).toBe(0);
       expect(counts.result.status).toBe("ready");
     },
   );

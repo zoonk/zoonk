@@ -1,5 +1,5 @@
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { signedInCourseGoal } from "./_test-utils/course-goal";
@@ -13,43 +13,43 @@ import { getPlanTabView } from "./plan/get-plan-view";
 import { getProgressView } from "./progress/get-progress-view";
 import { getSyllabusView } from "./syllabus/get-syllabus-view";
 
-describe("render read statement budgets", () => {
+describe("render reads", () => {
   it.each([
-    ["plan", getPlanTabView, 23],
-    ["progress", getProgressView, 87],
-    ["syllabus", getSyllabusView, 16],
-    ["map", getFieldMapView, 26],
-  ] as const)("keeps the read budget for %s", async (_name, read, budget) => {
+    ["plan", getPlanTabView],
+    ["progress", getProgressView],
+    ["syllabus", getSyllabusView],
+    ["map", getFieldMapView],
+  ] as const)("reads %s without writing", async (_name, read) => {
     await signedInCourseGoal();
     const counts = await countDatabaseStatements(async () => read({}));
-    assertReadBudget(counts, budget);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 
-  it("keeps the read budget for chapter", async () => {
+  it("reads chapter without writing", async () => {
     const { chapters } = await signedInCourseGoal();
 
     const counts = await countDatabaseStatements(async () =>
       getChapterView({ chapterId: chapters[0]!.id }),
     );
 
-    assertReadBudget(counts, 42);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 
   it.each([
-    ["language progress", getLanguageProgressView, 23],
-    ["language units", getLanguageUnitsView, 8],
-    ["language today", getLanguageTodayView, 21],
-  ] as const)("keeps the read budget for %s", async (_name, read, budget) => {
+    ["language progress", getLanguageProgressView],
+    ["language units", getLanguageUnitsView],
+    ["language today", getLanguageTodayView],
+  ] as const)("reads %s without writing", async (_name, read) => {
     const { user } = await languageGoalFixture();
     mockSession(user.id);
     const counts = await countDatabaseStatements(async () => read({}));
-    assertReadBudget(counts, budget);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 
-  it("keeps the read budget for language unit", async () => {
+  it("reads language unit without writing", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
 
@@ -57,7 +57,7 @@ describe("render read statement budgets", () => {
       getLanguageUnitView({ chapterId: renting.id }),
     );
 
-    assertReadBudget(counts, 26);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 });

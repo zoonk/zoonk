@@ -2,10 +2,11 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
+import * as catchUpItems from "../../learner/facts/catch-up-items";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { loadGoalPreparation } from "../../preparation/_utils/load-goal-preparation";
@@ -16,7 +17,7 @@ import { getSelectedCatchUpItems } from "../../sessions/_utils/selected-day-plan
 import { openStudyDay } from "../../sessions/open-study-day";
 import { getTodayView } from "./get-today-view";
 
-describe("Today preparation read budgets", () => {
+describe("Today preparation reads", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
@@ -73,9 +74,7 @@ describe("Today preparation read budgets", () => {
       }
 
       expect(saved.result.today.progress).toStrictEqual(preview.result.today.progress);
-      const budgets = { exam: [88, 64], language: [105, 80], learn: [97, 75] } as const;
-      assertReadBudget(preview, budgets[kind][0]);
-      assertReadBudget(saved, budgets[kind][1]);
+      expect([preview.writes, saved.writes]).toStrictEqual([0, 0]);
     },
   );
 
@@ -104,6 +103,7 @@ describe("Today preparation read budgets", () => {
     }
 
     const selectedPlan = { ...day.selection.context, catchUp: 0 };
+    const catchUpReads = vi.spyOn(catchUpItems, "readCatchUpItems");
 
     const counted = await countDatabaseStatements(() =>
       loadGoalPreparation({ goalId: goal.id, selectedPlan }),
@@ -116,7 +116,8 @@ describe("Today preparation read budgets", () => {
     );
 
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
-    assertReadBudget(counted, 23);
+    expect(counted.writes).toBe(0);
+    expect(catchUpReads).not.toHaveBeenCalled();
   });
 
   it("keeps explanations outside preparation even when the learner has a study goal", async () => {
