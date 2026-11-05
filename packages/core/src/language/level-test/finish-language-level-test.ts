@@ -4,9 +4,6 @@ import { type LanguageSkill, type LanguageSkillLevel, type TransactionClient } f
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getUserProgressCacheTag } from "../../cache/tags";
-import { awardPlacementCertificate } from "../../certificates/_utils/award-language-certificates";
-import { loadGoalCertificate } from "../../certificates/_utils/goal-certificate";
-import { type CertificateFacts } from "../../certificates/certificate-contract";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type ProgressLock } from "../../sessions/_utils/session-progress";
@@ -19,18 +16,13 @@ import { loadLevelTestContext, readLevelTestProgress } from "./_utils/level-test
 import { type LevelTestBank, type LevelTestProgress } from "./level-test-contract";
 import {
   type LevelTestScores,
-  getLevelTestMeasure,
   getLevelTestScores,
   listLevelTestLevels,
   toLevelLabels,
 } from "./level-test-rules";
 
 export type FinishLanguageLevelTestResult =
-  | {
-      certificate: CertificateFacts | null;
-      levels: { label: string; score: number; skill: LanguageSkill }[];
-      status: "ready";
-    }
+  | { levels: { label: string; score: number; skill: LanguageSkill }[]; status: "ready" }
   | { status: "notFound" | "notLanguage" | "notReady" | "unauthorized" };
 
 function isFreshStart({ row, score }: { row?: LanguageSkillLevel; score: number }) {
@@ -192,12 +184,6 @@ export async function finishLanguageLevelTest(
         userId,
       });
 
-      await awardPlacementCertificate(transaction, {
-        goal: { ...current, targetLanguage: goal.targetLanguage },
-        measure: getLevelTestMeasure({ bank, progress: currentProgress, scores: currentScores }),
-        now: new Date(),
-      });
-
       return { ...result, newResult: true };
     },
   );
@@ -233,7 +219,5 @@ export async function finishLanguageLevelTest(
     });
   }
 
-  const certificate = await loadGoalCertificate({ goalId: goal.id, kind: "placement", userId });
-
-  return { certificate, levels: listLevelTestLevels(scores), status: "ready" };
+  return { levels: listLevelTestLevels(scores), status: "ready" };
 }

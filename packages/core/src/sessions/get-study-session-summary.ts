@@ -3,7 +3,7 @@ import { type Milestone, prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { io } from "next/cache";
 import { loadUnshownCertificates } from "../certificates/_utils/unshown-certificates";
-import { type CertificateFacts } from "../certificates/certificate-contract";
+import { type OwnedCertificateFacts } from "../certificates/certificate-contract";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { loadCeremony } from "../milestones/load-ceremony";
 import { measureSessionState } from "./_utils/capture-snapshot";
@@ -47,7 +47,7 @@ type StudySessionSummary = {
   brainPower: number;
   capsulesSealed: { lessonId: string; opensOn: Date | null; title: string | null }[];
   ceremony: Milestone | null;
-  certificates: CertificateFacts[];
+  certificates: OwnedCertificateFacts[];
   comesBack: { date: Date; skills: number }[];
   correct: number;
   energy: Change<number> | null;

@@ -1,21 +1,16 @@
 import "server-only";
+import { issueEarnedCertificates } from "@zoonk/auth/certificate-issuance";
 import { type Goal, type LanguageSkill, type TransactionClient } from "@zoonk/db";
-import { clampCefrScore, formatCefrScore, toCefrLevel } from "@zoonk/utils/cefr";
+import { formatCefrScore } from "@zoonk/utils/cefr";
 import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { findLearnerLanguageGoal } from "../../language/_utils/language-goal";
-import { type LevelTestMeasure } from "../../language/level-test/level-test-rules";
 import { getEarnedLanguageLevel, getFinishedBands } from "../../language/levels/skill-level-rules";
 import { loadDoneUnitIds } from "../../language/units/can-do-events";
 import { loadLanguageUnits } from "../../language/units/language-units";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { countLessons } from "../../plans/_utils/stand-in-lessons";
-import {
-  CERTIFIED_LEVELS,
-  type CertifiedLevel,
-  type LanguageLevelCertificateDetails,
-  type PlacementCertificateDetails,
-} from "../certificate-contract";
+import { type CertifiedLevel, type LanguageLevelCertificateDetails } from "../certificate-contract";
 import { createCertificateCode } from "./certificate-code";
 
 type SkillScore = { score: number; skill: LanguageSkill };
@@ -143,55 +138,6 @@ export async function awardLanguageLevelCertificates(
       userId,
     })),
   });
-}
 
-/**
- * A placement certifies the band of the measured skills' average, for a test run to its end that
- * measured something above the start of A1, the test's lowest step. Once per goal.
- */
-export async function awardPlacementCertificate(
-  tx: TransactionClient,
-  {
-    goal,
-    measure,
-    now,
-  }: { goal: Goal & { targetLanguage: string }; measure: LevelTestMeasure; now: Date },
-): Promise<void> {
-  if (!measure.ranToEnd || measure.measured.length === 0) {
-    return;
-  }
-
-  const average =
-    measure.measured.reduce((sum, { score }) => sum + score, 0) / measure.measured.length;
-
-  const level = CERTIFIED_LEVELS.find((band) => band === toCefrLevel(average));
-
-  if (!level || clampCefrScore(average) === 0) {
-    return;
-  }
-
-  const key = { key: goal.id, kind: "placement" as const, userId: goal.userId };
-
-  if (await tx.certificate.findUnique({ select: { id: true }, where: { userCertificate: key } })) {
-    return;
-  }
-
-  const details: PlacementCertificateDetails = {
-    answered: measure.answered,
-    measuredLevel: formatCefrScore(average),
-    skillLevels: toSkillLabels(measure.measured),
-  };
-
-  await tx.certificate.create({
-    data: {
-      ...key,
-      code: createCertificateCode(),
-      completedOn: getCompletedOn({ goal, now }),
-      details,
-      goalId: goal.id,
-      language: goal.language,
-      level,
-      targetLanguage: goal.targetLanguage,
-    },
-  });
+  await issueEarnedCertificates(tx, { now, plus: "check", userId });
 }

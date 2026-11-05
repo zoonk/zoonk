@@ -1,4 +1,3 @@
-import { certificateFactsSchema } from "@zoonk/core/certificates/contract";
 import { languageLevelTestViewSchema } from "@zoonk/core/language/level-test/contract";
 import { spokenAnswerFieldsSchema } from "@zoonk/core/library/language/spoken-answer-contract";
 import { noticedPatternSchema } from "@zoonk/core/view-models/language/contract";
@@ -92,12 +91,6 @@ export const languageLevelTestSpokenResultSchema = z
 
 export const languageLevelTestResultSchema = z
   .object({
-    certificate: certificateFactsSchema
-      .nullable()
-      .meta({
-        description:
-          "The placement certificate this test earned: a test run to its end that measured a level above the start of A1. Null otherwise. Show it on the result, then POST /me/certificates/{code}/views when the learner leaves it",
-      }),
     levels: z
       .array(
         z.object({

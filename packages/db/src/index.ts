@@ -91,7 +91,6 @@ export type {
 export {
   BuddyGlasses,
   BuddyKind,
-  CertificateKind,
   CourseFormat,
   CourseLevel,
   FeedbackContentKind,

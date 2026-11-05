@@ -6,7 +6,6 @@ import {
   type OwnedCertificateFacts,
   courseCertificateDetailsSchema,
   languageLevelCertificateDetailsSchema,
-  placementCertificateDetailsSchema,
 } from "../certificate-contract";
 
 const LOGICAL_DATE_LENGTH = 10;
@@ -22,13 +21,10 @@ export type CertificateRow = Certificate & {
 };
 
 const NO_DETAILS = {
-  answered: null,
   canDo: [],
   category: null,
-  courseLevels: [],
   lessonsStudied: null,
   lessonsTestedOut: null,
-  measuredLevel: null,
   minutes: null,
   skillLevels: [],
   topics: [],
@@ -48,11 +44,7 @@ function getKindDetails(row: CertificateRow) {
     return courseCertificateDetailsSchema.parse(row.details);
   }
 
-  if (row.kind === "languageLevel") {
-    return languageLevelCertificateDetailsSchema.parse(row.details);
-  }
-
-  return placementCertificateDetailsSchema.parse(row.details);
+  return languageLevelCertificateDetailsSchema.parse(row.details);
 }
 
 export function toCertificateFacts(row: CertificateRow): CertificateFacts {
@@ -64,6 +56,7 @@ export function toCertificateFacts(row: CertificateRow): CertificateFacts {
     code: row.code,
     completedOn: row.completedOn.toISOString().slice(0, LOGICAL_DATE_LENGTH),
     courseId: isPublicCourse ? row.courseId : null,
+    courseLevel: row.courseLevel,
     kind: row.kind,
     language: row.language,
     level: toCertifiedLevel(row.level),
@@ -74,5 +67,9 @@ export function toCertificateFacts(row: CertificateRow): CertificateFacts {
 }
 
 export function toOwnedCertificateFacts(row: CertificateRow): OwnedCertificateFacts {
-  return { ...toCertificateFacts(row), shownAt: row.shownAt?.toISOString() ?? null };
+  return {
+    ...toCertificateFacts(row),
+    locked: row.issuedAt === null,
+    shownAt: row.shownAt?.toISOString() ?? null,
+  };
 }

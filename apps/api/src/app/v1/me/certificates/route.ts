@@ -1,6 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { withCertificateLinks } from "@/lib/certificate-links";
+import { withOwnedCertificateLinks } from "@/lib/certificate-links";
 import { listCurrentUserCertificates } from "@zoonk/core/certificates/list";
 import { NextResponse } from "next/server";
 
@@ -12,7 +12,7 @@ async function listCertificates() {
   }
 
   return NextResponse.json({
-    certificates: result.certificates.map((certificate) => withCertificateLinks(certificate)),
+    certificates: result.certificates.map((certificate) => withOwnedCertificateLinks(certificate)),
   });
 }
 

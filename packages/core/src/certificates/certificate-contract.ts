@@ -32,13 +32,6 @@ const countSchema = z.int().min(0);
 
 const certifiedLevelSchema = z.enum(CERTIFIED_LEVELS);
 
-const courseLevelSchema = z
-  .object({
-    chapters: countSchema.meta({ description: "Chapters of this level the plan held" }),
-    level: z.enum(CourseLevel),
-  })
-  .meta({ id: "CertificateCourseLevel" });
-
 const skillLevelSchema = z
   .object({
     label: z.string().meta({ description: 'The skill\'s level, such as "B1" or "B2+"' }),
@@ -48,7 +41,6 @@ const skillLevelSchema = z
 
 export const courseCertificateDetailsSchema = z.object({
   category: z.enum(COURSE_CATEGORIES).nullable(),
-  courseLevels: z.array(courseLevelSchema),
   lessonsStudied: countSchema,
   lessonsTestedOut: countSchema,
   minutes: countSchema.nullable(),
@@ -62,23 +54,12 @@ export const languageLevelCertificateDetailsSchema = z.object({
   skillLevels: z.array(skillLevelSchema),
 });
 
-export const placementCertificateDetailsSchema = z.object({
-  answered: countSchema,
-  measuredLevel: z.string(),
-  skillLevels: z.array(skillLevelSchema),
-});
-
 export type CourseCertificateDetails = z.infer<typeof courseCertificateDetailsSchema>;
 
 export type LanguageLevelCertificateDetails = z.infer<typeof languageLevelCertificateDetailsSchema>;
 
-export type PlacementCertificateDetails = z.infer<typeof placementCertificateDetailsSchema>;
-
 /** A plain shape, so the API can add its links without an `allOf` strict clients can't decode. */
 export const certificateFactsShape = {
-  answered: countSchema
-    .nullable()
-    .meta({ description: "Placement: the test's questions the learner answered" }),
   canDo: z
     .array(z.string())
     .meta({ description: "Language level: what the learner can do, in the certificate's words" }),
@@ -97,11 +78,12 @@ export const certificateFactsShape = {
     .uuid()
     .nullable()
     .meta({ description: "Course: the course while it's public, for a link to its page" }),
-  courseLevels: z
-    .array(courseLevelSchema)
+  courseLevel: z
+    .enum(CourseLevel)
+    .nullable()
     .meta({
       description:
-        'Course: each level of the course the plan held, in order, so "Python · Beginner" and "Python · Intermediate" read apart',
+        'Course: the level it certifies, named with the title ("Python · Beginner"). Null for a plan certified whole, and for language levels',
     }),
   kind: z.enum(CertificateKind),
   language: z.string().meta({ description: "The locale the certificate's own words are in" }),
@@ -109,14 +91,7 @@ export const certificateFactsShape = {
   lessonsTestedOut: countSchema.nullable().meta({ description: "Course: lessons passed by test" }),
   level: certifiedLevelSchema
     .nullable()
-    .meta({ description: "Language level: the level finished. Placement: the level measured" }),
-  measuredLevel: z
-    .string()
-    .nullable()
-    .meta({
-      description:
-        'Placement: the measured skills\' average in half steps, such as "A2+", which its ladder fills to; `level` is its band',
-    }),
+    .meta({ description: "Language level: the level finished" }),
   minutes: countSchema
     .nullable()
     .meta({
@@ -134,7 +109,7 @@ export const certificateFactsShape = {
     .array(skillLevelSchema)
     .meta({
       description:
-        "Language level: each skill the learner's answers raised, at its level when earned. Placement: each skill the test measured",
+        "Language level: each skill the learner's answers raised, at its level when earned",
     }),
   targetLanguage: z.string().nullable().meta({ description: "Language kinds: the language" }),
   title: z
@@ -144,21 +119,25 @@ export const certificateFactsShape = {
       description:
         "Course: its title, as written. Null for language kinds, named from the language",
     }),
-  topics: z.array(z.string()).meta({ description: "Course: what the plan covered, in plan order" }),
+  topics: z
+    .array(z.string())
+    .meta({
+      description:
+        "Course: the chapters it covers in plan order, the level's for a level and every one for a plan",
+    }),
 };
 
-export const certificateFactsSchema = z
-  .object(certificateFactsShape)
-  .meta({
-    description:
-      "What a certificate certifies, as anyone may see it: nothing else about the learner leaves.",
-    id: "CertificateFacts",
-  });
-
-export type CertificateFacts = z.infer<typeof certificateFactsSchema>;
+/** What a certificate certifies, as anyone may see it: nothing else about the learner leaves. */
+export type CertificateFacts = z.infer<z.ZodObject<typeof certificateFactsShape>>;
 
 export const ownedCertificateShape = {
   ...certificateFactsShape,
+  locked: z
+    .boolean()
+    .meta({
+      description:
+        "True when the learner earned it without Plus: show it locked, with the Plus notice, and no code, link, picture or share. It unlocks when they subscribe and stays unlocked after Plus ends",
+    }),
   shownAt: z.iso
     .datetime()
     .nullable()
@@ -168,11 +147,15 @@ export const ownedCertificateShape = {
     }),
 };
 
-export type OwnedCertificateFacts = CertificateFacts & { shownAt: string | null };
+const ownedCertificateFactsSchema = z
+  .object(ownedCertificateShape)
+  .meta({ description: "One of the learner's own certificates", id: "OwnedCertificateFacts" });
+
+export type OwnedCertificateFacts = z.infer<typeof ownedCertificateFactsSchema>;
 
 export const unshownCertificatesSchema = z
-  .array(certificateFactsSchema)
+  .array(ownedCertificateFactsSchema)
   .meta({
     description:
-      "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, then POST /me/certificates/{code}/views for each. Images and links: GET /certificates/{code}",
+      "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}",
   });

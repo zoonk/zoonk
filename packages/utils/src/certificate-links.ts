@@ -1,3 +1,4 @@
+import { getCourseLevelNames } from "./course-level-names";
 import { getLanguageName } from "./languages";
 import { getSupportedLocaleFromLanguage } from "./locale";
 import { hashSeed } from "./seeded-random";
@@ -21,6 +22,7 @@ export type CertificateImageVariant = (typeof CERTIFICATE_IMAGE_VARIANTS)[number
 type CertificateLinkInput = {
   code: string;
   completedOn: string;
+  courseLevel: keyof ReturnType<typeof getCourseLevelNames> | null;
   language: string;
   level: string | null;
   recipientName: string | null;
@@ -55,6 +57,10 @@ export function getCertificateImageVersion(recipientName: string | null): string
 }
 
 function getCertificateName(input: CertificateLinkInput): string {
+  if (input.title && input.courseLevel) {
+    return `${input.title} · ${getCourseLevelNames(input.language)[input.courseLevel]}`;
+  }
+
   if (input.title) {
     return input.title;
   }

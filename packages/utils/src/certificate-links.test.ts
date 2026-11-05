@@ -8,6 +8,7 @@ import {
 const COURSE = {
   code: "K7QF2M9XHD4P",
   completedOn: "2026-03-09",
+  courseLevel: null,
   language: "pt",
   level: null,
   recipientName: "Ana Souza",
@@ -55,6 +56,14 @@ describe(getCertificateLinks, () => {
       organizationName: "Zoonk",
       startTask: "CERTIFICATION_NAME",
     });
+  });
+
+  it("names a course level certificate by its course and level, in the certificate's language", () => {
+    const { linkedInUrl } = getCertificateLinks({ ...COURSE, courseLevel: "beginner" });
+
+    expect(new URL(linkedInUrl).searchParams.get("name")).toBe(
+      "Física quântica do zero · Iniciante",
+    );
   });
 
   it("names a language certificate by its language and level in the learner's language", () => {

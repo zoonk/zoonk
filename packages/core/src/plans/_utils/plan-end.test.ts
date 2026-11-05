@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
   countChallengesLeft,
   countLessonsLeft,
-  isCourseFinished,
   isDateReached,
   isPlanFinished,
   isPlanOver,
@@ -174,85 +173,6 @@ describe(isPlanFinished, () => {
     expect(isPlanFinished(end)).toBe(false);
     expect(isPlanOver(end)).toBe(false);
     expect(isPlanFinished({ ...end, phaseChallengesRequired: false })).toBe(true);
-  });
-});
-
-describe(isCourseFinished, () => {
-  it("is finished once every lesson is studied or tested out and every challenge won", () => {
-    expect(
-      isCourseFinished({
-        goalKind: "learn",
-        items: [lesson("done"), lesson("testedOut"), challenge("done")],
-        targetDate: null,
-      }),
-    ).toBe(true);
-
-    expect(
-      isCourseFinished({
-        goalKind: "learn",
-        items: [lesson("done"), lesson("todo")],
-        targetDate: null,
-      }),
-    ).toBe(false);
-
-    expect(
-      isCourseFinished({
-        goalKind: "learn",
-        items: [lesson("done"), challenge("todo")],
-        targetDate: null,
-      }),
-    ).toBe(false);
-  });
-
-  it("certifies no course nothing was studied in: a placement that tests out every lesson", () => {
-    expect(
-      isCourseFinished({
-        goalKind: "learn",
-        items: [lesson("testedOut"), lesson("testedOut")],
-        targetDate: null,
-      }),
-    ).toBe(false);
-
-    expect(isCourseFinished({ goalKind: "learn", items: [], targetDate: null })).toBe(false);
-  });
-
-  it("isn't finished with lessons set aside by its date, but is without a date", () => {
-    const items = [lesson("done"), lesson("skipped")];
-
-    expect(isCourseFinished({ goalKind: "learn", items, targetDate: DATE })).toBe(false);
-    expect(isCourseFinished({ goalKind: "learn", items, targetDate: null })).toBe(true);
-
-    expect(
-      isCourseFinished({ goalKind: "learn", items, studiesPastTarget: true, targetDate: DATE }),
-    ).toBe(true);
-  });
-
-  it("isn't finished while a phase's challenge is left out for time", () => {
-    expect(
-      isCourseFinished({
-        goalKind: "learn",
-        items: [lesson("done"), challenge("done")],
-        phases: [{}, { challengeLeftOut: true }],
-        targetDate: null,
-      }),
-    ).toBe(false);
-  });
-
-  it("leaves an exam's mocks and reviews out: they rehearse the exam, not the course", () => {
-    expect(
-      isCourseFinished({
-        goalKind: "exam",
-        items: [lesson("done"), review("2026-10-20")],
-        targetDate: DATE,
-      }),
-    ).toBe(true);
-  });
-
-  it("is never a language or explain goal's: they earn level certificates or none", () => {
-    const items = [lesson("done"), challenge("done")];
-
-    expect(isCourseFinished({ goalKind: "language", items, targetDate: null })).toBe(false);
-    expect(isCourseFinished({ goalKind: "explain", items, targetDate: null })).toBe(false);
   });
 });
 

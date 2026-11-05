@@ -5,18 +5,19 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getCertificatesCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
-import { awardCourseCertificate } from "./_utils/award-course-certificate";
+import { loadCertificatePlan, writeFinishedUnits } from "./_utils/award-course-certificate";
 import { CERTIFICATE_FACTS_INCLUDE, toOwnedCertificateFacts } from "./_utils/certificate-facts";
 import { type OwnedCertificateFacts } from "./certificate-contract";
 
 export type ClaimCourseCertificateResult =
-  | { certificate: OwnedCertificateFacts; status: "ready" }
+  | { certificates: OwnedCertificateFacts[]; status: "ready" }
   | { status: "notFinished" | "notFound" | "unauthorized" };
 
 /**
- * Awards a finished learn or exam goal's course certificate, or returns it when it exists. It's the
- * one path for a course that finished outside a lesson, challenge or test-out: a plan rewrite, a
- * lesson held back, an undo, or a plan finished before certificates.
+ * Awards a learn or exam goal's finished level and plan certificates, and returns every one of its
+ * plan's the learner holds. It's the one path for work that finished outside a lesson, challenge
+ * or test-out: a plan rewrite, a lesson held back, an undo, or a plan finished before
+ * certificates.
  */
 export async function claimCourseCertificate(
   goalId: string,
@@ -33,36 +34,42 @@ export async function claimCourseCertificate(
 
   const userId = session.user.id;
 
-  const goal = await prisma.goal.findFirst({
-    select: { plan: { select: { id: true } } },
+  const owned = await prisma.goal.findFirst({
+    select: { id: true },
     where: { id: goalId, userId },
   });
 
-  if (!goal) {
+  if (!owned) {
     return { status: "notFound" };
   }
 
-  const planId = goal.plan?.id;
+  const claimed = await writeLearnerChange({ userId }, async (tx) => {
+    const plan = await loadCertificatePlan(tx, { goalId });
+    const result = plan ? await writeFinishedUnits(tx, { goal: plan.goal, plan }) : null;
+    const keys = result?.units.map((unit) => unit.key) ?? [];
+    const outcome = { keys, written: result?.written ?? 0 };
 
-  const awarded = planId
-    ? await writeLearnerChange({ userId }, async (tx) => {
-        const result = await awardCourseCertificate(tx, planId);
-        return result?.created ? result : unchanged(result);
-      })
-    : null;
+    return outcome.written > 0 ? outcome : unchanged(outcome);
+  });
 
-  if (!awarded) {
-    return { status: "notFinished" };
-  }
-
-  if (awarded.created) {
+  if (claimed.written > 0) {
     revalidateCacheTags([getCertificatesCacheTag(userId)]);
   }
 
-  const row = await prisma.certificate.findUniqueOrThrow({
+  const rows = await prisma.certificate.findMany({
     include: CERTIFICATE_FACTS_INCLUDE,
-    where: { id: awarded.certificate.id },
+    where: { key: { in: claimed.keys }, kind: "course", userId },
   });
 
-  return { certificate: toOwnedCertificateFacts(row), status: "ready" };
+  if (rows.length === 0) {
+    return { status: "notFinished" };
+  }
+
+  return {
+    certificates: claimed.keys.flatMap((key) => {
+      const row = rows.find((entry) => entry.key === key);
+      return row ? toOwnedCertificateFacts(row) : [];
+    }),
+    status: "ready",
+  };
 }

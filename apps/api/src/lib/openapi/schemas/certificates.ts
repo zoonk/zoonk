@@ -37,9 +37,18 @@ export const certificateSchema = z
     id: "Certificate",
   });
 
-export const ownedCertificateSchema = z
-  .object({ ...ownedCertificateShape, ...certificateLinksShape })
-  .meta({ description: "One of the learner's own certificates", id: "OwnedCertificate" });
+const ownedCertificateSchema = z
+  .object({
+    ...ownedCertificateShape,
+    imageUrls: certificateLinksShape.imageUrls.nullable(),
+    linkedInUrl: certificateLinksShape.linkedInUrl.nullable(),
+    url: certificateLinksShape.url.nullable(),
+  })
+  .meta({
+    description:
+      "One of the learner's own certificates; its page, pictures and LinkedIn link are null exactly while it's `locked`",
+    id: "OwnedCertificate",
+  });
 
 export const certificateListResponseSchema = z
   .object({
@@ -48,3 +57,14 @@ export const certificateListResponseSchema = z
       .meta({ description: "Newest first; empty until the learner earns one" }),
   })
   .meta({ id: "CertificateList" });
+
+export const goalCertificatesResponseSchema = z
+  .object({
+    certificates: z
+      .array(ownedCertificateSchema)
+      .meta({
+        description:
+          "Every certificate of the goal's levels and of its plan the learner holds, in level order with the plan's last, including any just written and a level certified in another goal",
+      }),
+  })
+  .meta({ id: "GoalCertificates" });

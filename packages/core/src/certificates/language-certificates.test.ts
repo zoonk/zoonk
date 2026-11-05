@@ -156,23 +156,12 @@ const BANK: LevelTestBank = {
   speaking: TEST_LEVELS.map((level) => ({ level, sentence: `Say ${level}`, translation: "Diga" })),
 };
 
-type StoredAnswer = { answerIndex: number | null; id: string; skipped?: boolean };
+type StoredAnswer = { answerIndex: number; id: string };
 
-function answers({
-  answerIndex = 1,
-  levels = ["A2", "B1", "B2"],
-  skill,
-  skipped,
-}: {
-  answerIndex?: number | null;
-  levels?: string[];
-  skill: "listening" | "reading";
-  skipped?: boolean;
-}): StoredAnswer[] {
-  return levels.map((level, index) => ({
-    answerIndex,
+function answers(skill: "listening" | "reading"): StoredAnswer[] {
+  return ["A2", "B1", "B2"].map((level, index) => ({
+    answerIndex: 1,
     id: `${skill}-${level}-${index % 2}`,
-    ...(skipped && { skipped }),
   }));
 }
 
@@ -206,120 +195,10 @@ async function testTaker(levelAnswers: StoredAnswer[]) {
   return { goal, user };
 }
 
-describe("placement certificates", () => {
-  it("certifies a finished test's measured level once, and a retry changes nothing", async () => {
-    const { goal } = await testTaker([
-      ...answers({ levels: ["A2", "B1", "B1"], skill: "reading" }),
-      ...answers({ levels: ["A2", "B1", "B1"], skill: "listening" }),
-    ]);
-
-    const finished = await finishLanguageLevelTest(goal.id);
-    const retried = await finishLanguageLevelTest(goal.id);
-
-    expect(finished).toMatchObject({
-      certificate: {
-        answered: 6,
-        kind: "placement",
-        level: "B1",
-        measuredLevel: "B1+",
-        skillLevels: [
-          { label: "B1+", skill: "reading" },
-          { label: "B1+", skill: "listening" },
-        ],
-        targetLanguage: "en",
-      },
-      levels: [
-        { label: "B1+", skill: "reading" },
-        { label: "B1+", skill: "listening" },
-      ],
-      status: "ready",
-    });
-
-    const code = finished.status === "ready" ? finished.certificate?.code : null;
-    expect(retried).toMatchObject({ certificate: { code } });
-
-    await expect(
-      prisma.certificate.count({ where: { goalId: goal.id, kind: "placement" } }),
-    ).resolves.toBe(1);
-  });
-
-  it("leaves skipped skills out of the level", async () => {
-    const { goal } = await testTaker([
-      ...answers({ skill: "reading" }),
-      ...answers({ skill: "listening", skipped: true }),
-    ]);
-
-    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({
-      certificate: { answered: 3, skillLevels: [{ skill: "reading" }] },
-    });
-  });
-
-  it.each([
-    [
-      "a test finished early",
-      [...answers({ skill: "reading" }), ...answers({ levels: ["A2"], skill: "listening" })],
-    ],
-    [
-      "a test that measured nothing",
-      [
-        ...answers({ skill: "reading", skipped: true }),
-        ...answers({ skill: "listening", skipped: true }),
-      ],
-    ],
-    [
-      "a test whose answers showed nothing above the start of A1",
-      [
-        ...answers({ answerIndex: null, levels: ["A1", "A1", "A2"], skill: "reading" }),
-        ...answers({ answerIndex: null, levels: ["A1", "A1", "A2"], skill: "listening" }),
-      ],
-    ],
-  ])("certifies nothing for %s", async (_case, levelAnswers) => {
-    const { goal } = await testTaker(levelAnswers);
-
-    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({
-      certificate: null,
-      status: "ready",
-    });
-  });
-
-  it("certifies nothing a typed level suggests when no answer was right", async () => {
-    const { goal } = await testTaker([
-      ...answers({ answerIndex: null, levels: ["C1", "B2", "B1"], skill: "reading" }),
-      ...answers({ answerIndex: null, levels: ["C1", "B2", "B1"], skill: "listening" }),
-    ]);
-
-    await updateGoal({ goalId: goal.id, input: { details: { level: "C2" } } });
-
-    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({
-      certificate: null,
-      status: "ready",
-    });
-  });
-
-  it("certifies the same answers the same, whatever level the learner typed", async () => {
-    const levelAnswers = (["reading", "listening"] as const).flatMap((skill) => [
-      ...answers({ levels: ["C1", "C1"], skill }),
-      ...answers({ answerIndex: null, levels: ["B2"], skill }),
-    ]);
-
-    const typedC1 = await testTaker(levelAnswers);
-    await updateGoal({ goalId: typedC1.goal.id, input: { details: { level: "C1" } } });
-    const fromC1 = await finishLanguageLevelTest(typedC1.goal.id);
-
-    const typedC2 = await testTaker(levelAnswers);
-    await updateGoal({ goalId: typedC2.goal.id, input: { details: { level: "C2" } } });
-    const fromC2 = await finishLanguageLevelTest(typedC2.goal.id);
-
-    const certified = (result: typeof fromC1) =>
-      result.status === "ready" ? result.certificate?.measuredLevel : null;
-
-    expect(fromC1).toMatchObject({ certificate: { kind: "placement" } });
-    expect(certified(fromC2)).toBe(certified(fromC1));
-  });
-
-  it("keeps the stored test when a learner sends their own, and certifies only what it measured", async () => {
+describe("the level test", () => {
+  it("keeps the stored test and its result when a learner sends their own", async () => {
     const { goal } = await testTaker([]);
-    const forged = [...answers({ skill: "reading" }), ...answers({ skill: "listening" })];
+    const forged = [...answers("reading"), ...answers("listening")];
 
     await updateGoal({
       goalId: goal.id,
@@ -335,8 +214,6 @@ describe("placement certificates", () => {
 
     expect(stored.details).toMatchObject({ levelTest: { answers: [] } });
     expect(stored.details).not.toHaveProperty("skillLevels");
-
-    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({ certificate: null });
   });
 
   it("leaves skills lessons raised as they were when another goal's test finishes", async () => {

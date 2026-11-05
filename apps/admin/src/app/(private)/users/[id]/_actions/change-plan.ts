@@ -2,7 +2,9 @@
 
 import { findUserActiveSubscription } from "@/data/users/find-active-subscription";
 import { assertAdmin } from "@/lib/admin-guard";
+import { issueEarnedCertificates } from "@zoonk/auth/certificate-issuance";
 import { type Subscription, prisma } from "@zoonk/db";
+import { lockLearner } from "@zoonk/db/learner-writes";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { type SubscriptionPlanName, isSubscriptionPlanName } from "@zoonk/utils/subscription";
@@ -57,20 +59,26 @@ async function saveManualPlanChange({
     });
   }
 
-  if (existing) {
-    return prisma.subscription.update({
-      data: { plan, status: "active" },
-      where: { id: existing.id },
-    });
-  }
+  // The learner locks before their subscription row, as in every writer, and the grant issues what they earned.
+  return prisma.$transaction(async (tx) => {
+    await lockLearner(tx, { userId });
 
-  return prisma.subscription.create({
-    data: {
-      periodStart: changedAt,
-      plan,
-      provider: "zoonk",
-      referenceId: userId,
-      status: "active",
-    },
+    const saved = existing
+      ? await tx.subscription.update({
+          data: { plan, status: "active" },
+          where: { id: existing.id },
+        })
+      : await tx.subscription.create({
+          data: {
+            periodStart: changedAt,
+            plan,
+            provider: "zoonk",
+            referenceId: userId,
+            status: "active",
+          },
+        });
+
+    await issueEarnedCertificates(tx, { now: changedAt, plus: "check", userId });
+    return saved;
   });
 }
