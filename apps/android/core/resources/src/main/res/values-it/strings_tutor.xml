@@ -106,6 +106,8 @@
   "tutor_retry_last_question": "bf45f188f33c057da0d05eaa233044c5d0cda36562190a07c4b3b0d24f434da6",
   "tutor_send": "b8db02a14c5e8b9430dacec75fb767665814e2fa6bda4dc4e1b13af4524fa773",
   "tutor_sign_in": "4109a627a99b3a6e973a721c6470979b6ea63ce19262e3088e7612a4f16b8ae8",
+  "tutor_step_closed": "96667183daf2ca3fe2d1b50b9a32cb23b9a8d5b584adb151bbf407c8f6c4eb85",
+  "tutor_step_open_failed": "a933c9b6fb0d93660617f83d4e6ac068de6c0722e5fa746e294eee7ac5166a8f",
   "tutor_suggest_chapter": "71f275bd2c2278a9c28e74ecd9556342756fde098a3981a78e5d219d4824a932",
   "tutor_suggest_item_asking": "6aeb9a5a480220cf2b55efcc413ba9f6ffda8ed25643716949f4649b62c8b555",
   "tutor_suggest_item_idea": "33db42d100d646c1859e98bcf4c1f38c7862c51e4eab89e6c4b8c91b53ae1905",
@@ -199,6 +201,10 @@
     <string name="tutor_link_description">Questo link apre un sito esterno a Zoonk.</string>
     <string name="tutor_link_cancel">Annulla</string>
     <string name="tutor_link_open">Apri il link</string>
+    <!-- Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since -->
+    <string name="tutor_step_closed">Questo passaggio non è più disponibile.</string>
+    <!-- Under a buddy answer whose link to a step of the day didn't open -->
+    <string name="tutor_step_open_failed">Non siamo riusciti ad aprire questo passaggio. Riprova.</string>
     <string name="tutor_offer_open">Apri</string>
     <string name="tutor_offer_choose">Scegli</string>
     <string name="tutor_offer_start">Inizia</string>

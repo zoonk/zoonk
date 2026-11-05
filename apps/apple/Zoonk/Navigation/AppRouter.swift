@@ -179,8 +179,20 @@ final class AppRouter {
     }
   }
 
+  /// A block no longer free to start shows Today as it stands.
   @discardableResult
   func open(blockID: String) async -> MutationResult<StudyDestination> {
+    let result = await openBlock(blockID, self)
+
+    if case .done(.changed) = result {
+      showRoot(of: .today)
+    }
+
+    return result
+  }
+
+  /// A block a buddy answer links, which says itself when the block isn't free to start anymore.
+  func openAnswerLink(blockID: String) async -> MutationResult<StudyDestination> {
     await openBlock(blockID, self)
   }
 

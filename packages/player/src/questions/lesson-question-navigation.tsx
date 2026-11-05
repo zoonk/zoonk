@@ -4,9 +4,10 @@ import { type LessonQuestionMemoryChange } from "@zoonk/core/lesson-questions/co
 import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { type ReactNode, createContext, use } from "react";
 import { type PlayerLinkComponent } from "../player-context";
+import { type TutorAnswerLinks } from "./tutor-markdown";
 
 export type LessonQuestionNavigation = {
-  appLinks?: { openBlock?: (blockId: string) => Promise<boolean> };
+  appLinks?: Pick<TutorAnswerLinks, "openBlock">;
   linkComponent: PlayerLinkComponent;
   loginHref: string;
   subscriptionHref: string;

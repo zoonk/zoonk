@@ -24,6 +24,21 @@ type BlockResult = Pick<
   | "total"
 >;
 
+type MilestoneReward = NonNullable<BlockPayload["milestoneReward"]>;
+
+export function getBlockMilestoneAwards({
+  payload,
+  reward,
+}: {
+  payload: BlockPayload;
+  reward: MilestoneReward;
+}): Pick<Parameters<typeof awardMilestones>[0], "badges" | "brainPower"> {
+  return {
+    badges: reward.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
+    brainPower: reward.brainPower,
+  };
+}
+
 /** Retries replay missions without celebrating the same answer rewards again. */
 export async function completeBlockMoment({
   blockId,
@@ -62,8 +77,7 @@ export async function completeBlockMoment({
   };
 
   const milestones = await awardMilestones({
-    badges: reward.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
-    brainPower: reward.brainPower,
+    ...getBlockMilestoneAwards({ payload, reward }),
     brainPowerRewards: settled.fullMealReward ? [settled.fullMealReward] : [],
     userId,
   });

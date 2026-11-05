@@ -16,6 +16,7 @@ import {
 } from "@zoonk/core/memory/insights/daily";
 import { type MemoryGate, gateMemoryCandidate } from "@zoonk/core/memory/remember-candidate";
 import { resolveMistakeCause } from "@zoonk/core/mistakes/resolve-cause";
+import { settleOwedSessionDay } from "@zoonk/core/sessions/settle-owed-day";
 import {
   askToCancelSecondStorePlus,
   endWebPlusBesideStore,
@@ -50,6 +51,11 @@ export async function askToCancelSecondStorePlusStep(
 ) {
   "use step";
   await askToCancelSecondStorePlus(input);
+}
+
+export async function settleSessionDayStep(input: Parameters<typeof settleOwedSessionDay>[0]) {
+  "use step";
+  await settleOwedSessionDay(input);
 }
 
 export async function voiceWordStep(input: Parameters<typeof voiceWord>[0]) {

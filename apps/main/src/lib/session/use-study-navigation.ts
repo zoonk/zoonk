@@ -6,12 +6,10 @@ import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { learnerStaying } from "@/lib/learner/learner-store";
 import { LESSON_GENERATION_PARAM } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
-import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
-import { type MissionLinks } from "@zoonk/learn/buddy";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { LESSON_LIMIT_PARAM, toLessonLimitParam } from "./lesson-limit-param";
 import { SESSION_BLOCK_PARAM } from "./session-block-param";
 import { SESSION_GOAL_PARAM } from "./session-goal-param";
@@ -20,7 +18,6 @@ import { SESSION_STOPPED_HREF, SESSION_STOPPED_PARAM } from "./session-stopped-p
 import {
   addExtraStudyBlockAction,
   openStudyBlockAction,
-  saveMissionDayAction,
   stopStudySessionAction,
 } from "./study-session-actions";
 import { answerHere } from "./tap-answer";
@@ -66,7 +63,7 @@ export function getSessionHref({
   return query ? (`${SESSION_PATH}?${query}` as const) : SESSION_PATH;
 }
 
-function useReread(refresh?: () => void) {
+export function useReread(refresh?: () => void) {
   const router = useRouter();
 
   return useCallback(() => {
@@ -252,68 +249,6 @@ function useOpenDestination() {
       return typeof opened === "boolean" ? opened : go(opened.answer);
     },
     [go],
-  );
-}
-
-export function useMissionLinks(
-  goalId: string,
-  {
-    learner,
-    openStep,
-    refresh,
-  }: {
-    learner?: string;
-    openStep?: (ref: DayBlockRef) => Promise<boolean>;
-    refresh?: () => void;
-  } = {},
-): MissionLinks {
-  const go = useGoToStudyDestination({ refresh });
-  const reread = useReread(refresh);
-
-  return useMemo(
-    () => ({
-      hrefs: {
-        areaPractice: (areaId) => `/content/chapters/${areaId}`,
-        buddy: "/buddy",
-        call: (chapterId) => `/content/units/${chapterId}`,
-        mistakesPractice: "/mistakes/practice",
-        mockChooser: "/mock/new",
-        pattern: (patternId) => `/pattern/${patternId}`,
-        pronunciation: `/pronunciation?goal=${goalId}`,
-      },
-      openBlock: async (blockId) => {
-        const here = stayingHere(learner);
-
-        const opened = await answerHere(
-          noteAppWrite(
-            openStudyBlockAction({
-              target: { blockId, kind: "mission" },
-              timeZone: getLocalTimeZone(),
-            }),
-          ),
-          here,
-        );
-
-        if (typeof opened === "boolean") {
-          return opened;
-        }
-
-        // Only an answer with nothing to open reads the page again: Next turns a refresh that can't
-        // reach the server into a full page load, which offline lands on the browser's error page.
-        if (!opened.answer) {
-          reread();
-          return false;
-        }
-
-        return go(opened.answer);
-      },
-      // Fired with the tap, never awaited: the page opens at once (see `saveMissionDayAction`).
-      openPage: () => {
-        saveMissionDayAction({ goalId, timeZone: getLocalTimeZone() }).catch(() => null);
-      },
-      openStep,
-    }),
-    [go, goalId, learner, openStep, reread],
   );
 }
 
