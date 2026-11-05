@@ -11,7 +11,6 @@ import {
 } from "@zoonk/learn/certificates/meaning";
 import {
   CertificateIntro,
-  type CertificateOwner,
   CertificateOwnerActions,
   CertificatePaper,
   CertificatesBackLink,
@@ -22,6 +21,7 @@ import { CertificatePrint } from "./certificate-print";
 
 const BAND_CLASS = cn(PUBLIC_CONTAINER_CLASS, "py-14 sm:py-16");
 
+/** `links` is null for a locked certificate, which only its owner sees. */
 export function CertificateView({
   facts,
   links,
@@ -29,18 +29,18 @@ export function CertificateView({
   startHref,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks;
-  owner: Omit<CertificateOwner, "saveName"> | null;
+  links: CertificateLinks | null;
+  owner: boolean;
   startHref: string | null;
 }) {
-  const ownerActions = owner && { ...owner, saveName: saveCertificateNameAction };
+  const ownerActions = owner ? { saveName: saveCertificateNameAction } : null;
 
   return (
     <>
       <section className="bg-ground">
         <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-8 pb-14 sm:pt-12 sm:pb-16")}>
           {ownerActions && <CertificatesBackLink href="/certificates" />}
-          <CertificateIntro facts={facts} />
+          <CertificateIntro facts={facts} locked={!links} />
 
           {ownerActions && (
             <div className="mt-6">
@@ -70,7 +70,7 @@ export function CertificateView({
         </section>
       )}
 
-      <CertificatePrint src={links.imageUrls.print} />
+      {links && <CertificatePrint src={links.imageUrls.print} />}
     </>
   );
 }

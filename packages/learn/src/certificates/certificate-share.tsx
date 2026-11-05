@@ -26,7 +26,7 @@ const MINUTES_PER_HOUR = 60;
 
 export type ShareableCertificate = Pick<
   CertificateFacts,
-  "kind" | "lessonsStudied" | "level" | "minutes" | "targetLanguage" | "title"
+  "courseLevel" | "kind" | "lessonsStudied" | "level" | "minutes" | "targetLanguage" | "title"
 >;
 
 function useShareText() {

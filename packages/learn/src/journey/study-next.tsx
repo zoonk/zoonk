@@ -27,7 +27,7 @@ import {
 } from "../_components/suggestion";
 import { useLevelName } from "../course/use-level-name";
 import { SlotContent } from "../plan/plan-suggestion-context";
-import { CertificateAction, type CourseCertificate } from "./course-certificate";
+import { CertificateAction, type PlanCertificates } from "./course-certificate";
 
 type CourseLink = StudyNextView["related"][number];
 
@@ -96,11 +96,11 @@ function RelatedCourses({
 }
 
 export function StudyNextSuggestion({
-  certificate,
+  certificates,
   courseHref,
   next: { onContinue, view: next },
 }: {
-  certificate: CourseCertificate | null;
+  certificates: PlanCertificates | null;
   courseHref: (course: CourseLink) => string;
   next: StudyNext;
 }) {
@@ -121,10 +121,10 @@ export function StudyNextSuggestion({
           <SuggestionDescription>{t("Here's what to study next.")}</SuggestionDescription>
         )}
 
-        {(next.nextLevel || certificate) && (
+        {(next.nextLevel || certificates) && (
           <SuggestionActions>
-            {certificate && (
-              <CertificateAction certificate={certificate} primary={!next.nextLevel} />
+            {certificates && (
+              <CertificateAction certificates={certificates} primary={!next.nextLevel} />
             )}
             {next.nextLevel && (
               <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />

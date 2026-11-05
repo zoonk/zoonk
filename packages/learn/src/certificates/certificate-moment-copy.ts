@@ -1,16 +1,16 @@
 "use client";
 
-import { type CertificateFacts } from "@zoonk/core/certificates/contract";
+import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { useExtracted, useFormatter } from "next-intl";
+import { useLevelName } from "../course/use-level-name";
 import { useCertificateName } from "./certificate-labels";
-
-export type CertificateAccount = "account" | "guest";
 
 function useOneCertificateCopy() {
   const t = useExtracted();
   const certificateName = useCertificateName();
+  const levelName = useLevelName();
 
-  return (facts: CertificateFacts) => {
+  return (facts: OwnedCertificateFacts) => {
     const certificate = certificateName(facts);
 
     if (facts.kind === "languageLevel") {
@@ -22,19 +22,18 @@ function useOneCertificateCopy() {
 
     return {
       line: t("Your certificate for {course} is ready.", { course: certificate }),
-      title: t("Course complete!"),
+      title: facts.courseLevel
+        ? t("{level} complete!", { level: levelName(facts.courseLevel) })
+        : t("Course complete!"),
     };
   };
 }
 
-/** `certificates` is newest last, as completion results carry them. */
-export function useCertificateMomentCopy({
-  account,
-  certificates,
-}: {
-  account: CertificateAccount | null;
-  certificates: CertificateFacts[];
-}) {
+/**
+ * `certificates` is newest last, as completion results carry them. A locked one isn't ready to
+ * use, so it gets no line: the Plus notice says how to get it.
+ */
+export function useCertificateMomentCopy(certificates: OwnedCertificateFacts[]) {
   const t = useExtracted();
   const format = useFormatter();
   const certificateName = useCertificateName();
@@ -53,13 +52,8 @@ export function useCertificateMomentCopy({
         })
       : one.line;
 
-  const guest = t(
-    "{count, plural, one {Create a free account to keep your certificate and put your name on it.} other {Create a free account to keep your certificates and put your name on them.}}",
-    { count },
-  );
-
   return {
-    line: account === "guest" ? guest : ready,
+    line: top?.locked ? null : ready,
     saved: count > 1 ? t("They're saved in Certificates.") : t("It's saved in Certificates."),
     title,
   };

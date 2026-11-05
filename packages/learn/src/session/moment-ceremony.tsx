@@ -1,6 +1,6 @@
 "use client";
 
-import { type CertificateFacts } from "@zoonk/core/certificates/contract";
+import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { useEffect, useRef, useState } from "react";
 import { STEP_TITLE_SLOT } from "../_components/step-card";
 import { focusStepTitle } from "../_components/steps";
@@ -10,7 +10,7 @@ import { type CeremonyMilestone } from "../ceremonies/use-ceremony-copy";
 /** What a result shows full screen before itself: its new certificates, then its one milestone. */
 export type EarnedMoments = {
   ceremony: CeremonyMilestone | null;
-  certificates: CertificateFacts[];
+  certificates: OwnedCertificateFacts[];
 };
 
 export type MomentCeremony = (moments: EarnedMoments, onClose: () => void) => React.ReactNode;

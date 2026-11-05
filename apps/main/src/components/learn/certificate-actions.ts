@@ -11,12 +11,12 @@ export async function markCertificateShownAction(code: string): Promise<void> {
   await markCertificateShown(code);
 }
 
-/** Writes a finished course's certificate, or reads it when it's written; null when it can't. */
+/** Writes the goal's finished level and plan certificates and returns all it holds; null when none. */
 export async function claimCourseCertificateAction(
   goalId: string,
-): Promise<OwnedCertificateFacts | null> {
+): Promise<OwnedCertificateFacts[] | null> {
   const result = await claimCourseCertificate(goalId);
-  return result.status === "ready" ? result.certificate : null;
+  return result.status === "ready" ? result.certificates : null;
 }
 
 /** The profile name is the one every certificate shows, so this renames them all. */

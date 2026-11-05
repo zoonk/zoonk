@@ -21,7 +21,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { type CourseCertificate } from "../journey/course-certificate";
+import { type PlanCertificates } from "../journey/course-certificate";
 import { type GoalStatusControl } from "../journey/goal-actions";
 import { type StudyNext } from "../journey/study-next";
 import { type PlanEditorSection } from "./plan-editor-sections";
@@ -41,8 +41,8 @@ export type SlotResult = { change: PlanChangeView | null; item: SlotItem; text: 
 
 export type SlotPreview = PlanPreviewState;
 
-/** From the goal map: what to study next once the plan is finished, and its course's certificate once the course is. */
-export type PlanEnd = { certificate: CourseCertificate | null; next: StudyNext | null };
+/** From the goal map: what to study next once the plan is finished, and its certificates once a level or the plan is. */
+export type PlanEnd = { certificates: PlanCertificates | null; next: StudyNext | null };
 
 export type PlanSuggestionHost = PlanEnd & {
   courseHref: (course: { brandSlug: string; courseSlug: string }) => string;
