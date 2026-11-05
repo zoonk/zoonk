@@ -7,8 +7,7 @@ CREATE TABLE "lesson_icons" (
     "name" TEXT NOT NULL,
     "tags" TEXT[],
     "description" TEXT NOT NULL,
-    "status" "GenerationStatus" NOT NULL DEFAULT 'running',
-    "run_id" TEXT NOT NULL,
+    "status" "GenerationStatus" NOT NULL,
     "url" TEXT,
     "small_url" TEXT,
     "style_version" SMALLINT NOT NULL,
@@ -16,7 +15,6 @@ CREATE TABLE "lesson_icons" (
     "prompt_version" TEXT,
     "generated_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "lesson_icons_pkey" PRIMARY KEY ("id")
 );

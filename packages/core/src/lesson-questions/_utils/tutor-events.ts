@@ -1,6 +1,6 @@
 import "server-only";
 import { type AnalyticsEvent } from "../../analytics/events";
-import { type CreateLessonQuestionInput } from "../contract";
+import { type CreateLessonQuestionInput, type LessonScreenSuggestion } from "../contract";
 import { type TutorSubject } from "./tutor-subject";
 
 const LESSON_SCOPES = { answer: "answer", lesson: "lesson", step: "screen" } as const;
@@ -14,9 +14,11 @@ function getLessonScope(context: CreateLessonQuestionInput["context"]) {
 export function getTutorAskedEvent({
   input,
   subject,
+  suggestion,
 }: {
   input: CreateLessonQuestionInput;
   subject: TutorSubject;
+  suggestion: LessonScreenSuggestion | null;
 }): AnalyticsEvent {
   switch (subject.kind) {
     case "chapter":
@@ -29,7 +31,11 @@ export function getTutorAskedEvent({
     case "lesson":
       return {
         name: "Tutor Asked",
-        properties: { lesson_id: subject.lesson.id, scope: getLessonScope(input.context) },
+        properties: {
+          lesson_id: subject.lesson.id,
+          scope: getLessonScope(input.context),
+          suggestion,
+        },
       };
     case "mock":
       return { name: "Tutor Asked", properties: { mock_id: subject.mockExamId, scope: "mock" } };

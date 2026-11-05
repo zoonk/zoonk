@@ -20,6 +20,7 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { validateActivity } from "../library/activities/validate-activity";
+import { readSavedStepMarks } from "../library/marks/step-marks";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
 
@@ -183,7 +184,7 @@ describe(getPlayableLibraryLesson, () => {
     ]);
 
     expect(playable?.steps.map((step) => ("marks" in step ? step.marks : "none"))).toStrictEqual([
-      { example: null, icon: null, ideaIndex: 0, underline: null },
+      { example: null, icon: null, ideaIndex: null, underline: null },
       {
         example: "The electron doesn't circle the nucleus like a planet.",
         icon: cloud,
@@ -191,13 +192,32 @@ describe(getPlayableLibraryLesson, () => {
         underline: "a map of where it might be",
       },
       { example: null, icon: null, ideaIndex: 1, underline: "darkest just around the nucleus" },
-      { example: null, icon: null, ideaIndex: 1, underline: null },
+      { example: null, icon: null, ideaIndex: null, underline: null },
     ]);
+  });
+
+  it("sends a question or a guess without its idea, which would name its answer, though tagging stored one", async () => {
+    const { lesson } = await markedPlayableLessonFixture();
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+    const questions = steps.filter((step) => step.kind === "hook" || step.kind === "check");
+
+    const stored = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      select: { marks: true },
+      where: { kind: { in: ["hook", "check"] }, lessonId: lesson.id },
+    });
+
+    expect(stored.map((step) => readSavedStepMarks(step.marks)?.ideaIndex)).toStrictEqual([0, 1]);
+
+    expect(
+      questions.map((step) => ("marks" in step ? step.marks?.ideaIndex : "none")),
+    ).toStrictEqual([null, null]);
   });
 
   it("drops marks the screen can't show: a quote it doesn't have, half a sentence, an idea past the map, an icon beside a picture, an icon not drawn yet", async () => {
     const icon = await lessonIconFixture();
-    const drawing = await lessonIconFixture({ smallUrl: null, status: "running", url: null });
+    const drawing = await lessonIconFixture({ smallUrl: null, status: "failed", url: null });
     const text = playableStepContent.explanation.text;
 
     const marks = {

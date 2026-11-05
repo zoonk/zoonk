@@ -17,7 +17,7 @@ export const stepMarksSchema = z
       .nullable()
       .meta({
         description:
-          "The lesson map idea the screen belongs to, as an index into `summary.ideas` from 0. Null when the lesson has no map or the screen belongs to none of its ideas",
+          "The lesson map idea this teaching screen teaches, as an index into `summary.ideas` from 0, for the orientation strip. Null on questions and guesses, whose idea would give their answer away, when the lesson has no map, and when the screen belongs to none of its ideas",
       }),
     underline: z
       .string()
@@ -30,7 +30,7 @@ export const stepMarksSchema = z
   .nullable()
   .meta({
     description:
-      "Light marks on a teaching screen. The marked text is an explanation's `text` or a worked example's `problem`; on other screens only `ideaIndex` is set. `icon` sits on the corner of the example's frame, or of the text block when there's no example, only on an explanation with no picture, visual or activity of its own. Null until the lesson is tagged, and on screens it never tags",
+      "Light marks on a teaching screen. The marked text is an explanation's `text` or a worked example's `problem`; on every other screen all fields are null. `icon` sits on the corner of the example's frame, or of the text block when there's no example, only on an explanation with no picture, visual or activity of its own. Null until the lesson is tagged, and on screens it never tags",
     id: "StepMarks",
   });
 
