@@ -10,9 +10,9 @@ import { findRankedIds, orderByIds, toTextSearch } from "../identity/_utils/text
 import { toIconFiles } from "./_utils/icon-files";
 
 /**
- * Each draw attempt renews the claim and gives up after `DRAW_ATTEMPT_MS` (a drawing takes about 10
- * seconds, and Blob's own upload retries can run for 25 minutes), so a run still drawing renews long
- * before its claim goes stale; only one that stopped loses it.
+ * Each draw attempt renews the claim and ends within `DRAW_ATTEMPT_MS` (a drawing takes about 10
+ * seconds), so a run still drawing renews long before its claim goes stale; only one that stopped
+ * loses it.
  */
 const STALE_CLAIM_MS = 600_000;
 const DRAW_ATTEMPT_MS = 180_000;
@@ -85,29 +85,32 @@ export async function claimLessonIcon({
   return { ...icon, mine: icon.status === "running" && icon.runId === runId };
 }
 
-/** Internal workflow bridge. Draws a claimed icon once; another run's claim is left alone. */
-export async function drawLessonIcon({
-  analytics,
-  iconId,
-  runId,
-}: {
-  analytics?: AiGenerationContext;
-  iconId: string;
-  runId: string;
-}): Promise<GenerationStatus | null> {
-  const renewed = await prisma.lessonIcon.updateMany({
-    data: { updatedAt: new Date() },
-    where: { id: iconId, runId, status: "running" },
+/**
+ * Ends the attempt on time whatever the work does: Blob retries a `TimeoutError` for minutes, so the
+ * abort carries an `AbortError`, which it and the AI SDK stop on.
+ */
+function withinAttempt<T>(work: (abortSignal: AbortSignal) => Promise<T>): Promise<T> {
+  const controller = new AbortController();
+  const timedOut = new DOMException("The icon drawing ran out of time", "AbortError");
+
+  const deadline = new Promise<never>((_resolve, reject) => {
+    controller.signal.addEventListener("abort", () => reject(timedOut));
   });
 
-  const icon = await prisma.lessonIcon.findUnique({ where: { id: iconId } });
+  const timer = setTimeout(() => controller.abort(timedOut), DRAW_ATTEMPT_MS);
 
-  if (!icon || renewed.count === 0) {
-    return icon?.status ?? null;
-  }
+  return Promise.race([work(controller.signal), deadline]).finally(() => clearTimeout(timer));
+}
 
-  const abortSignal = AbortSignal.timeout(DRAW_ATTEMPT_MS);
-
+async function drawIconFiles({
+  abortSignal,
+  analytics,
+  icon,
+}: {
+  abortSignal: AbortSignal;
+  analytics?: AiGenerationContext;
+  icon: { description: string; name: string };
+}) {
   const { data, provenance } = await generateLessonIconImage({
     abortSignal,
     analytics,
@@ -130,14 +133,42 @@ export async function drawLessonIcon({
     throw small.error;
   }
 
+  return { files: { smallUrl: small.data, url: large.data }, provenance };
+}
+
+/** Internal workflow bridge. Draws a claimed icon once; another run's claim is left alone. */
+export async function drawLessonIcon({
+  analytics,
+  iconId,
+  runId,
+}: {
+  analytics?: AiGenerationContext;
+  iconId: string;
+  runId: string;
+}): Promise<GenerationStatus | null> {
+  const renewed = await prisma.lessonIcon.updateMany({
+    data: { updatedAt: new Date() },
+    where: { id: iconId, runId, status: "running" },
+  });
+
+  const icon = await prisma.lessonIcon.findUnique({ where: { id: iconId } });
+
+  if (!icon || renewed.count === 0) {
+    return icon?.status ?? null;
+  }
+
+  const { files, provenance } = await withinAttempt((abortSignal) =>
+    drawIconFiles({ abortSignal, analytics, icon }),
+  );
+
   const saved = await prisma.lessonIcon.updateMany({
     data: {
       generatedAt: new Date(provenance.generatedAt),
       model: provenance.model,
       promptVersion: provenance.promptVersion,
-      smallUrl: small.data,
+      smallUrl: files.smallUrl,
       status: "completed",
-      url: large.data,
+      url: files.url,
     },
     where: { id: iconId, runId, status: "running" },
   });

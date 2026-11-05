@@ -171,6 +171,28 @@ describe(drawLessonIcon, () => {
     });
   });
 
+  it("ends an attempt that hangs after three minutes with an abort Blob and the AI SDK don't retry", async () => {
+    const need = needFor(`spring scale ${randomUUID().slice(0, 4)}`.replaceAll(/\d/gu, "w"));
+    const runId = `run-${randomUUID()}`;
+    const claim = await claimLessonIcon({ need, runId });
+
+    vi.mocked(generateLessonIconImage).mockImplementation(
+      () => new Promise(() => {}) as ReturnType<typeof generateLessonIconImage>,
+    );
+
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    const drawing = drawLessonIcon({ iconId: claim.id, runId }).catch((error: unknown) => error);
+
+    await vi.waitUntil(() => vi.mocked(generateLessonIconImage).mock.calls.length > 0, {
+      interval: 1,
+    });
+
+    await vi.advanceTimersByTimeAsync(180_000);
+
+    await expect(drawing).resolves.toMatchObject({ name: "AbortError" });
+    expect(vi.mocked(generateLessonIconImage).mock.calls[0]?.[0].abortSignal?.aborted).toBe(true);
+  });
+
   it("throws on a file code can't use, so its step retries, and records the failure afterward", async () => {
     const need = needFor(`hourglass ${randomUUID().slice(0, 4)}`.replaceAll(/\d/gu, "z"));
     const runId = `run-${randomUUID()}`;
