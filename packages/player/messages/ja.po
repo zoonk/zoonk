@@ -3203,6 +3203,11 @@ msgid "This one is tricky. {name} can explain it another way."
 msgstr "この問題は少し難しいですね。{name}が別の言い方で説明してくれます。"
 
 #: src/lesson/controls/ask-buddy-offer.tsx
+msgctxt "zd4MuO"
+msgid "Taking your time? {name} can explain it another way."
+msgstr "じっくり考えていますか？{name}が別の言い方で説明してくれます。"
+
+#: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"

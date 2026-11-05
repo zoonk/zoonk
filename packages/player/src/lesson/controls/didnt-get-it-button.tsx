@@ -5,31 +5,20 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { COLUMN_GHOST_ACTION_CLASS } from "../../components/step-layouts";
 import { useTutorBuddy } from "../../questions/tutor-buddy";
-import { useLessonPlayerConfig } from "../lesson-player-context";
 
-export function DidntGetItButton({ stepId }: { stepId: string }) {
+export function DidntGetItButton() {
   const t = useExtracted();
   const buddy = useTutorBuddy();
-  const { lesson, track } = useLessonPlayerConfig();
 
-  if (!buddy || buddy.consulted) {
+  if (!buddy?.canAsk) {
     return null;
   }
-
-  const ask = () => {
-    track({
-      name: "Tutor Opened",
-      properties: { lesson_id: lesson.id, source: "didnt_understand", step_id: stepId },
-    });
-
-    buddy.openAndAsk("simpler");
-  };
 
   return (
     <Button
       className={cn(COLUMN_GHOST_ACTION_CLASS, "text-muted-foreground pl-1.5")}
       data-slot="didnt-get-it"
-      onClick={ask}
+      onClick={() => buddy.openAndAsk("simpler")}
       size="sm"
       variant="ghost"
     >

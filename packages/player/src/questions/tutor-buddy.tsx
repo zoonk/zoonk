@@ -10,11 +10,14 @@ import { LessonQuestionDrawer } from "./lesson-question-panel";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { type OfferedSuggestion } from "./lesson-question-state";
 import { isSameDraftContext } from "./lesson-question-state-helpers";
+import { doesLessonQuestionBlockNewQuestion } from "./lesson-question-status";
 
 type TutorPresentation = "dock" | "drawer";
 
 export type TutorBuddy = {
   ask: (question: OfferedSuggestion) => void;
+  /** False for guests, who can't talk with the buddy. */
+  canAsk: boolean;
   close: () => void;
   consulted: boolean;
   context: LessonQuestionContext;
@@ -25,7 +28,7 @@ export type TutorBuddy = {
   navigation: LessonQuestionNavigation;
   /** Fills the composer with the suggestion, for the learner to send. */
   open: (suggestion?: LessonScreenSuggestion) => void;
-  /** Sends the suggestion at once, so the buddy starts answering as it opens. */
+  /** Sends the suggestion at once, so the buddy starts answering as it opens; while an earlier question is unanswered, fills the composer instead. */
   openAndAsk: (suggestion: LessonScreenSuggestion) => void;
   suggests: boolean;
 };
@@ -63,7 +66,9 @@ export function TutorBuddyProvider({
     setShown({ presentation: null, visit });
   }
 
-  const { chooseSuggestion, close, open, state, suggestions } = controller;
+  const { canAskQuestions, chooseSuggestion, close, open, state, suggestions, unresolvedQuestion } =
+    controller;
+
   const askAbout = controller.ask;
   const docked = state.isOpen && shown.presentation === "dock";
   const drawerOpen = state.isOpen && shown.presentation === "drawer";
@@ -89,6 +94,7 @@ export function TutorBuddyProvider({
 
         void askAbout({ context, question, suggestion });
       },
+      canAsk: canAskQuestions,
       close,
       consulted,
       context,
@@ -107,15 +113,29 @@ export function TutorBuddyProvider({
       openAndAsk: (suggestion) => {
         const offered = show(suggestion);
 
-        if (offered) {
-          void askAbout({ context, question: offered.label, suggestion: offered.id });
+        if (!offered) {
+          return;
         }
+
+        const isWaiting =
+          isSameDraftContext({ current: state.context, next: context }) &&
+          (state.creating !== null ||
+            unresolvedQuestion !== null ||
+            state.questions.some(doesLessonQuestionBlockNewQuestion));
+
+        if (isWaiting) {
+          chooseSuggestion({ question: offered.label, suggestion: offered.id });
+          return;
+        }
+
+        void askAbout({ context, question: offered.label, suggestion: offered.id });
       },
       suggests: suggests && state.questions.length === 0,
     };
   }, [
     askAbout,
     asideShown,
+    canAskQuestions,
     chooseSuggestion,
     close,
     consulted,
@@ -127,9 +147,11 @@ export function TutorBuddyProvider({
     navigation,
     open,
     state.context,
-    state.questions.length,
+    state.creating,
+    state.questions,
     suggestions,
     suggests,
+    unresolvedQuestion,
     visit,
   ]);
 

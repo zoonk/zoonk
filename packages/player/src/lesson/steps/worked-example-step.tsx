@@ -7,7 +7,7 @@ import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonStepPicture } from "../_components/lesson-pictures";
 import { LessonEyebrow, LessonQuestion } from "../_components/lesson-step-text";
 import { ScreenSupport } from "../_components/screen-support";
-import { DidntGetItButton } from "../controls/didnt-get-it-button";
+import { ExplainingScreenHelp } from "../controls/ask-buddy-offer";
 import { useLessonPlayer } from "../lesson-player-context";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 import { WorkedExampleContent } from "./worked-example-content";
@@ -37,7 +37,7 @@ export function WorkedExampleStepView({ step }: LessonStepViewProps<StepOf<"work
         marks={step.marks}
         revealed={revealed}
       />
-      <DidntGetItButton stepId={step.id} />
+      <ExplainingScreenHelp step={step} />
     </PlayerReadScene>
   );
 }

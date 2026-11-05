@@ -10,7 +10,7 @@ import { LessonStepPicture, useIsExploredPictureLost } from "../_components/less
 import { LessonRichText } from "../_components/lesson-rich-text";
 import { LESSON_BODY_CLASS } from "../_components/lesson-step-text";
 import { CornerIcon, MarkedText } from "../_components/marked-text";
-import { DidntGetItButton } from "../controls/didnt-get-it-button";
+import { ExplainingScreenHelp } from "../controls/ask-buddy-offer";
 import { ExampleLine } from "./example-line";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
@@ -47,7 +47,7 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
         </>
       )}
       {content.exampleLineSlot && <ExampleLine key={step.id} stepId={step.id} />}
-      <DidntGetItButton stepId={step.id} />
+      <ExplainingScreenHelp step={step} />
     </PlayerReadScene>
   );
 }

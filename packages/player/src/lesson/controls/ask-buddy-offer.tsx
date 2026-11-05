@@ -4,8 +4,12 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useTutorBuddy } from "../../questions/tutor-buddy";
+import { type ExplainingStep } from "../_utils/lesson-struggle";
+import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
+import { DidntGetItButton } from "./didnt-get-it-button";
+import { useStrugglePause } from "./use-struggle-pause";
 
-export function AskBuddyOffer() {
+export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
   const t = useExtracted();
   const buddy = useTutorBuddy();
   const [dismissed, setDismissed] = useState(false);
@@ -22,7 +26,11 @@ export function AskBuddyOffer() {
       className="border-border flex flex-col gap-2 border-t pt-3 text-sm"
       data-slot="lesson-ask-buddy-offer"
     >
-      <p>{t("This one is tricky. {name} can explain it another way.", { name })}</p>
+      <p>
+        {reason === "misses"
+          ? t("This one is tricky. {name} can explain it another way.", { name })
+          : t("Taking your time? {name} can explain it another way.", { name })}
+      </p>
 
       <div className="flex flex-wrap gap-2">
         <Button
@@ -43,4 +51,18 @@ export function AskBuddyOffer() {
       </div>
     </div>
   );
+}
+
+export function StrugglePauseOffer({ step }: { step: ExplainingStep }) {
+  const { screen } = useLessonPlayer();
+  const isStuck = useStrugglePause(step);
+
+  return isStuck && !screen.quickCheck ? <AskBuddyOffer reason="pause" /> : null;
+}
+
+/** Knowledge lessons offer "I didn't get this" on every explaining screen; language lessons offer help after a long pause. */
+export function ExplainingScreenHelp({ step }: { step: ExplainingStep }) {
+  const { lesson } = useLessonPlayerConfig();
+
+  return lesson.targetLanguage ? <StrugglePauseOffer step={step} /> : <DidntGetItButton />;
 }
