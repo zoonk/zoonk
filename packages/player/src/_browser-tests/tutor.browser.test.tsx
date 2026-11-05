@@ -17,7 +17,7 @@ import { buildTutor } from "../_test-utils/tutor-config";
 import { getStrugglePauseMs } from "../lesson/_utils/lesson-struggle";
 import { type PlayableLibraryStep } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
-import { teachingStep } from "../preview/preview-steps";
+import { contentStep, teachingStep } from "../preview/preview-steps";
 import { type LessonQuestionNavigation } from "../questions/lesson-question-navigation";
 
 const PHONE = { height: 812, width: 375 };
@@ -1465,7 +1465,7 @@ describe("docked beside the lesson", () => {
       .toBeVisible();
   });
 
-  it("offers the lesson's simpler and deeper takes on a reading screen, one tap each", async () => {
+  it("offers the lesson's takes on a reading screen, one tap each", async () => {
     const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
     playLesson({ lesson });
 
@@ -1473,19 +1473,41 @@ describe("docked beside the lesson", () => {
     await expectCount(suggestions.getByRole("button"), 2);
 
     await expect
-      .element(suggestions.getByRole("button", { name: "I want to go deeper" }))
+      .element(suggestions.getByRole("button", { name: "Give me another example" }))
       .toBeVisible();
 
-    await suggestions.getByRole("button", { name: "Explain it more simply" }).click();
+    await suggestions.getByRole("button", { name: "I want to go deeper" }).click();
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
 
-    expect(api.inputs[0]).toMatchObject({
-      question: "Explain it more simply",
-      suggestion: "simpler",
-    });
+    expect(api.inputs[0]).toMatchObject({ question: "I want to go deeper", suggestion: "deeper" });
 
     await dockedConversation().getByRole("button", { name: "From the lesson" }).click();
     await expect.element(suggestions).not.toBeInTheDocument();
+  });
+
+  it('leaves the simpler take out of the aside only on a screen whose "I didn\'t get this" asks it', async () => {
+    const { lesson } = lessonWithTutor({
+      steps: [
+        contentStep("hook", { content: { text: "An electron isn't a ball.", variant: "text" } }),
+        teachingStep("explanation"),
+      ],
+    });
+
+    playLesson({ lesson });
+    const suggestions = lessonAside().getByRole("list", { name: "Suggested questions" });
+    const simpler = suggestions.getByRole("button", { name: "Explain it more simply" });
+    const didntGetIt = page.getByRole("button", { name: "I didn't get this" });
+
+    await expect.element(simpler).toBeVisible();
+    await expect.element(didntGetIt).not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(didntGetIt).toBeVisible();
+    await expect.element(simpler).not.toBeInTheDocument();
+
+    await expect
+      .element(suggestions.getByRole("button", { name: "I want to go deeper" }))
+      .toBeVisible();
   });
 
   it("offers no suggestions beside the lesson while a question is still on its way", async () => {
@@ -1494,7 +1516,7 @@ describe("docked beside the lesson", () => {
     playLesson({ lesson });
 
     const suggestions = lessonAside().getByRole("list", { name: "Suggested questions" });
-    await suggestions.getByRole("button", { name: "Explain it more simply" }).click();
+    await suggestions.getByRole("button", { name: "I want to go deeper" }).click();
     await dockedConversation().getByRole("button", { name: "From the lesson" }).click();
     await expect.element(suggestions).not.toBeInTheDocument();
 
