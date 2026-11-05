@@ -2,6 +2,7 @@ import { getLessonMapShape } from "@zoonk/ai/tasks/lesson-writer/map";
 import { LESSON_MAP_SHAPES } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { z } from "zod";
 import { type LessonIcon, lessonIconSchema } from "../icons/lesson-icon-contract";
+import { iconNeedSchema } from "../marks/step-marks";
 import { explanationSchema } from "../steps/contract/content-schemas";
 import { normalizeStepContentValue } from "../steps/contract/normalize-step-content";
 
@@ -47,12 +48,13 @@ export const lessonMapSchema = z
 
 export type LessonMap = z.infer<typeof lessonMapSchema>;
 
-/** Tagging adds `about` and links each idea's icon once it's drawn, while `iconPending`. */
+/** Tagging adds `about` and the icon it asks for, then links the icon once it's drawn. */
 const savedIdeaSchema = ideaSchema
   .omit({ about: true, icon: true })
   .extend({
     about: z.string().optional(),
-    iconId: z.uuid().optional(),
+    iconId: z.uuid().nullish(),
+    iconNeed: iconNeedSchema.optional(),
     iconPending: z.boolean().optional(),
   });
 
@@ -63,18 +65,16 @@ const savedLessonMapSchema = z
   .object({ ideas: z.array(savedIdeaSchema).min(1), shape: lessonMapSchema.shape.shape.optional() })
   .strict();
 
-function parseSavedLessonMap(summary: unknown) {
+export type SavedLessonMap = z.infer<typeof savedLessonMapSchema>;
+
+export function readSavedLessonMap(summary: unknown): SavedLessonMap | null {
   const parsed = savedLessonMapSchema.safeParse(normalizeStepContentValue(summary));
   return parsed.success ? parsed.data : null;
 }
 
-export function readSavedLessonMapIdeas(summary: unknown): SavedLessonMapIdea[] | null {
-  return parseSavedLessonMap(summary)?.ideas ?? null;
-}
-
 /** Null when the lesson has no map (not written yet, or a kind of lesson without one). */
 export function readLessonMap(summary: unknown): LessonMap | null {
-  const saved = parseSavedLessonMap(summary);
+  const saved = readSavedLessonMap(summary);
 
   if (!saved) {
     return null;
@@ -93,7 +93,7 @@ export function readPlayableLessonMap({
   summary: unknown;
 }): LessonMap | null {
   const map = readLessonMap(summary);
-  const saved = parseSavedLessonMap(summary)?.ideas ?? [];
+  const saved = readSavedLessonMap(summary)?.ideas ?? [];
 
   return (
     map && {
