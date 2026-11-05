@@ -6,7 +6,12 @@ import { type IconNeed } from "@zoonk/ai/tasks/icons/need";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
-import { findIconsById, findIconsByName, searchIconCandidates } from "../icons/lesson-icon-library";
+import {
+  type IconRow,
+  findIconsById,
+  findIconsByName,
+  searchIconCandidates,
+} from "../icons/lesson-icon-library";
 import { readSavedLessonMap } from "../lessons/lesson-map";
 import { CURRENT_STEPS } from "../lessons/lesson-versions";
 import { readSavedStepMarks } from "./step-marks";
@@ -48,6 +53,34 @@ async function decideReuse({
 }
 
 /**
+ * The map shows the ideas side by side to tell them apart, so a library icon goes to one idea: an
+ * idea that has it by name keeps it, and a later idea the reuse check sends to it draws its own.
+ */
+function keepIdeasApart({
+  named,
+  requests,
+  reused,
+}: {
+  named: ReadonlyMap<string, IconRow>;
+  requests: readonly LessonIconRequest[];
+  reused: ReadonlyMap<string, string>;
+}): Map<string, string> {
+  const ideas = requests.filter((request) => request.forIdea);
+  const namedIds = new Set(ideas.flatMap(({ need }) => named.get(need.name)?.id ?? []));
+  const ideaReuse = ideas.map(({ need }) => reused.get(need.name));
+
+  const taken = new Set(
+    ideas.flatMap(({ need }, index) => {
+      const reuse = ideaReuse[index];
+      const isTaken = reuse && (namedIds.has(reuse) || ideaReuse.slice(0, index).includes(reuse));
+      return isTaken ? [need.name] : [];
+    }),
+  );
+
+  return new Map([...reused].filter(([name]) => !taken.has(name)));
+}
+
+/**
  * Internal workflow bridge: a drawn icon of the same name is reused as is, and a name that failed
  * before is skipped; otherwise a text search finds candidates and one model call decides reuse or
  * draw.
@@ -64,10 +97,14 @@ export async function pickLessonIcons({
   const existing = await findIconsByName(requests.map((request) => request.need.name));
   const named = new Map(existing.map((icon) => [icon.name, icon]));
 
-  const reused = await decideReuse({
-    analytics,
-    requests: requests.filter((request) => !named.has(request.need.name)),
-    wait,
+  const reused = keepIdeasApart({
+    named,
+    requests,
+    reused: await decideReuse({
+      analytics,
+      requests: requests.filter((request) => !named.has(request.need.name)),
+      wait,
+    }),
   });
 
   return requests.flatMap(({ need }) => {

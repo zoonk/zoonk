@@ -1,6 +1,7 @@
+import { randomUUID } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { parseStepContent } from "../steps/contract/step-contract";
-import { canShowIcon, fitStepMarks } from "./step-marks";
+import { canShowIcon, fitStepMarks, toStepMarks } from "./step-marks";
 
 const TABLE_TEXT = [
   "Each neighborhood's cases and residents:",
@@ -44,5 +45,36 @@ describe(fitStepMarks, () => {
       ...marks,
       icon: null,
     });
+  });
+});
+
+describe(toStepMarks, () => {
+  const [dnaId, copierId] = [randomUUID(), randomUUID()];
+  const copier = { ...icon, url: "https://example.com/copier.webp" };
+
+  const icons = new Map([
+    [dnaId, icon],
+    [copierId, copier],
+  ]);
+
+  const ideas = [{ iconId: dnaId }, { iconId: null }];
+  const saved = { example: null, iconPending: false, ideaIndex: 0, underline: null };
+
+  it("never shows the screen's idea icon again beside its text", () => {
+    expect(toStepMarks({ icons, ideas, saved: { ...saved, iconId: dnaId } }).icon).toBeNull();
+  });
+
+  it("shows the screen's own icon, and any icon on a screen of no idea", () => {
+    expect(toStepMarks({ icons, ideas, saved: { ...saved, iconId: copierId } }).icon).toBe(copier);
+
+    expect(
+      toStepMarks({ icons, ideas, saved: { ...saved, iconId: dnaId, ideaIndex: null } }).icon,
+    ).toBe(icon);
+  });
+
+  it("drops an idea past the lesson's map", () => {
+    expect(
+      toStepMarks({ icons, ideas, saved: { ...saved, iconId: dnaId, ideaIndex: 2 } }),
+    ).toStrictEqual({ example: null, icon, ideaIndex: null, underline: null });
   });
 });

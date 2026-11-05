@@ -187,13 +187,36 @@ describe(getPlayableLibraryLesson, () => {
       { example: null, icon: null, ideaIndex: null, underline: null },
       {
         example: "The electron doesn't circle the nucleus like a planet.",
-        icon: cloud,
+        icon: { smallUrl: icons.planet.smallUrl, url: icons.planet.url },
         ideaIndex: 0,
         underline: "a map of where it might be",
       },
       { example: null, icon: null, ideaIndex: 1, underline: "darkest just around the nucleus" },
       { example: null, icon: null, ideaIndex: null, underline: null },
     ]);
+  });
+
+  it("never shows a screen the icon its idea's strip already shows, even when marks stored it", async () => {
+    const { icons, lesson } = await markedPlayableLessonFixture();
+    const example = "The electron doesn't circle the nucleus like a planet.";
+    const underline = "a map of where it might be";
+
+    await prisma.step.updateMany({
+      data: {
+        marks: { example, iconId: icons.cloud.id, iconPending: false, ideaIndex: 0, underline },
+      },
+      where: { kind: "explanation", lessonId: lesson.id },
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const shown = result?.status === "ready" ? result.lesson.steps[1] : null;
+
+    expect(shown && "marks" in shown ? shown.marks : null).toStrictEqual({
+      example,
+      icon: null,
+      ideaIndex: 0,
+      underline,
+    });
   });
 
   it("sends a question or a guess without its idea, which would name its answer, though tagging stored one", async () => {
