@@ -309,6 +309,7 @@ struct CertificateCeremony: View {
 /// Plus opens Plus unless `seePlus` leaves the screen first.
 struct CertificatePlusNotice: View {
   var isList = false
+  var isInset = false
   var seePlus: (() -> Void)?
 
   var body: some View {
@@ -324,7 +325,7 @@ struct CertificatePlusNotice: View {
         "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends.",
         tableName: "Certificates",
         comment: "What Plus does for certificates, on one the learner earned without Plus"),
-      seePlus: seePlus)
+      isInset: isInset, seePlus: seePlus)
   }
 }
 

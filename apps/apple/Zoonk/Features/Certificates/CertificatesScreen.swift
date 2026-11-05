@@ -82,9 +82,7 @@ private struct CertificatesPlusSection: View {
   var body: some View {
     if let tier = learner.summary.value?.tier, tier != .plus {
       Section {
-        CertificatePlusNotice(isList: true)
-          .listRowInsets(EdgeInsets())
-          .listRowBackground(Color.clear)
+        CertificatePlusNotice(isList: true, isInset: true)
       }
     }
   }

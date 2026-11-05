@@ -303,9 +303,7 @@ private struct LockedCertificateDetail: View {
       }
 
       Section {
-        CertificatePlusNotice()
-          .listRowInsets(EdgeInsets())
-          .listRowBackground(Color.clear)
+        CertificatePlusNotice(isInset: true)
       }
 
       Section {
