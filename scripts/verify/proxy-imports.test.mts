@@ -88,7 +88,19 @@ function resolveSource(input: { app: string; from: string; specifier: string }) 
   return file;
 }
 
-/** `fetch` called, passed around or read from `globalThis`; types and imports are erased or left to the package check. */
+const TYPE_KEYS = new Set(["returnType", "typeAnnotation", "typeArguments", "typeParameters"]);
+
+const TYPE_DECLARATIONS = new Set([
+  "ImportDeclaration",
+  "TSDeclareFunction",
+  "TSInterfaceDeclaration",
+  "TSTypeAliasDeclaration",
+]);
+
+/**
+ * `fetch` called, passed around or read from `globalThis`. Types are erased, and an import of
+ * `fetch` from a package is left to the import-path check.
+ */
 function mentionsFetch(node: unknown): boolean {
   if (typeof node !== "object" || node === null) {
     return false;
@@ -96,7 +108,7 @@ function mentionsFetch(node: unknown): boolean {
 
   const type = "type" in node && typeof node.type === "string" ? node.type : "";
 
-  if (type.startsWith("TS") || type === "ImportDeclaration") {
+  if (TYPE_DECLARATIONS.has(type) || ("exportKind" in node && node.exportKind === "type")) {
     return false;
   }
 
@@ -107,7 +119,7 @@ function mentionsFetch(node: unknown): boolean {
     return true;
   }
 
-  return Object.values(node).some((child) => mentionsFetch(child));
+  return Object.entries(node).some(([key, child]) => !TYPE_KEYS.has(key) && mentionsFetch(child));
 }
 
 function readImports(file: string) {
