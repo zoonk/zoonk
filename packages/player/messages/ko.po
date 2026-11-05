@@ -3040,6 +3040,24 @@ msgctxt "ct0jk_"
 msgid "Drawing the picture…"
 msgstr "그림을 그리고 있어요…"
 
+#. Label on the dashed frame around the sentences of a lesson screen that give an example.
+#: src/lesson/_components/marked-text.tsx
+msgctxt "xrCRnH"
+msgid "Example"
+msgstr "예시"
+
+#. Above a lesson screen: which of the lesson map's ideas the screen teaches, such as 'Idea 2 of 4'.
+#: src/lesson/_components/opening-map.tsx
+#: src/lesson/_components/orientation-strip.tsx
+msgctxt "CCQ4rY"
+msgid "Idea {current} of {total}"
+msgstr "{current}번째 개념 (총 {total}개)"
+
+#: src/lesson/_components/opening-map.tsx
+msgctxt "JHFGf_"
+msgid "{count, plural, one {# idea to discover in this lesson} other {# ideas to discover in this lesson}}"
+msgstr "{count, plural, other {이번 레슨에서 알아볼 개념 #개}}"
+
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "P0MjYO"
 msgid "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now."

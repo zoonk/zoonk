@@ -26,13 +26,11 @@ export function LessonContext({ children }: { children?: string }) {
   return <RichTextBlocks className="text-base leading-relaxed" text={children} />;
 }
 
+export const LESSON_BODY_CLASS =
+  "text-foreground highlight-strong text-lg leading-relaxed md:text-[1.1875rem] md:leading-[1.6]";
+
 export function LessonBody({ children }: { children: string }) {
-  return (
-    <RichTextBlocks
-      className="text-foreground text-lg leading-relaxed md:text-[1.1875rem] md:leading-[1.6] lg:max-w-xl"
-      text={children}
-    />
-  );
+  return <RichTextBlocks className={cn(LESSON_BODY_CLASS, "lg:max-w-xl")} text={children} />;
 }
 
 export const SCREEN_CHIP_CLASS =

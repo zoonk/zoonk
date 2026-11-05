@@ -97,15 +97,42 @@ function SegmentViews({ segments, start }: { segments: RichInlineSegment[]; star
   });
 }
 
-export function RichInlineSegments({ segments }: { segments: RichInlineSegment[] }) {
+export type RichMarkStyle = "highlight" | "underline";
+
+function MarkedRun({
+  children,
+  markStyle,
+}: {
+  children: React.ReactNode;
+  markStyle: RichMarkStyle;
+}) {
+  if (markStyle === "underline") {
+    return (
+      <span className="hand-underline" data-slot="underline">
+        {children}
+      </span>
+    );
+  }
+
+  return (
+    <mark className="bg-warning/15 text-foreground rounded-[3px] box-decoration-clone px-0.5">
+      {children}
+    </mark>
+  );
+}
+
+export function RichInlineSegments({
+  markStyle = "highlight",
+  segments,
+}: {
+  markStyle?: RichMarkStyle;
+  segments: RichInlineSegment[];
+}) {
   return toRuns(segments).map((run) =>
     run.marked ? (
-      <mark
-        className="bg-warning/15 text-foreground rounded-[3px] box-decoration-clone px-0.5"
-        key={`mark-${run.start}`}
-      >
+      <MarkedRun key={`mark-${run.start}`} markStyle={markStyle}>
         <SegmentViews segments={run.segments} start={run.start} />
-      </mark>
+      </MarkedRun>
     ) : (
       <SegmentViews key={`run-${run.start}`} segments={run.segments} start={run.start} />
     ),

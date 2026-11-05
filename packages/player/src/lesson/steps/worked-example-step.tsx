@@ -34,6 +34,7 @@ export function WorkedExampleStepView({ step }: LessonStepViewProps<StepOf<"work
             <LessonVisual visual={step.content.visual} />
           </ScreenSupport>
         }
+        marks={step.marks}
         revealed={revealed}
       />
       <StrugglePauseOffer step={step} />

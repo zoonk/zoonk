@@ -1,0 +1,101 @@
+"use client";
+
+import { type LessonIcon } from "@zoonk/core/library/icons/contract";
+import { type StepMarks } from "@zoonk/core/library/marks/contract";
+import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
+import { Fragment } from "react";
+import { LessonIconImage } from "./lesson-icon";
+
+type TextPart = { isExample: boolean; text: string };
+
+/** Paragraphs as plain blocks, so their lines wrap around an icon floated on the corner. */
+const FLOWING_TEXT_CLASS = "block space-y-3";
+
+/** Core keeps `example` an exact substring with balanced markup, so each part parses on its own. */
+function splitAtExample({ example, text }: { example: string | null; text: string }): TextPart[] {
+  const start = example ? text.indexOf(example) : -1;
+
+  if (!example || start === -1) {
+    return [{ isExample: false, text }];
+  }
+
+  return [
+    { isExample: false, text: text.slice(0, start) },
+    { isExample: true, text: example },
+    { isExample: false, text: text.slice(start + example.length) },
+  ].filter((part) => part.text.trim());
+}
+
+export function CornerIcon({ className, icon }: { className?: string; icon: LessonIcon }) {
+  return (
+    <LessonIconImage
+      className={cn("relative float-end ms-3 size-16 sm:size-18", className)}
+      icon={icon}
+      size={72}
+    />
+  );
+}
+
+function ExampleBox({ children, icon }: { children: React.ReactNode; icon: LessonIcon | null }) {
+  const t = useExtracted();
+
+  return (
+    <div
+      className="before:border-foreground/40 contrast-more:before:border-foreground relative flow-root px-4 pt-5 pb-4 before:pointer-events-none before:absolute before:inset-0 before:rotate-[-0.6deg] before:rounded-[1.25rem_0.75rem_1.375rem_0.625rem/0.75rem_1.25rem_0.625rem_1.375rem] before:border-2 before:border-dashed first:mt-3"
+      data-slot="example-box"
+    >
+      <span className="bg-background text-muted-foreground absolute inset-s-3 -top-2.5 px-1.5 text-sm leading-5 font-medium">
+        {t({
+          description:
+            "Label on the dashed frame around the sentences of a lesson screen that give an example.",
+          message: "Example",
+        })}
+      </span>
+      {icon && <CornerIcon className="-me-6 -mt-9 mb-1" icon={icon} />}
+      {children}
+    </div>
+  );
+}
+
+export function MarkedText({
+  className,
+  marks,
+  text,
+}: {
+  className?: string;
+  marks: StepMarks | null;
+  text: string;
+}) {
+  const parts = splitAtExample({ example: marks?.example ?? null, text });
+  const underline = marks?.underline ?? null;
+  const underlined = underline ? parts.findIndex((part) => part.text.includes(underline)) : -1;
+
+  const views = parts.map((part, index) => {
+    const blocks = (
+      <RichTextBlocks
+        className={cn(className, FLOWING_TEXT_CLASS)}
+        mark={index === underlined ? underline : null}
+        markStyle="underline"
+        text={part.text}
+      />
+    );
+
+    const key = `part-${index}`;
+
+    return part.isExample ? (
+      <ExampleBox icon={marks?.icon ?? null} key={key}>
+        {blocks}
+      </ExampleBox>
+    ) : (
+      <Fragment key={key}>{blocks}</Fragment>
+    );
+  });
+
+  return parts.some((part) => part.isExample) ? (
+    <div className="flex flex-col gap-7">{views}</div>
+  ) : (
+    views
+  );
+}
