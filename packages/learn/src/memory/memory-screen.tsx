@@ -26,13 +26,13 @@ import { SettingRow, SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { MemoryFactRow } from "./memory-fact-row";
 import { type MemoryCategory, MemoryCategoryName } from "./memory-labels";
-import { MemoryUpdated } from "./memory-updated";
+import { type MemoryUndoOutcome, MemoryUpdated } from "./memory-updated";
 
 export type MemoryActions = {
   deleteFact: (factId: string) => Promise<MemoryChange | null>;
   exportMemory: () => Promise<MemoryExport | null>;
   setEnabled: (enabled: boolean) => Promise<boolean>;
-  undo: (changes: MemoryChangeReference[]) => Promise<boolean>;
+  undo: (changes: MemoryChangeReference[]) => Promise<MemoryUndoOutcome>;
   updateFact: (input: { factId: string; statement: string }) => Promise<boolean>;
 };
 
@@ -67,7 +67,7 @@ function MemorySwitchDescription({ enabled }: { enabled: boolean }) {
   const t = useExtracted();
 
   return enabled
-    ? t("Personal examples and plans that fit your week")
+    ? t("Personal examples, plans that fit your week and calls that remember your news")
     : t("Memory is off. Nothing new is learned, and these facts aren't used.");
 }
 
@@ -118,6 +118,7 @@ function MemoryExportRow({ exportMemory }: Pick<MemoryActions, "exportMemory">) 
           <Button
             aria-label={isPending ? t("Preparing your memory…") : t("Download my memory")}
             disabled={isPending}
+            focusableWhenDisabled
             onClick={download}
             size="sm"
             variant="outline"

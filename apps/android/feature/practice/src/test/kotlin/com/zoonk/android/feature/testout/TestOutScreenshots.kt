@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.SavedStateHandle
@@ -27,6 +26,7 @@ import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.ChapterTestOutInput
 import com.zoonk.api.models.ChapterTestOutRecord
@@ -103,6 +103,7 @@ class TestOutScreenshots {
                 ) = SubmitChapterTestOut200Response.ChapterTestOutResultValue(
                     ChapterTestOutResult(
                         ceremony = null,
+                        certificates = emptyList(),
                         reached = MistakePatternPracticeResultReached(energy = 64, level = null),
                         changeId = UUID.randomUUID().takeIf { passed },
                         correct = if (passed) 3 else 1,
@@ -136,7 +137,7 @@ class TestOutScreenshots {
 
     private fun write(name: String) {
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
@@ -188,7 +189,7 @@ class TestOutScreenshots {
         rule.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-                ui.outcome?.let { TestOutResult(it, ui, viewModel, AppContainer.preview(rule.activity)) {} }
+                ui.outcome?.let { TestOutResult(it, ui, viewModel, AppContainer.preview(rule.activity), onClose = {}) }
             }
         }
         rule.mainClock.advanceTimeBy(10_000)

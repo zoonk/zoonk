@@ -26,8 +26,8 @@ export const memoryGateClassifier = {
     lasting: {
       criteria: {
         false:
-          "A moment, a one-off, small talk, something only about this lesson or conversation, how one goal's study is set up (time a day, focus, difficulty), or the date of the exam or deadline they study for.",
-        true: "Likely still true in a few weeks, and it would change how a tutor teaches, plans or picks examples.",
+          "A moment, a one-off with no EXPIRES day, small talk, something only about this lesson or conversation, how one goal's study is set up (time a day, focus, difficulty), or the date of the exam or deadline they study for.",
+        true: "Likely still true in a few weeks, or an upcoming event in their life until its EXPIRES day, and it would change how a tutor teaches, plans, picks examples or talks with them.",
       },
       instructions,
       type: "boolean",
@@ -44,6 +44,7 @@ export const memoryGateClassifier = {
   },
   toInput: (candidate: MemoryGateCandidate) => ({
     EVIDENCE: candidate.evidence.trim() || "none",
+    ...(candidate.expiresAt && { EXPIRES: candidate.expiresAt.toISOString().slice(0, 10) }),
     FACT: formatMemoryFact(candidate),
   }),
 } as const;

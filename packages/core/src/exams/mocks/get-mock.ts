@@ -8,10 +8,9 @@ import { EXAM_DAY_CHECKLIST } from "../../checkpoints/weekly-challenge-rules";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { getTrueFalseLabels } from "../../library/exams/true-false-labels";
-import { loadCeremony } from "../../milestones/load-ceremony";
+import { NO_RESULT_MOMENTS, loadResultMoments } from "../../milestones/load-ceremony";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
-import { serializeMilestone } from "../../sessions/completion-contract";
 import { NOTHING_REACHED, reachedSchema } from "../../sessions/reached";
 import { getEssayRubric } from "../essays/essay-rubric";
 import { getExamDocument } from "../exam-document";
@@ -270,7 +269,7 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
   const breakUntil =
     running && running.sectionStartedAt.getTime() > Date.now() ? running.sectionStartedAt : null;
 
-  const [number, current, finished, canMove, typed, speaking, missionMoment, ceremony] =
+  const [number, current, finished, canMove, typed, speaking, missionMoment, moments] =
     await Promise.all([
       getMockNumber(owned),
       running && !breakUntil ? loadCurrentSection({ areas, mock: running }) : null,
@@ -279,7 +278,7 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
       loadAskedTypedParts(getAskedItemIds(conditions).map((entry) => entry.itemId)),
       loadMockSpeaking(mock),
       loadMockMissionMoment({ mock, timeZone: getAnswerTimeZone({ goal: owned.goal }) }),
-      mock?.status === "finished" ? loadCeremony(owned.userId) : null,
+      mock?.status === "finished" ? loadResultMoments(owned.userId) : NO_RESULT_MOMENTS,
     ]);
 
   return {
@@ -290,7 +289,7 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
       brainPower: BRAIN_POWER_BONUS.weeklyChallenge,
       breakUntil: breakUntil?.toISOString() ?? null,
       canMove,
-      ceremony: ceremony ? serializeMilestone(ceremony) : null,
+      ...moments,
       checklist: [...EXAM_DAY_CHECKLIST],
       current,
       day: conditions.day,

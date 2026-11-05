@@ -9,6 +9,9 @@ const MAX_CANDIDATES = 5;
 
 const CONFIDENCE_BY_ORIGIN: Record<MemoryOrigin, number> = { noticed: 0.6, said: 0.9 };
 
+/** A fact the learner wrote or corrected themselves. */
+export const LEARNER_CONFIDENCE = 1;
+
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 
 export type MemoryCandidate = {
@@ -60,7 +63,11 @@ function toCandidate({
   fact: ExtractedMemoryFact;
   today: Date;
 }): MemoryCandidate | null {
-  const statement = fact.statement.replaceAll(/\s+/gu, " ").trim();
+  const statement = fact.statement
+    .replaceAll(/\s+/gu, " ")
+    .replace(/[\s.]+$/u, "")
+    .trim();
+
   const expiry = readExpiry({ expiresOn: fact.expiresOn, today });
 
   if (expiry.expired || !statement || statement.length > MAX_MEMORY_STATEMENT_LENGTH) {

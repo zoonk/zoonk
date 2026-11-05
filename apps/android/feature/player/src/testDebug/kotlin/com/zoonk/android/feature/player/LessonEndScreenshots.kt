@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.SavedStateHandle
@@ -28,6 +27,7 @@ import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonFit
@@ -167,7 +167,7 @@ class LessonEndScreenshots {
         if (fold) compose.unfoldBook(folds) else compose.waitForIdle()
         compose.mainClock.advanceTimeBy(10_000)
         compose.waitForIdle()
-        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun write(
@@ -195,7 +195,7 @@ private val IN_SESSION =
     SIGNED_IN.replace(
         """"studyBlock":null""",
         """
-        "studyBlock":{"blockId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","brainPower":50,"capsulesOpened":0,"ceremony":null,
+        "studyBlock":{"blockId":"2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","brainPower":50,"capsulesOpened":0,"ceremony":null,"certificates":[],
          "checkpoint":null,"comesBackOn":null,"completedMissions":["somethingNew"],"correct":2,"fullMeal":{"bonus":20,"paid":true},
          "milestones":[],"missions":[{"done":1,"kind":"somethingNew","status":"done","total":1},{"done":0,"kind":"review","status":"todo","total":1}],
          "netScore":null,"nextBlockId":null,"reached":{"energy":80,"level":{"color":"yellow","level":3}},

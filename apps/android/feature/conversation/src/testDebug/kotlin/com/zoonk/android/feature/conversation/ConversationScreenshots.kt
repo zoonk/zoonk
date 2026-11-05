@@ -3,7 +3,6 @@ package com.zoonk.android.feature.conversation
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -20,6 +19,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -212,7 +212,7 @@ class ConversationScreenshots {
 
     private fun shot(name: String) {
         if (folded) compose.unfoldBook(folds) else compose.waitForIdle()
-        val bitmap = compose.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }

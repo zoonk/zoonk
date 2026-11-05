@@ -9,8 +9,8 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 
 /**
- * Reads and writes nothing once its account isn't signed in. Pending debounced saves end with the
- * session. Screens [flush] on `ON_STOP` and [remove] the draft once the server has the work.
+ * Reads and writes nothing once its account isn't signed in; pending debounced saves land before it
+ * leaves. Screens [flush] on `ON_STOP` and [remove] the draft once the server has the work.
  */
 class DraftHandle<T> internal constructor(
     private val store: DraftStore,

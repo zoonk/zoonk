@@ -213,6 +213,7 @@ struct PracticeMainButton: View {
       HStack(spacing: 8) {
         if isBusy {
           ProgressView()
+            .controlSize(.small)
         }
         Text(title)
       }
@@ -283,12 +284,13 @@ struct PracticeSaveError: View {
 
   var body: some View {
     HStack {
-      Text(
-        "Your answer wasn't saved. Check your connection.", tableName: "Practice",
-        comment: "Shown over a run's actions when an answer or the finish didn't reach the server."
+      FailureLine(
+        message: LocalizedStringResource(
+          "Your answer wasn't saved. Check your connection.", table: "Practice",
+          comment:
+            "Shown over a run's actions when an answer or the finish didn't reach the server.")
       )
       .font(.subheadline)
-      .foregroundStyle(.destructive)
 
       Spacer()
 
@@ -395,35 +397,51 @@ enum PracticeLoad<Value> {
   case loading
 }
 
+/// Opens another place instead of a screen with nothing to show, as main redirects. Only while it's
+/// on screen, so a read that ends after the learner left never moves them.
+struct PracticeRedirect: View {
+  let open: () -> Void
+
+  var body: some View {
+    ProgressView()
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .onAppear(perform: open)
+  }
+}
+
 struct PracticeLoadFailureView: View {
   let error: APIError
   let retry: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        if error == .network {
-          Text(
-            "You're offline", tableName: "Practice",
-            comment: "Title when a practice screen can't load offline.")
-        } else {
-          Text(
-            "This didn't load", tableName: "Practice",
-            comment: "Title when a practice screen can't load.")
+    if error == .notFound {
+      NotFoundView()
+    } else {
+      ContentUnavailableView {
+        Label {
+          if error == .network {
+            Text(
+              "You're offline", tableName: "Practice",
+              comment: "Title when a practice screen can't load offline.")
+          } else {
+            Text(
+              "This didn't load", tableName: "Practice",
+              comment: "Title when a practice screen can't load.")
+          }
+        } icon: {
+          Image(systemName: error == .network ? "wifi.slash" : "exclamationmark.triangle")
         }
-      } icon: {
-        Image(systemName: error == .network ? "wifi.slash" : "exclamationmark.triangle")
+      } description: {
+        Text(
+          "Check your connection and try again.", tableName: "Practice",
+          comment: "Description when a practice screen can't load.")
+      } actions: {
+        Button(action: retry) {
+          Text("Try again", tableName: "Practice", comment: "Loads a practice screen again.")
+        }
+        .buttonStyle(.bordered)
       }
-    } description: {
-      Text(
-        "Check your connection and try again.", tableName: "Practice",
-        comment: "Description when a practice screen can't load.")
-    } actions: {
-      Button(action: retry) {
-        Text("Try again", tableName: "Practice", comment: "Loads a practice screen again.")
-      }
-      .buttonStyle(.bordered)
+      .lonePage()
     }
-    .lonePage()
   }
 }

@@ -75,6 +75,7 @@ async function loadWeeklyMockListening({
 
 export async function planWeeklyMock({
   essays,
+  finishedMocks,
   goal,
   identity = null,
   itemIds = null,
@@ -85,6 +86,8 @@ export async function planWeeklyMock({
   userId,
 }: {
   essays?: readonly MockEssayCandidate[];
+  /** A GET's finished-mock count; without it, it's counted fresh. */
+  finishedMocks?: Promise<number>;
   goal: Pick<Goal, "examBlueprintId" | "targetDate"> & { id: string | null };
   identity?: MockIdentity | null;
   itemIds?: readonly string[] | null;
@@ -96,7 +99,7 @@ export async function planWeeklyMock({
 }): Promise<MockPlan & { candidates: MockCandidate[] }> {
   const [candidates, mockNumber, finalStretchStart, written, listening] = await Promise.all([
     loadMockCandidates({ goal, itemIds, plan: savedPlan, skillIds, structure, userId }),
-    countFinishedMocksBefore({ goalId: goal.id }),
+    finishedMocks ?? countFinishedMocksBefore({ goalId: goal.id }),
     savedPlan
       ? getFinalStretchStart(parsePlanPhases(savedPlan.phases))
       : loadFinalStretchStart(goal.id),

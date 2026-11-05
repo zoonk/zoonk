@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { type findActiveSubscription } from "../../auth/subscription";
 import { type GoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { getAreaPreparations } from "../../preparation/area-preparation";
@@ -16,6 +17,7 @@ export async function weakSpotCandidate({
   now,
   plannedMinutes,
   readPreparation,
+  readSubscription,
   userId,
 }: {
   blocks: readonly MissionFactBlock[];
@@ -25,6 +27,7 @@ export async function weakSpotCandidate({
   plannedMinutes: number;
   /** A GET's request-wide preparation; without it, preparation is read fresh. */
   readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
+  readSubscription?: typeof findActiveSubscription;
   userId: string;
 }): Promise<MissionPick | null> {
   const practice = blocks.find((block) => block.kind === "practice" && !block.payload.extra);
@@ -40,6 +43,7 @@ export async function weakSpotCandidate({
         goalId: goal.id,
         now,
         readPlan: async () => goalPlan,
+        subscription: await readSubscription?.(userId),
         userId,
       });
 

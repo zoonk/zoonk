@@ -24,6 +24,7 @@
   "subscription_available_with_plus": "64a5caf747c3beb6d6c6ab13d5a3cb82e3dca56c6c7d28e5658ee5e3bde2cb69",
   "subscription_benefit_buddy": "e1a8ad62e48d21334ec73705af9636ed31f1223f7199df68631d548233fcbc4b",
   "subscription_benefit_calls": "01a3fce72ef1104c32c83b031227d38e84bfd881f77b99eb9880ab62bb4a638e",
+  "subscription_benefit_certificates": "fdfa63fe0b7e89c843d0556f7c2161ca6dd0c953943b2836461d9ba91401d170",
   "subscription_benefit_exam": "a77020384f9ed52c12037502ab61ecdaf9dd671f4a0a570364f416b651082c3b",
   "subscription_benefit_mocks": "ea18df6e22134d3df2666fdf94dc5b9507dcfc3ab03a126b3673f488bd0768b6",
   "subscription_benefits_summary": "88a3ac4d625d9adb923814d7d10dbd82907ed3b781e0c104251a2083c10ec8c2",
@@ -165,6 +166,7 @@
     <string name="subscription_benefit_mocks">실제 시험과 시간 제한이 같은 모의고사</string>
     <string name="subscription_benefit_buddy">막힐 때마다 도와주는 AI 공부 짝꿍</string>
     <string name="subscription_benefit_calls">더 넉넉한 말하기 연습 대화 이용 한도</string>
+    <string name="subscription_benefit_certificates">레벨을 마칠 때마다 받는 인증서</string>
     <string name="subscription_start_free">무료로 시작하기</string>
     <string name="subscription_no_card_needed">카드 등록이 필요 없어요.</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->

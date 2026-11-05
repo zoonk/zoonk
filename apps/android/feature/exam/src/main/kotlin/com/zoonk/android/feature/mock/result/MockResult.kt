@@ -32,6 +32,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.mock.runner.MockRun
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.MockRunnerViewModel
@@ -101,7 +102,15 @@ internal fun MockResult(
             if (!placement && mistakes > 0) add(MockResultPart.Next)
         }
     // A result opened again was celebrated then; one just finished shows its milestone's ceremony before its steps.
-    MomentAfterCeremony(app, view.ceremony?.takeUnless { viewModel.openedFinished }) { buddy ->
+    MomentAfterCeremony(
+        app,
+        view.ceremony?.takeUnless { viewModel.openedFinished },
+        view.certificates
+            .takeUnless { viewModel.openedFinished }
+            .orEmpty()
+            .map { it.naming },
+        onSeePlus = { navigator.open(AppRoute.Subscription) },
+    ) { buddy ->
         val review = rememberReviewPlace()
         // Above the steps, so paging away from the score and back keeps the areas the learner opened.
         var opened by rememberSaveable { mutableStateOf(emptyList<String>()) }

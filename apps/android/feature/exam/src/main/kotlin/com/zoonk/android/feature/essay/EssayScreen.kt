@@ -81,7 +81,6 @@ import com.zoonk.android.feature.player.leaveTaskFor
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
-import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.runColumn
@@ -92,6 +91,7 @@ import com.zoonk.android.feature.questions.isLongText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -137,7 +137,7 @@ fun EssayScreen(
     val blockId = remember(route.blockId) { runCatching { UUID.fromString(route.blockId) }.getOrNull() }
 
     if (blockId == null) {
-        RunNotFound(close)
+        TaskNotFound(navigator)
         return
     }
     if (signedIn == null) {
@@ -154,7 +154,7 @@ fun EssayScreen(
 
         is LoadState.Failed -> {
             if (read.error == ApiError.NotFound) {
-                RunNotFound(close)
+                TaskNotFound(navigator)
             } else {
                 RunLoadFailed(close, onRetry = { scope.launch { app.essays.essays[blockId].refresh() } })
             }

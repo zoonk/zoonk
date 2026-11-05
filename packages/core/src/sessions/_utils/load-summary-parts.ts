@@ -1,6 +1,7 @@
 import "server-only";
 import { type MasteryState, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { loadAnswersReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
@@ -130,7 +131,11 @@ export async function loadTomorrow({
   }
 
   const access = session.goal
-    ? await loadExamPrepAccess({ goal: session.goal, today: addDays(session.localDate, 1) })
+    ? await loadExamPrepAccess({
+        goal: session.goal,
+        readViewer: readEntitlementViewer,
+        today: addDays(session.localDate, 1),
+      })
     : null;
 
   if (access?.trialEnded) {

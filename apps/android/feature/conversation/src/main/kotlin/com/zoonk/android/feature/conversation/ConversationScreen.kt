@@ -6,9 +6,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -22,12 +21,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
@@ -35,10 +32,13 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.ceremonies.CertificateCeremony
+import com.zoonk.android.feature.ceremonies.CertificatesMoment
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.ceremonies.momentBuddy
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.livecall.LiveCall
 import com.zoonk.android.feature.livecall.LiveCallFailure
 import com.zoonk.android.feature.livecall.LiveCallPhase
@@ -51,7 +51,9 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.CompletedLanguageConversation
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationIntro
@@ -83,16 +85,17 @@ fun ConversationScreen(
         }
     val id = remember(route.conversationId) { runCatching { UUID.fromString(route.conversationId) }.getOrNull() }
     if (id == null) {
-        NotFound(onClose = exits::close)
+        NotFound(exits)
         return
     }
     ConversationEntry(id, app, exits, from = route.from, mock = route.mock)
 }
 
-/** A saved call's milestone ceremony and the day's moment, drawn with the learner's buddy. */
+/** A saved call's certificates, its milestone ceremony and the day's moment, drawn with the learner's buddy. */
 internal class CallMoments(
     val ceremony: MomentCeremony,
     val dayMoment: @Composable (CompletedLanguageConversation) -> Unit,
+    val certificates: CertificatesMoment? = null,
 )
 
 /** With [startWith], the call starts as soon as it's read, from the tap that opened it (a checkpoint's Start). */
@@ -127,10 +130,13 @@ internal fun ConversationEntry(
             )
         }
     val moments =
-        remember(app) {
+        remember(app, exits) {
             CallMoments(
                 ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
                 dayMoment = { completion -> CallDayMoment(app, completion) },
+                certificates = { awarded, onClose ->
+                    CertificateCeremony(app, awarded, onClose, onSeePlus = { exits.open(AppRoute.Subscription) }, app.timeSource)
+                },
             )
         }
     ConversationContent(model, app.speech, exits, moments, startWith, fromExam = from == FROM_EXAM, fromMock = mock != null)
@@ -174,7 +180,7 @@ internal fun ConversationContent(
 
         is LoadState.Failed -> {
             if (state.error == ApiError.NotFound) {
-                NotFound(onClose = exits::close)
+                NotFound(exits)
             } else {
                 CallFrame(title = {}, onClose = exits::close) {
                     item(
@@ -185,7 +191,7 @@ internal fun ConversationContent(
         }
 
         LoadState.Empty -> {
-            NotFound(onClose = exits::close)
+            NotFound(exits)
         }
 
         is LoadState.Loaded -> {
@@ -257,7 +263,17 @@ private fun Conversation(
 
     if (result != null) {
         // A call opened after it ended was celebrated then; one just saved shows its milestone's ceremony before its result.
-        MomentAfterCeremony(completed?.ceremony?.takeUnless { fromMock }, moments.ceremony) {
+        MomentAfterCeremony(
+            milestone = completed?.ceremony?.takeUnless { fromMock },
+            ceremony = moments.ceremony,
+            certificates =
+                completed
+                    ?.certificates
+                    ?.takeUnless { fromMock }
+                    .orEmpty()
+                    .map { it.naming },
+            certificatesMoment = moments.certificates,
+        ) {
             val dayMoment: @Composable () -> Unit = { completed?.let { moments.dayMoment(it) } }
             when {
                 conversation.kind == LanguageConversation.Kind.SPEAKING_MOCK -> {
@@ -425,16 +441,8 @@ internal fun rememberCallLauncher(
 }
 
 @Composable
-private fun NotFound(onClose: () -> Unit) {
-    CallFrame(title = {}, onClose = onClose) {
-        item(key = "not-found") {
-            CallOffMessage(stringResource(R.string.conversation_not_found_title), Modifier.callItem()) {
-                Text(
-                    stringResource(R.string.conversation_not_found_description),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-        }
+private fun NotFound(exits: ConversationExits) {
+    TaskScaffold(onClose = exits::close) { padding ->
+        NotFoundMessage(onGoHome = { exits.open(AppRoute.Today) }, Modifier.padding(padding))
     }
 }

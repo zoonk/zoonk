@@ -50,6 +50,7 @@ model MemoryFact {
   supersededById String?          @map("superseded_by_id") @db.Uuid
   supersededBy   MemoryFact?      @relation("MemoryFactSupersession", fields: [supersededById], references: [id], onDelete: Cascade)
   supersedes     MemoryFact[]     @relation("MemoryFactSupersession")
+  conversations  LanguageConversation[]
   confidence     Float?
   sensitive      Boolean          @default(false)
   sourceRef      Json?            @map("source_ref")

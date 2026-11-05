@@ -6,7 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -25,6 +24,7 @@ import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.practice.studyFeedback
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Checkpoint
 import com.zoonk.api.models.StudyAnswerFeedback
@@ -110,7 +110,7 @@ class CheckpointScreenshots {
         }
         play()
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
@@ -291,7 +291,7 @@ class CheckpointScreenshots {
         if (fold) rule.unfoldBook(folds)
         rule.mainClock.advanceTimeBy(10_000)
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 

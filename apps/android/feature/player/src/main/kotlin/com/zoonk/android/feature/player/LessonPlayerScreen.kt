@@ -85,6 +85,7 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.ceremonies.CertificatesMoment
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.ceremonies.MomentCeremony
 import com.zoonk.android.feature.player.engine.CompletionStatus
@@ -225,6 +226,7 @@ fun LessonPlayer(
     buddy: LearnerSummaryBuddy? = null,
     ceremony: MomentCeremony? = null,
     tutor: LessonTutor? = null,
+    certificatesMoment: CertificatesMoment? = null,
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -428,6 +430,7 @@ fun LessonPlayer(
                             language,
                             buddy,
                             ceremony,
+                            certificatesMoment,
                             offer,
                             help,
                             touches,
@@ -562,6 +565,7 @@ private fun Content(
     language: LessonLanguage,
     buddy: LearnerSummaryBuddy?,
     ceremony: MomentCeremony?,
+    certificatesMoment: CertificatesMoment?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
     help: (@Composable () -> Unit)?,
     touches: IntState,
@@ -577,7 +581,8 @@ private fun Content(
         }
 
         state.phase == LessonPhase.Completed -> {
-            MomentAfterCeremony(state.completion?.result?.ceremonyMilestone(), ceremony) {
+            val result = state.completion?.result
+            MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
                 if (ownEnd == null) LessonCompletionView(state, ending, buddy) else ownEnd.body(state)
             }
         }

@@ -36,6 +36,9 @@ model LanguageSkillLevel {
   windowTotal   Int           @default(0) @map("window_total")
   /// A window can't lift the level more than half a step above it.
   windowCeiling Float?        @map("window_ceiling")
+  /// The first time evidence raised the score; never cleared. Certificates count only raised
+  /// skills, and a level test leaves them alone.
+  raisedAt      DateTime?     @map("raised_at")
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
 
@@ -80,8 +83,8 @@ model PronunciationReview {
   @@map("pronunciation_reviews")
 }
 
-/// Neither the audio nor the transcript is stored: the transcript only reaches the model that
-/// writes `feedback`. The tasks of one exam speaking paper share a `sectionId`.
+/// Neither the audio nor the transcript is saved here: the transcript only travels as the input of
+/// the runs that read the call. The tasks of one exam speaking paper share a `sectionId`.
 model LanguageConversation {
   id                  String                     @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId              String                     @map("user_id") @db.Uuid
@@ -123,6 +126,9 @@ model LanguageConversation {
   startedAt           DateTime?                  @map("started_at")
   /// Once set, the call takes no new connections.
   reviewRunId         String?                    @map("review_run_id")
+  /// The fact the character may bring up; only practice calls get one.
+  memoryFactId        String?                    @map("memory_fact_id") @db.Uuid
+  memoryFact          MemoryFact?                @relation(fields: [memoryFactId], references: [id], onDelete: SetNull)
   endedAt             DateTime?                  @map("ended_at")
   createdAt           DateTime                   @default(now()) @map("created_at")
   updatedAt           DateTime                   @default(now()) @updatedAt @map("updated_at")
@@ -131,6 +137,7 @@ model LanguageConversation {
   @@index([goalId])
   @@index([chapterId])
   @@index([sectionId])
+  @@index([memoryFactId])
   @@map("language_conversations")
 }
 

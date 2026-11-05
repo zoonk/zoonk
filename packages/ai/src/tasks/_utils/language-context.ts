@@ -187,7 +187,7 @@ const LOCAL_CONTEXT_PACKS: Record<SupportedLocale, LocalContextPack> = {
 };
 /* oxlint-enable eslint/sort-keys */
 
-function formatPack(pack: LocalContextPack): string {
+function formatPack(pack: LocalContextPack, { register }: { register: boolean }): string {
   return [
     `- Place: ${pack.place}`,
     `- Money: ${pack.money}`,
@@ -197,21 +197,26 @@ function formatPack(pack: LocalContextPack): string {
     `- Everyday life: ${pack.everydayLife}`,
     `- School: ${pack.school}`,
     `- National exams: ${pack.exams}`,
-    `- Register: ${pack.register}`,
+    ...(register ? [`- Register: ${pack.register}`] : []),
     "- Brands: real companies and brands, the ones above included, appear only in their ordinary use; a failure, a bug, a complaint or a mistake happens at a made-up company with a made-up name",
   ].join("\n");
 }
 
 /**
  * A default, not a rule: prompts let the goal set another place (the SAT is American whatever the
- * learner's language). Languages without a pack get "none".
+ * learner's language). Languages without a pack get "none". The register is how a text addresses
+ * its reader, so a scene where people talk to each other leaves it out: a stranger at work there
+ * may use the polite form a reader never gets.
  */
-export function formatLocalContext(language: string): string {
+export function formatLocalContext(
+  language: string,
+  { register = true }: { register?: boolean } = {},
+): string {
   const locale = getContentLocale(language);
 
   if (!locale) {
     return "LOCAL_CONTEXT: none";
   }
 
-  return `LOCAL_CONTEXT:\n${formatPack(LOCAL_CONTEXT_PACKS[locale])}`;
+  return `LOCAL_CONTEXT:\n${formatPack(LOCAL_CONTEXT_PACKS[locale], { register })}`;
 }

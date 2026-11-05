@@ -71,11 +71,13 @@ import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.PressFocus
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberMoveFocus
+import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
@@ -131,6 +133,17 @@ fun FocusTestScreen(
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     val loaded by viewModel.test.collectShown()
+    val focus =
+        rememberPressFocus(
+            when {
+                ui.outcome != null || (ui.started && ui.questions.isNotEmpty()) -> null
+                ui.started && ui.writing -> "wait"
+                ui.startFailed -> "startFailed"
+                ui.refused != null -> "limit"
+                else -> "start"
+            },
+        )
+
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
 
     ui.outcome?.let {
@@ -143,8 +156,8 @@ fun FocusTestScreen(
             LaunchedEffect(read.value) { viewModel.arrive(read.value) }
             when {
                 ui.started && ui.questions.isNotEmpty() -> FocusTestQuestions(read.value, ui, viewModel, app, navigator, close)
-                ui.started && ui.writing -> FocusTestWriting(viewModel, close)
-                else -> FocusTestIntro(read.value, ui, viewModel, navigator)
+                ui.started && ui.writing -> FocusTestWriting(viewModel, close, focus)
+                else -> FocusTestIntro(read.value, ui, viewModel, navigator, focus.requester, focus::press)
             }
         }
 
@@ -169,11 +182,20 @@ internal fun FocusTestIntro(
     ui: FocusTestUi,
     viewModel: FocusTestViewModel,
     navigator: AppNavigator,
+    replacementFocus: FocusRequester? = null,
+    onStart: () -> Unit = {},
 ) {
+    val start = {
+        onStart()
+        viewModel.start(read)
+    }
     if (ui.startFailed) {
-        FocusTestWaitScreen(GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted), {
-            viewModel.start(read)
-        }, navigator::closeTask)
+        FocusTestWaitScreen(
+            GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted),
+            start,
+            navigator::closeTask,
+            replacementFocus,
+        )
         return
     }
     val minutes = maxOf(1, (read.total * SECONDS_PER_QUESTION / SECONDS_PER_MINUTE.toFloat()).roundToInt())
@@ -189,6 +211,10 @@ internal fun FocusTestIntro(
                         LimitSubject.Help,
                         onCreateAccount = { navigator.open(AppRoute.Login) },
                         onSeePlus = { navigator.open(AppRoute.Subscription) },
+                        modifier =
+                            replacementFocus?.let {
+                                Modifier.focusRequester(it).semantics(mergeDescendants = true) {}.focusable()
+                            } ?: Modifier,
                     )
                 } else {
                     TaskActions { width ->
@@ -196,8 +222,8 @@ internal fun FocusTestIntro(
                             stringResource(if (ui.starting) R.string.focustest_starting else R.string.focustest_start),
                             busy = ui.starting,
                             enabled = true,
-                            modifier = width,
-                        ) { viewModel.start(read) }
+                            modifier = replacementFocus?.let { width.focusRequester(it) } ?: width,
+                        ) { start() }
                     }
                 }
             }
@@ -222,9 +248,14 @@ internal fun FocusTestIntro(
 private fun FocusTestWriting(
     viewModel: FocusTestViewModel,
     onClose: () -> Unit,
+    focus: PressFocus,
 ) {
     val run by viewModel.run.collectAsStateWithLifecycle()
-    FocusTestWaitScreen(run, viewModel::retryWriting.takeIf { viewModel.canRestart }, onClose)
+    val retry = {
+        focus.pressInHolder()
+        viewModel.retryWriting()
+    }
+    FocusTestWaitScreen(run, retry.takeIf { viewModel.canRestart }, onClose, focus.requester)
 }
 
 @Composable
@@ -232,11 +263,16 @@ private fun FocusTestWaitScreen(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     onClose: () -> Unit,
+    titleFocus: FocusRequester?,
 ) {
     TaskScaffold(onClose = onClose) { padding ->
         RunPage(Modifier.padding(padding)) {
             GenerationWait(GenerationKind.FocusTestQuestions, run, onRetry) {
-                RunIntro(stringResource(R.string.focustest_writing_title), stringResource(R.string.focustest_writing_detail))
+                RunIntro(
+                    stringResource(R.string.focustest_writing_title),
+                    stringResource(R.string.focustest_writing_detail),
+                    titleFocus = titleFocus,
+                )
             }
         }
     }
@@ -279,6 +315,7 @@ internal fun FocusTestQuestions(
                     LimitSubject.Help,
                     onCreateAccount = { navigator.open(AppRoute.Login) },
                     onSeePlus = { navigator.open(AppRoute.Subscription) },
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 )
             } else {
                 GenerationWait(GenerationKind.FocusTestQuestions, run, viewModel::retryWriting.takeIf { viewModel.canRestart }) {
@@ -309,7 +346,14 @@ internal fun FocusTestResult(
     val moveFocus = rememberMoveFocus()
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }) { buddy ->
+    MomentAfterCeremony(
+        app,
+        outcome.ceremony.takeIf {
+            ui.celebrate
+        },
+        outcome.certificates,
+        { navigator.open(AppRoute.Subscription) },
+    ) { buddy ->
         BoxWithConstraints(Modifier.onPageSpan { span = it }) {
             // Where the result splits, both steps show at once: how the learner did before the fold, the new focus after it.
             val whole = spreadFold(maxWidth, span) != null

@@ -14,14 +14,7 @@ type GuestSession = "blocked" | "failed" | "ready";
  * could replace a signed-in learner's session. The auth client loads on the first tap that needs it.
  */
 async function startGuestSession(): Promise<GuestSession> {
-  const { data: auth, error: loadError } = await safeAsync(() => import("@zoonk/auth/client"));
-
-  if (loadError) {
-    logError("[ensureGuestSession] Could not load the auth client:", loadError);
-    return "failed";
-  }
-
-  const { authClient } = auth;
+  const { authClient } = await import("@zoonk/auth/client");
   const { data, error: checkError } = await authClient.getSession();
 
   if (checkError) {
@@ -53,9 +46,17 @@ let pending: Promise<GuestSession> | null = null;
 
 /** Two callers at once wait for the same sign-in instead of making two guests. */
 export function ensureGuestSession(): Promise<GuestSession> {
-  pending ??= startGuestSession().finally(() => {
-    pending = null;
-  });
+  pending ??= safeAsync(startGuestSession)
+    .then(({ data, error }) => {
+      if (error) {
+        logError("[ensureGuestSession] Could not reach auth:", error);
+      }
+
+      return data ?? "failed";
+    })
+    .finally(() => {
+      pending = null;
+    });
 
   return pending;
 }

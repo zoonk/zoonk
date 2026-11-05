@@ -8,7 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onRoot
@@ -24,6 +23,7 @@ import com.zoonk.android.feature.mock.result.SPEAKING
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -287,7 +287,7 @@ class MockRunnerScreenshots {
         // A fold published before the screen it waits for appears never reaches that screen.
         shows?.let { text -> compose.waitUntil { compose.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() } }
         if (unfolded) compose.unfoldBook(folds)
-        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun write(

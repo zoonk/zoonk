@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -15,6 +14,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.WeeklyRecap
@@ -113,7 +113,7 @@ class LogbookScreenshots {
         var step = 0
         while (true) {
             compose.waitForIdle()
-            write("logbook-$step-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("logbook-$step-$name", compose.onRoot().captureRender().asAndroidBitmap())
             if (compose.onAllNodes(hasText("Continue")).fetchSemanticsNodes().isEmpty()) break
             compose.onNodeWithText("Continue").performClick()
             step++

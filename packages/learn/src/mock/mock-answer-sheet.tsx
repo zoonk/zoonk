@@ -208,6 +208,7 @@ function SheetHandIn({ onHandIn }: { onHandIn: () => void }) {
     <Button
       className="w-full"
       disabled={runner.pending}
+      focusableWhenDisabled
       onClick={onHandIn}
       size="xl"
       variant="outline"
