@@ -48,3 +48,14 @@ export const certificateListResponseSchema = z
       .meta({ description: "Newest first; empty until the learner earns one" }),
   })
   .meta({ id: "CertificateList" });
+
+export const goalCertificatesResponseSchema = z
+  .object({
+    certificates: z
+      .array(ownedCertificateSchema)
+      .meta({
+        description:
+          "Every certificate of the goal's levels and of its plan the learner holds, in level order with the plan's last, including any just written and a level certified in another goal",
+      }),
+  })
+  .meta({ id: "GoalCertificates" });

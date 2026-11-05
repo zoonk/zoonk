@@ -15,9 +15,9 @@ export async function certificateFixture(
     data: {
       code: testCertificateCode(),
       completedOn: new Date("2026-11-03T00:00:00Z"),
+      courseLevel: "beginner",
       details: {
         category: "science",
-        courseLevels: [{ chapters: 3, level: "beginner" }],
         lessonsStudied: 12,
         lessonsTestedOut: 0,
         minutes: 90,

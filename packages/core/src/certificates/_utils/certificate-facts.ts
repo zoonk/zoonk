@@ -23,7 +23,6 @@ export type CertificateRow = Certificate & {
 const NO_DETAILS = {
   canDo: [],
   category: null,
-  courseLevels: [],
   lessonsStudied: null,
   lessonsTestedOut: null,
   minutes: null,
@@ -57,6 +56,7 @@ export function toCertificateFacts(row: CertificateRow): CertificateFacts {
     code: row.code,
     completedOn: row.completedOn.toISOString().slice(0, LOGICAL_DATE_LENGTH),
     courseId: isPublicCourse ? row.courseId : null,
+    courseLevel: row.courseLevel,
     kind: row.kind,
     language: row.language,
     level: toCertifiedLevel(row.level),

@@ -16,7 +16,7 @@ async function claimCertificate(
   if (result.status === "notFinished") {
     return createErrorResponse({
       code: "COURSE_NOT_FINISHED",
-      message: "The course isn't finished, or this goal earns no course certificate",
+      message: "No level or plan of this goal is finished, or it earns no course certificate",
       status: httpStatus.conflict,
     });
   }
@@ -25,7 +25,9 @@ async function claimCertificate(
     return accessError(result.status);
   }
 
-  return NextResponse.json(withCertificateLinks(result.certificate));
+  return NextResponse.json({
+    certificates: result.certificates.map((certificate) => withCertificateLinks(certificate)),
+  });
 }
 
 export const POST = withApiErrorBoundary(claimCertificate);

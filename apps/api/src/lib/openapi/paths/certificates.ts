@@ -1,7 +1,7 @@
 import {
   certificateListResponseSchema,
   certificateSchema,
-  ownedCertificateSchema,
+  goalCertificatesResponseSchema,
 } from "../schemas/certificates";
 import { certificatePathParamsSchema, goalPathParamsSchema } from "../schemas/paths";
 import {
@@ -37,13 +37,13 @@ export const certificatePaths = {
   "/goals/{goalId}/certificates": {
     post: {
       description:
-        "Awards the goal's course certificate, or returns it when it exists. Learn and exam goals earn one when every lesson of the plan is studied or tested out, at least one of them studied, and every phase challenge is won; an exam's mocks don't count. Use it where the goal map says `certificate.code` is null. Show its award moment while `shownAt` is null.",
+        "Writes the goal's finished level and plan certificates the learner doesn't hold yet, and returns all of them. A learn or exam goal on a Library course earns one per course level its plan holds whole (every chapter the level had when the plan began), once every lesson of it is studied or tested out, at least one studied, and the challenges of its phases are won; an exam's mocks don't count. The plan earns one of its own once it's all finished with studied lessons no certified level covers: a plan without levels, a partial level, other courses' lessons. Use it while the goal map lists `certificates.unclaimed`. Show the award moment of each returned certificate whose `shownAt` is null, then read the map again.",
       operationId: "claimCourseCertificate",
       requestParams: { path: goalPathParamsSchema },
       responses: {
         "200": {
-          content: { "application/json": { schema: ownedCertificateSchema } },
-          description: "The certificate",
+          content: { "application/json": { schema: goalCertificatesResponseSchema } },
+          description: "The goal's certificates",
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
@@ -51,11 +51,11 @@ export const certificatePaths = {
         "409": {
           ...conflictResponse,
           description:
-            "`COURSE_NOT_FINISHED`: the course isn't finished yet, or the goal is one that earns no course certificate (language and explain goals)",
+            "`COURSE_NOT_FINISHED`: no level or plan of the goal is finished, or the goal is one that earns no course certificate (language and explain goals)",
         },
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Claim a goal's course certificate",
+      summary: "Claim a goal's course certificates",
       tags: TAGS,
     },
   },

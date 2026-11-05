@@ -1,4 +1,4 @@
-import { type Goal, type PlanItem, prisma } from "@zoonk/db";
+import { type CourseLevel, type Goal, type PlanItem, prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -6,11 +6,16 @@ import {
   courseChapterFixture,
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { updateGoal } from "../goals/update-goal";
 import { testOutKnownPlanItems } from "../learner/_utils/known-skills";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { celebrateProgress } from "../milestones/celebrate-progress";
@@ -26,37 +31,71 @@ const TIME_ZONE = "America/Sao_Paulo";
 
 const WON_CHALLENGE = { kind: "boss", status: "done" } as const;
 
-type ItemSpec = { kind?: PlanItem["kind"]; minutes?: number | null; status?: PlanItem["status"] };
+type ChapterSpec = { level?: CourseLevel; title: string };
+
+type ItemSpec = {
+  chapter?: number;
+  completedAt?: Date;
+  kind?: PlanItem["kind"];
+  minutes?: number | null;
+  phase?: number;
+  status?: PlanItem["status"];
+};
+
+const ONE_LEVEL: ChapterSpec[] = [{ title: "Light and matter" }, { title: "Waves" }];
+
+const TWO_LEVELS: ChapterSpec[] = [
+  { level: "beginner", title: "Light and matter" },
+  { level: "intermediate", title: "Waves" },
+];
 
 /**
- * A public course's plan: its lessons alternate between a beginner and an intermediate chapter.
- * Without a challenge of its own, the plan fixture adds one to do.
+ * A public Library course's plan. Lessons alternate between its chapters unless an item names
+ * one; without a challenge of its own, the plan fixture adds one to do.
  */
 async function courseGoal({
+  chapters: specs = ONE_LEVEL,
+  course: courseAttrs = {},
+  details,
   items = [{ status: "done" }, { status: "todo" }, WON_CHALLENGE],
   kind = "learn",
-}: { items?: ItemSpec[]; kind?: Goal["kind"] } = {}) {
-  const [user, course, beginner, intermediate] = await Promise.all([
+}: {
+  chapters?: ChapterSpec[];
+  course?: Parameters<typeof courseFixture>[0];
+  details?: Parameters<typeof goalFixture>[0]["details"];
+  items?: ItemSpec[];
+  kind?: Goal["kind"];
+} = {}) {
+  const [user, course, chapters, lessons] = await Promise.all([
     userFixture({ name: "  Ana Souza  " }),
-    courseFixture({ isPublished: true, title: "Quantum physics", visibility: "public" }),
-    libraryChapterFixture({ title: "Light and matter" }),
-    libraryChapterFixture({ level: "intermediate", title: "Waves" }),
+    courseFixture({
+      isPublished: true,
+      title: "Quantum physics",
+      visibility: "public",
+      ...courseAttrs,
+    }),
+    Promise.all(
+      specs.map((spec) =>
+        libraryChapterFixture({ level: spec.level ?? "beginner", title: spec.title }),
+      ),
+    ),
+    Promise.all(items.map(() => libraryLessonFixture())),
   ]);
-
-  const chapters = [beginner, intermediate];
-  const lessons = await Promise.all(items.map(() => libraryLessonFixture()));
 
   await Promise.all([
     courseCategoryFixture({ category: "science", courseId: course.id }),
-    courseChapterFixture({ chapterId: beginner.id, courseId: course.id, level: "beginner" }),
-    courseChapterFixture({
-      chapterId: intermediate.id,
-      courseId: course.id,
-      level: "intermediate",
-    }),
+    ...chapters.map((chapter, position) =>
+      courseChapterFixture({
+        chapterId: chapter.id,
+        courseId: course.id,
+        level: specs[position]?.level ?? "beginner",
+        position,
+      }),
+    ),
   ]);
 
   const goal = await goalFixture({
+    details,
     kind,
     primaryCourseId: course.id,
     timezone: TIME_ZONE,
@@ -64,22 +103,32 @@ async function courseGoal({
     userId: user.id,
   });
 
+  const phases = Math.max(1, ...items.map((item) => (item.phase ?? 0) + 1));
+
   const plan = await planFixture({
     goalId: goal.id,
-    items: items.map((item, index) => ({
-      chapterId: item.kind === "boss" ? null : (chapters[index % 2]?.id ?? null),
-      completedAt: item.status === "todo" ? null : new Date("2026-11-02T15:00:00Z"),
-      kind: item.kind ?? "lesson",
-      lessonId: item.kind === "boss" ? null : (lessons[index]?.id ?? null),
-      minutes: item.minutes === undefined ? 30 : item.minutes,
-      status: item.status ?? "todo",
-    })),
+    items: items.map((item, index) => {
+      const isChallenge = item.kind === "boss";
+      const chapter = chapters[item.chapter ?? index % chapters.length];
+
+      return {
+        chapterId: isChallenge ? null : (chapter?.id ?? null),
+        completedAt:
+          item.status === "todo" ? null : (item.completedAt ?? new Date("2026-11-02T15:00:00Z")),
+        kind: item.kind ?? "lesson",
+        lessonId: isChallenge ? null : (lessons[index]?.id ?? null),
+        minutes: item.minutes === undefined ? 30 : item.minutes,
+        phase: item.phase ?? 0,
+        status: item.status ?? "todo",
+      };
+    }),
+    phases: Array.from({ length: phases }, (_phase, index) => ({ name: `Phase ${index + 1}` })),
   });
 
   await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
   mockSession(user.id);
 
-  return { course, goal, plan, user };
+  return { chapters, course, goal, plan, user };
 }
 
 type CourseGoal = Awaited<ReturnType<typeof courseGoal>>;
@@ -110,23 +159,26 @@ function listCertificates(userId: string) {
   return prisma.certificate.findMany({ orderBy: { createdAt: "asc" }, where: { userId } });
 }
 
-async function readMapCertificate() {
+async function readMapCertificates() {
   const result = await getFieldMapView();
-  return result.status === "ready" ? result.map.certificate : "not ready";
+  return result.status === "ready" ? result.map.certificates : "not ready";
 }
 
 describe("course certificates", () => {
-  it("awards the course when its last lesson is finished, with what the course was", async () => {
+  it("awards the level when its last lesson is finished, with what the level was", async () => {
     const fixture = await courseGoal();
 
     await finishLesson(fixture);
 
-    const [certificate] = await listCertificates(fixture.user.id);
+    const [certificate, ...more] = await listCertificates(fixture.user.id);
+
+    expect(more).toStrictEqual([]);
 
     expect(certificate).toMatchObject({
       courseId: fixture.course.id,
+      courseLevel: "beginner",
       goalId: fixture.goal.id,
-      key: fixture.goal.id,
+      key: `${fixture.course.id}:beginner`,
       kind: "course",
       language: "en",
       shownAt: null,
@@ -137,10 +189,7 @@ describe("course certificates", () => {
 
     expect(facts).toMatchObject({
       category: "science",
-      courseLevels: [
-        { chapters: 1, level: "beginner" },
-        { chapters: 1, level: "intermediate" },
-      ],
+      courseLevel: "beginner",
       kind: "course",
       lessonsStudied: 2,
       lessonsTestedOut: 0,
@@ -160,7 +209,10 @@ describe("course certificates", () => {
 
     const result = await claimCourseCertificate(fixture.goal.id);
 
-    expect(result).toMatchObject({ certificate: { completedOn: "2026-11-02" }, status: "ready" });
+    expect(result).toMatchObject({
+      certificates: [{ completedOn: "2026-11-02" }],
+      status: "ready",
+    });
   });
 
   it("keeps study time unknown when a studied lesson has no estimate", async () => {
@@ -225,7 +277,11 @@ describe("course certificates", () => {
     const fixture = await courseGoal();
     const shared = lastTodo(fixture);
     const studied = await libraryLessonFixture();
-    const other = await goalFixture({ userId: fixture.user.id });
+
+    const other = await goalFixture({
+      primaryCourseId: fixture.course.id,
+      userId: fixture.user.id,
+    });
 
     await planFixture({
       goalId: other.id,
@@ -272,7 +328,11 @@ describe("course certificates", () => {
   });
 
   it("counts the stand-ins a finishing test-out adds as passed by test", async () => {
-    const [fixture, placed] = await Promise.all([courseGoal(), skillFixture()]);
+    const [fixture, placed] = await Promise.all([
+      courseGoal(),
+      skillFixture({ level: "beginner" }),
+    ]);
+
     const todo = lastTodo(fixture);
 
     await writeLearnerChange({ userId: fixture.user.id }, (tx) =>
@@ -327,30 +387,178 @@ describe("course certificates", () => {
   });
 });
 
-describe(claimCourseCertificate, () => {
-  it("awards a course finished outside the award points, dated with its last work", async () => {
-    const fixture = await courseGoal();
-
-    await prisma.planItem.updateMany({
-      data: { completedAt: new Date("2026-10-20T12:00:00Z"), status: "done" },
-      where: { planId: fixture.plan.id },
+describe("level and plan certificates", () => {
+  it("awards each level as its phase finishes, and no plan certificate the levels cover", async () => {
+    const fixture = await courseGoal({
+      chapters: TWO_LEVELS,
+      items: [
+        { chapter: 0 },
+        { kind: "boss" },
+        { chapter: 1, phase: 1 },
+        { kind: "boss", phase: 1 },
+      ],
     });
 
-    await expect(readMapCertificate()).resolves.toStrictEqual({ code: null });
+    const [beginner, firstChallenge, intermediate, lastChallenge] = fixture.plan.items;
+
+    const complete = (planItemId: string) =>
+      writeLearnerChange({ userId: fixture.user.id }, (tx) =>
+        completePlanItem(tx, { now: new Date(), planItemId, userId: fixture.user.id }),
+      );
+
+    await finishLesson(fixture, beginner);
+    await expect(listCertificates(fixture.user.id)).resolves.toStrictEqual([]);
+
+    await complete(firstChallenge?.id ?? "");
+
+    await expect(listCertificates(fixture.user.id)).resolves.toMatchObject([
+      { courseLevel: "beginner", details: { topics: ["Light and matter"] } },
+    ]);
+
+    await finishLesson(fixture, intermediate);
+    await complete(lastChallenge?.id ?? "");
+
+    await expect(listCertificates(fixture.user.id)).resolves.toMatchObject([
+      { courseLevel: "beginner" },
+      { courseLevel: "intermediate", details: { topics: ["Waves"] } },
+    ]);
+  });
+
+  it("certifies a level once per learner, dated where they first finished it", async () => {
+    const first = await courseGoal({
+      items: [
+        { completedAt: new Date("2026-10-01T15:00:00Z"), status: "done" },
+        { completedAt: new Date("2026-10-01T15:00:00Z"), status: "done" },
+        { ...WON_CHALLENGE, completedAt: new Date("2026-10-01T15:00:00Z") },
+      ],
+    });
+
+    const again = await goalFixture({
+      primaryCourseId: first.course.id,
+      timezone: TIME_ZONE,
+      userId: first.user.id,
+    });
+
+    await planFixture({
+      goalId: again.id,
+      items: [
+        ...first.chapters.map((chapter) => ({
+          chapterId: chapter.id,
+          completedAt: new Date("2026-10-20T15:00:00Z"),
+          status: "done" as const,
+        })),
+        { ...WON_CHALLENGE, completedAt: new Date() },
+      ],
+    });
+
+    const claimed = await claimCourseCertificate(first.goal.id);
+    const repeated = await claimCourseCertificate(again.id);
+
+    expect(repeated).toStrictEqual(claimed);
+    expect(claimed).toMatchObject({ certificates: [{ completedOn: "2026-10-01" }] });
+
+    await expect(listCertificates(first.user.id)).resolves.toMatchObject([
+      { goalId: first.goal.id },
+    ]);
+  });
+
+  it("certifies a plan that skipped part of a level as the plan, whatever its details say", async () => {
+    const fixture = await courseGoal({
+      chapters: [...ONE_LEVEL, { title: "Optics" }],
+      details: { courseStart: { chapterId: null } },
+      items: [{ chapter: 1, status: "done" }, { chapter: 2, status: "done" }, WON_CHALLENGE],
+    });
+
+    const [skipped, skill] = await Promise.all([libraryLessonFixture(), skillFixture()]);
+
+    await Promise.all([
+      chapterLessonFixture({ chapterId: fixture.chapters[0]?.id ?? "", lessonId: skipped.id }),
+      lessonSkillFixture({ lessonId: skipped.id, skillId: skill.id }),
+    ]);
+
+    await updateGoal({ goalId: fixture.goal.id, input: { details: {} } });
+
+    await expect(claimCourseCertificate(fixture.goal.id)).resolves.toMatchObject({
+      certificates: [
+        {
+          courseLevel: null,
+          lessonsStudied: 2,
+          title: "Quantum physics",
+          topics: ["Waves", "Optics"],
+        },
+      ],
+      status: "ready",
+    });
+
+    await expect(listCertificates(fixture.user.id)).resolves.toMatchObject([
+      { courseLevel: null, key: fixture.goal.id },
+    ]);
+  });
+
+  it.each([
+    ["a private course", { visibility: "private" }],
+    ["an exam's course", { format: "exam" }],
+  ] as const)("certifies %s's plan whole", async (_label, course) => {
+    const fixture = await courseGoal({ chapters: TWO_LEVELS, course });
+
+    await finishLesson(fixture);
+
+    await expect(listCertificates(fixture.user.id)).resolves.toMatchObject([
+      { courseLevel: null, key: fixture.goal.id, title: "Quantum physics" },
+    ]);
+  });
+});
+
+describe(claimCourseCertificate, () => {
+  it("awards each level finished outside the award points, dated with its own last work", async () => {
+    const fixture = await courseGoal({
+      chapters: TWO_LEVELS,
+      items: [
+        { chapter: 0, completedAt: new Date("2026-10-20T12:00:00Z"), status: "done" },
+        { completedAt: new Date("2026-10-20T12:00:00Z"), kind: "boss", status: "done" },
+        { chapter: 1, completedAt: new Date("2026-10-25T12:00:00Z"), phase: 1, status: "done" },
+        { completedAt: new Date("2026-10-25T12:00:00Z"), kind: "boss", phase: 1, status: "done" },
+      ],
+    });
+
+    await expect(readMapCertificates()).resolves.toStrictEqual({
+      earned: [],
+      unclaimed: [{ courseLevel: "beginner" }, { courseLevel: "intermediate" }],
+    });
 
     const claimed = await claimCourseCertificate(fixture.goal.id);
     const again = await claimCourseCertificate(fixture.goal.id);
 
     expect(claimed).toMatchObject({
-      certificate: { completedOn: "2026-10-20", kind: "course", shownAt: null },
+      certificates: [
+        {
+          completedOn: "2026-10-20",
+          courseLevel: "beginner",
+          shownAt: null,
+          topics: ["Light and matter"],
+        },
+        {
+          completedOn: "2026-10-25",
+          courseLevel: "intermediate",
+          shownAt: null,
+          topics: ["Waves"],
+        },
+      ],
       status: "ready",
     });
 
     expect(again).toStrictEqual(claimed);
-    await expect(listCertificates(fixture.user.id)).resolves.toHaveLength(1);
+    await expect(listCertificates(fixture.user.id)).resolves.toHaveLength(2);
 
-    const code = claimed.status === "ready" ? claimed.certificate.code : null;
-    await expect(readMapCertificate()).resolves.toStrictEqual({ code });
+    const codes = claimed.status === "ready" ? claimed.certificates.map((row) => row.code) : [];
+
+    await expect(readMapCertificates()).resolves.toStrictEqual({
+      earned: [
+        { code: codes[0], courseLevel: "beginner" },
+        { code: codes[1], courseLevel: "intermediate" },
+      ],
+      unclaimed: [],
+    });
   });
 
   it("dates an exam's course by its course work, not a mock done after it", async () => {
@@ -370,14 +578,14 @@ describe(claimCourseCertificate, () => {
     });
 
     await expect(claimCourseCertificate(fixture.goal.id)).resolves.toMatchObject({
-      certificate: { completedOn: "2026-10-01" },
+      certificates: [{ completedOn: "2026-10-01" }],
     });
   });
 
   it("refuses an unfinished course and another learner's goal", async () => {
     const [fixture, other] = await Promise.all([courseGoal(), userFixture()]);
 
-    await expect(readMapCertificate()).resolves.toBeNull();
+    await expect(readMapCertificates()).resolves.toBeNull();
 
     await expect(claimCourseCertificate(fixture.goal.id)).resolves.toStrictEqual({
       status: "notFinished",
@@ -416,7 +624,7 @@ describe("a certificate as anyone sees it", () => {
       "code",
       "completedOn",
       "courseId",
-      "courseLevels",
+      "courseLevel",
       "kind",
       "language",
       "lessonsStudied",

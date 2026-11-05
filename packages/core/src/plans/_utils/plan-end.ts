@@ -28,7 +28,7 @@ type PlanEndInput = {
   today: Date;
 };
 
-const isTodo = (item: Pick<PlanItem, "status">) => getWorkProgress(item.status) === "todo";
+export const isTodo = (item: Pick<PlanItem, "status">) => getWorkProgress(item.status) === "todo";
 
 const isSetAsideLesson = (item: EndItem) =>
   LEARN_KINDS.has(item.kind) && getWorkProgress(item.status) === "setAside";
@@ -151,34 +151,6 @@ export function areLessonsFinished({
   const lessons = items.filter((item) => isInLessonScope({ deadline, item }));
 
   return lessons.length > 0 && lessons.every((item) => isWorkFinished(item.status));
-}
-
-const COURSE_GOALS: ReadonlySet<Goal["kind"]> = new Set(["learn", "exam"]);
-
-/**
- * A course certificate's rule, for learn and exam goals: every lesson studied or tested out, at
- * least one studied, and every phase challenge won. Unlike `isPlanFinished` it leaves out an exam's
- * mocks and reviews, which rehearse the exam rather than teach the course, so it never reads the
- * clock.
- */
-export function isCourseFinished({
-  goalKind,
-  items,
-  phases,
-  studiesPastTarget,
-  targetDate,
-}: Pick<PlanEndInput, "goalKind" | "phases" | "studiesPastTarget" | "targetDate"> & {
-  items: readonly EndItem[];
-}): boolean {
-  return (
-    COURSE_GOALS.has(goalKind) &&
-    areLessonsFinished({ items, studiesPastTarget, targetDate }) &&
-    items.some(
-      (item) => LEARN_KINDS.has(item.kind) && getWorkProgress(item.status) === "studied",
-    ) &&
-    !hasChallengeLeftOut({ phases }) &&
-    !items.some((item) => item.kind === "boss" && isTodo(item))
-  );
 }
 
 export function countChallengesLeft(input: PlanEndInput): number {

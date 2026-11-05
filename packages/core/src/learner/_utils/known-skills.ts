@@ -162,7 +162,7 @@ export async function testOutKnownPlanItems(
     ids.length > 0
       ? await tx.planItem.updateManyAndReturn({
           data: { completedAt: testedOutAt, status: "testedOut" },
-          select: { id: true, kind: true, planId: true },
+          select: { id: true, kind: true, phase: true, planId: true },
           where: { id: { in: ids }, status: "todo" },
         })
       : [];
