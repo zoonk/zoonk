@@ -69,7 +69,7 @@ function renderConversation({
   initialThread?: LessonQuestionThreadPage;
   onAnswered?: () => void;
   onAsked?: () => void;
-  openBlock?: (blockId: string) => Promise<boolean>;
+  openBlock?: (blockId: string) => Promise<boolean | "changed">;
 } = {}) {
   render(
     <TutorConversation
@@ -419,6 +419,40 @@ describe("the buddy's conversation", () => {
     await expect.element(page.getByRole("button", { name: "Showing Statistics" })).toBeVisible();
 
     opening.resolve(true);
+  });
+
+  it("says so when an earlier answer's step isn't free to start anymore, until a tap opens one", async () => {
+    const api = stubTutorApi({});
+    const firstOpen = Promise.withResolvers<boolean | "changed">();
+    const openBlock = vi.fn<(blockId: string) => Promise<boolean | "changed">>();
+    openBlock.mockReturnValueOnce(firstOpen.promise);
+
+    api.questions = [
+      api.question({
+        answer: `Start with [Atoms](/session?block=${BLOCK_ID}).`,
+        question: "Which lesson first?",
+        status: "completed",
+      }),
+    ];
+
+    renderConversation({
+      initialThread: { hasMore: false, nextCursor: null, questions: api.questions },
+      openBlock,
+    });
+
+    const lesson = page.getByRole("link", { name: "Atoms" });
+    const status = page.getByRole("status").filter({ hasText: "isn't available" });
+
+    await lesson.click();
+    await lesson.click();
+    firstOpen.resolve("changed");
+    await expect.element(status).toHaveTextContent("This step isn't available anymore.");
+    expect(openBlock).toHaveBeenCalledOnce();
+
+    openBlock.mockResolvedValueOnce(true);
+    await lesson.click();
+    await expect.element(status).not.toBeInTheDocument();
+    expect(openBlock).toHaveBeenCalledTimes(2);
   });
 
   it("keeps every link as words in an answer whose saved text never came", async () => {

@@ -162,6 +162,7 @@ struct TutorAnswerText: View {
   @ScaledMetric private var listIndent = 20.0
   @State private var blockOpen: Task<Void, Never>?
   @State private var blockOpenFailed = false
+  @State private var isBlockClosed = false
 
   let text: String
   let linksEnabled: Bool
@@ -190,6 +191,12 @@ struct TutorAnswerText: View {
         Text(.blockOpenFailed)
           .font(.subheadline)
           .foregroundStyle(.destructive)
+      }
+
+      if isBlockClosed {
+        Text(.blockClosed)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
       }
     }
     .onDisappear { blockOpen?.cancel() }
@@ -244,17 +251,26 @@ struct TutorAnswerText: View {
     }
 
     blockOpenFailed = false
+    isBlockClosed = false
 
     blockOpen = Task {
-      let result = await router.open(blockID: blockID)
+      let result = await router.openAnswerLink(blockID: blockID)
       blockOpen = nil
 
-      guard !Task.isCancelled, case .failed = result else {
+      guard !Task.isCancelled else {
         return
       }
 
-      blockOpenFailed = true
-      AccessibilityNotification.Announcement(String(localized: .blockOpenFailed)).post()
+      switch result {
+      case .failed:
+        blockOpenFailed = true
+        AccessibilityNotification.Announcement(String(localized: .blockOpenFailed)).post()
+      case .done(.changed):
+        isBlockClosed = true
+        AccessibilityNotification.Announcement(String(localized: .blockClosed)).post()
+      case .done, .obsolete:
+        break
+      }
     }
   }
 
@@ -267,6 +283,14 @@ extension LocalizedStringResource {
     LocalizedStringResource(
       "We couldn't open this step. Try again.", table: "Tutor",
       comment: "Under a buddy answer whose link to a step of the day didn't open")
+  }
+
+  fileprivate static var blockClosed: LocalizedStringResource {
+    LocalizedStringResource(
+      "This step isn't available anymore.", table: "Tutor",
+      comment:
+        "Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since"
+    )
   }
 }
 

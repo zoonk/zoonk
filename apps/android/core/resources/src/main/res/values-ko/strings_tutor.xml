@@ -106,6 +106,8 @@
   "tutor_retry_last_question": "9bf4e66538dd4b8858ca6cbcd2858afaddca2f92435601221129a6e57d0f53e6",
   "tutor_send": "31695b9f0fa135fe3d76e2ed2c7ff1a109f499291fa478ed76a703a03fb5a4a8",
   "tutor_sign_in": "096ea273503d1cb87a36900d1d254af64289a3283de37a89b8ba76da92d88038",
+  "tutor_step_closed": "b6f490947c4f148ee2cca7ccca6484384dba414f8bf6b986fc67c933a5732b53",
+  "tutor_step_open_failed": "0a9667107e136c516fedcf922fe47f5fe287f82a02937cce88feaa56fd74f563",
   "tutor_suggest_chapter": "c8d9c2bfcd36db4b63b5a2ed7c9c2ae471b6c1c9679a0319252ff432a2dfa9ab",
   "tutor_suggest_item_asking": "e262a3172605ebd30963443c715f5794c08a38e4a67b33db50548ccabe482fe8",
   "tutor_suggest_item_idea": "3887b9b9f618367b95c6f5c1b343fb519693c646387d6e4033d451e4b6cdc015",
@@ -199,6 +201,10 @@
     <string name="tutor_link_description">이 링크는 Zoonk 외부 웹사이트로 연결돼요.</string>
     <string name="tutor_link_cancel">취소</string>
     <string name="tutor_link_open">링크 열기</string>
+    <!-- Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since -->
+    <string name="tutor_step_closed">이 단계는 더 이상 이용할 수 없어요.</string>
+    <!-- Under a buddy answer whose link to a step of the day didn't open -->
+    <string name="tutor_step_open_failed">이 단계를 열지 못했어요. 다시 시도해 보세요.</string>
     <string name="tutor_offer_open">열기</string>
     <string name="tutor_offer_choose">선택</string>
     <string name="tutor_offer_start">시작하기</string>
