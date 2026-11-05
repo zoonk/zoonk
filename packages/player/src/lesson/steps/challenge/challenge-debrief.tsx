@@ -75,9 +75,9 @@ function DebriefNotes({
               >
                 <LessonRichText text={fill(note.text)} />
                 {note.example && (
-                  <q className="bg-warning/10 text-foreground rounded-xl px-3 py-2">
+                  <p className="bg-warning/10 text-foreground rounded-xl px-3 py-2">
                     <LessonRichText text={fill(note.example)} />
-                  </q>
+                  </p>
                 )}
               </li>
             ))}

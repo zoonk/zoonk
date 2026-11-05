@@ -563,26 +563,24 @@ struct PracticeCallSection: View {
         }
 
         if case .limit(let limit) = outcome {
-          Group {
-            if limit.period == .month {
-              Text(
-                "Not enough call time this month.", tableName: "Plan",
-                comment: "The plan's call time this month is used")
-            } else {
-              Text(
-                "Not enough call time today.", tableName: "Plan",
-                comment: "The plan's call time today is used")
-            }
+          if limit.period == .month {
+            FailureLine(
+              message: LocalizedStringResource(
+                "Not enough call time this month.", table: "Plan",
+                comment: "The plan's call time this month is used"))
+          } else {
+            FailureLine(
+              message: LocalizedStringResource(
+                "Not enough call time today.", table: "Plan",
+                comment: "The plan's call time today is used"))
           }
-          .foregroundStyle(.destructive)
         } else if outcome == .failed || outcome == .callInProgress
           || outcome == .previousConnectionClosing || outcome == .ended
         {
-          Text(
-            "The call didn't start. Try again in a moment.", tableName: "Plan",
-            comment: "Says the practice call didn't start"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "The call didn't start. Try again in a moment.", table: "Plan",
+              comment: "Says the practice call didn't start"))
         }
       }
     } header: {

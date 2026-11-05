@@ -5,7 +5,7 @@
   "scripts": {
     "i18n:lint": "eloqnt lint --strict",
     "i18n": "node scripts/add-missing-strings.mts && reuse-translations && eloqnt translate",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "devDependencies": {
     "@eloqnt/cli": "catalog:",

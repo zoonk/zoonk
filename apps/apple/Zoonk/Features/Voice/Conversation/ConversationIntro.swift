@@ -63,9 +63,9 @@ struct ConversationIntro<Footer: View>: View {
   @ViewBuilder let footer: Footer
 
   var body: some View {
-    PaneSplit(isSpread: true) {
+    PaneSplit {
       List {
-        situation
+        about
       }
     } secondary: {
       List {
@@ -74,7 +74,7 @@ struct ConversationIntro<Footer: View>: View {
       .safeAreaBar(edge: .bottom) { startBar }
     } single: {
       List {
-        situation
+        about
         task
       }
       .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
@@ -82,7 +82,7 @@ struct ConversationIntro<Footer: View>: View {
   }
 
   @ViewBuilder
-  private var situation: some View {
+  private var about: some View {
     let length = Duration.seconds(intro.minutes * 60).formatted(
       .units(allowed: [.minutes], width: .abbreviated))
 
@@ -117,21 +117,21 @@ struct ConversationIntro<Footer: View>: View {
     Section {
       CharacterRow(intro: intro, isTalking: false)
     }
+
+    if let examTask = intro.speakingTask {
+      if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
+        ExamPrepTimer(cardId: conversationId, task: examTask.task)
+      }
+    } else if intro.callsCharacter {
+      HowTheCallWorks(intro: intro)
+    }
   }
 
   @ViewBuilder
   private var task: some View {
     if let examTask = intro.speakingTask {
-      if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
-        ExamPrepTimer(cardId: conversationId, task: examTask.task)
-      }
-
       ExamTaskCard(task: examTask)
     } else {
-      if intro.callsCharacter {
-        HowTheCallWorks(intro: intro)
-      }
-
       Section {
         ForEach(intro.objectives, id: \.label) { objective in
           VStack(alignment: .leading, spacing: 2) {
@@ -317,6 +317,7 @@ private struct HowTheCallWorks: View {
 struct CharacterRow: View {
   let intro: CallIntro
   let isTalking: Bool
+  @ScaledMetric(relativeTo: .subheadline) private var markSize = 32.0
 
   var body: some View {
     let character = intro.character
@@ -324,7 +325,7 @@ struct CharacterRow: View {
     HStack(spacing: 12) {
       Text(character.name.prefix(1).uppercased())
         .font(.subheadline.weight(.medium))
-        .frame(minWidth: 32, minHeight: 32)
+        .frame(width: markSize, height: markSize)
         .background(Color(.secondarySystemFill), in: .circle)
         .overlay {
           Circle().strokeBorder(isTalking ? Color.secondary : .clear, lineWidth: 1.5)

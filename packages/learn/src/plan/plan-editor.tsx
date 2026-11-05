@@ -21,7 +21,6 @@ import { useExtracted } from "next-intl";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { PlanActivities } from "./plan-activities";
 import { PlanBases } from "./plan-bases";
-import { usePlanScreen } from "./plan-context";
 import { PlanDate } from "./plan-date";
 import { PlanEditRequest } from "./plan-edit-request";
 import { PlanEditorChange } from "./plan-editor-change";
@@ -40,12 +39,10 @@ import { PlanWrittenPractice } from "./written-cadence";
 const SECTION_CLASS = "flex flex-col gap-7 empty:hidden";
 
 function EditorSections() {
-  const { plan } = usePlanScreen();
-
   return (
     <>
       <div className={SECTION_CLASS} id={getEditorSectionId("date")}>
-        <PlanDate key={plan.schedule.targetDate ?? "none"} />
+        <PlanDate />
       </div>
       <PlanSchedule />
       <div className={SECTION_CLASS} id={getEditorSectionId("choices")}>

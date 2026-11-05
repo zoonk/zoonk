@@ -3,7 +3,6 @@ package com.zoonk.android.feature.player.language
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.LayoutDirection
@@ -11,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.summaryStep
+import com.zoonk.android.ui.testing.captureRender
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -43,7 +43,7 @@ class WordBankScreenshots {
 
     private fun capture(name: String) {
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 

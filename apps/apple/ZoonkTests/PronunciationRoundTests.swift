@@ -130,6 +130,7 @@ extension PronunciationRound.Grade {
 
 extension PronunciationRound.Result {
   fileprivate static let fixture = Self(
-    ceremony: nil, reached: .init(energy: nil, level: nil), brainPower: 5, correct: 1,
+    ceremony: nil, certificates: [], reached: .init(energy: nil, level: nil), brainPower: 5,
+    correct: 1,
     missionMoment: nil, total: 1)
 }

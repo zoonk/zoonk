@@ -58,6 +58,10 @@ export async function loadMistakeDrills({
     today,
   });
 
+  if (selected.length === 0) {
+    return [];
+  }
+
   const selectedSkillIds = selected.flatMap((mistake) =>
     mistake.skillId ? [mistake.skillId] : [],
   );

@@ -56,8 +56,6 @@
   "catalog_load_more_failed": "99b37e54d9e0641fa4dc0f342d707bc2867715b3de13bc2aa61e53f94373f78e",
   "catalog_loading_more": "fdacc73dcdecb8d792b276f5f8896bbab37c2879360f04e50bb155276e78e0f8",
   "catalog_no_sign_up": "0dc7a313b6f417f52abe728c29e0607db0f8c9ce6f5413778e53cbc340e58bde",
-  "catalog_not_found_description": "d4e8b40e9bcce3786d19e18f03000d99aa67a6c08763b32625db8aa9fce7ea7b",
-  "catalog_not_found_title": "acb2b71348cf6dc676378b9120514417e4416f4cdf02de62994a93d9d781d811",
   "catalog_open_course": "c8fa13a834e3bc191c3816a37713f5707269bfa96faac4463379d33942acda3a",
   "catalog_outcomes": "88049953b795e25861e9b673adfa24f88d395816d62dbe05d1b2b22dfd03789b",
   "catalog_outline": "64aeb4ff81b23d7e9c0d781d73873c9e25e72536f22bcc61baa8a8e69cc64b6d",
@@ -163,8 +161,6 @@
     <string name="catalog_start_goal">Bir hedefe başla</string>
     <string name="catalog_loading_more">Daha fazla kurs yüklüyoruz…</string>
     <string name="catalog_load_more_failed">Bir sorun oluştu. Lütfen tekrar dene.</string>
-    <string name="catalog_not_found_title">Bu sayfayı bulamadık</string>
-    <string name="catalog_not_found_description">Bağlantı eski veya yanlış yazılmış olabilir.</string>
     <string name="catalog_edition_notice">Bu kurs senin dilinde de var.</string>
     <string name="catalog_exam_on_today">Sınav %1$s tarihinde · bugün</string>
     <plurals name="catalog_exam_on">

@@ -44,11 +44,20 @@ describe(isScreenShortcut, () => {
     expect(results).toStrictEqual([false, false, false]);
   });
 
-  it("takes Enter where a field has no use for it: a select, or a one-line field outside a form", () => {
+  it("takes Enter where a field has no use for it: a select, a read-only field, or a one-line field outside a form", () => {
     expect(isEnterShortcutOn('<input data-target type="text" />')).toBe(true);
     expect(isEnterShortcutOn("<select data-target><option>One</option></select>")).toBe(true);
     expect(isEnterShortcutOn('<form><input data-target type="text" /></form>')).toBe(false);
     expect(isEnterShortcutOn("<textarea data-target></textarea>")).toBe(false);
+    expect(isEnterShortcutOn('<form><input data-target readonly type="text" /></form>')).toBe(true);
+    expect(isEnterShortcutOn("<textarea data-target readonly></textarea>")).toBe(true);
+  });
+
+  it("still leaves a held Enter and other keys alone in a read-only field", () => {
+    const field = mount('<form><input data-target readonly type="text" /></form>');
+
+    expect(isScreenShortcut(pressOn(field, { key: "Enter", repeat: true }))).toBe(false);
+    expect(isScreenShortcut(pressOn(field, { key: "1" }))).toBe(false);
   });
 
   it("leaves Enter to a focused button or link, but not to a picked answer or a button with its own key", () => {
@@ -84,6 +93,15 @@ describe(isScreenShortcut, () => {
 
     expect(isScreenShortcut(pressOn(slider, { key: "ArrowLeft" }))).toBe(false);
     expect(isScreenShortcut(pressOn(document.body, { key: "Enter", repeat: true }))).toBe(false);
+  });
+
+  it("takes keys on a waiting button that kept focus, though it stops every key but Tab", () => {
+    const waiting = mount('<button data-target aria-disabled="true" type="button">Start</button>');
+    waiting.addEventListener("keydown", (event) => event.preventDefault());
+
+    expect(isScreenShortcut(pressOn(waiting, { key: "Escape" }))).toBe(true);
+    expect(isScreenShortcut(pressOn(waiting, { key: "2" }))).toBe(true);
+    expect(isScreenShortcut(pressOn(waiting, { key: "Enter" }))).toBe(false);
   });
 });
 

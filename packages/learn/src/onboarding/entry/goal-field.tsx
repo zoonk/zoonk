@@ -183,6 +183,7 @@ export function GoalFieldSubmit({
     <Button
       aria-keyshortcuts="Enter"
       className={cn("shrink-0 px-4", className)}
+      focusableWhenDisabled
       size="lg"
       type="submit"
       {...props}

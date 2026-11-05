@@ -63,6 +63,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -138,7 +139,7 @@ internal fun CourseStartScreen(
                             }
                         }
                     } else {
-                        Loading()
+                        PageLoading()
                     }
                 }
 
@@ -155,16 +156,11 @@ internal fun CourseStartScreen(
                 }
 
                 LoadState.Idle, LoadState.Loading -> {
-                    Loading()
+                    PageLoading()
                 }
             }
         }
     }
-}
-
-@Composable
-private fun Loading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
 }
 
 @Composable

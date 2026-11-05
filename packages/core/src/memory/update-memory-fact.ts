@@ -11,10 +11,9 @@ import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
 import { forgetExampleLines } from "./_utils/forget-example-lines";
+import { LEARNER_CONFIDENCE } from "./_utils/memory-candidates";
 import { toMemoryFactView } from "./_utils/memory-fact-view";
 import { type MemoryFactUpdateInput, type MemoryFactView } from "./memory-contract";
-
-const LEARNER_CONFIDENCE = 1;
 
 function isSameCorrection({
   fact,

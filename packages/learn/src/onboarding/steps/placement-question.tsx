@@ -159,6 +159,7 @@ function PlacementActions({
         <Button
           className="grow"
           disabled={pending}
+          focusableWhenDisabled
           onClick={onDontKnow}
           size="lg"
           type="button"
@@ -179,6 +180,7 @@ function PlacementActions({
       <Button
         className="self-center"
         disabled={pending}
+        focusableWhenDisabled
         onClick={onStop}
         type="button"
         variant="ghost"

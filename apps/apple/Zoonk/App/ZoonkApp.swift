@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct ZoonkApp: App {
   @State private var buddy: BuddyStore
+  @State private var certificates: CertificatesStore
   @State private var completedLessons: CompletedLessonsStore
   @State private var courseCatalog: CourseCatalogStore
   @State private var exam: ExamStore
@@ -32,6 +33,12 @@ struct ZoonkApp: App {
   init() {
     ErrorReporting.start()
 
+    // On its light capsule the system draws the current page white and the others gray, so the
+    // dot that stands out is the wrong one. Main's step dots show the current step in the text
+    // color.
+    UIPageControl.appearance().currentPageIndicatorTintColor = .label
+    UIPageControl.appearance().pageIndicatorTintColor = .tertiaryLabel
+
     #if DEBUG
       let configuration = UITestConfiguration.current
       let dependencies = configuration?.dependencies ?? .live()
@@ -42,6 +49,7 @@ struct ZoonkApp: App {
 
     _buddy = State(initialValue: dependencies.buddyStore)
     cache = dependencies.cache
+    _certificates = State(initialValue: dependencies.certificatesStore)
     _completedLessons = State(initialValue: dependencies.completedLessonsStore)
     _courseCatalog = State(initialValue: dependencies.courseCatalogStore)
     _exam = State(initialValue: dependencies.examStore)
@@ -80,6 +88,7 @@ struct ZoonkApp: App {
           cache.followSession()
         }
         .environment(buddy)
+        .environment(certificates)
         .environment(completedLessons)
         .environment(courseCatalog)
         .environment(exam)
@@ -116,6 +125,7 @@ struct ZoonkApp: App {
 
 private struct AppWindow: View {
   @Environment(SessionStore.self) private var session
+  @Environment(VoiceServices.self) private var voice
   @State private var router: AppRouter
   @SceneStorage(TestOutScreen.openResultKey) private var openTestOutResult: URL?
   @State private var restoresTestOutResult = true
@@ -135,7 +145,7 @@ private struct AppWindow: View {
       // Made from the router the window keeps: `init` runs again on every update of the app.
       .environment(router)
       .environment(\.lessonPlayerRoutes, .routed(by: router))
-      .environment(\.practiceHooks, .routed(by: router))
+      .environment(\.practiceHooks, .routed(by: router, voice: voice))
       .environment(\.tutorPlaces, .routed(by: router))
       .onOpenURL { url in
         if !router.open(url: url) {

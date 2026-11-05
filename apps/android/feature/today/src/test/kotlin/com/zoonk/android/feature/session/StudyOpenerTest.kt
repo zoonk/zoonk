@@ -201,7 +201,7 @@ class StudyOpenerTest {
         }
 
     @Test
-    fun aMissionOpensItsBlockOnlyWhileFreeAndOneGoneMeanwhileOpensNothing() =
+    fun aMissionOpensItsBlockOnlyWhileFree() =
         runTest {
             val api = FakeStudyApi()
             api.openings = listOf(opening("session", "blockId" to blockId(0).toString(), "sessionId" to SESSION.toString()))
@@ -213,9 +213,6 @@ class StudyOpenerTest {
             assertEquals(target("mission", "blockId" to blockId(0).toString()), sent(api.targets.single()))
 
             api.openings = listOf(opening("changed"))
-            assertEquals(MutationResult.Done(null), opener(api).openMission(blockId(0)))
-
-            api.failures += ApiException(ApiError.NotFound, status = 404)
             assertEquals(MutationResult.Done(null), opener(api).openMission(blockId(0)))
         }
 

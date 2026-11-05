@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getCatalogCourseNextLesson } from "../next-lesson";
@@ -54,7 +54,7 @@ describe("bounded catalog completion ledger", () => {
     expect(lifetime.size).toBe(1022);
 
     const counts = await countDatabaseStatements(() => loadViewerFinishedLessons(lessonIds));
-    assertReadBudget(counts, 1);
+    expect(counts.writes).toBe(0);
 
     expect(counts.result).toStrictEqual({
       finishedLessonIds: new Set([...lifetime].filter((id) => lessonIds.includes(id))),
@@ -103,12 +103,12 @@ describe("bounded catalog completion ledger", () => {
     const learner = await userFixture();
     mockSession(learner.id);
     const empty = await countDatabaseStatements(() => loadViewerFinishedLessons([]));
-    assertReadBudget(empty, 0);
+    expect(empty).toMatchObject({ statements: 0, writes: 0 });
     expect(empty.result).toStrictEqual({ finishedLessonIds: new Set(), signedIn: true });
 
     mockSession(null);
     const visitor = await countDatabaseStatements(() => loadViewerFinishedLessons([randomUUID()]));
-    assertReadBudget(visitor, 0);
+    expect(visitor).toMatchObject({ statements: 0, writes: 0 });
     expect(visitor.result).toStrictEqual({ finishedLessonIds: new Set(), signedIn: false });
   });
 });

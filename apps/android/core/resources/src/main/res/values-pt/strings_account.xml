@@ -30,7 +30,7 @@
   "account_menu_settings": "6e64a560ae1b78a7906e7aadc0c72d4a9437502222a9ddd5a5cd03104e107af4",
   "account_menu_subscription": "6fc7e8b67c8708e362352f7d32570ff2a8e38283aac3897b3f0f4ced62c437e4",
   "account_name": "91a49014b7ccbcabbfb7ebfc2f676c7971eadb653526fd1cbe09414b473c0e41",
-  "account_name_description": "afa3650af1dfe243cb43dd13a8e8e00e67f53d87ac12997a644644d0c2947b96",
+  "account_name_description": "3ee0fa0d69c7ee4d280e8df799aa2bd07b3fe4a806d989948f93a92705c5b64d",
   "account_name_too_long": "cd2152259df0e7e3f31884a3b357989eeb269faac0d90c86d99c1336f254f782",
   "account_new_code_failed": "34ef696b347a885f18afa7f8bc4bcf2d5646b01e7c4464822837b24a094bdf21",
   "account_new_code_sent": "402df1e7fb6e7bbe27ea06a90fa1fb869aedaa93fa3c09db95b81f8b3db2731e",
@@ -99,7 +99,7 @@
     <string name="account_setup_title">Como podemos te chamar?</string>
     <string name="account_setup_description">Você pode mudar isso depois no seu perfil.</string>
     <string name="account_name">Nome</string>
-    <string name="account_name_description">Como o Zoonk e seu parceiro te chamam</string>
+    <string name="account_name_description">O nome que o Zoonk e seu parceiro usam para te chamar e que aparece nos seus certificados.</string>
     <string name="account_name_too_long">Use até 150 caracteres.</string>
     <string name="account_username">Nome de usuário</string>
     <!-- %1$s is a username. -->

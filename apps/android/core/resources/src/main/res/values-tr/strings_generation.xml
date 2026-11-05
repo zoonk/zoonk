@@ -17,8 +17,8 @@
   "generation_goal": "7495ff612fa1a62016861b00c72e81e8f90a58b80f887af50c24648b64c26d82",
   "generation_goal_line_1": "1bbd6da69b9ed31ca6fcf88a64d0cd13c188cd7d8377cede828464b62b283d15",
   "generation_goal_line_2": "b75be18547bebc424a124229a0db7937565b27542dc91e8a121e02b1e7e0a4c8",
-  "generation_level_test": "bf6cea2f2970b66cc63ea59f6433d05d0876b73254fa7955d16aacb68be0dd2b",
-  "generation_level_test_bank": "faad67ac8cd78d2ab0f2e07826bff8eea0509e53034af81cc7ed1560a1b740a7",
+  "generation_level_test": "af10df093ed5cea0636b96214a23a793bb916e38bcb2f96d9c8a1242d2f3ad90",
+  "generation_level_test_bank": "a8e9b6b38420209b327e4cf3d0c89a9b36afc525bd1a2dd12887ce1b62cf79dd",
   "generation_level_test_bank_line_1": "eb0c24774802e728cb46f12b3f099c67e5ab620e056a865a7907772c14fd8491",
   "generation_level_test_bank_line_2": "978e4f2746c157d8530cfe78187b9e3b2599a57815646fd1412b35a43bb4e7ef",
   "generation_level_test_bank_line_3": "e3e5e6a738be39a39434e181909d5f5eb6d3512225a8b55f17fa0c9aa2d5111d",
@@ -112,8 +112,8 @@
     <string name="generation_first_lesson_day_line_1">Kütüphane’de ders arıyoruz…</string>
     <string name="generation_first_lesson_day_line_2">Nereden başlayacağını seçiyoruz…</string>
     <!-- The wait while a language's level test questions are written. -->
-    <string name="generation_level_test">Seviye belirleme testini hazırlıyoruz</string>
-    <string name="generation_level_test_bank">Seviye testi sorularını hazırlıyoruz</string>
+    <string name="generation_level_test">Seviye tespit testini hazırlıyoruz</string>
+    <string name="generation_level_test_bank">Seviye tespit testi sorularını hazırlıyoruz</string>
     <string name="generation_level_test_bank_line_1">Başlangıçtan ileri seviyeye kadar metinler seçiyoruz…</string>
     <string name="generation_level_test_bank_line_2">Okuma sorularını hazırlıyoruz…</string>
     <string name="generation_level_test_bank_line_3">Dinleme sorularını hazırlıyoruz…</string>
