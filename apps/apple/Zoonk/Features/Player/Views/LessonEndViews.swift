@@ -17,7 +17,8 @@ struct LessonCompletionView: View {
         moment
 
         if let lesson, let summary = lesson.summary {
-          LessonMapSection(title: lesson.title, summary: summary)
+          LessonMapSection(
+            title: lesson.title, summary: summary, keepsIconRoom: lesson.expectsIdeaIcons)
         }
       }
     } secondary: {

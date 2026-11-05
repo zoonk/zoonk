@@ -50,7 +50,8 @@ struct LessonMapStage: View {
 
   private var mapPage: some View {
     LessonPage(store: store) {
-      LessonMapSection(title: title, summary: summary)
+      LessonMapSection(
+        title: title, summary: summary, keepsIconRoom: store.lesson?.expectsIdeaIcons == true)
     }
     .modifier(TracksSpread(store: store))
   }
@@ -76,6 +77,7 @@ private struct TracksSpread: ViewModifier {
 struct LessonMapSection: View {
   let title: String
   let summary: LessonSummary
+  let keepsIconRoom: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
@@ -87,7 +89,7 @@ struct LessonMapSection: View {
       .chip()
       .accessibilityAddTraits(.isHeader)
 
-      LessonMapView(title: title, summary: summary)
+      LessonMapView(title: title, summary: summary, keepsIconRoom: keepsIconRoom)
     }
   }
 }
@@ -97,11 +99,12 @@ struct LessonMapSheet: View {
 
   let title: String
   let summary: LessonSummary
+  let keepsIconRoom: Bool
 
   var body: some View {
     NavigationStack {
       ScrollView {
-        LessonMapView(title: title, summary: summary)
+        LessonMapView(title: title, summary: summary, keepsIconRoom: keepsIconRoom)
           .frame(maxWidth: .infinity, alignment: .leading)
           .scenePadding()
       }
@@ -130,10 +133,12 @@ struct LessonMapView: View {
 
   let title: String
   let summary: LessonSummary
+  /// Each idea keeps its icon's room, so an icon that comes later moves nothing.
+  let keepsIconRoom: Bool
 
   var body: some View {
     VStack(spacing: 16) {
-      LessonMindMap(title: title, ideas: summary.ideas)
+      LessonMindMap(title: title, ideas: summary.ideas, keepsIconRoom: keepsIconRoom)
 
       if summary.shape == .nested {
         Text(
@@ -158,6 +163,7 @@ private struct LessonMindMap: View {
 
   let title: String
   let ideas: [LessonSummary.Idea]
+  let keepsIconRoom: Bool
 
   var body: some View {
     LessonMindMapLayout(
@@ -176,7 +182,7 @@ private struct LessonMindMap: View {
         .accessibilitySortPriority(1)
 
       ForEach(Array(ideas.enumerated()), id: \.offset) { index, idea in
-        LessonMindMapIdea(number: index + 1, idea: idea)
+        LessonMindMapIdea(number: index + 1, idea: idea, keepsIconRoom: keepsIconRoom)
           .anchorPreference(key: LessonMindMapAnchors.self, value: .bounds) {
             LessonMindMapAnchors(ideas: [index: $0])
           }
@@ -291,14 +297,20 @@ private struct LessonMindMapLayout: Layout {
 private struct LessonMindMapIdea: View {
   let number: Int
   let idea: LessonSummary.Idea
+  let keepsIconRoom: Bool
 
   var body: some View {
     let shape = RoundedRectangle(cornerRadius: 14, style: .continuous)
 
     VStack(alignment: .leading, spacing: 6) {
       HStack(spacing: 8) {
-        if let icon = idea.icon {
-          LessonIconImage(icon: icon, size: 32)
+        if keepsIconRoom {
+          ZStack {
+            if let icon = idea.icon {
+              LessonIconImage(icon: icon, size: 32)
+            }
+          }
+          .frame(width: 32, height: 32)
         }
 
         VStack(alignment: .leading, spacing: 0) {

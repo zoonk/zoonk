@@ -121,8 +121,10 @@ private struct LessonPlayerContent: View {
     }
     .sheet(isPresented: $isShowingMap) {
       if let lesson = store.lesson, let summary = lesson.summary {
-        LessonMapSheet(title: lesson.title, summary: summary)
-          .accessibilitySizeStyles()
+        LessonMapSheet(
+          title: lesson.title, summary: summary, keepsIconRoom: lesson.expectsIdeaIcons
+        )
+        .accessibilitySizeStyles()
       }
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.
