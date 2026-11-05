@@ -11,6 +11,7 @@ struct FocusTestScreen: View {
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<FocusTestQuestions> = .loading
   @State private var started = false
+  @State private var isStarting = false
   @State private var isWriting = false
   @State private var writingEnded = false
   @State private var writeFailure: (any Error)?
@@ -99,7 +100,7 @@ struct FocusTestScreen: View {
             "About \(Duration.seconds(minutes * 60).formatted(.units(allowed: [.minutes], width: .wide)))",
           table: "Practice", comment: "About how long a test takes."),
       ],
-      isWriting: isWriting && questions.isEmpty, failure: writeFailure
+      isStarting: isStarting, isWriting: isWriting && questions.isEmpty, failure: writeFailure
     ) { Task { await start(test) } }
   }
 
@@ -222,16 +223,20 @@ struct FocusTestScreen: View {
       return
     }
 
-    isWriting = true
+    isStarting = true
     writeFailure = nil
     started = !questions.isEmpty
-    defer { isWriting = false }
+    defer {
+      isStarting = false
+      isWriting = false
+    }
 
     let goalId = goalId
     let written = await practice.write(.answered) { identity in
       if case .generating(let generationId) = try await practice.api.writeFocusTest(
         token: identity.bearerToken, goalId: goalId)
       {
+        isWriting = true
         try await practice.api.waitForQuestions(
           token: identity.bearerToken, generationId: generationId,
           readyStep: "focusTestQuestionsReady")

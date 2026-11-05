@@ -118,6 +118,7 @@ function FarTopicBody({
       {copy.action && (
         <Button
           disabled={isPending || isCapped}
+          focusableWhenDisabled
           onClick={isFailure ? retry : request}
           size="lg"
           variant={isFailure ? "outline" : "default"}
