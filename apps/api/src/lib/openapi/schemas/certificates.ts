@@ -54,7 +54,7 @@ export const certificateListResponseSchema = z
   .object({
     certificates: z
       .array(ownedCertificateSchema)
-      .meta({ description: "Newest first; empty until the learner earns one" }),
+      .meta({ description: "Latest finished first; empty until the learner earns one" }),
   })
   .meta({ id: "CertificateList" });
 

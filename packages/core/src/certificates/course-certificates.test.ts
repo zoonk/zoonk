@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type CourseLevel, type Goal, type PlanItem, prisma } from "@zoonk/db";
+import { certificateFixture } from "@zoonk/testing/fixtures/certificates";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -773,6 +774,26 @@ describe("a certificate as anyone sees it", () => {
 
     await expect(prisma.certificate.findUnique({ where: { code } })).resolves.toMatchObject({
       shownAt: null,
+    });
+  });
+
+  it("lists the learner's certificates by the day each was finished, newest first", async () => {
+    const user = await userFixture();
+
+    const finishedLater = await certificateFixture({
+      completedOn: new Date("2026-10-25T00:00:00Z"),
+      userId: user.id,
+    });
+
+    const claimedLater = await certificateFixture({
+      completedOn: new Date("2026-10-20T00:00:00Z"),
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    await expect(listCurrentUserCertificates()).resolves.toMatchObject({
+      certificates: [{ code: finishedLater.code }, { code: claimedLater.code }],
     });
   });
 

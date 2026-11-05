@@ -62,7 +62,7 @@ export const certificatePaths = {
   "/me/certificates": {
     get: {
       description:
-        "The learner's certificates, newest first: finished courses and finished language levels. Reading them never marks one shown.",
+        "The learner's certificates, latest finished first: finished course levels and plans, and finished language levels, locked ones included. Reading them never marks one shown.",
       operationId: "listCertificates",
       responses: {
         "200": {

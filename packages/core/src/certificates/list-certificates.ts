@@ -14,7 +14,7 @@ export type CertificateListResult =
   | { certificates: OwnedCertificateFacts[]; status: "ready" }
   | { status: "unauthorized" };
 
-/** Newest first. A rename expires the session tag, and progress writes are where certificates are earned. */
+/** Latest finished first. A rename expires the session tag, and progress writes are where certificates are earned. */
 export async function listCurrentUserCertificates(): Promise<CertificateListResult> {
   "use cache: private";
 
@@ -34,7 +34,8 @@ export async function listCurrentUserCertificates(): Promise<CertificateListResu
 
   const rows = await prisma.certificate.findMany({
     include: CERTIFICATE_FACTS_INCLUDE,
-    orderBy: { createdAt: "desc" },
+    // The rows one claim writes share a creation time; their time-ordered ids keep them apart.
+    orderBy: [{ completedOn: "desc" }, { id: "desc" }],
     where: { userId },
   });
 

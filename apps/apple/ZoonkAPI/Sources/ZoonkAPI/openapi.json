@@ -1298,7 +1298,7 @@
     },
     "/me/certificates": {
       "get": {
-        "description": "The learner's certificates, newest first: finished courses and finished language levels. Reading them never marks one shown.",
+        "description": "The learner's certificates, latest finished first: finished course levels and plans, and finished language levels, locked ones included. Reading them never marks one shown.",
         "operationId": "listCertificates",
         "security": [
           {
@@ -31949,7 +31949,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificate"
             },
-            "description": "Newest first; empty until the learner earns one"
+            "description": "Latest finished first; empty until the learner earns one"
           }
         },
         "required": [
