@@ -6,7 +6,6 @@ import {
   type OwnedCertificateFacts,
   courseCertificateDetailsSchema,
   languageLevelCertificateDetailsSchema,
-  placementCertificateDetailsSchema,
 } from "../certificate-contract";
 
 const LOGICAL_DATE_LENGTH = 10;
@@ -22,13 +21,11 @@ export type CertificateRow = Certificate & {
 };
 
 const NO_DETAILS = {
-  answered: null,
   canDo: [],
   category: null,
   courseLevels: [],
   lessonsStudied: null,
   lessonsTestedOut: null,
-  measuredLevel: null,
   minutes: null,
   skillLevels: [],
   topics: [],
@@ -48,11 +45,7 @@ function getKindDetails(row: CertificateRow) {
     return courseCertificateDetailsSchema.parse(row.details);
   }
 
-  if (row.kind === "languageLevel") {
-    return languageLevelCertificateDetailsSchema.parse(row.details);
-  }
-
-  return placementCertificateDetailsSchema.parse(row.details);
+  return languageLevelCertificateDetailsSchema.parse(row.details);
 }
 
 export function toCertificateFacts(row: CertificateRow): CertificateFacts {

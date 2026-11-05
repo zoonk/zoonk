@@ -62,23 +62,12 @@ export const languageLevelCertificateDetailsSchema = z.object({
   skillLevels: z.array(skillLevelSchema),
 });
 
-export const placementCertificateDetailsSchema = z.object({
-  answered: countSchema,
-  measuredLevel: z.string(),
-  skillLevels: z.array(skillLevelSchema),
-});
-
 export type CourseCertificateDetails = z.infer<typeof courseCertificateDetailsSchema>;
 
 export type LanguageLevelCertificateDetails = z.infer<typeof languageLevelCertificateDetailsSchema>;
 
-export type PlacementCertificateDetails = z.infer<typeof placementCertificateDetailsSchema>;
-
 /** A plain shape, so the API can add its links without an `allOf` strict clients can't decode. */
 export const certificateFactsShape = {
-  answered: countSchema
-    .nullable()
-    .meta({ description: "Placement: the test's questions the learner answered" }),
   canDo: z
     .array(z.string())
     .meta({ description: "Language level: what the learner can do, in the certificate's words" }),
@@ -109,14 +98,7 @@ export const certificateFactsShape = {
   lessonsTestedOut: countSchema.nullable().meta({ description: "Course: lessons passed by test" }),
   level: certifiedLevelSchema
     .nullable()
-    .meta({ description: "Language level: the level finished. Placement: the level measured" }),
-  measuredLevel: z
-    .string()
-    .nullable()
-    .meta({
-      description:
-        'Placement: the measured skills\' average in half steps, such as "A2+", which its ladder fills to; `level` is its band',
-    }),
+    .meta({ description: "Language level: the level finished" }),
   minutes: countSchema
     .nullable()
     .meta({
@@ -134,7 +116,7 @@ export const certificateFactsShape = {
     .array(skillLevelSchema)
     .meta({
       description:
-        "Language level: each skill the learner's answers raised, at its level when earned. Placement: each skill the test measured",
+        "Language level: each skill the learner's answers raised, at its level when earned",
     }),
   targetLanguage: z.string().nullable().meta({ description: "Language kinds: the language" }),
   title: z

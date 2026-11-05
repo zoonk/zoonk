@@ -411,7 +411,6 @@ describe("a certificate as anyone sees it", () => {
     );
 
     expect(Object.keys(facts ?? {}).toSorted()).toStrictEqual([
-      "answered",
       "canDo",
       "category",
       "code",
@@ -423,7 +422,6 @@ describe("a certificate as anyone sees it", () => {
       "lessonsStudied",
       "lessonsTestedOut",
       "level",
-      "measuredLevel",
       "minutes",
       "recipientName",
       "skillLevels",

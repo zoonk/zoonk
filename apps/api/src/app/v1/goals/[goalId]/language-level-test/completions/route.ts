@@ -17,7 +17,7 @@ async function finishLevelTest(
     return levelTestError(result.status);
   }
 
-  return NextResponse.json({ certificate: result.certificate, levels: result.levels });
+  return NextResponse.json({ levels: result.levels });
 }
 
 export const POST = withApiErrorBoundary(finishLevelTest);
