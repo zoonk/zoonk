@@ -29,6 +29,7 @@
   "memory_source_you": "44edf8da009c2d939c8bc7eaa5d41fc678c834d723938f920cb70cdd082e42f8",
   "memory_undo": "5a53793910722e1a31624a451a2691d5ede66e4921f68ca0d76794cc6e17f9dc",
   "memory_undo_failed": "c340683b4d6f6c98142b233f564cf3e6b7f14e946aaeff3e50e79b722d12dfe2",
+  "memory_undo_retry": "8b7fd1d3f6f010d451e33eaa7dbe545ff970071be1e8e61e23e800f585bef00f",
   "memory_updated": "c3716f340c3a00ef57b7ceb7cd7ee3882ac71bd339e2aa792e07de3678298a3b",
   "memory_updated_more": "8a220f11a39e6ae5edadd515249308d34c9f3779d370e3a34ec165210d5e6bf8",
   "memory_use": "fd536cb298f483c7da9d01bab9a1aa5ae67f824145d18f55e48fbdfd689d87b0",
@@ -80,4 +81,5 @@
     <string name="memory_undo">Cofnij</string>
     <string name="memory_change_undone">Cofnięto zmianę</string>
     <string name="memory_undo_failed">Nie udało się cofnąć zmiany. W międzyczasie wprowadzono kolejną.</string>
+    <string name="memory_undo_retry">Nie udało się cofnąć zmiany. Spróbuj ponownie.</string>
 </resources>

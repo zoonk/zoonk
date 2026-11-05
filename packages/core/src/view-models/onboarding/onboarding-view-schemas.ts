@@ -120,6 +120,12 @@ export const onboardingDraftViewSchema = z
         description:
           "`understanding` while the words are read, `understood` once `understanding` is there, `failed` when they couldn't be read (start it again)",
       }),
+    timeZone: z
+      .string()
+      .meta({
+        description:
+          "The IANA zone the draft counts the learner's today in. A `targetDate` fix is accepted from the day after that today through 3,650 days after it, so a date picker offers exactly those days",
+      }),
     understanding: goalUnderstandingViewSchema
       .nullable()
       .meta({ description: "What was understood, with the learner's fixes; null until then" }),

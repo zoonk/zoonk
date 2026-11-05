@@ -25,7 +25,6 @@ import { loadMistakeDrills } from "./load-mistake-drills";
 import { loadUpcomingLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
-import { isDayAwaitingOutlines } from "./outlining-stand-ins";
 import { getPlanTopics } from "./practice-blocks";
 import { loadReviewsAndClaims } from "./practice-claims";
 import { getPracticeDifficulty } from "./practice-difficulty";
@@ -173,10 +172,8 @@ export async function loadSessionBuildInput(
 ): Promise<SessionBuildInput> {
   const { goal, keepsBlocks = false, keptLessonIds, localDate, now, timeZone, userId } = context;
 
-  const [plan, awaitingOutlines] = await Promise.all([
-    context.dayPlan ?? loadDayPlan(context),
-    isDayAwaitingOutlines({ goal, localDate }),
-  ]);
+  const plan = await (context.dayPlan ?? loadDayPlan(context));
+  const awaitingOutlines = plan.outlines === "awaiting";
 
   const { dayMinutes, listeningSkillIds, textSkillIds } = plan;
   const skillIds = plan.skills.map((skill) => skill.id);
@@ -210,6 +207,7 @@ export async function loadSessionBuildInput(
     loadReviewsAndClaims({
       claims: { goal, graph: plan.graph, now, skillIds: testSkillIds, today: localDate, userId },
       practiceLocked: access.trialEnded,
+      readClaims: context.readClaims,
       review,
     }),
     loadMistakeDrills({

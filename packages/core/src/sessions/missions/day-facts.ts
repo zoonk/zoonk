@@ -1,7 +1,12 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { countUsage } from "../../entitlements/_utils/usage-counts";
+import {
+  type UsageTotals,
+  getUsageCounts,
+  loadUsageTotals,
+} from "../../entitlements/_utils/usage-counts";
+import { readExamPicks } from "../../exams/choices/exam-choices";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { type GoalPlan, getSkillOwners, loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
@@ -123,8 +128,8 @@ async function readyMistakes({
 
 type MissionContext = Pick<
   Parameters<typeof loadDayMissionFacts>[0],
-  "dayPlan" | "goal" | "localDate" | "selection" | "userId"
->;
+  "dayPlan" | "goal" | "localDate" | "readUsage" | "selection" | "userId"
+> & { now: Date };
 
 function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
   if (dayPlan) {
@@ -142,9 +147,9 @@ function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
 }
 
 async function loadMissionContext(input: MissionContext) {
-  const { dayPlan, goal, localDate, selection, userId } = input;
+  const { dayPlan, goal, localDate, now, readUsage, selection, userId } = input;
 
-  const [plan, goalPlan, tier, limit, recent] = await Promise.all([
+  const [plan, goalPlan, tier, limit, recent, usage] = await Promise.all([
     readMissionPlan(input),
     dayPlan?.goalPlan ?? loadGoalPlan(goal.id, selection?.source),
     dayPlan?.tier ?? getLearnerTier(userId),
@@ -154,9 +159,10 @@ async function loadMissionContext(input: MissionContext) {
       take: RECENT_SESSIONS,
       where: { goalId: goal.id, localDate: { lt: localDate }, userId },
     }),
+    readUsage ? readUsage() : loadUsageTotals({ client: prisma, now, userId }),
   ]);
 
-  return { goalPlan, limit, plan, recent, tier };
+  return { goalPlan, limit, plan, recent, tier, usage };
 }
 
 /** Internal build-time read. It never starts generation or claims any usage. */
@@ -170,6 +176,7 @@ export async function loadDayMissionFacts({
   plannedMinutes,
   readMistakes,
   readPreparation,
+  readUsage,
   selection,
   timeZone,
   userId,
@@ -185,14 +192,18 @@ export async function loadDayMissionFacts({
   /** A GET's request-wide practice mistakes; without it, they're read fresh. */
   readMistakes?: () => Promise<PracticeMistake[]>;
   readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
+  /** A GET's request-wide usage; without it, it's counted fresh. */
+  readUsage?: () => Promise<UsageTotals>;
   selection?: SelectedDayPlan;
   timeZone: string;
   userId: string;
 }): Promise<DayMissionFacts> {
-  const { plan, goalPlan, tier, limit, recent } = await loadMissionContext({
+  const { plan, goalPlan, tier, limit, recent, usage } = await loadMissionContext({
     dayPlan,
     goal,
     localDate,
+    now,
+    readUsage,
     selection,
     userId,
   });
@@ -228,7 +239,7 @@ export async function loadDayMissionFacts({
 
   const items = plan?.items ?? [];
 
-  const [mistakes, language, buddyUsage, weakSpot, structure] = await Promise.all([
+  const [mistakes, language, weakSpot, structure] = await Promise.all([
     readyMistakes({
       goal,
       goalPlan,
@@ -238,15 +249,19 @@ export async function loadDayMissionFacts({
       timeZone,
       userId,
     }),
-    languageCandidates({ blocks, goal, items, now, tier, userId }),
-    tier === "guest" ? null : countUsage({ client: prisma, kind: "tutorMessage", now, userId }),
+    languageCandidates({ blocks, goal, items, now, tier, usage, userId }),
     weakSpotCandidate({ blocks, goal, goalPlan, now, plannedMinutes, readPreparation, userId }),
-    loadExamStructure(goal, { blueprint }),
+    loadExamStructure(goal, { blueprint, picks: readExamPicks(plan?.settings) }),
   ]);
 
   const chapter = finishChapterCandidate({ blocks, goalPlan, items });
 
-  const buddyAllowed = hasMissionAllowance({ counts: buddyUsage, kind: "tutorMessage", now, tier });
+  const buddyAllowed = hasMissionAllowance({
+    counts: tier === "guest" ? null : getUsageCounts(usage, "tutorMessage"),
+    kind: "tutorMessage",
+    now,
+    tier,
+  });
 
   const candidates = await withChapterTitles([
     ...blockCandidates({ blocks, plannedMinutes, tier }),

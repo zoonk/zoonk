@@ -13,6 +13,7 @@ import { exportCurrentUserMemory } from "@zoonk/core/memory/export";
 import { updateMemorySettings } from "@zoonk/core/memory/settings";
 import { undoMemoryChanges } from "@zoonk/core/memory/undo";
 import { updateMemoryFact } from "@zoonk/core/memory/update-fact";
+import { type MemoryUndoOutcome } from "@zoonk/learn/memory-updated";
 
 export async function setMemoryEnabledAction(enabled: boolean): Promise<boolean> {
   const parsed = memorySettingsUpdateSchema.safeParse({ enabled });
@@ -47,15 +48,17 @@ export async function deleteMemoryFactAction(factId: string): Promise<MemoryChan
   return result.status === "deleted" ? result.change : null;
 }
 
-export async function undoMemoryChangesAction(changes: MemoryChangeReference[]): Promise<boolean> {
+export async function undoMemoryChangesAction(
+  changes: MemoryChangeReference[],
+): Promise<MemoryUndoOutcome> {
   const parsed = memoryUndoInputSchema.safeParse({ changes });
 
   if (!parsed.success) {
-    return false;
+    return "failed";
   }
 
-  const result = await undoMemoryChanges(parsed.data);
-  return result.status === "undone";
+  const { status } = await undoMemoryChanges(parsed.data);
+  return status === "unauthorized" ? "failed" : status;
 }
 
 export async function exportMemoryAction(): Promise<MemoryExport | null> {

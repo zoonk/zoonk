@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { type GoalPlanSource } from "../../learner/_utils/goal-skill-graph";
+import { type SavedPlan } from "../../learner/facts/saved-plan";
 import { getEstimateChange } from "../../plans/_utils/estimate-change";
 import { loadLeftWorkSelection, selectLeftWork } from "../../plans/_utils/left-work";
 import { type PlanContext, loadPlanContext } from "../../plans/_utils/plan-context";
@@ -294,13 +295,15 @@ export function getSelectedCatchUpItems({
 export async function readSavedDayPlan({
   goal,
   now,
+  saved,
   timeZone,
 }: {
   goal: Goal;
   now: Date;
+  saved: SavedPlan | null;
   timeZone: string;
 }): Promise<SelectedDayPlan | null> {
-  const context = await loadPlanContext({ goal, now, timeZone });
+  const context = await loadPlanContext({ goal, now, saved, timeZone });
 
   if (!context || context.items.length === 0) {
     return null;

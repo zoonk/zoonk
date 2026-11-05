@@ -59,7 +59,7 @@ export const goalPaths = {
         "422": {
           ...unprocessableEntityResponse,
           description:
-            "GOAL_REFERENCE_NOT_FOUND when an exam or course isn't available; TARGET_DATE_OUT_OF_RANGE when a new explicit date is before tomorrow or after calendar day 3,650 from the learner's today. A range refusal writes no goal or plan; details give the nearest accepted date.",
+            "GOAL_REFERENCE_NOT_FOUND when an exam or course isn't available; TARGET_DATE_OUT_OF_RANGE when a new explicit date is before tomorrow or after calendar day 3,650 from the learner's today (a goal from an onboarding card starts without such a date instead). A range refusal writes no goal or plan; details give the nearest accepted date.",
         },
         "429": tooManyRequestsResponse,
       },
