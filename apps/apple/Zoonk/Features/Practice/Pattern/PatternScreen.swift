@@ -103,7 +103,7 @@ struct PatternScreen: View {
       case .question(let index):
         drillQuestion(pattern, index: index)
       case .result(let result):
-        PracticeTaskLayout {
+        PracticeTaskLayout(isResult: true) {
           PracticeResultTitle(
             title: LocalizedStringResource(
               "Practice done", table: "Practice", comment: "End of a practice run."),

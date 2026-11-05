@@ -364,7 +364,7 @@ private struct CheckpointResultView: View {
     let correct = result?.correct ?? checkpoint.result?.correct ?? state.correct
     let total = result?.total ?? checkpoint.result?.total ?? state.questionCount
 
-    PracticeTaskLayout {
+    PracticeTaskLayout(isResult: true) {
       if checkpoint.endedWithoutQuestions == true {
         PracticeResultTitle(
           title: LocalizedStringResource(

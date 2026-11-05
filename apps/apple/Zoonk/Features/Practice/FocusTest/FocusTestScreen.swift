@@ -103,7 +103,7 @@ struct FocusTestScreen: View {
   private func resultView(_ result: Components.Schemas.FocusTestResult) -> some View {
     let chosen = result.areas.filter(\.chosen).map(\.label)
 
-    return PracticeTaskLayout {
+    return PracticeTaskLayout(isResult: true) {
       VStack(alignment: .leading, spacing: 12) {
         Text(
           "How you did", tableName: "Practice",

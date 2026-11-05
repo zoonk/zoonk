@@ -75,6 +75,7 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
@@ -119,77 +120,79 @@ internal fun SessionSummary(
     failed: SessionAction?,
     actions: SummaryActions,
 ) {
-    var onRewards by rememberSaveable { mutableStateOf(false) }
-    var leftRewards by rememberSaveable { mutableStateOf(false) }
-    val scroll = rememberScrollState()
-    var span by remember { mutableStateOf<PageSpan?>(null) }
+    ResultScreen {
+        var onRewards by rememberSaveable { mutableStateOf(false) }
+        var leftRewards by rememberSaveable { mutableStateOf(false) }
+        val scroll = rememberScrollState()
+        var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        val pages = spreadFold(maxWidth, span) != null
-        val wide = isWideLayout()
-        val stepped = !pages && !wide && !facts.stopped && summary.hasRewardsBeyondBrainPower()
-        val rewardsShown = stepped && onRewards
+        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+            val pages = spreadFold(maxWidth, span) != null
+            val wide = isWideLayout()
+            val stepped = !pages && !wide && !facts.stopped && summary.hasRewardsBeyondBrainPower()
+            val rewardsShown = stepped && onRewards
 
-        BackHandler(enabled = rewardsShown) {
-            onRewards = false
-            leftRewards = true
-        }
+            BackHandler(enabled = rewardsShown) {
+                onRewards = false
+                leftRewards = true
+            }
 
-        TaskScaffold(
-            onClose = actions.finish,
-            title = { if (stepped) StepDots(count = 2, index = if (rewardsShown) 1 else 0) },
-            bottomBar = {
-                SummaryBar(
-                    summary = summary,
-                    facts = facts,
-                    busy = busy,
-                    failed = failed,
-                    actions = actions,
-                    toRewards = if (stepped && !rewardsShown) ({ onRewards = true }) else null,
-                    fromRewards =
-                        if (rewardsShown) {
-                            {
-                                onRewards = false
-                                leftRewards = true
-                            }
-                        } else {
-                            null
+            TaskScaffold(
+                onClose = actions.finish,
+                title = { if (stepped) StepDots(count = 2, index = if (rewardsShown) 1 else 0) },
+                bottomBar = {
+                    SummaryBar(
+                        summary = summary,
+                        facts = facts,
+                        busy = busy,
+                        failed = failed,
+                        actions = actions,
+                        toRewards = if (stepped && !rewardsShown) ({ onRewards = true }) else null,
+                        fromRewards =
+                            if (rewardsShown) {
+                                {
+                                    onRewards = false
+                                    leftRewards = true
+                                }
+                            } else {
+                                null
+                            },
+                    )
+                },
+            ) { padding ->
+                if (pages) {
+                    ResultPages(
+                        modifier = Modifier.padding(padding),
+                        withMoment = true,
+                        columnModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        done = {
+                            DoneTitle(summary, facts)
+                            SessionNumbers(summary, facts, brainPowerTile = false)
+                            EarnedToday(summary, facts, buddy, buddyName)
                         },
-                )
-            },
-        ) { padding ->
-            if (pages) {
-                ResultPages(
-                    modifier = Modifier.padding(padding),
-                    withMoment = true,
-                    columnModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    done = {
-                        DoneTitle(summary, facts)
-                        SessionNumbers(summary, facts, brainPowerTile = false)
-                        EarnedToday(summary, facts, buddy, buddyName)
-                    },
-                    next = { Onward(summary, facts) },
-                )
-            } else {
-                Column(
-                    modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(scroll),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Row(
-                        modifier = Modifier.widthIn(max = 960.dp).padding(horizontal = 16.dp, vertical = 24.dp),
-                        horizontalArrangement = Arrangement.spacedBy(32.dp),
+                        next = { Onward(summary, facts) },
+                    )
+                } else {
+                    Column(
+                        modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(scroll),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Column(Modifier.weight(1f)) {
-                            // Going back to a step already seen shows it still.
-                            CelebrationScope(play = !leftRewards) {
-                                if (rewardsShown) {
-                                    RewardsStep(summary, facts, buddy, buddyName)
-                                } else {
-                                    DoneStep(summary, facts, wide)
+                        Row(
+                            modifier = Modifier.widthIn(max = 960.dp).padding(horizontal = 16.dp, vertical = 24.dp),
+                            horizontalArrangement = Arrangement.spacedBy(32.dp),
+                        ) {
+                            Column(Modifier.weight(1f)) {
+                                // Going back to a step already seen shows it still.
+                                CelebrationScope(play = !leftRewards) {
+                                    if (rewardsShown) {
+                                        RewardsStep(summary, facts, buddy, buddyName)
+                                    } else {
+                                        DoneStep(summary, facts, wide)
+                                    }
                                 }
                             }
+                            if (wide) EarnedToday(summary, facts, buddy, buddyName, Modifier.widthIn(max = 320.dp))
                         }
-                        if (wide) EarnedToday(summary, facts, buddy, buddyName, Modifier.widthIn(max = 320.dp))
                     }
                 }
             }

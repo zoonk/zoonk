@@ -55,6 +55,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import java.time.Instant
@@ -231,19 +232,21 @@ fun RunFinished(
     actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    TaskScaffold(
-        onClose = onClose,
-        title = { headerTitle?.let { LessonTitle(it) } },
-        bottomBar = {
-            TaskActionBar {
-                if (actions != null) {
-                    actions()
-                } else {
-                    TaskActions { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+    ResultScreen {
+        TaskScaffold(
+            onClose = onClose,
+            title = { headerTitle?.let { LessonTitle(it) } },
+            bottomBar = {
+                TaskActionBar {
+                    if (actions != null) {
+                        actions()
+                    } else {
+                        TaskActions { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+                    }
                 }
-            }
-        },
-    ) { padding -> RunDone(title, saving, detail, modifier = Modifier.padding(padding), content = content) }
+            },
+        ) { padding -> RunDone(title, saving, detail, modifier = Modifier.padding(padding), content = content) }
+    }
 }
 
 @Composable

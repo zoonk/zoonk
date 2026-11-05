@@ -126,6 +126,13 @@ class ExplainScreenshots {
     @Config(qualifiers = "w707dp-h823dp-xhdpi")
     fun smallBook() = capture("small-book", fold = true)
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("book-font200", fold = true)
+    }
+
     private val written =
         explanation(
             outline = OUTLINE,
@@ -190,7 +197,7 @@ class ExplainScreenshots {
                 "outline" to
                     { ExplainWaiting(explanation(outline = OUTLINE), viewModel, rememberAppNavigator(), readAgain = {}, onStart = {}) },
                 "written" to { ExplainWaiting(written, viewModel, rememberAppNavigator(), readAgain = {}, onStart = {}) },
-                "ending" to { SpreadScreen { ExplainEnding(written, completed(), rememberAppNavigator(), readAgain = {}) } },
+                "ending" to { SpreadScreen(result = true) { ExplainEnding(written, completed(), rememberAppNavigator(), readAgain = {}) } },
             )
         var index by mutableIntStateOf(0)
 

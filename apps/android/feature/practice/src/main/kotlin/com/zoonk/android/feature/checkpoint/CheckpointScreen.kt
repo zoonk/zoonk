@@ -116,6 +116,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
@@ -713,94 +714,96 @@ internal fun DuelResult(
     app: AppContainer,
     buddy: MomentBuddy,
 ) {
-    val checkpoint = duel.read.checkpoint
-    val outcome = duel.outcome()
-    val won = outcome != null && (!duel.read.isBoss || outcome.passed)
-    val rows = resultRows(duel, won)
-    val answers =
-        duel.state.completion
-            ?.checkpoint
-            ?.answers
-            .orEmpty()
-    var reviewing by rememberSaveable { mutableStateOf(false) }
-    var span by remember { mutableStateOf<PageSpan?>(null) }
+    ResultScreen {
+        val checkpoint = duel.read.checkpoint
+        val outcome = duel.outcome()
+        val won = outcome != null && (!duel.read.isBoss || outcome.passed)
+        val rows = resultRows(duel, won)
+        val answers =
+            duel.state.completion
+                ?.checkpoint
+                ?.answers
+                .orEmpty()
+        var reviewing by rememberSaveable { mutableStateOf(false) }
+        var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        // An open book splits the result into its own two pages, with no rail beside it.
-        val folded = pageFold(maxWidth, span) != null
+        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+            // An open book splits the result into its own two pages, with no rail beside it.
+            val folded = pageFold(maxWidth, span) != null
 
-        TaskScaffold(
-            onClose = viewModel::close,
-            title = { LessonTitle(eyebrow(checkpoint)) },
-            bottomBar = {
-                TaskActionBar {
-                    TaskActions { width ->
-                        if (answers.isNotEmpty() && !taskAsideBeside()) {
-                            OutlinedButton(onClick = { reviewing = true }) { Text(stringResource(R.string.checkpoint_review)) }
+            TaskScaffold(
+                onClose = viewModel::close,
+                title = { LessonTitle(eyebrow(checkpoint)) },
+                bottomBar = {
+                    TaskActionBar {
+                        TaskActions { width ->
+                            if (answers.isNotEmpty() && !taskAsideBeside()) {
+                                OutlinedButton(onClick = { reviewing = true }) { Text(stringResource(R.string.checkpoint_review)) }
+                            }
+                            Button(onClick = viewModel::close, modifier = width) { Text(stringResource(R.string.practice_continue)) }
                         }
-                        Button(onClick = viewModel::close, modifier = width) { Text(stringResource(R.string.practice_continue)) }
-                    }
-                }
-            },
-            aside = outcome?.takeIf { !rows.isEmpty && !folded }?.let { TaskAside { ResultDetails(duel, rows, won) } },
-        ) { padding ->
-            val wide = taskAsideBeside()
-            ResultPages(
-                modifier = Modifier.padding(padding),
-                withMoment = duel.state.completion != null,
-                columnModifier = Modifier.runColumn(),
-                done = {
-                    if (outcome == null) {
-                        QuestionsRemoved(eyebrow = null)
-                    } else {
-                        // A result opened again shows how it ended, still: the moment played when it was won or lost.
-                        if (duel.read.isBoss) {
-                            CelebrationScope(
-                                play = duel.state.completion != null,
-                            ) { TricksterArt(Modifier.size(104.dp), beaten = won, reacts = true) }
-                        }
-                        Text(
-                            text =
-                                stringResource(
-                                    when {
-                                        !duel.read.isBoss -> R.string.checkpoint_weekly_done
-                                        won -> R.string.checkpoint_beat
-                                        else -> R.string.checkpoint_not_this_time
-                                    },
-                                ),
-                            modifier = Modifier.semantics { heading() },
-                            style = MaterialTheme.typography.headlineSmall,
-                        )
-                        val passMark =
-                            duel.state.completion
-                                ?.checkpoint
-                                ?.passMark
-                                ?.toInt()
-                        MomentReadouts(
-                            brainPower = earnedBrainPower(duel, won),
-                            score = MomentScore(outcome.total, outcome.correct),
-                            facts =
-                                listOfNotNull(
-                                    passMark?.takeIf { !won }?.let {
-                                        pluralStringResource(R.plurals.checkpoint_right_to_win_of, it, it, duel.read.questions.size)
-                                    },
-                                ),
-                        )
-                        duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
                     }
                 },
-                next = {
-                    if (outcome != null && !wide && !rows.isEmpty) ResultDetails(duel, rows, won)
-                    if (outcome != null && wide && answers.isNotEmpty()) Review(duel, answers, app)
-                },
-            )
+                aside = outcome?.takeIf { !rows.isEmpty && !folded }?.let { TaskAside { ResultDetails(duel, rows, won) } },
+            ) { padding ->
+                val wide = taskAsideBeside()
+                ResultPages(
+                    modifier = Modifier.padding(padding),
+                    withMoment = duel.state.completion != null,
+                    columnModifier = Modifier.runColumn(),
+                    done = {
+                        if (outcome == null) {
+                            QuestionsRemoved(eyebrow = null)
+                        } else {
+                            // A result opened again shows how it ended, still: the moment played when it was won or lost.
+                            if (duel.read.isBoss) {
+                                CelebrationScope(
+                                    play = duel.state.completion != null,
+                                ) { TricksterArt(Modifier.size(104.dp), beaten = won, reacts = true) }
+                            }
+                            Text(
+                                text =
+                                    stringResource(
+                                        when {
+                                            !duel.read.isBoss -> R.string.checkpoint_weekly_done
+                                            won -> R.string.checkpoint_beat
+                                            else -> R.string.checkpoint_not_this_time
+                                        },
+                                    ),
+                                modifier = Modifier.semantics { heading() },
+                                style = MaterialTheme.typography.headlineSmall,
+                            )
+                            val passMark =
+                                duel.state.completion
+                                    ?.checkpoint
+                                    ?.passMark
+                                    ?.toInt()
+                            MomentReadouts(
+                                brainPower = earnedBrainPower(duel, won),
+                                score = MomentScore(outcome.total, outcome.correct),
+                                facts =
+                                    listOfNotNull(
+                                        passMark?.takeIf { !won }?.let {
+                                            pluralStringResource(R.plurals.checkpoint_right_to_win_of, it, it, duel.read.questions.size)
+                                        },
+                                    ),
+                            )
+                            duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
+                        }
+                    },
+                    next = {
+                        if (outcome != null && !wide && !rows.isEmpty) ResultDetails(duel, rows, won)
+                        if (outcome != null && wide && answers.isNotEmpty()) Review(duel, answers, app)
+                    },
+                )
+            }
         }
-    }
 
-    if (reviewing) {
-        ModalBottomSheet(onDismissRequest = { reviewing = false }) {
-            Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 32.dp)) {
-                Review(duel, answers, app, titleStyle = MaterialTheme.typography.titleLarge)
+        if (reviewing) {
+            ModalBottomSheet(onDismissRequest = { reviewing = false }) {
+                Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 32.dp)) {
+                    Review(duel, answers, app, titleStyle = MaterialTheme.typography.titleLarge)
+                }
             }
         }
     }

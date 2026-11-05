@@ -78,6 +78,7 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
@@ -150,65 +151,67 @@ internal fun Logbook(
     onClose: () -> Unit,
     onStart: () -> Unit,
 ) {
-    val steps =
-        if (!recap.ready || recap.week.daysStudied.isEmpty()) {
-            listOf(RecapStep.Week)
-        } else {
-            listOfNotNull(
-                RecapStep.Week,
-                RecapStep.Turnaround.takeIf { recap.turnaround != null },
-                RecapStep.Learned.takeIf { recap.hasLearned },
-                RecapStep.Next.takeIf { recap.nextFocus != null },
-            )
-        }
-    var index by rememberSaveable { mutableIntStateOf(0) }
-    val current = steps[index.coerceIn(steps.indices)]
-    val scroll = rememberScrollState()
-    var span by remember { mutableStateOf<PageSpan?>(null) }
-    val letsGo: @Composable FlowRowScope.(Modifier) -> Unit = { main ->
-        Button(onClick = onStart, modifier = main) { Text(stringResource(R.string.recap_lets_go)) }
-    }
-
-    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        val pages = spreadFold(maxWidth, span) != null
-
-        TaskScaffold(
-            onClose = onClose,
-            title = { if (!pages) StepDots(steps.size, index) },
-            bottomBar = {
-                if (pages) {
-                    TaskActions(content = letsGo)
-                } else {
-                    StepPagerActions(steps.size, index, onIndexChange = { index = it }, finalAction = letsGo)
-                }
-            },
-        ) { padding ->
-            if (pages) {
-                ResultPages(
-                    modifier = Modifier.padding(padding),
-                    withMoment = false,
-                    columnModifier = Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = 24.dp),
-                    done = { RecapStepContent(RecapStep.Week, recap, learnerName) },
-                    next = {
-                        steps.drop(1).forEachIndexed { position, step ->
-                            if (position > 0) HorizontalDivider()
-                            RecapStepContent(step, recap, learnerName)
-                        }
-                    },
-                )
+    ResultScreen {
+        val steps =
+            if (!recap.ready || recap.week.daysStudied.isEmpty()) {
+                listOf(RecapStep.Week)
             } else {
-                Box(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll), contentAlignment = Alignment.TopCenter) {
-                    // A step changed by Continue or Back is announced, as main moves focus to its title.
-                    RecapStepContent(
-                        current,
-                        recap,
-                        learnerName,
-                        Modifier
-                            .widthIn(max = COLUMN_WIDTH)
-                            .fillMaxWidth()
-                            .padding(24.dp)
-                            .semantics { liveRegion = LiveRegionMode.Polite },
+                listOfNotNull(
+                    RecapStep.Week,
+                    RecapStep.Turnaround.takeIf { recap.turnaround != null },
+                    RecapStep.Learned.takeIf { recap.hasLearned },
+                    RecapStep.Next.takeIf { recap.nextFocus != null },
+                )
+            }
+        var index by rememberSaveable { mutableIntStateOf(0) }
+        val current = steps[index.coerceIn(steps.indices)]
+        val scroll = rememberScrollState()
+        var span by remember { mutableStateOf<PageSpan?>(null) }
+        val letsGo: @Composable FlowRowScope.(Modifier) -> Unit = { main ->
+            Button(onClick = onStart, modifier = main) { Text(stringResource(R.string.recap_lets_go)) }
+        }
+
+        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+            val pages = spreadFold(maxWidth, span) != null
+
+            TaskScaffold(
+                onClose = onClose,
+                title = { if (!pages) StepDots(steps.size, index) },
+                bottomBar = {
+                    if (pages) {
+                        TaskActions(content = letsGo)
+                    } else {
+                        StepPagerActions(steps.size, index, onIndexChange = { index = it }, finalAction = letsGo)
+                    }
+                },
+            ) { padding ->
+                if (pages) {
+                    ResultPages(
+                        modifier = Modifier.padding(padding),
+                        withMoment = false,
+                        columnModifier = Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = 24.dp),
+                        done = { RecapStepContent(RecapStep.Week, recap, learnerName) },
+                        next = {
+                            steps.drop(1).forEachIndexed { position, step ->
+                                if (position > 0) HorizontalDivider()
+                                RecapStepContent(step, recap, learnerName)
+                            }
+                        },
                     )
+                } else {
+                    Box(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll), contentAlignment = Alignment.TopCenter) {
+                        // A step changed by Continue or Back is announced, as main moves focus to its title.
+                        RecapStepContent(
+                            current,
+                            recap,
+                            learnerName,
+                            Modifier
+                                .widthIn(max = COLUMN_WIDTH)
+                                .fillMaxWidth()
+                                .padding(24.dp)
+                                .semantics { liveRegion = LiveRegionMode.Polite },
+                        )
+                    }
                 }
             }
         }

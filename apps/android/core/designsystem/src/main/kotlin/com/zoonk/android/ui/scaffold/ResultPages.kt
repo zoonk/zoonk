@@ -27,12 +27,13 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.CelebrationScope
 
 /**
- * A result as the shared foldables rule lays it out, as two pages where [spreadFold] splits the
- * screen and one column elsewhere, the one column reading [done] then [next]. [done] goes before
- * the split: what was done and how it went (the title, its detail, the saving or failed line, the
- * numbers and what they break down into, and what it earned, such as the day's moment). [next] goes
- * after it, above the docked way on: what's next. A result with nothing for [next] still splits,
- * its page after the split holding only the way on, rather than spanning the fold.
+ * A result as the shared foldables rule lays it out, as two pages where the [ResultScreen] around it
+ * splits the screen (or a [SpreadScreen] showing its result), so across a fold at any text size, and
+ * one column elsewhere, the one column reading [done] then [next]. [done] goes before the split: what
+ * was done and how it went (the title, its detail, the saving or failed line, the numbers and what
+ * they break down into, and what it earned, such as the day's moment). [next] goes after it, above
+ * the docked way on: what's next. A result with nothing for [next] still splits, its page after the
+ * split holding only the way on, rather than spanning the fold.
  * Every page reads in [columnModifier], the caller's own column width, so a screen keeps its edges
  * without a split. [withMoment] is whether the moment is on screen yet, which waits for the save.
  */
@@ -53,10 +54,13 @@ fun ResultPages(
     val doneScroll = rememberScrollState()
     val nextScroll = rememberScrollState()
     var span by remember { mutableStateOf<PageSpan?>(null) }
+    // Read here, where the caller makes [done] and [next], not in the measured box: read there, the box recomposed for
+    // a fold before the caller passed what the fold changed, and inside Material's Scaffold it kept the content it had.
+    val split = LocalSpread.current?.takeIf { it.shows }?.split
 
     CelebrationScope(play = plays) {
         BoxWithConstraints(modifier.fillMaxSize().onPageSpan { span = it }) {
-            val fold = spreadFold(maxWidth, span)
+            val fold = split?.let { foldAt(listOf(it), maxWidth, span) }
 
             if (fold == null) {
                 ResultPage(Modifier.fillMaxSize(), scroll, Alignment.CenterHorizontally, columnModifier) {

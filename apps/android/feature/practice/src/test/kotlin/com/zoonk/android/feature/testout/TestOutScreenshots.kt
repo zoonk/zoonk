@@ -262,4 +262,11 @@ class TestOutScreenshots {
     @Test
     @Config(qualifiers = "w707dp-h823dp-xhdpi")
     fun smallBookPassed() = result("testout-small-book-passed", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookPassedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        result("testout-book-passed-font200", fold = true)
+    }
 }

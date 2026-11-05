@@ -83,6 +83,7 @@ import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
@@ -338,83 +339,85 @@ internal fun FocusTestResult(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val chosen = outcome.areas.filter { it.chosen }.map { it.label }
-    var index by rememberSaveable { mutableIntStateOf(0) }
-    var leftFirst by rememberSaveable { mutableStateOf(false) }
-    val canUndo = outcome.changeId != null && ui.undo != UndoState.Done
-    val stepTitle = remember { FocusRequester() }
-    val moveFocus = rememberMoveFocus()
-    var span by remember { mutableStateOf<PageSpan?>(null) }
+    ResultScreen {
+        val chosen = outcome.areas.filter { it.chosen }.map { it.label }
+        var index by rememberSaveable { mutableIntStateOf(0) }
+        var leftFirst by rememberSaveable { mutableStateOf(false) }
+        val canUndo = outcome.changeId != null && ui.undo != UndoState.Done
+        val stepTitle = remember { FocusRequester() }
+        val moveFocus = rememberMoveFocus()
+        var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    MomentAfterCeremony(
-        app,
-        outcome.ceremony.takeIf {
-            ui.celebrate
-        },
-        outcome.certificates,
-        { navigator.open(AppRoute.Subscription) },
-    ) { buddy ->
-        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-            // Where the result splits, both steps show at once: how the learner did before the fold, the new focus after it.
-            val whole = spreadFold(maxWidth, span) != null
-            val count = if (whole || chosen.isEmpty()) 1 else 2
-            val shown = index.coerceIn(0, count - 1)
-            var announced by rememberSaveable { mutableIntStateOf(shown) }
+        MomentAfterCeremony(
+            app,
+            outcome.ceremony.takeIf {
+                ui.celebrate
+            },
+            outcome.certificates,
+            { navigator.open(AppRoute.Subscription) },
+        ) { buddy ->
+            BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+                // Where the result splits, both steps show at once: how the learner did before the fold, the new focus after it.
+                val whole = spreadFold(maxWidth, span) != null
+                val count = if (whole || chosen.isEmpty()) 1 else 2
+                val shown = index.coerceIn(0, count - 1)
+                var announced by rememberSaveable { mutableIntStateOf(shown) }
 
-            // Main's `focusStepTitle`: a new step takes TalkBack to its heading, never the first one.
-            LaunchedEffect(shown) {
-                if (shown != announced) {
-                    announced = shown
-                    moveFocus(stepTitle)
-                }
-            }
-
-            TaskScaffold(
-                onClose = navigator::closeTask,
-                title = { StepDots(count, shown) },
-                bottomBar = {
-                    TaskActionBar {
-                        StepPagerActions(
-                            count,
-                            shown,
-                            onIndexChange = {
-                                if (shown == 0) leftFirst = true
-                                index = it
-                            },
-                        ) { main ->
-                            Button(
-                                onClick = { navigator.showRoot(AppTab.Plan) },
-                                modifier = main,
-                            ) { Text(stringResource(R.string.focustest_see_plan)) }
-                        }
-                        if (canUndo && shown == count - 1) UndoAction(ui.undo, viewModel::undo)
+                // Main's `focusStepTitle`: a new step takes TalkBack to its heading, never the first one.
+                LaunchedEffect(shown) {
+                    if (shown != announced) {
+                        announced = shown
+                        moveFocus(stepTitle)
                     }
-                },
-            ) { padding ->
-                ResultPages(
-                    modifier = Modifier.padding(padding),
-                    withMoment = true,
-                    columnModifier = Modifier.runColumn(),
-                    done = {
-                        if (whole || shown == 0) {
-                            CelebrationScope(play = ui.celebrate && !leftFirst) {
-                                AreasStep(outcome, stepTitle)
-                                DayMoment(
-                                    missions = null,
-                                    reached = outcome.reached,
-                                    ceremony = outcome.ceremony?.kind,
-                                    buddy = buddy.look,
-                                    buddyName = buddy.name,
-                                )
+                }
+
+                TaskScaffold(
+                    onClose = navigator::closeTask,
+                    title = { StepDots(count, shown) },
+                    bottomBar = {
+                        TaskActionBar {
+                            StepPagerActions(
+                                count,
+                                shown,
+                                onIndexChange = {
+                                    if (shown == 0) leftFirst = true
+                                    index = it
+                                },
+                            ) { main ->
+                                Button(
+                                    onClick = { navigator.showRoot(AppTab.Plan) },
+                                    modifier = main,
+                                ) { Text(stringResource(R.string.focustest_see_plan)) }
                             }
+                            if (canUndo && shown == count - 1) UndoAction(ui.undo, viewModel::undo)
                         }
                     },
-                    next = {
-                        if (chosen.isNotEmpty() && (whole || shown == 1)) {
-                            FocusStep(chosen, undone = ui.undo == UndoState.Done, stepTitle)
-                        }
-                    },
-                )
+                ) { padding ->
+                    ResultPages(
+                        modifier = Modifier.padding(padding),
+                        withMoment = true,
+                        columnModifier = Modifier.runColumn(),
+                        done = {
+                            if (whole || shown == 0) {
+                                CelebrationScope(play = ui.celebrate && !leftFirst) {
+                                    AreasStep(outcome, stepTitle)
+                                    DayMoment(
+                                        missions = null,
+                                        reached = outcome.reached,
+                                        ceremony = outcome.ceremony?.kind,
+                                        buddy = buddy.look,
+                                        buddyName = buddy.name,
+                                    )
+                                }
+                            }
+                        },
+                        next = {
+                            if (chosen.isNotEmpty() && (whole || shown == 1)) {
+                                FocusStep(chosen, undone = ui.undo == UndoState.Done, stepTitle)
+                            }
+                        },
+                    )
+                }
             }
         }
     }

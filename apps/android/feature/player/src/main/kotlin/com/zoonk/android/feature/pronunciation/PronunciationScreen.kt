@@ -120,6 +120,7 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
@@ -653,53 +654,57 @@ private fun RoundEnd(
     buddy: LearnerSummaryBuddy?,
     onDone: () -> Unit,
 ) {
-    val noWords = round.words.isEmpty()
-    val title = if (result == null) R.string.pronunciation_nothing_said else R.string.pronunciation_practice_done
+    ResultScreen {
+        val noWords = round.words.isEmpty()
+        val title = if (result == null) R.string.pronunciation_nothing_said else R.string.pronunciation_practice_done
 
-    TaskScaffold(
-        onClose = onDone,
-        modifier = Modifier.taskKeys(onEnter = onDone, onEscape = onDone),
-        title = { Text(stringResource(R.string.pronunciation_title)) },
-        bottomBar = {
-            TaskActionBar {
-                TaskActions { width -> Button(onClick = onDone, modifier = width) { Text(stringResource(R.string.pronunciation_done)) } }
-            }
-        },
-    ) { padding ->
-        ResultPages(
-            modifier = Modifier.padding(padding),
-            withMoment = true,
-            columnModifier = Modifier.lessonColumnWidth(),
-            done = {
-                Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                    if (noWords) {
-                        Text(
-                            stringResource(R.string.pronunciation_no_words),
-                            Modifier.semantics { heading() },
-                            style = MaterialTheme.typography.headlineSmall,
-                        )
-                    } else {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        TaskScaffold(
+            onClose = onDone,
+            modifier = Modifier.taskKeys(onEnter = onDone, onEscape = onDone),
+            title = { Text(stringResource(R.string.pronunciation_title)) },
+            bottomBar = {
+                TaskActionBar {
+                    TaskActions { width ->
+                        Button(onClick = onDone, modifier = width) { Text(stringResource(R.string.pronunciation_done)) }
+                    }
+                }
+            },
+        ) { padding ->
+            ResultPages(
+                modifier = Modifier.padding(padding),
+                withMoment = true,
+                columnModifier = Modifier.lessonColumnWidth(),
+                done = {
+                    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                        if (noWords) {
                             Text(
-                                stringResource(title),
+                                stringResource(R.string.pronunciation_no_words),
                                 Modifier.semantics { heading() },
                                 style = MaterialTheme.typography.headlineSmall,
                             )
-                            Text(
-                                stringResource(R.string.pronunciation_accent),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
-                        }
-                        result?.let {
-                            MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
+                        } else {
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(
+                                    stringResource(title),
+                                    Modifier.semantics { heading() },
+                                    style = MaterialTheme.typography.headlineSmall,
+                                )
+                                Text(
+                                    stringResource(R.string.pronunciation_accent),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                            }
+                            result?.let {
+                                MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
+                            }
                         }
                     }
-                }
-                result?.let { RoundMoment(it, buddy) }
-            },
-            next = {},
-        )
+                    result?.let { RoundMoment(it, buddy) }
+                },
+                next = {},
+            )
+        }
     }
 }
 
