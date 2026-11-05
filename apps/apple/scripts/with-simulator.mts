@@ -1,16 +1,10 @@
 import { spawnSync } from "node:child_process";
-import {
-  closeSync,
-  constants,
-  fstatSync,
-  ftruncateSync,
-  mkdirSync,
-  openSync,
-  writeSync,
-} from "node:fs";
+import { closeSync, constants, fstatSync, ftruncateSync, writeSync } from "node:fs";
 import { availableParallelism, loadavg } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
+import { findSimulatorAppCrashes, listCrashReports } from "../../../scripts/dev/crash-reports.mts";
+import { openExclusiveLock } from "../../../scripts/dev/exclusive-lock.mts";
 import { applyCommandExit, runForegroundCommand } from "../../../scripts/dev/process.mts";
 import { type QueueTurn, waitForTurn } from "../../../scripts/dev/queue.mts";
 import {
@@ -26,11 +20,13 @@ import {
 const BUSY_MAX_BOOTED_SIMULATORS = 3;
 const QUIET_MAX_BOOTED_SIMULATORS = 6;
 const POLL_MS = 5000;
-// macOS's open(2) flag for an exclusive lock, which Node doesn't export. The kernel keeps the lock
-// until every process holding the file closes it, however they exit.
-const O_EXLOCK = 0x20;
 
-type Lease = { descriptor: number; device: Simulator };
+const CLOSE_CRASH_ALERTS_SCRIPT = path.resolve(
+  import.meta.dirname,
+  "../../../scripts/dev/close-device-crash-alerts.mts",
+);
+
+type Lease = { descriptor: number; device: Simulator; reportsBefore: Set<string> };
 
 /** Quiet while fewer tasks wait to run than the machine has cores. */
 function getMaxBootedSimulators() {
@@ -51,17 +47,9 @@ function getBootedSimulators(catalog: SimulatorCatalog) {
     .filter((device) => !isShutDown(device));
 }
 
-/** Lock files stay in place: removing one lets a run lock it while another locks its replacement. */
-function openLocked({ flags, name }: { flags: number; name: string }) {
-  const lockPath = getLeasePath(name);
-  mkdirSync(path.dirname(lockPath), { recursive: true });
-  // oxlint-disable-next-line no-bitwise -- open(2) takes its flags as bits
-  return openSync(lockPath, constants.O_RDWR | constants.O_CREAT | O_EXLOCK | flags);
-}
-
 function tryLocking(device: Simulator): number | undefined {
   try {
-    return openLocked({ flags: constants.O_NONBLOCK, name: device.udid });
+    return openExclusiveLock({ flags: constants.O_NONBLOCK, lockPath: getLeasePath(device.udid) });
   } catch (error) {
     if (error instanceof Error && "code" in error && error.code === "EAGAIN") {
       return undefined;
@@ -116,9 +104,10 @@ function tryLeasing(device: Simulator): Lease | undefined {
 
   if (isBooted ? isLeftBehind : booted.length < getMaxBootedSimulators()) {
     claim(descriptor);
+    const reportsBefore = new Set(listCrashReports());
 
     if (isBooted || bootSimulator(device)) {
-      return { descriptor, device };
+      return { descriptor, device, reportsBefore };
     }
   }
 
@@ -134,7 +123,7 @@ function tryLeasing(device: Simulator): Lease | undefined {
  * none boots past the limit.
  */
 function leaseSimulator() {
-  const choosing = openLocked({ flags: 0, name: "choosing" });
+  const choosing = openExclusiveLock({ lockPath: getLeasePath("choosing") });
 
   try {
     // iPhone 17 last: `pnpm iphone` and older checkouts' `make test` pick it by name.
@@ -151,6 +140,24 @@ function leaseSimulator() {
     return { booted: getBootedSimulators(listSimulators()) };
   } finally {
     closeSync(choosing);
+  }
+}
+
+function cleanUpAfterAppCrashes({ device, reportsBefore }: Lease) {
+  const crashes = findSimulatorAppCrashes({ reportsBefore, udid: device.udid });
+
+  // Damaged simulator data can crash one of its iOS apps on every boot, each crash opening an alert.
+  if (crashes.some(({ isSystemApp }) => isSystemApp)) {
+    process.stdout.write(
+      `One of iOS's own apps crashed on ${device.name}. Erasing it so the crash doesn't repeat on ` +
+        `its next boot.\n`,
+    );
+
+    spawnSync("xcrun", ["simctl", "erase", device.udid], { stdio: "inherit" });
+  }
+
+  if (crashes.length > 0) {
+    spawnSync(process.execPath, [CLOSE_CRASH_ALERTS_SCRIPT], { stdio: "inherit" });
   }
 }
 
@@ -207,6 +214,7 @@ try {
   );
 } finally {
   spawnSync("xcrun", ["simctl", "shutdown", lease.device.udid], { stdio: "inherit" });
+  cleanUpAfterAppCrashes(lease);
   release(lease.descriptor);
   turn?.release();
 }
