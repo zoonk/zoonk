@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -12,12 +11,15 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +45,10 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class MistakePracticeScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -101,6 +106,7 @@ class MistakePracticeScreenshots {
         dark: Boolean = false,
         vararg questions: JsonObject = arrayOf(planet(), similar),
         play: () -> Unit = {},
+        fold: Boolean = false,
     ) {
         val api =
             FakeMistakesApi(
@@ -125,6 +131,7 @@ class MistakePracticeScreenshots {
         }
         play()
         rule.waitForIdle()
+        if (fold) rule.unfoldBook(folds)
         write(name)
     }
 
@@ -166,10 +173,24 @@ class MistakePracticeScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneDone() {
-        show("phone-done") {
-            check()
-            rule.onNodeWithContentDescription("End practice. What you answered counts.").performClick()
-        }
+        show("phone-done", play = ::finish)
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookDone() {
+        show("mistakes-book-done", fold = true, play = ::finish)
+    }
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookDone() {
+        show("mistakes-small-book-done", fold = true, play = ::finish)
+    }
+
+    private fun finish() {
+        check()
+        rule.onNodeWithContentDescription("End practice. What you answered counts.").performClick()
     }
 
     @Test
@@ -193,7 +214,7 @@ class MistakePracticeScreenshots {
     }
 
     private fun write(name: String) {
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }

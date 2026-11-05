@@ -20,7 +20,6 @@
   "mock_flagged_count": "760b6f7c6259b67f77802932a81d2da71e76e0e39db3f416ac37d42708f6e2b0",
   "mock_full_day": "93ba4a122f499a01e7f4e7233224b241b2f791cf10a520e2da26bab256bd8644",
   "mock_full_day_number": "67b406f8c70e7b07f6d336a8a38b9e7445b0b631862b043d785b41fe83faa7ff",
-  "mock_go_to_today": "9366f112ec4eb825ea6555627d07923bc5b836e7c6719ba4ae0f162244e54cb9",
   "mock_grading": "e612b57b0886231f877ce37e75a287bdc6aa2ec809b5c37bb65cf653f736c6dc",
   "mock_half_day": "76321d257e26b1a8e4c24e41c10c17050381b26ba038a89eb6d464e42d1c143f",
   "mock_half_day_number": "8e0613985797fd0ec67dd19b29f8ecf4638b1f8d36afb138f9b71130042bafe6",
@@ -54,8 +53,6 @@
   "mock_next": "30bfed0fd45a7dda4859985d6196ec013685316695a46ef9ed39c2ca9f429a23",
   "mock_next_named": "7cadca0650766e03bc0a6e545bccccf2eecfe26068b446e314cb52434a8a00fb",
   "mock_next_section": "9accd0524c41c7ed9dabd437a95d03c394676217cab43dc1ae687d696acd7532",
-  "mock_not_found_description": "2b10e0f120e19278211cd0155154bc9b9f43414f18f67907b3e374e1e30a9953",
-  "mock_not_found_title": "b9da13835f242641b3b1a6b4a3c86f44d0a9337d83b4ed0a707377210fc26982",
   "mock_not_saved_retrying": "5b80d094db7f34ae28dbffe1c0f7f765bc35fcaa61b5beae4aa30bef6aff8269",
   "mock_place": "6f4f79b8300799bfe604a1ac1c9ac4be246b1a501af1209a3eb14e629789f985",
   "mock_progress_label": "42a5783daff8b0691a7af628f7da8ef664483c608077253e7a35d10bbf763748",
@@ -137,9 +134,6 @@
     <string name="mock_label">Deneme sınavı</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
     <string name="mock_label_shape">Deneme sınavı · %1$s</string>
-    <string name="mock_not_found_title">Bu sayfayı bulamadık</string>
-    <string name="mock_not_found_description">Bağlantı eski veya yanlış yazılmış olabilir.</string>
-    <string name="mock_go_to_today">Bugün sayfasına git</string>
     <!-- What screen readers call the section's countdown. -->
     <string name="mock_time_left_label">Kalan süre</string>
     <!-- Under the section's countdown, such as "1:24:09". -->

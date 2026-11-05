@@ -6,6 +6,7 @@ import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.Syllabus
+import java.util.Locale
 import java.util.UUID
 
 const val GOAL = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01"
@@ -13,9 +14,9 @@ const val SESSION = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a03"
 const val BLOCK = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a04"
 
 /** A chapter id per position, so a fixture's links say which chapter they open. */
-internal fun chapterId(position: Int) = "c0000000-0000-4000-8000-%012d".format(position)
+internal fun chapterId(position: Int) = "c0000000-0000-4000-8000-%012d".format(Locale.ROOT, position)
 
-internal fun lessonId(position: Int) = "10000000-0000-4000-8000-%012d".format(position)
+internal fun lessonId(position: Int) = "10000000-0000-4000-8000-%012d".format(Locale.ROOT, position)
 
 fun chapter(
     position: Int,

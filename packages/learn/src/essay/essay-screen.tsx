@@ -4,7 +4,6 @@ import { type EssayDraft, type EssayView } from "@zoonk/core/exams/essays/contra
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
-import { cn } from "@zoonk/ui/lib/utils";
 import { countWords } from "@zoonk/utils/string";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
@@ -157,6 +156,7 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
           <Button
             className="shrink-0"
             disabled={finishing.pending}
+            focusableWhenDisabled
             onClick={() => void finishing.finish()}
             size="xl"
             variant="outline"
@@ -165,8 +165,9 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
           </Button>
         )}
         <Button
-          className={cn(TASK_MAIN_ACTION_CLASS, pending && "disabled:opacity-100")}
+          className={TASK_MAIN_ACTION_CLASS}
           disabled={!writer.canSend || finishing.pending}
+          focusableWhenDisabled
           onClick={() => void writer.send()}
           size="xl"
         >

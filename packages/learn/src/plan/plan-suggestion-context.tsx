@@ -3,7 +3,6 @@
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -22,7 +21,9 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { type PlanCertificates } from "../journey/course-certificate";
 import { type GoalStatusControl } from "../journey/goal-actions";
+import { type StudyNext } from "../journey/study-next";
 import { type PlanEditorSection } from "./plan-editor-sections";
 import { type PlanPreviewState } from "./plan-preview-state";
 import { useUndoChange } from "./use-undo-change";
@@ -30,17 +31,22 @@ import { useUndoChange } from "./use-undo-change";
 export type SlotItem =
   | { key: string; kind: "behind" | "tooTight"; text: string }
   | { choice: ExamChoiceView; key: string; kind: "choice" }
-  | { key: string; kind: "coverage" | "finished" | "fitLessons" | "freeWeekOver" | "paused" }
+  | {
+      key: string;
+      kind: "courseComplete" | "coverage" | "finished" | "fitLessons" | "freeWeekOver" | "paused";
+    }
   | { key: string; kind: "pastDate"; lessons: number };
 
 export type SlotResult = { change: PlanChangeView | null; item: SlotItem; text: string };
 
 export type SlotPreview = PlanPreviewState;
 
-export type PlanSuggestionHost = {
+/** From the goal map: what to study next once the plan is finished, and its certificates once a level or the plan is. */
+export type PlanEnd = { certificates: PlanCertificates | null; next: StudyNext | null };
+
+export type PlanSuggestionHost = PlanEnd & {
   courseHref: (course: { brandSlug: string; courseSlug: string }) => string;
   goalStatus: GoalStatusControl | null;
-  next: { onContinue: () => Promise<boolean>; view: StudyNextView } | null;
   onAdjust: () => void;
   onEdit: (section: PlanEditorSection) => void;
 };

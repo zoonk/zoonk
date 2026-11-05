@@ -33,6 +33,7 @@ function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
       {places?.completedLessons && (
         <LearnSidebarLink label={t("Completed lessons")} menu="completedLessons" />
       )}
+      {places?.certificates && <LearnSidebarLink label={t("Certificates")} menu="certificates" />}
       {places?.exam && <LearnSidebarLink label={t("Exam")} menu="exam" />}
       {places?.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
       {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}

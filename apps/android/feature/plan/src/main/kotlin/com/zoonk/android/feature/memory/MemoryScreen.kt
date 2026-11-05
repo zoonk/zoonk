@@ -323,6 +323,7 @@ private fun sourceName(fact: MemoryFact): String =
         when {
             fact.origin == MemoryFact.Origin.NOTICED -> R.string.memory_source_noticed
             fact.source == null -> R.string.memory_source_you
+            fact.source?.kind == MemorySource.Kind.CALL -> R.string.memory_source_call
             fact.source?.kind == MemorySource.Kind.CHAT -> R.string.memory_source_chat
             fact.source?.kind == MemorySource.Kind.ONBOARDING -> R.string.memory_source_onboarding
             else -> R.string.memory_source_session

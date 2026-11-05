@@ -37,11 +37,7 @@ fun StepPagerActions(
 
     // Back stays outside the actions' row, level with its last line when they wrap at a large font.
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
-        if (index > 0) {
-            OutlinedIconButton(onClick = { onIndexChange(index - 1) }) {
-                Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
-            }
-        }
+        if (index > 0) StepBackButton(onClick = { onIndexChange(index - 1) })
         Box(Modifier.weight(1f)) {
             TaskActions { main ->
                 if (index < count - 1) {
@@ -51,6 +47,13 @@ fun StepPagerActions(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun StepBackButton(onClick: () -> Unit) {
+    OutlinedIconButton(onClick = onClick) {
+        Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
     }
 }
 

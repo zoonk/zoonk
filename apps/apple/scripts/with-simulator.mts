@@ -1,7 +1,14 @@
 import { spawnSync } from "node:child_process";
+import path from "node:path";
+import { findSimulatorAppCrashes } from "../../../scripts/dev/crash-reports.mts";
 import { applyCommandExit, runForegroundCommand } from "../../../scripts/dev/process.mts";
-import { MAX_BOOTED_SIMULATORS, POLL_MS, leaseSimulator, releaseLease } from "./leases.mts";
+import { BOOT_LIMIT, type Lease, POLL_MS, leaseSimulator, releaseLease } from "./leases.mts";
 import { type Simulator, getNewestSimulators, listSimulators } from "./simulators.mts";
+
+const CLOSE_CRASH_ALERTS_SCRIPT = path.resolve(
+  import.meta.dirname,
+  "../../../scripts/dev/close-device-crash-alerts.mts",
+);
 
 function getNewestIphones() {
   return getNewestSimulators({ catalog: listSimulators(), family: "iphone" }).devices;
@@ -11,13 +18,30 @@ function listNames(simulators: Simulator[]) {
   return simulators.map(({ name }) => name).join(", ");
 }
 
+function cleanUpAfterAppCrashes({ device, reportsBefore }: Lease) {
+  const crashes = findSimulatorAppCrashes({ reportsBefore, udid: device.udid });
+
+  // Damaged simulator data can crash one of its iOS apps on every boot, each crash opening an alert.
+  if (crashes.some(({ isSystemApp }) => isSystemApp)) {
+    process.stdout.write(
+      `One of iOS's own apps crashed on ${device.name}. Erasing it so the crash doesn't repeat on ` +
+        `its next boot.\n`,
+    );
+
+    spawnSync("xcrun", ["simctl", "erase", device.udid], { stdio: "inherit" });
+  }
+
+  if (crashes.length > 0) {
+    spawnSync(process.execPath, [CLOSE_CRASH_ALERTS_SCRIPT], { stdio: "inherit" });
+  }
+}
+
 async function test({ args, command }: { args: string[]; command: string }) {
   const { lease, turn } = await leaseSimulator({
     describeWait: (booted) =>
-      `Waiting for a simulator. Each test run boots a shut-down iPhone of its own, with at most ` +
-      `${MAX_BOOTED_SIMULATORS} booted at once, and booted now: ${listNames(booted)}. Shut down ` +
-      `one you're done with, or set TEST_DESTINATION='platform=iOS Simulator,id=<udid>' to test ` +
-      `on yours.\n`,
+      `Waiting for a simulator. Each test run boots a shut-down iPhone of its own, with ` +
+      `${BOOT_LIMIT}, and booted now: ${listNames(booted)}. Shut down one you're done with, or ` +
+      `set TEST_DESTINATION='platform=iOS Simulator,id=<udid>' to test on yours.\n`,
     // iPhone 17 last: `pnpm iphone` and older checkouts' `make test` pick it by name.
     getCandidates: () => getNewestIphones().toReversed(),
     isTestRun: true,
@@ -38,6 +62,7 @@ async function test({ args, command }: { args: string[]; command: string }) {
     );
   } finally {
     spawnSync("xcrun", ["simctl", "shutdown", lease.device.udid], { stdio: "inherit" });
+    cleanUpAfterAppCrashes(lease);
     releaseLease(lease);
     turn?.release();
   }
@@ -58,8 +83,8 @@ function getNamedIphone(named: string) {
 async function hold(named: string) {
   const { lease, turn } = await leaseSimulator({
     describeWait: (booted) =>
-      `Waiting for ${named} while a test run or another hold has it, or until fewer than ` +
-      `${MAX_BOOTED_SIMULATORS} simulators are booted (booted now: ${listNames(booted)}).\n`,
+      `Waiting for ${named} while a test run or another hold has it, or until it can boot with ` +
+      `${BOOT_LIMIT}. Booted now: ${listNames(booted)}.\n`,
     getCandidates: () => getNamedIphone(named),
     isTestRun: false,
   });

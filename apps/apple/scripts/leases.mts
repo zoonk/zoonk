@@ -1,29 +1,35 @@
 import { spawnSync } from "node:child_process";
-import {
-  closeSync,
-  constants,
-  fstatSync,
-  ftruncateSync,
-  mkdirSync,
-  openSync,
-  writeSync,
-} from "node:fs";
-import { homedir } from "node:os";
+import { closeSync, constants, fstatSync, ftruncateSync, writeSync } from "node:fs";
+import { availableParallelism, homedir, loadavg } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
+import { listCrashReports } from "../../../scripts/dev/crash-reports.mts";
+import { openExclusiveLock } from "../../../scripts/dev/exclusive-lock.mts";
 import { type QueueTurn, waitForTurn } from "../../../scripts/dev/queue.mts";
 import { type Simulator, listSimulators } from "./simulators.mts";
 
-// More booted at once crash Apple's simulator services on a busy Mac.
-export const MAX_BOOTED_SIMULATORS = 3;
+// More booted at once crash Apple's simulator services on a busy Mac; a quiet one runs more. The
+// limits are apps/apple/AGENTS.md's "Simulators", which agents booting by hand follow too.
+const BUSY_MAX_BOOTED_SIMULATORS = 3;
+const QUIET_MAX_BOOTED_SIMULATORS = 6;
 export const POLL_MS = 5000;
-// macOS's open(2) flag for an exclusive lock, which Node doesn't export. The kernel keeps the lock
-// until every process holding the file closes it, however they exit.
-const O_EXLOCK = 0x20;
+
+export const BOOT_LIMIT =
+  `at most ${BUSY_MAX_BOOTED_SIMULATORS} booted at once while the machine is busy ` +
+  `(${QUIET_MAX_BOOTED_SIMULATORS} while it's quiet)`;
 
 const leaseDirectory = path.join(homedir(), ".cache", "zoonk", "simulators");
 
-export type Lease = { descriptor: number; device: Simulator };
+export type Lease = { descriptor: number; device: Simulator; reportsBefore: Set<string> };
+
+/** Quiet while fewer tasks wait to run than the machine has cores. */
+function getMaxBootedSimulators() {
+  const [lastMinute = Infinity] = loadavg();
+
+  return lastMinute < availableParallelism()
+    ? QUIET_MAX_BOOTED_SIMULATORS
+    : BUSY_MAX_BOOTED_SIMULATORS;
+}
 
 export function getBootedSimulators(): Simulator[] {
   return Object.values(listSimulators().devices)
@@ -31,17 +37,12 @@ export function getBootedSimulators(): Simulator[] {
     .filter((device) => device.state !== "Shutdown");
 }
 
-/** Lock files stay in place: removing one lets a run lock it while another locks its replacement. */
-function openLocked({ flags, name }: { flags: number; name: string }) {
-  const lockPath = path.join(leaseDirectory, name);
-  mkdirSync(leaseDirectory, { recursive: true });
-  // oxlint-disable-next-line no-bitwise -- open(2) takes its flags as bits
-  return openSync(lockPath, constants.O_RDWR | constants.O_CREAT | O_EXLOCK | flags);
-}
-
 function tryLocking(device: Simulator): number | undefined {
   try {
-    return openLocked({ flags: constants.O_NONBLOCK, name: device.udid });
+    return openExclusiveLock({
+      flags: constants.O_NONBLOCK,
+      lockPath: path.join(leaseDirectory, device.udid),
+    });
   } catch (error) {
     if (error instanceof Error && "code" in error && error.code === "EAGAIN") {
       return undefined;
@@ -58,7 +59,7 @@ function markAsTestRun(descriptor: number) {
   ftruncateSync(descriptor, Buffer.byteLength(owner));
 }
 
-export function releaseLease({ descriptor }: Lease) {
+export function releaseLease({ descriptor }: { descriptor: number }) {
   ftruncateSync(descriptor);
   closeSync(descriptor);
 }
@@ -88,25 +89,31 @@ function tryLeasing({
   descriptor,
   device,
   isTestRun,
-}: Lease & { isTestRun: boolean }): Lease | undefined {
+}: {
+  descriptor: number;
+  device: Simulator;
+  isTestRun: boolean;
+}): Lease | undefined {
   // Read after locking: the run that just let go of it may have shut it down.
   const booted = getBootedSimulators();
   const isBooted = booted.some(({ udid }) => udid === device.udid);
   const isLeftBehind = fstatSync(descriptor).size > 0;
 
-  if (isBooted ? !isTestRun || isLeftBehind : booted.length < MAX_BOOTED_SIMULATORS) {
+  if (isBooted ? !isTestRun || isLeftBehind : booted.length < getMaxBootedSimulators()) {
     if (isTestRun) {
       markAsTestRun(descriptor);
     } else {
       ftruncateSync(descriptor);
     }
 
+    const reportsBefore = new Set(listCrashReports());
+
     if (isBooted || bootSimulator(device)) {
-      return { descriptor, device };
+      return { descriptor, device, reportsBefore };
     }
   }
 
-  releaseLease({ descriptor, device });
+  releaseLease({ descriptor });
   return undefined;
 }
 
@@ -123,7 +130,7 @@ function chooseSimulator({
   getCandidates: () => Simulator[];
   isTestRun: boolean;
 }): Lease | { booted: Simulator[] } {
-  const choosing = openLocked({ flags: 0, name: "choosing" });
+  const choosing = openExclusiveLock({ lockPath: path.join(leaseDirectory, "choosing") });
 
   try {
     for (const device of getCandidates()) {

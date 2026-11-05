@@ -217,6 +217,7 @@
   "plan_continues_on": "f376225b799ab7affce3b0722a62d3baddddbd130056e41d1d7def14e23a38dd",
   "plan_continues_today": "23b43c8474131c2e1c956be278c7277f42bf11c8234528a888e9914e5d2274e6",
   "plan_couldnt_check_changes": "b80c51d21c7108cd3575fdf2efd4f3191fdf9580a5e861fee34ddf45a9089a54",
+  "plan_course_complete": "d294c11d5f831abd524fd34ba246294c6e9cbd19ac08263b7a1a2c1d2b393007",
   "plan_coverage": "f78fac204f3d06b6e39d20e0b07d06abbe6fc2e2528ef57b9983ea3a3db730d8",
   "plan_coverage_caption": "eb4a802f65e2788cea6b4a2f443c1cbe5325441d68bb39d678e480645d72ac19",
   "plan_covered_not_enough": "6d10d78e63882c770c583dbe6b88531f2faaf00ddd467b725ff745d71a6c6668",
@@ -317,6 +318,7 @@
   "plan_lessons_on_the_way": "74cb815d30c1515da4eaf2732843e140dfe4508e383f8098d659df2d773f9bfc",
   "plan_lessons_studied": "cada70ede7601e07a41fc4f27a181862b3c808e97134f3daa43446fa052ac8d5",
   "plan_level": "6685eaef3c3d9ad51db214c84f99acbfb19d27ecbd2bc0ed4b6f5194d5d07841",
+  "plan_level_complete": "15c353cd7d6acc2055f764b8ac12d6436cdd69c7561e23791698e6e7d639f205",
   "plan_long_term_memory": "c0f1649abd073e7c1d8de60872608ca36723fdc15baa3668e776dfd60f408480",
   "plan_loss_this_week": "2719857f5aa5427f2ef1d6f28edf75802f9145700d7ea98d34e12e8787df3172",
   "plan_mastery": "3f1aed421293838a9f79121305af1a0115f84e0ca95c313d1540b3c484c92790",
@@ -1548,4 +1550,8 @@
     <string name="plan_finished_title">Planını tamamladın</string>
     <string name="plan_study_next">Bundan sonra bunlara çalışabilirsin.</string>
     <string name="plan_continue_at">Devam et: %1$s</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
+    <string name="plan_course_complete">Kurs tamamlandı</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
+    <string name="plan_level_complete">%1$s tamamlandı</string>
 </resources>

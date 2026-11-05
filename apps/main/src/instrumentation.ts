@@ -7,26 +7,9 @@ export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     await import("../sentry.server.config");
 
-    const [
-      { registerAiGenerationAnalytics },
-      { registerAiCallLog },
-      { registerAuthAnalytics },
-      { registerSubscriptionAnalytics },
-      { registerEvaluationRunLog },
-    ] = await Promise.all([
-      import("@zoonk/core/analytics/ai-generations"),
-      import("@zoonk/core/ai-calls/log"),
-      import("@zoonk/core/analytics/auth-events"),
-      import("@zoonk/core/analytics/subscription-events"),
-      import("@zoonk/core/evaluation-runs/log"),
-    ]);
-
-    registerAiGenerationAnalytics();
-    registerAiCallLog();
+    const { registerServerSinks } = await import("@zoonk/core/server-sinks");
     // Better Auth serves sign-ins, sign-ups and Stripe's webhooks here as well as in the API.
-    registerAuthAnalytics();
-    registerSubscriptionAnalytics();
-    registerEvaluationRunLog();
+    registerServerSinks();
   }
 
   if (process.env.NEXT_RUNTIME === "edge") {

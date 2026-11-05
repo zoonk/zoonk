@@ -76,7 +76,13 @@ async function ProfileSkeleton() {
       <SectionSkeleton label={t("Account")}>
         <div className="flex flex-col">
           <ListGroup>
-            <SettingRow description={t("How Zoonk and your buddy call you")} label={t("Name")} wide>
+            <SettingRow
+              description={t(
+                "How Zoonk and your buddy call you, and the name on your certificates.",
+              )}
+              label={t("Name")}
+              wide
+            >
               <Skeleton className="h-11 w-full rounded-lg" />
             </SettingRow>
             <SettingRow

@@ -6,7 +6,6 @@ struct PatternScreen: View {
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
-  @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<Components.Schemas.MistakePattern> = .loading
   @State private var step: Step = .intro
@@ -16,7 +15,6 @@ struct PatternScreen: View {
   @State private var isSaving = false
   @State private var saveFailed = false
   @State private var showsRule = false
-  @State private var ceremonyClosed = false
   /// One id for this drill, sent again by Try again, so a retry after a lost response counts once.
   @State private var requestId = UUID().uuidString.lowercased()
 
@@ -43,7 +41,14 @@ struct PatternScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
+    .completionMoments(
+      certificates: finished?.certificates ?? [], ceremony: finished?.ceremony?.value1
+    )
     .task(id: session.authenticatedSession) { await read() }
+  }
+
+  private var finished: Components.Schemas.MistakePatternPracticeResult? {
+    if case .result(let result) = step { result } else { nil }
   }
 
   @ViewBuilder
@@ -98,30 +103,25 @@ struct PatternScreen: View {
       case .question(let index):
         drillQuestion(pattern, index: index)
       case .result(let result):
-        if let milestone = result.ceremony?.value1, !ceremonyClosed, let ceremony = hooks.ceremony {
-          ceremony(milestone) { ceremonyClosed = true }
-        } else {
-          PracticeTaskLayout {
-            PracticeResultTitle(
-              title: LocalizedStringResource(
-                "Practice done", table: "Practice", comment: "End of a practice run."),
-              detail: result.correct == result.total
-                ? LocalizedStringResource(
-                  "You've got this rule.", table: "Practice",
-                  comment: "End of a pattern drill, all right.")
-                : LocalizedStringResource(
-                  "Knowing the rule is the first step. It gets easier each time you use it.",
-                  table: "Practice",
-                  comment: "End of a pattern drill with misses."))
-          } response: {
-            PracticeResultNumbers(
-              correct: result.correct, total: result.total, brainPower: result.brainPower,
-              day: DayResult(result))
-          } actions: {
-            doneButton
-          }
-          .navigationTitle(Text(pattern.title))
+        PracticeTaskLayout {
+          PracticeResultTitle(
+            title: LocalizedStringResource(
+              "Practice done", table: "Practice", comment: "End of a practice run."),
+            detail: result.correct == result.total
+              ? LocalizedStringResource(
+                "You've got this rule.", table: "Practice",
+                comment: "End of a pattern drill, all right.")
+              : LocalizedStringResource(
+                "Knowing the rule is the first step. It gets easier each time you use it.",
+                table: "Practice",
+                comment: "End of a pattern drill with misses."))
+          PracticeResultNumbers(
+            correct: result.correct, total: result.total, brainPower: result.brainPower,
+            day: DayResult(result))
+        } actions: {
+          doneButton
         }
+        .navigationTitle(Text(pattern.title))
       }
     }
   }

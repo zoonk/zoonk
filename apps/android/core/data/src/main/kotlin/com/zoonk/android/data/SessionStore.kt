@@ -104,6 +104,9 @@ class SessionStore(
     override val current: AuthenticatedSession?
         get() = (mutableState.value as? SessionState.SignedIn)?.session ?: restoring?.session
 
+    private val isGuest: Boolean
+        get() = (mutableState.value as? SessionState.SignedIn)?.isGuest ?: restoring?.isGuest ?: false
+
     suspend fun restore() =
         restoreMutex.withLock {
             if (didRestore) return@withLock
@@ -127,7 +130,7 @@ class SessionStore(
         obtain: suspend (current: AuthenticatedSession?) -> String,
     ): SignInResult {
         val started = current
-        val wasGuest = (mutableState.value as? SessionState.SignedIn)?.isGuest ?: restoring?.isGuest ?: false
+        val wasGuest = isGuest
         val token: String
         val account: MeResponse
         try {
@@ -153,7 +156,7 @@ class SessionStore(
                     newSecret(),
                     newSecret(),
                     current,
-                    (mutableState.value as? SessionState.SignedIn)?.isGuest == true,
+                    isGuest,
                     now(),
                 )
             credentials.writePendingApple(pending)
@@ -233,7 +236,15 @@ class SessionStore(
 
     override suspend fun expire(session: AuthenticatedSession) = leave(session, sessionEnded = true)
 
-    suspend fun forgetDeletedAccount(session: AuthenticatedSession) = leave(session, sessionEnded = false)
+    /** A request the deletion refused may have signed [session] out already; its drafts go either way. */
+    suspend fun forgetDeletedAccount(session: AuthenticatedSession) =
+        drafts.follow {
+            if (current == session) {
+                signOutLocally(sessionEnded = false, deleted = true)
+            } else {
+                DraftsChange(next = current?.accountId, forget = session.accountId)
+            }
+        }
 
     /** Keeps the session when the server can't end it, unless the server refused its token. */
     suspend fun signOut(): SignOutResult {
@@ -307,7 +318,12 @@ class SessionStore(
         }
     }
 
-    private suspend fun signOutLocally(sessionEnded: Boolean): DraftsChange {
+    /** Nobody signs in to a deleted account or a guest again, so their drafts go with them. */
+    private suspend fun signOutLocally(
+        sessionEnded: Boolean,
+        deleted: Boolean = false,
+    ): DraftsChange {
+        val forgotten = current?.accountId?.takeIf { deleted || isGuest }
         try {
             credentials.writePendingApple(null)
             credentials.write(null)
@@ -317,7 +333,7 @@ class SessionStore(
         val hadSession = current != null
         publish(SessionState.SignedOut(sessionEnded))
         if (hadSession) clearCredentialState()
-        return DraftsChange(next = null)
+        return DraftsChange(next = null, forget = forgotten)
     }
 
     private fun publish(next: SessionState) {

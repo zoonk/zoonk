@@ -6,7 +6,8 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { POSTHOG_SYSTEM_DISTINCT_ID } from "@zoonk/utils/posthog";
 import { PostHog } from "posthog-node";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { registerAiGenerationAnalytics } from "./ai-generations";
+import { registerServerSinks } from "../server-sinks";
+import { sendAiGenerationAnalytics } from "./ai-generations";
 
 const posthogClient = {
   capture: vi.fn<(event: { distinctId: string; properties: Record<string, unknown> }) => void>(),
@@ -34,7 +35,7 @@ const generation: AiGeneration = {
 };
 
 async function sendThroughRegisteredSink(sent: AiGeneration = generation) {
-  registerAiGenerationAnalytics();
+  registerServerSinks();
   await globalThis.zoonkAiGenerationSinks?.get("posthog")?.(sent);
 }
 
@@ -53,7 +54,7 @@ function sentEvent() {
   return captured;
 }
 
-describe(registerAiGenerationAnalytics, () => {
+describe(sendAiGenerationAnalytics, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(PostHog).mockImplementation(TestPostHog as never);

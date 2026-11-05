@@ -74,6 +74,45 @@ final class SettingsAPITests: XCTestCase {
     }
   }
 
+  func testAMemoryChangeThatChangedSinceIsAnAnswerNotAFailure() async throws {
+    let changedSince = APIClientFactory(
+      baseURL: URL(string: "https://api.zoonk.test")!,
+      transport: MemoryReversalTransport(
+        status: .conflict,
+        json:
+          #"{"error":{"code":"MEMORY_CHANGE_ALREADY_UNDONE","message":"One of these changes was already undone or has changed since"}}"#
+      ))
+    let unavailable = APIClientFactory(
+      baseURL: URL(string: "https://api.zoonk.test")!,
+      transport: MemoryReversalTransport(
+        status: .internalServerError,
+        json: #"{"error":{"code":"INTERNAL_ERROR","message":"Something went wrong"}}"#))
+    let change = TutorMemoryChange(
+      action: .added, fact: .init(id: "fact", statement: "Likes maps"), previous: nil)
+
+    let restored = try await SettingsAPI(clients: changedSince)
+      .restoreMemoryFact(token: "token", factId: "fact")
+    let undone = try await TutorAPI(clients: changedSince)
+      .undoMemoryChanges([change], token: "token")
+
+    XCTAssertNil(restored)
+    XCTAssertFalse(undone)
+
+    do {
+      _ = try await SettingsAPI(clients: unavailable).restoreMemoryFact(token: "token", factId: "f")
+      XCTFail("Expected a server error to fail")
+    } catch {
+      XCTAssertEqual(error as? APIError, .unavailable)
+    }
+
+    do {
+      _ = try await TutorAPI(clients: unavailable).undoMemoryChanges([change], token: "token")
+      XCTFail("Expected a server error to fail")
+    } catch {
+      XCTAssertEqual(error as? APIError, .unavailable)
+    }
+  }
+
   private func webPlusAPI(_ status: HTTPResponse.Status, _ json: String?) -> SettingsAPI {
     SettingsAPI(
       clients: APIClientFactory(
@@ -102,6 +141,25 @@ private struct WebPlusTransport: ClientTransport {
       HTTPResponse(
         status: status, headerFields: json == nil ? [:] : [.contentType: "application/json"]),
       json.map { HTTPBody($0) }
+    )
+  }
+}
+
+private struct MemoryReversalTransport: ClientTransport {
+  let status: HTTPResponse.Status
+  let json: String
+
+  func send(
+    _ request: HTTPRequest,
+    body: HTTPBody?,
+    baseURL: URL,
+    operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    XCTAssertEqual(operationID, "createMemoryChangeReversal")
+
+    return (
+      HTTPResponse(status: status, headerFields: [.contentType: "application/json"]),
+      HTTPBody(json)
     )
   }
 }

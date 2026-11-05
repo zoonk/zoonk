@@ -86,6 +86,7 @@ export function QuestionAnswer({
     return (
       <Button
         disabled={checkAgainDisabled}
+        focusableWhenDisabled
         onClick={onRetry}
         size="sm"
         type="button"
@@ -135,6 +136,7 @@ export function QuestionAnswer({
         {status === "running" && !isLocallyStreaming && (
           <Button
             disabled={checkAgainDisabled}
+            focusableWhenDisabled
             onClick={onCheckAgain}
             size="sm"
             type="button"
@@ -158,6 +160,7 @@ export function QuestionAnswer({
       {status === "running" && !isLocallyStreaming && (
         <Button
           disabled={checkAgainDisabled}
+          focusableWhenDisabled
           onClick={onCheckAgain}
           size="sm"
           type="button"

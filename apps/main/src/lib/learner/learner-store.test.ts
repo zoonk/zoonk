@@ -138,6 +138,150 @@ describe("learner store identity", () => {
   });
 });
 
+async function holdFirst() {
+  stubPage({ seeded: false });
+  const reads = stubSummaryReads();
+  const store = await loadStore();
+
+  store.ensureLearnerSummary();
+  reads[0]?.resolve(answerFor(summaryOf("first")));
+  await settle();
+
+  return { reads, store };
+}
+
+function answerOf(check: () => Promise<boolean>) {
+  const answer = vi.fn();
+  void check().then(answer);
+  return answer;
+}
+
+describe("learner a tap was made for", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("waits for a check of who holds the session, then is still the learner when it finds them again", async () => {
+    const { reads, store } = await holdFirst();
+    const stillHere = store.learnerStaying();
+
+    store.mergeLearnerSummarySeed(seedFor(summaryOf("second")));
+    const answer = answerOf(stillHere);
+    await settle();
+    expect(answer).not.toHaveBeenCalled();
+
+    reads[1]?.resolve(answerFor(summaryOf("first")));
+    await settle();
+
+    expect(answer).toHaveBeenCalledWith(true);
+  });
+
+  it.each([
+    { answer: answerFor(summaryOf("second")), found: "another account" },
+    { answer: { readAt: Date.now(), status: "visitor" as const }, found: "no one signed in" },
+  ])("is someone else once a check still out when it's asked finds $found", async ({ answer }) => {
+    const { reads, store } = await holdFirst();
+    const stillHere = store.learnerStaying();
+
+    store.mergeLearnerSummarySeed(seedFor(summaryOf("second")));
+    const asked = stillHere();
+    reads[1]?.resolve(answer);
+
+    await expect(asked).resolves.toBe(false);
+  });
+
+  it("is still the learner held before a check that couldn't answer", async () => {
+    const { reads, store } = await holdFirst();
+    const stillHere = store.learnerStaying();
+
+    store.mergeLearnerSummarySeed(seedFor(summaryOf("second")));
+    reads[1]?.reject(new Error("offline"));
+
+    await expect(stillHere()).resolves.toBe(true);
+  });
+
+  it("is whoever the browser learns holds the session when no one was known at the tap", async () => {
+    stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    const stillHere = store.learnerStaying();
+
+    vi.advanceTimersByTime(SEED_WAIT_MS);
+    const answer = answerOf(stillHere);
+    await settle();
+    expect(answer).not.toHaveBeenCalled();
+
+    reads[0]?.resolve(answerFor(summaryOf("first")));
+    await settle();
+
+    expect(store.getLearnerGeneration()).toBe(1);
+    expect(answer).toHaveBeenCalledWith(true);
+  });
+
+  it("follows the newest check when a newer one replaced the read out at the tap", async () => {
+    const { page } = stubPage({ seeded: false });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    page.seeded = true;
+    store.ensureLearnerSummary();
+    const stillHere = store.learnerStaying("first");
+
+    const answer = answerOf(stillHere);
+    vi.advanceTimersByTime(SEED_WAIT_MS);
+    reads[1]?.resolve(answerFor(summaryOf("first")));
+    await settle();
+
+    expect(answer).toHaveBeenCalledWith(true);
+  });
+
+  it("has left once the browser learns no one holds the session, when no one was known at the tap", async () => {
+    stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    const stillHere = store.learnerStaying();
+
+    vi.advanceTimersByTime(SEED_WAIT_MS);
+    reads[0]?.resolve({ readAt: Date.now(), status: "visitor" });
+
+    await expect(stillHere()).resolves.toBe(false);
+  });
+
+  it("is someone else once the browser learns another holds the session than the page was drawn for", async () => {
+    stubPage({ seeded: true });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+    const stillHere = store.learnerStaying("first");
+
+    vi.advanceTimersByTime(SEED_WAIT_MS);
+    reads[0]?.resolve(answerFor(summaryOf("second")));
+
+    await expect(stillHere()).resolves.toBe(false);
+  });
+
+  it("is the learner the page was drawn for while the browser knows no one yet", async () => {
+    stubPage({ seeded: true });
+    stubSummaryReads();
+    const store = await loadStore();
+
+    store.ensureLearnerSummary();
+
+    await expect(store.learnerStaying("first")()).resolves.toBe(true);
+  });
+});
+
 const MINUTE_MS = 60 * 1000;
 
 const SERVER_READ_AT = Date.UTC(2026, 9, 14, 23, 50);

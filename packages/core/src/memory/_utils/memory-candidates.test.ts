@@ -21,7 +21,7 @@ describe(toMemoryCandidates, () => {
     expect(
       toMemoryCandidates({
         facts: [
-          fact({ statement: "  Wants   Law  " }),
+          fact({ statement: "  Wants   Law.  " }),
           fact({ category: "learning", origin: "noticed", statement: "Mixes up signs" }),
         ],
         today: TODAY,

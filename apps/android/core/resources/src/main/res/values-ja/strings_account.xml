@@ -30,7 +30,7 @@
   "account_menu_settings": "21d08ec5f6e0424f0d3581f0fcb71ceb060e6cf07515ed39f7853fa259db3a97",
   "account_menu_subscription": "6d617322af0513eea71ac1b24b6de8204801d2e3243ab0cd2cbda44c99d434d0",
   "account_name": "a971d665052f1cea5a5fa46427cc8b6566eb89ff45ae67cdf7140b08e23e3639",
-  "account_name_description": "d36ba81861aef243f3782d3d4d39714e5d849bd7dbb40aa9d6afb971d777bae6",
+  "account_name_description": "063481ca506c3f037488f666d47cf10cd482a6289f5418f71ac4438a12399c0d",
   "account_name_too_long": "097d61277cca2dd3b6e22a84d03c4160c556afc32e9182c58178ca688e446393",
   "account_new_code_failed": "b0f17daf116254d6c8483e0f461e4fece62dd6ca671833f13e433168b30cef00",
   "account_new_code_sent": "44f922d7e20c9c4e9247d8a6300d00be3d2c50a36745487360366504bb1de7af",
@@ -99,7 +99,7 @@
     <string name="account_setup_title">何とお呼びすればいいですか？</string>
     <string name="account_setup_description">名前とユーザー名は後からプロフィールで変更できます。</string>
     <string name="account_name">名前</string>
-    <string name="account_name_description">Zoonkや相棒が呼びかけるときの名前</string>
+    <string name="account_name_description">Zoonkや相棒が呼びかけるときの名前で、証明書にも記載されます。</string>
     <string name="account_name_too_long">150文字以内で入力してください。</string>
     <string name="account_username">ユーザー名</string>
     <!-- %1$s is a username. -->

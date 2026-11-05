@@ -163,12 +163,16 @@ function toResult({
 type LiveCall = { instructions: string; script: LiveCallScript };
 
 /** Null when the conversation can't be called; otherwise builds its call, new or continued. */
-export function getLiveCallBuilder(
+export function getLiveCallBuilder({
+  learnerNote,
+  row,
+}: {
+  learnerNote?: string;
   row: Pick<
     LanguageConversation,
     "kind" | "language" | "level" | "scenario" | "status" | "targetLanguage"
-  >,
-): ((continuesCall: boolean) => LiveCall) | null {
+  >;
+}): ((continuesCall: boolean) => LiveCall) | null {
   const data = readSavedScenario(row);
   const role = data ? toLiveRole(data) : null;
 
@@ -179,6 +183,7 @@ export function getLiveCallBuilder(
   const params = {
     ...role,
     learnerLanguage: row.language,
+    learnerNote,
     level: row.level,
     scenario: data,
     targetLanguage: row.targetLanguage,

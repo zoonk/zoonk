@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import path from "node:path";
-import { MAX_BOOTED_SIMULATORS, leaseSimulator, releaseLease } from "./leases.mts";
+import { BOOT_LIMIT, leaseSimulator, releaseLease } from "./leases.mts";
 import {
   type DeviceFamily,
   type Simulator,
@@ -113,8 +113,8 @@ async function runSimulator(family: DeviceFamily) {
 
   const { lease, turn } = await leaseSimulator({
     describeWait: (booted) =>
-      `Waiting for a free ${family} simulator, with at most ${MAX_BOOTED_SIMULATORS} booted at ` +
-      `once (booted now: ${booted.map(({ name }) => name).join(", ")}).\n`,
+      `Waiting for a free ${family} simulator, with ${BOOT_LIMIT}. Booted now: ` +
+      `${booted.map(({ name }) => name).join(", ")}.\n`,
     getCandidates: () => getNewestSimulators({ catalog: listSimulators(), family }).devices,
     isTestRun: false,
   });

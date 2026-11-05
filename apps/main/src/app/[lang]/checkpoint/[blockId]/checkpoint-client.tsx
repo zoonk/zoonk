@@ -56,8 +56,8 @@ export function CheckpointClient({
       buddy={buddy}
       checkpoint={checkpoint}
       hrefs={hrefs}
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}
       key={checkpoint.questions.map((question) => question.itemId).join(",")}
     />

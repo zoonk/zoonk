@@ -73,6 +73,7 @@ function LoginWithProvider({
     <Button
       className={cn("w-full", className)}
       disabled={isLoading}
+      focusableWhenDisabled
       size="lg"
       variant="outline"
       {...props}

@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.session
 
-import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -115,17 +114,11 @@ class StudyOpener(
             }
         }
 
-    /** A mission card's block, which opens only while it's still free to start; one gone meanwhile opens nothing either. */
+    /** A block a mission card or a buddy answer links, which opens only while it's still free to start. */
     suspend fun openMission(blockId: UUID): MutationResult<AppRoute?> =
         cache.mutate(invalidating = OPENING) { session ->
             val target = StudyBlockOpeningTarget.MissionWrapper(StudyBlockOpeningMission(blockId, StudyBlockOpeningMission.Kind.MISSION))
-            val opening =
-                try {
-                    openBlock(session, target)
-                } catch (e: ApiException) {
-                    if (e.error == ApiError.NotFound) return@mutate null else throw e
-                }
-            follow(session, opening)
+            follow(session, openBlock(session, target))
         }
 
     override suspend fun continueSession(sessionId: UUID): MutationResult<AppRoute> =

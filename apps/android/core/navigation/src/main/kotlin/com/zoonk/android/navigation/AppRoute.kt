@@ -59,6 +59,15 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data object CompletedLessons : AppRoute
 
+    @Serializable
+    data object Certificates : AppRoute
+
+    /** One of the learner's certificates by its code, as main's `/c/<code>` shows it to its owner. */
+    @Serializable
+    data class Certificate(
+        val code: String,
+    ) : AppRoute
+
     /** [task] opens that task's row, as main's `?task=` does. */
     @Serializable
     data class Speaking(
@@ -348,7 +357,7 @@ val AppRoute.presentation: Presentation
 
             is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit, AppRoute.Exam,
             AppRoute.MockChooser, is AppRoute.MindMaps, AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking,
-            AppRoute.EarlierQuestions,
+            AppRoute.EarlierQuestions, AppRoute.Certificates, is AppRoute.Certificate,
             -> Presentation.Push
 
             AppRoute.Settings, AppRoute.Preferences, AppRoute.Memory, AppRoute.Profile,
@@ -391,7 +400,7 @@ val AppRoute.requirement: Requirement
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook,
             is AppRoute.MistakePractice, is AppRoute.Pattern, is AppRoute.Challenge,
             is AppRoute.Checkpoint, is AppRoute.Essay, is AppRoute.Mock, is AppRoute.Pronunciation,
-            is AppRoute.Conversation, is AppRoute.Explain,
+            is AppRoute.Conversation, is AppRoute.Explain, AppRoute.Certificates, is AppRoute.Certificate,
             -> Requirement.Account
 
             else -> Requirement.None

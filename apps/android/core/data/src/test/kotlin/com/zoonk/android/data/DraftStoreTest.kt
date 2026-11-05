@@ -1,6 +1,8 @@
 package com.zoonk.android.data
 
 import androidx.datastore.core.Serializer
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -11,6 +13,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -22,10 +25,12 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
+import kotlin.coroutines.CoroutineContext
 
 @Serializable
 data class EssayDraft(
@@ -70,7 +75,7 @@ class DraftStoreTest {
             late.save(EssayDraft("Ana's late save"))
             advanceUntilIdle()
 
-            assertNull(entries(ANA))
+            assertEquals("""{"entries":{"essay:1":{"text":"Ana's first draft"}}}""", entries(ANA))
             assertEquals("""{"entries":{"essay:1":{"text":"Bia's essay"}}}""", entries(BIA))
             assertNull(essay.value.first())
         }
@@ -86,6 +91,68 @@ class DraftStoreTest {
             sessions.signIn { "token-a2" }
             advanceUntilIdle()
             assertEquals("""{"entries":{"essay:1":{"text":"kept"}}}""", entries(ANA))
+        }
+
+    @Test
+    fun aLearnerSignedOutOrSwitchedAwayFindsTheirDraftOnSigningInAgain() =
+        runTest {
+            val drafts = drafts()
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn { "token-a" }
+            drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).saveDebounced(EssayDraft("typed"))
+            advanceTimeBy(100)
+            sessions.signOut()
+            sessions.signIn { "token-a2" }
+            sessions.expire(sessions.current!!)
+            sessions.signIn { "token-b" }
+            sessions.signIn { "token-a" }
+            assertEquals(EssayDraft("typed"), drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).value.first())
+        }
+
+    @Test
+    fun aSaveAlreadyWritingWhenTheLearnerSignsOutLands() =
+        runTest {
+            val io = HeldDispatcher(StandardTestDispatcher(testScheduler))
+            val drafts = DraftStore(folder.root, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)), io = io)
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn { "token-a" }
+            val essay = drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer())
+            essay.save(EssayDraft("earlier"))
+            essay.saveDebounced(EssayDraft("latest"))
+            runCurrent()
+            io.held = true
+            advanceTimeBy(500)
+            runCurrent()
+            val leaving = launch { sessions.signOut() }
+            runCurrent()
+            io.release()
+            leaving.join()
+            sessions.signIn { "token-a" }
+            assertEquals(EssayDraft("latest"), drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).value.first())
+        }
+
+    @Test
+    fun aScreensFlushCancelledMidwayStillLandsTheSave() =
+        runTest {
+            val io = HeldDispatcher(StandardTestDispatcher(testScheduler))
+            val drafts = DraftStore(folder.root, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)), io = io)
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn { "token-a" }
+            val essay = drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer())
+            essay.save(EssayDraft("earlier"))
+            essay.saveDebounced(EssayDraft("latest"))
+            runCurrent()
+            io.held = true
+            advanceTimeBy(500)
+            runCurrent()
+            val stopping = launch { essay.flush() }
+            runCurrent()
+            stopping.cancel()
+            io.release()
+            advanceUntilIdle()
+            sessions.signOut()
+            sessions.signIn { "token-a" }
+            assertEquals(EssayDraft("latest"), drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).value.first())
         }
 
     @Test
@@ -134,13 +201,11 @@ class DraftStoreTest {
             sessions.signIn { "token-a" }
             drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).save(EssayDraft("Ana's"))
             sessions.signIn { "token-b" }
-            advanceUntilIdle()
-            assertNull(entries(ANA))
             assertNull(drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).value.first())
         }
 
     @Test
-    fun aSaveAfterSignOutIsDroppedAndRecreatesNoFile() =
+    fun aSaveAfterSignOutIsDropped() =
         runTest {
             val drafts = drafts()
             val sessions = sessions(drafts).apply { restore() }
@@ -150,6 +215,26 @@ class DraftStoreTest {
             sessions.signOut()
             essay.save(EssayDraft("after sign-out"))
             essay.saveDebounced(EssayDraft("debounced after sign-out"))
+            advanceUntilIdle()
+            assertEquals("""{"entries":{"essay:1":{"text":"before"}}}""", entries(ANA))
+        }
+
+    @Test
+    fun aLeavingGuestsAndADeletedAccountsDraftsAreDeleted() =
+        runTest {
+            val drafts = drafts()
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn(asGuest = true) { "guest" }
+            drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).save(EssayDraft("guest's"))
+            sessions.signOut()
+            sessions.signIn { "token-a" }
+            drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer()).save(EssayDraft("Ana's"))
+            sessions.forgetDeletedAccount(sessions.current!!)
+            sessions.signIn { "token-b" }
+            val bia = sessions.current!!
+            drafts.open(bia, "essay:1", EssayDraft.serializer()).save(EssayDraft("Bia's"))
+            sessions.expire(bia)
+            sessions.forgetDeletedAccount(bia)
             advanceUntilIdle()
             assertTrue(
                 folder.root
@@ -204,6 +289,44 @@ class DraftStoreTest {
         }
 
     @Test
+    fun aDraftTheDiskRefusesStaysOnScreenAndTheNextSaveLands() =
+        runTest {
+            var full = true
+            val disk =
+                object : Serializer<LearnerDrafts> {
+                    private val wrapped = DraftStore.LearnerDraftsSerializer
+                    override val defaultValue = wrapped.defaultValue
+
+                    override suspend fun readFrom(input: InputStream) = wrapped.readFrom(input)
+
+                    override suspend fun writeTo(
+                        t: LearnerDrafts,
+                        output: OutputStream,
+                    ) {
+                        if (full) throw IOException("No space left on device")
+                        wrapped.writeTo(t, output)
+                    }
+                }
+            val crashes = mutableListOf<Throwable>()
+            val app =
+                CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler) + CoroutineExceptionHandler { _, e -> crashes += e })
+            val drafts = DraftStore(folder.root, app, io = StandardTestDispatcher(testScheduler), serializer = disk)
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn { "token-a" }
+            val essay = drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer())
+            essay.save(EssayDraft("refused"))
+            essay.saveDebounced(EssayDraft("refused later"))
+            advanceTimeBy(100)
+            essay.flush()
+            essay.saveDebounced(EssayDraft("refused by the timer"))
+            advanceUntilIdle()
+            full = false
+            essay.save(EssayDraft("written"))
+            assertEquals(emptyList<Throwable>(), crashes)
+            assertEquals(EssayDraft("written"), essay.value.first())
+        }
+
+    @Test
     fun aDraftWritesItsFileOffTheMainThread() =
         runTest {
             val mainThread = Thread.currentThread()
@@ -242,4 +365,24 @@ class DraftStoreTest {
             assertFalse(mainThread in fileThreads)
             assertTrue(Json.parseToJsonElement(entries(ANA) ?: "{}").toString().isNotEmpty())
         }
+
+    private class HeldDispatcher(
+        private val next: CoroutineDispatcher,
+    ) : CoroutineDispatcher() {
+        var held = false
+        private val queued = mutableListOf<Pair<CoroutineContext, Runnable>>()
+
+        override fun dispatch(
+            context: CoroutineContext,
+            block: Runnable,
+        ) {
+            if (held) queued += context to block else next.dispatch(context, block)
+        }
+
+        fun release() {
+            held = false
+            queued.forEach { (context, block) -> next.dispatch(context, block) }
+            queued.clear()
+        }
+    }
 }

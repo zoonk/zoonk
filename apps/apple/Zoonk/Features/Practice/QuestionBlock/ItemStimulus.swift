@@ -361,12 +361,12 @@ private struct ListeningPlayerView: View {
       }
 
       if recordings.failed.contains(playsKey) {
-        Text(
-          "The recording didn't load. Check your connection and try again.", tableName: "Practice",
-          comment: "Shown when a set's recording fails to load."
+        FailureLine(
+          message: LocalizedStringResource(
+            "The recording didn't load. Check your connection and try again.",
+            table: "Practice", comment: "Shown when a set's recording fails to load.")
         )
         .font(.footnote)
-        .foregroundStyle(.destructive)
       }
 
       if let questions, !questions.prompts.isEmpty {

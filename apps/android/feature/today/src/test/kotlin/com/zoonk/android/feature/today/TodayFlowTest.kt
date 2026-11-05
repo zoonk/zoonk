@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -27,6 +26,7 @@ import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.OpenStudyDayRequest
@@ -225,7 +225,7 @@ class TodayFlowTest {
         file.outputStream().use {
             rule
                 .onRoot()
-                .captureToImage()
+                .captureRender()
                 .asAndroidBitmap()
                 .compress(Bitmap.CompressFormat.PNG, 100, it)
         }
