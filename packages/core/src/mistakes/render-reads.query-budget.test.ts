@@ -1,10 +1,6 @@
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import {
-  assertReadBudget,
-  countDatabaseRows,
-  countDatabaseStatements,
-} from "@zoonk/testing/statement-counter";
+import { countDatabaseRows, countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
@@ -12,7 +8,7 @@ import { getMistakePractice } from "./get-mistake-practice";
 import { listCurrentUserMistakes } from "./list-current-user-mistakes";
 
 describe("mistake read budgets", () => {
-  it.each(["practice", "list"] as const)("keeps the read budget for %s", async (name) => {
+  it.each(["practice", "list"] as const)("reads %s without writing", async (name) => {
     const user = await userFixture();
 
     const { goal, skills, items } = await learnerGoalFixture({
@@ -37,7 +33,7 @@ describe("mistake read budgets", () => {
         : listCurrentUserMistakes({ goalId: goal.id, limit: 50, offset: 0, status: "open" }),
     );
 
-    assertReadBudget(counts, name === "practice" ? 24 : 26);
+    expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
 
