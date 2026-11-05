@@ -202,7 +202,7 @@ export function LessonStage({
             />
           )}
 
-          {screen.struggleOffer && <AskBuddyOffer reason="misses" />}
+          {screen.struggleOffer && <AskBuddyOffer />}
         </PlayerContentFrame>
       )}
 

@@ -10,7 +10,7 @@ import { LessonStepPicture, useIsExploredPictureLost } from "../_components/less
 import { LessonRichText } from "../_components/lesson-rich-text";
 import { LESSON_BODY_CLASS } from "../_components/lesson-step-text";
 import { CornerIcon, MarkedText } from "../_components/marked-text";
-import { StrugglePauseOffer } from "../controls/ask-buddy-offer";
+import { DidntGetItButton } from "../controls/didnt-get-it-button";
 import { ExampleLine } from "./example-line";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
@@ -46,9 +46,8 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
           <ActivityExplore content={content.explore} labelId={ideaId} />
         </>
       )}
-      <StrugglePauseOffer step={step} />
-
       {content.exampleLineSlot && <ExampleLine key={step.id} stepId={step.id} />}
+      <DidntGetItButton stepId={step.id} />
     </PlayerReadScene>
   );
 }

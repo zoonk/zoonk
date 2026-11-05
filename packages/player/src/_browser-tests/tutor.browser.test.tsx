@@ -8,13 +8,11 @@ import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import {
   TUTOR_ANSWER,
-  nextFrames,
   stubTutorApi,
   tutorAnswerResponse,
   tutorAnswerStream,
 } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
-import { getStrugglePauseMs } from "../lesson/_utils/lesson-struggle";
 import { type PlayableLibraryStep } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
@@ -1222,6 +1220,33 @@ describe("the learner's buddy", () => {
     });
   });
 
+  it('explains the screen more simply in one tap on "I didn\'t get this", then steps aside', async () => {
+    const reading = teachingStep("explanation");
+    const { api, lesson } = lessonWithTutor({ steps: [reading] });
+    api.next("answer", () => Promise.resolve(tutorAnswerResponse(TUTOR_ANSWER)));
+    const track = vi.fn();
+    renderLessonPlayer({ lesson, track, tutor: buildTutor() });
+
+    const didntGetIt = page.getByRole("button", { name: "I didn't get this" });
+    await didntGetIt.click();
+
+    await expect.element(page.getByRole("dialog").getByText(TUTOR_ANSWER)).toBeVisible();
+    await expect.element(didntGetIt).not.toBeInTheDocument();
+
+    expect(api.inputs).toStrictEqual([
+      expect.objectContaining({
+        context: expect.objectContaining({ kind: "step", stepId: reading.id }),
+        question: "Explain it more simply",
+        suggestion: "simpler",
+      }),
+    ]);
+
+    expect(track).toHaveBeenCalledWith({
+      name: "Tutor Opened",
+      properties: { lesson_id: lesson.id, source: "didnt_understand", step_id: reading.id },
+    });
+  });
+
   it("shows a tapped suggestion as sent, with the buddy thinking, before the server saves it", async () => {
     const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
     const saveQuestion = api.hold("create");
@@ -1587,37 +1612,5 @@ describe("docked beside the lesson", () => {
 
     await lessonAside().getByRole("button", { name: "1 question" }).click();
     await expect.element(dockedConversation().getByText("Why a cloud?")).toBeVisible();
-  });
-
-  it("offers help after a long pause only on a screen the learner hasn't asked the buddy about", async () => {
-    freezeClock();
-    const reading = teachingStep("explanation");
-    const { lesson } = lessonWithTutor({ steps: [reading, teachingStep("explanation")] });
-    const pauseMs = getStrugglePauseMs(reading) ?? 0;
-    const offer = page.getByText("Taking your time? Pip can explain it another way.");
-
-    const pause = async () => {
-      await vi.advanceTimersByTimeAsync(pauseMs);
-      await nextFrames();
-    };
-
-    playLesson({ lesson });
-    await asideComposer().fill("Why a cloud?");
-    await press("Enter");
-    await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
-
-    await pause();
-    await expect.element(offer).not.toBeInTheDocument();
-
-    await page.getByRole("button", { name: /^Next/u }).click();
-    await page.getByRole("button", { name: "Previous screen" }).click();
-    await expect.element(lessonAside().getByRole("button", { name: "1 question" })).toBeVisible();
-
-    await pause();
-    await expect.element(offer).not.toBeInTheDocument();
-
-    await page.getByRole("button", { name: /^Next/u }).click();
-    await pause();
-    await expect.element(offer).toBeVisible();
   });
 });

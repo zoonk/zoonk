@@ -23,7 +23,10 @@ export type TutorBuddy = {
   identity: TutorIdentity;
   missed: boolean;
   navigation: LessonQuestionNavigation;
+  /** Fills the composer with the suggestion, for the learner to send. */
   open: (suggestion?: LessonScreenSuggestion) => void;
+  /** Sends the suggestion at once, so the buddy starts answering as it opens. */
+  openAndAsk: (suggestion: LessonScreenSuggestion) => void;
   suggests: boolean;
 };
 
@@ -71,6 +74,12 @@ export function TutorBuddyProvider({
       return null;
     }
 
+    const show = (suggestion?: LessonScreenSuggestion) => {
+      setShown({ presentation: asideShown ? "dock" : "drawer", visit });
+      open(context, { keepDraft: asideShown });
+      return suggestions.find(({ id }) => id === suggestion);
+    };
+
     return {
       ask: ({ question, suggestion }) => {
         if (!docked || !isSameDraftContext({ current: state.context, next: context })) {
@@ -89,12 +98,17 @@ export function TutorBuddyProvider({
       missed,
       navigation,
       open: (suggestion) => {
-        setShown({ presentation: asideShown ? "dock" : "drawer", visit });
-        open(context, { keepDraft: asideShown });
-        const offered = suggestions.find(({ id }) => id === suggestion);
+        const offered = show(suggestion);
 
         if (offered) {
           chooseSuggestion({ question: offered.label, suggestion: offered.id });
+        }
+      },
+      openAndAsk: (suggestion) => {
+        const offered = show(suggestion);
+
+        if (offered) {
+          void askAbout({ context, question: offered.label, suggestion: offered.id });
         }
       },
       suggests: suggests && state.questions.length === 0,

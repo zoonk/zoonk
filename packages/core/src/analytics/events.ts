@@ -107,6 +107,7 @@ type LearningEvents = {
     questions: number;
   };
   "Pronunciation Tip Shown": { skill_id: string | null; target_language: string };
+  "Tutor Opened": { lesson_id: string; source: "didnt_understand"; step_id: string };
   /**
    * Sent by the app once per connection, best effort, however it ended. A reply gap runs from the
    * learner's microphone going quiet to the next character transcript arriving: a proxy for the

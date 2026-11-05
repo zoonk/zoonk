@@ -1,4 +1,3 @@
-import { countWords } from "@zoonk/utils/string";
 import { type LessonPlayerState, getCurrentStep } from "../lesson-player-state";
 import { type PlayableLibraryStep } from "../lesson-player-types";
 
@@ -10,14 +9,6 @@ export type ExplainingStep = Extract<
 >;
 
 const MISSES_TO_STRUGGLE = 2;
-
-const MIN_STRUGGLE_PAUSE_MS = 45_000;
-
-const READING_WORDS_PER_MINUTE = 150;
-
-const PAUSE_READING_FACTOR = 3;
-
-const MS_PER_MINUTE = 60_000;
 
 function isExplaining(step: PlayableLibraryStep | undefined): step is ExplainingStep {
   return step?.kind === "explanation" || step?.kind === "workedExample";
@@ -63,24 +54,4 @@ export function getStruggleOffer(state: LessonPlayerState): ExplainingStep | nul
   }
 
   return findExplanationOf({ miss: last, state });
-}
-
-function getReadingText(step: ExplainingStep): string {
-  if (step.kind === "explanation") {
-    return `${step.content.title ?? ""} ${step.content.text}`;
-  }
-
-  const { problem, result, steps } = step.content;
-  return [problem, ...steps.map((item) => item.text), result].join(" ");
-}
-
-export function getStrugglePauseMs(step: PlayableLibraryStep): number | null {
-  if (!isExplaining(step)) {
-    return null;
-  }
-
-  const words = countWords(getReadingText(step));
-  const readingMs = (words / READING_WORDS_PER_MINUTE) * MS_PER_MINUTE;
-
-  return Math.max(MIN_STRUGGLE_PAUSE_MS, Math.round(readingMs * PAUSE_READING_FACTOR));
 }

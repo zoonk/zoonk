@@ -8,7 +8,7 @@ import {
 import { lessonPlayerReducer } from "../lesson-player-reducer";
 import { type LessonPlayerAction, createInitialState } from "../lesson-player-state";
 import { type PlayableLibraryStep } from "../lesson-player-types";
-import { getStruggleOffer, getStrugglePauseMs } from "./lesson-struggle";
+import { getStruggleOffer } from "./lesson-struggle";
 
 function withSkill(step: PlayableLibraryStep, skillId: string): PlayableLibraryStep {
   return { ...step, skillId };
@@ -103,21 +103,5 @@ describe(getStruggleOffer, () => {
     );
 
     expect(getStruggleOffer(noExplanation)).toBeNull();
-  });
-});
-
-describe(getStrugglePauseMs, () => {
-  it("waits three times the reading time, never less than 45 seconds, and only on explanations", () => {
-    const words = Array.from({ length: 300 }, () => "word").join(" ");
-
-    const long: PlayableLibraryStep = {
-      ...explanationStep("long"),
-      content: { text: words, title: "Long" },
-      kind: "explanation",
-    };
-
-    expect(getStrugglePauseMs(explanationStep("short"))).toBe(45_000);
-    expect(getStrugglePauseMs(long)).toBe(361_200);
-    expect(getStrugglePauseMs(checkStep("check"))).toBeNull();
   });
 });

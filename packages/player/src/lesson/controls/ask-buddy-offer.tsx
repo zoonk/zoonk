@@ -4,11 +4,8 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useTutorBuddy } from "../../questions/tutor-buddy";
-import { type ExplainingStep } from "../_utils/lesson-struggle";
-import { useLessonPlayer } from "../lesson-player-context";
-import { useStrugglePause } from "./use-struggle-pause";
 
-export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
+export function AskBuddyOffer() {
   const t = useExtracted();
   const buddy = useTutorBuddy();
   const [dismissed, setDismissed] = useState(false);
@@ -25,11 +22,7 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
       className="border-border flex flex-col gap-2 border-t pt-3 text-sm"
       data-slot="lesson-ask-buddy-offer"
     >
-      <p>
-        {reason === "misses"
-          ? t("This one is tricky. {name} can explain it another way.", { name })
-          : t("Taking your time? {name} can explain it another way.", { name })}
-      </p>
+      <p>{t("This one is tricky. {name} can explain it another way.", { name })}</p>
 
       <div className="flex flex-wrap gap-2">
         <Button
@@ -50,11 +43,4 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
       </div>
     </div>
   );
-}
-
-export function StrugglePauseOffer({ step }: { step: ExplainingStep }) {
-  const { screen } = useLessonPlayer();
-  const isStuck = useStrugglePause(step);
-
-  return isStuck && !screen.quickCheck ? <AskBuddyOffer reason="pause" /> : null;
 }

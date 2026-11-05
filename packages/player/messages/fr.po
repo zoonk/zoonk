@@ -3203,11 +3203,6 @@ msgid "This one is tricky. {name} can explain it another way."
 msgstr "C’est un peu difficile. {name} peut te l’expliquer autrement."
 
 #: src/lesson/controls/ask-buddy-offer.tsx
-msgctxt "zd4MuO"
-msgid "Taking your time? {name} can explain it another way."
-msgstr "Tu prends ton temps ? {name} peut te l’expliquer autrement."
-
-#: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
@@ -3218,6 +3213,12 @@ msgstr "Demander à {name}"
 msgctxt "c-JYNI"
 msgid "No thanks"
 msgstr "Non merci"
+
+#. Quiet button under a lesson's explanation, in the learner's own words when they didn't understand it, as short as they'd say it (Portuguese: 'Não entendi'). Tapping it asks their study buddy to explain the screen more simply.
+#: src/lesson/controls/didnt-get-it-button.tsx
+msgctxt "hmESnc"
+msgid "I didn't get this"
+msgstr "Je n’ai pas compris"
 
 #. Button the learner taps to see the lesson's explanation before answering this question.
 #: src/lesson/controls/explain-first-button.tsx
