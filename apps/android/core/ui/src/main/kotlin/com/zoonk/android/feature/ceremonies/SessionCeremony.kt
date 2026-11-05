@@ -12,6 +12,7 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
 import com.zoonk.api.models.Buddy
 import com.zoonk.api.models.Milestone
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -36,11 +37,14 @@ fun SessionCeremony(
         onWearGlasses =
             learnerBuddy?.let { buddy ->
                 { glasses ->
-                    app.learningProfile.setBuddy(
-                        kind = Buddy.Kind.entries.first { it.value == buddy.kind.value },
-                        glasses = Buddy.Glasses.entries.first { it.value == glasses.key },
-                        name = buddy.name,
-                    )
+                    app.scope
+                        .async {
+                            app.learningProfile.setBuddy(
+                                kind = Buddy.Kind.entries.first { it.value == buddy.kind.value },
+                                glasses = Buddy.Glasses.entries.first { it.value == glasses.key },
+                                name = buddy.name,
+                            )
+                        }.await()
                 }
             },
     )

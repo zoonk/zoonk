@@ -655,6 +655,7 @@ fun PlusBenefits(modifier: Modifier = Modifier) {
                 R.string.subscription_benefit_mocks,
                 R.string.subscription_benefit_buddy,
                 R.string.subscription_benefit_calls,
+                R.string.subscription_benefit_certificates,
             ).map { stringResource(it) },
         modifier = modifier,
     )

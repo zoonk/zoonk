@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { certificateFixture } from "@zoonk/testing/fixtures/certificates";
 import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
@@ -7,6 +8,7 @@ import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { markCertificateShown } from "../certificates/mark-certificate-shown";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   DAY_MS,
@@ -311,6 +313,7 @@ describe("ending a session", () => {
       ["prepareSession", today.session.id],
       ["rememberSession", today.session.id],
       ["checkDailyInsight", "2026-09-30"],
+      ["settleSessionDay", first?.id],
     ]);
 
     vi.setSystemTime(SESSION_NOW.getTime() + 60_000);
@@ -319,6 +322,18 @@ describe("ending a session", () => {
     await expect(
       prisma.followUp.findMany({ orderBy: { kind: "asc" }, where: { userId: user.id } }),
     ).resolves.toStrictEqual(owed);
+  });
+
+  it("brings back a certificate whose moment was lost, until the learner closes it", async () => {
+    const { session, user } = await setup();
+    const certificate = await certificateFixture({ userId: user.id });
+    const before = await getStudySessionSummary({ input: {}, sessionId: session.id });
+
+    await markCertificateShown(certificate.code);
+    const after = await getStudySessionSummary({ input: {}, sessionId: session.id });
+
+    expect(before).toMatchObject({ summary: { certificates: [{ code: certificate.code }] } });
+    expect(after).toMatchObject({ summary: { certificates: [] } });
   });
 
   it("owes the session's preparation when a block starts, and nothing again when it resumes", async () => {

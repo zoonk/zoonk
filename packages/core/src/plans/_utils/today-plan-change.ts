@@ -2,13 +2,14 @@ import "server-only";
 import { type Goal, type PlanChange, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { type PlanChangeView } from "../plan-view-contract";
 import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
 import { asksAboutAutomaticChange } from "./automatic-plan-change";
 import { foldChangeAreas } from "./fold-part-areas";
 import { loadGraphPartAreas } from "./part-areas";
 import { parsePlanChangePayload } from "./plan-change-payload";
-import { changeGoalSelect, toPlanChangeView } from "./plan-change-view";
+import { toPlanChangeView } from "./plan-change-view";
 import { isDateReached } from "./plan-end";
 
 export const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
@@ -84,18 +85,7 @@ export async function loadTodayPlanChange({
   now: Date;
   timeZone?: string | null;
 }): Promise<TodayPlanChangeView | null> {
-  const goalId = goal.id;
-
-  const plan = await prisma.plan.findUnique({
-    select: {
-      goal: { select: { ...changeGoalSelect, examBlueprintId: true } },
-      graph: true,
-      id: true,
-      settings: true,
-      version: true,
-    },
-    where: { goalId },
-  });
+  const plan = await readSavedPlan(goal.userId, goal.id);
 
   const dateReached =
     plan !== null &&
@@ -115,10 +105,10 @@ export async function loadTodayPlanChange({
 
   const [partAreas, view] = await Promise.all([
     loadGraphPartAreas({
-      examBlueprintId: plan.goal.examBlueprintId,
+      examBlueprintId: goal.examBlueprintId,
       graph: parsePlanGraph(plan.graph),
     }),
-    toPlanChangeView({ change, goal: plan.goal, now, planVersion: plan.version, timeZone }),
+    toPlanChangeView({ change, goal, now, planVersion: plan.version, timeZone }),
   ]);
 
   return foldChangeAreas({ change: { ...view, effect }, partAreas });

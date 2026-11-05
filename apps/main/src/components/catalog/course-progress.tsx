@@ -9,6 +9,7 @@ import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
 import { StatusMark } from "@zoonk/learn/status-mark";
+import { Button } from "@zoonk/ui/components/button";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
@@ -173,15 +174,16 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
   };
 
   return (
-    <button
+    <Button
       aria-busy={isPending}
       className={getStartControlClassName()}
       disabled={isPending}
+      focusableWhenDisabled
       onClick={continueGoal}
-      type="button"
+      size="lg"
     >
       {label}
-    </button>
+    </Button>
   );
 }
 

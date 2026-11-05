@@ -9,6 +9,7 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { type MemorySource } from "../memory-contract";
 import { forgetExampleLines } from "./forget-example-lines";
 import { isMemoryEnabled } from "./memory-access";
+import { LEARNER_CONFIDENCE } from "./memory-candidates";
 
 const MAX_HISTORY_DEPTH = 50;
 
@@ -58,8 +59,18 @@ export async function addMemoryFact({
 }
 
 /**
- * Returns null, writing nothing, when memory is off or another update already replaced or removed
- * the old fact.
+ * In a call the learner may be playing a part, so a call never overrides their word elsewhere: it
+ * replaces or removes only what another call said and they haven't corrected.
+ */
+function changeableBy(source: MemorySource | null | undefined) {
+  return source?.kind === "call"
+    ? { confidence: { not: LEARNER_CONFIDENCE }, sourceRef: { equals: "call", path: ["kind"] } }
+    : {};
+}
+
+/**
+ * Returns null, writing nothing, when memory is off, when another update already replaced or
+ * removed the old fact, or when a call may not change it.
  */
 export async function replaceMemoryFact({
   fact,
@@ -75,9 +86,14 @@ export async function replaceMemoryFact({
       return unchanged(null);
     }
 
-    const existing = await transaction.memoryFact.findFirst({
-      where: { id: previousId, status: "active", userId },
-    });
+    const where = {
+      ...changeableBy(fact.source),
+      id: previousId,
+      status: "active" as const,
+      userId,
+    };
+
+    const existing = await transaction.memoryFact.findFirst({ where });
 
     if (!existing) {
       return unchanged(null);
@@ -87,7 +103,7 @@ export async function replaceMemoryFact({
 
     const [previous] = await transaction.memoryFact.updateManyAndReturn({
       data: { status: "superseded", supersededById: created.id },
-      where: { id: previousId, status: "active", userId },
+      where,
     });
 
     if (!previous) {
@@ -126,9 +142,11 @@ export async function findHistoryIds({
 }
 
 export async function removeMemoryFact({
+  by,
   factId,
   userId,
 }: {
+  by?: MemorySource | null;
   factId: string;
   userId: string;
 }): Promise<MemoryFact | null> {
@@ -137,7 +155,7 @@ export async function removeMemoryFact({
 
     const [removed] = await transaction.memoryFact.updateManyAndReturn({
       data: { deletedAt, status: "deleted" },
-      where: { id: factId, status: "active", userId },
+      where: { ...changeableBy(by), id: factId, status: "active", userId },
     });
 
     if (!removed) {

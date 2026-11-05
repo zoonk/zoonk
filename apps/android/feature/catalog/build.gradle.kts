@@ -16,5 +16,4 @@ dependencies {
     implementation(libs.coil.compose)
 
     testImplementation(testFixtures(project(":feature:account")))
-    testImplementation(libs.androidx.window.testing)
 }

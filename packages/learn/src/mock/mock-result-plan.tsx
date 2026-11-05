@@ -227,11 +227,23 @@ export function MockPlanChange({
 
       {!change.settled && (
         <div className="flex flex-wrap gap-2">
-          <Button disabled={change.isPending} onClick={change.apply} size="sm" variant="outline">
+          <Button
+            disabled={change.isPending}
+            focusableWhenDisabled
+            onClick={change.apply}
+            size="sm"
+            variant="outline"
+          >
             {change.isPending && <Spinner aria-hidden="true" />}
             {t("Apply")}
           </Button>
-          <Button disabled={change.isPending} onClick={change.keep} size="sm" variant="ghost">
+          <Button
+            disabled={change.isPending}
+            focusableWhenDisabled
+            onClick={change.keep}
+            size="sm"
+            variant="ghost"
+          >
             {t("Keep my plan")}
           </Button>
         </div>

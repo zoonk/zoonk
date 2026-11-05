@@ -217,6 +217,7 @@
   "plan_continues_on": "ebb1c049a0f5c4f4e06431fd00bcedc6bef8b20ad309709929847406b322e4ee",
   "plan_continues_today": "086db5dd065d03a9a281dbca295d49156e2f7cb752ee8b7053f0db496841f493",
   "plan_couldnt_check_changes": "184c191dc12aee2ad912d2d0d523e81fb0f2a29a856d9b20bab3403b596a8e5d",
+  "plan_course_complete": "17a82e5f4c466d30e57cc744b5212199aa390ba6c2d93e736f1882754422b8fb",
   "plan_coverage": "a3172cb7e164b0b5de580b69bdac15af99759930d41a8fde5ed8a5ba2e2d6142",
   "plan_coverage_caption": "e4ec268b9076094c9705b0a1a3967195c9d00ce7498fded862f90d69f1537db8",
   "plan_covered_not_enough": "c58861c57254c2f28f5115ecf89b779893ec6b07cc8014de204be6f000c91863",
@@ -317,6 +318,7 @@
   "plan_lessons_on_the_way": "d53116af8f67b9228dff4e5b5773826976cfc7361dee46564296694f5ebe1d00",
   "plan_lessons_studied": "d121a7810a57cfbe70615c3c34032b6550dfb7dca8f36d026241f966dd7982f9",
   "plan_level": "6cdc4daa9222fa7f0752c104e92da82cfc4c78a245e0cddddbaa2831cc8f2136",
+  "plan_level_complete": "c04351049be42891b021b2fc16709ef5f8df694d94b633e4f5113ab60e17f596",
   "plan_long_term_memory": "29de811301cd8de8670b806952c0a17f0d3fe07a8ddfd436c3ae15d182d40082",
   "plan_loss_this_week": "c809d5da094083fa9aba2059618e903043785448dd24d33593e20cad8201dfe4",
   "plan_mastery": "9ca36dac06349a012fa934c5790751b0bde34bbecffc722f7b4840a18a95704d",
@@ -1633,4 +1635,8 @@
     <string name="plan_finished_title">Tu as terminé ton plan</string>
     <string name="plan_study_next">Voici ce que tu peux étudier ensuite.</string>
     <string name="plan_continue_at">Continuer à %1$s</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
+    <string name="plan_course_complete">Cours terminé</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
+    <string name="plan_level_complete">Niveau %1$s terminé</string>
 </resources>

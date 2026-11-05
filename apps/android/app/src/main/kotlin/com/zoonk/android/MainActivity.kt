@@ -1,6 +1,9 @@
 package com.zoonk.android
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.zoonk.android.app.ZoonkApp
 import com.zoonk.android.app.ZoonkApplication
+import com.zoonk.android.data.shownLocale
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -18,6 +22,14 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private var pendingLink by mutableStateOf<AppRoute?>(null)
+
+    // A device language Zoonk lacks stays first in Android's configuration while the strings fall back
+    // to English, so dates, language names and plurals would follow that language inside English copy.
+    @SuppressLint("AppBundleLocaleChanges") // It picks the device's language whose split Play installed, or the base's English.
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(newBase)
+        applyOverrideConfiguration(Configuration().apply { setLocale(newBase.resources.configuration.shownLocale()) })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

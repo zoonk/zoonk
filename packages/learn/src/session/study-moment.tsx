@@ -115,7 +115,13 @@ function MomentActions({
 
       <TaskActions className={cn(!sessionCompleted && "max-lg:flex-col max-lg:items-stretch")}>
         {!sessionCompleted && (
-          <Button disabled={stop.isPending} onClick={stop.run} size="xl" variant="outline">
+          <Button
+            disabled={stop.isPending}
+            focusableWhenDisabled
+            onClick={stop.run}
+            size="xl"
+            variant="outline"
+          >
             {t("Stop for today")}
           </Button>
         )}
@@ -177,7 +183,7 @@ export function StudyMoment({
       : null;
 
   const content = (
-    <MomentAfterCeremony milestone={moment.ceremony} render={renderCeremony}>
+    <MomentAfterCeremony moments={moment} render={renderCeremony}>
       <TaskBody data-slot="study-moment">
         <MomentHeader title={title}>
           <MomentEarned moment={moment} />

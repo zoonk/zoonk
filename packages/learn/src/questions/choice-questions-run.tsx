@@ -282,6 +282,7 @@ function QuestionsFooter({
       <Button
         className="shrink-0"
         disabled={pending}
+        focusableWhenDisabled
         onClick={onDontKnow}
         size="xl"
         variant="outline"

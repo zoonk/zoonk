@@ -11,6 +11,7 @@ import {
 } from "../../../sessions/_utils/session-progress";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { getAnswersEnergyDelta } from "../../../sessions/brain-power";
+import { oweDaySettlement } from "../../../sessions/settle-owed-session-day";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
 import { recordLearningEvent } from "../../../stats/record-learning-event";
 import { type SkillEvidence, addSkillEvidence } from "../../levels/record-language-evidence";
@@ -161,7 +162,7 @@ export async function settleConversation(
     });
 
     if (block) {
-      await tx.studySessionBlock.updateMany({
+      const finished = await tx.studySessionBlock.updateMany({
         data: {
           brainPower,
           completedAt: lock.completedAt,
@@ -172,6 +173,11 @@ export async function settleConversation(
         },
         where: { id: block.id, status: { in: ["active", "pending"] } },
       });
+
+      if (finished.count > 0) {
+        const source = { id: row.id, kind: "conversation" };
+        await oweDaySettlement(tx, { block, source, timeZone, userId });
+      }
     }
 
     if (planItemId && checkpoint?.passed) {

@@ -5,35 +5,35 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "Clearly presents a shortened IELTS practice mock, explicitly not an official test. It follows the three-part format, uses safe everyday topics, and instructs the examiner to remain neutral without correcting or grading. There is no identifiable evidence of copied test material.",
+          "reasoning": "Clearly identifies a shortened IELTS Speaking practice mock, explicitly denies official-test status, and preserves the three-part format. The examiner is instructed to remain neutral and neither correct nor grade. Topics are everyday and safe, with no identifiable evidence of copied test material.",
           "score": 10,
           "label": "Follows the exam",
           "weight": 25
         },
         {
           "categoryId": "level",
-          "reasoning": "The opening contains the examiner’s greeting and first Part 1 question. Examiner wording is clear and natural, and the hints are accessible at B1 and general rather than topic-specific answers. An open-ended example starter would be more reusable than the supplied statement about people having different needs.",
-          "score": 9,
+          "reasoning": "The opening gives a natural examiner greeting and the first Part 1 question. Examiner wording and hint vocabulary are appropriate for B1. However, two hints provide substantive reasons or example content instead of leaving the candidate's answer open.",
+          "score": 8,
           "label": "Opening and hints",
           "weight": 20
         },
         {
           "categoryId": "objectives",
-          "reasoning": "Includes exactly the three IELTS parts in the correct order, with appropriate English labels and concise Portuguese descriptions of what the candidate does.",
+          "reasoning": "All three IELTS parts appear once, in the correct order, with suitable English labels and Portuguese descriptions explaining what the candidate does.",
           "score": 10,
           "label": "Objectives",
           "weight": 20
         },
         {
           "categoryId": "brief",
-          "reasoning": "The English script includes four Part 1 questions, a complete cue card with a topic and four prompts, and three linked Part 3 questions. Spoken instructions, transitions, and closing are written out, and the shortened preparation and speaking periods support an approximately five-minute mock.",
+          "reasoning": "The English script includes the opening question and three further Part 1 questions, a complete Part 2 topic with four prompts, preparation and speaking directions, and three linked Part 3 questions. Transitions and closing lines are supplied, and the shortened timings reasonably fit about five minutes.",
           "score": 10,
           "label": "Examiner's script",
           "weight": 20
         },
         {
           "categoryId": "languages",
-          "reasoning": "Fields use the required languages: Portuguese for the title, situation, role, and objective descriptions; English for the place, opening, labels, hints, and brief. The situation explicitly says the mock is shorter than the real test. There are no emojis or em dashes.",
+          "reasoning": "Title, situation, role and objective descriptions are in natural Brazilian Portuguese. Place, opening, labels, hints and brief are in English. The situation explicitly says the mock is shorter than the real test. There are no emojis or em dashes.",
           "score": 10,
           "label": "Right language per field",
           "weight": 15
@@ -44,19 +44,19 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2135,
-          "outputTokens": 850,
-          "reasoningTokens": 337
+          "inputTokens": 2214,
+          "outputTokens": 843,
+          "reasoningTokens": 323
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Replace the relatively prescriptive hint “One reason for this is that people have different needs” with an open-ended starter such as “For example, ...” so candidates can more easily supply their own ideas.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
+          "conclusion": "Two hints supply answer content rather than just conversational support: “it makes daily life easier” supplies a reason, and “when people have more free time” supplies an example condition. Replace these with open-ended stems such as “One reason is that...” and “For example...” so the candidate supplies the ideas.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "IELTS Speaking practice mock for a Brazilian candidate at B1. The character is the examiner (role \"examinador\" or \"examinadora\"), the objectives are the three parts in order with labels like \"Part 1: About you\", \"Part 2: Cue card\", \"Part 3: Discussion\", and the brief has the Part 1 questions, the full Part 2 cue card (topic and four bullet prompts) and Part 3 questions linked to the cue card topic, run in about 5 minutes. The opening line is the examiner's greeting and first question. Title and situation call it a practice mock in Brazilian Portuguese, shorter than the real test, never an official test. Hints are phrases to keep talking.",
@@ -74,35 +74,35 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "Clearly presents an unofficial TOEFL practice mock and follows the requested task format. The examiner is neutral, provides no corrections or grades, and uses safe academic topics. There is no indication of copied test material.",
+          "reasoning": "Clearly presents a shorter TOEFL practice mock rather than an official test. It follows the requested task format, specifies a neutral examiner who does not correct or grade, and uses safe academic topics. There is no evidence of copied test material.",
           "score": 10,
           "label": "Follows the exam",
           "weight": 25
         },
         {
           "categoryId": "level",
-          "reasoning": "The opening includes a greeting, repetition directions, the campus setting, and the first sentence. Hints use accessible A2 language and support reasons, examples, and predictions without supplying topic answers or requesting repetition.",
-          "score": 10,
+          "reasoning": "The opening includes the greeting, Listen and Repeat directions, academic setting, and first sentence. Examiner wording is clear and natural, and hints are linguistically accessible at A2. However, several hints provide substantive reasons, experiences, or predictions rather than topic-independent phrases the learner can complete.",
+          "score": 7,
           "label": "Opening and hints",
           "weight": 20
         },
         {
           "categoryId": "objectives",
-          "reasoning": "Both required tasks appear exactly once and in the correct order, with Portuguese descriptions explaining what the candidate does.",
+          "reasoning": "Both required tasks appear exactly once and in the correct order, with the correct English labels. Their Portuguese descriptions explain what the candidate does.",
           "score": 10,
           "label": "Objectives",
           "weight": 20
         },
         {
           "categoryId": "brief",
-          "reasoning": "The English script includes all seven sentences, increasing from six to nineteen words and introducing dependent and relative clauses. Four interview prompts progress through a personal fact, an experience, an opinion, and a prediction. Once-only delivery and approximately 45 seconds per answer are explicit, and the script is feasible in five minutes. The only concrete mismatch is the two-sentence interview introduction instead of one sentence.",
+          "reasoning": "The English script includes all seven repetition sentences, progressing from six to nineteen words and incorporating dependent and relative clauses. All four interview questions follow the required fact, experience, opinion, and prediction sequence. Once-only delivery and approximately 45 seconds per answer are specified, and the content plausibly fits five minutes. Minor shortcomings are the three-sentence interview introduction and the unwritten closing thanks.",
           "score": 8,
           "label": "Examiner's script",
           "weight": 20
         },
         {
           "categoryId": "languages",
-          "reasoning": "All fields use their required languages, including the Portuguese examiner role and English task labels. The Portuguese situation explicitly states that the five-minute mock is shorter than the real section. There are no emojis or em dashes.",
+          "reasoning": "The title, situation, examiner role, and objective descriptions use natural Brazilian Portuguese. Place, opening, objective labels, hints, and brief are in English. The situation explicitly identifies the mock as shorter than the real section. There are no emojis or em dashes.",
           "score": 10,
           "label": "Right language per field",
           "weight": 15
@@ -113,19 +113,23 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2194,
-          "outputTokens": 988,
-          "reasoningTokens": 495
+          "inputTokens": 2228,
+          "outputTokens": 878,
+          "reasoningTokens": 289
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The interview introduction contains two sentences ('Thank you.' followed by 'Now, I'm asking students...'), rather than the explicitly requested single sentence. This is a small script-fit issue.",
+          "conclusion": "Several hints supply answer content rather than general language support: they propose learning as a benefit, invent an experience with a friend, and predict increased use. The interview introduction contains three sentences instead of the required one. The closing thanks is instructed but not written out, leaving the examiner's script incomplete at that point.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 7
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Make the sentence-length progression smoother: it currently jumps from eight words in sentence 3 to fourteen in sentence 4. An intermediate-length sentence would provide a more gradual progression.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "TOEFL iBT Speaking practice mock for a Brazilian candidate at A2. The character is the examiner (role \"examinador\" or \"examinadora\"), the objectives are \"Listen and Repeat\" then \"Take an Interview\", and the brief has a campus or academic setting with seven original sentences that start at about 5 words and grow to 14 to 20 with dependent or relative clauses, then a one-sentence interview introduction and four questions going from a brief fact about the candidate to describing an experience, an opinion on a broader issue and a prediction, each said once with about 45 seconds per answer. The opening line greets, gives the Listen and Repeat directions and the setting, and ends with the first sentence. Title and situation, in Brazilian Portuguese, call it a practice mock shorter than the real section, never an official test. Hints help interview answers (a reason, an example, a prediction) at A2 and never ask the examiner to repeat.",
@@ -143,36 +147,36 @@
       "categoryScores": [
         {
           "categoryId": "examFit",
-          "reasoning": "The result follows the IELTS three-part format, explicitly presents itself as practice rather than an official test, and directs the examiner to remain neutral without correcting or grading. Topics are everyday and safe, with no identifiable evidence of copied published test material.",
+          "reasoning": "Clearly presents a shortened IELTS Speaking practice mock, explicitly not an official test. It follows the three-part format, uses safe everyday topics, and instructs the examiner to remain neutral without correcting or grading. There is no identifiable evidence of copied test material.",
           "score": 10,
           "label": "Follows the exam",
           "weight": 25
         },
         {
           "categoryId": "level",
-          "reasoning": "The opening includes the examiner's greeting, name, and first Part 1 question. Examiner wording is clear and natural rather than artificially simplified. Hints are appropriate for B2 and provide general conversational support without supplying topic answers.",
+          "reasoning": "The opening includes the examiner's greeting, name, and first Part 1 question. Examiner wording is clear and natural without artificial simplification. All hints are suitable for B2 and provide general conversational support rather than topic-specific answers.",
           "score": 10,
           "label": "Opening and hints",
           "weight": 20
         },
         {
           "categoryId": "objectives",
-          "reasoning": "Exactly three objectives represent the IELTS parts in the correct order. Each description accurately explains the candidate's activity. Their language mismatch is assessed under the language category.",
+          "reasoning": "There is exactly one objective for each IELTS Speaking part, in the correct order. Labels clearly identify the parts, and each description explains what the candidate does.",
           "score": 10,
           "label": "Objectives",
           "weight": 20
         },
         {
           "categoryId": "brief",
-          "reasoning": "The English script includes all three parts, a complete cue-card topic with four prompts, four linked discussion questions, and timing broadly suitable for five minutes. However, it includes five Part 1 questions instead of three or four. No missing-items cap applies because all required parts and their items are present.",
-          "score": 8,
+          "reasoning": "The English script includes four Part 1 questions, a complete Part 2 topic with four prompts, preparation and speaking instructions, and four linked Part 3 questions. The explicit timing allocation supports an approximately five-minute mock.",
+          "score": 10,
           "label": "Examiner's script",
           "weight": 20
         },
         {
           "categoryId": "languages",
-          "reasoning": "The wrong-language cap of 5 applies: the situation, role, and every objective description are Spanish rather than US English. The remaining fields are in English, the situation does communicate that the mock is shorter than the real test, and there are no emojis or em dashes.",
-          "score": 5,
+          "reasoning": "All fields use the required English, with US English wording and spelling. The situation explicitly states that the mock is shorter than the real test. The role is 'examiner,' and there are no emojis or em dashes.",
+          "score": 10,
           "label": "Right language per field",
           "weight": 15
         }
@@ -182,30 +186,18 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2253,
-          "outputTokens": 836,
-          "reasoningTokens": 240
+          "inputTokens": 2219,
+          "outputTokens": 545,
+          "reasoningTokens": 94
         }
       },
       "steps": [
-        {
-          "conclusion": "The situation, character role, and all three objective descriptions are in Spanish, although the learner language is US English. This violates the language requirements and makes essential instructions less accessible. The role should be \"examiner\", not \"examinadora\".",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The script contains five Part 1 questions, counting the full-name question that serves as the opening item. The requirement is three or four. Remove one question to meet the requested count and ease the one-minute pacing.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Separate the Part 2 preparation period from the instruction to begin speaking. An explicit start instruction after the 20-second pause would make the examiner script easier to run consistently.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "IELTS Speaking practice mock for a B2 candidate who uses the app in English. The character is the examiner (role \"examiner\"), the objectives are the three parts in order with labels like \"Part 1: About you\", \"Part 2: Cue card\", \"Part 3: Discussion\", and the brief has 3 or 4 Part 1 questions, the full Part 2 cue card (topic and four bullet prompts) and 3 or 4 Part 3 questions linked to the cue card topic, run in about 5 minutes. The examiner's wording is the exam's usual clear wording, not simplified. The opening line is the examiner's greeting, name and first Part 1 question. Title and situation, in US English, call it a practice mock shorter than the real test, never an official test. Hints are general phrases at B2 to buy time, give an opinion or add an example, never an answer about the topic.",
+        "expectations": "IELTS Speaking practice mock for a B2 candidate who uses the app in English. The character is the examiner (role \"examiner\"), the objectives are the three parts in order with labels like \"Part 1: About you\", \"Part 2: Cue card\", \"Part 3: Discussion\", and the brief has 3 or 4 Part 1 questions, the full Part 2 cue card (topic and four bullet prompts) and 3 or 4 Part 3 questions linked to the cue card topic, run in about 5 minutes. The examiner's wording is the exam's usual clear wording, not simplified. The opening line is the examiner's greeting, name and first Part 1 question. Title and situation, in US English, call it a practice mock shorter than the real test, never an official test. Every objective description is in US English too, never another language. Hints are general phrases at B2 to buy time, give an opinion or add an example, never an answer about the topic.",
         "id": "en-en-b2-ielts-speaking-1",
         "userInput": {
           "exam": "ielts",

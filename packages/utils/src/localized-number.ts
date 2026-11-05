@@ -37,6 +37,7 @@ export function formatLocalizedNumber({
   grouping = true,
   locale,
   maximumFractionDigits = DEFAULT_FRACTION_DIGITS,
+  percent = false,
   signed = false,
   value,
 }: {
@@ -44,6 +45,8 @@ export function formatLocalizedNumber({
   grouping?: boolean;
   locale: string;
   maximumFractionDigits?: number;
+  /** Writes a ratio as a percent: 0.3 reads "30%". */
+  percent?: boolean;
   signed?: boolean;
   value: number;
 }): string {
@@ -53,6 +56,7 @@ export function formatLocalizedNumber({
     maximumFractionDigits: digits,
     notation: compact ? "compact" : "standard",
     ...(signed && { signDisplay: "exceptZero" }),
+    ...(percent && { style: "percent" }),
     useGrouping: grouping,
   }).format(value);
 

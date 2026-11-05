@@ -38,6 +38,7 @@ export const UNREAD_LEARNER_PALETTE: LearnerPalette = {
   goals: [],
   onSwitchGoal: switchGoal,
   places: {
+    certificates: false,
     completedLessons: false,
     exam: false,
     mindMaps: false,
@@ -142,6 +143,11 @@ export function useLearnerPaletteGroups({
         label: t("Completed lessons"),
         menu: getMenu("completedLessons"),
       }),
+    createNavigationPaletteItem({
+      id: "certificates",
+      label: t("Certificates"),
+      menu: getMenu("certificates"),
+    }),
     places.exam &&
       createNavigationPaletteItem({ id: "exam", label: t("Exam"), menu: getMenu("exam") }),
     places.speaking &&

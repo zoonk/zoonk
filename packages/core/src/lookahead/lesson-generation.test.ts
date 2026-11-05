@@ -12,6 +12,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { headers } from "next/headers";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
@@ -68,6 +69,12 @@ describe(getLessonGenerationStates, () => {
     ]);
 
     expect(states.size).toBe(lessons.length);
+  });
+
+  it("reads nothing for no lessons", async () => {
+    await expect(
+      countDatabaseStatements(() => getLessonGenerationStates([])),
+    ).resolves.toStrictEqual({ result: new Map(), statements: 0, writes: 0 });
   });
 });
 

@@ -1,20 +1,27 @@
 "use client";
 
+import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { safeAsync } from "@zoonk/utils/error";
 import { ArrowUpRightIcon, PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../../_components/save-error";
-import { toLocalIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
 import { UseDateButton } from "../../plan/notice-day";
 import { type UnderstoodRow as Row } from "./use-understood-rows";
 
 type EditorType = NonNullable<Row["editable"]>["kind"];
 
-function getInputLimits(type: EditorType) {
-  return type === "date" ? { min: toLocalIsoDate(new Date()) } : {};
+/** The deadlines a fix can save, counted from when the editor or button appeared. */
+function useDateBounds(timeZone: string) {
+  return getTargetDateBounds(getTodayInZone({ now: useMountTime(), timeZone }));
+}
+
+function isWithin({ bounds, date }: { bounds: { max: string; min: string }; date: string }) {
+  return date >= bounds.min && date <= bounds.max;
 }
 
 const MAX_SOURCE_TITLE_LENGTH = 40;
@@ -50,6 +57,7 @@ function RowEditor({
   label,
   onCancel,
   onSave,
+  timeZone,
   type,
 }: {
   defaultValue: string;
@@ -57,9 +65,11 @@ function RowEditor({
   onCancel: () => void;
   /** False when it couldn't be saved, which keeps the editor open. */
   onSave: (value: string) => Promise<boolean>;
+  timeZone: string;
   type: EditorType;
 }) {
   const t = useExtracted();
+  const bounds = useDateBounds(timeZone);
   const inputId = useId();
   const [value, setValue] = useState(defaultValue);
   const [failed, setFailed] = useState(false);
@@ -92,14 +102,21 @@ function RowEditor({
         onKeyDown={(event) => event.key === "Escape" && onCancel()}
         type={type}
         value={value}
-        {...getInputLimits(type)}
+        {...(type === "date" ? bounds : {})}
       />
       {failed && <ChangeSaveError />}
       <div className="flex gap-2">
-        <Button disabled={isSaving} size="sm" type="submit">
+        <Button disabled={isSaving} focusableWhenDisabled size="sm" type="submit">
           {isSaving ? t("Saving…") : t("Save")}
         </Button>
-        <Button disabled={isSaving} onClick={onCancel} size="sm" type="button" variant="ghost">
+        <Button
+          disabled={isSaving}
+          focusableWhenDisabled
+          onClick={onCancel}
+          size="sm"
+          type="button"
+          variant="ghost"
+        >
           {t("Cancel")}
         </Button>
       </div>
@@ -110,12 +127,19 @@ function RowEditor({
 function SuggestedDate({
   date,
   onSave,
+  timeZone,
 }: {
   date: string;
   onSave: (value: string) => Promise<boolean>;
+  timeZone: string;
 }) {
   const [failed, setFailed] = useState(false);
   const [isSaving, startSaving] = useTransition();
+  const bounds = useDateBounds(timeZone);
+
+  if (!isWithin({ bounds, date })) {
+    return null;
+  }
 
   return (
     <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -137,17 +161,25 @@ function SuggestedDate({
 function ChoiceDates({
   dates,
   onSave,
+  timeZone,
 }: {
   dates: string[];
   onSave: (value: string) => Promise<boolean>;
+  timeZone: string;
 }) {
   const formatDate = useFormatIsoDate();
   const [failed, setFailed] = useState(false);
   const [isSaving, startSaving] = useTransition();
+  const bounds = useDateBounds(timeZone);
+  const offered = dates.filter((date) => isWithin({ bounds, date }));
+
+  if (offered.length === 0) {
+    return null;
+  }
 
   return (
     <div className="mt-1.5 flex flex-wrap items-center gap-2">
-      {dates.map((date) => (
+      {offered.map((date) => (
         <Button
           disabled={isSaving}
           focusableWhenDisabled
@@ -215,6 +247,7 @@ export function UnderstoodRowItem({
   onEdit,
   onSave,
   row,
+  timeZone,
 }: {
   editValue: string;
   editing: boolean;
@@ -222,6 +255,7 @@ export function UnderstoodRowItem({
   onEdit: (editing: boolean) => void;
   onSave: (value: string) => Promise<boolean>;
   row: Row;
+  timeZone: string;
 }) {
   const t = useExtracted();
   const label = editing ? (row.editLabel ?? row.label) : row.label;
@@ -246,6 +280,7 @@ export function UnderstoodRowItem({
 
                 return saved;
               }}
+              timeZone={timeZone}
               type={row.editable.kind}
             />
           ) : (
@@ -253,10 +288,12 @@ export function UnderstoodRowItem({
           )}
 
           {row.suggestedDate && !editing && (
-            <SuggestedDate date={row.suggestedDate} onSave={onSave} />
+            <SuggestedDate date={row.suggestedDate} onSave={onSave} timeZone={timeZone} />
           )}
 
-          {row.choiceDates && !editing && <ChoiceDates dates={row.choiceDates} onSave={onSave} />}
+          {row.choiceDates && !editing && (
+            <ChoiceDates dates={row.choiceDates} onSave={onSave} timeZone={timeZone} />
+          )}
         </div>
       </div>
 

@@ -17,6 +17,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useIsolatedBudgetDay } from "../_test-utils/isolated-budget-day";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { claimCourseCertificate } from "../certificates/claim-course-certificate";
 import { loadGoalCurriculumInputs } from "../library/curriculum/goal-curriculum-inputs";
 import { setUpPlanInSteps } from "../plans/_test-utils/set-up-plan";
 import { listPlanSetupTasks } from "../plans/plan-setup";
@@ -261,6 +262,42 @@ describe(startCourseGoal, () => {
       "Lesson on Path planning",
       "Lesson on Robot learning",
     ]);
+  });
+
+  it.each<[string, ChapterSpec]>([
+    [
+      "a chapter whose skill an earlier one teaches",
+      { lessons: [["Motors"]], level: "beginner", title: "Gripping" },
+    ],
+    [
+      "a chapter whose lessons aren't written yet",
+      { lessons: [], level: "beginner", title: "Gripping" },
+    ],
+  ])("certifies every level of a whole course plan, even beside %s", async (_label, gripping) => {
+    const [{ chapters, course }, user] = await Promise.all([
+      outlinedCourse({}, [...ROBOTICS_OUTLINE.slice(0, 3), gripping, ...ROBOTICS_OUTLINE.slice(3)]),
+      userFixture(),
+    ]);
+
+    mockSession(user.id);
+
+    const result = await startCourseWithPlan({
+      courseId: course.id,
+      input: { chapterId: chapters[0]?.id ?? "" },
+    });
+
+    const goalId = result.status === "created" ? result.goal.id : "";
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: new Date(), status: "done" },
+      where: { plan: { goalId } },
+    });
+
+    const claimed = await claimCourseCertificate(goalId);
+
+    expect(
+      claimed.status === "ready" ? claimed.certificates.map((row) => row.courseLevel) : claimed,
+    ).toStrictEqual(["overview", "beginner", "intermediate", "advanced"]);
   });
 
   it("starts the plan at a chapter, leaving the chapters before it out", async () => {

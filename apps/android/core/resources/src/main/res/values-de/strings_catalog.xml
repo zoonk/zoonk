@@ -56,8 +56,6 @@
   "catalog_load_more_failed": "405c3a48fc98f6c844665b6b0f1e389dedf93d8c8b37a132287824750d7f4684",
   "catalog_loading_more": "3c8a25111c0418c43a93e2dae9ef7f85ed926ae9d2616523d264239740fa535e",
   "catalog_no_sign_up": "0fc5a8ab99e084519666a0a100e68874a09e686922e6476fea712577e260e63b",
-  "catalog_not_found_description": "3050813ff2224a6edc9828142300c9df3c9110c46e0f06714006de72a4bd49c0",
-  "catalog_not_found_title": "8fdab269236d359ebba7cccccb0b11946e71eb0e30fb6e718be4bd45c18974df",
   "catalog_open_course": "90916ca620610846be68b05b2bdafbf2f197daaf50d939ef46b01a1d0874fdcc",
   "catalog_outcomes": "aebd252fd684d84cc6b422503d941a4f57f5fcbd75367985fb4c881f3be89540",
   "catalog_outline": "4b48b0e918c4d2d95e0ca990bc7d8cda224cfa2812a8a904583c2fa438b7c266",
@@ -163,8 +161,6 @@
     <string name="catalog_start_goal">Ein Ziel starten</string>
     <string name="catalog_loading_more">Weitere Kurse werden geladen…</string>
     <string name="catalog_load_more_failed">Etwas ist schiefgelaufen. Versuch es noch einmal.</string>
-    <string name="catalog_not_found_title">Wir konnten diese Seite nicht finden</string>
-    <string name="catalog_not_found_description">Der Link ist möglicherweise veraltet oder falsch eingegeben.</string>
     <string name="catalog_edition_notice">Dieser Kurs ist auch in deiner Sprache verfügbar.</string>
     <string name="catalog_exam_on_today">Prüfung am %1$s · heute</string>
     <plurals name="catalog_exam_on">

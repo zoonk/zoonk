@@ -3,7 +3,7 @@
 import { usePathname } from "@/i18n/navigation";
 import { logout } from "@/lib/logout";
 import { openStudyBlockAction } from "@/lib/session/study-session-actions";
-import { useGoToStudyDestination } from "@/lib/session/use-study-navigation";
+import { useOpenDestination } from "@/lib/session/use-study-navigation";
 import { useContentFeedback } from "@zoonk/learn/feedback";
 import { useGoalSwitchTransition } from "@zoonk/learn/goal-switcher";
 import { useAppLocale } from "@zoonk/learn/locale";
@@ -82,17 +82,14 @@ function usePalettePlan({ enabled, goalId }: { enabled: boolean; goalId: string 
 /** The palette has closed by then, so a block that couldn't be opened says so in a toast. */
 function useContinueFromPalette() {
   const t = useExtracted();
-  const go = useGoToStudyDestination();
+  const open = useOpenDestination();
   const [, startTransition] = useTransition();
 
   return (sessionId: string) => {
     startTransition(async () => {
-      const { data: opened } = await safeAsync(async () =>
-        go(
-          await openStudyBlockAction({
-            target: { kind: "next", sessionId },
-            timeZone: getLocalTimeZone(),
-          }),
+      const { data: opened } = await safeAsync(() =>
+        open(() =>
+          openStudyBlockAction({ target: { kind: "next", sessionId }, timeZone: getLocalTimeZone() }),
         ),
       );
 

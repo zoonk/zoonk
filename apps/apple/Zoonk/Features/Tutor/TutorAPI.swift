@@ -12,7 +12,8 @@ protocol TutorAPIClient: Sendable {
   func decidePlanChange(
     goalId: String, changeId: String, decision: PlanChangeDecision, token: String
   ) async throws -> Components.Schemas.PlanChange
-  func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws
+  /// False when one of the changes was undone or changed since.
+  func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws -> Bool
 }
 
 enum PlanChangeDecision: String, Sendable {
@@ -135,17 +136,19 @@ struct TutorAPI: TutorAPIClient {
     }
   }
 
-  func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws {
+  func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws -> Bool {
     try await clients.perform(token: token) { client in
       let output = try await client.createMemoryChangeReversal(
         body: .json(.init(changes: changes.map(\.reversalInput))))
 
       switch output {
       case .ok:
-        return
+        return true
+      case .conflict:
+        return false
       case .unauthorized:
         throw APIError.unauthorized
-      case .badRequest, .conflict, .internalServerError, .undocumented:
+      case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }
     }

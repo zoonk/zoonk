@@ -6,7 +6,9 @@ import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.FakeSessionApi
 import com.zoonk.android.data.GUEST
@@ -156,6 +158,7 @@ class SubscriptionStoreTest {
     private val billing = FakePlayBilling()
     private val api = FakeSubscriptionApi()
     private val foreground = MutableStateFlow(false)
+    private lateinit var cache: AppCache
 
     private suspend fun TestScope.store(
         session: AuthenticatedSession,
@@ -171,7 +174,8 @@ class SubscriptionStoreTest {
                 clearCredentialState = {},
             )
         sessions.restore()
-        val store = SubscriptionStore(api, billing, sessions, AppCache(sessions, main), main, foreground)
+        cache = AppCache(sessions, main)
+        val store = SubscriptionStore(api, billing, sessions, cache, main, foreground)
         store.offers.load()
         advanceUntilIdle()
         return sessions to store
@@ -200,6 +204,21 @@ class SubscriptionStoreTest {
                     ?.account
                     ?.subscription,
             )
+        }
+
+    @Test
+    fun aLinkedPurchaseRereadsTheCertificatesItIssued() =
+        runTest {
+            store(ana)
+            var reads = 0
+            val certificates = cache.resource(Audience.SignedIn, setOf(DataDomain.Certificates)) { session -> session?.let { ++reads } }
+            certificates.load()
+
+            billing.updates.emit(PlayPurchaseUpdate.Purchased("purchase-1"))
+            advanceUntilIdle()
+            certificates.load()
+
+            assertEquals(2, reads)
         }
 
     @Test

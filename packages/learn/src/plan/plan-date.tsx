@@ -3,6 +3,7 @@
 import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
+import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -112,7 +113,7 @@ export function PlanDate() {
         onSubmit={(event) => {
           event.preventDefault();
 
-          if (canSave) {
+          if (canSave && !isPending) {
             void setDate(value);
           }
         }}
@@ -120,16 +121,17 @@ export function PlanDate() {
         <Input
           aria-describedby={note ? noteId : undefined}
           className="max-w-48"
-          disabled={isPending}
           id={inputId}
           max={bounds.max}
           min={bounds.min}
           onChange={(event) => setValue(event.target.value)}
+          onKeyDown={ignoreHeldEnter}
+          readOnly={isPending}
           type="date"
           value={value}
         />
         {canSave && (
-          <Button disabled={isPending} type="submit" variant="outline">
+          <Button disabled={isPending} focusableWhenDisabled type="submit" variant="outline">
             {isPending ? t("Saving…") : t("Save")}
           </Button>
         )}

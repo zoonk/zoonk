@@ -62,7 +62,13 @@ export function AlphabetRow({
 
       {alphabet.pending && (
         <div className="flex flex-wrap items-center gap-2">
-          <Button disabled={isPending} onClick={skip} size="sm" variant="outline">
+          <Button
+            disabled={isPending}
+            focusableWhenDisabled
+            onClick={skip}
+            size="sm"
+            variant="outline"
+          >
             {t("I can already read it")}
           </Button>
           {failed && <ChangeSaveError />}

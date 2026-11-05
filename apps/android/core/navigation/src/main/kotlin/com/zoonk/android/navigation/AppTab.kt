@@ -21,6 +21,7 @@ enum class StudyPlace(
 ) {
     Mistakes(AppRoute.Mistakes, R.string.navigation_mistakes, PlaceIcon.Mistakes),
     CompletedLessons(AppRoute.CompletedLessons, R.string.navigation_completed_lessons, PlaceIcon.CompletedLessons),
+    Certificates(AppRoute.Certificates, R.string.certificates_title, PlaceIcon.Certificates),
     Exam(AppRoute.Exam, R.string.navigation_exam, PlaceIcon.Exam),
     Speaking(AppRoute.Speaking(), R.string.navigation_speaking, PlaceIcon.Speaking),
     MindMaps(AppRoute.MindMaps(), R.string.navigation_mind_maps, PlaceIcon.MindMaps),
@@ -33,6 +34,7 @@ enum class StudyPlace(
             Statistics -> route.section == AppSection.Statistics
             Speaking -> route is AppRoute.Speaking
             MindMaps -> route is AppRoute.MindMaps
+            Certificates -> route == AppRoute.Certificates || route is AppRoute.Certificate
             else -> route == this.route
         }
 }

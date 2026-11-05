@@ -29,6 +29,7 @@ async function completeConversation(
   return NextResponse.json({
     ...result.conversation,
     ceremony: result.ceremony,
+    certificates: result.certificates,
     missionMoment: result.missionMoment,
     reached: result.reached,
   });

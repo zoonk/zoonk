@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
@@ -23,12 +22,11 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -107,21 +105,10 @@ class SearchScreenshots {
             }
         }
         compose.runOnIdle { search.open() }
-        unfold()
+        compose.unfoldBook(folds)
         compose.onAllNodes(hasSetTextAction()).onLast().performTextInput("set")
         compose.mainClock.advanceTimeBy(500)
         write("search-over-page-open-book")
-    }
-
-    private fun unfold() {
-        compose.waitForIdle()
-        folds.overrideWindowLayoutInfo(
-            TestWindowLayoutInfo(
-                listOf(
-                    FoldingFeature(compose.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                ),
-            ),
-        )
     }
 
     private fun capture(
@@ -142,7 +129,7 @@ class SearchScreenshots {
                 }
             }
         }
-        if (fold) unfold()
+        if (fold) compose.unfoldBook(folds)
         write("$name-closed")
         compose.onNodeWithText("Search or ask…").performClick()
         write("$name-open")
@@ -153,7 +140,7 @@ class SearchScreenshots {
 
     private fun write(name: String) {
         compose.waitForIdle()
-        val bitmap = compose.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }

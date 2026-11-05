@@ -958,6 +958,109 @@
           "title": "DELF A2"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "examFit",
+          "reasoning": "The card presents the situation first, addresses the candidate with «usted», and supplies simple A2-level goals suitable for a four-minute simulated dialogue. Planning a bicycle ride in Seville with a friend continues the previous photograph's topic and uses an explicitly permitted scenario. It does not follow another task's format.",
+          "score": 9,
+          "label": "Like the exam's sheet",
+          "weight": 30
+        },
+        {
+          "categoryId": "material",
+          "reasoning": "The topic stimulus supports all four conversational goals. Seville, the riverside, Parque de María Luisa, Plaza Nueva, and a two-hour morning ride are plausible and mutually compatible. Prices and rental conditions are unnecessary for this planning scenario. No additional photograph or text is needed to make the dialogue work.",
+          "score": 9,
+          "label": "Material that works",
+          "weight": 25
+        },
+        {
+          "categoryId": "script",
+          "reasoning": "The English brief provides ordered Spanish questions, fallback suggestions, realistic availability, alternatives, and follow-ups sufficient for an adaptive four-minute exchange. It correctly keeps the examiner in the friend's role and prohibits correction, praise, and grading. However, «Yo soy su amiga» is an unnatural in-character opening and inconsistently mixes forms of address. The final confirmation also lacks a written Spanish template. These are weaknesses, but the script does not contradict the card or assigned role.",
+          "score": 8,
+          "label": "The examiner's or partner's script",
+          "weight": 25
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The summary addresses the learner naturally in Brazilian Portuguese, and «amiga» is a valid Portuguese role label. Instructions, prompts, place, opening, hints, and quoted dialogue are Spanish; the private brief is English. There are no photo fields requiring language checks, emojis, or em dashes. No wrong-language field triggers the cap.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2475,
+          "outputTokens": 944,
+          "reasoningTokens": 358
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The opening sounds like role assignment rather than a friend speaking naturally: «Yo soy su amiga» also switches awkwardly from formal «su» to informal «quieres». The brief requests a final spoken confirmation of the agreed plan without supplying Spanish wording or a fill-in template for that confirmation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "A brief reference to the paper map or rental bicycles in the candidate-facing situation would make the connection to the previous photograph more immediately visible. The existing bicycle-ride planning scenario already maintains the required continuity.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "DELE A2 Task 3 continues Task 2's photo of two friends checking a paper map at a bike rental stand: the role-play builds on that scene (renting bikes, asking the way or planning a ride), with the examiner playing someone in it such as the rental clerk or one of the friends, never an unrelated situation. Instructions in simple Spain Spanish with \"usted\" state the situation first; the goals on the card and the examiner's facts (prices in euros, times, conditions) fit it. Summary and role in Brazilian Portuguese. Found in code: a continuing task never received the earlier card's photos, so it could not link the role-play to them.",
+        "id": "pt-es-dele-a2-role-play-continues-photo-1",
+        "userInput": {
+          "exam": "dele",
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "paper": "Prueba 4: Expresión e interacción orales",
+          "previous": {
+            "instructions": [
+              "Observe la fotografía y descríbala durante dos o tres minutos.",
+              "Puede usar las preguntas como guía."
+            ],
+            "photos": [
+              {
+                "alt": "Duas amigas olham um mapa de papel ao lado de bicicletas de aluguel numa praça.",
+                "scene": "Two women in their twenties, one in a yellow raincoat and one in a denim jacket, stand beside a row of rental bicycles in a sunny city square in Seville, unfolding a paper map together and pointing at it, with orange trees and a cafe terrace behind them in soft morning light."
+              }
+            ],
+            "prompts": [
+              "¿Quiénes son las personas?",
+              "¿Dónde están?",
+              "¿Qué están haciendo?",
+              "¿Qué relación hay entre ellas?",
+              "¿Cómo se sienten?",
+              "¿Qué han hecho antes y qué van a hacer después?"
+            ],
+            "table": null,
+            "task": "Tarea 2: Descripción de una fotografía",
+            "text": null
+          },
+          "task": {
+            "brief": "A role-play with the examiner in an everyday situation linked to the Task 2 photo (such as planning a surprise party with a sibling): the examiner plays the other person, follows a plan for the dialogue and improvises from the candidate's answers.",
+            "minutes": 4,
+            "name": "Tarea 3: Diálogo en una situación simulada",
+            "role": "examiner",
+            "stimulus": "topic"
+          },
+          "title": "DELE A2"
+        }
+      }
     }
   ],
   "taskId": "exam-speaking-card"

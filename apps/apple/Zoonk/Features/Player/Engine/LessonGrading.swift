@@ -10,6 +10,9 @@ struct LocalGrade: Hashable, Sendable {
 }
 
 enum LessonGrading {
+  /// Past this, a check the server is still grading says so (main's `CHECK_BOUNDS.slowMs`).
+  static let slowCheck = Duration.seconds(15)
+
   /// Nil for answers only the server grades (typed and spoken answers, an activity interaction its
   /// renderer doesn't grade) and for an answer that doesn't fit the screen.
   static func grade(

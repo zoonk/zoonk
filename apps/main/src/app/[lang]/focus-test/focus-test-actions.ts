@@ -29,6 +29,7 @@ export async function submitFocusTestAction(
       label: area.label,
     })),
     ceremony: outcome.ceremony,
+    certificates: outcome.certificates,
     changeId: outcome.changeId,
     reached: outcome.reached,
   };

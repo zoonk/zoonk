@@ -200,6 +200,7 @@ export function MaterialQuestions({
           aria-label={t("Ask")}
           className="size-11 shrink-0 rounded-full"
           disabled={!trimmed || isPending}
+          focusableWhenDisabled
           size="icon-lg"
           type="submit"
         >

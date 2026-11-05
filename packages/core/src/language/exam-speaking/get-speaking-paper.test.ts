@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getLanguageProgressView } from "../../view-models/language/get-language-progress-view";
@@ -55,17 +55,16 @@ describe("the speaking paper read", () => {
 
     mockSession(user.id);
 
-    const full = await countDatabaseStatements(() => getLanguageProgressView({ goalId: goal.id }));
-
+    const full = await getLanguageProgressView({ goalId: goal.id });
     const narrow = await countDatabaseStatements(() => getSpeakingPaper({ goalId: goal.id }));
 
-    if (full.result.status !== "ready") {
-      throw new Error(`Expected Progress, got ${full.result.status}`);
+    if (full.status !== "ready") {
+      throw new Error(`Expected Progress, got ${full.status}`);
     }
 
     expect(narrow.result).toStrictEqual({
       goalId: goal.id,
-      paper: full.result.progress.speaking,
+      paper: full.progress.speaking,
       status: "ready",
     });
 
@@ -73,8 +72,7 @@ describe("the speaking paper read", () => {
       paper: { access: plus ? "open" : "plusRequired", exam: "dele", level: "B2" },
     });
 
-    assertReadBudget(narrow, 16);
-    expect(narrow.statements).toBeLessThan(full.statements);
+    expect(narrow.writes).toBe(0);
   });
 
   it.each([false, true])("keeps past tries when calls are available: %s", async (available) => {

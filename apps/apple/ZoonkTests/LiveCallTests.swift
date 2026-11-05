@@ -775,6 +775,45 @@ final class LiveCallTests: XCTestCase {
     XCTAssertTrue(run.times(of: .goodbye).isEmpty)
   }
 
+  func testACheckNoteWaitsThroughTheLearnersSilenceUntilTheySpeak() {
+    var run = EndingRun()
+    run.chat(until: 50)
+    run.characterTalks(from: 55, to: 58)
+    // A transcript can land after the character answered: it isn't the learner's turn.
+    run.learnerHeard(at: 59.5)
+    run.noteArrives(at: 60)
+    run.learnerTalks(from: 66, to: 68)
+    run.wait(until: 70)
+
+    assertTimes(run.times(of: .progress), [66], accuracy: 0.11)
+  }
+
+  func testTheWrapUpNoteGoesWithATypedReplyAndTheGoodbyeAfterTheAnswer() {
+    var run = EndingRun()
+    run.chat(until: 50)
+    run.characterTalks(from: 55, to: 58)
+    run.goalsMet(at: 60, note: true)
+    run.learnerComposes(from: 62, to: 64)
+    run.learnerSends(at: 64.5)
+    run.characterTalks(from: 65.5, to: 67)
+    run.wait(until: 75)
+
+    assertTimes(run.times(of: .progress), [64.5], accuracy: 0.11)
+    assertTimes(run.times(of: .goodbyeDone), [68.5], accuracy: 0.11)
+  }
+
+  func testAGoodbyeDropsTheCheckNote() {
+    var run = EndingRun()
+    run.chat(until: 50)
+    run.characterTalks(from: 55, to: 58)
+    run.goalsMet(at: 60, note: true)
+    run.learnerTalks(from: 62, to: 64)
+    run.wait(until: 70)
+
+    assertTimes(run.times(of: .goodbyeDone), [62], accuracy: 0.11)
+    XCTAssertTrue(run.times(of: .progress).isEmpty)
+  }
+
   func testALearnersOwnGoodbyeEndsTheCallWithoutACue() {
     var run = EndingRun()
     run.chat(until: 30)
@@ -1466,9 +1505,16 @@ private struct EndingRun {
   }
 
   /// An objective check found every goal met in the transcript as it was when the check returned.
-  mutating func goalsMet(at seconds: TimeInterval) {
+  mutating func goalsMet(at seconds: TimeInterval, note: Bool = false) {
     once(at: seconds) {
-      _ = $0.checked(at: $1, snapshotAt: $1, goodbye: false, allGoalsMet: true)
+      $0.checked(at: $1, snapshotAt: $1, goodbye: false, allGoalsMet: true, hasNote: note)
+    }
+  }
+
+  /// An objective check found a new goal met and brought a note for the character.
+  mutating func noteArrives(at seconds: TimeInterval) {
+    once(at: seconds) {
+      $0.checked(at: $1, snapshotAt: $1, goodbye: false, allGoalsMet: false, hasNote: true)
     }
   }
 
@@ -1476,7 +1522,8 @@ private struct EndingRun {
   mutating func saidGoodbye(at seconds: TimeInterval, snapshotAt: TimeInterval? = nil) {
     once(at: seconds) { ending, now in
       let snapshot = Self.start.addingTimeInterval(snapshotAt ?? seconds)
-      _ = ending.checked(at: now, snapshotAt: snapshot, goodbye: true, allGoalsMet: false)
+      ending.checked(
+        at: now, snapshotAt: snapshot, goodbye: true, allGoalsMet: false, hasNote: false)
     }
   }
 

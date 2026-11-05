@@ -12,7 +12,10 @@ import { BrainIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 
-type UndoStatus = "failed" | "idle" | "undone";
+/** `conflict`: a change was undone or changed since, so trying again can't help. */
+export type MemoryUndoOutcome = "conflict" | "failed" | "undone";
+
+type UndoStatus = MemoryUndoOutcome | "idle";
 
 type MemoryFactSummary = Pick<MemoryFactView, "id" | "statement">;
 
@@ -43,7 +46,7 @@ function ChangeText({ change, extra }: { change: MemoryChangeSummary; extra: num
   );
 }
 
-function UndoResult({ status }: { status: UndoStatus }) {
+function UndoResult({ status }: { status: "conflict" | "undone" }) {
   const t = useExtracted();
 
   if (status === "undone") {
@@ -53,7 +56,6 @@ function UndoResult({ status }: { status: UndoStatus }) {
   return <span className="text-destructive-text">{t("Couldn't undo. It changed since.")}</span>;
 }
 
-/** `onUndo` resolves to whether the changes were undone. */
 export function MemoryUpdated({
   changes,
   className,
@@ -61,7 +63,7 @@ export function MemoryUpdated({
 }: {
   changes: MemoryChangeSummary[];
   className?: string;
-  onUndo: (changes: MemoryChangeReference[]) => Promise<boolean>;
+  onUndo: (changes: MemoryChangeReference[]) => Promise<MemoryUndoOutcome>;
 }) {
   const t = useExtracted();
   const [status, setStatus] = useState<UndoStatus>("idle");
@@ -73,9 +75,11 @@ export function MemoryUpdated({
   }
 
   const undo = () => {
+    setStatus("idle");
+
     startTransition(async () => {
-      const { data: undone } = await safeAsync(() => onUndo(toMemoryChangeReferences(changes)));
-      setStatus(undone ? "undone" : "failed");
+      const { data: outcome } = await safeAsync(() => onUndo(toMemoryChangeReferences(changes)));
+      setStatus(outcome ?? "failed");
     });
   };
 
@@ -92,13 +96,16 @@ export function MemoryUpdated({
       <BrainIcon aria-hidden="true" className="mt-0.75 size-3.5 shrink-0" />
 
       <p className="min-w-0 flex-1 text-pretty">
-        {status === "idle" ? (
+        {status === "idle" || status === "failed" ? (
           <>
             <ChangeText change={first} extra={changes.length - 1} />
             <span aria-hidden="true">{" · "}</span>
-            <Button disabled={isPending} onClick={undo} variant="link">
+            <Button disabled={isPending} focusableWhenDisabled onClick={undo} variant="link">
               {t("Undo")}
             </Button>
+            {status === "failed" && (
+              <span className="text-destructive-text block">{t("Couldn't undo. Try again.")}</span>
+            )}
           </>
         ) : (
           <UndoResult status={status} />
