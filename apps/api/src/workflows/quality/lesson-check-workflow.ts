@@ -9,6 +9,7 @@ import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
+import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
 import {
   checkPublishedLessonStep,
   citePublishedLessonStep,
@@ -81,8 +82,12 @@ export async function settlePublishedLesson({
     const imageScope = await readLessonImageScopeStep(context.lessonId);
 
     if (imageScope) {
-      const analytics = { ...context.analytics, contentScope: imageScope };
-      await start(lessonImagesWorkflow, [{ analytics, lessonId: context.lessonId }]);
+      const { analytics, lessonId } = context;
+      await start(lessonMarksWorkflow, [{ analytics, lessonId }]);
+
+      await start(lessonImagesWorkflow, [
+        { analytics: { ...analytics, contentScope: imageScope }, lessonId },
+      ]);
     }
   }
 

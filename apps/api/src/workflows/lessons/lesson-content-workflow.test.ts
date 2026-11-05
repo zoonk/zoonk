@@ -33,6 +33,7 @@ import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
+import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 import { writeLessonContentStep } from "./steps/write-lesson-content-step";
@@ -241,6 +242,10 @@ describe(lessonContentWorkflow, () => {
 
     expect(start).toHaveBeenCalledWith(lessonImagesWorkflow, [
       { analytics: { contentScope: "shared", distinctId: "learner" }, lessonId: lesson.id },
+    ]);
+
+    expect(start).toHaveBeenCalledWith(lessonMarksWorkflow, [
+      { analytics: { distinctId: "learner" }, lessonId: lesson.id },
     ]);
 
     expect(checkLessonQuality).not.toHaveBeenCalled();
@@ -578,7 +583,7 @@ describe(lessonContentWorkflow, () => {
     expect(start).not.toHaveBeenCalledWith(lessonCheckWorkflow, expect.anything());
   });
 
-  it("draws no pictures for a guest's own lesson", async () => {
+  it("draws no pictures and tags nothing for a guest's own lesson", async () => {
     const guest = await userFixture();
     await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } });
     const lesson = await outlinedLesson({ ownerId: guest.id, visibility: "private" });
@@ -588,6 +593,7 @@ describe(lessonContentWorkflow, () => {
     ).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
 
     expect(start).not.toHaveBeenCalledWith(lessonImagesWorkflow, expect.anything());
+    expect(start).not.toHaveBeenCalledWith(lessonMarksWorkflow, expect.anything());
   });
 
   it("frees both of the lesson's claims when planning it fails", async () => {

@@ -4,11 +4,19 @@ import { type LessonIcon } from "../icons/lesson-icon-contract";
 import { type StepContentByKind } from "../steps/contract/step-contract";
 import { type StepMarks } from "./step-marks-contract";
 
+export const iconNeedSchema = z.object({
+  description: z.string(),
+  name: z.string(),
+  searchWords: z.array(z.string()),
+});
+
 /** `Step.marks`: what tagging found, with the icon linked once it's drawn. */
 export const savedStepMarksSchema = z.object({
   example: z.string().nullable(),
   iconId: z.uuid().nullable(),
-  /** Tagging asked for an icon that isn't drawn and linked yet. */
+  /** What tagging asked the icon library for. */
+  iconNeed: iconNeedSchema.nullable().optional(),
+  /** The icon `iconNeed` asks for isn't linked or given up yet. */
   iconPending: z.boolean(),
   ideaIndex: z.int().min(0).nullable(),
   underline: z.string().nullable(),
@@ -17,13 +25,12 @@ export const savedStepMarksSchema = z.object({
 export type SavedStepMarks = z.infer<typeof savedStepMarksSchema>;
 
 export type MarkedScreen =
+  | { content: StepContentByKind["check"]; kind: "check" }
   | { content: StepContentByKind["explanation"]; kind: "explanation" }
   | { content: StepContentByKind["hook"]; kind: "hook" }
+  | { content: StepContentByKind["typedAnswer"]; kind: "typedAnswer" }
   | { content: StepContentByKind["workedExample"]; kind: "workedExample" }
-  | {
-      content: unknown;
-      kind: "activity" | "challenge" | "check" | "spokenAnswer" | "summary" | "typedAnswer";
-    };
+  | { content: unknown; kind: "activity" | "challenge" | "spokenAnswer" | "summary" };
 
 export function readSavedStepMarks(marks: unknown): SavedStepMarks | null {
   const parsed = savedStepMarksSchema.safeParse(marks);
