@@ -144,6 +144,7 @@ private struct PlanContent: View {
   @State private var sheet: PlanSheet?
   @State private var isReporting = false
   @State private var claimed: [CertificateFacts] = []
+  @State private var slotAnswer: PlanSlotAnswer?
 
   let goal: LearnerGoal
   let plan: GoalPlan
@@ -163,7 +164,7 @@ private struct PlanContent: View {
     } secondary: {
       List {
         PlanNumbersSection(context: context, syllabus: syllabus)
-        PlanSuggestionSection(context: context)
+        PlanSuggestionSection(context: context, answer: $slotAnswer)
         NextOnPathSection(context: context)
         PlanMoreSection(goal: goal)
         PlanSettingsSection(context: context)
@@ -172,7 +173,7 @@ private struct PlanContent: View {
       List {
         PlanRoadmapSection(context: context, structure: structure)
         PlanNumbersSection(context: context, syllabus: syllabus)
-        PlanSuggestionSection(context: context)
+        PlanSuggestionSection(context: context, answer: $slotAnswer)
         structureSections(context: context, structure: structure)
         NextOnPathSection(context: context)
         PlanMoreSection(goal: goal)

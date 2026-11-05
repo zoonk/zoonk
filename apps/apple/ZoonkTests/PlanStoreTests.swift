@@ -186,12 +186,8 @@ final class PlanStoreTests: XCTestCase {
     let earlier = PlanStore.SuggestionKey(
       owner: AuthenticatedSession(bearerToken: "earlier-session"), goalId: "goal")
 
-    store.setSuggestionState(earlier) {
-      $0.isWorking = true
-      $0.dismissed.insert(.tooTight)
-    }
+    store.setSuggestionState(earlier) { $0.dismissed.insert(.tooTight) }
 
-    XCTAssertFalse(store.suggestionState(goalId: "goal").isWorking)
     XCTAssertEqual(store.suggestionState(goalId: "goal").dismissed, [])
 
     store.setSuggestionState(store.suggestionKey(goalId: "goal")) { $0.dismissed.insert(.tooTight) }
