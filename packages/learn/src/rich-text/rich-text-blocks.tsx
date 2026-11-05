@@ -80,7 +80,6 @@ function RichBlockView({
     return (
       <List
         className={cn("flex flex-col gap-1.5 ps-6", block.ordered ? "list-decimal" : "list-disc")}
-        start={block.start}
       >
         {block.items.map((item, index) => {
           const key = `item-${index}`;

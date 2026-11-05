@@ -13,11 +13,21 @@ type TextPart = { isExample: boolean; text: string };
 /** Paragraphs as plain blocks, so their lines wrap around an icon floated on the corner. */
 const FLOWING_TEXT_CLASS = "block space-y-3";
 
+const NUMBERED_LINE = /^\s*\d{1,3}[.)]\s/u;
+
+/** Framing part of a numbered list would split it, and each part would count from 1 again. */
+function isInNumberedList({ end, start, text }: { end: number; start: number; text: string }) {
+  const lineStart = text.lastIndexOf("\n", start - 1) + 1;
+  const lineEnd = text.indexOf("\n", end);
+  const lines = text.slice(lineStart, lineEnd === -1 ? undefined : lineEnd).split("\n");
+  return lines.some((line) => NUMBERED_LINE.test(line));
+}
+
 /** Core keeps `example` an exact substring with balanced markup, so each part parses on its own. */
 function splitAtExample({ example, text }: { example: string | null; text: string }): TextPart[] {
   const start = example ? text.indexOf(example) : -1;
 
-  if (!example || start === -1) {
+  if (!example || start === -1 || isInNumberedList({ end: start + example.length, start, text })) {
     return [{ isExample: false, text }];
   }
 

@@ -246,19 +246,20 @@ describe("lesson marks", () => {
       .not.toBeNull();
   });
 
-  it("keeps a numbered list's numbers when its middle step is the example", async () => {
+  it("leaves an example inside a numbered list unframed, so the list keeps counting", async () => {
     const steps = "1. Heat the water.\n2. Add the salt.\n3. Stir until it dissolves.";
 
     const explanation = contentStep("explanation", {
       content: { text: steps },
-      marks: marks({ example: "2. Add the salt.", ideaIndex: 0 }),
+      marks: marks({ example: "2. Add the salt.", ideaIndex: 0, underline: "Add the salt" }),
     });
 
     renderLessonPlayer({ lesson: buildLesson([explanation], { summary: MAP }) });
     await expect.element(page.getByText("Add the salt.")).toBeVisible();
 
-    const lists = [...document.querySelectorAll<HTMLOListElement>("main ol")];
-    expect(lists.map((list) => list.start)).toStrictEqual([1, 2, 3]);
+    await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
+    expect(page.getByRole("main").getByRole("listitem").elements()).toHaveLength(3);
+    expect(underlined()).toStrictEqual(["Add the salt"]);
   });
 
   it("plays a lesson written before marks as plain text", async () => {
