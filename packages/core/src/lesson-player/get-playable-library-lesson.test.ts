@@ -20,6 +20,7 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { validateActivity } from "../library/activities/validate-activity";
+import { readSavedLessonMap } from "../library/lessons/lesson-map";
 import { readSavedStepMarks } from "../library/marks/step-marks";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
@@ -217,6 +218,25 @@ describe(getPlayableLibraryLesson, () => {
       ideaIndex: 0,
       underline,
     });
+  });
+
+  it("never shows two of the map's ideas one icon, even when the map stored it twice", async () => {
+    const { icons, lesson } = await markedPlayableLessonFixture();
+    const saved = readSavedLessonMap(lesson.summary);
+    const ideas = saved?.ideas.map((idea) => ({ ...idea, iconId: icons.cloud.id }));
+
+    await prisma.lesson.update({
+      data: { summary: { ...saved, ideas } },
+      where: { id: lesson.id },
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const shown = result?.status === "ready" ? result.lesson.summary?.ideas : [];
+
+    expect(shown?.map((idea) => idea.icon)).toStrictEqual([
+      { smallUrl: icons.cloud.smallUrl, url: icons.cloud.url },
+      null,
+    ]);
   });
 
   it("sends a question or a guess without its idea, which would name its answer, though tagging stored one", async () => {
