@@ -192,9 +192,9 @@ private struct PlanContent: View {
       context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true)
   }
 
-  /// A level, or an exam's course before its exam-day mocks, can finish before the plan does.
+  /// An exam's course can finish before its plan does: its exam-day mocks come after.
   private var courseEnd: [any CachedResource] {
-    [.learn, .exam].contains(goal.kind) && plan.end == nil ? [store.planEnd(goalId: goal.id)] : []
+    goal.kind == .exam && plan.end == nil ? [store.planEnd(goalId: goal.id)] : []
   }
 
   /// The learner asked for them, so when every moment already played, the certificate opens

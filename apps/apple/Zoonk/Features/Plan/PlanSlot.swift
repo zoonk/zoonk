@@ -75,8 +75,7 @@ struct PlanSuggestionSection: View {
     let state = store.suggestionState(goalId: context.goal.id)
     let isExam = context.goal.kind == .exam
     let unclaimed =
-      [.learn, .exam].contains(context.goal.kind)
-      ? store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? [] : []
+      isExam ? store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? [] : []
     let items = PlanSlotItem.items(
       plan: context.plan, isPaused: context.isPaused, isExam: isExam,
       courseComplete: !unclaimed.isEmpty
