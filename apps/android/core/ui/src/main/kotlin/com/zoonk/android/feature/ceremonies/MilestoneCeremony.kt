@@ -292,5 +292,5 @@ private fun glassesCopy(glasses: BuddyGlasses?): Pair<Int, Int> =
         BuddyGlasses.Round, null -> R.string.ceremony_glasses_new to R.string.ceremony_glasses_new_detail
     }
 
-private val STEADY = 500.milliseconds
+internal val STEADY = 500.milliseconds
 private const val STAGE_ALPHA = 0.2f

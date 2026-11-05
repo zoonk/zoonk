@@ -20,7 +20,7 @@ function PrepareLessonsLine() {
       <p className="text-muted-foreground text-xs leading-4">
         {t("Not written yet.")}
         {space}
-        <Button disabled={isPending} onClick={run} variant="link">
+        <Button disabled={isPending} focusableWhenDisabled onClick={run} variant="link">
           {t({
             description: "Button that has Zoonk write today's lessons.",
             message: "Get today's lessons",

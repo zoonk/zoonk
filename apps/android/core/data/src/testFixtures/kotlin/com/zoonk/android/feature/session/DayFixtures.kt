@@ -9,13 +9,14 @@ import com.zoonk.api.models.StudySessionMinutes
 import com.zoonk.api.models.StudySessionWeek
 import com.zoonk.api.models.StudySessionWeekTime
 import kotlinx.datetime.LocalDate
+import java.util.Locale
 import java.util.UUID
 
 val GOAL: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01")
 val SESSION: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d02")
 internal val DAY: LocalDate = LocalDate(2026, 10, 28)
 
-fun blockId(position: Int): UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2e%02d".format(position))
+fun blockId(position: Int): UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2e%02d".format(Locale.ROOT, position))
 
 fun step(
     position: Int,
@@ -23,7 +24,7 @@ fun step(
     kind: StudyBlock.Kind = StudyBlock.Kind.LEARN,
     screen: StudyBlock.Screen = StudyBlock.Screen.LESSON,
     saved: Boolean = true,
-    lessonId: UUID? = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2f%02d".format(position)),
+    lessonId: UUID? = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2f%02d".format(Locale.ROOT, position)),
 ): DayStep =
     DayStep(
         id = if (saved) blockId(position) else null,

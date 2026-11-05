@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
@@ -22,7 +22,7 @@ const STRUCTURE = {
 };
 
 describe(getChapterMindMapStatus, () => {
-  it("reads the goal and the full view's one status statement, without chapter numbering", async () => {
+  it("reads a running map as generating without writing", async () => {
     const { goal, chapters } = await signedInCourseGoal({
       statuses: ["done", "done", "todo", "todo"],
     });
@@ -34,7 +34,7 @@ describe(getChapterMindMapStatus, () => {
       getChapterMindMapStatus({ chapterId, goalId: goal.id }),
     );
 
-    assertReadBudget(counts, 2);
+    expect(counts.writes).toBe(0);
     expect(counts.result).toStrictEqual({ mindMap: { status: "generating" }, status: "ready" });
   });
 

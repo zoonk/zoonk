@@ -4,7 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.separatingHorizontalHingeBounds
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -20,7 +19,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowCompat
+import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import kotlin.math.roundToInt
 
 /**
@@ -97,8 +98,10 @@ fun TimePickerDialog(
 }
 
 /**
- * A dialog over the whole window, drawn behind the system bars. Its window decides the bars' icons
- * and doesn't take the activity's, so they follow the light or dark theme here.
+ * A dialog that fills the window behind the system bars. The bars show its own surface with no
+ * scrim, since [content] pads itself clear of them, and their icons follow the light or dark theme.
+ * It covers the window's snackbars: [content] shows them with a [SnackbarHost] where its layout has
+ * room, or they wait until it closes.
  */
 @Composable
 fun FullScreenDialog(
@@ -106,6 +109,7 @@ fun FullScreenDialog(
     content: @Composable () -> Unit,
 ) {
     Dialog(onDismissRequest, DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
+        HoldUntilFoldsRead()
         val view = LocalView.current
         val light = !isSystemInDarkTheme()
         SideEffect {
@@ -115,7 +119,7 @@ fun FullScreenDialog(
                 isAppearanceLightNavigationBars = light
             }
         }
-        content()
+        SnackbarLayerOver(content)
     }
 }
 
@@ -142,7 +146,7 @@ private fun dialogPlace(): DialogPlace {
         val towardEnd = if (LocalLayoutDirection.current == LayoutDirection.Ltr) 1 else -1
         return DialogPlace(width = window - fold.end, x = fold.end / 2 * towardEnd, y = 0.dp)
     }
-    val tabletop = currentWindowAdaptiveInfoV2().windowPosture.separatingHorizontalHingeBounds.firstOrNull()
+    val tabletop = windowAdaptiveInfo().windowPosture.separatingHorizontalHingeBounds.firstOrNull()
     return DialogPlace(width = null, x = 0.dp, y = tabletop?.let { with(density) { (it.bottom / 2).toDp() } } ?: 0.dp)
 }
 
@@ -153,6 +157,7 @@ private fun dialogPlace(): DialogPlace {
  */
 @Composable
 private fun WindowAt(place: DialogPlace) {
+    HoldUntilFoldsRead()
     val window = (LocalView.current.parent as? DialogWindowProvider)?.window ?: return
     val density = LocalDensity.current
 

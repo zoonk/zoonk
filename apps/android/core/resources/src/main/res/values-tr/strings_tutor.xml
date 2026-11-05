@@ -106,6 +106,8 @@
   "tutor_retry_last_question": "522c8cd26e22d19428c873974aa18fc01f1e6d8978d9dd78de8026ec21374d38",
   "tutor_send": "08e93890983ac2d7a684b4a887b55955c4c4b42bac135740e4963b9848b1867c",
   "tutor_sign_in": "58f5775c32c26535f7f675f04140abc993170b92606df94642816812ca0fb123",
+  "tutor_step_closed": "7407f6adc59626fa195d05e9d92e243aafa0c711eb4bf31448477c03ef1fc76d",
+  "tutor_step_open_failed": "366df7025d9bf05ad7112fce7f81d73b234419a88d7366deba17a563ba511cc6",
   "tutor_suggest_chapter": "dfc5b06d671d323676bfffef23180a163a6385507b07ab0103b8d6fe689e6a4f",
   "tutor_suggest_item_asking": "4db46e86132ee4854d4d64a5e40661f694433120eb12eece1a1c27fe3a1d74a3",
   "tutor_suggest_item_idea": "c8632a1ad62e73c947a003a59f162c1d83c3bd6e714a18a1254de3a06535d61f",
@@ -199,6 +201,10 @@
     <string name="tutor_link_description">Bu bağlantı Zoonk dışındaki bir web sitesini açar.</string>
     <string name="tutor_link_cancel">Vazgeç</string>
     <string name="tutor_link_open">Bağlantıyı aç</string>
+    <!-- Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since -->
+    <string name="tutor_step_closed">Bu adıma artık erişilemiyor.</string>
+    <!-- Under a buddy answer whose link to a step of the day didn't open -->
+    <string name="tutor_step_open_failed">Bu adımı açamadık. Tekrar dene.</string>
     <string name="tutor_offer_open">Aç</string>
     <string name="tutor_offer_choose">Seç</string>
     <string name="tutor_offer_start">Başla</string>

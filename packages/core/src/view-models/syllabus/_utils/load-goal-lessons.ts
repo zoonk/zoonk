@@ -1,15 +1,11 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { type PlanReadContext } from "../../../plans/_utils/plan-read-projection";
 import { type SyllabusView } from "../syllabus-contract";
 import { buildSyllabus } from "./build-syllabus";
 import { loadSyllabusInput } from "./load-syllabus";
 
 /** Caller must verify goal ownership; returns null for exams, explanations, or missing plans. */
-export async function loadGoalLessons(
-  goalId: string,
-  selectedPlan?: Pick<PlanReadContext, "items" | "state">,
-): Promise<SyllabusView["lessons"] | null> {
+export async function loadGoalLessons(goalId: string): Promise<SyllabusView["lessons"] | null> {
   const goal = await prisma.goal.findUnique({
     select: {
       createdAt: true,
@@ -29,6 +25,6 @@ export async function loadGoalLessons(
     return null;
   }
 
-  const input = await loadSyllabusInput(goal, { selectedPlan });
+  const input = await loadSyllabusInput(goal);
   return input ? buildSyllabus(input).lessons : null;
 }

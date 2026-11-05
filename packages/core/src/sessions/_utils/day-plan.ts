@@ -2,6 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getExamPrepAccess } from "../../entitlements/limits";
+import { readExamPicks } from "../../exams/choices/exam-choices";
 import { getFinalStretchStart } from "../../exams/final-stretch/final-stretch-rules";
 import {
   loadGoalListeningSkillIds,
@@ -16,6 +17,7 @@ import { loadDailyTimeLimitStatus } from "./daily-time-limit";
 import { getGoalDayMinutes } from "./day-minutes";
 import { loadExamStructure } from "./exam-structure";
 import { loadIdleListeningSkillIds } from "./load-practice";
+import { getDayOutlines } from "./outlining-stand-ins";
 import { getSkippedSkillIds } from "./review-skills";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
@@ -59,11 +61,12 @@ export async function loadDayPlan({
   goal,
   localDate,
   now,
+  readSubscription,
   selection,
   timeZone,
   userId,
 }: SessionDayContext & { selection?: SelectedDayPlan }) {
-  const [plan, goalPlan, tier, limit, lastStudyDate, hadEarlierDay, listeningSkillIds] =
+  const [plan, goalPlan, tier, limit, lastStudyDate, hadEarlierDay, listeningSkillIds, outlines] =
     await Promise.all([
       selection
         ? {
@@ -77,13 +80,14 @@ export async function loadDayPlan({
             where: { goalId: goal.id },
           }),
       loadGoalPlan(goal.id, selection?.source),
-      getLearnerTier(userId),
+      getLearnerTier(userId, readSubscription),
       loadDailyTimeLimitStatus({ date: localDate, userId }),
       loadLastStudyDate({ today: localDate, userId }),
       hasEarlierDay({ goalId: goal.id, today: localDate }),
       selection
         ? loadGoalListeningSkillIds({ blueprint, goal, graph: selection.state.graph })
         : loadListeningSkillIds(goal.id),
+      getDayOutlines({ goal, graph: selection?.state.graph, localDate, now }),
     ]);
 
   const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
@@ -93,7 +97,7 @@ export async function loadDayPlan({
   const skills = goalPlan.skills.filter((skill) => !skipped.has(skill.id));
 
   const [structure, prerequisites, idleSkillIds] = await Promise.all([
-    loadExamStructure(goal, { blueprint, dayMinutes }),
+    loadExamStructure(goal, { blueprint, dayMinutes, picks: readExamPicks(plan?.settings) }),
     loadSkillPrerequisites(graph.skills.map((skill) => skill.skillId)),
     loadIdleListeningSkillIds({
       examBlueprintId: goal.examBlueprintId,
@@ -116,6 +120,7 @@ export async function loadDayPlan({
     lastStudyDate,
     limit,
     listeningSkillIds,
+    outlines,
     /** Where the days away count from when the learner hasn't studied since (see `getFreshStart`). */
     planStart: getPlanStart({ goal, settings: plan?.settings, timeZone }),
     prerequisites,

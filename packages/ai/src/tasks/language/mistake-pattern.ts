@@ -5,9 +5,9 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages } from "../_utils/prompt-language";
 import { normalizeMistakePattern } from "./mistake-pattern-rules";
-import systemPrompt from "./mistake-pattern.prompt.md";
+import promptTemplate from "./mistake-pattern.prompt.md";
 
 /**
  * Luna scored 9.29 on the mistake-pattern eval with the right kind every time; Flash Lite stated a
@@ -67,23 +67,13 @@ function formatMistake(mistake: LanguageMistake, index: number): string {
 }
 
 function buildUserPrompt(params: FindMistakePatternParams): string {
-  const languages = getLanguagePromptContext({
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.learnerLanguage,
-  });
-
   const mistakes = params.mistakes.map((mistake, index) => formatMistake(mistake, index));
-
-  return `
-    TARGET_LANGUAGE: ${languages.targetLanguageName}
-    LEARNER_LANGUAGE: ${languages.userLanguageName}
-
-${formatUntrustedInput({ MISTAKES: mistakes.join("\n") })}
-  `;
+  return formatUntrustedInput({ MISTAKES: mistakes.join("\n") });
 }
 
 export async function findMistakePattern(params: FindMistakePatternParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const systemPrompt = fillPromptLanguages({ ...params, template: promptTemplate });
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

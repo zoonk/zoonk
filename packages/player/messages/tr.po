@@ -4163,6 +4163,17 @@ msgctxt "YtFTtA"
 msgid "Open link"
 msgstr "Bağlantıyı aç"
 
+#: src/questions/tutor-markdown.tsx
+msgctxt "xpHtfD"
+msgid "We couldn't open this step. Try again."
+msgstr "Bu adımı açamadık. Tekrar dene."
+
+#. Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since
+#: src/questions/tutor-markdown.tsx
+msgctxt "GYMJ1y"
+msgid "This step isn't available anymore."
+msgstr "Bu adıma artık erişilemiyor."
+
 #: src/questions/tutor-suggestion-words.ts
 msgctxt "tutorSuggestions.s6QqT3"
 msgid "I want to go deeper"

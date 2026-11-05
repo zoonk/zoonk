@@ -101,8 +101,6 @@
   "conversation_no_score_title": "b7448798a338ac96e43a593e113cac31fcc62515611f44b5e0bc107968f65d28",
   "conversation_not_connected": "b82ff248ffe85f27a7c7fdd8c30800efb1dca185c609b3c5bf7b3d0c1bfd336c",
   "conversation_not_connected_title": "cc33e81b259a7b605151f42f7f1e156574d40e354f12f686efcfcf76654828df",
-  "conversation_not_found_description": "eac8ee596abe7b2e868b11522fc77e601d67ff47910bff193d0f3e5b7fce2968",
-  "conversation_not_found_title": "1110194ef4f57ed406d38a8129b7a891eccb105e99973148167c24c33dae362c",
   "conversation_not_rated": "8f2c2435b39a4aec4da8a88d27aceacbd19cb0fe48231a490d9e31f1a4ada751",
   "conversation_not_this_time": "8b38d454082f677cd5b0fd0512584a8ea28239e8b48bffdd375938749164f5d7",
   "conversation_opens_and_card": "9f1eefe04729e7e99fdf8cfd38463dbdee58726f788e6e52c7a1be6dd7bb3f3a",
@@ -218,8 +216,6 @@
     <string name="conversation_mic_off">%1$sさんと声で話すには、設定でマイクの使用を許可してください。文字入力でも会話できます。</string>
     <!-- Starts the call without the microphone, answering by typing. -->
     <string name="conversation_type_instead">文字入力で会話する</string>
-    <string name="conversation_not_found_title">この会話が見つかりませんでした</string>
-    <string name="conversation_not_found_description">リンクが古いか、正しく入力されていない可能性があります。</string>
     <!-- Read before what the learner said in the call's transcript. -->
     <string name="conversation_you_said">自分：%1$s</string>
     <!-- Read before what the character said in the call's transcript: the character's name, then the words. -->

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.allVerticalHingeBounds
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
@@ -87,7 +86,9 @@ fun supportingPaneBeside(
  * width, so large text keeps a page and its aside a page each: one column could be no wider than
  * the page before the fold. [atFoldOnly] keeps one column where there's no fold, and [alone]
  * everywhere. Where a fold crosses a page too narrow for two panes, its one pane keeps to the page
- * before the fold if that page holds a phone's column.
+ * before the fold if that page holds a phone's column. A lone pane is measured with its text, as a
+ * spread is, or inside a [SpreadScreen] or [ResultScreen] where that screen's pages show, so a
+ * result's frame keeps both pages at any text size.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -102,7 +103,7 @@ fun pageDirective(
     val room = pageRoom(width, span, panesTouch, halfWidth, atFoldOnly)
     val fold = room.fold
     val window = room.window
-    val panesFit = room.fits(withText = fold == null || alone)
+    val panesFit = LocalSpread.current?.takeIf { alone }?.shows ?: room.fits(withText = fold == null || alone)
     val twoPanes = !alone && panesFit
     val excluded =
         when {
@@ -151,7 +152,7 @@ private fun pageRoom(
     halfWidth: Boolean,
     atFoldOnly: Boolean,
 ): PageRoom {
-    val info = currentWindowAdaptiveInfoV2()
+    val info = windowAdaptiveInfo()
     val fold = info.foldAcross(width, span)
     val window =
         if (fold == null) calculatePaneScaffoldDirective(info) else calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(info)
@@ -203,9 +204,8 @@ fun spreadFold(
     span: PageSpan?,
 ): PageFold? {
     LocalSpread.current?.let { spread -> return if (spread.shows) screenSplit(width, span) else null }
-    // Read on every frame, not only once a fold shows: a reading that starts late sees no fold at first.
-    val pagesFit = pageRoom(width, span = null, panesTouch = true, halfWidth = false, atFoldOnly = false).fits(withText = true)
-    return pageFold(width, span)?.takeIf { pagesFit }
+    val fold = pageFold(width, span) ?: return null
+    return fold.takeIf { pageRoom(width, span = null, panesTouch = true, halfWidth = false, atFoldOnly = false).fits(withText = true) }
 }
 
 /**
@@ -217,7 +217,7 @@ fun spreadFold(
 fun pageFold(
     width: Dp,
     span: PageSpan? = null,
-): PageFold? = currentWindowAdaptiveInfoV2().foldAcross(width, span)
+): PageFold? = windowAdaptiveInfo().foldAcross(width, span)
 
 @Composable
 private fun WindowAdaptiveInfo.foldAcross(

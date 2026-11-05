@@ -53,6 +53,7 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
@@ -84,7 +85,7 @@ fun PlanScreen(
             }
 
             loaded == null -> {
-                PlanLoading(padding)
+                PageLoading(Modifier.padding(padding))
             }
 
             goal == null -> {
@@ -131,7 +132,7 @@ private fun GoalPlan(
         }
 
         else -> {
-            PlanLoading(padding)
+            PageLoading(Modifier.padding(padding))
         }
     }
 }
@@ -205,7 +206,7 @@ private fun SetupLoading(
     if (setup is LoadState.Failed) {
         PlanLoadFailed(padding) { scope.launch { app.onboarding.onboardings[goal.id.toString()].refresh() } }
     } else {
-        PlanLoading(padding)
+        PageLoading(Modifier.padding(padding))
     }
 }
 
@@ -383,11 +384,4 @@ internal fun PlanTitle(modifier: Modifier = Modifier) {
         modifier = modifier.semantics { heading() },
         style = MaterialTheme.typography.headlineMedium,
     )
-}
-
-@Composable
-private fun PlanLoading(padding: PaddingValues) {
-    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
-    }
 }

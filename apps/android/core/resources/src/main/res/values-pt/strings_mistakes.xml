@@ -13,7 +13,6 @@
   "mistakes_empty_open": "b238f88893b8a3519018ea28bbf8b2adfd4550ceb2bc9797bc265af67588a3de",
   "mistakes_fixed_count": "490f41bf6518c77a4eeaddeb2fa431122ef1b0a29f16d2d2b10bb2cb8d6dc217",
   "mistakes_more_failed": "d617022b97848c94193c1c4636b5cf4bff9e91710a9322e197a80e623f891e08",
-  "mistakes_not_found_description": "3acf40ba3622f53c7b1fee9921c839a706f21c24162f8da4f636246245acfcb3",
   "mistakes_notebook_title": "5a3ceec9f80410d6253bb9af31e9cf6c268ff88192adb6d48df7a683efbb0f65",
   "mistakes_nothing_description": "d1f510209794ed8db12784f57aab59a8a45c1ecca1ec83d4b19bd0bf06863719",
   "mistakes_nothing_title": "7848741fa5472d906066f541068c18833d273f0b932ce5ef8a78d5cd6f9062fb",
@@ -43,7 +42,6 @@
         <item quantity="many">%d erros corrigidos</item>
         <item quantity="other">%d erros corrigidos</item>
     </plurals>
-    <string name="mistakes_not_found_description">Eles podem ter sido corrigidos ou removidos.</string>
     <string name="mistakes_nothing_title">Nada para praticar ainda</string>
     <string name="mistakes_nothing_description">Os erros voltam para prática a partir do dia seguinte.</string>
     <string name="mistakes_notebook_title">Caderno de erros</string>

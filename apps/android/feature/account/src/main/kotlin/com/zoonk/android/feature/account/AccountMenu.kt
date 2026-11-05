@@ -41,6 +41,7 @@ import com.zoonk.android.feature.feedback.rememberSendFeedback
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.PlaceIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.MeUser
@@ -90,6 +91,9 @@ fun AccountMenu(
                 HorizontalDivider()
             }
 
+            if (signedIn != null) {
+                MenuItem(stringResource(R.string.certificates_title), PlaceIcon.Certificates.icon) { go(AppRoute.Certificates) }
+            }
             MenuItem(stringResource(R.string.account_menu_settings), R.drawable.ic_settings) { go(AppRoute.Settings) }
 
             if (user != null) {

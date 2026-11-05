@@ -74,8 +74,8 @@ export function SessionBlockClient({
         stop: navigation.stop,
       }}
       buddy={tutor.buddy}
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={tutor.buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={tutor.buddy} moments={moments} onClose={onClose} />
       )}
       detail={detail}
       exitHref={EXIT_HREF}
@@ -108,6 +108,7 @@ function useApplyTap({ entry, tap }: { entry: DayEntry | null; tap: NextStopTap 
       }
 
       const went = await go(result.destination, {
+        here: entry.here,
         onSessionAddress: (address) => moveDayEntry(entry.id, address),
       });
 
@@ -242,8 +243,8 @@ export function SessionSummaryClient({
       exitHref={EXIT_HREF}
       goalKind={goalKind}
       mistakesHref="/mistakes"
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}
       signUpHref={isGuest ? signUpHref : null}
       stopped={stopped}

@@ -209,11 +209,13 @@ private struct PronunciationRoundView: View {
         ) {}
       } else if case .limit(let limit) = notice {
         HelpLimitNotice(limit: limit)
+      } else if notice == .failed {
+        FailureLine(message: statusLine(notice))
+          .font(.subheadline)
       } else {
         Text(statusLine(notice))
           .font(.subheadline)
-          .foregroundStyle(
-            notice == .failed ? AnyShapeStyle(.destructive) : AnyShapeStyle(.secondary))
+          .foregroundStyle(.secondary)
       }
     }
   }
@@ -310,11 +312,12 @@ private struct PronunciationRoundView: View {
 
   private func finishError(_ round: PronunciationRound) -> some View {
     HStack {
-      Text(
-        "We couldn't save your answers.", tableName: "Voice", comment: "Finishing the round failed"
+      FailureLine(
+        message: LocalizedStringResource(
+          "We couldn't save your answers.", table: "Voice",
+          comment: "Finishing the round failed")
       )
       .font(.subheadline)
-      .foregroundStyle(.destructive)
 
       Spacer()
 
@@ -416,18 +419,18 @@ private struct PronunciationResultView: View {
           Image(systemName: "checkmark.circle")
         }
       }
-      .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
+      .safeAreaBar(edge: .bottom) { doneButton }
       .lonePage()
     } else {
       PaneSplit {
         List {
           summary
-        }
-      } secondary: {
-        List {
           dayMoment
         }
-        .safeAreaBar(edge: .bottom) { doneButton }
+      } secondary: {
+        Color.clear
+          .safeAreaBar(edge: .bottom) { doneButton }
+          .background(Color(.systemGroupedBackground))
       } single: {
         List {
           summary
@@ -435,7 +438,7 @@ private struct PronunciationResultView: View {
         }
         .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
       }
-      .milestoneCeremony(day?.ceremony)
+      .completionMoments(day)
     }
   }
 

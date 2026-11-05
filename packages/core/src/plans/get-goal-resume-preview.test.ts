@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateGoal } from "../goals/update-goal";
@@ -47,15 +48,16 @@ describe(getGoalResumePreview, () => {
     });
   });
 
-  it("reads a generic resume preview and saves the exact move on resume", async () => {
+  it("reads a generic resume preview without writing and saves the exact move on resume", async () => {
     const { goal, plan } = await pausedGoal();
     const shown = await readPlan(plan.id);
     setNow(THURSDAY);
 
-    const result = await getGoalResumePreview(goal.id);
+    const { result, writes } = await countDatabaseStatements(() => getGoalResumePreview(goal.id));
     const preview = result.status === "ready" ? result.preview : null;
 
     expect(preview).toBe(true);
+    expect(writes).toBe(0);
 
     await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
 

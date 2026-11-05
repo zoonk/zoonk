@@ -124,7 +124,13 @@ function TypedReply({ call }: { call: LiveCall }) {
         ref={field}
         value={text}
       />
-      <Button className="size-11" disabled={!canSend || !text.trim()} size="icon" type="submit">
+      <Button
+        className="size-11"
+        disabled={!canSend || !text.trim()}
+        focusableWhenDisabled
+        size="icon"
+        type="submit"
+      >
         <SendIcon aria-hidden="true" />
         <span className="sr-only">{t("Send")}</span>
       </Button>

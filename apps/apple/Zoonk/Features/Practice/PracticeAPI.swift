@@ -6,8 +6,18 @@ enum PracticeAPIError: Error, Equatable, Sendable {
   case conflict(code: String?)
   case dailyLimitReached
   case invalid(code: String?)
-  case limitReached
+  case limit(HelpLimit)
   case plusRequired
+
+  /// Main's `requestQuestionWriting`: Plus required only when the refusal says `PLUS_REQUIRED`;
+  /// every other 402, 403 or 429 is the learner's help limit.
+  init(writingRefused refusal: VoiceRefusal) {
+    self = refusal.limit.map(Self.limit) ?? .plusRequired
+  }
+
+  var helpLimit: HelpLimit? {
+    if case .limit(let limit) = self { limit } else { nil }
+  }
 }
 
 enum PracticeGenerationStart: Equatable {
@@ -352,8 +362,15 @@ struct PracticeAPI: Sendable {
           ? .ready : .generating(generationId: generation.generationId)
       case .accepted(let response):
         return .generating(generationId: try response.body.json.generationId)
-      case .code402: throw PracticeAPIError.plusRequired
-      case .forbidden, .tooManyRequests: throw PracticeAPIError.limitReached
+      case .code402(let response):
+        throw PracticeAPIError(
+          writingRefused: voiceRefusal(status: 402, error: try? response.body.json))
+      case .forbidden(let response):
+        throw PracticeAPIError(
+          writingRefused: voiceRefusal(status: 403, error: try? response.body.json))
+      case .tooManyRequests(let response):
+        throw PracticeAPIError(
+          writingRefused: voiceRefusal(status: 429, error: try? response.body.json))
       case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }
@@ -420,8 +437,15 @@ struct PracticeAPI: Sendable {
           ? .ready : .generating(generationId: generation.generationId)
       case .accepted(let response):
         return .generating(generationId: try response.body.json.generationId)
-      case .code402: throw PracticeAPIError.plusRequired
-      case .forbidden, .tooManyRequests: throw PracticeAPIError.limitReached
+      case .code402(let response):
+        throw PracticeAPIError(
+          writingRefused: voiceRefusal(status: 402, error: try? response.body.json))
+      case .forbidden(let response):
+        throw PracticeAPIError(
+          writingRefused: voiceRefusal(status: 403, error: try? response.body.json))
+      case .tooManyRequests(let response):
+        throw PracticeAPIError(
+          writingRefused: voiceRefusal(status: 429, error: try? response.body.json))
       case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }
@@ -465,8 +489,15 @@ struct PracticeAPI: Sendable {
           ? .ready : .generating(generationId: generation.generationId)
       case .accepted(let response):
         return .generating(generationId: try response.body.json.generationId)
-      case .code402: throw PracticeAPIError.plusRequired
-      case .forbidden, .tooManyRequests: throw PracticeAPIError.limitReached
+      case .code402(let response):
+        throw PracticeAPIError(
+          writingRefused: voiceRefusal(status: 402, error: try? response.body.json))
+      case .forbidden(let response):
+        throw PracticeAPIError(
+          writingRefused: voiceRefusal(status: 403, error: try? response.body.json))
+      case .tooManyRequests(let response):
+        throw PracticeAPIError(
+          writingRefused: voiceRefusal(status: 429, error: try? response.body.json))
       case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }

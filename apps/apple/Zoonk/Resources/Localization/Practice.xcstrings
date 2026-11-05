@@ -9228,65 +9228,6 @@
         }
       }
     },
-    "Open the challenge" : {
-      "comment" : "Opens a checkpoint's challenge intro to start it.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Herausforderung öffnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir el desafío"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvrir le défi"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apri la sfida"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "チャレンジを開く"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "챌린지 열기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otwórz wyzwanie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir o desafio"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meydan okumayı aç"
-          }
-        }
-      }
-    },
     "Open the lesson" : {
       "comment" : "Opens the lesson that teaches a mistake's idea.",
       "localizations" : {
@@ -12601,6 +12542,65 @@
         }
       }
     },
+    "Still starting. This is taking longer than usual." : {
+      "comment" : "Starting a challenge is taking longer than usual.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Start läuft noch. Das dauert länger als üblich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún se está iniciando. Está tardando más de lo normal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le démarrage est en cours. Cela prend plus de temps que d’habitude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo ancora avviando la sfida. Ci stiamo mettendo più tempo del solito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ開始の準備をしています。いつもより時間がかかっています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 시작을 준비하고 있어요. 평소보다 오래 걸리고 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadal uruchamiamy wyzwanie. Trwa to dłużej niż zwykle."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda está iniciando. Está demorando mais que o normal."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hâlâ başlatmaya çalışıyoruz. Bu, normalden uzun sürüyor."
+          }
+        }
+      }
+    },
     "Stop for today" : {
       "comment" : "Stops today's session from the pause suggestion.",
       "localizations" : {
@@ -13722,65 +13722,6 @@
         }
       }
     },
-    "This challenge isn't ready yet." : {
-      "comment" : "A challenge that can't start on this device yet.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Herausforderung ist noch nicht bereit."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este desafío aún no está listo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce défi n’est pas encore disponible."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questa sfida non è ancora pronta."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このチャレンジはまだ始められません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 챌린지는 아직 준비되지 않았어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To wyzwanie nie jest jeszcze gotowe."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este desafio ainda não está disponível."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu meydan okuma henüz hazır değil."
-          }
-        }
-      }
-    },
     "This didn't load" : {
       "comment" : "Title when a practice screen can't load.",
       "localizations" : {
@@ -13895,65 +13836,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu branşın ağırlığı yüksek ve en çok yanlışı burada yaptın. Planında artık bu branş daha ayrıntılı işleniyor ve diğer tüm konular da planda kalıyor."
-          }
-        }
-      }
-    },
-    "This test comes with Plus." : {
-      "comment" : "A test that needs Plus.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieser Test ist in Plus enthalten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta prueba está incluida en Plus."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce test est inclus dans Plus."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questo test è incluso in Plus."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このテストはPlusで利用できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 테스트는 Plus에 포함돼 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ten test jest dostępny w pakiecie Plus."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este teste está incluído no Plus."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu test Plus’a dahil."
           }
         }
       }
@@ -17205,65 +17087,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tüm dinleme haklarını kullandın. Duyduklarına göre cevapla."
-          }
-        }
-      }
-    },
-    "You've used today's AI help. Try again tomorrow." : {
-      "comment" : "A test's questions can't be written: the AI allowance is spent.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast deine KI-Hilfe für heute aufgebraucht. Versuch es morgen noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya usaste toda la ayuda de IA de hoy. Inténtalo de nuevo mañana."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as utilisé toute l’aide de l’IA pour aujourd’hui. Réessaie demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito gli aiuti dell’IA per oggi. Riprova domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日のAIの利用上限に達しました。明日もう一度試してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘의 AI 도움 한도를 다 썼어요. 내일 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limit pomocy AI na dziś jest wyczerpany. Spróbuj ponownie jutro."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você usou toda a ajuda de IA de hoje. Tente de novo amanhã."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü yapay zekâ desteği hakkın bitti. Yarın tekrar dene."
           }
         }
       }
