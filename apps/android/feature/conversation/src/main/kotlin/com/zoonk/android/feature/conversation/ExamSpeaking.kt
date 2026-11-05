@@ -34,8 +34,8 @@ import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.formatClock
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
@@ -244,7 +244,13 @@ internal fun ExamTaskIntro(
     val criteria = spokenList(task.criteria.map { criterionGloss(it.key, it.name) }, locale)
     val card: @Composable () -> Unit = { SpeakingCardView(task.card, conversation.targetLanguage) }
 
-    CallFrame(title = { CallTitle(examTaskTitle(task)) }, onClose = onClose, bottomBar = actions, aside = { card() }) { beside ->
+    CallFrame(
+        title = { CallTitle(examTaskTitle(task)) },
+        onClose = onClose,
+        bottomBar = actions,
+        aside = { card() },
+        barUnderAside = true,
+    ) { beside ->
         item(key = "header") {
             Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Eyebrow(taskMinutes(task.task.minutes.min, task.task.minutes.max))

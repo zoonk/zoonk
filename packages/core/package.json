@@ -565,6 +565,7 @@
     "./sessions/reached": "./src/sessions/reached.ts",
     "./sessions/refresh-practice": "./src/sessions/add-refresh-practice-block.ts",
     "./sessions/save-for-mission": "./src/sessions/save-day-for-mission.ts",
+    "./sessions/settle-owed-day": "./src/sessions/settle-owed-session-day.ts",
     "./sessions/start-block": "./src/sessions/start-study-block.ts",
     "./sessions/stop": "./src/sessions/stop-study-session.ts",
     "./sessions/summary": "./src/sessions/get-study-session-summary.ts",
@@ -624,7 +625,7 @@
     "seed": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@apple/app-store-server-library": "catalog:",

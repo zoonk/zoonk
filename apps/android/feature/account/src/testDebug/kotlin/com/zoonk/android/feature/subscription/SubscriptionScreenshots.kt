@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
@@ -25,6 +24,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
@@ -116,7 +116,7 @@ class SubscriptionScreenshots {
         PlanViewer.entries.forEachIndexed { index, viewer ->
             shown = index
             compose.waitForIdle()
-            val bitmap = compose.onRoot().captureToImage().asAndroidBitmap()
+            val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
             val file = File(folder, "$prefix-${viewer.name.lowercase()}.png").apply { parentFile?.mkdirs() }
             file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
         }

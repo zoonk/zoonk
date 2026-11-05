@@ -45,6 +45,7 @@ final class TutorConversation {
   private(set) var askFailure: TutorFailure?
   private(set) var answerFailures: [String: TutorFailure] = [:]
   private(set) var memoryChanges: [String: [TutorMemoryChange]] = [:]
+  private(set) var memoryUndos: [String: MemoryUndo] = [:]
   private(set) var missionMoment: Components.Schemas.StudyMissionMoment?
   private(set) var isLoadingEarlier = false
   private(set) var earlierFailed = false
@@ -211,20 +212,25 @@ final class TutorConversation {
     }
   }
 
-  func undoMemory(of turnID: String) async -> MutationResult<Void> {
-    guard let changes = memoryChanges[turnID] else {
-      return .obsolete
+  func undoMemory(of turnID: String) async {
+    guard let changes = memoryChanges[turnID], memoryUndos[turnID]?.canUndo ?? true else {
+      return
     }
+
+    memoryUndos[turnID] = .undoing
 
     let result = await cache.mutate(invalidating: [.memory]) { identity in
       try await api.undoMemoryChanges(changes, token: identity.bearerToken)
     }
 
-    if case .done = result {
-      memoryChanges[turnID] = nil
+    switch result {
+    case .done(let undone):
+      memoryUndos[turnID] = undone ? .undone : .changedSince
+    case .failed:
+      memoryUndos[turnID] = .failed
+    case .obsolete:
+      memoryUndos[turnID] = nil
     }
-
-    return result
   }
 
   private func ask(_ question: String, suggestion: String?) async {

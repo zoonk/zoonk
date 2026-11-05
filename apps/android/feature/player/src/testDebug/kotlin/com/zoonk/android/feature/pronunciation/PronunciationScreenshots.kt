@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
@@ -26,6 +25,7 @@ import com.zoonk.android.feature.audio.previewSpeech
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PronunciationAnswerGrade
@@ -195,7 +195,7 @@ class PronunciationScreenshots {
             compose.waitForIdle()
             // A milestone's ceremony opens in a dialog's window, which onRoot() doesn't capture.
             val shown = if (compose.onAllNodes(isDialog()).fetchSemanticsNodes().isEmpty()) compose.onRoot() else compose.onNode(isDialog())
-            write("${states[screen].name}-$name", shown.captureToImage().asAndroidBitmap())
+            write("${states[screen].name}-$name", shown.captureRender().asAndroidBitmap())
         }
     }
 

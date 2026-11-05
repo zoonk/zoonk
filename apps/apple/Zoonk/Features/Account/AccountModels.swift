@@ -88,7 +88,9 @@ enum AccountDeletionResult: Equatable {
 
 enum AccountSessionState: Equatable {
   case restoring
-  case signedOut
+  /// `sessionEnded` when the server refused the session, rather than the learner signing out or
+  /// deleting their account: their plan is still there for them to log back in to.
+  case signedOut(sessionEnded: Bool)
   case signedIn(CurrentAccount)
   case unavailable
 

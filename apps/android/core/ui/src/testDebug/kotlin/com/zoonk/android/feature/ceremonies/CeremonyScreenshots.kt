@@ -7,7 +7,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -15,6 +14,7 @@ import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Milestone
 import org.junit.Assume.assumeTrue
@@ -107,7 +107,7 @@ class CeremonyScreenshots {
         milestones.indices.forEach { shown ->
             index = shown
             compose.waitForIdle()
-            write("ceremony-${milestones[shown].first}-$name", compose.onNode(isDialog()).captureToImage().asAndroidBitmap())
+            write("ceremony-${milestones[shown].first}-$name", compose.onNode(isDialog()).captureRender().asAndroidBitmap())
         }
     }
 

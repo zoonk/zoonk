@@ -9,7 +9,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -21,6 +20,7 @@ import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.TodayGoal
@@ -131,14 +131,14 @@ class SessionSummaryScreenshots {
         states.indices.forEach { state ->
             index = state
             compose.waitForIdle()
-            write("session-summary-${states[state].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("session-summary-${states[state].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
         index = 0
         compose.waitForIdle()
         if (compose.onAllNodes(hasText("Continue")).fetchSemanticsNodes().isNotEmpty()) {
             compose.onNodeWithText("Continue").performClick()
             compose.waitForIdle()
-            write("session-summary-rewards-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("session-summary-rewards-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

@@ -1,10 +1,15 @@
 package com.zoonk.android.feature.session
 
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.DoneMark
@@ -228,4 +233,18 @@ fun BlockMark(step: DayStep) {
         checkpoint != null && !checkpoint.mock && checkpoint.kind != CheckpointFacts.Kind.Weekly -> Trickster(Modifier.size(markSize()))
         else -> KindMark(step.learnKind)
     }
+}
+
+/** A row dims while its tap opens its block. */
+const val OPENING_ROW_ALPHA = 0.6f
+
+/** Under the title of a row whose tap couldn't open its block. */
+@Composable
+fun StepOpenFailed() {
+    Text(
+        text = stringResource(R.string.today_step_open_failed),
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        color = MaterialTheme.colorScheme.error,
+        style = MaterialTheme.typography.bodySmall,
+    )
 }

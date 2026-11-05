@@ -73,7 +73,7 @@ describe("Today preparation read budgets", () => {
       }
 
       expect(saved.result.today.progress).toStrictEqual(preview.result.today.progress);
-      const budgets = { exam: [107, 67], language: [135, 81], learn: [114, 77] } as const;
+      const budgets = { exam: [88, 64], language: [105, 80], learn: [97, 75] } as const;
       assertReadBudget(preview, budgets[kind][0]);
       assertReadBudget(saved, budgets[kind][1]);
     },

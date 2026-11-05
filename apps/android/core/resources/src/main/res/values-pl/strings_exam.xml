@@ -44,7 +44,6 @@
   "exam_format_one_day": "3ca275975290a2eb6b815b07527c76b0626fab602e102e21b05c394c8e09ad99",
   "exam_format_parts_questions": "0d50c5b87fe850d273069f4ca72ec50c6139f4b19a828540a827ed3c2301ee4a",
   "exam_format_two_days": "5cb7b50c6a9f82ca7f19d0508121ab4114ae6e1b7a84d0cb56f4b3972f3049ee",
-  "exam_go_to_today": "aa26e17b424ac04cf049af170034b871009bf252587814bf672a4d8a969f5c6a",
   "exam_how_did_it_go": "57c90acd84b0ce91aed9611a1cd54fd3311b2f12e396ffd58633ae9660033471",
   "exam_latest_mock": "eab1296c2a4b6eac8a37676338fec40c82811c8e6ebb21dc3df337cae560a09e",
   "exam_mock_answered": "c6942311634b1aba941b45b815e94cd7774dce719b329b7e2cb973634954f861",
@@ -61,8 +60,6 @@
   "exam_no_sitting_detail_one": "00bd6ed13f104c2e41f91988ba1d715862b7d4caa5167a8607ef2bc81d0dfaec",
   "exam_no_sitting_detail_several": "95e51d800b83f012dd029cecb470bd5f7b0bc60cc5adfa5e52a8b6a90c9d918e",
   "exam_no_sitting_title": "749c14e5bbf1e29e14fd9ef01674a56f763b8777e1d5158ac5ea9d3d947e10fc",
-  "exam_not_found_description": "dd9b028f1168abcc4495e2280618dcb90e3920359dbc2b97f9f35fd80ca6da24",
-  "exam_not_found_title": "1a87f03b9dacf4e8d6c0f0ec0138322e32154fe8d0f145092206d21ee076392f",
   "exam_out_of": "7397fd171a3e750ce7ea8451f2e20e503c2df5a70fa5c5dd9f1d829b98936b65",
   "exam_pass_marks_language": "43b74e266f3733528f4f97a5f02a9429ef53a0b05692df625b5db155ff435c6b",
   "exam_passed_no": "ab6c517be1c68dcbd634cd2aaaf4a8d0c2505a86d996cb6e7c9c7f71941d8bdf",
@@ -315,7 +312,4 @@
     <string name="exam_cutoff_source">%1$s, źródło: %2$s</string>
     <!-- %1$s is the learner's goal, such as "Medicine at USP". -->
     <string name="exam_cutoff_goal">Twój cel: %1$s</string>
-    <string name="exam_not_found_title">Nie udało się znaleźć tej strony</string>
-    <string name="exam_not_found_description">Link może być nieaktualny lub zawierać literówkę.</string>
-    <string name="exam_go_to_today">Przejdź do zakładki Dziś</string>
 </resources>

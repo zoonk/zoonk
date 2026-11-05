@@ -482,12 +482,12 @@ private struct PauseSuggestionView: View {
       .disabled(isStopping)
 
       if failed {
-        Text(
-          "We couldn't stop the session. Try again.", tableName: "Practice",
-          comment: "Stopping the session failed."
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't stop the session. Try again.", table: "Practice",
+            comment: "Stopping the session failed.")
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
       }
     }
   }

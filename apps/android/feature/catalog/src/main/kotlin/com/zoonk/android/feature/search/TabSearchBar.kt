@@ -64,7 +64,6 @@ import com.zoonk.android.data.SignOutResult
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.catalog.CatalogQuery
-import com.zoonk.android.feature.catalog.catalogLanguage
 import com.zoonk.android.feature.exam.ExamStore
 import com.zoonk.android.feature.feedback.rememberSendFeedback
 import com.zoonk.android.feature.session.StudyOpener
@@ -352,7 +351,7 @@ private fun rememberSearchGroups(
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val summary by app.learnerSummary.summary.collectShown()
     val value = summary.value
-    val language = catalogLanguage(currentLocale())
+    val language = currentLocale().language
     val activeGoalId = value?.activeGoalId ?: value?.goals?.firstOrNull()?.id
     val reading = settled.isNotEmpty()
 
