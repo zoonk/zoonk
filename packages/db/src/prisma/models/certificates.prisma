@@ -1,12 +1,12 @@
 enum CertificateKind {
   course
   languageLevel @map("language_level")
-  placement
 }
 
 /// Titles and numbers are snapshots, so a certificate reads the same after its course changes or
-/// goes away. `key` awards each once: the goal for a course or a placement, "<language>:<band>"
-/// for a language level.
+/// goes away. `key` awards each once: "<courseId>:<level>" for a course level, the goal for a plan
+/// certified whole, "<language>:<band>" for a language level. Every learner earns the row; only
+/// `issuedAt` makes it a certificate they can show.
 model Certificate {
   id             String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId         String          @map("user_id") @db.Uuid
@@ -22,14 +22,18 @@ model Certificate {
   /// The learner's language: the certificate's own words are written in it.
   language       String          @db.VarChar(10)
   targetLanguage String?         @map("target_language") @db.VarChar(10)
-  /// The CEFR band, for a language level or a placement.
+  /// The CEFR band, for a language level.
   level          String?         @db.VarChar(2)
+  /// The course level it certifies; null for a plan certified whole and for language levels.
+  courseLevel    CourseLevel?    @map("course_level")
   /// A course's title; null for language kinds, which are named from `targetLanguage`.
   title          String?
   details        Json            @default("{}")
   /// The learner's local day, fixed when it was earned.
   completedOn    DateTime        @map("completed_on") @db.Date
   shownAt        DateTime?       @map("shown_at")
+  /// Set once the learner has Plus, and kept after it ends; null while it's locked.
+  issuedAt       DateTime?       @map("issued_at")
   createdAt      DateTime        @default(now()) @map("created_at")
 
   @@unique([userId, kind, key], name: "userCertificate")
