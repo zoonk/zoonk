@@ -70,6 +70,27 @@ function shownStrips() {
     .map((shown) => shown.textContent);
 }
 
+function boxOf(text: string) {
+  return page.getByRole("main").getByText(text, { exact: true }).element().getBoundingClientRect();
+}
+
+function endMapLabels() {
+  return MAP.ideas.map(({ label = "" }) => {
+    const { left, top } = boxOf(label);
+    return { left, top };
+  });
+}
+
+function endMapIcons() {
+  return document.querySelectorAll('[data-slot="lesson-map"] [data-slot="lesson-icon"]');
+}
+
+async function answerCheck() {
+  await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await page.getByRole("button", { name: /^Continue/u }).click();
+}
+
 function underlined() {
   return [...document.querySelectorAll('[data-slot="underline"]')].map((mark) => mark.textContent);
 }
@@ -147,9 +168,7 @@ describe("lesson marks", () => {
     await expect.poll(shownStrips).toStrictEqual(["Idea 2 of 2"]);
     await expect.element(page.getByText("Reading the cloud")).not.toBeInTheDocument();
 
-    await page.getByRole("radio", { name: RIGHT_OPTION }).click();
-    await page.getByRole("button", { name: /^Check/u }).click();
-    await page.getByRole("button", { name: /^Continue/u }).click();
+    await answerCheck();
 
     const map = page.getByRole("main");
     await expect.element(map.getByRole("heading", { name: "Lesson map" })).toBeVisible();
@@ -221,6 +240,28 @@ describe("lesson marks", () => {
 
     await page.getByRole("button", { name: "Previous screen" }).click();
     await expect.element(page.getByText("2 ideas to discover in this lesson")).toBeVisible();
+  });
+
+  it("keeps each idea's icon room on the end map, so icons drawn after it opened move nothing", async () => {
+    const arrival = Promise.withResolvers<LessonMarks>();
+    const getLessonMarks = vi.fn(() => arrival.promise);
+
+    const opened = buildLesson(lesson().steps, {
+      marksPending: true,
+      summary: { ...MAP, ideas: MAP.ideas.map((idea) => ({ ...idea, icon: null })) },
+    });
+
+    renderLessonPlayer({ adapters: { ...buildAdapters(opened), getLessonMarks }, lesson: opened });
+    await next();
+    await next();
+    await answerCheck();
+
+    await expect.element(page.getByRole("main").getByText("Reading the cloud")).toBeVisible();
+    const before = endMapLabels();
+
+    arrival.resolve({ marksPending: false, steps: [], summary: MAP });
+    await expect.poll(() => endMapIcons().length).toBe(MAP.ideas.length);
+    expect(endMapLabels()).toStrictEqual(before);
   });
 
   it("keeps reading marks after a few failed reads, within the screens' picture wait", async () => {
@@ -297,6 +338,11 @@ describe("lesson marks", () => {
     await expect.element(strip()).not.toBeInTheDocument();
     await expect.element(page.getByText("Example", { exact: true })).not.toBeInTheDocument();
     expect(underlined()).toStrictEqual([]);
+
+    await next();
+    await answerCheck();
+    const [first] = plainMap.ideas;
+    expect(boxOf(first?.label ?? "").left).toBe(boxOf(first?.text ?? "").left);
   });
 
   it("puts a knowledge lesson's new term on the highlighter, even before its marks", async () => {
