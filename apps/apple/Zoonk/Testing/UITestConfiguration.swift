@@ -147,7 +147,7 @@
       throw APIError.unavailable
     }
 
-    func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws {
+    func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws -> Bool {
       throw APIError.unavailable
     }
   }

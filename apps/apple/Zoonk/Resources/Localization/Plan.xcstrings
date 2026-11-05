@@ -5914,7 +5914,7 @@
       }
     },
     "%lld of %lld" : {
-      "comment" : "Chapters done of the subject's chapters\nLessons done of the chapter's lessons\nThe learner's phase number of the plan's phases, under the roadmap",
+      "comment" : "Chapters done of the subject's chapters\nLessons done of the chapter's lessons\nThe learner's phase number of the plan's phases, under the roadmap\nThe suggestion shown of the Plan's suggestions",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8465,65 +8465,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "1 of %lld" : {
-      "comment" : "The suggestion shown of the Plan's suggestions",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 von %lld"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 de %lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 sur %lld"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 di %lld"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld件中1件目"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1/%lld"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 z %lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 de %lld"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 / %lld"
           }
         }
       }
@@ -21532,6 +21473,65 @@
         }
       }
     },
+    "Next" : {
+      "comment" : "Goes on to the next of the Plan's suggestions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivant"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avanti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次へ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dalej"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonrakine geç"
+          }
+        }
+      }
+    },
     "Next mock %@" : {
       "comment" : "A line of a change's diff: the day of the next mock exam",
       "localizations" : {
@@ -24305,6 +24305,65 @@
         }
       }
     },
+    "Previous" : {
+      "comment" : "Goes back to the previous of the Plan's suggestions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anterior"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Précédent"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indietro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前へ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이전"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wstecz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anterior"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öncekine dön"
+          }
+        }
+      }
+    },
     "Progress" : {
       "comment" : "Label of the goal's progress number",
       "localizations" : {
@@ -25068,65 +25127,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu hedefe devam et"
-          }
-        }
-      }
-    },
-    "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams." : {
-      "comment" : "What stays free and what Plus opens after the free week",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wiederholungen und das Korrigieren deiner Fehler bleiben kostenlos. Mit Plus erhältst du Zugang zu neuen Lektionen, dem Rest deines Plans und Probeprüfungen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Repasar y corregir tus errores sigue siendo gratis. Plus te da acceso a nuevas lecciones, al resto de tu plan y a simulacros."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les révisions et la correction de tes erreurs restent gratuites. Plus donne accès à de nouvelles leçons, au reste de ton plan et aux examens blancs."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi continuare a ripassare e correggere i tuoi errori gratis. Plus sblocca nuove lezioni, il resto del tuo piano e le simulazioni."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習や間違いを直す練習は、引き続き無料です。Plusでは、新しいレッスンや学習計画の続き、模試を利用できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "복습과 오답 고치기는 계속 무료예요. Plus를 구독하면 새 레슨과 모의고사를 이용하고 남은 계획도 이어갈 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Powtórki i poprawianie błędów pozostają bezpłatne. Plus odblokowuje nowe lekcje, resztę twojego planu i egzaminy próbne."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As revisões e a correção dos seus erros continuam grátis. O Plus libera novas aulas, o restante do seu plano e simulados."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrar yapmak ve yanlışlarını düzeltmek ücretsiz olmaya devam eder. Plus ile yeni derslere, planının geri kalanına ve deneme sınavlarına erişebilirsin."
           }
         }
       }
@@ -31824,65 +31824,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cihazın"
-          }
-        }
-      }
-    },
-    "Your free week of exam prep is over" : {
-      "comment" : "Title of the Plan's notice when a free exam plan's first week ended",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine kostenlose Woche Prüfungsvorbereitung ist vorbei"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminó tu semana gratis de preparación para el examen"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta semaine gratuite de préparation à l’examen est terminée"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua settimana gratuita di preparazione all’esame è finita"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験対策の無料期間（1週間）が終わりました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "일주일간의 무료 시험 준비가 끝났어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bezpłatny tydzień przygotowań do egzaminu dobiegł końca"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua semana grátis de preparo para a prova terminou"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınava hazırlıktaki ücretsiz haftan sona erdi"
           }
         }
       }

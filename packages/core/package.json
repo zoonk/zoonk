@@ -625,7 +625,7 @@
     "seed": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@apple/app-store-server-library": "catalog:",

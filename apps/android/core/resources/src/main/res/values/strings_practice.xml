@@ -42,7 +42,4 @@
     <string name="practice_pause_failed">We couldn\'t stop the session. Try again.</string>
     <string name="practice_done_title">Practice done</string>
     <string name="practice_done_review">Review done</string>
-    <string name="practice_not_found_title">These questions aren\'t here anymore</string>
-    <string name="practice_not_found_description">They may have ended or moved. Today has what\'s next.</string>
-    <string name="practice_close">Close</string>
 </resources>

@@ -20,7 +20,7 @@ import {
 } from "./_utils/skill-graph-sections";
 import { type OnSkillNamed, finishStreamedPart } from "./_utils/streamed-skill-names";
 import { type ExamOutline, formatExamOutline } from "./exam-outline";
-import { buildSkillGraphSystemPrompt } from "./skill-graph-system-prompt";
+import { buildSkillGraphSystemPrompt, startsWithSubject } from "./skill-graph-system-prompt";
 
 /**
  * Terra scored a little above Sol on the skill-graph eval at half the cost (30 Oct 2026); Flash
@@ -56,6 +56,10 @@ const schema = z.object({
   courses: z.array(courseSchema),
   phases: z.array(phaseSchema),
   skills: z.array(skillSchema),
+});
+
+const subjectStartSchema = schema.extend({
+  courses: z.array(courseSchema.extend({ supporting: z.boolean() })),
 });
 
 const frameSchema = z.object({
@@ -236,7 +240,11 @@ async function writePart<TOutput>({
 }
 
 async function generateWholeGraph(params: SkillGraphParams) {
-  const whole = await writePart({ params, part: { kind: "whole" }, partSchema: schema });
+  const whole = await writePart({
+    params,
+    part: { kind: "whole" },
+    partSchema: startsWithSubject(params) ? subjectStartSchema : schema,
+  });
 
   return {
     ...normalizeDraft({ params, raw: whole.output }),

@@ -13,7 +13,6 @@
   "mistakes_empty_open": "026ce2a4487d84fbc62b76838f8e751970396b1d37e42b62db0c6fd8e75d3735",
   "mistakes_fixed_count": "099ff7252beb3ec27143a35a7f6b2f4f2175fa42a34b3ba9ca3cfb3dc6ae2e02",
   "mistakes_more_failed": "4680a772d17072c6c1cac5818e2393cc78633761d121636a8cbdd82077c6d139",
-  "mistakes_not_found_description": "f04f7f8ee52ba95e9108326bc45a2a1a42f1f49216d2c8ef829345ac547cdb41",
   "mistakes_notebook_title": "f215fd53d5e81479a0547ab8b9de672c096cf9a5450a86e82419fa903c73d549",
   "mistakes_nothing_description": "fcafb30c2fb9e5d443a74ea1677cb33400043ace47052078bd0654638f22b31a",
   "mistakes_nothing_title": "027921feb5f37ffd5afa64d62710fce6a44bc4d85acd7acd6351c9b25f9318db",
@@ -41,7 +40,6 @@
     <plurals name="mistakes_practice_fixed">
         <item quantity="other">%d件の間違いを克服しました</item>
     </plurals>
-    <string name="mistakes_not_found_description">克服済みか、削除された可能性があります。</string>
     <string name="mistakes_nothing_title">まだ練習する問題はありません</string>
     <string name="mistakes_nothing_description">間違えた問題は、翌日から練習できるようになります。</string>
     <string name="mistakes_notebook_title">間違いノート</string>

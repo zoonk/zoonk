@@ -6,7 +6,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -17,6 +16,7 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -141,7 +141,7 @@ class MockRunnerScreenshots {
             }
         }
         compose.waitForIdle()
-        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun write(

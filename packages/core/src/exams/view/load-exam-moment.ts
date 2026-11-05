@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { readFinishedMockCount } from "../../learner/facts/finished-mocks";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
@@ -75,7 +76,7 @@ export async function loadExamMoment({
 
   const [work, mocksTaken, result, shortPlan] = await Promise.all([
     loadExamWork({ goalId: goal.id, today }),
-    prisma.mockExam.count({ where: { goalId: goal.id, status: "finished" } }),
+    readFinishedMockCount(goal.userId, goal.id),
     prisma.examResult.findUnique({ select: { id: true }, where: { goalId: goal.id } }),
     selectedShortPlan === undefined ? loadShortPlanDay({ goal, today }) : selectedShortPlan,
   ]);

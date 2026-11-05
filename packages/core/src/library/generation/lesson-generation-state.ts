@@ -35,6 +35,10 @@ function toLessonGenerationState(lesson: StateRow): LessonGenerationState {
 export async function getLessonGenerationStates(
   lessonIds: readonly string[],
 ): Promise<Map<string, LessonGenerationState>> {
+  if (lessonIds.length === 0) {
+    return new Map();
+  }
+
   const lessons = await prisma.lesson.findMany({
     select: {
       contentRunId: true,

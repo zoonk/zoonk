@@ -29,6 +29,7 @@
   "memory_source_you": "9c84655eda9cc5380ec303345851625191ca228b33a6d1b95324139574cc9ee7",
   "memory_undo": "ba0a54a1660b3be8b6a4ab9c9fa7f4c94ffb64e89b1d34496b71ef3509befbe3",
   "memory_undo_failed": "29b4146f165e286ba39c252fa23f3c1dcf6bb20d840641d11833a8db8255bdb1",
+  "memory_undo_retry": "c3e020644496152820ddfec1c70f2c16f6e270dcf9b498da4d88833e315155bf",
   "memory_updated": "c10493b342954890cce0fd7eea07b0624614223df9258578fa37d74c4bec3fa8",
   "memory_updated_more": "b965593ef9aa06bdee5bd474dd235b63fe1157bc9e39d3fbcbdd1eae6cdefc2d",
   "memory_use": "e5b19a9d5cb2dbc6f7131e4d67fd95bde7555d36def25376ba9433c9817f8a41",
@@ -79,4 +80,5 @@
     <string name="memory_undo">Annuler</string>
     <string name="memory_change_undone">Modification annulée</string>
     <string name="memory_undo_failed">Impossible d’annuler. Cela a changé depuis.</string>
+    <string name="memory_undo_retry">Impossible d’annuler. Réessaie.</string>
 </resources>

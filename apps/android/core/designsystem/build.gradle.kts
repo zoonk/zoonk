@@ -5,6 +5,7 @@ plugins {
 
 android {
     namespace = "com.zoonk.android.designsystem"
+    testFixtures.enable = true
 }
 
 dependencies {
@@ -32,6 +33,9 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    testFixturesImplementation(composeBom)
+    testFixturesImplementation(libs.androidx.compose.ui.test.junit4)
 
     testImplementation(testFixtures(project(":core:data")))
     testImplementation(composeBom)

@@ -48,10 +48,26 @@ export function isSameIdentity(a: LearnerIdentity | null, b: LearnerIdentity | n
   return a.userId === b.userId;
 }
 
+/** Null when no one is signed in, undefined until the browser knows who is. */
+export type LearnerId = string | null | undefined;
+
+/**
+ * Whether the learner who made a tap still holds the session. Only someone signed in taps, so one not
+ * known at the tap is whoever the browser then learns holds it, unless that's no one; while the
+ * browser knows no one yet, nothing says they left.
+ */
+export function isTapLearner({ held, tapped }: { held: LearnerId; tapped: LearnerId }): boolean {
+  if (held === undefined) {
+    return true;
+  }
+
+  return tapped === undefined ? held !== null : tapped === held;
+}
+
 export type LearnerStore = {
   changeTimer: ReturnType<typeof setTimeout> | undefined;
   generation: number;
-  inFlight: { generation: number; promise: Promise<void> } | null;
+  inFlight: { generation: number; promise: Promise<void>; replaced: () => void } | null;
   installed: boolean;
   listeners: Set<() => void>;
   readAt: number;
