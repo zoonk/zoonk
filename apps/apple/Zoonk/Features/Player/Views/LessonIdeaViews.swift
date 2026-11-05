@@ -236,8 +236,9 @@ private struct LessonOpeningIdea: View {
       LessonIconImage(icon: icon, size: Self.size - 8)
         .frame(width: Self.size, height: Self.size)
         .overlay(alignment: .bottomTrailing) {
+          // The map keeps its size at every text size; past this one the number outgrows its ring.
           number
-            .padding(3)
+            .dynamicTypeSize(...DynamicTypeSize.xxLarge)
             .frame(minWidth: 22, minHeight: 22)
             .background(Color(.systemBackground), in: .circle)
             .overlay {
