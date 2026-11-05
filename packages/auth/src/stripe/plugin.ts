@@ -54,9 +54,9 @@ function isGranting(subscription: Stripe.Subscription): boolean {
  * already reads ended, such as a refund handled first: they had Plus, and issued certificates
  * stay.
  */
-function issueOnGrant(userId: string) {
+function issueOnGrant({ grantedAt, userId }: { grantedAt: Date; userId: string }) {
   return prisma.$transaction((tx) =>
-    issueEarnedCertificates(tx, { now: new Date(), plus: "granted", userId }),
+    issueEarnedCertificates(tx, { now: new Date(), plus: { grantedAt }, userId }),
   );
 }
 
@@ -123,7 +123,7 @@ const settleReturnedCheckout = createAuthMiddleware(async (context) => {
     await saveIfEnded(checkout.subscription);
 
     if (getCheckoutLearner(checkout) === session.user.id && isGranting(checkout.subscription)) {
-      await issueOnGrant(session.user.id);
+      await issueOnGrant({ grantedAt: new Date(), userId: session.user.id });
     }
   });
 
@@ -173,7 +173,7 @@ async function onStripeEvent(event: Stripe.Event) {
   const granted = await findGrantedLearner(event);
 
   if (granted) {
-    await issueOnGrant(granted);
+    await issueOnGrant({ grantedAt: new Date(event.created * 1000), userId: granted });
   }
 }
 

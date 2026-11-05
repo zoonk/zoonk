@@ -8,13 +8,14 @@ import { getActiveSubscriptionQuery } from "./active-subscription";
  * transaction, and every award does after writing rows, both under the learner's lock: whichever
  * commits second sees the other.
  *
- * `granted` trusts a verified grant, such as a Stripe event, instead of re-reading our copy of the
- * subscription, which a cancellation or refund may have ended since. `check` reads it in `tx`.
- * Guests are never Plus.
+ * `check` reads the subscription in `tx`. A verified grant, such as a Stripe event, is trusted
+ * instead of our copy, which a cancellation or refund may have ended since; it covers what was
+ * earned by `grantedAt`, so a grant delivered again after Plus ended doesn't issue what was earned
+ * without it. Guests are never Plus.
  */
 export async function issueEarnedCertificates(
   tx: TransactionClient,
-  { now, plus, userId }: { now: Date; plus: "check" | "granted"; userId: string },
+  { now, plus, userId }: { now: Date; plus: "check" | { grantedAt: Date }; userId: string },
 ): Promise<number> {
   const user = await tx.user.findUnique({ select: { isAnonymous: true }, where: { id: userId } });
 
@@ -37,7 +38,11 @@ export async function issueEarnedCertificates(
 
   const issued = await tx.certificate.updateMany({
     data: { issuedAt: now },
-    where: { issuedAt: null, userId },
+    where: {
+      issuedAt: null,
+      userId,
+      ...(plus !== "check" && { createdAt: { lte: plus.grantedAt } }),
+    },
   });
 
   return issued.count;

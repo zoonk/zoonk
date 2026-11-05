@@ -184,7 +184,7 @@ function addCheckoutRow(userId: string) {
 }
 
 function deliverStripeEvent(event: { data: { object: unknown }; type: string }) {
-  stripe.constructEvent.mockResolvedValue(event);
+  stripe.constructEvent.mockResolvedValue({ created: Math.floor(Date.now() / 1000), ...event });
 
   return guestAuth.handler(
     new Request("http://localhost:3000/api/auth/stripe/webhook", {

@@ -6,7 +6,7 @@ import {
   type UnitGoal,
   loadCertificateUnits,
 } from "../../certificates/_utils/load-certificate-units";
-import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { type SavedPlan } from "../../learner/facts/saved-plan";
 import { countSkillStates } from "../../learner/mastery-state";
 import { loadPlanCourse } from "../../plans/_utils/plan-course";
 import { loadGoalMap } from "../_utils/goal-map";
@@ -23,10 +23,14 @@ function isRefreshGoal(details: unknown): boolean {
   return isJsonObject(details) && details.purpose === "refresh";
 }
 
-async function readPlanCertificates(goal: UnitGoal): Promise<FieldMapView["certificates"]> {
+async function readPlanCertificates({
+  goal,
+  plan,
+}: {
+  goal: UnitGoal;
+  plan: SavedPlan | null;
+}): Promise<FieldMapView["certificates"]> {
   cacheTag(getCertificatesCacheTag(goal.userId));
-
-  const plan = await readSavedPlan(goal.userId, goal.id);
 
   if (!plan) {
     return null;
@@ -71,7 +75,7 @@ export async function getFieldMapView(
   const [course, courses, certificates] = await Promise.all([
     loadPlanCourse({ goal, items: map.items }),
     loadMapCourses({ courseIds: map.courseIds, userId: goal.userId }),
-    readPlanCertificates(goal),
+    readPlanCertificates({ goal, plan: map.savedPlan }),
   ]);
 
   const areaCourses = courses.filter((entry) =>

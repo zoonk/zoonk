@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type CourseLevel, type Goal, type PlanItem, prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   courseChapterFixture,
@@ -476,9 +476,14 @@ describe("level and plan certificates", () => {
 
     const [skipped, skill] = await Promise.all([libraryLessonFixture(), skillFixture()]);
 
+    // Skipping an area takes its lessons out of the plan but leaves its skills in the graph.
     await Promise.all([
       chapterLessonFixture({ chapterId: fixture.chapters[0]?.id ?? "", lessonId: skipped.id }),
       lessonSkillFixture({ lessonId: skipped.id, skillId: skill.id }),
+      prisma.plan.update({
+        data: { graph: { skills: plannedSkills([{ id: skill.id, name: skill.name }]) } },
+        where: { id: fixture.plan.id },
+      }),
     ]);
 
     await updateGoal({ goalId: fixture.goal.id, input: { details: {} } });

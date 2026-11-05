@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { issueEarnedCertificates } from "./certificate-issuance";
 import { createCertificate, createLearner } from "./guests/_test-utils/learner-data";
 
-function issue(userId: string, plus: "check" | "granted", now = new Date()) {
+function issue(userId: string, plus: "check" | { grantedAt: Date }, now = new Date()) {
   return prisma.$transaction((tx) => issueEarnedCertificates(tx, { now, plus, userId }));
 }
 
@@ -33,14 +33,23 @@ describe(issueEarnedCertificates, () => {
     await createCertificate({ userId });
 
     await expect(issue(userId, "check")).resolves.toBe(0);
-    await expect(issue(userId, "granted")).resolves.toBe(1);
+    await expect(issue(userId, { grantedAt: new Date() })).resolves.toBe(1);
+  });
+
+  it("leaves out what was earned after a grant, so a grant delivered again late issues none of it", async () => {
+    const userId = await createLearner({ isAnonymous: false });
+    const earned = await createCertificate({ userId });
+    const before = new Date(earned.createdAt.getTime() - 1000);
+
+    await expect(issue(userId, { grantedAt: before })).resolves.toBe(0);
+    await expect(issue(userId, { grantedAt: earned.createdAt })).resolves.toBe(1);
   });
 
   it("never issues a guest's certificates", async () => {
     const userId = await createLearner({ isAnonymous: true });
     await createCertificate({ userId });
 
-    await expect(issue(userId, "granted")).resolves.toBe(0);
+    await expect(issue(userId, { grantedAt: new Date() })).resolves.toBe(0);
     await expect(readIssuedAt(userId)).resolves.toStrictEqual([{ issuedAt: null }]);
   });
 });

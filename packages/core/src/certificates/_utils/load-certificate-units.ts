@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, type Plan, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { isWorkFinished } from "../../plans/_utils/work-progress";
 import { LEARN_KINDS, isStandIn } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type CertifiableItem, listCertificateUnits } from "./certificate-units";
@@ -51,7 +52,6 @@ async function loadPrimaryCourse(db: TransactionClient, goal: UnitGoal) {
 
   return db.course.findUnique({
     select: {
-      categories: { orderBy: { createdAt: "asc" }, select: { category: true }, take: 1 },
       courseChapters: {
         select: { chapterId: true, createdAt: true, level: true },
         where: { chapter: libraryRowsVisibleTo(goal.userId) },
@@ -111,8 +111,9 @@ async function loadStandInLevels(db: TransactionClient, { goal, plan }: UnitInpu
 
 /**
  * Of the chapters a level of the plan had when it began and the plan holds no item in, the ones
- * whose lessons teach only skills the plan's graph has. A chapter without lessons yet teaches
- * nothing the plan could miss.
+ * whose lessons teach only skills the plan's finished lessons taught. Not the plan's graph: an area
+ * the learner skipped leaves its skills there. A chapter without lessons yet teaches nothing the
+ * plan could miss.
  */
 async function findChaptersTaughtInPlan(
   db: TransactionClient,
@@ -138,25 +139,41 @@ async function findChaptersTaughtInPlan(
   }
 
   const visible = libraryRowsVisibleTo(goal.userId);
-  const planned = new Set(parsePlanGraph(plan.graph).skills.map((skill) => skill.skillId));
 
-  const chapters = await db.chapter.findMany({
-    select: {
-      id: true,
-      lessons: {
-        select: {
-          lesson: { select: { skills: { select: { skillId: true }, where: { skill: visible } } } },
+  const finished = items.filter(
+    (item) => LEARN_KINDS.has(item.kind) && isWorkFinished(item.status),
+  );
+
+  const [chapters, finishedSkills] = await Promise.all([
+    db.chapter.findMany({
+      select: {
+        id: true,
+        lessons: {
+          select: {
+            lesson: {
+              select: { skills: { select: { skillId: true }, where: { skill: visible } } },
+            },
+          },
+          where: { lesson: { ...visible, setAsideAt: null } },
         },
-        where: { lesson: { ...visible, setAsideAt: null } },
       },
-    },
-    where: { id: { in: missing } },
-  });
+      where: { id: { in: missing } },
+    }),
+    db.lessonSkill.findMany({
+      select: { skillId: true },
+      where: { lessonId: { in: finished.flatMap((item) => item.lessonId ?? []) } },
+    }),
+  ]);
+
+  const taught = new Set([
+    ...finishedSkills.map((row) => row.skillId),
+    ...finished.flatMap((item) => (isStandIn(item) && item.skillId ? item.skillId : [])),
+  ]);
 
   return new Set(
     chapters.flatMap((chapter) =>
       chapter.lessons.every(({ lesson }) =>
-        lesson.skills.every((skill) => planned.has(skill.skillId)),
+        lesson.skills.every((skill) => taught.has(skill.skillId)),
       )
         ? chapter.id
         : [],

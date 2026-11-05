@@ -107,17 +107,16 @@ function getCertificateTitle({
 }
 
 function buildDetails({
-  course,
+  category,
   topics,
   unit,
 }: {
-  course: UnitCourse | null;
+  category: string | null;
   topics: string[];
   unit: CertificateUnit;
 }): CourseCertificateDetails {
   const lessons = unit.items.filter((item) => item.kind === "lesson");
   const studied = lessons.filter((item) => getWorkProgress(item.status) === "studied");
-  const category = course?.categories[0]?.category ?? null;
 
   return {
     category: isValidCategory(category) ? category : null,
@@ -147,7 +146,17 @@ export async function writeFinishedUnits(
     return { ...loaded, written: 0 };
   }
 
-  const chapters = await loadChapters(tx, due);
+  const [chapters, category] = await Promise.all([
+    loadChapters(tx, due),
+    goal.primaryCourseId
+      ? tx.courseCategory.findFirst({
+          orderBy: { createdAt: "asc" },
+          select: { category: true },
+          where: { courseId: goal.primaryCourseId },
+        })
+      : null,
+  ]);
+
   const timeZone = getAnswerTimeZone({ goal });
 
   const rows = due.flatMap((unit) => {
@@ -165,7 +174,7 @@ export async function writeFinishedUnits(
         completedOn: getDateInTimeZone({ date: getLastFinishedAt(unit.items), timeZone }),
         courseId: goal.primaryCourseId,
         courseLevel: unit.courseLevel,
-        details: buildDetails({ course: loaded.course, topics, unit }),
+        details: buildDetails({ category: category?.category ?? null, topics, unit }),
         goalId: goal.id,
         key: unit.key,
         kind: "course" as const,

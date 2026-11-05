@@ -24,8 +24,8 @@ export type LevelChapter = {
   createdAt: Date;
   level: CourseLevel;
   /**
-   * Every skill its lessons teach is in the plan: a course-start plan teaches a skill once, so it
-   * leaves out a chapter whose skills an earlier chapter already teaches.
+   * The plan's finished lessons taught every skill its lessons teach: a course-start plan teaches
+   * a skill once, so it leaves out a chapter whose skills an earlier chapter already teaches.
    */
   taughtInPlan: boolean;
 };
