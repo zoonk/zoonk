@@ -582,11 +582,11 @@ struct LessonWaitingView: View {
     return switch writing {
     case .notStarted:
       LocalizedStringResource(
-        "Zoonk writes it when you start. It takes a minute or two.", table: "Player",
+        "Zoonk writes it when you start. It takes a few minutes.", table: "Player",
         comment: "A lesson not written yet")
     case .writing, .written:
       LocalizedStringResource(
-        "It usually takes a minute or two. The lesson opens here as soon as it's ready.",
+        "It usually takes a few minutes. The lesson opens here as soon as it's ready.",
         table: "Player",
         comment: "While a lesson is written")
     case .failed:

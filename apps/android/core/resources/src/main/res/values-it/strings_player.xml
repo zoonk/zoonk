@@ -103,7 +103,7 @@
   "player_not_found_title": "5b762cfd823817eb0fc967a1c73eb70cae5017d782a4c2276d9089f9912f42c5",
   "player_not_in_app_description": "1321935ead014dcfcf253b62fb1c63e1d3f05f5c6ad286833f939b34ee51c213",
   "player_not_in_app_title": "e36ed11d2f6f1a2103bef2e959a373819bec066d07f64379c859a3b52433437e",
-  "player_not_written_description": "0d501da0d1a346d05360eac8c05f3ce971eca693f1dfb839284151640808f609",
+  "player_not_written_description": "01b4385c541cef479c7c7487513161d4cbe5e5c6f7a66728c7b37a50587aa5e2",
   "player_not_written_title": "3351675250f5565c2967f63d6be7ca3fdc32f8500524c54da39ad17a189c1b86",
   "player_nothing_left_description": "164e8e662a3d42afd48760c39ad8927f8c8445bbbc10dee63edcf321fb657dc5",
   "player_nothing_left_title": "c03ea427ddc2f303e5c0b7ac036fed2c6ce0af7bd19b0b408432bc7977999155",
@@ -178,7 +178,7 @@
   "player_write_again": "dc90596055f67b8a83606fb95ddacf760918e3553acfd95f1c027a83c10fef7b",
   "player_write_your_answer": "f214de9fa199199c6ac8fb524ea6e4b1a1b7abd8d1f4cd83e80522d0df5dfd50",
   "player_writing_lesson": "0cee8345c10d6389ce29d06097d482c9b37da78fd63aaeb17282e643d83af3ff",
-  "player_writing_note": "8e85a391d1d38d08fdeaf138fe74f5ea1c302b45548a5b8bb3a1c031eb1a0d80",
+  "player_writing_note": "870311de71f5e360d9c90912294f791b0122f5eff126071deba5a5db54fe902a",
   "player_your_answer": "3a358814d3e8478554c92c1e5e86fc1eba05410e22b270404c63268787dea169",
   "player_your_example": "ff69287a95c623e4f6c67a03015d26097c88b1135b511326b1ef56adaeaf08b3"
 }
@@ -282,7 +282,7 @@
     <string name="player_your_answer">La tua risposta</string>
     <string name="player_write_your_answer">Scrivi la tua risposta</string>
     <string name="player_not_written_title">Questa lezione è ancora da preparare</string>
-    <string name="player_not_written_description">Zoonk la prepara quando inizi. Ci vuole un minuto o due.</string>
+    <string name="player_not_written_description">Zoonk la prepara quando inizi. Ci vuole qualche minuto.</string>
     <string name="player_start_this_lesson">Inizia questa lezione</string>
     <string name="player_starting">Stiamo avviando…</string>
     <string name="player_writing_lesson">Stiamo preparando la tua lezione</string>
@@ -291,7 +291,7 @@
     <string name="player_phase_plan_line_2">Stiamo scegliendo come spiegare al meglio l’argomento…</string>
     <string name="player_phase_write">Stiamo preparando la lezione</string>
     <string name="player_phase_write_line">Stiamo preparando la schermata %1$d…</string>
-    <string name="player_writing_note">Di solito ci vuole un minuto o due. La lezione si apre qui appena è pronta.</string>
+    <string name="player_writing_note">Di solito ci vuole qualche minuto. La lezione si apre qui appena è pronta.</string>
     <string name="player_ready_while_waiting">Da fare nell’attesa</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
     <string name="player_ready_instead">Un’alternativa già pronta</string>

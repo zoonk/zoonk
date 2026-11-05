@@ -103,7 +103,7 @@
   "player_not_found_title": "4b671d05b2001fc09a5bc6509c28102acd57f88957737f90d6ae63e86a2e1d7d",
   "player_not_in_app_description": "303546ba08cc4e2276516ad1273d0bda3a1919599763c6ad5bb8a57f6d7b4273",
   "player_not_in_app_title": "eb28b1eb7666364fada33b422fafc1fcd1163a035f9f55d956292cd32e3661d9",
-  "player_not_written_description": "27775ea34b7c3de9fe522258e52541573e661c5895299574b312345c3c1e953f",
+  "player_not_written_description": "bdb2403b34a18ddff06ac85b9951e28046ee45d56c9f5224c2a661926c4304ad",
   "player_not_written_title": "5cad9d02cdb94e846272cea8716844f8fa01bc6883682e24be7ea52041970121",
   "player_nothing_left_description": "79e2f8ebf61acb37ac79e8c22d86062c3e7450aae7197ebea5a54c55d10c9f72",
   "player_nothing_left_title": "e0ccb0f337e77f5876b007aa508befa2fb7122549ad7b4b2995a801115c84074",
@@ -178,7 +178,7 @@
   "player_write_again": "45224b719d9478a671a9556218533787839ef89f951d3c4b2d27f7e440e8f443",
   "player_write_your_answer": "f53d264f3d7b71f794b1f327cebb49195974befd19a765f870f0ac742bb07b2e",
   "player_writing_lesson": "c921bb17f2aa38d5ce18f8d4b884b2297a1a0482db305ead7c9290cc8fefea38",
-  "player_writing_note": "e4a63e7ac9667003b04756229bff09f5585042442562af33088b6e3884dd890e",
+  "player_writing_note": "d60bd9fbce5097679b578e9b97b89e330c89f3f46149bfdd3610610e20d4af74",
   "player_your_answer": "c5d23a3ad588edce41e71ff88da7da054b05643d6fb838f4e9fdbfa7e7f44f06",
   "player_your_example": "d8280581441c526421eea87cbe191d4e569f1474c7e45f4fbd79cf36cea97246"
 }
@@ -278,7 +278,7 @@
     <string name="player_your_answer">選んだ答え</string>
     <string name="player_write_your_answer">答えを書いてください</string>
     <string name="player_not_written_title">このレッスンはまだ作成されていません</string>
-    <string name="player_not_written_description">開始すると、Zoonkがレッスンを作成します。1〜2分かかります。</string>
+    <string name="player_not_written_description">始めると、Zoonkがレッスンを作成します。数分ほどかかります。</string>
     <string name="player_start_this_lesson">このレッスンを始める</string>
     <string name="player_starting">開始しています…</string>
     <string name="player_writing_lesson">レッスンを作成しています</string>
@@ -287,7 +287,7 @@
     <string name="player_phase_plan_line_2">いちばんわかりやすい説明のしかたを選んでいます…</string>
     <string name="player_phase_write">レッスンを作成しています</string>
     <string name="player_phase_write_line">%1$dページ目を作成しています…</string>
-    <string name="player_writing_note">通常1〜2分かかります。準備ができ次第、ここにレッスンが表示されます。</string>
+    <string name="player_writing_note">通常、数分ほどかかります。準備ができ次第、ここでレッスンが開きます。</string>
     <string name="player_ready_while_waiting">待っている間にできること</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
     <string name="player_ready_instead">今できる別の学習</string>

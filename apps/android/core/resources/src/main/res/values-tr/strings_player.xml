@@ -103,7 +103,7 @@
   "player_not_found_title": "e948b6069446886b5c2ebe069a5f0852e9cfb45d6352113d71a49a4b358db008",
   "player_not_in_app_description": "f80e3e2550b248b67d55849787e23a78c759949ee6c141ac952c1395e3ede22c",
   "player_not_in_app_title": "b0b55f8ba9360f1a1ba3f63bb8bf4d0110c1e29b715edcddd95ebede0fe5d194",
-  "player_not_written_description": "ac8cca6f1c6251a301cd712589e91f72bce3aa9194ea17f620d6928619974d84",
+  "player_not_written_description": "e7283c081782b67771f2d41a844ccffb7d757bcd373e9ffbee85e96ce8b26f23",
   "player_not_written_title": "3ea8a41df0b801db7cc58cf7714b81c49a0982cde436519531b3011953e08c11",
   "player_nothing_left_description": "ca75ac90053d81554758ab7601f0bbc61e0be428b88dbaa57fbb5076e6cb9ba7",
   "player_nothing_left_title": "cd5a43c688ba84f5574408f45474afa79f2f9d190e2f3ae762c81f71420e31c0",
@@ -178,7 +178,7 @@
   "player_write_again": "a7971372e1fb64ebdf825ffd0a971ad16d10b6543eb4eda2aa25098f3bc23391",
   "player_write_your_answer": "2bccbed46fb67a1c21ac7f7bec82bf53d3acdfefbc9d8bab6aebe58f0f16c701",
   "player_writing_lesson": "8975f01bba2c0faad3702827b546e4e78f406275856f78ebb131ea4578d4c8a7",
-  "player_writing_note": "70cabbaa0433fe75cf17db99689d4c85106e5fe167a87dd0cc52df42dc5dee60",
+  "player_writing_note": "1c8f9a8fa3d50e0b15fd77d16e14764a020fcd8f9b873444778b4cf0c1c20d5b",
   "player_your_answer": "bbe8405a2b2d75235749e343b89c05b81a5186b28caff3190bad9bf9ee3db627",
   "player_your_example": "44f5c5ed55823b341689f4c53dd8c0356579472b905c2d4994804ccb12318a5c"
 }
@@ -280,7 +280,7 @@
     <string name="player_your_answer">Cevabın</string>
     <string name="player_write_your_answer">Cevabını yaz</string>
     <string name="player_not_written_title">Bu ders henüz hazırlanmadı</string>
-    <string name="player_not_written_description">Başladığında Zoonk dersi hazırlar. Bir iki dakika sürer.</string>
+    <string name="player_not_written_description">Başladığında Zoonk dersi hazırlar. Birkaç dakika sürer.</string>
     <string name="player_start_this_lesson">Bu derse başla</string>
     <string name="player_starting">Başlatıyoruz…</string>
     <string name="player_writing_lesson">Dersini hazırlıyoruz</string>
@@ -289,7 +289,7 @@
     <string name="player_phase_plan_line_2">Konuyu anlatmanın en iyi yolunu seçiyoruz…</string>
     <string name="player_phase_write">Dersi hazırlıyoruz</string>
     <string name="player_phase_write_line">%1$d. ekranı hazırlıyoruz…</string>
-    <string name="player_writing_note">Genellikle bir iki dakika sürer. Ders hazır olur olmaz burada açılır.</string>
+    <string name="player_writing_note">Genellikle birkaç dakika sürer. Ders hazır olur olmaz burada açılır.</string>
     <string name="player_ready_while_waiting">Beklerken başlayabilirsin</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
     <string name="player_ready_instead">Bunun yerine yapabilirsin</string>

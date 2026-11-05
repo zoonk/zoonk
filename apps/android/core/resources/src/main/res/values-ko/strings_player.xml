@@ -103,7 +103,7 @@
   "player_not_found_title": "4b7e722cb8bae05f3859143d921b3363da02fd888523a5571a20d32ffbb0670e",
   "player_not_in_app_description": "878f74b57d84d0eb05e7f18cfc3c82578a21fcac5edb0e9a19f9937bacaca898",
   "player_not_in_app_title": "42fdb383b6154eb32cd4bf621c7246fb598a247aac7fe8c0c70e27616eaba825",
-  "player_not_written_description": "4111d5a191b7b305671d4d2887692b68814da7be7aa9468cb2dad3e6dac9ab4b",
+  "player_not_written_description": "d0a12c1b480a075bc496b0f1581f8863e8d027399882a42358b35df970a74b6d",
   "player_not_written_title": "7b9de9e4e91be3c179ad71eeb3e4e37acb58826596681b21b056205ff10f20ab",
   "player_nothing_left_description": "1421f656043edb809b1d93ee9c6b00d7ee91fbf6e56b02a0c4f62691c159cfd3",
   "player_nothing_left_title": "1c6f98c7f9db8cbb22eb9185210e58930236336681061044f4505bc57b5e2645",
@@ -178,7 +178,7 @@
   "player_write_again": "b671b4132acc01908df286cab2f91f2c5fd5fef56dc5c3a01a449fd16c105a0c",
   "player_write_your_answer": "92a5bf659c9f703f92af4e773e735b57f3be306937908e6b9cd2e293dc10b88e",
   "player_writing_lesson": "7e265e7c590bcfc2a1970cafa4ef7efdb5d20e507bdbf6fdbeaf225628360f7f",
-  "player_writing_note": "1aa3746736db28e752607722fd5f3471099850f6dae495baaeea5eb25352117e",
+  "player_writing_note": "3e174efea58c4a1c05e92a69f17c424b085ac7518932ff014c96b2e9d0b43208",
   "player_your_answer": "453009f5c086dbe11ade9c97cb00ab21eceb6d7ac4ddc5cbd580ab01f463e082",
   "player_your_example": "7ef76eadf639e079ecefddb83a9dec61c2afb5596f8e0dba2e7d106ddb35d1bf"
 }
@@ -278,7 +278,7 @@
     <string name="player_your_answer">내 답</string>
     <string name="player_write_your_answer">답을 써 주세요</string>
     <string name="player_not_written_title">아직 만들지 않은 레슨이에요</string>
-    <string name="player_not_written_description">시작하면 Zoonk가 레슨을 만들어요. 1~2분 정도 걸려요.</string>
+    <string name="player_not_written_description">시작하면 Zoonk가 레슨을 만들어요. 몇 분 정도 걸려요.</string>
     <string name="player_start_this_lesson">이 레슨 시작하기</string>
     <string name="player_starting">시작하고 있어요…</string>
     <string name="player_writing_lesson">레슨을 만들고 있어요</string>
@@ -287,7 +287,7 @@
     <string name="player_phase_plan_line_2">주제를 가장 잘 설명할 방법을 고르고 있어요…</string>
     <string name="player_phase_write">레슨을 만들고 있어요</string>
     <string name="player_phase_write_line">%1$d번째 화면을 만들고 있어요…</string>
-    <string name="player_writing_note">보통 1~2분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요.</string>
+    <string name="player_writing_note">보통 몇 분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요.</string>
     <string name="player_ready_while_waiting">기다리는 동안 할 수 있는 학습</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
     <string name="player_ready_instead">대신 바로 할 수 있는 학습</string>

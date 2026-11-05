@@ -2497,9 +2497,9 @@ msgid "Your lesson is ready. Start it whenever you like."
 msgstr "Sua aula está pronta. Comece quando quiser."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "X6rSIT"
-msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
-msgstr "Geralmente leva um ou dois minutos. A aula abre aqui assim que estiver pronta."
+msgctxt "ILYIbj"
+msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
+msgstr "Geralmente leva alguns minutos. A aula abre aqui assim que estiver pronta."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "Dr8j6a"
@@ -2507,9 +2507,9 @@ msgid "This lesson isn't written yet"
 msgstr "Esta aula ainda não foi criada"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "kCHykv"
-msgid "Zoonk writes it when you start. It takes a minute or two."
-msgstr "O Zoonk cria a aula quando você começa. Leva um ou dois minutos."
+msgctxt "BdqTEJ"
+msgid "Zoonk writes it when you start. It takes a few minutes."
+msgstr "O Zoonk cria a aula quando você começa. Leva alguns minutos."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "RFCwI6"

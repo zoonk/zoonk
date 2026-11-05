@@ -101,7 +101,7 @@
     <string name="player_write_your_answer">Write your answer</string>
 
     <string name="player_not_written_title">This lesson isn\'t written yet</string>
-    <string name="player_not_written_description">Zoonk writes it when you start. It takes a minute or two.</string>
+    <string name="player_not_written_description">Zoonk writes it when you start. It takes a few minutes.</string>
     <string name="player_start_this_lesson">Start this lesson</string>
     <string name="player_starting">Starting…</string>
     <string name="player_writing_lesson">Writing your lesson</string>
@@ -110,7 +110,7 @@
     <string name="player_phase_plan_line_2">Picking the best way to explain it…</string>
     <string name="player_phase_write">Writing the lesson</string>
     <string name="player_phase_write_line">Writing screen %1$d…</string>
-    <string name="player_writing_note">It usually takes a minute or two. The lesson opens here as soon as it\'s ready.</string>
+    <string name="player_writing_note">It usually takes a few minutes. The lesson opens here as soon as it\'s ready.</string>
     <string name="player_ready_while_waiting">Ready while you wait</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
     <string name="player_ready_instead">Ready to do instead</string>

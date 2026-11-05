@@ -2497,9 +2497,9 @@ msgid "Your lesson is ready. Start it whenever you like."
 msgstr "레슨이 준비됐어요. 편할 때 시작하세요."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "X6rSIT"
-msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
-msgstr "보통 1~2분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요."
+msgctxt "ILYIbj"
+msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
+msgstr "보통 몇 분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "Dr8j6a"
@@ -2507,9 +2507,9 @@ msgid "This lesson isn't written yet"
 msgstr "아직 만들지 않은 레슨이에요"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "kCHykv"
-msgid "Zoonk writes it when you start. It takes a minute or two."
-msgstr "시작하면 Zoonk가 레슨을 만들어요. 1~2분 정도 걸려요."
+msgctxt "BdqTEJ"
+msgid "Zoonk writes it when you start. It takes a few minutes."
+msgstr "시작하면 Zoonk가 레슨을 만들어요. 몇 분 정도 걸려요."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "RFCwI6"

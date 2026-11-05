@@ -4908,61 +4908,61 @@
         }
       }
     },
-    "It usually takes a minute or two. The lesson opens here as soon as it's ready." : {
+    "It usually takes a few minutes. The lesson opens here as soon as it's ready." : {
       "comment" : "While a lesson is written",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das dauert meist ein bis zwei Minuten. Die Lektion öffnet sich hier, sobald sie fertig ist."
+            "value" : "Das dauert normalerweise ein paar Minuten. Die Lektion öffnet sich hier, sobald sie fertig ist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suele tardar uno o dos minutos. La lección se abrirá aquí en cuanto esté lista."
+            "value" : "Suele tardar unos minutos. La lección se abrirá aquí en cuanto esté lista."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cela prend généralement une ou deux minutes. La leçon s’ouvrira ici dès qu’elle sera prête."
+            "value" : "Cela prend généralement quelques minutes. La leçon s’ouvrira ici dès qu’elle sera prête."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di solito ci vogliono uno o due minuti. La lezione si aprirà qui appena sarà pronta."
+            "value" : "Di solito ci vuole qualche minuto. La lezione si apre qui appena è pronta."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通常は1〜2分かかります。準備ができ次第、ここにレッスンが表示されます。"
+            "value" : "通常、数分ほどかかります。準備ができ次第、ここでレッスンが開きます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "보통 1~2분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요."
+            "value" : "보통 몇 분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zwykle zajmuje nam to minutę lub dwie. Lekcja otworzy się tutaj, gdy tylko będzie gotowa."
+            "value" : "Zwykle trwa to kilka minut. Lekcja otworzy się tutaj, gdy tylko będzie gotowa."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geralmente leva um ou dois minutos. A aula abre aqui assim que estiver pronta."
+            "value" : "Geralmente leva alguns minutos. A aula abre aqui assim que estiver pronta."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Genellikle bir iki dakika sürer. Dersi hazır olur olmaz burada açacağız."
+            "value" : "Genellikle birkaç dakika sürer. Ders hazır olur olmaz burada açılır."
           }
         }
       }
@@ -13416,61 +13416,61 @@
         }
       }
     },
-    "Zoonk writes it when you start. It takes a minute or two." : {
+    "Zoonk writes it when you start. It takes a few minutes." : {
       "comment" : "A lesson not written yet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk erstellt sie, wenn du beginnst. Das dauert ein bis zwei Minuten."
+            "value" : "Zoonk erstellt sie, wenn du startest. Das dauert ein paar Minuten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk la prepara cuando empiezas. Tarda uno o dos minutos."
+            "value" : "Zoonk la prepara cuando empiezas. Tarda unos minutos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk la prépare quand tu commences. Cela prend une ou deux minutes."
+            "value" : "Zoonk la prépare quand tu commences. Cela prend quelques minutes."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk la prepara quando inizi. Ci vuole un minuto o due."
+            "value" : "Zoonk la prepara quando inizi. Ci vuole qualche minuto."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開始するとZoonkがレッスンを作成します。1〜2分かかります。"
+            "value" : "始めると、Zoonkがレッスンを作成します。数分ほどかかります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시작하면 Zoonk가 레슨을 만들어요. 1~2분 정도 걸려요."
+            "value" : "시작하면 Zoonk가 레슨을 만들어요. 몇 분 정도 걸려요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk przygotuje ją, gdy zaczniesz. Zajmie to minutę lub dwie."
+            "value" : "Zoonk przygotuje ją, gdy zaczniesz. Zajmuje to kilka minut."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk cria a aula quando você começa. Leva um ou dois minutos."
+            "value" : "O Zoonk cria a aula quando você começa. Leva alguns minutos."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sen başlayınca Zoonk dersi hazırlar. Bir iki dakika sürer."
+            "value" : "Başladığında Zoonk dersi hazırlar. Birkaç dakika sürer."
           }
         }
       }

@@ -177,7 +177,7 @@ function WritingWait({
         <p className="text-muted-foreground text-sm text-pretty">
           {holding
             ? t("Your lesson is ready. Start it whenever you like.")
-            : t("It usually takes a minute or two. The lesson opens here as soon as it's ready.")}
+            : t("It usually takes a few minutes. The lesson opens here as soon as it's ready.")}
         </p>
       )}
 
@@ -199,7 +199,7 @@ function UnwrittenLessonNote() {
     <p className="flex flex-col gap-1 text-sm text-pretty">
       <span className="font-medium">{t("This lesson isn't written yet")}</span>
       <span className="text-muted-foreground">
-        {t("Zoonk writes it when you start. It takes a minute or two.")}
+        {t("Zoonk writes it when you start. It takes a few minutes.")}
       </span>
     </p>
   );
