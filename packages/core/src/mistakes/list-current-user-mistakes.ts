@@ -124,11 +124,9 @@ export async function listCurrentUserMistakes(
     countMistakes(scope),
     goal ? loadExamStructure(goal, { blueprint, picks: readExamPicks(savedPlan?.settings) }) : null,
     loadMistakePracticeAvailability({
-      blueprint,
-      goal,
       goalId: input.goalId,
       localDate,
-      skillIds,
+      skillId: input.skillId,
       timeZone,
       userId,
     }),
