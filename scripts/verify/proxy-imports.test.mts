@@ -88,7 +88,13 @@ function resolveSource(input: { app: string; from: string; specifier: string }) 
   return file;
 }
 
-const TYPE_KEYS = new Set(["returnType", "typeAnnotation", "typeArguments", "typeParameters"]);
+const TYPE_KEYS = new Set([
+  "returnType",
+  "superTypeArguments",
+  "typeAnnotation",
+  "typeArguments",
+  "typeParameters",
+]);
 
 const TYPE_DECLARATIONS = new Set([
   "ImportDeclaration",
