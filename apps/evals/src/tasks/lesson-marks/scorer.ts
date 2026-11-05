@@ -52,7 +52,6 @@ function ideaProblems({ input, marks }: { input: MarksInput; marks: LessonMarks 
   });
 }
 
-/** The pipeline's own normalizer decides what's kept, so this counts what production drops. */
 export const checkLessonMarks: TaskCodeChecks = ({ output, testCase }) => {
   const input = testCase.userInput as MarksInput;
   const { raw } = JSON.parse(output) as LessonMarksEvalOutput;

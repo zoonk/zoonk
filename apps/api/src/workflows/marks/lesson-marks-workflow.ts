@@ -44,7 +44,6 @@ async function drawIcon({
   }
 }
 
-/** Another lesson's run is drawing these; the lesson links whatever they end up as. */
 async function waitForOtherRuns(icons: readonly PickedIcon[]): Promise<void> {
   const iconIds = icons.map((icon) => icon.iconId);
 
@@ -75,10 +74,6 @@ async function pickIcons({
   }
 }
 
-/**
- * Tags a written lesson, then picks and draws its icons, one model call per step. The lesson plays
- * without them meanwhile; each write makes its next read show what's ready.
- */
 export async function lessonMarksWorkflow({
   analytics,
   lessonId,

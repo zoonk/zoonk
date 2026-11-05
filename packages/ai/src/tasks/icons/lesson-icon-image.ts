@@ -30,7 +30,6 @@ export type LessonIconImageParams = {
   useFallback?: boolean;
 };
 
-/** A transparent square drawing; code checks the file and makes the app's sizes. */
 export async function generateLessonIconImage({
   analytics,
   model = defaultModel,

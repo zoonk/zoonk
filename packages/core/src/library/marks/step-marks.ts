@@ -14,7 +14,6 @@ export const iconNeedSchema = z.object({
 const savedStepMarksSchema = z.object({
   example: z.string().nullable(),
   iconId: z.uuid().nullable(),
-  /** What tagging asked the icon library for. */
   iconNeed: iconNeedSchema.nullable().optional(),
   /** The icon `iconNeed` asks for isn't linked or given up yet. */
   iconPending: z.boolean(),
@@ -57,7 +56,6 @@ export function isTaggedScreen(screen: MarkedScreen): boolean {
   }
 }
 
-/** The text a screen's underline and example quote. */
 export function getMarkedText(screen: MarkedScreen): string | null {
   if (screen.kind === "explanation") {
     return screen.content.text;

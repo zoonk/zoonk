@@ -28,7 +28,6 @@ export function findIconsById(ids: readonly string[]): Promise<IconRow[]> {
     : prisma.lessonIcon.findMany({ select: iconRowSelect, where: { id: { in: [...ids] } } });
 }
 
-/** Drawn icons sharing a word with the need's name or search words, best first. */
 export async function searchIconCandidates(need: IconNeed): Promise<IconCandidate[]> {
   const search = toTextSearch({
     language: "en",

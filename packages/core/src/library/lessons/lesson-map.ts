@@ -43,7 +43,6 @@ export const lessonMapSchema = z
 
 export type LessonMap = z.infer<typeof lessonMapSchema>;
 
-/** Tagging adds `about` and the icon it asks for, then links the icon once it's drawn. */
 const savedIdeaSchema = ideaSchema
   .omit({ about: true, icon: true })
   .extend({

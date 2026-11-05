@@ -23,7 +23,6 @@ import {
   readSavedStepMarks,
 } from "./step-marks";
 
-/** An icon a lesson asks for, with what it marks there, for the library's reuse check. */
 export type LessonIconRequest = { need: IconNeed; usedFor: string };
 
 /** `contentScope` is the lesson's, so its icon calls keep a private lesson's data protections. */
