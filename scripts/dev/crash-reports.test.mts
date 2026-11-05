@@ -40,7 +40,7 @@ function writeReports(reports: Reports) {
   }
 }
 
-async function hasCrashedDuringRun({
+async function findCrashesDuringRun({
   after,
   before = {},
   udid = SIMULATOR,
@@ -49,11 +49,11 @@ async function hasCrashedDuringRun({
   before?: Reports;
   udid?: string;
 }) {
-  const { hasSimulatorSystemAppCrashed, listCrashReports } = await import("./crash-reports.mts");
+  const { findSimulatorAppCrashes, listCrashReports } = await import("./crash-reports.mts");
   writeReports(before);
   const reportsBefore = new Set(listCrashReports());
   writeReports(after);
-  return hasSimulatorSystemAppCrashed({ reportsBefore, udid });
+  return findSimulatorAppCrashes({ reportsBefore, udid });
 }
 
 beforeEach(() => {
@@ -67,57 +67,57 @@ afterEach(() => {
   rmSync(home, { force: true, recursive: true });
 });
 
-describe("hasSimulatorSystemAppCrashed", () => {
-  it("finds a crash of one of the simulator's iOS apps", async () => {
+describe("findSimulatorAppCrashes", () => {
+  it("marks crashes of the simulator's own iOS apps and their extensions", async () => {
     await expect(
-      hasCrashedDuringRun({
-        after: {
-          "PosterBoard-2026-11-05-142149.ips": { processPath: POSTER_BOARD, udid: SIMULATOR },
-        },
-      }),
-    ).resolves.toBe(true);
-  });
-
-  it("finds a crash of an iOS app's extension", async () => {
-    await expect(
-      hasCrashedDuringRun({
+      findCrashesDuringRun({
         after: {
           "KaleidoscopePoster-2026-11-03-012253.ips": {
             processPath: POSTER_EXTENSION,
             udid: SIMULATOR,
           },
+          "PosterBoard-2026-11-05-142149.ips": { processPath: POSTER_BOARD, udid: SIMULATOR },
         },
       }),
-    ).resolves.toBe(true);
+    ).resolves.toStrictEqual([{ isSystemApp: true }, { isSystemApp: true }]);
   });
 
-  it("ignores daemons, installed apps and other simulators", async () => {
+  it("finds a crash of an app installed on the simulator", async () => {
     await expect(
-      hasCrashedDuringRun({
+      findCrashesDuringRun({
+        after: { "Zoonk-2026-11-05-142201.ips": { processPath: INSTALLED_APP, udid: SIMULATOR } },
+      }),
+    ).resolves.toStrictEqual([{ isSystemApp: false }]);
+  });
+
+  it("ignores daemons and other simulators", async () => {
+    await expect(
+      findCrashesDuringRun({
         after: {
           "PosterBoard-2026-11-05-142149.ips": { processPath: POSTER_BOARD, udid: OTHER_SIMULATOR },
-          "Zoonk-2026-11-05-142201.ips": { processPath: INSTALLED_APP, udid: SIMULATOR },
           "intelligencetasksd-2026-11-05-140233.ips": { processPath: DAEMON, udid: SIMULATOR },
         },
       }),
-    ).resolves.toBe(false);
+    ).resolves.toStrictEqual([]);
   });
 
   it("ignores reports written before the run", async () => {
     await expect(
-      hasCrashedDuringRun({
+      findCrashesDuringRun({
         after: {},
         before: {
           "PosterBoard-2026-11-05-142149.ips": { processPath: POSTER_BOARD, udid: SIMULATOR },
         },
       }),
-    ).resolves.toBe(false);
+    ).resolves.toStrictEqual([]);
   });
 
   it("works on a Mac with no reports folder", async () => {
-    const { hasSimulatorSystemAppCrashed, listCrashReports } = await import("./crash-reports.mts");
+    const { findSimulatorAppCrashes, listCrashReports } = await import("./crash-reports.mts");
+
+    const crashes = findSimulatorAppCrashes({ reportsBefore: new Set(), udid: SIMULATOR });
 
     expect(listCrashReports()).toStrictEqual([]);
-    expect(hasSimulatorSystemAppCrashed({ reportsBefore: new Set(), udid: SIMULATOR })).toBe(false);
+    expect(crashes).toStrictEqual([]);
   });
 });

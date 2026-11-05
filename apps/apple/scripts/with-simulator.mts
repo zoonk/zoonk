@@ -11,10 +11,7 @@ import {
 import { availableParallelism, loadavg } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
-import {
-  hasSimulatorSystemAppCrashed,
-  listCrashReports,
-} from "../../../scripts/dev/crash-reports.mts";
+import { findSimulatorAppCrashes, listCrashReports } from "../../../scripts/dev/crash-reports.mts";
 import { applyCommandExit, runForegroundCommand } from "../../../scripts/dev/process.mts";
 import { type QueueTurn, waitForTurn } from "../../../scripts/dev/queue.mts";
 import {
@@ -39,7 +36,7 @@ const CLOSE_CRASH_ALERTS_SCRIPT = path.resolve(
   "../../../scripts/dev/close-device-crash-alerts.mts",
 );
 
-type Lease = { descriptor: number; device: Simulator };
+type Lease = { descriptor: number; device: Simulator; reportsBefore: Set<string> };
 
 /** Quiet while fewer tasks wait to run than the machine has cores. */
 function getMaxBootedSimulators() {
@@ -125,9 +122,10 @@ function tryLeasing(device: Simulator): Lease | undefined {
 
   if (isBooted ? isLeftBehind : booted.length < getMaxBootedSimulators()) {
     claim(descriptor);
+    const reportsBefore = new Set(listCrashReports());
 
     if (isBooted || bootSimulator(device)) {
-      return { descriptor, device };
+      return { descriptor, device, reportsBefore };
     }
   }
 
@@ -163,25 +161,22 @@ function leaseSimulator() {
   }
 }
 
-/** Damaged simulator data can crash one of its iOS apps on every boot, each crash opening an alert. */
-function eraseAfterSystemAppCrash({
-  device,
-  reportsBefore,
-}: {
-  device: Simulator;
-  reportsBefore: Set<string>;
-}) {
-  if (!hasSimulatorSystemAppCrashed({ reportsBefore, udid: device.udid })) {
-    return;
+function cleanUpAfterAppCrashes({ device, reportsBefore }: Lease) {
+  const crashes = findSimulatorAppCrashes({ reportsBefore, udid: device.udid });
+
+  // Damaged simulator data can crash one of its iOS apps on every boot, each crash opening an alert.
+  if (crashes.some(({ isSystemApp }) => isSystemApp)) {
+    process.stdout.write(
+      `One of iOS's own apps crashed on ${device.name}. Erasing it so the crash doesn't repeat on ` +
+        `its next boot.\n`,
+    );
+
+    spawnSync("xcrun", ["simctl", "erase", device.udid], { stdio: "inherit" });
   }
 
-  process.stdout.write(
-    `One of iOS's own apps crashed on ${device.name}. Erasing it so the crash doesn't repeat on ` +
-      `its next boot.\n`,
-  );
-
-  spawnSync("xcrun", ["simctl", "erase", device.udid], { stdio: "inherit" });
-  spawnSync(process.execPath, [CLOSE_CRASH_ALERTS_SCRIPT], { stdio: "inherit" });
+  if (crashes.length > 0) {
+    spawnSync(process.execPath, [CLOSE_CRASH_ALERTS_SCRIPT], { stdio: "inherit" });
+  }
 }
 
 /** Gives the queue turn back while it waits, so waiting runs don't hold every slot. */
@@ -221,7 +216,6 @@ if (!command) {
   throw new Error("Usage: with-simulator.mts <xcodebuild command>");
 }
 
-const reportsBefore = new Set(listCrashReports());
 const { lease, turn } = await startRun({ isWaiting: false });
 process.stdout.write(`Testing on ${lease.device.name} (${lease.device.udid}).\n`);
 
@@ -238,7 +232,7 @@ try {
   );
 } finally {
   spawnSync("xcrun", ["simctl", "shutdown", lease.device.udid], { stdio: "inherit" });
-  eraseAfterSystemAppCrash({ device: lease.device, reportsBefore });
+  cleanUpAfterAppCrashes(lease);
   release(lease.descriptor);
   turn?.release();
 }

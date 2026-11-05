@@ -9,8 +9,8 @@ const ALERT_TITLE = /^(?<name>.+) quit unexpectedly\.$/u;
 const MAX_ALERTS = 500;
 const NEXT_ALERT_WAIT_MS = 1500;
 
-function runAppleScript(script: string) {
-  const result = spawnSync("osascript", ["-e", script], { encoding: "utf8" });
+function runAppleScript({ args = [], script }: { args?: string[]; script: string }) {
+  const result = spawnSync("osascript", ["-e", script, ...args], { encoding: "utf8" });
 
   if (result.status !== 0) {
     throw new Error(result.stderr.trim() || `osascript exited with status ${result.status ?? 1}.`);
@@ -20,15 +20,17 @@ function runAppleScript(script: string) {
 }
 
 function getAlertProcessName() {
-  const texts = runAppleScript(`
-    tell application "System Events"
-      if not (exists process "UserNotificationCenter") then return ""
-      tell process "UserNotificationCenter"
-        if (count of windows) is 0 then return ""
-        set AppleScript's text item delimiters to linefeed
-        return (value of static texts of window 1) as text
-      end tell
-    end tell`);
+  const texts = runAppleScript({
+    script: `
+      tell application "System Events"
+        if not (exists process "UserNotificationCenter") then return ""
+        tell process "UserNotificationCenter"
+          if (count of windows) is 0 then return ""
+          set AppleScript's text item delimiters to linefeed
+          return (value of static texts of window 1) as text
+        end tell
+      end tell`,
+  });
 
   return texts
     .split("\n")
@@ -36,11 +38,23 @@ function getAlertProcessName() {
     .find((name) => name !== undefined);
 }
 
-function ignoreAlert() {
-  runAppleScript(`
-    tell application "System Events" to tell process "UserNotificationCenter"
-      click button "Ignore" of window 1
-    end tell`);
+/** Another closer, or the person, may have closed the alert, showing a Mac app's in its place. */
+function ignoreAlert(processName: string) {
+  const result = runAppleScript({
+    args: [`${processName} quit unexpectedly.`],
+    script: `
+      on run argv
+        tell application "System Events" to tell process "UserNotificationCenter"
+          if (count of windows) is 0 then return "open"
+          set AppleScript's text item delimiters to linefeed
+          if ((value of static texts of window 1) as text) does not contain (item 1 of argv) then return "open"
+          click button "Ignore" of window 1
+          return "closed"
+        end tell
+      end run`,
+  });
+
+  return result === "closed";
 }
 
 async function waitForAlertProcessName() {
@@ -58,7 +72,7 @@ async function closeDeviceCrashAlerts() {
   let closed = 0;
   let processName = getAlertProcessName();
 
-  while (processName !== undefined && closed < MAX_ALERTS) {
+  for (let attempt = 0; processName !== undefined && attempt < MAX_ALERTS; attempt += 1) {
     if (!isDeviceCrash(processName)) {
       process.stdout.write(
         `Left the alert for ${processName} open: it isn't a simulator or emulator crash.\n`,
@@ -67,8 +81,10 @@ async function closeDeviceCrashAlerts() {
       break;
     }
 
-    ignoreAlert();
-    closed += 1;
+    if (ignoreAlert(processName)) {
+      closed += 1;
+    }
+
     // oxlint-disable-next-line no-await-in-loop -- each alert only appears after the previous one closes
     processName = await waitForAlertProcessName();
   }

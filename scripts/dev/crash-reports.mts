@@ -4,6 +4,7 @@ import path from "node:path";
 
 const REPORTS_DIRECTORY = path.join(homedir(), "Library", "Logs", "DiagnosticReports");
 const SIMULATOR_COALITION = '"coalitionName" : "com.apple.CoreSimulator.SimDevice.';
+const PROCESS_PATH = '"procPath" : "';
 // Reports redact the home folder to USER; the SDK's default location is ~/Library/Android/sdk.
 const ANDROID_SDK_PROCESS = String.raw`"procPath" : "\/Users\/USER\/Library\/Android\/`;
 // Reports redact where Xcode mounts the simulator's iOS to /Volumes/VOLUME; apps installed on the
@@ -39,21 +40,22 @@ export function isDeviceCrash(processName: string) {
   return report.includes(SIMULATOR_COALITION) || report.includes(ANDROID_SDK_PROCESS);
 }
 
-function isSimulatorSystemAppCrash({ report, udid }: { report: string; udid: string }) {
-  const systemProcessPath =
-    report.split("\n").find((line) => line.includes(SIMULATOR_SYSTEM_PROCESS)) ?? "";
+function getSimulatorAppCrash({ report, udid }: { report: string; udid: string }) {
+  const processPath = report.split("\n").find((line) => line.includes(PROCESS_PATH)) ?? "";
 
-  return (
-    report.includes(`${SIMULATOR_COALITION}${udid}"`) && systemProcessPath.includes(APP_BUNDLE)
-  );
+  if (!report.includes(`${SIMULATOR_COALITION}${udid}"`) || !processPath.includes(APP_BUNDLE)) {
+    return;
+  }
+
+  return { isSystemApp: processPath.includes(SIMULATOR_SYSTEM_PROCESS) };
 }
 
 /**
- * Whether one of the simulator's own iOS apps, like PosterBoard, crashed in a report written after
- * `reportsBefore` was listed. Those crashes open a "quit unexpectedly" alert on the Mac; the iOS
- * daemons that crash often on simulators don't.
+ * Apps that crashed on the simulator in reports written after `reportsBefore` was listed. Each app
+ * crash opens a "quit unexpectedly" alert on the Mac; the iOS daemons that crash often on
+ * simulators don't.
  */
-export function hasSimulatorSystemAppCrashed({
+export function findSimulatorAppCrashes({
   reportsBefore,
   udid,
 }: {
@@ -62,5 +64,6 @@ export function hasSimulatorSystemAppCrashed({
 }) {
   return listCrashReports()
     .filter((file) => !reportsBefore.has(file))
-    .some((file) => isSimulatorSystemAppCrash({ report: readCrashReport(file), udid }));
+    .map((file) => getSimulatorAppCrash({ report: readCrashReport(file), udid }))
+    .filter((crash) => crash !== undefined);
 }
