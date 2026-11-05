@@ -16,8 +16,9 @@ import com.zoonk.android.ui.theme.LocalMoreContrast
 import kotlin.math.roundToInt
 
 /**
- * A knowledge lesson's dotted paper (concept 2's "Lousa"): a quiet grid of dots behind the screens,
- * drawn as one repeated tile. More contrast leaves the page plain, so nothing competes with the text.
+ * A knowledge lesson's dotted paper (concept 2's "Lousa"): a quiet grid of dots behind its reading
+ * screens and its map, drawn as one repeated tile. Questions keep a plain page, which reads as the
+ * learner's turn. More contrast leaves the page plain, so nothing competes with the text.
  */
 @Composable
 internal fun Modifier.dottedPaper(): Modifier {
