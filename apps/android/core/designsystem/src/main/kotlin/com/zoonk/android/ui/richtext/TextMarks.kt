@@ -196,11 +196,11 @@ private const val TAU = 2 * PI.toFloat()
 // ripple over it as a hand's; the curl's length and lift; the echo pass likewise, trimmed at the ends.
 private const val PEN_DROP = 0.27f
 private const val PEN_SWAY = 0.05f
-private const val PEN_WAVE = 9f
+private const val PEN_WAVE = 6.5f
 private const val PEN_RIPPLE = 0.015f
 private const val RIPPLE_WAVE = 3.7f
 private const val CURL_LENGTH = 0.7f
-private const val CURL_LIFT = 0.16f
+private const val CURL_LIFT = 0.12f
 private const val ECHO_DROP = 0.4f
 private const val ECHO_SWAY = 0.03f
 private const val ECHO_WAVE = 13f
