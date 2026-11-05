@@ -2,11 +2,21 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { parseSync } from "oxc-parser";
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 
 const ROOT = resolve(import.meta.dirname, "../..");
 const EXTENSIONS = ["", ".ts", ".tsx", ".mts", "/index.ts", "/index.tsx"];
 
-type Exports = Record<string, string | { default?: string }>;
+const relative = (file: string) => file.slice(ROOT.length + 1);
+
+const manifestSchema = z.object({
+  exports: z
+    .record(z.string(), z.union([z.string(), z.object({ default: z.string().optional() })]))
+    .default({}),
+  name: z.string(),
+});
+
+type Exports = z.infer<typeof manifestSchema>["exports"];
 
 const WORKSPACE_PACKAGES = new Map(
   readdirSync(join(ROOT, "packages")).flatMap((folder) => {
@@ -17,10 +27,9 @@ const WORKSPACE_PACKAGES = new Map(
       return [];
     }
 
-    const { exports = {}, name } = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
-      exports?: Exports;
-      name: string;
-    };
+    const { exports, name } = manifestSchema.parse(
+      JSON.parse(readFileSync(join(dir, "package.json"), "utf8")),
+    );
 
     return [[name, { dir, exports }] as const];
   }),
@@ -44,8 +53,7 @@ function exportTarget(exports: Exports, subpath: string): string | undefined {
   return typeof target === "string" ? target : target?.default;
 }
 
-/** Our own files only, the way the apps' bundler resolves them; packages from node_modules stop the walk. */
-function resolveSource({ app, from, specifier }: { app: string; from: string; specifier: string }) {
+function findOwnFile({ app, from, specifier }: { app: string; from: string; specifier: string }) {
   if (specifier.startsWith(".")) {
     return findFile(resolve(dirname(from), specifier));
   }
@@ -55,14 +63,29 @@ function resolveSource({ app, from, specifier }: { app: string; from: string; sp
   }
 
   const name = /^@zoonk\/[^/]+/u.exec(specifier)?.[0];
-  const workspacePackage = name && WORKSPACE_PACKAGES.get(name);
+  const workspacePackage = name ? WORKSPACE_PACKAGES.get(name) : undefined;
 
   if (!name || !workspacePackage) {
-    return undefined;
+    return;
   }
 
   const target = exportTarget(workspacePackage.exports, `.${specifier.slice(name.length)}`);
-  return target && findFile(join(workspacePackage.dir, target));
+  return target ? findFile(join(workspacePackage.dir, target)) : undefined;
+}
+
+/**
+ * Our own files, the way the apps' bundler resolves them; a package from node_modules ends the walk.
+ * One of ours it can't find fails the test, so a new kind of import can't slip past it.
+ */
+function resolveSource(input: { app: string; from: string; specifier: string }) {
+  const isOwn = /^(?:\.|@\/|@zoonk\/)/u.test(input.specifier);
+  const file = isOwn ? findOwnFile(input) : undefined;
+
+  if (isOwn && !file) {
+    throw new Error(`Can't find ${input.specifier}, imported by ${relative(input.from)}`);
+  }
+
+  return file;
 }
 
 function readImports(file: string) {
@@ -80,12 +103,15 @@ function readImports(file: string) {
     ),
   ];
 
-  const dynamicImports = module.dynamicImports.flatMap(({ moduleRequest }) => {
-    const literal = /^["'](?<path>[^"']+)["']$/u.exec(
-      source.slice(moduleRequest.start, moduleRequest.end),
-    );
+  const dynamicImports = module.dynamicImports.map(({ moduleRequest }) => {
+    const request = source.slice(moduleRequest.start, moduleRequest.end);
+    const path = /^["'](?<path>[^"']+)["']$/u.exec(request)?.groups?.path;
 
-    return literal?.groups?.path ? [literal.groups.path] : [];
+    if (!path) {
+      throw new Error(`Can't follow import(${request}) in ${relative(file)}`);
+    }
+
+    return path;
   });
 
   return { dynamicImports, source, staticImports };
@@ -106,32 +132,35 @@ function walk({
   entry: string;
 }) {
   const files = new Map<string, string>();
-  const pending = [join(ROOT, "apps", app, "src", entry)];
 
-  for (let file = pending.pop(); file; file = pending.pop()) {
+  function visit(file: string, isEntry: boolean) {
     if (files.has(file)) {
-      continue;
+      return;
     }
 
     const { dynamicImports, source, staticImports } = readImports(file);
-    const isEntry = files.size === 0;
     files.set(file, source);
 
     const followed =
       dynamic === "everywhere" || isEntry ? [...staticImports, ...dynamicImports] : staticImports;
 
-    pending.push(
-      ...followed.flatMap((specifier) => resolveSource({ app, from: file, specifier }) ?? []),
-    );
+    for (const specifier of followed) {
+      const imported = resolveSource({ app, from: file, specifier });
+
+      if (imported) {
+        visit(imported, false);
+      }
+    }
   }
 
+  visit(join(ROOT, "apps", app, "src", entry), true);
   return files;
 }
 
-const relative = (file: string) => file.slice(ROOT.length + 1);
-
 function databaseFiles(files: Map<string, string>) {
-  return [...files.keys()].filter((file) => file.includes("/packages/db/")).map(relative);
+  return [...files.keys()]
+    .filter((file) => file.includes("/packages/db/"))
+    .map((file) => relative(file));
 }
 
 describe.each(["main", "api"])(
