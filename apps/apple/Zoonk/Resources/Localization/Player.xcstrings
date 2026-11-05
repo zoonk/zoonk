@@ -3483,12 +3483,12 @@
       }
     },
     "Each level sits inside the next one." : {
-      "comment" : "VoiceOver, before the levels of a lesson map drawn as boxes inside boxes",
+      "comment" : "Under a lesson map whose ideas are levels, the smallest first, such as an organism inside a population.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jedes Level liegt innerhalb des nächsten."
+            "value" : "Jede Ebene liegt innerhalb der nächstgrößeren."
           }
         },
         "es" : {
@@ -3500,31 +3500,31 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chaque niveau est contenu dans le suivant."
+            "value" : "Chaque niveau est à l’intérieur du suivant."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ogni livello è racchiuso in quello successivo."
+            "value" : "Ogni livello si trova dentro quello successivo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "各レベルは次のレベルの中に入っています。"
+            "value" : "各階層は、次の階層の中に入っています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "각 단계는 그다음 단계 안에 들어 있어요."
+            "value" : "각 단계는 다음 단계 안에 들어 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Każdy poziom znajduje się wewnątrz kolejnego."
+            "value" : "Każdy poziom mieści się w kolejnym."
           }
         },
         "pt" : {
@@ -3536,7 +3536,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Her seviye bir sonrakinin içinde yer alır."
+            "value" : "Her katman bir sonrakinin içinde yer alır."
           }
         }
       }

@@ -112,20 +112,3 @@ struct LessonIdeaSlot: Equatable {
     }
   }
 }
-
-/// Which of the lesson's ideas the end map puts above its title and which below, row by row, in
-/// reading order. Two to five ideas fit: every connector then runs clear of the other ideas.
-struct LessonMindMapRows: Equatable {
-  let above: [[Int]]
-  let below: [[Int]]
-
-  static func fits(_ count: Int) -> Bool {
-    (2...5).contains(count)
-  }
-
-  init(count: Int) {
-    let first = count > 2 ? 2 : 1
-    above = [Array(0..<min(first, count))]
-    below = stride(from: first, to: count, by: 2).map { Array($0..<min($0 + 2, count)) }
-  }
-}

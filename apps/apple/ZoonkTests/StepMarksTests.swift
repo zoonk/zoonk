@@ -168,14 +168,6 @@ final class StepMarksTests: XCTestCase {
       InlineMarks(drawn, underline: "não está aqui", highlightsTerms: false), InlineMarks())
   }
 
-  func testTheEndMapPutsTwoIdeasAboveItsTitleAndTheRestBelowInPairs() {
-    let rows = [2, 3, 5].map { LessonMindMapRows(count: $0) }
-
-    XCTAssertEqual(rows.map(\.above), [[[0]], [[0, 1]], [[0, 1]]])
-    XCTAssertEqual(rows.map(\.below), [[[1]], [[2]], [[2, 3], [4]]])
-    XCTAssertFalse(LessonMindMapRows.fits(6), "a sixth idea would sit behind the others' lines")
-  }
-
   func testIdeasSitInReadingOrderAroundTheMapsCenter() {
     let slot = { (column: Int, row: Int) in LessonIdeaSlot(column: column, row: row) }
 
