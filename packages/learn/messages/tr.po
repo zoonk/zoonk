@@ -2007,9 +2007,9 @@ msgid "{count, plural, one {# certificate} other {# certificates}}"
 msgstr "{count, plural, other {# sertifika}}"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "svDFL8"
-msgid "Print, download or share your certificates anytime."
-msgstr "Sertifikalarını istediğin zaman yazdır, indir veya paylaş."
+msgctxt "Ybfjqu"
+msgid "A certificate for every level and plan you finish."
+msgstr "Tamamladığın her seviye ve plan için bir sertifika."
 
 #: src/challenge/challenge-call-intro.tsx
 #: src/challenge/challenge-intro.tsx

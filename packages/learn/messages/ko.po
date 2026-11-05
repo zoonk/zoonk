@@ -2007,9 +2007,9 @@ msgid "{count, plural, one {# certificate} other {# certificates}}"
 msgstr "{count, plural, other {인증서 #개}}"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "svDFL8"
-msgid "Print, download or share your certificates anytime."
-msgstr "인증서를 언제든 인쇄, 다운로드, 공유할 수 있어요."
+msgctxt "Ybfjqu"
+msgid "A certificate for every level and plan you finish."
+msgstr "레벨이나 계획을 완료할 때마다 인증서를 받아요."
 
 #: src/challenge/challenge-call-intro.tsx
 #: src/challenge/challenge-intro.tsx

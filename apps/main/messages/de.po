@@ -868,9 +868,9 @@ msgid "Your day"
 msgstr "Dein Tag"
 
 #: src/app/[lang]/(app)/(learn)/certificates/page.tsx
-msgctxt "svDFL8"
-msgid "Print, download or share your certificates anytime."
-msgstr "Du kannst deine Zertifikate jederzeit ausdrucken, herunterladen oder teilen."
+msgctxt "Ybfjqu"
+msgid "A certificate for every level and plan you finish."
+msgstr "Ein Zertifikat für jedes abgeschlossene Level und jeden abgeschlossenen Plan."
 
 #: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
 msgctxt "1ZQwwl"

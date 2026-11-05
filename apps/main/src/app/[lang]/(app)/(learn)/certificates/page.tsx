@@ -52,7 +52,7 @@ async function CertificatesContent() {
 
     return (
       <AuthGatePage
-        description={t("Print, download or share your certificates anytime.")}
+        description={t("A certificate for every level and plan you finish.")}
         next="/certificates"
         title={t("Certificates")}
       />

@@ -228,7 +228,7 @@ export function CertificatesHeader({ count }: { count: number | null }) {
             t("{count, plural, one {# certificate} other {# certificates}}", { count: count ?? 0 })}
         </PageEyebrow>
         <DetailTitle>{t("Certificates")}</DetailTitle>
-        <PageSubtitle>{t("Print, download or share your certificates anytime.")}</PageSubtitle>
+        <PageSubtitle>{t("A certificate for every level and plan you finish.")}</PageSubtitle>
       </DetailHeroText>
     </DetailHero>
   );
