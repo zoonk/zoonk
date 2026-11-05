@@ -190,6 +190,28 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   },
   {
     expectations: `
+      - MUST be in US English
+      - Advanced lesson for a learner with a physics degree: what Bell tests rule out (local hidden variables with free setting choices), what they don't, and the loopholes experiments closed
+      - Every formula matches the system the lesson describes. For photon polarizers, the correlation follows twice the angle between the settings, as in $E = \\cos 2(\\theta_L - \\theta_R)$ up to sign, and settings that reach $S = 2\\sqrt2$ sit 22.5° apart; $E = -\\cos(\\theta_L - \\theta_R)$ with settings 45° apart holds for spin-½ measurement directions, not polarizer angles
+      - MUST NOT pair photon polarizer angles with the spin-½ correlation, which gives the wrong numbers for every setting
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-bells-test-advanced",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({ before: ["Qubits"] }),
+      chapterTitle: "Entanglement and quantum computing",
+      courseTitle: "Quantum physics from scratch",
+      language: "en",
+      lessonDescription: "How experiments ruled out a hidden plan.",
+      lessonTitle: "Bell's test",
+      level: "advanced",
+      skills: ["Explain what Bell tests showed"],
+    },
+  },
+  {
+    expectations: `
       - MUST be in Brazilian Portuguese
       - Overview lesson for a curious adult: why the electron doesn't fall into the nucleus, told as a story with an everyday comparison (a blurred fan, a cloud) and no formulas, equations or notation
       - The hook is a scene that asks nothing: the atom's picture as a story, ending on the question the lesson answers (why doesn't the electron fall in?), with no options; checks are light and come after at least two teaching screens
