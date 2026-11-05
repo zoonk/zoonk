@@ -1,27 +1,24 @@
 import SwiftUI
 
-/// The award moment: the certificates a result earned, the newest on top. Closing it marks them
-/// shown, so they stop coming back with results.
+/// The award moment: the certificates a result earned, the newest on top. Continue marks them
+/// shown, so they stop coming back with results. A locked one, earned without Plus, shows its card
+/// and the Plus notice instead of its picture, name and sharing.
 struct CertificateCeremony: View {
   @Environment(CertificatesStore.self) private var store
-  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @State private var isEditingName = false
   @State private var nameDraft = ""
   @State private var isLinkedInShown = false
   @State private var isOpened = false
-  @State private var isSigningUp = false
 
   /// Oldest first, never empty.
   let certificates: [CertificateFacts]
+  /// Leaves without marking them shown, so they play again after the next task.
+  let onSeePlus: () -> Void
   let onClose: () -> Void
 
   private var top: CertificateFacts {
     certificates[certificates.count - 1]
-  }
-
-  private var isGuest: Bool {
-    learner.summary.value?.identity.isAnonymous == true
   }
 
   /// The live profile name: a new one shows at once, before the pictures are drawn again.
@@ -30,7 +27,7 @@ struct CertificateCeremony: View {
   }
 
   var body: some View {
-    let certificate = store.certificate(code: top.code)
+    let certificate = store.certificate(code: top.code)?.issued
 
     PaneSplit {
       stage
@@ -40,7 +37,7 @@ struct CertificateCeremony: View {
       CenteredScroll {
         VStack(spacing: 0) {
           words
-          learnerPart(certificate.value)
+          learnerPart(certificate)
         }
         .scenePadding()
       }
@@ -51,7 +48,7 @@ struct CertificateCeremony: View {
           stage
             .padding(.bottom, 32)
           words
-          learnerPart(certificate.value)
+          learnerPart(certificate)
         }
         .frame(maxWidth: 600)
         .scenePadding()
@@ -60,19 +57,16 @@ struct CertificateCeremony: View {
     }
     .landsActsOnInput()
     .celebratesOnce(id: top.code)
+    .loads(store.list, refreshable: false)
     .sheet(isPresented: $isOpened) {
       CertificateSheet(code: top.code)
         .accessibilitySizeStyles()
     }
     .sheet(isPresented: $isLinkedInShown) {
-      if let value = certificate.value {
-        CertificateLinkedInSheet(certificate: value)
+      if let certificate {
+        CertificateLinkedInSheet(certificate: certificate)
           .accessibilitySizeStyles()
       }
-    }
-    .sheet(isPresented: $isSigningUp) {
-      AccountSheet(signsIn: true)
-        .accessibilitySizeStyles()
     }
   }
 
@@ -82,18 +76,26 @@ struct CertificateCeremony: View {
       ForEach(Array(certificates.dropLast().enumerated()), id: \.element.id) { index, facts in
         let depth = CGFloat(certificates.count - 1 - index)
 
-        StagePicture(code: facts.code)
+        StagePicture(facts: facts)
           .offset(x: 14 * depth, y: -14 * depth)
           .opacity(0.6)
           .accessibilityHidden(true)
       }
 
-      Button {
-        isOpened = true
-      } label: {
-        StagePicture(code: top.code)
+      Group {
+        if top.locked {
+          LockedCertificateCard(facts: top)
+        } else {
+          Button {
+            isOpened = true
+          } label: {
+            StagePicture(facts: top)
+          }
+          .buttonStyle(.plain)
+          .accessibilityLabel(top.spokenTitle)
+          .accessibilityAddTraits(.isImage)
+        }
       }
-      .buttonStyle(.plain)
       .settles(from: 0.92)
       .overlay {
         GeometryReader { proxy in
@@ -102,8 +104,6 @@ struct CertificateCeremony: View {
             .position(x: proxy.size.width * 0.92, y: proxy.size.height * 0.76)
         }
       }
-      .accessibilityLabel(top.spokenTitle)
-      .accessibilityAddTraits(.isImage)
     }
     .padding(.top, certificates.count > 1 ? 14 : 0)
     .padding(.trailing, certificates.count > 1 ? 14 : 0)
@@ -116,38 +116,22 @@ struct CertificateCeremony: View {
         .multilineTextAlignment(.center)
         .accessibilityAddTraits(.isHeader)
 
-      Text(line)
-        .font(.title3)
-        .foregroundStyle(.secondary)
-        .multilineTextAlignment(.center)
+      // The Plus notice says how to get a locked one.
+      if !top.locked {
+        Text(line)
+          .font(.title3)
+          .foregroundStyle(.secondary)
+          .multilineTextAlignment(.center)
+      }
     }
     .frame(maxWidth: .infinity)
   }
 
   @ViewBuilder
   private func learnerPart(_ certificate: Certificate?) -> some View {
-    if isGuest {
-      VStack(spacing: 22) {
-        Text(
-          "Create a free account to keep your certificate and put your name on it.",
-          tableName: "Certificates", comment: "What a guest who earned a certificate can do"
-        )
-        .font(.subheadline)
-        .multilineTextAlignment(.center)
-
-        Button {
-          isSigningUp = true
-        } label: {
-          Text(
-            "Create a free account", tableName: "Certificates",
-            comment: "Opens sign-up for a guest with a certificate"
-          )
-          .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.bordered)
-        .controlSize(.large)
-      }
-      .padding(.top, 18)
+    if top.locked {
+      CertificatePlusNotice(seePlus: onSeePlus)
+        .padding(.top, 18)
     } else if name.isEmpty || isEditingName {
       CertificateNameEditor(name: $nameDraft, current: name) {
         isEditingName = false
@@ -272,16 +256,23 @@ struct CertificateCeremony: View {
         comment: "Title when one result earned several certificates")
     }
 
-    switch top.kind {
-    case .course:
+    let level =
+      switch top.kind {
+      case .course: top.courseLevel.map { String(localized: $0.localizedTitle) }
+      case .languageLevel: top.level
+      }
+
+    guard let level else {
       return String(
         localized: "Course complete!", table: "Certificates",
-        comment: "Title when the learner finished a course")
-    case .languageLevel:
-      return String(
-        localized: "\(top.level ?? "") complete!", table: "Certificates",
-        comment: "Title when the learner finished a CEFR language level, such as B1")
+        comment: "Title when the learner finished a whole plan's course")
     }
+
+    return String(
+      localized: "\(level) complete!", table: "Certificates",
+      comment:
+        "Title when the learner finished a level: a CEFR language level, such as B1, or a course's level, such as Beginner"
+    )
   }
 
   private var line: String {
@@ -295,8 +286,10 @@ struct CertificateCeremony: View {
 
     if top.kind == .course {
       return String(
-        localized: "Your certificate for \(top.title ?? "") is ready.", table: "Certificates",
-        comment: "Under the title when a course certificate was earned; the course")
+        localized: "Your certificate for \(top.name) is ready.", table: "Certificates",
+        comment:
+          "Under the title when a course certificate was earned; the course or its level, such as Python · Beginner"
+      )
     }
 
     return String(
@@ -307,25 +300,46 @@ struct CertificateCeremony: View {
   }
 
   private func close() {
-    for facts in certificates {
-      Task { await store.markShown(facts.code) }
-    }
-
+    store.closeMoments(certificates.map(\.code))
     onClose()
   }
 }
 
-/// Each picture loads its certificate's links first.
+/// What a locked certificate says wherever it shows; the list's one notice covers all of them. See
+/// Plus opens Plus unless `seePlus` leaves the screen first.
+struct CertificatePlusNotice: View {
+  var isList = false
+  var seePlus: (() -> Void)?
+
+  var body: some View {
+    PlusNotice(
+      title: isList
+        ? Text(
+          "Certificates come with Plus", tableName: "Certificates",
+          comment: "Title of the notice at the top of the learner's certificates without Plus")
+        : Text(
+          "Get your certificate with Plus", tableName: "Certificates",
+          comment: "Title of the notice on a certificate the learner earned without Plus"),
+      description: Text(
+        "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends.",
+        tableName: "Certificates",
+        comment: "What Plus does for certificates, on one the learner earned without Plus"),
+      seePlus: seePlus)
+  }
+}
+
+/// A picture appears once the learner's list has the certificate; a locked one shows its card.
 private struct StagePicture: View {
   @Environment(CertificatesStore.self) private var store
 
-  let code: String
+  let facts: CertificateFacts
 
   var body: some View {
-    let certificate = store.certificate(code: code)
-
-    CertificatePicture(url: certificate.value?.pictures.screen)
-      .loads(certificate, refreshable: false)
+    if facts.locked {
+      LockedCertificateCard(facts: facts)
+    } else {
+      CertificatePicture(url: store.certificate(code: facts.code)?.issued?.pictures.screen)
+    }
   }
 }
 

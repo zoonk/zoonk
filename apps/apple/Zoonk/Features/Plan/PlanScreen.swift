@@ -137,6 +137,7 @@ private struct PlanSetupLeft: View {
 }
 
 private struct PlanContent: View {
+  @Environment(AppRouter.self) private var router
   @Environment(CertificatesStore.self) private var certificates
   @Environment(PlanStore.self) private var store
   @State private var adjusting: AdjustPlanSheet.Section?
@@ -191,22 +192,27 @@ private struct PlanContent: View {
       context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true)
   }
 
-  /// An exam's course can finish before its plan does: its exam-day mocks come after.
+  /// A level, or an exam's course before its exam-day mocks, can finish before the plan does.
   private var courseEnd: [any CachedResource] {
-    goal.kind == .exam && plan.end == nil ? [store.planEnd(goalId: goal.id)] : []
+    [.learn, .exam].contains(goal.kind) && plan.end == nil ? [store.planEnd(goalId: goal.id)] : []
   }
 
-  /// The learner asked for it, so a certificate whose moment already played opens instead.
+  /// The learner asked for them, so when every moment already played, the certificate opens
+  /// instead.
   private func claimCertificate() async -> Bool {
     switch await certificates.claim(goalID: goal.id) {
-    case .done(let certificate?):
-      if certificate.wasShown {
-        sheet = .certificate(code: certificate.facts.code)
+    case .done(let claimed) where !claimed.isEmpty:
+      let unshown = claimed.filter { !$0.wasShown }.map(\.facts)
+
+      if !unshown.isEmpty {
+        self.claimed = unshown
+      } else if let only = claimed.first, claimed.count == 1 {
+        sheet = .certificate(code: only.facts.code)
       } else {
-        claimed = [certificate.facts]
+        router.present(.account(.certificates))
       }
       return true
-    case .done(nil), .failed: return false
+    case .done, .failed: return false
     case .obsolete: return true
     }
   }

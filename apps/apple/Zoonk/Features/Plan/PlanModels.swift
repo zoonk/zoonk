@@ -420,14 +420,26 @@ enum BaseChoice: String, Codable, Sendable {
 
 /// What a finished plan's card offers, from the goal map.
 struct PlanEnd: Decodable, Equatable, Sendable {
-  struct CourseCertificate: Decodable, Equatable, Sendable {
-    /// Nil while the course is finished but its certificate isn't written yet: the learner claims
-    /// it.
-    let code: String?
+  struct Certificates: Decodable, Equatable, Sendable {
+    struct Earned: Decodable, Equatable, Sendable {
+      let code: String
+      /// Earned without Plus: the button carries the Plus mark.
+      let locked: Bool
+    }
+
+    struct Unclaimed: Decodable, Equatable, Sendable {
+      /// Nil for the plan's own certificate.
+      let courseLevel: CourseLevel?
+    }
+
+    /// Level order, the plan's last, with a level certified in another goal.
+    let earned: [Earned]
+    /// Finished levels, or the finished plan, without a certificate yet: the learner claims them.
+    let unclaimed: [Unclaimed]
   }
 
-  /// Nil for goals that earn no course certificate, and before the course is finished.
-  let certificate: CourseCertificate?
+  /// Nil for goals that earn none, and until one is finished.
+  let certificates: Certificates?
   let next: StudyNext?
 }
 

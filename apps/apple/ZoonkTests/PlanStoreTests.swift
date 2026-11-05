@@ -280,7 +280,7 @@ private actor PlanAPIStub: PlanAPIClient {
     throw APIError.notFound
   }
   func planEnd(token: String, goalId: String) async throws -> PlanEnd {
-    PlanEnd(certificate: nil, next: nil)
+    PlanEnd(certificates: nil, next: nil)
   }
   func resumeChangesPlan(token: String, goalId: String) async throws -> Bool { false }
   func setStatus(token: String, goalId: String, status: GoalStatusChange) async throws

@@ -4,45 +4,42 @@ import XCTest
 
 @MainActor
 final class CertificatesStoreTests: XCTestCase {
-  func testEachMomentPlaysOnceAndTheListGainsItsCertificate() async {
+  /// See Plus leaves a moment without closing it, so the next task's result plays it again.
+  func testAMomentPlaysUntilContinueClosesIt() async {
     let api = CertificatesAPIStub()
     let store = CertificatesStore(
       api: api, cache: AppCache(session: .preview(account: .certificatesTestAccount)))
-    let course = facts("COURSE000001")
+    let course = facts("COURSE000001", locked: true)
     let level = facts("LEVEL0000001")
     await store.list.load()
 
     XCTAssertEqual(store.claimMoments([course]), [course])
     XCTAssertEqual(
+      store.claimMoments([course]), [course],
+      "Expected a moment left through See Plus to play again after the next task")
+
+    store.closeMoments([course.code])
+
+    XCTAssertEqual(
       store.claimMoments([course, level]), [level],
-      "Expected a certificate that the next result carries again to play once")
-    XCTAssertEqual(store.claimMoments([course, level]), [])
+      "Expected a closed moment that the next result carries again to play no more")
     await store.list.load()
 
     let reads = await api.listReads
-    XCTAssertEqual(reads, 2)
+    XCTAssertEqual(reads, 2, "Expected the list to be read again for the certificates just earned")
   }
 
-  /// Signing a guest into an account moves the guest's certificates there, under its name.
-  func testACertificateIsReadAgainWhenTheSessionChanges() async throws {
-    let api = CertificatesAPIStub(recipientNames: [nil, "Ana Souza"])
-    let session = SessionStore.preview(account: .certificatesTestAccount)
-    let cache = AppCache(session: session)
-    let store = CertificatesStore(api: api, cache: cache)
-    let certificate = store.certificate(code: "K7QF2M9XHD4P")
-    await certificate.load()
+  func testALockedCertificateHasNoPictureOrLink() throws {
+    let certificates = try JSONDecoder().decode(
+      [OwnedCertificate].self,
+      from: Data(
+        "[\(certificateJSON(code: "LOCKED000001", locked: true)), \(certificateJSON(code: "ISSUED000001"))]"
+          .utf8))
 
-    await session.expire(try XCTUnwrap(session.authenticatedSession))
-    cache.followSession()
-
-    XCTAssertNotNil(certificate.value, "Kept on screen while it's read again")
-    await certificate.load()
-    XCTAssertEqual(certificate.value?.facts.recipientName, "Ana Souza")
-
-    cache.followSession()
-    await certificate.load()
-    let reads = await api.certificateReads
-    XCTAssertEqual(reads, 2, "Another window following the same change reads nothing again")
+    XCTAssertEqual(certificates.map(\.facts.code), ["LOCKED000001", "ISSUED000001"])
+    XCTAssertNil(certificates[0].issued)
+    XCTAssertEqual(
+      certificates[1].issued?.url, URL(string: "https://zoonk.com/c/ISSUED000001"))
   }
 
   func testTheDayEarnedNeverShiftsWithTheDevicesTimeZone() throws {
@@ -70,62 +67,63 @@ final class CertificatesStoreTests: XCTestCase {
     XCTAssertTrue(certificate.fileName.hasPrefix("佐藤 花子 - 量子物理学"))
   }
 
-  private func facts(_ code: String, completedOn: String = "2026-11-03") -> CertificateFacts {
+  private func facts(
+    _ code: String, completedOn: String = "2026-11-03", locked: Bool = false
+  ) -> CertificateFacts {
     CertificateFacts(
       code: code, kind: .course, recipientName: "Ana Souza", completedOn: completedOn,
-      title: "Quantum physics from scratch", targetLanguage: nil, level: nil, lessonsStudied: 148,
-      minutes: 2460)
+      title: "Quantum physics from scratch", courseLevel: nil, targetLanguage: nil, level: nil,
+      topics: [], canDo: [], lessonsStudied: 148, lessonsTestedOut: 0, minutes: 2460,
+      locked: locked)
   }
 }
 
 private func decodedCertificate(
   code: String, recipientName: String?, title: String = "Quantum physics from scratch"
 ) throws -> Certificate {
-  let recipient = String(decoding: try JSONEncoder().encode(recipientName), as: UTF8.self)
-
-  return try JSONDecoder().decode(
+  try JSONDecoder().decode(
     Certificate.self,
-    from: Data(
-      #"""
-      {"code": "\#(code)", "kind": "course", "recipientName": \#(recipient),
-       "completedOn": "2026-11-03", "title": "\#(title)", "targetLanguage": null,
-       "level": null, "lessonsStudied": 148, "minutes": 2460,
-       "url": "https://zoonk.com/c/\#(code)",
-       "imageUrls": {"screen": "https://zoonk.com/a.png", "print": "https://zoonk.com/b.png",
-         "link": "https://zoonk.com/c.png", "post": "https://zoonk.com/d.png"},
-       "linkedInUrl": "https://www.linkedin.com/profile/add"}
-      """#.utf8))
+    from: Data(certificateJSON(code: code, recipientName: recipientName, title: title).utf8))
+}
+
+/// One entry of the learner's list.
+private func certificateJSON(
+  code: String, recipientName: String? = "Ana Souza",
+  title: String = "Quantum physics from scratch", locked: Bool = false
+) -> String {
+  let recipient = String(
+    decoding: (try? JSONEncoder().encode(recipientName)) ?? Data(), as: UTF8.self)
+  let links =
+    locked
+    ? #""url": null, "imageUrls": null, "linkedInUrl": null"#
+    : #"""
+    "url": "https://zoonk.com/c/\#(code)",
+    "imageUrls": {"screen": "https://zoonk.com/a.png", "print": "https://zoonk.com/b.png",
+      "link": "https://zoonk.com/c.png", "post": "https://zoonk.com/d.png"},
+    "linkedInUrl": "https://www.linkedin.com/profile/add"
+    """#
+
+  return #"""
+    {"code": "\#(code)", "kind": "course", "recipientName": \#(recipient),
+     "completedOn": "2026-11-03", "title": "\#(title)", "courseLevel": "beginner",
+     "targetLanguage": null, "level": null, "topics": ["Variables"], "canDo": [],
+     "lessonsStudied": 148, "lessonsTestedOut": 0, "minutes": 2460, "locked": \#(locked),
+     "shownAt": null, \#(links)}
+    """#
 }
 
 private actor CertificatesAPIStub: CertificatesAPIClient {
   private(set) var listReads = 0
-  private(set) var certificateReads = 0
-  /// One per read of the certificate, in order.
-  private var recipientNames: [String?]
 
-  init(recipientNames: [String?] = []) {
-    self.recipientNames = recipientNames
-  }
-
-  func list(token: String) async throws -> [Certificate] {
+  func list(token: String) async throws -> [OwnedCertificate] {
     listReads += 1
     return []
   }
 
-  func certificate(code: String) async throws -> Certificate {
-    certificateReads += 1
-
-    guard !recipientNames.isEmpty else {
-      throw APIError.notFound
-    }
-
-    return try decodedCertificate(code: code, recipientName: recipientNames.removeFirst())
-  }
-
   func markShown(token: String, code: String) async throws {}
 
-  func claim(token: String, goalID: String) async throws -> ClaimedCertificate? {
-    nil
+  func claim(token: String, goalID: String) async throws -> [ClaimedCertificate] {
+    []
   }
 
   func upNext(token: String) async throws -> [CertificateUpNext] {

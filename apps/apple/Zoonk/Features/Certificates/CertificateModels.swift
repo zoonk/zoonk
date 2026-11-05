@@ -15,17 +15,50 @@ struct CertificateFacts: Decodable, Hashable, Identifiable, Sendable {
   /// The learner's calendar day it was earned, `YYYY-MM-DD`.
   let completedOn: String
   let title: String?
+  /// The course level it certifies; nil for a plan certified whole and for language levels.
+  let courseLevel: CourseLevel?
   let targetLanguage: String?
   let level: String?
+  /// A course's chapters, in plan order.
+  let topics: [String]
+  /// A language level's: what the learner can do.
+  let canDo: [String]
   let lessonsStudied: Int?
+  let lessonsTestedOut: Int?
   /// About how long the studied lessons take; nil when unknown.
   let minutes: Int?
+  /// Earned without Plus: no picture, link, code or share until the learner subscribes.
+  let locked: Bool
 
   var id: String { code }
 }
 
-/// A certificate with its public page and pictures, from `GET /certificates/{code}` or the
-/// learner's list.
+/// One of the learner's certificates. The public read refuses a locked one, so screens read the
+/// learner's own list.
+enum OwnedCertificate: Decodable, Hashable, Identifiable, Sendable {
+  case issued(Certificate)
+  case locked(CertificateFacts)
+
+  init(from decoder: any Decoder) throws {
+    let facts = try CertificateFacts(from: decoder)
+    self = facts.locked ? .locked(facts) : .issued(try Certificate(from: decoder))
+  }
+
+  var facts: CertificateFacts {
+    switch self {
+    case .issued(let certificate): certificate.facts
+    case .locked(let facts): facts
+    }
+  }
+
+  var issued: Certificate? {
+    if case .issued(let certificate) = self { certificate } else { nil }
+  }
+
+  var id: String { facts.code }
+}
+
+/// An issued certificate with its public page and pictures.
 struct Certificate: Decodable, Hashable, Identifiable, Sendable {
   struct Pictures: Decodable, Hashable, Sendable {
     /// The certificate itself, as screens show it.
@@ -72,8 +105,18 @@ extension CertificateFacts {
   /// The certificate pictures are A4 landscape.
   static let aspectRatio: CGFloat = 297 / 210
 
-  /// Main's list name: a course's title, or the language and level, such as "Spanish B1".
+  /// Main's list name: a course's title with the level it certifies, such as "Python · Beginner",
+  /// or the language and level, such as "Spanish B1".
   var name: String {
+    if let title, let courseLevel {
+      return String(
+        localized: "\(title) · \(String(localized: courseLevel.localizedTitle))",
+        table: "Certificates",
+        comment:
+          "A course level certificate's name: the course, then its level, such as Python · Beginner"
+      )
+    }
+
     if let title {
       return title
     }
@@ -94,8 +137,12 @@ extension CertificateFacts {
   /// "Certificate of completion · Nov 3, 2026".
   /// A wrapped line breaks before the date, never inside it.
   var summary: String {
-    let date = completedOnText(.studyDay.year().month(.abbreviated).day())
-    return [kindName, date.replacingOccurrences(of: " ", with: "\u{00A0}")].joinedFacts()
+    [kindName, completedOnDay.replacingOccurrences(of: " ", with: "\u{00A0}")].joinedFacts()
+  }
+
+  /// "Nov 3, 2026".
+  var completedOnDay: String {
+    completedOnText(.studyDay.year().month(.abbreviated).day())
   }
 
   /// LinkedIn's issue date: "November 2026".
@@ -125,8 +172,10 @@ extension CertificateFacts {
       switch kind {
       case .course:
         String(
-          localized: "\(name) completed \(title ?? "")", table: "Certificates",
-          comment: "A course certificate read aloud: the learner's name, then the course")
+          localized: "\(name) completed \(self.name)", table: "Certificates",
+          comment:
+            "A course certificate read aloud: the learner's name, then the course or its level, such as Python · Beginner"
+        )
       case .languageLevel:
         String(
           localized: "\(name) completed level \(level ?? "") in \(languageName)",

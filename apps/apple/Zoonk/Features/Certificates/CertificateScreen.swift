@@ -1,22 +1,26 @@
 import SwiftUI
 import UIKit
 
-/// The learner's own certificate: its picture, then what they can do with it.
+/// The learner's own certificate: its picture, then what they can do with it. A locked one shows
+/// its card, its facts and the Plus notice.
 struct CertificateScreen: View {
   @Environment(CertificatesStore.self) private var store
 
   let code: String
 
   var body: some View {
-    let certificate = store.certificate(code: code)
-
     Group {
-      switch certificate.state {
-      case .loaded(let value):
-        CertificateDetail(certificate: value)
-      case .idle, .loading, .failed, .empty:
-        SettingsLoadingState(state: certificate.state) {
-          Task { await certificate.refresh() }
+      switch store.certificate(code: code) {
+      case .issued(let certificate):
+        CertificateDetail(certificate: certificate)
+      case .locked(let facts):
+        LockedCertificateDetail(facts: facts)
+      // One just earned joins the list when it's read again.
+      case nil where store.list.isRefreshing:
+        ProgressView()
+      case nil:
+        SettingsLoadingState(state: store.list.state) {
+          Task { await store.list.refresh() }
         }
       }
     }
@@ -24,7 +28,7 @@ struct CertificateScreen: View {
       Text("Certificate", tableName: "Certificates", comment: "Title of one certificate's page")
     )
     .toolbarTitleDisplayMode(.inline)
-    .loads(certificate)
+    .loads(store.list)
   }
 }
 
@@ -47,11 +51,9 @@ struct CertificateSheet: View {
 }
 
 private struct CertificateDetail: View {
-  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @State private var isZoomed = false
   @State private var isLinkedInShown = false
-  @State private var isSigningUp = false
   @State private var isEditingName = false
   @State private var nameDraft = ""
   @State private var printAnchor = PrintAnchor()
@@ -61,10 +63,6 @@ private struct CertificateDetail: View {
 
   let certificate: Certificate
 
-  private var isGuest: Bool {
-    learner.summary.value?.identity.isAnonymous == true
-  }
-
   /// The live profile name: a rename shows here before the certificate is read again.
   private var name: String {
     session.account?.user.name.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
@@ -72,7 +70,7 @@ private struct CertificateDetail: View {
 
   /// Sharing, printing and saving wait for the name that goes on the certificate.
   private var isReady: Bool {
-    !isGuest && !name.isEmpty
+    !name.isEmpty
   }
 
   /// A rename waits for the pictures drawn with the new name; pull to refresh reads them again.
@@ -96,9 +94,7 @@ private struct CertificateDetail: View {
         .listRowInsets(EdgeInsets())
       }
 
-      if isGuest {
-        guestSection
-      } else if name.isEmpty {
+      if name.isEmpty {
         Section {
           CertificateNameEditor(name: $nameDraft, current: "") {}
         }
@@ -127,9 +123,6 @@ private struct CertificateDetail: View {
     }
     .sheet(isPresented: $isLinkedInShown) {
       CertificateLinkedInSheet(certificate: certificate)
-    }
-    .sheet(isPresented: $isSigningUp) {
-      AccountSheet(signsIn: true)
     }
     .onDisappear { printing?.cancel() }
     .sensoryFeedback(.success, trigger: linkCopied) { _, copied in copied }
@@ -269,22 +262,6 @@ private struct CertificateDetail: View {
     }
   }
 
-  private var guestSection: some View {
-    Section {
-      Text(
-        "Create a free account to keep it and share it.", tableName: "Certificates",
-        comment: "What a guest does to keep a certificate and share it")
-
-      Button {
-        isSigningUp = true
-      } label: {
-        Text(
-          "Create a free account", tableName: "Certificates",
-          comment: "Opens sign-up for a guest with a certificate")
-      }
-    }
-  }
-
   private var linkNote: Text {
     Text(
       "Anyone with the link can see this certificate. Its page doesn't show up in search.",
@@ -308,6 +285,83 @@ private struct CertificateDetail: View {
         CertificatePrinting.print(data, jobName: certificate.fileName, from: printAnchor.view)
       } catch {
         printFailed = !Task.isCancelled
+      }
+    }
+  }
+}
+
+/// What the certificate says, without the picture, code or link that make it a credential.
+private struct LockedCertificateDetail: View {
+  let facts: CertificateFacts
+
+  var body: some View {
+    List {
+      Section {
+      } header: {
+        LockedCertificateCard(facts: facts)
+          .listRowInsets(EdgeInsets())
+      }
+
+      Section {
+        CertificatePlusNotice()
+          .listRowInsets(EdgeInsets())
+          .listRowBackground(Color.clear)
+      }
+
+      Section {
+        LabeledContent {
+          Text(facts.completedOnDay)
+        } label: {
+          Text("Completed", tableName: "Certificates", comment: "When a certificate was earned")
+        }
+
+        if let lessons = facts.lessonsStudied, lessons > 0 {
+          LabeledContent {
+            Text(lessons, format: .number)
+          } label: {
+            Text(
+              "Lessons studied", tableName: "Certificates",
+              comment: "How many lessons a certificate's learner studied")
+          }
+        }
+
+        if let lessons = facts.lessonsTestedOut, lessons > 0 {
+          LabeledContent {
+            Text(lessons, format: .number)
+          } label: {
+            Text(
+              "Passed by test", tableName: "Certificates",
+              comment: "How many of a certificate's lessons the learner passed by a test")
+          }
+        }
+
+        if let minutes = facts.minutes, minutes > 0 {
+          LabeledContent {
+            Text(studyTime(minutes))
+          } label: {
+            Text(
+              "Study time", tableName: "Certificates",
+              comment: "About how long a certificate's lessons took to study")
+          }
+        }
+      }
+
+      if !facts.topics.isEmpty || !facts.canDo.isEmpty {
+        Section {
+          ForEach(facts.kind == .course ? facts.topics : facts.canDo, id: \.self) { line in
+            Text(line)
+          }
+        } header: {
+          if facts.kind == .course {
+            Text(
+              "Topics covered", tableName: "Certificates",
+              comment: "Heading over the chapters a course certificate covers")
+          } else {
+            Text(
+              "Can do", tableName: "Certificates",
+              comment: "Heading over what a language certificate's learner can do")
+          }
+        }
       }
     }
   }

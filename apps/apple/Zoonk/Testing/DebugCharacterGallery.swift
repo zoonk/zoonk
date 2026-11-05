@@ -189,7 +189,7 @@
       .id(index)
     }
   }
-  /// All of them at once, then each alone.
+  /// All of them at once, then each alone. See Plus moves on too.
   private struct CertificatesPreview: View {
     @Environment(CertificatesStore.self) private var store
     @State private var index = 0
@@ -198,13 +198,14 @@
       .split(separator: ",").map(String.init)
 
     var body: some View {
-      let certificates = codes.map { store.certificate(code: $0) }
-      let facts = certificates.compactMap(\.value?.facts)
+      let facts = codes.compactMap { store.certificate(code: $0)?.facts }
       let shown = [facts] + (facts.count > 1 ? facts.map { [$0] } : [])
 
       Group {
         if facts.count == codes.count, !facts.isEmpty {
-          CertificateCeremony(certificates: shown[index % shown.count]) {
+          CertificateCeremony(
+            certificates: shown[index % shown.count], onSeePlus: { index += 1 }
+          ) {
             index += 1
           }
           .id(index)
@@ -212,11 +213,7 @@
           ProgressView()
         }
       }
-      .task {
-        for certificate in certificates {
-          await certificate.load()
-        }
-      }
+      .loads(store.list)
     }
   }
 
