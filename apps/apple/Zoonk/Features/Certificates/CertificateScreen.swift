@@ -15,6 +15,9 @@ struct CertificateScreen: View {
         CertificateDetail(certificate: certificate)
       case .locked(let facts):
         LockedCertificateDetail(facts: facts)
+      // One just earned joins the list when it's read again.
+      case nil where store.list.isRefreshing:
+        ProgressView()
       case nil:
         SettingsLoadingState(state: store.list.state) {
           Task { await store.list.refresh() }
