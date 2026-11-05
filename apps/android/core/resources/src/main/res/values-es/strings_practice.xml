@@ -3,7 +3,6 @@
 {
   "practice_already_answered": "9f84378aec868a99b267a9451e9aa9516064e418fafe096796a65abaff45736d",
   "practice_check": "bd74e58aad8c08e30e719fb88373f1232ca8c0b6025926940944fa28ec7e49b4",
-  "practice_close": "d8e2753b564e2dc2f8e38f3f6127224fda63b711535ac985dd05858fce7fbb4e",
   "practice_continue": "5f6522086a795954cbbb061549cf6cbe67861565cea30820e49c149fece50cfc",
   "practice_count": "9f1f85930dde173fd2706ca86bf1d83c5fee965d865f0374e6785859bfd02770",
   "practice_done_review": "55fc48964238487a4c181033119ab8b7233ad44495159eb21383fd53cb947a3d",
@@ -18,8 +17,6 @@
   "practice_net_tally": "83a84442839a6dcefa4751ff04e2ba6d04b85e3e8563e8e3d18ea380be626f17",
   "practice_net_wrong": "f601261c4ebafeec3bba57bbf8c415820ef368e5e6d7e718be49f65250123679",
   "practice_next": "1e1fb3addb43037d1d081518d6141b1e0e5155ed87b42c46a542cde9fde1fb24",
-  "practice_not_found_description": "c053ac2dfb7db19cb8268c0a9918c8d7b863ab1fc4ce8f3d79f85666a934d150",
-  "practice_not_found_title": "3a9bde8374bad4a31c95d34c4204c3bd4a5267cfed301b5754ed07c89f8ef2d9",
   "practice_pause_failed": "6f0653f3b1dbc25ca1b353a37104f163b83cc9968eb3eb2b8cee9d576293d58b",
   "practice_pause_stop": "2e3e4463175765a5dd47aedc4e39ec8239c534629efb7bfc625470dc8146b684",
   "practice_pause_text": "44864db00782a116d2a296cc74b836fc09a374b354c740483ba84181bca4c232",
@@ -80,7 +77,4 @@
     <string name="practice_pause_failed">No pudimos detener la sesión. Inténtalo de nuevo.</string>
     <string name="practice_done_title">Práctica completada</string>
     <string name="practice_done_review">Repaso completado</string>
-    <string name="practice_not_found_title">Estas preguntas ya no están aquí</string>
-    <string name="practice_not_found_description">Puede que ya no estén activas o hayan cambiado de lugar. En Hoy encontrarás lo que sigue.</string>
-    <string name="practice_close">Cerrar</string>
 </resources>

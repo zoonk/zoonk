@@ -72,7 +72,7 @@ export function OTPLinks({ children, className }: React.ComponentProps<"p">) {
 }
 
 export const OTP_LINK_CLASS =
-  "text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50";
+  "text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] aria-disabled:pointer-events-none aria-disabled:opacity-50";
 
 function keepDigits(text: string) {
   return text.replaceAll(/\D/gu, "");
@@ -155,6 +155,7 @@ export function OTPSubmit({
       aria-keyshortcuts="Enter"
       className={cn("w-full font-[560]", className)}
       disabled={isDisabled}
+      focusableWhenDisabled
       size="lg"
       type="submit"
       {...props}

@@ -4,11 +4,13 @@ How to look at screens and measure requests, memory, leaks, CPU and jank for the
 
 ## Look at it without an emulator
 
-Robolectric renders real screens on the JVM in seconds. Use it to check every window size, dark theme, more contrast and large text before opening an emulator. `app/src/testDebug/kotlin/com/zoonk/android/gallery/GalleryScreenshots.kt` is the pattern: `@GraphicsMode(NATIVE)`, Compose UI test v2's `createAndroidComposeRule`, one test per `@Config(qualifiers = "w411dp-h891dp-xxhdpi")` size (`-night` for dark, `RuntimeEnvironment.setFontScale(2f)` for 200%), and `onRoot().captureToImage()` written to a folder only when one is passed:
+Robolectric renders real screens on the JVM in seconds. Use it to check every window size, dark theme, more contrast and large text before opening an emulator. `app/src/testDebug/kotlin/com/zoonk/android/gallery/GalleryScreenshots.kt` is the pattern: `@GraphicsMode(NATIVE)`, Compose UI test v2's `createAndroidComposeRule`, one test per `@Config(qualifiers = "w411dp-h891dp-xxhdpi")` size (`-night` for dark, `RuntimeEnvironment.setFontScale(2f)` for 200%), and the shared `com.zoonk.android.ui.testing.captureRender` from `:core:designsystem` test fixtures, written to a folder only when one is passed:
 
 ```sh
 ./gradlew :feature:today:testDebugUnitTest --tests '*Screenshots*' --rerun -Pzoonk.shots=/path/to/folder
 ```
+
+Use `captureRender()` on one selected Compose root, tagged node, or dialog for JVM captures. When several roots are open, select the intended root explicitly. It settles composition and layout, invalidates the selected Compose view, then lets Compose’s capture idle pass draw before PixelCopy reads the window surface. `captureToImage()` alone can copy an empty first frame on SDK 37 even after `waitForIdle()`; extra waits and repeated captures do not establish that a new frame was drawn.
 
 Run the test task of the module that owns the screen (`:app` for the gallery and the shell); each module writes its reports under its own `build/`.
 
@@ -18,7 +20,7 @@ Read the PNGs. Images aren't committed and CI doesn't compare pixels. A render s
 
 - Start only main and the API from your checkout, with the mailbox that comes along for sign-in codes: `pnpm dev main api` to iterate, `pnpm start main api` for timings. Debug builds call the URL it writes to `apps/android/local-development.properties`; on the emulator, `localhost` names resolve to the host machine at `10.0.2.2`. A request that fails after 30 seconds with `SocketTimeoutException` means the app lacks `ACCESS_LOCAL_NETWORK` (see the README's "Local API").
 - Boot your AVD once and keep it: `emulator -avd <avd> -no-window -no-snapshot-save &` with a name from `emulator -list-avds`, then `adb wait-for-device`. Install and launch: `pnpm android:phone -- <avd>`.
-- Sign in as a persona copy (`pnpm dev:persona <name>`) with the token recipe in `apps/android/README.md`'s "Local API".
+- Sign in as a persona copy (`pnpm dev:persona <name>`) with the token recipe in `apps/android/README.md`'s "Local API", and open pages with the link recipe there.
 - Other agents may run Zoonk on another emulator: pass `-s <serial>` to every `adb` command (`adb devices`), and take your app's process: `PID=$(adb -s $SERIAL shell pidof com.zoonk.debug)`.
 
 ## Requests per screen and per tab switch

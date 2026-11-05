@@ -58,12 +58,12 @@ import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.TypedAnswerField
-import com.zoonk.android.feature.questions.formatClock
 import com.zoonk.android.feature.questions.isMulti
 import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk

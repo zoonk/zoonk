@@ -6,7 +6,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { proxyApiRequest } from "./lib/api-proxy";
 import { getBillingCurrency } from "./lib/billing-currency";
-import { getCatalogNotFound } from "./lib/catalog-not-found";
+import { getCategoryNotFound } from "./lib/category-not-found";
 
 const localizedMiddleware = createMiddleware(routing);
 const HOME_PATH = new RegExp(`^/(?:${SUPPORTED_LOCALES.join("|")})?$`, "u");
@@ -61,7 +61,11 @@ function getPricingRewrite({
   return NextResponse.rewrite(resolvedUrl, { headers });
 }
 
-/** UI-language variants of a course slug aren't translated editions, so next-intl's automatic alternates don't apply. */
+/**
+ * Vercel runs it in every region ahead of the CDN cache, far from the database, so it reads only
+ * the request. UI-language variants of a course slug aren't translated editions, so next-intl's
+ * automatic alternates don't apply.
+ */
 export default async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname === "/v1" || request.nextUrl.pathname.startsWith("/v1/")) {
     return proxyApiRequest(request);
@@ -96,7 +100,7 @@ export default async function proxy(request: NextRequest) {
 
   return (
     getPricingRewrite({ request, response }) ??
-    (await getCatalogNotFound({ localized: response, request })) ??
+    getCategoryNotFound({ localized: response, request }) ??
     response
   );
 }

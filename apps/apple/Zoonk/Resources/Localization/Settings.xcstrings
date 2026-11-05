@@ -1252,6 +1252,65 @@
         }
       }
     },
+    "Couldn't undo. Try again." : {
+      "comment" : "A deleted fact didn't come back, and Undo stays to try again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ließ sich nicht rückgängig machen. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo deshacer. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’annuler. Réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile annullare. Riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消せませんでした。もう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "되돌리지 못했어요. 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się cofnąć zmiany. Spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível desfazer. Tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geri alınamadı. Tekrar dene."
+          }
+        }
+      }
+    },
     "Daily time limit" : {
       "comment" : "Setting that ends the day's study after a time",
       "localizations" : {
@@ -1838,6 +1897,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İlk haftalık meydan okumanı tamamla"
+          }
+        }
+      }
+    },
+    "From a call" : {
+      "comment" : "Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus einem Gespräch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De una llamada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lors d’un appel"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Da una conversazione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話から"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화에서"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Z rozmowy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De uma conversa por voz"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesli sohbetten"
           }
         }
       }
@@ -2904,61 +3022,61 @@
         }
       }
     },
-    "Personal examples and plans that fit your week" : {
+    "Personal examples, plans that fit your week and calls that remember your news" : {
       "comment" : "What memory does while it's on",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Persönliche Beispiele und Pläne, die zu deiner Woche passen"
+            "value" : "Persönliche Beispiele, Pläne, die zu deiner Woche passen, und Gespräche, die an deine Neuigkeiten anknüpfen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ejemplos personalizados y planes que se adaptan a tu semana"
+            "value" : "Ejemplos de tu vida, planes que se adaptan a tu semana y llamadas que recuerdan lo que nos cuentas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Des exemples personnalisés et des plans adaptés à ta semaine"
+            "value" : "Des exemples personnalisés, des plans adaptés à ta semaine et des appels où l’on se souvient de ce que tu as raconté"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esempi personalizzati e piani adatti alla tua settimana"
+            "value" : "Esempi su misura per te, piani adatti alla tua settimana e conversazioni che tengono conto delle tue novità"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "身近な例や、1週間の予定に合う学習計画"
+            "value" : "身近な例、1週間の予定に合った学習計画、近況を踏まえた会話"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내게 맞는 예시와 이번 주 일정에 맞는 계획"
+            "value" : "나에게 맞춘 예시, 한 주 일정에 맞는 계획, 내 근황을 기억하는 대화"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przykłady z twojego życia i plany dopasowane do twojego grafiku"
+            "value" : "Przykłady z twojego życia, plany dopasowane do twojego tygodnia i rozmowy, w których pamiętamy, co u ciebie nowego"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exemplos para você e planos que cabem na sua semana"
+            "value" : "Exemplos personalizados, planos que cabem na sua semana e conversas que lembram das suas novidades"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sana özel örnekler ve haftana uygun planlar"
+            "value" : "Sana özel örnekler, haftana uygun planlar ve hayatındaki gelişmeleri hatırlayan sohbetler"
           }
         }
       }

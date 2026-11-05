@@ -47,6 +47,7 @@ export function ExplainAnswer({ answer, stepId }: { answer: string; stepId: stri
     <div aria-live="polite" className="flex flex-col items-start gap-2">
       <Button
         disabled={state.status === "loading"}
+        focusableWhenDisabled
         onClick={() => void request()}
         size="sm"
         variant="outline"

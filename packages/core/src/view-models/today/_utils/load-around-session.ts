@@ -8,26 +8,13 @@ import { getRequestProgressDateContext } from "../../../progress/get-request-dat
 import { type ReadStudyDay } from "../../../sessions/_utils/read-study-day";
 import { getSelectedCatchUpItems } from "../../../sessions/_utils/selected-day-plan";
 import { type DayView } from "../../../sessions/day-view";
-import { loadGoalLessons } from "../../syllabus/_utils/load-goal-lessons";
 import { getSyllabusView } from "../../syllabus/get-syllabus-view";
 import { readTodayWeeklyChallenge } from "./weekly-challenge-view";
 
-async function loadLessons({
-  goalId,
-  kind,
-  selection,
-}: {
-  goalId: string;
-  kind: GoalKind;
-  selection: ReadStudyDay["selection"];
-}) {
+/** A day not opened yet replays the saved plan, so its lessons are the syllabus the page shows. */
+async function loadLessons({ goalId, kind }: { goalId: string; kind: GoalKind }) {
   if (kind === "exam" || kind === "explain") {
     return null;
-  }
-
-  if (selection) {
-    const lessons = await loadGoalLessons(goalId, selection.context);
-    return lessons ? { done: lessons.done, total: lessons.total } : null;
   }
 
   const result = await getSyllabusView({ goalId });
@@ -69,7 +56,7 @@ export async function loadAroundSession({
           }),
         )
       : getGoalPreparation(goalId),
-    loadLessons({ goalId, kind, selection }),
+    loadLessons({ goalId, kind }),
     getCurrentMemoryInsight({ goalId }),
     readTodayWeeklyChallenge({ goalId, selection, session, timeZone }),
   ]);

@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
@@ -23,6 +22,7 @@ import com.zoonk.android.feature.language.languageProgress
 import com.zoonk.android.feature.language.languageProgressNotYet
 import com.zoonk.android.feature.speaking.speakingPaper
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -120,7 +120,7 @@ class PlanLanguageScreenshots {
         (pages.keys + sheetShots.keys).forEach { name ->
             shown = name
             compose.waitForIdle()
-            write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+            write(name, compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

@@ -402,8 +402,14 @@ struct MockSpeaking: Hashable, Decodable, Sendable {
       case completed
     }
 
+    struct Minutes: Hashable, Decodable, Sendable {
+      var max: Double
+      var min: Double
+    }
+
     var conversationId: String
     var key: String
+    var minutes: Minutes
     var name: String
     var status: Status
 
@@ -489,6 +495,7 @@ struct MockView: Hashable, Decodable, Sendable {
   var blockId: String
   var breakUntil: Date?
   var ceremony: Milestone?
+  var certificates: [CertificateFacts]
   var current: MockCurrent?
   var essayRubric: EssayRubric?
   var essays: [MockEssay]
@@ -523,7 +530,9 @@ struct MockView: Hashable, Decodable, Sendable {
   }
 
   var day: DayResult {
-    DayResult(ceremony: ceremony, missionMoment: missionMoment, reached: reached)
+    DayResult(
+      ceremony: ceremony, certificates: certificates, missionMoment: missionMoment,
+      reached: reached)
   }
 
   var isLastSectionCurrent: Bool {

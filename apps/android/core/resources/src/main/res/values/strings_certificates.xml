@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A place name, like "Completed lessons": the page listing the learner's completion certificates, to print, download or share. -->
+    <string name="certificates_title">Certificates</string>
+    <!-- Above the page title, counting the learner's certificates. -->
+    <plurals name="certificates_count">
+        <item quantity="one">%1$d certificate</item>
+        <item quantity="other">%1$d certificates</item>
+    </plurals>
+    <string name="certificates_lead">A certificate for every level and plan you finish.</string>
+    <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
+    <string name="certificates_kind_completion">Certificate of completion</string>
+    <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
+    <string name="certificates_language_level">%1$s %2$s</string>
+    <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
+    <string name="certificates_course_level">%1$s · %2$s</string>
+    <string name="certificates_empty_title">No certificates yet</string>
+    <string name="certificates_empty_description">Your certificates show up here when you finish a level or a plan.</string>
+    <string name="certificates_continue_learning">Continue learning</string>
+    <!-- On a finished plan's card: opens the plan's one certificate. -->
+    <string name="certificates_view">View certificate</string>
+    <string name="certificates_view_several">View certificates</string>
+    <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
+    <string name="certificates_get">Get your certificate</string>
+    <string name="certificates_up_next">Up next</string>
+    <string name="certificates_up_next_course">Your certificate comes when you finish the plan</string>
+    <!-- Under a language goal: its certificate comes once every skill the learner practices (reading, listening, speaking, writing) reaches the next CEFR level. -->
+    <string name="certificates_up_next_language">Comes when every skill you practice reaches the next level</string>
+
+    <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
+    <string name="certificates_course_complete">Course complete!</string>
+    <string name="certificates_level_complete">%1$s complete!</string>
+    <!-- The title when the learner earned two or more certificates at once. -->
+    <plurals name="certificates_earned">
+        <item quantity="one">%1$d certificate earned</item>
+        <item quantity="other">%1$d certificates earned</item>
+    </plurals>
+    <!-- %1$s is the course's title. -->
+    <string name="certificates_course_ready">Your certificate for %1$s is ready.</string>
+    <!-- %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
+    <string name="certificates_language_ready">Your %1$s %2$s certificate is ready.</string>
+    <!-- %1$s lists the certificates' names, such as "Spanish A2 and B1" or "Python and Spanish B1". -->
+    <string name="certificates_several_ready">Your %1$s certificates are ready.</string>
+    <!-- %1$s is the learner's name, as printed on their certificate. -->
+    <string name="certificates_on_your_certificate">On your certificate: %1$s</string>
+    <!-- A short button beside the learner's name, to edit the name printed on their certificates. -->
+    <string name="certificates_change">Change</string>
+    <!-- TalkBack's name for the Change button beside the learner's name. -->
+    <string name="certificates_change_name">Change the name on your certificates</string>
+    <!-- The label of a field where a learner without a name types it for the first time. -->
+    <string name="certificates_name_label_new">Your name, as it should appear</string>
+    <!-- The label of the field with the learner's current name, when they change it. -->
+    <string name="certificates_name_label">Name on your certificates</string>
+    <string name="certificates_name_placeholder">Your full name</string>
+    <string name="certificates_name_hint_new">Your certificates and your buddy use this name. You can change it anytime.</string>
+    <string name="certificates_name_hint">Your certificates and your buddy use this name.</string>
+    <string name="certificates_save">Save</string>
+    <string name="certificates_cancel">Cancel</string>
+    <string name="certificates_name_save_failed">That didn\'t save. Try again.</string>
+    <string name="certificates_share">Share</string>
+    <!-- Opens a sheet that helps the learner add the certificate to their LinkedIn profile. -->
+    <string name="certificates_add_to_linkedin">Add to LinkedIn</string>
+    <!-- "Certificates" is the place name. -->
+    <string name="certificates_saved_one">It\'s saved in Certificates.</string>
+    <!-- "Certificates" is the place name. -->
+    <string name="certificates_saved_several">They\'re saved in Certificates.</string>
+    <string name="certificates_continue">Continue</string>
+    <string name="certificates_locked">Locked</string>
+    <string name="certificates_plus_title">Get your certificate with Plus</string>
+    <string name="certificates_plus_description">Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends.</string>
+    <string name="certificates_plus_list_title">Certificates come with Plus</string>
+
+    <!-- The title of the screen showing one certificate. -->
+    <string name="certificates_certificate">Certificate</string>
+    <!-- Prints the certificate, or saves it as a PDF from the printing screen. -->
+    <string name="certificates_print">Print</string>
+    <!-- Saves the certificate's picture to the phone's Pictures. -->
+    <string name="certificates_download">Download</string>
+    <string name="certificates_copy_link">Copy link</string>
+    <string name="certificates_link_copied">Link copied</string>
+    <!-- A row showing the learner's name as their certificates print it, opening a field to change it. -->
+    <string name="certificates_name_on_certificate">Name on certificate</string>
+    <string name="certificates_link_note">Anyone with the link can see this certificate. Its page doesn\'t show up in search.</string>
+    <!-- A short message after the certificate's picture was saved to the phone's Pictures. -->
+    <string name="certificates_downloaded">Saved to Pictures</string>
+    <string name="certificates_picture_failed">The certificate didn\'t load. Try again.</string>
+    <string name="certificates_not_found">We couldn\'t find this certificate</string>
+    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name and %2$s the course's title. -->
+    <string name="certificates_alt_course">%1$s completed %2$s</string>
+    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
+    <string name="certificates_alt_level">%1$s completed level %2$s in %3$s</string>
+    <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
+    <string name="certificates_alt_dated">%1$s, %2$s</string>
+
+    <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
+    <string name="certificates_caption_course">I just finished %1$s on Zoonk: %2$s.</string>
+    <!-- Text the learner can post with a course certificate whose lessons were all passed by test. %1$s is the course's title. -->
+    <string name="certificates_caption_course_tested_out">I just finished %1$s on Zoonk.</string>
+    <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "148 lessons", and %3$d about how many hours they studied. -->
+    <plurals name="certificates_caption_course_hours">
+        <item quantity="one">I just finished %1$s on Zoonk: %2$s and about %3$d hour of study.</item>
+        <item quantity="other">I just finished %1$s on Zoonk: %2$s and about %3$d hours of study.</item>
+    </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the course's title, %2$s the lessons they studied, such as "12 lessons", and %3$d about how many minutes they studied, under an hour. -->
+    <plurals name="certificates_caption_course_minutes">
+        <item quantity="one">I just finished %1$s on Zoonk: %2$s and about %3$d minute of study.</item>
+        <item quantity="other">I just finished %1$s on Zoonk: %2$s and about %3$d minutes of study.</item>
+    </plurals>
+    <!-- Part of the text the learner posts: how many lessons they studied. %1$s is the number. -->
+    <plurals name="certificates_lessons">
+        <item quantity="one">%1$s lesson</item>
+        <item quantity="other">%1$s lessons</item>
+    </plurals>
+    <!-- Text the learner can post with their certificate. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_caption_level">I just completed level %1$s in %2$s on Zoonk.</string>
+
+    <string name="certificates_linkedin_title">Add to your LinkedIn profile</string>
+    <string name="certificates_linkedin_description">LinkedIn opens its form to add a license or certification. Copy each field into it.</string>
+    <!-- The fields of LinkedIn's "Add license or certification" form, named as LinkedIn names them. -->
+    <string name="certificates_linkedin_name">Name</string>
+    <string name="certificates_linkedin_organization">Issuing organization</string>
+    <string name="certificates_linkedin_issue_date">Issue date</string>
+    <string name="certificates_linkedin_credential_id">Credential ID</string>
+    <string name="certificates_linkedin_credential_url">Credential URL</string>
+    <string name="certificates_linkedin_open">Open LinkedIn</string>
+    <string name="certificates_copy">Copy</string>
+    <!-- TalkBack's name for a Copy button. %1$s is the field it copies, such as "Credential ID". -->
+    <string name="certificates_copy_field">Copy %1$s</string>
+    <string name="certificates_copied">Copied</string>
+</resources>

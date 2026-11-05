@@ -9,6 +9,7 @@ struct ProfileEditorView: View {
   @State private var username: String
   @State private var isChangingUsername = false
   @State private var usernameCheck: UsernameCheck?
+  @State private var isSaved = false
 
   let account: CurrentAccount
   let isRequiredSetup: Bool
@@ -55,8 +56,8 @@ struct ProfileEditorView: View {
           .foregroundStyle(.destructive)
         } else if !isRequiredSetup {
           Text(
-            "How Zoonk and your buddy call you", tableName: "Account",
-            comment: "What the profile name is for")
+            "How Zoonk and your buddy call you, and the name on your certificates.",
+            tableName: "Account", comment: "What the profile name is for")
         }
       }
 
@@ -128,6 +129,18 @@ struct ProfileEditorView: View {
       if session.failure != nil {
         Section {
           AccountFailureMessage(failure: session.failure)
+        }
+      } else if isSaved {
+        Section {
+          Label {
+            Text(
+              "Saved.", tableName: "Account",
+              comment: "The profile saved and its editor stays open beside the settings")
+          } icon: {
+            Image(systemName: "checkmark.circle")
+          }
+          .font(.footnote)
+          .foregroundStyle(.success)
         }
       }
 
@@ -201,6 +214,8 @@ struct ProfileEditorView: View {
         isChangingUsername = true
       }
     }
+    .onChange(of: name) { isSaved = false }
+    .onChange(of: username) { isSaved = false }
     .toolbar {
       if !isRequiredSetup {
         ToolbarItem(placement: .confirmationAction) {
@@ -293,11 +308,19 @@ struct ProfileEditorView: View {
   }
 
   private func save() {
+    isSaved = false
+
     Task {
       let didUpdate = await session.updateProfile(
         name: normalizedName, username: normalizedUsername)
 
-      if didUpdate && !isRequiredSetup && !isBesideTheList {
+      guard didUpdate, !isRequiredSetup else {
+        return
+      }
+
+      if isBesideTheList {
+        isSaved = true
+      } else {
         dismiss()
       }
     }

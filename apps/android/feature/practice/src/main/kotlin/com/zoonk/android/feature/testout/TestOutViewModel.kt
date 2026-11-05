@@ -12,6 +12,8 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.certificates.CertificateName
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.practice.AnswersDraft
 import com.zoonk.android.feature.practice.GradedAnswer
@@ -46,6 +48,7 @@ data class TestOutOutcome(
     val changeId: UUID?,
     val ceremony: Milestone? = null,
     val reached: ReachedFacts? = null,
+    val certificates: List<CertificateName> = emptyList(),
 )
 
 @Immutable
@@ -310,6 +313,7 @@ private fun ChapterTestOutResult.outcome() =
         changeId = changeId,
         ceremony = ceremony,
         reached = ReachedFacts(reached.level, reached.energy),
+        certificates = certificates.map { it.naming },
     )
 
 private fun ChapterTestOutRecord.outcome() =

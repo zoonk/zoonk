@@ -19,6 +19,7 @@ export function SubmitButton({
     <Button
       className={cn(full ? "w-full" : "w-max", className)}
       disabled={status.pending || disabled}
+      focusableWhenDisabled
       type="submit"
       {...props}
     >

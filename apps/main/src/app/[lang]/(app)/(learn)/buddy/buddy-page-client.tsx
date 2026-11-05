@@ -6,7 +6,7 @@ import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
 import { useTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorAppLinks } from "@/lib/learn/use-tutor-app-links";
 import { useTutorCardActions } from "@/lib/learn/use-tutor-cards";
-import { useMissionLinks } from "@/lib/session/use-study-navigation";
+import { useMissionLinks } from "@/lib/session/use-mission-links";
 import { type LessonQuestionThreadResource } from "@zoonk/core/lesson-questions/contract";
 import {
   BuddyScreen,
@@ -43,7 +43,7 @@ function BuddyConversation({
 }) {
   const content = useBuddyTutor();
   const router = useRouter();
-  const appLinks = useTutorAppLinks(goalId);
+  const appLinks = useTutorAppLinks();
 
   const tutor = useTutorConfig({ appLinks, buddy: null, canAsk });
 
@@ -84,7 +84,7 @@ export function BuddyPageClient({
 }) {
   const router = useRouter();
   const { decide, tools } = useTutorCardActions(goalId);
-  const missionLinks = useMissionLinks(goalId);
+  const missionLinks = useMissionLinks(goalId, { learner: viewerId });
 
   useReportTabMissions({
     day: status.today && { goalId: status.today.goalId, localDate: status.today.localDate },

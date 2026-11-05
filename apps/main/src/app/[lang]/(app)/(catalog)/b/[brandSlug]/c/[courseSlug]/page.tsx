@@ -14,7 +14,10 @@ import { LibraryCoursePage } from "./library-course-page";
 
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">;
 
-/** The same for everyone; the learner's own bits are read in the browser. */
+/**
+ * The same for everyone; the learner's own bits are read in the browser. Written whole before it's
+ * served, so a missing course answers a real 404.
+ */
 export const ensureStatic = "navigation";
 
 /** The page reads its address outside any boundary, so it has no placeholder to paint first. */

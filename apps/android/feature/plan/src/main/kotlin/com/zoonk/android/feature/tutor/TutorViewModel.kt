@@ -19,14 +19,19 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.memory.MemoryUndo
+import com.zoonk.android.feature.memory.memoryUndo
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.StudyMissionMoment
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -83,6 +88,8 @@ class TutorViewModel internal constructor(
     scope: TutorScope,
     private val store: TutorStore,
     private val saved: SavedStateHandle,
+    /** Null when the step isn't free to start anymore. */
+    private val openMission: suspend (UUID) -> MutationResult<AppRoute?>,
 ) : ViewModel() {
     /** The conversation's latest scope (the question now checked) is what its next question is about. */
     var scope: TutorScope by mutableStateOf(scope)
@@ -105,6 +112,63 @@ class TutorViewModel internal constructor(
     init {
         saved.remove<String>(SENT_DRAFT)
         viewModelScope.launch { snapshotFlow { draft.text.toString() }.collect { saved[DRAFT] = it } }
+    }
+
+    /** One at a time, so two opens never race. */
+    fun openBlock(
+        turnId: String,
+        blockId: UUID,
+    ) {
+        if (isOpeningBlock) return
+        isOpeningBlock = true
+        leadsWhereTapped = true
+        blockNotice = null
+
+        viewModelScope.launch {
+            try {
+                val result = openMission(blockId)
+                if (!leadsWhereTapped) return@launch
+                when (result) {
+                    is MutationResult.Done -> {
+                        val route = result.value
+                        if (route == null) {
+                            blockNotice = BlockNotice(turnId, closed = true)
+                        } else {
+                            openedBlocks.trySend(route)
+                        }
+                    }
+
+                    is MutationResult.Failed -> {
+                        blockNotice = BlockNotice(turnId, closed = false)
+                    }
+
+                    MutationResult.Obsolete -> {}
+                }
+            } finally {
+                isOpeningBlock = false
+            }
+        }
+    }
+
+    var isOpeningBlock by mutableStateOf(false)
+        private set
+
+    var blockNotice by mutableStateOf<BlockNotice?>(null)
+        private set
+
+    private val openedBlocks = Channel<AppRoute>(Channel.BUFFERED)
+    private var leadsWhereTapped = false
+
+    /** Where an answer's step link leads once it opened, even after the answer scrolled away or the screen was made again. */
+    val blockRoutes: Flow<AppRoute> = openedBlocks.receiveAsFlow()
+
+    /** The learner left the conversation, so a step link's open still on its way leads and says nothing when it lands. */
+    fun leave() {
+        leadsWhereTapped = false
+        blockNotice = null
+        do {
+            val waiting = openedBlocks.tryReceive()
+        } while (waiting.isSuccess)
     }
 
     private val mutableState = MutableStateFlow(TutorConversationState())
@@ -164,11 +228,11 @@ class TutorViewModel internal constructor(
 
     fun undoMemory(turnId: String) {
         val changes = state.value.memoryChanges[turnId] ?: return
-        if ((state.value.memoryUndos[turnId] ?: MemoryUndo.Offered) != MemoryUndo.Offered) return
+        if (!(state.value.memoryUndos[turnId] ?: MemoryUndo.Offered).canUndo) return
         mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to MemoryUndo.Undoing)) }
         viewModelScope.launch {
-            val undone = store.undoMemory(changes.map { it.shown.reference })
-            mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to if (undone) MemoryUndo.Undone else MemoryUndo.Failed)) }
+            val undo = store.undoMemory(changes.map { it.shown.reference }).memoryUndo()
+            mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to undo)) }
         }
     }
 
@@ -497,3 +561,9 @@ private const val INITIAL_POLL_MILLIS = 1_000.0
 private const val MAX_POLL_MILLIS = 5_000.0
 private const val MIN_JITTER = 0.8
 private const val JITTER_RANGE = 0.4
+
+@Immutable
+data class BlockNotice(
+    val turnId: String,
+    val closed: Boolean,
+)
