@@ -6,22 +6,25 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 import { type IdeaSlot, getIdeaSlots, getSlotRows } from "../_utils/idea-slots";
+import { useLessonPlayerConfig } from "../lesson-player-context";
 import { LessonIconImage } from "./lesson-icon";
 import { LessonRichText } from "./lesson-rich-text";
 
 type MapIdea = LessonMapData["ideas"][number];
 
-/** A tagged idea keeps its icon's room before it's drawn, so a late icon doesn't move its words. */
+/** While icons are on their way, an idea keeps its icon's room, so a late icon doesn't move its words. */
 const ICON_SLOT_CLASS = "-ms-1 size-9 shrink-0";
 
 function IdeaContent({ idea, number }: { idea: MapIdea; number: number }) {
+  const { lesson } = useLessonPlayerConfig();
+
   return (
     <>
       <span className="flex min-h-9 items-center gap-2">
         {idea.icon ? (
           <LessonIconImage className={ICON_SLOT_CLASS} icon={idea.icon} size={36} />
         ) : (
-          idea.about && <span aria-hidden="true" className={ICON_SLOT_CLASS} />
+          lesson.marksPending && <span aria-hidden="true" className={ICON_SLOT_CLASS} />
         )}
         <span className="flex min-w-0 flex-col">
           <span aria-hidden="true" className="text-faint font-mono text-xs tabular-nums">
