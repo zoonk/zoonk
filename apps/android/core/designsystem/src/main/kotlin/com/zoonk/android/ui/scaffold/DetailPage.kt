@@ -80,17 +80,9 @@ fun detailPagePadding(): PaddingValues {
     return PaddingValues(horizontal = if (compact) 16.dp else 24.dp, vertical = 24.dp)
 }
 
-/** A page's main action fills the row on phones, as main's does under `md`, and keeps its own width beyond. */
+/** A page's main action fills the row on a phone and on a book's page, as main's does under `md` ([isMediumLayout]), and keeps its own width beyond. */
 @Composable
-fun Modifier.mainActionWidth(): Modifier =
-    if (windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(
-            WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-        )
-    ) {
-        this
-    } else {
-        fillMaxWidth()
-    }
+fun Modifier.mainActionWidth(): Modifier = if (isMediumLayout()) this else fillMaxWidth()
 
 val DETAIL_PAGE_WIDTH = 720.dp
 val DETAIL_SECTION_GAP = 32.dp

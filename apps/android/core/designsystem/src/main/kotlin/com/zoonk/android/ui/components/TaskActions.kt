@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.adaptive.allVerticalHingeBounds
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
+import com.zoonk.android.ui.scaffold.isOnBookPage
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 
@@ -65,18 +65,12 @@ fun TaskActions(
 fun Modifier.taskOption(): Modifier = if (isWideLayout()) this else fillMaxWidth()
 
 /**
- * Main's `lg` for a task: a window wide enough that its actions line up at its end and what a phone
- * shows a step at a time shows at once. A book's page, on either side of an unfolded book's fold or
- * of a spread's split, is about a phone wide, so what's on it lays out as on a phone.
+ * Main's `lg` for a task: an expanded window, where its actions line up at its end and what a phone
+ * shows a step at a time shows at once, except on a book's page ([isOnBookPage]), which lays out as on a phone.
  */
 @Composable
-fun isWideLayout(): Boolean {
-    val info = windowAdaptiveInfo()
-
-    return info.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND) &&
-        info.windowPosture.allVerticalHingeBounds.isEmpty() &&
-        !spreadShows()
-}
+fun isWideLayout(): Boolean =
+    windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND) && !isOnBookPage()
 
 /** Main's 40rem task column less its 16dp sides, so the bar lines up with the task's content. */
 private val TASK_COLUMN_WIDTH = 608.dp

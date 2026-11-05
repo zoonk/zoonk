@@ -28,6 +28,19 @@ fun SpreadScreen(content: @Composable () -> Unit) {
 fun spreadShows(): Boolean = LocalSpread.current?.shows == true
 
 /**
+ * Whether this sits on a book's page: anywhere in a window an unfolded book's fold crosses, or on a
+ * [SpreadScreen]'s page while it shows two. A book's page is about a phone wide, so what follows
+ * main's breakpoints there lays out as on a phone.
+ */
+@Composable
+fun isOnBookPage(): Boolean = windowAdaptiveInfo().windowPosture.allVerticalHingeBounds.isNotEmpty() || spreadShows()
+
+/** Main's `sm` and `md`: a medium or wider window, except on a book's page ([isOnBookPage]), which lays out as on a phone. */
+@Composable
+fun isMediumLayout(): Boolean =
+    windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) && !isOnBookPage()
+
+/**
  * Where a page [width] wide splits, for what keeps off the split (a bar, a snackbar, a sheet): inside
  * a [SpreadScreen] where it splits, elsewhere at an unfolded book's fold ([pageFold]).
  */
