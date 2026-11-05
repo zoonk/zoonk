@@ -5,7 +5,7 @@ import { tagLesson } from "@zoonk/ai/tasks/lesson-marks";
 import { uploadImage } from "@zoonk/core/images/upload";
 import { readSavedLessonMap } from "@zoonk/core/library/lessons/map";
 import { prisma } from "@zoonk/db";
-import { lessonIconFixture, playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { drawnIcon } from "./_test-utils/icon-results";
 import { lessonMarksWorkflow } from "./lesson-marks-workflow";
@@ -127,10 +127,10 @@ describe(lessonMarksWorkflow, () => {
     });
   });
 
-  it("records an icon whose drawing keeps failing, so no lesson pays for it again, and still links the others", async () => {
+  it("records an icon whose drawing keeps failing, so the next lesson skips it without paying again, and still links the others", async () => {
     const [cloud, nucleus] = [uniqueName(), uniqueName()];
     taggedAs({ cloud, nucleus });
-    const lesson = await markedLesson();
+    const [lesson, next] = await Promise.all([markedLesson(), markedLesson()]);
 
     vi.mocked(generateLessonIconImage).mockImplementation(async ({ need: asked }) => {
       if (asked.name === nucleus) {
@@ -154,9 +154,23 @@ describe(lessonMarksWorkflow, () => {
       ideas: [{ iconPending: false }, { iconId: null, iconPending: false }],
       steps: [{ iconPending: false }, { iconPending: false }],
     });
+
+    vi.mocked(generateLessonIconImage).mockClear();
+
+    await expect(lessonMarksWorkflow({ lessonId: next.id })).resolves.toStrictEqual({
+      drawn: 0,
+      failed: 0,
+      icons: 1,
+    });
+
+    expect(generateLessonIconImage).not.toHaveBeenCalled();
+
+    await expect(linkedIcons(next.id)).resolves.toMatchObject({
+      ideas: [{ iconPending: false }, { iconId: null, iconPending: false }],
+    });
   });
 
-  it("links the same library row in two lessons that draw the same new name at once", async () => {
+  it("draws each new name once when two lessons need it at once, and links the same row in both", async () => {
     const [cloud, nucleus] = [uniqueName(), uniqueName()];
     taggedAs({ cloud, nucleus });
     const [first, second] = await Promise.all([markedLesson(), markedLesson()]);
@@ -166,39 +180,24 @@ describe(lessonMarksWorkflow, () => {
       lessonMarksWorkflow({ lessonId: second.id }),
     ]);
 
-    const icon = await prisma.lessonIcon.findUniqueOrThrow({ where: { name: cloud } });
-
-    await expect(linkedIcons(first.id)).resolves.toMatchObject({
-      steps: [{ iconId: icon.id }, { iconId: icon.id }],
-    });
-
-    await expect(linkedIcons(second.id)).resolves.toMatchObject({
-      steps: [{ iconId: icon.id }, { iconId: icon.id }],
-    });
-  });
-
-  it("skips a name an earlier lesson failed to draw, without paying for it again", async () => {
-    const [cloud, nucleus] = [uniqueName(), uniqueName()];
-    taggedAs({ cloud, nucleus });
-    const lesson = await markedLesson();
-
-    await lessonIconFixture({ name: cloud, smallUrl: null, status: "failed", url: null });
-
-    await expect(lessonMarksWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
-      drawn: 1,
-      failed: 0,
-      icons: 1,
-    });
-
     expect(
-      vi.mocked(generateLessonIconImage).mock.calls.map(([input]) => input.need.name),
-    ).toStrictEqual([nucleus]);
+      vi
+        .mocked(generateLessonIconImage)
+        .mock.calls.map(([input]) => input.need.name)
+        .toSorted(),
+    ).toStrictEqual([cloud, nucleus].toSorted());
 
-    await expect(linkedIcons(lesson.id)).resolves.toMatchObject({
-      steps: [
-        { iconId: null, iconPending: false },
-        { iconId: null, iconPending: false },
-      ],
-    });
+    const icons = await prisma.lessonIcon.findMany({ where: { name: { in: [cloud, nucleus] } } });
+    const idOf = (name: string) => icons.find((icon) => icon.name === name)?.id;
+
+    expect(icons.map((icon) => icon.status)).toStrictEqual(["completed", "completed"]);
+
+    const linked = {
+      ideas: [{ iconId: idOf(cloud) }, { iconId: idOf(nucleus) }],
+      steps: [{ iconId: idOf(cloud) }, { iconId: idOf(cloud) }],
+    };
+
+    await expect(linkedIcons(first.id)).resolves.toMatchObject(linked);
+    await expect(linkedIcons(second.id)).resolves.toMatchObject(linked);
   });
 });

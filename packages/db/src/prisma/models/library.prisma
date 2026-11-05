@@ -352,7 +352,8 @@ model LessonIcon {
   tags          String[]
   /// What the drawing shows, in one English sentence.
   description   String
-  /// `completed`, or `failed` when the model couldn't draw it, so later lessons skip the name.
+  /// `running` while the one lesson that claimed the name draws it, then `completed`, or `failed`
+  /// when the model couldn't draw it, so later lessons skip the name.
   status        GenerationStatus
   /// 256 px WebP with its sticker border.
   url           String?

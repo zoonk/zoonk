@@ -340,6 +340,60 @@ describe(getPlayableLibraryLesson, () => {
     expect(pending).toStrictEqual([true, true, false, false]);
   });
 
+  it("shows an icon another lesson is still drawing only once its row is completed, and asks clients to read again until then", async () => {
+    const drawing = await lessonIconFixture({ smallUrl: null, status: "running", url: null });
+
+    const { lesson } = await playableLessonFixture({
+      lesson: { summary: { ideas: [{ iconId: drawing.id, text: "Electrons live in clouds." }] } },
+      steps: [
+        {
+          kind: "explanation",
+          marks: {
+            example: null,
+            iconId: drawing.id,
+            iconPending: false,
+            ideaIndex: null,
+            underline: null,
+          },
+        },
+      ],
+    });
+
+    async function readIcons() {
+      const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+      const ready = result?.status === "ready" ? result.lesson : null;
+
+      return {
+        idea: ready?.summary?.ideas[0]?.icon,
+        marksPending: ready?.marksPending,
+        step: ready?.steps.map((step) => ("marks" in step ? step.marks?.icon : "none")),
+      };
+    }
+
+    await expect(readIcons()).resolves.toStrictEqual({
+      idea: null,
+      marksPending: true,
+      step: [null],
+    });
+
+    const drawn = await prisma.lessonIcon.update({
+      data: {
+        smallUrl: "https://example.test/drawn-96.webp",
+        status: "completed",
+        url: "https://example.test/drawn-256.webp",
+      },
+      where: { id: drawing.id },
+    });
+
+    const icon = { smallUrl: drawn.smallUrl, url: drawn.url };
+
+    await expect(readIcons()).resolves.toStrictEqual({
+      idea: icon,
+      marksPending: false,
+      step: [icon],
+    });
+  });
+
   it("serves the shared fixture content of every kind, so tests play valid lessons", async () => {
     const kinds = [...TEACHING_LESSON_STEPS, "activity", "fillBlank", "multipleChoice"] as const;
 

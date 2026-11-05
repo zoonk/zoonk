@@ -1,7 +1,12 @@
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type CallWait } from "@zoonk/ai/provider-options";
 import { type IconNeed } from "@zoonk/ai/tasks/icons/need";
-import { type IconRow, drawLessonIcon, failLessonIcon } from "@zoonk/core/library/icons/library";
+import {
+  type IconClaim,
+  claimLessonIcons,
+  drawLessonIcon,
+  failLessonIcon,
+} from "@zoonk/core/library/icons/library";
 import { type PickedIcon, linkLessonIcons, pickLessonIcons } from "@zoonk/core/library/marks/icons";
 import {
   type LessonIconRequest,
@@ -29,20 +34,28 @@ export async function pickLessonIconsStep(input: {
   return pickLessonIcons(input);
 }
 
+/** Its own step, so a retried drawing reads the claim from the run instead of claiming again. */
+export async function claimLessonIconsStep(needs: IconNeed[]): Promise<IconClaim[]> {
+  "use step";
+
+  return claimLessonIcons(needs);
+}
+
 /** One icon per step, so a failed drawing retries alone without drawing the others again. */
 export async function drawLessonIconStep(input: {
   analytics?: AiGenerationContext;
+  iconId: string;
   need: IconNeed;
-}): Promise<IconRow> {
+}): Promise<void> {
   "use step";
 
-  return drawLessonIcon(input);
+  await drawLessonIcon(input);
 }
 
-export async function failLessonIconStep(need: IconNeed): Promise<IconRow> {
+export async function failLessonIconStep(iconId: string): Promise<void> {
   "use step";
 
-  return failLessonIcon(need);
+  await failLessonIcon(iconId);
 }
 
 export async function linkLessonIconsStep(input: {

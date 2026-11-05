@@ -28,6 +28,7 @@ export type PlayableLibraryLessonResult =
 
 type LoadedPlayableLesson = {
   access: { ownerId: string | null; visibility: LibraryVisibility };
+  drawingIconIds: string[];
   result: PlayableLibraryLessonResult;
 };
 
@@ -62,14 +63,14 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
   const playable = await loadPlayableSteps({ lesson, rows: lesson.steps });
 
   if (lesson.contentStatus !== "completed" || playable.length === 0) {
-    return { access, result: { lesson: outline, status: "notGenerated" } };
+    return { access, drawingIconIds: [], result: { lesson: outline, status: "notGenerated" } };
   }
 
   const endsOnItsOwn = playable.some(
     (step) => step.kind === "summary" || step.kind === "challenge",
   );
 
-  const { marksPending, steps, summary } = await withLessonMarks({
+  const { drawingIconIds, marksPending, steps, summary } = await withLessonMarks({
     rows: lesson.steps,
     steps: playable,
     summary: endsOnItsOwn ? null : lesson.summary,
@@ -78,6 +79,7 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
 
   return {
     access,
+    drawingIconIds,
     result: {
       lesson: {
         ...outline,
@@ -128,10 +130,31 @@ async function findLessonVersion(lessonId: string): Promise<string | null> {
   return lesson ? `${lesson.updatedAt.getTime()}:${steps._max.updatedAt?.getTime() ?? 0}` : null;
 }
 
-/** Each app has separate caches, so fresh version keys must detect publication changes made elsewhere. */
+/**
+ * Each app has separate caches, so fresh version keys must detect publication changes made
+ * elsewhere. An icon still drawing when the lesson was cached lands without touching the lesson, so
+ * how many of those have landed since is part of the key.
+ */
 async function getCurrentPlayableLesson(lessonId: string): Promise<LoadedPlayableLesson | null> {
   const version = await findLessonVersion(lessonId);
-  return version ? getCachedPlayableLesson({ lessonId, version }) : null;
+
+  if (!version) {
+    return null;
+  }
+
+  const cached = await getCachedPlayableLesson({ lessonId, version });
+
+  if (!cached || cached.drawingIconIds.length === 0) {
+    return cached;
+  }
+
+  const landed = await prisma.lessonIcon.count({
+    where: { id: { in: cached.drawingIconIds }, status: { not: "running" } },
+  });
+
+  return landed === 0
+    ? cached
+    : getCachedPlayableLesson({ lessonId, version: `${version}:${landed}` });
 }
 
 function toOutline(lesson: PlayableLibraryLesson): LessonOutline {

@@ -27,12 +27,6 @@ export function findIconsByName(names: readonly string[]): Promise<IconRow[]> {
     : prisma.lessonIcon.findMany({ select: iconRowSelect, where: { name: { in: [...names] } } });
 }
 
-export function findIconsById(ids: readonly string[]): Promise<IconRow[]> {
-  return ids.length === 0
-    ? Promise.resolve([])
-    : prisma.lessonIcon.findMany({ select: iconRowSelect, where: { id: { in: [...ids] } } });
-}
-
 export async function searchIconCandidates(need: IconNeed): Promise<IconCandidate[]> {
   const search = toTextSearch({
     language: "en",
@@ -57,28 +51,35 @@ export async function searchIconCandidates(need: IconNeed): Promise<IconCandidat
   return orderByIds(ids, icons);
 }
 
-async function keepIcon({
-  drawn,
-  need,
-}: {
-  drawn: DrawnFiles | null;
-  need: IconNeed;
-}): Promise<IconRow> {
-  // Two lessons drawing a new name at once both pay for a drawing: the first row stays, and the
-  // other run's uploaded files are left unused.
-  await prisma.lessonIcon.createMany({
-    data: {
+export type IconClaim = { claimed: boolean; iconId: string; need: IconNeed };
+
+/**
+ * Internal workflow bridge: inserts a running row for each new name, and only the run whose insert
+ * won draws it; the others link the row as it is, and lessons show its icon once it's completed.
+ * A draw that never finishes leaves its row running and the name without an icon, as a failed draw
+ * does: no run takes the claim over or waits for it.
+ */
+export async function claimLessonIcons(needs: readonly IconNeed[]): Promise<IconClaim[]> {
+  const won = await prisma.lessonIcon.createManyAndReturn({
+    data: needs.map((need) => ({
       description: need.description,
       name: need.name,
-      status: drawn ? "completed" : "failed",
+      status: "running" as const,
       styleVersion: LESSON_ICON_STYLE_VERSION,
       tags: need.searchWords,
-      ...drawn,
-    },
+    })),
+    select: { name: true },
     skipDuplicates: true,
   });
 
-  return prisma.lessonIcon.findUniqueOrThrow({ select: iconRowSelect, where: { name: need.name } });
+  const claimed = new Set(won.map((icon) => icon.name));
+  const rows = await findIconsByName(needs.map((need) => need.name));
+  const ids = new Map(rows.map((icon) => [icon.name, icon.id]));
+
+  return needs.flatMap((need) => {
+    const iconId = ids.get(need.name);
+    return iconId ? [{ claimed: claimed.has(need.name), iconId, need }] : [];
+  });
 }
 
 async function drawFiles({
@@ -114,23 +115,28 @@ async function drawFiles({
   };
 }
 
-/** Internal workflow bridge: the library's row for the name, drawn first when it has none. */
+/** Internal workflow bridge: draws a name this run claimed and completes its row. */
 export async function drawLessonIcon({
   analytics,
+  iconId,
   need,
 }: {
   analytics?: AiGenerationContext;
+  iconId: string;
   need: IconNeed;
-}): Promise<IconRow> {
-  const existing = await prisma.lessonIcon.findUnique({
-    select: iconRowSelect,
-    where: { name: need.name },
-  });
+}): Promise<void> {
+  const drawn = await drawFiles({ analytics, need });
 
-  return existing ?? keepIcon({ drawn: await drawFiles({ analytics, need }), need });
+  await prisma.lessonIcon.updateMany({
+    data: { ...drawn, status: "completed" },
+    where: { id: iconId, status: "running" },
+  });
 }
 
-/** After its step's retries, so later lessons skip the name instead of paying for it again. */
-export function failLessonIcon(need: IconNeed): Promise<IconRow> {
-  return keepIcon({ drawn: null, need });
+/** After its draw step's retries, so later lessons skip the name instead of paying for it again. */
+export async function failLessonIcon(iconId: string): Promise<void> {
+  await prisma.lessonIcon.updateMany({
+    data: { status: "failed" },
+    where: { id: iconId, status: "running" },
+  });
 }
