@@ -28,7 +28,10 @@ struct LessonTextParts: Equatable {
         return nil
       }
 
-      let owned = underline.flatMap { trimmed.contains($0) ? $0 : nil }
+      // The underline quotes the text without its bold marks, and may run through a bold term.
+      let owned = underline.flatMap {
+        trimmed.replacingOccurrences(of: "**", with: "").contains($0) ? $0 : nil
+      }
 
       if owned != nil {
         underline = nil

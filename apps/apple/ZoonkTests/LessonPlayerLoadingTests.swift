@@ -101,7 +101,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
 
     XCTAssertEqual(reads, 2)
     XCTAssertEqual(store.state?.currentStep?.id, "first")
-    XCTAssertNil(store.state?.steps["first"]?.marks, "the screen in view keeps its layout")
+    XCTAssertNil(
+      store.state?.steps["first"]?.marks?.ideaIndex, "the screen in view keeps its layout")
     XCTAssertEqual(store.state?.steps["second"]?.marks?.ideaIndex, 1)
     XCTAssertEqual(store.lesson?.isTagged, true)
   }

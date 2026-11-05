@@ -52,6 +52,8 @@ struct LessonIdeaStrip: View {
         LessonIconImage(icon: icon, size: 44)
       }
     }
+    // The idea's icon can come after the strip shows, so its height is kept for it.
+    .frame(minHeight: 44)
     .padding(.bottom, 12)
     .overlay(alignment: .bottom) {
       Divider()

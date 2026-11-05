@@ -708,7 +708,8 @@ struct LessonPlayerState: Equatable, Sendable {
     leaveOutAhead({ unavailable.contains($0) }, completionStatus: .ready, now: now)
   }
 
-  /// The screen in view keeps its layout: its late marks show from the learner's next visit.
+  /// Late marks reach the screen in view only as far as they draw on its text, so nothing moves
+  /// while the learner reads; its strip, example frame and icon show from the next visit.
   mutating func applyMarks(from fresh: [LessonStep]) {
     for step in fresh {
       guard let current = steps[step.id], current.marks != step.marks else {
@@ -716,6 +717,7 @@ struct LessonPlayerState: Equatable, Sendable {
       }
 
       if step.id == currentStep?.id {
+        steps[step.id] = current.withMarks(step.marks.map { StepMarks(underline: $0.underline) })
         heldMarks = HeldMarks(stepId: step.id, marks: step.marks)
       } else {
         steps[step.id] = current.withMarks(step.marks)

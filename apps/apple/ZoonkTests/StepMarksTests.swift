@@ -67,6 +67,16 @@ final class StepMarksTests: XCTestCase {
         underline: "se chamam metabolismo"))
   }
 
+  func testTheUnderlineMayRunThroughABoldTerm() {
+    let parts = LessonTextParts(
+      "Um exemplo vem antes.\n\nEssas e outras **transformações** se chamam metabolismo.",
+      marks: StepMarks(
+        underline: "outras transformações se chamam", example: "Um exemplo vem antes."))
+
+    XCTAssertNil(parts.example?.underline)
+    XCTAssertEqual(parts.after?.underline, "outras transformações se chamam")
+  }
+
   func testAnExampleTheTextDoesntHoldLeavesTheTextWhole() {
     let parts = LessonTextParts(
       "Sobra o valor que cai na conta. O valor que cai na conta é a renda líquida.",
@@ -91,21 +101,24 @@ final class StepMarksTests: XCTestCase {
       parts.before?.text, "1. Heat the water.\n2. Add the tea.\n3. Pour it into a cup.")
   }
 
-  func testMarksForTheScreenInViewWaitForTheLearnersNextVisit() throws {
+  func testLateMarksDrawOnTheScreenInViewAndAddTheRestOnTheNextVisit() throws {
     var state = LessonPlayerState(
       lessonId: "lesson", steps: [try explanation("first"), try explanation("second")],
       hasMap: true)
 
     state.applyMarks(from: [
-      try explanation("first", marks: #"{"ideaIndex": 0}"#),
+      try explanation("first", marks: #"{"ideaIndex": 0, "underline": "Cells make up"}"#),
       try explanation("second", marks: #"{"ideaIndex": 1}"#),
     ])
 
-    XCTAssertNil(state.steps["first"]?.marks, "the screen in view keeps its layout")
+    XCTAssertEqual(
+      state.steps["first"]?.marks, StepMarks(underline: "Cells make up"),
+      "only what draws on the text, so the screen in view keeps its layout")
     XCTAssertEqual(state.steps["second"]?.marks?.ideaIndex, 1)
 
     state.continueLesson()
-    XCTAssertEqual(state.steps["first"]?.marks?.ideaIndex, 0)
+    XCTAssertEqual(
+      state.steps["first"]?.marks, StepMarks(ideaIndex: 0, underline: "Cells make up"))
   }
 
   @MainActor
@@ -115,7 +128,7 @@ final class StepMarksTests: XCTestCase {
     let marks = InlineMarks(drawn, underline: "come ração", highlightsTerms: true)
 
     XCTAssertEqual(marks.terms, [10..<15], "the emoji takes two UTF-16 units")
-    XCTAssertEqual(marks.underline, 5..<15)
+    XCTAssertEqual(marks.underline, 5..<15, "through the bold term, found in the drawn text")
     XCTAssertEqual(
       InlineMarks(drawn, underline: "não está aqui", highlightsTerms: false), InlineMarks())
   }
