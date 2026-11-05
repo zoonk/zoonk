@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.engine
 
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.api.models.StepMarks
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf11Value as LabeledDiagramContent
 
 /** Core's picture wait, which covers the drawing's retries. */
@@ -31,8 +32,9 @@ fun LessonPlayerState.isWaitingForMarks(
 /**
  * Pictures drawn and marks tagged since the lesson opened; then, with their wait over, screens stop
  * waiting and a numbered picture's question that never got it is left out (main's
- * `getLostNumberedScreens`). The screen on view keeps its marks until the learner leaves it
- * ([heldMarks]); the map takes its `about` lines and icons at once.
+ * `getLostNumberedScreens`). The screen on view takes only its underline, which moves nothing; its
+ * strip, example and icon wait until the learner leaves it ([heldMarks]). The map takes its `about`
+ * lines and icons at once.
  */
 fun LessonPlayerState.withLateContent(
     fresh: List<LessonStep>,
@@ -63,7 +65,7 @@ fun LessonPlayerState.withLateContent(
                             image = if (step.imagePending) read.image ?: step.image else step.image,
                             imagePending = step.imagePending && read.imagePending,
                             optionPictures = if (step.imagePending) step.optionPictures + read.optionPictures else step.optionPictures,
-                            marks = if (id == onView) step.marks else read.marks ?: step.marks,
+                            marks = if (id == onView) step.marks.withUnderlineOf(read.marks) else read.marks ?: step.marks,
                         )
                     }
                 }
@@ -73,6 +75,13 @@ fun LessonPlayerState.withLateContent(
 
     return copy(steps = drawn, heldMarks = heldMarks + held).skipSteps(lost, now)
 }
+
+private fun StepMarks?.withUnderlineOf(fresh: StepMarks?): StepMarks? =
+    when {
+        fresh?.underline == null -> this
+        this == null -> StepMarks(example = null, icon = null, ideaIndex = null, underline = fresh.underline)
+        else -> copy(underline = fresh.underline)
+    }
 
 /** The marks held for a screen reach it once another screen is on view. */
 fun LessonPlayerState.releasingHeldMarks(): LessonPlayerState {

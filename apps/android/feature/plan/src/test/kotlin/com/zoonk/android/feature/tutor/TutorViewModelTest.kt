@@ -344,21 +344,32 @@ class TutorViewModelTest {
         }
 
     @Test
-    fun aScreensAskLetsAQuestionThatMayBeSavedGoFirstAndThenGoes() =
+    fun aScreensAskWaitsInTheComposerWhileAnEarlierQuestionIsUnanswered() =
         runTest(dispatcher) {
             val vm = conversation()
+            val simpler = TutorSuggestion("Explain it more simply", "simpler")
             api.refusal = ApiException(ApiError.Network)
             vm.draft.setTextAndPlaceCursorAtEnd("Why?")
             vm.send()
             advanceUntilIdle()
 
-            api.refusal = null
-            api.answers = { flowOf(TutorAnswerEvent.Text("Because."), TutorAnswerEvent.Finish) }
+            vm.ask(simpler)
+            advanceUntilIdle()
+
+            assertEquals(listOf("Why?"), api.asked.map { it.question })
+            assertEquals("Explain it more simply", vm.draft.text.toString())
+        }
+
+    @Test
+    fun aScreensAskGoesAtOnceWhenNothingIsUnanswered() =
+        runTest(dispatcher) {
+            val vm = conversation()
+
             vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
             advanceUntilIdle()
 
-            assertEquals(listOf("Why?", "Why?", "Explain it more simply"), api.asked.map { it.question })
-            assertEquals(listOf(null, null, "simpler"), api.asked.map { it.suggestion })
+            assertEquals(listOf("simpler"), api.asked.map { it.suggestion })
+            assertEquals("", vm.draft.text.toString())
         }
 
     @Test

@@ -754,7 +754,7 @@ class LessonPlayerReducerTest {
     }
 
     @Test
-    fun lateMarksWaitForTheLearnerToLeaveTheScreenOnViewWhileTheMapTakesThemAtOnce() {
+    fun theScreenOnViewTakesOnlyItsUnderlineUntilTheLearnerLeavesItWhileTheMapTakesMarksAtOnce() {
         val opened = play(listOf(explanationStep("seen"), explanationStep("ahead"), lessonMapStep()), started())
         val marks = StepMarks(example = null, icon = null, ideaIndex = 0, underline = "Idea")
         val map = lessonMapStep().content as StepContent.Map
@@ -772,7 +772,7 @@ class LessonPlayerReducerTest {
                 ),
             )
 
-        assertNull(read.steps["seen"]?.marks)
+        assertEquals(StepMarks(example = null, icon = null, ideaIndex = null, underline = "Idea"), read.steps["seen"]?.marks)
         assertEquals(marks, read.steps["ahead"]?.marks)
         assertEquals(
             "What a cloud is made of",

@@ -24,6 +24,18 @@ class TeachingMarksTest {
     }
 
     @Test
+    fun keepsANumberedListWholeRatherThanFramingAnExampleInsideIt() {
+        val steps = "Para somar frações:\n\n1. Ache o denominador comum.\n2. Some 1/4 + 2/4 = 3/4.\n3. Simplifique."
+
+        assertNull(splitExample(steps, "Some 1/4 + 2/4 = 3/4."))
+        assertNull(splitExample(steps, "2. Some 1/4 + 2/4 = 3/4."))
+        assertEquals(
+            "Para somar frações:",
+            splitExample("Para somar frações:\n\n- Ache o denominador comum.", "Para somar frações:")?.example,
+        )
+    }
+
+    @Test
     fun underlinesOnePartWhenTheTextAroundTheExampleRepeats() {
         val split =
             checkNotNull(

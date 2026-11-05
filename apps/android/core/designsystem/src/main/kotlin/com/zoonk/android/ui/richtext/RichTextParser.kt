@@ -253,6 +253,9 @@ private fun readBlocks(
 
 fun parseRichBlocks(text: String): List<RichBlock> = readBlocks(text.split(LINE_END), 0)
 
+/** A line the parser reads as a numbered list's item, which lists number by their place. */
+fun isNumberedItem(line: String): Boolean = ORDERED_ITEM.containsMatchIn(line)
+
 private fun List<RichSegment>.shownText(): String = joinToString("") { it.text }
 
 /** Only words can be cut; a formula or code is marked whole once the quote reaches into it. */
