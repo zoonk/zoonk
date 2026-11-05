@@ -47,17 +47,17 @@ import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.components.isWideWindow
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.withWords
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.isOnBookPage
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.scaffold.taskAsideBeside
@@ -72,7 +72,7 @@ private val CALL_ITEM_MARGIN = 16.dp
 
 /** The task's bar keeps its own 16dp sides, so its actions line up with the items' text. */
 private val CALL_BAR_WIDTH = CALL_COLUMN - CALL_ITEM_MARGIN * 2
-private val AVATAR_MIN = 40.dp
+private val MARK_MIN = 40.dp
 
 /**
  * A call's task frame: its [content] in one column, and [aside] beside it where there's room (main's
@@ -96,7 +96,7 @@ internal fun CallFrame(
     barUnderAside: Boolean = false,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    val wide = isWideWindow() && !isOnBookPage()
+    val wide = isWideLayout()
     val bar: (@Composable () -> Unit)? =
         bottomBar?.let { bar ->
             {
@@ -222,20 +222,22 @@ internal fun CharacterAvatar(
         border = BorderStroke(2.dp, if (talking) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.secondaryContainer),
         modifier = Modifier.clearAndSetSemantics {},
     ) {
-        // A circle at any text size: the initial's line plus room around it, never under 40dp.
-        val side =
-            with(LocalDensity.current) {
-                maxOf(
-                    AVATAR_MIN,
-                    MaterialTheme.typography.titleSmall.lineHeight
-                        .toDp() + 16.dp,
-                )
-            }
-        Box(Modifier.size(side), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(markSide()), contentAlignment = Alignment.Center) {
             Text(name.trim().take(1).uppercase(), style = MaterialTheme.typography.titleSmall, textAlign = TextAlign.Center)
         }
     }
 }
+
+/** The side of every round mark on a call, so the avatar and the turn row's discs stay one size at any text size. */
+@Composable
+internal fun markSide(): Dp =
+    with(LocalDensity.current) {
+        maxOf(
+            MARK_MIN,
+            MaterialTheme.typography.titleSmall.lineHeight
+                .toDp() + 16.dp,
+        )
+    }
 
 /** A call's goals, met or not, in the call's language; [describe] says how, on the intro. */
 @Composable

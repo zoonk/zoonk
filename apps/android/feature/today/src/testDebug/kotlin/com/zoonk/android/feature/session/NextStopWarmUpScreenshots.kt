@@ -140,6 +140,13 @@ class NextStopWarmUpScreenshots {
     fun compactStop() = captureStop("compact")
 
     @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactStopAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureStop("compact-font200")
+    }
+
+    @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun expandedStop() = captureStop("expanded")
 

@@ -2,13 +2,14 @@ import { randomUUID } from "node:crypto";
 import { reportSubscriptionChange } from "@zoonk/auth/subscription-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { registerServerSinks } from "../server-sinks";
 import { trackServerEvent } from "./server";
-import { registerSubscriptionAnalytics } from "./subscription-events";
+import { trackSubscriptionChange } from "./subscription-events";
 
-describe(registerSubscriptionAnalytics, () => {
+describe(trackSubscriptionChange, () => {
   it('sends "Subscription Conversion" with the learner\'s shared properties when Stripe confirms a checkout', async () => {
     const user = await userFixture();
-    registerSubscriptionAnalytics();
+    registerServerSinks();
 
     await reportSubscriptionChange({ change: "started", plan: "plus", referenceId: user.id });
 
@@ -24,7 +25,7 @@ describe(registerSubscriptionAnalytics, () => {
 
   it('sends "Subscription Canceled" for the learner the Stripe webhook names', async () => {
     const user = await userFixture();
-    registerSubscriptionAnalytics();
+    registerServerSinks();
 
     await reportSubscriptionChange({ change: "canceled", plan: "plus", referenceId: user.id });
 
@@ -38,7 +39,7 @@ describe(registerSubscriptionAnalytics, () => {
   });
 
   it("sends nothing for an organization's subscription", async () => {
-    registerSubscriptionAnalytics();
+    registerServerSinks();
 
     await reportSubscriptionChange({ change: "started", plan: "plus", referenceId: randomUUID() });
 

@@ -63,7 +63,7 @@ import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.celebrates
-import com.zoonk.android.ui.components.isWideWindow
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -128,7 +128,7 @@ internal fun SessionSummary(
 
         BoxWithConstraints(Modifier.onPageSpan { span = it }) {
             val pages = spreadFold(maxWidth, span) != null
-            val wide = isWideWindow()
+            val wide = isWideLayout()
             val stepped = !pages && !wide && !facts.stopped && summary.hasRewardsBeyondBrainPower()
             val rewardsShown = stepped && onRewards
 

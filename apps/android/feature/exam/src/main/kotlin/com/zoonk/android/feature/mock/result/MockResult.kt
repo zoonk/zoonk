@@ -53,6 +53,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -192,7 +193,8 @@ internal fun MockResult(
             // Where the step reached is beside, the step before it shows with the aside.
             val current = shown.lastOrNull { steps.indexOf(it) <= reached } ?: shown.firstOrNull()
             val position = shown.indexOf(current).coerceAtLeast(0)
-            // Beside the main action on wide windows and under it on a phone, as main's `MockResultOptions`.
+            // Beside the main action on a wide layout and under it on a phone or a book's page, as main's `MockResultOptions`.
+            val secondaryBeside = isWideLayout()
             val secondary =
                 when {
                     placement || mistakes == 0 -> null
@@ -220,7 +222,7 @@ internal fun MockResult(
                             reachedId = shown[to].id
                         },
                     ) { main ->
-                        if (wide && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
+                        if (secondaryBeside && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
                         MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue, main)
                     }
                     if (current?.id == SCORE && !wide && view.review.isNotEmpty()) {
@@ -235,7 +237,7 @@ internal fun MockResult(
                             )
                         }
                     }
-                    if (position == shown.lastIndex && !wide && secondary != null) {
+                    if (position == shown.lastIndex && !secondaryBeside && secondary != null) {
                         TextButton(onClick = onContinue, modifier = Modifier.fillMaxWidth()) { Text(secondary) }
                     }
                 }
