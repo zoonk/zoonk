@@ -15,12 +15,11 @@ import {
   openStudyBlockAction,
   prepareTodayLessonsAction,
 } from "./study-session-actions";
-import { answerHere } from "./tap-answer";
+import { answerHere, openingHere, stayingHere } from "./tap-answer";
 import {
   SESSION_PATH,
   getCurrentLocation,
   getSessionHref,
-  stayingHere,
   useGoToStudyDestination,
 } from "./use-study-navigation";
 
@@ -130,7 +129,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
   );
 
   const applyHere = useCallback(
-    (result: TapResult): Promise<boolean> | boolean => {
+    (result: TapResult, here: () => Promise<boolean>): Promise<boolean> | boolean => {
       if (result.kind === "failed") {
         return false;
       }
@@ -140,7 +139,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         return true;
       }
 
-      return go(result.destination);
+      return go(result.destination, { here });
     },
     [go, refresh],
   );
@@ -149,6 +148,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
     async ({ next, step }: { next: boolean; step: TapStep }): Promise<boolean> => {
       const learnerHere = learnerStaying(shown.userId);
       const origin = getCurrentLocation();
+      const here = openingHere(shown.userId);
       const focusMain = isFocusOnControl();
 
       const href =
@@ -167,8 +167,6 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
       const answer = request({ next, step, stillHere });
 
       if (href) {
-        const entry = beginDayEntry({ day, focusMain, href, next, step, tappedAt: Date.now() });
-
         // Within the session screen the step replaces the one shown; Back still leads to Today.
         if (href !== origin && (origin === SESSION_PATH || origin.startsWith(`${SESSION_PATH}?`))) {
           router.replace(href);
@@ -176,22 +174,32 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
           router.push(href);
         }
 
+        const entry = beginDayEntry({
+          day,
+          focusMain,
+          here: stayingHere(shown.userId),
+          href,
+          next,
+          step,
+          tappedAt: Date.now(),
+        });
+
         void answer.then((result) => settleEntry({ id: entry.id, learnerHere, origin, result }));
 
         return true;
       }
 
-      const result = await answer;
+      const answered = await answerHere(answer, here);
 
-      if (!(await stillHere())) {
-        return true;
+      if (typeof answered === "boolean") {
+        return answered;
       }
 
-      if (result.kind !== "failed") {
+      if (answered.answer.kind !== "failed") {
         endDayEntry();
       }
 
-      return applyHere(result);
+      return applyHere(answered.answer, here);
     },
     [applyHere, day, request, router, shown],
   );
@@ -218,7 +226,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
   return {
     addExtraTime: async () => {
-      const here = stayingHere(shown.userId);
+      const here = openingHere(shown.userId);
       const kept = await openKept(here);
 
       if (typeof kept === "boolean") {
@@ -232,7 +240,9 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         here,
       );
 
-      return typeof added === "boolean" ? added : applyHere(toDestinationResult(added.answer));
+      return typeof added === "boolean"
+        ? added
+        : applyHere(toDestinationResult(added.answer), here);
     },
     catchUp: async () => {
       const here = stayingHere(shown.userId);
