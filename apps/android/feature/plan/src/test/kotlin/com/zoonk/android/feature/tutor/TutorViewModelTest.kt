@@ -344,6 +344,24 @@ class TutorViewModelTest {
         }
 
     @Test
+    fun aScreensAskLetsAQuestionThatMayBeSavedGoFirstAndThenGoes() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.refusal = ApiException(ApiError.Network)
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceUntilIdle()
+
+            api.refusal = null
+            api.answers = { flowOf(TutorAnswerEvent.Text("Because."), TutorAnswerEvent.Finish) }
+            vm.ask(TutorSuggestion("Explain it more simply", "simpler"))
+            advanceUntilIdle()
+
+            assertEquals(listOf("Why?", "Why?", "Explain it more simply"), api.asked.map { it.question })
+            assertEquals(listOf(null, null, "simpler"), api.asked.map { it.suggestion })
+        }
+
+    @Test
     fun aConflictReadsTheConversationAgain() =
         runTest(dispatcher) {
             val vm = conversation()

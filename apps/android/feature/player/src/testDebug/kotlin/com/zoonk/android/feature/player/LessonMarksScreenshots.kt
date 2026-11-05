@@ -516,7 +516,12 @@ private val NET_PAY_WORKED =
                         .map { PlayableLibraryStepAnyOf8ContentStepsInner(text = it) },
             ),
         ),
-        marks = marks(3, underline = "Quanto cai na conta dele?"),
+        marks =
+            marks(
+                3,
+                underline = "Quanto cai na conta dele?",
+                example = "Rui ganha R$ 2.500,00 de **renda bruta** e tem R$ 280,00 de descontos no contracheque.",
+            ),
     )
 
 private val FINANCE =

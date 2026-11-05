@@ -22,11 +22,11 @@ fun LessonStep.isWaitingForPicture(
     now: Long,
 ): Boolean = imagePending && now - (pictureWaitStartedAt ?: openedAt) < PICTURE_WAIT_MS
 
-/** Core's `marksPending`: a new lesson's marks, `about` lines and icons come within its screens' picture wait. */
+/** Core's `marksPending`: marks, `about` lines and icons come while any screen is within its picture wait. */
 fun LessonPlayerState.isWaitingForMarks(
     openedAt: Long,
     now: Long,
-): Boolean = now - (steps.values.mapNotNull(LessonStep::pictureWaitStartedAt).minOrNull() ?: openedAt) < PICTURE_WAIT_MS
+): Boolean = now - (steps.values.mapNotNull(LessonStep::pictureWaitStartedAt).maxOrNull() ?: openedAt) < PICTURE_WAIT_MS
 
 /**
  * Pictures drawn and marks tagged since the lesson opened; then, with their wait over, screens stop

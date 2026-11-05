@@ -417,7 +417,7 @@ fun LessonPlayer(
             }
         }
     val askSimpler: ((Boolean) -> Unit)? =
-        tutor?.let { buddy ->
+        tutor?.takeIf { it.canAsk }?.let { buddy ->
             { onSpread ->
                 offerId = buddy.suggestions.firstOrNull { it.id == SIMPLER_SUGGESTION }?.id
                 offerAsked = true
@@ -738,8 +738,6 @@ private fun Content(
                     val fold = spreadFold(maxWidth, span)
                     // The turn's page is the whole column without a fold, so the work in it keeps when the book opens or closes.
                     val part = if (fold == null) StepPart.Whole else StepPart.Turn
-                    // Beside a teaching screen's text on a spread, the buddy's help already offers the simpler explanation.
-                    val helpBeside = help != null && fold != null && step.teachesInText
 
                     StepColumn(
                         Modifier
@@ -752,13 +750,11 @@ private fun Content(
                     ) {
                         Notice(state, screen, viewModel, part)
                         CompositionLocalProvider(LocalStepViewHeight provides if (fold == null) maxHeight - STEP_PADDING * 2 else null) {
-                            CompositionLocalProvider(LocalAskSimpler provides LocalAskSimpler.current.takeUnless { helpBeside }) {
-                                work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
-                            }
+                            work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
                         }
                         // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause;
                         // a knowledge lesson's explanations have "I didn't get this" instead.
-                        if (helpBeside) {
+                        if (help != null && fold != null && step.teachesInText) {
                             help()
                         } else if (offer != null && screen.quickCheck == null && language.languages.isLanguageLesson) {
                             StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
@@ -780,9 +776,7 @@ private fun Content(
                                 align = Alignment.End,
                             ) {
                                 Notice(state, screen, viewModel, StepPart.Screen)
-                                CompositionLocalProvider(LocalAskSimpler provides LocalAskSimpler.current.takeUnless { helpBeside }) {
-                                    work.Page(turn = false) { StepView(step, state, screen, actions, navigator, language, StepPart.Screen) }
-                                }
+                                work.Page(turn = false) { StepView(step, state, screen, actions, navigator, language, StepPart.Screen) }
                                 recap()
                             }
                         }

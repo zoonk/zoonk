@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.takeWhile
@@ -195,10 +196,18 @@ class TutorViewModel internal constructor(
     /** A lesson's own suggestion goes by its id, so its shared answer is reused. */
     fun send(suggestion: TutorSuggestion) = ask(suggestion.label, suggestion.id)
 
-    /** A suggestion the learner asked for from the screen ("I didn't get this"), sent once the conversation has loaded. */
+    /**
+     * A suggestion the learner asked for from the screen ("I didn't get this"), sent once the
+     * conversation can take a question: one that may already be saved goes again first, as on main.
+     */
     fun ask(suggestion: TutorSuggestion) {
         viewModelScope.launch {
-            thread.state.first { it.value != null }
+            val takesQuestion = combine(state, thread.state) { conversation, read -> read.value?.turns?.let(conversation::canAsk) == true }
+            takesQuestion.first { it }
+            if (unresolved != null) {
+                send(suggestion)
+                takesQuestion.first { it && unresolved == null }
+            }
             send(suggestion)
         }
     }

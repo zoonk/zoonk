@@ -786,6 +786,18 @@ class LessonPlayerReducerTest {
     }
 
     @Test
+    fun marksAreAwaitedWhileAnyScreenIsWithinItsWait() {
+        val repaired =
+            play(
+                listOf(explanationStep("old").copy(pictureWaitStartedAt = 0), explanationStep("new").copy(pictureWaitStartedAt = 300_000)),
+                started(),
+            )
+
+        assertTrue(repaired.isWaitingForMarks(openedAt = 360_000, now = 360_000))
+        assertFalse(repaired.isWaitingForMarks(openedAt = 360_000, now = 600_000))
+    }
+
+    @Test
     fun aNumberedPictureQuestionWhosePictureNeverCameIsLeftOut() {
         val drawing = numberedCheckStep("parts").copy(imagePending = true, pictureWaitStartedAt = 0)
         val opened = play(listOf(explanationStep("idea"), drawing, summaryStep("end")), started())

@@ -365,12 +365,7 @@ internal fun WorkedExampleView(
                 LabelChip(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
                 worked.title?.let { QuestionText(it) }
             }
-            RichText(
-                text = worked.problem,
-                style = MaterialTheme.typography.bodyLarge,
-                underline = step.marks?.underline.takeIf { marking != null },
-                marksTerms = marking != null,
-            )
+            TeachingText(title = null, text = worked.problem, marks = step.marks.takeIf { marking != null }, marksTerms = marking != null)
             StepPicture(step, PictureFrame.Inline)
             LessonStepVisual(worked.visual)
         }

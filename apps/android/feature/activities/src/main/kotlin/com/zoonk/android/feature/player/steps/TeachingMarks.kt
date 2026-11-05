@@ -211,11 +211,11 @@ internal fun TeachingText(
     val icon = marks?.icon
     val underlined = remember(example, text, underline) { underlinedPart(example?.parts ?: listOf(text), underline) }
     val body =
-        @Composable { part: String ->
+        @Composable { part: String, at: Int ->
             RichText(
                 text = part,
                 style = MaterialTheme.typography.bodyLarge,
-                underline = underline.takeIf { part == underlined },
+                underline = underline.takeIf { at == underlined },
                 marksTerms = marksTerms,
             )
         }
@@ -225,15 +225,15 @@ internal fun TeachingText(
         }
 
     if (example == null) {
-        IconCorner(icon, title != null, heading) { body(text) }
+        IconCorner(icon, title != null, heading) { body(text, 0) }
         return
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         heading(Modifier)
-        if (example.before.isNotEmpty()) body(example.before)
-        ExampleBox(icon, Modifier.padding(vertical = 4.dp)) { body(example.example) }
-        if (example.after.isNotEmpty()) body(example.after)
+        if (example.before.isNotEmpty()) body(example.before, 0)
+        ExampleBox(icon, Modifier.padding(vertical = 4.dp)) { body(example.example, 1) }
+        if (example.after.isNotEmpty()) body(example.after, 2)
     }
 }
 
@@ -246,11 +246,11 @@ internal data class ExampleSplit(
     val parts get() = listOf(before, example, after)
 }
 
-/** One underline at most: the first part whose words, read without their marks, show the phrase. */
+/** One underline at most: the index of the first part whose words, read without their marks, show the phrase. */
 internal fun underlinedPart(
     parts: List<String>,
     underline: String?,
-): String? = underline?.let { phrase -> parts.firstOrNull { plainText(it).contains(phrase) } }
+): Int? = underline?.let { phrase -> parts.indexOfFirst { plainText(it).contains(phrase) }.takeIf { it >= 0 } }
 
 internal fun splitExample(
     text: String,

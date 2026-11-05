@@ -19,7 +19,17 @@ class TeachingMarksTest {
     fun findsAnUnderlineThatRunsThroughABoldTermInTheShownWords() {
         val split = checkNotNull(splitExample(text, "Sobram R$ 2.870,00."))
 
-        assertEquals(split.after, underlinedPart(split.parts, "se chama renda líquida, o que"))
+        assertEquals(2, underlinedPart(split.parts, "se chama renda líquida, o que"))
         assertNull(underlinedPart(split.parts, "renda líquida cai"))
+    }
+
+    @Test
+    fun underlinesOnePartWhenTheTextAroundTheExampleRepeats() {
+        val split =
+            checkNotNull(
+                splitExample("Cells use energy.\n\nA cat gets energy from food.\n\nCells use energy.", "A cat gets energy from food."),
+            )
+
+        assertEquals(0, underlinedPart(split.parts, "Cells use energy."))
     }
 }
