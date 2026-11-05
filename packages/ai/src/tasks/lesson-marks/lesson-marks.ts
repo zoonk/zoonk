@@ -23,7 +23,8 @@ import promptTemplate from "./lesson-marks.prompt.md";
  * On the lesson-marks eval (13 lessons, 5 Nov 2026), Luna at minimal reasoning scored 9.17 at
  * $0.71 per 1,000 lessons and 11s p50, and wrote the about lines that least gave the answer away
  * (9.54). Haiku 5.5 without reasoning took 5.7s but scored 8.08; with its default reasoning, 8.66 in
- * 18.7s; Gemini 3.5 Flash-Lite 8.83 in 19.2s at $16.52.
+ * 18.7s; Gemini 3.5 Flash-Lite 8.83 in 19.2s at $16.52. Once icons had to stay apart (15 lessons,
+ * a stricter icon rubric), Luna scored 8.70 at $0.77 and 13.6s p50; the others weren't run again.
  */
 const defaultModel = "openai/gpt-6-luna";
 const defaultReasoning: Reasoning = "minimal";

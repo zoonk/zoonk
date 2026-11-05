@@ -3,7 +3,7 @@ import { z } from "zod";
 import { type IconNeed, toIconNeed } from "../icons/icon-need";
 import { isExampleQuote, isUnderlineQuote } from "./mark-quotes";
 
-/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: each screen's idea comes before what it marks. */
+/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the ideas' icons come before the screens' icons that must differ from them, and each screen's idea before what it marks. */
 
 const iconNeedSchema = z.object({
   name: z.string(),
@@ -12,6 +12,7 @@ const iconNeedSchema = z.object({
 });
 
 export const lessonMarksOutputSchema = z.object({
+  ideas: z.array(z.object({ idea: z.int(), about: z.string(), icon: iconNeedSchema.nullable() })),
   screens: z.array(
     z.object({
       screen: z.int(),
@@ -21,7 +22,6 @@ export const lessonMarksOutputSchema = z.object({
       icon: iconNeedSchema.nullable(),
     }),
   ),
-  ideas: z.array(z.object({ idea: z.int(), about: z.string(), icon: iconNeedSchema.nullable() })),
 });
 
 /* oxlint-enable eslint/sort-keys */
@@ -91,6 +91,27 @@ function toAbout(about: string | undefined): string | null {
   return line && line.length <= MAX_ABOUT_LENGTH ? line : null;
 }
 
+/** The map shows the ideas side by side to tell them apart, so an icon an earlier idea has goes. */
+function keepIdeaIconsApart(icons: readonly (IconNeed | null)[]): (IconNeed | null)[] {
+  return icons.map((icon, index) =>
+    icon && icons.slice(0, index).some((earlier) => earlier?.name === icon.name) ? null : icon,
+  );
+}
+
+/** A screen shows its idea's icon above its text, so the same icon beside the text goes. */
+function toScreenIcon({
+  ideaIcon,
+  marked,
+  screen,
+}: {
+  ideaIcon: IconNeed | null;
+  marked: IconNeed | null | undefined;
+  screen: MarksScreen;
+}): IconNeed | null {
+  const icon = canScreenGetIcon(screen) ? toIconNeed(marked) : null;
+  return icon && icon.name !== ideaIcon?.name ? icon : null;
+}
+
 /** Keeps what fits the lesson and drops the rest, as the pipeline and the eval both read it. */
 export function normalizeLessonMarks({
   ideas,
@@ -104,18 +125,27 @@ export function normalizeLessonMarks({
   const byScreen = new Map(output.screens.map((item) => [item.screen, item]));
   const byIdea = new Map(output.ideas.map((item) => [item.idea, item]));
 
+  const ideaIcons = keepIdeaIconsApart(
+    ideas.map((_idea, index) => toIconNeed(byIdea.get(index + 1)?.icon)),
+  );
+
   return {
-    ideas: ideas.map((_idea, index) => {
-      const marked = byIdea.get(index + 1);
-      return { about: toAbout(marked?.about), icon: toIconNeed(marked?.icon) };
-    }),
+    ideas: ideas.map((_idea, index) => ({
+      about: toAbout(byIdea.get(index + 1)?.about),
+      icon: ideaIcons[index] ?? null,
+    })),
     screens: screens.map((screen, index) => {
       const marked = byScreen.get(index + 1);
+      const ideaIndex = toIdeaIndex({ idea: marked?.idea ?? null, ideaCount: ideas.length });
 
       return {
         example: toExample({ quote: marked?.example ?? null, screen }),
-        icon: canScreenGetIcon(screen) ? toIconNeed(marked?.icon) : null,
-        ideaIndex: toIdeaIndex({ idea: marked?.idea ?? null, ideaCount: ideas.length }),
+        icon: toScreenIcon({
+          ideaIcon: ideaIndex === null ? null : (ideaIcons[ideaIndex] ?? null),
+          marked: marked?.icon,
+          screen,
+        }),
+        ideaIndex,
         underline: toUnderline({ quote: marked?.underline ?? null, screen }),
       };
     }),

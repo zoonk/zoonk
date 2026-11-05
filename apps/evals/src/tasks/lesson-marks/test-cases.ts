@@ -5,7 +5,8 @@ import { type MarksLessonId, getMarksLesson } from "./written-lessons";
 type MarksCaseInput = Pick<LessonMarksParams, "ideas" | "language" | "lessonTitle" | "screens">;
 
 const SHARED_EXPECTATIONS = `
-  - A screen "may get an icon" when its kind is \`explanation\` and \`hasVisual\` is false; every such screen has an icon and no other screen does
+  - A screen "may get an icon" when its kind is \`explanation\` and \`hasVisual\` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon
+  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)
   - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen
   - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language
   - Don't evaluate JSON formatting
@@ -47,6 +48,25 @@ export const TEST_CASES = [
       - "Elétrons de valência" about line doesn't say they're the outermost shell's; "Elétrons e ligações" doesn't give oxygen's 6 electrons or its two bonds
     `,
     id: "pt-eletrons-valencia",
+  }),
+  marksCase({
+    expectations: `
+      - In Brazilian Portuguese, for a total beginner in biology
+      - The ideas are the stages of one cycle, so each icon shows what sets its stage apart: "G1" and "fase M" never both get a cell or a variant of one, and no two ideas show the same thing
+      - Each screen's icon shows its own case, never its idea's: "Primeiro, crescer" doesn't repeat G1's icon, "Depois, copiar o manual" doesn't repeat fase S's (no DNA beside a DNA strip), "Últimos preparativos" doesn't repeat G2's
+      - "Uma sequência que recomeça" walks through the whole cycle (G1, S, G2 and M), so it has no idea; "As três fases ativas" teaches the intérfase idea
+      - About lines don't say what the cell does in each stage (grows, copies its DNA, prepares, divides)
+    `,
+    id: "pt-ciclo-celular",
+  }),
+  marksCase({
+    expectations: `
+      - In Brazilian Portuguese, for a total beginner in personal finance
+      - "Juros" and "Juros sobre juros" never share an icon (not a coin on both), "Mesmo ritmo, ganho maior" and "Na bolsa" never share one (not a stock chart on both), and no two ideas show the same thing
+      - Each screen's icon shows its own case, never its idea's icon
+      - The "Juros sobre juros" about line doesn't say old gains also earn; "Reinvestir" doesn't say it's leaving the gain invested; "Na bolsa" doesn't say a stock can fall
+    `,
+    id: "pt-juros-sobre-juros",
   }),
   marksCase({
     expectations: `

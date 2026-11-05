@@ -1,5 +1,6 @@
 import { scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskCodeChecks, type TaskScorer } from "@/lib/types";
+import { toIconNeed } from "@zoonk/ai/tasks/icons/need";
 import { type LessonMarksParams } from "@zoonk/ai/tasks/lesson-marks";
 import {
   type LessonMarks,
@@ -13,6 +14,26 @@ type RawOutput = Parameters<typeof normalizeLessonMarks>[0]["output"];
 export type LessonMarksEvalOutput = { marks: LessonMarks; raw: RawOutput };
 
 type MarksInput = Pick<LessonMarksParams, "ideas" | "screens">;
+
+/**
+ * Normalizing drops a usable icon only when it repeats its idea's, or an earlier idea's. A screen
+ * may go without one; an idea may not.
+ */
+function iconProblem({
+  asked,
+  kept,
+  repeated,
+}: {
+  asked: Parameters<typeof toIconNeed>[0];
+  kept: unknown;
+  repeated: string;
+}): string | null {
+  if (kept) {
+    return null;
+  }
+
+  return toIconNeed(asked) ? repeated : "no usable icon";
+}
 
 function screenProblems({
   input,
@@ -28,11 +49,16 @@ function screenProblems({
     const kept = marks.screens[index];
     const label = `Screen ${index + 1}`;
 
+    const icon =
+      canScreenGetIcon(screen) && asked?.icon
+        ? iconProblem({ asked: asked.icon, kept: kept?.icon, repeated: "repeats its idea's icon" })
+        : null;
+
     return [
       asked ? null : `${label}: left out`,
       asked?.underline && !kept?.underline ? `${label}: underline isn't an exact quote` : null,
       asked?.example && !kept?.example ? `${label}: example isn't whole exact sentences` : null,
-      canScreenGetIcon(screen) && !kept?.icon ? `${label}: no usable icon where one belongs` : null,
+      icon ? `${label}: ${icon}` : null,
       typeof asked?.idea === "number" && kept?.ideaIndex === null
         ? `${label}: idea number out of range`
         : null,
@@ -40,14 +66,29 @@ function screenProblems({
   });
 }
 
-function ideaProblems({ input, marks }: { input: MarksInput; marks: LessonMarks }): string[] {
+function ideaProblems({
+  input,
+  marks,
+  raw,
+}: {
+  input: MarksInput;
+  marks: LessonMarks;
+  raw: RawOutput;
+}): string[] {
   return input.ideas.flatMap((_idea, index) => {
+    const asked = raw.ideas.find((item) => item.idea === index + 1);
     const kept = marks.ideas[index];
     const label = `Idea ${index + 1}`;
 
+    const icon = iconProblem({
+      asked: asked?.icon,
+      kept: kept?.icon,
+      repeated: "same icon as an earlier idea",
+    });
+
     return [
       kept?.about ? null : `${label}: no usable about line`,
-      kept?.icon ? null : `${label}: no usable icon`,
+      icon ? `${label}: ${icon}` : null,
     ].filter((problem) => problem !== null);
   });
 }
@@ -56,7 +97,12 @@ export const checkLessonMarks: TaskCodeChecks = ({ output, testCase }) => {
   const input = testCase.userInput as MarksInput;
   const { raw } = JSON.parse(output) as LessonMarksEvalOutput;
   const marks = normalizeLessonMarks({ ideas: input.ideas, output: raw, screens: input.screens });
-  const problems = [...screenProblems({ input, marks, raw }), ...ideaProblems({ input, marks })];
+
+  const problems = [
+    ...screenProblems({ input, marks, raw }),
+    ...ideaProblems({ input, marks, raw }),
+  ];
+
   const total = input.screens.length + input.ideas.length;
   const failing = new Set(problems.map((problem) => problem.split(":")[0]));
 
