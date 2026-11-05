@@ -146,6 +146,8 @@ export async function finishLessonRun({
         brainPower: score.brainPower,
         now: completedAt,
         run: currentRun,
+        timeZone,
+        userId,
       }));
 
     const explanationsFinished = await finishExplanations(tx, { lessonId, userId });

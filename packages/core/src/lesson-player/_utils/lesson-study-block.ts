@@ -7,6 +7,7 @@ import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { serializeStudyBlockCompletion } from "../../sessions/completion-contract";
 import { NOTHING_REACHED } from "../../sessions/reached";
 import { settleFinishedLesson } from "../../sessions/settle-finished-lesson";
+import { oweDaySettlement } from "../../sessions/settle-owed-session-day";
 import { type LibraryLessonCompletion } from "../contract";
 
 export type RunCompletion = Omit<
@@ -53,7 +54,7 @@ export async function lockRunBlock({
 
 type RunBlock = NonNullable<Awaited<ReturnType<typeof lockRunBlock>>>;
 
-/** Commits the block with the run that finished it, so a failed settlement still leaves it done and a retry on a later day still settles its day. */
+/** Commits the block with the run that finished it and owes its day's settlement, so a request that fails or ends before settling still leaves the block done and its day settled. */
 export async function completeRunBlock(
   tx: TransactionClient,
   {
@@ -61,7 +62,16 @@ export async function completeRunBlock(
     brainPower,
     now,
     run,
-  }: { block: RunBlock; brainPower: number; now: Date; run: LearningEvent },
+    timeZone,
+    userId,
+  }: {
+    block: RunBlock;
+    brainPower: number;
+    now: Date;
+    run: LearningEvent;
+    timeZone: string;
+    userId: string;
+  },
 ): Promise<boolean> {
   if (block.status !== "active" && block.status !== "pending") {
     return false;
@@ -71,6 +81,8 @@ export async function completeRunBlock(
     data: { brainPower, completedAt: now, status: "completed" },
     where: { id: block.id },
   });
+
+  await oweDaySettlement(tx, { block, timeZone, userId });
 
   await tx.learningEvent.update({
     data: {
