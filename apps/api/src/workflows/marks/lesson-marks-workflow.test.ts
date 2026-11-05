@@ -43,6 +43,7 @@ function taggedAs({ cloud, nucleus }: { cloud: string; nucleus: string }) {
         underline: null,
       })),
     },
+    output: {} as never,
     provenance: {} as never,
     systemPrompt: "",
     usage: {} as never,
