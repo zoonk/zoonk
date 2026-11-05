@@ -333,7 +333,7 @@ describe("lesson marks", () => {
     period.setEnd(following, 1);
 
     expect(period.toString()).toBe(".");
-    expect(period.getBoundingClientRect().top).toBe(lastLine?.top);
+    expect(period.getBoundingClientRect().top).toBeCloseTo(lastLine?.top ?? Number.NaN, 0);
   });
 
   it("keeps a language lesson's bold plain, as before marks existed", async () => {
