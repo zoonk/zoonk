@@ -53,7 +53,6 @@ import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.UndoAction
 import com.zoonk.android.feature.practice.UndoState
-import com.zoonk.android.feature.practice.runColumn
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator

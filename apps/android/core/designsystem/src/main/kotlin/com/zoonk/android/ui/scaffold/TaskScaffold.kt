@@ -53,6 +53,7 @@ import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.SnackbarHost
+import com.zoonk.android.ui.components.TASK_MARGIN
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
 data class TaskExitConfirmation(
@@ -253,7 +254,7 @@ private val ASIDE_MARGIN = 24.dp
 @Composable
 private fun TaskBottomBar(
     content: @Composable () -> Unit,
-    horizontalPadding: Dp = 16.dp,
+    horizontalPadding: Dp = TASK_MARGIN,
 ) {
     DockedActionBar {
         Box(

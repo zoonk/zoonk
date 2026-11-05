@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
@@ -15,13 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 
-/** Main's `TaskActionBar`: as wide as the task's column on a narrow window, across it on a wide one, its lines at the end. */
+/** Main's `TaskActionBar`: as wide as the task's column ([taskColumn]) on a narrow window, across it on a wide one, its lines at the end. */
 @Composable
 fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
     val wide = isWideWindow()
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Column(
-            if (wide) Modifier.fillMaxWidth() else Modifier.widthIn(max = TASK_COLUMN_WIDTH).fillMaxWidth(),
+            if (wide) Modifier.fillMaxWidth() else Modifier.taskBarColumn(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = if (wide) Alignment.End else Alignment.Start,
             content = content,
@@ -62,6 +63,12 @@ fun Modifier.taskOption(): Modifier = if (isWideWindow()) this else fillMaxWidth
 @Composable
 fun isWideWindow() = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
-/** Main's 40rem task column less its 16dp sides, so the bar lines up with the task's content. */
-private val TASK_COLUMN_WIDTH = 608.dp
+/** Main's `TASK_COLUMN_CLASS`: a task's one column, centered at a readable measure with the same sides at every width. */
+fun Modifier.taskColumn(): Modifier = widthIn(max = TASK_COLUMN_WIDTH).fillMaxWidth().padding(horizontal = TASK_MARGIN)
+
+/** [taskColumn] in a task's bottom bar, which keeps the column's sides itself: as wide as what the column holds. */
+fun Modifier.taskBarColumn(): Modifier = widthIn(max = TASK_COLUMN_WIDTH - TASK_MARGIN * 2).fillMaxWidth()
+
+private val TASK_COLUMN_WIDTH = 640.dp
+internal val TASK_MARGIN = 16.dp
 private val MAIN_ACTION_WIDTH = 160.dp

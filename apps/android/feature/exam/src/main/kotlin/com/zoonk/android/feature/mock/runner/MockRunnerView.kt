@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -71,11 +70,11 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -137,9 +136,9 @@ internal fun MockRunnerView(
 
         // The whole pane scrolls, margins included, with the question held to a readable column.
         Box(Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-            Column(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth()) {
+            Column(Modifier.taskColumn()) {
                 RunnerProgress(run, titled = !beside, onQuestionTimeUp = viewModel::timeOutQuestion)
-                Column(Modifier.padding(detailPagePadding()), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                Column(Modifier.padding(vertical = 24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
                     key(question.question.set?.id) { MockRecording(viewModel, run, question, audio) }
                     key(question.itemId) { MockQuestionCard(viewModel, run, question) }
                     if (!beside) {
@@ -276,7 +275,7 @@ private fun RunnerProgress(
             drawStopIndicator = {},
         )
         Row(
-            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).semantics(mergeDescendants = true) {
+            Modifier.fillMaxWidth().padding(vertical = 8.dp).semantics(mergeDescendants = true) {
                 contentDescription =
                     spokenPlace
             },

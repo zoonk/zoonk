@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -130,6 +129,7 @@ import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
@@ -160,7 +160,7 @@ internal fun LessonColumn(
 ) {
     Box(modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
         Column(
-            modifier = Modifier.lessonColumnWidth(),
+            modifier = Modifier.taskColumn(),
             verticalArrangement = Arrangement.spacedBy(COLUMN_SPACING),
             content = content,
         )
@@ -185,7 +185,7 @@ private fun StepColumn(
     align: Alignment.Horizontal = Alignment.CenterHorizontally,
     content: @Composable () -> Unit,
 ) {
-    Layout(content, modifier.wrapContentWidth(align).lessonColumnWidth()) { measurables, constraints ->
+    Layout(content, modifier.wrapContentWidth(align).taskColumn()) { measurables, constraints ->
         val spacing = COLUMN_SPACING.roundToPx()
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val filling = measurables.indexOfFirst { it.layoutId == FillsView }
@@ -207,10 +207,6 @@ private fun StepColumn(
     }
 }
 
-internal fun Modifier.lessonColumnWidth() = widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = COLUMN_PADDING)
-
-private val COLUMN_WIDTH = 640.dp
-private val COLUMN_PADDING = 20.dp
 private val COLUMN_SPACING = 20.dp
 
 @Composable
@@ -512,7 +508,7 @@ private fun Segments(
         Box(
             (if (fold == null) Modifier.fillMaxWidth() else Modifier.width(fold.start))
                 .wrapContentWidth(if (fold == null) Alignment.CenterHorizontally else Alignment.End)
-                .lessonColumnWidth()
+                .taskColumn()
                 .padding(bottom = 8.dp)
                 .semantics {
                     contentDescription = label
