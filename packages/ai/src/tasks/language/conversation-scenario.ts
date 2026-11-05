@@ -48,7 +48,7 @@ function buildUserPrompt(params: GenerateConversationScenarioParams): string {
     UNIT_CAN_DO:
 ${params.canDo.map((item) => `- ${item}`).join("\n")}
 
-${formatLocalContext(params.targetLanguage)}
+${formatLocalContext(params.targetLanguage, { register: false })}
   `;
 }
 

@@ -11,7 +11,13 @@ export type SimulatedLearner = {
   plan: string[];
 };
 
-export type CallTurn = { speaker: "character" | "learner"; text: string; objectivesMet: string[] };
+export type CallTurn = {
+  speaker: "character" | "learner";
+  text: string;
+  objectivesMet: string[];
+  /** The character said it after falling quiet, while the learner was still writing. */
+  unprompted?: boolean;
+};
 
 function toEnglishName(language: string): string {
   return getLanguageName({ targetLanguage: language, userLanguage: "en" });

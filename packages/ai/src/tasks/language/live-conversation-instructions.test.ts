@@ -64,6 +64,7 @@ describe(buildLiveConversationInstructions, () => {
     expect(instructions).toContain("Speak only US English");
     expect(instructions).toContain("clarification in Português Brasileiro");
     expect(instructions).toContain("The learner is at A2.");
+    expect(instructions).toContain("Say one or two short sentences in a turn");
     expect(instructions).toMatch(/Delegate to the backend when:\s+- Never\./u);
     expect(instructions).toContain("The app tells you when it's time to end the call.");
     expect(instructions).not.toMatch(/\d minutes?/u);
@@ -119,6 +120,7 @@ describe(buildLiveConversationInstructions, () => {
     expect(instructions).not.toContain("Is the apartment still available?");
     expect(instructions).toContain("Never use Português Brasileiro");
     expect(instructions).not.toContain("clarification in");
+    expect(instructions).not.toContain("one or two short sentences");
   });
 
   it("runs a TOEFL mock with Listen and Repeat, then the interview, the same at every level", () => {

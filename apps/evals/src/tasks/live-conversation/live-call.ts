@@ -39,8 +39,8 @@ type CallState = {
 type LiveExchange = { before: string; reply: string };
 
 export type LiveCall = {
-  send: (cue: LiveCallCue) => void;
-  exchange: (cue: LiveCallCue) => Promise<LiveExchange>;
+  /** `note` goes right after `cue`, as the app sends a check's note with the learner's reply. */
+  exchange: (cue: LiveCallCue, note?: LiveCallCue) => Promise<LiveExchange>;
   /** Resolves with the seconds GPT-Live billed. */
   close: () => Promise<number>;
 };
@@ -218,7 +218,7 @@ export async function openLiveCall({
 
   return {
     close,
-    exchange: async (cue) => {
+    exchange: async (cue, note) => {
       await waitFor(() => {
         check();
         return isQuiet();
@@ -228,6 +228,10 @@ export async function openLiveCall({
       const sentAt = Date.now();
       send(cue, null);
 
+      if (note) {
+        send(note, null);
+      }
+
       await waitFor(() => {
         check();
         return state.lastCharacterAt > sentAt && isQuiet();
@@ -236,6 +240,5 @@ export async function openLiveCall({
       check();
       return { before, reply: takeHeard() };
     },
-    send: (cue) => send(cue, null),
   };
 }

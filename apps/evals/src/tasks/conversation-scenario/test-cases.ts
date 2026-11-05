@@ -43,7 +43,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning Brazilian Portuguese at A1, at a restaurant. A face-to-face order or a call to a restaurant, with a Brazilian name and reais. Opening line and hints very short (A1): "Eu quero...", "A conta, por favor". Brazilian words ("cardápio", not "ementa"). Title, situation, role and every objective description in US English, never Portuguese.`,
+    expectations: `US English speaker learning Brazilian Portuguese at A1, at a restaurant. A phone call to a restaurant, such as booking a table or ordering food for pickup, with goals a call can reach: the learner is never there in person, so nothing asks for the bill at the table. A Brazilian name and reais. Opening line and hints very short (A1): "Eu quero...", "Quanto é?". Brazilian words ("cardápio", not "ementa"). Title, situation, role and every objective description in US English, never Portuguese.`,
     id: "en-pt-a1-restaurant",
     userInput: {
       canDo: ["Ask for a table", "Order food and drinks", "Ask for the bill"],
@@ -55,7 +55,7 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker practicing US English at A2, at a restaurant. A face-to-face order or a call to a restaurant, with a US name and dollars. Opening line and hints short and simple (A2). Every field is in US English: title, situation, role, objective labels and descriptions, opening line and hints. The title is a 3 to 6 word goal starting with a verb ("Order dinner at a diner").`,
+    expectations: `US English speaker practicing US English at A2, at a restaurant. A phone call to a restaurant, such as booking a table or ordering food for pickup, with goals a call can reach: the learner is never there in person, so nothing asks for the bill at the table. A US name and dollars. Opening line and hints short and simple (A2). Every field is in US English: title, situation, role, objective labels and descriptions, opening line and hints. The title is a 3 to 6 word goal starting with a verb ("Order dinner from a diner").`,
     id: "en-en-a2-restaurant",
     userInput: {
       canDo: ["Ask for a table", "Order food and drinks", "Ask for the bill"],
@@ -96,6 +96,18 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
       targetLanguage: "en",
       unitDescription: "Convide alguém para sair, combine o que fazer e marque dia, hora e lugar",
       unitTitle: "Planos para o fim de semana",
+    },
+  },
+  {
+    expectations: `Brazilian learner of US English at A2, in a unit about chatting with neighbors, colleagues and new friends. The character already knows the learner: a friend, colleague or neighbor (role in Brazilian Portuguese), never a relative or someone they're meeting for the first time, and the situation says who they are to the learner. The objectives say what to do without giving anything away: no day, time or plan for the learner to propose and no hint of the character's twist (never "Suggest coffee on Saturday at 10 and pick another time if she can't"). The place and situation name no city or neighborhood, since that would be where the learner lives. Nothing names the learner or assumes facts about their life. US name. Opening line and hints short and simple (A2). Title, situation, role and descriptions in Brazilian Portuguese.`,
+    id: "pt-en-a2-social-life",
+    userInput: {
+      canDo: ["Consigo conversar com vizinhos e colegas"],
+      learnerLanguage: "pt",
+      level: "A2",
+      targetLanguage: "en",
+      unitDescription: "Conversa com vizinhos, colegas e novos amigos.",
+      unitTitle: "Vida social",
     },
   },
   {
