@@ -23,6 +23,7 @@ export async function certificateFixture(
         minutes: 90,
         topics: ["Light and matter"],
       },
+      issuedAt: new Date("2026-11-03T12:00:00Z"),
       key: crypto.randomUUID(),
       kind: "course",
       language: "en",

@@ -1,5 +1,5 @@
 import {
-  type CertificateFacts,
+  type OwnedCertificateFacts,
   unshownCertificatesSchema,
 } from "../certificates/certificate-contract";
 import { type MilestoneView, milestoneSchema } from "./completion-contract";
@@ -8,7 +8,7 @@ import { type Reached, reachedSchema } from "./reached";
 /** Off-session results share one ceremony and newly reached belt/Energy levels. */
 export type ProgressCelebration = {
   ceremony: MilestoneView | null;
-  certificates: CertificateFacts[];
+  certificates: OwnedCertificateFacts[];
   reached: Reached;
 };
 

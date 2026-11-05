@@ -1,4 +1,5 @@
 import "server-only";
+import { issueEarnedCertificates } from "@zoonk/auth/certificate-issuance";
 import { type Goal, type LanguageSkill, type TransactionClient } from "@zoonk/db";
 import { formatCefrScore } from "@zoonk/utils/cefr";
 import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
@@ -137,4 +138,6 @@ export async function awardLanguageLevelCertificates(
       userId,
     })),
   });
+
+  await issueEarnedCertificates(tx, { now, plus: "check", userId });
 }

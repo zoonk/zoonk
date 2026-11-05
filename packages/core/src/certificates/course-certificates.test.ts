@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { type CourseLevel, type Goal, type PlanItem, prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
@@ -21,6 +22,7 @@ import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { celebrateProgress } from "../milestones/celebrate-progress";
 import { completePlanItem } from "../sessions/_utils/plan-items";
 import { settleFinishedLesson } from "../sessions/settle-finished-lesson";
+import { reconcileAppleSubscription } from "../subscriptions/reconcile-apple-subscription";
 import { getFieldMapView } from "../view-models/map/get-field-map-view";
 import { claimCourseCertificate } from "./claim-course-certificate";
 import { getPublicCertificate } from "./get-public-certificate";
@@ -185,17 +187,21 @@ describe("course certificates", () => {
       title: "Quantum physics",
     });
 
-    const facts = await getPublicCertificate(certificate?.code ?? "");
+    const facts = await listCurrentUserCertificates();
 
     expect(facts).toMatchObject({
-      category: "science",
-      courseLevel: "beginner",
-      kind: "course",
-      lessonsStudied: 2,
-      lessonsTestedOut: 0,
-      minutes: 60,
-      recipientName: "Ana Souza",
-      topics: ["Light and matter", "Waves"],
+      certificates: [
+        {
+          category: "science",
+          courseLevel: "beginner",
+          kind: "course",
+          lessonsStudied: 2,
+          lessonsTestedOut: 0,
+          minutes: 60,
+          recipientName: "Ana Souza",
+          topics: ["Light and matter", "Waves"],
+        },
+      ],
     });
   });
 
@@ -221,10 +227,9 @@ describe("course certificates", () => {
     });
 
     await finishLesson(fixture);
-    const [certificate] = await listCertificates(fixture.user.id);
 
-    await expect(getPublicCertificate(certificate?.code ?? "")).resolves.toMatchObject({
-      minutes: null,
+    await expect(listCurrentUserCertificates()).resolves.toMatchObject({
+      certificates: [{ minutes: null }],
     });
   });
 
@@ -509,6 +514,80 @@ describe("level and plan certificates", () => {
   });
 });
 
+const APPLE_PLUS = { billingInterval: "month", plan: "plus" } as const;
+
+function applePlus(userId: string, { isActive = true }: { isActive?: boolean } = {}) {
+  return reconcileAppleSubscription({
+    product: APPLE_PLUS,
+    referenceId: userId,
+    verifiedSubscription: {
+      accountToken: userId,
+      environment: "sandbox",
+      eventId: randomUUID(),
+      eventSignedDate: new Date(),
+      expirationDate: new Date("2099-01-01T00:00:00Z"),
+      isActive,
+      isAutoRenewEnabled: isActive,
+      originalTransactionId: `plus-${userId}`,
+      productId: "com.zoonk.plus.monthly",
+      purchaseDate: new Date("2026-10-01T00:00:00Z"),
+      revocationDate: isActive ? null : new Date(),
+      transactionId: randomUUID(),
+      transactionSignedDate: new Date(),
+    },
+  });
+}
+
+describe("certificates with and without Plus", () => {
+  it("earns a free learner a locked certificate, which subscribing issues as it was", async () => {
+    const fixture = await courseGoal();
+    await finishLesson(fixture);
+    const [earned] = await listCertificates(fixture.user.id);
+    const code = earned?.code ?? "";
+
+    expect(earned?.issuedAt).toBeNull();
+    await expect(getPublicCertificate(code)).resolves.toBeNull();
+
+    await expect(listCurrentUserCertificates()).resolves.toMatchObject({
+      certificates: [{ code, locked: true }],
+    });
+
+    await expect(
+      celebrateProgress({ progress: null, userId: fixture.user.id }),
+    ).resolves.toMatchObject({ certificates: [{ code, locked: true }] });
+
+    await expect(claimCourseCertificate(fixture.goal.id)).resolves.toMatchObject({
+      certificates: [{ code, locked: true }],
+    });
+
+    await expect(markCertificateShown(code)).resolves.toStrictEqual({ status: "ready" });
+    const [shown] = await listCertificates(fixture.user.id);
+
+    await applePlus(fixture.user.id);
+    const [issued] = await listCertificates(fixture.user.id);
+
+    expect(issued).toStrictEqual({ ...shown, issuedAt: expect.any(Date) });
+    await expect(getPublicCertificate(code)).resolves.toMatchObject({ code });
+
+    await applePlus(fixture.user.id, { isActive: false });
+
+    await expect(listCertificates(fixture.user.id)).resolves.toStrictEqual([issued]);
+  });
+
+  it("issues a Plus learner's certificate as it's earned", async () => {
+    const fixture = await courseGoal();
+    await applePlus(fixture.user.id);
+
+    await finishLesson(fixture);
+
+    await expect(claimCourseCertificate(fixture.goal.id)).resolves.toMatchObject({
+      certificates: [{ locked: false }],
+    });
+
+    await expect(readMapCertificates()).resolves.toMatchObject({ earned: [{ locked: false }] });
+  });
+});
+
 describe(claimCourseCertificate, () => {
   it("awards each level finished outside the award points, dated with its own last work", async () => {
     const fixture = await courseGoal({
@@ -554,8 +633,8 @@ describe(claimCourseCertificate, () => {
 
     await expect(readMapCertificates()).resolves.toStrictEqual({
       earned: [
-        { code: codes[0], courseLevel: "beginner" },
-        { code: codes[1], courseLevel: "intermediate" },
+        { code: codes[0], courseLevel: "beginner", locked: true },
+        { code: codes[1], courseLevel: "intermediate", locked: true },
       ],
       unclaimed: [],
     });
@@ -608,6 +687,7 @@ describe(claimCourseCertificate, () => {
 describe("a certificate as anyone sees it", () => {
   it("shows the public facts only, follows a rename and never marks it shown", async () => {
     const fixture = await courseGoal();
+    await applePlus(fixture.user.id);
     await finishLesson(fixture);
     const [row] = await listCertificates(fixture.user.id);
     const code = row?.code ?? "";
@@ -664,6 +744,7 @@ describe("a certificate as anyone sees it", () => {
 
   it("outlives its course: the title stays and the course link goes", async () => {
     const fixture = await courseGoal();
+    await applePlus(fixture.user.id);
     await finishLesson(fixture);
     const [row] = await listCertificates(fixture.user.id);
 

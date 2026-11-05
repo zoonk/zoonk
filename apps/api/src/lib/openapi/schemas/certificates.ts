@@ -38,8 +38,17 @@ export const certificateSchema = z
   });
 
 export const ownedCertificateSchema = z
-  .object({ ...ownedCertificateShape, ...certificateLinksShape })
-  .meta({ description: "One of the learner's own certificates", id: "OwnedCertificate" });
+  .object({
+    ...ownedCertificateShape,
+    imageUrls: certificateLinksShape.imageUrls.nullable(),
+    linkedInUrl: certificateLinksShape.linkedInUrl.nullable(),
+    url: certificateLinksShape.url.nullable(),
+  })
+  .meta({
+    description:
+      "One of the learner's own certificates; its page, pictures and LinkedIn link are null exactly while it's `locked`",
+    id: "OwnedCertificate",
+  });
 
 export const certificateListResponseSchema = z
   .object({

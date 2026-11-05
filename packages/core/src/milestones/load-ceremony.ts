@@ -1,7 +1,7 @@
 import "server-only";
 import { type Milestone, prisma } from "@zoonk/db";
 import { loadUnshownCertificates } from "../certificates/_utils/unshown-certificates";
-import { type CertificateFacts } from "../certificates/certificate-contract";
+import { type OwnedCertificateFacts } from "../certificates/certificate-contract";
 import { type MilestoneView, serializeMilestone } from "../sessions/completion-contract";
 import { pickCeremony } from "./milestone-rules";
 
@@ -11,7 +11,10 @@ export async function loadCeremony(userId: string): Promise<Milestone | null> {
   return pickCeremony(unshown);
 }
 
-export type ResultMoments = { ceremony: MilestoneView | null; certificates: CertificateFacts[] };
+export type ResultMoments = {
+  ceremony: MilestoneView | null;
+  certificates: OwnedCertificateFacts[];
+};
 
 export const NO_RESULT_MOMENTS: ResultMoments = { ceremony: null, certificates: [] };
 

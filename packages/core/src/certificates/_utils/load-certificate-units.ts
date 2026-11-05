@@ -166,7 +166,7 @@ async function findChaptersTaughtInPlan(
 
 function loadHeldCertificates(db: TransactionClient, goal: UnitGoal) {
   return db.certificate.findMany({
-    select: { code: true, courseLevel: true, id: true, key: true },
+    select: { code: true, issuedAt: true, key: true },
     where: {
       OR: [
         { key: goal.id },

@@ -1,6 +1,6 @@
 import { accessError, createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { withCertificateLinks } from "@/lib/certificate-links";
+import { withOwnedCertificateLinks } from "@/lib/certificate-links";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
 import { claimCourseCertificate } from "@zoonk/core/certificates/claim";
@@ -26,7 +26,7 @@ async function claimCertificate(
   }
 
   return NextResponse.json({
-    certificates: result.certificates.map((certificate) => withCertificateLinks(certificate)),
+    certificates: result.certificates.map((certificate) => withOwnedCertificateLinks(certificate)),
   });
 }
 

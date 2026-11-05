@@ -67,5 +67,9 @@ export function toCertificateFacts(row: CertificateRow): CertificateFacts {
 }
 
 export function toOwnedCertificateFacts(row: CertificateRow): OwnedCertificateFacts {
-  return { ...toCertificateFacts(row), shownAt: row.shownAt?.toISOString() ?? null };
+  return {
+    ...toCertificateFacts(row),
+    locked: row.issuedAt === null,
+    shownAt: row.shownAt?.toISOString() ?? null,
+  };
 }

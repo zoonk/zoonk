@@ -93,7 +93,15 @@ export const fieldMapViewSchema = z
     certificates: z
       .object({
         earned: z
-          .array(z.object({ code: z.string(), courseLevel: z.enum(CourseLevel).nullable() }))
+          .array(
+            z.object({
+              code: z.string(),
+              courseLevel: z.enum(CourseLevel).nullable(),
+              locked: z
+                .boolean()
+                .meta({ description: "Earned without Plus: show it with the Plus mark" }),
+            }),
+          )
           .meta({
             description:
               "The certificates of this plan's levels and of the plan itself the learner holds, in level order with the plan's last; a level they certified in another goal too",

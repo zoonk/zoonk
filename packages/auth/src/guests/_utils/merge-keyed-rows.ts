@@ -36,11 +36,7 @@ async function moveMilestones({ guestUserId, transaction, userId }: GuestLinkCon
   `;
 }
 
-/**
- * A guest's certificate may already be shared, so unlike a milestone it never drops: on a key the
- * account already holds it moves keyed by its own id, both codes keep working, and the account's
- * row stays the one that stops a repeat award.
- */
+/** A guest's certificates are never issued, so on a key the account holds the account's row stays. */
 async function moveCertificates({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`
     WITH guest_rows AS (
@@ -48,15 +44,11 @@ async function moveCertificates({ guestUserId, transaction, userId }: GuestLinkC
       WHERE user_id = ${guestUserId}::uuid
       RETURNING *
     )
-    INSERT INTO certificates (id, user_id, kind, key, code, goal_id, course_id, language, target_language, level, title, details, completed_on, shown_at, created_at)
-    SELECT guest.id, ${userId}::uuid, guest.kind,
-      CASE WHEN EXISTS (
-        SELECT 1 FROM certificates AS account
-        WHERE account.user_id = ${userId}::uuid AND account.kind = guest.kind AND account.key = guest.key
-      ) THEN guest.id::text ELSE guest.key END,
-      guest.code, guest.goal_id, guest.course_id, guest.language, guest.target_language, guest.level, guest.title, guest.details, guest.completed_on, guest.shown_at, guest.created_at
-    FROM guest_rows AS guest
-    ORDER BY guest.kind, guest.key
+    INSERT INTO certificates (id, user_id, kind, key, code, goal_id, course_id, language, target_language, level, course_level, title, details, completed_on, shown_at, issued_at, created_at)
+    SELECT id, ${userId}::uuid, kind, key, code, goal_id, course_id, language, target_language, level, course_level, title, details, completed_on, shown_at, issued_at, created_at
+    FROM guest_rows
+    ORDER BY kind, key
+    ON CONFLICT (user_id, kind, key) DO NOTHING
   `;
 }
 

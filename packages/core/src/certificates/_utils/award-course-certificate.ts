@@ -1,4 +1,5 @@
 import "server-only";
+import { issueEarnedCertificates } from "@zoonk/auth/certificate-issuance";
 import { type Goal, type PlanItem, type TransactionClient } from "@zoonk/db";
 import { isValidCategory } from "@zoonk/utils/categories";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
@@ -176,6 +177,7 @@ export async function writeFinishedUnits(
   });
 
   await tx.certificate.createMany({ data: rows });
+  await issueEarnedCertificates(tx, { now: new Date(), plus: "check", userId: goal.userId });
 
   return { ...loaded, written: rows.length };
 }

@@ -11,6 +11,7 @@
     "./app-attest-contract": "./src/app-attest/app-attest-contract.ts",
     "./auth-events": "./src/auth-events.ts",
     "./available-username": "./src/available-username.ts",
+    "./certificate-issuance": "./src/certificate-issuance.ts",
     "./client": "./src/client.ts",
     "./cookies": "./src/cookies.ts",
     "./email-deletion-contract": "./src/email-deletion-contract.ts",

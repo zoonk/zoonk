@@ -40,7 +40,10 @@ async function readPlanCertificates(goal: UnitGoal): Promise<FieldMapView["certi
 
   const earned = units.flatMap((unit) => {
     const row = held.find((entry) => entry.key === unit.key);
-    return row ? { code: row.code, courseLevel: unit.courseLevel } : [];
+
+    return row
+      ? { code: row.code, courseLevel: unit.courseLevel, locked: row.issuedAt === null }
+      : [];
   });
 
   if (earned.length === 0 && unclaimed.length === 0) {

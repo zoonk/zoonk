@@ -139,6 +139,12 @@ export type CertificateFacts = z.infer<typeof certificateFactsSchema>;
 
 export const ownedCertificateShape = {
   ...certificateFactsShape,
+  locked: z
+    .boolean()
+    .meta({
+      description:
+        "True when the learner earned it without Plus: show it locked, with the Plus notice, and no code, link, picture or share. It unlocks when they subscribe and stays unlocked after Plus ends",
+    }),
   shownAt: z.iso
     .datetime()
     .nullable()
@@ -148,11 +154,15 @@ export const ownedCertificateShape = {
     }),
 };
 
-export type OwnedCertificateFacts = CertificateFacts & { shownAt: string | null };
+export const ownedCertificateFactsSchema = z
+  .object(ownedCertificateShape)
+  .meta({ description: "One of the learner's own certificates", id: "OwnedCertificateFacts" });
+
+export type OwnedCertificateFacts = z.infer<typeof ownedCertificateFactsSchema>;
 
 export const unshownCertificatesSchema = z
-  .array(certificateFactsSchema)
+  .array(ownedCertificateFactsSchema)
   .meta({
     description:
-      "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, then POST /me/certificates/{code}/views for each. Images and links: GET /certificates/{code}",
+      "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}",
   });

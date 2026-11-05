@@ -2,8 +2,14 @@ import { randomUUID } from "node:crypto";
 import { prisma, sql } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
 import { waitForBlocked } from "./_test-utils/blocked-sessions";
-import { createLearner, createLesson, createSkill } from "./_test-utils/learner-data";
+import {
+  createCertificate,
+  createLearner,
+  createLesson,
+  createSkill,
+} from "./_test-utils/learner-data";
 import { moveKeyedRows } from "./_utils/merge-keyed-rows";
+import { linkGuestAccount } from "./link-guest-account";
 
 const OLDER = new Date("2026-09-01T00:00:00Z");
 
@@ -291,46 +297,43 @@ describe("guest keyed-row linking", () => {
   );
 });
 
-function createCertificate({ key, userId }: { key: string; userId: string }) {
-  return prisma.certificate.create({
-    data: {
-      code: randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase(),
-      completedOn: OLDER,
-      createdAt: OLDER,
-      details: { canDo: [], lessonsStudied: 20, minutes: null, skillLevels: [] },
-      key,
-      kind: "languageLevel",
-      language: "en",
-      level: "A1",
-      targetLanguage: "es",
-      userId,
-    },
-  });
-}
-
 describe("guest certificate linking", () => {
-  it("keeps a guest's certificate on a key the account holds, so a shared link still works", async () => {
+  it("keeps the account's certificate on a key both hold and moves the guest's others", async () => {
     const [accountId, guestId] = await Promise.all([
       createLearner({ isAnonymous: false }),
       createLearner({ isAnonymous: true }),
     ]);
 
-    const [accountRow, guestRow, uniqueRow] = await Promise.all([
+    const [accountRow, , uniqueRow] = await Promise.all([
       createCertificate({ key: "es:A1", userId: accountId }),
       createCertificate({ key: "es:A1", userId: guestId }),
       createCertificate({ key: "es:A2", userId: guestId }),
     ]);
 
-    await prisma.$transaction((transaction) =>
-      moveKeyedRows({ guestUserId: guestId, transaction, userId: accountId }),
-    );
+    await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
 
-    const accountRows = await prisma.certificate.findMany({ where: { userId: accountId } });
+    await expect(
+      prisma.certificate.findMany({ orderBy: { key: "asc" }, where: { userId: accountId } }),
+    ).resolves.toStrictEqual([accountRow, { ...uniqueRow, userId: accountId }]);
+  });
 
-    expect(accountRows).toHaveLength(3);
-    expect(accountRows).toContainEqual(accountRow);
-    expect(accountRows).toContainEqual({ ...uniqueRow, userId: accountId });
-    expect(accountRows).toContainEqual({ ...guestRow, key: guestRow.id, userId: accountId });
-    await expect(prisma.certificate.count({ where: { userId: guestId } })).resolves.toBe(0);
+  it("issues the guest's certificates when the account has Plus", async () => {
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+    ]);
+
+    await Promise.all([
+      createCertificate({ key: "es:A1", userId: guestId }),
+      prisma.subscription.create({
+        data: { plan: "plus", referenceId: accountId, status: "active", userId: accountId },
+      }),
+    ]);
+
+    await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
+
+    await expect(
+      prisma.certificate.findMany({ select: { issuedAt: true }, where: { userId: accountId } }),
+    ).resolves.toStrictEqual([{ issuedAt: expect.any(Date) }]);
   });
 });
