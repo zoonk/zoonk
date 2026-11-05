@@ -19,12 +19,12 @@ final class PlanStore {
   @ObservationIgnored private var plans: [String: Resource<PlanRead>] = [:]
   @ObservationIgnored private var resumePreviews: [String: Resource<Bool>] = [:]
   @ObservationIgnored private var standings: [String: Resource<GoalStanding>] = [:]
-  @ObservationIgnored private var studyNexts: [String: Resource<StudyNext>] = [:]
+  @ObservationIgnored private var planEnds: [String: Resource<PlanEnd>] = [:]
   @ObservationIgnored private var syllabi: [String: Resource<GoalSyllabus>] = [:]
   /// What the learner opened on a plan's path, kept above the panes a fold rebuilds.
   private var phaseDisclosures: [String: [Int: PhaseDisclosure]] = [:]
-  /// What the learner put off or ticked among a plan's suggestions, kept the same way, for the
-  /// session that did it.
+  /// What the learner paged to, put off or ticked among a plan's suggestions, kept the same way, for
+  /// the session that did it.
   private var suggestionStates: [SuggestionKey: SuggestionState] = [:]
 
   struct PhaseDisclosure {
@@ -37,6 +37,7 @@ final class PlanStore {
     /// The options ticked of each choice whose candidates take several, by its group.
     var choiceDrafts: [String: [String]] = [:]
     var dismissed: Set<PlanSlotItem> = []
+    var position = 0
   }
 
   struct SuggestionKey: Hashable {
@@ -118,9 +119,13 @@ final class PlanStore {
     }
   }
 
-  func studyNext(goalId: String) -> Resource<StudyNext> {
-    resource(&studyNexts, goalId) { api, token in
-      try await api.studyNext(token: token, goalId: goalId)
+  /// Subscribing unlocks its certificates.
+  func planEnd(goalId: String) -> Resource<PlanEnd> {
+    resource(
+      &planEnds, goalId,
+      domains: [.certificates, .goals, .learnerModel, .userProgress, .userSubscription]
+    ) { api, token in
+      try await api.planEnd(token: token, goalId: goalId)
     }
   }
 

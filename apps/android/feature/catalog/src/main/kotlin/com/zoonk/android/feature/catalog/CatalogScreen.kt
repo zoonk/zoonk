@@ -36,7 +36,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
@@ -85,6 +84,7 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageDirective
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.CourseCategoryCounts
 import com.zoonk.api.models.CourseResult
@@ -116,7 +116,7 @@ fun CatalogScreen(
     val countsState by counts.collectShown()
     val isRefreshing by courses.isRefreshing.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+    val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
     val categories = categoryLinks(countsState.value, category, locale)
     val gridState = rememberSaveable(category, saver = LazyGridState.Saver) { LazyGridState() }
     var goal by rememberSaveable { mutableStateOf("") }

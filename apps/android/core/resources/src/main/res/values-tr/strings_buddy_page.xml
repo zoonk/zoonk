@@ -34,7 +34,6 @@
   "buddy_page_missions_done": "0253950800870a0fe55feb4e0caa872eef2a516d5f5c1e2414e621fbb866dd51",
   "buddy_page_more": "28e280f3ddccf335f0cbadbc2a6cf053e7f37d83cd38b189f96063e550362c8a",
   "buddy_page_not_yet": "0120f0123b9c46090939fd5b4dd507668bd753155eedb13f2ee91893cdb1da41",
-  "buddy_page_open_failed": "84df7677d1fef55fb6696e6dd93157794517bfe01a31e63a73f6edaed1969b22",
   "buddy_page_placeholder": "60cdadef5f3b1313f96d0c70d3289fb1e5ec5cfa091ac5456c5d65d36f806bc5",
   "buddy_page_remembers": "e2fc572bb233ad191a4a725dbfa3083846c1ba7fe561ae07c97ef87a3fb6cecb",
   "buddy_page_save_failed": "53ad0f143bab00d950a2aeabd46b9e8629922a75ef5109dba6452bcefddb218a",
@@ -67,7 +66,6 @@
     <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">Kazanılan: %1$s, toplam: %2$s</string>
     <string name="buddy_page_save_failed">Kaydedilemedi. Tekrar dene.</string>
-    <string name="buddy_page_open_failed">Açılamadı. Tekrar dene.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">Merhaba! Ben %1$s, yapay zekâ ders arkadaşın. Çalıştığın konular hakkında bana istediğini sor ya da planında neleri değiştirmek istediğini anlat.</string>
     <string name="buddy_page_goal_greeting">Merhaba! Ben %1$s, yapay zekâ ders arkadaşın. Ne öğrenmek istiyorsun ve ne zamana kadar? Buna göre o tarihe kadar her gün için bir plan hazırlayacağım.</string>

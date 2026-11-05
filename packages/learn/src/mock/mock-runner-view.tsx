@@ -147,8 +147,9 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
         <FlagButton />
         <Button
           aria-keyshortcuts={isLastQuestion ? undefined : "Enter ArrowRight"}
-          className={cn(TASK_MAIN_ACTION_CLASS, handingIn && "disabled:opacity-100")}
+          className={TASK_MAIN_ACTION_CLASS}
           disabled={runner.pending || waiting}
+          focusableWhenDisabled
           onClick={next}
           size="xl"
         >

@@ -15,6 +15,7 @@ import { refreshLiveCallViewer } from "../../entitlements/_utils/live-call-viewe
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { getLiveCallCostMicros } from "../../entitlements/limits";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { readCallNote } from "../../memory/call-fact";
 import { getLiveCallBuilder } from "./_utils/conversation-view";
 import { getEndingCharge, isWithinConnectWindow } from "./_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
@@ -82,20 +83,21 @@ async function prepareCreation({
 }): Promise<Prepared> {
   return writeLearnerChange<Prepared>({ userId }, async (transaction) => {
     await lockUsageForViewer({ transaction, userId });
+    const now = new Date();
 
-    const [connection, conversation] = await Promise.all([
+    const [connection, conversation, learnerNote] = await Promise.all([
       transaction.liveCallConnection.findFirst({
         where: { conversationId, id: connectionId, userId },
       }),
       transaction.languageConversation.findFirst({ where: { id: conversationId, userId } }),
+      readCallNote({ conversationId, now, transaction, userId }),
     ]);
 
     if (!connection || !conversation) {
       return unchanged({ status: "notFound" as const });
     }
 
-    const now = new Date();
-    const buildCall = getLiveCallBuilder(conversation);
+    const buildCall = getLiveCallBuilder({ learnerNote, row: conversation });
 
     if (!buildCall || conversation.reviewRunId !== null) {
       return unchanged({ status: "conversationEnded" as const });

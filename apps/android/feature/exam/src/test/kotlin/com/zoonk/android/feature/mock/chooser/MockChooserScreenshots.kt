@@ -11,9 +11,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
@@ -26,6 +23,7 @@ import com.zoonk.android.feature.exam.GOAL
 import com.zoonk.android.feature.exam.mockOptions
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
@@ -83,6 +81,18 @@ class MockChooserScreenshots {
     fun phoneWithoutPlus() = capture("chooser-phone-free", options = """$OPTIONS,"access":"plusRequired"""")
 
     @Test
+    @Config(qualifiers = "w700dp-h1400dp-xhdpi")
+    fun medium() = capture("chooser-medium")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("chooser-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("chooser-small-book", fold = true)
+
+    @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun expanded() = capture("chooser-expanded")
 
@@ -129,20 +139,7 @@ class MockChooserScreenshots {
                 }
             }
         }
-        if (fold) {
-            compose.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(
-                            compose.activity,
-                            state = FoldingFeature.State.FLAT,
-                            orientation = FoldingFeature.Orientation.VERTICAL,
-                        ),
-                    ),
-                ),
-            )
-        }
+        if (fold) compose.unfoldBook(folds)
         compose.mainClock.advanceTimeBy(WRITING_FOR)
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
@@ -155,6 +152,7 @@ class MockChooserScreenshots {
         moreContrast: Boolean = false,
         placement: Boolean = false,
         options: String = OPTIONS,
+        fold: Boolean = false,
         act: () -> Unit = {},
     ) {
         val mocks = FakeMockApi(mockOptions(options))
@@ -182,6 +180,7 @@ class MockChooserScreenshots {
                 }
             }
         }
+        if (fold) compose.unfoldBook(folds)
         compose.waitForIdle()
         act()
         compose.waitForIdle()

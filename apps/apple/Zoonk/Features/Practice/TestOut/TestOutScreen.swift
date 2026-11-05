@@ -25,12 +25,12 @@ struct TestOutScreen: View {
   @Environment(LearnerSummaryStore.self) private var summary
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<TestOutLoad> = .loading
+  @State private var isStarting = false
   @State private var isWriting = false
   @State private var writeFailure: (any Error)?
   @State private var isSubmitting = false
   @State private var submitFailed = false
   @State private var result: Components.Schemas.ChapterTestOutResult?
-  @State private var ceremonyClosed = false
   @State private var undo: UndoState = .idle
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
@@ -43,13 +43,7 @@ struct TestOutScreen: View {
     NavigationStack {
       Group {
         if let result {
-          if let milestone = result.ceremony?.value1, !ceremonyClosed,
-            let ceremony = hooks.ceremony
-          {
-            ceremony(milestone) { ceremonyClosed = true }
-          } else {
-            resultView(result)
-          }
+          resultView(result)
         } else {
           switch load {
           case .loading where summary.summary.value != nil && goalId == nil:
@@ -93,8 +87,12 @@ struct TestOutScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
+    .completionMoments(
+      certificates: result?.certificates ?? [], ceremony: result?.ceremony?.value1
+    )
     .onDisappear { openResult = nil }
     .task(id: "\(session.authenticatedSession?.bearerToken ?? ""):\(goalId ?? "")") { await read() }
+    .clearsRefusal { writeFailure = nil }
   }
 
   private func preparing(failure: (any Error)?) -> some View {
@@ -109,7 +107,7 @@ struct TestOutScreen: View {
         "We're writing a few questions on this chapter. The test opens here when they're ready.",
         table: "Practice",
         comment: "While a test-out's questions are written."),
-      isWriting: isWriting, failure: failure
+      isStarting: isStarting, isWriting: isWriting, failure: failure
     ) { Task { await write() } }
   }
 
@@ -129,7 +127,6 @@ struct TestOutScreen: View {
           : LocalizedStringResource(
             "Not yet, and that's fine", table: "Practice", comment: "A failed test-out's result."),
         detail: resultDetail(result))
-    } response: {
       PracticeResultNumbers(
         facts: [
           String(
@@ -137,13 +134,14 @@ struct TestOutScreen: View {
             comment: "A test-out's right answers out of its questions.")
         ],
         day: DayResult(result))
-
+    } response: {
       if undo == .failed {
-        Text(
-          "We couldn't put the lessons back. Try again.", tableName: "Practice",
-          comment: "Undoing a test-out's skip failed."
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't put the lessons back. Try again.", table: "Practice",
+            comment: "Undoing a test-out's skip failed.")
         )
-        .font(.subheadline).foregroundStyle(.destructive)
+        .font(.subheadline)
       }
     } actions: {
       if let changeId = result.changeId, undo != .done {
@@ -205,7 +203,7 @@ struct TestOutScreen: View {
       {
         guard session.authenticatedSession == identity else { return }
         result = .init(
-          ceremony: nil, reached: .init(energy: nil, level: nil),
+          ceremony: nil, certificates: [], reached: .init(energy: nil, level: nil),
           changeId: recorded.canUndo ? recorded.changeId : nil, correct: recorded.correct,
           lessonsSkipped: recorded.lessonsSkipped, passed: recorded.passed, total: recorded.total)
         undo = recorded.undone ? .done : .idle
@@ -229,9 +227,12 @@ struct TestOutScreen: View {
   private func write() async {
     guard let goalId else { return }
 
-    isWriting = true
+    isStarting = true
     writeFailure = nil
-    defer { isWriting = false }
+    defer {
+      isStarting = false
+      isWriting = false
+    }
 
     let chapterId = chapterId
     switch await practice.write(
@@ -241,6 +242,7 @@ struct TestOutScreen: View {
           token: identity.bearerToken, goalId: goalId, chapterId: chapterId)
 
         if case .generating(let generationId) = start {
+          isWriting = true
           try await practice.api.waitForQuestions(
             token: identity.bearerToken, generationId: generationId,
             readyStep: "testOutQuestionsReady")

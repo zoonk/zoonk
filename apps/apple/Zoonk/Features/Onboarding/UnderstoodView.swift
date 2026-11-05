@@ -387,12 +387,12 @@ private struct UnderstoodRowView: View {
       .disabled(isSaving)
 
       if failed {
-        Text(
-          "That didn't save. Try again.", tableName: "Onboarding",
-          comment: "A change couldn't be saved"
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
+            comment: "A change couldn't be saved")
         )
         .font(.footnote)
-        .foregroundStyle(.destructive)
       }
     }
   }
@@ -527,12 +527,12 @@ private struct RowEditor: View {
       }
 
       if failed {
-        Text(
-          "That didn't save. Try again.", tableName: "Onboarding",
-          comment: "A change couldn't be saved"
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Onboarding",
+            comment: "A change couldn't be saved")
         )
         .font(.footnote)
-        .foregroundStyle(.destructive)
       }
 
       ButtonRow {
@@ -724,11 +724,10 @@ private struct InstrumentOutcome: View {
           CreateAccountButton()
         case nil:
           if joinFailed {
-            Text(
-              "That didn't save. Try again.", tableName: "Onboarding",
-              comment: "A change couldn't be saved"
-            )
-            .foregroundStyle(.destructive)
+            FailureLine(
+              message: LocalizedStringResource(
+                "That didn't save. Try again.", table: "Onboarding",
+                comment: "A change couldn't be saved"))
           }
         }
       }

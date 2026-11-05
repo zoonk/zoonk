@@ -9,6 +9,11 @@ class ZoonkIssueRegistry : IssueRegistry() {
     override val api: Int = CURRENT_API
     override val minApi: Int = CURRENT_API
     override val issues: List<Issue> =
-        listOf(HardcodedComposeTextDetector.ISSUE, ImplicitLocaleFormatDetector.ISSUE, MaterialOutlinedButtonDetector.ISSUE)
+        listOf(
+            HardcodedComposeTextDetector.ISSUE,
+            ImplicitLocaleFormatDetector.ISSUE,
+            MaterialOutlinedButtonDetector.ISSUE,
+            MaterialWindowAdaptiveInfoDetector.ISSUE,
+        )
     override val vendor: Vendor = Vendor(vendorName = "Zoonk", identifier = "com.zoonk.lint")
 }

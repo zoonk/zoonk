@@ -110,7 +110,7 @@ function SendButton({ disabled, pending }: { disabled: boolean; pending: boolean
   const t = useExtracted("feedback");
 
   return (
-    <Button disabled={disabled || pending} size="sm" type="submit">
+    <Button disabled={disabled || pending} focusableWhenDisabled size="sm" type="submit">
       {pending && <Spinner aria-hidden="true" />}
       {t("Send message")}
     </Button>

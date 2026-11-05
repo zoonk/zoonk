@@ -13,6 +13,7 @@ import {
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { runOwedSettlements } from "../sessions/_test-utils/owed-settlements";
 import { applyChallengeMove, restoreChallengeBlock } from "./_utils/challenge-move";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
 import { moveWeeklyChallenge, undoWeeklyChallengeMove } from "./move-weekly-challenge";
@@ -174,6 +175,39 @@ describe(moveWeeklyChallenge, () => {
     ]);
 
     expect(restored.payload).toMatchObject({ planItemId: back.id });
+  });
+
+  it("completes a started day whose last open block was the challenge", async () => {
+    const { block, plan, session, user } = await setup();
+
+    const lesson = await prisma.planItem.findFirstOrThrow({
+      where: { kind: "lesson", lessonId: { not: null }, planId: plan.id },
+    });
+
+    await Promise.all([
+      studySessionBlockFixture({
+        completedAt: CHALLENGE_DAY,
+        lessonId: lesson.lessonId,
+        position: 1,
+        sessionId: session.id,
+        startedAt: CHALLENGE_DAY,
+        status: "completed",
+      }),
+      prisma.studySession.update({
+        data: { startedAt: CHALLENGE_DAY, status: "active" },
+        where: { id: session.id },
+      }),
+    ]);
+
+    await expect(
+      moveWeeklyChallenge({ blockId: block.id, input: { timeZone: "UTC" } }),
+    ).resolves.toMatchObject({ status: "moved" });
+
+    await runOwedSettlements(user.id);
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+    ).resolves.toMatchObject({ endedAt: CHALLENGE_DAY, status: "completed" });
   });
 
   it.each(["session", "challenge"] as const)(

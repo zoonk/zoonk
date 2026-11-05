@@ -18,6 +18,8 @@
 ## Glossary
 
 - “lesson”: “レッスン”, not “授業”; lessons are counted “#レッスン”, not with “件”, “回” or “つ”
+- “certificate” (what a finished course or level earns) and the Certificates page: “証明書”, never “修了証” or “認定証”; “Certificate of completion”: “修了証明書”
+- the language “placement test” or “level test”: “レベル診断テスト”
 - “goal” (the learner's goal): “目標”
 - “plan” (study plan): “学習計画”, or “計画” where it's clear; subscription plan: “プラン”
 - “Free” (subscription name): “無料プラン”

@@ -1,3 +1,4 @@
+import { unshownCertificatesSchema } from "@zoonk/core/certificates/contract";
 import { milestoneSchema, missionSchema } from "@zoonk/core/sessions/completion-contract";
 import { MasteryState, StudySessionStatus } from "@zoonk/db";
 import { z } from "zod";
@@ -45,6 +46,7 @@ export const studySessionSummaryResponseSchema = z
       }),
     ),
     ceremony: milestoneSchema.nullable().meta({ description: "At most one ceremony per session" }),
+    certificates: unshownCertificatesSchema,
     comesBack: z.array(z.object({ date: logicalDateSchema, skills: z.number().int().min(0) })),
     correct: z.number().int().min(0),
     energy: z.object({ after: z.number(), before: z.number() }).nullable(),

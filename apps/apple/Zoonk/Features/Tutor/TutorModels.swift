@@ -75,12 +75,6 @@ struct TutorMemoryChange: Decodable, Equatable, Sendable {
   let previous: Fact?
 }
 
-enum TutorMemoryUndo: Equatable, Sendable {
-  case undoing
-  case undone
-  case failed
-}
-
 enum TutorAnswerEvent: Equatable, Sendable {
   case text(String)
   /// Its links are checked; it replaces the streamed text.

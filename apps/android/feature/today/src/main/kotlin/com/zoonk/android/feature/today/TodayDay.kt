@@ -18,7 +18,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -37,7 +36,6 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
@@ -61,6 +59,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.isMediumLayout
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
@@ -103,7 +102,7 @@ fun TodayDay(
     onboarding: OnboardingStore? = null,
     refreshIfChanged: suspend () -> Boolean,
 ) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val wide = isMediumLayout()
     val poll =
         pollWhile(
             active = read.day.isWaitingForLessons(read.today.lessonStatus),
@@ -113,7 +112,7 @@ fun TodayDay(
         )
     val model = remember(read, poll.stalled) { TodayDayModel(read, poll.stalled) }
     val activity = LocalActivity.current
-    DisposableEffect(viewModel) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
+    DisposableEffect(viewModel, read.noticeVisit()) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
     TrackShown(AnalyticsEvent.TodayViewed)
     // Here rather than in the notice, which a lazy list or a layout change can compose again within one visit.
     viewModel.noticeEvent(read)?.let { TrackShown(it) }
@@ -157,6 +156,8 @@ fun TodayDay(
                     TodayNotice(TodayNoticeState(read, viewModel, navigator::open, plans, language?.value, onboarding), layout)
                 },
                 onMission = { opens -> openMission(opens, model, actions, today, scope) },
+                pending = { viewModel.pending },
+                failed = { viewModel.failed },
                 navigate = navigator::open,
                 standing = {
                     val openPlan = { navigator.open(AppRoute.Plan()) }

@@ -33,6 +33,7 @@ import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlanBasesAdvice
+import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
@@ -312,6 +313,16 @@ class PlanScreenshots {
                     ),
             )
 
+        fun certificates(json: String) = ApiJson.decodeFromString<PlanCertificates>(json)
+        val unclaimed = certificates("""{"earned":[],"unclaimed":[{"courseLevel":null}]}""")
+        val levelUnclaimed = certificates("""{"earned":[],"unclaimed":[{"courseLevel":"beginner"}]}""")
+        val oneEarned = certificates("""{"earned":[{"code":"K7QF2M9XHD4P","courseLevel":null,"locked":false}],"unclaimed":[]}""")
+        val severalLocked =
+            certificates(
+                """{"earned":[{"code":"K7QF2M9XHD4P","courseLevel":"overview","locked":true},""" +
+                    """{"code":"M3Q8R2T7V9WX","courseLevel":"beginner","locked":true}],"unclaimed":[]}""",
+            )
+
         fun ready(
             operations: List<PlanOp>,
             plan: com.zoonk.api.models.Plan,
@@ -373,6 +384,12 @@ class PlanScreenshots {
                 "plan-slot-past-date-no-date" to Shot(pastDate, state = { SlotState().apply { dateSearch = DateSearch.NoDate } }),
                 "plan-slot-finished" to Shot(plan(), host = SlotHost(next = next)),
                 "plan-slot-finished-starting" to Shot(plan(), host = SlotHost(next = next, nextLevel = NextLevelStart.Starting)),
+                "plan-slot-finished-certificate" to Shot(plan(), host = SlotHost(next = next, certificates = oneEarned)),
+                "plan-slot-finished-certificates-locked" to Shot(plan(), host = SlotHost(next = next, certificates = severalLocked)),
+                "plan-slot-course-complete" to Shot(plan(), summary = exam, host = SlotHost(certificates = unclaimed)),
+                "plan-slot-level-complete" to Shot(plan(), host = SlotHost(certificates = levelUnclaimed)),
+                "plan-slot-course-complete-failed" to
+                    Shot(plan(), summary = exam, host = SlotHost(certificates = unclaimed, claimFailed = true)),
             )
         var shown by mutableStateOf(shots.keys.first())
         compose.setContent {

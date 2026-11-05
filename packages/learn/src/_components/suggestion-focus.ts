@@ -24,7 +24,10 @@ export function useFocusOnAnswer({
   }, [answered, focusOnMount, section]);
 }
 
-export function useFocusOnRemovedControl(section: React.RefObject<HTMLElement | null>) {
+export function useFocusOnRemovedControl(
+  section: React.RefObject<HTMLElement | null>,
+  target: () => HTMLElement | null = () => section.current,
+) {
   const control = useRef<Element | null>(null);
 
   useEffect(() => {
@@ -42,7 +45,7 @@ export function useFocusOnRemovedControl(section: React.RefObject<HTMLElement | 
     const lost = document.activeElement === document.body;
 
     if (lost && control.current && !control.current.isConnected) {
-      section.current?.focus();
+      target()?.focus();
     }
   });
 }

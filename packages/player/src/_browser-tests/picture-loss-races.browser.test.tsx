@@ -305,6 +305,7 @@ describe("picture loss during a lesson", () => {
         completion: {
           brainPower: 10,
           ceremony: null,
+          certificates: [],
           correctCount: 1,
           energyDelta: 1,
           incorrectCount: 0,

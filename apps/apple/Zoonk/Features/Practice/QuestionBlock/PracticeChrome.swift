@@ -101,7 +101,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   }
 }
 
-/// An intro or a note: it leads, and the trailing page keeps only the way on.
+/// An intro, a note or a result with nothing next: it leads, and the trailing page keeps only the
+/// way on.
 extension PracticeTaskLayout where Response == EmptyView {
   init(
     segments: [PracticeSegment]? = nil, index: Int = 0,
@@ -283,12 +284,13 @@ struct PracticeSaveError: View {
 
   var body: some View {
     HStack {
-      Text(
-        "Your answer wasn't saved. Check your connection.", tableName: "Practice",
-        comment: "Shown over a run's actions when an answer or the finish didn't reach the server."
+      FailureLine(
+        message: LocalizedStringResource(
+          "Your answer wasn't saved. Check your connection.", table: "Practice",
+          comment:
+            "Shown over a run's actions when an answer or the finish didn't reach the server.")
       )
       .font(.subheadline)
-      .foregroundStyle(.destructive)
 
       Spacer()
 

@@ -47,6 +47,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunFinished
@@ -117,7 +118,7 @@ fun PatternScreen(
 
     when (val drill = state) {
         null -> PatternRead(viewModel, navigator, onClose = viewModel::leave)
-        else -> PatternContent(drill, viewModel, app)
+        else -> PatternContent(drill, viewModel, app) { navigator.open(AppRoute.Subscription) }
     }
 }
 
@@ -156,12 +157,13 @@ internal fun PatternContent(
     drill: PatternDrill,
     viewModel: PatternViewModel,
     app: AppContainer,
+    onSeePlus: () -> Unit = {},
 ) {
     val step = drill.step
     val onClose = viewModel::leave
     when {
         drill.isTypos -> TyposPattern(drill.pattern, onClose)
-        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, app, onClose)
+        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, app, onClose, onSeePlus)
         step is DrillStep.Question -> PatternQuestion(drill, step.index, viewModel, app, onClose)
         else -> PatternIntroPage(drill.pattern, onStart = viewModel::start, onClose = onClose)
     }
@@ -441,8 +443,9 @@ private fun PatternResult(
     result: MistakePatternPracticeResult,
     app: AppContainer,
     onClose: () -> Unit,
+    onSeePlus: () -> Unit,
 ) {
-    MomentAfterCeremony(app, result.ceremony) { buddy ->
+    MomentAfterCeremony(app, result.ceremony, result.certificates.map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.pattern_done),

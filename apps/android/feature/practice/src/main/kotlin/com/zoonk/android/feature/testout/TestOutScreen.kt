@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.testout
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -65,6 +68,7 @@ import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -142,7 +146,7 @@ fun TestOutScreen(
     val outcome = ui.outcome
     val sent = ui.sent
     when {
-        outcome != null -> TestOutResult(outcome, ui, viewModel, app, close)
+        outcome != null -> TestOutResult(outcome, ui, viewModel, app, close) { navigator.open(AppRoute.Subscription) }
         sent != null && !ui.sending -> RecordedTestOut(viewModel, sent, close)
         else -> TestOutBody(viewModel, ui, page, app, navigator, showChapter)
     }
@@ -237,6 +241,24 @@ internal fun TestOutPreparing(
 ) {
     val run by viewModel.run.collectAsStateWithLifecycle()
     val waiting = ui.writing || ui.startFailed
+    val locked = plusRequired || ui.plusRequired
+    val focus =
+        rememberPressFocus(
+            when {
+                waiting -> "wait"
+                locked -> "plus"
+                ui.refused != null -> "limit"
+                else -> "start"
+            },
+        )
+    val start = {
+        focus.press()
+        viewModel.start()
+    }
+    val retryWriting = {
+        focus.pressInHolder()
+        viewModel.retryWriting()
+    }
 
     TaskScaffold(
         onClose = navigator::closeTask,
@@ -245,7 +267,7 @@ internal fun TestOutPreparing(
             if (waiting) {
                 null
             } else {
-                { TaskActionBar { StartActions(viewModel, ui, plusRequired || ui.plusRequired, navigator) } }
+                { TaskActionBar { StartActions(ui, locked, navigator, focus.requester, start) } }
             },
     ) { padding ->
         RunPage(Modifier.padding(padding)) {
@@ -253,9 +275,13 @@ internal fun TestOutPreparing(
                 GenerationWait(
                     kind = GenerationKind.TestOutQuestions,
                     run = if (ui.writing) run else GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted),
-                    onRetry = if (ui.writing) viewModel::retryWriting.takeIf { viewModel.canRestart } else viewModel::start,
+                    onRetry = if (ui.writing) retryWriting.takeIf { viewModel.canRestart } else start,
                 ) {
-                    RunIntro(stringResource(R.string.testout_writing_title), stringResource(R.string.testout_writing_detail))
+                    RunIntro(
+                        stringResource(R.string.testout_writing_title),
+                        stringResource(R.string.testout_writing_detail),
+                        titleFocus = focus.requester,
+                    )
                 }
             } else {
                 RunIntro(stringResource(R.string.testout_intro_title), stringResource(R.string.testout_intro_detail))
@@ -266,18 +292,21 @@ internal fun TestOutPreparing(
 
 @Composable
 private fun StartActions(
-    viewModel: TestOutViewModel,
     ui: TestOutUi,
     plusRequired: Boolean,
     navigator: AppNavigator,
+    replacementFocus: FocusRequester,
+    onStart: () -> Unit,
 ) {
     val refused = ui.refused
+    val replacementModifier = Modifier.focusRequester(replacementFocus).semantics(mergeDescendants = true) {}.focusable()
     when {
         plusRequired -> {
             PlusNotice(
                 onSeePlus = null,
                 title = stringResource(R.string.subscription_free_week_over_title),
                 description = stringResource(R.string.subscription_free_week_over_description),
+                modifier = replacementModifier,
             )
             TaskActions { width ->
                 Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = width) {
@@ -292,6 +321,7 @@ private fun StartActions(
                 LimitSubject.Help,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
                 onSeePlus = { navigator.open(AppRoute.Subscription) },
+                modifier = replacementModifier,
             )
         }
 
@@ -301,8 +331,8 @@ private fun StartActions(
                     stringResource(if (ui.starting) R.string.testout_starting else R.string.testout_start),
                     busy = ui.starting,
                     enabled = true,
-                    modifier = width,
-                    onClick = viewModel::start,
+                    modifier = width.focusRequester(replacementFocus),
+                    onClick = onStart,
                 )
             }
         }
@@ -373,6 +403,7 @@ internal fun TestOutResult(
     viewModel: TestOutViewModel,
     app: AppContainer,
     onClose: () -> Unit,
+    onSeePlus: () -> Unit = {},
 ) {
     val undone = ui.undo == UndoState.Done
     val detail =
@@ -384,7 +415,7 @@ internal fun TestOutResult(
         }
     val canUndo = outcome.changeId != null && !undone
 
-    MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }) { buddy ->
+    MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }, outcome.certificates, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(if (outcome.passed) R.string.testout_passed else R.string.testout_not_passed),
             action = stringResource(R.string.testout_continue),

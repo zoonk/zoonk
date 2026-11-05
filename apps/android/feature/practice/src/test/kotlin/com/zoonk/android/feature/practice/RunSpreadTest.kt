@@ -18,9 +18,6 @@ import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
@@ -29,6 +26,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.practice.block.Runner
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -73,17 +71,6 @@ class RunSpreadTest {
         if (restoration == null) rule.setContent(content) else restoration.setContent(content)
     }
 
-    /** Opens the book flat, its fold down the middle of the window. */
-    private fun unfold() {
-        rule.waitForIdle()
-        folds.overrideWindowLayoutInfo(
-            TestWindowLayoutInfo(
-                listOf(FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)),
-            ),
-        )
-        rule.waitForIdle()
-    }
-
     private fun text(
         text: String,
         substring: Boolean = false,
@@ -102,7 +89,7 @@ class RunSpreadTest {
         show(planet("set" to PASSAGE), star(), restoration = restoration)
         rule.onNodeWithText("Mars", substring = true).performClick()
 
-        unfold()
+        rule.unfoldBook(folds)
         assertAfterFold("the pick", text("Mars"))
         rule.onNodeWithText("Mars", substring = true).assertIsSelected()
 
@@ -112,7 +99,7 @@ class RunSpreadTest {
         assertTrue("the pick is in the one column", text("Mars").left < FOLD)
         rule.onNodeWithText("Mars", substring = true).assertIsSelected()
 
-        unfold()
+        rule.unfoldBook(folds)
         assertAfterFold("the pick", text("Mars"))
         rule.onNodeWithText("Mars", substring = true).assertIsSelected()
         rule.onNodeWithText("Check").assertIsEnabled()
@@ -126,7 +113,7 @@ class RunSpreadTest {
         show(sodium(), star(), restoration = restoration)
         rule.onNode(hasSetTextAction()).performTextInput("Na")
 
-        unfold()
+        rule.unfoldBook(folds)
         rule.onNode(hasSetTextAction()).assertTextContains("Na")
         assertAfterFold("the answer box", rule.onNode(hasSetTextAction()).getUnclippedBoundsInRoot())
 
@@ -134,7 +121,7 @@ class RunSpreadTest {
         rule.waitForIdle()
         rule.onNode(hasSetTextAction()).assertTextContains("Na")
 
-        unfold()
+        rule.unfoldBook(folds)
         rule.onNode(hasSetTextAction()).assertTextContains("Na")
         rule.onNodeWithText("Check").assertIsEnabled()
     }

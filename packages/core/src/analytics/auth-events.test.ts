@@ -4,7 +4,8 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
-import { registerAuthAnalytics } from "./auth-events";
+import { registerServerSinks } from "../server-sinks";
+import { trackAuthEvent } from "./auth-events";
 import { trackServerEvent } from "./server";
 
 function signUpEvent({ fromGuest, userId }: { fromGuest: boolean; userId: string }): unknown {
@@ -15,10 +16,10 @@ function signUpEvent({ fromGuest, userId }: { fromGuest: boolean; userId: string
   });
 }
 
-describe(registerAuthAnalytics, () => {
+describe(trackAuthEvent, () => {
   it("sends Sign Up Completed after the response, saying whether a guest's learning came along", async () => {
     const settle = runDeferredWork();
-    registerAuthAnalytics();
+    registerServerSinks();
 
     const [fresh, withGoal, withLesson] = await Promise.all([
       userFixture(),
@@ -57,7 +58,7 @@ describe(registerAuthAnalytics, () => {
 
   it("sends Sign In Method Chosen after the response, with the method", async () => {
     const settle = runDeferredWork();
-    registerAuthAnalytics();
+    registerServerSinks();
     const user = await userFixture();
 
     await reportAuthEvent({ method: "google", name: "sign-in", userId: user.id });

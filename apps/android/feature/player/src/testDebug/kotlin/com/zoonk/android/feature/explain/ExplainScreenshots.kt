@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -30,6 +31,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.SpreadScreen
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
@@ -86,7 +88,10 @@ private fun explanation(
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class ExplainScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -113,6 +118,14 @@ class ExplainScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = capture("tablet")
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("small-book", fold = true)
+
     private val written =
         explanation(
             outline = OUTLINE,
@@ -136,6 +149,7 @@ class ExplainScreenshots {
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        fold: Boolean = false,
     ) {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
@@ -186,6 +200,7 @@ class ExplainScreenshots {
                 Surface(color = MaterialTheme.colorScheme.surface) { key(index) { screens[index].second() } }
             }
         }
+        if (fold) compose.unfoldBook(folds)
         screens.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()

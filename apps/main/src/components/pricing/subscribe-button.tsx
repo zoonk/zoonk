@@ -108,6 +108,7 @@ export function SubscribeButton({ billingSwitch }: { billingSwitch: string }) {
         aria-busy={isLoading}
         className={PLUS_CTA_CLASS}
         disabled={isLoading}
+        focusableWhenDisabled
         onClick={subscribe}
         size="lg"
         type="button"

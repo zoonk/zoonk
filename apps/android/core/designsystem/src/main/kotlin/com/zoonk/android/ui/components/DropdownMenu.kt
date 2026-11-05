@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.adaptive.allVerticalHingeBounds
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.separatingHorizontalHingeBounds
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -30,6 +29,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 
 /**
  * Material's dropdown menu, anchored like Material's to the layout it sits in (a `Box` around the
@@ -48,7 +49,7 @@ fun DropdownMenu(
 ) {
     val direction = LocalLayoutDirection.current
     val density = LocalDensity.current
-    val posture = currentWindowAdaptiveInfoV2().windowPosture
+    val posture = windowAdaptiveInfo().windowPosture
     val bookFolds = posture.allVerticalHingeBounds
     val tabletopFolds = posture.separatingHorizontalHingeBounds
     val window = LocalWindowInfo.current.containerSize
@@ -99,6 +100,7 @@ fun DropdownMenu(
                 offset = DpOffset(0.dp, -lift.toDp()),
                 scrollState = scrollState,
             ) {
+                HoldUntilFoldsRead()
                 CompositionLocalProvider(LocalLayoutDirection provides direction) { content() }
             }
         }
