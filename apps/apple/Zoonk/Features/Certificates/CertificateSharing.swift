@@ -104,11 +104,6 @@ extension CertificateFacts {
         table: "Certificates",
         comment:
           "Suggested text for sharing a language level certificate: the level, then the language")
-    case .placement:
-      return String(
-        localized: "My \(languageName) placement result on Zoonk: \(level ?? "").",
-        table: "Certificates",
-        comment: "Suggested text for sharing a placement result: the language, then the level")
     }
   }
 }

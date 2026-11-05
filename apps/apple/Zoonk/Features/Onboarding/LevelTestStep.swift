@@ -9,13 +9,9 @@ struct LevelTestStep: View {
   let testMinutes: Int
   let onDone: () async throws -> Void
 
-  @Environment(CertificatesStore.self) private var certificates
   @Environment(OnboardingStore.self) private var onboarding
   @Environment(VoiceServices.self) private var voice
   @State private var phase = Phase.loading
-  @State private var placement: CertificateFacts?
-  @State private var placementSeen = false
-  @State private var hasEnded = false
   /// The player is app-wide, and another window can show the same bank question.
   @State private var audioOwner = UUID()
   @State private var levels: [LevelTest.Level] = []
@@ -56,18 +52,7 @@ struct LevelTestStep: View {
           goalID: goalID, sentence: sentence, progress: progress, onTest: show,
           onSkip: stop)
       case .done:
-        LevelTestDone(
-          levels: levels, placement: placement, isSaving: isSaving, failed: failed,
-          onPlacementSeen: { placementSeen = true }, onContinue: finish
-        )
-        .task { await recordEnd() }
-        // The row counts as its moment once it was on screen, so one never seen plays after the
-        // learner's next task.
-        .onDisappear {
-          if placementSeen, let code = placement?.code {
-            Task { await certificates.markShown(code) }
-          }
-        }
+        LevelTestDone(levels: levels, isSaving: isSaving, failed: failed, onContinue: finish)
       }
     }
     .task { await resume() }
@@ -274,8 +259,21 @@ struct LevelTestStep: View {
     }
   }
 
-  /// The end is saved when the test reaches it; a save that failed then is made here.
   private func finish() {
+    saveFinish(then: onDone)
+  }
+
+  /// Saving the finish ends the test, so a relaunch or another device shows this result too.
+  private func stop() {
+    guard !isSaving else {
+      return
+    }
+
+    phase = .done
+    saveFinish {}
+  }
+
+  private func saveFinish(then next: @escaping () async throws -> Void) {
     guard !isSaving else {
       return
     }
@@ -287,44 +285,12 @@ struct LevelTestStep: View {
       defer { isSaving = false }
 
       do {
-        if !hasEnded {
-          placement = try await onboarding.finishLevelTest(goalID: goalID)
-          hasEnded = true
-        }
-
-        try await onDone()
+        try await onboarding.finishLevelTest(goalID: goalID)
+        try await next()
       } catch is CancellationError {
       } catch {
         failed = true
       }
-    }
-  }
-
-  private func stop() {
-    guard !isSaving else {
-      return
-    }
-
-    phase = .done
-  }
-
-  /// Saving the finish ends the test, so a relaunch or another device shows this result too, with
-  /// the placement it earned.
-  private func recordEnd() async {
-    guard !hasEnded else {
-      return
-    }
-
-    isSaving = true
-    failed = false
-    defer { isSaving = false }
-
-    do {
-      placement = try await onboarding.finishLevelTest(goalID: goalID)
-      hasEnded = true
-    } catch is CancellationError {
-    } catch {
-      failed = true
     }
   }
 }
@@ -651,10 +617,8 @@ private struct LevelTestSpeaking: View {
 
 private struct LevelTestDone: View {
   let levels: [LevelTest.Level]
-  let placement: CertificateFacts?
   let isSaving: Bool
   let failed: Bool
-  let onPlacementSeen: () -> Void
   let onContinue: () -> Void
 
   var body: some View {
@@ -680,13 +644,6 @@ private struct LevelTestDone: View {
               }
             }
           }
-        }
-      }
-
-      if let placement {
-        Section {
-          PlacementCertificateRow(facts: placement)
-            .onAppear(perform: onPlacementSeen)
         }
       }
 

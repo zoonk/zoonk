@@ -6,7 +6,6 @@ struct CertificateFacts: Decodable, Hashable, Identifiable, Sendable {
   enum Kind: String, Decodable, Sendable {
     case course
     case languageLevel
-    case placement
   }
 
   let code: String
@@ -87,16 +86,9 @@ extension CertificateFacts {
   }
 
   var kindName: String {
-    switch kind {
-    case .course, .languageLevel:
-      String(
-        localized: "Certificate of completion", table: "Certificates",
-        comment: "The kind of certificate earned by finishing a course or a language level")
-    case .placement:
-      String(
-        localized: "Placement result", table: "Certificates",
-        comment: "The kind of certificate a language placement test gives")
-    }
+    String(
+      localized: "Certificate of completion", table: "Certificates",
+      comment: "The kind of certificate earned by finishing a course or a language level")
   }
 
   /// "Certificate of completion · Nov 3, 2026".
@@ -141,11 +133,6 @@ extension CertificateFacts {
           table: "Certificates",
           comment:
             "A language level certificate read aloud: the learner's name, the level, the language")
-      case .placement:
-        String(
-          localized: "Placement result for \(name): \(languageTitle) \(level ?? "")",
-          table: "Certificates",
-          comment: "A placement certificate read aloud: the learner's name, the language and level")
       }
 
     return [sentence, date].joined(separator: ", ")

@@ -791,15 +791,14 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// The placement certificate the test earned, on every finish of it.
-  func finishLevelTest(goalID: String, token: String) async throws -> CertificateFacts? {
+  func finishLevelTest(goalID: String, token: String) async throws {
     let output = try await clients.perform(token: token) { client in
       try await client.finishLanguageLevelTest(path: .init(goalId: goalID))
     }
 
     switch output {
-    case .ok(let response):
-      return try (try response.body.json.certificate).map { try StudyJSON.recode($0) }
+    case .ok:
+      return
     case .unauthorized:
       throw APIError.unauthorized
     default:

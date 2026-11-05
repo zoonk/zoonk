@@ -66,71 +66,6 @@
         }
       }
     },
-    "%@ %@ placement result" : {
-      "comment" : "A placement certificate's name on LinkedIn: the language, then the level",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@: Einstufungsergebnis"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ %2$@ placement result"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@: resultado de la prueba de nivel"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@ : résultat du test de niveau"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@: risultato del test di livello"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@のレベル診断結果"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@ 레벨 테스트 결과"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@: wynik testu poziomującego"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@: resultado do teste de nível"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@ seviye tespit testi sonucu"
-          }
-        }
-      }
-    },
     "%@ complete!" : {
       "comment" : "Title when the learner finished a CEFR language level, such as B1",
       "localizations" : {
@@ -1614,61 +1549,61 @@
         }
       }
     },
-    "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too." : {
+    "Finish a course or a language level and its certificate shows up here, free to print and share." : {
       "comment" : "How the learner earns certificates",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du einen Kurs oder ein Sprachlevel abschließt, findest du hier dein Zertifikat zum kostenlosen Ausdrucken und Teilen. Auch das Ergebnis eines Einstufungstests erscheint hier."
+            "value" : "Wenn du einen Kurs oder ein Sprachlevel abschließt, findest du hier dein Zertifikat zum kostenlosen Ausdrucken und Teilen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completa un curso o un nivel de un idioma y su certificado aparecerá aquí para que puedas imprimirlo y compartirlo gratis. El resultado de una prueba de nivel también aparece aquí."
+            "value" : "Completa un curso o un nivel de un idioma y su certificado aparecerá aquí para que puedas imprimirlo y compartirlo gratis."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termine un cours ou un niveau de langue pour retrouver ici ton certificat, à imprimer et à partager gratuitement. Le résultat d’un test de niveau apparaît ici aussi."
+            "value" : "Termine un cours ou un niveau de langue pour retrouver ici ton certificat, à imprimer et à partager gratuitement."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completa un corso o un livello di lingua e troverai qui il certificato, da stampare e condividere gratis. Qui trovi anche il risultato del test di livello."
+            "value" : "Completa un corso o un livello di lingua e troverai qui il certificato, da stampare e condividere gratis."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "コースや言語のレベルを修了すると、ここに証明書が表示されます。無料で印刷・共有できます。レベル診断テストの結果もここに表示されます。"
+            "value" : "コースや言語のレベルを修了すると、ここに証明書が表示されます。無料で印刷・共有できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "코스나 언어 레벨을 마치면 인증서가 여기에 표시돼요. 무료로 인쇄하고 공유할 수 있어요. 레벨 테스트 결과도 여기에 표시돼요."
+            "value" : "코스나 언어 레벨을 마치면 인증서가 여기에 표시돼요. 무료로 인쇄하고 공유할 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ukończ kurs lub poziom językowy, a certyfikat pojawi się tutaj. Możesz go bezpłatnie wydrukować i udostępnić. Znajdziesz tu też wynik testu poziomującego."
+            "value" : "Ukończ kurs lub poziom językowy, a certyfikat pojawi się tutaj. Możesz go bezpłatnie wydrukować i udostępnić."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ao concluir um curso ou um nível de idioma, seu certificado aparece aqui para você imprimir e compartilhar de graça. O resultado do teste de nível também aparece aqui."
+            "value" : "Ao concluir um curso ou um nível de idioma, seu certificado aparece aqui para você imprimir e compartilhar de graça."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bir kursu veya dil seviyesini tamamladığında, ücretsiz yazdırıp paylaşabileceğin sertifikan burada görünür. Seviye tespit testinin sonucu da burada görünür."
+            "value" : "Bir kursu veya dil seviyesini tamamladığında, ücretsiz yazdırıp paylaşabileceğin sertifikan burada görünür."
           }
         }
       }
@@ -2704,71 +2639,6 @@
         }
       }
     },
-    "My %@ placement result on Zoonk: %@." : {
-      "comment" : "Suggested text for sharing a placement result: the language, then the level",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mein Einstufungsergebnis für %1$@ auf Zoonk: %2$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "My %1$@ placement result on Zoonk: %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mi resultado en la prueba de nivel de %1$@ en Zoonk: %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mon résultat au test de niveau en %1$@ sur Zoonk : %2$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il mio risultato al test di livello di %1$@ su Zoonk: %2$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkでの%1$@のレベル診断結果は%2$@でした。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk에서 확인한 내 %1$@ 레벨 테스트 결과: %2$@."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mój wynik testu poziomującego w Zoonku: %1$@, poziom %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meu resultado no teste de nível de %1$@ no Zoonk: %2$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk’taki %1$@ seviye tespit testi sonucum: %2$@."
-          }
-        }
-      }
-    },
     "Name" : {
       "comment" : "Labels the learner's full name, as their certificates print it",
       "localizations" : {
@@ -3064,195 +2934,6 @@
         }
       }
     },
-    "Placement result" : {
-      "comment" : "The kind of certificate a language placement test gives",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einstufungsergebnis"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resultado de la prueba de nivel"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Résultat du test de niveau"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Risultato del test di livello"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レベル診断結果"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레벨 테스트 결과"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wynik testu poziomującego"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resultado do teste de nível"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seviye tespit testi sonucu"
-          }
-        }
-      }
-    },
-    "Placement result for %@: %@ %@" : {
-      "comment" : "A placement certificate read aloud: the learner's name, the language and level",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einstufungsergebnis für %1$@: %2$@ %3$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Placement result for %1$@: %2$@ %3$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resultado de la prueba de nivel de %1$@: %2$@ %3$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Résultat du test de niveau pour %1$@ : %2$@ %3$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Risultato del test di livello di %1$@: %2$@ %3$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@さんのレベル診断結果：%2$@ %3$@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@님의 레벨 테스트 결과: %2$@ %3$@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wynik testu poziomującego: %1$@, %2$@ %3$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resultado do teste de nível de %1$@: %2$@ %3$@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ için seviye tespit testi sonucu: %2$@ %3$@"
-          }
-        }
-      }
-    },
-    "Placement result: %@ %@" : {
-      "comment" : "A placement certificate: the language, then the level measured",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einstufungsergebnis: %1$@ %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Placement result: %1$@ %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resultado de la prueba de nivel: %1$@ %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Résultat du test de niveau : %1$@ %2$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Risultato del test di livello: %1$@ %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レベル診断結果：%1$@ %2$@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레벨 테스트 결과: %1$@ %2$@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wynik testu poziomującego: %1$@ %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resultado do teste de nível: %1$@ %2$@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seviye tespit testi sonucu: %1$@ %2$@"
-          }
-        }
-      }
-    },
     "Print" : {
       "comment" : "Prints a certificate",
       "localizations" : {
@@ -3485,65 +3166,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sertifikayı kaydet"
-          }
-        }
-      }
-    },
-    "Saved in your certificates. Share it anytime." : {
-      "comment" : "Under a placement result on the level test's last screen",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unter deinen Zertifikaten gespeichert. Du kannst es jederzeit teilen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guardado en tus certificados. Compártelo cuando quieras."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enregistré dans tes certificats. Partage-le quand tu veux."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salvato tra i tuoi certificati. Condividilo quando vuoi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「証明書」に保存しました。いつでも共有できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "인증서 목록에 저장했어요. 언제든 공유하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zapisano w twoich certyfikatach. Możesz go udostępnić w każdej chwili."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salvo nos seus certificados. Compartilhe quando quiser."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sertifikalarına kaydedildi. İstediğin zaman paylaş."
           }
         }
       }

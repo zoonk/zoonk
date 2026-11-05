@@ -20,7 +20,7 @@ struct CertificateLinkedInSheet: View {
                 comment:
                   "LinkedIn's field for the certificate's name, labeled as in LinkedIn's \"Add license or certification\" form"
               )),
-            value: credentialName)
+            value: certificate.facts.name)
           field(
             Text(
               "Issuing organization", tableName: "Certificates",
@@ -89,20 +89,6 @@ struct CertificateLinkedInSheet: View {
         copied = nil
       }
     }
-  }
-
-  /// The language kinds are named as main names them on LinkedIn.
-  private var credentialName: String {
-    let facts = certificate.facts
-
-    guard facts.kind == .placement else {
-      return facts.name
-    }
-
-    return String(
-      localized: "\(facts.languageTitle) \(facts.level ?? "") placement result",
-      table: "Certificates",
-      comment: "A placement certificate's name on LinkedIn: the language, then the level")
   }
 
   private func field(_ label: Text, value: String, copies: Bool = true, isCode: Bool = false)

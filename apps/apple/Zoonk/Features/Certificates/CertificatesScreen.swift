@@ -80,7 +80,7 @@ private struct EmptyCertificates: View {
           }
         } description: {
           Text(
-            "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too.",
+            "Finish a course or a language level and its certificate shows up here, free to print and share.",
             tableName: "Certificates", comment: "How the learner earns certificates")
         } actions: {
           Button {

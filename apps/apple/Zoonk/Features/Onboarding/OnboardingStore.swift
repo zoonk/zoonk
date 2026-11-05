@@ -379,16 +379,14 @@ final class OnboardingStore {
     }
   }
 
-  func finishLevelTest(goalID: String) async throws -> CertificateFacts? {
-    let certificate = try await cache.onboardingWrite(
-      invalidating: [.certificates, .goals, .learnerModel, .learningProfile]
-    ) { [api] identity in
+  func finishLevelTest(goalID: String) async throws {
+    try await cache.onboardingWrite(invalidating: [.goals, .learnerModel, .learningProfile]) {
+      [api] identity in
       try await api.finishLevelTest(goalID: goalID, token: identity.bearerToken)
     }
 
     // The finish writes the tested level into the goal, which the plan so far shows beside the result.
     onboarding(goalID: goalID).invalidate()
-    return certificate
   }
 
   private func create(_ input: Components.Schemas.GoalCreateInput) async throws -> String {

@@ -281,8 +281,6 @@ struct CertificateCeremony: View {
       return String(
         localized: "\(top.level ?? "") complete!", table: "Certificates",
         comment: "Title when the learner finished a CEFR language level, such as B1")
-    case .placement:
-      return placementResult(top)
     }
   }
 
@@ -315,14 +313,6 @@ struct CertificateCeremony: View {
 
     onClose()
   }
-}
-
-/// "Placement result: Spanish B1".
-func placementResult(_ facts: CertificateFacts) -> String {
-  String(
-    localized: "Placement result: \(facts.languageTitle) \(facts.level ?? "")",
-    table: "Certificates", comment: "A placement certificate: the language, then the level measured"
-  )
 }
 
 /// Each picture loads its certificate's links first.
