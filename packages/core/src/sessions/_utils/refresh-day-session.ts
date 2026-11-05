@@ -1,6 +1,5 @@
 import "server-only";
 import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
-import { type findActiveSubscription } from "../../auth/subscription";
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
@@ -104,11 +103,9 @@ async function planRestOfDayWithPlan({
   kept,
   readSubscription,
   selection,
-}: {
+}: Pick<Parameters<typeof loadDayPlan>[0], "readSubscription" | "selection"> & {
   day: DaySession;
   kept: readonly StudySessionBlock[];
-  readSubscription?: typeof findActiveSubscription;
-  selection?: SelectedDayPlan;
 }) {
   const { goal, session, timeZone } = day;
 
