@@ -295,12 +295,3 @@ struct LessonDidntGetIt: View {
     }
   }
 }
-
-extension LessonStep {
-  var isExplained: Bool {
-    switch content {
-    case .explanation, .workedExample: true
-    default: false
-    }
-  }
-}
