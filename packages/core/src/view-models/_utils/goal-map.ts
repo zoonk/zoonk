@@ -9,6 +9,7 @@ import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { findPlanPhase } from "../../plans/_utils/phase-states";
 import { isPlanFinished } from "../../plans/_utils/plan-end";
@@ -162,6 +163,7 @@ export async function loadGoalMap({
 
   const phaseChallengesRequired = await arePhaseChallengesRequired({
     goalKind: goal.kind,
+    readSubscription: readActiveSubscription,
     userId: goal.userId,
   });
 

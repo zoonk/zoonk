@@ -1,6 +1,7 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { type findActiveSubscription } from "../../auth/subscription";
 import {
   type UsageTotals,
   getUsageCounts,
@@ -128,7 +129,7 @@ async function readyMistakes({
 
 type MissionContext = Pick<
   Parameters<typeof loadDayMissionFacts>[0],
-  "dayPlan" | "goal" | "localDate" | "readUsage" | "selection" | "userId"
+  "dayPlan" | "goal" | "localDate" | "readSubscription" | "readUsage" | "selection" | "userId"
 > & { now: Date };
 
 function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
@@ -147,12 +148,12 @@ function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
 }
 
 async function loadMissionContext(input: MissionContext) {
-  const { dayPlan, goal, localDate, now, readUsage, selection, userId } = input;
+  const { dayPlan, goal, localDate, now, readSubscription, readUsage, selection, userId } = input;
 
   const [plan, goalPlan, tier, limit, recent, usage] = await Promise.all([
     readMissionPlan(input),
     dayPlan?.goalPlan ?? loadGoalPlan(goal.id, selection?.source),
-    dayPlan?.tier ?? getLearnerTier(userId),
+    dayPlan?.tier ?? getLearnerTier(userId, readSubscription),
     dayPlan?.limit ?? loadDailyTimeLimitStatus({ date: localDate, userId }),
     prisma.studySession.findMany({
       orderBy: [{ localDate: "desc" }, { id: "desc" }],
@@ -176,6 +177,7 @@ export async function loadDayMissionFacts({
   plannedMinutes,
   readMistakes,
   readPreparation,
+  readSubscription,
   readUsage,
   selection,
   timeZone,
@@ -192,6 +194,7 @@ export async function loadDayMissionFacts({
   /** A GET's request-wide practice mistakes; without it, they're read fresh. */
   readMistakes?: () => Promise<PracticeMistake[]>;
   readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
+  readSubscription?: typeof findActiveSubscription;
   /** A GET's request-wide usage; without it, it's counted fresh. */
   readUsage?: () => Promise<UsageTotals>;
   selection?: SelectedDayPlan;
@@ -203,6 +206,7 @@ export async function loadDayMissionFacts({
     goal,
     localDate,
     now,
+    readSubscription,
     readUsage,
     selection,
     userId,
@@ -250,7 +254,16 @@ export async function loadDayMissionFacts({
       userId,
     }),
     languageCandidates({ blocks, goal, items, now, tier, usage, userId }),
-    weakSpotCandidate({ blocks, goal, goalPlan, now, plannedMinutes, readPreparation, userId }),
+    weakSpotCandidate({
+      blocks,
+      goal,
+      goalPlan,
+      now,
+      plannedMinutes,
+      readPreparation,
+      readSubscription,
+      userId,
+    }),
     loadExamStructure(goal, { blueprint, picks: readExamPicks(plan?.settings) }),
   ]);
 

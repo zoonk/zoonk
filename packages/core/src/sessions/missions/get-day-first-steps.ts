@@ -1,5 +1,6 @@
 import "server-only";
 import { readPracticeMistakes } from "../../learner/facts/practice-mistakes";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readUsageTotals } from "../../learner/facts/usage-totals";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { readBlockPayload } from "../block-payload";
@@ -37,6 +38,7 @@ export async function getDayFirstSteps({
     localDate: session.localDate,
     plannedMinutes: session.plannedMinutes,
     readMistakes: () => readPracticeMistakes(userId, goal.id),
+    readSubscription: readActiveSubscription,
     readUsage: () => readUsageTotals(userId),
     timeZone,
     userId,
