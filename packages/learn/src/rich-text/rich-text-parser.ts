@@ -7,7 +7,7 @@ import { type RichInlineSegment } from "./rich-inline-segments";
  * links can never change the player's layout.
  */
 export type RichBlock =
-  | { kind: "list"; items: RichInlineSegment[][]; ordered: boolean }
+  | { kind: "list"; items: RichInlineSegment[][]; ordered: boolean; start?: number }
   | { kind: "paragraph"; lines: RichInlineSegment[][] }
   | {
       align: MarkdownTableAlign[];
@@ -23,7 +23,7 @@ const DIGIT = /\d/u;
 const UPPERCASE_LETTER = /\p{Lu}/u;
 const PRICE_AFTER_SIGN = /^\s?\d/u;
 const UNORDERED_ITEM = /^\s*[-*•]\s+(?<text>.+)$/u;
-const ORDERED_ITEM = /^\s*\d{1,3}[.)]\s+(?<text>.+)$/u;
+const ORDERED_ITEM = /^\s*(?<number>\d{1,3})[.)]\s+(?<text>.+)$/u;
 
 function isWhitespace(character: string | undefined): boolean {
   return character === undefined || WHITESPACE.test(character);
@@ -156,22 +156,35 @@ export function parseRichInline(text: string): RichInlineSegment[] {
 
 type LineKind =
   | { kind: "blank" }
-  | { kind: "item"; ordered: boolean; text: string }
+  | { kind: "item"; number?: number; ordered: boolean; text: string }
   | { kind: "text"; text: string };
 
 function classifyLine(line: string): LineKind {
   const unordered = UNORDERED_ITEM.exec(line)?.groups?.text;
-  const ordered = ORDERED_ITEM.exec(line)?.groups?.text;
+  const ordered = ORDERED_ITEM.exec(line)?.groups;
 
   if (unordered) {
     return { kind: "item", ordered: false, text: unordered };
   }
 
-  if (ordered) {
-    return { kind: "item", ordered: true, text: ordered };
+  if (ordered?.text) {
+    return { kind: "item", number: Number(ordered.number), ordered: true, text: ordered.text };
   }
 
   return line.trim() ? { kind: "text", text: line.trim() } : { kind: "blank" };
+}
+
+/** An ordered list counts from its first item's number, so a list split around an example keeps its place. */
+function newList({
+  inline,
+  line,
+}: {
+  inline: RichInlineSegment[];
+  line: Extract<LineKind, { kind: "item" }>;
+}): RichBlock {
+  return line.ordered
+    ? { items: [inline], kind: "list", ordered: true, start: line.number ?? 1 }
+    : { items: [inline], kind: "list", ordered: false };
 }
 
 function appendLine(
@@ -191,7 +204,7 @@ function appendLine(
   if (line.kind === "item") {
     return last?.kind === "list" && last.ordered === line.ordered && previous?.kind === "item"
       ? [...head, { ...last, items: [...last.items, inline] }]
-      : [...blocks, { items: [inline], kind: "list", ordered: line.ordered }];
+      : [...blocks, newList({ inline, line })];
   }
 
   return last?.kind === "paragraph" && previous?.kind === "text"

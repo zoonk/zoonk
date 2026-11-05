@@ -168,6 +168,10 @@ describe(speakRichBlocks, () => {
     );
   });
 
+  it("says a list's numbers from where it starts", () => {
+    expect(speakRichBlocks({ text: "3. Stir.\n4. Serve", words })).toBe("3. Stir. 4. Serve");
+  });
+
   it("names a question that is only a table by its header", () => {
     expect(
       speakRichBlocks({ text: "| Shape | Area $A$ |\n| --- | --- |\n| Circle | $r^2$ |", words }),

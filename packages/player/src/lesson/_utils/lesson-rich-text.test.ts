@@ -81,7 +81,18 @@ describe(parseRichBlocks, () => {
       ordered: false,
     });
 
-    expect(blocks[2]).toMatchObject({ ordered: true });
+    expect(blocks[2]).toMatchObject({ ordered: true, start: 1 });
+  });
+
+  it("numbers an ordered list from its first item, as a part of a longer list keeps its place", () => {
+    expect(parseRichBlocks("2. Second step.\n3. Third step.")).toStrictEqual([
+      {
+        items: [[{ kind: "text", text: "Second step." }], [{ kind: "text", text: "Third step." }]],
+        kind: "list",
+        ordered: true,
+        start: 2,
+      },
+    ]);
   });
 
   it("keeps a single line break inside the paragraph and splits on a blank line", () => {
