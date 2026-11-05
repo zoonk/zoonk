@@ -12,6 +12,7 @@ import {
   type PlacementOutcome,
   type PlacementQuestion,
 } from "../onboarding-actions";
+import { saveFinish } from "./placement-finish";
 import { PlacementQuestionScreen } from "./placement-question";
 import {
   PlacementDone,
@@ -152,28 +153,6 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
   return { countAnswer, mockOffer, phase, setPhase, showReady, start };
 }
 
-async function saveFinish({
-  actions,
-  fromScratch,
-  goalId,
-  stopMockId,
-}: {
-  actions: OnboardingActions;
-  fromScratch: boolean;
-  goalId: string;
-  stopMockId: string | null;
-}): Promise<boolean> {
-  if (stopMockId) {
-    await safeAsync(() => actions.stopPlacementMock(stopMockId));
-  }
-
-  const { data: finished } = await safeAsync(() =>
-    actions.finishPlacement({ fromScratch, goalId }),
-  );
-
-  return Boolean(finished);
-}
-
 export function PlacementStep({
   actions,
   areaCount,
@@ -210,10 +189,14 @@ export function PlacementStep({
     startTransition(async () => {
       onFinishFailed(false);
 
-      if (await saveFinish({ actions, fromScratch, goalId, stopMockId })) {
+      const { data: saved } = await safeAsync(() =>
+        saveFinish({ actions, fromScratch, goalId, stopMockId }),
+      );
+
+      onFinishFailed(!saved);
+
+      if (saved) {
         onDone();
-      } else {
-        onFinishFailed(true);
       }
     });
 
