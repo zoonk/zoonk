@@ -194,7 +194,6 @@ export function LessonPlayerProvider({
         estimatedMinutes: lesson.estimatedMinutes,
         id: lesson.id,
         language: lesson.language,
-        marksPending: arrived ? arrived.marksPending : lesson.marksPending,
         summary: arrived ? arrived.summary : lesson.summary,
         targetLanguage: lesson.targetLanguage,
         title: lesson.title,
