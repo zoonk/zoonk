@@ -89,7 +89,10 @@ function useContinueFromPalette() {
     startTransition(async () => {
       const { data: opened } = await safeAsync(() =>
         open(() =>
-          openStudyBlockAction({ target: { kind: "next", sessionId }, timeZone: getLocalTimeZone() }),
+          openStudyBlockAction({
+            target: { kind: "next", sessionId },
+            timeZone: getLocalTimeZone(),
+          }),
         ),
       );
 
