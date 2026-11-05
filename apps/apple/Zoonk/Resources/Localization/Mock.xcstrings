@@ -13576,61 +13576,67 @@
         }
       }
     },
-    "Task %lld" : {
-      "comment" : "A speaking task's number",
+    "Task %lld · %@" : {
+      "comment" : "A speaking task's number and how long it lasts",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aufgabe %lld"
+            "value" : "Aufgabe %1$lld · %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Task %1$lld · %2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tarea %lld"
+            "value" : "Tarea %1$lld · %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exercice %lld"
+            "value" : "Tâche %1$lld · %2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compito %lld"
+            "value" : "Compito %1$lld · %2$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "タスク%lld"
+            "value" : "タスク%1$lld・%2$@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "과제 %lld"
+            "value" : "과제 %1$lld · %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zadanie %lld"
+            "value" : "Zadanie %1$lld · %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tarefa %lld"
+            "value" : "Tarefa %1$lld · %2$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bölüm %lld"
+            "value" : "Bölüm %1$lld · %2$@"
           }
         }
       }
