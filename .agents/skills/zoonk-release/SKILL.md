@@ -45,7 +45,7 @@ If nothing left changes what learners get, tell the user and stop.
 
 The readers are learners and people following Zoonk, not the team. They want to know what they can do now that they couldn't before, what works better and what stopped going wrong. Write in English. Group the PRs that changed the same thing into one item, start with what the learner notices, and end each item with its PR numbers, such as `(#1956, #1965)`.
 
-Place each item by what the learner experiences, not by its commit type: a `fix` can add something new, and a `feat` can polish something that existed.
+Place each item by what the learner experiences, not by its commit type: a `fix` can add something new, and a `feat` can polish something that existed. A group goes where its main effect belongs, and a PR that changed two things can appear in two items.
 
 | Section           | What goes there                                                                                                                                                                                      |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -54,12 +54,12 @@ Place each item by what the learner experiences, not by its commit type: a `fix`
 | `## Enhancements` | Things that already existed and now work better: easier, faster, clearer, more accessible.                                                                                                           |
 | `## Bug Fixes`    | Things that went wrong for learners in the last release and no longer do. Say what went wrong as they saw it and how it behaves now.                                                                 |
 
-Below Highlights, each item is one bullet of one or two sentences. Leave out an empty section. Most people read the Highlights and skim the rest, so keep the whole thing to a few minutes' read: ten small fixes to one screen become one item about that screen, and when a section runs long, cut what the fewest learners would notice. A rare fix can go unless it blocked something completely, such as signing in.
+Below Highlights, each item is one bullet of one or two sentences. Leave out an empty section. Most people read the Highlights and skim the rest, so keep the whole thing to about five minutes' read (around 1,000 words): ten small fixes to one screen become one item about that screen, and when a section runs long, cut what the fewest learners would notice. A rare fix can go unless it blocked something completely, such as signing in.
 
 Write the way someone on the team would explain the change to a learner:
 
 - "You" for the learner, "we" for Zoonk, in plain words. No internal names: packages, tables, workflows, components, file paths, model or provider names. Names learners know, such as an exam, a browser or LinkedIn, are fine.
-- Say what changed. "Bug fixes and improvements", "improved performance" and "a better experience" say nothing; "Lessons open about twice as fast on a phone" does, when a PR measured it. Quote a number only from a PR that measured it, after checking that no later PR in the release measured it differently. A number measured only before the change describes the wait that went away, not how much faster things got. Never invent one.
+- Say what changed. "Bug fixes and improvements", "improved performance" and "a better experience" say nothing; "Lessons open about twice as fast on a phone" does, when a PR measured it. Quote a number only from a PR that measured it, after checking that no later PR in the release measured it differently. A number measured only before the change describes the wait that went away, not how much faster things got, and a projected number isn't a measurement. Never invent one.
 - Run the self-check in [copywriting's AI tells](../copywriting/references/ai-tells.md) on the draft and rewrite what it flags. No em dashes, no "we're excited to", no closing line that sums up the release.
 
 ```text
@@ -78,4 +78,4 @@ gh release create <tag> --target <release commit's full sha> --title <tag> --not
 
 This creates the tag on the release commit and publishes the release. To publish a draft the user reviewed, run `gh release edit <tag> --draft=false`. Either one starts the Production Release workflow: find the run whose branch is the new tag (`gh run list --workflow production.yml --event release`; it can take a few seconds to show up) and wait for it to finish. Investigate a failure from its log: a failed release can leave one app on the new version and another on the old one. Re-run the failed jobs once (`gh run rerun <run id> --failed`) only when the log shows an outage before any of our code ran; never delete and republish the release to retry it.
 
-Hand back with the release link, its tag and commit, the deployment's result, and the commits left for the next release.
+Hand back with the release link, its tag and commit, the deployment's result, the PRs you cut for length (so the user can bring one back) and the commits left for the next release.
