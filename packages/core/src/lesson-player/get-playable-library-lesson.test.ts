@@ -6,6 +6,8 @@ import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import {
   languageLessonFixture,
+  lessonIconFixture,
+  markedPlayableLessonFixture,
   playableLessonFixture,
 } from "@zoonk/testing/fixtures/playable-lessons";
 import {
@@ -147,16 +149,132 @@ describe(getPlayableLibraryLesson, () => {
       }),
     );
 
+    const untagged = { about: null, icon: null };
+
     expect(maps).toStrictEqual([
       {
-        ideas: [{ text: "Electrons live in clouds." }, { text: "Clouds are fuzzy." }],
+        ideas: [
+          { ...untagged, text: "Electrons live in clouds." },
+          { ...untagged, text: "Clouds are fuzzy." },
+        ],
         shape: "hub",
       },
-      nested,
+      { ...nested, ideas: nested.ideas.map((idea) => ({ ...idea, ...untagged })) },
       null,
       null,
       null,
     ]);
+  });
+
+  it("serves a tagged lesson's marks, about lines and drawn icons", async () => {
+    const { icons, lesson } = await markedPlayableLessonFixture();
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const playable = result?.status === "ready" ? result.lesson : null;
+    const cloud = { smallUrl: icons.cloud.smallUrl, url: icons.cloud.url };
+
+    expect(playable?.marksPending).toBe(false);
+
+    expect(playable?.summary?.ideas.map(({ about, icon }) => ({ about, icon }))).toStrictEqual([
+      { about: "What the electron does around the nucleus", icon: cloud },
+      {
+        about: "How to read the cloud",
+        icon: { smallUrl: icons.nucleus.smallUrl, url: icons.nucleus.url },
+      },
+    ]);
+
+    expect(playable?.steps.map((step) => ("marks" in step ? step.marks : "none"))).toStrictEqual([
+      { example: null, icon: null, ideaIndex: 0, underline: null },
+      {
+        example: "The electron doesn't circle the nucleus like a planet.",
+        icon: cloud,
+        ideaIndex: 0,
+        underline: "a map of where it might be",
+      },
+      { example: null, icon: null, ideaIndex: 1, underline: "darkest just around the nucleus" },
+      { example: null, icon: null, ideaIndex: 1, underline: null },
+    ]);
+  });
+
+  it("drops marks the screen can't show: a quote it doesn't have, half a sentence, an idea past the map, an icon beside a picture, an icon not drawn yet", async () => {
+    const icon = await lessonIconFixture();
+    const drawing = await lessonIconFixture({ smallUrl: null, status: "running", url: null });
+    const text = playableStepContent.explanation.text;
+
+    const marks = {
+      example: "doesn't circle the nucleus like a planet.",
+      iconId: icon.id,
+      iconPending: false,
+      ideaIndex: 3,
+      underline: "a **cloud of possibilities**",
+    };
+
+    const { lesson } = await playableLessonFixture({
+      lesson: { summary: { ideas: [{ text: "Electrons live in clouds." }] } },
+      steps: [
+        { kind: "explanation", marks },
+        {
+          content: {
+            ...playableStepContent.explanation,
+            image: { alt: "A fuzzy cloud", prompt: "Electron cloud" },
+          },
+          kind: "explanation",
+          marks: { ...marks, example: text.slice(0, text.indexOf(" It ")), ideaIndex: 0 },
+        },
+        { kind: "explanation", marks: { ...marks, iconId: drawing.id, underline: "in the text" } },
+      ],
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+    expect(steps.map((step) => ("marks" in step ? step.marks : "none"))).toStrictEqual([
+      {
+        example: null,
+        icon: { smallUrl: icon.smallUrl, url: icon.url },
+        ideaIndex: null,
+        underline: null,
+      },
+      {
+        example: "The electron doesn't circle the nucleus like a planet.",
+        icon: null,
+        ideaIndex: 0,
+        underline: null,
+      },
+      { example: null, icon: null, ideaIndex: null, underline: null },
+    ]);
+  });
+
+  it("asks clients to read again while a freshly written lesson waits for its marks or icons, and not for an old lesson or a language one", async () => {
+    const old = new Date(Date.now() - 10 * 60_000);
+
+    const waitingIcon = {
+      example: null,
+      iconId: null,
+      iconPending: true,
+      ideaIndex: 0,
+      underline: null,
+    };
+
+    const [untagged, drawing, stale, language] = await Promise.all([
+      playableLessonFixture({ steps: ["hook", "explanation"] }),
+      playableLessonFixture({ steps: [{ kind: "explanation", marks: waitingIcon }] }),
+      playableLessonFixture({ steps: ["explanation"] }),
+      languageLessonFixture(),
+    ]);
+
+    await prisma.step.updateMany({
+      data: { generatedAt: old },
+      where: { lessonId: stale.lesson.id },
+    });
+
+    const pending = await Promise.all(
+      [untagged.lesson, drawing.lesson, stale.lesson, language.lesson].map(async ({ id }) => {
+        const result = await getPlayableLibraryLesson({ lessonId: id });
+        return result?.status === "ready" ? result.lesson.marksPending : "not ready";
+      }),
+    );
+
+    expect(pending).toStrictEqual([true, true, false, false]);
   });
 
   it("serves the shared fixture content of every kind, so tests play valid lessons", async () => {

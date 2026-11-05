@@ -26,6 +26,7 @@ export function buildLesson(
     id: crypto.randomUUID(),
     language: "en",
     level: "beginner",
+    marksPending: false,
     skills: [],
     steps: steps.map((step, position) => ({ ...step, position })),
     summary: null,

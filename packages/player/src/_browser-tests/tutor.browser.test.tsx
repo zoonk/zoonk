@@ -1222,6 +1222,37 @@ describe("the learner's buddy", () => {
     });
   });
 
+  it('explains the screen more simply in one tap on "I didn\'t get this"', async () => {
+    const reading = teachingStep("explanation");
+    const { api, lesson } = lessonWithTutor({ steps: [reading] });
+    api.next("answer", () => Promise.resolve(tutorAnswerResponse(TUTOR_ANSWER)));
+    playLesson({ lesson });
+
+    await page.getByRole("button", { name: "I didn't get this" }).click();
+    await expect.element(page.getByRole("dialog").getByText(TUTOR_ANSWER)).toBeVisible();
+
+    expect(api.inputs).toStrictEqual([
+      expect.objectContaining({
+        context: expect.objectContaining({ kind: "step", stepId: reading.id }),
+        question: "Explain it more simply",
+        suggestion: "simpler",
+      }),
+    ]);
+  });
+
+  it("leaves out \"I didn't get this\" for a guest, who can't ask the buddy", async () => {
+    const { lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    renderLessonPlayer({ lesson, tutor: { ...buildTutor(), canAsk: false } });
+
+    await expect
+      .element(page.getByRole("heading", { name: "A cloud, not a little ball" }))
+      .toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "I didn't get this" }))
+      .not.toBeInTheDocument();
+  });
+
   it("shows a tapped suggestion as sent, with the buddy thinking, before the server saves it", async () => {
     const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
     const saveQuestion = api.hold("create");
@@ -1589,10 +1620,11 @@ describe("docked beside the lesson", () => {
     await expect.element(dockedConversation().getByText("Why a cloud?")).toBeVisible();
   });
 
-  it("offers help after a long pause only on a screen the learner hasn't asked the buddy about", async () => {
+  it("offers help after a long pause in a language lesson, only on a screen the learner hasn't asked the buddy about", async () => {
     freezeClock();
     const reading = teachingStep("explanation");
-    const { lesson } = lessonWithTutor({ steps: [reading, teachingStep("explanation")] });
+    const lesson = buildLesson([reading, teachingStep("explanation")], { targetLanguage: "es" });
+    stubTutorApi({ lesson });
     const pauseMs = getStrugglePauseMs(reading) ?? 0;
     const offer = page.getByText("Taking your time? Pip can explain it another way.");
 
@@ -1619,5 +1651,21 @@ describe("docked beside the lesson", () => {
     await page.getByRole("button", { name: /^Next/u }).click();
     await pause();
     await expect.element(offer).toBeVisible();
+  });
+
+  it('fills in the simpler suggestion when "I didn\'t get this" is tapped while a question is on its way', async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    const saveQuestion = api.hold("create");
+    playLesson({ lesson });
+
+    const didntGetIt = page.getByRole("button", { name: "I didn't get this" });
+    await didntGetIt.click();
+    await expect.element(dockedConversation().getByText("Explain it more simply")).toBeVisible();
+
+    await didntGetIt.click();
+    await expect.element(asideComposer()).toHaveValue("Explain it more simply");
+
+    await saveQuestion();
+    expect(api.requests.create).toBe(1);
   });
 });

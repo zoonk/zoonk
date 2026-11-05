@@ -1,0 +1,55 @@
+/*
+ * A teacher's marks on the page: a dotted paper ground, a hand-drawn underline and a highlighter.
+ * Each follows the text it marks across line breaks and grows with the text.
+ */
+@utility dot-paper {
+  background-image: radial-gradient(
+    circle at center,
+    color-mix(in srgb, var(--foreground) 10%, transparent) 1.15px,
+    transparent 1.6px
+  );
+  background-size: 20px 20px;
+  background-attachment: local;
+
+  @media (prefers-contrast: more) {
+    background-image: none;
+  }
+}
+
+/*
+ * A drawing in a data URL can't read the page's variables, so each stroke repeats that mode's
+ * `--warning` (look here).
+ */
+@utility hand-underline {
+  padding-bottom: 0.2em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7.5C30 4.5 62 9 98 6.5S168 4.5 198 7' fill='none' stroke='oklch(0.74 0.14 70)' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M8 10C52 8 122 10.5 192 9' fill='none' stroke='oklch(0.74 0.14 70)' stroke-width='1.5' stroke-linecap='round' opacity='.65'/%3E%3C/svg%3E");
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 0.5em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+
+  @variant dark {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7.5C30 4.5 62 9 98 6.5S168 4.5 198 7' fill='none' stroke='oklch(0.83 0.12 80)' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M8 10C52 8 122 10.5 192 9' fill='none' stroke='oklch(0.83 0.12 80)' stroke-width='1.5' stroke-linecap='round' opacity='.65'/%3E%3C/svg%3E");
+  }
+
+  @media (prefers-contrast: more) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7.5C30 4.5 62 9 98 6.5S168 4.5 198 7' fill='none' stroke='oklch(0.473 0.137 46.201)' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M8 10C52 8 122 10.5 192 9' fill='none' stroke='oklch(0.473 0.137 46.201)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+
+    @variant dark {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7.5C30 4.5 62 9 98 6.5S168 4.5 198 7' fill='none' stroke='oklch(0.879 0.169 91.605)' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M8 10C52 8 122 10.5 192 9' fill='none' stroke='oklch(0.879 0.169 91.605)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    }
+  }
+}
+
+/* A highlighter behind every bold run inside: the new terms a teaching screen introduces. */
+@utility highlight-strong {
+  & strong {
+    margin-inline: -0.1em;
+    padding-inline: 0.1em;
+    border-radius: 0.25em;
+    background-color: color-mix(in srgb, var(--warning) 28%, transparent);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+}

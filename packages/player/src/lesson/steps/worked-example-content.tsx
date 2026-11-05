@@ -7,6 +7,8 @@ import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { LESSON_BODY_CLASS } from "../_components/lesson-step-text";
+import { MarkedText } from "../_components/marked-text";
 import { type StepOf } from "./lesson-step-view-props";
 
 type WorkedExampleContentData = StepOf<"workedExample">["content"];
@@ -62,10 +64,12 @@ function useNewestStepInView(revealed: number) {
 export function WorkedExampleContent({
   content,
   figure,
+  marks,
   revealed,
 }: {
   content: WorkedExampleContentData;
   figure?: React.ReactNode;
+  marks: StepOf<"workedExample">["marks"];
   revealed: number;
 }) {
   const t = useExtracted();
@@ -75,11 +79,11 @@ export function WorkedExampleContent({
   const [openedWith] = useState(revealed);
 
   return (
-    <div className="flex w-full flex-col gap-5 lg:max-w-xl" data-slot="worked-example">
-      <RichTextBlocks
-        className="text-lg leading-relaxed md:text-[1.1875rem] md:leading-[1.6]"
-        text={content.problem}
-      />
+    <div
+      className="highlight-strong flex w-full flex-col gap-5 lg:max-w-xl"
+      data-slot="worked-example"
+    >
+      <MarkedText className={LESSON_BODY_CLASS} marks={marks} text={content.problem} />
       {figure}
 
       <ol aria-label={t("Steps")} aria-live="polite" className="flex flex-col gap-3">

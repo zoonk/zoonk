@@ -5,7 +5,8 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useTutorBuddy } from "../../questions/tutor-buddy";
 import { type ExplainingStep } from "../_utils/lesson-struggle";
-import { useLessonPlayer } from "../lesson-player-context";
+import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
+import { DidntGetItButton } from "./didnt-get-it-button";
 import { useStrugglePause } from "./use-struggle-pause";
 
 export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
@@ -57,4 +58,11 @@ export function StrugglePauseOffer({ step }: { step: ExplainingStep }) {
   const isStuck = useStrugglePause(step);
 
   return isStuck && !screen.quickCheck ? <AskBuddyOffer reason="pause" /> : null;
+}
+
+/** Knowledge lessons offer "I didn't get this" on every explaining screen; language lessons offer help after a long pause. */
+export function ExplainingScreenHelp({ step }: { step: ExplainingStep }) {
+  const { lesson } = useLessonPlayerConfig();
+
+  return lesson.targetLanguage ? <StrugglePauseOffer step={step} /> : <DidntGetItButton />;
 }

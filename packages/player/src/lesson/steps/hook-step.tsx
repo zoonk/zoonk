@@ -13,8 +13,10 @@ import {
   LessonEyebrow,
   LessonQuestion,
 } from "../_components/lesson-step-text";
+import { OpeningMap } from "../_components/opening-map";
 import { ScreenSupport } from "../_components/screen-support";
 import { splitQuestionData } from "../_utils/lesson-aside";
+import { useLessonPlayerConfig } from "../lesson-player-context";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
 function HookGuess({
@@ -64,11 +66,11 @@ function HookGuess({
   );
 }
 
-export function HookStepView(props: LessonStepViewProps<StepOf<"hook">>) {
-  const { step } = props;
+function HookScene({ step }: LessonStepViewProps<StepOf<"hook">>) {
+  const { lesson } = useLessonPlayerConfig();
 
-  if (step.content.variant === "guess") {
-    return <HookGuess {...props} />;
+  if (step.content.variant !== "text") {
+    return null;
   }
 
   return (
@@ -76,6 +78,15 @@ export function HookStepView(props: LessonStepViewProps<StepOf<"hook">>) {
       <LessonBody>{step.content.text}</LessonBody>
       <LessonStepPicture className="order-first" hero priority step={step} />
       <LessonVisual visual={step.content.visual} />
+      {lesson.summary && <OpeningMap ideas={lesson.summary.ideas} />}
     </PlayerReadScene>
+  );
+}
+
+export function HookStepView(props: LessonStepViewProps<StepOf<"hook">>) {
+  return props.step.content.variant === "guess" ? (
+    <HookGuess {...props} />
+  ) : (
+    <HookScene {...props} />
   );
 }

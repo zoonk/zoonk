@@ -5,11 +5,12 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CloudOffIcon, ImageIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import { FILL_FOR_WORD_BANK_CLASS, PlayerContentFrame } from "../components/step-layouts";
 import { LessonCitation } from "./_components/lesson-citation";
 import { UpcomingPictures } from "./_components/lesson-pictures";
 import { LessonEyebrow } from "./_components/lesson-step-text";
+import { OrientationStrip } from "./_components/orientation-strip";
 import { LESSON_CONTENT_ID, focusLessonAfterTurn } from "./_utils/lesson-focus";
 import { isLanguageStep } from "./_utils/lesson-steps";
 import { AskBuddyOffer } from "./controls/ask-buddy-offer";
@@ -20,6 +21,7 @@ import { useLessonPlayer } from "./lesson-player-context";
 import { type LessonPlayerState } from "./lesson-player-state";
 import { type PlayableLibraryStep } from "./lesson-player-types";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
+import { useShownMarks } from "./use-arriving-marks";
 import { type ScreenTurn } from "./use-screen-turns";
 
 function NoticeLine({
@@ -164,6 +166,12 @@ export function LessonStage({
 }) {
   const { actions, screen, state } = useLessonPlayer();
   const result = state.results[step.id];
+  const marks = useShownMarks({ isShown, step });
+
+  const marked = useMemo(
+    () => (isLanguageStep(step) || step.marks === marks ? step : { ...step, marks }),
+    [marks, step],
+  );
 
   const next = result && {
     nextReviewAt: result.nextReviewAt,
@@ -173,6 +181,7 @@ export function LessonStage({
 
   return (
     <div className={cn("flex w-full flex-col", FILL_FOR_WORD_BANK_CLASS)} data-slot="lesson-stage">
+      <OrientationStrip step={marked} />
       {isShown && <LessonNotice />}
 
       <LessonScreenFrame turn={turn}>
@@ -181,7 +190,7 @@ export function LessonStage({
           isLocked={isShown && state.phase !== "playing"}
           onAnswer={(answer) => actions.selectAnswer(step.id, answer)}
           result={result}
-          step={step}
+          step={marked}
         />
       </LessonScreenFrame>
 

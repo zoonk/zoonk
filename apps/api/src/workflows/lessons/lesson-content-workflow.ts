@@ -11,6 +11,7 @@ import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken, joinRun } from "../_shared/run-token";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
+import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import {
   type LessonContentResult,
@@ -274,11 +275,12 @@ export async function lessonContentWorkflow(
     return finish({ lessonId, status: outcome.status === "heldBack" ? "heldBack" : "missing" });
   }
 
-  // The lesson plays without its pictures and model checks, so the waiting screens open it first.
+  // The lesson plays without its pictures, marks and model checks, so the waiting screens open it first.
   const ready = await finish({ lessonId, status: "ready" });
 
   if (outcome.imageScope) {
     const analytics = { ...input.analytics, contentScope: outcome.imageScope };
+    await start(lessonMarksWorkflow, [{ analytics: input.analytics, lessonId, wait: input.wait }]);
     await start(lessonImagesWorkflow, [{ analytics, lessonId }]);
   }
 
