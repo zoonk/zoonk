@@ -11,14 +11,10 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.audio.GradeOutcome
-import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
-import com.zoonk.api.models.CertificateFacts
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestGeneration
-import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import kotlinx.coroutines.launch
 
 private class SentTestAnswer(
@@ -59,14 +55,6 @@ internal class LevelTestViewModel(
         private set
 
     var finishFailed by mutableStateOf(false)
-        private set
-
-    /** The finish ran: its levels place the plan, and Build my plan only moves on. */
-    var finished by mutableStateOf(false)
-        private set
-
-    /** The placement certificate the finish answered with; null when the test earned none. */
-    var placement by mutableStateOf<CertificateFacts?>(null)
         private set
 
     private val test get() = store.levelTests[goalId]
@@ -128,9 +116,6 @@ internal class LevelTestViewModel(
         send()
     }
 
-    suspend fun speak(recording: VoiceRecording): GradeOutcome<LanguageLevelTestSpokenResult> =
-        store.speakLevelTest(goalId, recording).also { if (it is GradeOutcome.Graded) finishIfEnded() }
-
     /** A failed answer may have saved with only its reply lost: once the test moved past it, it isn't sent again. */
     fun retryAnswer() {
         val answer = sent ?: return
@@ -145,7 +130,6 @@ internal class LevelTestViewModel(
             } else {
                 sent = null
                 answerFailed = false
-                finishIfEnded()
             }
         }
     }
@@ -157,17 +141,13 @@ internal class LevelTestViewModel(
         finish {}
     }
 
-    fun buildPlan(onDone: () -> Unit) = if (finished) onDone() else finish(onDone)
-
     fun finish(onDone: () -> Unit) {
         if (isSaving) return
         isSaving = true
         finishFailed = false
         viewModelScope.launch {
-            when (val outcome = store.finishLevelTest(goalId)) {
+            when (store.finishLevelTest(goalId)) {
                 is WriteOutcome.Done -> {
-                    finished = true
-                    placement = outcome.value?.certificate
                     onDone()
                 }
 
@@ -186,8 +166,7 @@ internal class LevelTestViewModel(
         isSaving = true
         answerFailed = false
         viewModelScope.launch {
-            val outcome = store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs, answer.skipped)
-            when (outcome) {
+            when (store.answerLevelTest(goalId, answer.questionId, answer.answerIndex, answer.durationMs, answer.skipped)) {
                 is WriteOutcome.Done -> {
                     sent = null
                 }
@@ -199,17 +178,7 @@ internal class LevelTestViewModel(
                 }
             }
             isSaving = false
-            if (outcome is WriteOutcome.Done) finishIfEnded()
         }
-    }
-
-    /**
-     * Main's: the learner's own answer that ends the test finishes it then, so its last screen shows
-     * the placement it earned. A test that only reads as ended (reopened, or finished elsewhere)
-     * waits for Build my plan.
-     */
-    private fun finishIfEnded() {
-        if (!finished && phase(test.state.value) is LevelTestPhase.Done) finish {}
     }
 
     private fun Resource<LanguageLevelTest>.preparing() = (state.value.value as? LanguageLevelTest.LanguageLevelTestOneOfValue)?.value

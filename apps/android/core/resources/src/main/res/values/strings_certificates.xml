@@ -10,14 +10,11 @@
     <string name="certificates_lead">Print, download or share your certificates anytime.</string>
     <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Certificate of completion</string>
-    <!-- A certificate stating the language level a placement test measured, such as "Spanish B1". -->
-    <string name="certificates_kind_placement">Placement result</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
     <string name="certificates_empty_title">No certificates yet</string>
-    <string name="certificates_empty_description">Finish a course or a language level and its certificate shows up here, free to print and share. A placement test\'s result shows up here too.</string>
+    <string name="certificates_empty_description">Finish a course or a language level and its certificate shows up here, free to print and share.</string>
     <string name="certificates_continue_learning">Continue learning</string>
-    <!-- A section title on the empty page, over the learner's goals and how each one earns a certificate. -->
     <!-- On a finished plan's card: opens the course's certificate. -->
     <string name="certificates_view">View certificate</string>
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
@@ -69,11 +66,6 @@
     <string name="certificates_saved_several">They\'re saved in Certificates.</string>
     <string name="certificates_continue">Continue</string>
 
-    <!-- A row on the language level test's last screen. %1$s is the language, such as "Spanish", and %2$s the level the test measured, such as "B1". -->
-    <string name="certificates_placement_row_title">Placement result: %1$s %2$s</string>
-    <string name="certificates_placement_row_saved">Saved in your certificates. Share it anytime.</string>
-    <string name="certificates_placement_row_guest">Create a free account to keep it and share it.</string>
-
     <!-- The title of the screen showing one certificate. -->
     <string name="certificates_certificate">Certificate</string>
     <!-- Prints the certificate, or saves it as a PDF from the printing screen. -->
@@ -93,8 +85,6 @@
     <string name="certificates_alt_course">%1$s completed %2$s</string>
     <!-- TalkBack reads the certificate's picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
     <string name="certificates_alt_level">%1$s completed level %2$s in %3$s</string>
-    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name, %2$s the language, such as "Spanish", and %3$s the level, such as "B1". -->
-    <string name="certificates_alt_placement">Placement result for %1$s: %2$s %3$s</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
 
@@ -119,8 +109,6 @@
     </plurals>
     <!-- Text the learner can post with their certificate. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
     <string name="certificates_caption_level">I just completed level %1$s in %2$s on Zoonk.</string>
-    <!-- Text the learner can post with their certificate. %1$s is the language, such as "Spanish", and %2$s the level a placement test measured, such as "B1". -->
-    <string name="certificates_caption_placement">My %1$s placement result on Zoonk: %2$s.</string>
 
     <string name="certificates_linkedin_title">Add to your LinkedIn profile</string>
     <string name="certificates_linkedin_description">LinkedIn opens its form to add a license or certification. Copy each field into it.</string>
@@ -130,8 +118,6 @@
     <string name="certificates_linkedin_issue_date">Issue date</string>
     <string name="certificates_linkedin_credential_id">Credential ID</string>
     <string name="certificates_linkedin_credential_url">Credential URL</string>
-    <!-- The certificate's name in LinkedIn's form for a placement test's result. %1$s is the language, such as "Spanish", and %2$s the level, such as "B1". -->
-    <string name="certificates_linkedin_placement_name">%1$s %2$s placement result</string>
     <string name="certificates_linkedin_open">Open LinkedIn</string>
     <string name="certificates_copy">Copy</string>
     <!-- TalkBack's name for a Copy button. %1$s is the field it copies, such as "Credential ID". -->

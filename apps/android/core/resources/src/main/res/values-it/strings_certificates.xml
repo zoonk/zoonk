@@ -5,14 +5,12 @@
   "certificates_alt_course": "bdb68d018eb12f5bc41f3281879029bc7fab8f37c9d148768cc69392868722a7",
   "certificates_alt_dated": "02b5e1a8a568ce200d9b0a993ff229cf79d85792f963ab23fdafe1195443e35e",
   "certificates_alt_level": "0f91ddd992075251fbbac0257572137be1ef538539f199e710eee8e6cead7c92",
-  "certificates_alt_placement": "f0e064c93cfc30f361743b1f76f051fb25a0c2d226b45333de7da45fe8154b4d",
   "certificates_cancel": "877a8ed5f80cc03107591456ac5e0b9ab7d30a0be0c7eb46c1a83b3874aae9b9",
   "certificates_caption_course": "96534d8734f3a44b9ef992519311c9e392c2ac8afb3c917daecd09a3af05d136",
   "certificates_caption_course_hours": "0e2b3c80998a55c9c383205a5a4b9ce10fdfcfa82fd4b74d49db33b495a34566",
   "certificates_caption_course_minutes": "78a3d948cece5e79b6dafe026790eae8feb4e5a77b8268a2a7d5e37df174391a",
   "certificates_caption_course_tested_out": "342ca5e95d8a9c2b91a1977f8c5c8ea1a7b43bd296a18487bfda4c38f8c62d2a",
   "certificates_caption_level": "54cab115108bb7a362bcc809c0d1d1bc35e1a1bae92d5e22d32eee5508f59f0c",
-  "certificates_caption_placement": "0023baa60d59239a4261700c534e173370429468df2490e15403dcaeede2aada",
   "certificates_certificate": "02f6a518b87df7c41e9adacdedb79e5c63c2ce86ddba8a783a8d5fe91799c50a",
   "certificates_change": "fe58c22f287c44b2ac55cde55402bfd3a90f22af2cec6256be14b51cc2cc5e36",
   "certificates_change_name": "e1229a3000e07bc4b2866ca7c80e5db47bb050349cd8926eef2eb9c8f1e0641e",
@@ -29,12 +27,11 @@
   "certificates_download": "24d8b76da43692326288b5057006e14961a3f2645ab7e7c804d191ee4bc2236d",
   "certificates_downloaded": "26cfa3c409ea2b366f6cc1a7f08814bf5bfc51fa918d13afe5902e32352f610a",
   "certificates_earned": "be6980cee9e22e7eb1f7a0bb63af4d142b4727e29b9c9953481e104ffaba98b5",
-  "certificates_empty_description": "ba5bf637e90d3f0aa4d9030431cca7fe7f144b48bd4366db24d1dfd180bd0e27",
+  "certificates_empty_description": "d7c214dc3f18efb9350d2a3b61e52bd205a8c668126a4375c2e4075d8791f3b8",
   "certificates_empty_title": "620ff7a84d722668cfe51ce4b1d547c04651c001b52a551e5971bb804d85b021",
   "certificates_get": "06ee13c42c17e39a838fd6eb0f31c3efcd6fec02914e0b80382ffe6b6dee8c7b",
   "certificates_guest_line": "d791b4ecdf29f6f3bb565adbdcf10a626af7d84cc6da74b9c5f93b55f62aa1d1",
   "certificates_kind_completion": "9165cf8c888af928e38c1903e11ab41b0ec64a48fe45e6b0820e703c45b9542d",
-  "certificates_kind_placement": "25f0b717505669c77aba8a47d385531779d5d61aedbbeb87405ccdd31e7075a1",
   "certificates_language_level": "761898edca1a5c7e216e0ba14f905cf96f371e2f063043ecd8a1d79418446862",
   "certificates_language_ready": "dc773c95553254ca10bffacbbad3730ec133436b6303f82ef93ce0ec5a70c889",
   "certificates_lead": "50745c5284f03ba66fa1fda289a6b1528446fe3036e3a024d5b1d3802ac678b7",
@@ -49,7 +46,6 @@
   "certificates_linkedin_name": "5d0a21daddfca54e168f0d5b599f30ba1ecd27bb0415e08b97ae46f3c60febf4",
   "certificates_linkedin_open": "f09fefef247db32caa1e9bcc9d1380c88d15a4b2e8b410d123c041b314f204e6",
   "certificates_linkedin_organization": "436a5a49427cfd83422c56482553a049760fb893936c9e19a502e2f2da7eb2f9",
-  "certificates_linkedin_placement_name": "da7b0089cdadac135c9c27b32ffb1111430f2f09719a5cac4d1cea89410e69c1",
   "certificates_linkedin_title": "3588f86a8a6c9e6767f477741454b4920305377f19f8f33ec911cb1f9fedfa74",
   "certificates_name_hint": "3f828adfb01c289ce733d2fd1689b65db59e886b2985adbe2ff0a5f261fef0c5",
   "certificates_name_hint_new": "678e5c89cdd4bcbb17add57af81f401b41bc13da6954e256d4cc76d476fc00f6",
@@ -61,9 +57,6 @@
   "certificates_not_found": "0313d09717cb3e7d73f7266c965c89d202b875721a68d2fd3de93c7f5cdf55b2",
   "certificates_on_your_certificate": "f223aa166fab6e61b06478e782e905da99f5c2f6737704d3cd52eae0f7cce1c4",
   "certificates_picture_failed": "16ba40082253886db74a75ad209a8bd980ebd6fb1f6a29587afe4dd72fba359d",
-  "certificates_placement_row_guest": "2497b87070e214bf5cffc2bcc3427fa46787bdfbab64075931d6b09fa796f7f4",
-  "certificates_placement_row_saved": "35bc875dda5a9cab31898ecc9edd7f2f4e666ca294ab71acac178e74a7e0294d",
-  "certificates_placement_row_title": "2a72057c24d4b120dbaae44800fccfa28bd8c45675a3b568872c21e1fb872378",
   "certificates_print": "7dae28efb0dd0e26536b48c964ed4812296ebe318e87d324bee253391ecc1453",
   "certificates_save": "3b27efe3192bdff629bb4ea475f76fd36ab2f1bb44ee9d79d8d0dea2c74c4d12",
   "certificates_saved_one": "b0374f30f9af0867ed66f4e00068e2a44117b49858983eac296772002007c6c4",
@@ -89,14 +82,11 @@
     <string name="certificates_lead">Stampa, scarica o condividi i tuoi certificati quando vuoi.</string>
     <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Certificato di completamento</string>
-    <!-- A certificate stating the language level a placement test measured, such as "Spanish B1". -->
-    <string name="certificates_kind_placement">Risultato del test di livello</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
     <string name="certificates_empty_title">Ancora nessun certificato</string>
-    <string name="certificates_empty_description">Completa un corso o un livello di lingua e troverai qui il certificato, da stampare e condividere gratis. Qui trovi anche il risultato del test di livello.</string>
+    <string name="certificates_empty_description">Completa un corso o un livello di una lingua e troverai qui il certificato, da stampare e condividere gratis.</string>
     <string name="certificates_continue_learning">Continua a imparare</string>
-    <!-- A section title on the empty page, over the learner's goals and how each one earns a certificate. -->
     <!-- On a finished plan's card: opens the course's certificate. -->
     <string name="certificates_view">Visualizza il certificato</string>
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
@@ -147,10 +137,6 @@
     <!-- "Certificates" is the place name. -->
     <string name="certificates_saved_several">Sono salvati in Certificati.</string>
     <string name="certificates_continue">Continua</string>
-    <!-- A row on the language level test's last screen. %1$s is the language, such as "Spanish", and %2$s the level the test measured, such as "B1". -->
-    <string name="certificates_placement_row_title">Risultato del test di livello: %1$s %2$s</string>
-    <string name="certificates_placement_row_saved">Salvato tra i tuoi certificati. Condividilo quando vuoi.</string>
-    <string name="certificates_placement_row_guest">Crea un account gratuito per conservarlo e condividerlo.</string>
     <!-- The title of the screen showing one certificate. -->
     <string name="certificates_certificate">Certificato</string>
     <!-- Prints the certificate, or saves it as a PDF from the printing screen. -->
@@ -170,8 +156,6 @@
     <string name="certificates_alt_course">%1$s ha completato %2$s</string>
     <!-- TalkBack reads the certificate's picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
     <string name="certificates_alt_level">%1$s ha completato il livello %2$s di %3$s</string>
-    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name, %2$s the language, such as "Spanish", and %3$s the level, such as "B1". -->
-    <string name="certificates_alt_placement">Risultato del test di livello di %1$s: %2$s %3$s</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->
@@ -198,8 +182,6 @@
     </plurals>
     <!-- Text the learner can post with their certificate. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
     <string name="certificates_caption_level">Ho appena completato il livello %1$s di %2$s su Zoonk.</string>
-    <!-- Text the learner can post with their certificate. %1$s is the language, such as "Spanish", and %2$s the level a placement test measured, such as "B1". -->
-    <string name="certificates_caption_placement">Il mio risultato al test di livello di %1$s su Zoonk: %2$s.</string>
     <string name="certificates_linkedin_title">Aggiungi al tuo profilo LinkedIn</string>
     <string name="certificates_linkedin_description">LinkedIn apre il modulo per aggiungere una licenza o una certificazione. Copia ogni dato nel campo corrispondente.</string>
     <!-- The fields of LinkedIn's "Add license or certification" form, named as LinkedIn names them. -->
@@ -208,8 +190,6 @@
     <string name="certificates_linkedin_issue_date">Data di rilascio</string>
     <string name="certificates_linkedin_credential_id">ID credenziale</string>
     <string name="certificates_linkedin_credential_url">URL credenziale</string>
-    <!-- The certificate's name in LinkedIn's form for a placement test's result. %1$s is the language, such as "Spanish", and %2$s the level, such as "B1". -->
-    <string name="certificates_linkedin_placement_name">%1$s %2$s: risultato del test di livello</string>
     <string name="certificates_linkedin_open">Apri LinkedIn</string>
     <string name="certificates_copy">Copia</string>
     <!-- TalkBack's name for a Copy button. %1$s is the field it copies, such as "Credential ID". -->

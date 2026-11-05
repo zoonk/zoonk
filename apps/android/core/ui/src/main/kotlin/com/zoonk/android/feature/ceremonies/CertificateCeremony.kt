@@ -363,7 +363,6 @@ private fun title(awarded: List<CertificateName>): String {
     return when (only.kind) {
         CertificateKind.Course -> stringResource(R.string.certificates_course_complete)
         CertificateKind.LanguageLevel -> stringResource(R.string.certificates_level_complete, only.level.orEmpty())
-        CertificateKind.Placement -> stringResource(R.string.certificates_placement_row_title, only.languageWord(), only.level.orEmpty())
     }
 }
 

@@ -21,7 +21,6 @@ import com.zoonk.api.models.JoinInstrumentWaitlistRequest
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestGeneration
-import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
@@ -238,7 +237,7 @@ interface OnboardingApi {
     suspend fun finishLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-    ): LanguageLevelTestResult
+    )
 }
 
 class LiveOnboardingApi(
@@ -505,7 +504,9 @@ class LiveOnboardingApi(
     override suspend fun finishLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-    ) = perform { api.clients(session).language.finishLanguageLevelTest(UUID.fromString(goalId)) }
+    ) {
+        perform { api.clients(session).language.finishLanguageLevelTest(UUID.fromString(goalId)) }
+    }
 }
 
 @Serializable
