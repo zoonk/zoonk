@@ -183,7 +183,7 @@ function addCheckoutRow(userId: string) {
   });
 }
 
-function deliverStripeEvent(event: { data: { object: unknown }; type: string }) {
+function deliverStripeEvent(event: { created?: number; data: { object: unknown }; type: string }) {
   stripe.constructEvent.mockResolvedValue({ created: Math.floor(Date.now() / 1000), ...event });
 
   return guestAuth.handler(
@@ -568,6 +568,40 @@ describe("certificates on a website purchase", () => {
       prisma.subscription.findUniqueOrThrow({ where: { id: row.id } }),
     ).resolves.toMatchObject({ status: "canceled" });
 
+    await expect(readIssuedAt(userId)).resolves.toStrictEqual([{ issuedAt: expect.any(Date) }]);
+  });
+
+  it("issues one earned within the second Stripe dates the grant, after a refund ended our copy", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const created = Math.floor(Date.now() / 1000);
+
+    const [row, certificate] = await Promise.all([
+      addCheckoutRow(userId),
+      createCertificate({ userId }),
+    ]);
+
+    await prisma.certificate.update({
+      data: { createdAt: new Date(created * 1000 + 500) },
+      where: { id: certificate.id },
+    });
+
+    const delivered = await deliverStripeEvent({
+      created,
+      data: {
+        object: {
+          client_reference_id: userId,
+          customer: CUSTOMER,
+          metadata: { referenceId: userId, subscriptionId: row.id, userId },
+          mode: "subscription",
+          payment_status: "paid",
+          subscription: stripeFake.add("canceled"),
+        },
+      },
+      type: "checkout.session.completed",
+    });
+
+    expect(delivered.status).toBe(200);
     await expect(readIssuedAt(userId)).resolves.toStrictEqual([{ issuedAt: expect.any(Date) }]);
   });
 

@@ -173,7 +173,8 @@ async function onStripeEvent(event: Stripe.Event) {
   const granted = await findGrantedLearner(event);
 
   if (granted) {
-    await issueOnGrant({ grantedAt: new Date(event.created * 1000), userId: granted });
+    // Stripe dates an event to the second, so its grant covers everything earned in that second.
+    await issueOnGrant({ grantedAt: new Date((event.created + 1) * 1000 - 1), userId: granted });
   }
 }
 
