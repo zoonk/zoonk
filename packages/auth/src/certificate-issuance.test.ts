@@ -45,6 +45,19 @@ describe(issueEarnedCertificates, () => {
     await expect(issue(userId, { grantedAt: earned.createdAt })).resolves.toBe(1);
   });
 
+  it("issues what was earned after a grant delivered late while the learner has Plus", async () => {
+    const userId = await createLearner({ isAnonymous: false });
+    const earned = await createCertificate({ userId });
+
+    await prisma.subscription.create({
+      data: { plan: "plus", referenceId: userId, status: "active", userId },
+    });
+
+    await expect(
+      issue(userId, { grantedAt: new Date(earned.createdAt.getTime() - 1000) }),
+    ).resolves.toBe(1);
+  });
+
   it("never issues a guest's certificates", async () => {
     const userId = await createLearner({ isAnonymous: true });
     await createCertificate({ userId });
