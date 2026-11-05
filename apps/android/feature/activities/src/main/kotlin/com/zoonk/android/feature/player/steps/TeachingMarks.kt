@@ -22,11 +22,9 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalDensity
@@ -48,8 +46,6 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LessonIcon
 import com.zoonk.api.models.LessonMap
 import com.zoonk.api.models.StepMarks
-import kotlin.math.cos
-import kotlin.math.sin
 
 /** A knowledge lesson's marking: its map, which the strip and the opening scene draw. Language lessons have none. */
 @Immutable
@@ -95,7 +91,7 @@ internal fun IdeaStrip(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IdeasDrawing(ideas.size, index, nested = map.shape == LessonMap.Shape.NESTED, Modifier.size(STRIP_DRAWING))
+            IdeasDrawing(ideas.size, index)
             Column(Modifier.weight(1f)) {
                 Text(
                     stringResource(R.string.player_idea_position, count(index + 1), count(ideas.size)),
@@ -111,86 +107,37 @@ internal fun IdeaStrip(
     }
 }
 
-/**
- * Where each of [count] ideas sits around the lesson's hub, x and y from -1 to 1: the strip's
- * drawing and the opening map put them in the same places, the first at the top start corner.
- */
-internal fun hubPoints(
-    count: Int,
-    layoutDirection: LayoutDirection,
-): List<Offset> {
-    val start =
-        when (count) {
-            2 -> 180.0
-            3 -> -150.0
-            4 -> -135.0
-            else -> -90.0
-        }
-    val mirror = if (layoutDirection == LayoutDirection.Rtl) -1f else 1f
-
-    return List(count) { index ->
-        val angle = Math.toRadians(start + 360.0 / count * index)
-        Offset(cos(angle).toFloat() * mirror, sin(angle).toFloat())
-    }
-}
-
-/** The lesson's ideas drawn small, with the learner's place on [current]: spokes around a hub, or rings inside rings for a nested map. */
+/** The lesson's ideas drawn small, in the opening map's places, with the learner's place on [current]. */
 @Composable
 private fun IdeasDrawing(
     count: Int,
     current: Int,
-    nested: Boolean,
-    modifier: Modifier,
 ) {
     val line = MaterialTheme.colorScheme.outline
     val place = MaterialTheme.colorScheme.tertiary
     val hub = MaterialTheme.colorScheme.onSurfaceVariant
     val ground = MaterialTheme.colorScheme.surface
+    val slots = remember(count) { ideaSlots(count) }
+    val rows = slotRows(slots)
 
-    Canvas(modifier) {
-        if (nested) drawRings(count, current, line, place) else drawSpokes(count, current, line, place, hub, ground)
-    }
-}
+    Canvas(Modifier.size(DRAWING_COLUMN * 2 + DRAWING_PAD * 2, DRAWING_ROW * (rows.last - rows.first) + DRAWING_PAD * 2)) {
+        val center = Offset(size.width / 2, DRAWING_PAD.toPx() - rows.first * DRAWING_ROW.toPx())
+        val start = if (layoutDirection == LayoutDirection.Rtl) -1 else 1
+        val points = slots.map { center + Offset(it.column * start * DRAWING_COLUMN.toPx(), it.row * DRAWING_ROW.toPx()) }
+        val stroke = 1.25.dp.toPx()
+        val node = DRAWING_NODE.toPx()
 
-private fun DrawScope.drawSpokes(
-    count: Int,
-    current: Int,
-    line: Color,
-    place: Color,
-    hub: Color,
-    ground: Color,
-) {
-    val node = size.minDimension * NODE_SHARE
-    val stroke = 1.5.dp.toPx()
-    val reach = size.minDimension / 2 - node * 2
-    val points = hubPoints(count, layoutDirection).map { center + it * reach }
-
-    points.forEach { drawLine(line, center, it, stroke) }
-    drawCircle(hub, node * 0.9f, center)
-    points.forEachIndexed { index, point ->
-        if (index == current) {
-            drawCircle(place.copy(alpha = HALO_ALPHA), node * 2, point)
-            drawCircle(place, node * 1.1f, point)
-        } else {
-            drawCircle(ground, node, point)
-            drawCircle(line, node, point, style = Stroke(stroke))
+        points.forEach { drawLine(line, center, it, stroke) }
+        drawCircle(hub, DRAWING_HUB.toPx(), center)
+        points.forEachIndexed { index, point ->
+            if (index == current) {
+                drawCircle(place.copy(alpha = HALO_ALPHA), node * 2, point)
+                drawCircle(place, node * 1.15f, point)
+            } else {
+                drawCircle(ground, node, point)
+                drawCircle(line, node, point, style = Stroke(stroke))
+            }
         }
-    }
-}
-
-private fun DrawScope.drawRings(
-    count: Int,
-    current: Int,
-    line: Color,
-    place: Color,
-) {
-    val outer = size.minDimension / 2 - 2.dp.toPx()
-    val inner = outer * INNER_RING_SHARE
-
-    repeat(count) { index ->
-        val radius = if (count == 1) outer else inner + (outer - inner) * index / (count - 1)
-        val isPlace = index == current
-        drawCircle(if (isPlace) place else line, radius, style = Stroke((if (isPlace) 2.5.dp else 1.25.dp).toPx()))
     }
 }
 
@@ -379,12 +326,14 @@ private fun Density.exampleFrame(
 }
 
 private const val SMALL_ICON_PIXELS = 96
-private const val NODE_SHARE = 0.08f
 private const val HALO_ALPHA = 0.25f
-private const val INNER_RING_SHARE = 0.3f
 private const val FRAME_TILT = -0.6f
 
-private val STRIP_DRAWING = 40.dp
+private val DRAWING_COLUMN = 17.5.dp
+private val DRAWING_ROW = 15.dp
+private val DRAWING_PAD = 7.5.dp
+private val DRAWING_NODE = 3.75.dp
+private val DRAWING_HUB = 2.5.dp
 private val STRIP_ICON = 40.dp
 private val CORNER_ICON = 56.dp
 private val ICON_OUTSET = 8.dp

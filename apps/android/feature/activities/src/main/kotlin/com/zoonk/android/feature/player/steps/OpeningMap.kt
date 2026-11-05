@@ -21,6 +21,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,11 +34,10 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -48,12 +48,12 @@ import kotlin.math.roundToInt
 
 /** Once tagged, a lesson's map can open it: its ideas say what they cover or have an icon. */
 internal val LessonMap.opensLesson: Boolean
-    get() = shape == LessonMap.Shape.HUB && ideas.size > 1 && ideas.any { it.about != null || it.icon != null }
+    get() = ideas.any { it.about != null || it.icon != null }
 
 /**
- * The opening scene's map (concept 3): the lesson's ideas, numbered, with their icons, around the
- * hub, where the strip's drawing later marks the learner's place. An idea with an `about` line opens
- * it in a popover, which says what the idea covers without giving its answer.
+ * The opening scene's map (concept 3): the lesson's ideas, numbered, with their icons, around a
+ * plain dot, where the strip's drawing later marks the learner's place. An idea with an `about` line
+ * opens it in a popover, which says what the idea covers without giving its answer.
  */
 @Composable
 internal fun OpeningMap(
@@ -63,7 +63,7 @@ internal fun OpeningMap(
     val ideas = map.ideas
 
     Column(modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        IdeasAroundHub(ideas)
+        IdeasAroundCenter(ideas)
         Text(
             pluralStringResource(R.plurals.player_opening_map_ideas, ideas.size, count(ideas.size)),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -73,51 +73,56 @@ internal fun OpeningMap(
     }
 }
 
-/** The ideas on an ellipse around the hub, with dashed spokes to it; TalkBack reads them in their order, wherever they sit. */
+/** The ideas in their slots, each joined to the center by a dashed line. The slots hold the ideas in reading order, so TalkBack reads them by number. */
 @Composable
-private fun IdeasAroundHub(ideas: List<LessonMapIdeasInner>) {
+private fun IdeasAroundCenter(ideas: List<LessonMapIdeasInner>) {
     val line = MaterialTheme.colorScheme.outline
-    val hub = MaterialTheme.colorScheme.onSurfaceVariant
+    val dot = MaterialTheme.colorScheme.onSurfaceVariant
+    val slots = remember(ideas.size) { ideaSlots(ideas.size) }
+    val rows = slotRows(slots)
 
     Layout(
-        content = { ideas.forEachIndexed { index, idea -> HubIdea(index, idea, Modifier.semantics { traversalIndex = index.toFloat() }) } },
+        content = { ideas.forEachIndexed { index, idea -> OpeningIdea(index, idea) } },
         modifier =
             Modifier
-                .widthIn(max = HUB_WIDTH)
+                .widthIn(max = OPENING_MAP_WIDTH)
                 .fillMaxWidth()
-                .semantics { isTraversalGroup = true }
                 .drawBehind {
-                    val node = HUB_NODE.toPx()
+                    val center = slotCenter(IdeaSlot(0, 0), rows, size.width)
                     val dash = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 4.dp.toPx()))
-                    hubPoints(ideas.size, layoutDirection).forEach { point ->
-                        val end = Offset(center.x + point.x * (size.width - node) / 2, center.y + point.y * (size.height - node) / 2)
-                        drawLine(line, center, end, 1.5.dp.toPx(), pathEffect = dash)
-                    }
-                    drawCircle(hub, HUB_DOT.toPx())
+                    // The slots pair up across the middle, so the lines need no mirroring for right-to-left.
+                    slots.forEach { drawLine(line, center, slotCenter(it, rows, size.width), 1.5.dp.toPx(), pathEffect = dash) }
+                    drawCircle(dot, CENTER_DOT.toPx(), center)
                 },
     ) { measurables, constraints ->
         val nodes = measurables.map { it.measure(Constraints()) }
-        val node = HUB_NODE.roundToPx()
         val width = constraints.maxWidth
-        val height = (width * HUB_ASPECT).roundToInt().coerceAtLeast(node * 3)
-        val points = hubPoints(nodes.size, layoutDirection)
+        val height = OPENING_NODE.roundToPx() + OPENING_ROW_GAP.roundToPx() * (rows.last - rows.first)
 
         layout(width, height) {
             nodes.forEachIndexed { index, placeable ->
-                val x = width / 2f + points[index].x * (width - node) / 2
-                val y = height / 2f + points[index].y * (height - node) / 2
-                placeable.place((x - placeable.width / 2f).roundToInt(), (y - placeable.height / 2f).roundToInt())
+                val at = slotCenter(slots[index], rows, width.toFloat())
+                placeable.placeRelative((at.x - placeable.width / 2f).roundToInt(), (at.y - placeable.height / 2f).roundToInt())
             }
         }
     }
 }
 
+/** A slot's middle in a map [width] wide: the side columns touch its edges and the rows keep main's spacing. */
+private fun Density.slotCenter(
+    slot: IdeaSlot,
+    rows: IntRange,
+    width: Float,
+): Offset {
+    val node = OPENING_NODE.toPx()
+    return Offset(width / 2 + slot.column * (width - node) / 2, node / 2 + (slot.row - rows.first) * OPENING_ROW_GAP.toPx())
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HubIdea(
+private fun OpeningIdea(
     index: Int,
     idea: LessonMapIdeasInner,
-    modifier: Modifier,
 ) {
     val number = count(index + 1)
     // Before the lesson, an idea is its number: its name is often the term the lesson teaches.
@@ -133,7 +138,7 @@ private fun HubIdea(
         @Composable { placeModifier: Modifier ->
             Box(
                 placeModifier
-                    .size(HUB_NODE)
+                    .size(OPENING_NODE)
                     .drawBehind {
                         drawCircle(ground)
                         if (idea.icon == null) {
@@ -153,7 +158,7 @@ private fun HubIdea(
                 if (icon == null) {
                     Text(number, style = MaterialTheme.typography.titleMedium.withTabularFigures())
                 } else {
-                    LessonIconImage(icon, HUB_ICON)
+                    LessonIconImage(icon, OPENING_ICON)
                     Text(
                         number,
                         Modifier
@@ -170,7 +175,7 @@ private fun HubIdea(
         }
 
     if (about == null) {
-        place(modifier.semantics(mergeDescendants = true) { contentDescription = name })
+        place(Modifier.semantics(mergeDescendants = true) { contentDescription = name })
         return
     }
 
@@ -178,7 +183,6 @@ private fun HubIdea(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
         tooltip = { RichTooltip { Text(about) } },
         state = tooltip,
-        modifier = modifier,
     ) {
         place(
             Modifier
@@ -188,11 +192,10 @@ private fun HubIdea(
     }
 }
 
-private const val HUB_ASPECT = 0.62f
-
-private val HUB_WIDTH = 320.dp
-private val HUB_NODE = 56.dp
-private val HUB_ICON = 44.dp
-private val HUB_DOT = 5.dp
+private val OPENING_MAP_WIDTH = 240.dp
+private val OPENING_NODE = 56.dp
+private val OPENING_ROW_GAP = 80.dp
+private val OPENING_ICON = 44.dp
+private val CENTER_DOT = 5.dp
 private val BADGE = 20.dp
 private val BADGE_OUTSET = 4.dp
