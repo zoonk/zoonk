@@ -12,7 +12,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { unplannedGoalFixture } from "../plans/_test-utils/plan-library";
-import { checkOffLesson } from "./_test-utils/check-off-lesson";
 import { toBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
 
@@ -107,7 +106,6 @@ async function prepareCompletion({
       userId: user.id,
     });
 
-    await checkOffLesson({ lessonId: lesson.id, userId: user.id });
     return;
   }
 
