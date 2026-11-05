@@ -121,7 +121,6 @@
   "player_opening_lesson": "04ddffca306d4c6571540ace77d879be63759dd8c85179534b86b96662ab557f",
   "player_opening_map_idea": "cc65cd7e78ee6a1f042bec83f20ab3dec58796fe862677cce22341c80b14181e",
   "player_opening_map_ideas": "add47e8b59805cdd344ac48985980e51cb0b7ce69a44b008173c1ff8b8f3aabc",
-  "player_opening_map_named_idea": "3854e9edd3ff9627f106b881109dfa8384c767dd3ae61cada0521c67d60f3825",
   "player_opening_map_show": "ae0b195ed02462fc0e80c0cbb7221dcb67f3ffc668e33cac6e25db6d93abdf36",
   "player_part_of": "c9d745c1a3c7affefaecc365a89d28eacab7de5bfbd34e4709b693536252a865",
   "player_phase_plan": "67b12d10a891196200cdfd39b2a59c166bce88543a818a077927fce4625acfd5",
@@ -207,9 +206,7 @@
         <item quantity="one">Bu derste keşfedeceğin %1$s kavram var</item>
         <item quantity="other">Bu derste keşfedeceğin %1$s kavram var</item>
     </plurals>
-    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas, with the idea's name. -->
-    <string name="player_opening_map_named_idea">%1$s. kavram: %2$s</string>
-    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas that has no name. -->
+    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">%1$s. kavram</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
     <string name="player_opening_map_show">İçeriğini gör</string>

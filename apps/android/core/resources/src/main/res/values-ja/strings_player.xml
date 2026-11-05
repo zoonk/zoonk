@@ -121,7 +121,6 @@
   "player_opening_lesson": "93a1a95fac960dea805841cba36cb2798df9781534e7671fe01312cfc0be691a",
   "player_opening_map_idea": "40f6c1aa9f29849073cb09f7ac60b28ccab29be0355e61926a52f0600711c893",
   "player_opening_map_ideas": "625eaecc917287dd8150856451c3ab447aded980128f7487a69eb6e835222b73",
-  "player_opening_map_named_idea": "1f7073bf398840b115a90d52093f2226cf44ca7d3d07dd40c7738e42afff80c8",
   "player_opening_map_show": "fbf3228b7bbebe65741b778352f356f3959fef8191c9ca0b6eae38c62452bcf3",
   "player_part_of": "401ba3aa3f710678f9cb3b3b8022424ea40f51340f0413596cea7e7ed5e6bbf3",
   "player_phase_plan": "313130240643a35889136e30a17b47e03f0083815abe3000586508ec64a99383",
@@ -206,9 +205,7 @@
     <plurals name="player_opening_map_ideas">
         <item quantity="other">このレッスンで学ぶ%1$s個のポイント</item>
     </plurals>
-    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas, with the idea's name. -->
-    <string name="player_opening_map_named_idea">ポイント%1$s：%2$s</string>
-    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas that has no name. -->
+    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">ポイント%1$s</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
     <string name="player_opening_map_show">内容を見る</string>

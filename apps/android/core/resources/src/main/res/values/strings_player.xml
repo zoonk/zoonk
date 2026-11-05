@@ -16,9 +16,7 @@
         <item quantity="one">%1$s idea to discover in this lesson</item>
         <item quantity="other">%1$s ideas to discover in this lesson</item>
     </plurals>
-    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas, with the idea's name. -->
-    <string name="player_opening_map_named_idea">Idea %1$s: %2$s</string>
-    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas that has no name. -->
+    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">Idea %1$s</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
     <string name="player_opening_map_show">See what it covers</string>

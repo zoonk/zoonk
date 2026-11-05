@@ -120,9 +120,8 @@ private fun HubIdea(
     modifier: Modifier,
 ) {
     val number = count(index + 1)
-    val name =
-        idea.label?.let { stringResource(R.string.player_opening_map_named_idea, number, it) }
-            ?: stringResource(R.string.player_opening_map_idea, number)
+    // Before the lesson, an idea is its number: its name is often the term the lesson teaches.
+    val name = stringResource(R.string.player_opening_map_idea, number)
     val about = idea.about
     val tooltip = rememberTooltipState(isPersistent = true)
     val scope = rememberCoroutineScope()
@@ -177,7 +176,7 @@ private fun HubIdea(
 
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
-        tooltip = { RichTooltip(title = idea.label?.let { { Text(it) } }) { Text(about) } },
+        tooltip = { RichTooltip { Text(about) } },
         state = tooltip,
         modifier = modifier,
     ) {

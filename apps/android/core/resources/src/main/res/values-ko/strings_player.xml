@@ -121,7 +121,6 @@
   "player_opening_lesson": "618017a49e2989cd25325d46e02b675a2825b32184dac3a73c4ce2f50f1b40b9",
   "player_opening_map_idea": "ba4033b2f2dc2133e1c08fb0fddf82376890ab914149f19f1feea26df6366b34",
   "player_opening_map_ideas": "a5e5730b66655b6a5b68ee14e61d299a6bd01d584b96cdc2cf807665257147c4",
-  "player_opening_map_named_idea": "41931bc66bcaf1d9438a75568144f7dd62cdc00e6c7a26de8ff292dcbd008bd5",
   "player_opening_map_show": "eeaf907949be242fb93afa853ac80b4c0696023539b4f755fbcf2f19e9716ace",
   "player_part_of": "da683991d2b6a583fbffd98ab2d3a1201ed78462ebff6eb9b132c8cf6cc83e5f",
   "player_phase_plan": "aea5c2cd2526ec9a65a0d31fb31cf7c69b3a1b66fc59d376fb9734e6c425277f",
@@ -206,9 +205,7 @@
     <plurals name="player_opening_map_ideas">
         <item quantity="other">이번 레슨에서 알아볼 개념 %1$s개</item>
     </plurals>
-    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas, with the idea's name. -->
-    <string name="player_opening_map_named_idea">%1$s번째 개념: %2$s</string>
-    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas that has no name. -->
+    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">%1$s번째 개념</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
     <string name="player_opening_map_show">다룰 내용 보기</string>

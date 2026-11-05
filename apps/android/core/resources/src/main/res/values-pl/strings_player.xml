@@ -121,7 +121,6 @@
   "player_opening_lesson": "265ef7984cf2a43a0b6d395df1ae7f9136a8ec9288f1affa0bba0d8a992ef5aa",
   "player_opening_map_idea": "5d748526b484f0c99bcb3e068204c5aa87445f60bc411640817aa266d1411980",
   "player_opening_map_ideas": "11913fc248bb57eb8edfc5335ecfc3175044baa6aef0ce54af75825815ad86a4",
-  "player_opening_map_named_idea": "4882413d239a62b1219d6ec1a22a4f2d9fc9c8bbefdb699ce26955c83449418f",
   "player_opening_map_show": "c03b292ab22af65b45a15130b078028240350a08ff8c7d47c03482d778477139",
   "player_part_of": "cdb1f90504622cc27073b1bbecccbb560297032c5bd43b9a9fd02fb8ce8edc63",
   "player_phase_plan": "3a723da8fb8a3e1bc196e5651207f1c28d61d37452c20145f04e734a5a5bf15b",
@@ -209,9 +208,7 @@
         <item quantity="many">%1$s zagadnień do odkrycia w tej lekcji</item>
         <item quantity="other">%1$s zagadnienia do odkrycia w tej lekcji</item>
     </plurals>
-    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas, with the idea's name. -->
-    <string name="player_opening_map_named_idea">Zagadnienie %1$s: %2$s</string>
-    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas that has no name. -->
+    <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">Zagadnienie %1$s</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
     <string name="player_opening_map_show">Zobacz, czego dotyczy</string>
