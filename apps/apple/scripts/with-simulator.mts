@@ -11,6 +11,10 @@ import {
 import { availableParallelism, loadavg } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
+import {
+  hasSimulatorSystemAppCrashed,
+  listCrashReports,
+} from "../../../scripts/dev/crash-reports.mts";
 import { applyCommandExit, runForegroundCommand } from "../../../scripts/dev/process.mts";
 import { type QueueTurn, waitForTurn } from "../../../scripts/dev/queue.mts";
 import {
@@ -29,6 +33,11 @@ const POLL_MS = 5000;
 // macOS's open(2) flag for an exclusive lock, which Node doesn't export. The kernel keeps the lock
 // until every process holding the file closes it, however they exit.
 const O_EXLOCK = 0x20;
+
+const CLOSE_CRASH_ALERTS_SCRIPT = path.resolve(
+  import.meta.dirname,
+  "../../../scripts/dev/close-device-crash-alerts.mts",
+);
 
 type Lease = { descriptor: number; device: Simulator };
 
@@ -154,6 +163,27 @@ function leaseSimulator() {
   }
 }
 
+/** Damaged simulator data can crash one of its iOS apps on every boot, each crash opening an alert. */
+function eraseAfterSystemAppCrash({
+  device,
+  reportsBefore,
+}: {
+  device: Simulator;
+  reportsBefore: Set<string>;
+}) {
+  if (!hasSimulatorSystemAppCrashed({ reportsBefore, udid: device.udid })) {
+    return;
+  }
+
+  process.stdout.write(
+    `One of iOS's own apps crashed on ${device.name}. Erasing it so the crash doesn't repeat on ` +
+      `its next boot.\n`,
+  );
+
+  spawnSync("xcrun", ["simctl", "erase", device.udid], { stdio: "inherit" });
+  spawnSync(process.execPath, [CLOSE_CRASH_ALERTS_SCRIPT], { stdio: "inherit" });
+}
+
 /** Gives the queue turn back while it waits, so waiting runs don't hold every slot. */
 async function startRun({
   isWaiting,
@@ -191,6 +221,7 @@ if (!command) {
   throw new Error("Usage: with-simulator.mts <xcodebuild command>");
 }
 
+const reportsBefore = new Set(listCrashReports());
 const { lease, turn } = await startRun({ isWaiting: false });
 process.stdout.write(`Testing on ${lease.device.name} (${lease.device.udid}).\n`);
 
@@ -207,6 +238,7 @@ try {
   );
 } finally {
   spawnSync("xcrun", ["simctl", "shutdown", lease.device.udid], { stdio: "inherit" });
+  eraseAfterSystemAppCrash({ device: lease.device, reportsBefore });
   release(lease.descriptor);
   turn?.release();
 }
