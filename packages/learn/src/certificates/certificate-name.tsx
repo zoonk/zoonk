@@ -12,6 +12,7 @@ import {
 } from "@zoonk/ui/components/dialog";
 import { Input } from "@zoonk/ui/components/input";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -41,7 +42,7 @@ function useNameSave({
     }
 
     startTransition(async () => {
-      const saved = await save(trimmed);
+      const { data: saved } = await safeAsync(() => save(trimmed));
       setFailed(!saved);
 
       if (saved) {
