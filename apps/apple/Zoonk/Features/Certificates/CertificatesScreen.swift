@@ -20,11 +20,9 @@ struct CertificatesScreen: View {
               row(certificate)
             }
           } footer: {
-            if certificates.contains(where: { $0.issued != nil }) {
-              Text(
-                "Print, download or share your certificates anytime.", tableName: "Certificates",
-                comment: "Under the learner's certificates")
-            }
+            Text(
+              "A certificate for every level and plan you finish.", tableName: "Certificates",
+              comment: "Under the learner's certificates: what earns one")
           }
         }
       case .empty:
@@ -111,7 +109,7 @@ private struct EmptyCertificates: View {
           }
         } description: {
           Text(
-            "Finish a course level or a language level and its certificate shows up here.",
+            "Your certificates show up here when you finish a level or a plan.",
             tableName: "Certificates", comment: "How the learner earns certificates")
         } actions: {
           Button {

@@ -74,11 +74,12 @@ struct PlanSuggestionSection: View {
   var body: some View {
     let state = store.suggestionState(goalId: context.goal.id)
     let isExam = context.goal.kind == .exam
-    let certificates =
-      isExam ? store.planEnd(goalId: context.goal.id).value?.certificates : nil
+    let unclaimed =
+      [.learn, .exam].contains(context.goal.kind)
+      ? store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? [] : []
     let items = PlanSlotItem.items(
       plan: context.plan, isPaused: context.isPaused, isExam: isExam,
-      courseComplete: !(certificates?.unclaimed.isEmpty ?? true)
+      courseComplete: !unclaimed.isEmpty
     ).filter { !state.dismissed.contains($0) }
     let index = min(state.position, max(items.count - 1, 0))
 
@@ -147,6 +148,25 @@ struct PlanSuggestionSection: View {
     store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
       $0.position = (index + count) % count
     }
+  }
+
+  /// "Beginner complete" when the claim certifies one level, else "Course complete".
+  private var completeTitle: Text {
+    let unclaimed = store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? []
+
+    if let level = unclaimed.first?.courseLevel, unclaimed.count == 1 {
+      return Text(
+        "\(String(localized: level.localizedTitle)) complete", tableName: "Plan",
+        comment:
+          "A Plan suggestion's title once every lesson and challenge of a course level is done, such as \"Beginner complete\", before the plan's end"
+      )
+    }
+
+    return Text(
+      "Course complete", tableName: "Plan",
+      comment:
+        "A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead"
+    )
   }
 
   @ViewBuilder
@@ -238,12 +258,8 @@ struct PlanSuggestionSection: View {
     case .courseComplete:
       VStack(alignment: .leading, spacing: 8) {
         Label {
-          Text(
-            "Course complete", tableName: "Plan",
-            comment:
-              "A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead"
-          )
-          .font(.headline)
+          completeTitle
+            .font(.headline)
         } icon: {
           StatusMark(status: .done)
         }
@@ -610,11 +626,11 @@ private struct PlanFinishedSlot: View {
       }
 
       if let certificates = end.value?.certificates {
-        if !certificates.unclaimed.isEmpty {
+        if certificates.unclaimed.isEmpty {
+          PlanCertificatesButton(context: context, earned: certificates.earned)
+        } else {
           CertificateClaimButton(context: context)
         }
-
-        PlanCertificatesButton(context: context, earned: certificates.earned)
       }
 
       if let value = end.value?.next, value.nextLevel != nil || !value.related.isEmpty {

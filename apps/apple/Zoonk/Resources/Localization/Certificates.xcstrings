@@ -552,6 +552,65 @@
         }
       }
     },
+    "A certificate for every level and plan you finish." : {
+      "comment" : "Under the learner's certificates: what earns one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Zertifikat für jedes abgeschlossene Level und jeden abgeschlossenen Plan."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un certificado por cada nivel y plan que completes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un certificat pour chaque niveau et chaque plan que tu termines."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un certificato per ogni livello e ogni piano che completi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レベルや学習計画を完了するたびに、証明書がもらえます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레벨이나 계획을 완료할 때마다 인증서를 받아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certyfikat za każdy ukończony poziom i plan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um certificado para cada nível e plano que você concluir."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamladığın her seviye ve plan için bir sertifika."
+          }
+        }
+      }
+    },
     "Add to LinkedIn" : {
       "comment" : "Adds a certificate to LinkedIn",
       "localizations" : {
@@ -735,25 +794,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das kannst du"
+            "value" : "Fähigkeiten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que puedes hacer"
+            "value" : "Lo que puede hacer"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compétences acquises"
+            "value" : "Savoir-faire"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cosa sai fare"
+            "value" : "Cosa sa fare"
           }
         },
         "ja" : {
@@ -777,7 +836,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que você consegue fazer"
+            "value" : "O que sabe fazer"
           }
         },
         "tr" : {
@@ -971,7 +1030,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zertifikate sind in Plus enthalten"
+            "value" : "Zertifikate gibt es mit Plus"
           }
         },
         "es" : {
@@ -983,7 +1042,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les certificats sont inclus avec Plus"
+            "value" : "Plus inclut les certificats"
           }
         },
         "it" : {
@@ -995,13 +1054,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "証明書はPlusの特典です"
+            "value" : "Plusなら証明書を受け取れます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "인증서는 Plus 혜택이에요"
+            "value" : "Plus로 인증서를 받을 수 있어요"
           }
         },
         "pl" : {
@@ -1013,7 +1072,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Plus inclui certificados"
+            "value" : "Certificados vêm com o Plus"
           }
         },
         "tr" : {
@@ -1148,31 +1207,31 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abgeschlossen"
+            "value" : "Abgeschlossen am"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completado"
+            "value" : "Fecha de finalización"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obtenu le"
+            "value" : "Date de fin"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completato"
+            "value" : "Data di completamento"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "取得日"
+            "value" : "修了日"
           }
         },
         "ko" : {
@@ -1190,7 +1249,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conclusão"
+            "value" : "Concluído em"
           }
         },
         "tr" : {
@@ -1673,72 +1732,13 @@
         }
       }
     },
-    "Finish a course level or a language level and its certificate shows up here." : {
-      "comment" : "How the learner earns certificates",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schließ ein Kurs- oder Sprachlevel ab, dann erscheint dein Zertifikat hier."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completa un nivel de un curso o de un idioma y su certificado aparecerá aquí."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termine un niveau de cours ou de langue et son certificat apparaîtra ici."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completa un livello di un corso o di una lingua e troverai qui il suo certificato."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コースや語学のレベルを修了すると、証明書がここに表示されます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "코스 레벨이나 언어 레벨을 완료하면 인증서가 여기에 표시돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ukończ poziom kursu lub poziom językowy, a certyfikat pojawi się tutaj."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conclua um nível de um curso ou idioma e o certificado aparece aqui."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir kurs veya dil seviyesini tamamladığında sertifikan burada görünür."
-          }
-        }
-      }
-    },
     "Get your certificate with Plus" : {
       "comment" : "Title of the notice on a certificate the learner earned without Plus",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hol dir dein Zertifikat mit Plus"
+            "value" : "Mit Plus bekommst du dein Zertifikat"
           }
         },
         "es" : {
@@ -1762,7 +1762,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusで証明書を取得"
+            "value" : "Plusで証明書を受け取る"
           }
         },
         "ko" : {
@@ -1774,7 +1774,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odbierz certyfikat w pakiecie Plus"
+            "value" : "Odbierz certyfikat z pakietem Plus"
           }
         },
         "pt" : {
@@ -2668,7 +2668,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習したレッスン"
+            "value" : "学習したレッスン数"
           }
         },
         "ko" : {
@@ -3188,13 +3188,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprobadas con una prueba"
+            "value" : "Aprobadas mediante una prueba"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Validées par un test"
+            "value" : "Leçons validées par test"
           }
         },
         "it" : {
@@ -3206,7 +3206,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "テストで合格したレッスン"
+            "value" : "テスト合格で免除されたレッスン数"
           }
         },
         "ko" : {
@@ -3218,13 +3218,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaliczone w teście"
+            "value" : "Zaliczone testem"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Concluídas por teste"
+            "value" : "Aulas dispensadas por teste"
           }
         },
         "tr" : {
@@ -3241,55 +3241,55 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit Plus bekommst du für jedes abgeschlossene Level ein Zertifikat zum Ausdrucken und Teilen. Deine Zertifikate bleiben dir erhalten, auch wenn Plus endet."
+            "value" : "Mit Plus bekommst du für jedes abgeschlossene Level ein Zertifikat zum Ausdrucken und Teilen. Deine Zertifikate bleiben dir auch erhalten, wenn dein Plus-Abo endet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus te da un certificado por cada nivel que completes, para imprimir y compartir. Los certificados que obtengas seguirán siendo tuyos aunque termine tu suscripción a Plus."
+            "value" : "Plus te da un certificado por cada nivel que completes, para imprimir y compartir. Los certificados que obtengas siguen siendo tuyos aunque termine tu suscripción a Plus."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec Plus, tu reçois un certificat pour chaque niveau terminé, à imprimer et à partager. Tu gardes les certificats obtenus même si ton abonnement Plus prend fin."
+            "value" : "Avec Plus, tu reçois un certificat à imprimer et à partager pour chaque niveau terminé. Tu conserves tes certificats même si ton abonnement Plus prend fin."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus ti dà un certificato per ogni livello che completi, da stampare e condividere. I certificati ottenuti restano tuoi anche se l’abbonamento a Plus termina."
+            "value" : "Con Plus ricevi un certificato per ogni livello che completi, da stampare e condividere. I certificati che ottieni restano tuoi anche se non hai più Plus."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusなら、修了したレベルごとに、印刷や共有ができる証明書を取得できます。Plusの利用が終了しても、取得した証明書はそのまま残ります。"
+            "value" : "Plusでは、レベルを終えるたびに、印刷や共有ができる証明書を受け取れます。受け取った証明書は、Plusの利用が終了してもそのまま残ります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus를 이용하면 레벨을 마칠 때마다 인쇄하거나 공유할 수 있는 인증서를 받아요. 받은 인증서는 Plus 이용이 끝나도 계속 보관할 수 있어요."
+            "value" : "Plus를 이용하면 레벨을 마칠 때마다 인쇄하고 공유할 수 있는 인증서를 받아요. 받은 인증서는 Plus 이용이 끝나도 계속 보관할 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W pakiecie Plus dostajesz za każdy ukończony poziom certyfikat do wydrukowania i udostępnienia. Otrzymane certyfikaty zachowujesz także po zakończeniu pakietu Plus."
+            "value" : "W pakiecie Plus za każdy ukończony poziom dostajesz certyfikat do wydrukowania i udostępnienia. Otrzymane certyfikaty zachowujesz, nawet gdy pakiet Plus wygaśnie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com o Plus, você recebe um certificado para cada nível que concluir, para imprimir e compartilhar. Os certificados continuam sendo seus mesmo se a assinatura acabar."
+            "value" : "O Plus te dá um certificado para cada nível que você conclui, para imprimir e compartilhar. Os certificados que você recebe continuam sendo seus mesmo se sua assinatura do Plus acabar."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus, tamamladığın her seviye için yazdırıp paylaşabileceğin bir sertifika sunar. Plus üyeliğin sona erse de aldığın sertifikalar sende kalır."
+            "value" : "Plus ile tamamladığın her seviye için yazdırıp paylaşabileceğin bir sertifika alırsın. Plus üyeliğin sona erse de aldığın sertifikalar sende kalır."
           }
         }
       }
@@ -3349,65 +3349,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yazdır"
-          }
-        }
-      }
-    },
-    "Print, download or share your certificates anytime." : {
-      "comment" : "Under the learner's certificates",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst deine Zertifikate jederzeit ausdrucken, herunterladen oder teilen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Imprime, descarga o comparte tus certificados cuando quieras."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Imprime, télécharge ou partage tes certificats quand tu veux."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stampa, scarica o condividi i tuoi certificati quando vuoi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "証明書はいつでも印刷、ダウンロード、共有できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "인증서를 언제든 인쇄, 다운로드, 공유할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certyfikaty możesz w każdej chwili wydrukować, pobrać lub udostępnić."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Imprima, baixe ou compartilhe seus certificados quando quiser."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sertifikalarını istediğin zaman yazdır, indir veya paylaş."
           }
         }
       }
@@ -3607,7 +3548,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Temps d’étude"
+            "value" : "Durée d’étude"
           }
         },
         "it" : {
@@ -3637,7 +3578,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tempo de estudo"
+            "value" : "Carga horária"
           }
         },
         "tr" : {
@@ -3778,7 +3719,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Temas incluidos"
+            "value" : "Temas cubiertos"
           }
         },
         "fr" : {
@@ -3802,7 +3743,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다룬 주제"
+            "value" : "학습한 주제"
           }
         },
         "pl" : {
@@ -4240,6 +4181,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir. İstediğin zaman değiştirebilirsin."
+          }
+        }
+      }
+    },
+    "Your certificates show up here when you finish a level or a plan." : {
+      "comment" : "How the learner earns certificates",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Zertifikate erscheinen hier, wenn du ein Level oder einen Plan abschließt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus certificados aparecerán aquí cuando completes un nivel o un plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes certificats apparaissent ici quand tu termines un niveau ou un plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I tuoi certificati compaiono qui quando completi un livello o un piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レベルや学習計画を完了すると、ここに証明書が表示されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레벨이나 계획을 마치면 여기에 인증서가 표시돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje certyfikaty pojawią się tutaj, gdy ukończysz poziom lub plan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seus certificados aparecem aqui quando você conclui um nível ou um plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir seviyeyi veya planı tamamladığında sertifikaların burada görünür."
           }
         }
       }

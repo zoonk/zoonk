@@ -427,7 +427,10 @@ struct PlanEnd: Decodable, Equatable, Sendable {
       let locked: Bool
     }
 
-    struct Unclaimed: Decodable, Equatable, Sendable {}
+    struct Unclaimed: Decodable, Equatable, Sendable {
+      /// Nil for the plan's own certificate.
+      let courseLevel: CourseLevel?
+    }
 
     /// Level order, the plan's last, with a level certified in another goal.
     let earned: [Earned]
