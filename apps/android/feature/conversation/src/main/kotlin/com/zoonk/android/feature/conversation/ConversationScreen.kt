@@ -134,7 +134,7 @@ internal fun ConversationEntry(
                 ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
                 dayMoment = { completion -> CallDayMoment(app, completion) },
                 certificates = { awarded, onClose ->
-                    CertificateCeremony(app, awarded, onClose, onCreateAccount = { exits.open(AppRoute.Login) }, app.timeSource)
+                    CertificateCeremony(app, awarded, onClose, onSeePlus = { exits.open(AppRoute.Subscription) }, app.timeSource)
                 },
             )
         }

@@ -52,8 +52,8 @@ import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
-import com.zoonk.api.models.GoalCertificate
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.StudyNext
@@ -107,7 +107,7 @@ internal sealed interface SlotItem {
     }
 }
 
-/** [finished] once what to study next is known, [courseComplete] while its certificate isn't written; [fix] is the pace's sentence. */
+/** [finished] once what to study next is known, [courseComplete] while a finished unit's certificate isn't written; [fix] is the pace's sentence. */
 internal fun slotItems(
     page: PlanPageState,
     fix: PaceFix?,
@@ -201,7 +201,7 @@ internal class SlotHost(
     val next: StudyNext? = null,
     val nextLevel: NextLevelStart = NextLevelStart.Idle,
     val onContinue: () -> Unit = {},
-    val certificate: GoalCertificate? = null,
+    val certificates: PlanCertificates? = null,
     val claimingCertificate: Boolean = false,
     val claimFailed: Boolean = false,
     val onCertificate: () -> Unit = {},
@@ -287,7 +287,11 @@ private fun slotItemsLeft(
         page.plan.status
             ?.pace
             ?.let { paceFix(it, page.isExam) }
-    val courseComplete = host.certificate != null && host.certificate.code == null
+    val courseComplete =
+        host.certificates
+            ?.unclaimed
+            .orEmpty()
+            .isNotEmpty()
     return slotItems(page, fix, finished = host.next != null, courseComplete).filter { it.key !in state.dismissed }
 }
 

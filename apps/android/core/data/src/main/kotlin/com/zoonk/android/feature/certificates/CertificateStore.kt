@@ -23,7 +23,7 @@ interface CertificatesApi {
     suspend fun claim(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): OwnedCertificate
+    ): List<OwnedCertificate>
 
     suspend fun goals(session: AuthenticatedSession): List<Goal>
 }
@@ -41,7 +41,7 @@ class LiveCertificatesApi(
     override suspend fun claim(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = perform { api.clients(session).certificates.claimCourseCertificate(goalId) }
+    ) = perform { api.clients(session).certificates.claimCourseCertificate(goalId) }.certificates
 
     override suspend fun goals(session: AuthenticatedSession) = perform { api.clients(session).goals.listGoals() }.goals
 }
@@ -116,7 +116,7 @@ class CertificateStore(
         ) { session -> api.markShown(session, code) } is MutationResult.Done
     }
 
-    /** A finished course's certificate, awarded now or returned when it exists; the goal map then shows it. */
-    suspend fun claim(goalId: UUID): MutationResult<OwnedCertificate> =
+    /** Every certificate of the plan's finished units, the ones it writes now included; the goal map then shows them. */
+    suspend fun claim(goalId: UUID): MutationResult<List<OwnedCertificate>> =
         cache.mutate(invalidating = setOf(DataDomain.Certificates, DataDomain.Goals)) { session -> api.claim(session, goalId) }
 }

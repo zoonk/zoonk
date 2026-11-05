@@ -55,19 +55,18 @@ fun MomentAfterCeremony(
     if (open == null || open.kind == Milestone.Kind.BADGE) moment()
 }
 
-/** [onCreateAccount] takes a guest to sign up, and back to the certificates' moment. */
 @Composable
 fun MomentAfterCeremony(
     app: AppContainer,
     milestone: Milestone?,
-    certificates: List<CertificateName> = emptyList(),
-    onCreateAccount: (() -> Unit)? = null,
+    certificates: List<CertificateName>,
+    onSeePlus: () -> Unit,
     moment: @Composable (MomentBuddy) -> Unit,
 ) = MomentAfterCeremony(
     milestone = milestone,
     ceremony = { open, onClose -> SessionCeremony(app, open, onClose) },
     certificates = certificates,
-    certificatesMoment = { awarded, onClose -> CertificateCeremony(app, awarded, onClose, onCreateAccount, app.timeSource) },
+    certificatesMoment = { awarded, onClose -> CertificateCeremony(app, awarded, onClose, onSeePlus, app.timeSource) },
 ) { moment(momentBuddy(app)) }
 
 @Composable

@@ -59,18 +59,28 @@ class CertificateActions internal constructor(
     var busy by mutableStateOf<CertificateAction?>(null)
         private set
 
-    /** The share sheet with the post picture, [caption] and the link, as main's Web Share sends them. */
+    /** The share sheet with the post picture, [caption] and the link, as main's Web Share sends them; a locked one has neither. */
     fun share(
         certificate: OwnedCertificate,
         fileName: String,
         caption: String,
-    ) = run(CertificateAction.Share) {
-        val uri = shared(app.certificateFiles.file(certificate.imageUrls.post.toString(), fileName))
+    ) {
+        val urls = certificate.imageUrls ?: return
+        run(CertificateAction.Share) {
+            send(shared(app.certificateFiles.file(urls.post.toString(), fileName)), fileName, "$caption\n${certificate.url}")
+        }
+    }
+
+    private fun send(
+        uri: Uri,
+        fileName: String,
+        text: String,
+    ) {
         val send =
             Intent(Intent.ACTION_SEND).apply {
                 type = PNG
                 putExtra(Intent.EXTRA_STREAM, uri)
-                putExtra(Intent.EXTRA_TEXT, "$caption\n${certificate.url}")
+                putExtra(Intent.EXTRA_TEXT, text)
                 clipData = ClipData.newRawUri(fileName, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
@@ -81,13 +91,16 @@ class CertificateActions internal constructor(
     fun print(
         certificate: OwnedCertificate,
         fileName: String,
-    ) = run(CertificateAction.Print) {
-        val file = app.certificateFiles.file(certificate.imageUrls.print.toString(), fileName)
-        PrintHelper(context.activity())
-            .apply {
-                scaleMode = PrintHelper.SCALE_MODE_FIT
-                orientation = PrintHelper.ORIENTATION_LANDSCAPE
-            }.printBitmap(fileName.removeSuffix(".png"), Uri.fromFile(file))
+    ) {
+        val urls = certificate.imageUrls ?: return
+        run(CertificateAction.Print) {
+            val file = app.certificateFiles.file(urls.print.toString(), fileName)
+            PrintHelper(context.activity())
+                .apply {
+                    scaleMode = PrintHelper.SCALE_MODE_FIT
+                    orientation = PrintHelper.ORIENTATION_LANDSCAPE
+                }.printBitmap(fileName.removeSuffix(".png"), Uri.fromFile(file))
+        }
     }
 
     /** Into Pictures, where the gallery shows it; before Android 10 the learner picks the folder. */
@@ -95,14 +108,15 @@ class CertificateActions internal constructor(
         certificate: OwnedCertificate,
         fileName: String,
     ) {
-        if (busy != null) return
+        val urls = certificate.imageUrls
+        if (busy != null || urls == null) return
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            pendingSave.value = listOf(certificate.imageUrls.print.toString(), fileName)
+            pendingSave.value = listOf(urls.print.toString(), fileName)
             saveAs(fileName)
             return
         }
         run(CertificateAction.Download) {
-            savePicture(app.certificateFiles.file(certificate.imageUrls.print.toString(), fileName), fileName)
+            savePicture(app.certificateFiles.file(urls.print.toString(), fileName), fileName)
             app.snackbars.show(R.string.certificates_downloaded)
         }
     }

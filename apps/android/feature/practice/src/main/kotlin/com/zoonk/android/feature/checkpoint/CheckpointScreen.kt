@@ -160,7 +160,7 @@ fun CheckpointScreen(
                         ?.certificates
                         .orEmpty()
                         .map { it.naming },
-                    onCreateAccount = { navigator.open(AppRoute.Login) },
+                    onSeePlus = { navigator.open(AppRoute.Subscription) },
                 ) { buddy ->
                     DuelResult(shown, viewModel, app, buddy)
                 }

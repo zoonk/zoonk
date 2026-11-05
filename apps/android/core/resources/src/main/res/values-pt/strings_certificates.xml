@@ -22,19 +22,18 @@
   "certificates_copy_link": "92ca1e92c0330fdc31ee01d8c1eb05ee41a9cbebc75f69f755830a33050fcc21",
   "certificates_count": "9760bd4efc6a53159486358a85adb6a17b110921ec9169232047d114dfa08171",
   "certificates_course_complete": "945d1e067ac5a72e5770ac6eda77f6628ddfd3dd312a8388b7a3a5ad3afdc80c",
+  "certificates_course_level": "c8aac7731b122dbed32de4ccd2bc54baf8bfbc1455ca15c06be83af94ad74830",
   "certificates_course_ready": "e64282b5ea9566578aabb7217c408c4ef16053dd32fc1ccd2b503f9086a15f4a",
-  "certificates_create_account": "e5074d788c8d40b3bbc3f7078a9d1a05e9fd69cb33c525870ecb5706a10fd431",
   "certificates_download": "4a8cb1d0e0febc08787effb793df9e83dbd6d5e86de1736c11e600f88b576f71",
   "certificates_downloaded": "973bba8d52b22bd9abbd44579071eee5d91d0afeba5ceb575a74d9b604965466",
   "certificates_earned": "cec49473a8e7ec122829555cde8b2db37115390163c82b652082932c61bd6f24",
-  "certificates_empty_description": "e606726c944b067a9776841ffd2575797ec22d5b61be97073f933d0bdf300fbd",
+  "certificates_empty_description": "e531935a5ca71f11a2409034611a5ea94916fb87a5a33d7428a8c8657aee53c1",
   "certificates_empty_title": "95e2dbbdd4e9eb95dd5d20208d1f3a342f11830c43c597152f9b1c63a32f692d",
   "certificates_get": "0c3deb156c492ad36b6fe0a3d82cb8887e4ed16bd89c1de0a9bf0f1ae00dc58e",
-  "certificates_guest_line": "74d34246c8754c1998caea21dc9bbee6f36db11fccd66724f61fd2bcedc3bb8f",
   "certificates_kind_completion": "a84d07427537e76e677148c3b52478aa20a5e0a960d9f882942eb267dd7c1d38",
   "certificates_language_level": "9ff7875ed82879df14c030832652480a94dcb12b44804079573510d78c82d374",
   "certificates_language_ready": "68a2a0810d0837e4584bab24907da11b345d91a86f876246dc461b62dcdaaeb2",
-  "certificates_lead": "3139a7ad9f3f8e2a85191dfa75b8115f14780d97b77724e898f7c806bbab82f0",
+  "certificates_lead": "cbdc4e991a1985f69c81ee41d532a8f47ae1ac007dd162b7106c882337b2ae89",
   "certificates_lessons": "856539d83e713903bd6a04ee6d912328a67ee3dccbe00e7c9f1ca07d3141d77d",
   "certificates_level_complete": "f8a3ab8cde5629ac22e91a3f04d053f104342b40545921e714e5a2bf6058e434",
   "certificates_link_copied": "a68e6e63d218dea6defedc45f74deea2fb0f925b931d72cef6217f5428fc7564",
@@ -47,6 +46,7 @@
   "certificates_linkedin_open": "d847ac44907483b43fcc42143ea57180575d393412dbc828c0d919c147765c3b",
   "certificates_linkedin_organization": "cdb3c3730d8de0aa7e96f78bd305e99d463c48490446632170477b9a3ddc8ece",
   "certificates_linkedin_title": "cb133ee21e649e95ab9992938149122332367b320f6d722b98ad5d8586ff1134",
+  "certificates_locked": "113c8bcf4043f1a7fc88fdd782697d300e7e13ab1684defce35f87b2a5beb44d",
   "certificates_name_hint": "84995d997e766cd8d2a9680baee15fd704b651a5d36d3a5f295fb7b429c0cba4",
   "certificates_name_hint_new": "1e48b53776a83fc5eeaec0d2383471e2f243cd47e4eb166933721aeadbe63da3",
   "certificates_name_label": "fa843270dfea4ae9ef907aec8651beb705a9c614cf3a6bb8a21c5c5a1fd36647",
@@ -57,6 +57,9 @@
   "certificates_not_found": "9ba4e80f5bed16ac49ee2d42d49b3c8f15c77800534fcf104576affbed4248ba",
   "certificates_on_your_certificate": "66ccb6c86a6fec74ae0642bf04d83eadf82400e106371bdee062d9285759f2f0",
   "certificates_picture_failed": "3a739dd63d7cb60f70a04dcecddd09ab5cbae74cf30ff94073250314c17e1dbb",
+  "certificates_plus_description": "3c7f75575b6abdd93750404bc536a45e1a10187d2f62707a8872d65d8a572fdb",
+  "certificates_plus_list_title": "950e225dfb5420eaaf1ca125de670c156e0b5655f618cd97761f76571b969766",
+  "certificates_plus_title": "24dec0e44870a00c8cce4d72c29f7bd965fea82b254dc93884fd0aaca7f02554",
   "certificates_print": "1fbcec4f33c5c4b5d604b87589895cabceb5e11558a298c349cabd1f638b6707",
   "certificates_save": "3613a60f977e7daaf8f1d1c7181836f2b20edde317a222163dab7069f37eb201",
   "certificates_saved_one": "8ce318dd5e1f37a30853057e934fb048cfc0d4af2f1ffb68283dd48077b027c0",
@@ -67,7 +70,8 @@
   "certificates_up_next": "ec888da0f88d2765c22dc22042a3139c27aaa65111e267f4af7aa0ee9743a1e2",
   "certificates_up_next_course": "7d6ca1258d81b8dc40953571ccccc1231c0d8891ba794b43531c427b0a516938",
   "certificates_up_next_language": "acc9336f23a5942e85598e3ba389bb2a8201f071015211e6c11ded4d6c8ddfed",
-  "certificates_view": "0d742162d6d7f86943f7445ca16b6c78eb95a2f24252af9fceca01fc2f6ddc70"
+  "certificates_view": "0d742162d6d7f86943f7445ca16b6c78eb95a2f24252af9fceca01fc2f6ddc70",
+  "certificates_view_several": "996f8bf659e38a4a8b4d21a3652155f667440230e1c6b823af89a73ff60d0b04"
 }
 -->
 <resources>
@@ -79,16 +83,19 @@
         <item quantity="many">%1$d certificados</item>
         <item quantity="other">%1$d certificados</item>
     </plurals>
-    <string name="certificates_lead">Imprima, baixe ou compartilhe seus certificados quando quiser.</string>
+    <string name="certificates_lead">Um certificado para cada nível e plano que você concluir.</string>
     <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Certificado de conclusão</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
+    <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
+    <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">Ainda sem certificados</string>
-    <string name="certificates_empty_description">Conclua um curso ou um nível de idioma e seu certificado aparece aqui, grátis para imprimir e compartilhar.</string>
+    <string name="certificates_empty_description">Seus certificados aparecem aqui quando você conclui um nível ou um plano.</string>
     <string name="certificates_continue_learning">Continuar aprendendo</string>
-    <!-- On a finished plan's card: opens the course's certificate. -->
+    <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">Ver certificado</string>
+    <string name="certificates_view_several">Ver certificados</string>
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">Emitir seu certificado</string>
     <string name="certificates_up_next">A seguir</string>
@@ -97,7 +104,6 @@
     <string name="certificates_up_next_language">Você recebe quando todas as habilidades que pratica chegam ao próximo nível</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Curso concluído!</string>
-    <!-- The title of a full screen shown once, right after the learner finishes a language level. %1$s is the CEFR level, such as "B1". -->
     <string name="certificates_level_complete">%1$s concluído!</string>
     <!-- The title when the learner earned two or more certificates at once. -->
     <plurals name="certificates_earned">
@@ -111,8 +117,6 @@
     <string name="certificates_language_ready">Seu certificado de %1$s %2$s está pronto.</string>
     <!-- %1$s lists the certificates' names, such as "Spanish A2 and B1" or "Python and Spanish B1". -->
     <string name="certificates_several_ready">Seus certificados de %1$s estão prontos.</string>
-    <string name="certificates_guest_line">Crie uma conta grátis para guardar seu certificado e colocar seu nome nele.</string>
-    <string name="certificates_create_account">Criar uma conta grátis</string>
     <!-- %1$s is the learner's name, as printed on their certificate. -->
     <string name="certificates_on_your_certificate">No seu certificado: %1$s</string>
     <!-- A short button beside the learner's name, to edit the name printed on their certificates. -->
@@ -137,6 +141,10 @@
     <!-- "Certificates" is the place name. -->
     <string name="certificates_saved_several">Estão salvos em Certificados.</string>
     <string name="certificates_continue">Continuar</string>
+    <string name="certificates_locked">Bloqueado</string>
+    <string name="certificates_plus_title">Receba seu certificado com o Plus</string>
+    <string name="certificates_plus_description">O Plus te dá um certificado para cada nível que você conclui, para imprimir e compartilhar. Os certificados que você recebe continuam sendo seus mesmo se sua assinatura do Plus acabar.</string>
+    <string name="certificates_plus_list_title">Certificados vêm com o Plus</string>
     <!-- The title of the screen showing one certificate. -->
     <string name="certificates_certificate">Certificado</string>
     <!-- Prints the certificate, or saves it as a PDF from the printing screen. -->

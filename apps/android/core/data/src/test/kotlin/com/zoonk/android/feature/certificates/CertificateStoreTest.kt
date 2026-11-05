@@ -79,7 +79,7 @@ private class FakeCertificatesApi(
     override suspend fun claim(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = held.first()
+    ) = held
 
     override suspend fun goals(session: AuthenticatedSession) = emptyList<Goal>()
 }
@@ -108,25 +108,24 @@ private fun owned(code: String): OwnedCertificate {
     val page = "https://www.zoonk.com/c/$code"
     val picture = "https://www.zoonk.com/en/c/$code/image"
     return OwnedCertificate(
-        answered = null,
         canDo = emptyList(),
         category = null,
         code = code,
         completedOn = LocalDate(2026, 11, 3),
         courseId = null,
-        courseLevels = emptyList(),
+        courseLevel = null,
         kind = OwnedCertificate.Kind.COURSE,
         language = "en",
         lessonsStudied = 12,
         lessonsTestedOut = 0,
         level = null,
-        measuredLevel = null,
         minutes = 240,
         recipientName = "Ana Souza",
         skillLevels = emptyList(),
         targetLanguage = null,
         title = "Python",
         topics = emptyList(),
+        locked = false,
         shownAt = null,
         imageUrls =
             CertificateImageUrls(

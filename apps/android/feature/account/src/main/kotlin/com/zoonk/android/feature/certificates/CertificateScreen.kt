@@ -3,7 +3,6 @@ package com.zoonk.android.feature.certificates
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -37,11 +36,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
-import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
@@ -49,7 +46,6 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
@@ -62,7 +58,9 @@ import kotlinx.coroutines.launch
 
 /**
  * Main's `/c/<code>` for its owner: the certificate with Share, Print, Download, Add to LinkedIn,
- * Copy link and its name. It reads the learner's list, so a rename shows here at once.
+ * Copy link and its name, or, earned without Plus, locked with the Plus notice. It reads the
+ * learner's list, so a rename or a subscription shows here at once, and a locked one, which the
+ * public read refuses, shows at all.
  */
 @Composable
 fun CertificateScreen(
@@ -76,9 +74,7 @@ fun CertificateScreen(
     val wanted = normalizeCertificateCode(code)
     val certificate = state.value?.find { it.code == wanted }
     val actions = rememberCertificateActions(app)
-    val session by app.sessions.state.collectAsStateWithLifecycle()
-    val isGuest = (session as? SessionState.SignedIn)?.isGuest == true
-    val canShare = certificate?.recipientName != null && !isGuest
+    val canShare = certificate?.recipientName != null && !certificate.locked
 
     PageScaffold(
         onBack = { navigator.back() },
@@ -106,7 +102,7 @@ fun CertificateScreen(
         ) {
             when {
                 certificate != null -> {
-                    Certificate(app, certificate, actions, isGuest) { navigator.open(AppRoute.Login) }
+                    Certificate(app, certificate, actions) { navigator.open(AppRoute.Subscription) }
                 }
 
                 state is LoadState.Failed -> {
@@ -141,35 +137,46 @@ private fun Certificate(
     app: AppContainer,
     certificate: OwnedCertificate,
     actions: CertificateActions,
-    isGuest: Boolean,
-    onCreateAccount: () -> Unit,
+    onSeePlus: () -> Unit,
 ) {
     // Above both layouts: folding moves what the learner does between the one column and the page after the fold, and each keeps its scroll.
     val name = certificateNameModel(app)
     var linkedIn by rememberSaveable { mutableStateOf(false) }
     val pageScroll = rememberScrollState()
     val usesScroll = rememberScrollState()
-    val uses = @Composable { Uses(certificate, actions, isGuest, onCreateAccount, name) { linkedIn = true } }
+    val naming = certificate.naming
+    val uses =
+        @Composable {
+            if (naming.locked) {
+                CertificatesPlusNotice(onSeePlus, Modifier.padding(top = 24.dp))
+            } else {
+                Uses(certificate, actions, name) { linkedIn = true }
+            }
+        }
 
     PageWithSupportingPane(supportingPane = { DetailColumn(usesScroll) { uses() } }, panesTouch = true, atFoldOnly = true) { usesBeside ->
         DetailColumn(pageScroll) {
             Text(
-                certificate.naming.words(),
+                naming.words(),
                 Modifier.pageTitle(),
                 style = MaterialTheme.typography.titleLarge,
             )
             Text(
-                certificate.kindLine(),
+                naming.kindLine(),
                 Modifier.padding(top = 4.dp, bottom = 16.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            CertificatePicture(certificate.pictureUrl, app.images, certificate.pictureLabel(), Modifier.fillMaxWidth())
+            if (naming.locked) {
+                LockedCertificate(naming, Modifier.fillMaxWidth())
+            } else {
+                CertificatePicture(certificate.pictureUrl, app.images, certificate.pictureLabel(), Modifier.fillMaxWidth())
+            }
             if (!usesBeside) uses()
         }
     }
 
-    if (linkedIn) LinkedInSheet(certificate, onCopy = actions::copy, onDismiss = { linkedIn = false })
+    if (linkedIn && !naming.locked) LinkedInSheet(certificate, onCopy = actions::copy, onDismiss = { linkedIn = false })
 }
 
 @Composable
@@ -187,13 +194,11 @@ private fun DetailColumn(
     )
 }
 
-/** Print, download, LinkedIn, the link and the name, or what a guest or a learner without a name does first. */
+/** Print, download, LinkedIn, the link and the name, or the name first for a learner without one. */
 @Composable
 private fun Uses(
     certificate: OwnedCertificate,
     actions: CertificateActions,
-    isGuest: Boolean,
-    onCreateAccount: () -> Unit,
     name: CertificateNameModel,
     onAddToLinkedIn: () -> Unit,
 ) {
@@ -201,13 +206,6 @@ private fun Uses(
     val fileName = certificate.fileName()
 
     when {
-        isGuest -> {
-            Column(Modifier.padding(top = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(stringResource(R.string.certificates_guest_line), style = MaterialTheme.typography.bodyLarge)
-                OutlinedButton(onClick = onCreateAccount) { Text(stringResource(R.string.certificates_create_account)) }
-            }
-        }
-
         // Share, print, download and LinkedIn wait for a name, as main's page does.
         recipient == null -> {
             CertificateNameField(current = null, name, Modifier.padding(top = 24.dp))
