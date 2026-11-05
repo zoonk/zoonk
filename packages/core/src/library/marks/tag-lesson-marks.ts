@@ -23,7 +23,7 @@ import {
   readSavedStepMarks,
 } from "./step-marks";
 
-export type LessonIconRequest = { need: IconNeed; usedFor: string };
+export type LessonIconRequest = { forIdea: boolean; need: IconNeed; usedFor: string };
 
 /** `contentScope` is the lesson's, so its icon calls keep a private lesson's data protections. */
 export type TaggedLesson = { contentScope: "personal" | "shared"; requests: LessonIconRequest[] };
@@ -132,15 +132,15 @@ function collectRequests({
   ideas: readonly SavedLessonMapIdea[];
   steps: readonly TaggedStep[];
 }): LessonIconRequest[] {
-  const uses = [
+  const uses: LessonIconRequest[] = [
     ...steps.flatMap(({ marks, screen }) =>
       marks?.iconPending && marks.iconNeed
-        ? [{ need: marks.iconNeed, usedFor: `a screen: ${describeScreen(screen)}` }]
+        ? [{ forIdea: false, need: marks.iconNeed, usedFor: `a screen: ${describeScreen(screen)}` }]
         : [],
     ),
     ...ideas.flatMap((idea) =>
       idea.iconPending && idea.iconNeed
-        ? [{ need: idea.iconNeed, usedFor: `the lesson map's idea: ${idea.text}` }]
+        ? [{ forIdea: true, need: idea.iconNeed, usedFor: `the lesson map's idea: ${idea.text}` }]
         : [],
     ),
   ];
@@ -152,7 +152,13 @@ function collectRequests({
 
     byName.set(
       use.need.name,
-      known ? { ...known, usedFor: `${known.usedFor}; ${use.usedFor}` } : use,
+      known
+        ? {
+            ...known,
+            forIdea: known.forIdea || use.forIdea,
+            usedFor: `${known.usedFor}; ${use.usedFor}`,
+          }
+        : use,
     );
   }
 

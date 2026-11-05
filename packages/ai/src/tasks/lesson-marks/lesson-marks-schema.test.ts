@@ -30,6 +30,7 @@ const ideas = [
 ];
 
 const stamp = { description: "A wooden rubber stamp", name: "Rubber Stamp", searchWords: ["seal"] };
+const oven = { description: "A bakery's brick oven", name: "brick oven", searchWords: ["bakery"] };
 
 describe(normalizeLessonMarks, () => {
   it("keeps exact quotes, ideas as indexes from 0 and icons only where a screen may show one", () => {
@@ -43,12 +44,12 @@ describe(normalizeLessonMarks, () => {
         screens: [
           {
             example: "A padaria do João tem um forno e R$ 2.000 no caixa.",
-            icon: stamp,
+            icon: oven,
             idea: 1,
             screen: 1,
             underline: "tudo o que a empresa tem",
           },
-          { example: null, icon: stamp, idea: 1, screen: 2, underline: null },
+          { example: null, icon: oven, idea: 1, screen: 2, underline: null },
           { example: null, icon: stamp, idea: 2, screen: 3, underline: "O que muda no balanço?" },
           { example: null, icon: stamp, idea: 2, screen: 4, underline: "O forno" },
         ],
@@ -70,7 +71,7 @@ describe(normalizeLessonMarks, () => {
       screens: [
         {
           example: "A padaria do João tem um forno e R$ 2.000 no caixa.",
-          icon: need,
+          icon: oven,
           ideaIndex: 0,
           underline: "tudo o que a empresa tem",
         },
@@ -109,6 +110,37 @@ describe(normalizeLessonMarks, () => {
     expect(marks.ideas).toStrictEqual([
       { about: null, icon: null },
       { about: null, icon: null },
+    ]);
+  });
+
+  it("keeps the ideas' icons apart and never puts a screen's idea icon beside its text", () => {
+    const cell = { description: "A round animal cell", name: "cell", searchWords: [] };
+
+    const marks = normalizeLessonMarks({
+      ideas: [...ideas, { label: "Patrimônio", text: "Patrimônio é o ativo menos o passivo." }],
+      output: {
+        ideas: [
+          { about: "O que a empresa tem", icon: cell, idea: 1 },
+          { about: "O que a empresa deve", icon: stamp, idea: 2 },
+          { about: "O que sobra", icon: { ...cell, name: "Cell" }, idea: 3 },
+        ],
+        screens: [
+          { example: null, icon: cell, idea: 1, screen: 1, underline: null },
+          { example: null, icon: oven, idea: 2, screen: 2, underline: null },
+        ],
+      },
+      screens: [explanation, explanation],
+    });
+
+    expect(marks.ideas.map((idea) => idea.icon?.name ?? null)).toStrictEqual([
+      "cell",
+      "rubber stamp",
+      null,
+    ]);
+
+    expect(marks.screens.map((screen) => screen.icon?.name ?? null)).toStrictEqual([
+      null,
+      "brick oven",
     ]);
   });
 

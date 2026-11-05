@@ -30,7 +30,7 @@ export const stepMarksSchema = z
   .nullable()
   .meta({
     description:
-      "Light marks on a teaching screen. The marked text is an explanation's `text` or a worked example's `problem`; on every other screen all fields are null. `icon` sits on the corner of the example's frame, or of the text block when there's no example, only on an explanation with no picture, visual or activity of its own. Null until the lesson is tagged, and on screens it never tags",
+      "Light marks on a teaching screen. The marked text is an explanation's `text` or a worked example's `problem`; on every other screen all fields are null. `icon` sits on the corner of the example's frame, or of the text block when there's no example, only on an explanation with no picture, visual or activity of its own, and never the same icon as its idea's, which the orientation strip already shows. Null until the lesson is tagged, and on screens it never tags",
     id: "StepMarks",
   });
 

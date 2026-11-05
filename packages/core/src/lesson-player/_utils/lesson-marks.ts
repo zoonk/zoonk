@@ -91,10 +91,7 @@ export async function withLessonMarks({
     return "content" in step && marks
       ? {
           ...step,
-          marks: fitStepMarks({
-            marks: toStepMarks({ icons, ideaCount: ideas.length, saved: marks }),
-            screen: step,
-          }),
+          marks: fitStepMarks({ marks: toStepMarks({ icons, ideas, saved: marks }), screen: step }),
         }
       : step;
   });

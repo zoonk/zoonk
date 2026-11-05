@@ -81,23 +81,21 @@ export function canShowIcon(screen: MarkedScreen): boolean {
   );
 }
 
+/** The strip shows the idea's icon above the text, so the screen never shows that icon again. */
 export function toStepMarks({
-  ideaCount,
   icons,
+  ideas,
   saved,
 }: {
-  ideaCount: number;
   icons: ReadonlyMap<string, LessonIcon>;
+  ideas: readonly { iconId?: string | null }[];
   saved: SavedStepMarks;
 }): StepMarks {
   const { example, iconId, ideaIndex, underline } = saved;
+  const idea = ideaIndex === null ? undefined : ideas[ideaIndex];
+  const icon = iconId && iconId !== idea?.iconId ? icons.get(iconId) : undefined;
 
-  return {
-    example,
-    icon: (iconId && icons.get(iconId)) || null,
-    ideaIndex: ideaIndex !== null && ideaIndex < ideaCount ? ideaIndex : null,
-    underline,
-  };
+  return { example, icon: icon ?? null, ideaIndex: idea ? ideaIndex : null, underline };
 }
 
 /**

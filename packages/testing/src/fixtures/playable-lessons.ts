@@ -95,9 +95,10 @@ function savedMarks(marks: {
 export async function markedPlayableLessonFixture({
   lesson,
 }: { lesson?: FixtureAttrs<Lesson, "heldBackDrafts" | "spec" | "summary"> } = {}) {
-  const [cloud, nucleus] = await Promise.all([
+  const [cloud, nucleus, planet] = await Promise.all([
     lessonIconFixture({ name: `electron cloud ${randomUUID()}`, tags: ["electron", "cloud"] }),
     lessonIconFixture({ name: `atom nucleus ${randomUUID()}`, tags: ["atom", "nucleus"] }),
+    lessonIconFixture({ name: `planet ${randomUUID()}`, tags: ["planet", "orbit"] }),
   ]);
 
   const created = await playableLessonFixture({
@@ -127,7 +128,7 @@ export async function markedPlayableLessonFixture({
         kind: "explanation",
         marks: savedMarks({
           example: "The electron doesn't circle the nucleus like a planet.",
-          iconId: cloud.id,
+          iconId: planet.id,
           ideaIndex: 0,
           underline: "a map of where it might be",
         }),
@@ -140,7 +141,7 @@ export async function markedPlayableLessonFixture({
     ],
   });
 
-  return { ...created, icons: { cloud, nucleus } };
+  return { ...created, icons: { cloud, nucleus, planet } };
 }
 
 export async function languageLessonFixture({

@@ -5,37 +5,37 @@
       "categoryScores": [
         {
           "categoryId": "about",
-          "reasoning": "All five lines are in Portuguese, stay within 60 characters, and generally pose introductory questions without revealing outcomes. However, “Que tipos de compromissos a empresa precisa considerar?” strongly hints that Passivo concerns obligations through the near-synonym “compromissos,” triggering the maximum score of 7. The Ativo and Compra planejada lines avoid their prohibited conclusions.",
+          "reasoning": "All previews are in Portuguese and within 60 characters. The Ativo and Compra planejada lines withhold their conclusions. However, “Que tipo de compromisso a empresa precisa considerar?” strongly hints that Passivo concerns obligations, triggering the maximum score of 7 for strong hints. The planned-purchase preview is also rather vague.",
           "score": 7,
           "label": "About lines that don't give the answer away",
           "weight": 30
         },
         {
           "categoryId": "ideas",
-          "reasoning": "Screens 2 and 3 belong to Ativo, not Itens separados: buying on credit supplies context, but the question and explanation concern only asset recognition. This triggers the maximum score of 6 for incorrect placement. The remaining assignments fit, including the final mixed question being assigned to the later Compra planejada idea.",
-          "score": 6,
+          "reasoning": "All screens are assigned to the ideas they teach or assess. The final question combines machine recognition, receivables, and planned purchases and appropriately has no single idea assignment.",
+          "score": 10,
           "label": "Each screen under its idea",
           "weight": 20
         },
         {
           "categoryId": "marks",
-          "reasoning": "The examples consistently isolate concrete cases rather than general rules. Most underlines identify relevant central phrases. However, “exigirá entregar recursos” on the Passivo screen highlights one supporting characteristic rather than its main point that the existing obligation belongs in Passivo, triggering the side-detail cap of 7.",
+          "reasoning": "The examples correctly isolate concrete cases rather than general rules. However, “já controla e usa a máquina” highlights the justification rather than the main point that the machine is recorded as an asset even before payment. Likewise, “exigirá entregar recursos” captures only a supporting feature of the liability explanation rather than its central classification of an existing obligation. These side-detail selections trigger the maximum score of 7.",
           "score": 7,
           "label": "Underlines on the main point, examples on the case",
           "weight": 20
         },
         {
           "categoryId": "icons",
-          "reasoning": "Every eligible explanation screen has an icon, and all other screens have none. Names and descriptions are English, with consistent naming. Flour, machinery, the bank, and the computer connect to their cases. However, the coin does not distinguish a receivable from money already held, and empty balance scales do not represent the paper purchase or supplier payable. These several weak choices trigger the maximum score of 8.",
-          "score": 8,
+          "reasoning": "Icons appear only on eligible explanation screens, all eligible screens receive one, and no screen repeats its idea’s icon. Names and descriptions are in English, and the flour, paper, bank, and computer connect to their cases. Several choices remain weak: handshake does not distinguish a receivable, banknote does not express separate entries, and coin is less fitting than an invoice for an unpaid service. The sewing-machine name also introduces unsupported specificity. Multiple weak icons trigger the maximum score of 8; their combined lack of clarity supports a score of 7.",
+          "score": 7,
           "label": "Concrete, fitting icons",
           "weight": 30
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 15 parts passed the code checks.",
-          "score": 10,
+          "reasoning": "14 of 15 parts passed. Screen 3: example isn't whole exact sentences",
+          "score": 9.4,
           "weight": 30
         }
       ],
@@ -44,30 +44,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3457,
-          "outputTokens": 1098,
-          "reasoningTokens": 437
+          "inputTokens": 3651,
+          "outputTokens": 1054,
+          "reasoningTokens": 409
         }
       },
       "steps": [
         {
-          "conclusion": "Screens 2 and 3 are incorrectly assigned to “Itens separados” (ideaIndex 3). They ask about or explain recognizing the machine as an asset despite not paying yet; neither teaches separate asset and liability entries. Both belong under “Ativo” (ideaIndex 0).",
+          "conclusion": "The Passivo preview strongly hints at the answer through “compromisso,” a near-synonym for obligation, which the expectations specifically seek to withhold. Some underlines also emphasize supporting details rather than the screen’s central accounting takeaway.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 7
         },
         {
-          "conclusion": "The Passivo about line strongly hints at its definition through “compromissos.” The Passivo underline emphasizes a future outflow rather than the central classification of an existing obligation. The coin and balance-scale icons are weak connections to the receivable and supplier-payable cases.",
+          "conclusion": "Several icons have weak instructional connections: a handshake suggests an agreement rather than a receivable, a banknote does not distinguish separate asset and liability entries, and a coin does not clearly convey an unpaid service invoice. “Sewing machine” adds an unsupported machine type and is more specific than its description.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Use a neutral Passivo preview such as “O que entra nessa classificação contábil?”. Replace the receivable coin with an invoice depicted without text or numbers, and the supplier-payable scales with a stack of paper. For the Passivo screen, underline “faz parte do **passivo**” or omit the underline.",
+          "conclusion": "Make the Compra planejada preview more informative without revealing its conclusion, for example “Como analisar uma compra ainda no planejamento?”. Preserve the correct screen assignments, concrete example selections, and restriction of screen icons to eligible explanations.",
           "kind": "potentialImprovements",
           "score": 8
         }
       ],
       "testCase": {
-        "expectations": "\n      - In Brazilian Portuguese, for a total beginner in accounting\n      - The \"Ativo\" about line doesn't say it's what the company controls or what brings benefits; \"Passivo\" doesn't say it's an obligation or a debt; \"Compra planejada\" doesn't say a planned purchase creates no liability\n      - Icons show the screens' own cases (the business's goods, a loan, an invoice), not a generic balance sheet on every screen\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "expectations": "\n      - In Brazilian Portuguese, for a total beginner in accounting\n      - The \"Ativo\" about line doesn't say it's what the company controls or what brings benefits; \"Passivo\" doesn't say it's an obligation or a debt; \"Compra planejada\" doesn't say a planned purchase creates no liability\n      - Icons show the screens' own cases (the business's goods, a loan, an invoice), not a generic balance sheet on every screen\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "pt-ativo-passivo-1",
         "userInput": {
           "ideas": [
@@ -163,29 +163,29 @@
       "categoryScores": [
         {
           "categoryId": "about",
-          "reasoning": "All lines are short, accessible Brazilian Portuguese and disclose none of the classifications. In particular, the loan, gift, and own-account lines preserve the intended questions. However, “De onde vem o salário?” promises an explanation of salary's source rather than its budget classification.",
-          "score": 8,
+          "reasoning": "All lines are short, natural Portuguese and name their topics without revealing the classifications or reasons. In particular, the loan, occasional-gain, and own-account lines do not disclose their answers. The salary question could align more precisely with what the lesson addresses, but it still names the relevant topic. No answer-disclosure cap applies.",
+          "score": 9,
           "label": "About lines that don't give the answer away",
           "weight": 30
         },
         {
           "categoryId": "ideas",
-          "reasoning": "Every screen is assigned to the appropriate idea. The final review includes several ideas and correctly belongs to the latest one, Contas próprias.",
+          "reasoning": "Every individual explanation and question is assigned to the appropriate idea. The final question reviews several classifications and correctly has no idea assignment.",
           "score": 10,
           "label": "Each screen under its idea",
           "weight": 20
         },
         {
           "categoryId": "marks",
-          "reasoning": "The examples consistently frame concrete cases rather than general rules. Most underlines capture relevant teaching points, but the expense underline selects a supporting detail instead of the main classification, triggering the maximum score of 7. The gift underline could also convey the income classification more directly instead of isolating its frequency qualification.",
-          "score": 7,
+          "reasoning": "The retained examples frame concrete transactions rather than general rules. The underlines emphasize relevant central distinctions: earned money, the loan not being income, irregular frequency for an occasional gain, and continued ownership during an own-account transfer. The frequency qualifier is central to the occasional-gain idea rather than an unrelated detail. Missing underlines are not penalized.",
+          "score": 10,
           "label": "Underlines on the main point, examples on the case",
           "weight": 20
         },
         {
           "categoryId": "icons",
-          "reasoning": "Exactly the five eligible explanation screens have icons; the other screens have none. Names and descriptions are in English and consistently reused. The salary coin, loan banknote with a return arrow, electricity light bulb, and gift box fit their respective cases. The bank is a recognizable symbol for the accounts screen. The light bulb is relevant to electricity here, not a generic filler.",
-          "score": 10,
+          "reasoning": "The gift explanation wrongly lacks an icon despite having cash as an available case object distinct from its idea's gift box. The wallet for salary and metaphorical chain for loans are also weaker associations for beginners, triggering the cap of 8 for several weak icons. Other constraints are respected: icons appear only on eligible screens, names and descriptions are English, idea icons are distinct, and no screen repeats its idea's icon. The light bulb is appropriate here because the case concerns electricity.",
+          "score": 7,
           "label": "Concrete, fitting icons",
           "weight": 30
         },
@@ -202,26 +202,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3163,
-          "outputTokens": 753,
-          "reasoningTokens": 237
+          "inputTokens": 3292,
+          "outputTokens": 1108,
+          "reasoningTokens": 516
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The expense screen underlines “pagamentos por compras ou obrigações,” a supporting generalization rather than its main point that the electricity payment is an expense. The salary about line asks where salary comes from, whereas the idea explains how salary is classified.",
+          "conclusion": "The gift explanation is missing its required case icon. Although its idea already uses a gift box, the cash gift provides another concrete object, such as a banknote, so the exception for having no other concrete object does not apply.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Some icons are weakly connected to their topics: the salary screen's wallet suggests money generally rather than receiving a salary, and the loan idea's chain requires a metaphorical association with debt that may not be clear to a total beginner.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "The gift screen's underline could emphasize that the gift is income, rather than highlighting only its irregular frequency. For the salary about line, a question such as “Como registrar o salário?” would better match the lesson without revealing the answer.",
+          "conclusion": "Make the salary about line more closely match the lesson's classification question, for example, 'Como registrar o salário no orçamento?' This remains answer-free while setting a more useful expectation than asking where salary comes from.",
           "kind": "potentialImprovements",
           "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - In Brazilian Portuguese, for a total beginner\n      - The \"Empréstimo\" about line doesn't say a loan isn't income; \"Ganho ocasional\" doesn't say a gift is income; \"Contas próprias\" doesn't say a transfer between your own accounts is neither\n      - The light bill, the salary, the loan and the gift each get the object of their own case\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "expectations": "\n      - In Brazilian Portuguese, for a total beginner\n      - The \"Empréstimo\" about line doesn't say a loan isn't income; \"Ganho ocasional\" doesn't say a gift is income; \"Contas próprias\" doesn't say a transfer between your own accounts is neither\n      - The light bill, the salary, the loan and the gift each get the object of their own case\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "pt-receitas-despesas-1",
         "userInput": {
           "ideas": [
@@ -305,37 +309,37 @@
       "categoryScores": [
         {
           "categoryId": "about",
-          "reasoning": "All five previews are in Portuguese, stay within 60 characters, and ask about topics without supplying conclusions. In particular, neither the outermost-shell definition nor oxygen's six valence electrons and two bonds is disclosed. The valence preview could name its topic more directly, but no answer-leakage cap applies.",
-          "score": 9,
+          "reasoning": "The lines are natural Brazilian Portuguese and mostly introduce questions without answering them. However, asking which electrons are farthest from the center strongly hints at the valence-electron definition, triggering the cap of 7. The water-related line is also 64 characters long. It correctly avoids revealing oxygen’s six valence electrons or two bonds.",
+          "score": 7,
           "label": "About lines that don't give the answer away",
           "weight": 30
         },
         {
           "categoryId": "ideas",
-          "reasoning": "The opening guess about what happens when hydrogen atoms unite is assigned to the shared-pair idea rather than the chemical-bond idea. Nothing in that question specifically introduces the shared pair, so the later-idea rule does not justify this placement. This triggers the wrong-placement cap of 6. The remaining assignments, including the final mixed ammonia question under 'Elétrons e ligações', fit their screens.",
+          "reasoning": "Most assignments fit, including leaving the introductory atom screen unassigned and assigning the ammonia correction to the later electrons-versus-bonds idea. However, the initial hydrogen-union guess is mapped to the shared-pair idea before asking anything about electron contributions or sharing. Its question and immediate explanatory follow-up concern chemical bonding without fused centers. This wrong assignment triggers the cap of 6.",
           "score": 6,
           "label": "Each screen under its idea",
           "weight": 20
         },
         {
           "categoryId": "marks",
-          "reasoning": "The oxygen-valence, helium, and shared-pair screens underline case details or secondary qualifications rather than their central teaching points, triggering the cap of 7. The examples appropriately select concrete hydrogen, oxygen, or water cases rather than general rules. Missing marks are not penalized.",
+          "reasoning": "The examples appropriately select concrete hydrogen, oxygen, and helium cases rather than general rules. However, “a segunda camada é a ocupada mais externa” selects an oxygen-specific detail instead of the valence-electron definition, and “não cria elétrons novos” selects a secondary clarification instead of the shared-pair mechanism. These trigger the cap of 7. The final underline also spans the complete concluding sentence.",
           "score": 7,
           "label": "Underlines on the main point, examples on the case",
           "weight": 20
         },
         {
           "categoryId": "icons",
-          "reasoning": "Every idea has an icon, and every screen correctly has none: all explanation screens have visuals, while the nonvisual worked example is ineligible. Names and descriptions are in English. However, a balance scale with atoms on opposite sides suggests weighing or equilibrium, not a chemical bond holding atoms together, triggering the misleading-icon cap of 6. The atom, outer-shell diagram, hydrogen molecule, and water molecule otherwise fit their ideas.",
-          "score": 6,
+          "reasoning": "Every idea has a distinct, drawable icon with an English name and description. Rings, an electron, chain links, paired marbles, and a water droplet connect appropriately to their respective topics. All screen icons are correctly absent: every explanation has a visual, and the nonvisual worked example is not eligible for an icon.",
+          "score": 10,
           "label": "Concrete, fitting icons",
           "weight": 30
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "17 of 18 parts passed. Screen 8: example isn't whole exact sentences",
-          "score": 9.5,
+          "reasoning": "All 18 parts passed the code checks.",
+          "score": 10,
           "weight": 30
         }
       ],
@@ -344,30 +348,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3533,
-          "outputTokens": 911,
-          "reasoningTokens": 249
+          "inputTokens": 3732,
+          "outputTokens": 1353,
+          "reasoningTokens": 690
         }
       },
       "steps": [
         {
-          "conclusion": "The chemical-bond idea uses a balance scale, which suggests weighing or equilibrium rather than atoms being held together. The opening hydrogen-union guess is assigned to 'Par compartilhado', although its question concerns atoms joining and belongs under 'Ligação química'; it does not ask about electron contributions or sharing.",
+          "conclusion": "The opening hydrogen-union guess is assigned to “Par compartilhado” (ideaIndex 3), although it asks broadly about atoms joining and is answered by the following explanation about rearrangement without fused centers. It belongs under “Ligação química” (ideaIndex 2).",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Several underlines select supporting details rather than the main point: oxygen's second shell being outermost instead of the definition of valence electrons; helium having one occupied shell instead of why its two electrons count as valence electrons; and sharing not creating new electrons instead of each hydrogen contributing to the shared pair.",
+          "conclusion": "The valence-electron about line strongly hints at the definition through “mais afastados do centro.” The final about line has 64 characters, exceeding the 60-character limit. Some underlines emphasize supporting details rather than the main point, particularly oxygen’s second shell and “não cria elétrons novos.” The final explanation also underlines an entire sentence rather than a short phrase.",
           "kind": "minorErrors",
           "score": 7
         },
         {
-          "conclusion": "Make the valence-electron preview more informative while preserving its non-spoiling question, for example 'Como identificar os elétrons de valência?'. Replace the balance scale with a bonded-atom model, and remove or refocus the secondary-detail underlines.",
+          "conclusion": "The shared-pair about line could target the idea more precisely: “Como cada hidrogênio participa da ligação?” introduces the question of each atom’s contribution without revealing the shared-pair conclusion.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\n      - In Brazilian Portuguese, for beginners in chemistry\n      - Every explanation here has its own picture or visual, so no screen gets an icon, while every idea still has one\n      - \"Elétrons de valência\" about line doesn't say they're the outermost shell's; \"Elétrons e ligações\" doesn't give oxygen's 6 electrons or its two bonds\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "expectations": "\n      - In Brazilian Portuguese, for beginners in chemistry\n      - Every explanation here has its own picture or visual, so no screen gets an icon, while every idea still has one\n      - \"Elétrons de valência\" about line doesn't say they're the outermost shell's; \"Elétrons e ligações\" doesn't give oxygen's 6 electrons or its two bonds\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "pt-eletrons-valencia-1",
         "userInput": {
           "ideas": [
@@ -481,168 +485,28 @@
       "categoryScores": [
         {
           "categoryId": "about",
-          "reasoning": "All four lines are beginner-friendly Brazilian Portuguese questions under 60 characters. They introduce topics without revealing conclusions. In particular, neither the net-income subtraction rule nor the unchanged-net-salary outcome is disclosed.",
+          "reasoning": "All three lines are natural Brazilian Portuguese, remain within 60 characters, and introduce their topics as questions without revealing statutory lists, rules, or conclusions.",
           "score": 10,
           "label": "About lines that don't give the answer away",
           "weight": 30
         },
         {
           "categoryId": "ideas",
-          "reasoning": "Every screen is assigned to the appropriate idea. The proposal comparison belongs to net income, the post-payment bill belongs to household spending afterward, and the final question combining salary and service income correctly takes the later idea.",
+          "reasoning": "The individual explanations and questions are mapped correctly. The two-idea proposal question and Murilo's question use the later relevant idea. The final question reviews all three ideas and appropriately has no idea assignment.",
           "score": 10,
           "label": "Each screen under its idea",
           "weight": 20
         },
         {
           "categoryId": "marks",
-          "reasoning": "The underlines identify central distinctions, and the examples on screens 1 and 3 identify concrete numerical cases. However, screen 6 labels the general rule itself as an example rather than the following numerical case, triggering the maximum score of 7.",
+          "reasoning": "The underlines identify central distinctions rather than incidental details or bold labels alone. However, screen 1's marked example remains a general statement about defending people whose human rights were violated, without a concrete case. It effectively frames the rule, triggering the cap of 7.",
           "score": 7,
           "label": "Underlines on the main point, examples on the case",
           "weight": 20
         },
         {
           "categoryId": "icons",
-          "reasoning": "Screen icons appear exactly on the three explanation screens without visuals. Their English names and descriptions identify concrete generic objects: a pay stub for salary, an electric meter for the electricity bill, and a wrench as a recognizable symbol of independent service work. Repeated objects retain consistent names, and no prohibited subjects or misleading icons appear.",
-          "score": 10,
-          "label": "Concrete, fitting icons",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 13 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3366,
-          "outputTokens": 755,
-          "reasoningTokens": 288
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "On screen 6, the example marks the rule that paying an electricity bill reduces remaining money without changing net salary. It should instead mark the following concrete case: “Por exemplo, de R$ 2.000,00 líquidos, pagar R$ 150,00 deixa R$ 1.850,00.”",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n      - In Brazilian Portuguese, for a total beginner\n      - The \"Renda líquida\" about line doesn't say it's the gross minus deductions, and \"Contas depois\" doesn't say a bill paid later leaves net pay unchanged\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
-        "id": "pt-renda-bruta-liquida-1",
-        "userInput": {
-          "ideas": [
-            {
-              "label": "Salário bruto",
-              "text": "O salário bruto é o valor inicial antes das retiradas do pagamento."
-            },
-            {
-              "label": "Renda líquida",
-              "text": "No salário, a renda líquida é o bruto menos os descontos."
-            },
-            {
-              "label": "Contas depois",
-              "text": "Uma conta paga depois diminui o dinheiro restante, mas não muda o salário líquido."
-            },
-            {
-              "label": "Faturamento bruto",
-              "text": "O faturamento bruto é o total cobrado pelas vendas ou serviços antes dos gastos do trabalho e dos impostos."
-            }
-          ],
-          "language": "pt",
-          "lessonTitle": "Renda bruta e renda líquida",
-          "screens": [
-            {
-              "hasVisual": false,
-              "kind": "explanation",
-              "text": "Otávio confere a proposta: são R$ 3.000,00 antes de qualquer retirada do pagamento. Esse valor inicial é o **salário bruto**. Uma proposta de R$ 2.000,00 também mostra o bruto antes dos descontos.",
-              "title": "O valor anunciado"
-            },
-            {
-              "hasVisual": true,
-              "kind": "guess",
-              "text": "Otávio compara duas propostas de mesmo salário bruto. Qual deixa mais dinheiro para ele usar ao receber?",
-              "title": null
-            },
-            {
-              "hasVisual": true,
-              "kind": "explanation",
-              "text": "Imagine o pagamento de Otávio como uma caixa de dinheiro: tiram valores antes de entregá-la. O que chega após essas retiradas é a **renda líquida**. No salário, líquido = bruto − descontos; contas pagas depois não são esses descontos. Mova os controles: R$ 3.000,00 menos R$ 300,00 deixam R$ 2.700,00.",
-              "title": "O que chega à conta"
-            },
-            {
-              "hasVisual": false,
-              "kind": "workedExample",
-              "text": "Veja um exemplo de pagamento de Otávio. O desconto de INSS é uma contribuição para a previdência pública. Os valores são fictícios.\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.000,00 |\n| Desconto de INSS | R$ 270,00 |\n| Outro desconto | R$ 30,00 |\n| Total de descontos | R$ 300,00 |\n| Salário líquido | R$ 2.700,00 |\n\nQuanto chega à conta?",
-              "title": "Do bruto ao líquido"
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Um salário bruto é de R$ {bruto},00 e os descontos somam R$ {desconto},00.\nQual é o salário líquido?",
-              "title": null
-            },
-            {
-              "hasVisual": false,
-              "kind": "explanation",
-              "text": "Otávio nota que, sem descontos, receberia o mesmo valor do salário bruto. Uma conta de luz paga depois diminui o dinheiro restante, mas não muda o salário líquido. Por exemplo, de R$ 2.000,00 líquidos, pagar R$ 150,00 deixa R$ 1.850,00.",
-              "title": "Depois de receber"
-            },
-            {
-              "hasVisual": false,
-              "kind": "explanation",
-              "text": "Otávio também considera fazer serviços por conta própria. O total cobrado pelas vendas ou serviços, antes dos gastos do trabalho e dos impostos, é o **faturamento bruto**. Para saber quanto sobra do que recebeu, subtraia esses gastos e impostos.\n\n| Exemplo | Valor |\n| --- | ---: |\n| Recebido | R$ 1.000,00 |\n| Materiais | R$ 200,00 |\n| Impostos | R$ 100,00 |\n| Sobra | R$ 700,00 |",
-              "title": "Trabalho por conta própria"
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Um serviço trouxe R$ {recebido},00. Os materiais custaram R$ {materiais},00 e os impostos, R$ {impostos},00.\nQuanto sobra após esses gastos?",
-              "title": null
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Otávio organiza o dinheiro que recebeu no mês, antes de pagar as contas de casa.\n\n| Origem ou gasto | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.000,00 |\n| Descontos do salário | R$ 300,00 |\n| Serviços recebidos | R$ 2.000,00 |\n| Materiais | R$ 500,00 |\n| Impostos dos serviços | R$ 100,00 |\nQuanto está disponível antes das contas da casa?",
-              "title": null
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "about",
-          "reasoning": "All three lines are in Brazilian Portuguese and under 60 characters. They introduce questions about institutional activity, judicial speed, and professional representation without revealing the statutory duties or the ideas' conclusions.",
-          "score": 10,
-          "label": "About lines that don't give the answer away",
-          "weight": 30
-        },
-        {
-          "categoryId": "ideas",
-          "reasoning": "Every screen is assigned to the appropriate idea. The opening mixed proposal, Murilo's question, and the final three-request question correctly use the later applicable idea, finalidade corporativa.",
-          "score": 10,
-          "label": "Each screen under its idea",
-          "weight": 20
-        },
-        {
-          "categoryId": "marks",
-          "reasoning": "The underlines select short substantive points: constitutional defense, the prohibition on replacing judges, and the scope of exclusivity. The examples identify an application involving victims of human-rights violations and Lorena's professional needs rather than enclosing the statutory lists. Missing marks on other screens are not flaws.",
-          "score": 10,
-          "label": "Underlines on the main point, examples on the case",
-          "weight": 20
-        },
-        {
-          "categoryId": "icons",
-          "reasoning": "Exactly the three explanation screens without existing visuals receive icons. The shield, hourglass, and briefcase are concrete generic symbols fitting protection, judicial delay, and professional activity. Names and descriptions are in English, repeated objects retain identical names, and no prohibited imagery or misleading symbols appear.",
+          "reasoning": "The shield, hourglass, and briefcase are distinct, drawable, generic symbols suited to the three ideas, with English names and descriptions. No prohibited logo, flag, person, or text appears. The eligible explanation screens contain no distinct concrete case object requiring an additional icon, so their null icons are appropriate. All other screens correctly have no icon.",
           "score": 10,
           "label": "Concrete, fitting icons",
           "weight": 30
@@ -660,18 +524,22 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3023,
-          "outputTokens": 897,
-          "reasoningTokens": 502
+          "inputTokens": 3057,
+          "outputTokens": 788,
+          "reasoningTokens": 337
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "The example marked on screen 1 restates the OAB's human-rights protection role rather than presenting a concrete incident or situation. The words “Por exemplo” do not make this general description a concrete case; it would be better left unmarked.",
+          "kind": "minorErrors",
+          "score": 7
+        },
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n      - In Brazilian Portuguese, a law lesson for the OAB exam\n      - About lines name each purpose's topic without listing what the statute says it includes\n      - Icons are generic legal or civic objects tied to each screen's case, never the OAB's logo or a flag\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "expectations": "\n      - In Brazilian Portuguese, a law lesson for the OAB exam\n      - About lines name each purpose's topic without listing what the statute says it includes\n      - Icons are generic legal or civic objects tied to each screen's case, never the OAB's logo or a flag\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "pt-finalidades-oab-1",
         "userInput": {
           "ideas": [
@@ -747,28 +615,28 @@
       "categoryScores": [
         {
           "categoryId": "about",
-          "reasoning": "All three lines are natural Brazilian Portuguese, stay within 60 characters, and introduce questions without revealing proportionality rules, definitions, or calculation procedures.",
+          "reasoning": "All three lines are natural Brazilian Portuguese, stay within 60 characters, and pose topic-level questions. None reveals proportional direction, a definition, or the calculation rule.",
           "score": 10,
           "label": "About lines that don't give the answer away",
           "weight": 30
         },
         {
           "categoryId": "ideas",
-          "reasoning": "All nine screens are assigned correctly. The explanation introducing simple proportion belongs to idea 1 despite its opening inverse-proportion example; the compound calculations and questions belong to idea 2.",
+          "reasoning": "All screens are assigned appropriately. The wall-painting explanation introduces simple proportion after revisiting inverse relationships, and is correctly assigned to the later idea. The remaining questions and examples follow their corresponding simple or compound calculation ideas; no overview is incorrectly assigned.",
           "score": 10,
           "label": "Each screen under its idea",
           "weight": 20
         },
         {
           "categoryId": "marks",
-          "reasoning": "The first two underlines identify central relationships or conditions, and the wall-painting example correctly frames a concrete case. However, screen 6 underlines only 'A divisão das impressoras fica invertida', a supporting detail instead of the main procedure involving both ratios. This triggers the cap of 7 for a side-detail underline.",
+          "reasoning": "The examples consistently select concrete case material rather than rules, and the first underline captures a central proportional relationship. However, the wall-painting underline selects a case outcome rather than the main point about simple proportion. The compound-rule underline similarly isolates the printer ratio rather than the combined calculation. The side-detail underline triggers the cap of 7.",
           "score": 7,
           "label": "Underlines on the main point, examples on the case",
           "weight": 20
         },
         {
           "categoryId": "icons",
-          "reasoning": "Exactly the two eligible screens receive icons. Their paintbrush and printer are concrete, relevant, described in English, and contain no numbers or formulas. However, the idea icons use 'printing press' and 'printer' for apparently the same printing-machine motif, with overlapping descriptions and search terms, weakening the required naming consistency.",
+          "reasoning": "Screen icons appear exactly on the eligible explanations and fit their cases: a paint roller and a label roll. Names and descriptions are English, and no icon specifies numbers or formulas, repeats its idea's object, or duplicates another idea's icon. However, the ruler has little connection to this lesson's simple-proportion cases, and the hourglass conveys only time, a subject shared across the ideas, rather than direct versus inverse relationships. These multiple weak choices trigger the cap of 8.",
           "score": 8,
           "label": "Concrete, fitting icons",
           "weight": 30
@@ -786,22 +654,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3003,
-          "outputTokens": 643,
-          "reasoningTokens": 195
+          "inputTokens": 3201,
+          "outputTokens": 793,
+          "reasoningTokens": 207
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "Screen 6 underlines only the inversion of the printer ratio, a supporting detail rather than the main compound-proportion calculation. Icon naming also varies between 'printing press' and 'printer' for apparently the same printing-machine motif.",
+          "conclusion": "Some underlines emphasize supporting details rather than the screen's main teaching point: “o tempo cai pela metade” highlights the introductory case instead of regra de três simples, while “A divisão das impressoras fica invertida” highlights only one component of the compound calculation. The ruler is weakly connected to simple proportion, and the hourglass represents time without distinguishing direct and inverse relationships.",
           "kind": "minorErrors",
           "score": 7
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Remove underlines where no short phrase captures the main point. Use idea icons that distinguish the mathematical concepts more clearly without numbers or formulas. On the wall-painting explanation, the example could also include the sentence describing the doubled team and halved time, rather than only introducing the wall.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
-        "expectations": "\n      - In Brazilian Portuguese, intermediate math\n      - About lines don't give the rule (direct or inverse proportion, multiply by the ratio) away\n      - Icons never show numbers or formulas\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "expectations": "\n      - In Brazilian Portuguese, intermediate math\n      - About lines don't give the rule (direct or inverse proportion, multiply by the ratio) away\n      - Icons never show numbers or formulas\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "pt-regra-de-tres-1",
         "userInput": {
           "ideas": [
@@ -883,37 +755,37 @@
       "categoryScores": [
         {
           "categoryId": "about",
-          "reasoning": "All five lines are natural Spanish questions under 60 characters that introduce topics without supplying their conclusions. In particular, 'No todos suben' does not reveal that some prices need not rise, and 'Más pesos' does not reveal that more income may fail to increase purchasing power.",
+          "reasoning": "All five lines are natural Spanish questions under 60 characters that introduce topics without answering them. In particular, “No todos suben” does not reveal that every price need not rise, and “Más pesos” does not reveal that additional pesos may fail to buy more. No disclosure cap applies.",
           "score": 10,
           "label": "About lines that don't give the answer away",
           "weight": 30
         },
         {
           "categoryId": "ideas",
-          "reasoning": "Screens 4 and 5 incorrectly map the insufficiency of an isolated price increase to 'No todos suben' rather than the general and sustained nature of 'Inflación'. The remaining mappings are appropriate, including the final question under the later income-versus-purchases idea. The wrong placements trigger the maximum score of 6.",
+          "reasoning": "The tomato explanation and coffee question concern the broad, sustained price changes needed to establish inflation, so both should use ideaIndex 0 rather than 2. The other assignments fit, including the final question under the later income-versus-purchases idea. The incorrect assignments trigger the maximum score of 6.",
           "score": 6,
           "label": "Each screen under its idea",
           "weight": 20
         },
         {
           "categoryId": "marks",
-          "reasoning": "The retained underlines select concise central claims rather than isolated terms or side details. Examples frame concrete cases involving purchases, prices, food, a television, or income. The jitomate example remains a concrete conditional case rather than a standalone general rule. Missing underlines are not penalized.",
+          "reasoning": "The retained underlines identify central claims, and the examples frame concrete numerical or everyday cases rather than standalone rules. The tomato example appropriately includes the assessment of that specific situation. Missing underlines are not flaws. No cap applies.",
           "score": 10,
           "label": "Underlines on the main point, examples on the case",
           "weight": 20
         },
         {
           "categoryId": "icons",
-          "reasoning": "All six eligible explanation screens have icons, and no ineligible screen does. The English names and descriptions specify concrete generic objects connected to each screen: shopping basket, price tag, tomato, television, meal, and coin. Repeated objects retain consistent names, and none introduces prohibited text, numbers, people, or misleading imagery.",
-          "score": 10,
+          "reasoning": "Icons appear on all and only eligible explanation screens. Names and descriptions are English, objects are drawable, idea icons are distinct, and no screen repeats its own idea's icon. However, the quilt and piggy bank are weak conceptual associations, and screen 3's coin is insufficiently specific to its shopping case. Several weak icons trigger the maximum score of 8.",
+          "score": 8,
           "label": "Concrete, fitting icons",
           "weight": 30
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 16 parts passed the code checks.",
-          "score": 10,
+          "reasoning": "15 of 16 parts passed. Screen 4: underline isn't an exact quote",
+          "score": 9.4375,
           "weight": 30
         }
       ],
@@ -922,22 +794,26 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3620,
-          "outputTokens": 762,
-          "reasoningTokens": 235
+          "inputTokens": 3747,
+          "outputTokens": 938,
+          "reasoningTokens": 373
         }
       },
       "steps": [
         {
-          "conclusion": "Screens 4 and 5 are assigned to ideaIndex 2 ('No todos suben'), but they teach or test ideaIndex 0 ('Inflación'). A single jitomate or café price increase is insufficient evidence of a general, sustained price increase. This is different from explaining that inflation does not require every price to rise. Both screens should use ideaIndex 0.",
+          "conclusion": "Screens 4 and 5 are assigned to “No todos suben” (ideaIndex 2), but teach how to establish whether inflation exists by examining broader price changes over time. Both belong under “Inflación” (ideaIndex 0). These are different questions from whether some prices can fall during inflation.",
           "kind": "majorErrors",
           "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Several icons have weak connections to their ideas or cases. The patchwork quilt is not a readily recognizable symbol of differing price movements, and the piggy bank does not clearly represent the relationship between income and purchasing capacity. The coin on screen 3 conveys money generally rather than its particular shopping example.",
+          "kind": "minorErrors",
+          "score": 8
+        },
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n      - In Spanish (Mexico), for beginners in economics\n      - \"No todos suben\" about line doesn't say not every price has to rise; \"Más pesos\" doesn't say more pesos don't guarantee buying more\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "expectations": "\n      - In Spanish (Mexico), for beginners in economics\n      - \"No todos suben\" about line doesn't say not every price has to rise; \"Más pesos\" doesn't say more pesos don't guarantee buying more\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "es-inflacion-1",
         "userInput": {
           "ideas": [
@@ -1039,28 +915,28 @@
       "categoryScores": [
         {
           "categoryId": "about",
-          "reasoning": "All five about lines are German questions under 60 characters that introduce topics without supplying their conclusions. In particular, the oxygen line does not say oxygen is produced, and the darkness line does not reveal the use of previously formed sugar.",
+          "reasoning": "All five lines are concise German questions under 60 characters that introduce their topics without answering them. In particular, the oxygen line does not reveal that oxygen is produced, and the nighttime line does not reveal the use of previously formed sugar.",
           "score": 10,
           "label": "About lines that don't give the answer away",
           "weight": 30
         },
         {
           "categoryId": "ideas",
-          "reasoning": "The assignments fit the ideas taught or tested. The introductory screen connects light with sugar production; the chlorophyll screen develops the chloroplast topic. The final question combines light's role with the absence of light and is assigned to the later idea, consistent with the mixed-question rule.",
+          "reasoning": "The introductory overview correctly has no idea assignment. The remaining screens align with the ideas they teach or test. The final question combines starting materials with light’s energy role and correctly uses the later energy idea.",
           "score": 10,
           "label": "Each screen under its idea",
           "weight": 20
         },
         {
           "categoryId": "marks",
-          "reasoning": "The kept underlines select central claims rather than isolated bold terms or side details. The examples identify concrete aquarium and sunflower cases, not general rules. Screens without underlines are not penalized.",
-          "score": 10,
+          "reasoning": "The examples correctly identify concrete aquarium and sunflower cases rather than general rules. Most underlines capture relevant teaching points, but the introductory underline spans most of a sentence, and the location screen’s underline excludes the crucial location information. Missing underlines are not penalized.",
+          "score": 8,
           "label": "Underlines on the main point, examples on the case",
           "weight": 20
         },
         {
           "categoryId": "icons",
-          "reasoning": "All six eligible explanation screens have icons, and no ineligible screen has one. Names and descriptions are English, and repeated objects retain their names. However, the cloud on the carbon-dioxide screen suggests the wrong physical substance rather than the tree or its invisible gaseous input, triggering the cap of 6 for a misleading icon. The aquatic plant, sunflower, sun, bubbles, and moon otherwise fit their screens.",
+          "reasoning": "Icons appear only on eligible explanation screens, their names and descriptions are English, and idea icons are distinct without screen–idea duplication. However, the nighttime candle suggests a light source or an unrelated source of energy rather than stored sugar, triggering the cap of 6 for a misleading icon. The whole-cell icon is also less specific than a chloroplast depiction would be.",
           "score": 6,
           "label": "Concrete, fitting icons",
           "weight": 30
@@ -1078,22 +954,30 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3383,
-          "outputTokens": 961,
-          "reasoningTokens": 481
+          "inputTokens": 3571,
+          "outputTokens": 1063,
+          "reasoningTokens": 516
         }
       },
       "steps": [
         {
-          "conclusion": "The cloud icon on the carbon-dioxide screen is misleading: a visible cloud consists of water droplets or ice crystals, not the invisible carbon dioxide the tree needs. It also misses the screen's concrete tree example. A tree icon would fit without introducing this misconception.",
+          "conclusion": "The candle icon for “Nachts ohne Licht” is unrelated to the screen’s case and misleadingly introduces a light source where the lesson concerns using stored sugar without light. Use the existing “sugar cube” icon instead.",
           "kind": "majorErrors",
           "score": 6
         },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "The first screen’s underline covers most of its opening sentence rather than a compact key phrase. On “In der Blattzelle,” “findet die Fotosynthese statt” omits the location—the essential point being taught—so the highlighted words alone convey little.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the Chloroplasten idea icon more specific by depicting a chloroplast rather than an entire plant cell. This would distinguish the actual site of photosynthesis more clearly for beginners.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
-        "expectations": "\n      - In German, for beginners in biology\n      - \"Sauerstoff entsteht\" about line doesn't say oxygen is made; \"Nachts ohne Licht\" doesn't say the plant uses stored sugar at night\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "expectations": "\n      - In German, for beginners in biology\n      - \"Sauerstoff entsteht\" about line doesn't say oxygen is made; \"Nachts ohne Licht\" doesn't say the plant uses stored sugar at night\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "de-fotosynthese-1",
         "userInput": {
           "ideas": [
@@ -1195,29 +1079,489 @@
       "categoryScores": [
         {
           "categoryId": "about",
-          "reasoning": "All four lines are concise Japanese topic descriptions or questions, within 60 characters. They do not supply the answers. In particular, the distance line does not reveal that moving the effort farther from the fulcrum reduces the required force.",
+          "reasoning": "All three lines are beginner-friendly English questions under 60 characters. They introduce the topics without revealing the calculation rules or conclusions. In particular, “Getting back” does not disclose that the required rise is a bigger percent.",
           "score": 10,
           "label": "About lines that don't give the answer away",
           "weight": 30
         },
         {
           "categoryId": "ideas",
-          "reasoning": "Every screen is assigned to the idea it teaches or tests. The fulcrum-position screens correctly belong to the distance idea, and the final question combining force and movement belongs to the later movement idea.",
+          "reasoning": "The screen assignments fit their teaching purposes: the initial subtraction introduces the change, the comparison and percent-change exercises belong to percent change, and the final explanation and question belong to getting back. The final mixed question correctly uses the later idea.",
           "score": 10,
           "label": "Each screen under its idea",
           "weight": 20
         },
         {
           "categoryId": "marks",
-          "reasoning": "The examples correctly select concrete cases involving the box, hand, and long handle rather than the general rules. The underlines address central points, but screens 8 and 9 underline essentially complete sentences; screen 9 would be more informative if it selected the specific force comparison instead of the general warning.",
-          "score": 8,
+          "reasoning": "The kept examples frame concrete ticket and sneaker calculations rather than general rules. The underlines highlight central points of their screens: the limitation of a dollar change alone, comparison with the original price, and the larger percentage needed to recover. They are short phrases rather than isolated terms or most of a sentence.",
+          "score": 10,
           "label": "Underlines on the main point, examples on the case",
           "weight": 20
         },
         {
           "categoryId": "icons",
-          "reasoning": "Every idea has an icon, and all screen icons are correctly null because every screen already has a visual. Names and descriptions are in English. The lever, hand, and crowbar are concrete and relevant, and both lever icons consistently use the same name.",
+          "reasoning": "The minus sign, pie chart, and U-turn sign are distinct, drawable symbols that fit subtraction, percentages, and returning to a previous value. Their names and descriptions are in English. No screen is eligible for an icon, and all screen icons are correctly absent.",
           "score": 10,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2901,
+          "outputTokens": 676,
+          "reasoningTokens": 264
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - In US English, for beginners\n      - \"Getting back\" about line doesn't say the rise back is a bigger percent\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "en-percent-change-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "The change",
+              "text": "The change is the new value minus the starting value."
+            },
+            {
+              "label": "Percent change",
+              "text": "Percent change is the change divided by the starting value, multiplied by 100."
+            },
+            {
+              "label": "Getting back",
+              "text": "After a drop, the rise needed to get back is measured from the lower value, so it is a bigger percent."
+            }
+          ],
+          "language": "en",
+          "lessonTitle": "Percent change",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Leah’s movie ticket went from $20 to $25. Subtract the old price from the new one: $25 − $20 = $5. But $5 alone doesn’t tell you how big the jump is: it’s bigger compared with a $20 ticket than with a $500 TV.",
+              "title": "How big is $5?"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Leah can ask how many cents the ticket changed for each dollar she started with. To find the **percent change**, divide the change by the original price, then multiply by 100. Original means the starting value, before the change. For the ticket, $5 on $20 is 25 cents per starting dollar.",
+              "title": "Compare with the start"
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Leah’s movie ticket went from $20 to $25. What was the percent increase?",
+              "title": "The ticket increase"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Leah’s monthly salary rose from ${old} to ${new}.\nWhat was the percent increase, rounded to the nearest whole percent?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Leah finds a jacket reduced from $80 to $60. What is the percent change?",
+              "title": "A price decrease"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "A video game Leah wants drops from ${old} to ${new}.\nWhat is the percent change?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Leah’s $100 sneakers drop 50% to $50. A 50% rise on $50 adds only $25, making $75, not $100. To return to $100, the price needs a $50 rise from $50: 50 ÷ 50 × 100 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
+              "title": "Getting back to $100"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Your monthly pay of $3,000 is cut 10% in a slow season, then raised 10% later.\nWhat happens to your pay, and what rise would undo the cut?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All four lines are natural English questions under 60 characters. They introduce their topics without revealing boundary values, allowed energies, mode properties, or the emitted photon's wavelength.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "“The wave inside” belongs with Allowed energies: it introduces the energy equation, the energy-dependent wave number, and the general solution used in the quantization derivation. Assigning it to Standing waves triggers the wrong-idea cap of 6. The remaining assignments fit their screens, including the later photon idea for the quantum-dot question.",
+          "score": 6,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The sole example correctly begins with the concrete n=3 case but extends into the general explanation of growing energy gaps. An example framing a rule triggers the cap of 7. Missing underlines are not penalized.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Only the eligible explanation screen receives a screen icon, and its string matches the stated analogy without repeating its idea's tuning fork. All icons are concrete, distinct, and named in English. However, the prism splitting a ray suggests optical dispersion rather than the electron's emission of a photon, triggering the misleading-icon cap of 6. The tuning fork is also less direct than a standing-wave depiction.",
+          "score": 6,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "11 of 13 parts passed. Screen 1: underline isn't an exact quote Screen 1: example isn't whole exact sentences Screen 6: underline isn't an exact quote",
+          "score": 8.615384615384615,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3377,
+          "outputTokens": 861,
+          "reasoningTokens": 316
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "“The wave inside” is assigned to Standing waves, but it develops the energy equation and its general solution, preparing the Allowed energies derivation rather than teaching normalized standing-wave modes. The prism icon also suggests splitting light into a spectrum, not photon emission from an electron transition.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The example on “Waves that fit” includes the general rule “the gaps grow because E_n ∝ n².” Only the preceding n=3 case should be marked as the example.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "A recognizable standing-wave shape would distinguish the Standing waves idea more directly than a tuning fork, which primarily signals sound or vibration.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In US English, advanced quantum physics\n      - About lines don't state the energies, the boundary values or the photon's wavelength\n      - Icons stay concrete (a box, a wave, a photon), never an equation\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "en-particle-in-a-box-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Boundary conditions",
+              "text": "Infinite walls make the wave zero outside the box, so continuity gives $\\psi(0)=\\psi(L)=0$."
+            },
+            {
+              "label": "Allowed energies",
+              "text": "The nonzero box states have $k_n=n\\pi/L$ and $E_n=n^2h^2/(8mL^2)$ for positive integers $n$."
+            },
+            {
+              "label": "Standing waves",
+              "text": "Each normalized standing wave fits $n$ half-wavelengths in the box and has $n-1$ interior nodes."
+            },
+            {
+              "label": "An electron's photon",
+              "text": "An electron dropping from $n=2$ to $n=1$ in a $1.0\\,\\text{nm}$ box emits a photon near $1100\\,\\text{nm}$."
+            }
+          ],
+          "language": "en",
+          "lessonTitle": "Particle in a box",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Naomi models a confined particle between $x=0$ and $x=L$. Its potential energy $V(x)$ is zero inside and infinite outside, where its wavefunction $\\psi$, the particle's probability amplitude, is zero. Continuity makes $\\psi(0)=\\psi(L)=0$: these are **boundary conditions**, like a guitar string pinned at both ends.",
+              "title": "A box with walls"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Inside Naomi's box, the energy equation is $-(\\hbar^2/2m)\\psi''=E\\psi$. Here $m$ is mass, $E$ is energy, $\\hbar$ is Planck's constant divided by $2\\pi$, and $\\psi''$ is the second spatial derivative. With $k=\\sqrt{2mE}/\\hbar$, it becomes $\\psi''=-k^2\\psi$, so $\\psi=A\\sin kx+B\\cos kx$. This oscillation resembles a vibrating string.",
+              "title": "The wave inside"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Naomi has $\\psi=A\\sin kx+B\\cos kx$ inside the box and requires $\\psi(0)=0$.\nWhich term can remain after she applies the condition at zero?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Naomi has applied the left boundary condition and found $\\psi=A\\sin kx$. Which values of $k$ and $E$ satisfy the right boundary?",
+              "title": "Allowed waves and energies"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Naomi considers assigning $n=0$ to the lowest state of the box.\nWhy must the lowest state instead have $n=1$?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Naomi sets the total probability in the box to one: $\\int_0^L|\\psi|^2dx=1$. This gives $A=\\sqrt{2/L}$ and $\\psi_n=\\sqrt{2/L}\\sin(n\\pi x/L)$. Each **standing wave** fits $n$ half-wavelengths into $L$ and has $n-1$ interior nodes, points where the wave is zero. For $n=3$, there are two nodes and $E_3=9E_1$; the gaps grow because $E_n\\propto n^2$.",
+              "title": "Waves that fit"
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Naomi models an electron in a $1.0\\,\\text{nm}$ box. What energy and wavelength result when it drops from $n=2$ to $n=1$?",
+              "title": "An electron's photon"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "For the same electron, $E_1={energy}\\,\\text{eV}$ when the box width is ${wide}\\,\\text{nm}$. Naomi makes the box ${narrow}\\,\\text{nm}$ wide.\nWhat is the new $E_1$, in eV, to two decimal places?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Naomi uses the box model for CdSe dots. She compares a 6 nm dot with a 3 nm dot, keeping the material the same. Treat the confinement contribution to the transition energy as proportional to $1/L^2$.\nHow does the confinement contribution change, and why can the smaller dot emit bluer light?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All three lines are in US English, stay within 60 characters, and introduce topics without giving the answers. In particular, the Reach 5 line does not reveal range(1, 6) or explain that it stops before 6.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The opening screen covers all three ideas and correctly has no idea assignment. Both questions test start/stop boundaries, including stop exclusion when counting down, so their assignment to idea 0 is appropriate.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The kept underline is a short statement of the boundary rule emphasized by the opening screen's title. The example selects Hannah's concrete range and its output, not the general rule. The questions appropriately have no marks.",
+          "score": 10,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "The idea icons are distinct concrete objects with English names and descriptions: a staircase evokes a counting sequence, a target represents reaching a goal, and an abacus represents counting values. No screen is eligible for an icon, and all screen icons are correctly null.",
+          "score": 10,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2332,
+          "outputTokens": 600,
+          "reasoningTokens": 211
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - In US English, a beginner programming lesson\n      - \"Reach 5\" about line doesn't say range(1, 6) stops before 6\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "en-python-range-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Start and stop",
+              "text": "In `range(start, stop)`, counting starts at the start and leaves out the stop, even when counting down."
+            },
+            { "label": "Reach 5", "text": "`range(1, 6)` reaches 5 because it stops before 6." },
+            {
+              "label": "Number of values",
+              "text": "When counting up by ones, the number of values is stop minus start."
+            }
+          ],
+          "language": "en",
+          "lessonTitle": "Count with range() in Python",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Hannah’s `range(1, 5)` starts at 1 and gives 1, 2, 3, 4. In `range(start, stop)`, the stop is left out, even when counting down. To reach 5, use `range(1, 6)`. Counting up by ones, the number of values is stop minus start: 5 − 1 = 4. A loop over page numbers works the same way.",
+              "title": "Stop before the end"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Hannah runs `for n in range(2, 6): print(n)`.\nWhat does the loop print?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Hannah uses `for n in range(10, 0, -1): print(n)` for a timer countdown. The `-1` counts down by one.\nWhat is the last number printed?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All three lines are beginner-friendly English questions under 60 characters. They introduce topics without explaining which chambers receive or pump blood, identifying the septum, or revealing its function.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The multi-idea overview correctly has no idea assignment. The whole-body pumping question belongs to Ventricles, and the question about a hole in the separating wall belongs to Septum.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "There are no kept underlines or examples to misplace. Missing underlines are explicitly acceptable.",
+          "score": 10,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "The funnel, hand pump, and brick wall are distinct, concrete objects that clearly symbolize receiving, pumping, and separation. Their names and descriptions are in English. All screens correctly omit icons because none is an explanation without a visual.",
+          "score": 10,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2260,
+          "outputTokens": 470,
+          "reasoningTokens": 125
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - In US English, for beginners in biology\n      - About lines don't say which chambers receive or pump blood\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "en-heart-chambers-1",
+        "userInput": {
+          "ideas": [
+            { "label": "Atria", "text": "The two upper chambers, the atria, receive blood." },
+            {
+              "label": "Ventricles",
+              "text": "The two lower chambers, the ventricles, pump blood out: the right to the lungs and the left to the whole body."
+            },
+            {
+              "label": "Septum",
+              "text": "The septum is the wall that separates the heart’s two sides and keeps their blood apart."
+            }
+          ],
+          "language": "en",
+          "lessonTitle": "The chambers of the heart",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Look at Naomi’s heart from the front: its right side appears on your left. The two upper chambers, called atria, receive blood; the two lower chambers, called ventricles, pump it out. The right ventricle sends blood to the lungs; the left sends it to the whole body. The septum is the wall that separates the two sides, keeping their blood apart. Look at the numbered parts.",
+              "title": "Four chambers at work"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Naomi learns that one chamber sends blood to her whole body.\nWhich chamber does that job?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "During Naomi’s heart exam, a doctor hears signs of a hole in the wall between her ventricles.\nWhat is the wall, and why can a hole let blood mix?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "The lines are concise and in Brazilian Portuguese, but the fase S, G2 and fase M lines reveal what the cell does in those stages. Question wording does not prevent this disclosure. The answer-giveaway cap of 5 applies.",
+          "score": 5,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "'As três fases ativas' explicitly teaches intérfase but is assigned null rather than index 4, triggering the cap of 6. The whole-cycle overview correctly has no idea, and the stage explanations and subsequent questions otherwise have appropriate assignments.",
+          "score": 6,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "Several stage underlines correctly capture their main points. However, 'Ela continua sendo uma célula só, agora com o manual em dobro' states the fase S conclusion, and 'Se essas células também se dividem, cada uma recomeça em G1' states the cycle's recurrence rule; neither is a concrete example. The intérfase underline also selects a supporting property rather than the grouping being taught. The cap of 7 applies.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Icons appear only on eligible screens, use English names and descriptions, and the five idea icons depict distinct things. G1 and fase M do not both use cells, and the screen icons depict different objects from their associated idea icons. However, several choices are weak: the hourglass conveys elapsed time rather than active intérfase, the wrench only loosely suggests G2 preparation, and the G2 screen's 'material-like shapes' lack a recognizable concrete identity. The several-weak-icons cap of 8 applies.",
+          "score": 8,
           "label": "Concrete, fitting icons",
           "weight": 30
         },
@@ -1234,22 +1578,490 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3297,
-          "outputTokens": 950,
-          "reasoningTokens": 501
+          "inputTokens": 3746,
+          "outputTokens": 1178,
+          "reasoningTokens": 498
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "On screens 8 and 9, the underlines cover essentially complete sentences rather than short phrases. Screen 9's broad warning is also less precise than highlighting the central comparison: the required force exceeds the box's weight.",
+          "conclusion": "Several about lines disclose the stage's answer: fase S already mentions DNA copying, G2 identifies preparation for division, and fase M identifies cell division. 'As três fases ativas' incorrectly has no idea instead of intérfase (index 4). The examples on the fase S screen and the cycle recap frame biological conclusions rather than concrete cases.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some icons are weak for a total beginner: the hourglass does not communicate active intérfase, and the G2 screen's unspecified 'material-like shapes' are not readily recognizable. The underline on 'As três fases ativas' emphasizes activity rather than the central point that G1, S and G2 together constitute intérfase.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use neutral about questions that do not identify each stage's activity, assign the intérfase explanation to index 4, and remove example markings that merely restate rules. Prefer readily recognizable icon details over unspecified shapes, and underline the grouping that defines intérfase rather than its supporting description.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, for a total beginner in biology\n      - The ideas are the stages of one cycle, so each icon shows what sets its stage apart: \"G1\" and \"fase M\" never both get a cell or a variant of one, and no two ideas show the same thing\n      - Each screen's icon shows its own case, never its idea's: \"Primeiro, crescer\" doesn't repeat G1's icon, \"Depois, copiar o manual\" doesn't repeat fase S's (no DNA beside a DNA strip), \"Últimos preparativos\" doesn't repeat G2's\n      - \"Uma sequência que recomeça\" walks through the whole cycle (G1, S, G2 and M), so it has no idea; \"As três fases ativas\" teaches the intérfase idea\n      - About lines don't say what the cell does in each stage (grows, copies its DNA, prepares, divides)\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-ciclo-celular-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "G1",
+              "text": "Em G1, a célula recém-formada cresce e produz as peças que usa para funcionar."
+            },
+            {
+              "label": "fase S",
+              "text": "Na fase S, a célula copia o seu DNA inteiro e continua sendo uma célula só."
+            },
+            {
+              "label": "G2",
+              "text": "Em G2, com o DNA já copiado, a célula produz os materiais que vai usar na divisão."
+            },
+            {
+              "label": "fase M",
+              "text": "Na fase M, a célula reparte seu conteúdo e vira duas, que podem recomeçar o ciclo celular em G1."
+            },
+            {
+              "label": "intérfase",
+              "text": "G1, S e G2 juntas formam a intérfase, o período ativo antes da fase M."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Fases do ciclo celular",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Cada célula da sua pele carrega um manual de instruções. Ela segue esse manual para produzir as peças de que precisa para funcionar. Esse manual se chama **DNA**.",
+              "title": "O manual da célula"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Uma célula da pele passa várias horas sem se separar em duas. O que ela faz durante esse tempo?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Uma célula que acabou de se formar é pequena. Por isso, ela primeiro cresce e produz as peças que usa no dia a dia, seguindo o DNA. Essa fase de crescimento se chama **G1**.",
+              "title": "Primeiro, crescer"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Depois de crescer, a célula da pele faz uma cópia do seu DNA inteiro. Ela continua sendo uma célula só, agora com o manual em dobro. Essa fase de cópia se chama **fase S**.",
+              "title": "Depois, copiar o manual"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Uma célula da pele já cresceu. Agora ela está no meio da cópia do seu DNA e continua sendo uma célula só.\nEm que fase essa célula está?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Com o DNA já copiado, a célula ainda não se divide. Antes, ela produz os materiais que vai usar na divisão. Essa preparação final se chama **G2**.",
+              "title": "Últimos preparativos"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Por fim, a célula reparte seu conteúdo, e cada lado leva uma cópia do DNA. Assim, uma célula vira duas. Essa etapa de divisão se chama **fase M**.",
+              "title": "Enfim, a divisão"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Em G1, S e G2, a célula ainda é uma só, mas está ativa: ela cresce, copia e se prepara. Juntas, essas três fases se chamam **intérfase**. Depois dela vem a fase M.",
+              "title": "As três fases ativas"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Uma célula nova passa por G1, S, G2 e M e vira duas. Se essas células também se dividem, cada uma recomeça em G1. Essa sequência que se repete se chama **ciclo celular**.",
+              "title": "Uma sequência que recomeça"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Uma célula recém-formada cresce em G1, copia o DNA em S e depois se divide em M.\nQual fase fica entre a cópia do DNA e a divisão?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "No laboratório, Jussara vê que uma célula da pele terminou de copiar o DNA. O relatório anota: *vai se dividir imediatamente* e *ainda está na intérfase*.\nQual afirmação do relatório precisa ser corrigida?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All lines are brief, natural Portuguese and within 60 characters. Most introduce a topic or question without answering it. However, “Quando os ganhos também entram na conta” strongly hints at including previous gains in the calculation, triggering the cap of 7. It does not explicitly say that those gains also earn, so the direct-answer cap of 5 is not warranted.",
+          "score": 7,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The assignments follow the concepts taught or tested: interest, compounding, reinvesting, increasing monetary gains at a constant rate, and stock-market variability. The final question concerns what to do with unneeded gains and why, making reinvesting appropriate; mentioning B3 as its setting does not itself make it a question about price variability. No explanation is a multi-idea overview incorrectly assigned to one idea.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The monetary examples generally identify concrete cases, and the earlier underlines capture relevant mechanisms. However, the stock-market example marks a general rule rather than a concrete situation, triggering the cap of 7. Its underline is also nearly a whole sentence and unnecessarily includes the definition of a share.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Only eligible explanation screens receive icons, all icon metadata is in English, the five idea icons depict distinct things, and no screen repeats its idea's object. The snowball and roller coaster communicate compounding and variability reasonably well. However, the potted plant does not clearly distinguish reinvesting from growth, and the calculator is an arithmetic accessory not grounded in the screen's own investment case. These multiple weak choices trigger the cap of 8; there is no clear misleading-icon or duplication violation requiring the cap of 6.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 14 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3670,
+          "outputTokens": 1212,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The example marked on the stock-market screen is a general statement about shares and their possible price movements, not a concrete case. It therefore frames the rule itself. The underline on that screen also covers most of the sentence, including the incidental definition of a share, rather than a short main-point phrase.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "“Quando os ganhos também entram na conta” strongly hints that previous gains enter the calculation, partially revealing the compounding mechanism. Some icons are weakly grounded: the calculator represents arithmetic rather than the second-year investment case, and the potted plant suggests general growth more readily than reinvesting.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a more neutral preview for compound interest, such as “O que acontece no segundo ano”. Remove the stock-market example marking and shorten its underline to the central caution. Choose an icon that distinguishes reinvesting from growth generally, and use a concrete monetary object rather than a calculator for the second-year case.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, for a total beginner in personal finance\n      - \"Juros\" and \"Juros sobre juros\" never share an icon (not a coin on both), \"Mesmo ritmo, ganho maior\" and \"Na bolsa\" never share one (not a stock chart on both), and no two ideas show the same thing\n      - Each screen's icon shows its own case, never its idea's icon\n      - The \"Juros sobre juros\" about line doesn't say old gains also earn; \"Reinvestir\" doesn't say it's leaving the gain invested; \"Na bolsa\" doesn't say a stock can fall\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-juros-sobre-juros-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Juros",
+              "text": "Juros são o ganho que o dinheiro aplicado rende, como R$ 100 sobre R$ 1.000 no primeiro ano."
+            },
+            {
+              "label": "Juros sobre juros",
+              "text": "Quando os ganhos antigos ficam aplicados, eles também rendem, e o ganho sobe de R$ 100 para R$ 110."
+            },
+            {
+              "label": "Reinvestir",
+              "text": "Reinvestir é deixar o ganho na aplicação, porque se você tira o ganho, só o valor inicial continua rendendo."
+            },
+            {
+              "label": "Mesmo ritmo, ganho maior",
+              "text": "No mesmo ritmo, o ganho em reais cresce porque o saldo que rende cresce."
+            },
+            {
+              "label": "Na bolsa",
+              "text": "Na bolsa, uma ação pode subir num ano e cair no seguinte, então o exemplo mostra o mecanismo e não promete esse caminho."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Juros sobre juros",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Imagine R$ 1.000 aplicados que rendem R$ 100 no primeiro ano. Esse ganho se chama **juros**. Ele pode ficar aplicado, junto com os R$ 1.000 do começo.",
+              "title": "O ganho do dinheiro aplicado"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Os R$ 1.000 e os R$ 100 de ganho continuam aplicados, rendendo no mesmo ritmo. Quanto a aplicação vai ganhar no segundo ano?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "No segundo ano, os R$ 1.000 rendem de novo R$ 100. Os R$ 100 ganhos antes também rendem: mais R$ 10. Assim, o ganho sobe para R$ 110. Quando ganhos antigos também rendem, isso se chama **juros sobre juros**.",
+              "title": "O ganho também rende"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Se você tirar os R$ 100 da aplicação, só os R$ 1.000 continuam rendendo, e o ganho do ano seguinte volta a ser R$ 100. Deixar o ganho lá dentro para render também se chama **reinvestir**.",
+              "title": "Tirar ou deixar o ganho"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Davi tem duas aplicações de R$ 500 que rendem no mesmo ritmo. Numa, ele deixa os ganhos lá dentro. Na outra, tira todo o ganho no fim de cada ano.\nQual delas ganha mais no segundo ano?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Cada R$ 100 rende R$ 10 por ano, sempre. Mas o saldo que rende cresce, então o ganho em reais cresce junto. Mova o prazo até 20 anos: o saldo chega a uns R$ 6.727, e a curva fica cada vez mais inclinada.",
+              "title": "Mesmo ritmo, ganho maior"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Uma aplicação rende no mesmo ritmo todo ano, sem depósitos nem retiradas. Mesmo assim, ela ganha mais reais no décimo ano do que no primeiro.\nO que explica isso?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Na bolsa, uma ação, que é um pedacinho de uma empresa, pode subir num ano e cair no seguinte. Por isso, o exemplo dos R$ 1.000 crescendo no mesmo ritmo mostra o mecanismo. Ele não promete esse caminho.",
+              "title": "Na bolsa, o caminho oscila"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Você investe na B3, a bolsa de valores do Brasil, para dar a entrada num apartamento daqui a 15 anos. Você não precisa usar os ganhos agora.\nQual decisão e qual motivo fazem sentido?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All previews are short and in accessible Brazilian Portuguese. The net-income and later-bills previews avoid the specifically prohibited conclusions. However, paired with 'Salário bruto', 'Qual valor aparece antes dos descontos?' reveals its defining before-deductions distinction. This triggers the maximum score of 5.",
+          "score": 5,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "Most assignments fit, including assigning the final mixed question to the later self-employment idea. However, screen 3 teaches net salary and explicitly distinguishes bills paid afterward, while screen 6 teaches the no-deductions net-salary case and the effect of later bills. Assigning these multi-idea explanations solely to ideas 1 and 2, respectively, violates the requirement that such explanations have no assignment. The maximum score is 6.",
+          "score": 6,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The kept underlines identify central distinctions: before payroll deductions, what arrives after deductions, unchanged net salary after a bill, and revenue before business expenses and taxes. The examples frame Otávio's concrete proposal or numerical cases, not general rules. Missing marks are not penalized.",
+          "score": 10,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "The supplied icons use English names and descriptions, represent distinct drawable things, and appear only on eligible screens. The contract fits the proposal, and the light bulb fits the electricity-bill case without repeating the electrical plug. However, eligible screen 7 lacks a case icon despite having concrete received money and materials distinct from the storefront. No wrong-suggestion or repeated-icon cap is triggered.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 13 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3479,
+          "outputTokens": 1529,
+          "reasoningTokens": 920
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The 'Salário bruto' preview gives away the defining distinction through 'antes dos descontos', triggering the about-category cap. Screens 3 and 6 are assigned to single ideas even though each teaches both net salary and the distinction between payroll deductions and bills paid afterward; these mixed explanations should have no idea assignment.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Screen 7 is eligible for an icon but has none. Its case includes received money and materials, so there are concrete possibilities distinct from its idea's storefront icon.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The 'Faturamento bruto' preview could focus more clearly on identifying revenue rather than broadly asking which amounts enter self-employment, while still withholding the definition.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, for a total beginner\n      - The \"Renda líquida\" about line doesn't say it's the gross minus deductions, and \"Contas depois\" doesn't say a bill paid later leaves net pay unchanged\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-renda-bruta-liquida-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Salário bruto",
+              "text": "O salário bruto é o valor inicial antes das retiradas do pagamento."
+            },
+            {
+              "label": "Renda líquida",
+              "text": "No salário, a renda líquida é o bruto menos os descontos."
+            },
+            {
+              "label": "Contas depois",
+              "text": "Uma conta paga depois diminui o dinheiro restante, mas não muda o salário líquido."
+            },
+            {
+              "label": "Faturamento bruto",
+              "text": "O faturamento bruto é o total cobrado pelas vendas ou serviços antes dos gastos do trabalho e dos impostos."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Renda bruta e renda líquida",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Otávio confere a proposta: são R$ 3.000,00 antes de qualquer retirada do pagamento. Esse valor inicial é o **salário bruto**. Uma proposta de R$ 2.000,00 também mostra o bruto antes dos descontos.",
+              "title": "O valor anunciado"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Otávio compara duas propostas de mesmo salário bruto. Qual deixa mais dinheiro para ele usar ao receber?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Imagine o pagamento de Otávio como uma caixa de dinheiro: tiram valores antes de entregá-la. O que chega após essas retiradas é a **renda líquida**. No salário, líquido = bruto − descontos; contas pagas depois não são esses descontos. Mova os controles: R$ 3.000,00 menos R$ 300,00 deixam R$ 2.700,00.",
+              "title": "O que chega à conta"
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Veja um exemplo de pagamento de Otávio. O desconto de INSS é uma contribuição para a previdência pública. Os valores são fictícios.\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.000,00 |\n| Desconto de INSS | R$ 270,00 |\n| Outro desconto | R$ 30,00 |\n| Total de descontos | R$ 300,00 |\n| Salário líquido | R$ 2.700,00 |\n\nQuanto chega à conta?",
+              "title": "Do bruto ao líquido"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Um salário bruto é de R$ {bruto},00 e os descontos somam R$ {desconto},00.\nQual é o salário líquido?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Otávio nota que, sem descontos, receberia o mesmo valor do salário bruto. Uma conta de luz paga depois diminui o dinheiro restante, mas não muda o salário líquido. Por exemplo, de R$ 2.000,00 líquidos, pagar R$ 150,00 deixa R$ 1.850,00.",
+              "title": "Depois de receber"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Otávio também considera fazer serviços por conta própria. O total cobrado pelas vendas ou serviços, antes dos gastos do trabalho e dos impostos, é o **faturamento bruto**. Para saber quanto sobra do que recebeu, subtraia esses gastos e impostos.\n\n| Exemplo | Valor |\n| --- | ---: |\n| Recebido | R$ 1.000,00 |\n| Materiais | R$ 200,00 |\n| Impostos | R$ 100,00 |\n| Sobra | R$ 700,00 |",
+              "title": "Trabalho por conta própria"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Um serviço trouxe R$ {recebido},00. Os materiais custaram R$ {materiais},00 e os impostos, R$ {impostos},00.\nQuanto sobra após esses gastos?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Otávio organiza o dinheiro que recebeu no mês, antes de pagar as contas de casa.\n\n| Origem ou gasto | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.000,00 |\n| Descontos do salário | R$ 300,00 |\n| Serviços recebidos | R$ 2.000,00 |\n| Materiais | R$ 500,00 |\n| Impostos dos serviços | R$ 100,00 |\nQuanto está disponível antes das contas da casa?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All four lines are Japanese and within 60 characters. The distance line correctly avoids revealing that greater effort distance reduces required force. However, the second line paraphrases both point definitions under their idea label, revealing the answer and triggering the cap of 5.",
+          "score": 5,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "Every screen is assigned to the idea it teaches or tests. Fulcrum-placement and force-comparison screens appropriately belong to the distance idea. The final question combines force and movement and correctly takes the later movement idea. No overview is incorrectly assigned.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The underlines select short main-point phrases, and the hand-pushing, box-lifting, and long-handle examples are appropriate cases. However, screen 3's example frames the general fulcrum-placement rule, and screen 11's example frames the general movement relationship without a concrete case. These trigger the cap of 7.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Every idea has a distinct, concrete icon with English naming and description, and all screen icons are correctly absent because every explanation already has a visual. The seesaw, hand, and ruler are fitting. The pendulum is a weaker association: it conveys motion but not specifically the hand displacement involved in lever use. It is indirect rather than demonstrably misleading.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 16 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3593,
+          "outputTokens": 788,
+          "reasoningTokens": 254
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The second about line paraphrases the definitions of the effort and load points rather than merely introducing their topic. Some example selections also frame rules: screen 3 states the relationship between fulcrum placement and required force, and screen 11 states the general relationship between effort-point and load-point movement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The pendulum icon is only loosely connected to the hand-movement idea. It suggests swinging motion but does not clearly communicate the movement involved in operating a lever.",
           "kind": "minorErrors",
           "score": 8
         },
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expectations": "\n      - In Japanese, for beginners in physics\n      - Every explanation has its own visual, so no screen gets an icon; every idea has one\n      - \"支点からの距離\" about line doesn't say moving the effort farther from the fulcrum takes less force\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "expectations": "\n      - In Japanese, for beginners in physics\n      - Every explanation has its own visual, so no screen gets an icon; every idea has one\n      - \"支点からの距離\" about line doesn't say moving the effort farther from the fulcrum takes less force\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
         "id": "ja-teko-1",
         "userInput": {
           "ideas": [
@@ -1340,470 +2152,6 @@
               "hasVisual": true,
               "kind": "question",
               "text": "庭の重い石を棒で少し浮かせます。棒の右側を下げる空間は十分あります。\n最も小さな力で浮かせる配置と、そのときの動きは？",
-              "title": null
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "about",
-          "reasoning": "All three lines are concise English topic prompts under 60 characters. None supplies a calculation rule or conclusion. In particular, “Getting back” does not reveal that the required rise is a bigger percent.",
-          "score": 10,
-          "label": "About lines that don't give the answer away",
-          "weight": 30
-        },
-        {
-          "categoryId": "ideas",
-          "reasoning": "Every screen is assigned to the appropriate idea. The subtraction introduction belongs to “The change,” the percentage calculations belong to “Percent change,” and both recovery screens belong to “Getting back,” including the final question that mixes ideas.",
-          "score": 10,
-          "label": "Each screen under its idea",
-          "weight": 20
-        },
-        {
-          "categoryId": "marks",
-          "reasoning": "The examples isolate concrete ticket and sneaker cases rather than general rules. The underlines identify central operations or the changed-base mechanism, not incidental details or bold terms alone. The final underline could emphasize the bigger-percent relationship more directly.",
-          "score": 9,
-          "label": "Underlines on the main point, examples on the case",
-          "weight": 20
-        },
-        {
-          "categoryId": "icons",
-          "reasoning": "No screen is eligible for an icon: every explanation has a visual, and the remaining screens are questions or worked examples. All screen icons are correctly null. The idea-level minus sign, percent sign, and upward arrow are recognizable, fitting symbols with English names and descriptions.",
-          "score": 10,
-          "label": "Concrete, fitting icons",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 11 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2676,
-          "outputTokens": 806,
-          "reasoningTokens": 377
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "On the sneaker screen, consider underlining “the same dollar amount is a bigger percent” instead. The current underline identifies the central cause, but this alternative emphasizes the lesson’s takeaway more directly.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - In US English, for beginners\n      - \"Getting back\" about line doesn't say the rise back is a bigger percent\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
-        "id": "en-percent-change-1",
-        "userInput": {
-          "ideas": [
-            {
-              "label": "The change",
-              "text": "The change is the new value minus the starting value."
-            },
-            {
-              "label": "Percent change",
-              "text": "Percent change is the change divided by the starting value, multiplied by 100."
-            },
-            {
-              "label": "Getting back",
-              "text": "After a drop, the rise needed to get back is measured from the lower value, so it is a bigger percent."
-            }
-          ],
-          "language": "en",
-          "lessonTitle": "Percent change",
-          "screens": [
-            {
-              "hasVisual": true,
-              "kind": "explanation",
-              "text": "Leah’s movie ticket went from $20 to $25. Subtract the old price from the new one: $25 − $20 = $5. But $5 alone doesn’t tell you how big the jump is: it’s bigger compared with a $20 ticket than with a $500 TV.",
-              "title": "How big is $5?"
-            },
-            {
-              "hasVisual": true,
-              "kind": "explanation",
-              "text": "Leah can ask how many cents the ticket changed for each dollar she started with. To find the **percent change**, divide the change by the original price, then multiply by 100. Original means the starting value, before the change. For the ticket, $5 on $20 is 25 cents per starting dollar.",
-              "title": "Compare with the start"
-            },
-            {
-              "hasVisual": false,
-              "kind": "workedExample",
-              "text": "Leah’s movie ticket went from $20 to $25. What was the percent increase?",
-              "title": "The ticket increase"
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Leah’s monthly salary rose from ${old} to ${new}.\nWhat was the percent increase, rounded to the nearest whole percent?",
-              "title": null
-            },
-            {
-              "hasVisual": false,
-              "kind": "workedExample",
-              "text": "Leah finds a jacket reduced from $80 to $60. What is the percent change?",
-              "title": "A price decrease"
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "A video game Leah wants drops from ${old} to ${new}.\nWhat is the percent change?",
-              "title": null
-            },
-            {
-              "hasVisual": true,
-              "kind": "explanation",
-              "text": "Leah’s $100 sneakers drop 50% to $50. A 50% rise on $50 adds only $25, making $75, not $100. To return to $100, the price needs a $50 rise from $50: 50 ÷ 50 × 100 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
-              "title": "Getting back to $100"
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Your monthly pay of $3,000 is cut 10% in a slow season, then raised 10% later.\nWhat happens to your pay, and what rise would undo the cut?",
-              "title": null
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "about",
-          "reasoning": "All four lines are English topic questions under 60 characters. None reveals boundary values, allowed energies, wave-counting rules, or the emitted photon's wavelength.",
-          "score": 10,
-          "label": "About lines that don't give the answer away",
-          "weight": 30
-        },
-        {
-          "categoryId": "ideas",
-          "reasoning": "The screen assignments fit the supplied ideas. The interior wave equation supports the allowed-energy derivation, the width-scaling question concerns allowed energies, and the final question combines confinement scaling with emitted light and correctly takes the later photon idea.",
-          "score": 10,
-          "label": "Each screen under its idea",
-          "weight": 20
-        },
-        {
-          "categoryId": "marks",
-          "reasoning": "The only example includes both a concrete n=3 case and the general explanation that energy gaps grow because energy scales as n squared. Framing that rule as part of the example triggers the maximum score of 7. Missing underlines are not a flaw.",
-          "score": 7,
-          "label": "Underlines on the main point, examples on the case",
-          "weight": 20
-        },
-        {
-          "categoryId": "icons",
-          "reasoning": "Exactly the eligible explanation screen receives a screen icon, and its guitar fits the vibrating-string analogy. Icon names and descriptions are English, concrete, and free of equations; the repeated guitar keeps its name. The idea-level prism is a weaker, indirect representation of photon emission, although it is related to light and does not assert incorrect physics.",
-          "score": 8,
-          "label": "Concrete, fitting icons",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "11 of 13 parts passed. Screen 1: underline isn't an exact quote Screen 6: underline isn't an exact quote",
-          "score": 8.615384615384615,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3200,
-          "outputTokens": 811,
-          "reasoningTokens": 327
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The example on “Waves that fit” includes the general rule “the gaps grow because $E_n\\propto n^2$.” Only the preceding n=3 statement is the concrete case; the rule should remain outside the example.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "A photon would represent “An electron's photon” more directly than a prism. The prism is concrete and light-related, but its connection to the electron's emission is indirect.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - In US English, advanced quantum physics\n      - About lines don't state the energies, the boundary values or the photon's wavelength\n      - Icons stay concrete (a box, a wave, a photon), never an equation\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
-        "id": "en-particle-in-a-box-1",
-        "userInput": {
-          "ideas": [
-            {
-              "label": "Boundary conditions",
-              "text": "Infinite walls make the wave zero outside the box, so continuity gives $\\psi(0)=\\psi(L)=0$."
-            },
-            {
-              "label": "Allowed energies",
-              "text": "The nonzero box states have $k_n=n\\pi/L$ and $E_n=n^2h^2/(8mL^2)$ for positive integers $n$."
-            },
-            {
-              "label": "Standing waves",
-              "text": "Each normalized standing wave fits $n$ half-wavelengths in the box and has $n-1$ interior nodes."
-            },
-            {
-              "label": "An electron's photon",
-              "text": "An electron dropping from $n=2$ to $n=1$ in a $1.0\\,\\text{nm}$ box emits a photon near $1100\\,\\text{nm}$."
-            }
-          ],
-          "language": "en",
-          "lessonTitle": "Particle in a box",
-          "screens": [
-            {
-              "hasVisual": true,
-              "kind": "explanation",
-              "text": "Naomi models a confined particle between $x=0$ and $x=L$. Its potential energy $V(x)$ is zero inside and infinite outside, where its wavefunction $\\psi$, the particle's probability amplitude, is zero. Continuity makes $\\psi(0)=\\psi(L)=0$: these are **boundary conditions**, like a guitar string pinned at both ends.",
-              "title": "A box with walls"
-            },
-            {
-              "hasVisual": false,
-              "kind": "explanation",
-              "text": "Inside Naomi's box, the energy equation is $-(\\hbar^2/2m)\\psi''=E\\psi$. Here $m$ is mass, $E$ is energy, $\\hbar$ is Planck's constant divided by $2\\pi$, and $\\psi''$ is the second spatial derivative. With $k=\\sqrt{2mE}/\\hbar$, it becomes $\\psi''=-k^2\\psi$, so $\\psi=A\\sin kx+B\\cos kx$. This oscillation resembles a vibrating string.",
-              "title": "The wave inside"
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Naomi has $\\psi=A\\sin kx+B\\cos kx$ inside the box and requires $\\psi(0)=0$.\nWhich term can remain after she applies the condition at zero?",
-              "title": null
-            },
-            {
-              "hasVisual": false,
-              "kind": "workedExample",
-              "text": "Naomi has applied the left boundary condition and found $\\psi=A\\sin kx$. Which values of $k$ and $E$ satisfy the right boundary?",
-              "title": "Allowed waves and energies"
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Naomi considers assigning $n=0$ to the lowest state of the box.\nWhy must the lowest state instead have $n=1$?",
-              "title": null
-            },
-            {
-              "hasVisual": true,
-              "kind": "explanation",
-              "text": "Naomi sets the total probability in the box to one: $\\int_0^L|\\psi|^2dx=1$. This gives $A=\\sqrt{2/L}$ and $\\psi_n=\\sqrt{2/L}\\sin(n\\pi x/L)$. Each **standing wave** fits $n$ half-wavelengths into $L$ and has $n-1$ interior nodes, points where the wave is zero. For $n=3$, there are two nodes and $E_3=9E_1$; the gaps grow because $E_n\\propto n^2$.",
-              "title": "Waves that fit"
-            },
-            {
-              "hasVisual": false,
-              "kind": "workedExample",
-              "text": "Naomi models an electron in a $1.0\\,\\text{nm}$ box. What energy and wavelength result when it drops from $n=2$ to $n=1$?",
-              "title": "An electron's photon"
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "For the same electron, $E_1={energy}\\,\\text{eV}$ when the box width is ${wide}\\,\\text{nm}$. Naomi makes the box ${narrow}\\,\\text{nm}$ wide.\nWhat is the new $E_1$, in eV, to two decimal places?",
-              "title": null
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Naomi uses the box model for CdSe dots. She compares a 6 nm dot with a 3 nm dot, keeping the material the same. Treat the confinement contribution to the transition energy as proportional to $1/L^2$.\nHow does the confinement contribution change, and why can the smaller dot emit bluer light?",
-              "title": null
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "about",
-          "reasoning": "All three about lines are short English questions naming the topic without revealing the answer. In particular, \"How can a count include 5?\" does not disclose range(1, 6) or the exclusion of 6.",
-          "score": 10,
-          "label": "About lines that don't give the answer away",
-          "weight": 30
-        },
-        {
-          "categoryId": "ideas",
-          "reasoning": "The first screen's main point and the countdown question fit \"Start and stop.\" However, the second screen asks about range(2, 6), combining start/stop behavior with reaching 5. It should use the later \"Reach 5\" idea rather than idea 0. This triggers the wrong-placement cap of 6.",
-          "score": 6,
-          "label": "Each screen under its idea",
-          "weight": 20
-        },
-        {
-          "categoryId": "marks",
-          "reasoning": "The retained underline, \"the stop is left out,\" states the first screen's main point concisely. Its example frames Hannah's concrete range and output rather than the general rule. Missing marks on the questions are not flaws.",
-          "score": 10,
-          "label": "Underlines on the main point, examples on the case",
-          "weight": 20
-        },
-        {
-          "categoryId": "icons",
-          "reasoning": "No screen is eligible for an icon, and all screen icons are null. The idea icons are concrete, generic symbols with English names and descriptions: an unnumbered tick-mark line, a finish line, and an abacus. They fit the associated ideas without prohibited people, text, or numerical labels.",
-          "score": 10,
-          "label": "Concrete, fitting icons",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2132,
-          "outputTokens": 891,
-          "reasoningTokens": 403
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The second screen is assigned to idea 0, but its range(2, 6) question combines start/stop behavior with reaching 5 by using stop 6. Under the rule that a mixed-idea question takes the later idea, it belongs under idea 1, \"Reach 5.\"",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n      - In US English, a beginner programming lesson\n      - \"Reach 5\" about line doesn't say range(1, 6) stops before 6\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
-        "id": "en-python-range-1",
-        "userInput": {
-          "ideas": [
-            {
-              "label": "Start and stop",
-              "text": "In `range(start, stop)`, counting starts at the start and leaves out the stop, even when counting down."
-            },
-            { "label": "Reach 5", "text": "`range(1, 6)` reaches 5 because it stops before 6." },
-            {
-              "label": "Number of values",
-              "text": "When counting up by ones, the number of values is stop minus start."
-            }
-          ],
-          "language": "en",
-          "lessonTitle": "Count with range() in Python",
-          "screens": [
-            {
-              "hasVisual": true,
-              "kind": "explanation",
-              "text": "Hannah’s `range(1, 5)` starts at 1 and gives 1, 2, 3, 4. In `range(start, stop)`, the stop is left out, even when counting down. To reach 5, use `range(1, 6)`. Counting up by ones, the number of values is stop minus start: 5 − 1 = 4. A loop over page numbers works the same way.",
-              "title": "Stop before the end"
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Hannah runs `for n in range(2, 6): print(n)`.\nWhat does the loop print?",
-              "title": null
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Hannah uses `for n in range(10, 0, -1): print(n)` for a timer countdown. The `-1` counts down by one.\nWhat is the last number printed?",
-              "title": null
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "about",
-          "reasoning": "All three about lines are short English topic questions under 60 characters. None reveals which chambers receive or pump blood, names the separating wall, or explains its function.",
-          "score": 10,
-          "label": "About lines that don't give the answer away",
-          "weight": 30
-        },
-        {
-          "categoryId": "ideas",
-          "reasoning": "The introductory overview covers all three ideas and is reasonably attached to the first, Atria. The whole-body pumping question correctly maps to Ventricles, and the wall-and-mixing question correctly maps to Septum, the later relevant idea.",
-          "score": 10,
-          "label": "Each screen under its idea",
-          "weight": 20
-        },
-        {
-          "categoryId": "marks",
-          "reasoning": "No underlines or examples are retained. Missing underlines are explicitly acceptable, and there are no misplaced example spans.",
-          "score": 10,
-          "label": "Underlines on the main point, examples on the case",
-          "weight": 20
-        },
-        {
-          "categoryId": "icons",
-          "reasoning": "Every screen has a visual, so none is eligible for a screen icon; all screen icons are correctly null. The idea-level icons have English names and descriptions and depict concrete, recognizable things connected to their topics: a heart, lungs as a ventricular destination, and a wall as a partition.",
-          "score": 10,
-          "label": "Concrete, fitting icons",
-          "weight": 30
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2069,
-          "outputTokens": 666,
-          "reasoningTokens": 296
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n      - In US English, for beginners in biology\n      - About lines don't say which chambers receive or pump blood\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
-        "id": "en-heart-chambers-1",
-        "userInput": {
-          "ideas": [
-            { "label": "Atria", "text": "The two upper chambers, the atria, receive blood." },
-            {
-              "label": "Ventricles",
-              "text": "The two lower chambers, the ventricles, pump blood out: the right to the lungs and the left to the whole body."
-            },
-            {
-              "label": "Septum",
-              "text": "The septum is the wall that separates the heart’s two sides and keeps their blood apart."
-            }
-          ],
-          "language": "en",
-          "lessonTitle": "The chambers of the heart",
-          "screens": [
-            {
-              "hasVisual": true,
-              "kind": "explanation",
-              "text": "Look at Naomi’s heart from the front: its right side appears on your left. The two upper chambers, called atria, receive blood; the two lower chambers, called ventricles, pump it out. The right ventricle sends blood to the lungs; the left sends it to the whole body. The septum is the wall that separates the two sides, keeping their blood apart. Look at the numbered parts.",
-              "title": "Four chambers at work"
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "Naomi learns that one chamber sends blood to her whole body.\nWhich chamber does that job?",
-              "title": null
-            },
-            {
-              "hasVisual": true,
-              "kind": "question",
-              "text": "During Naomi’s heart exam, a doctor hears signs of a hole in the wall between her ventricles.\nWhat is the wall, and why can a hole let blood mix?",
               "title": null
             }
           ]

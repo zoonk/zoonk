@@ -589,6 +589,101 @@
       }
     ]
   },
+  "pt-ciclo-celular": {
+    "ideas": [
+      {
+        "label": "G1",
+        "text": "Em G1, a célula recém-formada cresce e produz as peças que usa para funcionar."
+      },
+      {
+        "label": "fase S",
+        "text": "Na fase S, a célula copia o seu DNA inteiro e continua sendo uma célula só."
+      },
+      {
+        "label": "G2",
+        "text": "Em G2, com o DNA já copiado, a célula produz os materiais que vai usar na divisão."
+      },
+      {
+        "label": "fase M",
+        "text": "Na fase M, a célula reparte seu conteúdo e vira duas, que podem recomeçar o ciclo celular em G1."
+      },
+      {
+        "label": "intérfase",
+        "text": "G1, S e G2 juntas formam a intérfase, o período ativo antes da fase M."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Fases do ciclo celular",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Cada célula da sua pele carrega um manual de instruções. Ela segue esse manual para produzir as peças de que precisa para funcionar. Esse manual se chama **DNA**.",
+        "title": "O manual da célula"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Uma célula da pele passa várias horas sem se separar em duas. O que ela faz durante esse tempo?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Uma célula que acabou de se formar é pequena. Por isso, ela primeiro cresce e produz as peças que usa no dia a dia, seguindo o DNA. Essa fase de crescimento se chama **G1**.",
+        "title": "Primeiro, crescer"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Depois de crescer, a célula da pele faz uma cópia do seu DNA inteiro. Ela continua sendo uma célula só, agora com o manual em dobro. Essa fase de cópia se chama **fase S**.",
+        "title": "Depois, copiar o manual"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Uma célula da pele já cresceu. Agora ela está no meio da cópia do seu DNA e continua sendo uma célula só.\nEm que fase essa célula está?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Com o DNA já copiado, a célula ainda não se divide. Antes, ela produz os materiais que vai usar na divisão. Essa preparação final se chama **G2**.",
+        "title": "Últimos preparativos"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Por fim, a célula reparte seu conteúdo, e cada lado leva uma cópia do DNA. Assim, uma célula vira duas. Essa etapa de divisão se chama **fase M**.",
+        "title": "Enfim, a divisão"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Em G1, S e G2, a célula ainda é uma só, mas está ativa: ela cresce, copia e se prepara. Juntas, essas três fases se chamam **intérfase**. Depois dela vem a fase M.",
+        "title": "As três fases ativas"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Uma célula nova passa por G1, S, G2 e M e vira duas. Se essas células também se dividem, cada uma recomeça em G1. Essa sequência que se repete se chama **ciclo celular**.",
+        "title": "Uma sequência que recomeça"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Uma célula recém-formada cresce em G1, copia o DNA em S e depois se divide em M.\nQual fase fica entre a cópia do DNA e a divisão?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "No laboratório, Jussara vê que uma célula da pele terminou de copiar o DNA. O relatório anota: *vai se dividir imediatamente* e *ainda está na intérfase*.\nQual afirmação do relatório precisa ser corrigida?",
+        "title": null
+      }
+    ]
+  },
   "pt-eletrons-valencia": {
     "ideas": [
       {
@@ -761,6 +856,89 @@
         "hasVisual": true,
         "kind": "question",
         "text": "Na sede da OAB, Sabrina analisa três pedidos: cobrar providências diante de violações de direitos humanos; promover a seleção de advogados; e assumir o julgamento de recursos atrasados.\nComo esses pedidos se relacionam, nessa ordem, com as finalidades do art. 44 do Estatuto?",
+        "title": null
+      }
+    ]
+  },
+  "pt-juros-sobre-juros": {
+    "ideas": [
+      {
+        "label": "Juros",
+        "text": "Juros são o ganho que o dinheiro aplicado rende, como R$ 100 sobre R$ 1.000 no primeiro ano."
+      },
+      {
+        "label": "Juros sobre juros",
+        "text": "Quando os ganhos antigos ficam aplicados, eles também rendem, e o ganho sobe de R$ 100 para R$ 110."
+      },
+      {
+        "label": "Reinvestir",
+        "text": "Reinvestir é deixar o ganho na aplicação, porque se você tira o ganho, só o valor inicial continua rendendo."
+      },
+      {
+        "label": "Mesmo ritmo, ganho maior",
+        "text": "No mesmo ritmo, o ganho em reais cresce porque o saldo que rende cresce."
+      },
+      {
+        "label": "Na bolsa",
+        "text": "Na bolsa, uma ação pode subir num ano e cair no seguinte, então o exemplo mostra o mecanismo e não promete esse caminho."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Juros sobre juros",
+    "level": "beginner",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Imagine R$ 1.000 aplicados que rendem R$ 100 no primeiro ano. Esse ganho se chama **juros**. Ele pode ficar aplicado, junto com os R$ 1.000 do começo.",
+        "title": "O ganho do dinheiro aplicado"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Os R$ 1.000 e os R$ 100 de ganho continuam aplicados, rendendo no mesmo ritmo. Quanto a aplicação vai ganhar no segundo ano?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "No segundo ano, os R$ 1.000 rendem de novo R$ 100. Os R$ 100 ganhos antes também rendem: mais R$ 10. Assim, o ganho sobe para R$ 110. Quando ganhos antigos também rendem, isso se chama **juros sobre juros**.",
+        "title": "O ganho também rende"
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Se você tirar os R$ 100 da aplicação, só os R$ 1.000 continuam rendendo, e o ganho do ano seguinte volta a ser R$ 100. Deixar o ganho lá dentro para render também se chama **reinvestir**.",
+        "title": "Tirar ou deixar o ganho"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Davi tem duas aplicações de R$ 500 que rendem no mesmo ritmo. Numa, ele deixa os ganhos lá dentro. Na outra, tira todo o ganho no fim de cada ano.\nQual delas ganha mais no segundo ano?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Cada R$ 100 rende R$ 10 por ano, sempre. Mas o saldo que rende cresce, então o ganho em reais cresce junto. Mova o prazo até 20 anos: o saldo chega a uns R$ 6.727, e a curva fica cada vez mais inclinada.",
+        "title": "Mesmo ritmo, ganho maior"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Uma aplicação rende no mesmo ritmo todo ano, sem depósitos nem retiradas. Mesmo assim, ela ganha mais reais no décimo ano do que no primeiro.\nO que explica isso?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Na bolsa, uma ação, que é um pedacinho de uma empresa, pode subir num ano e cair no seguinte. Por isso, o exemplo dos R$ 1.000 crescendo no mesmo ritmo mostra o mecanismo. Ele não promete esse caminho.",
+        "title": "Na bolsa, o caminho oscila"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Você investe na B3, a bolsa de valores do Brasil, para dar a entrada num apartamento daqui a 15 anos. Você não precisa usar os ganhos agora.\nQual decisão e qual motivo fazem sentido?",
         "title": null
       }
     ]

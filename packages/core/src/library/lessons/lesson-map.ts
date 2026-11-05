@@ -78,7 +78,10 @@ export function readLessonMap(summary: unknown): LessonMap | null {
   return { ideas, shape: getLessonMapShape({ ideas, shape: saved.shape ?? "hub" }) };
 }
 
-/** The map the lesson plays with: every idea has its `about` line and its drawn icon, or null. */
+/**
+ * The map the lesson plays with: every idea has its `about` line and its drawn icon, or null. The
+ * map tells the ideas apart, so an icon an earlier idea shows goes.
+ */
 export function readPlayableLessonMap({
   icons,
   summary,
@@ -94,7 +97,8 @@ export function readPlayableLessonMap({
       ...map,
       ideas: map.ideas.map((idea, index) => {
         const { about, iconId } = saved[index] ?? {};
-        return { ...idea, about: about ?? null, icon: (iconId && icons.get(iconId)) || null };
+        const shown = iconId && !saved.slice(0, index).some((earlier) => earlier.iconId === iconId);
+        return { ...idea, about: about ?? null, icon: (shown && icons.get(iconId)) || null };
       }),
     }
   );

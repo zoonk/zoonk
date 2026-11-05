@@ -18,7 +18,7 @@ describe(getLessonMarks, () => {
     expect(marks?.steps.map((step) => step.stepId)).toStrictEqual(steps.map((step) => step.id));
 
     expect(marks?.steps[1]?.marks).toMatchObject({
-      icon: { smallUrl: icons.cloud.smallUrl, url: icons.cloud.url },
+      icon: { smallUrl: icons.planet.smallUrl, url: icons.planet.url },
       underline: "a map of where it might be",
     });
 

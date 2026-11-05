@@ -177,9 +177,9 @@ describe(pickLessonIcons, () => {
 
     const picked = await pickLessonIcons({
       requests: [
-        { need: need(sameName.name), usedFor: "a screen" },
-        { need: fresh, usedFor: "a screen" },
-        { need: synonym, usedFor: "a screen about the courts" },
+        { forIdea: false, need: need(sameName.name), usedFor: "a screen" },
+        { forIdea: false, need: fresh, usedFor: "a screen" },
+        { forIdea: false, need: synonym, usedFor: "a screen about the courts" },
       ],
     });
 
@@ -194,6 +194,48 @@ describe(pickLessonIcons, () => {
     ).not.toContain(sameName.name);
   });
 
+  it("never gives one library icon to two of the lesson's ideas: a later idea sent to a taken icon draws its own", async () => {
+    const tag = uniqueName("money").replace(" ", "");
+
+    const [coin, scale] = await Promise.all([
+      lessonIconFixture({ name: uniqueName("coin"), tags: [tag] }),
+      lessonIconFixture({ name: uniqueName("balance scale"), tags: [tag] }),
+    ]);
+
+    const coins = { ...need(uniqueName("coins")), searchWords: [tag] };
+    const purse = { ...need(uniqueName("purse")), searchWords: [tag] };
+    const justice = { ...need(uniqueName("scales of justice")), searchWords: [tag] };
+    const court = { ...need(uniqueName("court scale")), searchWords: [tag] };
+
+    vi.mocked(matchLessonIcons).mockImplementation(async ({ needs }) => ({
+      data: needs.map((item) =>
+        item.need.name === justice.name || item.need.name === court.name ? scale.id : coin.id,
+      ),
+      provenance: {} as never,
+      systemPrompt: "",
+      usage: {} as never,
+      userPrompt: "",
+    }));
+
+    const picked = await pickLessonIcons({
+      requests: [
+        { forIdea: true, need: coins, usedFor: "the lesson map's idea: interest" },
+        { forIdea: true, need: need(coin.name), usedFor: "the lesson map's idea: compounding" },
+        { forIdea: false, need: purse, usedFor: "a screen" },
+        { forIdea: true, need: justice, usedFor: "the lesson map's idea: courts" },
+        { forIdea: true, need: court, usedFor: "the lesson map's idea: appeals" },
+      ],
+    });
+
+    expect(picked.map(({ iconId, name }) => ({ iconId, name }))).toStrictEqual([
+      { iconId: null, name: coins.name },
+      { iconId: coin.id, name: coin.name },
+      { iconId: coin.id, name: purse.name },
+      { iconId: scale.id, name: justice.name },
+      { iconId: null, name: court.name },
+    ]);
+  });
+
   it("skips a name the model failed to draw for an earlier lesson, without paying for it again", async () => {
     const failed = await lessonIconFixture({
       name: uniqueName("compass"),
@@ -203,7 +245,9 @@ describe(pickLessonIcons, () => {
     });
 
     await expect(
-      pickLessonIcons({ requests: [{ need: need(failed.name), usedFor: "a screen" }] }),
+      pickLessonIcons({
+        requests: [{ forIdea: false, need: need(failed.name), usedFor: "a screen" }],
+      }),
     ).resolves.toStrictEqual([]);
 
     expect(matchLessonIcons).not.toHaveBeenCalled();

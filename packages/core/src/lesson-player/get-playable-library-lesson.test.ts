@@ -20,6 +20,7 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { validateActivity } from "../library/activities/validate-activity";
+import { readSavedLessonMap } from "../library/lessons/lesson-map";
 import { readSavedStepMarks } from "../library/marks/step-marks";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
@@ -187,12 +188,54 @@ describe(getPlayableLibraryLesson, () => {
       { example: null, icon: null, ideaIndex: null, underline: null },
       {
         example: "The electron doesn't circle the nucleus like a planet.",
-        icon: cloud,
+        icon: { smallUrl: icons.planet.smallUrl, url: icons.planet.url },
         ideaIndex: 0,
         underline: "a map of where it might be",
       },
       { example: null, icon: null, ideaIndex: 1, underline: "darkest just around the nucleus" },
       { example: null, icon: null, ideaIndex: null, underline: null },
+    ]);
+  });
+
+  it("never shows a screen the icon its idea's strip already shows, even when marks stored it", async () => {
+    const { icons, lesson } = await markedPlayableLessonFixture();
+    const example = "The electron doesn't circle the nucleus like a planet.";
+    const underline = "a map of where it might be";
+
+    await prisma.step.updateMany({
+      data: {
+        marks: { example, iconId: icons.cloud.id, iconPending: false, ideaIndex: 0, underline },
+      },
+      where: { kind: "explanation", lessonId: lesson.id },
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const shown = result?.status === "ready" ? result.lesson.steps[1] : null;
+
+    expect(shown && "marks" in shown ? shown.marks : null).toStrictEqual({
+      example,
+      icon: null,
+      ideaIndex: 0,
+      underline,
+    });
+  });
+
+  it("never shows two of the map's ideas one icon, even when the map stored it twice", async () => {
+    const { icons, lesson } = await markedPlayableLessonFixture();
+    const saved = readSavedLessonMap(lesson.summary);
+    const ideas = saved?.ideas.map((idea) => ({ ...idea, iconId: icons.cloud.id }));
+
+    await prisma.lesson.update({
+      data: { summary: { ...saved, ideas } },
+      where: { id: lesson.id },
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const shown = result?.status === "ready" ? result.lesson.summary?.ideas : [];
+
+    expect(shown?.map((idea) => idea.icon)).toStrictEqual([
+      { smallUrl: icons.cloud.smallUrl, url: icons.cloud.url },
+      null,
     ]);
   });
 
