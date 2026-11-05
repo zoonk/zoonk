@@ -101,7 +101,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   }
 }
 
-/// An intro or a note: it leads, and the trailing page keeps only the way on.
+/// An intro, a note or a result with nothing next: it leads, and the trailing page keeps only the
+/// way on.
 extension PracticeTaskLayout where Response == EmptyView {
   init(
     segments: [PracticeSegment]? = nil, index: Int = 0,

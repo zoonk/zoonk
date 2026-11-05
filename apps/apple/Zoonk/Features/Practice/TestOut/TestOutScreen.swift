@@ -127,7 +127,6 @@ struct TestOutScreen: View {
           : LocalizedStringResource(
             "Not yet, and that's fine", table: "Practice", comment: "A failed test-out's result."),
         detail: resultDetail(result))
-    } response: {
       PracticeResultNumbers(
         facts: [
           String(
@@ -135,7 +134,7 @@ struct TestOutScreen: View {
             comment: "A test-out's right answers out of its questions.")
         ],
         day: DayResult(result))
-
+    } response: {
       if undo == .failed {
         FailureLine(
           message: LocalizedStringResource(

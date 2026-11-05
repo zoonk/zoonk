@@ -115,7 +115,6 @@ struct PatternScreen: View {
                 "Knowing the rule is the first step. It gets easier each time you use it.",
                 table: "Practice",
                 comment: "End of a pattern drill with misses."))
-        } response: {
           PracticeResultNumbers(
             correct: result.correct, total: result.total, brainPower: result.brainPower,
             day: DayResult(result))

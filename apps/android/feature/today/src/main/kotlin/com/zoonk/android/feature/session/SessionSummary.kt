@@ -2,6 +2,7 @@ package com.zoonk.android.feature.session
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -18,10 +19,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,7 +37,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.ActReaction
 import com.zoonk.android.ui.characters.BuddyAct
@@ -57,6 +57,7 @@ import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.celebrates
+import com.zoonk.android.ui.components.isWideWindow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
@@ -65,7 +66,12 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatProgressShare
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.StudyMission
@@ -93,7 +99,8 @@ internal class SummaryActions(
 
 /**
  * Main's `SessionSummary`: how the session went, then what it earned. A phone shows the rewards as
- * a second step; a wide window keeps them beside the session, as main's "Earned today" does.
+ * a second step; a wide window keeps them beside the session, as main's "Earned today" does. An
+ * open book shows the session and what it earned before the fold and what comes next after it.
  */
 @Composable
 internal fun SessionSummary(
@@ -105,62 +112,78 @@ internal fun SessionSummary(
     failed: SessionAction?,
     actions: SummaryActions,
 ) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-    val stepped = !wide && !facts.stopped && summary.hasRewardsBeyondBrainPower()
     var onRewards by rememberSaveable { mutableStateOf(false) }
     var leftRewards by rememberSaveable { mutableStateOf(false) }
-    val rewardsShown = stepped && onRewards
+    val scroll = rememberScrollState()
+    var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    BackHandler(enabled = rewardsShown) {
-        onRewards = false
-        leftRewards = true
-    }
+    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+        val pages = spreadFold(maxWidth, span) != null
+        // Across a fold the summary keeps to a page, even where its text is too large for two.
+        val wide = pageFold(maxWidth, span) == null && isWideWindow()
+        val stepped = !pages && !wide && !facts.stopped && summary.hasRewardsBeyondBrainPower()
+        val rewardsShown = stepped && onRewards
 
-    TaskScaffold(
-        onClose = actions.finish,
-        title = { if (stepped) StepDots(count = 2, index = if (rewardsShown) 1 else 0) },
-        bottomBar = {
-            SummaryBar(
-                summary = summary,
-                facts = facts,
-                busy = busy,
-                failed = failed,
-                actions = actions,
-                toRewards = if (stepped && !rewardsShown) ({ onRewards = true }) else null,
-                fromRewards =
-                    if (rewardsShown) {
-                        {
-                            onRewards = false
-                            leftRewards = true
-                        }
-                    } else {
-                        null
-                    },
-            )
-        },
-    ) { padding ->
-        Column(
-            modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Row(
-                modifier = Modifier.widthIn(max = 960.dp).padding(horizontal = 16.dp, vertical = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(32.dp),
-            ) {
-                Column(Modifier.weight(1f)) {
-                    // Going back to a step already seen shows it still.
-                    CelebrationScope(play = !leftRewards) {
+        BackHandler(enabled = rewardsShown) {
+            onRewards = false
+            leftRewards = true
+        }
+
+        TaskScaffold(
+            onClose = actions.finish,
+            title = { if (stepped) StepDots(count = 2, index = if (rewardsShown) 1 else 0) },
+            bottomBar = {
+                SummaryBar(
+                    summary = summary,
+                    facts = facts,
+                    busy = busy,
+                    failed = failed,
+                    actions = actions,
+                    toRewards = if (stepped && !rewardsShown) ({ onRewards = true }) else null,
+                    fromRewards =
                         if (rewardsShown) {
-                            RewardsStep(summary, facts, buddy, buddyName)
+                            {
+                                onRewards = false
+                                leftRewards = true
+                            }
                         } else {
-                            DoneStep(summary, facts, wide)
+                            null
+                        },
+                )
+            },
+        ) { padding ->
+            if (pages) {
+                ResultPages(
+                    modifier = Modifier.padding(padding),
+                    withMoment = true,
+                    columnModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    done = {
+                        DoneTitle(summary, facts)
+                        SessionNumbers(summary, facts, brainPowerTile = false)
+                        EarnedToday(summary, facts, buddy, buddyName)
+                    },
+                    next = { Onward(summary, facts) },
+                )
+            } else {
+                Column(
+                    modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(scroll),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Row(
+                        modifier = Modifier.widthIn(max = 960.dp).padding(horizontal = 16.dp, vertical = 24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(32.dp),
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            // Going back to a step already seen shows it still.
+                            CelebrationScope(play = !leftRewards) {
+                                if (rewardsShown) {
+                                    RewardsStep(summary, facts, buddy, buddyName)
+                                } else {
+                                    DoneStep(summary, facts, wide)
+                                }
+                            }
                         }
-                    }
-                }
-                if (wide) {
-                    Column(Modifier.widthIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        SectionLabel(stringResource(R.string.session_summary_earned_today))
-                        Rewards(summary, facts, buddy, buddyName, title = null)
+                        if (wide) EarnedToday(summary, facts, buddy, buddyName, Modifier.widthIn(max = 320.dp))
                     }
                 }
             }
@@ -174,8 +197,19 @@ private fun DoneStep(
     facts: SummaryFacts,
     wide: Boolean,
 ) {
-    val locale = currentLocale()
-    val time = formatMinutes(summary.minutes.toInt(), locale)
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        DoneTitle(summary, facts)
+        SessionNumbers(summary, facts, brainPowerTile = !wide)
+        Onward(summary, facts)
+    }
+}
+
+@Composable
+private fun DoneTitle(
+    summary: StudySessionSummary,
+    facts: SummaryFacts,
+) {
+    val time = formatMinutes(summary.minutes.toInt(), currentLocale())
     val title =
         when {
             facts.stopped -> stringResource(R.string.session_summary_done_for_now)
@@ -183,25 +217,43 @@ private fun DoneStep(
             else -> stringResource(R.string.session_summary_done_in, time)
         }
 
-    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Eyebrow(stringResource(R.string.session_summary_eyebrow))
-            Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
-            if (facts.stopped && summary.minutes >= 1) {
-                Text(
-                    stringResource(R.string.session_summary_so_far, time),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Eyebrow(stringResource(R.string.session_summary_eyebrow))
+        Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
+        if (facts.stopped && summary.minutes >= 1) {
+            Text(
+                stringResource(R.string.session_summary_so_far, time),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
-        SessionNumbers(summary, facts, brainPowerTile = !wide)
-        SkillRises(summary)
-        summary.tomorrow?.takeIf { !facts.stopped }?.let { tomorrow ->
-            SummaryList(stringResource(R.string.session_summary_tomorrow)) {
-                SummaryRow(R.drawable.ic_menu_book) { Text(tomorrow.title, style = MaterialTheme.typography.bodyLarge) }
-            }
+    }
+}
+
+@Composable
+private fun Onward(
+    summary: StudySessionSummary,
+    facts: SummaryFacts,
+) {
+    SkillRises(summary)
+    summary.tomorrow?.takeIf { !facts.stopped }?.let { tomorrow ->
+        SummaryList(stringResource(R.string.session_summary_tomorrow)) {
+            SummaryRow(R.drawable.ic_menu_book) { Text(tomorrow.title, style = MaterialTheme.typography.bodyLarge) }
         }
+    }
+}
+
+@Composable
+private fun EarnedToday(
+    summary: StudySessionSummary,
+    facts: SummaryFacts,
+    buddy: BuddyLook,
+    buddyName: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        SectionLabel(stringResource(R.string.session_summary_earned_today))
+        Rewards(summary, facts, buddy, buddyName, title = null)
     }
 }
 

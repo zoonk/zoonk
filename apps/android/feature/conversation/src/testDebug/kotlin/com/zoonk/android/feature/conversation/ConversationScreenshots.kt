@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.feature.livecall.CallReservation
 import com.zoonk.android.feature.livecall.LiveServerEvent
 import com.zoonk.android.feature.livecall.characterSays
@@ -17,6 +18,7 @@ import com.zoonk.android.feature.livecall.setup
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -32,8 +34,13 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class ConversationScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
+
+    private var folded = false
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
 
@@ -62,6 +69,42 @@ class ConversationScreenshots {
     @Test
     @Config(qualifiers = "w851dp-h882dp-xhdpi")
     fun foldOpen() = walk("fold-open")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() {
+        folded = true
+        walk("book")
+    }
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun galaxyFold() {
+        folded = true
+        walk("galaxy-fold")
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookLimit() {
+        folded = true
+        val harness = ConversationHarness()
+        harness.client.reservations = ArrayDeque(listOf(CallReservation.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day))))
+        harness.show(compose)
+        compose.onNodeWithText("Call Lucía").performClick()
+        shot("problem-limit-book")
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookDropped() {
+        folded = true
+        val harness = ConversationHarness()
+        harness.show(compose)
+        harness.goLive(compose)
+        harness.transport.onLost()
+        shot("problem-dropped-book")
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
@@ -168,7 +211,7 @@ class ConversationScreenshots {
     }
 
     private fun shot(name: String) {
-        compose.waitForIdle()
+        if (folded) compose.unfoldBook(folds) else compose.waitForIdle()
         val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }

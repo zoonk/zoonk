@@ -6,12 +6,8 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -38,10 +33,10 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.certificates.naming
-import com.zoonk.android.feature.mock.runner.COLUMN_WIDTH
 import com.zoonk.android.feature.mock.runner.MockRun
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.MockRunnerViewModel
+import com.zoonk.android.feature.mock.runner.StepColumn
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
@@ -61,7 +56,6 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.MockExam
@@ -117,7 +111,7 @@ internal fun MockResult(
         onSeePlus = { navigator.open(AppRoute.Subscription) },
     ) { buddy ->
         val review = rememberReviewPlace()
-        // Above both layouts, since an open book reads the areas on the page after the fold.
+        // Above the steps, so paging away from the score and back keeps the areas the learner opened.
         var opened by rememberSaveable { mutableStateOf(emptyList<String>()) }
         val toggle = { key: String -> opened = if (key in opened) opened - key else opened + key }
         val onContinue = { navigator.continueAfter(view, route) }
@@ -127,11 +121,11 @@ internal fun MockResult(
         BoxWithConstraints {
             val fold = pageFold(maxWidth)
             val asideFits = supportingPaneBeside(maxWidth, panesTouch = true)
-            // An open book reads what happened before the fold, and what it means and what's next after it, with the way on.
+            // An open book reads how it went before the fold, and what's next after it, with the way on.
             val nextAfterFold = MockResultPart.Score in has && fold != null && asideFits
-            // With no questions to review, the areas and what the mock showed fill the page after the fold instead.
-            val numbersAfterFold = nextAfterFold && view.review.isEmpty()
-            val hasAside = resultAsideParts(has).isNotEmpty() || nextAfterFold
+            // Main's aside, under its title: the plan and the mistakes. A fold adds the page after it even without them.
+            val mainAside = resultAsideParts(has).isNotEmpty()
+            val hasAside = mainAside || nextAfterFold
             // Main's `lg`: the aside beside the steps, or a window as wide without one; the review then sits in the score step.
             val wide =
                 if (hasAside) {
@@ -149,7 +143,7 @@ internal fun MockResult(
                                 result?.let {
                                     ResultStep(SCORE, part.beside) {
                                         ScoreStep(view, it, dayMoment = { MockDayMoment(view, buddy) }) {
-                                            if (!numbersAfterFold) ScoreNumbers(it, opened, toggle)
+                                            ScoreNumbers(it, opened, toggle)
                                             if (!nextAfterFold) {
                                                 if (wide) ReviewSection(view, app, review)
                                                 ResultNotes(view)
@@ -249,7 +243,7 @@ internal fun MockResult(
             val step: @Composable () -> Unit = {
                 current?.let {
                     CompositionLocalProvider(LocalStepHeading provides heading) {
-                        StepColumn(it.id) {
+                        StepColumn(step = it.id) {
                             CelebrationScope(play = it.id !in left) {
                                 it.content()
                                 if (MockResultPart.Score !in has && it == steps.first()) {
@@ -268,9 +262,11 @@ internal fun MockResult(
                     bottomBar = actions.takeUnless { nextAfterFold },
                     aside =
                         if (hasAside) {
-                            TaskAside(title = stringResource(R.string.mock_result_after), footer = actions.takeIf { nextAfterFold }) {
+                            TaskAside(
+                                title = stringResource(R.string.mock_result_after).takeIf { mainAside },
+                                footer = actions.takeIf { nextAfterFold },
+                            ) {
                                 ResultAside(preparation) {
-                                    if (numbersAfterFold) result?.let { ScoreNumbers(it, opened, toggle) }
                                     if (offered.isNotEmpty()) {
                                         view.adapt?.let { adapt ->
                                             AsideSection(
@@ -294,25 +290,6 @@ internal fun MockResult(
             }
 
             if (review.open && !wide) ReviewSheet(view, app, review)
-        }
-    }
-}
-
-/** Scrolls on the whole pane, margins included, with the step held to a readable column. */
-@Composable
-private fun StepColumn(
-    id: String,
-    content: @Composable () -> Unit,
-) {
-    key(id) {
-        Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-            Column(
-                Modifier
-                    .widthIn(max = COLUMN_WIDTH)
-                    .fillMaxWidth()
-                    .padding(detailPagePadding()),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-            ) { content() }
         }
     }
 }

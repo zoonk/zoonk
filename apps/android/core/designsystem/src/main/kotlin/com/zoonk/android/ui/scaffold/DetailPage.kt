@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,14 +76,14 @@ fun DetailPage(
 /** Material's window margins: 16dp on phones, 24dp from medium windows up. */
 @Composable
 fun detailPagePadding(): PaddingValues {
-    val compact = !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val compact = !windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     return PaddingValues(horizontal = if (compact) 16.dp else 24.dp, vertical = 24.dp)
 }
 
 /** A page's main action fills the row on phones, as main's does under `md`, and keeps its own width beyond. */
 @Composable
 fun Modifier.mainActionWidth(): Modifier =
-    if (currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(
+    if (windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(
             WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
         )
     ) {

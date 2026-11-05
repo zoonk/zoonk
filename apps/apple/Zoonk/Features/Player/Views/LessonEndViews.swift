@@ -13,10 +13,10 @@ struct LessonCompletionView: View {
     PaneSplit {
       page {
         moment
+        dayMoment
       }
     } secondary: {
       page {
-        dayMoment
         guestEndingView
       }
       .safeAreaBar(edge: .bottom) { actionBar }

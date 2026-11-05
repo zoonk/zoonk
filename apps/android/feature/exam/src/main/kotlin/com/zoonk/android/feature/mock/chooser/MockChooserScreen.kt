@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +33,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.MockOptions
@@ -68,7 +68,7 @@ fun MockChooserScreen(
         }
 
         else -> {
-            ChooserFrame(navigator) { ChooserLoading() }
+            ChooserFrame(navigator) { PageLoading() }
         }
     }
 }
@@ -139,7 +139,7 @@ internal fun MockChooser(
     ChooserFrame(navigator, title = loaded?.let { chooserTitle(placement) }, listState = listState) {
         when {
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
-            loaded == null -> ChooserLoading()
+            loaded == null -> PageLoading()
             writing -> MockWriting(run, onRetry = retry, titleFocus = focus.requester)
             placement -> PlacementChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
             else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
@@ -191,7 +191,7 @@ private fun Leave(
     exit: ChooserExit,
     navigator: AppNavigator,
 ) {
-    ChooserFrame(navigator) { ChooserLoading() }
+    ChooserFrame(navigator) { PageLoading() }
     LaunchedEffect(exit) {
         navigator.back()
         when (exit) {
@@ -217,9 +217,4 @@ private fun ChooserFrame(
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) { content() }
     }
-}
-
-@Composable
-private fun ChooserLoading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
 }

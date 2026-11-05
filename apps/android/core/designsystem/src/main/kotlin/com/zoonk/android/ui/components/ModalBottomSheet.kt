@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import com.zoonk.android.app.SnackbarLayer
+import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.screenSplit
 
 /**
@@ -49,7 +50,9 @@ fun ModalBottomSheet(
                 } else {
                     minOf(BottomSheetDefaults.SheetMaxWidth, window - fold.end)
                 },
-            content = content,
-        )
+        ) {
+            HoldUntilFoldsRead()
+            content()
+        }
     }
 }

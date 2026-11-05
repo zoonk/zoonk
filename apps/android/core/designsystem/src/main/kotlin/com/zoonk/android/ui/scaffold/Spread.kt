@@ -1,7 +1,6 @@
 package com.zoonk.android.ui.scaffold
 
 import androidx.compose.material3.adaptive.allVerticalHingeBounds
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -52,7 +51,7 @@ internal val LocalSpread = compositionLocalOf<Spread?> { null }
 
 @Composable
 private fun spread(): Spread {
-    val info = currentWindowAdaptiveInfoV2()
+    val info = windowAdaptiveInfo()
     val density = LocalDensity.current
     val window = LocalWindowInfo.current.containerSize
     val hinge = info.windowPosture.allVerticalHingeBounds.firstOrNull()

@@ -41,6 +41,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +57,7 @@ fun LicensesScreen(navigator: AppNavigator) {
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_licenses)) }) { padding ->
         val list = libraries
         if (list == null) {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            PageLoading(Modifier.padding(padding))
         } else {
             LazyColumn(Modifier.fillMaxSize(), contentPadding = padding, horizontalAlignment = Alignment.CenterHorizontally) {
                 items(list, key = { it.uniqueId }) { library ->

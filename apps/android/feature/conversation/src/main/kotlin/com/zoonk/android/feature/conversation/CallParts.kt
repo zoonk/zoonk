@@ -26,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -61,6 +60,7 @@ import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.scaffold.taskAsideBeside
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.api.models.ExamSpeakingTask
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationIntro
@@ -92,7 +92,7 @@ internal fun CallFrame(
     barUnderAside: Boolean = false,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val bar: (@Composable () -> Unit)? =
         bottomBar?.let { bar ->
             {
@@ -106,7 +106,6 @@ internal fun CallFrame(
         }
 
     BoxWithConstraints {
-        // Both read the window on every frame: a reading that starts once a fold shows sees no fold at first.
         val fold = pageFold(maxWidth)
         val asideBeside = supportingPaneBeside(maxWidth, panesTouch = true)
         val barAfterFold = barUnderAside && aside != null && fold != null && asideBeside
