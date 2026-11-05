@@ -16,12 +16,7 @@ const ideaSchema = z
         description:
           "One line in the lesson's language on what the idea covers, without giving away its answer, for before the lesson (the opening map's popover). Null until the lesson is tagged",
       }),
-    icon: lessonIconSchema
-      .nullable()
-      .optional()
-      .meta({
-        description: "The idea's icon. Null until it's drawn; only the playable lesson has it",
-      }),
+    icon: lessonIconSchema.optional(),
     label: z
       .string()
       .min(1)

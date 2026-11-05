@@ -30187,8 +30187,6 @@
                   "type": "string"
                 },
                 "icon": {
-                  "description": "The idea's icon. Null until it's drawn; only the playable lesson has it",
-                  "nullable": true,
                   "allOf": [
                     {
                       "$ref": "#/components/schemas/LessonIcon"
@@ -30230,6 +30228,8 @@
         "description": "A small map of what the lesson teaches: its ideas, each in one complete sentence"
       },
       "LessonIcon": {
+        "nullable": true,
+        "description": "A small drawing in the lesson's house style, with a white sticker border baked in, so one file works in light and dark. Decorative: screen readers skip it, since the text beside it says the same. Null until it's drawn",
         "type": "object",
         "properties": {
           "smallUrl": {
@@ -30245,8 +30245,7 @@
           "smallUrl",
           "url"
         ],
-        "additionalProperties": false,
-        "description": "A small drawing in the lesson's house style, with a white sticker border baked in, so one file works in light and dark. Decorative: screen readers skip it, since the text beside it says the same"
+        "additionalProperties": false
       },
       "CatalogSearchResponse": {
         "type": "object",
@@ -56323,12 +56322,7 @@
                 ]
               },
               "marks": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/StepMarks"
-                  }
-                ]
+                "$ref": "#/components/schemas/StepMarks"
               },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
@@ -56416,6 +56410,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture",
               "baseMap",
               "minTolerance"
@@ -57063,12 +57058,7 @@
                 ]
               },
               "marks": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/StepMarks"
-                  }
-                ]
+                "$ref": "#/components/schemas/StepMarks"
               },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
@@ -57130,6 +57120,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -57573,12 +57564,7 @@
                 ]
               },
               "marks": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/StepMarks"
-                  }
-                ]
+                "$ref": "#/components/schemas/StepMarks"
               },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
@@ -57640,6 +57626,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -62506,12 +62493,7 @@
                 ]
               },
               "marks": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/StepMarks"
-                  }
-                ]
+                "$ref": "#/components/schemas/StepMarks"
               },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
@@ -62598,6 +62580,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture",
               "baseMap"
             ],
@@ -63205,12 +63188,7 @@
                 ]
               },
               "marks": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/StepMarks"
-                  }
-                ]
+                "$ref": "#/components/schemas/StepMarks"
               },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
@@ -63272,6 +63250,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -63476,12 +63455,7 @@
                 ]
               },
               "marks": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/StepMarks"
-                  }
-                ]
+                "$ref": "#/components/schemas/StepMarks"
               },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
@@ -66326,6 +66300,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture",
               "listening"
             ],
@@ -66524,12 +66499,7 @@
                 ]
               },
               "marks": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/StepMarks"
-                  }
-                ]
+                "$ref": "#/components/schemas/StepMarks"
               },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
@@ -66591,6 +66561,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -66974,12 +66945,7 @@
                 ]
               },
               "marks": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/StepMarks"
-                  }
-                ]
+                "$ref": "#/components/schemas/StepMarks"
               },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
@@ -67041,6 +67007,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -67437,12 +67404,7 @@
                 ]
               },
               "marks": {
-                "nullable": true,
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/StepMarks"
-                  }
-                ]
+                "$ref": "#/components/schemas/StepMarks"
               },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
@@ -67504,6 +67466,7 @@
               "image",
               "imagePending",
               "kind",
+              "marks",
               "picture"
             ],
             "additionalProperties": false
@@ -70357,6 +70320,8 @@
         ]
       },
       "StepMarks": {
+        "nullable": true,
+        "description": "Light marks on a teaching screen. The marked text is an explanation's `text` or a worked example's `problem`; on other screens only `ideaIndex` is set. `icon` sits on the corner of the example's frame, or of the text block when there's no example, only on an explanation with no picture, visual or activity of its own. Null until the lesson is tagged, and on screens it never tags",
         "type": "object",
         "properties": {
           "example": {
@@ -70365,13 +70330,7 @@
             "type": "string"
           },
           "icon": {
-            "nullable": true,
-            "description": "Shown on the corner of the example's frame, or of the text block when there's no example. Only on an explanation with no picture, visual or activity of its own, and null until it's drawn",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/LessonIcon"
-              }
-            ]
+            "$ref": "#/components/schemas/LessonIcon"
           },
           "ideaIndex": {
             "nullable": true,
@@ -70392,8 +70351,7 @@
           "ideaIndex",
           "underline"
         ],
-        "additionalProperties": false,
-        "description": "Light marks on a teaching screen. The marked text is an explanation's `text` or a worked example's `problem`; on other screens only `ideaIndex` is set. Null until the lesson is tagged, and on screens it never tags"
+        "additionalProperties": false
       },
       "ScreenPicture": {
         "nullable": true,

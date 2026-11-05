@@ -29,7 +29,7 @@ const schema = z.object({
 
 export type IconCandidate = { description: string; id: string; name: string; tags: string[] };
 
-export type IconMatchNeed = { candidates: IconCandidate[]; need: IconNeed; usedFor: string };
+type IconMatchNeed = { candidates: IconCandidate[]; need: IconNeed; usedFor: string };
 
 export type IconMatchParams = {
   needs: IconMatchNeed[];

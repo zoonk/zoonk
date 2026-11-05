@@ -11,7 +11,7 @@ export const iconNeedSchema = z.object({
 });
 
 /** `Step.marks`: what tagging found, with the icon linked once it's drawn. */
-export const savedStepMarksSchema = z.object({
+const savedStepMarksSchema = z.object({
   example: z.string().nullable(),
   iconId: z.uuid().nullable(),
   /** What tagging asked the icon library for. */
