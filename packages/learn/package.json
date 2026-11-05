@@ -179,7 +179,7 @@
     "i18n": "reuse-translations && eloqnt translate",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@ai-sdk/openai": "4.0.106",

@@ -6,7 +6,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -22,6 +21,7 @@ import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -154,7 +154,7 @@ class ExamScreenshots {
         }
         if (fold) unfold()
         compose.waitForIdle()
-        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** Opens the book flat, telling again what the fold composed, as a device tells every new reader. */

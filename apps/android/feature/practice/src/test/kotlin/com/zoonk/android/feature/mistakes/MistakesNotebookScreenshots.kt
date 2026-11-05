@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Surface
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -17,6 +16,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalMistakePattern
@@ -132,7 +132,7 @@ class MistakesNotebookScreenshots {
         if (fold) unfold()
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 

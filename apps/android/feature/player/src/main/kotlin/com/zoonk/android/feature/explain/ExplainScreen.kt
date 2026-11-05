@@ -69,6 +69,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
@@ -108,7 +109,7 @@ fun ExplainScreen(
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
             TaskScaffold(onClose = navigator::closeTask) { padding ->
-                Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                PageLoading(Modifier.padding(padding))
             }
         }
 

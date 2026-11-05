@@ -6,7 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -14,9 +13,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
@@ -26,6 +22,8 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.practice.block.BlockFinished
 import com.zoonk.android.feature.practice.block.Runner
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.StudyBlockCompletion
 import kotlinx.coroutines.CoroutineScope
@@ -106,7 +104,7 @@ class QuestionBlockScreenshots {
             }
         }
 
-        if (open) unfold()
+        if (open) rule.unfoldBook(folds)
         if (check) {
             rule.onNodeWithText("Moon", substring = true).performClick()
             rule.onNodeWithText("Check").performClick()
@@ -239,22 +237,6 @@ class QuestionBlockScreenshots {
             },
         )
 
-    // Android tells a listener that starts after the fold about it; window-testing doesn't, so a frame
-    // rebuilt as the fold drops the passage's aside hears it again.
-    private fun unfold() {
-        repeat(2) {
-            rule.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                    ),
-                ),
-            )
-        }
-        rule.waitForIdle()
-    }
-
     private fun showDone(
         name: String,
         fold: Boolean = false,
@@ -294,7 +276,7 @@ class QuestionBlockScreenshots {
             }
         }
         rule.mainClock.advanceTimeBy(10_000)
-        if (fold) unfold()
+        if (fold) rule.unfoldBook(folds)
         write(name)
     }
 
@@ -334,7 +316,7 @@ class QuestionBlockScreenshots {
     fun tabletDone() = showDone("tablet-block-done")
 
     private fun write(name: String) {
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }

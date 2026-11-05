@@ -17,7 +17,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,6 +63,7 @@ import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
@@ -73,8 +73,8 @@ import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
-import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
@@ -211,7 +211,7 @@ private fun SavedDay(
         }
 
         LoadState.Empty -> {
-            TaskScaffold(onClose = navigator::closeTask) { padding -> NotFoundMessage(navigator::closeTask, Modifier.padding(padding)) }
+            TaskNotFound(navigator)
         }
 
         else -> {
@@ -345,11 +345,6 @@ internal fun NextStop(
     val startFocus = remember { FocusRequester() }
     var screenFocused by remember { mutableStateOf(false) }
     val instead = alternative?.takeIf { !ready && goalId != null }
-    // Main stacks the actions full width below its large breakpoint once an alternative joins them.
-    val stacked =
-        instead != null &&
-            !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-    val actionWidth = if (stacked) Modifier.fillMaxWidth() else Modifier
 
     LaunchedEffect(step.position, waiting, step.screen) {
         when {
@@ -393,40 +388,46 @@ internal fun NextStop(
                             SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))
                             else -> Unit
                         }
-                        FlowRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            onStop?.let {
-                                OutlinedButton(
-                                    onClick = it,
-                                    modifier = actionWidth,
-                                    enabled = !busy,
-                                ) { Text(stringResource(R.string.session_next_stop)) }
-                            }
-                            startsFor?.let { goal ->
-                                LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
-                                Button(
-                                    onClick = { viewModel.start(day, step, goal) },
-                                    Modifier.focusRequester(startFocus),
-                                    enabled = !busy,
-                                ) {
-                                    Text(stringResource(R.string.session_next_start))
+                        // Main stacks the actions full width below its large breakpoint once an alternative joins them;
+                        // here that's the width of the page the bar sits on, which is a phone's beside a fold.
+                        BoxWithConstraints(Modifier.fillMaxWidth()) {
+                            val stacked = instead != null && maxWidth < WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
+                            val actionWidth = if (stacked) Modifier.fillMaxWidth() else Modifier
+                            FlowRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                onStop?.let {
+                                    OutlinedButton(
+                                        onClick = it,
+                                        modifier = actionWidth,
+                                        enabled = !busy,
+                                    ) { Text(stringResource(R.string.session_next_stop)) }
                                 }
-                            }
-                            instead?.let { other ->
-                                Button(
-                                    onClick = { goalId?.let { viewModel.start(day, other, it) } },
-                                    modifier = actionWidth,
-                                    enabled = !busy,
-                                ) {
-                                    Text(
-                                        stringResource(
-                                            if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
-                                            blockTitle(other),
-                                        ),
-                                    )
+                                startsFor?.let { goal ->
+                                    LaunchedEffect(written) { if (written && !screenFocused) startFocus.requestFocus() }
+                                    Button(
+                                        onClick = { viewModel.start(day, step, goal) },
+                                        Modifier.focusRequester(startFocus),
+                                        enabled = !busy,
+                                    ) {
+                                        Text(stringResource(R.string.session_next_start))
+                                    }
+                                }
+                                instead?.let { other ->
+                                    Button(
+                                        onClick = { goalId?.let { viewModel.start(day, other, it) } },
+                                        modifier = actionWidth,
+                                        enabled = !busy,
+                                    ) {
+                                        Text(
+                                            stringResource(
+                                                if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
+                                                blockTitle(other),
+                                            ),
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -579,15 +580,7 @@ private fun ErrorLine(text: String) {
 
 @Composable
 private fun SessionLoading(onClose: () -> Unit) {
-    TaskScaffold(onClose = onClose) { padding ->
-        Column(
-            Modifier.padding(padding).fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            CircularProgressIndicator()
-        }
-    }
+    TaskScaffold(onClose = onClose) { padding -> PageLoading(Modifier.padding(padding)) }
 }
 
 /** Main's `findAlternativeStudyBlock`: other work to do while [step]'s lesson waits, never work that waits itself. */

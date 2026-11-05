@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -44,6 +45,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -65,7 +68,6 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.goalcontent.PageLoading
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -75,6 +77,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
@@ -161,7 +164,7 @@ internal fun MindMapsContent(
         }
 
         LoadState.Idle, LoadState.Loading -> {
-            PageScaffold(onBack = back) { PageLoading(it) }
+            PageScaffold(onBack = back) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
         }
     }
 }
@@ -202,7 +205,7 @@ internal fun MindMapsPage(
         BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
             val direction = LocalLayoutDirection.current
             val start = padding.calculateStartPadding(direction) + MARGIN
-            val grid = tileGrid(maxWidth, pageFold(maxWidth, span), start)
+            val grid = tileGrid(maxWidth, pageFold(maxWidth, span), start, LocalDensity.current.fontScale.coerceAtLeast(1f))
             LazyVerticalGrid(
                 columns = grid.columns,
                 state = gridState,
@@ -263,29 +266,44 @@ private class TileGrid(
 )
 
 /**
- * Main's grid on a page [width] wide whose grid starts [start] from its edge. Across a book's [fold] each page holds the
- * tiles a row a phone would, as many and as wide on both, with the fold between them, so folding moves nothing.
+ * Main's grid on a page [width] wide whose grid starts [start] from its edge, its tiles growing with the text past its
+ * default size ([textScale]). Across a book's [fold] each page holds the tiles a row its width allows, as many and as
+ * wide on both, with the fold between them, so folding moves nothing.
  */
 private fun tileGrid(
     width: Dp,
     fold: PageFold?,
     start: Dp,
+    textScale: Float,
 ): TileGrid {
+    val tileMin = TILE_MIN * textScale
     if (fold == null) {
-        val columns = if (width < WIDE_FROM) GridCells.Fixed(2) else GridCells.Adaptive(TILE_MIN)
+        val columns = if (width < WIDE_FROM) GridCells.Fixed(narrowColumns(width - MARGIN * 2, textScale)) else GridCells.Adaptive(tileMin)
         return TileGrid(columns, Arrangement.spacedBy(tileSpacing(width)), Modifier)
     }
 
     val leading = fold.start - start - MARGIN
     val page = minOf(fold.start, width - fold.end)
     val spacing = tileSpacing(page)
-    val perPage = if (page < WIDE_FROM) 2 else ((page - MARGIN * 2 + spacing) / (TILE_MIN + spacing)).toInt().coerceAtLeast(1)
+    val room = page - MARGIN * 2
+    val perPage =
+        if (page < WIDE_FROM) narrowColumns(room, textScale) else ((room + spacing) / (tileMin + spacing)).toInt().coerceAtLeast(1)
     val around = AroundFold(leading, gap = fold.end - fold.start + MARGIN * 2, perPage, spacing)
 
     return TileGrid(around, around, Modifier.wrapContentWidth(Alignment.Start).width(leading))
 }
 
 private fun tileSpacing(width: Dp): Dp = if (width < WIDE_FROM) 12.dp else 16.dp
+
+/**
+ * Main's two tiles a row on a phone, where [room] is at least the narrowest phone's, scaled with the text. A narrower
+ * room, such as a book's page beside the rail or a phone at a large text size, holds one, so a tile keeps room for its
+ * button's label.
+ */
+private fun narrowColumns(
+    room: Dp,
+    textScale: Float,
+): Int = if (room >= (NARROWEST_PHONE - MARGIN * 2) * textScale) 2 else 1
 
 /**
  * [perPage] tiles a page on each side of a fold, all as wide, the ones before it ending at [leading] and the ones after
@@ -482,7 +500,7 @@ private fun RequestTile(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f)
+                    .squareOrTaller()
                     .drawBehind {
                         drawRoundRect(
                             color = dash,
@@ -518,6 +536,8 @@ private fun RequestTile(
                     onClick = { if (failure) actions.retry(map.chapterId) else actions.create(map.chapterId) },
                     modifier = Modifier.semantics { contentDescription = spoken },
                     enabled = local?.pending != true && !blocked,
+                    // Material's pill, which a label wrapped by large text would round into a circle that cuts off its corners.
+                    shape = RoundedCornerShape(ButtonDefaults.MinHeight / 2),
                 ) {
                     PendingLabel(
                         local?.pending == true,
@@ -536,9 +556,21 @@ private fun RequestTile(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        if (limit != null && !capped) MindMapLimit(limit, navigator)
+        if (limit != null && !capped && !local.pending) {
+            MindMapLimit(limit, navigator, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+        }
     }
 }
+
+/** As tall as it's wide, or taller where its content needs it, as large text can. */
+private fun Modifier.squareOrTaller(): Modifier =
+    layout { measurable, constraints ->
+        val placeable =
+            measurable.measure(
+                constraints.copy(minHeight = constraints.maxWidth.coerceIn(constraints.minHeight, constraints.maxHeight)),
+            )
+        layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+    }
 
 private val TILE_CORNER = 12.dp
 private val TILE_SHAPE = RoundedCornerShape(TILE_CORNER)
@@ -547,3 +579,5 @@ private val MARGIN = 16.dp
 
 /** Main's `sm`: two tiles a row on a phone, then as many 13rem tiles as fit. */
 private val WIDE_FROM = 600.dp
+
+private val NARROWEST_PHONE = 320.dp

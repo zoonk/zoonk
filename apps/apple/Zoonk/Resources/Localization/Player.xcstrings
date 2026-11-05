@@ -1061,6 +1061,124 @@
         }
       }
     },
+    "a bit higher" : {
+      "comment" : "A challenge meter went up a little",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "etwas höher"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "subió un poco"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un peu plus haut"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in leggero aumento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "少し上昇"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "조금 높아짐"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trochę wyżej"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "um pouco mais alto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "biraz daha yüksek"
+          }
+        }
+      }
+    },
+    "a bit lower" : {
+      "comment" : "A challenge meter went down a little",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "etwas niedriger"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bajó un poco"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un peu plus bas"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in leggero calo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "少し低下"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "조금 낮아짐"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "trochę niżej"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "um pouco mais baixo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "biraz daha düşük"
+          }
+        }
+      }
+    },
     "All pairs matched. Press Check to continue." : {
       "comment" : "Every pair of a match exercise is matched",
       "localizations" : {
@@ -5858,6 +5976,124 @@
         }
       }
     },
+    "much higher" : {
+      "comment" : "A challenge meter went up a lot",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "viel höher"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "subió mucho"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "beaucoup plus haut"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in forte aumento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大幅に上昇"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "훨씬 높아짐"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "znacznie wyżej"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bem mais alto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "çok daha yüksek"
+          }
+        }
+      }
+    },
+    "much lower" : {
+      "comment" : "A challenge meter went down a lot",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "viel niedriger"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bajó mucho"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "beaucoup plus bas"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in forte calo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大幅に低下"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "훨씬 낮아짐"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "znacznie niżej"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bem mais baixo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "çok daha düşük"
+          }
+        }
+      }
+    },
     "New lessons open again in %@" : {
       "comment" : "How long until the next lesson opens",
       "localizations" : {
@@ -6031,6 +6267,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İyi iş çıkardın"
+          }
+        }
+      }
+    },
+    "no change" : {
+      "comment" : "Beside a challenge meter the last decision didn't move",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "keine Veränderung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sin cambios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aucun changement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nessun cambiamento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変化なし"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "변화 없음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bez zmian"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sem mudança"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "değişiklik yok"
           }
         }
       }
@@ -7453,65 +7748,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ tarihinde tekrar"
-          }
-        }
-      }
-    },
-    "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams." : {
-      "comment" : "A free exam plan past its first week",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wiederholungen und das Korrigieren deiner Fehler bleiben kostenlos. Mit Plus erhältst du Zugang zu neuen Lektionen, dem Rest deines Plans und Probeprüfungen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Los repasos y la corrección de tus errores siguen siendo gratis. Plus te da acceso a nuevas lecciones, al resto de tu plan y a los simulacros."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les révisions et la correction de tes erreurs restent gratuites. Plus donne accès à de nouvelles leçons, au reste de ton plan et aux examens blancs."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi sempre ripassare e correggere i tuoi errori gratis. Plus sblocca nuove lezioni, il resto del tuo piano e le simulazioni."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習と間違えた問題のやり直しは、引き続き無料です。Plusでは新しいレッスンや学習計画の続き、模試に取り組めます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "복습과 오답 고치기는 계속 무료예요. Plus를 구독하면 새 레슨, 계획의 나머지 부분, 모의고사를 이용할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Powtórki i poprawianie błędów nadal są bezpłatne. Plus daje dostęp do nowych lekcji, dalszej części planu i egzaminów próbnych."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As revisões e a correção dos seus erros continuam grátis. O Plus libera novas aulas, o resto do seu plano e simulados."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrar yapmak ve yanlışlarını düzeltmek ücretsiz kalır. Plus ile yeni derslere, planının kalanına ve deneme sınavlarına erişebilirsin."
           }
         }
       }
@@ -9286,6 +9522,65 @@
         }
       }
     },
+    "Still checking. This is taking longer than usual." : {
+      "comment" : "Grading the answer is taking longer than usual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir prüfen noch. Das dauert länger als üblich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún estamos comprobando tu respuesta. Está tardando más de lo habitual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La vérification continue. Elle prend plus de temps que d’habitude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo ancora controllando. Ci stiamo mettendo più del solito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "答え合わせを続けています。いつもより時間がかかっています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadal sprawdzamy. Trwa to dłużej niż zwykle."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda estamos conferindo. Está demorando mais que o normal."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hâlâ kontrol ediyoruz. Normalden uzun sürüyor."
+          }
+        }
+      }
+    },
     "sub %@" : {
       "comment" : "Screen reader words for an index, said after its base: \"x sub 1\".",
       "localizations" : {
@@ -10466,6 +10761,65 @@
         }
       }
     },
+    "This question was waiting for its picture. Answer it to finish the lesson." : {
+      "comment" : "A question left out while its picture was drawn came back once it was drawn",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Frage hat auf ihr Bild gewartet. Beantworte sie, um die Lektion abzuschließen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faltaba la imagen de esta pregunta. Respóndela para terminar la lección."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette question attendait son image. Réponds-y pour terminer la leçon."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per questa domanda mancava l’immagine. Rispondi per completare la lezione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像の準備ができました。この問題に答えてレッスンを完了してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그림이 준비되기를 기다리던 문제예요. 레슨을 마치려면 이 문제에 답해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To pytanie czekało na obrazek. Odpowiedz na nie, by ukończyć lekcję."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta pergunta estava esperando a imagem. Responda para concluir a aula."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu soru için görsel bekleniyordu. Dersi bitirmek için soruyu cevapla."
+          }
+        }
+      }
+    },
     "To improve" : {
       "comment" : "Above what to improve after a challenge",
       "localizations" : {
@@ -11410,6 +11764,65 @@
         }
       }
     },
+    "What happened" : {
+      "comment" : "Above how a challenge's path ended, before the learner checks it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was passiert ist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué pasó"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce qui s’est passé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cos’è successo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結果"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "결과"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Co się stało"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que aconteceu"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne oldu"
+          }
+        }
+      }
+    },
     "What if · %@" : {
       "comment" : "Above a what-if scenario's title",
       "localizations" : {
@@ -12236,6 +12649,65 @@
         }
       }
     },
+    "You: %@" : {
+      "comment" : "VoiceOver: the learner's pick in a challenge's conversation",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tú: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toi : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ty: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sen: %@"
+          }
+        }
+      }
+    },
     "You've reached today's limit. New lessons open again tomorrow." : {
       "comment" : "A Plus learner reached the day's limit",
       "localizations" : {
@@ -12645,65 +13117,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Senin örneğin: %@"
-          }
-        }
-      }
-    },
-    "Your free week of exam prep is over" : {
-      "comment" : "A free exam plan past its first week",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine kostenlose Woche Prüfungsvorbereitung ist vorbei"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminó tu semana gratis de preparación para el examen"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta semaine gratuite de préparation à l’examen est terminée"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua settimana gratuita di preparazione all’esame è finita"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験対策の無料期間（1週間）が終了しました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시험 준비 일주일 무료 체험이 끝났어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój bezpłatny tydzień przygotowań do egzaminu dobiegł końca"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua semana grátis de preparo para a prova acabou"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz sınava hazırlık haftan bitti"
           }
         }
       }

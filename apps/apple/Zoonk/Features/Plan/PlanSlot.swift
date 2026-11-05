@@ -206,7 +206,7 @@ struct PlanSuggestionSection: View {
         }
       }
     case .freeWeekOver:
-      FreeWeekOverNotice()
+      FreeWeekOverNotice(isInset: true)
     }
   }
 
@@ -346,6 +346,7 @@ struct PlanSuggestionSection: View {
 private struct PlanPausedSlot: View {
   @Environment(PlanStore.self) private var store
   @State private var isResuming = false
+  @State private var failure: GoalStatusOutcome?
 
   let context: PlanContext
 
@@ -379,18 +380,49 @@ private struct PlanPausedSlot: View {
       .foregroundStyle(.secondary)
 
       Button {
-        Task {
-          isResuming = true
-          _ = await store.setStatus(.active, goalId: context.goal.id)
-          isResuming = false
-        }
+        Task { await resume() }
       } label: {
         Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
       }
       .buttonStyle(.bordered)
       .disabled(isResuming)
+
+      switch failure {
+      case .limitReached:
+        FailureLine(
+          message: LocalizedStringResource(
+            "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
+            table: "Plan", comment: "Explains why resuming a goal failed on the free plan")
+        )
+        .font(.footnote)
+      case .failed:
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't save. Try again.", table: "Plan",
+            comment: "Resuming the paused goal didn't save")
+        )
+        .font(.footnote)
+      case .saved, nil:
+        EmptyView()
+      }
     }
     .loads(preview, refreshable: false)
+  }
+
+  private func resume() async {
+    isResuming = true
+    failure = nil
+
+    switch await store.setStatus(.active, goalId: context.goal.id) {
+    case .done(.saved), .obsolete:
+      break
+    case .done(let refused):
+      failure = refused
+    case .failed:
+      failure = .failed
+    }
+
+    isResuming = false
   }
 }
 
@@ -444,12 +476,12 @@ private struct PlanFinishedSlot: View {
       }
 
       if failed {
-        Text(
-          "That didn't work. Try again in a moment.", tableName: "Plan",
-          comment: "Says the next level didn't start"
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't work. Try again in a moment.", table: "Plan",
+            comment: "Says the next level didn't start")
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
       }
     }
     .loads(next, refreshable: false)
@@ -472,19 +504,5 @@ func planLevelName(_ level: String) -> String {
   case "beginner": String(localized: "Beginner", table: "Plan", comment: "A course level")
   case "intermediate": String(localized: "Intermediate", table: "Plan", comment: "A course level")
   default: String(localized: "Advanced", table: "Plan", comment: "A course level")
-  }
-}
-
-/// A free exam plan's first week ended, on the Plan and Today.
-struct FreeWeekOverNotice: View {
-  var body: some View {
-    PlusNotice(
-      title: Text(
-        "Your free week of exam prep is over", tableName: "Plan",
-        comment: "Title of the Plan's notice when a free exam plan's first week ended"),
-      description: Text(
-        "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
-        tableName: "Plan", comment: "What stays free and what Plus opens after the free week"),
-      isInset: true)
   }
 }

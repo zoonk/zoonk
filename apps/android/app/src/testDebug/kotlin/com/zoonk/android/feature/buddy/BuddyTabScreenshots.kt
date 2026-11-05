@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
@@ -28,6 +27,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.EarlierQuestions
 import com.zoonk.api.models.LearnerSummaryBuddy
@@ -196,7 +196,7 @@ class BuddyTabScreenshots {
         file.outputStream().use {
             compose
                 .onRoot()
-                .captureToImage()
+                .captureRender()
                 .asAndroidBitmap()
                 .compress(Bitmap.CompressFormat.PNG, 100, it)
         }

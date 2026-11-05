@@ -53,8 +53,10 @@ jobs:
         name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
+          # Only main writes the Gradle cache (setup-gradle's default): other branches' entries can't
+          # be restored anywhere else, and in the repository's shared 10 GB they evict main's, which
+          # every pull request can restore.
           cache-provider: enhanced
-          cache-read-only: false
 
       - name: Compile shared inputs
         run: make -C apps/android build BUILD_TASKS=compileReleaseKotlin
@@ -83,7 +85,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # A shard takes up to 10 minutes when the Gradle cache is cold.
+    timeout-minutes: 15
     concurrency:
       group: ${{ github.workflow }}-tests-${{ matrix.shard }}-${{ github.event.pull_request.number || github.run_id }}
       cancel-in-progress: true
@@ -103,7 +106,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.m2/repository/org/robolectric
-          key: robolectric-${{ steps.robolectric.outputs.version }}-${{ hashFiles('apps/android/core/data/src/testFixtures/resources/robolectric.properties') }}
+          key: robolectric-${{ steps.robolectric.outputs.version }}
       - name: Run Gradle
         run: make -C apps/android test GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS -Pzoonk.testShard=${{ matrix.shard }}/${{ strategy.job-total }}"
       - name: Upload task profiles

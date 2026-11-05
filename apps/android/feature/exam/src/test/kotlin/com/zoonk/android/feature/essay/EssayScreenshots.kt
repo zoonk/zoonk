@@ -6,7 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -14,11 +13,10 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -51,22 +49,6 @@ class EssayScreenshots {
 
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
-
-    // The publisher doesn't replay a fold to a screen composed after it, so it tells the shown screen, twice
-    // for a frame that's rebuilt as the fold changes its panes.
-    private fun unfold() {
-        repeat(2) {
-            rule.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                    ),
-                ),
-            )
-        }
-        rule.waitForIdle()
-    }
 
     private fun show(
         name: String,
@@ -118,13 +100,13 @@ class EssayScreenshots {
         }
         rule.mainClock.advanceTimeBy(1_000)
         if (secondStep) rule.onNodeWithText("Continue").performClick()
-        if (fold) unfold()
+        if (fold) rule.unfoldBook(folds)
         write(name)
     }
 
     private fun write(name: String) {
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
@@ -259,4 +241,15 @@ class EssayScreenshots {
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
     fun bookClosedTooShort() = show("essay-book-closed-too-short", drafted = true, tooShort = true, status = "completed", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookClosedGrade() = show("essay-book-closed-grade", drafted = true, status = "completed", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookGradeAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("essay-book-grade-font200", drafted = true, fold = true)
+    }
 }

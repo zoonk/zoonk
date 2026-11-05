@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -57,6 +58,8 @@ import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.isOnBookPage
+import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.api.models.ExamSpeakingTask
 import com.zoonk.api.models.LanguageConversation
@@ -74,7 +77,9 @@ private val AVATAR_MIN = 40.dp
 /**
  * A call's task frame: its [content] in one column, and [aside] beside it where there's room (main's
  * task aside from `lg`); where there isn't, [content] is told so and shows it inline. On wide
- * windows the main action sits at its own width at the bar's end.
+ * windows the main action sits at its own width at the bar's end. With [barUnderAside], an unfolded
+ * book's fold docks the bar under [aside], on the page after the fold, as an intro's main action
+ * sits under the goals or card it starts.
  */
 @Composable
 internal fun CallFrame(
@@ -88,39 +93,48 @@ internal fun CallFrame(
     listModifier: Modifier = Modifier,
     bottomBar: (@Composable () -> Unit)? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
+    barUnderAside: Boolean = false,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     val wide = isWideWindow() && !isOnBookPage()
-    TaskScaffold(
-        onClose = onClose,
-        modifier = modifier,
-        title = title,
-        exitConfirmation = exitConfirmation,
-        bottomBar =
-            bottomBar?.let { bar ->
-                {
-                    CompositionLocalProvider(LocalWideBar provides wide) {
-                        Box(
-                            Modifier.fillMaxWidth(),
-                            Alignment.Center,
-                        ) { Box(Modifier.widthIn(max = CALL_BAR_WIDTH).fillMaxWidth(), Alignment.CenterEnd) { bar() } }
-                    }
+    val bar: (@Composable () -> Unit)? =
+        bottomBar?.let { bar ->
+            {
+                CompositionLocalProvider(LocalWideBar provides wide) {
+                    Box(
+                        Modifier.fillMaxWidth(),
+                        Alignment.Center,
+                    ) { Box(Modifier.widthIn(max = CALL_BAR_WIDTH).fillMaxWidth(), Alignment.CenterEnd) { bar() } }
                 }
-            },
-        aside = aside?.let { TaskAside(content = it) },
-    ) { padding ->
-        val beside = taskAsideBeside()
-        Column(Modifier.fillMaxSize().padding(padding), horizontalAlignment = Alignment.CenterHorizontally) {
-            header?.invoke()
-            Box(Modifier.weight(1f)) {
-                LazyColumn(
-                    state = listState,
-                    modifier = listModifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(top = if (header == null) 8.dp else 20.dp, bottom = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                ) { content(beside) }
-                floating?.invoke(this)
+            }
+        }
+
+    BoxWithConstraints {
+        val fold = pageFold(maxWidth)
+        val asideBeside = supportingPaneBeside(maxWidth, panesTouch = true)
+        val barAfterFold = barUnderAside && aside != null && fold != null && asideBeside
+
+        TaskScaffold(
+            onClose = onClose,
+            modifier = modifier,
+            title = title,
+            exitConfirmation = exitConfirmation,
+            bottomBar = bar.takeUnless { barAfterFold },
+            aside = aside?.let { TaskAside(footer = bar.takeIf { barAfterFold }, content = it) },
+        ) { padding ->
+            val beside = taskAsideBeside()
+            Column(Modifier.fillMaxSize().padding(padding), horizontalAlignment = Alignment.CenterHorizontally) {
+                header?.invoke()
+                Box(Modifier.weight(1f)) {
+                    LazyColumn(
+                        state = listState,
+                        modifier = listModifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        contentPadding = PaddingValues(top = if (header == null) 8.dp else 20.dp, bottom = 24.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                    ) { content(beside) }
+                    floating?.invoke(this)
+                }
             }
         }
     }

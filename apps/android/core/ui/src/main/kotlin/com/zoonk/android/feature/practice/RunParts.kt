@@ -43,8 +43,8 @@ import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PendingLabel
-import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.DateStyle
@@ -130,8 +130,8 @@ private fun timeMachineText(
 
 /**
  * A run's result in place of its questions: the title first and saving while [saving], so nothing
- * moves when the score arrives. Where the screen splits ([ResultPages]) the title leads and
- * [content], the numbers and the day's moment, faces it above the way on.
+ * moves when the score arrives, then [content], the numbers and the day's moment. Where the screen
+ * splits ([ResultPages]) all of it takes the page before the split, and the way on the page after.
  */
 @Composable
 private fun RunDone(
@@ -164,9 +164,11 @@ private fun RunDone(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge,
                 )
+            } else {
+                content()
             }
         },
-        next = { if (!saving) content() },
+        next = {},
     )
 }
 
@@ -241,9 +243,7 @@ fun RunFinished(
 
 @Composable
 fun RunLoading(onClose: () -> Unit) {
-    TaskScaffold(onClose = onClose) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-    }
+    TaskScaffold(onClose = onClose) { padding -> PageLoading(Modifier.padding(padding)) }
 }
 
 @Composable
@@ -252,21 +252,6 @@ fun RunLoadFailed(
     onRetry: () -> Unit,
 ) {
     TaskScaffold(onClose = onClose) { padding -> LoadFailedMessage(onRetry = onRetry, modifier = Modifier.padding(padding)) }
-}
-
-@Composable
-fun RunNotFound(
-    onClose: () -> Unit,
-    description: String = stringResource(R.string.practice_not_found_description),
-) {
-    TaskScaffold(onClose = onClose) { padding ->
-        StatusMessage(
-            icon = R.drawable.ic_school,
-            title = stringResource(R.string.practice_not_found_title),
-            description = description,
-            modifier = Modifier.padding(padding),
-        ) { Button(onClick = onClose) { Text(stringResource(R.string.practice_close)) } }
-    }
 }
 
 /** A recording set's place and task; its player comes with the listening milestone. */

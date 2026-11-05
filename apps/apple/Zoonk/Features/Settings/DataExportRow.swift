@@ -45,12 +45,12 @@ struct DataExportRow: View {
       }
 
       if failed {
-        Text(
-          "We couldn't prepare the download. Try again.", tableName: "Settings",
-          comment: "Shown when a data download failed"
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't prepare the download. Try again.", table: "Settings",
+            comment: "Shown when a data download failed")
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
       }
     }
     .fileExporter(

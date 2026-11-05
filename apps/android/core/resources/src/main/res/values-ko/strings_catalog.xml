@@ -56,8 +56,6 @@
   "catalog_load_more_failed": "74fa98ccfbd1dec5334ff8d92ecd6b2dfa0a755df2cbe9a8edd20af8d54c4a9a",
   "catalog_loading_more": "1903ec455add80f3d2bfea131637cdf34949107ce617c028c2e4d98a68a92512",
   "catalog_no_sign_up": "867ad5a82f56198cd30b4cfec9880b148c881eba7cf4f2620ba3c5a97ab6d080",
-  "catalog_not_found_description": "19049fb8fa68a79f09c6b463fae6440efb16ed5521be674139f234820c28be7e",
-  "catalog_not_found_title": "273ab73d74c88d1f6987f6e8b805b5b85a8bc5d9c92e2d339a0c25f8802c8dc5",
   "catalog_open_course": "3b43fa2ef13fe5aff789edcb9c27ea7a04237810778840eab5deb34d88d48fa0",
   "catalog_outcomes": "110032a5aaa6aea620d01d7005594c7b07c91cc4baa356876c7ab9a503182fcd",
   "catalog_outline": "9c4de5447d05c85acce8e0ca483a6add9cef1b49ca3290a9f575b97fc651c310",
@@ -162,8 +160,6 @@
     <string name="catalog_start_goal">목표 시작하기</string>
     <string name="catalog_loading_more">코스를 더 불러오고 있어요…</string>
     <string name="catalog_load_more_failed">문제가 생겼어요. 다시 시도해 보세요.</string>
-    <string name="catalog_not_found_title">페이지를 찾을 수 없어요</string>
-    <string name="catalog_not_found_description">오래된 링크이거나 주소가 잘못 입력되었을 수 있어요.</string>
     <string name="catalog_edition_notice">이 코스는 사용 중인 언어로도 배울 수 있어요.</string>
     <string name="catalog_exam_on_today">%1$s 시험 · 오늘</string>
     <plurals name="catalog_exam_on">

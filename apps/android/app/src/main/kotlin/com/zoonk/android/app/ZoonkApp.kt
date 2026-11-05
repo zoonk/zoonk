@@ -40,7 +40,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
@@ -127,6 +126,7 @@ import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.TabRootBar
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageDirective
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryPlaces
 
@@ -250,7 +250,7 @@ fun AppShell(
         navigator.rememberEntries(
             remember(entryProvider, navigator) { { key: NavKey -> entryProvider(key).onItsOwn(key, entryProvider).onTop(key, navigator) } },
         )
-    val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfoV2(), navigator)
+    val navigationSuiteType = navigationSuiteType(windowAdaptiveInfo(), navigator)
 
     CompositionLocalProvider(
         LocalSnackbarHostState provides snackbarHostState,
