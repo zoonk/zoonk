@@ -1,17 +1,8 @@
 import { UsageKind } from "@zoonk/db";
 import { type Allowance, type AllowanceItem, type EntitlementTier } from "../contract";
 import { getActiveGoalLimit, getExamPrepAccess, getUsageRule } from "../limits";
+import { type UsageTotals } from "./usage-counts";
 import { getUsageResets } from "./usage-periods";
-
-export type AllowanceCounts = {
-  activeGoals: number;
-  callSecondsThisMonth: number;
-  callSecondsToday: number;
-  day: Map<UsageKind, number>;
-  generatedLessons: number;
-  month: Map<UsageKind, number>;
-  total: Map<UsageKind, number>;
-};
 
 type Usage = { day: number; month: number; total: number };
 
@@ -26,21 +17,17 @@ function getRemaining({ item, usage }: { item: Omit<AllowanceItem, "remaining">;
 }
 
 function toAllowanceItem({
-  counts,
   kind,
   tier,
+  totals,
 }: {
-  counts: AllowanceCounts;
   kind: UsageKind;
   tier: EntitlementTier;
+  totals: UsageTotals;
 }): AllowanceItem {
   const rule = getUsageRule({ kind, tier });
-
-  const usage = {
-    day: counts.day.get(kind) ?? 0,
-    month: counts.month.get(kind) ?? 0,
-    total: counts.total.get(kind) ?? 0,
-  };
+  const used = totals.kinds.get(kind);
+  const usage = { day: used?.day ?? 0, month: used?.month ?? 0, total: used?.total ?? 0 };
 
   const item = {
     dailyLimit: rule.day ?? null,
@@ -57,31 +44,32 @@ function toAllowanceItem({
 }
 
 export function toAllowance({
-  counts,
   now,
   tier,
+  totals,
 }: {
-  counts: AllowanceCounts;
   now: Date;
   tier: EntitlementTier;
+  totals: UsageTotals;
 }): Allowance {
   const generatedLimit = getUsageRule({ kind: "lessonStart", tier }).generatedTotal;
   const calls = getUsageRule({ kind: "conversation", tier });
+  const callUsage = totals.kinds.get("conversation");
 
   return {
-    activeGoals: { limit: getActiveGoalLimit(tier), used: counts.activeGoals },
+    activeGoals: { limit: getActiveGoalLimit(tier), used: totals.activeGoals },
     callTime: {
       limitSeconds: calls.daySeconds ?? null,
       monthLimitSeconds: calls.monthSeconds ?? null,
-      usedSeconds: counts.callSecondsToday,
-      usedSecondsThisMonth: counts.callSecondsThisMonth,
+      usedSeconds: callUsage?.secondsToday ?? 0,
+      usedSecondsThisMonth: callUsage?.secondsThisMonth ?? 0,
     },
     examPrep: getExamPrepAccess(tier),
     generatedLessons:
       generatedLimit === undefined
         ? null
-        : { limit: generatedLimit, used: counts.generatedLessons },
-    items: Object.values(UsageKind).map((kind) => toAllowanceItem({ counts, kind, tier })),
+        : { limit: generatedLimit, used: totals.kinds.get("lessonStart")?.generatedTotal ?? 0 },
+    items: Object.values(UsageKind).map((kind) => toAllowanceItem({ kind, tier, totals })),
     resets: getUsageResets(now),
     tier,
   };

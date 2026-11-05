@@ -7,6 +7,7 @@ import {
   getUserSubscriptionCacheTag,
 } from "../cache/tags";
 import { readLearningProfile } from "../learner/facts/learning-profile";
+import { readActiveSubscription } from "../learner/facts/subscription";
 import { getSession } from "../users/get-session";
 import { loadGoalViews } from "./_utils/goal-view";
 import { type GoalView } from "./goal-contract";
@@ -56,6 +57,10 @@ export async function listCurrentUserGoals(): Promise<GoalList | null> {
     dailyMinutes: goals
       .filter((goal) => goal.status === "active")
       .reduce((total, goal) => total + goal.dailyMinutes, 0),
-    goals: await loadGoalViews({ activeGoalId, goals: ordered }),
+    goals: await loadGoalViews({
+      activeGoalId,
+      goals: ordered,
+      readSubscription: readActiveSubscription,
+    }),
   };
 }

@@ -83,7 +83,7 @@ export async function connectLanguageConversation({
     return { status: "notFound" };
   }
 
-  const buildCall = getLiveCallBuilder(owned.row);
+  const buildCall = getLiveCallBuilder({ row: owned.row });
 
   if (!buildCall || owned.row.reviewRunId !== null) {
     return { status: "conversationEnded" };

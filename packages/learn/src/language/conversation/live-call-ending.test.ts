@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
-  type CallEndingEvent,
   type LiveCallTiming,
   getCallEndingView,
   startCallEnding,
   stepCallEnding,
 } from "./live-call-ending";
+import { type CallEndingEvent } from "./live-call-ending-event";
 
 const TIMING: LiveCallTiming = {
   answerWaitMs: 8000,
@@ -319,7 +319,7 @@ describe("hanging up after the goodbye", () => {
 describe("what the objective check ends", () => {
   const exchange = [...GREETING, ...learnerTalks(4000, 3000), ...characterTalks(8400, 1600)];
 
-  it("says goodbye with the goals-done cue once every goal is met", () => {
+  it("says goodbye with the goals-done cue once every goal is met, which drops the check's note", () => {
     const { goodbyes, log } = play({
       events: [
         ...exchange,
@@ -327,7 +327,7 @@ describe("what the objective check ends", () => {
           allMet: true,
           at: 11_500,
           goodbye: false,
-          progress: false,
+          progress: true,
           snapshotAt: 11_400,
           type: "checked",
         },
@@ -348,6 +348,55 @@ describe("what the objective check ends", () => {
     ]);
 
     expect(log.filter((entry) => entry.type === "progress")).toHaveLength(0);
+  });
+
+  it("holds a check's note through the learner's silence and sends it once they speak", () => {
+    const { log } = play({
+      events: [
+        ...exchange,
+        // A transcript can land after the character answered: it isn't the learner's turn.
+        { at: 11_000, type: "learnerHeard" },
+        {
+          allMet: false,
+          at: 11_500,
+          goodbye: false,
+          progress: true,
+          snapshotAt: 11_400,
+          type: "checked",
+        },
+        ...learnerTalks(16_000, 2000),
+      ],
+      talkSeconds: 120,
+      until: 20_000,
+    });
+
+    const progress = log.filter((entry) => entry.type === "progress");
+    expect(progress.map((entry) => entry.at)).toStrictEqual([16_000]);
+  });
+
+  it("sends the wrap-up note with a typed reply, and the goodbye once the character answered it", () => {
+    const { goodbyes, log } = play({
+      events: [
+        ...exchange,
+        {
+          allMet: true,
+          at: 11_500,
+          goodbye: false,
+          progress: true,
+          snapshotAt: 11_400,
+          type: "checked",
+        },
+        ...learnerTypes(13_000, 2000),
+        { at: 15_200, type: "sent" },
+        ...characterTalks(16_000, 1500),
+      ],
+      talkSeconds: 120,
+      until: 25_000,
+    });
+
+    const progress = log.filter((entry) => entry.type === "progress");
+    expect(progress.map((entry) => entry.at)).toStrictEqual([15_200]);
+    expect(goodbyes.map((entry) => [entry.at, entry.cue])).toStrictEqual([[18_750, "goodbyeDone"]]);
   });
 
   it("hangs up without a cue when the learner and the character said goodbye", () => {

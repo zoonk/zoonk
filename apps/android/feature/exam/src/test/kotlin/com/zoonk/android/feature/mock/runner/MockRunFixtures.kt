@@ -40,7 +40,7 @@ internal fun runningMock(
         ApiJson
             .parseToJsonElement(
                 """
-                {"adapt":null,"blockId":"$RUN_BLOCK","brainPower":0,"breakUntil":null,"canMove":false,"ceremony":null,"checklist":[],
+                {"adapt":null,"blockId":"$RUN_BLOCK","brainPower":0,"breakUntil":null,"canMove":false,"ceremony":null,"certificates":[],"checklist":[],
                  "current":$current,
                  "date":"2026-10-29","day":null,"essayRubric":null,"essays":[],"examDocument":"notice","examName":"ENEM","examQuestions":null,
                  "fullLength":true,"goalId":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01","leftOut":[],"minutes":60,"missionMoment":null,"mistakes":[],

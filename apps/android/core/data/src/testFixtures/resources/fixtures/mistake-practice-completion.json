@@ -1,6 +1,7 @@
 {
   "brainPower": 12,
   "ceremony": null,
+  "certificates": [],
   "correct": 1,
   "missionMoment": null,
   "reached": { "energy": null, "level": null },

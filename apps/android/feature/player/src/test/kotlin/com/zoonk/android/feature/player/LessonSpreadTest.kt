@@ -25,9 +25,6 @@ import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import coil3.ImageLoader
 import coil3.intercept.Interceptor
@@ -36,6 +33,7 @@ import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.language.reading
 import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.scaffold.unfoldBook
 import kotlinx.coroutines.awaitCancellation
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.Assert.assertTrue
@@ -59,17 +57,6 @@ class LessonSpreadTest {
 
     private val harness = LessonPlayerHarness(rule) { folder.newFolder() }
 
-    /** Opens the book flat, its fold down the middle of the window. */
-    private fun unfold() {
-        rule.waitForIdle()
-        folds.overrideWindowLayoutInfo(
-            TestWindowLayoutInfo(
-                listOf(FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)),
-            ),
-        )
-        rule.waitForIdle()
-    }
-
     private fun described(description: String): DpRect = rule.onNodeWithContentDescription(description).getUnclippedBoundsInRoot()
 
     private fun assertAfterFold(
@@ -88,14 +75,14 @@ class LessonSpreadTest {
             .onFirst()
             .performClick()
 
-        unfold()
+        rule.unfoldBook(folds)
         assertAfterFold("the placed word", described(PLACED))
 
         // Android recreates the screen as the book folds; window-testing tells the new one of no fold, so it's one column.
         restoration.emulateSavedInstanceStateRestore()
         assertTrue("the placed word is in the one column", described(PLACED).left < FOLD)
 
-        unfold()
+        rule.unfoldBook(folds)
         assertAfterFold("the placed word", described(PLACED))
     }
 
@@ -105,7 +92,7 @@ class LessonSpreadTest {
     fun aMovedSliderStaysAsTheBookFoldsAndOpens() {
         val restoration = StateRestorationTester(rule)
         harness.play(listOf(ActivityFixtures.step("formulaModel"), summaryStep("end")), restoration = restoration)
-        unfold()
+        rule.unfoldBook(folds)
         val rate = rule.onNode(hasContentDescription("Rate per year") and SemanticsMatcher.keyIsDefined(SemanticsActions.SetProgress))
         rate.performScrollTo().requestFocus()
         repeat(2) { rate.performKeyInput { pressKey(Key.DirectionRight) } }
@@ -118,7 +105,7 @@ class LessonSpreadTest {
         restoration.emulateSavedInstanceStateRestore()
         rate.assert(moved)
 
-        unfold()
+        rule.unfoldBook(folds)
         rate.assert(moved)
     }
 
@@ -130,7 +117,7 @@ class LessonSpreadTest {
         harness.play(listOf(ActivityFixtures.step("categorize"), summaryStep("end")), restoration = restoration)
         rule.onNodeWithText("Same substance").performScrollTo().performClick()
 
-        for (change in listOf(::unfold, restoration::emulateSavedInstanceStateRestore, ::unfold)) {
+        for (change in listOf({ rule.unfoldBook(folds) }, restoration::emulateSavedInstanceStateRestore, { rule.unfoldBook(folds) })) {
             change()
             rule.onNodeWithText("1 of 3 sorted").assertExists()
             rule.onNodeWithText("Rusting iron").assertExists()

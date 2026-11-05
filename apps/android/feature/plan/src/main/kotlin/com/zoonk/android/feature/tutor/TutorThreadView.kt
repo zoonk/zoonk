@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.tutor
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,11 +31,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,6 +57,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.catalog.toUuidOrNull
 import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.memory.MemoryUndo
 import com.zoonk.android.feature.memory.MemoryUpdated
@@ -73,6 +77,7 @@ import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.UUID
 
 class TutorRoutes(
     val createAccount: () -> Unit,
@@ -94,6 +99,10 @@ internal fun TutorThreadView(
     page: TutorPage? = null,
 ) {
     val coroutines = rememberCoroutineScope()
+    val openRoute by rememberUpdatedState(routes.open)
+    val activity = LocalActivity.current
+    LaunchedEffect(vm) { vm.blockRoutes.collect { openRoute(it) } }
+    DisposableEffect(vm) { onDispose { if (activity?.isChangingConfigurations != true) vm.leave() } }
 
     Box(modifier.fillMaxSize()) {
         when {
@@ -394,7 +403,7 @@ private fun Answer(
         }
 
         turn.status == TutorTurn.Status.Failed -> {
-            turn.answer?.let { AnswerText(it, linksChecked, routes.open) }
+            turn.answer?.let { AnswerText(it, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn)) }
             if (failure?.helpLimit != null) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
@@ -412,7 +421,7 @@ private fun Answer(
         }
 
         answer != null -> {
-            AnswerText(answer, linksChecked, routes.open)
+            AnswerText(answer, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn))
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
 
@@ -451,17 +460,28 @@ private fun Thinking() {
 private val TutorFailure?.isGeneric: Boolean
     get() = this == null || this == TutorFailure.Failed || this == TutorFailure.Invalid
 
-/** Unchecked links read as their words. A checked one opens Zoonk's page in the app, or a website after asking. */
+private fun TutorViewModel.noticeFor(turn: TutorTurn) = blockNotice?.takeIf { it.turnId == turn.id }
+
+/** Unchecked links read as their words. A checked one opens Zoonk's page in the app, a step of the day through [onOpenBlock], or a website after asking. */
 @Composable
 fun AnswerText(
     answer: String,
     linksChecked: Boolean,
     onOpenRoute: (AppRoute) -> Unit,
+    onOpenBlock: ((UUID) -> Unit)? = null,
+    blockNotice: BlockNotice? = null,
 ) {
     var asked by remember { mutableStateOf<String?>(null) }
     val open: (String) -> Unit = { url ->
         val route = AppLink.parse(url)
-        if (route != null) {
+        val blockId =
+            (route as? AppRoute.Session)
+                ?.takeIf { it.sessionId == null && it.goalId == null && !it.stopped }
+                ?.blockId
+                ?.toUuidOrNull()
+        if (blockId != null && onOpenBlock != null) {
+            onOpenBlock(blockId)
+        } else if (route != null) {
             onOpenRoute(route)
         } else if (url.isWebAddress) {
             asked = url
@@ -473,6 +493,15 @@ fun AnswerText(
         onOpenLink = open.takeIf { linksChecked },
         style = MaterialTheme.typography.bodyLarge,
     )
+
+    blockNotice?.let {
+        Text(
+            text = stringResource(if (it.closed) R.string.tutor_step_closed else R.string.tutor_step_open_failed),
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            color = if (it.closed) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
 
     asked?.let { url -> ExternalLink(url, onDismiss = { asked = null }) }
 }

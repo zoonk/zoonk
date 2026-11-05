@@ -6,6 +6,7 @@ import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { loadNoticeDates } from "../../exams/_utils/notice-day";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { getExamDocument } from "../../exams/exam-document";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
@@ -147,6 +148,7 @@ export async function buildPlanView({
 
   const phaseChallengesRequired = await arePhaseChallengesRequired({
     goalKind: goal.kind,
+    readSubscription: readActiveSubscription,
     userId: goal.userId,
   });
 

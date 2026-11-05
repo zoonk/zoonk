@@ -13,7 +13,13 @@ import { type JourneyPathLinks } from "./journey-links";
 import { BandFace } from "./roadmap-band";
 import { RoadmapFull } from "./roadmap-full";
 import { PhaseAxis } from "./roadmap-lane";
-import { BAND_CLASS, BAND_COLUMN_CLASS, BAND_STATE_CLASS } from "./roadmap-styles";
+import {
+  BAND_CLASS,
+  BAND_COLUMN_CLASS,
+  BAND_ROWS_CLASS,
+  BAND_STATE_CLASS,
+  getBandColumnsStyle,
+} from "./roadmap-styles";
 import {
   getLessonShare,
   useRoadmapFinish,
@@ -191,16 +197,15 @@ function RoadmapReveal() {
 
   return (
     <div className="flex flex-col gap-1.5 max-sm:hidden" data-slot="plan-roadmap">
-      <ol className="flex gap-[3px]">
+      <ol
+        className={cn(BAND_ROWS_CLASS, "grid-rows-[repeat(2,auto)] gap-y-1.5")}
+        style={getBandColumnsStyle(phases.map((phase) => getPhaseWeight(phase)))}
+      >
         {phases.map((phase, position) => {
           const when = getPhaseWhen({ currentIndex, position });
 
           return (
-            <li
-              className={cn(BAND_COLUMN_CLASS, "gap-1.5")}
-              key={phase.index}
-              style={{ flexGrow: getPhaseWeight(phase) }}
-            >
+            <li className={BAND_COLUMN_CLASS} key={phase.index}>
               <span
                 aria-current={phase.state === "current" ? "step" : undefined}
                 className={cn(BAND_CLASS, BAND_STATE_CLASS[phase.state])}
@@ -211,7 +216,6 @@ function RoadmapReveal() {
               {dated && phase.startDate && (
                 <>
                   <PhaseAxis
-                    flagOnPhone
                     isLast={position === phases.length - 1}
                     labelled={when === "start"}
                     phase={phase}

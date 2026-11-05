@@ -79,12 +79,12 @@ private struct ListenButtons: View {
         if let limit {
           HelpLimitNotice(limit: limit)
         } else {
-          Text(
-            "The sound didn't play. Try again.", tableName: "Voice",
-            comment: "Playing a word's sound failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "The sound didn't play. Try again.", table: "Voice",
+              comment: "Playing a word's sound failed")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       }
     }

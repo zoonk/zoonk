@@ -2,7 +2,10 @@ import "server-only";
 import { type Milestone, prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { io } from "next/cache";
+import { loadUnshownCertificates } from "../certificates/_utils/unshown-certificates";
+import { type OwnedCertificateFacts } from "../certificates/certificate-contract";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { readActiveSubscription } from "../learner/facts/subscription";
 import { loadCeremony } from "../milestones/load-ceremony";
 import { measureSessionState } from "./_utils/capture-snapshot";
 import { isCurrentSession } from "./_utils/current-session";
@@ -45,6 +48,7 @@ type StudySessionSummary = {
   brainPower: number;
   capsulesSealed: { lessonId: string; opensOn: Date | null; title: string | null }[];
   ceremony: Milestone | null;
+  certificates: OwnedCertificateFacts[];
   comesBack: { date: Date; skills: number }[];
   correct: number;
   energy: Change<number> | null;
@@ -101,7 +105,16 @@ async function measureSummaryState({
 }): Promise<SessionState> {
   const end = session.status === "completed" ? readSessionEnd(session.endSnapshot) : null;
 
-  return end ?? measureSessionState({ goalId: session.goalId, now: new Date(), timeZone, userId });
+  return (
+    end ??
+    measureSessionState({
+      goalId: session.goalId,
+      now: new Date(),
+      readSubscription: readActiveSubscription,
+      timeZone,
+      userId,
+    })
+  );
 }
 
 /** Requires ownership; completed sessions replay saved end state while stopped sessions reflect current progress. */
@@ -163,18 +176,27 @@ export async function getStudySessionSummary({
 
   const netScoredItemIds = getNetScoredItemIds(session.blocks);
 
-  const [comesBack, capsulesSealed, buddyAte, ceremony, tomorrow, extraTime, netScore] =
-    await Promise.all([
-      loadComesBack({ answers, session, timeZone, userId }),
-      loadSealedCapsules({ session, timeZone, userId }),
-      loadBuddyMeal({ answers, newIdeas: newSkillIds.length, session, userId }),
-      loadCeremony(userId),
-      loadTomorrow({ session }),
-      withExtraStudyCheck({ extraTime: view.extraTime, session, userId }),
-      netScoredItemIds.length > 0
-        ? getNetScore({ itemIds: netScoredItemIds, sessionId, userId })
-        : null,
-    ]);
+  const [
+    comesBack,
+    capsulesSealed,
+    buddyAte,
+    ceremony,
+    certificates,
+    tomorrow,
+    extraTime,
+    netScore,
+  ] = await Promise.all([
+    loadComesBack({ answers, session, timeZone, userId }),
+    loadSealedCapsules({ session, timeZone, userId }),
+    loadBuddyMeal({ answers, newIdeas: newSkillIds.length, session, userId }),
+    loadCeremony(userId),
+    loadUnshownCertificates(userId),
+    loadTomorrow({ session }),
+    withExtraStudyCheck({ extraTime: view.extraTime, session, userId }),
+    netScoredItemIds.length > 0
+      ? getNetScore({ itemIds: netScoredItemIds, sessionId, userId })
+      : null,
+  ]);
 
   const correct = answers.filter((answer) => answer.isCorrect).length;
   const scored = scoreAnswers({ answers });
@@ -189,6 +211,7 @@ export async function getStudySessionSummary({
       buddyAte,
       capsulesSealed,
       ceremony,
+      certificates,
       comesBack,
       correct,
       energy: snapshot ? { after: after.energy, before: snapshot.energy } : null,

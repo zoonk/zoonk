@@ -13,7 +13,6 @@
   "mistakes_empty_open": "1121b3cc055fbb5c1281b249e698e1e1953d70a24497067deff6e1282ea2d83b",
   "mistakes_fixed_count": "7271e3f6f4dd5f296c96625f075aa115ac594d93ba18e92b0d2c86b404dab7a5",
   "mistakes_more_failed": "621a9374f17d21a60fcf40df2787e7e76a9cff21d5b6cb04f6419dd4232aa8be",
-  "mistakes_not_found_description": "a02788ba07c12db971098911dfc64355675146b4bbfd782f34416f1362b7f5a2",
   "mistakes_notebook_title": "9d522a70062774d41e060250e33422e848d799bae85ab764eb3128c93de3859d",
   "mistakes_nothing_description": "412e03da0ceaff6022004247a230acf671325c541fd8bb219dd63e23fff2071a",
   "mistakes_nothing_title": "eb4d195aa22831c48a571ffea0b6dcf393bc1dc7988ffd937a118c69ae255d64",
@@ -42,7 +41,6 @@
         <item quantity="one">%d Fehler korrigiert</item>
         <item quantity="other">%d Fehler korrigiert</item>
     </plurals>
-    <string name="mistakes_not_found_description">Sie wurden möglicherweise korrigiert oder entfernt.</string>
     <string name="mistakes_nothing_title">Noch nichts zum Üben</string>
     <string name="mistakes_nothing_description">Fehler kannst du ab dem nächsten Tag üben.</string>
     <string name="mistakes_notebook_title">Fehlerheft</string>

@@ -1,8 +1,9 @@
 import "server-only";
 import { LIVE_CONVERSATION_MODEL } from "@zoonk/ai/tasks/language/live-conversation-models";
-import { type Goal, type LanguageConversationKind, type prisma } from "@zoonk/db";
+import { type Goal, type LanguageConversationKind } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { writeLearnerChange } from "../../../learner/_utils/write-learner-change";
+import { findFactForCall } from "../../../memory/call-fact";
 import { type ExamTaskSnapshot } from "../../exam-speaking/speaking-contract";
 import { type ConversationScenario, type SpeakingMockExam } from "../conversation-contract";
 
@@ -40,8 +41,16 @@ export function toConversationData(input: Omit<NewConversation, "markChanged">) 
 }
 
 export function createConversation(input: NewConversation) {
-  const create = (client: Pick<typeof prisma, "languageConversation">) =>
-    client.languageConversation.create({ data: toConversationData(input) });
+  const { userId } = input;
 
-  return writeLearnerChange({ userId: input.userId }, create);
+  return writeLearnerChange({ userId }, async (transaction) => {
+    const memoryFactId =
+      input.kind === "practice"
+        ? await findFactForCall({ now: new Date(), transaction, userId })
+        : null;
+
+    return transaction.languageConversation.create({
+      data: { ...toConversationData(input), memoryFactId },
+    });
+  });
 }

@@ -12,6 +12,7 @@ export async function PlusBenefits() {
         { id: "mocks", text: t("Mock exams, timed like the real one") },
         { id: "buddy", text: t("An AI study buddy whenever you're stuck") },
         { id: "calls", text: t("Higher limits for speaking calls") },
+        { id: "certificates", text: t("A certificate for every level you finish") },
       ]}
       summary={t("Every goal · every lesson")}
     />

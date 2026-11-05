@@ -2,7 +2,7 @@ import "server-only";
 import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
-import { getEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
+import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
 import { getCallTimeLeft } from "../../../entitlements/_utils/evaluate-usage";
 import { sumCallSeconds } from "../../../entitlements/_utils/usage-counts";
 import { type PracticeCallLengths, toPracticeCallLengths } from "./call-lengths";
@@ -14,7 +14,7 @@ async function findCharacter(where: { chapterId: string; level: CefrLevel }) {
 }
 
 async function loadCallLengths(): Promise<PracticeCallLengths & { paused: boolean }> {
-  const viewer = await getEntitlementViewer();
+  const viewer = await readEntitlementViewer();
   const tier = viewer?.tier ?? "guest";
 
   if (!viewer || tier === "guest") {

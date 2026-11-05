@@ -465,9 +465,7 @@ describe("language conversations", () => {
         objectivesMet: ["Is it available?"],
         progress: {
           channel: "thinking",
-          text: expect.stringContaining(
-            'achieved "Is it available?". Still to do: "Book a viewing", "Ask about the deposit".',
-          ),
+          text: expect.stringContaining('achieved "Is it available?". This note needs no reply'),
         },
       },
       status: "ready",
@@ -618,7 +616,29 @@ describe("language conversations", () => {
     });
   });
 
-  it("says when the call ended with a goodbye, and sends no progress once every goal is met", async () => {
+  it("tells the character to stop asking once every goal is met", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const call = await connectPractice(renting.id);
+
+    vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
+      objectivesAnswer(["Is it available?", "Book a viewing", "Ask about the deposit"]),
+    );
+
+    await expect(checkGoals(call, TURNS)).resolves.toStrictEqual({
+      check: {
+        goodbye: false,
+        objectivesMet: ["Is it available?", "Book a viewing", "Ask about the deposit"],
+        progress: {
+          channel: "thinking",
+          text: expect.stringContaining("without asking anything new"),
+        },
+      },
+      status: "ready",
+    });
+  });
+
+  it("says when the call ended with a goodbye, with no cue to send", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const call = await connectPractice(renting.id);

@@ -9,11 +9,12 @@ import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMaps
 import com.zoonk.api.models.MindMapGeneration
+import java.util.Locale
 import java.util.UUID
 
 internal const val GOAL = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01"
 
-internal fun mapChapter(position: Int) = "c0000000-0000-4000-8000-%012d".format(position)
+internal fun mapChapter(position: Int) = "c0000000-0000-4000-8000-%012d".format(Locale.ROOT, position)
 
 private const val PICTURE = "https://api.zoonk.test/v1/files/images/0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a1"
 

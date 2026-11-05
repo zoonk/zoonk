@@ -433,11 +433,17 @@ private struct ChapterReferenceSection: View {
       return Text("Fading", tableName: "Plan", comment: "A skill the learner is forgetting")
     }
 
-    switch skill.state {
-    case .new: return Text("New", tableName: "Plan", comment: "A skill not studied yet")
-    case .learning: return Text("Learning", tableName: "Plan", comment: "A skill being learned")
-    case .solid: return Text("Solid", tableName: "Plan", comment: "A skill learned well")
-    case .mastered: return Text("Mastered", tableName: "Plan", comment: "A skill mastered")
+    return skill.state.label
+  }
+}
+
+extension GoalChapter.Skill.State {
+  var label: Text {
+    switch self {
+    case .new: Text("New", tableName: "Plan", comment: "A skill not studied yet")
+    case .learning: Text("Learning", tableName: "Plan", comment: "A skill being learned")
+    case .solid: Text("Solid", tableName: "Plan", comment: "A skill learned well")
+    case .mastered: Text("Mastered", tableName: "Plan", comment: "A skill mastered")
     }
   }
 }

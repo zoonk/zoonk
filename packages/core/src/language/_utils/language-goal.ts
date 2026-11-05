@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
 
@@ -14,11 +14,13 @@ export function readGoalDetails(goal: Pick<Goal, "details"> | null): Record<stri
  */
 export async function findLearnerLanguageGoal({
   activeGoal,
+  db = prisma,
   goalId,
   targetLanguage,
   userId,
 }: {
   activeGoal?: Goal | null;
+  db?: TransactionClient;
   goalId?: string;
   targetLanguage: string;
   userId: string;
@@ -32,7 +34,7 @@ export async function findLearnerLanguageGoal({
   }
 
   const [goals, activeGoalId] = await Promise.all([
-    prisma.goal.findMany({
+    db.goal.findMany({
       orderBy: { updatedAt: "desc" },
       where: { kind: "language", targetLanguage, userId },
     }),

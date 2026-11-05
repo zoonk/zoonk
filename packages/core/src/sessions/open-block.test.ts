@@ -9,6 +9,11 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  LEARNER_LOCK,
+  holdLearnerLock,
+  waitForBlockedStatement,
+} from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
 import { openStudyBlock } from "./open-block";
@@ -321,6 +326,89 @@ describe("the learner opens a study block", () => {
     });
   });
 
+  it("a mission whose block a plan change removed opens nothing", async () => {
+    const { session } = await goalDaySession();
+    const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
+
+    await prisma.studySessionBlock.delete({ where: { id: block.id } });
+
+    await expect(mission(block)).resolves.toStrictEqual({
+      opening: { kind: "changed" },
+      status: "ready",
+    });
+  });
+
+  it("a mission whose block a plan change removes while it opens opens nothing", async () => {
+    const user = await userFixture();
+    const { goal } = await sessionGoalFixture({ userId: user.id });
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+    const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
+    mockSession(user.id);
+
+    const planChange = holdLearnerLock({
+      beforeCommit: (tx) => tx.studySessionBlock.delete({ where: { id: block.id } }),
+      userId: user.id,
+    });
+
+    const pid = await planChange.pid;
+    const opened = mission(block);
+
+    try {
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
+    } finally {
+      planChange.release();
+      await planChange.done;
+    }
+
+    await expect(opened).resolves.toStrictEqual({ opening: { kind: "changed" }, status: "ready" });
+  });
+
+  it("a mission reads today in the learner's zone when the goal has none saved", async () => {
+    const user = await userFixture();
+    const { goal } = await sessionGoalFixture({ goal: { timezone: null }, userId: user.id });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: new Date("2026-09-30T00:00:00Z"),
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
+    mockSession(user.id);
+    vi.setSystemTime(new Date("2026-10-01T02:00:00Z"));
+
+    await expect(
+      openStudyBlock({
+        target: { blockId: block.id, kind: "mission" },
+        timeZone: "America/New_York",
+      }),
+    ).resolves.toStrictEqual({
+      opening: { blockId: block.id, kind: "session", sessionId: session.id },
+      status: "ready",
+    });
+  });
+
+  it("a mission from a day that's over opens nothing, even a step left unstarted", async () => {
+    const user = await userFixture();
+    const { goal } = await sessionGoalFixture({ userId: user.id });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: new Date("2026-09-20T00:00:00Z"),
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
+    mockSession(user.id);
+
+    await expect(mission(block)).resolves.toStrictEqual({
+      opening: { kind: "changed" },
+      status: "ready",
+    });
+
+    await expect(readBlock(block)).resolves.toMatchObject({ status: "pending" });
+  });
+
   it("opens nothing for a signed-out visitor or another learner's block", async () => {
     const { session } = await learnerSession();
     const block = await studySessionBlockFixture({ kind: "review", sessionId: session.id });
@@ -330,7 +418,10 @@ describe("the learner opens a study block", () => {
 
     await expect(tap(block)).resolves.toStrictEqual({ status: "notFound" });
 
-    await expect(mission(block)).resolves.toStrictEqual({ status: "notFound" });
+    await expect(mission(block)).resolves.toStrictEqual({
+      opening: { kind: "changed" },
+      status: "ready",
+    });
 
     await expect(
       openStudyBlock({ target: { kind: "next", sessionId: session.id }, timeZone: "UTC" }),
@@ -338,6 +429,7 @@ describe("the learner opens a study block", () => {
 
     mockSession(null);
     await expect(tap(block)).resolves.toStrictEqual({ status: "unauthorized" });
+    await expect(mission(block)).resolves.toStrictEqual({ status: "unauthorized" });
     await expect(readBlock(block)).resolves.toMatchObject({ status: "pending" });
   });
 

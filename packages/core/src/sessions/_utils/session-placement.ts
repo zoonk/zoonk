@@ -1,8 +1,10 @@
 import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { type findActiveSubscription } from "../../auth/subscription";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
+import { type ClaimEvent } from "../../learner/_utils/skill-claims";
 import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
 import {
   PLACEMENT_WEEK_DAYS,
@@ -21,6 +23,10 @@ export type SessionDayContext = {
   goal: Goal;
   localDate: Date;
   now: Date;
+  /** A GET's request-wide claim events; without it, they're read fresh. */
+  readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
+  /** A GET passes `readActiveSubscription`; without it, the subscription is read fresh. */
+  readSubscription?: typeof findActiveSubscription;
   timeZone: string;
   userId: string;
 };

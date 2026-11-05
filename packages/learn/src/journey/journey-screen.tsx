@@ -1,7 +1,6 @@
 "use client";
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useState } from "react";
@@ -24,6 +23,7 @@ import { type PlanEditorSection } from "../plan/plan-editor-sections";
 import { PlanProperties } from "../plan/plan-properties";
 import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
 import { PlanSuggestionProvider, PlanSuggestionSlot } from "../plan/plan-suggestion";
+import { type PlanEnd } from "../plan/plan-suggestion-context";
 import { PageWithAside } from "../shell/learn-shell";
 import { SyllabusSection, hasSyllabusSection } from "../syllabus/syllabus-section";
 import { type SyllabusSectionView } from "../syllabus/syllabus-section-view";
@@ -42,9 +42,11 @@ import { PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { CompletedLessonsPathRow, MoreSection, PathSection, PhasesSheet } from "./plan-sections";
 
+export type { PlanEnd } from "../plan/plan-suggestion-context";
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
 export type { JourneyStanding } from "./journey-hero";
 export type { GoalStatusControl, GoalStatusOutcome } from "./goal-actions";
+export type { StudyNext } from "./study-next";
 
 const WRITING_REFRESH_MS = 10_000;
 
@@ -60,8 +62,6 @@ export type JourneyLinks = JourneyPathLinks & {
   mindMaps: string | null;
   subject: (key: string) => string;
 };
-
-type JourneyNext = { onContinue: () => Promise<boolean>; view: StudyNextView };
 
 type JourneyAlphabet = { link: AlphabetLink; onSkip: () => Promise<boolean> };
 
@@ -152,17 +152,17 @@ function usePlanEditor(arrival: boolean | PlanEditorSection) {
 
 function JourneyBody({
   alphabet,
+  end,
   goalStatus,
   links,
-  next,
   openAdjust,
   standing,
   syllabus,
 }: {
   alphabet: JourneyAlphabet | null;
+  end: PlanEnd;
   goalStatus: GoalStatusControl | null;
   links: JourneyLinks;
-  next: JourneyNext | null;
   openAdjust: boolean | PlanEditorSection;
   standing: JourneyStanding | null;
   syllabus: SyllabusSectionView | null;
@@ -194,9 +194,9 @@ function JourneyBody({
   return (
     <PlanSuggestionProvider
       host={{
+        ...end,
         courseHref: links.course,
         goalStatus,
-        next,
         onAdjust: () => editor.open(),
         onEdit: editor.open,
       }}
@@ -275,10 +275,10 @@ function JourneyBody({
 export function JourneyScreen({
   actions,
   alphabet = null,
+  end,
   goal,
   goalStatus = null,
   links,
-  next = null,
   openAdjust = false,
   openFocus = false,
   openFullCourse = false,
@@ -291,10 +291,10 @@ export function JourneyScreen({
 }: {
   actions: PlanActions;
   alphabet?: JourneyAlphabet | null;
+  end: PlanEnd;
   goal: PlanGoal;
   goalStatus?: GoalStatusControl | null;
   links: JourneyLinks;
-  next?: JourneyNext | null;
   openAdjust?: boolean | PlanEditorSection;
   openFocus?: boolean;
   openFullCourse?: boolean;
@@ -319,9 +319,9 @@ export function JourneyScreen({
       <PlanSheetHosts openFullCourse={openFullCourse}>
         <JourneyBody
           alphabet={alphabet}
+          end={end}
           goalStatus={goalStatus}
           links={links}
-          next={next}
           openAdjust={openAdjust}
           standing={standing}
           syllabus={syllabus}

@@ -44,9 +44,9 @@ const DEFAULT_ROUTING: LessonRouting = { exit: "/", exitTo: null, nextLesson: nu
 
 function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots, "ceremony"> {
   return {
-    ceremony: (milestone, onClose) => (
+    ceremony: (moments, onClose) => (
       <MainLearnProvider>
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       </MainLearnProvider>
     ),
   };

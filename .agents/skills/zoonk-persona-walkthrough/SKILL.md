@@ -24,7 +24,7 @@ Use it for any change a learner can see or feel: screens, flows, copy, plan beha
 - Prefer seeded personas and the persona command described in the catalog. They give a realistic learner at a chosen point of their plan with no AI cost.
 - Use the real onboarding when the journey starts there. Keep the shared Library warm between passes (development guide, "Persona passes") so walks don't pay to generate content again.
 - Seeded data can't show whether real AI output works. When the change depends on what a model writes, reads or grades, walk it at least once end to end with real AI output, and keep those runs few and small. Turn what you checked by eye into eval cases, so later changes are checked without paying for another walk.
-- Use the persona's device size, time zone and language, in light and dark.
+- Use the persona's device size, time zone and language, in light and dark. On one of Xcode's own iPhone simulators, hold it for the whole walk, as the [Apple simulator rules](../../../apps/apple/AGENTS.md#simulators) say, so a test run doesn't take it.
 
 ## 3. Walk with fresh eyes
 

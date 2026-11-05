@@ -23,6 +23,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.SessionEndActions
 import com.zoonk.android.feature.player.leaveTaskFor
 import com.zoonk.android.feature.practice.AnswerActions
@@ -33,7 +34,6 @@ import com.zoonk.android.feature.practice.RunFinished
 import com.zoonk.android.feature.practice.RunFrame
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
-import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.RunPhase
 import com.zoonk.android.feature.practice.RunQuestion
 import com.zoonk.android.feature.practice.RunSegments
@@ -53,6 +53,7 @@ import com.zoonk.android.feature.session.toDayStep
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.TaskActions
@@ -105,7 +106,7 @@ fun QuestionBlock(
     val key = remember(sessionId, blockId) { blockKey(sessionId, blockId) }
     if (key == null) {
         BackHandler(onBack = onClose)
-        RunNotFound(onClose)
+        TaskNotFound(navigator)
         return
     }
     val viewModel =
@@ -140,23 +141,37 @@ internal fun QuestionBlockContent(
             run?.let { shown ->
                 val phase = shown.phase
                 when {
-                    phase !is RunPhase.Finished -> Runner(read, shown, viewModel, app, navigator, close, examTomorrow)
-                    finished != null -> finished(phase.completion)
-                    else -> BlockFinished(phase.completion, read.detail.isReview, app, viewModel, close)
+                    phase !is RunPhase.Finished -> {
+                        Runner(read, shown, viewModel, app, navigator, close, examTomorrow)
+                    }
+
+                    finished != null -> {
+                        finished(phase.completion)
+                    }
+
+                    else -> {
+                        BlockFinished(
+                            phase.completion,
+                            read.detail.isReview,
+                            app,
+                            viewModel,
+                            close,
+                        ) { navigator.open(AppRoute.Subscription) }
+                    }
                 }
             }
         }
 
         is LoadState.Failed -> {
             if (state.error == ApiError.NotFound) {
-                RunNotFound(close)
+                TaskNotFound(navigator)
             } else {
                 RunLoadFailed(close, onRetry = viewModel::reread)
             }
         }
 
         LoadState.Empty -> {
-            RunNotFound(close)
+            TaskNotFound(navigator)
         }
 
         else -> {
@@ -178,10 +193,11 @@ internal fun BlockFinished(
     app: AppContainer,
     viewModel: QuestionBlockViewModel,
     onClose: () -> Unit,
+    onSeePlus: () -> Unit = {},
 ) {
     val move by viewModel.sessionMove.collectAsStateWithLifecycle()
 
-    MomentAfterCeremony(app, completion?.ceremony) { buddy ->
+    MomentAfterCeremony(app, completion?.ceremony, completion?.certificates.orEmpty().map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(if (review) R.string.practice_done_review else R.string.practice_done_title),
             action = stringResource(R.string.practice_continue),
@@ -227,7 +243,7 @@ internal fun Runner(
     val draft = saved.answerFor(run.index, question)
 
     if (run.phase == RunPhase.Finishing) {
-        BlockFinished(null, detail.isReview, app, viewModel, onClose)
+        BlockFinished(null, detail.isReview, app, viewModel, onClose) { navigator.open(AppRoute.Subscription) }
         return
     }
 
