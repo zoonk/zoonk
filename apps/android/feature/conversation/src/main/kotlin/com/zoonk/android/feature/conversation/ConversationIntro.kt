@@ -100,6 +100,7 @@ internal fun CallIntro(
             }
         },
         aside = { goals() },
+        barUnderAside = true,
     ) { beside ->
         item(key = "header") {
             Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(8.dp)) {

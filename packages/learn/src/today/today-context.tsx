@@ -12,8 +12,9 @@ import { type MissionsDay } from "../missions/missions-card";
 import { type DayStep } from "../session/session-types";
 
 /**
- * `continueSession` resolves to false when it didn't work; every other action to whether it was
- * saved, or what it saved.
+ * `continueSession` and `openBlock` resolve to false when they couldn't open; every other action to
+ * whether it was saved, or what it saved. One that stops because the learner left (another page, goal
+ * or day) resolves true: it has nothing to report, even when they come back.
  */
 export type TodayActions = {
   addExtraTime: () => Promise<boolean>;

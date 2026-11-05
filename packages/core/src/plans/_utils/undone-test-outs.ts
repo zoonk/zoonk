@@ -3,13 +3,8 @@ import { prisma } from "@zoonk/db";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
 import { parsePlanChangePayload } from "./plan-change-payload";
 
-export async function loadUndoneTestOuts({
-  goalId,
-  skillIds,
-}: {
-  goalId: string;
-  skillIds: ReadonlySet<string>;
-}): Promise<ClaimEvent[]> {
+/** Every skill the goal's undone test-outs touched, whichever skills the caller asks about. */
+export async function loadUndoneTestOuts(goalId: string): Promise<ClaimEvent[]> {
   const changes = await prisma.planChange.findMany({
     select: { createdAt: true, payload: true },
     where: { kind: "testedOut", plan: { goalId }, status: "undone" },
@@ -48,8 +43,6 @@ export async function loadUndoneTestOuts({
   );
 
   return undone.flatMap(({ at, itemId }) =>
-    (skillsOf.get(itemId) ?? [])
-      .filter((skillId) => skillIds.has(skillId))
-      .map((skillId): ClaimEvent => ({ at, kind: "undone", skillId })),
+    (skillsOf.get(itemId) ?? []).map((skillId): ClaimEvent => ({ at, kind: "undone", skillId })),
   );
 }

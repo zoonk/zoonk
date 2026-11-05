@@ -63,7 +63,7 @@
   "navigation_user_menu": "9c89aff9ce59cdf1d035b55c0a3e8307dcb320777370b2c7a584305f7557f7f6",
   "not_found_description": "1f9f90c25b9cdd4a59d58f3d29c44e56568fd95d2d3d254a1779cd835ac342ca",
   "not_found_go_home": "17eae6ccbed3804a1cf0525babe20b1cd764510e1c14871e498ecf775fd017ad",
-  "not_found_title": "36d73057b035834eec15241d391c42523400f7217c2c558c7cbb499a07f6692b",
+  "not_found_title": "a54234e10a21588e264d0111397d9372b3841c8601914ce752cb8b49faae8c71",
   "suggestion_save_failed": "64f77e2077e7d4f067f974eabdcc53a20ac52105964c1a1d6fe1a1f03e6f09e6",
   "suggestion_view": "3d160efc2a851cc8cb8b887b76439d4c85bf15bdbeec4eb2da058732e8bcad57",
   "task_leave": "177cb39387567943127b8e077274966476e8573f7f4bec70580fe56164773c57",
@@ -137,7 +137,7 @@
     <string name="test_out_title">Já sabe isso?</string>
     <string name="test_out_skip_chapter">Faça o teste e pule o capítulo</string>
     <string name="test_out_skip_unit">Faça o teste e pule a unidade</string>
-    <string name="not_found_title">Não encontramos esta página</string>
+    <string name="not_found_title">A gente não encontrou esta página</string>
     <string name="not_found_description">O link pode ser antigo ou ter sido digitado errado.</string>
     <string name="not_found_go_home">Ir para a página inicial</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->

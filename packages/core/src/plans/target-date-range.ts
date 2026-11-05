@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type GoalDraft } from "../goals/goal-contract";
 
 export const MAX_PLAN_DAYS = 3650;
 
@@ -10,6 +11,23 @@ function addDays(isoDate: string, days: number): string {
 
 export function getTargetDateBounds(today: string): { max: string; min: string } {
   return { max: addDays(today, MAX_PLAN_DAYS), min: addDays(today, 1) };
+}
+
+/**
+ * A new goal takes only a date in `getTargetDateBounds`, so a card reads any other (today, a day
+ * gone, one past the planner's reach) as no date, and setup asks for one.
+ */
+export function withPlannableDate({
+  draft,
+  today,
+}: {
+  draft: GoalDraft;
+  today: string;
+}): GoalDraft {
+  const { max, min } = getTargetDateBounds(today);
+  const { targetDate, ...undated } = draft;
+
+  return targetDate && targetDate >= min && targetDate <= max ? draft : undated;
 }
 
 /**

@@ -157,7 +157,7 @@ function TestOutResult({
         {
           content: <ResultStep buddy={buddy} outcome={outcome} undone={undo === "done"} />,
           id: "result",
-          moment: getCeremonyMoment({ milestone: outcome.ceremony, render: renderCeremony }),
+          moment: getCeremonyMoment({ moments: outcome, render: renderCeremony }),
         },
       ]}
     />
@@ -300,7 +300,9 @@ export function TestOutRun({
       setOutcome(graded);
     });
 
-  const shown = outcome ?? (recorded && { ...recorded, ceremony: null, reached: NOTHING_REACHED });
+  const shown =
+    outcome ??
+    (recorded && { ...recorded, ceremony: null, certificates: [], reached: NOTHING_REACHED });
 
   if (shown) {
     return (

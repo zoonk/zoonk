@@ -16,6 +16,7 @@ export function getLessonCelebration(result: LibraryLessonCompletion): LessonCel
     return {
       brainPower: result.brainPower,
       ceremony: result.ceremony,
+      certificates: result.certificates,
       missionMoment: null,
       reached: result.reached,
     };
@@ -24,6 +25,7 @@ export function getLessonCelebration(result: LibraryLessonCompletion): LessonCel
   return {
     brainPower: getOwnBrainPower(block),
     ceremony: block.ceremony,
+    certificates: block.certificates,
     missionMoment: {
       completed: block.completedMissions,
       fullMeal: block.fullMeal,

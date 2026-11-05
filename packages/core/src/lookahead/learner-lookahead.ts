@@ -36,10 +36,13 @@ export function getLookahead(tier: EntitlementTier): LearnerLookahead {
 }
 
 /** Workflow bridge: userId must be the owner of the workflow's authorized goal. */
-export async function getLearnerTier(userId: string): Promise<EntitlementTier> {
+export async function getLearnerTier(
+  userId: string,
+  readSubscription: typeof findActiveSubscription = findActiveSubscription,
+): Promise<EntitlementTier> {
   const [user, subscription] = await Promise.all([
     prisma.user.findUnique({ select: { isAnonymous: true }, where: { id: userId } }),
-    findActiveSubscription(userId),
+    readSubscription(userId),
   ]);
 
   if (!user || user.isAnonymous) {

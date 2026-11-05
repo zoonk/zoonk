@@ -49,6 +49,17 @@
             </intent-filter>
         </activity>
 
+        <!-- Certificate pictures the share sheet and printing read from the app's cache. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/shared_files" />
+        </provider>
+
         <service
             android:name="com.zoonk.android.feature.livecall.LiveCallService"
             android:exported="false"

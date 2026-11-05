@@ -48,10 +48,31 @@ const timeZoneSchema = z
   .refine(isValidTimeZone, { message: "Invalid timezone" })
   .meta({ description: "The learner's IANA timezone" });
 
+/**
+ * Only core writes these: research the notice's question formats, which shared questions read,
+ * and the level test its progress and result, which set the learner's skill levels.
+ */
+const CORE_DETAILS_KEYS: ReadonlySet<string> = new Set([
+  "levelTest",
+  "noticeFormats",
+  "skillLevels",
+]);
+
+function isCoreDetail([key]: [string, unknown]): boolean {
+  return CORE_DETAILS_KEYS.has(key);
+}
+
+export function withoutCoreDetails<Value>(details: Record<string, Value>): Record<string, Value> {
+  return Object.fromEntries(Object.entries(details).filter((entry) => !isCoreDetail(entry)));
+}
+
+export function onlyCoreDetails<Value>(details: Record<string, Value>): Record<string, Value> {
+  return Object.fromEntries(Object.entries(details).filter((entry) => isCoreDetail(entry)));
+}
+
 const detailsSchema = z
   .record(z.string(), z.json())
-  // Only research writes the notice's question formats, and shared questions read them.
-  .overwrite(({ noticeFormats: _written, ...details }) => details)
+  .overwrite((details) => withoutCoreDetails(details))
   .refine((details) => JSON.stringify(details).length <= MAX_GOAL_DETAILS_LENGTH, {
     message: `Details are at most ${MAX_GOAL_DETAILS_LENGTH} characters as JSON`,
   })
@@ -78,7 +99,7 @@ export const goalDraftSchema = z
       .optional()
       .meta({
         description:
-          "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created.",
+          "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created, except on a goal from an onboarding card (`details.onboardingId`): a card's date can stop being ahead after the card was read, so that goal starts without it and its setup asks for one.",
       }),
     targetLanguage: languageSchema.optional().meta({ description: "The language being learned" }),
     title: z.string().trim().min(1).max(MAX_TITLE_LENGTH),

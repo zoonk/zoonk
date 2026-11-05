@@ -233,9 +233,9 @@ describe("deleting a learner's private files", () => {
   it("deletes every upload and private course picture in the learner's folders, page by page, before anything else", async () => {
     const user = await createTestUser();
 
-    vi.mocked(list).mockImplementation(async ({ cursor, prefix } = {}) => {
-      if (prefix === `sources/${user.id}/`) {
-        return cursor
+    vi.mocked(list).mockImplementation(async (options) => {
+      if (options?.prefix === `sources/${user.id}/`) {
+        return options.cursor
           ? listed({ urls: ["https://blob.test/sources/b.pdf"] })
           : listed({ cursor: "next", urls: ["https://blob.test/sources/a.pdf"] });
       }
@@ -280,8 +280,8 @@ describe("deleting a learner's private files", () => {
       },
     });
 
-    vi.mocked(list).mockImplementation(async ({ prefix } = {}) =>
-      listed({ urls: prefix === `sources/${user.id}/` ? [sharedUrl, ownUrl] : [] }),
+    vi.mocked(list).mockImplementation(async (options) =>
+      listed({ urls: options?.prefix === `sources/${user.id}/` ? [sharedUrl, ownUrl] : [] }),
     );
 
     await deleteUserDependenciesBeforeAuthDelete(user);

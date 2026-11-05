@@ -3,7 +3,6 @@ package com.zoonk.android.feature.player
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -11,6 +10,7 @@ import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.PictureDescription
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.api.models.ScreenPicture
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -48,7 +48,7 @@ class LessonPicturesScreenshots {
     ) {
         harness.play(listOf(step, summaryStep("end")))
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 

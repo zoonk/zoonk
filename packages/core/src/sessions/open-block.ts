@@ -149,7 +149,10 @@ async function openTappedBlock({
     : { status: "notFound" };
 }
 
-/** A mission opens only a block still free to start; anything else reads the host again. */
+/**
+ * A mission opens only a block of today still free to start; anything else, a block a plan change
+ * removed included (before or while it opens), reads the host again.
+ */
 async function openMission({
   target,
   timeZone,
@@ -157,14 +160,14 @@ async function openMission({
   target: Target<"mission">;
   timeZone: string | undefined;
 }): Promise<OpenStudyBlockResult> {
-  const day = await getSessionPageView({ blockId: target.blockId });
+  const day = await getSessionPageView({ blockId: target.blockId, timeZone });
 
-  if (day.status === "notFound" || day.status === "unauthorized") {
+  if (day.status === "unauthorized") {
     return { status: day.status };
   }
 
   const block =
-    day.status === "ready"
+    day.status === "ready" && day.session.current
       ? day.session.blocks.find(
           (candidate) =>
             candidate.id === target.blockId &&
@@ -184,11 +187,12 @@ async function openMission({
     userId: day.userId,
   });
 
-  return opened.status === "ready" &&
+  const finished =
+    opened.status === "ready" &&
     opened.opening.kind === "session" &&
-    opened.opening.blockId === null
-    ? openingResult({ kind: "changed" })
-    : opened;
+    opened.opening.blockId === null;
+
+  return finished || opened.status === "notFound" ? openingResult({ kind: "changed" }) : opened;
 }
 
 /**

@@ -50,7 +50,7 @@ function checkWriteListeningSetOutput(
       null,
       2,
     ),
-    passed: passing.length + (setProblems.length === 0 ? SET_CHECKS : 0),
+    passed: passing.length === 0 ? 0 : passing.length + (setProblems.length === 0 ? SET_CHECKS : 0),
     problems: [...setProblems, ...checked.flatMap((entry) => entry.problems)],
     total: checked.length + SET_CHECKS,
   };

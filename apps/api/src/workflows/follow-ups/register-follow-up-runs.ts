@@ -1,7 +1,13 @@
 import { registerFollowUpStarter } from "@zoonk/core/follow-ups/starter";
-import { start } from "workflow/api";
-import { followUpsWorkflow } from "./follow-ups-workflow";
 
+/** `register()` runs this before every server's first request, the proxy's too, so the workflow loads with the first follow-up. */
 export function registerFollowUpRuns(): void {
-  registerFollowUpStarter((userId) => start(followUpsWorkflow, [{ userId }]));
+  registerFollowUpStarter(async (userId) => {
+    const [{ start }, { followUpsWorkflow }] = await Promise.all([
+      import("workflow/api"),
+      import("./follow-ups-workflow"),
+    ]);
+
+    return start(followUpsWorkflow, [{ userId }]);
+  });
 }

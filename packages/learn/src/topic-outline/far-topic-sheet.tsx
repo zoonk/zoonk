@@ -16,6 +16,7 @@ import { type ReactElement, type ReactNode, useRef, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { OutlineLimitNotice } from "../_components/help-limit-notice";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
+import { StatusRegion } from "../_components/status-region";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { type TopicOutlineActions } from "./topic-outline-actions";
@@ -117,6 +118,7 @@ function FarTopicBody({
       {copy.action && (
         <Button
           disabled={isPending || isCapped}
+          focusableWhenDisabled
           onClick={isFailure ? retry : request}
           size="lg"
           variant={isFailure ? "outline" : "default"}
@@ -126,7 +128,11 @@ function FarTopicBody({
         </Button>
       )}
 
-      {limit && <OutlineLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />}
+      <StatusRegion>
+        {limit && !isPending && (
+          <OutlineLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
+        )}
+      </StatusRegion>
     </div>
   );
 }

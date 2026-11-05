@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { getGoalsCacheTag, getLearningProfileCacheTag } from "../../cache/tags";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
 
 function selectLessonPlan(lessonId: string) {
@@ -9,6 +10,11 @@ function selectLessonPlan(lessonId: string) {
     items: { select: { chapterId: true }, where: { lessonId } },
     settings: true,
   } as const;
+}
+
+/** A private read that calls `findLearnerLessonPlan` carries these, which plan and goal writes and a switch of active goal expire. */
+export function getLearnerLessonPlanCacheTags(userId: string): string[] {
+  return [getGoalsCacheTag(userId), getLearningProfileCacheTag(userId)];
 }
 
 export async function findLearnerLessonPlan({

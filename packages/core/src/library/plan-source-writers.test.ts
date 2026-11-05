@@ -23,7 +23,7 @@ import { listeningSetFixture } from "@zoonk/testing/fixtures/listening";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
@@ -1620,7 +1620,7 @@ describe(resolvePlanInputDependents, () => {
     ).resolves.toStrictEqual([plan.id]);
   });
 
-  it("reads only skills and plans for a write of skills alone", async () => {
+  it("finds the plans a write of skills alone reaches, without writing", async () => {
     const skill = await skillFixture();
     const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
 
@@ -1629,7 +1629,7 @@ describe(resolvePlanInputDependents, () => {
     );
 
     expect(counts.result).toStrictEqual([plan.id]);
-    assertReadBudget(counts, 2);
+    expect(counts.writes).toBe(0);
   });
 });
 

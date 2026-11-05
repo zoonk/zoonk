@@ -30,7 +30,7 @@
   "account_menu_settings": "7a6e198dce1fcfbfd6b4bde21fbae06d5ccedb958d91b4a2efa15d30100ed128",
   "account_menu_subscription": "d7e90662d8e8acba7ac394d47d73d535879fea5bc9bdd3fa2e22435baaf47108",
   "account_name": "87240420ee765577badd845ac53744667eddf2d8a741c2349227ec48392a9cd7",
-  "account_name_description": "92e4a484c851e43602c8e1e145a7852fdbf43152ff5a90ec490bc0b4edf6bee4",
+  "account_name_description": "364a780976966d10c6a5cb1da4b504731bc078b7bfd57614b09d436c9d27ef21",
   "account_name_too_long": "f63019b62a7a63d3136edc302f48c721b1409bd3fd0193e8f962dc71bf241b74",
   "account_new_code_failed": "edd975b301424acd76170bde276fe73339a2910ef11799f564473968adadfe67",
   "account_new_code_sent": "7e54006401c7c74c18946743b590f385c8c819f9c998c4ab2b2927baece89844",
@@ -99,7 +99,7 @@
     <string name="account_setup_title">Sana nasıl hitap edelim?</string>
     <string name="account_setup_description">Adını ve kullanıcı adını daha sonra profilinden değiştirebilirsin.</string>
     <string name="account_name">Ad</string>
-    <string name="account_name_description">Zoonk ve arkadaşın sana bu adla seslenir</string>
+    <string name="account_name_description">Zoonk ve ders arkadaşın sana bu adla seslenir. Sertifikalarında da bu ad görünür.</string>
     <string name="account_name_too_long">En fazla 150 karakter kullan.</string>
     <string name="account_username">Kullanıcı adı</string>
     <!-- %1$s is a username. -->

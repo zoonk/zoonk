@@ -83,12 +83,15 @@ struct TutorTurnView: View {
           .font(.subheadline)
           .foregroundStyle(.secondary)
         } else {
-          (failure.map(answerFailureMessage)
-            ?? Text(
-              "We couldn't finish this answer.", tableName: "Tutor",
-              comment: "A buddy answer failed"))
-            .font(.subheadline)
-            .foregroundStyle(.destructive)
+          if let failure {
+            FailureLine(message: answerFailureMessage(failure))
+              .font(.subheadline)
+          } else {
+            // An answer that failed before this visit is part of the thread, not news to announce.
+            Text(answerFailureMessage(.failed))
+              .font(.subheadline)
+              .foregroundStyle(.destructive)
+          }
 
           TutorRemedyButton(failure: failure ?? .failed) {
             Task { await conversation.retryAnswer(turn.id) }
@@ -140,12 +143,14 @@ struct TutorTurnView: View {
     .disabled(conversation.answeringID != nil)
   }
 
-  private func answerFailureMessage(_ failure: TutorFailure) -> Text {
+  private func answerFailureMessage(_ failure: TutorFailure) -> String {
     switch failure {
     case .signedOut, .plusRequired, .gone, .slowDown:
       failure.message
     case .signUpRequired, .limitReached, .invalid, .conflict, .failed:
-      Text("We couldn't finish this answer.", tableName: "Tutor", comment: "A buddy answer failed")
+      String(
+        localized: "We couldn't finish this answer.", table: "Tutor",
+        comment: "A buddy answer failed")
     }
   }
 }
@@ -155,6 +160,9 @@ struct TutorTurnView: View {
 struct TutorAnswerText: View {
   @Environment(AppRouter.self) private var router
   @ScaledMetric private var listIndent = 20.0
+  @State private var blockOpen: Task<Void, Never>?
+  @State private var blockOpenFailed = false
+  @State private var isBlockClosed = false
 
   let text: String
   let linksEnabled: Bool
@@ -163,20 +171,35 @@ struct TutorAnswerText: View {
   var body: some View {
     let blocks = TutorAnswerBlock.blocks(of: text, linksEnabled: linksEnabled)
 
-    VStack(alignment: .leading, spacing: 0) {
-      ForEach(blocks) { block in
-        blockView(block)
-          .padding(.top, block.id == 0 ? 0 : block.followsListItem ? 6 : 12)
+    VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: 0) {
+        ForEach(blocks) { block in
+          blockView(block)
+            .padding(.top, block.id == 0 ? 0 : block.followsListItem ? 6 : 12)
+        }
+      }
+      .textSelection(.enabled)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .environment(\.openURL, OpenURLAction(handler: open))
+      .accessibilityElement(children: .combine)
+      .accessibilityLabel(
+        Text(
+          verbatim:
+            "\(buddyName): \(blocks.map { String($0.text.characters) }.joined(separator: "\n"))"))
+
+      if blockOpenFailed {
+        Text(.blockOpenFailed)
+          .font(.subheadline)
+          .foregroundStyle(.destructive)
+      }
+
+      if isBlockClosed {
+        Text(.blockClosed)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
       }
     }
-    .textSelection(.enabled)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .environment(\.openURL, OpenURLAction(handler: open))
-    .accessibilityElement(children: .combine)
-    .accessibilityLabel(
-      Text(
-        verbatim:
-          "\(buddyName): \(blocks.map { String($0.text.characters) }.joined(separator: "\n"))"))
+    .onDisappear { blockOpen?.cancel() }
   }
 
   @ViewBuilder
@@ -212,11 +235,63 @@ struct TutorAnswerText: View {
       return .discarded
     }
 
-    return router.open(url: page) ? .handled : .discarded
+    guard case .block(let blockID) = AppLink(url: page) else {
+      return router.open(url: page) ? .handled : .discarded
+    }
+
+    open(blockID: blockID)
+    return .handled
+  }
+
+  /// One at a time, so two opens never race. An answer that leaves the screen takes its open with
+  /// it, so nothing is said over what the learner went to.
+  private func open(blockID: String) {
+    guard blockOpen == nil else {
+      return
+    }
+
+    blockOpenFailed = false
+    isBlockClosed = false
+
+    blockOpen = Task {
+      let result = await router.openAnswerLink(blockID: blockID)
+      blockOpen = nil
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      switch result {
+      case .failed:
+        blockOpenFailed = true
+        AccessibilityNotification.Announcement(String(localized: .blockOpenFailed)).post()
+      case .done(.changed):
+        isBlockClosed = true
+        AccessibilityNotification.Announcement(String(localized: .blockClosed)).post()
+      case .done, .obsolete:
+        break
+      }
+    }
   }
 
   /// Any of main's origins: the app reads only a link's path.
   private static let mainOrigin = URL(string: "https://www.zoonk.com")
+}
+
+extension LocalizedStringResource {
+  fileprivate static var blockOpenFailed: LocalizedStringResource {
+    LocalizedStringResource(
+      "We couldn't open this step. Try again.", table: "Tutor",
+      comment: "Under a buddy answer whose link to a step of the day didn't open")
+  }
+
+  fileprivate static var blockClosed: LocalizedStringResource {
+    LocalizedStringResource(
+      "This step isn't available anymore.", table: "Tutor",
+      comment:
+        "Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since"
+    )
+  }
 }
 
 struct TutorAnswerBlock: Identifiable {

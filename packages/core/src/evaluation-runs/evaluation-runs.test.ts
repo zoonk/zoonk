@@ -4,7 +4,8 @@ import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { registerEvaluationRunLog } from "./evaluation-run-log";
+import { registerServerSinks } from "../server-sinks";
+import { recordEvaluationRun } from "./evaluation-run-log";
 import { purgeEvaluationRuns } from "./purge-evaluation-runs";
 
 const DAY_MS = 86_400_000;
@@ -26,8 +27,8 @@ function runRecord(attrs: Partial<EvaluationRunRecord> = {}): EvaluationRunRecor
 }
 
 /** `@zoonk/ai` never calls a sink under tests, so this calls the registered log directly. */
-async function recordEvaluationRun(record: EvaluationRunRecord) {
-  registerEvaluationRunLog();
+async function recordThroughSink(record: EvaluationRunRecord) {
+  registerServerSinks();
   await globalThis.zoonkEvaluationRunSink?.(record);
 }
 
@@ -35,13 +36,13 @@ function findByHash(inputHash: string) {
   return prisma.evaluationRun.findFirstOrThrow({ where: { inputHash } });
 }
 
-describe(registerEvaluationRunLog, () => {
+describe(recordEvaluationRun, () => {
   it("stores a learner's run with its verdict and input, and deletes it with the learner", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
     const record = runRecord({ distinctId: user.id, goalId: goal.id });
 
-    await recordEvaluationRun(record);
+    await recordThroughSink(record);
 
     const stored = await findByHash(record.inputHash);
 
@@ -72,7 +73,7 @@ describe(registerEvaluationRunLog, () => {
       task: "library-identity-decision",
     });
 
-    await recordEvaluationRun(record);
+    await recordThroughSink(record);
     await prisma.user.delete({ where: { id: user.id } });
 
     await expect(findByHash(record.inputHash)).resolves.toMatchObject({
@@ -87,7 +88,7 @@ describe(registerEvaluationRunLog, () => {
   it("keeps the verdict but drops the link and input when the learner is already gone", async () => {
     const record = runRecord({ distinctId: crypto.randomUUID() });
 
-    await recordEvaluationRun(record);
+    await recordThroughSink(record);
 
     await expect(findByHash(record.inputHash)).resolves.toMatchObject({
       answers: record.answers,
@@ -105,7 +106,7 @@ describe(registerEvaluationRunLog, () => {
       task: "memory-gate",
     });
 
-    await recordEvaluationRun(record);
+    await recordThroughSink(record);
 
     await expect(findByHash(record.inputHash)).resolves.toMatchObject({
       input: null,

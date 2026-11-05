@@ -35,7 +35,13 @@ export function PasteLink({ onAdd, pending }: { onAdd: (url: string) => void; pe
         type="url"
         value={url}
       />
-      <Button className="self-start" disabled={pending || !trimmed} size="sm" type="submit">
+      <Button
+        className="self-start"
+        disabled={pending || !trimmed}
+        focusableWhenDisabled
+        size="sm"
+        type="submit"
+      >
         {t("Add link")}
       </Button>
     </form>

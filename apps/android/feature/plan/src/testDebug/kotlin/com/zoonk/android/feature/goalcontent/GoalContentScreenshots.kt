@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -41,6 +40,7 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
@@ -114,11 +114,11 @@ class GoalContentScreenshots {
             index = screen
             compose.waitForIdle()
             val shot = SCREENS[screen].first
-            write("$shot-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("$shot-$name", compose.onRoot().captureRender().asAndroidBitmap())
             val opens = OPENED[shot] ?: return@forEach
             opens.forEach { compose.onNodeWithText(it).performClick() }
             compose.waitForIdle()
-            write("$shot-opened-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("$shot-opened-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

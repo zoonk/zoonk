@@ -181,9 +181,9 @@ describe(deleteInactiveGuests, () => {
     );
 
     vi.mocked(list).mockImplementation(
-      async ({ prefix } = {}) =>
+      async (options) =>
         ({
-          blobs: prefix === `images/${guest.id}/` ? [{ url: pictureUrl }] : [],
+          blobs: options?.prefix === `images/${guest.id}/` ? [{ url: pictureUrl }] : [],
           cursor: undefined,
           folders: [],
           hasMore: false,
@@ -235,9 +235,9 @@ describe(deleteInactiveGuests, () => {
     });
 
     vi.mocked(list).mockImplementation(
-      async ({ prefix } = {}) =>
+      async (options) =>
         ({
-          blobs: prefix === `images/${guest.id}/` ? [{ url: mapUrl }] : [],
+          blobs: options?.prefix === `images/${guest.id}/` ? [{ url: mapUrl }] : [],
           cursor: undefined,
           folders: [],
           hasMore: false,

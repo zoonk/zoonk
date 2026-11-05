@@ -1,16 +1,13 @@
 import "server-only";
-import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
-import {
-  loadGoalListeningSkillIds,
-  loadLearnerListeningSkillIds,
-} from "../exams/listening/listening-skills";
-import { getSkillOwners } from "../learner/_utils/goal-skill-graph";
+import { prisma } from "@zoonk/db";
+import { loadLearnerListeningSkillIds } from "../exams/listening/listening-skills";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
-import { readGoalPlan } from "../learner/_utils/read-goal-plan";
-import { readSavedPlan } from "../learner/facts/saved-plan";
-import { getGoalField } from "../library/items/item-field";
+import { readPracticeMistakes } from "../learner/facts/practice-mistakes";
 import { type MistakeAvailability } from "./contract";
-import { filterMistakesWithPracticeMaterial } from "./mistake-practice-eligibility";
+import {
+  type PracticeMistake,
+  filterMistakesWithPracticeMaterial,
+} from "./mistake-practice-eligibility";
 
 /** Fixing requires recall on a later local day, never repeating a just-shown answer. */
 export function getMistakePracticeBefore({
@@ -23,124 +20,70 @@ export function getMistakePracticeBefore({
   return getStartOfLocalDay({ localDate, timeZone });
 }
 
-function isMistakePracticeAvailable({
-  createdAt,
-  startOfToday,
-  status,
+export function listReadyMistakes<TMistake extends Pick<PracticeMistake, "createdAt">>({
+  localDate,
+  mistakes,
+  timeZone,
 }: {
-  createdAt: Date;
-  startOfToday: Date;
-  status: "fixed" | "open";
-}): boolean {
-  return status === "open" && createdAt.getTime() < startOfToday.getTime();
+  localDate: Date;
+  mistakes: readonly TMistake[];
+  timeZone: string;
+}): TMistake[] {
+  const before = getMistakePracticeBefore({ localDate, timeZone }).getTime();
+  return mistakes.filter((mistake) => mistake.createdAt.getTime() < before);
 }
 
-type MistakeScopeInput = {
-  /** The known goal's exam blueprint when the caller already read it (a GET), so it isn't again. */
-  blueprint?: ExamBlueprint | null;
-  /** The goal's row when the caller already read it (the learner summary), so it isn't again. */
-  goal?: Goal | null;
-  goalId?: string | null;
-  skillIds?: readonly string[] | null;
-  userId: string;
-};
-
-type AvailabilityInput = MistakeScopeInput & { localDate: Date; timeZone: string };
-
-async function loadGoalScope({
-  blueprint,
-  goal: known,
-  goalId,
-  userId,
-}: {
-  blueprint?: ExamBlueprint | null;
-  goal?: Goal | null;
-  goalId: string;
-  userId: string;
-}) {
-  const isKnown = known?.id === goalId;
-
-  const [plan, saved, goal] = await Promise.all([
-    readGoalPlan(goalId),
-    readSavedPlan(userId, goalId),
-    isKnown ? known : prisma.goal.findUnique({ where: { id: goalId } }),
-  ]);
-
-  const listeningSkillIds = goal
-    ? await loadGoalListeningSkillIds({
-        blueprint: isKnown ? blueprint : undefined,
-        goal,
-        graph: saved?.graph ?? null,
-      })
-    : new Set<string>();
-
-  return { goal, listeningSkillIds, ownerOf: getSkillOwners(plan.skills) };
-}
-
-/** Caller must authorize the learner and scoped goal first. */
+/** Caller must authorize the learner and scoped goal first; a skill counts only within the goal's, as practice does. */
 async function loadPracticeEligibleMistakes({
-  blueprint,
-  goal: knownGoal,
   goalId,
-  skillIds,
+  skillId,
   userId,
-}: MistakeScopeInput) {
-  const scope = goalId ? await loadGoalScope({ blueprint, goal: knownGoal, goalId, userId }) : null;
-  const ownerOf = scope?.ownerOf ?? new Map<string, string>();
-  const scopedSkillIds = skillIds ?? (goalId ? [...ownerOf.keys()] : null);
-
-  const where = {
-    status: "open" as const,
-    userId,
-    ...(scopedSkillIds ? { skillId: { in: [...scopedSkillIds] } } : {}),
-  };
+}: {
+  goalId?: string;
+  skillId?: string;
+  userId: string;
+}): Promise<PracticeMistake[]> {
+  if (goalId) {
+    const mistakes = await readPracticeMistakes(userId, goalId);
+    return skillId ? mistakes.filter((mistake) => mistake.skillId === skillId) : mistakes;
+  }
 
   const [mistakes, listeningSkillIds] = await Promise.all([
-    prisma.mistake.findMany({ omit: { snapshot: true }, where }),
-    scope ? scope.listeningSkillIds : loadLearnerListeningSkillIds(userId),
+    prisma.mistake.findMany({
+      select: { createdAt: true, id: true, itemId: true, skillId: true },
+      where: { skillId, status: "open", userId },
+    }),
+    loadLearnerListeningSkillIds(userId),
   ]);
 
-  const goal = scope?.goal ?? null;
-
   return filterMistakesWithPracticeMaterial({
-    examBlueprintId: goal?.examBlueprintId ?? null,
-    field: getGoalField(goal?.details),
+    examBlueprintId: null,
+    field: null,
     listeningSkillIds,
     mistakes,
-    ownerOf,
+    ownerOf: new Map(),
   });
 }
 
-type EligibleMistake = Awaited<ReturnType<typeof loadPracticeEligibleMistakes>>[number];
-
-function findReadyIds({
-  eligible,
+/** Caller must authorize the learner and scoped goal first. */
+export async function loadMistakePracticeAvailability({
   localDate,
   timeZone,
+  ...scope
 }: {
-  eligible: readonly EligibleMistake[];
+  goalId?: string;
   localDate: Date;
+  skillId?: string;
   timeZone: string;
-}): Set<string> {
-  const startOfToday = getMistakePracticeBefore({ localDate, timeZone });
-
-  return new Set(
-    eligible
-      .filter((mistake) => isMistakePracticeAvailable({ ...mistake, startOfToday }))
-      .map((mistake) => mistake.id),
-  );
-}
-
-/** Caller must authorize the learner and scoped goal first. */
-export async function loadMistakePracticeAvailability(
-  input: AvailabilityInput,
-): Promise<{
+  userId: string;
+}): Promise<{
   availability: MistakeAvailability;
   readyIds: ReadonlySet<string>;
   tomorrowIds: ReadonlySet<string>;
 }> {
-  const eligible = await loadPracticeEligibleMistakes(input);
-  const readyIds = findReadyIds({ eligible, ...input });
+  const eligible = await loadPracticeEligibleMistakes(scope);
+  const ready = listReadyMistakes({ localDate, mistakes: eligible, timeZone });
+  const readyIds = new Set(ready.map((mistake) => mistake.id));
 
   const tomorrowIds = new Set(
     eligible.filter((mistake) => !readyIds.has(mistake.id)).map((mistake) => mistake.id),
@@ -154,16 +97,22 @@ export async function loadMistakePracticeAvailability(
 }
 
 export async function countReadyMistakes({
+  goalId,
   timeZone,
   today,
-  ...scope
-}: MistakeScopeInput & { timeZone: string; today: Date }): Promise<number> {
+  userId,
+}: {
+  goalId: string;
+  timeZone: string;
+  today: Date;
+  userId: string;
+}): Promise<number> {
   const candidate = await prisma.mistake.findFirst({
     select: { id: true },
     where: {
       createdAt: { lt: getMistakePracticeBefore({ localDate: today, timeZone }) },
       status: "open",
-      userId: scope.userId,
+      userId,
     },
   });
 
@@ -171,6 +120,6 @@ export async function countReadyMistakes({
     return 0;
   }
 
-  const eligible = await loadPracticeEligibleMistakes(scope);
-  return findReadyIds({ eligible, localDate: today, timeZone }).size;
+  const mistakes = await readPracticeMistakes(userId, goalId);
+  return listReadyMistakes({ localDate: today, mistakes, timeZone }).length;
 }

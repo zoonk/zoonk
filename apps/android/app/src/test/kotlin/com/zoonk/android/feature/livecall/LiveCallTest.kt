@@ -254,7 +254,7 @@ class LiveCallTest {
         }
 
     @Test
-    fun goalsAreCheckedOnceTheCharacterAnswersTheLearnerAndTheServersProgressIsPassedOn() =
+    fun goalsAreCheckedOnceTheCharacterAnswersTheLearnerAndTheServersNoteWaitsForTheLearnersTurn() =
         runTest(dispatcher) {
             val progress = LiveCallCue(LiveCallCue.Channel.THINKING, "They ordered; the price is left")
             client.check =
@@ -281,8 +281,12 @@ class LiveCallTest {
             assertEquals(listOf(said), client.checks)
             assertEquals(listOf(CONNECTION), client.checkedConnections)
             assertEquals(listOf("Order a coffee"), call.state.value.metLabels)
-            assertEquals(progress.command(), transport.thinking.single())
+            assertTrue("A note sent into the learner's silence gets answered aloud", transport.thinking.isEmpty())
             assertNull(call.state.value.ending)
+
+            wait(2.seconds)
+            learnerTalks(until = currentTime.milliseconds + 1.seconds)
+            assertEquals(progress.command(), transport.thinking.single())
         }
 
     @Test
@@ -503,7 +507,8 @@ class LiveCallTest {
     @Test
     fun everyGoalMetEndsTheCallWithAThankYouGoodbye() =
         runTest(dispatcher) {
-            client.check = { LanguageConversationObjectiveCheck(goodbye = false, objectivesMet = task.objectives, progress = null) }
+            val wrapUp = LiveCallCue(LiveCallCue.Channel.THINKING, "They did everything; ask nothing new")
+            client.check = { LanguageConversationObjectiveCheck(goodbye = false, objectivesMet = task.objectives, progress = wrapUp) }
             val call = greeted()
 
             learnerAnswers()
@@ -513,7 +518,25 @@ class LiveCallTest {
 
             wait(8.seconds)
             assertEquals(listOf(cues.goodbyeDone.text), transport.goodbyes.map { it.content })
+            assertTrue("The goodbye ends the call, so the note is dropped", transport.thinking.isEmpty())
+        }
+
+    @Test
+    fun theWrapUpNoteGoesWithATypedReplyBeforeTheGoodbye() =
+        runTest(dispatcher) {
+            val wrapUp = LiveCallCue(LiveCallCue.Channel.THINKING, "They did everything; ask nothing new")
+            client.check = { LanguageConversationObjectiveCheck(goodbye = false, objectivesMet = task.objectives, progress = wrapUp) }
+            val call = greeted()
+
+            learnerAnswers()
+            characterTalks(until = 4.seconds)
+            wait(LiveCall.REPLY_SETTLED)
             assertTrue(transport.thinking.isEmpty())
+
+            call.sendText("Gracias")
+            runCurrent()
+            assertEquals(wrapUp.command(), transport.thinking.single())
+            assertTrue(transport.goodbyes.isEmpty())
         }
 
     @Test

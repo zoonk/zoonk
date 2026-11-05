@@ -100,6 +100,39 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(store.sessionID, "s9", "the session screen shows the session it opened in")
   }
 
+  func testABlockLinkThatFailsSaysSoOnlyWhileTheLearnerStaysWhereTheyTapped() async {
+    let api = StudyAPIStub(openError: .network, holdsOpening: true)
+    let router = AppRouter(
+      openBlock: AppRouter.openingTodayBlocks(
+        today: TodayStore(api: api, cache: signedInCache())))
+
+    let stayed = Task { await router.open(blockID: "b1") }
+    await api.waitForHeldOpening()
+    await api.releaseOpening()
+
+    guard case .failed = await stayed.value else {
+      return XCTFail("the answer the learner tapped in says the step didn't open")
+    }
+
+    let left = Task { await router.open(blockID: "b1") }
+    await api.waitForHeldOpening()
+    router.select(.plan)
+    await api.releaseOpening()
+
+    guard case .obsolete = await left.value else {
+      return XCTFail("a screen the learner left says nothing")
+    }
+
+    let covered = Task { await router.open(blockID: "b1") }
+    await api.waitForHeldOpening()
+    router.present(.account())
+    await api.releaseOpening()
+
+    guard case .obsolete = await covered.value else {
+      return XCTFail("a sheet the learner opened meanwhile hears nothing")
+    }
+  }
+
   func testAMissionLinksSessionWinsOverAnEarlierDayTodayStillShows() async throws {
     let yesterday = try today(
       session: day(blocks: [], nextPosition: nil, id: "s1", localDate: "2026-10-27"))
@@ -763,7 +796,7 @@ private func today(
 private func moment(blockID: String, nextBlockID: String?) throws -> BlockMoment {
   try decode(
     """
-    {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"comesBackOn":null,
+    {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"certificates":[],"comesBackOn":null,
     "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"missions":[],
     "nextBlockId":\(json(nextBlockID)),"reached":null,"sessionCompleted":\(nextBlockID == nil),
     "total":1}

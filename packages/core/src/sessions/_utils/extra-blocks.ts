@@ -1,6 +1,7 @@
 import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
+import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
@@ -39,12 +40,20 @@ async function loadPracticePlan(goalId: string | null) {
 }
 
 /** Uses the session's saved local day, not the request's later date. */
-export async function isFreeWeekOver(session: ExtraDay): Promise<boolean> {
+export async function isFreeWeekOver(
+  session: ExtraDay,
+  readViewer?: typeof readEntitlementViewer,
+): Promise<boolean> {
   if (!session.goal) {
     return false;
   }
 
-  const access = await loadExamPrepAccess({ goal: session.goal, today: session.localDate });
+  const access = await loadExamPrepAccess({
+    goal: session.goal,
+    readViewer,
+    today: session.localDate,
+  });
+
   return access.trialEnded;
 }
 
@@ -128,14 +137,16 @@ export async function buildExtraLessons({
   areaId = null,
   minutes = 0,
   planItemIds,
+  readViewer,
   session,
 }: {
   areaId?: string | null;
   minutes?: number;
   planItemIds?: readonly string[];
+  readViewer?: typeof readEntitlementViewer;
   session: ExtraDay;
 }): Promise<PlannedBlock[]> {
-  if (await isFreeWeekOver(session)) {
+  if (await isFreeWeekOver(session, readViewer)) {
     return [];
   }
 
@@ -187,16 +198,18 @@ export async function buildExtraLessons({
 
 export async function planExtraBlocks({
   minutes,
+  readViewer,
   session,
   skillIds,
   userId,
 }: {
   minutes: number;
+  readViewer?: typeof readEntitlementViewer;
   session: ExtraDay;
   skillIds: string[];
   userId: string;
 }): Promise<ExtraBlocks | null> {
-  const [lesson, ...lessons] = await buildExtraLessons({ minutes, session });
+  const [lesson, ...lessons] = await buildExtraLessons({ minutes, readViewer, session });
 
   if (lesson) {
     return [lesson, ...lessons];
@@ -220,13 +233,19 @@ export async function withExtraStudyCheck({
     return extraTime;
   }
 
-  if (await isFreeWeekOver(session)) {
+  if (await isFreeWeekOver(session, readEntitlementViewer)) {
     return { available: false, lessons: [], minutes: 0, reason: "plusRequired" };
   }
 
   const skillIds = session.goalId ? await loadGoalSkillIds(session.goalId) : [];
 
-  const planned = await planExtraBlocks({ minutes: extraTime.minutes, session, skillIds, userId });
+  const planned = await planExtraBlocks({
+    minutes: extraTime.minutes,
+    readViewer: readEntitlementViewer,
+    session,
+    skillIds,
+    userId,
+  });
 
   if (!planned) {
     return { available: false, lessons: [], minutes: 0, reason: "nothingToStudy" };

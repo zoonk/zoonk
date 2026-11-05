@@ -61,7 +61,7 @@
   "navigation_study": "8b3752f2d808233863b8e0797833bad85e2c9d653c47232cfe7b060895bfc381",
   "navigation_today": "797d355eb2b1e46bf90bd415faeff70a9c42b76904bae823d8d7a4bd4da9d095",
   "navigation_user_menu": "aa0d6f9b07be2db17049f069e73ffc6ac80559d1ee9db474bbec1c642f6bc384",
-  "not_found_description": "68c0ae963e10fe3ebb8016e241287adeef1dffd36929979b7c191d67323fa4b4",
+  "not_found_description": "0bc2f9de7bd79d4b841e8a58a6b012c9e8855f22c5edb7952c2bc3b2e6011f0a",
   "not_found_go_home": "15848291f200ce64248588b5e9bbb365050e83c8efc34ba5163b8a0af9879db0",
   "not_found_title": "7c76fad69ccfab206d1daeb348478509cf70c273825f8cbf08cf64ae85dcbe7c",
   "suggestion_save_failed": "cf84bd9a1f3bf0c8c3071f7530f4c3ca9586046a179c7579ecabd845dad930c8",
@@ -138,7 +138,7 @@
     <string name="test_out_skip_chapter">Mach den Test und überspringe das Kapitel</string>
     <string name="test_out_skip_unit">Mach den Test und überspringe die Einheit</string>
     <string name="not_found_title">Wir konnten diese Seite nicht finden</string>
-    <string name="not_found_description">Der Link ist vielleicht veraltet oder enthält einen Tippfehler.</string>
+    <string name="not_found_description">Der Link ist vielleicht veraltet oder falsch eingegeben.</string>
     <string name="not_found_go_home">Zur Startseite</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
