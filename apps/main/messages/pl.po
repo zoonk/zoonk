@@ -3041,6 +3041,11 @@ msgid "Higher limits for speaking calls"
 msgstr "Wyższe limity rozmów do ćwiczenia mówienia"
 
 #: src/components/pricing/plus-benefits.tsx
+msgctxt "udRZBr"
+msgid "A certificate for every level you finish"
+msgstr "Certyfikat za każdy ukończony poziom"
+
+#: src/components/pricing/plus-benefits.tsx
 msgctxt "joZG7W"
 msgid "Every goal · every lesson"
 msgstr "Każdy cel · każda lekcja"
@@ -3574,17 +3579,11 @@ msgctxt "PrhNZj"
 msgid "Level completed · aligned with the CEFR"
 msgstr "Poziom ukończony · zgodny ze skalą CEFR"
 
-#. A course certificate's span when the plan held one level, such as “Beginner level”.
+#. A course level certificate's level, such as “Beginner level”.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "XmHKKJ"
 msgid "{level} level"
 msgstr "Poziom: {level}"
-
-#. The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "LZF2Ia"
-msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
-msgstr "Od {from, select, overview {przeglądu} beginner {poziomu początkującego} intermediate {poziomu średnio zaawansowanego} other {poziomu zaawansowanego}} do {to, select, overview {przeglądu} beginner {poziomu początkującego} intermediate {poziomu średnio zaawansowanego} other {poziomu zaawansowanego}}"
 
 #. Above the topics a finished course covered, on its certificate.
 #: src/lib/certificates/certificate-view.ts
@@ -3592,11 +3591,17 @@ msgctxt "fAGVcM"
 msgid "Topics covered"
 msgstr "Omówione tematy"
 
-#. The fine print on a course certificate.
+#. The fine print on a course level's certificate.
 #: src/lib/certificates/certificate-view.ts
-msgctxt "fDd8ap"
-msgid "Awarded for finishing every lesson and challenge of this course on Zoonk."
-msgstr "Przyznano za ukończenie wszystkich lekcji i wyzwań tego kursu w Zoonku."
+msgctxt "anftNZ"
+msgid "Awarded for finishing every lesson and challenge of this level on Zoonk."
+msgstr "Przyznano za ukończenie wszystkich lekcji i wyzwań tego poziomu w Zoonku."
+
+#. The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "Sadn8K"
+msgid "Awarded for finishing every lesson and challenge of a study plan on Zoonk."
+msgstr "Przyznano za ukończenie wszystkich lekcji i wyzwań z planu nauki w Zoonku."
 
 #: src/lib/public/public-labels.ts
 msgctxt "3Rx6Qo"

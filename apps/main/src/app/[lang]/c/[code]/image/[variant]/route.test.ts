@@ -17,6 +17,7 @@ function linkImageUrl({ code, name }: { code: string; name: string }) {
   const links = getCertificateLinks({
     code,
     completedOn: "2026-11-03",
+    courseLevel: null,
     language: "en",
     level: null,
     origin: ORIGIN,
@@ -55,5 +56,15 @@ describe("certificate image route", () => {
 
     expect(picture.status).toBe(200);
     expect(picture.headers.get("Content-Disposition")).toMatch(/^attachment;/u);
+  });
+
+  it("refuses a locked certificate's picture like an unknown one's, uncached", async () => {
+    const user = await userFixture({ name: "Ana Souza" });
+    const { code } = await certificateFixture({ issuedAt: null, userId: user.id });
+
+    const response = await requestImage({ code, url: linkImageUrl({ code, name: "Ana Souza" }) });
+
+    expect(response.status).toBe(404);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 });

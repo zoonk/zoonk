@@ -1,10 +1,10 @@
 import { getCertificateDownloadDisposition } from "@/lib/certificates/certificate-download";
 import { renderCertificateImage } from "@/lib/certificates/certificate-image";
-import { getCertificateFileTitle } from "@/lib/certificates/certificate-view";
 import { getPublicCertificate } from "@zoonk/core/certificates/public";
 import {
   CERTIFICATE_IMAGE_VARIANTS,
   getCertificateImageVersion,
+  getCertificateName,
 } from "@zoonk/utils/certificate-links";
 import { type NextRequest } from "next/server";
 
@@ -28,8 +28,10 @@ export async function GET(
   const variant = CERTIFICATE_IMAGE_VARIANTS.find((name) => file === `${name}.png`);
   const facts = variant ? await getPublicCertificate(code) : null;
 
+  // A locked certificate's picture is refused like an unknown one's, and never cached, so it shows
+  // once its owner gets Plus.
   if (!variant || !facts) {
-    return new Response(null, { status: 404 });
+    return new Response(null, { headers: { "Cache-Control": "no-store" }, status: 404 });
   }
 
   const version = getCertificateImageVersion(facts.recipientName);
@@ -60,7 +62,7 @@ export async function GET(
       ...(download && {
         "Content-Disposition": getCertificateDownloadDisposition({
           name: facts.recipientName,
-          title: getCertificateFileTitle(facts),
+          title: getCertificateName(facts),
         }),
       }),
     },

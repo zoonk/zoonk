@@ -5,7 +5,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted, useFormatter } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
-import { useCertificateName, useLanguageNameInSentence } from "./certificate-labels";
+import { useLanguageNameInSentence } from "./certificate-labels";
 
 /** A level is finished when every counted skill reaches the band above it. */
 const BAND_ABOVE: Record<CertifiedLevel, string> = {
@@ -38,9 +38,13 @@ function useMeaning(facts: CertificateFacts): string[] {
   }
 
   return [
-    t(
-      "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it.",
-    ),
+    facts.courseLevel
+      ? t(
+          "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it.",
+        )
+      : t(
+          "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it.",
+        ),
     `${t("It's a record of completion on Zoonk, not academic credit.")} ${nameNote}`,
   ];
 }
@@ -102,7 +106,6 @@ export function CertificateCovered({ facts }: { facts: CertificateFacts }) {
 
 export function CertificateStart({ facts, href }: { facts: CertificateFacts; href: string }) {
   const t = useExtracted();
-  const certificateName = useCertificateName();
   const languageName = useLanguageNameInSentence();
 
   return (
@@ -110,7 +113,7 @@ export function CertificateStart({ facts, href }: { facts: CertificateFacts; hre
       <div>
         <h2 className="text-section">
           {facts.kind === "course"
-            ? t("Learn {course} on Zoonk", { course: certificateName(facts) })
+            ? t("Learn {course} on Zoonk", { course: facts.title ?? "" })
             : t("Learn {language} on Zoonk", { language: languageName(facts.targetLanguage) })}
         </h2>
         <p className="text-muted-foreground mt-1.5 text-sm">

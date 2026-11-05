@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  fitRouteLabels,
-  getCoveredFallbacks,
-  getLinkOverflow,
-  getSheetOverflow,
-} from "./certificate-layout";
+import { getCoveredFallbacks, getLinkOverflow, getSheetOverflow } from "./certificate-layout";
 
 const TOPICS = [
   "Light and matter",
@@ -102,30 +97,5 @@ describe(getCoveredFallbacks, () => {
     ]);
 
     expect(getCoveredFallbacks({ kind: "readouts" })).toStrictEqual([{ kind: "readouts" }, null]);
-  });
-});
-
-/** The print sheet's route: 979 u wide, labels 12.5 u, each at its level's start (the first at the ring). */
-const SHEET_ROUTE = { fontSize: 12.5, width: 979 };
-
-describe(fitRouteLabels, () => {
-  it("leaves out the label of a level too short for it, keeping the levels after it", () => {
-    const labels = [
-      { label: "Overview", left: 0 },
-      { label: "Beginner", left: 44 },
-      { label: "Intermediate", left: 550 },
-      { label: "Advanced", left: 887 },
-    ];
-
-    expect(fitRouteLabels({ ...SHEET_ROUTE, labels })).toStrictEqual(labels.slice(1));
-  });
-
-  it("leaves out a last label that would run past the route's end", () => {
-    const labels = [
-      { label: "Beginner", left: 0 },
-      { label: "Advanced", left: 935 },
-    ];
-
-    expect(fitRouteLabels({ ...SHEET_ROUTE, labels })).toStrictEqual(labels.slice(0, 1));
   });
 });

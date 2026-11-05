@@ -17,8 +17,7 @@ const TOPIC_TEXT_WIDTH = TOPIC_COLUMN_WIDTH - SHEET.topics.check - SHEET.topics.
 const WIDE_CHARACTER =
   /[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}＀-￯]/u;
 
-/** Geist Mono's characters are all 0.6 em wide. */
-const EM_WIDTH = { mono: 0.6, narrow: 0.56, wide: 1 };
+const EM_WIDTH = { narrow: 0.56, wide: 1 };
 
 const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 
@@ -41,28 +40,6 @@ function estimateLines({
 }): number {
   const ems = countEms({ narrow: EM_WIDTH.narrow, text });
   return Math.max(1, Math.ceil((ems * fontSize) / width));
-}
-
-export type RouteLabel = { label: string; left: number };
-
-/**
- * A level's label shows only when it ends a character before the next level starts, or before the
- * route ends, so labels never overlap or run off; a level without its label is still drawn.
- */
-export function fitRouteLabels({
-  fontSize,
-  labels,
-  width,
-}: {
-  fontSize: number;
-  labels: readonly RouteLabel[];
-  width: number;
-}): RouteLabel[] {
-  return labels.filter(({ label, left }, index) => {
-    const room = (labels[index + 1]?.left ?? width) - left;
-    const ems = countEms({ narrow: EM_WIDTH.mono, text: label }) + EM_WIDTH.mono;
-    return ems * fontSize <= room;
-  });
 }
 
 export type SheetCovered =

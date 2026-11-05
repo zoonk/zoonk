@@ -4,7 +4,7 @@ import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { type CertificateLinks } from "@zoonk/utils/certificate-links";
+import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailContent, DetailLayout } from "../_components/detail-page";
@@ -25,6 +25,7 @@ import {
   PageSectionTitle,
   PageSubtitle,
 } from "../_components/page";
+import { PlusMark } from "../_components/plus-lock";
 import { useFormatShare } from "../_utils/percent";
 import { LearnLink } from "../learn-link";
 import { GoalMark } from "../shell/goal-mark";
@@ -34,9 +35,11 @@ import {
   useCertificateName,
   useCertificateSentence,
 } from "./certificate-labels";
+import { CertificatesPlusNotice, LockedCertificateSheet } from "./certificate-lock";
 import { CertificateSheet } from "./certificate-sheet";
 
-export type ListedCertificate = { facts: OwnedCertificateFacts; links: CertificateLinks };
+/** `links` is null exactly when the certificate is locked. */
+export type ListedCertificate = { facts: OwnedCertificateFacts; links: CertificateLinks | null };
 
 /** A goal that can still earn a certificate: a course by finishing its plan, a language by levels. */
 export type CertificateUpNext = {
@@ -49,6 +52,7 @@ export type CertificateUpNext = {
 const LIST_ID = "certificates-list";
 const UP_NEXT_ID = "certificates-up-next";
 
+/** A locked one opens its owner's locked page, by its code: the same row, marked for Plus. */
 function CertificateItem({ facts, links }: ListedCertificate) {
   const certificateName = useCertificateName();
   const t = useExtracted();
@@ -58,22 +62,27 @@ function CertificateItem({ facts, links }: ListedCertificate) {
   return (
     <LearnLink
       className="group press focus-visible:ring-ring/50 flex items-center gap-3 rounded-lg py-2.5 outline-none [--press-scale:0.99] focus-visible:ring-[3px] lg:flex-col lg:items-stretch lg:py-0"
-      href={links.path}
+      href={links?.path ?? getCertificatePath(facts.code)}
       prefetch="intent"
     >
       <span className="w-18 shrink-0 lg:w-full">
-        <CertificateSheet
-          alt={sentence(facts)}
-          className="lg:rounded-md"
-          loading="lazy"
-          images={links.imageUrls}
-          variant="thumb"
-        />
+        {links ? (
+          <CertificateSheet
+            alt={sentence(facts)}
+            className="lg:rounded-md"
+            loading="lazy"
+            images={links.imageUrls}
+            variant="thumb"
+          />
+        ) : (
+          <LockedCertificateSheet className="rounded-[4px] lg:rounded-md" facts={facts} />
+        )}
       </span>
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="group-hover:decoration-input text-sm leading-snug font-[550] tracking-[-0.01em] text-pretty group-hover:underline group-hover:underline-offset-4">
           {certificateName(facts)}
+          {!links && <PlusMark className="ml-2 align-middle" />}
         </span>
         <span className="text-muted-foreground text-xs leading-snug">
           {t("Certificate of completion")}
@@ -178,9 +187,7 @@ function EmptyCertificates({
           {t("No certificates yet")}
         </h2>
         <p className="text-muted-foreground mt-1.5 text-sm text-pretty">
-          {t(
-            "Finish a course or a language level and its certificate shows up here, free to print and share.",
-          )}
+          {t("Your certificates show up here when you finish a level or a plan.")}
         </p>
         <LearnLink
           className={buttonVariants({ className: "mt-5", size: "lg" })}
@@ -236,11 +243,14 @@ export function CertificatesScreen({
   back,
   certificates,
   continueHref,
+  plus,
   upNext,
 }: {
   back: string;
   certificates: ListedCertificate[];
   continueHref: string;
+  /** Whether the learner has Plus now; without it, new certificates come locked. */
+  plus: boolean;
   upNext: CertificateUpNext[];
 }) {
   return (
@@ -248,6 +258,7 @@ export function CertificatesScreen({
       <CertificatesHeader count={certificates.length} />
 
       <DetailContent>
+        {!plus && <CertificatesPlusNotice />}
         {certificates.length > 0 ? (
           <CertificateList certificates={certificates} />
         ) : (

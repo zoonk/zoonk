@@ -1,32 +1,33 @@
 "use client";
 
 import { saveBuddyAction } from "@/app/[lang]/(app)/(settings)/settings/appearance/actions";
-import { getPathname } from "@/i18n/navigation";
-import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
-import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
-import { type CertificateFacts } from "@zoonk/core/certificates/contract";
+import {
+  type CertificateFacts,
+  type OwnedCertificateFacts,
+} from "@zoonk/core/certificates/contract";
 import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { MilestoneCeremony } from "@zoonk/learn/ceremony";
-import { type CertificateAccount, CertificateMoment } from "@zoonk/learn/certificates/moment";
-import { useAppLocale } from "@zoonk/learn/locale";
+import { CertificateMoment } from "@zoonk/learn/certificates/moment";
 import { type EarnedMoments } from "@zoonk/learn/session/moment-ceremony";
-import { getCertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
-import { useState } from "react";
+import { getCertificateLinks } from "@zoonk/utils/certificate-links";
+import { useState, useSyncExternalStore } from "react";
 import { markCertificateShownAction, saveCertificateNameAction } from "./certificate-actions";
 import { markMilestoneShownAction } from "./milestone-actions";
 
-/** Built in the browser from its own origin, so a preview's links point at the preview. */
-function getBrowserCertificateLinks(facts: CertificateFacts) {
-  return getCertificateLinks({ ...facts, origin: globalThis.location.origin });
+/** The page's origin doesn't change while it's open: nothing to listen to. */
+function subscribeToOrigin(): () => void {
+  return function unsubscribe() {
+    // Nothing was listened to, so there's nothing to stop.
+  };
 }
 
-/** Naming and sharing need a known account, and a guest is offered one instead; a failed read offers neither. */
-function getViewerAccount(learner: LearnerSummaryState): CertificateAccount | null {
-  if (learner.status !== "ready") {
-    return null;
-  }
-
-  return learner.summary.identity.isAnonymous ? "guest" : "account";
+/** Links come from the browser's own origin, so a preview's point at the preview; the server has none. */
+function useBrowserOrigin(): string | null {
+  return useSyncExternalStore(
+    subscribeToOrigin,
+    () => globalThis.location.origin,
+    () => null,
+  );
 }
 
 export function SessionCertificates({
@@ -35,30 +36,23 @@ export function SessionCertificates({
   onClose,
 }: {
   beforeCeremony?: boolean;
-  certificates: CertificateFacts[];
+  certificates: OwnedCertificateFacts[];
   onClose: () => void;
 }) {
-  const locale = useAppLocale();
-  const learner = useLearnerSummary();
+  const origin = useBrowserOrigin();
 
-  // Waits to know who's looking. The server never knows, so the links built from the browser's
-  // origin never render there.
-  if (learner.status === "not-loaded") {
+  if (!origin) {
     return null;
   }
 
   return (
     <CertificateMoment
-      account={getViewerAccount(learner)}
       beforeCeremony={beforeCeremony}
       certificates={certificates}
-      getLinks={getBrowserCertificateLinks}
+      getLinks={(facts: CertificateFacts) => getCertificateLinks({ ...facts, origin })}
       onClose={onClose}
       onShown={(code) => void markCertificateShownAction(code)}
       saveName={saveCertificateNameAction}
-      signUpHref={(code) =>
-        `${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(getPathname({ href: getCertificatePath(code), locale }))}`
-      }
     />
   );
 }

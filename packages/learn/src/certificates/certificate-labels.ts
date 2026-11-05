@@ -10,7 +10,10 @@ import { useLevelName } from "../course/use-level-name";
 
 const MINUTES_PER_HOUR = 60;
 
-type NamedFacts = Pick<CertificateFacts, "kind" | "level" | "targetLanguage" | "title">;
+type NamedFacts = Pick<
+  CertificateFacts,
+  "courseLevel" | "kind" | "level" | "targetLanguage" | "title"
+>;
 
 /** The plan's estimate, so it's shown rounded: whole hours past the first one. */
 export function roundStudyMinutes(minutes: number): number {
@@ -33,12 +36,25 @@ export function useLanguageNameInSentence() {
     targetLanguage ? getLanguageNameInSentence({ targetLanguage, userLanguage: locale }) : "";
 }
 
-/** A course's title, or the language and its level ("Spanish B1"), in the viewer's language. */
+/**
+ * A course's title, with its level for a level's certificate ("Python · Beginner"), or the language
+ * and its level ("Spanish B1"), in the viewer's language.
+ */
 export function useCertificateName() {
   const t = useExtracted();
   const languageName = useLanguageName();
+  const levelName = useLevelName();
 
   return (facts: NamedFacts): string => {
+    if (facts.kind === "course" && facts.courseLevel) {
+      return t({
+        description:
+          "A course level's certificate name, such as \"Python · Beginner\": the course's title, then the level's name.",
+        message: "{course} · {level}",
+        values: { course: facts.title ?? "", level: levelName(facts.courseLevel) },
+      });
+    }
+
     if (facts.kind === "course") {
       return facts.title ?? "";
     }
@@ -62,33 +78,6 @@ export function useStudyTime() {
       message: "about {duration}",
       values: { duration: formatDuration(roundStudyMinutes(minutes)) },
     });
-}
-
-/** "Beginner to Advanced", one level's name, or nothing for a course without levels. */
-export function useCourseLevels() {
-  const t = useExtracted();
-  const levelName = useLevelName();
-
-  return (levels: CertificateFacts["courseLevels"]): string => {
-    const first = levels.at(0)?.level;
-    const last = levels.at(-1)?.level;
-
-    if (!first || !last) {
-      return "";
-    }
-
-    if (first === last) {
-      return levelName(first);
-    }
-
-    return t({
-      description:
-        "The span of levels a course certificate covers, such as “Beginner to Advanced”. Reword both ends as your language says a range of course levels, such as Portuguese “Do iniciante ao avançado”.",
-      message:
-        "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}",
-      values: { from: first, to: last },
-    });
-  };
 }
 
 export function useCertificateDate() {

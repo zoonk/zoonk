@@ -1,5 +1,4 @@
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
-import { type RouteLabel, fitRouteLabels } from "./certificate-layout";
 import { CERTIFICATE_COLORS } from "./certificate-palette";
 import { type CertificateView, type CertificateGraph as Graph } from "./certificate-view";
 
@@ -7,8 +6,6 @@ const ROUTE = {
   /** Past this many stations they shrink, so a long course's dots don't touch. */
   denseStationScale: 0.6,
   denseStations: 60,
-  /** Ticks between levels reach this share of the line's height above and below it. */
-  tickReach: 0.38,
 };
 
 const LADDER_WEIGHTS = { label: 400, reached: 600 };
@@ -23,7 +20,6 @@ type RouteSpec = {
   squareRadius: number;
   station: number;
   stroke: number;
-  tick: number;
   width: number;
 };
 
@@ -36,39 +32,19 @@ type LadderSpec = {
   radius: number;
 };
 
-type RouteZone = { chapters: number; label: string };
-
 type RouteGraph = Extract<Graph, { kind: "route" }>;
 
-/** A course without levels draws its topics as stations, unlabelled; without either, the bare line. */
-function getRouteZones({ topics, zones }: RouteGraph): RouteZone[] {
-  if (zones.some((zone) => zone.chapters > 0)) {
-    return zones;
-  }
-
-  return topics > 0 ? [{ chapters: topics, label: "" }] : [];
-}
-
-/** Stations sit a step apart between the start ring and the end square; a level starts half a step before its first. */
-function getRouteGeometry({ spec, zones }: { spec: RouteSpec; zones: RouteZone[] }) {
-  const total = zones.reduce((sum, zone) => sum + zone.chapters, 0);
+/** Stations sit a step apart between the start ring and the end square. */
+function getRouteGeometry({ spec, stations }: { spec: RouteSpec; stations: number }) {
   const pad = spec.ring + spec.stroke / 2;
-  const step = (spec.width - pad * 2) / (total + 1);
-
-  const zoneStarts = zones.map(
-    (_zone, index) =>
-      pad +
-      step * (zones.slice(0, index).reduce((sum, zone) => sum + zone.chapters, 0) + 1) -
-      step / 2,
-  );
+  const step = (spec.width - pad * 2) / (stations + 1);
 
   return {
     end: spec.width - pad,
     middle: spec.height / 2,
     pad,
-    station: total > ROUTE.denseStations ? spec.station * ROUTE.denseStationScale : spec.station,
-    stations: Array.from({ length: total }, (_value, index) => pad + step * (index + 1)),
-    zoneStarts,
+    station: stations > ROUTE.denseStations ? spec.station * ROUTE.denseStationScale : spec.station,
+    stations: Array.from({ length: stations }, (_value, index) => pad + step * (index + 1)),
   };
 }
 
@@ -83,43 +59,29 @@ function scaleRoute(spec: RouteSpec, scale: number): RouteSpec {
     squareRadius: spec.squareRadius * scale,
     station: spec.station * scale,
     stroke: spec.stroke * scale,
-    tick: spec.tick * scale,
     width: spec.width * scale,
   };
 }
 
-function RouteLabels({ labels, spec }: { labels: RouteLabel[]; spec: RouteSpec }) {
+function RouteLabel({ label, spec }: { label: string; spec: RouteSpec }) {
   return (
-    <div
+    <span
       style={{
-        display: "flex",
+        color: CERTIFICATE_COLORS.muted,
+        fontFamily: "Geist Mono",
+        fontSize: spec.labelSize,
         height: spec.labelHeight,
+        letterSpacing: 0,
         marginBottom: spec.labelGap,
-        position: "relative",
+        whiteSpace: "nowrap",
       }}
     >
-      {labels.map(({ label, left }) => (
-        <span
-          key={label}
-          style={{
-            color: CERTIFICATE_COLORS.muted,
-            fontFamily: "Geist Mono",
-            fontSize: spec.labelSize,
-            left,
-            letterSpacing: 0,
-            position: "absolute",
-            top: 0,
-            whiteSpace: "nowrap",
-          }}
-        >
-          {label}
-        </span>
-      ))}
-    </div>
+      {label}
+    </span>
   );
 }
 
-/** The course's chapters in order as stations through its levels; on a certificate all of it is done. */
+/** The topics in order as stations along the route; on a certificate all of it is done. */
 function CertificateRoute({
   graph,
   showLabels,
@@ -129,24 +91,14 @@ function CertificateRoute({
   showLabels: boolean;
   spec: RouteSpec;
 }) {
-  const zones = getRouteZones(graph);
-  const { end, middle, pad, station, stations, zoneStarts } = getRouteGeometry({ spec, zones });
-  const tickReach = spec.height * ROUTE.tickReach;
-
-  const labels = fitRouteLabels({
-    fontSize: spec.labelSize,
-    labels: zones.map(({ label }, index) => ({
-      label,
-      left: index === 0 ? 0 : (zoneStarts[index] ?? 0),
-    })),
-    width: spec.width,
+  const { end, middle, pad, station, stations } = getRouteGeometry({
+    spec,
+    stations: graph.stations,
   });
 
   return (
     <div style={{ display: "flex", flexDirection: "column", width: spec.width }}>
-      {showLabels && zones.some((zone) => zone.label) && (
-        <RouteLabels labels={labels} spec={spec} />
-      )}
+      {showLabels && graph.label && <RouteLabel label={graph.label} spec={spec} />}
 
       <div
         style={{ display: "flex", height: spec.height, position: "relative", width: spec.width }}
@@ -169,18 +121,6 @@ function CertificateRoute({
             radius={station}
             top={middle - station}
             width={station * 2}
-          />
-        ))}
-
-        {zoneStarts.slice(1).map((x) => (
-          <Dot
-            color={CERTIFICATE_COLORS.hairline}
-            height={tickReach * 2}
-            key={x}
-            left={x - spec.tick / 2}
-            radius={0}
-            top={middle - tickReach}
-            width={spec.tick}
           />
         ))}
 
@@ -309,7 +249,7 @@ function CertificateLadder({
   );
 }
 
-/** A course's route through its levels, or a language's CEFR ladder. */
+/** A course's route through its topics, or a language's CEFR ladder. */
 export function CertificateGraph({
   ladder,
   route,
