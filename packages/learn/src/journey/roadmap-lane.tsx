@@ -57,7 +57,7 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
   const overrunShare = overrun?.phaseIndex === phase.index ? overrun.share : null;
 
   return (
-    <span aria-hidden="true" className="relative mt-1 block h-4">
+    <span aria-hidden="true" className="relative mt-2 block h-4">
       {typeof mockShare === "number" && (
         <LaneMark share={mockShare}>
           <KindDot className="size-1.5" kind="mock" />

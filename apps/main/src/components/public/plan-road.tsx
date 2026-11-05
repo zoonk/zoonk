@@ -89,7 +89,7 @@ function RoadBandFace({ band }: { band: RoadBand }) {
 
 function RoadLane({ band, isLast }: { band: RoadBand; isLast: boolean }) {
   return (
-    <span className="relative mt-1 block h-4">
+    <span className="relative mt-2 block h-4">
       {band.mocks?.map((share) => (
         <span
           className="absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2"
