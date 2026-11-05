@@ -180,13 +180,27 @@ private struct GoalSwitcher: View {
   @Environment(OnboardingStore.self) private var onboarding
   @State private var pendingGoalId: String?
   @State private var isStartingWaitingGoal = false
+  @State private var failure = Failure.switchGoal
+  @State private var showsFailure = false
   /// Caps a long goal title so it truncates in the bar instead of moving to its overflow menu.
   @ScaledMetric(relativeTo: .body) private var maxTitleWidth: CGFloat = 140
 
   let summary: LearnerSummary
   let isCompact: Bool
 
+  /// Said in an alert, since the menu the learner chose from has closed.
+  private enum Failure {
+    case start
+    case switchGoal
+  }
+
   var body: some View {
+    menu
+      .alert(failureTitle, isPresented: $showsFailure) {}
+  }
+
+  @ViewBuilder
+  private var menu: some View {
     let followed = summary.followedGoals
     let explanations = summary.openExplanations
 
@@ -315,6 +329,19 @@ private struct GoalSwitcher: View {
     }
   }
 
+  private var failureTitle: Text {
+    switch failure {
+    case .start:
+      Text(
+        "We couldn't start this goal. Try again.", tableName: "Navigation",
+        comment: "A goal waiting in the goal switcher didn't start")
+    case .switchGoal:
+      Text(
+        "We couldn't switch goals. Try again.", tableName: "Navigation",
+        comment: "Switching to another goal in the goal switcher didn't go through")
+    }
+  }
+
   private func start(_ goal: LearnerWaitingGoal) {
     guard !goal.locked else {
       router.present(.subscription)
@@ -326,8 +353,12 @@ private struct GoalSwitcher: View {
     Task {
       defer { isStartingWaitingGoal = false }
 
-      if let goalID = try? await onboarding.startWaitingGoal(goal) {
-        router.open(.goalSetup(goalId: goalID))
+      do {
+        router.open(.goalSetup(goalId: try await onboarding.startWaitingGoal(goal)))
+      } catch is CancellationError {
+      } catch {
+        failure = .start
+        showsFailure = true
       }
     }
   }
@@ -340,15 +371,23 @@ private struct GoalSwitcher: View {
     Binding(
       get: { shownGoal?.id == goal.id },
       set: { isOn in
-        guard isOn, shownGoal?.id != goal.id else {
+        guard isOn, pendingGoalId == nil, shownGoal?.id != goal.id else {
           return
         }
 
         pendingGoalId = goal.id
 
         Task {
-          await learner.switchGoal(to: goal.id)
-          router.popToRoots()
+          switch await learner.switchGoal(to: goal.id) {
+          case .done:
+            router.popToRoots()
+          case .failed:
+            failure = .switchGoal
+            showsFailure = true
+          case .obsolete:
+            break
+          }
+
           pendingGoalId = nil
         }
       })
@@ -393,23 +432,12 @@ private func goalLine(_ goal: LearnerGoal) -> String {
 }
 
 private func daysLeft(until targetDate: String?) -> Int? {
-  guard let targetDate,
-    let date = try? Date(targetDate, strategy: .iso8601.year().month().day())
-  else {
+  guard let targetDate else {
     return nil
   }
 
-  var calendar = Calendar(identifier: .gregorian)
-  calendar.timeZone = .gmt
-  let today = calendar.date(
-    from: Calendar.current.dateComponents([.year, .month, .day], from: .now))
-  guard let today,
-    let days = calendar.dateComponents([.day], from: today, to: date).day, days >= 0
-  else {
-    return nil
-  }
-
-  return days
+  let days = PlanDate.days(from: isoDay(.now), to: targetDate)
+  return days >= 0 ? days : nil
 }
 
 extension EnvironmentValues {

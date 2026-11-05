@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { loadLessonsForSkills, loadUpcomingLessons } from "./load-plan-lessons";
@@ -72,5 +73,25 @@ describe(loadUpcomingLessons, () => {
     expect(upcoming.map((lesson) => lesson.lessonId)).toStrictEqual(
       lessons.slice(8).map((lesson) => lesson.id),
     );
+  });
+
+  it("reads nothing when the day keeps every lesson", async () => {
+    const lessonId = randomUUID();
+
+    const item = {
+      chapterId: null,
+      id: randomUUID(),
+      kind: "lesson" as const,
+      lessonId,
+      phase: 0,
+      scheduledFor: null,
+      skillId: null,
+    };
+
+    const upcoming = await countDatabaseStatements(() =>
+      loadUpcomingLessons({ dayMinutes: 30, items: [item], keptLessonIds: new Set([lessonId]) }),
+    );
+
+    expect(upcoming).toStrictEqual({ result: [], statements: 0, writes: 0 });
   });
 });

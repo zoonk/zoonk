@@ -54,11 +54,11 @@ class MemoryViewModel(
 
     fun undo() {
         val change = lastChange ?: return
-        if (lastUndo != MemoryUndo.Offered) return
+        if (!lastUndo.canUndo) return
         lastUndo = MemoryUndo.Undoing
         viewModelScope.launch {
-            val undone = store.undo(listOf(change.reference))
-            if (lastChange == change) lastUndo = if (undone) MemoryUndo.Undone else MemoryUndo.Failed
+            val undo = store.undo(listOf(change.reference)).memoryUndo()
+            if (lastChange == change) lastUndo = undo
         }
     }
 

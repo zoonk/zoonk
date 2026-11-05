@@ -53,22 +53,21 @@ final class LearnerSummaryStore {
     }
   }
 
-  /// True once the goal is the one the tabs show, with the summary read again for it.
-  @discardableResult
-  func switchGoal(to goalID: String) async -> Bool {
+  /// Done once the goal is the one the tabs show, with the summary read again for it. Callers run one
+  /// switch at a time, so an older switch never answers for a newer pick.
+  func switchGoal(to goalID: String) async -> MutationResult<Void> {
     guard summary.value?.activeGoalID != goalID else {
-      return true
+      return .done(())
     }
 
     let result = await cache.mutate(invalidating: [.learningProfile]) { identity in
       try await api.switchGoal(token: identity.bearerToken, goalID: goalID)
     }
 
-    guard case .done = result else {
-      return false
+    if case .done = result {
+      await summary.refresh()
     }
 
-    await summary.refresh()
-    return true
+    return result
   }
 }

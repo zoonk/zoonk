@@ -116,4 +116,13 @@ describe("ensureGuestSession", () => {
 
     expect(auth.signInAnonymously).not.toHaveBeenCalled();
   });
+
+  it("says no, making no guest, when auth can't be reached", async () => {
+    auth.getSession.mockRejectedValue(new TypeError("Failed to fetch"));
+    const ensureGuestSession = await loadHelper();
+
+    await expect(ensureGuestSession()).resolves.toBe("failed");
+
+    expect(auth.signInAnonymously).not.toHaveBeenCalled();
+  });
 });

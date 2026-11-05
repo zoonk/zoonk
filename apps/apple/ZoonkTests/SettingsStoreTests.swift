@@ -142,7 +142,7 @@ final class SettingsStoreTests: XCTestCase {
     await undo.value
 
     XCTAssertEqual(store.deletedFact, .sciFi)
-    XCTAssertEqual(store.undoStatus, .idle, "the later deletion can still be undone")
+    XCTAssertNil(store.undoStatus, "the later deletion can still be undone")
   }
 
   func testDeletedFactLeavesTheListAndCanComeBack() async {
@@ -163,6 +163,21 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(restoredFactIds, [MemoryFact.evenings.id])
   }
 
+  func testASecondUndoTapWhileTheFirstRunsRestoresNothingMore() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    await store.memory.load()
+    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+
+    async let first: Void = store.undoDeletion()
+    async let second: Void = store.undoDeletion()
+    _ = await (first, second)
+
+    XCTAssertEqual(store.undoStatus, .undone)
+    let restoredFactIds = await api.restoredFactIds
+    XCTAssertEqual(restoredFactIds, [MemoryFact.evenings.id])
+  }
+
   func testFailedDeletionKeepsTheFact() async {
     let store = makeStore(api: SettingsAPIStub(deleteError: APIError.network))
     await store.memory.load()
@@ -174,8 +189,25 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertTrue(store.saveFailed)
   }
 
-  func testUndoThatChangedSinceSaysItCouldNot() async {
-    let store = makeStore(api: SettingsAPIStub(restoreError: APIError.unavailable))
+  func testUndoThatChangedSinceSaysItCouldNotAndIsNotSentAgain() async {
+    let api = SettingsAPIStub(restoreChangedSince: true)
+    let store = makeStore(api: api)
+    await store.memory.load()
+    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+
+    await store.undoDeletion()
+    await store.undoDeletion()
+
+    XCTAssertEqual(store.undoStatus, .changedSince)
+    XCTAssertFalse(store.saveFailed)
+    XCTAssertEqual(store.memory.value?.facts, [.sciFi])
+    let restoreCount = await api.restoreCount
+    XCTAssertEqual(restoreCount, 1)
+  }
+
+  func testUndoThatDidNotGoThroughCanBeTriedAgain() async {
+    let api = SettingsAPIStub(restoreError: APIError.network)
+    let store = makeStore(api: api)
     await store.memory.load()
     await store.deleteMemoryFact(id: MemoryFact.evenings.id)
 
@@ -184,6 +216,11 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(store.undoStatus, .failed)
     XCTAssertFalse(store.saveFailed)
     XCTAssertEqual(store.memory.value?.facts, [.sciFi])
+
+    await store.undoDeletion()
+
+    let restoreCount = await api.restoreCount
+    XCTAssertEqual(restoreCount, 2)
   }
 
   func testExpiredSessionSignsOutWithoutSayingTheSaveFailed() async {
@@ -251,7 +288,7 @@ final class SettingsStoreTests: XCTestCase {
     await accounts.signIn(session, as: "learner-b")
 
     XCTAssertNil(store.deletedFact)
-    XCTAssertEqual(store.undoStatus, .idle)
+    XCTAssertNil(store.undoStatus)
   }
 
   func testCancelingWebPlusShowsItEndingOnceItReturns() async {
@@ -343,6 +380,7 @@ final class SettingsStoreTests: XCTestCase {
 private actor SettingsAPIStub: SettingsAPIClient {
   private(set) var updates: [PreferencesUpdate] = []
   private(set) var restoredFactIds: [String] = []
+  private(set) var restoreCount = 0
   private(set) var webPlusChangeTokens: [String] = []
   private(set) var webPlusReads = 0
   private var webPlus: WebPlus?
@@ -360,6 +398,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private let updateError: Error?
   private let deleteError: Error?
   private let restoreError: Error?
+  private let restoreChangedSince: Bool
   private let exportError: Error?
 
   func runBeforeDelete(_ action: @escaping @MainActor @Sendable () async -> Void) {
@@ -370,6 +409,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
     updateError: Error? = nil,
     deleteError: Error? = nil,
     restoreError: Error? = nil,
+    restoreChangedSince: Bool = false,
     exportError: Error? = nil,
     webPlus: WebPlus? = nil,
     webPlusChangeError: Error? = nil
@@ -379,6 +419,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
     self.updateError = updateError
     self.deleteError = deleteError
     self.restoreError = restoreError
+    self.restoreChangedSince = restoreChangedSince
     self.exportError = exportError
   }
 
@@ -485,9 +526,15 @@ private actor SettingsAPIStub: SettingsAPIClient {
     heldDelete = nil
   }
 
-  func restoreMemoryFact(token: String, factId: String) async throws -> [MemoryFact] {
+  func restoreMemoryFact(token: String, factId: String) async throws -> [MemoryFact]? {
+    restoreCount += 1
+
     if let restoreError {
       throw restoreError
+    }
+
+    guard !restoreChangedSince else {
+      return nil
     }
 
     restoredFactIds.append(factId)

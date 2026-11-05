@@ -69,15 +69,8 @@ private struct MockStage: View {
       ProgressView()
         .navigationTitle(untitledMock)
     case .empty, .failed(.notFound):
-      ContentUnavailableView {
-        Label {
-          Text("This mock exam isn't here", tableName: "Mock", comment: "A mock that doesn't exist")
-        } icon: {
-          Image(systemName: "timer")
-        }
-      }
-      .lonePage()
-      .navigationTitle(untitledMock)
+      NotFoundView()
+        .navigationTitle(untitledMock)
     case .failed:
       ContentUnavailableView {
         Label {
@@ -175,25 +168,22 @@ struct MockStepStatus: View {
         }
         .foregroundStyle(.secondary)
       case .refused:
-        Text("Your last answer wasn't saved.", tableName: "Mock", comment: "A refused save")
-          .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
       case .saved, .saving:
         EmptyView()
       }
 
       if run.failed {
-        Group {
-          if run.queue.status == .saved {
-            Text(
-              "That didn't go through. Your answers are saved. Try again in a moment.",
-              tableName: "Mock", comment: "A mock step failed; the answers are saved")
-          } else {
-            Text(
-              "That didn't go through. Try again in a moment.", tableName: "Mock",
-              comment: "A mock step failed")
-          }
-        }
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: run.queue.status == .saved
+            ? String(
+              localized: "That didn't go through. Your answers are saved. Try again in a moment.",
+              table: "Mock", comment: "A mock step failed; the answers are saved")
+            : String(
+              localized: "That didn't go through. Try again in a moment.", table: "Mock",
+              comment: "A mock step failed"))
       } else if run.slow {
         Text(
           "Still handing it in. This is taking longer than usual.", tableName: "Mock",
@@ -273,7 +263,6 @@ private struct MockTimeUpView: View {
         .disabled(run.pending)
         .keyboardShortcut(.defaultAction)
       }
-      .keepsOffFold()
     }
     .lonePage()
   }
@@ -303,7 +292,6 @@ private struct MockGradingView: View {
         .disabled(run.pending)
         .keyboardShortcut(.defaultAction)
       }
-      .keepsOffFold()
     }
     .lonePage()
   }
@@ -338,7 +326,6 @@ private struct MockExpiredView: View {
       .controlSize(.large)
       .scenePadding(.horizontal)
       .padding(.vertical, 10)
-      .keepsOffFold()
     }
     .lonePage()
   }
@@ -404,8 +391,8 @@ private struct MockBreakView: View {
         .controlSize(.large)
         .disabled(run.pending)
       }
-      .keepsOffFold()
     }
+    .lonePage()
   }
 }
 
@@ -492,8 +479,8 @@ private struct MockSpeakingView: View {
           .disabled(run.pending)
         }
       }
-      .keepsOffFold()
     }
+    .lonePage()
     .alert(handInTitle, isPresented: $confirmsHandIn) {
       Button(role: .cancel) {
       } label: {

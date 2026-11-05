@@ -13,7 +13,6 @@
   "mistakes_empty_open": "fb2821385e3e635cff080c6b616f741db68e9aaf095e15b6e8b185d4f2b5884e",
   "mistakes_fixed_count": "40dd0821e3098b14377903845ccdb89b50ee16fe90ee87c9872aa95a4a114556",
   "mistakes_more_failed": "fc2c5639801a4f48d709e7fffedd1a979d28426ca3cf068e9d15c74cef279484",
-  "mistakes_not_found_description": "1153d37ff06cabb5472cc3c0762e5b94ecbc56ba884ecbd82d7f411f77698bf3",
   "mistakes_notebook_title": "5e4fc88162a0e06b2515a3bf7b83b1da04e5aad877ea8d08eb68d9407c08cde1",
   "mistakes_nothing_description": "929efe9fcde58c3dbae3ccbc0237c09b3533ebc8d0f5a34ba88628b581ce7b0c",
   "mistakes_nothing_title": "a459267bda60657e1b2426cf66af32385c27070f955e7acd726e7e18579614ca",
@@ -44,7 +43,6 @@
         <item quantity="many">Poprawiono %d błędów</item>
         <item quantity="other">Poprawiono %d błędów</item>
     </plurals>
-    <string name="mistakes_not_found_description">Być może zostały już poprawione lub usunięte.</string>
     <string name="mistakes_nothing_title">Jeszcze nie ma nic do przećwiczenia</string>
     <string name="mistakes_nothing_description">Do błędów możesz wrócić w ćwiczeniach już następnego dnia.</string>
     <string name="mistakes_notebook_title">Zeszyt błędów</string>

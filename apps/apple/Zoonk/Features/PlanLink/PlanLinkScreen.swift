@@ -134,8 +134,7 @@ struct PlanLinkScreen: View {
 
       if let error {
         Section {
-          Text(error.message)
-            .foregroundStyle(.destructive)
+          FailureLine(message: error.message)
         }
       }
 

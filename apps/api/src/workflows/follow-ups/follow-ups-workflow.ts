@@ -49,6 +49,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "findMistakePattern":
     case "rememberOnboarding":
     case "rememberSession":
+    case "settleSessionDay":
     case "voiceWord":
       await start(backgroundTaskWorkflow, [followUp]);
       return;

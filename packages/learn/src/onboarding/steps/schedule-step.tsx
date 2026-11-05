@@ -109,6 +109,7 @@ function ScheduleTime({
           <Button
             className="self-start"
             disabled={pending}
+            focusableWhenDisabled
             onClick={onChangeDate}
             type="button"
             variant="link"

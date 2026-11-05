@@ -21,6 +21,7 @@ import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page, PageEyebrow } from "../_components/page";
+import { StatusRegion } from "../_components/status-region";
 import { useSentenceSpace } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
 import { type GenerationRun } from "../generation/generation-run";
@@ -157,8 +158,9 @@ export function ChooserStartButton({
   return (
     <Button
       aria-keyshortcuts="Enter"
-      className={cn(DETAIL_PRIMARY_CLASS, "font-[560]", busy && "disabled:opacity-100")}
+      className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
       disabled={isDisabled}
+      focusableWhenDisabled
       onClick={onClick}
       ref={ref}
       size="lg"
@@ -187,14 +189,16 @@ export function ChooserPlusLink({ href }: { href: string }) {
   );
 }
 
-export function ChooserRefusal({ status }: { status: MockChooserStatus }) {
+export function ChooserRefusal({ busy, status }: { busy: boolean; status: MockChooserStatus }) {
   const routes = useLearnRoutes();
 
-  if (status.kind !== "refused") {
-    return null;
-  }
-
-  return <HelpLimitNotice limit={status.limit} linkComponent={LearnLink} routes={routes} />;
+  return (
+    <StatusRegion>
+      {!busy && status.kind === "refused" && (
+        <HelpLimitNotice limit={status.limit} linkComponent={LearnLink} routes={routes} />
+      )}
+    </StatusRegion>
+  );
 }
 
 export function MockWriting({ bar, run }: { bar: ReactNode; run: GenerationRun }) {
