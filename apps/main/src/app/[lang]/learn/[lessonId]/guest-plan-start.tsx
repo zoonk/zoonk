@@ -4,7 +4,7 @@ import { CourseStartFailureNote } from "@/components/public/course-start-failure
 import { useCourseStart } from "@/components/public/use-course-start";
 import { Link } from "@/i18n/navigation";
 import { getGoalStartHref } from "@/lib/public/public-hrefs";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -22,13 +22,14 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
 
   return (
     <>
-      <button
+      <Button
         aria-keyshortcuts="Enter"
-        className={PLAN_CLASS}
+        className="w-full"
         disabled={pending}
+        focusableWhenDisabled
         onClick={startCourse}
         ref={ref}
-        type="button"
+        size="xl"
       >
         {t("Build my plan")}
         {pending ? (
@@ -36,7 +37,7 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
         ) : (
           <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
         )}
-      </button>
+      </Button>
 
       {pending && (
         <span className="sr-only" role="status">

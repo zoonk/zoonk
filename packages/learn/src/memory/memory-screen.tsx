@@ -118,6 +118,7 @@ function MemoryExportRow({ exportMemory }: Pick<MemoryActions, "exportMemory">) 
           <Button
             aria-label={isPending ? t("Preparing your memory…") : t("Download my memory")}
             disabled={isPending}
+            focusableWhenDisabled
             onClick={download}
             size="sm"
             variant="outline"

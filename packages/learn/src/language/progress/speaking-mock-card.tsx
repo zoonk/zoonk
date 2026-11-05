@@ -85,6 +85,7 @@ export function SpeakingMockCard({
             <Button
               className="self-start"
               disabled={call.isStarting}
+              focusableWhenDisabled
               onClick={call.start}
               size="lg"
               variant="outline"

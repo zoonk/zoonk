@@ -13,6 +13,7 @@ import {
   rememberMemoryCandidateStep,
   resolveMistakeCauseStep,
   saveDailyInsightStep,
+  settleSessionDayStep,
   voiceWordStep,
   writeDailyInsightStep,
 } from "./steps/background-task-steps";
@@ -91,6 +92,8 @@ async function runTask(task: BackgroundTask): Promise<void> {
       return checkDailyInsight(task);
     case "checkFactSensitivity":
       return checkFactSensitivityStep(task.input);
+    case "settleSessionDay":
+      return settleSessionDayStep({ ...task.input, userId });
     case "voiceWord":
       return voiceWordStep(task.input);
     case "endWebPlusBesideStore":
