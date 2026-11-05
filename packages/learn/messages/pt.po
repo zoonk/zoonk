@@ -6930,10 +6930,16 @@ msgctxt "dppJZz"
 msgid "From a study session"
 msgstr "De uma sessão de estudo"
 
+#. Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.
+#: src/memory/memory-labels.tsx
+msgctxt "nxU2W7"
+msgid "From a call"
+msgstr "De uma conversa por voz"
+
 #: src/memory/memory-screen.tsx
-msgctxt "Nqh1Tt"
-msgid "Personal examples and plans that fit your week"
-msgstr "Exemplos para você e planos que cabem na sua semana"
+msgctxt "PRUyMZ"
+msgid "Personal examples, plans that fit your week and calls that remember your news"
+msgstr "Exemplos personalizados, planos que cabem na sua semana e conversas que lembram das suas novidades"
 
 #: src/memory/memory-screen.tsx
 msgctxt "yp_BUN"

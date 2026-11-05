@@ -171,6 +171,7 @@
     "./language/conversations/end-connection": "./src/language/conversations/end-language-conversation-connection.ts",
     "./language/conversations/end-live-call": "./src/language/conversations/end-live-call.ts",
     "./language/conversations/get": "./src/language/conversations/get-language-conversation.ts",
+    "./language/conversations/live-call-script": "./src/language/conversations/_utils/live-call-script.ts",
     "./language/conversations/prepare": "./src/language/conversations/prepare-language-calls.ts",
     "./language/conversations/redeem-sdp": "./src/language/conversations/redeem-live-call-sdp.ts",
     "./language/conversations/review": "./src/language/conversations/conversation-review.ts",

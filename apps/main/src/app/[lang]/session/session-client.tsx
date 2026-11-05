@@ -108,6 +108,7 @@ function useApplyTap({ entry, tap }: { entry: DayEntry | null; tap: NextStopTap 
       }
 
       const went = await go(result.destination, {
+        here: entry.here,
         onSessionAddress: (address) => moveDayEntry(entry.id, address),
       });
 

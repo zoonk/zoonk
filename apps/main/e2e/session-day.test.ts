@@ -236,6 +236,46 @@ test.describe("Today's session", () => {
     await page.context().close();
   });
 
+  test("a tab tapped while a lesson row opens goes there at once, and the lesson's answer doesn't pull the learner back", async ({
+    browser,
+  }) => {
+    const { lesson, user } = await createStudyDay();
+    const page = await openAs(browser, user);
+    const opens = /"kind":"block"/u;
+    const held: (() => void)[] = [];
+
+    await page.route(
+      (url) => url.pathname === "/today",
+      async (route) => {
+        if (opens.test(route.request().postData() ?? "")) {
+          await new Promise<void>((release) => {
+            held.push(release);
+          });
+        }
+
+        await route.fallback();
+      },
+    );
+
+    await page.goto("/today");
+    const row = page.getByRole("button", { exact: true, name: lesson.title });
+    await expectHydrated(row);
+    await row.click();
+    await expect.poll(() => held.length).toBe(1);
+
+    await page.getByRole("link", { exact: true, name: "Plan" }).click();
+    await expect(page).toHaveURL(/\/plan$/u);
+
+    const answered = page.waitForResponse((response) =>
+      opens.test(response.request().postData() ?? ""),
+    );
+
+    held[0]?.();
+    await answered;
+    await expect(page).toHaveURL(/\/plan$/u);
+    await page.context().close();
+  });
+
   test("a lesson nobody asked for shows its Start, and only the tap asks for it", async ({
     browser,
   }) => {

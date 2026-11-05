@@ -8,18 +8,24 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.FakeStudyApi
+import com.zoonk.android.feature.session.SESSION
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.day
 import com.zoonk.android.feature.session.decodeFixture
+import com.zoonk.android.feature.session.opening
 import com.zoonk.android.feature.session.step
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -47,6 +53,18 @@ class TodayTapTest {
     }
 
     private val read = TodayRead.Day(decodeFixture<Today>("today"), day())
+
+    private fun opensALesson() {
+        api.openings = listOf(opening("lesson", "lessonId" to step(1).lessonId.toString(), "sessionId" to SESSION.toString()))
+    }
+
+    /** Today's screen collects routes only while it shows, as `TodayScreen` does. */
+    private fun TestScope.shownRoutes(viewModel: TodayViewModel): List<TodayRoute> {
+        val routes = mutableListOf<TodayRoute>()
+        backgroundScope.launch { viewModel.routes.toList(routes) }
+        runCurrent()
+        return routes
+    }
 
     /** Main shows a mission row's wait and failure on that row, not on the queue row of the same block. */
     @Test
@@ -104,5 +122,30 @@ class TodayTapTest {
 
             assertNull(viewModel.pending)
             assertNull(viewModel.failed)
+        }
+
+    @Test
+    fun aTapOpensItsStepWhileTodayStays() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            opensALesson()
+
+            viewModel.open(read, read.day.steps[1], next = false)
+            advanceUntilIdle()
+
+            assertEquals(1, shownRoutes(viewModel).size)
+        }
+
+    @Test
+    fun aTapAnsweredAfterTheLearnerLeftTodayOpensNothingWhenTheyComeBack() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            opensALesson()
+
+            viewModel.open(read, read.day.steps[1], next = false)
+            viewModel.endVisit()
+            advanceUntilIdle()
+
+            assertEquals(emptyList<TodayRoute>(), shownRoutes(viewModel))
         }
 }

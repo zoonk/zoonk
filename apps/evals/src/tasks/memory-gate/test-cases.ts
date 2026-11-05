@@ -67,6 +67,16 @@ export const TEST_CASES: GateCase[] = [
   gateCase({
     candidate: {
       category: "goals",
+      evidence: "my ENEM is on November 8",
+      expiresAt: new Date("2026-11-09"),
+      statement: "Has the ENEM on November 8",
+    },
+    decision: "notLasting",
+    id: "en-goal-exam-date-expires",
+  }),
+  gateCase({
+    candidate: {
+      category: "goals",
       evidence: "eu disse que a prova era em março, por que o plano é pra janeiro?",
       statement: "Tem prova em março de 2027",
     },
@@ -81,6 +91,26 @@ export const TEST_CASES: GateCase[] = [
     },
     decision: "keep",
     id: "en-keep-dated-move",
+  }),
+  gateCase({
+    candidate: {
+      category: "context",
+      evidence: "I can't on Friday because I have a job interview at a bank",
+      expiresAt: new Date("2026-10-03"),
+      statement: "Tem entrevista de emprego num banco em 2 de outubro",
+    },
+    decision: "keep",
+    id: "pt-keep-dated-interview",
+  }),
+  gateCase({
+    candidate: {
+      category: "context",
+      evidence: "il mese prossimo vado a Napoli, il diciassette ottobre",
+      expiresAt: new Date("2026-10-18"),
+      statement: "Goes to Naples on October 17",
+    },
+    decision: "keep",
+    id: "en-keep-dated-trip",
   }),
   gateCase({
     candidate: {
