@@ -137,6 +137,7 @@ export const signInDatabaseHooks = {
 export const baseAuthPlugins = [
   adminPlugin(),
   username({
+    displayUsername: false,
     maxUsernameLength: USERNAME_MAX_LENGTH,
     minUsernameLength: USERNAME_MIN_LENGTH,
     usernameNormalization: normalizeUsername,

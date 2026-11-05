@@ -8,6 +8,8 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { getRequestInstant } from "../../learner/facts/request-instant";
+import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { findPlanPhase } from "../../plans/_utils/phase-states";
 import { isPlanFinished } from "../../plans/_utils/plan-end";
@@ -23,6 +25,7 @@ export type GoalMap = {
   finished: boolean;
   plan: GoalPlan;
   items: MapItem[];
+  savedPlan: SavedPlan | null;
   phases: MapPhase[];
   /** Today's lessons not done yet, as Today opens them (`readTodayLearnBlocks`). */
   todayBlocks: TodayLearnBlock[];
@@ -46,31 +49,24 @@ function pickCourseId({
   return chapter.homeCourseId ?? courseIds[0] ?? null;
 }
 
-async function loadPlanRows(goalId: string) {
-  const plan = await prisma.plan.findUnique({
-    select: {
-      items: {
-        orderBy: { position: "asc" },
-        select: {
-          chapterId: true,
-          id: true,
-          kind: true,
-          lessonId: true,
-          phase: true,
-          scheduledFor: true,
-          status: true,
-        },
-      },
-      phases: true,
-      settings: true,
-    },
-    where: { goalId },
-  });
+async function loadPlanRows(goal: Pick<Goal, "id" | "userId">) {
+  const saved = await readSavedPlan(goal.userId, goal.id);
 
   return {
-    items: plan?.items ?? [],
-    phases: parsePlanPhases(plan?.phases),
-    settings: parsePlanSettings(plan?.settings),
+    items: (saved?.items ?? []).map(
+      ({ chapterId, id, kind, lessonId, phase, scheduledFor, status }) => ({
+        chapterId,
+        id,
+        kind,
+        lessonId,
+        phase,
+        scheduledFor,
+        status,
+      }),
+    ),
+    phases: parsePlanPhases(saved?.phases),
+    saved,
+    settings: parsePlanSettings(saved?.settings),
   };
 }
 
@@ -109,7 +105,7 @@ export async function loadGoalMap({
 
   const [graph, rows, todayBlocks] = await Promise.all([
     readGoalPlan(goal.id),
-    loadPlanRows(goal.id),
+    loadPlanRows(goal),
     readTodayLearnBlocks(goal.userId, goal.id),
   ]);
 
@@ -167,6 +163,7 @@ export async function loadGoalMap({
 
   const phaseChallengesRequired = await arePhaseChallengesRequired({
     goalKind: goal.kind,
+    readSubscription: readActiveSubscription,
     userId: goal.userId,
   });
 
@@ -215,6 +212,7 @@ export async function loadGoalMap({
     }),
     items,
     plan: graph,
+    savedPlan: rows.saved,
     todayBlocks,
   };
 }

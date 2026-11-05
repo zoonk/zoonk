@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { loadDatedClaims } from "../../learner/_utils/load-skill-claims";
+import { type ClaimEvent } from "../../learner/_utils/skill-claims";
 import { loadExamFacts } from "../../plans/_utils/planner-exam-facts";
 import { findAnnouncedSkillIds } from "../../plans/planner/announced-lessons";
 import { type PlanGraph } from "../../plans/planner/plan-state";
@@ -63,6 +64,7 @@ export async function loadPracticeClaims({
   goal,
   graph,
   now,
+  readClaims,
   skillIds,
   today,
   userId,
@@ -70,13 +72,14 @@ export async function loadPracticeClaims({
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind">;
   graph: PlanGraph;
   now: Date;
+  readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
   /** The goal's skills practice may ask: the ones its plan or its test has. */
   skillIds: readonly string[];
   /** The learner-local date of the session, as a UTC-midnight label. */
   today: Date;
   userId: string;
 }): Promise<PracticeClaims> {
-  const claims = await loadDatedClaims({ goalId: goal.id, skillIds, userId });
+  const claims = await loadDatedClaims({ goalId: goal.id, readClaims, skillIds, userId });
   const dueBefore = now.getTime() - DUE_AFTER_DAYS * DAY_MS;
 
   const toConfirm = [...claims].filter(([, { claim }]) => claim === "toConfirm");
@@ -111,23 +114,25 @@ export async function loadPracticeClaims({
 export async function loadReviewsAndClaims({
   claims: claimsInput,
   practiceLocked,
+  readClaims,
   review,
 }: {
-  claims: Parameters<typeof loadPracticeClaims>[0];
+  claims: Omit<Parameters<typeof loadPracticeClaims>[0], "readClaims">;
   /** The day's session has no practice (see `ExamPrepAccess.trialEnded`). */
   practiceLocked: boolean;
+  readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
   review: Parameters<typeof loadReviewCapsules>[0];
 }) {
   if (!practiceLocked) {
     const [capsules, claims] = await Promise.all([
       loadReviewCapsules(review),
-      loadPracticeClaims(claimsInput),
+      loadPracticeClaims({ ...claimsInput, readClaims }),
     ]);
 
     return { capsules, claims };
   }
 
-  const claims = await loadPracticeClaims(claimsInput);
+  const claims = await loadPracticeClaims({ ...claimsInput, readClaims });
   const capsules = await loadReviewCapsules({ ...review, confirmSkillIds: [...claims.first] });
 
   return { capsules, claims };

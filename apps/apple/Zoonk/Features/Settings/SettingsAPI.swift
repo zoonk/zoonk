@@ -10,7 +10,8 @@ protocol SettingsAPIClient: Sendable {
   func updateMemoryFact(token: String, factId: String, statement: String) async throws
     -> MemoryFact
   func deleteMemoryFact(token: String, factId: String) async throws -> MemoryFact
-  func restoreMemoryFact(token: String, factId: String) async throws -> [MemoryFact]
+  /// Nil when the fact changed since.
+  func restoreMemoryFact(token: String, factId: String) async throws -> [MemoryFact]?
   func getAllowance(token: String) async throws -> PlanAllowance
   func getFreePlan() async throws -> FreePlan
   func getWebPlus(token: String) async throws -> WebPlus
@@ -116,7 +117,7 @@ struct SettingsAPI: SettingsAPIClient {
   }
 
   /// Returns the fact with the facts it had replaced.
-  func restoreMemoryFact(token: String, factId: String) async throws -> [MemoryFact] {
+  func restoreMemoryFact(token: String, factId: String) async throws -> [MemoryFact]? {
     try await clients.perform(token: token) { client in
       let output = try await client.createMemoryChangeReversal(
         body: .json(.init(changes: [.init(factId: nil, previousFactId: factId)])))
@@ -124,6 +125,8 @@ struct SettingsAPI: SettingsAPIClient {
       switch output {
       case .ok(let response):
         return try response.body.json.restored.map(MemoryFact.init)
+      case .conflict:
+        return nil
       case .unauthorized:
         throw APIError.unauthorized
       default:

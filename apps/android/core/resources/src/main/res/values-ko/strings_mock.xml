@@ -20,7 +20,6 @@
   "mock_flagged_count": "7e5537a26542320e4f6368011f85ca9848251a0904ae5e3ae9f557df9871109c",
   "mock_full_day": "1c019fcaa951bfa71fb224f686dfec49768988b8277f1386fa1b7f8836bd6b53",
   "mock_full_day_number": "839dc6831c9b9e05a53def869790c456a86f3713ffecae1ccfdb0b4dc9286b3d",
-  "mock_go_to_today": "d115e50dd4286956177b85458f0c600d30a2164ae7a5708de9d296838d834841",
   "mock_grading": "1c097fbb04d1d106105e0e4b08438d975714741a728b9b4d43069f1ea61c8b44",
   "mock_half_day": "7ccbef4e00c6a0c8fd44b45e17f7ad64d0a17ce3941bfd6e8dd02a850042d1d8",
   "mock_half_day_number": "75c7d6bb63eea052c95ec6b16d20c647dd11f2ee5db379e059b3fd84f31e124f",
@@ -54,8 +53,6 @@
   "mock_next": "196d2edd8803ac72db314e8a20d5c9b06090d74e64aab784ed96f751e708a1b0",
   "mock_next_named": "c802127b08bf5e9b79484c7a5e35c9b608bc0c85fe6d55462b17ee55cb3da664",
   "mock_next_section": "8d0ee175d3c18aaa18fc664741aa013a3f619deca2ac859aa064aaabc61d7770",
-  "mock_not_found_description": "16a3d212b556e1ae804e78fce31182b43354cebc7b2f1ab9a8b131d288c6684d",
-  "mock_not_found_title": "f1f014af9594e74835b557277290f57c39ca547fbb46098d5f08416ca05fac73",
   "mock_not_saved_retrying": "16335e8d43882ac27ace6d79045baf63c4cb20c9460260087e431e0a50860159",
   "mock_place": "e9eb53d1a8f80f75c0aff53b6fff21a0aa6b92046162912249e65e7c46c24be9",
   "mock_progress_label": "20e066bfe67d7fe655e19a34d7e7e62286a6a323a07662fc095e5c239844d21b",
@@ -135,9 +132,6 @@
     <string name="mock_label">모의고사</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
     <string name="mock_label_shape">모의고사 · %1$s</string>
-    <string name="mock_not_found_title">페이지를 찾을 수 없어요</string>
-    <string name="mock_not_found_description">오래된 링크이거나 주소가 잘못 입력되었을 수 있어요.</string>
-    <string name="mock_go_to_today">오늘의 학습으로 이동하기</string>
     <!-- What screen readers call the section's countdown. -->
     <string name="mock_time_left_label">남은 시간</string>
     <!-- Under the section's countdown, such as "1:24:09". -->

@@ -40,7 +40,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
@@ -127,6 +126,7 @@ import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.TabRootBar
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageDirective
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryPlaces
 
@@ -175,6 +175,7 @@ fun ZoonkApp(
 
     CompositionLocalProvider(
         LocalSnackbarHostState provides snackbars,
+        LocalSnackbarLayer provides remember { SnackbarLayer() },
         LocalPrivatePictures provides pictures,
         LocalUriHandler provides links,
         LocalTabRootBar provides rememberTabRootBar(app, navigator),
@@ -250,7 +251,7 @@ fun AppShell(
         navigator.rememberEntries(
             remember(entryProvider, navigator) { { key: NavKey -> entryProvider(key).onItsOwn(key, entryProvider).onTop(key, navigator) } },
         )
-    val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfoV2(), navigator)
+    val navigationSuiteType = navigationSuiteType(windowAdaptiveInfo(), navigator)
 
     CompositionLocalProvider(
         LocalSnackbarHostState provides snackbarHostState,
@@ -593,10 +594,11 @@ private fun AppTab.title(summary: LearnerSummary?): String {
     return buddyName(buddy?.kind?.let { BuddyKind.of(it.value) } ?: BuddyKind.Zu, buddy?.name)
 }
 
-/** Exam, Speaking, Mind maps and Completed lessons are listed only for a goal that has them. */
+/** Exam, Speaking, Mind maps and Completed lessons are listed only for a goal that has them; Certificates once there's one. */
 private fun StudyPlace.isListed(places: LearnerSummaryPlaces?): Boolean =
     when (this) {
         StudyPlace.CompletedLessons -> places?.completedLessons == true
+        StudyPlace.Certificates -> places?.certificates == true
         StudyPlace.Exam -> places?.exam == true
         StudyPlace.Speaking -> places?.speaking == true
         StudyPlace.MindMaps -> places?.mindMaps == true

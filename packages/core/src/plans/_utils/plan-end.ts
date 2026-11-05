@@ -28,7 +28,7 @@ type PlanEndInput = {
   today: Date;
 };
 
-const isTodo = (item: Pick<PlanItem, "status">) => getWorkProgress(item.status) === "todo";
+export const isTodo = (item: Pick<PlanItem, "status">) => getWorkProgress(item.status) === "todo";
 
 const isSetAsideLesson = (item: EndItem) =>
   LEARN_KINDS.has(item.kind) && getWorkProgress(item.status) === "setAside";
@@ -144,7 +144,9 @@ export function areLessonsFinished({
   items,
   studiesPastTarget = false,
   targetDate,
-}: Pick<PlanEndInput, "items" | "studiesPastTarget" | "targetDate">): boolean {
+}: Pick<PlanEndInput, "studiesPastTarget" | "targetDate"> & {
+  items: readonly EndItem[];
+}): boolean {
   const deadline = hasPlanDeadline({ studiesPastTarget, targetDate });
   const lessons = items.filter((item) => isInLessonScope({ deadline, item }));
 

@@ -321,7 +321,7 @@ export const languageConversationObjectiveCheckSchema = z
       .nullable()
       .meta({
         description:
-          "Tell the character what the learner achieved: null when this check found nothing new or a goodbye, or every objective is met",
+          "Tell the character what the learner achieved, and once every objective is met to ask nothing new. Send it once the learner speaks or sends a typed reply, never into their silence, which the character would answer aloud, and drop it when the goodbye cue goes. Null when this check found nothing new or a goodbye",
       }),
   })
   .meta({ id: "LanguageConversationObjectiveCheck" });

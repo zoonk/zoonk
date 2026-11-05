@@ -14,7 +14,6 @@ export type CurrentUser = Pick<
   User,
   | "analyticsDisabled"
   | "createdAt"
-  | "displayUsername"
   | "email"
   | "emailVerified"
   | "id"
@@ -28,7 +27,6 @@ function toCurrentUser(user: User): CurrentUser {
   return {
     analyticsDisabled: user.analyticsDisabled,
     createdAt: user.createdAt,
-    displayUsername: user.displayUsername,
     email: user.email,
     emailVerified: user.emailVerified,
     id: user.id,

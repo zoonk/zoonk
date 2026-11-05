@@ -20,7 +20,6 @@
   "mock_flagged_count": "6092d9e4badffbe5687a70c19cbe6738f3fd54d9fcb53f7b03feab7665df1f91",
   "mock_full_day": "83ec4d660fed82771f144594b8318d67a0658bc61fca918221aa3911d6f03411",
   "mock_full_day_number": "04b73de18bae633934c68272749eec25e1c57c5980ccb5b0409bd612a7d006c1",
-  "mock_go_to_today": "9c6e4fe9d3671c363f362282f86521faf518bd2e673c6e8b1a239a34df02b234",
   "mock_grading": "4354eaae329d31e8dfcfb4624fc4bd888eab0e81f87e1681e529963509d9788a",
   "mock_half_day": "eb0ef8c48ddc82660df8c68149332a88c7e5215777386aa4425fc7203ebb434a",
   "mock_half_day_number": "6bf89ff0b0ce89528ba8d370b64a329d3cd0995ca05303bb9dedef74fa36fe73",
@@ -54,8 +53,6 @@
   "mock_next": "9b5702e63bcd99224087fd05bc1fe318455a8eb7cb4f1a45377d965345b3cdfc",
   "mock_next_named": "779c2b9a5b3a2327ec473c706968a5e07a15f86ab7ced1bc91493b29933bd596",
   "mock_next_section": "43e7009d87a154e642198b4c8390381f4549aca9562cb30c421f1c2ebf85f08e",
-  "mock_not_found_description": "570ba097e9fffed058f8dc7bdb68a140ee6f8e09c2598481d1b924fcc5883ad5",
-  "mock_not_found_title": "e1bcecd23f0a20d6724068f2f6ebf1e8ec8d6f3e950ac52bf2eeca6373da4b40",
   "mock_not_saved_retrying": "74cfc43b2a1352f14f616c58b4e616e92bd24e0209994066a277fd56b172f2f0",
   "mock_place": "a3548fd6737b525c95e7c31890377fb6462ec90d34e26b250ed4d2686f5ca1ff",
   "mock_progress_label": "59533957d73e7d46c57ac8b60f373b9d5571b712f0ec04a6f75eb2bf43a6ff3f",
@@ -137,9 +134,6 @@
     <string name="mock_label">Probeprüfung</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
     <string name="mock_label_shape">Probeprüfung · %1$s</string>
-    <string name="mock_not_found_title">Wir konnten diese Seite nicht finden</string>
-    <string name="mock_not_found_description">Der Link ist vielleicht veraltet oder falsch eingegeben.</string>
-    <string name="mock_go_to_today">Zu Heute</string>
     <!-- What screen readers call the section's countdown. -->
     <string name="mock_time_left_label">Verbleibende Zeit</string>
     <!-- Under the section's countdown, such as "1:24:09". -->

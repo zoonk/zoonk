@@ -1,4 +1,5 @@
 import "server-only";
+import { loadUnshownCertificates } from "../../certificates/_utils/unshown-certificates";
 import { awardMilestones } from "../../milestones/award-milestones";
 import { getTrapHunterBadge, pickCeremony } from "../../milestones/milestone-rules";
 import { type BlockPayload } from "../block-payload";
@@ -22,6 +23,21 @@ type BlockResult = Pick<
   | "topHyperdrive"
   | "total"
 >;
+
+type MilestoneReward = NonNullable<BlockPayload["milestoneReward"]>;
+
+export function getBlockMilestoneAwards({
+  payload,
+  reward,
+}: {
+  payload: BlockPayload;
+  reward: MilestoneReward;
+}): Pick<Parameters<typeof awardMilestones>[0], "badges" | "brainPower"> {
+  return {
+    badges: reward.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
+    brainPower: reward.brainPower,
+  };
+}
 
 /** Retries replay missions without celebrating the same answer rewards again. */
 export async function completeBlockMoment({
@@ -61,19 +77,20 @@ export async function completeBlockMoment({
   };
 
   const milestones = await awardMilestones({
-    badges: reward.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
-    brainPower: reward.brainPower,
+    ...getBlockMilestoneAwards({ payload, reward }),
     brainPowerRewards: settled.fullMealReward ? [settled.fullMealReward] : [],
     userId,
   });
 
   const blocks = settled.session.blocks;
+  const certificates = await loadUnshownCertificates(userId);
 
   return {
     ...result,
     blockId,
     brainPower: result.brainPower + fullMeal,
     ceremony: pickCeremony(milestones),
+    certificates,
     completedMissions: missionResult.completed,
     fullMeal: { bonus, paid: missionResult.fullMealPaid },
     milestones,

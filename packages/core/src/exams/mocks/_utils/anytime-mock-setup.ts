@@ -72,6 +72,7 @@ async function canBuildMock({
 
 type AnytimeMockPage = {
   essays: Promise<MockEssayCandidate[]>;
+  finishedMocks: Promise<number>;
   plan: Promise<SavedPlan | null>;
   typed: Promise<MockTypedPart[]>;
 };
@@ -88,7 +89,7 @@ export async function loadAnytimeMockSetup(
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : (knownBlueprint ?? null),
     loadSkillAreas(goal.id, plan ?? undefined),
-    countFinishedMocksBefore({ goalId: goal.id }),
+    page?.finishedMocks ?? countFinishedMocksBefore({ goalId: goal.id }),
     loadMockPace(goal.examBlueprintId),
     page?.essays ?? loadMockEssays({ goal, userId: goal.userId }),
     plan === undefined ? loadExamPicks(goal.id) : readExamPicks(plan?.settings),

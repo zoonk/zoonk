@@ -1,6 +1,10 @@
 import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
-import { extractMemoryFacts } from "@zoonk/ai/tasks/memory/extraction";
+import {
+  type MemoryCallInput,
+  type MemoryExtractionInput,
+  extractMemoryFacts,
+} from "@zoonk/ai/tasks/memory/extraction";
 import { findSessionPatterns } from "@zoonk/ai/tasks/memory/session-patterns";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
@@ -25,7 +29,8 @@ import { type CandidateContext, rememberCandidate } from "./remember-candidate";
 type MemoryUpdateSource =
   | { kind: "onboarding"; goalId: string }
   | { kind: "chat"; id: string | null; language: string; messages: readonly MemoryChatMessage[] }
-  | { kind: "session"; id: string | null; language: string; activity: string };
+  | { kind: "session"; id: string | null; language: string; activity: string }
+  | { kind: "call"; id: string; language: string; call: Omit<MemoryCallInput, "source"> };
 
 export type MemoryUpdateRequest = {
   userId: string;
@@ -37,11 +42,25 @@ export type MemoryUpdateRequest = {
 export type ProposedMemoryUpdate = { candidates: MemoryCandidate[]; context: CandidateContext };
 
 type ExtractionInput = {
-  input: string;
   language: string;
+  read: { source: "session"; activity: string } | MemoryExtractionInput;
   source: MemorySource;
   timeZone?: string | null;
 };
+
+function hasInput(read: ExtractionInput["read"]): boolean {
+  switch (read.source) {
+    case "session":
+      return read.activity.trim() !== "";
+    case "call":
+      return read.turns.some((turn) => turn.speaker === "learner");
+    case "chat":
+    case "onboarding":
+      return read.input.trim() !== "";
+    default:
+      return read satisfies never;
+  }
+}
 
 async function proposeFacts({
   analytics,
@@ -52,11 +71,11 @@ async function proposeFacts({
   extraction: ExtractionInput;
   today: string;
 }) {
-  const { input, language, source } = extraction;
+  const { language, read } = extraction;
 
-  if (source.kind === "session") {
+  if (read.source === "session") {
     const { data, provenance } = await findSessionPatterns({
-      activity: input,
+      activity: read.activity,
       analytics,
       language,
     });
@@ -64,13 +83,7 @@ async function proposeFacts({
     return { facts: toSessionFacts(data.patterns), provenance };
   }
 
-  const { data, provenance } = await extractMemoryFacts({
-    analytics,
-    input,
-    language,
-    source: source.kind,
-    today,
-  });
+  const { data, provenance } = await extractMemoryFacts({ ...read, analytics, language, today });
 
   return { facts: data.facts, provenance };
 }
@@ -81,17 +94,36 @@ async function loadExtractionInput({
 }: MemoryUpdateRequest): Promise<ExtractionInput | null> {
   if (source.kind === "onboarding") {
     const onboarding = await loadOnboardingInput({ goalId: source.goalId, userId });
-    return onboarding && { ...onboarding, source: { id: source.goalId, kind: "onboarding" } };
+
+    return (
+      onboarding && {
+        language: onboarding.language,
+        read: { input: onboarding.input, source: "onboarding" },
+        source: { id: source.goalId, kind: "onboarding" },
+        timeZone: onboarding.timeZone,
+      }
+    );
   }
 
   if (source.kind === "chat") {
-    const input = formatChatInput(source.messages);
-    return { input, language: source.language, source: { id: source.id, kind: "chat" } };
+    return {
+      language: source.language,
+      read: { input: formatChatInput(source.messages), source: "chat" },
+      source: { id: source.id, kind: "chat" },
+    };
+  }
+
+  if (source.kind === "call") {
+    return {
+      language: source.language,
+      read: { ...source.call, source: "call" },
+      source: { id: source.id, kind: "call" },
+    };
   }
 
   return {
-    input: source.activity,
     language: source.language,
+    read: { activity: source.activity, source: "session" },
     source: { id: source.id, kind: "session" },
   };
 }
@@ -128,7 +160,7 @@ export async function proposeMemoryUpdate(
     loadExtractionInput(request),
   ]);
 
-  if (!enabled || !extraction?.input.trim()) {
+  if (!enabled || !extraction || !hasInput(extraction.read)) {
     return null;
   }
 

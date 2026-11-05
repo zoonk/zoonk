@@ -105,7 +105,7 @@ export const TEST_CASES: TestCase<MistakePatternExpected, MistakePatternInput>[]
     },
   },
   {
-    expectations: `A US English speaker learning Mexican Spanish mixes up "ser" and "estar" (mistakes 1, 2, 3 and 5): English has one verb "to be". Mistake 4 (a missing plural) is unrelated. The rule should say "estar" is for states and location, "ser" for what something is (like a job), with a drill that mixes "es" and "está" forms. In US English.`,
+    expectations: `A US English speaker learning Mexican Spanish mixes up "ser" and "estar" (mistakes 1, 2, 3 and 5): English has one verb "to be". Mistake 4 (a missing plural) is unrelated. The rule should say "estar" is for states and location, "ser" for what something is (like a job), with a drill that mixes "es" and "está" forms. The title, rule, contrast labels and drill feedback are in US English, never Spanish.`,
     expected: { kind: "pattern", mistakeNumbers: [1, 2, 3, 5] },
     id: "en-es-ser-estar",
     userInput: {
@@ -156,7 +156,7 @@ export const TEST_CASES: TestCase<MistakePatternExpected, MistakePatternInput>[]
     },
   },
   {
-    expectations: `A US English speaker learning Brazilian Portuguese writes "em o" and "em a" where Portuguese joins them into "no" and "na" (mistakes 1, 2, 4 and 5): English keeps "in the" apart. Mistake 3 (a missing "de" after "gosto") is a different rule. The rule: "em" + "o" becomes "no", "em" + "a" becomes "na". The drill mixes "no" and "na", and everything around the Portuguese examples is in US English.`,
+    expectations: `A US English speaker learning Brazilian Portuguese writes "em o" and "em a" where Portuguese joins them into "no" and "na" (mistakes 1, 2, 4 and 5): English keeps "in the" apart. Mistake 3 (a missing "de" after "gosto") is a different rule. The rule: "em" + "o" becomes "no", "em" + "a" becomes "na". The drill mixes "no" and "na", and everything around the Portuguese examples is in US English, including contrast labels and drill feedback.`,
     expected: { kind: "pattern", mistakeNumbers: [1, 2, 4, 5] },
     id: "en-pt-contractions",
     userInput: {

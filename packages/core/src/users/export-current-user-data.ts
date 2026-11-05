@@ -50,6 +50,7 @@ function loadLearnerModel(userId: string) {
     prisma.learnerSkill.findMany({ orderBy: byCreation, where: { userId } }),
     prisma.mistake.findMany({ orderBy: byCreation, where: { userId } }),
     prisma.milestone.findMany({ orderBy: { earnedAt: "asc" }, where: { userId } }),
+    prisma.certificate.findMany({ orderBy: byCreation, where: { userId } }),
   ]);
 }
 
@@ -69,7 +70,7 @@ export async function exportCurrentUserData() {
     goals,
     [progress, dailyProgress, learningEvents],
     attempts,
-    [skills, mistakes, milestones],
+    [skills, mistakes, milestones, certificates],
     memory,
     feedbackMessages,
     buddy,
@@ -104,7 +105,7 @@ export async function exportCurrentUserData() {
     feedback: { messages: feedbackMessages },
     goals,
     language,
-    learnerModel: { milestones, mistakes, skills },
+    learnerModel: { certificates, milestones, mistakes, skills },
     memory,
     profile,
     progress: { daily: dailyProgress, learningEvents, totals: progress },

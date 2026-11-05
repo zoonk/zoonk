@@ -30,6 +30,11 @@ test.describe("A checkpoint from today's session", () => {
 
     await playDuel(page);
 
+    // The plan's last challenge finishes the course: its certificate plays before the glasses.
+    const certificate = page.getByRole("dialog", { name: "Course complete!" });
+    await expect(certificate.getByRole("button", { name: /^Continue/u })).toBeFocused();
+    await pressUntil(() => page.keyboard.press("Enter"), certificate, { visible: false });
+
     const ceremony = page.getByRole("dialog", { name: "Star glasses!" });
     await expect(ceremony.getByRole("button", { name: "Wear them" })).toBeFocused();
     await pressUntil(() => page.keyboard.press("Enter"), ceremony, { visible: false });

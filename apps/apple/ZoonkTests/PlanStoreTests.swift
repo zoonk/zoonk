@@ -279,7 +279,9 @@ private actor PlanAPIStub: PlanAPIClient {
   func languageUnits(token: String, goalId: String) async throws -> LanguageUnitsOverview {
     throw APIError.notFound
   }
-  func studyNext(token: String, goalId: String) async throws -> StudyNext? { nil }
+  func planEnd(token: String, goalId: String) async throws -> PlanEnd {
+    PlanEnd(certificates: nil, next: nil)
+  }
   func resumeChangesPlan(token: String, goalId: String) async throws -> Bool { false }
   func setStatus(token: String, goalId: String, status: GoalStatusChange) async throws
     -> GoalStatusOutcome
@@ -356,7 +358,6 @@ extension CurrentAccount {
       deletion: AccountDeletionRequirements(hasAppleAccount: false),
       subscription: nil),
     user: AccountUser(
-      displayUsername: "learner",
       email: "learner@zoonk.test",
       id: "plan-test-user",
       image: nil,

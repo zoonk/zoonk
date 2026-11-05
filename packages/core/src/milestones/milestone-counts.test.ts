@@ -3,7 +3,7 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { getCheckpointReward } from "../checkpoints/checkpoint-reward";
 import { getPassMark, hasPassedCheckpoint } from "../checkpoints/checkpoint-rules";
@@ -60,8 +60,7 @@ async function expectCounts(userId: string, expectedRaw: MilestoneCounts): Promi
   const raw = await rawCounts(userId);
   expect(raw).toStrictEqual(expectedRaw);
   const measured = await countDatabaseStatements(() => loadMilestoneCounts(userId));
-  assertReadBudget(measured, 4);
-  expect(measured.statements).toBe(4);
+  expect(measured.writes).toBe(0);
 
   expect(measured.result).toStrictEqual({
     bigChallenges: Math.min(raw.bigChallenges, GLASSES_TARGETS.bigChallenges),

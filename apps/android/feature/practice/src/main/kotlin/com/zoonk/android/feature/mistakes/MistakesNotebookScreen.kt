@@ -77,6 +77,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -87,6 +88,7 @@ import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.GoalMistakePatternPattern
@@ -140,7 +142,8 @@ fun MistakesNotebookScreen(
 /**
  * The notebook's two lists, what's to fix and what's fixed. Tabs switch between them; an unfolded
  * book shows both, as the open iPhone Duo does: what's to fix under the notebook's hero on the page
- * before the fold and what's fixed on the page after it, each under its own title.
+ * before the fold and what's fixed on the page after it, each under its own title. Where the text is
+ * too large for both pages, the tabs and their list keep to the page before the fold.
  */
 @Composable
 internal fun Notebook(
@@ -159,7 +162,8 @@ internal fun Notebook(
 
     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
         val fold = spreadFold(maxWidth, span)
-        val wide = fold == null && maxWidth >= INBOX_WIDTH
+        val beforeFold = pageFold(maxWidth, span)?.start
+        val wide = beforeFold == null && maxWidth >= INBOX_WIDTH
         val first = if (fold == null && fixed) fixedOnes else toFix
         val heroAway by remember(first) { derivedStateOf { first.scroll.firstVisibleItemIndex > 0 } }
 
@@ -178,7 +182,7 @@ internal fun Notebook(
                 hero = true,
                 onTab = if (fold == null) ({ fixed = it }) else null,
                 wide = wide,
-                modifier = if (fold == null) Modifier.weight(1f) else Modifier.width(fold.start),
+                modifier = beforeFold?.let { Modifier.width(it) } ?: Modifier.weight(1f),
             )
             if (fold != null) {
                 NotebookList(
@@ -729,11 +733,6 @@ private val MistakeCause?.icon: Int
 private fun List<Mistake>.skillName(): String = first().skill?.name ?: stringResource(R.string.mistakes_other_questions)
 
 private fun List<Mistake>.groupKey(): String = first().skill?.id?.toString() ?: "none"
-
-@Composable
-private fun PageLoading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-}
 
 private val ITEM_GAP = 24.dp
 private val INBOX_WIDTH = 840.dp

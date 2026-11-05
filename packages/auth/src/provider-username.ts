@@ -14,5 +14,5 @@ export const nameProviderAccount: UserCreateBeforeHook = async (user, context) =
 
   const username = await findAvailableUsername(user.email);
 
-  return { data: username ? { ...user, displayUsername: username, username } : user };
+  return { data: username ? { ...user, username } : user };
 };

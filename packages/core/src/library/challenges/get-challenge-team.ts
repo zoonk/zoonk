@@ -1,9 +1,13 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { cacheTag } from "next/cache";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { getSession } from "../../users/get-session";
-import { findLearnerLessonPlan } from "../_utils/learner-lesson-plan";
+import {
+  findLearnerLessonPlan,
+  getLearnerLessonPlanCacheTags,
+} from "../_utils/learner-lesson-plan";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { type ChallengeTeam, buildChallengeTeam } from "./challenge-team";
 
@@ -40,6 +44,7 @@ export async function getChallengeTeam({
     return { status: "notFound" };
   }
 
+  cacheTag(...getLearnerLessonPlanCacheTags(userId));
   const plan = await findLearnerLessonPlan({ lessonId, userId });
 
   if (!plan) {

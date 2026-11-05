@@ -64,6 +64,7 @@ function EndButton({ backHref, run }: { backHref: string; run: Run }) {
       aria-label={t("End practice. What you answered counts.")}
       className={TASK_HEADER_ICON_CLASS.start}
       disabled={phase.kind === "checking"}
+      focusableWhenDisabled
       onClick={run.end}
       ref={buttonRef}
       size="icon"

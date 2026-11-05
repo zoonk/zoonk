@@ -177,7 +177,4 @@
     <string name="exam_cutoff_source">%1$s, according to %2$s</string>
     <!-- %1$s is the learner's goal, such as "Medicine at USP". -->
     <string name="exam_cutoff_goal">Your goal: %1$s</string>
-    <string name="exam_not_found_title">We couldn\'t find this page</string>
-    <string name="exam_not_found_description">The link may be old or mistyped.</string>
-    <string name="exam_go_to_today">Go to Today</string>
 </resources>

@@ -20,13 +20,13 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.closeBook
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -58,20 +58,17 @@ class SettingsPageFoldTest {
                         }
                     }
                 }
-            AppShell(navigator, entries, onSendFeedback = {})
+            ZoonkTheme { AppShell(navigator, entries, onSendFeedback = {}) }
         }
         rule.runOnIdle { navigator.open(AppRoute.Preferences) }
         rule.waitForIdle()
         rule.onNodeWithTag("taps").performClick()
 
-        val fold = FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL)
-        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(listOf(fold)))
-        rule.waitForIdle()
+        rule.unfoldBook(folds)
         rule.onNodeWithText("Settings list").assertIsDisplayed()
         rule.onNodeWithText("Taps 1").assertIsDisplayed()
 
-        folds.overrideWindowLayoutInfo(TestWindowLayoutInfo(emptyList()))
-        rule.waitForIdle()
+        rule.closeBook(folds)
         rule.onNodeWithText("Settings list").assertDoesNotExist()
         rule.onNodeWithText("Taps 1").assertIsDisplayed()
     }

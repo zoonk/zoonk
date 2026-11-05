@@ -10,13 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.shell.GoalMark
 import com.zoonk.android.feature.account.AccountAvatar
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -40,7 +40,7 @@ class LetterMarkTest {
 
     private val user: MeUser =
         ApiJson.decodeFromString(
-            """{"analyticsDisabled":false,"createdAt":"2026-01-01T00:00:00Z","displayUsername":null,"email":"ana@zoonk.test",
+            """{"analyticsDisabled":false,"createdAt":"2026-01-01T00:00:00Z","email":"ana@zoonk.test",
                 "emailVerified":true,"id":"00000000-0000-4000-8000-000000000001","image":null,"name":"Ana",
                 "updatedAt":"2026-01-01T00:00:00Z","username":null}""",
         )
@@ -85,7 +85,7 @@ class LetterMarkTest {
         file.outputStream().use {
             compose
                 .onRoot()
-                .captureToImage()
+                .captureRender()
                 .asAndroidBitmap()
                 .compress(Bitmap.CompressFormat.PNG, 100, it)
         }

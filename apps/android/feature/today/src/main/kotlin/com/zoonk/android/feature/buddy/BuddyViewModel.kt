@@ -34,11 +34,15 @@ class BuddyViewModel internal constructor(
     var saveFailed by mutableStateOf(false)
         private set
 
-    var isOpening by mutableStateOf(false)
+    /** The row whose block is opening, and the one whose block couldn't, so only that row says so. */
+    var opening by mutableStateOf<BuddyTap?>(null)
         private set
 
-    var openFailed by mutableStateOf(false)
+    var openFailed by mutableStateOf<BuddyTap?>(null)
         private set
+
+    /** An answer that comes back after the learner left the page, or moved to another goal, belongs to no row and opens nothing. */
+    private var visit = 0
 
     private val opened = Channel<AppRoute>(Channel.BUFFERED)
 
@@ -73,28 +77,41 @@ class BuddyViewModel internal constructor(
     }
 
     fun openMission(
-        opens: MissionOpens,
+        tap: BuddyTap,
         goalId: String,
     ) {
-        opens.page(goalId)?.let {
+        tap.opens.page(goalId)?.let {
             opened.trySend(it)
             return
         }
-        val blockId = (opens as? MissionOpens.Block)?.blockId ?: return
-        if (isOpening) return
-        isOpening = true
-        openFailed = false
+        val blockId = (tap.opens as? MissionOpens.Block)?.blockId ?: return
+        if (opening != null) return
+        opening = tap
+        openFailed = null
+        val started = visit
 
         viewModelScope.launch {
             try {
                 when (val result = opener.openMission(blockId)) {
-                    is MutationResult.Done -> result.value?.let(opened::trySend) ?: store.status.refresh()
-                    is MutationResult.Failed -> openFailed = true
+                    is MutationResult.Done -> result.value?.let { if (visit == started) opened.trySend(it) } ?: store.status.refresh()
+                    is MutationResult.Failed -> if (visit == started) openFailed = tap
                     MutationResult.Obsolete -> Unit
                 }
             } finally {
-                isOpening = false
+                opening = null
             }
         }
     }
+
+    /** The page left the screen (a lesson over it, another tab) or moved to another goal. */
+    fun endVisit() {
+        visit++
+        openFailed = null
+    }
 }
+
+/** A tapped row of the buddy's day. A first step can open the same block as a mission, and only the tapped row shows how it went. */
+data class BuddyTap(
+    val opens: MissionOpens,
+    val firstStep: Boolean = false,
+)

@@ -31,6 +31,15 @@ enum HelpLimit: Equatable, Sendable {
 
     return false
   }
+
+  /// It passes on its own, so the learner tries again from the same screen.
+  var isShortBreak: Bool {
+    if case .slowDown = self {
+      return true
+    }
+
+    return false
+  }
 }
 
 struct VoiceRefusal: Error, Equatable, Sendable {
