@@ -10,10 +10,12 @@ import { findRankedIds, orderByIds, toTextSearch } from "../identity/_utils/text
 import { toIconFiles } from "./_utils/icon-files";
 
 /**
- * Each draw attempt renews the claim and its image call times out after 2 minutes, so a run still
- * drawing never goes this long without renewing; only one that stopped loses its claim.
+ * Each draw attempt renews the claim and gives up after `DRAW_ATTEMPT_MS` (a drawing takes about 10
+ * seconds, and Blob's own upload retries can run for 25 minutes), so a run still drawing renews long
+ * before its claim goes stale; only one that stopped loses it.
  */
 const STALE_CLAIM_MS = 600_000;
+const DRAW_ATTEMPT_MS = 180_000;
 
 export type IconRow = { id: string; name: string; runId: string; status: GenerationStatus };
 
@@ -104,13 +106,20 @@ export async function drawLessonIcon({
     return icon?.status ?? null;
   }
 
-  const { data, provenance } = await generateLessonIconImage({ analytics, need: icon });
+  const abortSignal = AbortSignal.timeout(DRAW_ATTEMPT_MS);
+
+  const { data, provenance } = await generateLessonIconImage({
+    abortSignal,
+    analytics,
+    need: icon,
+  });
+
   const files = await toIconFiles(data.image.uint8Array);
   const slug = icon.name.replaceAll(" ", "-");
 
   const [large, small] = await Promise.all([
-    uploadImage({ fileName: `library/icons/${slug}-256.webp`, image: files.large }),
-    uploadImage({ fileName: `library/icons/${slug}-96.webp`, image: files.small }),
+    uploadImage({ abortSignal, fileName: `library/icons/${slug}-256.webp`, image: files.large }),
+    uploadImage({ abortSignal, fileName: `library/icons/${slug}-96.webp`, image: files.small }),
   ]);
 
   if (large.error) {

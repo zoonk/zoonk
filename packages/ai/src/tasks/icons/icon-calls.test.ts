@@ -42,11 +42,15 @@ describe("icon library calls", () => {
     ).toStrictEqual([undefined, undefined]);
   });
 
-  it("bound each drawing, so a run still drawing renews its claim in time", async () => {
-    await expect(generateLessonIconImage({ need })).rejects.toThrow("stopped before the call");
+  it("stop drawing when the caller's attempt runs out", async () => {
+    const abortSignal = AbortSignal.timeout(1000);
+
+    await expect(generateLessonIconImage({ abortSignal, need })).rejects.toThrow(
+      "stopped before the call",
+    );
 
     expect(generateImage).toHaveBeenCalledWith(
-      expect.objectContaining({ abortSignal: expect.any(AbortSignal), maxImagesPerCall: 1 }),
+      expect.objectContaining({ abortSignal, maxImagesPerCall: 1 }),
     );
   });
 });

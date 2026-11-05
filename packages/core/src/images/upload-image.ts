@@ -4,11 +4,13 @@ import { logError } from "@zoonk/utils/logger";
 import { getPrivateBlobStore } from "@zoonk/utils/private-blob-store";
 
 export async function uploadImage({
+  abortSignal,
   access = "public",
   addRandomSuffix = true,
   fileName,
   image,
 }: {
+  abortSignal?: AbortSignal;
   access?: "private" | "public";
   addRandomSuffix?: boolean;
   fileName: string;
@@ -16,6 +18,7 @@ export async function uploadImage({
 }): Promise<SafeReturn<string>> {
   const { data: blob, error } = await safeAsync(() =>
     put(fileName, image, {
+      abortSignal,
       access,
       addRandomSuffix,
       ...(access === "private" ? getPrivateBlobStore() : {}),

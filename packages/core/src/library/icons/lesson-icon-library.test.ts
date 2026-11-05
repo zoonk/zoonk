@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { put } from "@vercel/blob";
 import { generateLessonIconImage } from "@zoonk/ai/tasks/icons/image";
 import { prisma } from "@zoonk/db";
 import { lessonIconFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -150,6 +151,15 @@ describe(drawLessonIcon, () => {
     await expect(drawLessonIcon({ iconId: claim.id, runId })).resolves.toBe("completed");
 
     expect(generateLessonIconImage).toHaveBeenCalledOnce();
+
+    const deadline = vi.mocked(generateLessonIconImage).mock.calls[0]?.[0].abortSignal;
+
+    expect(deadline).toBeInstanceOf(AbortSignal);
+
+    expect(vi.mocked(put).mock.calls.map((call) => call[2]?.abortSignal)).toStrictEqual([
+      deadline,
+      deadline,
+    ]);
 
     await expect(
       prisma.lessonIcon.findUniqueOrThrow({ where: { id: claim.id } }),
