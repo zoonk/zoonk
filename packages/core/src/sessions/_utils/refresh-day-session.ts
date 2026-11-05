@@ -12,6 +12,7 @@ import { loadDayPlan } from "./day-plan";
 import { AWAITING_OUTLINES_VERSION, loadDayPlanVersion } from "./day-plan-version";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
+import { oweStartedDaySettlements } from "./owe-started-day-settlements";
 import { planStudyDay } from "./plan-study-day";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
 import { type SelectedDayPlan, selectDayPlan, selectDayPlanFromContext } from "./selected-day-plan";
@@ -314,6 +315,8 @@ async function replaceNotStartedBlocks({
         },
         where: { id: session.id },
       });
+
+      await oweStartedDaySettlements(transaction, planned.length > 0 ? [] : replaced);
 
       return "rebuilt";
     },

@@ -102,8 +102,8 @@ export function ConversationClient({
       conversation={conversation}
       hrefs={getHrefs({ conversation, fromExam, fromMock })}
       onSaved={fromMock ? () => router.replace(`/mock/${fromMock}`) : undefined}
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}
     />
   );

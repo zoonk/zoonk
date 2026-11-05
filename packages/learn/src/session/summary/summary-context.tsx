@@ -2,6 +2,7 @@
 
 import { createContext, use } from "react";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
+import { type MomentCeremony } from "../moment-ceremony";
 import { type StudySessionSummary } from "../session-types";
 
 /** Each returns false when it didn't work. */
@@ -12,17 +13,12 @@ export type SessionSummaryActions = {
   keepGoing: () => Promise<boolean>;
 };
 
-export type CeremonyRenderer = (
-  milestone: NonNullable<StudySessionSummary["ceremony"]>,
-  onClose: () => void,
-) => React.ReactNode;
-
 export type SummaryGoalKind = "exam" | "explain" | "language" | "learn";
 
 type SessionSummaryValue = {
   actions: SessionSummaryActions;
   buddy: LearnBuddy | null;
-  ceremony?: CeremonyRenderer;
+  ceremony?: MomentCeremony;
   exitHref: string;
   goalKind: SummaryGoalKind;
   mistakesHref: string | null;

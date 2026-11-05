@@ -8,7 +8,8 @@ import { assertBrowserLaunchAllowed } from "../../packages/testing/src/browser-p
 import { getMailboxCaptureUrl, getServiceUrl } from "../dev/config.mts";
 import { readActionNames } from "./actions.mts";
 import { compareWithBaseline, comparisonRows, readBaseline } from "./baseline.mts";
-import { type Finding, markBusy } from "./checks.mts";
+import { markBusy } from "./busy.mts";
+import { type Finding } from "./checks.mts";
 import { checkExposure, readLearner } from "./exposure.mts";
 import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
@@ -221,7 +222,7 @@ const header = [
 const report = renderReport({
   extra: [
     ...renders.map(({ findings, path }) => ({
-      findings,
+      findings: judge(findings),
       place: { page: path, screen: "its render" },
     })),
     ...exposures.map(({ findings, path, viewer }) => ({

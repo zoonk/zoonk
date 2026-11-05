@@ -11,6 +11,8 @@ export type Statement = { at: number; ms: number; rows: number | null; sql: stri
 
 const REPEATED = 3;
 const LARGE_RESULT = 1000;
+/** Rendered alone on a quiet machine, the heaviest seeded plans' statements stayed under it (median 2 ms). */
+const SLOW_MS = 100;
 const QUIET_MS = 1000;
 const QUIET_LIMIT_MS = 15_000;
 const QUIET_POLL_MS = 200;
@@ -70,6 +72,7 @@ export function summarizeStatements(statements: Statement[]) {
     repeated: [...counts]
       .filter(([sql, same]) => isRead(sql) && same.length >= REPEATED)
       .map(([sql, same]) => ({ sql, times: same.length })),
+    slow: statements.filter((statement) => statement.ms > SLOW_MS),
   };
 }
 
@@ -88,6 +91,13 @@ export function queryFindings(summary: ReturnType<typeof summarizeStatements>): 
       message: `returned more than ${LARGE_RESULT} rows (unbounded, or more than the page shows): ${label(sql)}`,
       unit: "rows",
       value: rows ?? 0,
+    })),
+    ...summary.slow.map(({ ms, sql }): Finding => ({
+      check: "slow query",
+      level: "warn",
+      message: `took over ${SLOW_MS} ms (a scan, sort or join over many rows, or a busy database): ${label(sql)}`,
+      unit: "ms",
+      value: Math.round(ms),
     })),
   ];
 }
@@ -233,11 +243,11 @@ export function renderRows(renders: RenderReport[]): string[] {
     "",
     "Each page's server render on its own, from `ZOONK_QUERY_LOG`.",
     "",
-    "| Page | Statements | DB time | Repeated reads | Large results | Filters without an index |",
-    "| --- | --- | --- | --- | --- | --- |",
+    "| Page | DB time | Slow statements | Repeated reads | Large results | Filters without an index | Statements |",
+    "| --- | --- | --- | --- | --- | --- | --- |",
     ...renders.map(({ findings, path, summary }) => {
       const unindexed = findings.filter((finding) => finding.check === "no index").length;
-      return `| ${path} | ${summary.count} | ${Math.round(summary.dbMs)} ms | ${summary.repeated.length} | ${summary.large.length} | ${unindexed} |`;
+      return `| ${path} | ${Math.round(summary.dbMs)} ms | ${summary.slow.length} | ${summary.repeated.length} | ${summary.large.length} | ${unindexed} | ${summary.count} |`;
     }),
     "",
   ];

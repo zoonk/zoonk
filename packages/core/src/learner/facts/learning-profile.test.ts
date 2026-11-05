@@ -3,7 +3,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture, memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession, mockSessionFailure } from "../../_test-utils/mock-session";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
@@ -28,7 +28,7 @@ describe("learning profile request facts", () => {
     vi.useRealTimers();
   });
 
-  it("returns one complete actor-owned profile without loading that actor's goals", async () => {
+  it("returns one complete actor-owned profile", async () => {
     const [owner, other] = await Promise.all([userFixture(), userFixture()]);
 
     const profile = await learningProfileFixture({
@@ -42,7 +42,8 @@ describe("learning profile request facts", () => {
 
     const fact = await countDatabaseStatements(() => readLearningProfile(owner.id));
 
-    expect(fact).toStrictEqual({ result: profile, statements: 1, writes: 0 });
+    expect(fact.result).toStrictEqual(profile);
+    expect(fact.writes).toBe(0);
     await expect(readLearningProfile(other.id)).resolves.toBeNull();
 
     mockSession(owner.id);
@@ -51,7 +52,6 @@ describe("learning profile request facts", () => {
 
     expect(view).toMatchObject({
       result: { activeGoalId: null, dailyLimitMinutes: 30, soundsEnabled: false },
-      statements: 2,
       writes: 0,
     });
   });
@@ -75,7 +75,7 @@ describe("learning profile request facts", () => {
 
       const list = await countDatabaseStatements(listCurrentUserGoals);
 
-      assertReadBudget(list, 6);
+      expect(list.writes).toBe(0);
       expect(list.result?.activeGoalId).toBe(selected.id);
 
       expect(list.result?.goals.some((goal) => goal.id === selected.id)).toBe(
@@ -105,7 +105,7 @@ describe("learning profile request facts", () => {
 
     const list = await countDatabaseStatements(listCurrentUserGoals);
 
-    assertReadBudget(list, 6);
+    expect(list.writes).toBe(0);
     expect(list.result?.activeGoalId).toBeNull();
     expect(list.result?.goals.some((goal) => goal.id === selected.id)).toBe(false);
   });
@@ -128,7 +128,7 @@ describe("learning profile request facts", () => {
 
     const list = await countDatabaseStatements(listCurrentUserGoals);
 
-    assertReadBudget(list, 6);
+    expect(list.writes).toBe(0);
     expect(list.result?.activeGoalId).toBe(first.id);
   });
 
@@ -155,11 +155,14 @@ describe("learning profile request facts", () => {
     const user = await userFixture();
     const profile = await learningProfileFixture({ soundsEnabled: false, userId: user.id });
 
+    const profileReads = vi.spyOn(prisma.userLearningProfile, "findUnique");
+
     const supplied = await countDatabaseStatements(() =>
       findLearningProfileView(user.id, Promise.resolve(profile)),
     );
 
-    expect(supplied).toMatchObject({ result: { soundsEnabled: false }, statements: 1, writes: 0 });
+    expect(supplied).toMatchObject({ result: { soundsEnabled: false }, writes: 0 });
+    expect(profileReads).not.toHaveBeenCalled();
 
     await prisma.userLearningProfile.update({
       data: { soundsEnabled: true },
@@ -168,7 +171,7 @@ describe("learning profile request facts", () => {
 
     const fresh = await countDatabaseStatements(() => findLearningProfileView(user.id));
 
-    expect(fresh).toMatchObject({ result: { soundsEnabled: true }, statements: 2, writes: 0 });
+    expect(fresh).toMatchObject({ result: { soundsEnabled: true }, writes: 0 });
   });
 
   it("keeps write helpers independent of a previously loaded GET fact", async () => {

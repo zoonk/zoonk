@@ -1,4 +1,5 @@
 import { getActiveSubscriptionQuery } from "@zoonk/auth/active-subscription";
+import { issueEarnedCertificates } from "@zoonk/auth/certificate-issuance";
 import { readStorePurchaseLocale } from "@zoonk/auth/duplicate-plus-emails";
 import {
   type Subscription,
@@ -8,7 +9,7 @@ import {
 } from "@zoonk/db";
 import { z } from "zod";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
-import { getUserSubscriptionCacheTag } from "../cache/tags";
+import { getCertificatesCacheTag, getUserSubscriptionCacheTag } from "../cache/tags";
 import { type FollowUp } from "../follow-ups/follow-up-contract";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
@@ -268,6 +269,12 @@ function writeSnapshot(
       userId: snapshot.referenceId,
     });
 
+    await issueEarnedCertificates(tx, {
+      now: new Date(),
+      plus: "check",
+      userId: snapshot.referenceId,
+    });
+
     return written;
   });
 }
@@ -345,7 +352,11 @@ export async function reconcileStoreSubscription(
     return writeSnapshot(snapshot, options);
   });
 
-  revalidateCacheTags([getUserSubscriptionCacheTag(snapshot.referenceId)]);
+  revalidateCacheTags([
+    getCertificatesCacheTag(snapshot.referenceId),
+    getUserSubscriptionCacheTag(snapshot.referenceId),
+  ]);
+
   return subscription;
 }
 

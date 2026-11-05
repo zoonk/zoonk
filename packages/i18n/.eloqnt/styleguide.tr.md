@@ -76,6 +76,7 @@
 - “Phase challenge”: “Aşama meydan okuması”
 - “Weekly challenge”: “Haftalık meydan okuma”
 - “Mock exam”, including speaking mocks: “deneme sınavı”, never just “deneme”, which is a try
+- The placement test, whatever the English calls it (“level test”, “placement”, an exam's “diagnostic”): “seviye tespit testi”, never “seviye belirleme” or a bare “seviye testi”
 - “Logbook”: “Çalışma günlüğü”
 - “Fading” (needs review): “Tekrar edilecek”
 - “Overview” (course level and a plan's first phase): “Genel bakış”
