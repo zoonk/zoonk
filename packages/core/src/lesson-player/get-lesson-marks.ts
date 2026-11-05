@@ -1,11 +1,6 @@
 import "server-only";
-import { type StepMarks } from "../library/marks/step-marks-contract";
 import { getPlayableLibraryLesson } from "./get-playable-library-lesson";
-import { type PlayableLibraryLesson } from "./playable-lesson";
-
-export type LessonMarks = Pick<PlayableLibraryLesson, "marksPending" | "summary"> & {
-  steps: { marks: StepMarks | null; stepId: string }[];
-};
+import { type LessonMarks } from "./playable-lesson";
 
 /**
  * What a player polls while `marksPending`: the lesson's marks and map as its next read has them,

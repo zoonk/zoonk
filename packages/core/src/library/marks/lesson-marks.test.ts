@@ -39,6 +39,7 @@ function taggedAs({ cloud, nucleus }: { cloud: string; nucleus: string }) {
         underline: screen.kind === "explanation" ? "a map of where it might be" : null,
       })),
     },
+    output: {} as never,
     provenance: {} as never,
     systemPrompt: "",
     usage: {} as never,
@@ -141,6 +142,7 @@ describe(tagLessonMarks, () => {
 
       return {
         data: { ideas: [{ about: "Stale", icon: null }], screens: [] },
+        output: {} as never,
         provenance: {} as never,
         systemPrompt: "",
         usage: {} as never,

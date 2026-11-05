@@ -1,7 +1,7 @@
 import sharp from "sharp";
 import { describe, expect, it } from "vitest";
 import { blankIcon, drawnIcon } from "../_test-utils/icon-images";
-import { IconFileError, toIconFiles } from "./icon-files";
+import { toIconFiles } from "./icon-files";
 
 async function readCorner(file: Buffer) {
   const { data } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -34,12 +34,12 @@ describe(toIconFiles, () => {
   });
 
   it("refuses a file with no drawing, a drawing on a dark background, and bytes that aren't an image", async () => {
-    await expect(toIconFiles(await blankIcon())).rejects.toBeInstanceOf(IconFileError);
+    await expect(toIconFiles(await blankIcon())).rejects.toThrow("no drawing");
 
-    await expect(toIconFiles(await drawnIcon({ background: "#1E293B" }))).rejects.toBeInstanceOf(
-      IconFileError,
+    await expect(toIconFiles(await drawnIcon({ background: "#1E293B" }))).rejects.toThrow(
+      "no drawing",
     );
 
-    await expect(toIconFiles(new Uint8Array([1, 2, 3]))).rejects.toBeInstanceOf(IconFileError);
+    await expect(toIconFiles(new Uint8Array([1, 2, 3]))).rejects.toThrow("isn't an image");
   });
 });

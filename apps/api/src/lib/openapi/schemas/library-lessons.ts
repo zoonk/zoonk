@@ -95,7 +95,7 @@ function teachingStepSchema<TKind extends TeachingStepKind>(kind: TKind) {
           "The screen asks for a picture that is still being drawn (the lesson was written moments ago): read the lesson again in a few seconds for `image`",
       }),
     kind: z.literal(kind),
-    marks: stepMarksSchema.nullable().optional(),
+    marks: stepMarksSchema,
     optionPictures: z
       .record(z.string(), stepImageObjectSchema)
       .optional()

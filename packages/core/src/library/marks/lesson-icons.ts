@@ -128,10 +128,6 @@ export async function pickLessonIcons({
   return picked.flat();
 }
 
-export async function readIconStates(iconIds: readonly string[]): Promise<IconRow[]> {
-  return findIconsById(iconIds);
-}
-
 function linkIcon<
   T extends { iconId?: string | null; iconNeed?: IconNeed | null; iconPending?: boolean },
 >({ ready, saved }: { ready: ReadonlyMap<string, string>; saved: T }): T {

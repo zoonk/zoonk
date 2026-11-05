@@ -1,12 +1,7 @@
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type CallWait } from "@zoonk/ai/provider-options";
-import { drawLessonIcon, failLessonIcon } from "@zoonk/core/library/icons/library";
-import {
-  type PickedIcon,
-  linkLessonIcons,
-  pickLessonIcons,
-  readIconStates,
-} from "@zoonk/core/library/marks/icons";
+import { drawLessonIcon, failLessonIcon, findIconsById } from "@zoonk/core/library/icons/library";
+import { type PickedIcon, linkLessonIcons, pickLessonIcons } from "@zoonk/core/library/marks/icons";
 import {
   type LessonIconRequest,
   type TaggedLesson,
@@ -55,7 +50,7 @@ export async function failLessonIconStep(input: { iconId: string; runId: string 
 export async function readIconStatesStep(iconIds: string[]): Promise<GenerationStatus[]> {
   "use step";
 
-  const icons = await readIconStates(iconIds);
+  const icons = await findIconsById(iconIds);
   return icons.map((icon) => icon.status);
 }
 

@@ -112,3 +112,8 @@ export type PlayableLibraryLesson = {
   targetLanguage: string | null;
   title: string;
 };
+
+/** What a player reads again while `marksPending`, without the rest of the lesson. */
+export type LessonMarks = Pick<PlayableLibraryLesson, "marksPending" | "summary"> & {
+  steps: { marks: StepMarks | null; stepId: string }[];
+};

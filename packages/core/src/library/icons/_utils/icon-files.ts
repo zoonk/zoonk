@@ -17,7 +17,7 @@ const BACKGROUND_LIGHTNESS = 235;
 const TRANSPARENT = "rgba(0, 0, 0, 0)";
 const WHITE = "#ffffff";
 
-export class IconFileError extends Error {
+class IconFileError extends Error {
   override name = "IconFileError";
 }
 

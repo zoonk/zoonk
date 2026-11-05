@@ -13,7 +13,7 @@ const LEADING_ARTICLE = /^(?:an?|the) /u;
  * Lowercase English words, so a name is the same key whoever wrote it. Null for anything else:
  * digits, another script or a long phrase can't be a shared icon's name.
  */
-export function normalizeIconName(name: string): string | null {
+function normalizeIconName(name: string): string | null {
   const cleaned = name
     .normalize("NFKC")
     .toLowerCase()

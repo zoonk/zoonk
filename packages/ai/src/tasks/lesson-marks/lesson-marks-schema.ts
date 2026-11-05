@@ -49,7 +49,7 @@ export type ScreenMarks = {
   icon: IconNeed | null;
 };
 
-export type IdeaMarks = { about: string | null; icon: IconNeed | null };
+type IdeaMarks = { about: string | null; icon: IconNeed | null };
 
 export type LessonMarks = { ideas: IdeaMarks[]; screens: ScreenMarks[] };
 
