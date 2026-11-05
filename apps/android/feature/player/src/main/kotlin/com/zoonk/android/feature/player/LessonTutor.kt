@@ -104,11 +104,13 @@ internal fun AskBuddyOffer(
 
 /**
  * Main's aside beside a teaching screen on wide screens, on the learner's page of a spread: two of the
- * buddy's suggestions for the screen, ready to send, or anything else.
+ * buddy's suggestions for the screen, ready to send, or anything else. A screen that shows "I didn't
+ * get this" ([simplerOnScreen]) already asks for the simpler explanation, so the aside offers the others.
  */
 @Composable
 internal fun ScreenHelp(
     tutor: LessonTutor,
+    simplerOnScreen: Boolean,
     onAsk: (TutorSuggestion?) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -125,7 +127,7 @@ internal fun ScreenHelp(
             )
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            tutor.suggestions.take(SCREEN_SUGGESTIONS).forEach { suggestion ->
+            tutor.suggestions.filterNot { simplerOnScreen && it.id == SIMPLER_SUGGESTION }.take(SCREEN_SUGGESTIONS).forEach { suggestion ->
                 SuggestionChip(onClick = { onAsk(suggestion) }, label = { Text(suggestion.label) })
             }
             SuggestionChip(onClick = { onAsk(null) }, label = { Text(stringResource(R.string.player_ask_something_else)) })

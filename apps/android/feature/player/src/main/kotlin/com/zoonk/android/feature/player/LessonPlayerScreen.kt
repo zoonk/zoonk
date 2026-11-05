@@ -405,11 +405,11 @@ fun LessonPlayer(
                 AskBuddyOffer(reason, tutor.identity, onAsk = { ask(spread) }, onDismiss = closeOffer)
             }
         }
-    val help: (@Composable () -> Unit)? =
+    val help: (@Composable (simplerOnScreen: Boolean) -> Unit)? =
         tutor?.takeIf { it.canAsk }?.let { buddy ->
-            {
+            { simplerOnScreen ->
                 val spread = spreadShows()
-                ScreenHelp(buddy) { suggestion ->
+                ScreenHelp(buddy, simplerOnScreen) { suggestion ->
                     offerId = suggestion?.id
                     offerAsked = false
                     ask(spread)
@@ -659,7 +659,7 @@ private fun Content(
     ceremony: MomentCeremony?,
     certificatesMoment: CertificatesMoment?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
-    help: (@Composable () -> Unit)?,
+    help: (@Composable (simplerOnScreen: Boolean) -> Unit)?,
     touches: IntState,
     canvasWork: SaveableStateHolder,
 ) {
@@ -755,7 +755,7 @@ private fun Content(
                         // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause;
                         // a knowledge lesson's explanations have "I didn't get this" instead.
                         if (help != null && fold != null && step.teachesInText) {
-                            help()
+                            help(step.content is StepContent.Explanation && !language.languages.isLanguageLesson)
                         } else if (offer != null && screen.quickCheck == null && language.languages.isLanguageLesson) {
                             StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
                         }
