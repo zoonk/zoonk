@@ -21,7 +21,6 @@ import com.zoonk.api.models.CourseResult
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import java.util.Locale
 import java.util.UUID
 import kotlin.time.Duration.Companion.hours
 
@@ -183,11 +182,6 @@ internal fun String.toUuid(): UUID =
     }
 
 fun String.toUuidOrNull(): UUID? = runCatching { UUID.fromString(this) }.getOrNull()
-
-/** Main's catalog lists courses in the app's language, or English when Zoonk has no catalog in it. */
-fun catalogLanguage(locale: Locale): String = locale.language.takeIf { it in CATALOG_LANGUAGES } ?: "en"
-
-private val CATALOG_LANGUAGES = setOf("de", "en", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr")
 
 class LiveCatalogApi(
     private val api: ApiClients,

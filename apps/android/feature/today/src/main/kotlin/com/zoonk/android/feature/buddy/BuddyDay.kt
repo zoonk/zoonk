@@ -22,9 +22,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +39,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.missions.MissionsCard
-import com.zoonk.android.feature.session.MissionOpens
+import com.zoonk.android.feature.session.DayMission
 import com.zoonk.android.feature.session.toDayMission
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -74,16 +71,30 @@ internal fun BuddyStatus.look(): BuddyLook =
 
 private fun belt(color: String): Belt = Belt.entries.first { it.name.equals(color, ignoreCase = true) }
 
-/** Main's quiet line beside the buddy on a phone: Energy and the day's missions, opening the day in a sheet. */
+/** What the buddy's day rows open, and the row whose tap is opening or couldn't open. */
+internal class BuddyDayTaps(
+    val open: (BuddyTap) -> Unit,
+    private val opening: BuddyTap? = null,
+    private val failed: BuddyTap? = null,
+) {
+    fun isOpening(tap: BuddyTap?): Boolean = tap != null && tap == opening
+
+    fun hasFailed(tap: BuddyTap?): Boolean = tap != null && tap == failed
+}
+
+internal fun DayMission.tap(firstStep: Boolean = false): BuddyTap? = opens?.let { BuddyTap(it, firstStep) }
+
+/** Main's quiet line beside the buddy on a phone: Energy and the day's missions, opening the day in a sheet ([open]). */
 @Composable
 internal fun BuddyTodayLine(
     status: BuddyStatus,
     look: BuddyLook,
     name: String,
-    onMission: (MissionOpens) -> Unit,
+    taps: BuddyDayTaps,
+    open: Boolean,
+    onOpenChange: (Boolean) -> Unit,
     navigator: AppNavigator,
 ) {
-    var open by rememberSaveable { mutableStateOf(false) }
     val today = status.today
     val done = today?.missions?.count { it.status == StudyMission.Status.DONE } ?: 0
     val energy = status.energy.current?.let { formatPercent(it / PERCENT, currentLocale()) }
@@ -97,7 +108,7 @@ internal fun BuddyTodayLine(
     val icon = with(LocalDensity.current) { LINE_ICON.toDp() }
 
     TextButton(
-        onClick = { open = true },
+        onClick = { onOpenChange(true) },
         modifier = Modifier.semantics { contentDescription = spoken },
         contentPadding = PaddingValues(horizontal = 8.dp),
     ) {
@@ -132,15 +143,7 @@ internal fun BuddyTodayLine(
         }
     }
 
-    if (open) {
-        BuddyTodaySheet(status, look, name, onMission = { opens ->
-            open = false
-            onMission(opens)
-        }, navigator, onDismiss = {
-            open =
-                false
-        })
-    }
+    if (open) BuddyTodaySheet(status, look, name, taps, navigator, onDismiss = { onOpenChange(false) })
 }
 
 @Composable
@@ -160,7 +163,7 @@ private fun BuddyTodaySheet(
     status: BuddyStatus,
     look: BuddyLook,
     name: String,
-    onMission: (MissionOpens) -> Unit,
+    taps: BuddyDayTaps,
     navigator: AppNavigator,
     onDismiss: () -> Unit,
 ) {
@@ -191,11 +194,11 @@ private fun BuddyTodaySheet(
             }
             if (status.today?.missions?.isNotEmpty() == true) {
                 HorizontalDivider()
-                BuddyMissions(status, look, name, onMission)
+                BuddyMissions(status, look, name, taps)
             }
             if (status.firstSteps != null) {
                 HorizontalDivider()
-                BuddyFirstStepsSection(status.firstSteps, look, name, onMission)
+                BuddyFirstStepsSection(status.firstSteps, look, name, taps)
             }
         }
     }
@@ -207,7 +210,7 @@ internal fun BuddyDayPane(
     status: BuddyStatus,
     look: BuddyLook,
     name: String,
-    onMission: (MissionOpens) -> Unit,
+    taps: BuddyDayTaps,
     onGlasses: () -> Unit,
     navigator: AppNavigator,
     app: AppContainer,
@@ -219,8 +222,8 @@ internal fun BuddyDayPane(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         BuddyEnergy(status.energy, name) { navigator.open(AppRoute.StatsEnergy) }
-        BuddyMissions(status, look, name, onMission)
-        BuddyFirstStepsSection(status.firstSteps, look, name, onMission)
+        BuddyMissions(status, look, name, taps)
+        BuddyFirstStepsSection(status.firstSteps, look, name, taps)
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
@@ -279,7 +282,7 @@ private fun BuddyMissions(
     status: BuddyStatus,
     look: BuddyLook,
     name: String,
-    onMission: (MissionOpens) -> Unit,
+    taps: BuddyDayTaps,
 ) {
     val today = status.today ?: return
 
@@ -289,8 +292,10 @@ private fun BuddyMissions(
         bonusEarned = today.fullMeal.earned,
         buddy = look,
         buddyName = name,
-        onOpen = onMission,
+        onOpen = { opens -> taps.open(BuddyTap(opens)) },
         brainPower = status.belt.totalBrainPower,
+        opening = { mission -> taps.isOpening(mission.tap()) },
+        openFailed = { mission -> taps.hasFailed(mission.tap()) },
         showBuddy = false,
     )
 }

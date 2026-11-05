@@ -20,6 +20,8 @@ struct LessonPlayerState: Equatable, Sendable {
     case selfCorrect
     /// An answer never reached the server, so the lesson came back to its screen.
     case answerNotSaved
+    /// A question left out because its picture never came is back, since the picture came.
+    case pictureReady
     /// "Can't write now" left the lesson's writing out; "Write again" puts it back.
     case writingSkipped
   }
@@ -581,32 +583,62 @@ struct LessonPlayerState: Equatable, Sendable {
     run = .refused(refusal)
   }
 
-  /// The server couldn't finish the lesson because an answer the screens show never reached it:
-  /// the lesson goes back to the first screen it's missing.
-  mutating func resync(answers runAnswers: [LessonRunAnswer], optionalStepIds: [String] = []) {
+  /// The server couldn't finish the lesson: the lesson goes back to the first screen whose answer
+  /// never reached it or, when every answer did, to a question left out for a picture that has
+  /// come since (`lesson` is the lesson read again).
+  mutating func resync(
+    answers runAnswers: [LessonRunAnswer], optionalStepIds: [String] = [], lesson: [LessonStep] = []
+  ) {
     guard phase == .completed else {
       return
     }
 
     skipSteps(optionalStepIds)
     let known = runAnswers.filter { steps[$0.stepId] != nil }
+
+    if var missing = resumed(from: known) {
+      missing.notice = .answerNotSaved
+      self = missing
+    } else if var pictured = restoringPictures(from: lesson, optionalStepIds: optionalStepIds)
+      .resumed(from: known)
+    {
+      pictured.notice = .pictureReady
+      self = pictured
+    } else {
+      completion?.status = .failed
+    }
+  }
+
+  /// Going back helps only if a screen here is still to answer; when the one the server misses
+  /// was left out on this device, the learner would replay the lesson without end.
+  private func resumed(from known: [LessonRunAnswer]) -> LessonPlayerState? {
     let answered = Set(known.map(\.stepId))
     var resumed = self
     resumed.resetForResume()
     resumed.resume(from: known)
 
-    // Going back helps only if a screen here is still to answer; when the one the server misses
-    // was left out on this device, the learner would replay the lesson without end.
     let isOpen = resumed.queue.contains {
       steps[$0]?.isAnswerable == true && !answered.contains($0)
     }
 
-    if isOpen {
-      self = resumed
-      notice = .answerNotSaved
-    } else {
-      completion?.status = .failed
+    return isOpen ? resumed : nil
+  }
+
+  /// Screens left out here that the run still needs, back with the picture they now have.
+  private func restoringPictures(from lesson: [LessonStep], optionalStepIds: [String])
+    -> LessonPlayerState
+  {
+    var restored = self
+
+    for step in lesson
+    where step.image != nil && unavailableStepIds.contains(step.id)
+      && !optionalStepIds.contains(step.id)
+    {
+      restored.steps[step.id] = steps[step.id]?.withPictures(from: step)
+      restored.unavailableStepIds.removeAll { $0 == step.id }
     }
+
+    return restored
   }
 
   mutating func skipSteps(_ stepIds: [String], now: Date = .now) {

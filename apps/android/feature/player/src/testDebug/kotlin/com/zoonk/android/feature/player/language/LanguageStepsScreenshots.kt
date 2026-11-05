@@ -9,7 +9,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.SavedStateHandle
@@ -44,6 +43,7 @@ import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.playable
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -202,7 +202,7 @@ class LanguageStepsScreenshots {
         states.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            write("${states[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("${states[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

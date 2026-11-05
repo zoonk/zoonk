@@ -3,8 +3,6 @@ package com.zoonk.android.data
 import android.content.ComponentCallbacks
 import android.content.Context
 import android.content.res.Configuration
-import androidx.core.os.ConfigurationCompat
-import com.zoonk.android.feature.catalog.catalogLanguage
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearningProfile
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +14,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.util.Date
-import java.util.Locale
 
 /** PostHog as [Analytics] drives it. */
 interface AnalyticsSdk {
@@ -132,7 +129,7 @@ fun Context.shownLanguage(): Flow<String> =
         awaitClose { unregisterComponentCallbacks(callbacks) }
     }
 
-private fun Configuration.shownLanguage() = catalogLanguage(ConfigurationCompat.getLocales(this)[0] ?: Locale.getDefault())
+private fun Configuration.shownLanguage() = shownLocale().language
 
 private data class Viewer(
     val learner: AnalyticsLearner,

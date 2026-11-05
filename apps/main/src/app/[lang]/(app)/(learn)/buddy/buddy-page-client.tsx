@@ -84,7 +84,7 @@ export function BuddyPageClient({
 }) {
   const router = useRouter();
   const { decide, tools } = useTutorCardActions(goalId);
-  const missionLinks = useMissionLinks(goalId);
+  const missionLinks = useMissionLinks(goalId, { learner: viewerId });
 
   useReportTabMissions({
     day: status.today && { goalId: status.today.goalId, localDate: status.today.localDate },

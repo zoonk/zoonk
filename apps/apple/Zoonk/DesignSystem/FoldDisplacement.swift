@@ -22,6 +22,16 @@ extension View {
   }
 }
 
+extension View {
+  /// What each helper here measures, outside its own padding. A frame with only a maximum width grows
+  /// to fit content its padding pushed past the width offered and moves the fold the helper reads, so
+  /// the helpers would measure each other forever; with both bounds it keeps the width offered:
+  /// https://developer.apple.com/documentation/swiftui/view/frame(minwidth:idealwidth:maxwidth:minheight:idealheight:maxheight:alignment:)
+  fileprivate func atOfferedWidth() -> some View {
+    frame(minWidth: 0, maxWidth: .infinity)
+  }
+}
+
 private struct FoldDisplacement: ViewModifier {
   @State private var fold: ClosedRange<CGFloat>?
 
@@ -29,7 +39,7 @@ private struct FoldDisplacement: ViewModifier {
     content
       .frame(maxWidth: .infinity)
       .padding(.leading, fold?.upperBound ?? 0)
-      // Measured outside the padding, so moving the control doesn't move the fold it reads.
+      .atOfferedWidth()
       .onGeometryChange(for: ClosedRange<CGFloat>?.self) {
         PaneSpace($0).fold
       } action: {
@@ -45,7 +55,7 @@ private struct HingeEnd: ViewModifier {
     content
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.trailing, space.hinge.map { space.width - $0.lowerBound } ?? 0)
-      // Measured outside the padding, so ending the block doesn't move the hinge it reads.
+      .atOfferedWidth()
       .onGeometryChange(for: PaneSpace.self, of: PaneSpace.init) { space = $0 }
   }
 }
@@ -59,6 +69,7 @@ private struct LonePage: ViewModifier {
     content
       .readableColumn(space.hinge == nil ? readableWidth : .infinity)
       .safeAreaPadding(.trailing, space.lonePageInset)
+      .atOfferedWidth()
       .onGeometryChange(for: PaneSpace.self, of: PaneSpace.init) { space = $0 }
   }
 }

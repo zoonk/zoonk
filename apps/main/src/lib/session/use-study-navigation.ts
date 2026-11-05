@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
+import { learnerStaying } from "@/lib/learner/learner-store";
 import { LESSON_GENERATION_PARAM } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
@@ -23,6 +23,7 @@ import {
   saveMissionDayAction,
   stopStudySessionAction,
 } from "./study-session-actions";
+import { answerHere } from "./tap-answer";
 
 export const SESSION_PATH = "/session";
 
@@ -85,6 +86,12 @@ export function getCurrentLocation(): string {
   return (localized ? `/${rest.join("/")}` : pathname) + search;
 }
 
+export function stayingHere(learner?: string): () => Promise<boolean> {
+  const learnerHere = learnerStaying(learner);
+  const origin = getCurrentLocation();
+  return async () => (await learnerHere()) && origin === getCurrentLocation();
+}
+
 type SessionAddress = { blockId?: string; href: string };
 
 /** On the session screen already, it reads itself again in place: a new address would draw the frame first. */
@@ -129,31 +136,37 @@ function useOpenUnwrittenLesson() {
       destination: Extract<StudyBlockOpening, { kind: "unwrittenLesson" }>,
       onSessionAddress?: (address: SessionAddress) => void,
     ): Promise<boolean> => {
-      const openedFrom = getCurrentLocation();
-      const generation = getLearnerGeneration();
-      const answer = await askToWriteLesson(destination.lessonId);
+      const here = stayingHere();
+      const asked = await answerHere(askToWriteLesson(destination.lessonId), here);
 
-      const stillHere = () =>
-        openedFrom === getCurrentLocation() && generation === getLearnerGeneration();
+      if (typeof asked === "boolean") {
+        return asked;
+      }
 
-      if (answer.status === "failed" || !stillHere()) {
+      const { answer } = asked;
+
+      if (answer.status === "failed") {
         return false;
       }
 
       if (answer.status === "ready") {
-        const written = await noteAppWrite(
-          openStudyBlockAction({
-            target: { blockId: destination.blockId, kind: "block" },
-            timeZone: getLocalTimeZone(),
-          }),
+        const written = await answerHere(
+          noteAppWrite(
+            openStudyBlockAction({
+              target: { blockId: destination.blockId, kind: "block" },
+              timeZone: getLocalTimeZone(),
+            }),
+          ),
+          here,
         );
 
-        if (!stillHere()) {
-          return false;
+        if (typeof written === "boolean") {
+          return written;
         }
 
-        if (written?.kind === "lesson") {
-          router.push(`/learn/${written.lessonId}?session=${written.sessionId}`);
+        if (written.answer?.kind === "lesson") {
+          const { lessonId, sessionId } = written.answer;
+          router.push(`/learn/${lessonId}?session=${sessionId}`);
           return true;
         }
       }
@@ -177,6 +190,10 @@ function useOpenUnwrittenLesson() {
   );
 }
 
+/**
+ * Resolves to false when it couldn't open, and true otherwise, also when the learner left before the
+ * answer: a tap they left has nothing to report.
+ */
 export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = {}) {
   const router = useRouter();
   const openSession = useOpenSession();
@@ -225,15 +242,14 @@ export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = 
   );
 }
 
-function useOpenDestination({ refresh }: { refresh?: () => void } = {}) {
-  const go = useGoToStudyDestination({ refresh });
+function useOpenDestination() {
+  const go = useGoToStudyDestination();
 
   return useCallback(
     async (action: () => Promise<StudyBlockOpening | null>): Promise<boolean> => {
-      const openedFrom = getCurrentLocation();
-      const destination = await action();
-
-      return openedFrom === getCurrentLocation() ? go(destination) : false;
+      const here = stayingHere();
+      const opened = await answerHere(action(), here);
+      return typeof opened === "boolean" ? opened : go(opened.answer);
     },
     [go],
   );
@@ -242,11 +258,16 @@ function useOpenDestination({ refresh }: { refresh?: () => void } = {}) {
 export function useMissionLinks(
   goalId: string,
   {
+    learner,
     openStep,
     refresh,
-  }: { openStep?: (ref: DayBlockRef) => Promise<boolean>; refresh?: () => void } = {},
+  }: {
+    learner?: string;
+    openStep?: (ref: DayBlockRef) => Promise<boolean>;
+    refresh?: () => void;
+  } = {},
 ): MissionLinks {
-  const navigate = useOpenDestination({ refresh });
+  const go = useGoToStudyDestination({ refresh });
   const reread = useReread(refresh);
 
   return useMemo(
@@ -261,22 +282,30 @@ export function useMissionLinks(
         pronunciation: `/pronunciation?goal=${goalId}`,
       },
       openBlock: async (blockId) => {
-        const openedFrom = getCurrentLocation();
+        const here = stayingHere(learner);
 
-        const opened = await navigate(() =>
+        const opened = await answerHere(
           noteAppWrite(
             openStudyBlockAction({
               target: { blockId, kind: "mission" },
               timeZone: getLocalTimeZone(),
             }),
           ),
+          here,
         );
 
-        if (!opened && openedFrom === getCurrentLocation()) {
-          reread();
+        if (typeof opened === "boolean") {
+          return opened;
         }
 
-        return opened;
+        // Only an answer with nothing to open reads the page again: Next turns a refresh that can't
+        // reach the server into a full page load, which offline lands on the browser's error page.
+        if (!opened.answer) {
+          reread();
+          return false;
+        }
+
+        return go(opened.answer);
       },
       // Fired with the tap, never awaited: the page opens at once (see `saveMissionDayAction`).
       openPage: () => {
@@ -284,7 +313,7 @@ export function useMissionLinks(
       },
       openStep,
     }),
-    [goalId, navigate, openStep, reread],
+    [go, goalId, learner, openStep, reread],
   );
 }
 

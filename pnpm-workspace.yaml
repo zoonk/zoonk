@@ -64,7 +64,7 @@ catalog:
   server-only: 0.0.1
   sharp: 0.35.5
   tsx: 4.23.15
-  typescript: 7.0.2
+  typescript: 7.1.0-beta
   undici: 8.12.3
   vite: 8.3.5
   vitest: 5.0.5

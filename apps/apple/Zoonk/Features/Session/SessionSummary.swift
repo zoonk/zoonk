@@ -36,10 +36,10 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   }
 
   struct SkillMove: Decodable, Equatable, Sendable {
-    let from: String
+    let from: GoalChapter.Skill.State
     let name: String
     let skillId: String
-    let to: String
+    let to: GoalChapter.Skill.State
   }
 
   struct Tomorrow: Decodable, Equatable, Sendable {

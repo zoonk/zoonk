@@ -26,6 +26,10 @@ export async function loadLastAnswers({
   itemIds: readonly string[];
   userId: string;
 }): Promise<Map<string, Date>> {
+  if (itemIds.length === 0) {
+    return new Map();
+  }
+
   const rows = await prisma.attempt.groupBy({
     _max: { answeredAt: true },
     by: ["itemId"],

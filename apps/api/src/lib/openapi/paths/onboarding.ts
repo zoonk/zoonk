@@ -90,7 +90,7 @@ export const onboardingPaths = {
     },
     patch: {
       description:
-        "One fix on the \"Here's what I understood\" card, recomputing the fields that depend on it: the learner's own date (any full date, such as the notice's day it offers) replaces the exam's dates, and null brings them back; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal (no such goal, a day already past). Fixing the words themselves is a new understanding.",
+        "One fix on the \"Here's what I understood\" card, recomputing the fields that depend on it: the learner's own date (any full date, such as the notice's day it offers) replaces the exam's dates, and null brings them back; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal or its date is out of range. Fixing the words themselves is a new understanding.",
       operationId: "reviseGoalUnderstanding",
       requestBody: {
         content: { "application/json": { schema: onboardingDraftEditSchema } },
@@ -106,7 +106,11 @@ export const onboardingPaths = {
         "401": unauthorizedResponse,
         "404": notFoundResponse,
         "409": conflictResponse,
-        "422": unprocessableEntityResponse,
+        "422": {
+          ...unprocessableEntityResponse,
+          description:
+            "UNPROCESSABLE_ENTITY when the card has no such goal; TARGET_DATE_OUT_OF_RANGE when the date is before the day after the learner's today in the draft's `timeZone` or after calendar day 3,650 from it, as POST /goals refuses it. Nothing was saved; details give the nearest accepted date.",
+        },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Fix a goal understanding",

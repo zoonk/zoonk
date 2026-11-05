@@ -52,6 +52,14 @@ curl -s "$API/v1/sessions/email-code" -H 'Content-Type: application/json' -d '{"
 adb shell am broadcast -a com.zoonk.debug.SIGN_IN -n com.zoonk.debug/com.zoonk.android.app.DebugSignInReceiver --es token <token>
 ```
 
+To open a page, send main's URL to `MainActivity` by name; a running app takes it in place, so don't force-stop the app first:
+
+```sh
+adb shell am start -a android.intent.action.VIEW -d 'https://www.zoonk.com/<path>' -n com.zoonk.debug/com.zoonk.android.MainActivity
+```
+
+Without `-n`, a path outside the app's link filter opens the browser, and launching `com.zoonk.debug` without its activity finds two launcher activities (LeakCanary adds one) and can leave the home screen up.
+
 ## Structure
 
 [`app/`](app) is the shell: the activity, the application, navigation between features and error reporting. Product code lives in feature modules, organized by `feature/<feature>/` packages. [`core/designsystem/`](core/designsystem) holds the theme and the shared `ui/` pieces; [`core/ui/`](core/ui) the learning pieces several features show; [`feature/account/`](feature/account) sign-in, account, settings, statistics and Plus; [`feature/activities/`](feature/activities) the activities and everything that draws a lesson step; [`feature/catalog/`](feature/catalog) the catalog and search; [`feature/conversation/`](feature/conversation) live calls and speaking practice; [`feature/exam/`](feature/exam) exams, mocks and essays; [`feature/onboarding/`](feature/onboarding) starting a goal or a course, the goal switcher and the setup; [`feature/plan/`](feature/plan) the plan, goal content, language units and the tutor; [`feature/player/`](feature/player) the lesson player, explanations and pronunciation reviews; [`feature/practice/`](feature/practice) practice, checkpoints, challenges, test-outs, focus tests, patterns and mistakes; [`feature/today/`](feature/today) Today, the session screen, buddy and recap; [`core/data/`](core/data) holds the container, `data/` (cache, session, drafts, API runtime), every store and the models they return; [`core/navigation/`](core/navigation) the routes and the navigator; [`core/resources/`](core/resources) every string, translation, drawable, font and asset. [`api/`](api) generates the Kotlin client from `api/openapi.json` on build. `lint-checks/` is build-time tooling, not part of the APK.

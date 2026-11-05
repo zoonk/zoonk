@@ -37,7 +37,7 @@ function notify() {
   store.listeners.forEach((listener) => listener());
 }
 
-function getHeldIdentity(): LearnerIdentity | null | undefined {
+export function getHeldIdentity(): LearnerIdentity | null | undefined {
   if (store.state.status === "ready") {
     return store.state.summary.identity;
   }
@@ -125,7 +125,8 @@ export function fail() {
 
 /**
  * `verify` supersedes every read sent before it, whose cookies may be another learner's, and seeds
- * wait until a read sent since answers.
+ * wait until a read sent since answers. The returned promise also settles once a newer read
+ * replaces this one, since this one's answer can no longer land.
  */
 export function readLearnerSummary({ verify = false }: { verify?: boolean } = {}): Promise<void> {
   if (!verify && store.inFlight?.generation === store.generation) {
@@ -138,37 +139,39 @@ export function readLearnerSummary({ verify = false }: { verify?: boolean } = {}
   }
 
   const sent = store.generation;
+  const replacement = Promise.withResolvers<null>();
 
-  const promise = fetchLearnerSummary()
-    .then(
-      (snapshot) => {
-        if (store.generation !== sent) {
-          return;
-        }
-
-        store.verifying = null;
-        accept(snapshot, { fresh: true });
-
-        // A hint kept from a session that ended goes, so the next page isn't drawn as signed in.
-        if (!snapshot.summary && hasSessionHint()) {
-          void fetch(SESSION_READ_PATH)
-            .then((response) => response.text())
-            .catch(() => null);
-        }
-      },
-      () => {
-        if (store.generation === sent) {
-          fail();
-        }
-      },
-    )
-    .finally(() => {
-      if (store.inFlight?.promise === promise) {
-        store.inFlight = null;
+  const read = fetchLearnerSummary().then(
+    (snapshot) => {
+      if (store.generation !== sent) {
+        return;
       }
-    });
 
-  store.inFlight = { generation: sent, promise };
+      store.verifying = null;
+      accept(snapshot, { fresh: true });
+
+      // A hint kept from a session that ended goes, so the next page isn't drawn as signed in.
+      if (!snapshot.summary && hasSessionHint()) {
+        void fetch(SESSION_READ_PATH)
+          .then((response) => response.text())
+          .catch(() => null);
+      }
+    },
+    () => {
+      if (store.generation === sent) {
+        fail();
+      }
+    },
+  );
+
+  const promise = Promise.race([read, replacement.promise]).then(() => {
+    if (store.inFlight?.promise === promise) {
+      store.inFlight = null;
+    }
+  });
+
+  store.inFlight?.replaced();
+  store.inFlight = { generation: sent, promise, replaced: () => replacement.resolve(null) };
   return promise;
 }
 

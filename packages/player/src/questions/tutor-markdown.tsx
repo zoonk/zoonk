@@ -12,9 +12,10 @@ import {
 } from "@zoonk/ui/components/alert-dialog";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { ExternalLinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ComponentProps, type MouseEvent, createContext, use } from "react";
+import { type ComponentProps, type MouseEvent, createContext, use, useState } from "react";
 import {
   type Components,
   type ExtraProps,
@@ -87,7 +88,7 @@ const LESSON_QUESTION_LINK_SAFETY = {
 /** Set `verified` only after the saved answer's links have been checked against their allowlist. */
 export type TutorAnswerLinks = {
   Link: PlayerLinkComponent;
-  openBlock?: (blockId: string) => void;
+  openBlock?: (blockId: string) => Promise<boolean>;
   verified: boolean;
 };
 
@@ -100,36 +101,70 @@ function isPlainClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
 
-const TutorAnswerLinksContext = createContext<TutorAnswerLinks | null>(null);
+const TutorAnswerLinksContext = createContext<
+  (TutorAnswerLinks & { setOpenFailed: (failed: boolean) => void }) | null
+>(null);
 
 function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
   const links = use(TutorAnswerLinksContext);
+  const [opening, setOpening] = useState(false);
 
   if (!links?.verified || !href || !isTutorAppPath(href)) {
     return children;
   }
 
-  const { Link, openBlock } = links;
+  const { Link, openBlock, setOpenFailed } = links;
   const blockId = readTutorBlockLink(href);
 
   const onClick =
     blockId && openBlock
       ? (event: MouseEvent<HTMLAnchorElement>) => {
-          if (isPlainClick(event)) {
-            event.preventDefault();
-            openBlock(blockId);
+          if (!isPlainClick(event)) {
+            return;
           }
+
+          event.preventDefault();
+
+          if (opening) {
+            return;
+          }
+
+          setOpening(true);
+          setOpenFailed(false);
+
+          // Not a transition: React would hold a navigation the learner starts meanwhile until the
+          // open settles, and then the open would win.
+          void safeAsync(() => openBlock(blockId)).then(({ data: opened }) => {
+            setOpening(false);
+            setOpenFailed(!opened);
+          });
         }
       : undefined;
 
   return (
-    <Link href={href} onClick={onClick} prefetch={false}>
+    <Link
+      aria-busy={opening || undefined}
+      className="aria-busy:opacity-60"
+      href={href}
+      onClick={onClick}
+      prefetch={false}
+    >
       {children}
     </Link>
   );
 }
 
 const TUTOR_ANSWER_COMPONENTS: Components = { a: TutorAnswerLink };
+
+function BlockOpenFailed() {
+  const t = useExtracted();
+
+  return (
+    <p className="text-destructive-text mt-2 text-sm" role="alert">
+      {t("We couldn't open this step. Try again.")}
+    </p>
+  );
+}
 
 // Streamdown's code and table scrollers carry their own border and background, which the sideways
 // fade would fade with them, so their outer card is the one frame. A table keeps its words whole
@@ -152,9 +187,11 @@ export function TutorMarkdown({
   isStreaming: boolean;
 }) {
   const plugins = useMarkdownPlugins({ isStreaming, text: answer });
+  const [openFailed, setOpenFailed] = useState(false);
+  const links = appLinks ? { ...appLinks, setOpenFailed } : null;
 
   return (
-    <TutorAnswerLinksContext value={appLinks ?? null}>
+    <TutorAnswerLinksContext value={links}>
       <Streamdown
         animated={isAnimating}
         className={TUTOR_MARKDOWN_CLASS}
@@ -170,6 +207,8 @@ export function TutorMarkdown({
       >
         {answer}
       </Streamdown>
+
+      {openFailed && <BlockOpenFailed />}
     </TutorAnswerLinksContext>
   );
 }
