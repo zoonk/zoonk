@@ -300,7 +300,7 @@ class LessonPlayerScreenshots {
         title: String,
         vararg actions: LessonAction,
     ) = played(
-        listOf(explanationStep("idea"), LessonStep(LESSON_MAP_STEP_ID, null, StepContent.Map(map, title, marksPending = false))),
+        listOf(explanationStep("idea"), LessonStep(LESSON_MAP_STEP_ID, null, StepContent.Map(map, title, keepsIconRoom = false))),
         LessonAction.Continue,
         *actions,
     )

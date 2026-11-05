@@ -788,7 +788,7 @@ class LessonPlayerReducerTest {
     }
 
     @Test
-    fun aTaggedLessonsMapKeepsItsIconRoomFromTheFirstReadThroughTheIconsArrivalWhileAnUntaggedOnesHasNone() {
+    fun aTaggedLessonsMapKeepsItsIconRoomThroughLateReadsWhileAnUntaggedOnesHasNone() {
         val map = (lessonMapStep().content as StepContent.Map).map
         val drawn =
             map.copy(
@@ -800,10 +800,12 @@ class LessonPlayerReducerTest {
         val tagging = playable(listOf(explanationStep("idea")), map).copy(marksPending = true)
         val opened = play(tagging.playedSteps, started())
         val iconsCame = opened.then(LessonAction.LessonRead(tagging.copy(map = drawn, marksPending = false).playedSteps, openedAt = 0))
+        val iconsNeverCame = opened.then(LessonAction.LessonRead(tagging.copy(marksPending = false).playedSteps, openedAt = 0))
         val untagged = play(playable(listOf(explanationStep("idea")), map).playedSteps, started())
 
         assertEquals(true, opened.lessonMap?.keepsIconRoom)
         assertEquals(true, iconsCame.lessonMap?.keepsIconRoom)
+        assertEquals(true, iconsNeverCame.lessonMap?.keepsIconRoom)
         assertEquals(false, untagged.lessonMap?.keepsIconRoom)
     }
 
