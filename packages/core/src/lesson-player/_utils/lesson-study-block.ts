@@ -78,11 +78,17 @@ export async function completeRunBlock(
     return false;
   }
 
+  // The run's duration records the block's timing after the block was locked.
+  const current = await tx.studySessionBlock.findUniqueOrThrow({
+    select: { payload: true },
+    where: { id: block.id },
+  });
+
   await tx.studySessionBlock.update({
     data: {
       brainPower: brainPower.after - brainPower.before,
       completedAt: now,
-      payload: { ...readBlockPayload(block), milestoneReward: { bossWon: false, brainPower } },
+      payload: { ...readBlockPayload(current), milestoneReward: { bossWon: false, brainPower } },
       status: "completed",
     },
     where: { id: block.id },
