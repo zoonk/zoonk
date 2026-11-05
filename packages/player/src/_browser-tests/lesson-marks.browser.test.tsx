@@ -64,10 +64,10 @@ function strip() {
   return page.getByRole("main").getByText(/^Idea \d of \d$/u);
 }
 
-function shownIdeas() {
+function shownStrips() {
   return [...document.querySelectorAll('[data-slot="orientation-strip"]')]
     .filter((shown) => shown.checkVisibility())
-    .map((shown) => shown.querySelector("p")?.textContent);
+    .map((shown) => shown.textContent);
 }
 
 function underlined() {
@@ -112,8 +112,8 @@ describe("lesson marks", () => {
     renderLessonPlayer({ lesson: lesson() });
     await next();
 
-    await expect.element(strip()).toHaveTextContent("Idea 1 of 2");
-    await expect.element(page.getByText("A cloud, not an orbit")).toBeVisible();
+    await expect.poll(shownStrips).toStrictEqual(["Idea 1 of 2"]);
+    await expect.element(page.getByText("A cloud, not an orbit")).not.toBeInTheDocument();
     expect(underlined()).toStrictEqual(["a map of where it might be"]);
 
     await expect.element(page.getByText("Example", { exact: true })).toBeVisible();
@@ -144,8 +144,8 @@ describe("lesson marks", () => {
     await next();
     await next();
 
-    await expect.element(strip()).toHaveTextContent("Idea 2 of 2");
-    await expect.element(page.getByText("Reading the cloud")).toBeVisible();
+    await expect.poll(shownStrips).toStrictEqual(["Idea 2 of 2"]);
+    await expect.element(page.getByText("Reading the cloud")).not.toBeInTheDocument();
 
     await page.getByRole("radio", { name: RIGHT_OPTION }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
@@ -216,7 +216,7 @@ describe("lesson marks", () => {
     await expect.element(strip()).toHaveTextContent("Idea 2 of 2");
 
     await page.getByRole("button", { name: "Previous screen" }).click();
-    await expect.poll(shownIdeas).toStrictEqual(["Idea 1 of 2"]);
+    await expect.poll(shownStrips).toStrictEqual(["Idea 1 of 2"]);
     expect(underlined()).toStrictEqual(["a map of where it might be"]);
 
     await page.getByRole("button", { name: "Previous screen" }).click();
