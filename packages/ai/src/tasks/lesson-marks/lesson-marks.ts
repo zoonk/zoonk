@@ -19,8 +19,15 @@ import {
 } from "./lesson-marks-schema";
 import promptTemplate from "./lesson-marks.prompt.md";
 
-const defaultModel = "anthropic/claude-haiku-5.5";
-const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.8-flash"] as const;
+/**
+ * On the lesson-marks eval (13 lessons, 5 Nov 2026), Luna at minimal reasoning scored 9.17 at
+ * $0.71 per 1,000 lessons and 11s p50, and wrote the about lines that least gave the answer away
+ * (9.54). Haiku 5.5 without reasoning took 5.7s but scored 8.08; with its default reasoning, 8.66 in
+ * 18.7s; Gemini 3.5 Flash-Lite 8.83 in 19.2s at $16.52.
+ */
+const defaultModel = "openai/gpt-6-luna";
+const defaultReasoning: Reasoning = "minimal";
+const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.5-flash-lite"] as const;
 
 export type LessonMarksParams = {
   ideas: MarksIdea[];
@@ -90,7 +97,7 @@ export async function tagLesson({
   language,
   lessonTitle,
   model = defaultModel,
-  reasoning,
+  reasoning = defaultReasoning,
   screens,
   useFallback = true,
   wait = "soon",
@@ -119,7 +126,7 @@ export async function tagLesson({
         output: Output.object({ schema: lessonMarksOutputSchema }),
         prompt: userPrompt,
         providerOptions,
-        ...(reasoning ? { reasoning } : {}),
+        reasoning,
       }),
     libraryInput: true,
     systemPrompt: promptTemplate,
@@ -128,5 +135,5 @@ export async function tagLesson({
 
   const data: LessonMarks = normalizeLessonMarks({ ideas, output: result.output, screens });
 
-  return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return { data, output: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }

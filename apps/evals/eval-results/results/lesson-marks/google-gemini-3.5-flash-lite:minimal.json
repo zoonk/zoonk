@@ -1,0 +1,1847 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite:minimal",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All previews are in Portuguese and within 60 characters, but the Ativo and Passivo previews explicitly disclose defining conclusions. This triggers the maximum score of 5. The planned-purchase preview appropriately names the situation without revealing that it creates no liability.",
+          "score": 5,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "Every screen is assigned to the appropriate idea. The receivables question correctly remains under Valores a receber despite appearing after the liability explanation. The final mixed question correctly uses Compra planejada, the latest idea involved.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The retained examples frame concrete cases rather than general rules. However, the loan underline highlights only recording cash as an asset, a supporting component rather than the screen's central point about separate asset and liability entries. This triggers the cap of 7 for an underline on a side detail.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "All six eligible explanation screens have icons, and no ineligible screen has one. Names and descriptions are in English. The flour sack, machine, paper stack, and computer fit their cases well. However, the printer does not directly depict the receivable, the coin is a weak loan cue, and the idea-level notepad and calendar are weak topic identifiers. Several weak icons trigger the maximum score of 8; their combined lack of specificity warrants 7.",
+          "score": 7,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "14 of 15 parts passed. Screen 3: example isn't whole exact sentences",
+          "score": 9.4,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3487,
+          "outputTokens": 920,
+          "reasoningTokens": 307
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Two about lines reveal answers before instruction: “Recursos controlados pela empresa” states the control criterion for Ativo, and “Obrigações atuais da empresa” defines Passivo as current obligations. Both directly violate the task-specific restrictions.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The loan screen underlines only the asset entry, rather than its main teaching point that the asset and liability are recorded separately. Several icons are weakly connected to their topics: the printer emphasizes the business rather than its receivable, the coin conveys money rather than a loan, and the idea-level notepad and calendar do little to identify receivables and liabilities.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use neutral previews such as “O que entra no ativo?” and “O que entra no passivo?”. An invoice would make the receivable screen more recognizable. For the loan screen, underline “em itens separados” to emphasize the distinction being taught.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, for a total beginner in accounting\n      - The \"Ativo\" about line doesn't say it's what the company controls or what brings benefits; \"Passivo\" doesn't say it's an obligation or a debt; \"Compra planejada\" doesn't say a planned purchase creates no liability\n      - Icons show the screens' own cases (the business's goods, a loan, an invoice), not a generic balance sheet on every screen\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-ativo-passivo-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Ativo",
+              "text": "O ativo reúne recursos que a empresa controla por fatos já ocorridos e que podem trazer benefícios."
+            },
+            {
+              "label": "Valores a receber",
+              "text": "Um valor que a empresa tem direito de cobrar por um serviço entregue faz parte do ativo."
+            },
+            {
+              "label": "Passivo",
+              "text": "O passivo inclui obrigações atuais causadas por algo que já aconteceu e que exigirão entregar recursos."
+            },
+            {
+              "label": "Itens separados",
+              "text": "Um empréstimo recebido gera dinheiro no ativo e uma dívida no passivo, registrados em itens separados."
+            },
+            {
+              "label": "Compra planejada",
+              "text": "Um plano de compra ainda não contratado nem recebido não cria passivo."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Ativo e passivo",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "A padaria já comprou farinha e pode usá-la para fazer pães para venda. Recursos que a empresa controla por fatos já ocorridos e que podem trazer benefícios formam o **ativo**.",
+              "title": "Recursos da empresa"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Uma oficina recebe uma máquina de R$ 7.000,00, comprada a prazo e sem entrada. O que acontece com o ativo da oficina?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "A oficina já controla e usa a máquina, então registra R$ 7.000,00 no ativo, mesmo sem ter pago nenhuma parcela.",
+              "title": "Mesmo sem quitar"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Uma gráfica entregou um serviço e tem R$ 900,00 a receber do cliente. Esse valor é um direito de cobrança e faz parte do ativo.",
+              "title": "Valores a receber"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Uma gráfica recebeu papel e deve R$ 400,00 ao fornecedor. Essa obrigação atual surgiu de algo que já aconteceu e exigirá entregar recursos: ela faz parte do **passivo**.",
+              "title": "Valores a pagar"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Uma distribuidora entregou peças a uma oficina e receberá R$ 650,00 depois.\nEm qual grupo a distribuidora registra o valor a receber?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Uma empresa recebe um empréstimo de R$ 4.000,00. Ela registra o dinheiro no banco como ativo e a dívida de R$ 4.000,00 como passivo, em itens separados.",
+              "title": "Os dois ao mesmo tempo"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Uma empresa planeja comprar um computador, mas ainda não contratou a compra nem recebeu o aparelho. Esse plano não cria passivo, pois ainda não existe obrigação pela compra.",
+              "title": "Um plano não é dívida"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Uma empresa registrou no passivo o orçamento de uma reforma que ainda não aprovou nem contratou.\nO que ela deve fazer com esse registro?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "A marcenaria Linha Clara recebeu a máquina sem entrada e ainda não pagou parcelas.\n\n| Item | Ativo | Passivo |\n| --- | ---: | ---: |\n| Máquina a prazo | R$ 9.000,00 | R$ 0,00 |\n| Clientes a receber | R$ 1.200,00 | R$ 0,00 |\n| Compra planejada | R$ 0,00 | R$ 2.500,00 |\n\nQuais correções a marcenaria deve fazer?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All lines are brief, natural Brazilian Portuguese and reveal no conclusion, so neither answer-leakage cap applies. However, the final line should specify “contas próprias” to identify the actual topic without revealing its answer.",
+          "score": 8,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "Every screen has the correct ideaIndex. The loan guess belongs to Empréstimo, the medicine question belongs to Despesa, and the cumulative final question correctly takes the latest idea, Contas próprias.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The underlines select the central classifications rather than isolated terms or side details. Each example frames a concrete transaction, leaving the classification rule outside the example. No misplaced-mark cap applies.",
+          "score": 10,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Exactly the five eligible screens have icons, and all icon names and descriptions are in English with consistent naming. The banknote, light bulb, and gift box fit their cases. The handshake fails the specific loan-case-object expectation, while the bank building is a weak cue for transfers between one's own accounts. These weaknesses trigger the several-weak-icons ceiling of 8; neither clearly conveys a false financial classification.",
+          "score": 7,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 13 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3175,
+          "outputTokens": 850,
+          "reasoningTokens": 321
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The loan screen uses a handshake rather than an object from its concrete case. It suggests a general agreement, so it does not satisfy the specific expectation that the loan receive its own case object.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "“Transferência entre contas” omits that the accounts belong to the same person, making the preview broader than the intended topic. The bank-building icon likewise conveys banking rather than movement between one's own accounts.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use “Transferência entre contas próprias” for the final about line. Choose a concrete money-related object for the loan and a clearer transfer symbol for the own-accounts screen, maintaining consistent names wherever the same object recurs.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, for a total beginner\n      - The \"Empréstimo\" about line doesn't say a loan isn't income; \"Ganho ocasional\" doesn't say a gift is income; \"Contas próprias\" doesn't say a transfer between your own accounts is neither\n      - The light bill, the salary, the loan and the gift each get the object of their own case\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-receitas-despesas-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Receita",
+              "text": "O salário é uma receita porque é dinheiro que você ganhou."
+            },
+            {
+              "label": "Empréstimo",
+              "text": "O dinheiro emprestado não é receita porque você precisa devolvê-lo."
+            },
+            {
+              "label": "Despesa",
+              "text": "A conta de luz é uma despesa, mesmo sendo um gasto necessário."
+            },
+            {
+              "label": "Ganho ocasional",
+              "text": "Um presente em dinheiro que você não precisa devolver é receita, mesmo que não aconteça todo mês."
+            },
+            {
+              "label": "Contas próprias",
+              "text": "Uma transferência entre contas próprias não é receita nem despesa: o dinheiro só muda de lugar."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Receitas e despesas",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Você recebeu R$ 2.600,00 de salário neste mês. Esse dinheiro que você ganhou é uma **receita** do orçamento da casa.",
+              "title": "Dinheiro que você ganha"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Você recebe R$ 600,00 de um empréstimo na conta. O que acontece com a receita do mês?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Os R$ 600,00 emprestados aumentam o dinheiro disponível agora. Mas não são receita: você precisa devolvê-los, então fica com uma dívida.",
+              "title": "Empréstimo não é ganho"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Você gasta R$ 150,00 para pagar a luz de casa, um serviço necessário. Esse gasto é uma **despesa**, assim como pagamentos por compras ou obrigações.",
+              "title": "Dinheiro que você gasta"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Você paga R$ 45,00 em dinheiro por um remédio necessário.\nComo registrar esse pagamento?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Você recebe R$ 100,00 de presente e não precisa devolver. O presente é uma receita, mesmo que você não o receba todo mês.",
+              "title": "Um ganho ocasional"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Você passa R$ 200,00 de uma conta sua para outra. Isso não é receita nem despesa da casa: o dinheiro continua sendo seu, apenas mudou de lugar.",
+              "title": "Entre contas próprias"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Você revisa estes registros do orçamento da casa:\n\n| Movimentação | Registro feito |\n| --- | --- |\n| Salário recebido: R$ 2.300,00 | Receita |\n| Empréstimo recebido: R$ 400,00 | Receita |\n| Farmácia paga: R$ 80,00 | Despesa |\n| Transferência entre contas próprias: R$ 200,00 | Despesa |\n\nQuais registros devem sair das receitas e despesas, e por quê?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All lines are concise and in Portuguese, and “Elétrons e ligações na água” correctly withholds oxygen’s electron and bond counts. However, “Elétrons mais externos do átomo” paraphrases the defining conclusion of the valence-electron idea. Omitting the word “camada” does not prevent that disclosure. The answer-leak cap of 5 applies.",
+          "score": 5,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The later screens are assigned appropriately, including the ammonia question under the later idea about electron counts versus bond counts. The opening atom introduction can reasonably remain unassigned. However, the hydrogen-union guess and the explanation about centers remaining separate address the chemical-bond idea but have null assignments. These mapping failures trigger the cap of 6.",
+          "score": 6,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The examples generally select concrete cases involving particular elements or molecules, rather than abstract rules. However, the magnesium underline selects problem data, and the helium underline selects a supporting detail instead of the conclusion about valence electrons. These trigger the side-detail cap of 7. The shared-pair underline is also nearly a whole sentence, contrary to the short-phrase requirement.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Screen-icon eligibility is handled correctly: every screen icon is null, including the non-explanation worked example, and every idea has an icon. Names and descriptions are English and describe concrete generic objects. However, a battery communicates energy storage rather than electron shells, and a jewelry ring does not clearly communicate valence electrons. These multiple weak choices trigger the cap of 8. The water droplet is directly connected to its idea’s case.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 18 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3555,
+          "outputTokens": 1028,
+          "reasoningTokens": 329
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The valence-electron about line, “Elétrons mais externos do átomo,” reveals the defining answer before the lesson. Also, the hydrogen-union guess and “Os centros ficam separados” screen have no idea assignment even though they address “Ligação química,” particularly its distinction between joining atoms and fusing their centers.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some underlines emphasize supporting information rather than the main point: the magnesium electron distribution and helium’s single occupied shell. The hydrogen shared-pair underline covers nearly its entire sentence rather than a short phrase. Several idea icons are weakly connected to their topics, especially the battery for electron shells and the jewelry ring for valence electrons.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a neutral preview such as “Identificando elétrons de valência.” Assign the introductory bonding screens to their matching idea. Remove optional underlines that merely highlight given data, and shorten the shared-pair underline to its essential phrase. Choose idea icons more directly connected to atomic structure and shared electrons.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, for beginners in chemistry\n      - Every explanation here has its own picture or visual, so no screen gets an icon, while every idea still has one\n      - \"Elétrons de valência\" about line doesn't say they're the outermost shell's; \"Elétrons e ligações\" doesn't give oxygen's 6 electrons or its two bonds\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-eletrons-valencia-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Camadas",
+              "text": "Os elétrons ocupam regiões de energia chamadas camadas, que não são trilhos de movimento."
+            },
+            {
+              "label": "Elétrons de valência",
+              "text": "Os elétrons de valência são os da camada ocupada mais externa."
+            },
+            {
+              "label": "Ligação química",
+              "text": "Uma ligação química mantém átomos unidos e envolve elétrons de valência sem fundir seus centros."
+            },
+            {
+              "label": "Par compartilhado",
+              "text": "No gás hidrogênio, cada átomo contribui com seu único elétron para um par compartilhado."
+            },
+            {
+              "label": "Elétrons e ligações",
+              "text": "Na água, o oxigênio tem 6 elétrons de valência e faz duas ligações."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Átomos e elétrons de valência",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "A água e outras matérias são feitas de unidades minúsculas. Elas se chamam **átomos**. O hidrogênio é um tipo de átomo.",
+              "title": "Uma unidade minúscula"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Quando dois átomos de hidrogênio se unem para formar o gás, o que acontece?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Na união dos hidrogênios, as partículas externas se reorganizam, mas os centros continuam separados. Essas partículas são os **elétrons**.",
+              "title": "Os centros ficam separados"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "No oxigênio, 2 elétrons ocupam a primeira região de energia e 6 ocupam a segunda. Essas regiões são chamadas **camadas**; elas não são trilhos de movimento.",
+              "title": "Regiões de energia"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "No oxigênio, a segunda camada é a ocupada mais externa e tem 6 elétrons. Os elétrons da camada ocupada mais externa são os **elétrons de valência**.",
+              "title": "Elétrons mais externos"
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "O magnésio tem 2, 8 e 2 elétrons em suas camadas. Quantos são de valência?",
+              "title": "Contando no magnésio"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "O enxofre tem {internos}, {meio} e {externos} elétrons nas três camadas, de dentro para fora.\nQuantos elétrons de valência ele tem?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "O hélio tem uma única camada ocupada, com 2 elétrons. Como ela também é a camada ocupada mais externa, os 2 elétrons são de valência.",
+              "title": "Uma camada só"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "O hélio tem 2 elétrons em uma camada. O lítio tem 2 na primeira camada e 1 na segunda.\nQual tem mais elétrons de valência?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "No gás hidrogênio, uma interação mantém dois átomos unidos sem fundir seus centros. Essa interação envolve elétrons de valência e é uma **ligação química**.",
+              "title": "Átomos unidos"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Cada hidrogênio contribui com seu único elétron para um par compartilhado. Compartilhar elétrons é uma maneira de formar uma ligação e não cria elétrons novos.",
+              "title": "Um par compartilhado"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Na água, o oxigênio tem 6 elétrons de valência e faz duas ligações, uma com cada hidrogênio. A quantidade de elétrons externos não é a quantidade de ligações.",
+              "title": "Elétrons não são ligações"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Ao montar um modelo de amônia, alguém diz que o nitrogênio tem 3 elétrons de valência porque faz 3 ligações. O átomo tem 2 elétrons na primeira camada e 5 na segunda.\nComo você corrige a afirmação?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "The previews are short, accessible Brazilian Portuguese, and “Despesas pagas após o recebimento” appropriately avoids revealing the effect on net salary. However, other previews disclose definitions, especially the total charged for sales or services. The answer-giveaway cap of 5 applies even though the Renda líquida preview does not state gross minus deductions.",
+          "score": 5,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "All screens are assigned to their relevant ideas. The comparison question belongs to Renda líquida, the household-payment explanation belongs to Contas depois, and the final question combining salary and service income correctly takes the later idea, Faturamento bruto.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The three retained examples isolate concrete monetary cases rather than general rules. All underlines are absent, which is explicitly permitted and is not a flaw.",
+          "score": 10,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Exactly the eligible explanation screens—1, 6 and 7—have screen icons. Their banknote, receipt and cash register are concrete, recognizable objects connected to pay, a subsequent payment, and sales revenue. Names and descriptions are in English, and repeated objects retain consistent names. No misleading or prohibited icon is evident.",
+          "score": 10,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 13 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3318,
+          "outputTokens": 863,
+          "reasoningTokens": 321
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several about lines reveal definitions rather than merely introduce topics. “O total cobrado por vendas ou serviços” gives the core definition of faturamento bruto, and “O valor inicial de uma proposta de salário” reveals part of the salário bruto definition. “O valor que realmente chega à conta” also paraphrases what renda líquida represents, even though it avoids the subtraction formula. These violate the no-answer-giveaway requirement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Replace the revealing previews with neutral topic or question labels, such as “Valores em propostas de salário”, “Como identificar a renda líquida?” and “Faturamento no trabalho por conta própria”.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, for a total beginner\n      - The \"Renda líquida\" about line doesn't say it's the gross minus deductions, and \"Contas depois\" doesn't say a bill paid later leaves net pay unchanged\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-renda-bruta-liquida-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Salário bruto",
+              "text": "O salário bruto é o valor inicial antes das retiradas do pagamento."
+            },
+            {
+              "label": "Renda líquida",
+              "text": "No salário, a renda líquida é o bruto menos os descontos."
+            },
+            {
+              "label": "Contas depois",
+              "text": "Uma conta paga depois diminui o dinheiro restante, mas não muda o salário líquido."
+            },
+            {
+              "label": "Faturamento bruto",
+              "text": "O faturamento bruto é o total cobrado pelas vendas ou serviços antes dos gastos do trabalho e dos impostos."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Renda bruta e renda líquida",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Otávio confere a proposta: são R$ 3.000,00 antes de qualquer retirada do pagamento. Esse valor inicial é o **salário bruto**. Uma proposta de R$ 2.000,00 também mostra o bruto antes dos descontos.",
+              "title": "O valor anunciado"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Otávio compara duas propostas de mesmo salário bruto. Qual deixa mais dinheiro para ele usar ao receber?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Imagine o pagamento de Otávio como uma caixa de dinheiro: tiram valores antes de entregá-la. O que chega após essas retiradas é a **renda líquida**. No salário, líquido = bruto − descontos; contas pagas depois não são esses descontos. Mova os controles: R$ 3.000,00 menos R$ 300,00 deixam R$ 2.700,00.",
+              "title": "O que chega à conta"
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Veja um exemplo de pagamento de Otávio. O desconto de INSS é uma contribuição para a previdência pública. Os valores são fictícios.\n\n| Item | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.000,00 |\n| Desconto de INSS | R$ 270,00 |\n| Outro desconto | R$ 30,00 |\n| Total de descontos | R$ 300,00 |\n| Salário líquido | R$ 2.700,00 |\n\nQuanto chega à conta?",
+              "title": "Do bruto ao líquido"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Um salário bruto é de R$ {bruto},00 e os descontos somam R$ {desconto},00.\nQual é o salário líquido?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Otávio nota que, sem descontos, receberia o mesmo valor do salário bruto. Uma conta de luz paga depois diminui o dinheiro restante, mas não muda o salário líquido. Por exemplo, de R$ 2.000,00 líquidos, pagar R$ 150,00 deixa R$ 1.850,00.",
+              "title": "Depois de receber"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Otávio também considera fazer serviços por conta própria. O total cobrado pelas vendas ou serviços, antes dos gastos do trabalho e dos impostos, é o **faturamento bruto**. Para saber quanto sobra do que recebeu, subtraia esses gastos e impostos.\n\n| Exemplo | Valor |\n| --- | ---: |\n| Recebido | R$ 1.000,00 |\n| Materiais | R$ 200,00 |\n| Impostos | R$ 100,00 |\n| Sobra | R$ 700,00 |",
+              "title": "Trabalho por conta própria"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Um serviço trouxe R$ {recebido},00. Os materiais custaram R$ {materiais},00 e os impostos, R$ {impostos},00.\nQuanto sobra após esses gastos?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Otávio organiza o dinheiro que recebeu no mês, antes de pagar as contas de casa.\n\n| Origem ou gasto | Valor |\n| --- | ---: |\n| Salário bruto | R$ 3.000,00 |\n| Descontos do salário | R$ 300,00 |\n| Serviços recebidos | R$ 2.000,00 |\n| Materiais | R$ 500,00 |\n| Impostos dos serviços | R$ 100,00 |\nQuanto está disponível antes das contas da casa?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All three lines are natural Brazilian Portuguese questions under 60 characters. They identify the relevant topics without listing statutory duties or revealing the ideas' conclusions.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "Every screen is assigned to the appropriate idea. The questions combining multiple ideas correctly use the later idea, including the initial two-proposal question and the final three-request question.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The retained underline highlights the central topic of faster administration of justice rather than a side detail. The example selects the application involving people whose human rights were violated, not the statutory rule. Missing underlines elsewhere are not flaws.",
+          "score": 10,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Exactly the three eligible explanation screens have icons. The balance scale, hourglass, and briefcase are concrete, generic symbols fitting societal justice, judicial delay, and professional advocacy. Names and descriptions are in English, repeated objects retain identical names, and no prohibited imagery appears.",
+          "score": 10,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3027,
+          "outputTokens": 499,
+          "reasoningTokens": 130
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, a law lesson for the OAB exam\n      - About lines name each purpose's topic without listing what the statute says it includes\n      - Icons are generic legal or civic objects tied to each screen's case, never the OAB's logo or a flag\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-finalidades-oab-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Finalidade institucional",
+              "text": "A finalidade institucional inclui defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social."
+            },
+            {
+              "label": "Justiça mais rápida",
+              "text": "A OAB deve lutar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas, sem julgar processos no lugar dos juízes."
+            },
+            {
+              "label": "Finalidade corporativa",
+              "text": "A OAB promove com exclusividade a representação, a defesa, a seleção e a disciplina dos advogados em todo o Brasil, sem limitar a eles todas as suas finalidades."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Finalidades da OAB",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "A queixa que Lorena ouviu diz respeito ao interesse de todos, não só ao de uma profissão. Essa atuação é chamada de **finalidade institucional**. Pelo art. 44, I, do Estatuto da Advocacia, a OAB deve defender a Constituição, a ordem jurídica do Estado democrático de direito, os direitos humanos e a justiça social. Por exemplo, pode atuar em defesa de pessoas cujos direitos humanos foram violados.",
+              "title": "Defesa da sociedade"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Lorena leva à OAB duas propostas: cobrar providências contra a demora dos processos e defender advogados em questões da profissão. Quais podem corresponder às finalidades da Ordem?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "A OAB pode cobrar providências contra atrasos, mas não pode julgar processos no lugar dos juízes. O art. 44, I, também prevê que ela deve lutar pela boa aplicação das leis, pela rápida administração da justiça e pelo aperfeiçoamento da cultura e das instituições jurídicas. Essas frentes são previstas por si: cobrar rapidez não exige provar que uma lei foi aplicada incorretamente.",
+              "title": "Uma Justiça mais rápida"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Ao saber da queixa ouvida por Lorena, Raimundo sugere que a OAB decida o recurso no lugar dos juízes para combater a demora.\nComo você avalia a proposta de Raimundo?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Thaís afirma a Lorena que a OAB só pode cobrar rapidez da Justiça se também demonstrar que alguma lei foi aplicada incorretamente.\nA afirmação de Thaís está correta?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Lorena também pode contar com a OAB em questões da profissão. Essa atuação é chamada de **finalidade corporativa**. Pelo art. 44, II, do Estatuto, cabe à OAB promover, com exclusividade e em todo o Brasil, a representação, a defesa, a seleção e a disciplina dos advogados. A exclusividade vale para essas atribuições e não limita aos advogados todas as finalidades da OAB.",
+              "title": "A atuação pela advocacia"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Murilo diz a Lorena que, como a OAB atua com exclusividade na seleção de advogados, ela não pode defender direitos humanos de pessoas que não sejam advogadas.\nOnde está o erro de Murilo?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Na sede da OAB, Sabrina analisa três pedidos: cobrar providências diante de violações de direitos humanos; promover a seleção de advogados; e assumir o julgamento de recursos atrasados.\nComo esses pedidos se relacionam, nessa ordem, com as finalidades do art. 44 do Estatuto?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All three lines are natural Brazilian Portuguese, remain within 60 characters, and pose topic-level questions without revealing proportionality rules, definitions, or calculation procedures.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "Every screen is assigned to the appropriate idea. Screen 3 introduces simple proportion after an inverse-proportion case, and the subsequent screens correctly progress from simple to compound calculations.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The examples correctly frame concrete situations rather than general rules. However, the underlines on screens 4 and 7 select starting data, not short statements of the main point. Screen 7's underline also covers almost its entire opening sentence. The side-detail underline cap of 7 applies.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Exactly the two eligible screens have icons: a paint roller for the wall-painting case and a printer for the printing case. Both are concrete, recognizable objects directly connected to their screens. Icon names and descriptions are in English, and none specifies numbers, formulas, people, brands, or text.",
+          "score": 10,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 12 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3030,
+          "outputTokens": 627,
+          "reasoningTokens": 182
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The underlines on screens 4 and 7 emphasize given numerical data rather than the screens' main points. Screen 7 also underlines almost an entire sentence rather than a short phrase. These passages belong to the concrete cases; remove the underlines or use example marking instead.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, intermediate math\n      - About lines don't give the rule (direct or inverse proportion, multiply by the ratio) away\n      - Icons never show numbers or formulas\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-regra-de-tres-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Direta e inversa",
+              "text": "Com equipe e ritmo fixos, o tempo cresce na mesma proporção que o pedido; para o mesmo pedido, mais trabalhadores no mesmo ritmo reduzem o tempo na proporção inversa."
+            },
+            {
+              "label": "Regra de três simples",
+              "text": "A regra de três simples calcula um valor desconhecido usando duas quantidades relacionadas e uma condição fixa."
+            },
+            {
+              "label": "Regra de três composta",
+              "text": "Na regra de três composta, o tempo inicial é multiplicado pela nova quantidade de etiquetas dividida pela inicial e pelo número inicial de impressoras dividido pelo novo."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Regra de três simples e composta",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Na gráfica, Marília compara equipes e pedidos. Para o mesmo pedido, mais trabalhadores no mesmo ritmo reduzem o tempo na proporção inversa; com equipe e ritmo fixos, o tempo cresce na mesma proporção que o pedido. Essas relações são chamadas, respectivamente, de **inversa** e direta. Antes de comparar, diga o que permanece fixo.",
+              "title": "O que fica fixo?"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Um carro mantém o mesmo consumo por quilômetro. Uma piscina é enchida por torneiras iguais, abertas ao mesmo tempo.\nComo o combustível varia com a distância e o tempo de enchimento com o número de torneiras?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Marília também precisa pintar o muro da gráfica. Para o mesmo muro, se a equipe dobra e todos trabalham no mesmo ritmo, o tempo cai pela metade: a relação é inversa. Para calcular um valor desconhecido usando duas quantidades relacionadas e uma condição fixa, usamos a **regra de três simples**.",
+              "title": "Uma mudança por vez"
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Quatro trabalhadores pintam o muro da gráfica em 6 dias. Em quantos dias 8 trabalhadores, no mesmo ritmo, pintam o mesmo muro?",
+              "title": "O prazo do muro"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Na gráfica de Marília, {printers} impressoras fazem {initial} etiquetas em {hours} horas. Elas mantêm o mesmo ritmo.\nQuantas horas as mesmas impressoras levam para fazer {target} etiquetas?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Marília muda tanto o pedido de etiquetas quanto o número de impressoras iguais, mantendo o ritmo de cada uma. Para achar o novo tempo, multiplique o tempo inicial pelo novo número de etiquetas dividido pelo inicial e pelo número inicial de impressoras dividido pelo novo. Esse cálculo é uma **regra de três composta**. A divisão das impressoras fica invertida porque mais impressoras reduzem o tempo.",
+              "title": "Duas mudanças juntas"
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Três impressoras iguais fazem 240 etiquetas em 4 horas. Quanto tempo 5 impressoras levam para fazer 600 etiquetas, no mesmo ritmo?",
+              "title": "Etiquetas e impressoras"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Na gráfica de Marília, {machines} máquinas iguais fazem {initial} peças em {hours} horas. Cada máquina mantém o mesmo ritmo.\nQuantas horas {newMachines} máquinas levam para fazer {target} peças?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Numa padaria, {ovens} fornos iguais assam {initial} pães em {hours} horas. Cada forno mantém o mesmo ritmo.\nQuantas horas {newOvens} fornos levam para assar {target} pães?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All lines are in Spanish and within 60 characters. The 'No todos suben' and 'Más pesos' lines ask questions without revealing their answers. However, 'Qué puedes comprar con tu dinero' paraphrases the supplied definition of purchasing power, triggering the cap of 5. The first line is also broader than the intended inflation topic.",
+          "score": 5,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "Screens 4 and 5 concern whether an individual price increase establishes inflation. They teach the general, sustained nature of inflation, not the distinct point that some prices can fall while inflation occurs. Both should use ideaIndex 0 rather than 2, triggering the cap of 6. The remaining assignments are appropriate.",
+          "score": 6,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "Both retained underlines identify their screens' central conclusions. Every retained example selects a concrete numerical or everyday case rather than the general rule. Missing underlines are not penalized.",
+          "score": 10,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Every eligible explanation screen has an icon, and no ineligible screen has one. Names and descriptions are in English, and repeated objects retain consistent names. The shopping cart, tomato, television, and coin fit well. The speedometer is an indirect rate metaphor despite an explicit shopping case, and the wallet is less case-specific than the meals described on its screen. These multiple weaker choices warrant the cap of 8.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 16 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3623,
+          "outputTokens": 960,
+          "reasoningTokens": 378
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Screens 4 and 5 are assigned to ideaIndex 2, but they teach how to distinguish inflation from an isolated price increase, so they belong under ideaIndex 0. Also, the purchasing-power about line repeats the substance of its definition rather than withholding the answer.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The speedometer and wallet are less directly connected to their screens' concrete shopping and meal examples. The two yes/no about questions also omit Spanish opening question marks.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the first about line more specific to inflation without defining it. Prefer icons drawn from the screens' actual cases, such as the shopping cart for the slower price increase and a plate of food for the meal example.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Spanish (Mexico), for beginners in economics\n      - \"No todos suben\" about line doesn't say not every price has to rise; \"Más pesos\" doesn't say more pesos don't guarantee buying more\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "es-inflacion-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Inflación",
+              "text": "La inflación ocurre cuando los precios suben en general y siguen subiendo con el tiempo."
+            },
+            {
+              "label": "Suben más despacio",
+              "text": "Cuando la inflación baja de 8% a 3%, los precios en general siguen subiendo, pero más despacio."
+            },
+            {
+              "label": "No todos suben",
+              "text": "No todos los precios tienen que subir para que haya inflación."
+            },
+            {
+              "label": "Poder adquisitivo",
+              "text": "El poder adquisitivo es lo que puedes comprar con tu dinero."
+            },
+            {
+              "label": "Más pesos",
+              "text": "Recibir más pesos no garantiza comprar más si tus compras también se encarecen."
+            }
+          ],
+          "language": "es",
+          "lessonTitle": "Qué es la inflación",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Unas compras que representan el consumo de los hogares pasan de $100.00 a $108.00 en un año: suben 8%. Cuando los precios suben en general y siguen subiendo con el tiempo, hay **inflación**.",
+              "title": "Precios en aumento"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "La inflación anual pasa de 8% a 3%. ¿Qué ocurre con los precios durante el segundo año?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Aunque la inflación baja de 8% a 3%, los precios en general siguen subiendo. Las compras que costaban $108.00 pasan a $111.24 con el aumento de 3%.",
+              "title": "Suben más despacio"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Si el jitomate se encarece durante una semana, eso no demuestra que haya inflación. También hace falta saber qué pasa con muchos otros precios a lo largo del tiempo.",
+              "title": "Un precio no basta"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Sube el precio del café en una cafetería.\n¿Qué conviene revisar antes de concluir que hay inflación?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Una televisión puede abaratarse mientras el conjunto de compras de los hogares sigue encareciéndose. No todos los precios tienen que subir para que haya inflación.",
+              "title": "No todos suben"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "La ropa baja de precio, pero el conjunto de compras de los hogares se encarece de forma sostenida.\n¿La baja de la ropa contradice que haya inflación?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Con $200.00 compras diez comidas de $20.00, pero solo ocho si cada una cuesta $25.00. Lo que puedes comprar con tu dinero es tu **poder adquisitivo**. Si tu dinero no aumenta y tus compras se encarecen, lo pierdes.",
+              "title": "Lo que compra tu dinero"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Sergio conserva $600.00 en efectivo mientras suben los precios de sus compras habituales.\n¿Qué pierde Sergio?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Tu ingreso pasa de $1,000.00 a $1,100.00 y tus mismas compras pasan de $1,000.00 a $1,100.00. Recibir más pesos no garantiza comprar más: en este caso, solo puedes comprar lo mismo.",
+              "title": "Más pesos, mismas compras"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Marta compara su ingreso quincenal con el costo de las mismas compras en el mercado.\n\n| Concepto | Antes | Ahora |\n| --- | ---: | ---: |\n| Ingreso | $4,000.00 | $4,400.00 |\n| Compras | $4,000.00 | $4,600.00 |\n¿Le alcanza para mantener esas compras y por qué?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All five lines are short German questions that introduce their topics without answering them. In particular, the oxygen line does not identify oxygen as the gas produced, and the nighttime line does not reveal that previously formed sugar supplies energy.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The assignments match the ideas taught or tested. The chlorophyll screen appropriately develops the chloroplast idea. The final greenhouse question asks about light enabling photosynthesis and supplying energy, so ideaIndex 2 is appropriate; it does not ask about using stored sugar at night.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The examples correctly select concrete cases involving an aquarium plant, a sunflower, and oxygen bubbles. Most underlines identify the main teaching point. However, “findet die Fotosynthese statt” omits the essential location and therefore does not express the leaf-cell screen’s main point. The missing nighttime underline is not a flaw.",
+          "score": 8,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Every eligible explanation screen has an icon, and no ineligible screen does. Names and descriptions are English, and the icons depict concrete generic objects or familiar symbols. Most are well matched, but a fern leaf does not closely represent the first screen’s aquarium-plant example. This is a weak connection rather than a clearly misleading scientific claim.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "15 of 16 parts passed. Screen 10: underline isn't an exact quote",
+          "score": 9.4375,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3413,
+          "outputTokens": 1013,
+          "reasoningTokens": 485
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The underline on “In der Blattzelle” selects only “findet die Fotosynthese statt”, omitting the location that is the screen’s main point. The first screen’s fern-leaf icon is also a weak match for its concrete example of an aquarium plant.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "For the leaf-cell screen, select a phrase that includes the location, or omit the underline. Replace the fern leaf with an aquatic plant to make the first screen’s icon immediately recognizable from its example.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In German, for beginners in biology\n      - \"Sauerstoff entsteht\" about line doesn't say oxygen is made; \"Nachts ohne Licht\" doesn't say the plant uses stored sugar at night\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "de-fotosynthese-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Kohlendioxid und Wasser",
+              "text": "Die Pflanze braucht Kohlendioxid und Wasser, um durch Fotosynthese Zucker herzustellen."
+            },
+            {
+              "label": "Chloroplasten",
+              "text": "Die Fotosynthese findet in den grünen Chloroplasten der Pflanzenzellen statt."
+            },
+            {
+              "label": "Energie im Zucker",
+              "text": "Licht liefert Energie, die bei der Fotosynthese im Zucker gespeichert wird."
+            },
+            {
+              "label": "Sauerstoff entsteht",
+              "text": "Bei der Fotosynthese entsteht neben Zucker auch Sauerstoff, den die Pflanze abgeben kann."
+            },
+            {
+              "label": "Nachts ohne Licht",
+              "text": "Nachts kann die Pflanze zuvor gebildeten Zucker als Energiequelle nutzen."
+            }
+          ],
+          "language": "de",
+          "lessonTitle": "Die Fotosynthese",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Eine grüne Pflanze stellt mithilfe von Licht selbst Zucker her. Das kann auch die Wasserpflanze im Aquarium. Dieser Vorgang heißt **Fotosynthese**.",
+              "title": "Zucker aus eigener Herstellung"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Woher stammt der größte Teil des Materials für neues, trockenes Holz eines Baumes?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Ein Baum braucht ein Gas aus der Luft, um Zucker herzustellen, aus dem später Holz entstehen kann. Dieses Gas heißt **Kohlendioxid**.",
+              "title": "Baumaterial aus der Luft"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Eine Sonnenblume nimmt Wasser über ihre Wurzeln auf. Sie verbraucht dieses Wasser bei der Fotosynthese.",
+              "title": "Wasser wird verbraucht"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Eine Pflanze bekommt Licht und Wasser, aber kein Kohlendioxid mehr.\nKann sie weiter durch Fotosynthese Zucker herstellen?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Ein Blatt besteht aus winzigen Zellen, seinen lebenden Bausteinen. In kleinen grünen Körperchen darin findet die Fotosynthese statt. Sie heißen **Chloroplasten**.",
+              "title": "In der Blattzelle"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "In den Chloroplasten fängt ein grüner Farbstoff einen Teil des Sonnenlichts auf, das auf ein Blatt fällt. Dieser Farbstoff heißt **Chlorophyll**.",
+              "title": "Licht auffangen"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Licht liefert bei der Fotosynthese Energie, aber kein Baumaterial. Diese Energie wird im Zucker gespeichert, den die Pflanze später als Energiequelle nutzen kann.",
+              "title": "Energie im Zucker"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Bei der Fotosynthese entsteht neben Zucker auch Sauerstoff, ein Gas, das die Pflanze abgeben kann. Die Blasen an der Wasserpflanze im hellen Aquarium enthalten diesen Sauerstoff.",
+              "title": "Sauerstoff entsteht"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Ohne Licht stellt eine Pflanze durch Fotosynthese keinen neuen Zucker her. Nachts kann sie trotzdem weiterleben, weil sie zuvor gebildeten Zucker als Energiequelle nutzt.",
+              "title": "Nachts ohne Licht"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "In einem dunklen Gewächshaus bekommen Pflanzen Wasser und Kohlendioxid.\nWas ermöglicht neue Fotosynthese und warum?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "The first preview paraphrases the fulcrum's definition as the lever's center of rotation, triggering the maximum score of 5 for revealing an answer. The other previews are Japanese, within 60 characters, and appropriately withhold their conclusions. In particular, the distance preview does not reveal that moving the effort farther away reduces the required force.",
+          "score": 5,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "All screens are assigned to the ideas they teach or test. The fulcrum-position questions appropriately belong to distance and force, and the final question combining force and movement belongs to the later hand-movement idea.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "Screen 6's underline captures only the changing effort position rather than the relationship between position and required force. The other retained underlines highlight their screens' main outcomes. The long-handle example is a concrete everyday application rather than the general rule, and missing underlines are not faults.",
+          "score": 8,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Every idea has an icon, and no screen has one, correctly respecting the existing visuals. Names and descriptions are English. The pivot block, handle, measuring tape, and movement arrow are drawable objects or an allowed common symbol with recognizable connections to their respective ideas; none introduces a misleading claim or prohibited subject.",
+          "score": 10,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 16 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3257,
+          "outputTokens": 791,
+          "reasoningTokens": 269
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The first about line, 「てこが回転するときの中心」, reveals the definition of 支点 before the lesson. This violates the requirement that previews name the topic without supplying the idea's answer.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "On screen 6, 「力点を支点から遠ざけるほど」 underlines only the condition, omitting the main outcome that less force is needed. It does not independently express the screen's main point.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Japanese, for beginners in physics\n      - Every explanation has its own visual, so no screen gets an icon; every idea has one\n      - \"支点からの距離\" about line doesn't say moving the effort farther from the fulcrum takes less force\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "ja-teko-1",
+        "userInput": {
+          "ideas": [
+            { "label": "支点", "text": "支点は、てこが回る中心です。" },
+            {
+              "label": "力点と作用点",
+              "text": "力点はてこを動かす力を加える場所で、作用点はてこが相手に力を加える場所です。"
+            },
+            {
+              "label": "支点からの距離",
+              "text": "支点と作用点が同じなら、力点を支点から遠ざけるほど必要な力は小さくなります。"
+            },
+            {
+              "label": "手の動き",
+              "text": "小さな力で上げられる配置では、その分、手を大きく動かします。"
+            }
+          ],
+          "language": "ja",
+          "lessonTitle": "てこのはたらき",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "支えを中心に回るこの棒を、てこといいます。棒と支えが接する回る中心が**支点**です。",
+              "title": "棒が回る場所"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "箱と手の位置はそのままで、支えを箱に近づけると、箱を上げる力はどうなりますか？",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "箱と手が同じ位置なら、支点を箱に近づけるほど小さな力で上げられます。箱側が短く、手側が長くなるからです。",
+              "title": "支点を箱の近くに"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "箱を上げるとき、手で棒を押します。このように、てこを動かす力を加える場所が**力点**です。",
+              "title": "手で押す場所"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "棒の左端は箱を押し上げます。このように、てこが相手に力を加える場所が**作用点**です。",
+              "title": "箱を押す場所"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "支点と作用点が同じなら、力点を支点から遠ざけるほど、必要な力は小さくなります。長い柄の端を押すと楽なのはそのためです。",
+              "title": "遠くを押す"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "同じ釘を同じバールで抜きます。\n小さな力で押せる位置はどちらですか？",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "棒の重さを無視すると、左右の距離が同じてこでは、箱を支える力は箱の重さと同じです。力を小さくする効果はありません。",
+              "title": "距離が同じなら"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "棒の重さを無視すると、力点が作用点より支点に近い場合、箱を支えるには箱の重さより大きな力が必要です。てこはいつも楽になるわけではありません。",
+              "title": "力が大きくなる配置"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "同じ重さの箱を静かに支えます。棒の重さは無視します。\n手に必要な力が大きいのはどちらですか？",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "小さな力で上げられる配置では、その分、手を大きく動かします。支点から遠い力点が大きく下がる間に、近い作用点は少し上がります。",
+              "title": "手は大きく動く"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "庭の重い石を棒で少し浮かせます。棒の右側を下げる空間は十分あります。\n最も小さな力で浮かせる配置と、そのときの動きは？",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All three lines are beginner-friendly English, stay within 60 characters, and name topics without revealing rules or outcomes. In particular, the Getting back line does not disclose that the required rise is a bigger percent.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "Every screen is assigned to the idea it primarily teaches or tests. The final question combines percent change with reversing a decrease and correctly takes the later Getting back idea.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The explanatory underlines select relevant operations, and all retained examples frame concrete cases rather than general rules. However, the two worked-example underlines reproduce whole questions, not short phrases stating the screens' main points; leaving them unmarked would be better.",
+          "score": 8,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Screen-icon eligibility is handled correctly: no screen is both an explanation and without a visual, and all screen icons are null. The idea icons have concrete English names and descriptions. The price tag and coin fit the monetary context, but the hourglass is not a clear symbol of recovering an original value after a drop. This is a weak association rather than a mathematically misleading depiction.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "10 of 11 parts passed. Screen 7: underline isn't an exact quote",
+          "score": 9.181818181818182,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2650,
+          "outputTokens": 919,
+          "reasoningTokens": 443
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The underlines on the two worked examples highlight entire questions rather than short phrases stating a main point. The hourglass idea icon is also weak: it suggests elapsed time rather than returning to an original value after a decrease.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The sneakers example could include the concrete return calculation, rather than stopping after the initial drop, to better showcase the case that illustrates the idea.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In US English, for beginners\n      - \"Getting back\" about line doesn't say the rise back is a bigger percent\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "en-percent-change-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "The change",
+              "text": "The change is the new value minus the starting value."
+            },
+            {
+              "label": "Percent change",
+              "text": "Percent change is the change divided by the starting value, multiplied by 100."
+            },
+            {
+              "label": "Getting back",
+              "text": "After a drop, the rise needed to get back is measured from the lower value, so it is a bigger percent."
+            }
+          ],
+          "language": "en",
+          "lessonTitle": "Percent change",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Leah’s movie ticket went from $20 to $25. Subtract the old price from the new one: $25 − $20 = $5. But $5 alone doesn’t tell you how big the jump is: it’s bigger compared with a $20 ticket than with a $500 TV.",
+              "title": "How big is $5?"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Leah can ask how many cents the ticket changed for each dollar she started with. To find the **percent change**, divide the change by the original price, then multiply by 100. Original means the starting value, before the change. For the ticket, $5 on $20 is 25 cents per starting dollar.",
+              "title": "Compare with the start"
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Leah’s movie ticket went from $20 to $25. What was the percent increase?",
+              "title": "The ticket increase"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Leah’s monthly salary rose from ${old} to ${new}.\nWhat was the percent increase, rounded to the nearest whole percent?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Leah finds a jacket reduced from $80 to $60. What is the percent change?",
+              "title": "A price decrease"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "A video game Leah wants drops from ${old} to ${new}.\nWhat is the percent change?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Leah’s $100 sneakers drop 50% to $50. A 50% rise on $50 adds only $25, making $75, not $100. To return to $100, the price needs a $50 rise from $50: 50 ÷ 50 × 100 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
+              "title": "Getting back to $100"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Your monthly pay of $3,000 is cut 10% in a slow season, then raised 10% later.\nWhat happens to your pay, and what rise would undo the cut?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All four lines are concise English topic descriptions under 60 characters. None reveals the boundary values, allowed-energy formula, standing-wave relationships, or photon wavelength. The final line names the emission topic without answering the energy-and-wavelength question.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The screen assignments fit the ideas. The interior-wave equation supports the allowed-energy derivation, the left-boundary question belongs to boundary conditions, and the width-scaling question belongs to allowed energies. The final question combines energy scaling with emitted light and appropriately uses the later photon idea.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The normalization sentence marked as an example states a general rule, triggering the maximum score of 7. The n=3 sentence would be the appropriate concrete case on that screen. The other retained examples frame a setup and a tangible analogy. Missing underlines are not penalized.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Screen eligibility is handled correctly: only the explanation without a visual receives a screen icon. All icon names and descriptions are English and depict concrete objects rather than equations. However, several choices are weakly connected: the resting spring is not the screen's vibrating string, and the tuning fork, looping jump rope, and flashlight are indirect representations of their respective ideas. These multiple weak icons trigger the maximum score of 8.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "12 of 13 parts passed. Screen 7: example isn't whole exact sentences",
+          "score": 9.307692307692308,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3217,
+          "outputTokens": 877,
+          "reasoningTokens": 290
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "On “Waves that fit,” the example highlights the normalization requirement, ∫|ψ|²dx = 1. This is a general rule, not a concrete case; mentioning Naomi does not make it an example.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Several icons have weak connections to their content. The resting spring does not depict the vibrating string or spatial wave discussed on its screen. The tuning fork, looping jump rope, and flashlight are indirect substitutes for energy levels, standing waves, and an emitted photon.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Move the standing-wave example to the n=3 case, which supplies concrete node and energy values. Use a vibrating string or wave for “The wave inside,” and more directly recognizable box, standing-wave, and photon imagery for the ideas.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In US English, advanced quantum physics\n      - About lines don't state the energies, the boundary values or the photon's wavelength\n      - Icons stay concrete (a box, a wave, a photon), never an equation\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "en-particle-in-a-box-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Boundary conditions",
+              "text": "Infinite walls make the wave zero outside the box, so continuity gives $\\psi(0)=\\psi(L)=0$."
+            },
+            {
+              "label": "Allowed energies",
+              "text": "The nonzero box states have $k_n=n\\pi/L$ and $E_n=n^2h^2/(8mL^2)$ for positive integers $n$."
+            },
+            {
+              "label": "Standing waves",
+              "text": "Each normalized standing wave fits $n$ half-wavelengths in the box and has $n-1$ interior nodes."
+            },
+            {
+              "label": "An electron's photon",
+              "text": "An electron dropping from $n=2$ to $n=1$ in a $1.0\\,\\text{nm}$ box emits a photon near $1100\\,\\text{nm}$."
+            }
+          ],
+          "language": "en",
+          "lessonTitle": "Particle in a box",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Naomi models a confined particle between $x=0$ and $x=L$. Its potential energy $V(x)$ is zero inside and infinite outside, where its wavefunction $\\psi$, the particle's probability amplitude, is zero. Continuity makes $\\psi(0)=\\psi(L)=0$: these are **boundary conditions**, like a guitar string pinned at both ends.",
+              "title": "A box with walls"
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Inside Naomi's box, the energy equation is $-(\\hbar^2/2m)\\psi''=E\\psi$. Here $m$ is mass, $E$ is energy, $\\hbar$ is Planck's constant divided by $2\\pi$, and $\\psi''$ is the second spatial derivative. With $k=\\sqrt{2mE}/\\hbar$, it becomes $\\psi''=-k^2\\psi$, so $\\psi=A\\sin kx+B\\cos kx$. This oscillation resembles a vibrating string.",
+              "title": "The wave inside"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Naomi has $\\psi=A\\sin kx+B\\cos kx$ inside the box and requires $\\psi(0)=0$.\nWhich term can remain after she applies the condition at zero?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Naomi has applied the left boundary condition and found $\\psi=A\\sin kx$. Which values of $k$ and $E$ satisfy the right boundary?",
+              "title": "Allowed waves and energies"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Naomi considers assigning $n=0$ to the lowest state of the box.\nWhy must the lowest state instead have $n=1$?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Naomi sets the total probability in the box to one: $\\int_0^L|\\psi|^2dx=1$. This gives $A=\\sqrt{2/L}$ and $\\psi_n=\\sqrt{2/L}\\sin(n\\pi x/L)$. Each **standing wave** fits $n$ half-wavelengths into $L$ and has $n-1$ interior nodes, points where the wave is zero. For $n=3$, there are two nodes and $E_3=9E_1$; the gaps grow because $E_n\\propto n^2$.",
+              "title": "Waves that fit"
+            },
+            {
+              "hasVisual": false,
+              "kind": "workedExample",
+              "text": "Naomi models an electron in a $1.0\\,\\text{nm}$ box. What energy and wavelength result when it drops from $n=2$ to $n=1$?",
+              "title": "An electron's photon"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "For the same electron, $E_1={energy}\\,\\text{eV}$ when the box width is ${wide}\\,\\text{nm}$. Naomi makes the box ${narrow}\\,\\text{nm}$ wide.\nWhat is the new $E_1$, in eV, to two decimal places?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Naomi uses the box model for CdSe dots. She compares a 6 nm dot with a 3 nm dot, keeping the material the same. Treat the confinement contribution to the transition energy as proportional to $1/L^2$.\nHow does the confinement contribution change, and why can the smaller dot emit bluer light?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All three about lines are in English, stay within 60 characters, and introduce topics without revealing their conclusions. In particular, the Reach 5 line does not disclose that range(1, 6) excludes 6.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The explanation is assigned to its central start-and-stop point. The range(2, 6) question belongs to Reach 5, the later applicable idea. The countdown question tests stop exclusion and correctly belongs to Start and stop.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The kept underline, 'the stop is left out,' is a short statement of the explanation's main point. The example isolates Hannah's concrete range and output rather than framing the general rule. Missing marks on the questions are not flaws.",
+          "score": 10,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "No input screen qualifies for an icon because every screen has a visual. All three screen icons are null, so eligibility is handled correctly. The separate idea-level icons do not constitute icons on ineligible screens; their names and descriptions are in English.",
+          "score": 10,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2134,
+          "outputTokens": 825,
+          "reasoningTokens": 430
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - In US English, a beginner programming lesson\n      - \"Reach 5\" about line doesn't say range(1, 6) stops before 6\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "en-python-range-1",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Start and stop",
+              "text": "In `range(start, stop)`, counting starts at the start and leaves out the stop, even when counting down."
+            },
+            { "label": "Reach 5", "text": "`range(1, 6)` reaches 5 because it stops before 6." },
+            {
+              "label": "Number of values",
+              "text": "When counting up by ones, the number of values is stop minus start."
+            }
+          ],
+          "language": "en",
+          "lessonTitle": "Count with range() in Python",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Hannah’s `range(1, 5)` starts at 1 and gives 1, 2, 3, 4. In `range(start, stop)`, the stop is left out, even when counting down. To reach 5, use `range(1, 6)`. Counting up by ones, the number of values is stop minus start: 5 − 1 = 4. A loop over page numbers works the same way.",
+              "title": "Stop before the end"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Hannah runs `for n in range(2, 6): print(n)`.\nWhat does the loop print?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Hannah uses `for n in range(10, 0, -1): print(n)` for a timer countdown. The `-1` counts down by one.\nWhat is the last number printed?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All three lines are in English, under 60 characters, and phrased as questions. The atria and septum lines withhold their answers. However, “blood go from the lower chambers” strongly hints at the lower chambers’ outflow function, triggering the cap of 7. “What is the role of the lower chambers?” would avoid that hint.",
+          "score": 7,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The overview explicitly teaches atrial function, so its assignment to Atria is supported even though it also introduces the other ideas. The whole-body destination question correctly belongs to Ventricles, and the wall-and-mixing question correctly belongs to Septum. The later-idea rule for mixed questions is respected.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The retained underline states the central atrial function rather than highlighting only a term or an incidental detail. It is a compact clause, not most of its compound sentence. The other screens appropriately have no underlines, and no examples incorrectly frame a rule.",
+          "score": 10,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "No screen is eligible for an icon because every screen has a visual, and all screen icons are null. The idea-level icons are concrete, generic objects with English names and descriptions: a heart for atria, lungs as a ventricular destination, and a wall as a septum analogy. None suggests an incorrect relationship.",
+          "score": 10,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2084,
+          "outputTokens": 1148,
+          "reasoningTokens": 645
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "“Where does blood go from the lower chambers?” strongly hints that the lower chambers send blood out. Although it does not name the destinations or explicitly say “pump,” it previews part of the ventricular function that the about line should leave for the lesson.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - In US English, for beginners in biology\n      - About lines don't say which chambers receive or pump blood\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; every such screen has an icon and no other screen does\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "en-heart-chambers-1",
+        "userInput": {
+          "ideas": [
+            { "label": "Atria", "text": "The two upper chambers, the atria, receive blood." },
+            {
+              "label": "Ventricles",
+              "text": "The two lower chambers, the ventricles, pump blood out: the right to the lungs and the left to the whole body."
+            },
+            {
+              "label": "Septum",
+              "text": "The septum is the wall that separates the heart’s two sides and keeps their blood apart."
+            }
+          ],
+          "language": "en",
+          "lessonTitle": "The chambers of the heart",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Look at Naomi’s heart from the front: its right side appears on your left. The two upper chambers, called atria, receive blood; the two lower chambers, called ventricles, pump it out. The right ventricle sends blood to the lungs; the left sends it to the whole body. The septum is the wall that separates the two sides, keeping their blood apart. Look at the numbered parts.",
+              "title": "Four chambers at work"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Naomi learns that one chamber sends blood to her whole body.\nWhich chamber does that job?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "During Naomi’s heart exam, a doctor hears signs of a hole in the wall between her ventricles.\nWhat is the wall, and why can a hole let blood mix?",
+              "title": null
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-marks"
+}

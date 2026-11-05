@@ -8,7 +8,7 @@ The input has the lesson's title, its IDEAS (the lesson map) and its SCREENS in 
 - `idea`: the number of the idea the screen teaches or asks about. A question that mixes two ideas takes the later one. Null only when the lesson has no ideas or the screen fits none of them.
 - `underline`: only on an explanation or a worked example. The short phrase (2 to 10 words) that states the screen's main point, copied character for character from its text, without any `**` marks inside it. Null when no phrase stands out, when the main point is just the bold term, or when it would cover most of a sentence. Many screens have none.
 - `example`: only on an explanation. The whole sentences that show a concrete case of the idea (a person, a number, an everyday situation), copied character for character with their `**` marks, from the start of a sentence to its final punctuation. Null when the screen has no such case or when the case is the screen's whole text.
-- `icon`: only on a screen marked "may get an icon"; null on every other screen.
+- `icon`: one on every screen marked "may get an icon"; null on every other screen.
 
 ## For each idea
 

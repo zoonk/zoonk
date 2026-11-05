@@ -29,7 +29,7 @@ export const stepMarksSchema = z
       .nullable()
       .meta({
         description:
-          "The phrase that states the screen's main point, to underline: an exact substring of the marked text, in plain words with no markup inside, so it reads the same in the rendered text. Often null",
+          "The phrase that states the screen's main point, to underline: plain words found in the marked text once its `**` marks are removed, so look for it in the rendered text, where it may start, end or run through a bold term. Often null",
       }),
   })
   .meta({

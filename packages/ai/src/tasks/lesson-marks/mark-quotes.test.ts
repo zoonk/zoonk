@@ -5,9 +5,10 @@ const text =
   "Seu salário bruto é o valor do contrato. Ana ganha **R$ 3.000** por mês. O que cai na conta dela é menor.";
 
 describe(isUnderlineQuote, () => {
-  it("takes plain words the text has, a bold term's own words included", () => {
+  it("takes plain words the rendered text shows together, through a bold term too", () => {
     expect(isUnderlineQuote({ quote: "o valor do contrato", text })).toBe(true);
-    expect(isUnderlineQuote({ quote: "R$ 3.000", text })).toBe(false);
+    expect(isUnderlineQuote({ quote: "Ana ganha R$ 3.000 por mês", text })).toBe(true);
+    expect(isUnderlineQuote({ quote: "R$ 3.000", text })).toBe(true);
     expect(isUnderlineQuote({ quote: "o valor de contrato", text })).toBe(false);
     expect(isUnderlineQuote({ quote: "**R$ 3.000**", text })).toBe(false);
     expect(isUnderlineQuote({ quote: " o valor", text })).toBe(false);

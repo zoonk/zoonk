@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-11-05T17:35:59.831Z",
+  "modelId": "openai/gpt-6-luna:minimal",
+  "outputs": [
+    {
+      "cacheReadTokens": 0,
+      "cacheWriteTokens": 0,
+      "inputTokens": 547,
+      "outputTokens": 76,
+      "reasoningTokens": 36,
+      "duration": 4125.861334,
+      "output": "[\n  \"lib-scale\",\n  null,\n  \"lib-drop\"\n]",
+      "systemPrompt": "A learning app keeps one shared library of small icons, all drawn in one house style. Before it draws a new icon, it looks for one the library already has.\n\nFor each NEED you get the icon a lesson asks for, what the lesson uses it for, and the library icons a text search found, each with its id, name, tags and what the drawing shows. Answer with the id of the library icon whose drawing serves this need just as well, or null to draw a new one.\n\n- Reuse only when the drawing shows the same object or symbol, named differently: \"balance scale\" serves \"scales of justice\", \"water drop\" serves \"water droplet\".\n- Draw a new one when the library's icon is only related, a part, a variant someone would tell apart, or more generic: \"piggy bank\" doesn't serve \"savings jar\", \"coin\" doesn't serve \"stack of coins\", \"building\" doesn't serve \"city hall\".\n- When several fit, pick the closest. When none fits, answer null: a new drawing costs little, a wrong one confuses the learner.\n",
+      "testCaseId": "en-same-thing-other-name-1",
+      "userPrompt": "NEED 1: \"scales of justice\" (also: law, justice). Shows: A balance scale, the symbol of justice\nUSED FOR: a screen: a judge must weigh both sides before deciding\nLIBRARY:\n  lib-scale: balance scale; tags: justice, scales, weigh; shows: A brass balance scale with two pans level\n  lib-building: office building; tags: company, business; shows: A tall glass office building\n\nNEED 2: \"savings jar\" (also: savings, jar). Shows: A glass jar with coins inside\nUSED FOR: a screen: Maya keeps her spare change in a jar on the shelf\nLIBRARY:\n  lib-piggy: piggy bank; tags: savings, coin, save; shows: A pink piggy bank with a coin going into its slot\n  lib-coins: stack of coins; tags: money, savings; shows: A short stack of gold coins\n\nNEED 3: \"water droplet\" (also: water, drop). Shows: A single drop of water\nUSED FOR: the lesson map's idea: water moves up from the roots\nLIBRARY:\n  lib-drop: water drop; tags: water, liquid, rain; shows: One blue water drop"
+    },
+    {
+      "cacheReadTokens": 0,
+      "cacheWriteTokens": 0,
+      "inputTokens": 560,
+      "outputTokens": 38,
+      "reasoningTokens": 0,
+      "duration": 3576.408875000001,
+      "output": "[\n  null,\n  null,\n  \"lib-coins\"\n]",
+      "systemPrompt": "A learning app keeps one shared library of small icons, all drawn in one house style. Before it draws a new icon, it looks for one the library already has.\n\nFor each NEED you get the icon a lesson asks for, what the lesson uses it for, and the library icons a text search found, each with its id, name, tags and what the drawing shows. Answer with the id of the library icon whose drawing serves this need just as well, or null to draw a new one.\n\n- Reuse only when the drawing shows the same object or symbol, named differently: \"balance scale\" serves \"scales of justice\", \"water drop\" serves \"water droplet\".\n- Draw a new one when the library's icon is only related, a part, a variant someone would tell apart, or more generic: \"piggy bank\" doesn't serve \"savings jar\", \"coin\" doesn't serve \"stack of coins\", \"building\" doesn't serve \"city hall\".\n- When several fit, pick the closest. When none fits, answer null: a new drawing costs little, a wrong one confuses the learner.\n",
+      "testCaseId": "en-part-variant-or-generic-1",
+      "userPrompt": "NEED 1: \"stack of coins\" (also: money, coins). Shows: A tall stack of coins\nUSED FOR: a screen: the interest piles up year after year\nLIBRARY:\n  lib-coin: coin; tags: money, cent; shows: One gold coin seen from the front\n  lib-piggy: piggy bank; tags: savings, coin, save; shows: A pink piggy bank with a coin going into its slot\n\nNEED 2: \"city hall\" (also: government, town hall, building). Shows: A city hall with columns and a clock\nUSED FOR: a screen: the mayor's office sets the local tax\nLIBRARY:\n  lib-building: office building; tags: company, business; shows: A tall glass office building\n  lib-house: house; tags: home, family; shows: A small house with a red roof\n\nNEED 3: \"pile of coins\" (also: money, savings). Shows: A pile of gold coins\nUSED FOR: a screen: everything the business keeps adds up\nLIBRARY:\n  lib-coins: stack of coins; tags: money, savings; shows: A short stack of gold coins\n  lib-coin: coin; tags: money, cent; shows: One gold coin seen from the front"
+    },
+    {
+      "cacheReadTokens": 0,
+      "cacheWriteTokens": 0,
+      "inputTokens": 459,
+      "outputTokens": 53,
+      "reasoningTokens": 22,
+      "duration": 2006.991583,
+      "output": "[\n  \"lib-meter\",\n  null\n]",
+      "systemPrompt": "A learning app keeps one shared library of small icons, all drawn in one house style. Before it draws a new icon, it looks for one the library already has.\n\nFor each NEED you get the icon a lesson asks for, what the lesson uses it for, and the library icons a text search found, each with its id, name, tags and what the drawing shows. Answer with the id of the library icon whose drawing serves this need just as well, or null to draw a new one.\n\n- Reuse only when the drawing shows the same object or symbol, named differently: \"balance scale\" serves \"scales of justice\", \"water drop\" serves \"water droplet\".\n- Draw a new one when the library's icon is only related, a part, a variant someone would tell apart, or more generic: \"piggy bank\" doesn't serve \"savings jar\", \"coin\" doesn't serve \"stack of coins\", \"building\" doesn't serve \"city hall\".\n- When several fit, pick the closest. When none fits, answer null: a new drawing costs little, a wrong one confuses the learner.\n",
+      "testCaseId": "pt-conta-de-luz-1",
+      "userPrompt": "NEED 1: \"electric meter\" (also: electricity, power, utility). Shows: A home electricity meter\nUSED FOR: a screen: Você gasta R$ 150,00 para pagar a luz de casa, um serviço necessário.\nLIBRARY:\n  lib-bulb: light bulb; tags: idea, electricity, lamp; shows: A glowing light bulb\n  lib-meter: electricity meter; tags: power, utility bill, energy; shows: A household electricity meter with a dial\n\nNEED 2: \"power outlet\" (also: socket, plug, electricity). Shows: A wall power outlet with two holes\nUSED FOR: a screen: A tomada fornece energia para a geladeira da cozinha.\nLIBRARY:\n  lib-bulb: light bulb; tags: idea, electricity, lamp; shows: A glowing light bulb"
+    },
+    {
+      "cacheReadTokens": 0,
+      "cacheWriteTokens": 0,
+      "inputTokens": 534,
+      "outputTokens": 67,
+      "reasoningTokens": 28,
+      "duration": 2640.8412500000004,
+      "output": "[\n  null,\n  \"lib-tree\",\n  null\n]",
+      "systemPrompt": "A learning app keeps one shared library of small icons, all drawn in one house style. Before it draws a new icon, it looks for one the library already has.\n\nFor each NEED you get the icon a lesson asks for, what the lesson uses it for, and the library icons a text search found, each with its id, name, tags and what the drawing shows. Answer with the id of the library icon whose drawing serves this need just as well, or null to draw a new one.\n\n- Reuse only when the drawing shows the same object or symbol, named differently: \"balance scale\" serves \"scales of justice\", \"water drop\" serves \"water droplet\".\n- Draw a new one when the library's icon is only related, a part, a variant someone would tell apart, or more generic: \"piggy bank\" doesn't serve \"savings jar\", \"coin\" doesn't serve \"stack of coins\", \"building\" doesn't serve \"city hall\".\n- When several fit, pick the closest. When none fits, answer null: a new drawing costs little, a wrong one confuses the learner.\n",
+      "testCaseId": "pt-plantas-e-imas-1",
+      "userPrompt": "NEED 1: \"cactus\" (also: plant, desert). Shows: A green cactus in a small pot\nUSED FOR: a screen: O cacto guarda água no caule para aguentar a seca.\nLIBRARY:\n  lib-leaf: green leaf; tags: plant, nature; shows: One green leaf with visible veins\n  lib-tree: tree; tags: plant, forest; shows: A round green tree\n\nNEED 2: \"tree\" (also: plant, forest). Shows: A leafy tree\nUSED FOR: the lesson map's idea: As árvores tiram carbono do ar.\nLIBRARY:\n  lib-tree: tree; tags: plant, forest; shows: A round green tree\n  lib-leaf: green leaf; tags: plant, nature; shows: One green leaf with visible veins\n\nNEED 3: \"compass\" (also: north, navigation, magnet). Shows: A round compass with a red needle\nUSED FOR: a screen: A agulha da bússola aponta para o norte magnético.\nLIBRARY:\n  lib-magnet: horseshoe magnet; tags: magnetism, attract; shows: A red horseshoe magnet"
+    }
+  ],
+  "taskId": "icon-match"
+}
