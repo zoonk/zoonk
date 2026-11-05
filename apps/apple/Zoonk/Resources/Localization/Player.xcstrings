@@ -10226,6 +10226,124 @@
         }
       }
     },
+    "Taking your time? %@ can explain it another way." : {
+      "comment" : "Offer to ask the buddy after a long pause",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brauchst du noch etwas Zeit? %@ kann es dir anders erklären."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Necesitas más tiempo? %@ puede explicarlo de otra manera."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu prends ton temps ? %@ peut te l’expliquer autrement."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci stai pensando? Puoi chiedere a %@ una spiegazione diversa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "考え中ですか？%@が別の方法で説明できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "생각할 시간이 더 필요한가요? %@(이)가 다른 방식으로 설명해 줄 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potrzebujesz chwili? %@ może wyjaśnić to inaczej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pensando com calma? %@ pode explicar de outro jeito."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biraz daha zamana mı ihtiyacın var? %@ başka bir şekilde açıklayabilir."
+          }
+        }
+      }
+    },
+    "Taking your time? Your buddy can explain it another way." : {
+      "comment" : "Offer to ask the buddy after a long pause",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brauchst du noch etwas Zeit? Dein Kumpel kann es dir anders erklären."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Necesitas más tiempo? Tu compañero puede explicarlo de otra manera."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu prends ton temps ? Ton Compagnon peut te l’expliquer autrement."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci stai pensando? Puoi chiedere al tuo compagno una spiegazione diversa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "考え中ですか？相棒が別の方法で説明できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "생각할 시간이 더 필요한가요? 짝꿍이 다른 방식으로 설명해 줄 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potrzebujesz chwili? Twój kumpel może wyjaśnić to inaczej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pensando com calma? Seu parceiro pode explicar de outro jeito."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biraz daha zamana mı ihtiyacın var? Ders arkadaşın başka bir şekilde açıklayabilir."
+          }
+        }
+      }
+    },
     "Tap along" : {
       "comment" : "What the learner does in an activity, named above its prompt",
       "localizations" : {

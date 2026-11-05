@@ -81,6 +81,33 @@ final class StepMarksTests: XCTestCase {
     XCTAssertNil(parts.after)
   }
 
+  func testAnExampleInsideANumberedListLeavesTheListWhole() {
+    let parts = LessonTextParts(
+      "1. Heat the water.\n2. Add the tea.\n3. Pour it into a cup.",
+      marks: StepMarks(example: "2. Add the tea."))
+
+    XCTAssertNil(parts.example, "framing it would number every part from 1")
+    XCTAssertEqual(
+      parts.before?.text, "1. Heat the water.\n2. Add the tea.\n3. Pour it into a cup.")
+  }
+
+  func testMarksForTheScreenInViewWaitForTheLearnersNextVisit() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try explanation("first"), try explanation("second")],
+      hasMap: true)
+
+    state.applyMarks(from: [
+      try explanation("first", marks: #"{"ideaIndex": 0}"#),
+      try explanation("second", marks: #"{"ideaIndex": 1}"#),
+    ])
+
+    XCTAssertNil(state.steps["first"]?.marks, "the screen in view keeps its layout")
+    XCTAssertEqual(state.steps["second"]?.marks?.ideaIndex, 1)
+
+    state.continueLesson()
+    XCTAssertEqual(state.steps["first"]?.marks?.ideaIndex, 0)
+  }
+
   @MainActor
   func testMarksCountTheTextAsDrawnInUTF16() {
     let drawn = LessonRichText.typeset("O 🐱 come **ração** todo dia").text
@@ -105,4 +132,11 @@ final class StepMarksTests: XCTestCase {
     try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
   }
 
+  private func explanation(_ id: String, marks: String = "null") throws -> LessonStep {
+    try step(
+      """
+      {"id": "\(id)", "position": 0, "kind": "explanation", "marks": \(marks),
+       "content": {"title": null, "text": "Cells make up living things."}}
+      """)
+  }
 }

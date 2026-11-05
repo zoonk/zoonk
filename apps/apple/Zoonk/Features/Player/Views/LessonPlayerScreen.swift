@@ -410,12 +410,15 @@ struct LessonAskPanel: View {
 
   var body: some View {
     if let panel = tutor.panel, let lesson = store.lesson {
+      let stepId = store.state?.currentStep?.id
+
       panel(
         LessonTutorScope(
-          lessonId: lesson.id, stepId: store.state?.currentStep?.id,
+          lessonId: lesson.id, stepId: stepId,
           stepNumber: store.state.flatMap { $0.currentStep == nil ? nil : $0.position + 1 },
           answer: store.state?.answerInView, stepIds: store.state?.lessonOrder ?? [],
-          suggestions: lesson.tutorSuggestions, startingOffer: store.askingOffer),
+          suggestions: lesson.tutorSuggestions,
+          startingOffer: store.startingOffer(about: stepId)),
         isBeside)
     }
   }

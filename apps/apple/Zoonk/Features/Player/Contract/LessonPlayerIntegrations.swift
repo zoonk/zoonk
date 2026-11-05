@@ -168,6 +168,7 @@ struct LessonTutorScope: Hashable, Sendable {
 /// Each tap that offers a suggestion is its own offer, so it's put in the composer, or asked, once.
 struct LessonTutorOffer: Hashable, Sendable {
   let suggestionId: String
+  let stepId: String?
   var sendsAtOnce = false
   let id = UUID()
 }

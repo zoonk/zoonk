@@ -74,10 +74,13 @@ struct LessonPlayerState: Equatable, Sendable {
   let lessonOrder: [String]
   let hasMap: Bool
   private(set) var queue: [String]
-  private(set) var position = 0
+  private(set) var position = 0 {
+    didSet { showHeldMarks() }
+  }
   private(set) var phase: Phase
   private(set) var run = Run.idle
   private(set) var answers: [String: LessonAnswer] = [:]
+  private var heldMarks: HeldMarks?
   /// Moves on wherever a screen starts over (a checked attempt coming back, the lesson loading
   /// again), so what the learner did on its canvas (`ActivityWork`) lasts exactly as long as the
   /// answer; moving between screens never clears either.
@@ -705,13 +708,28 @@ struct LessonPlayerState: Equatable, Sendable {
     leaveOutAhead({ unavailable.contains($0) }, completionStatus: .ready, now: now)
   }
 
-  /// Marks that came late reach every screen but the one in view, which keeps its layout.
+  /// The screen in view keeps its layout: its late marks show from the learner's next visit.
   mutating func applyMarks(from fresh: [LessonStep]) {
-    for step in fresh where step.id != currentStep?.id {
-      if let current = steps[step.id], current.marks != step.marks {
+    for step in fresh {
+      guard let current = steps[step.id], current.marks != step.marks else {
+        continue
+      }
+
+      if step.id == currentStep?.id {
+        heldMarks = HeldMarks(stepId: step.id, marks: step.marks)
+      } else {
         steps[step.id] = current.withMarks(step.marks)
       }
     }
+  }
+
+  private mutating func showHeldMarks() {
+    guard let held = heldMarks, held.stepId != currentStep?.id else {
+      return
+    }
+
+    steps[held.stepId] = steps[held.stepId]?.withMarks(held.marks)
+    heldMarks = nil
   }
 
   mutating func applyPictures(from fresh: [LessonStep]) {
@@ -1088,4 +1106,9 @@ extension TypedAnswerContent {
   var isOwnWords: Bool {
     !isNumberAnswer && (acceptedAnswers ?? []).isEmpty
   }
+}
+
+private struct HeldMarks: Equatable, Sendable {
+  let stepId: String
+  let marks: StepMarks?
 }

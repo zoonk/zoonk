@@ -11,7 +11,10 @@ struct LessonTextParts: Equatable {
   let after: Part?
 
   init(_ text: String, marks: StepMarks) {
-    let range = marks.example.flatMap { $0.isEmpty ? nil : text.range(of: $0) }
+    let range = marks.example.flatMap { $0.isEmpty ? nil : text.range(of: $0) }.flatMap {
+      RichTextBlock.cutsNumberedList(text, at: $0.lowerBound)
+        || RichTextBlock.cutsNumberedList(text, at: $0.upperBound) ? nil : $0
+    }
     let pieces: [Substring] =
       range.map { [text[..<$0.lowerBound], text[$0], text[$0.upperBound...]] } ?? [
         text[...], "", "",

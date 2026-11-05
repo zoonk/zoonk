@@ -219,6 +219,28 @@ enum RichTextBlock: Equatable {
     return blocks
   }
 
+  static var orderedItem: Regex<(Substring, Substring)> { /\s*\d{1,3}[.)]\s+(.+)/ }
+
+  /// A list numbers its items from 1, so text split inside a numbered list restarts its numbers.
+  static func cutsNumberedList(_ text: String, at cut: String.Index) -> Bool {
+    guard cut > text.startIndex, cut < text.endIndex else {
+      return false
+    }
+
+    let start = text[..<cut].lastIndex(of: "\n").map(text.index(after:)) ?? text.startIndex
+    let end = text[cut...].firstIndex(of: "\n") ?? text.endIndex
+    let isItem = { (line: Substring) in line.wholeMatch(of: orderedItem) != nil }
+
+    guard start == cut else {
+      return isItem(text[start..<end])
+    }
+
+    let previousStart =
+      text[..<text.index(before: cut)].lastIndex(of: "\n").map(text.index(after:))
+      ?? text.startIndex
+    return isItem(text[previousStart..<text.index(before: cut)]) && isItem(text[cut..<end])
+  }
+
   static func lines(_ text: String) -> [String] {
     text.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n")
   }
@@ -311,7 +333,7 @@ enum RichTextBlock: Equatable {
     init(_ line: String) {
       if let match = line.wholeMatch(of: /\s*[-*•]\s+(.+)/) {
         self = .item(String(match.output.1), ordered: false)
-      } else if let match = line.wholeMatch(of: /\s*\d{1,3}[.)]\s+(.+)/) {
+      } else if let match = line.wholeMatch(of: RichTextBlock.orderedItem) {
         self = .item(String(match.output.1), ordered: true)
       } else {
         let trimmed = line.trimmingCharacters(in: .whitespaces)

@@ -129,12 +129,17 @@ struct LessonScreenHelp: View {
   }
 }
 
-/// After two misses in a row on the same idea.
+/// After two misses in a row on the same idea, or a long pause on a language lesson's explanation.
 struct LessonAskBuddyOffer: View {
+  enum Reason {
+    case misses, pause
+  }
+
   @Environment(\.lessonTutor) private var tutor
   @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
   @State private var isDismissed = false
 
+  let reason: Reason
   let store: LessonPlayerStore
 
   var body: some View {
@@ -172,14 +177,23 @@ struct LessonAskBuddyOffer: View {
 
   @ViewBuilder
   private var message: some View {
-    if let buddyName {
+    switch (reason, buddyName) {
+    case (.misses, let name?):
       Text(
-        "This one is tricky. \(buddyName) can explain it another way.", tableName: "Player",
+        "This one is tricky. \(name) can explain it another way.", tableName: "Player",
         comment: "Offer to ask the buddy after two misses")
-    } else {
+    case (.misses, nil):
       Text(
         "This one is tricky. Your buddy can explain it another way.", tableName: "Player",
         comment: "Offer to ask the buddy after two misses")
+    case (.pause, let name?):
+      Text(
+        "Taking your time? \(name) can explain it another way.", tableName: "Player",
+        comment: "Offer to ask the buddy after a long pause")
+    case (.pause, nil):
+      Text(
+        "Taking your time? Your buddy can explain it another way.", tableName: "Player",
+        comment: "Offer to ask the buddy after a long pause")
     }
   }
 
@@ -190,6 +204,62 @@ struct LessonAskBuddyOffer: View {
     } else {
       Text("Ask your buddy", tableName: "Player", comment: "Opens the Ask panel with the buddy")
     }
+  }
+}
+
+struct LessonPauseOffer: View {
+  @Environment(\.scenePhase) private var scenePhase
+  @State private var isStuck = false
+
+  let step: LessonStep
+  let store: LessonPlayerStore
+
+  var body: some View {
+    // A stack rather than a group, so the timer runs while nothing shows yet.
+    VStack(alignment: .leading, spacing: 0) {
+      if isStuck, store.state?.quickCheck == nil {
+        LessonAskBuddyOffer(reason: .pause, store: store)
+      }
+    }
+    .task(id: PauseKey(stepId: step.id, isActive: scenePhase == .active, touches: store.touches)) {
+      guard !isStuck, scenePhase == .active, let delay = step.strugglePause else {
+        return
+      }
+
+      try? await Task.sleep(for: delay)
+
+      if !Task.isCancelled {
+        isStuck = true
+      }
+    }
+  }
+
+  private struct PauseKey: Hashable {
+    let stepId: String
+    let isActive: Bool
+    let touches: Int
+  }
+}
+
+extension LessonStep {
+  /// How long a learner can stay on an explanation or worked example without touching anything
+  /// before help is offered: three times its reading time at 150 words a minute, at least 45 s.
+  var strugglePause: Duration? {
+    let text: String
+
+    switch content {
+    case .explanation(let content):
+      text = "\(content.title ?? "") \(content.text)"
+    case .workedExample(let content):
+      text = ([content.problem] + content.steps.map(\.text) + [content.result]).joined(
+        separator: " ")
+    default:
+      return nil
+    }
+
+    let words = WordCount.count(text)
+    let readingSeconds = Double(words) / 150 * 60
+    return .seconds(max(45, readingSeconds * 3))
   }
 }
 

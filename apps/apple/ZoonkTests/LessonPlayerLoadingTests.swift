@@ -106,6 +106,20 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(store.lesson?.isTagged, true)
   }
 
+  func testIDidntGetItAsksOnlyAboutTheScreenItWasTappedOn() async throws {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try markedLesson(isTagged: true))
+    }
+    let store = player(cache: cache, content: content, transport: OfflineLessonTransport())
+    await store.load()
+
+    store.ask(suggestionId: "simpler", sendsAtOnce: true)
+
+    XCTAssertEqual(store.startingOffer(about: "first")?.sendsAtOnce, true)
+    XCTAssertNil(store.startingOffer(about: "second"), "moving on with Ask open never asks again")
+  }
+
   /// Loading the lesson again (a session renewed for the same learner) starts every answer over,
   /// so what was done on a canvas starts over with it.
   func testALessonLoadedAgainStartsItsCanvasWorkOver() async throws {

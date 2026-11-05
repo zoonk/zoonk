@@ -33,7 +33,7 @@ struct LessonMapStage: View {
         if store.isAsking {
           LessonAskPanel(store: store, isBeside: true)
         } else {
-          LessonPage {
+          LessonPage(store: store) {
             LessonScreenHelp(store: store)
           }
           .safeAreaBar(edge: .bottom) { actionBar }
@@ -53,7 +53,7 @@ struct LessonMapStage: View {
   }
 
   private var mapPage: some View {
-    LessonPage {
+    LessonPage(store: store) {
       LessonMapSection(title: title, summary: summary)
     }
     .modifier(TracksSpread(store: store))

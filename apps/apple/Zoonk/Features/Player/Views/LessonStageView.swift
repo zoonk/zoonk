@@ -84,11 +84,12 @@ struct LessonStageView: View {
           spread != nil && step.teachesInText && tutor.panel != nil && !store.isGuest
         let recap = state.recap
         let map = store.lesson?.taggedSummary
+        let offersDidntGetIt = step.isExplained && store.lesson?.targetLanguage == nil
 
         HStack(spacing: 0) {
           if let pages = spread {
             ScrollViewReader { scroll in
-              LessonPage {
+              LessonPage(store: store) {
                 LessonNotice(state: state, store: store)
 
                 VStack(alignment: .leading, spacing: 20) {
@@ -97,6 +98,10 @@ struct LessonStageView: View {
                   LessonStepNotes(step: step, store: store)
                 }
                 .id(Self.screenId)
+
+                if offersDidntGetIt {
+                  LessonDidntGetIt(store: store)
+                }
 
                 // The page the learner reads ends with what the question rests on.
                 if let recap {
@@ -115,6 +120,7 @@ struct LessonStageView: View {
 
           ScrollViewReader { scroll in
             LessonPage(
+              store: store,
               fillsHeight: spread == nil && (step.hasWordBank || (step.opensLesson && map != nil))
             ) {
               if spread == nil {
@@ -155,14 +161,16 @@ struct LessonStageView: View {
                   )
 
                   if state.struggleOffer != nil {
-                    LessonAskBuddyOffer(store: store)
+                    LessonAskBuddyOffer(reason: .misses, store: store)
                   }
                 }
                 .id(Self.verdictId)
               }
 
-              if step.isExplained, !offersHelp, store.lesson?.targetLanguage == nil {
+              if spread == nil, offersDidntGetIt {
                 LessonDidntGetIt(store: store)
+              } else if step.strugglePause != nil, !offersHelp, !offersDidntGetIt {
+                LessonPauseOffer(step: step, store: store)
               }
 
               if spread == nil, let recap {
@@ -260,6 +268,7 @@ struct LessonStageView: View {
           isCheckSlow = !Task.isCancelled
         }
       }
+      .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
       .sensoryFeedback(trigger: state.countedVerdict(step.id)) { _, isCorrect in
         isCorrect.map { $0 ? .success : .error }
@@ -276,6 +285,7 @@ struct LessonStageView: View {
 struct LessonPage<Content: View>: View {
   @State private var visibleHeight: CGFloat?
 
+  let store: LessonPlayerStore
   var fillsHeight = false
   @ViewBuilder let content: Content
 
@@ -291,6 +301,11 @@ struct LessonPage<Content: View>: View {
     }
     .onScrollGeometryChange(for: CGFloat.self, of: \.containerSize.height) { _, height in
       visibleHeight = height
+    }
+    .onScrollPhaseChange { _, phase in
+      if phase != .idle {
+        store.touches += 1
+      }
     }
   }
 }

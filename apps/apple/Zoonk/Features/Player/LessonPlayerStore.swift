@@ -65,8 +65,10 @@ final class LessonPlayerStore {
   /// The screen and answer round whose "From the lesson" is open, so a fold keeps it open and the
   /// screen's next round starts it folded.
   var openRecap: String?
+  /// Any touch or scroll on the screen: a learner who touches it isn't stuck.
+  var touches = 0
   var isAsking = false
-  private(set) var askingOffer: LessonTutorOffer?
+  private var askingOffer: LessonTutorOffer?
   /// The lesson shows as a spread, where Ask opens beside it; elsewhere Ask is a sheet. Kept by the
   /// stage, which measures it. Once Ask is beside the lesson, closing iPhone Duo doesn't bring its
   /// sheet back.
@@ -145,8 +147,17 @@ final class LessonPlayerStore {
     return work
   }
 
+  /// Ask stays open as the lesson moves on, and only the screen an offer was made about starts with
+  /// it, so moving on never asks again.
+  func startingOffer(about stepId: String?) -> LessonTutorOffer? {
+    askingOffer.flatMap { $0.stepId == stepId ? $0 : nil }
+  }
+
   func ask(suggestionId: String? = nil, sendsAtOnce: Bool = false) {
-    askingOffer = suggestionId.map { LessonTutorOffer(suggestionId: $0, sendsAtOnce: sendsAtOnce) }
+    askingOffer = suggestionId.map {
+      LessonTutorOffer(
+        suggestionId: $0, stepId: state?.currentStep?.id, sendsAtOnce: sendsAtOnce)
+    }
     isAskingInSheet = !isSpread
     isAsking = true
   }
