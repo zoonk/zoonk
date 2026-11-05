@@ -215,7 +215,7 @@ class PronunciationScreenshots {
             ApiJson.decodeFromString(
                 PronunciationRoundResult.serializer(),
                 """
-                {"brainPower":2,"correct":1,"total":1,"missionMoment":null,"reached":{"energy":null,"level":{"color":"yellow","level":1}},
+                {"brainPower":2,"certificates":[],"correct":1,"total":1,"missionMoment":null,"reached":{"energy":null,"level":{"color":"yellow","level":1}},
                  "ceremony":{"beltStartBrainPower":2500,"earnedAt":"2026-11-04T12:00:00Z","id":"00000000-0000-4000-8000-000000000077",
                   "key":"yellow","kind":"belt","shownAt":null}}
                 """.trimIndent(),

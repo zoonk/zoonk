@@ -237,6 +237,14 @@ msgid "Completed lessons"
 msgstr "Tamamlanan dersler"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "Sertifikalar"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
@@ -244,6 +252,7 @@ msgstr "Sınav"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/lib/certificates/certificate-study-view.ts
 msgctxt "ONqlu6"
 msgid "Speaking"
 msgstr "Konuşma"
@@ -574,9 +583,11 @@ msgctxt "rEPdIs"
 msgid "Course outline"
 msgstr "Kurs içeriği"
 
+#. How many chapters a finished course's plan held.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
+#: src/lib/certificates/certificate-view.ts
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, other {# ünite}}"
@@ -855,6 +866,11 @@ msgstr "Arkadaşın sorularını cevaplar ve planını düzenler."
 msgctxt "BV0cQk"
 msgid "Your day"
 msgstr "Günün"
+
+#: src/app/[lang]/(app)/(learn)/certificates/page.tsx
+msgctxt "Ybfjqu"
+msgid "A certificate for every level and plan you finish."
+msgstr "Tamamladığın her seviye ve plan için bir sertifika."
 
 #: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
 msgctxt "1ZQwwl"
@@ -1215,9 +1231,9 @@ msgstr "Verilerin"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "O7G-L3"
-msgid "How Zoonk and your buddy call you"
-msgstr "Zoonk ve arkadaşın sana bu adla seslenir"
+msgctxt "1aCPlI"
+msgid "How Zoonk and your buddy call you, and the name on your certificates."
+msgstr "Zoonk ve ders arkadaşın sana bu adla seslenir. Sertifikalarında da bu ad görünür."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -2410,6 +2426,27 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Hesabın silindi."
 
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "kgqbTN"
+msgid "We couldn't find this certificate"
+msgstr "Bu sertifikayı bulamadık"
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "pFjRPG"
+msgid "Check the link. A certificate's link ends in its 12-character code, like {example}, and works with or without the dashes."
+msgstr "Bağlantıyı kontrol et. Sertifika bağlantısı, {example} örneğindeki gibi sertifikanın 12 karakterlik koduyla biter. Kısa çizgiler olmadan da çalışır."
+
+#: src/app/[lang]/c/[code]/certificate-not-found.tsx
+msgctxt "15PZTm"
+msgid "Go to Zoonk"
+msgstr "Zoonk’a git"
+
+#: src/app/[lang]/c/[code]/page.tsx
+msgctxt "4566_7"
+msgid "A certificate issued by Zoonk. Anyone with its link can check it."
+msgstr "Zoonk tarafından verilen bir sertifika. Bağlantıya sahip olan herkes sertifikayı doğrulayabilir."
+
 #: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
 msgctxt "9MidH4"
@@ -3004,6 +3041,11 @@ msgid "Higher limits for speaking calls"
 msgstr "Konuşma pratiği sohbetlerinde daha yüksek limitler"
 
 #: src/components/pricing/plus-benefits.tsx
+msgctxt "udRZBr"
+msgid "A certificate for every level you finish"
+msgstr "Tamamladığın her seviye için bir sertifika"
+
+#: src/components/pricing/plus-benefits.tsx
 msgctxt "joZG7W"
 msgid "Every goal · every lesson"
 msgstr "Her hedef · her ders"
@@ -3443,6 +3485,123 @@ msgstr "{category} kursları"
 msgctxt "BBu_dn"
 msgid "Courses in {category}"
 msgstr "{category} alanında kurslar"
+
+#. After “Topics covered” when the certificate lists only the first six topics.
+#: src/lib/certificates/certificate-fit.ts
+msgctxt "oDI_Rp"
+msgid "and {count} more"
+msgstr "ve {count} konu daha"
+
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "1TOMnj"
+msgid "Listening"
+msgstr "Dinleme"
+
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "MOK_yK"
+msgid "Reading"
+msgstr "Okuma"
+
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "GoReDj"
+msgid "Writing"
+msgstr "Yazma"
+
+#. A certificate's fact: the day the learner finished the course or level.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Tamamlanma tarihi"
+
+#. A certificate's fact: how many of the plan's lessons the learner studied.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "mrBiB2"
+msgid "Lessons studied"
+msgstr "Çalışılan dersler"
+
+#. A certificate's fact: lessons the learner skipped by passing a test, said for outsiders.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "dx3nJs"
+msgid "Passed by test"
+msgstr "Testle geçilen dersler"
+
+#. A certificate's fact: about how long the studied lessons take. In Brazilian Portuguese: “Carga horária”.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "KHL8ap"
+msgid "Study time"
+msgstr "Çalışma süresi"
+
+#. A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária).
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "8QINPM"
+msgid "about {duration}"
+msgstr "yaklaşık {duration}"
+
+#. Under a big number on a certificate's social post: how many lessons the learner studied.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "hYLeZv"
+msgid "{count, plural, =0 {lessons studied} one {lesson studied} other {lessons studied}}"
+msgstr "{count, plural, =0 {çalışılan ders yok} other {çalışılan ders}}"
+
+#. Under a big number of hours on a certificate's social post, such as “~41 h” over “of study”.
+#: src/lib/certificates/certificate-study-view.ts
+msgctxt "6SwZ60"
+msgid "of study"
+msgstr "çalışma"
+
+#. Shown on a certificate where the learner's name goes, until they add one to their profile.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "vlKhIl"
+msgid "Your name"
+msgstr "Adın"
+
+#. The kind of document, above the learner's name on a certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "zaINXN"
+msgid "Certificate of completion"
+msgstr "Tamamlama sertifikası"
+
+#. Above a certificate's link and QR code, which open the page that proves it's real.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "5FXh-Z"
+msgid "Verify this certificate"
+msgstr "Bu sertifikayı doğrula"
+
+#. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "yA8QN_"
+msgid "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result."
+msgstr "Zoonk’ta çalıştığı tüm beceriler, verdiği cevaplara göre {level} düzeyine ulaştığında verildi. Bu resmî bir sınav sonucu değildir."
+
+#. How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "PrhNZj"
+msgid "Level completed · aligned with the CEFR"
+msgstr "Seviye tamamlandı · CEFR ile uyumlu"
+
+#. A course level certificate's level, such as “Beginner level”.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "XmHKKJ"
+msgid "{level} level"
+msgstr "{level} seviyesi"
+
+#. Above the topics a finished course covered, on its certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "fAGVcM"
+msgid "Topics covered"
+msgstr "İşlenen konular"
+
+#. The fine print on a course level's certificate.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "anftNZ"
+msgid "Awarded for finishing every lesson and challenge of this level on Zoonk."
+msgstr "Zoonk’ta bu seviyedeki tüm dersleri ve meydan okumaları tamamladığın için verilmiştir."
+
+#. The fine print on a certificate for a learner's whole study plan in a course, which may cover only part of the course: the topics it lists.
+#: src/lib/certificates/certificate-view.ts
+msgctxt "Sadn8K"
+msgid "Awarded for finishing every lesson and challenge of a study plan on Zoonk."
+msgstr "Zoonk’ta bir çalışma planındaki tüm dersleri ve meydan okumaları tamamladığın için verilmiştir."
 
 #: src/lib/public/public-labels.ts
 msgctxt "3Rx6Qo"

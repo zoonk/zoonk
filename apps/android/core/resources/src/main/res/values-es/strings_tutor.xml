@@ -106,6 +106,8 @@
   "tutor_retry_last_question": "8a489340bf3b0a6749bef1915b4c05a1c35595185c6d9366cd12bda1a57280f3",
   "tutor_send": "fa2db300b29960dcbda52dc712cef32ae4b96372c16714577ac0bc3fe8da934e",
   "tutor_sign_in": "48c6214ba82cb973fb493647e888ae567d9914fea779a5950cf2a6f39775cb87",
+  "tutor_step_closed": "59afccee97f23c809956abce74c090bfba68062caa2566bb0ab04b502e50b184",
+  "tutor_step_open_failed": "a454883fec6353a1da6ed178f5424bb40c3a1477447090099ac0f5a4e43a161f",
   "tutor_suggest_chapter": "0610b647a7d6162dd2153d4ee2802faf815ff3f1df0f2b9913469a1d42b34d25",
   "tutor_suggest_item_asking": "dac01d585de4bdcf832eca35be4525a006253ad077f367d12c5ab19c6555a437",
   "tutor_suggest_item_idea": "8628f3a88f1fc917edb2ffb271a56fab8e08e2540cf44d86a09e09f52cfb8a84",
@@ -199,6 +201,10 @@
     <string name="tutor_link_description">Este enlace abre un sitio web fuera de Zoonk.</string>
     <string name="tutor_link_cancel">Cancelar</string>
     <string name="tutor_link_open">Abrir enlace</string>
+    <!-- Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since -->
+    <string name="tutor_step_closed">Este paso ya no está disponible.</string>
+    <!-- Under a buddy answer whose link to a step of the day didn't open -->
+    <string name="tutor_step_open_failed">No pudimos abrir este paso. Inténtalo de nuevo.</string>
     <string name="tutor_offer_open">Abrir</string>
     <string name="tutor_offer_choose">Elegir</string>
     <string name="tutor_offer_start">Empezar</string>

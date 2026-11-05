@@ -42,6 +42,7 @@ msgstr "Sınırı değiştir"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
+#: src/certificates/certificates-screen.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 msgctxt "nC-1Um"
@@ -146,6 +147,7 @@ msgstr "Günlük çalışma süresi"
 #: src/_components/detail-page.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
+#: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
 #: src/language/conversation/conversation-result.tsx
@@ -192,6 +194,9 @@ msgstr "%{percent} tamamlandı"
 
 #: src/_components/details-drawer.tsx
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
@@ -999,6 +1004,7 @@ msgid "Glasses"
 msgstr "Gözlük"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
 #: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
@@ -1012,6 +1018,7 @@ msgid "Cancel"
 msgstr "Vazgeç"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-name.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -1022,6 +1029,8 @@ msgid "Save"
 msgstr "Kaydet"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-details.tsx
+#: src/certificates/certificate-moment-parts.tsx
 #: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-tools.tsx
 msgctxt "BY343C"
@@ -1509,6 +1518,498 @@ msgstr "{buddy} büyüdü!"
 msgctxt "d5UGw8"
 msgid "Wear them"
 msgstr "Arkadaşına tak"
+
+#: src/certificates/certificate-copy-button.tsx
+msgctxt "p556q3"
+msgid "Copied"
+msgstr "Kopyalandı"
+
+#: src/certificates/certificate-copy-button.tsx
+#: src/certificates/certificate-details.tsx
+msgctxt "4l6vz1"
+msgid "Copy"
+msgstr "Kopyala"
+
+#: src/certificates/certificate-details.tsx
+#: src/journey/journey-hero.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+#: src/today/today-preparation.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Seviye"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Tamamlanma tarihi"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "mrBiB2"
+msgid "Lessons studied"
+msgstr "Çalışılan dersler"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "dx3nJs"
+msgid "Passed by test"
+msgstr "Testle geçilen dersler"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "KHL8ap"
+msgid "Study time"
+msgstr "Çalışma süresi"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "LbAVCO"
+msgid "Certificate ID"
+msgstr "Sertifika kimliği"
+
+#. Labels the learner's full name, as their certificates print it
+#: src/certificates/certificate-details.tsx
+msgctxt "certificateRecipientName"
+msgid "Name"
+msgstr "Ad soyad"
+
+#: src/certificates/certificate-details.tsx
+#: src/onboarding/entry/paste-link.tsx
+msgctxt "JBWS0c"
+msgid "Link"
+msgstr "Bağlantı"
+
+#: src/certificates/certificate-details.tsx
+#: src/certificates/certificate-share.tsx
+#: src/plan/use-share-plan.ts
+msgctxt "zU_q1N"
+msgid "Link copied"
+msgstr "Bağlantı kopyalandı"
+
+#: src/certificates/certificate-details.tsx
+#: src/syllabus/subject-aside.tsx
+msgctxt "Lv0zJu"
+msgid "Details"
+msgstr "Ayrıntılar"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "QshKyk"
+msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
+msgstr "Bağlantıya sahip herkes bu sertifikayı görebilir. Sertifika sayfası arama sonuçlarında görünmez."
+
+#. A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name.
+#: src/certificates/certificate-labels.ts
+msgctxt "LD0O-X"
+msgid "{course} · {level}"
+msgstr "{course} · {level}"
+
+#. A language and a CEFR level, such as "Spanish B1": a certificate's name.
+#: src/certificates/certificate-labels.ts
+msgctxt "ZP9lOu"
+msgid "{language} {level}"
+msgstr "{language} {level}"
+
+#. An approximate study time, such as "about 41 hr".
+#: src/certificates/certificate-labels.ts
+msgctxt "8QINPM"
+msgid "about {duration}"
+msgstr "yaklaşık {duration}"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "ZfBPq3"
+msgid "{name} completed level {level} in {language}"
+msgstr "{name}, {level} seviyesini {language} dilinde tamamladı"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "7ULGz_"
+msgid "Level {level} in {language}, completed on Zoonk"
+msgstr "{level} seviyesi, {language} dilinde Zoonk’ta tamamlandı"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "do3pHn"
+msgid "{name} completed {course}"
+msgstr "{name}, {course} kursunu tamamladı"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "z9WxBG"
+msgid "{course}, completed on Zoonk"
+msgstr "{course}, Zoonk’ta tamamlandı"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "B-Co6Y"
+msgid "Add to your LinkedIn profile"
+msgstr "LinkedIn profiline ekle"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "bv21CP"
+msgid "LinkedIn opens its form to add a license or certification. Copy each field into it."
+msgstr "LinkedIn, lisans veya sertifika ekleme formunu açar. Her alandaki bilgiyi forma kopyala."
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "Gsc9HO"
+msgid "Copy the name"
+msgstr "Adı kopyala"
+
+#. LinkedIn's field for the certificate's name, labeled as in LinkedIn's "Add license or certification" form
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "linkedInCertificationName"
+msgid "Name"
+msgstr "Ad"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "Stmjvy"
+msgid "Copy the issuing organization"
+msgstr "Veren kuruluşu kopyala"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "chGb2H"
+msgid "Issuing organization"
+msgstr "Veren kuruluş"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "c3mXbd"
+msgid "Issue date"
+msgstr "Veriliş tarihi"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "iIH6lJ"
+msgid "Copy the credential ID"
+msgstr "Yeterlilik kimliğini kopyala"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "NMHFhh"
+msgid "Credential ID"
+msgstr "Yeterlilik kimliği"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "GkUPxx"
+msgid "Copy the credential URL"
+msgstr "Yeterlilik URL’sini kopyala"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "bV_-Gb"
+msgid "Credential URL"
+msgstr "Yeterlilik URL’si"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "CEB03t"
+msgid "Open LinkedIn"
+msgstr "LinkedIn’i aç"
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "oL0rU6"
+msgid "Locked"
+msgstr "Kilitli"
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "rS5epi"
+msgid "Get your certificate with Plus"
+msgstr "Plus ile sertifikanı al"
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "QIyGxo"
+msgid "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends."
+msgstr "Plus ile tamamladığın her seviye için yazdırıp paylaşabileceğin bir sertifika alırsın. Plus üyeliğin sona erse de aldığın sertifikalar sende kalır."
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "Oe9wC5"
+msgid "Certificates come with Plus"
+msgstr "Sertifikalar Plus’a dahil"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "l4zQLP"
+msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs."
+msgstr "Sertifikada öğrencinin Zoonk hesabında belirttiği ad yer alır; Zoonk kimlik kontrolü yapmaz."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "s94wjH"
+msgid "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result."
+msgstr "Seviyeler, CEFR (Common European Framework of Reference for Languages) ile uyumludur. Bu, resmî bir sınav sonucu değildir."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "X1QrOq"
+msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
+msgstr "Zoonk, her beceriyi (okuma, dinleme, konuşma, yazma) öğrencinin derslerde ve alıştırmalarda verdiği cevaplara göre ölçer. Bu cevaplarla seviyesi yükselen tüm beceriler bir sonraki seviyeye ulaştığında seviye tamamlanır; bu sertifika da bu becerilerin her biri {level} seviyesine ulaştığında verildi."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "j5jrUM"
+msgid "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it."
+msgstr "Zoonk bu sertifikayı, bir kurs seviyesindeki her dersi çalışarak veya testini geçerek tüm üniteleri tamamlayan ve o seviyedeki tüm meydan okumaları kazanan öğrencilere verir."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "9Bnhaw"
+msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it."
+msgstr "Zoonk bu sertifikayı, öğrenci bir kursun planındaki tüm dersleri çalışarak veya testlerini geçerek tamamladığında ve plandaki tüm meydan okumaları kazandığında verir."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "wB_Ebz"
+msgid "It's a record of completion on Zoonk, not academic credit."
+msgstr "Zoonk’ta kursun tamamlandığını gösterir; akademik kredi yerine geçmez."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "I9vOlY"
+msgid "What this certificate means"
+msgstr "Bu sertifikanın anlamı"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "fAGVcM"
+msgid "Topics covered"
+msgstr "İşlenen konular"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "8Rm1i0"
+msgid "Can do"
+msgstr "Yapabildikleri"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "NnlD8J"
+msgid "Learn {course} on Zoonk"
+msgstr "Zoonk’ta {course} öğren"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "1h_6la"
+msgid "Learn {language} on Zoonk"
+msgstr "Zoonk’ta {language} öğren"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "hxYqqG"
+msgid "A plan for each day that fits your time, starting from what you already know."
+msgstr "Zaten bildiklerini temel alan, her gün ayırabildiğin süreye uygun bir plan."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "VJA_YD"
+msgid "Start this course"
+msgstr "Bu kursa başla"
+
+#: src/certificates/certificate-meaning.tsx
+#: src/onboarding/how-it-works.tsx
+msgctxt "npIkqE"
+msgid "Start free, no account needed."
+msgstr "Ücretsiz başla, hesap gerekmez."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "buj2o3"
+msgid "Your {certificate} certificate is ready."
+msgstr "{certificate} sertifikan hazır."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "e63c09"
+msgid "{level} complete!"
+msgstr "{level} tamamlandı!"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "lopydx"
+msgid "Your certificate for {course} is ready."
+msgstr "{course} için sertifikan hazır."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "SqnwjO"
+msgid "Course complete!"
+msgstr "Kurs tamamlandı!"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "H8ofJ_"
+msgid "{count, plural, other {# certificates earned}}"
+msgstr "{count, plural, other {# sertifika kazandın}}"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "72XHg-"
+msgid "Your {list} certificates are ready."
+msgstr "{list} sertifikaların hazır."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "_QSets"
+msgid "They're saved in Certificates."
+msgstr "Sertifikalar bölümüne kaydedildi."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "m77iCk"
+msgid "It's saved in Certificates."
+msgstr "Sertifikalar bölümüne kaydedildi."
+
+#: src/certificates/certificate-moment-parts.tsx
+msgctxt "e_2HUM"
+msgid "On your certificate: <strong>{name}</strong>"
+msgstr "Sertifikandaki ad: <strong>{name}</strong>"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "En fazla 150 karakter kullan."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Vrz1pI"
+msgid "Your certificates and your buddy use this name."
+msgstr "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "F6SpEM"
+msgid "Your certificates and your buddy use this name. You can change it anytime."
+msgstr "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir. İstediğin zaman değiştirebilirsin."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "CG1x0d"
+msgid "Name on your certificates"
+msgstr "Sertifikalarındaki ad"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Zeqtwb"
+msgid "Your name, as it should appear"
+msgstr "Sertifikanda görünecek adın"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "m4c_De"
+msgid "Your full name"
+msgstr "Adın ve soyadın"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Qcr1L3"
+msgid "It shows on every certificate and its link. Your buddy calls you by it too."
+msgstr "Her sertifikada ve bağlantısında bu ad görünür. Ders arkadaşın da sana bu adla seslenir."
+
+#: src/certificates/certificate-page.tsx
+msgctxt "5lbext"
+msgid "Your certificates"
+msgstr "Sertifikalarına dön"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "QXN1kN"
+msgid "Verified certificate · issued by Zoonk"
+msgstr "Doğrulanmış sertifika · Zoonk tarafından verildi"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "faSg-e"
+msgid "Certificate of completion, issued on {date}."
+msgstr "Bitirme sertifikası, {date} tarihinde verildi."
+
+#: src/certificates/certificate-page.tsx
+msgctxt "CXRlIo"
+msgid "Print"
+msgstr "Yazdır"
+
+#: src/certificates/certificate-page.tsx
+#: src/memory/memory-screen.tsx
+#: src/mind-maps/mind-map-card.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "5q3qC0"
+msgid "Download"
+msgstr "İndir"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "sfDPEB"
+msgid "I just completed level {level} in {language} on Zoonk."
+msgstr "Zoonk’ta {level} seviyesini {language} dilinde az önce tamamladım."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "rIzvkK"
+msgid "I just finished {course} on Zoonk."
+msgstr "Zoonk’ta {course} kursunu yeni bitirdim."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "xgqZIz"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}."
+msgstr "Zoonk’ta {course} kursunu az önce bitirdim: {lessons, plural, =0 {# ders} other {# ders}}."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "_w9o_B"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} and about {minutes, plural, one {# minute} other {# minutes}} of study."
+msgstr "Zoonk’ta {course} kursunu az önce bitirdim: {lessons, plural, =0 {# ders} other {# ders}} ve yaklaşık {minutes, plural, other {# dakikalık}} çalışma."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "WJJ7jr"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} and about {hours, plural, one {# hour} other {# hours}} of study."
+msgstr "Zoonk’ta {course} kursunu az önce bitirdim: {lessons, plural, =0 {# ders} other {# ders}} ve yaklaşık {hours, plural, other {# saatlik}} çalışma."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "DquYTO"
+msgid "Text copied. Paste it into your LinkedIn post."
+msgstr "Metin kopyalandı. LinkedIn gönderine yapıştır."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "31QcAi"
+msgid "Text copied. Paste it into your Facebook post."
+msgstr "Metin kopyalandı. Facebook gönderine yapıştır."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "tXB0F9"
+msgid "Share your certificate"
+msgstr "Sertifikanı paylaş"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "Mpsug3"
+msgid "Your post shows this picture and links to your certificate's page."
+msgstr "Gönderinde bu görsel ve sertifika sayfana giden bir bağlantı yer alır."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "tfBQnN"
+msgid "Suggested text"
+msgstr "Önerilen metin"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "l2ddvP"
+msgid "Copy the suggested text"
+msgstr "Önerilen metni kopyala"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "rIB4Ud"
+msgid "Post on"
+msgstr "Paylaşım platformu"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "lbr3Lq"
+msgid "Copy link"
+msgstr "Bağlantıyı kopyala"
+
+#: src/certificates/certificate-sharing.tsx
+msgctxt "OKhRC6"
+msgid "Share"
+msgstr "Paylaş"
+
+#: src/certificates/certificate-sharing.tsx
+msgctxt "L2bkq_"
+msgid "Add to LinkedIn"
+msgstr "LinkedIn’e ekle"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "zaINXN"
+msgid "Certificate of completion"
+msgstr "Tamamlama sertifikası"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "Sertifikalar"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "Ek6qb7"
+msgid "Comes when every skill you practice reaches the next level"
+msgstr "Çalıştığın her beceride bir sonraki seviyeye ulaştığında alırsın"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "ojltlj"
+msgid "Your certificate comes when you finish the plan"
+msgstr "Planı tamamladığında sertifikanı alırsın"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "GyTxyv"
+msgid "No certificates yet"
+msgstr "Henüz sertifikan yok"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "_eLagx"
+msgid "Your certificates show up here when you finish a level or a plan."
+msgstr "Bir seviyeyi veya planı tamamladığında sertifikaların burada görünür."
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "0X-xfW"
+msgid "Continue learning"
+msgstr "Öğrenmeye devam et"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "7yoAJi"
+msgid "{count, plural, one {# certificate} other {# certificates}}"
+msgstr "{count, plural, other {# sertifika}}"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "Ybfjqu"
+msgid "A certificate for every level and plan you finish."
+msgstr "Tamamladığın her seviye ve plan için bir sertifika."
 
 #: src/challenge/challenge-call-intro.tsx
 #: src/challenge/challenge-intro.tsx
@@ -3978,6 +4479,33 @@ msgctxt "7wkXtE"
 msgid "Adding a quick check that it works…"
 msgstr "Çalıştığını doğrulamak için kısa bir kontrol ekliyoruz…"
 
+#: src/journey/course-certificate.tsx
+msgctxt "n-Px0T"
+msgid "Get your certificate"
+msgstr "Sertifikanı al"
+
+#: src/journey/course-certificate.tsx
+msgctxt "QlJQMD"
+msgid "View certificates"
+msgstr "Sertifikaları görüntüle"
+
+#: src/journey/course-certificate.tsx
+msgctxt "koWpue"
+msgid "View certificate"
+msgstr "Sertifikayı görüntüle"
+
+#. A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end
+#: src/journey/course-certificate.tsx
+msgctxt "4S7nHA"
+msgid "{level} complete"
+msgstr "{level} tamamlandı"
+
+#. A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead
+#: src/journey/course-certificate.tsx
+msgctxt "dhP2hY"
+msgid "Course complete"
+msgstr "Kurs tamamlandı"
+
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
@@ -4132,13 +4660,6 @@ msgstr "Hazırlık"
 msgctxt "Z1VCaI"
 msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
 msgstr "{studied, plural, =0 {Henüz ders çalışılmadı} other {# ders çalışıldı}}"
-
-#: src/journey/journey-hero.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-#: src/today/today-preparation.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Seviye"
 
 #: src/journey/journey-hero.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -6409,10 +6930,16 @@ msgctxt "dppJZz"
 msgid "From a study session"
 msgstr "Bir çalışmadan"
 
+#. Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.
+#: src/memory/memory-labels.tsx
+msgctxt "nxU2W7"
+msgid "From a call"
+msgstr "Sesli sohbetten"
+
 #: src/memory/memory-screen.tsx
-msgctxt "Nqh1Tt"
-msgid "Personal examples and plans that fit your week"
-msgstr "Sana özel örnekler ve haftana uygun planlar"
+msgctxt "PRUyMZ"
+msgid "Personal examples, plans that fit your week and calls that remember your news"
+msgstr "Sana özel örnekler, haftana uygun planlar ve hayatındaki gelişmeleri hatırlayan sohbetler"
 
 #: src/memory/memory-screen.tsx
 msgctxt "yp_BUN"
@@ -6443,13 +6970,6 @@ msgstr "Belleğini hazırlıyoruz…"
 msgctxt "Ob8gKI"
 msgid "Preparing…"
 msgstr "Hazırlıyoruz…"
-
-#: src/memory/memory-screen.tsx
-#: src/mind-maps/mind-map-card.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "5q3qC0"
-msgid "Download"
-msgstr "İndir"
 
 #: src/memory/memory-screen.tsx
 msgctxt "owirfw"
@@ -8882,11 +9402,6 @@ msgid "Ask"
 msgstr "Sor"
 
 #: src/onboarding/entry/paste-link.tsx
-msgctxt "JBWS0c"
-msgid "Link"
-msgstr "Bağlantı"
-
-#: src/onboarding/entry/paste-link.tsx
 msgctxt "IB_QxY"
 msgid "https://… an article, a class page or a PDF"
 msgstr "https://… bir makale, ders sayfası veya PDF"
@@ -9037,11 +9552,6 @@ msgstr "Tarihleri belli bir plan ve ilk dersini al"
 msgctxt "HK3ph8"
 msgid "How it works"
 msgstr "Nasıl işler"
-
-#: src/onboarding/how-it-works.tsx
-msgctxt "npIkqE"
-msgid "Start free, no account needed."
-msgstr "Ücretsiz başla, hesap gerekmez."
 
 #: src/onboarding/library-course-offer.tsx
 msgctxt "JHbf4S"
@@ -11614,11 +12124,6 @@ msgctxt "w-dRYG"
 msgid "{count, plural, other {# topics from {subjects} are back in your plan: you missed questions on them.}}"
 msgstr "{count, plural, other {# konu ({subjects}) yeniden planında: bu konulardaki soruları yanlış yanıtladın.}}"
 
-#: src/plan/use-share-plan.ts
-msgctxt "zU_q1N"
-msgid "Link copied"
-msgstr "Bağlantı kopyalandı"
-
 #: src/plan/use-short-list.ts
 msgctxt "WeWUAR"
 msgid "{names} and {count, number} more"
@@ -12781,11 +13286,6 @@ msgstr "Zaten biliyordun"
 msgctxt "Wfs1md"
 msgid "{count, plural, one {# lesson skipped} other {# lessons skipped}}"
 msgstr "{count, plural, other {# ders atlandı}}"
-
-#: src/syllabus/subject-aside.tsx
-msgctxt "Lv0zJu"
-msgid "Details"
-msgstr "Ayrıntılar"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "AGSt8i"

@@ -178,7 +178,7 @@ class TodayViewModel(
         examChoiceFailedOn = null
     }
 
-    /** An answer or a failed tap that comes back after the learner left Today belongs to no card or row. */
+    /** An answer or a failed tap that comes back after the learner left Today belongs to no card or row and opens nothing. */
     var visit = 0
         private set
 
@@ -369,10 +369,14 @@ class TodayViewModel(
         val started = visit
 
         viewModelScope.launch {
-            when (val result = write()) {
-                is MutationResult.Done -> result.value?.let { opened.send(TodayRoute(it, read.today.goal.id, read.day.localDate)) }
-                is MutationResult.Failed -> if (visit == started) failed = tap
-                MutationResult.Obsolete -> Unit
+            val result = write()
+
+            if (visit == started) {
+                when (result) {
+                    is MutationResult.Done -> result.value?.let { opened.send(TodayRoute(it, read.today.goal.id, read.day.localDate)) }
+                    is MutationResult.Failed -> failed = tap
+                    MutationResult.Obsolete -> Unit
+                }
             }
 
             pending = null

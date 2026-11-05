@@ -97,6 +97,7 @@ export function UserDropdownMenu({
     <DropdownMenuContent align={align} className="w-64" keepMounted side={side}>
       {isAccount && <AccountIdentity account={summary.account} />}
       {includeSearch && <SearchDropdownItem />}
+      {status !== "visitor" && <MenuPageItem page="certificates">{t("Certificates")}</MenuPageItem>}
       <MenuPageItem page="settings">{t("Settings")}</MenuPageItem>
       <PlanItem isAccount={isAccount} plus={summary?.tier === "plus"} />
       <MenuPageItem page="support">{t("Help")}</MenuPageItem>

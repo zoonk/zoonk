@@ -10,6 +10,7 @@ import { accountPaths } from "./paths/account";
 import { appAttestPaths } from "./paths/app-attest";
 import { catalogPaths } from "./paths/catalog";
 import { catalogResourcePaths } from "./paths/catalog-resources";
+import { certificatePaths } from "./paths/certificates";
 import { checkpointPaths } from "./paths/checkpoints";
 import { completedLessonPaths } from "./paths/completed-lessons";
 import { contentGenerationPaths } from "./paths/content-generation";
@@ -99,6 +100,7 @@ const paths = withInternalErrorResponses({
   ...appAttestPaths,
   ...catalogPaths,
   ...catalogResourcePaths,
+  ...certificatePaths,
   ...checkpointPaths,
   ...completedLessonPaths,
   ...contentGenerationPaths,

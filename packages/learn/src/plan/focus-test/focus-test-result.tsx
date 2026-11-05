@@ -154,7 +154,7 @@ export function FocusTestResult({
     {
       content: <AreasStep buddy={buddy} outcome={outcome} />,
       id: "areas",
-      moment: getCeremonyMoment({ milestone: outcome.ceremony, render: renderCeremony }),
+      moment: getCeremonyMoment({ moments: outcome, render: renderCeremony }),
     },
     outcome.areas.some((area) => area.chosen) && {
       content: <FocusStep outcome={outcome} undone={undo === "done"} />,

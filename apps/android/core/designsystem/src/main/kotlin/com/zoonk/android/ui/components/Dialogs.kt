@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,7 +15,10 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
 import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
@@ -90,6 +94,32 @@ fun TimePickerDialog(
     ) {
         WindowAt(place)
         content()
+    }
+}
+
+/**
+ * A dialog that fills the window behind the system bars. The bars show its own surface with no
+ * scrim, since [content] pads itself clear of them, and their icons follow the light or dark theme.
+ * It covers the window's snackbars: [content] shows them with a [SnackbarHost] where its layout has
+ * room, or they wait until it closes.
+ */
+@Composable
+fun FullScreenDialog(
+    onDismissRequest: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    Dialog(onDismissRequest, DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
+        HoldUntilFoldsRead()
+        val view = LocalView.current
+        val light = !isSystemInDarkTheme()
+        SideEffect {
+            val window = (view.parent as? DialogWindowProvider)?.window ?: return@SideEffect
+            WindowCompat.getInsetsController(window, view).run {
+                isAppearanceLightStatusBars = light
+                isAppearanceLightNavigationBars = light
+            }
+        }
+        SnackbarLayerOver(content)
     }
 }
 

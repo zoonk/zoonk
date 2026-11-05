@@ -105,7 +105,7 @@ struct MockResultView: View {
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
     .navigationTitle(MockLabels.title(number: view.number))
-    .milestoneCeremony(view.day.ceremony)
+    .completionMoments(view.day)
     .toolbar {
       if view.purpose != .placement {
         TutorAskToolbarItem(scope: .mock(blockId: view.blockId))

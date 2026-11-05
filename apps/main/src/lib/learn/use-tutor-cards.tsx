@@ -61,7 +61,7 @@ export type MainTutorCards = TutorCards & { appLinks: ReturnType<typeof useTutor
 /** The lesson player isn't a learn screen, so each card brings main's learn links and analytics with it. */
 export function useTutorCards(goalId: string | null): MainTutorCards | null {
   const actions = useTutorCardActions(goalId ?? "");
-  const appLinks = useTutorAppLinks(goalId ?? "");
+  const appLinks = useTutorAppLinks();
 
   return useMemo(() => {
     if (!goalId) {

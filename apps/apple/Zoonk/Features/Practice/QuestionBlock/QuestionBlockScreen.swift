@@ -120,10 +120,11 @@ struct QuestionBlockView: View {
 
     Group {
       if case .finished(let completion) = phase {
-        // In a session, the session's next stop shows the ceremony.
-        BlockFinishedView(
-          kind: run.detail.block.kind, completion: completion, hostsCeremony: onFinished == nil
-        ) { dismiss() }
+        BlockFinishedView(kind: run.detail.block.kind, completion: completion) { dismiss() }
+          // In a session, the session's next stop shows them.
+          .completionMoments(
+            certificates: onFinished == nil ? completion.certificates : [],
+            ceremony: onFinished == nil ? completion.ceremony?.value1 : nil)
       } else {
         PracticeTaskLayout(segments: run.state.segments, index: run.state.index) {
           stimulus(phase: phase)
@@ -494,25 +495,11 @@ private struct PauseSuggestionView: View {
 }
 
 private struct BlockFinishedView: View {
-  @Environment(\.practiceHooks) private var hooks
-  @State private var ceremonyClosed = false
-
   let kind: PracticeBlock.Kind
   let completion: Components.Schemas.StudyBlockCompletion
-  let hostsCeremony: Bool
   let close: () -> Void
 
   var body: some View {
-    if hostsCeremony, let milestone = completion.ceremony?.value1, !ceremonyClosed,
-      let ceremony = hooks.ceremony
-    {
-      ceremony(milestone) { ceremonyClosed = true }
-    } else {
-      result
-    }
-  }
-
-  private var result: some View {
     PracticeTaskLayout(isResult: true) {
       PracticeResultTitle(title: title)
       PracticeResultNumbers(

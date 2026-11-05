@@ -1,6 +1,7 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { type findActiveSubscription } from "../../auth/subscription";
 import {
   type UsageTotals,
   getUsageCounts,
@@ -9,10 +10,12 @@ import {
 import { readExamPicks } from "../../exams/choices/exam-choices";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { type GoalPlan, getSkillOwners, loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
-import { getStartOfLocalDay } from "../../learner/_utils/local-time";
-import { getGoalField } from "../../library/items/item-field";
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
-import { filterMistakesWithPracticeMaterial } from "../../mistakes/mistake-practice-eligibility";
+import { listReadyMistakes } from "../../mistakes/mistake-availability";
+import {
+  type PracticeMistake,
+  loadPracticeMistakes,
+} from "../../mistakes/mistake-practice-eligibility";
 import { type loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { loadDailyTimeLimitStatus } from "../_utils/daily-time-limit";
 import { getGoalDayMinutes } from "../_utils/day-minutes";
@@ -99,7 +102,8 @@ async function readyMistakes({
   goal,
   goalPlan,
   localDate,
-  listeningSkillIds: knownListeningSkillIds,
+  listeningSkillIds,
+  readMistakes,
   timeZone,
   userId,
 }: {
@@ -107,36 +111,25 @@ async function readyMistakes({
   goalPlan: GoalPlan;
   listeningSkillIds?: ReadonlySet<string>;
   localDate: Date;
+  readMistakes?: () => Promise<PracticeMistake[]>;
   timeZone: string;
   userId: string;
 }) {
-  const ownerOf = getSkillOwners(goalPlan.skills);
-
-  const [mistakes, listeningSkillIds] = await Promise.all([
-    prisma.mistake.findMany({
-      orderBy: { createdAt: "asc" },
-      where: {
-        createdAt: { lt: getStartOfLocalDay({ localDate, timeZone }) },
-        skillId: { in: [...ownerOf.keys()] },
-        status: "open",
+  const mistakes = readMistakes
+    ? await readMistakes()
+    : await loadPracticeMistakes({
+        goal,
+        listeningSkillIds: listeningSkillIds ?? (await loadListeningSkillIds(goal.id)),
+        ownerOf: getSkillOwners(goalPlan.skills),
         userId,
-      },
-    }),
-    knownListeningSkillIds ?? loadListeningSkillIds(goal.id),
-  ]);
+      });
 
-  return filterMistakesWithPracticeMaterial({
-    examBlueprintId: goal.examBlueprintId,
-    field: getGoalField(goal.details),
-    listeningSkillIds,
-    mistakes,
-    ownerOf,
-  });
+  return listReadyMistakes({ localDate, mistakes, timeZone });
 }
 
 type MissionContext = Pick<
   Parameters<typeof loadDayMissionFacts>[0],
-  "dayPlan" | "goal" | "localDate" | "readUsage" | "selection" | "userId"
+  "dayPlan" | "goal" | "localDate" | "readSubscription" | "readUsage" | "selection" | "userId"
 > & { now: Date };
 
 function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
@@ -155,12 +148,12 @@ function readMissionPlan({ dayPlan, goal, selection }: MissionContext) {
 }
 
 async function loadMissionContext(input: MissionContext) {
-  const { dayPlan, goal, localDate, now, readUsage, selection, userId } = input;
+  const { dayPlan, goal, localDate, now, readSubscription, readUsage, selection, userId } = input;
 
   const [plan, goalPlan, tier, limit, recent, usage] = await Promise.all([
     readMissionPlan(input),
     dayPlan?.goalPlan ?? loadGoalPlan(goal.id, selection?.source),
-    dayPlan?.tier ?? getLearnerTier(userId),
+    dayPlan?.tier ?? getLearnerTier(userId, readSubscription),
     dayPlan?.limit ?? loadDailyTimeLimitStatus({ date: localDate, userId }),
     prisma.studySession.findMany({
       orderBy: [{ localDate: "desc" }, { id: "desc" }],
@@ -182,7 +175,9 @@ export async function loadDayMissionFacts({
   localDate,
   now = new Date(),
   plannedMinutes,
+  readMistakes,
   readPreparation,
+  readSubscription,
   readUsage,
   selection,
   timeZone,
@@ -196,7 +191,10 @@ export async function loadDayMissionFacts({
   localDate: Date;
   now?: Date;
   plannedMinutes: number;
+  /** A GET's request-wide practice mistakes; without it, they're read fresh. */
+  readMistakes?: () => Promise<PracticeMistake[]>;
   readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
+  readSubscription?: typeof findActiveSubscription;
   /** A GET's request-wide usage; without it, it's counted fresh. */
   readUsage?: () => Promise<UsageTotals>;
   selection?: SelectedDayPlan;
@@ -208,6 +206,7 @@ export async function loadDayMissionFacts({
     goal,
     localDate,
     now,
+    readSubscription,
     readUsage,
     selection,
     userId,
@@ -250,11 +249,21 @@ export async function loadDayMissionFacts({
       goalPlan,
       listeningSkillIds: dayPlan?.listeningSkillIds,
       localDate,
+      readMistakes,
       timeZone,
       userId,
     }),
     languageCandidates({ blocks, goal, items, now, tier, usage, userId }),
-    weakSpotCandidate({ blocks, goal, goalPlan, now, plannedMinutes, readPreparation, userId }),
+    weakSpotCandidate({
+      blocks,
+      goal,
+      goalPlan,
+      now,
+      plannedMinutes,
+      readPreparation,
+      readSubscription,
+      userId,
+    }),
     loadExamStructure(goal, { blueprint, picks: readExamPicks(plan?.settings) }),
   ]);
 

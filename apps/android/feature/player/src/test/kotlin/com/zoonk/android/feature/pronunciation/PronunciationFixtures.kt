@@ -45,7 +45,7 @@ internal val RESULT: PronunciationRoundResult =
     ApiJson.decodeFromString(
         PronunciationRoundResult.serializer(),
         """
-        {"ceremony":null,"reached":{"energy":80,"level":{"color":"yellow","level":3}},"brainPower":2,"correct":1,"total":1,
+        {"ceremony":null,"certificates":[],"reached":{"energy":80,"level":{"color":"yellow","level":3}},"brainPower":2,"correct":1,"total":1,
          "missionMoment":{"completed":["pronunciation"],"fullMeal":{"bonus":50,"paid":false},"missions":[
           {"kind":"review","status":"done","done":1,"total":1},
           {"kind":"pronunciation","status":"done","done":1,"total":1},
