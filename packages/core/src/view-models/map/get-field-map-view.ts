@@ -36,11 +36,7 @@ async function readPlanCertificates({
     return null;
   }
 
-  const { held, units } = await loadCertificateUnits({ goal, plan });
-
-  const unclaimed = units.filter(
-    (unit) => unit.finished && !held.some((row) => row.key === unit.key),
-  );
+  const { due, held, units } = await loadCertificateUnits({ goal, plan });
 
   const earned = units.flatMap((unit) => {
     const row = held.find((entry) => entry.key === unit.key);
@@ -50,11 +46,11 @@ async function readPlanCertificates({
       : [];
   });
 
-  if (earned.length === 0 && unclaimed.length === 0) {
+  if (earned.length === 0 && due.length === 0) {
     return null;
   }
 
-  return { earned, unclaimed: unclaimed.map((unit) => ({ courseLevel: unit.courseLevel })) };
+  return { earned, unclaimed: due.map((unit) => ({ courseLevel: unit.courseLevel })) };
 }
 
 /** Requires an owned goal (active by default); completed plans may offer next study, refresh goals lead with fading skills. */

@@ -666,6 +666,35 @@ describe(claimCourseCertificate, () => {
     });
   });
 
+  it("offers a plan without a primary course only once a chapter's home course can name it", async () => {
+    const fixture = await courseGoal({
+      items: [{ status: "done" }, { status: "done" }, WON_CHALLENGE],
+    });
+
+    await prisma.goal.update({ data: { primaryCourseId: null }, where: { id: fixture.goal.id } });
+
+    await expect(readMapCertificates()).resolves.toBeNull();
+
+    await expect(claimCourseCertificate(fixture.goal.id)).resolves.toStrictEqual({
+      status: "notFinished",
+    });
+
+    await prisma.chapter.update({
+      data: { homeCourseId: fixture.course.id },
+      where: { id: fixture.chapters[1]?.id },
+    });
+
+    await expect(readMapCertificates()).resolves.toStrictEqual({
+      earned: [],
+      unclaimed: [{ courseLevel: null }],
+    });
+
+    await expect(claimCourseCertificate(fixture.goal.id)).resolves.toMatchObject({
+      certificates: [{ courseLevel: null, title: "Quantum physics" }],
+      status: "ready",
+    });
+  });
+
   it("refuses an unfinished course and another learner's goal", async () => {
     const [fixture, other] = await Promise.all([courseGoal(), userFixture()]);
 

@@ -13,7 +13,6 @@ import { createCertificateCode } from "./certificate-code";
 import { type CertifiableItem, type CertificateUnit } from "./certificate-units";
 import {
   UNIT_PLAN_SELECT,
-  type UnitCourse,
   type UnitGoal,
   type UnitPlan,
   loadCertificateUnits,
@@ -53,7 +52,7 @@ function getLastFinishedAt(items: readonly CertifiableItem[]): Date {
 
 async function loadChapters(tx: TransactionClient, units: readonly CertificateUnit[]) {
   const chapters = await tx.chapter.findMany({
-    select: { homeCourse: { select: { title: true } }, id: true, title: true },
+    select: { id: true, title: true },
     where: { id: { in: [...new Set(units.flatMap((unit) => unit.chapterIds))] } },
   });
 
@@ -80,30 +79,6 @@ function listTopics({
   return parsePlanPhases(plan.phases).flatMap((phase, index) =>
     phases.has(index) ? phase.name : [],
   );
-}
-
-/**
- * Named by a course, never by the goal's title, which the learner can rename: the primary course,
- * or for a plan without one, the course its first chapter was written for.
- */
-function getCertificateTitle({
-  chapters,
-  course,
-  unit,
-}: {
-  chapters: UnitChapters;
-  course: UnitCourse | null;
-  unit: CertificateUnit;
-}): string | null {
-  if (course) {
-    return course.title;
-  }
-
-  const first = unit.chapterIds
-    .map((id) => chapters.get(id))
-    .find((chapter) => chapter?.homeCourse);
-
-  return first?.homeCourse?.title ?? null;
 }
 
 function buildDetails({
@@ -139,8 +114,7 @@ export async function writeFinishedUnits(
   { goal, plan }: { goal: CertificateGoal; plan: UnitPlan },
 ) {
   const loaded = await loadCertificateUnits({ goal, plan }, tx);
-  const held = new Set(loaded.held.map((row) => row.key));
-  const due = loaded.units.filter((unit) => unit.finished && !held.has(unit.key));
+  const { due } = loaded;
 
   if (due.length === 0) {
     return { ...loaded, written: 0 };
@@ -159,31 +133,23 @@ export async function writeFinishedUnits(
 
   const timeZone = getAnswerTimeZone({ goal });
 
-  const rows = due.flatMap((unit) => {
-    const title = getCertificateTitle({ chapters, course: loaded.course, unit });
-
-    if (!title) {
-      return [];
-    }
-
-    const topics = listTopics({ chapters, plan, unit });
-
-    return [
-      {
-        code: createCertificateCode(),
-        completedOn: getDateInTimeZone({ date: getLastFinishedAt(unit.items), timeZone }),
-        courseId: goal.primaryCourseId,
-        courseLevel: unit.courseLevel,
-        details: buildDetails({ category: category?.category ?? null, topics, unit }),
-        goalId: goal.id,
-        key: unit.key,
-        kind: "course" as const,
-        language: goal.language,
-        title,
-        userId: goal.userId,
-      },
-    ];
-  });
+  const rows = due.map((unit) => ({
+    code: createCertificateCode(),
+    completedOn: getDateInTimeZone({ date: getLastFinishedAt(unit.items), timeZone }),
+    courseId: goal.primaryCourseId,
+    courseLevel: unit.courseLevel,
+    details: buildDetails({
+      category: category?.category ?? null,
+      topics: listTopics({ chapters, plan, unit }),
+      unit,
+    }),
+    goalId: goal.id,
+    key: unit.key,
+    kind: "course" as const,
+    language: goal.language,
+    title: unit.title,
+    userId: goal.userId,
+  }));
 
   await tx.certificate.createMany({ data: rows });
   await issueEarnedCertificates(tx, { now: new Date(), plus: "check", userId: goal.userId });

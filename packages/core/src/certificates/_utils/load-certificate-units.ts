@@ -4,7 +4,11 @@ import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { isWorkFinished } from "../../plans/_utils/work-progress";
 import { LEARN_KINDS, isStandIn } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
-import { type CertifiableItem, listCertificateUnits } from "./certificate-units";
+import {
+  type CertifiableItem,
+  type CertificateUnit,
+  listCertificateUnits,
+} from "./certificate-units";
 
 export type UnitGoal = Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate" | "userId">;
 
@@ -64,7 +68,7 @@ async function loadPrimaryCourse(db: TransactionClient, goal: UnitGoal) {
   });
 }
 
-export type UnitCourse = NonNullable<Awaited<ReturnType<typeof loadPrimaryCourse>>>;
+type UnitCourse = NonNullable<Awaited<ReturnType<typeof loadPrimaryCourse>>>;
 
 async function loadHomeChapters(db: TransactionClient, plan: UnitPlan) {
   const lessonIds = plan.items.flatMap((item) =>
@@ -197,7 +201,41 @@ function loadHeldCertificates(db: TransactionClient, goal: UnitGoal) {
 
 type UnitInput = { goal: UnitGoal; plan: UnitPlan };
 
-/** The plan's level and plan certificates, finished or not, with the ones the learner holds. */
+/**
+ * Named by a course, never by the goal's title, which the learner can rename: the primary course,
+ * or for a plan without one, the course its first chapter was written for. A unit nothing names
+ * earns no certificate.
+ */
+async function nameUnits(
+  db: TransactionClient,
+  { course, units }: { course: UnitCourse | null; units: readonly CertificateUnit[] },
+) {
+  if (course) {
+    return units.map((unit) => ({ ...unit, title: course.title }));
+  }
+
+  const chapterIds = [...new Set(units.flatMap((unit) => unit.chapterIds))];
+
+  const chapters =
+    chapterIds.length > 0
+      ? await db.chapter.findMany({
+          select: { homeCourse: { select: { title: true } }, id: true },
+          where: { homeCourseId: { not: null }, id: { in: chapterIds } },
+        })
+      : [];
+
+  const titles = new Map(chapters.map((chapter) => [chapter.id, chapter.homeCourse?.title]));
+
+  return units.flatMap((unit) => {
+    const title = unit.chapterIds.map((id) => titles.get(id)).find(Boolean);
+    return title ? { ...unit, title } : [];
+  });
+}
+
+/**
+ * The plan's level and plan certificates, finished or not, with the ones the learner holds and the
+ * finished ones they're owed.
+ */
 export async function loadCertificateUnits(
   { goal, plan }: UnitInput,
   db: TransactionClient = prisma,
@@ -227,10 +265,11 @@ export async function loadCertificateUnits(
   });
 
   const taught = await findChaptersTaughtInPlan(db, { course, goal, items, plan });
+  const heldKeys = new Set(held.map((row) => row.key));
 
   const units = listCertificateUnits({
     goal,
-    heldKeys: new Set(held.map((row) => row.key)),
+    heldKeys,
     items,
     levelChapters:
       course?.courseChapters.map((entry) => ({
@@ -246,5 +285,10 @@ export async function loadCertificateUnits(
 
   const unitKeys = new Set(units.map((unit) => unit.key));
 
-  return { course, held: held.filter((row) => unitKeys.has(row.key)), units };
+  const due = await nameUnits(db, {
+    course,
+    units: units.filter((unit) => unit.finished && !heldKeys.has(unit.key)),
+  });
+
+  return { due, held: held.filter((row) => unitKeys.has(row.key)), units };
 }
