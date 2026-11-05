@@ -303,6 +303,39 @@ describe("lesson marks", () => {
     await expect(newTermBackground({})).resolves.not.toBe(NO_BACKGROUND);
   });
 
+  it("keeps the punctuation after an underlined phrase on its last word's line", async () => {
+    await page.viewport(447, 900);
+
+    const text =
+      "Remember that the electron spreads as a **cloud of possibilities** around the nucleus. This tells us where it might be.";
+
+    renderLessonPlayer({
+      lesson: buildLesson([
+        contentStep("explanation", {
+          content: { text },
+          marks: marks({
+            example: text,
+            icon: inlineIcon("E"),
+            underline: "the electron spreads as a cloud of possibilities around the nucleus",
+          }),
+        }),
+      ]),
+    });
+
+    await expect.element(page.getByText("cloud of possibilities", { exact: true })).toBeVisible();
+    await document.fonts.ready;
+
+    const phrase = document.querySelector('[data-slot="underline"]');
+    const following = phrase?.nextElementSibling?.firstChild ?? document.body;
+    const lastLine = [...(phrase?.getClientRects() ?? [])].at(-1);
+    const period = document.createRange();
+    period.setStart(following, 0);
+    period.setEnd(following, 1);
+
+    expect(period.toString()).toBe(".");
+    expect(period.getBoundingClientRect().top).toBe(lastLine?.top);
+  });
+
   it("keeps a language lesson's bold plain, as before marks existed", async () => {
     await expect(newTermBackground({ language: "pt", targetLanguage: "en" })).resolves.toBe(
       NO_BACKGROUND,

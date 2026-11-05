@@ -19,8 +19,10 @@
 /*
  * One pen stroke at a fixed wavelength for the text size: a phrase that wraps shows each line's
  * slice of the same stroke (`slice` is the default `box-decoration-break`), and the closing curl
- * sits after the phrase's last character, so a line break never gets one. A drawing in a data URL
- * can't read the page's variables, so each stroke repeats that mode's `--warning` (look here).
+ * sits after the phrase's last character, so a line break never gets one. The curl is an empty
+ * inline box rather than an inline-block, which would let the punctuation after the phrase wrap
+ * away from it. A drawing in a data URL can't read the page's variables, so each stroke repeats
+ * that mode's `--warning` (look here).
  */
 @utility hand-underline {
   padding-bottom: 0.2em;
@@ -31,14 +33,13 @@
 
   &::after {
     content: "";
-    display: inline-block;
-    width: 0.3em;
-    height: 0.5em;
+    padding-inline-end: 0.3em;
+    padding-bottom: 0.2em;
     margin-inline-end: -0.3em;
-    margin-bottom: -0.2em;
-    vertical-align: text-bottom;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7.2 12'%3E%3Cpath d='M0 7C1.4 7.3 2.8 7.1 4 6.1S5.9 3.9 5.3 3.4' fill='none' stroke='oklch(0.74 0.14 70)' stroke-width='2.8' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-size: 100% 100%;
+    background-size: 0.3em 0.5em;
     pointer-events: none;
   }
 
