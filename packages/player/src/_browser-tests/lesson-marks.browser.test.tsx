@@ -3,7 +3,7 @@ import { type LessonIcon } from "@zoonk/core/library/icons/contract";
 import { type LessonMap } from "@zoonk/core/library/lessons/map";
 import { type StepMarks } from "@zoonk/core/library/marks/contract";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { nextFrames } from "../_test-utils/tutor-api";
@@ -211,6 +211,39 @@ describe("lesson marks", () => {
 
     await page.getByRole("button", { name: "Previous screen" }).click();
     await expect.element(page.getByText("2 ideas to discover in this lesson")).toBeVisible();
+  });
+
+  it("keeps reading marks after a few failed reads, within the screens' picture wait", async () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    const tagged = lesson();
+
+    const getLessonMarks = vi
+      .fn<() => Promise<LessonMarks | null>>()
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null)
+      .mockResolvedValue({ marksPending: false, steps: [], summary: MAP });
+
+    const opened = buildLesson(tagged.steps, {
+      marksPending: true,
+      summary: { ...MAP, ideas: MAP.ideas.map(({ label, text }) => ({ label, text })) },
+    });
+
+    renderLessonPlayer({ adapters: { ...buildAdapters(opened), getLessonMarks }, lesson: opened });
+    const openingMap = page.getByText("2 ideas to discover in this lesson");
+
+    await expect
+      .poll(async () => {
+        await vi.advanceTimersByTimeAsync(4000);
+        return openingMap.query();
+      })
+      .not.toBeNull();
   });
 
   it("keeps a numbered list's numbers when its middle step is the example", async () => {

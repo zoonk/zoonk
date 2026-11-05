@@ -14,7 +14,7 @@ type MapIdea = LessonMapData["ideas"][number];
 function IdeaContent({ idea, number }: { idea: MapIdea; number: number }) {
   return (
     <>
-      <span className="flex items-center gap-2">
+      <span className="flex min-h-9 items-center gap-2">
         {idea.icon && <LessonIconImage className="-ms-1 size-9" icon={idea.icon} size={36} />}
         <span className="flex min-w-0 flex-col">
           <span aria-hidden="true" className="text-faint font-mono text-xs tabular-nums">

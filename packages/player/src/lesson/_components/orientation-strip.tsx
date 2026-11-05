@@ -27,7 +27,7 @@ export function OrientationStrip({ step }: { step: PlayableLibraryStep }) {
       >
         <IdeaMiniMap count={ideas.length} current={index} />
 
-        <div className="flex min-w-0 flex-col">
+        <div className="flex min-h-11 min-w-0 flex-col justify-center">
           <p className="text-muted-foreground font-mono text-xs text-balance tabular-nums">
             {t({
               description:

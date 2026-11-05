@@ -55,13 +55,12 @@ export function useArrivingMarks({
         return;
       }
 
-      const read = await getLessonMarks?.();
+      // A failed read is retried on the next round: the picture wait, not an error count, ends it.
+      const read = await getLessonMarks?.().catch(() => null);
 
-      if (!read) {
-        throw new Error("The lesson's marks couldn't be read.");
+      if (read) {
+        setArrived(read);
       }
-
-      setArrived(read);
     },
   });
 
