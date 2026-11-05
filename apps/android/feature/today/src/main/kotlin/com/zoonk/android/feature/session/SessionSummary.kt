@@ -27,6 +27,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -35,7 +36,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.ActReaction
@@ -55,9 +58,13 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
+import com.zoonk.android.ui.components.StepBackButton
 import com.zoonk.android.ui.components.StepDots
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.components.isWideWindow
+import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
@@ -80,6 +87,7 @@ import com.zoonk.api.models.StudySessionSummaryBelt
 import com.zoonk.api.models.StudySessionSummarySkillsMovedInner
 import com.zoonk.api.models.TodayGoal
 import kotlinx.datetime.toJavaLocalDate
+import kotlin.math.max
 
 /** What the summary needs beyond the session's own numbers. [bonus] is the day's missions bonus, from its session. */
 internal data class SummaryFacts(
@@ -555,32 +563,32 @@ private fun SummaryBar(
 ) {
     val locale = currentLocale()
     val extraTime = summary.extraTime.takeIf { !facts.stopped && it.available && toRewards == null }
+    val seesMistakes = fromRewards == null && summary.mistakesSaved > 0
+    val crowded = seesMistakes && facts.stopped
+    val options: @Composable () -> Unit = {
+        if (seesMistakes) {
+            OutlinedButton(onClick = actions.seeMistakes) { Text(stringResource(R.string.session_summary_see_mistakes)) }
+        }
+        if (facts.stopped) {
+            OutlinedButton(
+                onClick = actions.keepGoing,
+                enabled = busy == null,
+            ) { Text(stringResource(R.string.session_summary_keep_going)) }
+        }
+    }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (failed == SessionAction.KeepGoing) SummaryError()
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            fromRewards?.let { OutlinedButton(onClick = it) { Text(stringResource(R.string.navigation_back)) } }
-            if (fromRewards == null && summary.mistakesSaved > 0) {
-                OutlinedButton(onClick = actions.seeMistakes) { Text(stringResource(R.string.session_summary_see_mistakes)) }
-            }
-            if (facts.stopped) {
-                OutlinedButton(
-                    onClick = actions.keepGoing,
-                    enabled = busy == null,
-                ) { Text(stringResource(R.string.session_summary_keep_going)) }
-            }
+    TaskActionBar {
+        if (failed == SessionAction.KeepGoing) SummaryError(stringResource(R.string.today_open_failed))
+        TaskActions(back = fromRewards?.let { { StepBackButton(onClick = it) } }) { main ->
+            if (crowded) SharedRow(Modifier.taskOption(), options) else options()
             if (toRewards != null) {
-                Button(onClick = toRewards) { Text(stringResource(R.string.steps_continue)) }
+                Button(onClick = toRewards, modifier = main) { Text(stringResource(R.string.steps_continue)) }
             } else {
-                Button(onClick = actions.finish) { Text(stringResource(R.string.session_summary_finish)) }
+                Button(onClick = actions.finish, modifier = main) { Text(stringResource(R.string.session_summary_finish)) }
             }
         }
         extraTime?.let { extra ->
-            TextButton(onClick = actions.extraTime, modifier = Modifier.fillMaxWidth(), enabled = busy == null) {
+            TextButton(onClick = actions.extraTime, modifier = Modifier.taskOption(), enabled = busy == null) {
                 Text(
                     if (extra.lessons.isNotEmpty()) {
                         stringResource(R.string.today_keep_learning)
@@ -589,14 +597,19 @@ private fun SummaryBar(
                     },
                 )
             }
-            if (failed == SessionAction.ExtraTime) SummaryError()
+            if (failed == SessionAction.ExtraTime) SummaryError(stringResource(R.string.today_save_failed))
         }
         if (facts.guest) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalArrangement = Arrangement.Center) {
+            FlowRow(
+                modifier = Modifier.taskOption(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                verticalArrangement = Arrangement.Center,
+            ) {
                 Text(
                     stringResource(R.string.session_summary_save_note),
                     Modifier.align(Alignment.CenterVertically),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodySmall,
                 )
                 TextButton(onClick = actions.signUp) { Text(stringResource(R.string.session_summary_create_account)) }
@@ -605,10 +618,53 @@ private fun SummaryBar(
     }
 }
 
+/**
+ * Main's `SHARED_ROW_ACTION_CLASS` grows each button from its label's width; a `FlowRow` weight would
+ * split the line evenly and wrap the longer label.
+ */
 @Composable
-private fun SummaryError() {
+private fun SharedRow(
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
+    Layout(content, modifier) { measurables, constraints ->
+        val gap = 12.dp.roundToPx()
+        val labels = measurables.map { it.maxIntrinsicWidth(constraints.maxHeight) }
+        val row = labels.sum() + gap * (labels.size - 1)
+
+        if (row <= constraints.maxWidth) {
+            val width = max(row, constraints.minWidth)
+            val rest = width - row
+            val placeables =
+                measurables.mapIndexed { index, measurable ->
+                    val share = rest / labels.size + if (index < rest % labels.size) 1 else 0
+                    measurable.measure(Constraints.fixedWidth(labels[index] + share))
+                }
+            val height = placeables.maxOf { it.height }
+            layout(width, height) {
+                var x = 0
+                placeables.forEach {
+                    it.placeRelative(x, (height - it.height) / 2)
+                    x += it.width + gap
+                }
+            }
+        } else {
+            val placeables = measurables.map { it.measure(Constraints.fixedWidth(constraints.maxWidth)) }
+            layout(constraints.maxWidth, placeables.sumOf { it.height } + gap * (placeables.size - 1)) {
+                var y = 0
+                placeables.forEach {
+                    it.placeRelative(0, y)
+                    y += it.height + gap
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SummaryError(text: String) {
     Text(
-        stringResource(R.string.today_open_failed),
+        text,
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
