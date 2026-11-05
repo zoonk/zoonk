@@ -69,7 +69,7 @@ export async function completeRunBlock(
     block: RunBlock;
     brainPower: ProgressChange;
     now: Date;
-    run: LearningEvent;
+    run: Pick<LearningEvent, "id">;
     timeZone: string;
     userId: string;
   },
@@ -78,11 +78,11 @@ export async function completeRunBlock(
     return false;
   }
 
-  // The run's duration records the block's timing after the block was locked.
-  const current = await tx.studySessionBlock.findUniqueOrThrow({
-    select: { payload: true },
-    where: { id: block.id },
-  });
+  // Earlier writes in this transaction, the run's duration and skipped steps, changed both rows after they were read.
+  const [current, currentRun] = await Promise.all([
+    tx.studySessionBlock.findUniqueOrThrow({ select: { payload: true }, where: { id: block.id } }),
+    tx.learningEvent.findUniqueOrThrow({ select: { contentIds: true }, where: { id: run.id } }),
+  ]);
 
   await tx.studySessionBlock.update({
     data: {
@@ -99,7 +99,7 @@ export async function completeRunBlock(
   await tx.learningEvent.update({
     data: {
       contentIds: {
-        ...(isJsonObject(run.contentIds) ? run.contentIds : {}),
+        ...(isJsonObject(currentRun.contentIds) ? currentRun.contentIds : {}),
         studySessionBlockId: block.id,
         studySessionId: block.sessionId,
       },
