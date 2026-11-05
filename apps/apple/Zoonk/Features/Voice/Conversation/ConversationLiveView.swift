@@ -41,10 +41,12 @@ struct ConversationLiveView: View {
       callColumn(besideAside: false)
     }
     .safeAreaBar(edge: .top) {
-      // A vertical bar (iPhone Duo) has no room for the clock, so it tops the call.
+      // A vertical bar (iPhone Duo) has no room for the clock, so it tops the call, on its page.
       if isToolbarVertical {
         CallHeader(call: call)
           .scenePadding(.horizontal)
+          .frame(maxWidth: .infinity)
+          .keepsBeforeHinge()
       }
     }
     .toolbar {
