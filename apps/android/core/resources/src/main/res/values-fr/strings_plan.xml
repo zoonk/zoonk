@@ -318,6 +318,7 @@
   "plan_lessons_on_the_way": "d53116af8f67b9228dff4e5b5773826976cfc7361dee46564296694f5ebe1d00",
   "plan_lessons_studied": "d121a7810a57cfbe70615c3c34032b6550dfb7dca8f36d026241f966dd7982f9",
   "plan_level": "6cdc4daa9222fa7f0752c104e92da82cfc4c78a245e0cddddbaa2831cc8f2136",
+  "plan_level_complete": "c04351049be42891b021b2fc16709ef5f8df694d94b633e4f5113ab60e17f596",
   "plan_long_term_memory": "29de811301cd8de8670b806952c0a17f0d3fe07a8ddfd436c3ae15d182d40082",
   "plan_loss_this_week": "c809d5da094083fa9aba2059618e903043785448dd24d33593e20cad8201dfe4",
   "plan_mastery": "9ca36dac06349a012fa934c5790751b0bde34bbecffc722f7b4840a18a95704d",
@@ -1636,4 +1637,6 @@
     <string name="plan_continue_at">Continuer à %1$s</string>
     <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
     <string name="plan_course_complete">Cours terminé</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, before the plan's end. %1$s is the level's name, such as "Beginner". -->
+    <string name="plan_level_complete">Niveau %1$s terminé</string>
 </resources>

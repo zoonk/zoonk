@@ -251,7 +251,7 @@ private fun SessionSummaryContent(
     val certificates = summary.certificates.map { it.naming }
     var certificatesClosed by rememberSaveable(certificates.map { it.code }) { mutableStateOf(false) }
     if (certificates.isNotEmpty() && !certificatesClosed) {
-        CertificateCeremony(app, certificates, { certificatesClosed = true }, { navigator.open(AppRoute.Login) }, app.timeSource)
+        CertificateCeremony(app, certificates, { certificatesClosed = true }, { navigator.open(AppRoute.Subscription) }, app.timeSource)
         return
     }
 

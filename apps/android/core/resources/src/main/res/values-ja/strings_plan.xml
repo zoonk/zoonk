@@ -318,6 +318,7 @@
   "plan_lessons_on_the_way": "7f9206c06af99dd8e2abade62e1ce8103c1746fe9502390909a35036ffb942aa",
   "plan_lessons_studied": "1d6b27c6998fd4537a1ea41aba8a57934e5f6d22b10425f86facef59a5e80f6b",
   "plan_level": "85c3543954a97c81640ef5588a86e9b8bf199e55edb515a0960e5254c64afc0e",
+  "plan_level_complete": "9b37826fbb63af2f405f6d112470d1e55ff291e6cad4576e74a44dba40f1e1a2",
   "plan_long_term_memory": "74b3d9ec03fe52f2301ca947576919b53f5c25da452a5e45edc86ce31b54cbea",
   "plan_loss_this_week": "400178d524c6994a578af04bae843685bca72a2d4cc1e5145bfda5f5105fad8b",
   "plan_mastery": "c3b7ac164a0972334627a792fa118fa8e4fafe245ea0ce4bb1ac0b274293a6d6",
@@ -1466,4 +1467,6 @@
     <string name="plan_continue_at">%1$sで学習を続ける</string>
     <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
     <string name="plan_course_complete">コース修了</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, before the plan's end. %1$s is the level's name, such as "Beginner". -->
+    <string name="plan_level_complete">%1$s完了</string>
 </resources>

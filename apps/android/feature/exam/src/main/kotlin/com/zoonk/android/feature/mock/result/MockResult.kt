@@ -114,7 +114,7 @@ internal fun MockResult(
             .takeUnless { viewModel.openedFinished }
             .orEmpty()
             .map { it.naming },
-        onCreateAccount = { navigator.open(AppRoute.Login) },
+        onSeePlus = { navigator.open(AppRoute.Subscription) },
     ) { buddy ->
         val review = rememberReviewPlace()
         // Above both layouts, since an open book reads the areas on the page after the fold.

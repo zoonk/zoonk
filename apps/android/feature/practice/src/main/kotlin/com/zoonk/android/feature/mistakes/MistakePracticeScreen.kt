@@ -125,7 +125,7 @@ internal fun PracticeRun(
     BackHandler(onBack = viewModel::leave)
 
     if (ending) {
-        PracticeDone(state, app, onClose = viewModel::leave) { navigator.open(AppRoute.Login) }
+        PracticeDone(state, app, onClose = viewModel::leave) { navigator.open(AppRoute.Subscription) }
         return
     }
 
@@ -183,14 +183,14 @@ private fun PracticeDone(
     state: PracticeState,
     app: AppContainer,
     onClose: () -> Unit,
-    onCreateAccount: (() -> Unit)? = null,
+    onSeePlus: () -> Unit,
 ) {
     val end = state.end
     val summary = end?.summary
     val fixed = state.fixedIds.size
     val comesBack = if (summary != null) summary.correct < summary.total else fixed == 0
 
-    MomentAfterCeremony(app, summary?.ceremony, summary?.certificates.orEmpty().map { it.naming }, onCreateAccount) { buddy ->
+    MomentAfterCeremony(app, summary?.ceremony, summary?.certificates.orEmpty().map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.navigation_back),

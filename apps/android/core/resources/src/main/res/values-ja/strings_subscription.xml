@@ -24,6 +24,7 @@
   "subscription_available_with_plus": "96ae80d70bf80243ad593a149566f0c6a3133333e51ecdb8d6aedf8dfa238a3d",
   "subscription_benefit_buddy": "e0508362a1b5b3e7bc13d6e098853079e1748b4773ed4dc9841959073113deca",
   "subscription_benefit_calls": "42e0aa2ae212dde3e77e1c7a3bc4aa54c52125859e55e7ab954720d58dc240a4",
+  "subscription_benefit_certificates": "cba348758d174367edbffc988b89795d4791940eedc1a5215c2bbc7dc35b6662",
   "subscription_benefit_exam": "b2d4916fddc1fff0e85833261da4b8d21b7ac5817cbd6105a9eea783844c6f63",
   "subscription_benefit_mocks": "1edaf3ab2ca5a4312fd32b01f2b4ffbacdbba6f8f005a0cef9f926b65d2005ac",
   "subscription_benefits_summary": "7ef48449d19263112a34f92db72cc5da109bbf4d78e64cada0be830a2744182b",
@@ -165,6 +166,7 @@
     <string name="subscription_benefit_mocks">本番と同じ制限時間の模試</string>
     <string name="subscription_benefit_buddy">困ったときはいつでも、AIが学習の相棒に</string>
     <string name="subscription_benefit_calls">スピーキング練習の会話をより多く利用できます</string>
+    <string name="subscription_benefit_certificates">レベルを終えるたびに証明書を受け取れます</string>
     <string name="subscription_start_free">無料で始める</string>
     <string name="subscription_no_card_needed">クレジットカードは不要です。</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->

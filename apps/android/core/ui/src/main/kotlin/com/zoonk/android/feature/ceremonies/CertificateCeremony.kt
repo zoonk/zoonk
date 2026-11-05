@@ -51,13 +51,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
-import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.feature.certificates.CertificateAction
 import com.zoonk.android.feature.certificates.CertificateActions
 import com.zoonk.android.feature.certificates.CertificateKind
@@ -65,11 +64,14 @@ import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.feature.certificates.CertificateNameField
 import com.zoonk.android.feature.certificates.CertificateNameModel
 import com.zoonk.android.feature.certificates.CertificatePicture
+import com.zoonk.android.feature.certificates.CertificatesPlusNotice
 import com.zoonk.android.feature.certificates.LinkedInSheet
+import com.zoonk.android.feature.certificates.LockedCertificate
 import com.zoonk.android.feature.certificates.caption
 import com.zoonk.android.feature.certificates.certificateNameModel
 import com.zoonk.android.feature.certificates.fileName
 import com.zoonk.android.feature.certificates.languageWord
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.certificates.pictureLabel
 import com.zoonk.android.feature.certificates.pictureUrl
 import com.zoonk.android.feature.certificates.rememberCertificateActions
@@ -91,16 +93,17 @@ import kotlin.time.TimeSource
  * Main's certificate award moment, full screen before any milestone ceremony: the certificates a
  * write earned ([awarded], oldest first, so the newest shows on top and Share and LinkedIn act on
  * it). Their words come with the result; the pictures, links and the learner's current name come
- * from the learner's list, which a completion leaves stale. Closing marks them shown; a guest's
- * [onCreateAccount] leaves them unshown, so the moment is still there on the way back. On an open
- * book the certificate takes the page before the fold, and the words and Continue the page after it.
+ * from the learner's list, which a completion leaves stale. Closing marks them shown. One earned
+ * without Plus shows locked, with the Plus notice: See Plus leaves without marking it shown, so it
+ * plays again after the next task, unlocked once they subscribe. On an open book the certificate
+ * takes the page before the fold, and the words and Continue the page after it.
  */
 @Composable
 fun CertificateCeremony(
     app: AppContainer,
     awarded: List<CertificateName>,
     onClose: () -> Unit,
-    onCreateAccount: (() -> Unit)? = null,
+    onSeePlus: () -> Unit,
     timeSource: TimeSource = TimeSource.Monotonic,
 ) {
     val open = remember(awarded) { awarded.filterNot { app.certificates.isClosed(it.code) } }
@@ -112,9 +115,9 @@ fun CertificateCeremony(
     LaunchedEffect(codes) { app.certificates.awarded(codes) }
 
     val list by app.certificates.certificates.collectShown()
-    val session by app.sessions.state.collectAsStateWithLifecycle()
-    val isGuest = (session as? SessionState.SignedIn)?.isGuest == true
     val owned = open.map { name -> list.value?.find { it.code == name.code } }
+    // The list is newer than the result: the learner may have subscribed since.
+    val names = open.zip(owned) { name, certificate -> certificate?.naming ?: name }
     val top = owned.lastOrNull()
     val shownAt = remember { timeSource.markNow() }
     var closing by remember { mutableStateOf(false) }
@@ -125,14 +128,19 @@ fun CertificateCeremony(
     val columnScroll = rememberScrollState()
     val stageScroll = rememberScrollState()
     val wordsScroll = rememberScrollState()
-    val wordsAndActions = @Composable { Words(app, open, top, isGuest, onCreateAccount, actions, name) { linkedIn = true } }
 
-    fun close() {
+    fun leave(seePlus: Boolean) {
         if (closing || shownAt.elapsedNow() < STEADY) return
         closing = true
-        codes.forEach { code -> app.scope.launch { app.certificates.markShown(code) } }
+        if (!seePlus) codes.forEach { code -> app.scope.launch { app.certificates.markShown(code) } }
         onClose()
+        if (seePlus) onSeePlus()
     }
+
+    fun close() = leave(seePlus = false)
+
+    val wordsAndActions =
+        @Composable { Words(names, top, actions, name, onSeePlus = { leave(seePlus = true) }) { linkedIn = true } }
 
     val continueButton =
         @Composable {
@@ -158,10 +166,10 @@ fun CertificateCeremony(
                 atFoldOnly = true,
             ) { wordsBeside ->
                 if (wordsBeside) {
-                    StagePage(stageScroll) { Stage(app, owned) }
+                    StagePage(stageScroll) { Stage(app, names, owned) }
                 } else {
                     StagePage(columnScroll, footer = continueButton) {
-                        Stage(app, owned)
+                        Stage(app, names, owned)
                         Spacer(Modifier.height(32.dp))
                         wordsAndActions()
                     }
@@ -169,7 +177,7 @@ fun CertificateCeremony(
             }
         }
 
-        if (linkedIn && top != null) {
+        if (linkedIn && top != null && !top.locked) {
             LinkedInSheet(top, onCopy = actions::copy, onDismiss = { linkedIn = false })
         }
     }
@@ -207,6 +215,7 @@ private fun StagePage(
 @Composable
 private fun Stage(
     app: AppContainer,
+    names: List<CertificateName>,
     owned: List<OwnedCertificate?>,
 ) {
     val play = celebrates()
@@ -231,33 +240,46 @@ private fun Stage(
             },
     ) {
         if (owned.size > 1) {
-            val behind = owned[owned.size - 2]
-            CertificatePicture(
-                url = behind?.pictureUrl,
-                images = app.images,
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth().offset(x = BEHIND_OFFSET, y = -BEHIND_OFFSET),
+            Sheet(
+                app,
+                names[names.size - 2],
+                owned[owned.size - 2],
+                behind = true,
+                Modifier.offset(x = BEHIND_OFFSET, y = -BEHIND_OFFSET),
             )
         }
-        val top = owned.lastOrNull()
+        Sheet(app, names.last(), owned.last(), behind = false)
+    }
+}
+
+/** The certificate's picture, or its locked card; the one [behind] is only seen. */
+@Composable
+private fun Sheet(
+    app: AppContainer,
+    name: CertificateName,
+    certificate: OwnedCertificate?,
+    behind: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    if (name.locked) {
+        LockedCertificate(name, modifier.fillMaxWidth().then(if (behind) Modifier.clearAndSetSemantics {} else Modifier))
+    } else {
         CertificatePicture(
-            url = top?.pictureUrl,
+            url = certificate?.pictureUrl,
             images = app.images,
-            contentDescription = top?.pictureLabel(),
-            modifier = Modifier.fillMaxWidth(),
+            contentDescription = if (behind) null else certificate?.pictureLabel(),
+            modifier = modifier.fillMaxWidth(),
         )
     }
 }
 
 @Composable
 private fun Words(
-    app: AppContainer,
     awarded: List<CertificateName>,
     top: OwnedCertificate?,
-    isGuest: Boolean,
-    onCreateAccount: (() -> Unit)?,
     actions: CertificateActions,
     name: CertificateNameModel,
+    onSeePlus: () -> Unit,
     onAddToLinkedIn: () -> Unit,
 ) {
     val recipient = top?.recipientName
@@ -272,8 +294,13 @@ private fun Words(
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
         )
+        if (awarded.last().locked) {
+            CertificatesPlusNotice(onSeePlus, Modifier.padding(top = 24.dp))
+            return@Column
+        }
+
         Text(
-            text = if (isGuest) stringResource(R.string.certificates_guest_line) else line(awarded),
+            text = line(awarded),
             modifier = Modifier.padding(top = 8.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge,
@@ -281,14 +308,6 @@ private fun Words(
         )
 
         when {
-            isGuest -> {
-                onCreateAccount?.let {
-                    OutlinedButton(onClick = it, modifier = Modifier.padding(top = 24.dp)) {
-                        Text(stringResource(R.string.certificates_create_account))
-                    }
-                }
-            }
-
             // The list says whether the learner has a name; until it loads, nothing asks for one.
             top == null -> {}
 
@@ -321,15 +340,13 @@ private fun Words(
             }
         }
 
-        if (!isGuest) {
-            Text(
-                text = stringResource(if (awarded.size > 1) R.string.certificates_saved_several else R.string.certificates_saved_one),
-                modifier = Modifier.padding(top = 14.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center,
-            )
-        }
+        Text(
+            text = stringResource(if (awarded.size > 1) R.string.certificates_saved_several else R.string.certificates_saved_one),
+            modifier = Modifier.padding(top = 14.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
@@ -361,8 +378,14 @@ private fun NameRow(
 private fun title(awarded: List<CertificateName>): String {
     val only = awarded.singleOrNull() ?: return pluralStringResource(R.plurals.certificates_earned, awarded.size, awarded.size)
     return when (only.kind) {
-        CertificateKind.Course -> stringResource(R.string.certificates_course_complete)
-        CertificateKind.LanguageLevel -> stringResource(R.string.certificates_level_complete, only.level.orEmpty())
+        CertificateKind.Course -> {
+            only.courseLevel?.let { stringResource(R.string.certificates_level_complete, courseLevelName(it)) }
+                ?: stringResource(R.string.certificates_course_complete)
+        }
+
+        CertificateKind.LanguageLevel -> {
+            stringResource(R.string.certificates_level_complete, only.level.orEmpty())
+        }
     }
 }
 
@@ -375,7 +398,7 @@ private fun line(awarded: List<CertificateName>): String {
                 formatList(awarded.reversed().map { it.words() }, currentLocale()),
             )
     return when (only.kind) {
-        CertificateKind.Course -> stringResource(R.string.certificates_course_ready, only.title.orEmpty())
+        CertificateKind.Course -> stringResource(R.string.certificates_course_ready, only.words())
         else -> stringResource(R.string.certificates_language_ready, only.languageWord(), only.level.orEmpty())
     }
 }

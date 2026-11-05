@@ -118,7 +118,7 @@ fun PatternScreen(
 
     when (val drill = state) {
         null -> PatternRead(viewModel, navigator, onClose = viewModel::leave)
-        else -> PatternContent(drill, viewModel, app) { navigator.open(AppRoute.Login) }
+        else -> PatternContent(drill, viewModel, app) { navigator.open(AppRoute.Subscription) }
     }
 }
 
@@ -157,13 +157,13 @@ internal fun PatternContent(
     drill: PatternDrill,
     viewModel: PatternViewModel,
     app: AppContainer,
-    onCreateAccount: (() -> Unit)? = null,
+    onSeePlus: () -> Unit = {},
 ) {
     val step = drill.step
     val onClose = viewModel::leave
     when {
         drill.isTypos -> TyposPattern(drill.pattern, onClose)
-        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, app, onClose, onCreateAccount)
+        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, app, onClose, onSeePlus)
         step is DrillStep.Question -> PatternQuestion(drill, step.index, viewModel, app, onClose)
         else -> PatternIntroPage(drill.pattern, onStart = viewModel::start, onClose = onClose)
     }
@@ -443,9 +443,9 @@ private fun PatternResult(
     result: MistakePatternPracticeResult,
     app: AppContainer,
     onClose: () -> Unit,
-    onCreateAccount: (() -> Unit)?,
+    onSeePlus: () -> Unit,
 ) {
-    MomentAfterCeremony(app, result.ceremony, result.certificates.map { it.naming }, onCreateAccount) { buddy ->
+    MomentAfterCeremony(app, result.ceremony, result.certificates.map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.pattern_done),

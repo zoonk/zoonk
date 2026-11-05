@@ -16,11 +16,11 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.data.performWritten
 import com.zoonk.android.data.value
 import com.zoonk.api.models.ExamChoiceInput
-import com.zoonk.api.models.GoalCertificate
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
+import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangeInput
@@ -291,7 +291,7 @@ class LivePlanApi(
     override suspend fun end(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = perform { api.clients(session).learner.getGoalMap(goalId) }.let { map -> GoalEnd(map.next, map.certificate) }
+    ) = perform { api.clients(session).learner.getGoalMap(goalId) }.let { map -> GoalEnd(map.next, map.certificates) }
 
     override suspend fun continueAtNextLevel(
         session: AuthenticatedSession,
@@ -305,13 +305,10 @@ class LivePlanApi(
     private fun deviceTimeZone() = ZoneId.systemDefault().id
 }
 
-/**
- * From the goal map: what to study next once the plan is finished, and its course's certificate
- * once the course is (`code` null: not claimed yet).
- */
+/** From the goal map: what to study next once the plan is finished, and the certificates its finished units earned or still owe. */
 data class GoalEnd(
     val next: StudyNext?,
-    val certificate: GoalCertificate?,
+    val certificates: PlanCertificates?,
 )
 
 /** The Plan tab's reads, by goal; the subject pages read [syllabus] too. */
@@ -336,7 +333,7 @@ class PlanStore(
 
     /** Read once the plan has ended (`plan.end`), and for an exam, whose course can finish before its exam-day mocks. */
     val end: KeyedResources<UUID, GoalEnd> =
-        cache.keyed(Audience.SignedIn, READ_DOMAINS) { session, goalId -> session?.let { api.end(it, goalId) } }
+        cache.keyed(Audience.SignedIn, READ_DOMAINS + DataDomain.Certificates) { session, goalId -> session?.let { api.end(it, goalId) } }
 
     suspend fun buildingRunId(
         session: AuthenticatedSession,

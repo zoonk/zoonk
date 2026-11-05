@@ -24,6 +24,7 @@
   "subscription_available_with_plus": "7cd7b0aaee2632e2489afa3f3f925647a7c42923529005cf98f9bd78c9820013",
   "subscription_benefit_buddy": "e3d3d539c397a67a6435cf8f5930eb73dc6c6b049178a63cc1c67c601f671e6a",
   "subscription_benefit_calls": "15a914da8b40b4dfee62bd57ef57d4adf44fbf746a12c299613dc93c8d79f1d4",
+  "subscription_benefit_certificates": "ebfb077078a0532d01f52c9ec6eb858862830d5e96ac5e8ff5af0217d968abbb",
   "subscription_benefit_exam": "6467e1f1bfe0f4d0e4aa57c51634a222ff48b80810abf28162db3241ba7cf8f1",
   "subscription_benefit_mocks": "cd1aad5ec78ec3baa29d102ab29033894fe8954cfa7bd4c6d28b26ebb833724e",
   "subscription_benefits_summary": "7116108eac44634461f8fd97a22a75d3b5aec127aded0b43a70d89544cbb9eae",
@@ -167,6 +168,7 @@
     <string name="subscription_benefit_mocks">Des examens blancs chronométrés comme le vrai</string>
     <string name="subscription_benefit_buddy">Un Compagnon d’étude IA dès que tu bloques</string>
     <string name="subscription_benefit_calls">Plus d’appels pour pratiquer l’expression orale</string>
+    <string name="subscription_benefit_certificates">Un certificat pour chaque niveau terminé</string>
     <string name="subscription_start_free">Commencer gratuitement</string>
     <string name="subscription_no_card_needed">Pas de carte bancaire nécessaire.</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->

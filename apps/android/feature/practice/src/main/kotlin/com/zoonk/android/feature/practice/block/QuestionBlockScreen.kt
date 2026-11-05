@@ -141,9 +141,23 @@ internal fun QuestionBlockContent(
             run?.let { shown ->
                 val phase = shown.phase
                 when {
-                    phase !is RunPhase.Finished -> Runner(read, shown, viewModel, app, navigator, close, examTomorrow)
-                    finished != null -> finished(phase.completion)
-                    else -> BlockFinished(phase.completion, read.detail.isReview, app, viewModel, close) { navigator.open(AppRoute.Login) }
+                    phase !is RunPhase.Finished -> {
+                        Runner(read, shown, viewModel, app, navigator, close, examTomorrow)
+                    }
+
+                    finished != null -> {
+                        finished(phase.completion)
+                    }
+
+                    else -> {
+                        BlockFinished(
+                            phase.completion,
+                            read.detail.isReview,
+                            app,
+                            viewModel,
+                            close,
+                        ) { navigator.open(AppRoute.Subscription) }
+                    }
                 }
             }
         }
@@ -179,11 +193,11 @@ internal fun BlockFinished(
     app: AppContainer,
     viewModel: QuestionBlockViewModel,
     onClose: () -> Unit,
-    onCreateAccount: (() -> Unit)? = null,
+    onSeePlus: () -> Unit = {},
 ) {
     val move by viewModel.sessionMove.collectAsStateWithLifecycle()
 
-    MomentAfterCeremony(app, completion?.ceremony, completion?.certificates.orEmpty().map { it.naming }, onCreateAccount) { buddy ->
+    MomentAfterCeremony(app, completion?.ceremony, completion?.certificates.orEmpty().map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(if (review) R.string.practice_done_review else R.string.practice_done_title),
             action = stringResource(R.string.practice_continue),
@@ -229,7 +243,7 @@ internal fun Runner(
     val draft = saved.answerFor(run.index, question)
 
     if (run.phase == RunPhase.Finishing) {
-        BlockFinished(null, detail.isReview, app, viewModel, onClose) { navigator.open(AppRoute.Login) }
+        BlockFinished(null, detail.isReview, app, viewModel, onClose) { navigator.open(AppRoute.Subscription) }
         return
     }
 

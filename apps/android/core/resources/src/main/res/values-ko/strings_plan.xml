@@ -318,6 +318,7 @@
   "plan_lessons_on_the_way": "a7eef1be32d2f1818a4a63c911ba1f3b4aa065f6ee503174538638db8ce458c9",
   "plan_lessons_studied": "dc55775a1dc01503e6f79db18e9f1bb4e5502f998d1cffef77b86dd0bb9a9b84",
   "plan_level": "4e1af743aac57ae5a61de51bfe7bf25c4464815413c1a0f17cae84e06dff2555",
+  "plan_level_complete": "30d1782ed9aa2010b41687a355f0579da1a2fae1e7303331f7e5213008a798a9",
   "plan_long_term_memory": "268304a6bd273c12b3ddb0953d36a91e885938c7e4ab5b34e75fe6d91819ca48",
   "plan_loss_this_week": "be4477cedaa16fbb2ca97e786e5b6ba4d517f118df75d758836c0b0d4c4a4b6b",
   "plan_mastery": "483ecadfa716e33812db16926df438237014c48907c3b851d041bf63459c0f96",
@@ -1466,4 +1467,6 @@
     <string name="plan_continue_at">%1$s 학습 이어가기</string>
     <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
     <string name="plan_course_complete">코스 완료</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, before the plan's end. %1$s is the level's name, such as "Beginner". -->
+    <string name="plan_level_complete">%1$s 완료</string>
 </resources>

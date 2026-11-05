@@ -39,6 +39,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -57,10 +58,14 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.launch
 
-/** Main's `/certificates`: every certificate the learner earned, newest first, each opening its page. */
+/**
+ * Main's `/certificates`: every certificate the learner earned, newest first, each opening its page,
+ * under the Plus notice while the learner isn't on Plus, since that's what issues them.
+ */
 @Composable
 fun CertificatesScreen(
     app: AppContainer,
@@ -68,6 +73,8 @@ fun CertificatesScreen(
 ) {
     val resource = app.certificates.certificates
     val state by resource.collectShown()
+    val summary by app.learnerSummary.summary.collectShown()
+    val showsPlus = summary.value?.let { it.tier != LearnerSummary.Tier.PLUS } == true
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val titleAway by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
@@ -82,7 +89,7 @@ fun CertificatesScreen(
                 is LoadState.Loaded, LoadState.Empty -> {
                     BeforeFold { beforeFold ->
                         LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
-                            certificates(app, navigator, state.value.orEmpty())
+                            certificates(app, navigator, state.value.orEmpty(), showsPlus)
                         }
                     }
                 }
@@ -103,6 +110,7 @@ private fun androidx.compose.foundation.lazy.LazyListScope.certificates(
     app: AppContainer,
     navigator: AppNavigator,
     certificates: List<OwnedCertificate>,
+    showsPlus: Boolean,
 ) {
     item(key = "header", contentType = "header") {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -115,6 +123,16 @@ private fun androidx.compose.foundation.lazy.LazyListScope.certificates(
                 stringResource(R.string.certificates_lead),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+
+    if (showsPlus) {
+        item(key = "plus", contentType = "plus") {
+            CertificatesPlusNotice(
+                onSeePlus = { navigator.open(AppRoute.Subscription) },
+                modifier = Modifier.padding(top = 16.dp),
+                title = stringResource(R.string.certificates_plus_list_title),
             )
         }
     }
@@ -138,20 +156,31 @@ private fun CertificateRow(
     certificate: OwnedCertificate,
     onOpen: () -> Unit,
 ) {
+    val name = certificate.naming
+
     ListItem(
-        headlineContent = { Text(certificate.naming.words()) },
+        headlineContent = { Text(name.words()) },
         modifier = Modifier.clickable(role = Role.Button, onClick = onOpen),
-        supportingContent = { Text(certificate.kindLine()) },
+        supportingContent = { Text(name.kindLine()) },
         leadingContent = {
-            CertificatePicture(
-                certificate.pictureUrl,
-                app.images,
-                contentDescription = null,
-                Modifier.width(88.dp),
-                corner = 4.dp,
-            )
+            if (name.locked) {
+                LockedCertificate(name, Modifier.width(88.dp), corner = 4.dp, compact = true)
+            } else {
+                CertificatePicture(
+                    certificate.pictureUrl,
+                    app.images,
+                    contentDescription = null,
+                    Modifier.width(88.dp),
+                    corner = 4.dp,
+                )
+            }
         },
-        trailingContent = { Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null) },
+        trailingContent = {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (name.locked) PlusMark()
+                Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null)
+            }
+        },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
     )
 }

@@ -24,6 +24,7 @@
   "subscription_available_with_plus": "c1f0a8dbf6c53c615c5e8b607884619c669c4cbe61ffffe3a944d354cfbb225d",
   "subscription_benefit_buddy": "1e1cbf7a03898933b894e35118c1f7fe98a7778d99c496bb1b62c7b56f1f05cd",
   "subscription_benefit_calls": "ca5dcbd415b605d1f967d16821ce27d74c283fa3909808d14ae70df0fe0f1b1b",
+  "subscription_benefit_certificates": "dd8d824cfd20386deb6ed3e5b0ba461ad4433029c9a5b82979cb935c24535f5c",
   "subscription_benefit_exam": "53b506ce224c1693319fecd3de2be79895023ae6d3673d5a247ecdf5deef235a",
   "subscription_benefit_mocks": "9469ccf3311e26eee46e5284c4b3296029353f9e34e2ea196b63df52edbd5296",
   "subscription_benefits_summary": "b74d5e574530831e7d7674d83973722a79d21edba4e261c5f1f5f5f86a86b585",
@@ -166,6 +167,7 @@
     <string name="subscription_benefit_mocks">Probeprüfungen mit denselben Zeitvorgaben wie bei der echten Prüfung</string>
     <string name="subscription_benefit_buddy">Ein KI-Lernkumpel, wenn du nicht weiterkommst</string>
     <string name="subscription_benefit_calls">Höhere Limits für Gespräche zum Üben des Sprechens</string>
+    <string name="subscription_benefit_certificates">Ein Zertifikat für jedes abgeschlossene Level</string>
     <string name="subscription_start_free">Kostenlos starten</string>
     <string name="subscription_no_card_needed">Keine Karte nötig.</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->

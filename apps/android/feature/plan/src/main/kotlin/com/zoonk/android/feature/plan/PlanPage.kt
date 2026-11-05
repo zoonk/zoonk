@@ -258,19 +258,32 @@ internal fun PlanPage(
                 next = end?.next,
                 nextLevel = nextLevel,
                 onContinue = viewModel::continueAtNextLevel,
-                certificate = end?.certificate,
+                certificates = end?.certificates,
                 claimingCertificate = claim.claiming,
                 claimFailed = claim.failed,
                 onCertificate = {
-                    val open = { code: String -> navigator.open(AppRoute.Certificate(code)) }
-                    end?.certificate?.code?.let(open) ?: claim.claim(open)
+                    val open = { codes: List<String> ->
+                        navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
+                    }
+                    val certificates = end?.certificates
+                    when {
+                        certificates == null -> {}
+
+                        certificates.unclaimed.isNotEmpty() -> {
+                            claim.claim { shown -> open(shown.map { it.code }) }
+                        }
+
+                        else -> {
+                            open(certificates.earned.map { it.code })
+                        }
+                    }
                 },
             ),
         slotState = viewModel.slotState,
     )
 
-    claim.awarded?.let { awarded ->
-        CertificateCeremony(app, listOf(awarded), claim::closeMoment, onCreateAccount = { navigator.open(AppRoute.Login) }, app.timeSource)
+    if (claim.awarded.isNotEmpty()) {
+        CertificateCeremony(app, claim.awarded, claim::closeMoment, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
     }
 
     if (editing) {

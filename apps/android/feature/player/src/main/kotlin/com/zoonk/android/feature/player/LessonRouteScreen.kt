@@ -221,7 +221,7 @@ internal fun PlayingLesson(
             ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
             tutor = tutor,
             certificatesMoment = { awarded, onClose ->
-                CertificateCeremony(app, awarded, onClose, onCreateAccount = { navigator.open(AppRoute.Login) }, app.timeSource)
+                CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
             },
         )
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)

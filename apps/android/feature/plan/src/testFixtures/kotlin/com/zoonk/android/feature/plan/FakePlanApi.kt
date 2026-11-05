@@ -220,7 +220,7 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
     ): GoalEnd {
         studyNextReads++
-        return GoalEnd(studyNext, certificate = null)
+        return GoalEnd(studyNext, certificates = null)
     }
 
     override suspend fun continueAtNextLevel(

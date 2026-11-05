@@ -24,6 +24,7 @@
   "subscription_available_with_plus": "3bb09e4c0a16c2501e59f46ff40b19d27b3e4c401679dc54b82c7c3e95734bd0",
   "subscription_benefit_buddy": "02fe0c9b222a68f7af8816efb57d1b436030bfdcf783db1ac748b57df7bb05a2",
   "subscription_benefit_calls": "11980f422ce25fd72f4816aee851c5eed90f3fb8a348b371c27ef923494e157d",
+  "subscription_benefit_certificates": "327755911895a6d3b1d585592ff3707193373a9b6238f8de49ce578ef108a12c",
   "subscription_benefit_exam": "e8129354a3b08e7c7b7f1c11db826c955ad7f2c805be27e4aa3bc3e4455a7398",
   "subscription_benefit_mocks": "555fde75de93755e1cd84c0e1110a9f7f3e0758a0aa89f7be84fbbbd4d387c66",
   "subscription_benefits_summary": "d5033a0370823f8562629bddf498819793abd6115370d7ef833887bc54fcb6a7",
@@ -166,6 +167,7 @@
     <string name="subscription_benefit_mocks">Gerçek sınavla aynı süre sınırına sahip deneme sınavları</string>
     <string name="subscription_benefit_buddy">Takıldığın her an yanında olan yapay zekâ destekli bir ders arkadaşı</string>
     <string name="subscription_benefit_calls">Konuşma pratiği sohbetlerinde daha yüksek limitler</string>
+    <string name="subscription_benefit_certificates">Tamamladığın her seviye için bir sertifika</string>
     <string name="subscription_start_free">Ücretsiz başla</string>
     <string name="subscription_no_card_needed">Kart gerekmez.</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->
