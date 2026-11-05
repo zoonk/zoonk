@@ -6,6 +6,7 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { nextFrames } from "../_test-utils/tutor-api";
 import { buildLesson } from "../preview/preview-lesson";
 import { contentStep, teachingStep } from "../preview/preview-steps";
 
@@ -83,6 +84,24 @@ function endMapLabels() {
 
 function endMapIcons() {
   return document.querySelectorAll('[data-slot="lesson-map"] [data-slot="lesson-icon"]');
+}
+
+function withoutIcon(idea: LessonMap["ideas"][number]) {
+  return { ...idea, icon: null };
+}
+
+async function openEndMapWhileTagsArrive(summary: LessonMap) {
+  const arrival = Promise.withResolvers<LessonMarks>();
+  const opened = buildLesson(lesson().steps, { marksPending: true, summary });
+  const getLessonMarks = vi.fn(() => arrival.promise);
+
+  renderLessonPlayer({ adapters: { ...buildAdapters(opened), getLessonMarks }, lesson: opened });
+  await next();
+  await next();
+  await answerCheck();
+
+  await expect.element(page.getByRole("main").getByText("Reading the cloud")).toBeVisible();
+  return arrival;
 }
 
 async function answerCheck() {
@@ -243,24 +262,22 @@ describe("lesson marks", () => {
   });
 
   it("keeps each idea's icon room on the end map, so icons drawn after it opened move nothing", async () => {
-    const arrival = Promise.withResolvers<LessonMarks>();
-    const getLessonMarks = vi.fn(() => arrival.promise);
-
-    const opened = buildLesson(lesson().steps, {
-      marksPending: true,
-      summary: { ...MAP, ideas: MAP.ideas.map((idea) => ({ ...idea, icon: null })) },
-    });
-
-    renderLessonPlayer({ adapters: { ...buildAdapters(opened), getLessonMarks }, lesson: opened });
-    await next();
-    await next();
-    await answerCheck();
-
-    await expect.element(page.getByRole("main").getByText("Reading the cloud")).toBeVisible();
+    const arrival = await openEndMapWhileTagsArrive({ ...MAP, ideas: MAP.ideas.map(withoutIcon) });
     const before = endMapLabels();
 
     arrival.resolve({ marksPending: false, steps: [], summary: MAP });
     await expect.poll(() => endMapIcons().length).toBe(MAP.ideas.length);
+    expect(endMapLabels()).toStrictEqual(before);
+  });
+
+  it("keeps the end map's icon room when its tags end with no icon or about line", async () => {
+    const untold = { ...MAP, ideas: MAP.ideas.map(({ label, text }) => ({ label, text })) };
+    const arrival = await openEndMapWhileTagsArrive(untold);
+    const before = endMapLabels();
+
+    arrival.resolve({ marksPending: false, steps: [], summary: untold });
+    await arrival.promise;
+    await nextFrames();
     expect(endMapLabels()).toStrictEqual(before);
   });
 

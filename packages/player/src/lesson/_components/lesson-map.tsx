@@ -114,10 +114,20 @@ function slotPlacement({
   return { "--map-column": columns[slot.column], "--map-row": slot.row - first + 1 };
 }
 
-/** A tagged lesson's ideas keep their icon's room, even before it's drawn, so a late icon moves nothing. */
+/**
+ * A tagged lesson's ideas keep their icon's room from the first frame for as long as the map shows,
+ * so an icon that comes late, or never, moves nothing.
+ */
 function useKeepsIconRoom(ideas: readonly MapIdea[]): boolean {
   const { lesson } = useLessonPlayerConfig();
-  return lesson.marksPending || ideas.some((idea) => idea.about || idea.icon);
+  const isTagged = lesson.marksPending || ideas.some((idea) => idea.about || idea.icon);
+  const [keeps, setKeeps] = useState(isTagged);
+
+  if (isTagged && !keeps) {
+    setKeeps(true);
+  }
+
+  return isTagged || keeps;
 }
 
 function MindMap({ ideas, title }: { ideas: readonly MapIdea[]; title: string }) {
