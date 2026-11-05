@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getUserSubscriptionCacheTag } from "../cache/tags";
+import { getCertificatesCacheTag, getUserSubscriptionCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
 import { getAppleSubscriptionProduct } from "./apple-products";
 import {
@@ -99,9 +99,10 @@ describe(syncCurrentUserAppleSubscription, () => {
       },
     });
 
-    expect(revalidateTag).toHaveBeenCalledExactlyOnceWith(getUserSubscriptionCacheTag(user.id), {
-      expire: 0,
-    });
+    expect(vi.mocked(revalidateTag).mock.calls).toStrictEqual([
+      [getCertificatesCacheTag(user.id), { expire: 0 }],
+      [getUserSubscriptionCacheTag(user.id), { expire: 0 }],
+    ]);
   });
 
   it("rejects a transaction associated with another account", async () => {

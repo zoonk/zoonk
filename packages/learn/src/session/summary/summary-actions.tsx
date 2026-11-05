@@ -58,6 +58,7 @@ export function KeepGoingButton({
     <Button
       className={cn("shrink-0", className)}
       disabled={keepGoing.isPending}
+      focusableWhenDisabled
       onClick={keepGoing.run}
       size="xl"
       variant="outline"

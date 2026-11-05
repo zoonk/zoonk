@@ -177,6 +177,7 @@ export function ListeningPlayer({
           <Button
             aria-busy={status === "loading"}
             disabled={isUsedUp || status === "playing" || status === "loading"}
+            focusableWhenDisabled
             onClick={() => void play()}
             size="icon-lg"
             type="button"

@@ -22,6 +22,7 @@
   "memory_fact_source": "436f7d1d057e1d1f7ef107742dedef474121401f221526d1055d084368943081",
   "memory_save_failed": "e9adaf578384a1c781fd09d700d48fa7534b78b1d9f412b78eb85026b8445e5a",
   "memory_sensitive_note": "1bb5abf21eb884fa1c49808372dc0d96f520aaa37ee4ae83fedf98d9ccbc5e9b",
+  "memory_source_call": "24fd497326c20d8b97d45f6f1ddbd4fea8c21cbe6b3b9a2daa745eb2059992c0",
   "memory_source_chat": "ce2d5affad1b85c009f2baf006feb78a56d516a944b825a13042d91c8bc4c2d5",
   "memory_source_noticed": "4f513a5dabfbc9f8583777657aa93e1dadab2d41de6de92823f1e12d70aaebe5",
   "memory_source_onboarding": "c33f232f88973f7f23add9779dc789da45bea215ac9e65d4c3a93e6e80458ccf",
@@ -29,17 +30,18 @@
   "memory_source_you": "44edf8da009c2d939c8bc7eaa5d41fc678c834d723938f920cb70cdd082e42f8",
   "memory_undo": "5a53793910722e1a31624a451a2691d5ede66e4921f68ca0d76794cc6e17f9dc",
   "memory_undo_failed": "c340683b4d6f6c98142b233f564cf3e6b7f14e946aaeff3e50e79b722d12dfe2",
+  "memory_undo_retry": "8b7fd1d3f6f010d451e33eaa7dbe545ff970071be1e8e61e23e800f585bef00f",
   "memory_updated": "c3716f340c3a00ef57b7ceb7cd7ee3882ac71bd339e2aa792e07de3678298a3b",
   "memory_updated_more": "8a220f11a39e6ae5edadd515249308d34c9f3779d370e3a34ec165210d5e6bf8",
   "memory_use": "fd536cb298f483c7da9d01bab9a1aa5ae67f824145d18f55e48fbdfd689d87b0",
   "memory_use_off": "255a34925bb431aa93ffaf4bc716a2bfb16ea57a4ce623b2d8b253221d3c2120",
-  "memory_use_on": "1af93675237828b050c939d420d16d8ba030a3f8bead77744f848dedba123bf5"
+  "memory_use_on": "a0ccb916fdca038782555cd169f0c6b3f9de3f5248ce2633176ad7b39ee4a001"
 }
 -->
 <resources>
     <string name="memory_description">To, co Zoonk pamięta, by dopasować przykłady i plany do twojego życia.</string>
     <string name="memory_use">Korzystamy z pamięci</string>
-    <string name="memory_use_on">Przykłady z twojego życia i plany dopasowane do twojego grafiku</string>
+    <string name="memory_use_on">Przykłady z twojego życia, plany dopasowane do twojego tygodnia i rozmowy, w których pamiętamy, co u ciebie nowego</string>
     <string name="memory_use_off">Pamięć jest wyłączona. Nie zapamiętujemy nic nowego i nie korzystamy z tych informacji.</string>
     <string name="memory_empty_on">Na razie nic tu nie ma. Podczas nauki i rozmów pojawią się tu krótkie notatki, które pomogą Zoonkowi lepiej cię uczyć.</string>
     <string name="memory_empty_off">Nic tu nie ma. Zoonk nie zapisuje notatek o tobie, gdy pamięć jest wyłączona.</string>
@@ -53,6 +55,8 @@
     <string name="memory_category_context">Kontekst</string>
     <string name="memory_source_noticed">Na podstawie twojej aktywności</string>
     <string name="memory_source_you">Informacja od ciebie</string>
+    <!-- Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor. -->
+    <string name="memory_source_call">Z rozmowy</string>
     <string name="memory_source_chat">Z czatu</string>
     <string name="memory_source_onboarding">Z wprowadzenia</string>
     <string name="memory_source_session">Z nauki</string>
@@ -80,4 +84,5 @@
     <string name="memory_undo">Cofnij</string>
     <string name="memory_change_undone">Cofnięto zmianę</string>
     <string name="memory_undo_failed">Nie udało się cofnąć zmiany. W międzyczasie wprowadzono kolejną.</string>
+    <string name="memory_undo_retry">Nie udało się cofnąć zmiany. Spróbuj ponownie.</string>
 </resources>

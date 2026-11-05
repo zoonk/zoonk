@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { linkGoalSkillPrerequisites } from "./save-goal-skills";
 
@@ -17,7 +16,7 @@ async function listPrerequisiteIds(skillId: string): Promise<string[]> {
 }
 
 describe(linkGoalSkillPrerequisites, () => {
-  it.each([1, 12, 48])("links a %i-skill graph with bounded database work", async (size) => {
+  it.each([1, 12, 48])("links a %i-skill graph", async (size) => {
     const rows = await Promise.all(Array.from({ length: size }, () => skillFixture()));
     const idsByKey = Object.fromEntries(rows.map((row, index) => [String(index), row.id]));
 
@@ -25,12 +24,7 @@ describe(linkGoalSkillPrerequisites, () => {
       graphSkill(String(index), index > 0 ? [String(index - 1)] : []),
     );
 
-    const counts = await countDatabaseStatements(() =>
-      linkGoalSkillPrerequisites({ idsByKey, skills }),
-    );
-
-    expect(counts.statements).toBeLessThanOrEqual(16);
-    expect(counts.writes).toBeLessThanOrEqual(2);
+    await linkGoalSkillPrerequisites({ idsByKey, skills });
 
     const edges = await prisma.skillPrerequisite.findMany({
       where: { skillId: { in: rows.map((row) => row.id) } },

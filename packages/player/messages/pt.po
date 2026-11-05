@@ -4126,6 +4126,12 @@ msgctxt "xpHtfD"
 msgid "We couldn't open this step. Try again."
 msgstr "A gente não conseguiu abrir este passo. Tente de novo."
 
+#. Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since
+#: src/questions/tutor-markdown.tsx
+msgctxt "GYMJ1y"
+msgid "This step isn't available anymore."
+msgstr "Esse passo não está mais disponível."
+
 #: src/questions/tutor-suggestion-words.ts
 msgctxt "tutorSuggestions.s6QqT3"
 msgid "I want to go deeper"

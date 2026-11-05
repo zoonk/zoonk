@@ -2,8 +2,8 @@ import { type CourseCategory } from "@zoonk/utils/categories";
 import { getExtracted } from "next-intl/server";
 import { CATEGORY_ICONS, type CategoryInfo } from "./category-icons";
 
-export async function getCategories(): Promise<CategoryInfo[]> {
-  const t = await getExtracted();
+export async function getCategories(locale?: string): Promise<CategoryInfo[]> {
+  const t = await getExtracted(locale === undefined ? undefined : { locale });
 
   return [
     { icon: CATEGORY_ICONS.arts, key: "arts", label: t("Arts") },
@@ -53,7 +53,7 @@ export async function getCategoryTitles(): Promise<Record<string, string>> {
   );
 }
 
-export async function getCategoryNames(): Promise<Record<string, string>> {
-  const categories = await getCategories();
+export async function getCategoryNames(locale?: string): Promise<Record<string, string>> {
+  const categories = await getCategories(locale);
   return Object.fromEntries(categories.map(({ key, label }) => [key, label]));
 }

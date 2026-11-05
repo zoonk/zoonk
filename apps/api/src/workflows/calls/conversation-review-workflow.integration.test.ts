@@ -3,6 +3,8 @@ import { writeConversationFeedback } from "@zoonk/ai/tasks/language/conversation
 import { checkConversationObjectives } from "@zoonk/ai/tasks/language/conversation-objectives";
 import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/language/speaking-mock-scenario";
 import { scoreSpeaking } from "@zoonk/ai/tasks/language/speaking-score";
+import { extractMemoryFacts } from "@zoonk/ai/tasks/memory/extraction";
+import { gateMemoryFact } from "@zoonk/ai/tasks/memory/gate";
 import { completeLanguageConversation } from "@zoonk/core/language/conversations/complete";
 import { prepareSpeakingMock } from "@zoonk/core/language/conversations/prepare";
 import { getSession } from "@zoonk/core/users/session";
@@ -32,6 +34,8 @@ vi.mock("@zoonk/ai/tasks/language/speaking-mock-scenario", () => ({
   generateSpeakingMockScenario: vi.fn(),
 }));
 
+vi.mock("@zoonk/ai/tasks/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/language/speaking-score", () => ({ scoreSpeaking: vi.fn() }));
 
@@ -58,6 +62,15 @@ const TURNS = [
   { speaker: "learner" as const, text: "It is available?" },
 ];
 
+const MOVING_FACT = {
+  category: "context" as const,
+  evidence: "I move to Toronto next month",
+  expiresOn: null,
+  intent: "remember" as const,
+  origin: "said" as const,
+  statement: "Está se mudando para Toronto",
+};
+
 function modelAnswer<T>(data: T) {
   return {
     data,
@@ -66,6 +79,13 @@ function modelAnswer<T>(data: T) {
     usage: undefined as never,
     userPrompt: "",
   };
+}
+
+/** Calls settled by earlier tests may still be read while this one runs. */
+function extractionsFor(userId: string) {
+  return vi
+    .mocked(extractMemoryFacts)
+    .mock.calls.filter(([params]) => params.analytics?.distinctId === userId);
 }
 
 async function liveCall() {
@@ -105,6 +125,16 @@ async function liveCall() {
 describe(conversationReviewWorkflow, () => {
   beforeEach(() => {
     vi.mocked(writeConversationFeedback).mockReset().mockResolvedValue(modelAnswer(FEEDBACK));
+
+    vi.mocked(extractMemoryFacts)
+      .mockReset()
+      .mockResolvedValue(modelAnswer({ facts: [] }));
+
+    vi.mocked(gateMemoryFact)
+      .mockReset()
+      .mockResolvedValue({ decision: "keep", sensitive: false } as Awaited<
+        ReturnType<typeof gateMemoryFact>
+      >);
 
     vi.mocked(checkConversationObjectives)
       .mockReset()
@@ -187,6 +217,52 @@ describe(conversationReviewWorkflow, () => {
     expect(writeConversationFeedback).toHaveBeenCalledOnce();
 
     await expect(prisma.learningEvent.count({ where: { userId: call.userId } })).resolves.toBe(1);
+  });
+
+  it("remembers what the learner said about their life once the call settles, and only then", async () => {
+    const call = await liveCall();
+    vi.mocked(extractMemoryFacts).mockResolvedValue(modelAnswer({ facts: [MOVING_FACT] }));
+
+    const completion = {
+      ...call,
+      spokenSeconds: 20,
+      timeZone: "UTC",
+      turns: [...TURNS, { speaker: "learner" as const, text: "I move to Toronto next month." }],
+      usedHelp: false,
+    };
+
+    const run = await start(conversationReviewWorkflow, [completion]);
+    await expect(run.returnValue).resolves.toMatchObject({ status: "completed" });
+
+    await vi.waitFor(
+      async () => {
+        await expect(
+          prisma.memoryFact.findMany({
+            select: { sourceRef: true, statement: true },
+            where: { userId: call.userId },
+          }),
+        ).resolves.toStrictEqual([
+          {
+            sourceRef: { id: call.conversationId, kind: "call" },
+            statement: MOVING_FACT.statement,
+          },
+        ]);
+      },
+      { interval: 200, timeout: 30_000 },
+    );
+
+    expect(extractionsFor(call.userId)).toStrictEqual([
+      [expect.objectContaining({ source: "call", turns: completion.turns })],
+    ]);
+
+    expect(gateMemoryFact).toHaveBeenCalledWith({
+      candidate: expect.objectContaining({ statement: MOVING_FACT.statement }),
+    });
+
+    const replay = await start(conversationReviewWorkflow, [completion]);
+    await expect(replay.returnValue).resolves.toMatchObject({ status: "completed" });
+
+    expect(extractionsFor(call.userId)).toHaveLength(1);
   });
 
   it("[3] writes the next speaking mock once it settles one the learner connected to", async () => {

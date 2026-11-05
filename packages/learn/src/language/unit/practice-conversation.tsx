@@ -143,6 +143,7 @@ function CallSetup({
           aria-busy={call.isStarting}
           className="w-full"
           disabled={call.isStarting}
+          focusableWhenDisabled
           onClick={call.start}
           size="lg"
         >

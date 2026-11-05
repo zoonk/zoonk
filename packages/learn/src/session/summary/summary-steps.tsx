@@ -128,14 +128,10 @@ export function SummarySteps() {
     );
   }
 
-  const milestone = summary.ceremony;
   const continuesToRewards = rewards.exists && !rewards.open;
 
   return (
-    <MomentAfterCeremony
-      milestone={milestone}
-      render={ceremony && milestone ? (_, close) => ceremony(milestone, close) : undefined}
-    >
+    <MomentAfterCeremony moments={summary} render={ceremony}>
       <TaskFrame
         aside={{
           children: (

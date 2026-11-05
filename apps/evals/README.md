@@ -117,6 +117,7 @@ pnpm --filter evals eval:run --task course-intent --model typesafe-ai/jev --mode
   - `--runs <n>` writes and judges each case `n` times; the head-to-head averages a case's runs before its cases.
   - `--swap` has each judge rank the outputs in both orders and averages the two, to cancel position bias.
   - With `--saved`, it reports saved outputs and judgments without calling any model, and lists the case-runs that have no saved judgment for them.
+- `live-conversation` runs on `openai/gpt-live-1` only. It plays each case's practice call over GPT-Live's server WebSocket with the production instructions and cues: a text model plays the learner from the case's plan and sends each line as the app's typed reply, and the production objective check runs after each answer. When a check finds a new goal met, its note for the character goes out with the learner's next line, as the app sends it, and anything the character says while the learner is still writing fails a code check. GPT-Live bills per second of session, so "Cost / 1k runs" is the voice alone, and "Spent" adds the learner's model, the objective checks and the judge. Cases with a `learnerNote` (`--case=-memory-`) also score how the character used the learner's note.
 
 Generation runs at most four calls at a time so a model's own requests don't slow each other down. "Spent" is what the sampled cases' saved outputs and judge calls cost, including ones generated in earlier runs. Search tool fees (`find-official-sources`) are billed per search and aren't included.
 

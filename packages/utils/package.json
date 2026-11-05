@@ -11,6 +11,8 @@
     "./buddy": "./src/buddy.ts",
     "./categories": "./src/categories.ts",
     "./cefr": "./src/cefr.ts",
+    "./certificate-links": "./src/certificate-links.ts",
+    "./course-level-names": "./src/course-level-names.ts",
     "./chart": "./src/chart.ts",
     "./contribution-calendar": "./src/contribution-calendar.ts",
     "./brain-power": "./src/brain-power.ts",
@@ -74,7 +76,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.10.1",

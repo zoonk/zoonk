@@ -104,10 +104,17 @@ function RowEditor({
       />
       {failed && <ChangeSaveError />}
       <div className="flex gap-2">
-        <Button disabled={isSaving} size="sm" type="submit">
+        <Button disabled={isSaving} focusableWhenDisabled size="sm" type="submit">
           {isSaving ? t("Saving…") : t("Save")}
         </Button>
-        <Button disabled={isSaving} onClick={onCancel} size="sm" type="button" variant="ghost">
+        <Button
+          disabled={isSaving}
+          focusableWhenDisabled
+          onClick={onCancel}
+          size="sm"
+          type="button"
+          variant="ghost"
+        >
           {t("Cancel")}
         </Button>
       </div>

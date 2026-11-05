@@ -67,6 +67,7 @@ export function supportsJudgeMode(
 }
 
 type TaskUsage = {
+  audioSeconds?: number;
   inputTokens: number | undefined;
   outputTokens: number | undefined;
   inputTokenDetails?: { cacheReadTokens: number | undefined; cacheWriteTokens: number | undefined };
@@ -74,6 +75,7 @@ type TaskUsage = {
 };
 
 export type TokenUsage = {
+  audioSeconds?: number;
   inputTokens: number;
   outputTokens: number;
   cacheReadTokens?: number;
@@ -83,6 +85,7 @@ export type TokenUsage = {
 
 export function toTokenUsage(usage: TaskUsage): TokenUsage {
   return {
+    audioSeconds: usage.audioSeconds,
     cacheReadTokens: usage.inputTokenDetails?.cacheReadTokens,
     cacheWriteTokens: usage.inputTokenDetails?.cacheWriteTokens,
     inputTokens: usage.inputTokens ?? 0,
@@ -164,7 +167,7 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   codeChecks?: TaskCodeChecks<TExpected>;
   scoreCategories?: ScoreCategory[];
   latencyBudget?: LatencyBudget;
-  output?: "image" | "speech" | "transcription";
+  output?: "image" | "realtime" | "speech" | "transcription";
   skippedLanguages?: Partial<Record<RequiredLanguage, string>>;
 };
 

@@ -28,6 +28,13 @@ describe(formatLocalContext, () => {
     expect(formatLocalContext("pt-BR")).toBe(formatLocalContext("pt"));
   });
 
+  it("leaves out how a text addresses its reader for a scene where people talk", () => {
+    const lines = formatLocalContext("es", { register: false }).split("\n").slice(1);
+    const labels = lines.map((line) => /^- (?<label>[^:]+): \S/u.exec(line)?.groups?.label);
+
+    expect(labels).toStrictEqual(PACK_LINES.filter((label) => label !== "Register"));
+  });
+
   it("has no pack for languages outside the app's languages", () => {
     expect(formatLocalContext("ar")).toBe("LOCAL_CONTEXT: none");
   });

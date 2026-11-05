@@ -1,4 +1,5 @@
 import "server-only";
+import { readPracticeMistakes } from "../../learner/facts/practice-mistakes";
 import { readUsageTotals } from "../../learner/facts/usage-totals";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { readBlockPayload } from "../block-payload";
@@ -18,7 +19,9 @@ export async function getDayFirstSteps({
   timeZone: string;
   missions: readonly Mission[];
 }): Promise<FirstSteps | null> {
-  if (!session.goal) {
+  const { goal, userId } = session;
+
+  if (!goal) {
     return null;
   }
 
@@ -30,12 +33,13 @@ export async function getDayFirstSteps({
         estimatedMinutes: block.estimatedMinutes ?? 0,
         payload: readBlockPayload(block),
       })),
-    goal: session.goal,
+    goal,
     localDate: session.localDate,
     plannedMinutes: session.plannedMinutes,
-    readUsage: () => readUsageTotals(session.userId),
+    readMistakes: () => readPracticeMistakes(userId, goal.id),
+    readUsage: () => readUsageTotals(userId),
     timeZone,
-    userId: session.userId,
+    userId,
   });
 
   const firstSteps = facts.firstSteps;

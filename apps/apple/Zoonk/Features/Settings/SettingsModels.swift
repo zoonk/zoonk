@@ -85,6 +85,19 @@ enum PreferencesUpdate: Equatable, Sendable {
   }
 }
 
+/// What undoing a memory change did, on the Memory page and in the buddy's answers.
+enum MemoryUndo: Equatable, Sendable {
+  /// One of the changes was undone or changed since, which no retry undoes.
+  case changedSince
+  case failed
+  case undoing
+  case undone
+
+  var canUndo: Bool {
+    self == .failed
+  }
+}
+
 struct LearnerMemory: Equatable, Sendable {
   var enabled: Bool
   var facts: [MemoryFact]
@@ -102,6 +115,7 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
   }
 
   enum Source: Equatable, Sendable {
+    case call
     case chat
     case noticed
     case onboarding
@@ -159,6 +173,7 @@ extension MemoryFact {
     let source: Source =
       switch (fact.origin, fact.source?.value1.kind) {
       case (.noticed, _): .noticed
+      case (_, .call): .call
       case (_, .chat): .chat
       case (_, .onboarding): .onboarding
       case (_, .session): .session

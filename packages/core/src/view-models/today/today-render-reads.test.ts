@@ -1,19 +1,22 @@
 import { prisma } from "@zoonk/db";
 import { layOutPlanFixture, planChangeFixture } from "@zoonk/testing/fixtures/goals";
-import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseRows } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../../_test-utils/mock-session";
+import { mockAccountSession, mockSession } from "../../_test-utils/mock-session";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { type readClaimEvents } from "../../learner/facts/claim-events";
 import { type readPlanClaimEvents } from "../../learner/facts/plan-claim-events";
+import { type readPracticeMistakes } from "../../learner/facts/practice-mistakes";
 import { type readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { type readSavedPlan } from "../../learner/facts/saved-plan";
 import { type readUsageTotals } from "../../learner/facts/usage-totals";
+import { getLearnerSummary } from "../../learner/summary/get-learner-summary";
+import { listCurrentUserMistakes } from "../../mistakes/list-current-user-mistakes";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import {
   SESSION_NOW,
@@ -49,6 +52,15 @@ vi.mock("../../learner/facts/plan-claim-events", async (importOriginal) => {
   ]);
 
   return { ...actual, readPlanClaimEvents: keepRequestReads(actual.readPlanClaimEvents) };
+});
+
+vi.mock("../../learner/facts/practice-mistakes", async (importOriginal) => {
+  const [actual, { keepRequestReads }] = await Promise.all([
+    importOriginal<{ readPracticeMistakes: typeof readPracticeMistakes }>(),
+    import("../../_test-utils/keep-request-reads"),
+  ]);
+
+  return { ...actual, readPracticeMistakes: keepRequestReads(actual.readPracticeMistakes) };
 });
 
 vi.mock("../../learner/facts/saved-plan", async (importOriginal) => {
@@ -267,4 +279,44 @@ describe("Today's render reads", () => {
       expect(reads.rows).toBe(1);
     },
   );
+
+  it("checks the open mistakes' practice material once for the missions, the count and the summary", async () => {
+    const user = await userFixture();
+
+    const { goal, items, plan, skills } = await sessionGoalFixture({
+      goal: { kind: "exam" },
+      userId: user.id,
+    });
+
+    await Promise.all([
+      layOutPlanFixture(plan.id),
+      ...skills.map((skill, index) =>
+        mistakeFixture({
+          createdAt: daysAgo(2),
+          itemId: items[index * 3]!.id,
+          skillId: skill.id,
+          userId: user.id,
+        }),
+      ),
+    ]);
+
+    mockAccountSession({ user });
+
+    const reads = await countDatabaseRows(
+      () =>
+        Promise.all([
+          getTodayView({ goalId: goal.id, timeZone: "UTC" }),
+          listCurrentUserMistakes({ goalId: goal.id, limit: 1, offset: 0, status: "open" }),
+          getLearnerSummary(),
+        ]),
+      'SELECT "public"."items"."skill_id" FROM "public"."items"',
+    );
+
+    const [today, mistakes, summary] = reads.result;
+
+    expect(today.status).toBe("ready");
+    expect(mistakes).toMatchObject({ availability: { ready: skills.length, tomorrow: 0 } });
+    expect(summary?.places.readyMistakes).toBe(skills.length);
+    expect(reads.rows).toBe(skills.length);
+  });
 });

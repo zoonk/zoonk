@@ -324,12 +324,12 @@ private struct LessonCheckNote: View {
     }
 
     if state.checkFailed {
-      Text(
-        "We couldn't check your answer this time. Try again.", tableName: "Player",
-        comment: "The server couldn't grade a written or spoken answer"
+      FailureLine(
+        message: LocalizedStringResource(
+          "We couldn't check your answer this time. Try again.", table: "Player",
+          comment: "The server couldn't grade a written or spoken answer")
       )
       .font(.subheadline)
-      .foregroundStyle(.secondary)
     }
 
     if isSlow, state.phase == .checking {

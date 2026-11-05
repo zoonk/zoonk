@@ -138,7 +138,6 @@
   "today_see_you_next_session": "bb951eff8d195116c3a1608abf90776cca20e19ab65dab47cdfcae310b86be7b",
   "today_see_you_tomorrow": "57b9a938d27e1b61507e483093e4816186a67af140f40f32c81eca884cfa6d1d",
   "today_see_your_plan": "f945b4ec612db48dbd50690fe2f8350423dc89d174b4379fc832597fdffd91cc",
-  "today_session_ended_description": "379e3ccb7da3c2fd1f4b22bb5bc5f9b043a1f615035c859a80e0c9022c2d452d",
   "today_setting_up": "14cc0bce5b5ac4db1d77986310335b133aadfe580cf074d24d10196bf200d1d9",
   "today_setting_up_detail": "9d6a3622a5bfead2c527c6cfaef5406643b4840f28d01c8a49b240a552545cbb",
   "today_setting_up_goal": "a8ea859eb12320b143597e5c2db949ff8ecd52ac66ede441a4f40a57e5bc9573",
@@ -156,6 +155,7 @@
   "today_step_next": "273d0caa15be65f720ff38083694a300389ac8ccdaaba078169e006611e06bf5",
   "today_step_often_tested": "8e01f7e3b3ce0dbc0bd95b275b1c78da3a8c315e74240b5c981b2b91e78d79dd",
   "today_step_often_tested_label": "449fb16cd7c35bbb8d666439a74ddc6fc6d22ecb647b768f4ae4d765472991a3",
+  "today_step_open_failed": "86e7f5cf0d7b91ebf8b5d7cf6d6c7cc628d05980eca9276541e4db269b7aa9f1",
   "today_step_skipped": "cb24182ca6ea0f088d8d5b38f56bbd05e8cbb4acb8bdf4419ddf57ea1053c4ca",
   "today_steps_done": "068c0feff1c4c8c2b813b0166027f92d226a9f0bdd7aefd6fd0ad9bcff9394dd",
   "today_study_everything": "a443e2bdfcb281f9aa76749ce4dd24200c5ef7625662dd305b9697b3923e5eb3",
@@ -327,6 +327,7 @@
     <string name="today_lessons_not_written">Les leçons du jour ne sont pas encore prêtes.</string>
     <string name="today_get_lessons">Obtenir les leçons du jour</string>
     <string name="today_open_failed">Impossible d’ouvrir la prochaine étape. Réessaie.</string>
+    <string name="today_step_open_failed">Impossible d’ouvrir cette étape. Réessaie.</string>
     <string name="today_keep_learning_failed">Nous n’avons pas pu ouvrir tes prochaines leçons. Réessaie.</string>
     <string name="today_welcome_back">Te revoilà</string>
     <!-- %1$s is a course's title. -->
@@ -358,7 +359,6 @@
     <string name="today_building_plan_detail">Cela prend généralement une ou deux minutes. Ton premier jour s’affichera ici dès qu’il sera prêt.</string>
     <string name="today_quick_explanation">Explication rapide</string>
     <string name="today_continue_explanation">Continuer l’explication</string>
-    <string name="today_session_ended_description">Les leçons, révisions et exercices de chaque jour pour ton objectif.</string>
     <string name="today_week_title">Cette semaine</string>
     <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
     <plurals name="today_week_days">

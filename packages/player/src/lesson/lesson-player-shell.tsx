@@ -49,9 +49,7 @@ function LessonCompletion() {
 
   return (
     <MomentAfterCeremony
-      milestone={
-        props.completion.result ? getLessonCelebration(props.completion.result).ceremony : null
-      }
+      moments={props.completion.result ? getLessonCelebration(props.completion.result) : null}
       render={slots.ceremony}
     >
       {slots.completion ? slots.completion(props) : <LessonCompletionMoment {...props} />}

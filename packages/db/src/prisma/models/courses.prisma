@@ -45,6 +45,7 @@ model Course {
   examSkillGraphs      ExamSkillGraph[]
   languageSkillGraphs  LanguageSkillGraph[]
   goFurtherLessons     Lesson[]
+  certificates         Certificate[]
 
   @@unique([organizationId, slug], name: "orgSlug")
   @@unique([userId, slug], name: "userSlug")

@@ -10,6 +10,7 @@ function lessonCompletion(
   return {
     brainPower: 1,
     ceremony: null,
+    certificates: [],
     correctCount: 1,
     energyDelta: 0.2,
     incorrectCount: 0,
@@ -30,6 +31,7 @@ describe(getLessonCelebration, () => {
     expect(getLessonCelebration(completion)).toStrictEqual({
       brainPower: 1,
       ceremony: null,
+      certificates: [],
       missionMoment: null,
       reached: { energy: 80, level: LEVEL_TWO },
     });
@@ -41,6 +43,7 @@ describe(getLessonCelebration, () => {
     const studyBlock = {
       brainPower: 51,
       ceremony: null,
+      certificates: [],
       completedMissions: ["askBuddy"],
       fullMeal: { bonus: 50, paid: true },
       missions,
@@ -50,6 +53,7 @@ describe(getLessonCelebration, () => {
     expect(getLessonCelebration(lessonCompletion({ studyBlock }))).toStrictEqual({
       brainPower: 1,
       ceremony: null,
+      certificates: [],
       missionMoment: { completed: ["askBuddy"], fullMeal: { bonus: 50, paid: true }, missions },
       reached: { energy: 80, level: LEVEL_TWO },
     });

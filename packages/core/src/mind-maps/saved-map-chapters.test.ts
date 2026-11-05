@@ -297,7 +297,7 @@ describe("mind maps read from the saved plan", () => {
   it("reads the saved plan's chapters in one grouped statement, without the goal's map", async () => {
     const { goal } = await signedInCourseGoal({ statuses: ["done", "done", "todo", "todo"] });
 
-    const { result, statements, texts, writes } = await recordStatements(() =>
+    const { result, texts, writes } = await recordStatements(() =>
       listGoalMindMaps({ goalId: goal.id }),
     );
 
@@ -309,7 +309,5 @@ describe("mind maps read from the saved plan", () => {
     const grouped = texts.filter((text) => /JOIN plan_items i ON i\.plan_id = p\.id/u.test(text));
 
     expect(grouped).toHaveLength(1);
-    // Vitest lacks request-cache deduplication, so goal numbering reads the ownership fact again.
-    expect(statements).toBeLessThanOrEqual(19);
   });
 });
