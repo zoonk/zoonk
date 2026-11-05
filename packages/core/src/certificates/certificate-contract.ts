@@ -127,15 +127,8 @@ export const certificateFactsShape = {
     }),
 };
 
-export const certificateFactsSchema = z
-  .object(certificateFactsShape)
-  .meta({
-    description:
-      "What a certificate certifies, as anyone may see it: nothing else about the learner leaves.",
-    id: "CertificateFacts",
-  });
-
-export type CertificateFacts = z.infer<typeof certificateFactsSchema>;
+/** What a certificate certifies, as anyone may see it: nothing else about the learner leaves. */
+export type CertificateFacts = z.infer<z.ZodObject<typeof certificateFactsShape>>;
 
 export const ownedCertificateShape = {
   ...certificateFactsShape,
