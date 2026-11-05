@@ -190,6 +190,46 @@ describe(getMistakePractice, () => {
     expect(questions[0]?.set).toMatchObject({ count: 2, position: 1, title: "The Sunday library" });
   });
 
+  it("keeps a passage question for its own mistake's drill, never another mistake's", async () => {
+    const { extra, original, skill, user } = await setup();
+    const set = await itemSetFixture({ content: textSetContent("The Sunday library") });
+
+    const missed = await itemFixture({
+      content: choiceItemContent(),
+      setId: set.id,
+      setPosition: 0,
+      skillId: skill.id,
+    });
+
+    const [passageMistake, plainMistake] = await Promise.all([
+      mistakeFixture({
+        cause: "gap",
+        createdAt: YESTERDAY,
+        itemId: missed.id,
+        skillId: skill.id,
+        userId: user.id,
+      }),
+      mistakeFixture({
+        cause: "gap",
+        createdAt: YESTERDAY,
+        itemId: original.id,
+        skillId: skill.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const result = await getMistakePractice({ timeZone: "UTC" });
+    const practice = result.status === "ready" ? result.practice : [];
+
+    const questionsOf = (mistakeId: string) =>
+      practice
+        .find((entry) => entry.mistakeId === mistakeId)
+        ?.questions.map((question) => question.itemId);
+
+    expect(questionsOf(passageMistake.id)?.[0]).toBe(missed.id);
+    expect(questionsOf(plainMistake.id)).toStrictEqual([original.id, extra.id]);
+  });
+
   it("goes over a lesson the learner can open, with its summary, before a gap's questions", async () => {
     const { original, skill, user } = await setup();
     const owner = await userFixture();

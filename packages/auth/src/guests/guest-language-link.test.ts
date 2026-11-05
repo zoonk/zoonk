@@ -19,6 +19,7 @@ describe("guest language linking", () => {
         prisma.languageSkillLevel.create({
           data: {
             language: "en",
+            raisedAt: OLDER,
             score: 1.5,
             skill: "reading",
             startScore: 2,
@@ -182,6 +183,7 @@ describe("guest language linking", () => {
       expect(levels).toContainEqual(
         expect.objectContaining({
           language: source.language,
+          raisedAt: source.raisedAt,
           score: source.score,
           skill: source.skill,
           startScore: source.startScore,
@@ -309,4 +311,41 @@ describe("guest language linking", () => {
       ).resolves.toBe(0);
     },
   );
+
+  it("keeps a skill the account's answers raised over a newer one nobody raised", async () => {
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+    ]);
+
+    const [raised] = await Promise.all([
+      prisma.languageSkillLevel.create({
+        data: {
+          language: "es",
+          raisedAt: OLDER,
+          score: 0.5,
+          skill: "reading",
+          startScore: 0,
+          updatedAt: OLDER,
+          userId: accountId,
+        },
+      }),
+      prisma.languageSkillLevel.create({
+        data: {
+          language: "es",
+          score: 2,
+          skill: "reading",
+          startScore: 2,
+          updatedAt: NEWER,
+          userId: guestId,
+        },
+      }),
+    ]);
+
+    await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
+
+    await expect(
+      prisma.languageSkillLevel.findMany({ where: { language: "es", userId: accountId } }),
+    ).resolves.toStrictEqual([raised]);
+  });
 });

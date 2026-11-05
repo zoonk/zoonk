@@ -78,7 +78,7 @@ export function UnderstoodWords({
       </p>
 
       <div className="flex flex-wrap gap-2">
-        <Button disabled={!trimmed || disabled} size="sm" type="submit">
+        <Button disabled={!trimmed || disabled} focusableWhenDisabled size="sm" type="submit">
           {t("Read it again")}
         </Button>
         <Button onClick={onCancel} size="sm" type="button" variant="ghost">

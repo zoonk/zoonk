@@ -325,11 +325,51 @@ const CACD_LANGUAGES_BLUEPRINT: ExamOutline = {
 export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
   {
     expectations: `
+      - MUST be in Brazilian Portuguese
+      - An adult beginner wants depth, not an overview-only course: retain cells, metabolism, genetics, evolution, organism physiology, ecology and advanced biological mechanisms
+      - The first skills teach concrete biology from everyday knowledge: distinguish living things and explain cells as units of life. They must not wait for chemistry, biomolecules or enzymes
+      - Supporting skills sit near their first use, not in whole-course blocks after the opening. Chemistry remains where biological mechanisms need it: bonds and biomolecules before molecular mechanisms, energy before detailed metabolism. Do not front-load a chemistry course before the learner encounters living things or cells
+      - Early conceptual skills and later mechanistic skills have distinct scopes, rather than repeating the same skill or making an introductory skill cover advanced depth
+      - Phase milestones must be supported by the skills in that phase
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-biology-beginner-deep",
+    userInput: {
+      goal: "Aprender tudo sobre biologia",
+      goalKind: "learn",
+      language: "pt",
+      ownLevel: "none",
+      purpose: "deep",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - An adult beginner wants to study economics in depth
+      - Begin with economic choices, scarcity, opportunity cost and everyday markets, rather than a separate mathematics or statistics course
+      - Retain quantitative depth: place algebra, calculus and statistics just before the economic methods that use them, rather than in a complete math block after the opening, plus microeconomics, macroeconomics, econometrics and policy
+      - Conceptual economic reasoning must not depend on formal optimization or econometrics, and advanced mathematical economic analysis must not lose its real prerequisites
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-economics-beginner-deep",
+    userInput: {
+      goal: "Learn economics in depth from scratch",
+      goalKind: "learn",
+      language: "en",
+      ownLevel: "none",
+      purpose: "deep",
+    },
+  },
+  {
+    expectations: `
       - MUST be in US English
       - Huge goal: the graph must span several canonical courses, such as mathematics (algebra, trigonometry, calculus, differential equations, complex numbers, probability), linear algebra, classical mechanics, waves and oscillations, electromagnetism, and quantum mechanics
       - Quantum mechanics must reach the core: the wave function, the Schrödinger equation, operators and observables, uncertainty, the hydrogen atom, angular momentum and spin, perturbation theory or approximation methods, and entanglement or quantum information
-      - Starting from forgotten high school math, the path begins with the math physics uses; calculus and linear algebra come before the quantum formalism
-      - The honest size is hundreds of hours (roughly 300 to 600); phases that move from the math physics uses through calculus, linear algebra and classical physics to quantum mechanics and its advanced topics are sensible
+      - Starting from forgotten high school math, begin with concrete quantum phenomena such as quantization, interference or measurement in plain words; do not require a separate mathematics or classical mechanics course before encountering quantum physics
+      - Calculus, complex numbers and linear algebra still come before the quantum formalism that uses them, with conceptual and formal skills scoped separately
+      - The honest size is hundreds of hours (roughly 300 to 600); retain mathematics, classical physics, quantum mechanics and advanced topics, introducing supporting skills just before their dependents, not in a whole math or classical physics course after a short quantum opening
       - Chapter-sized skills are expected, not hundreds of lesson-sized trivia skills
 
       ${SHARED_EXPECTATIONS}

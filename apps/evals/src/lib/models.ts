@@ -5,7 +5,7 @@ import {
 } from "@zoonk/ai/evaluate/models";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 
-type ModelKind = "generation" | "evaluation" | "image" | "speech" | "transcription";
+type ModelKind = "generation" | "evaluation" | "image" | "realtime" | "speech" | "transcription";
 
 export type ModelConfig = {
   id: string;
@@ -87,6 +87,10 @@ const TRANSCRIPTION_MODELS: { id: string; name: string }[] = [
   { id: "spacexai/grok-stt", name: "grok-stt" },
 ];
 
+const REALTIME_MODELS: { id: string; name: string }[] = [
+  { id: "openai/gpt-live-1", name: "gpt-live-1" },
+];
+
 export const EVAL_MODELS: ModelConfig[] = [
   ...GENERATION_MODELS.map((model) => ({
     ...model,
@@ -110,6 +114,11 @@ export const EVAL_MODELS: ModelConfig[] = [
     ...model,
     gatewayModelId: model.id,
     kind: "transcription" as const,
+  })),
+  ...REALTIME_MODELS.map((model) => ({
+    ...model,
+    gatewayModelId: model.id,
+    kind: "realtime" as const,
   })),
 ];
 

@@ -93,7 +93,8 @@ test.describe("Far topics", () => {
     expect(requested).toBe(0);
 
     await see.click();
-    await expect(sheet.getByRole("status")).toHaveText(/Preparing the lessons/u);
+    const preparing = sheet.getByRole("status").filter({ hasText: /Preparing the lessons/u });
+    await expect(preparing).toBeVisible();
     expect(requested).toBe(1);
 
     await page.context().close();

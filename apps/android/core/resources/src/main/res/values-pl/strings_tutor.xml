@@ -106,6 +106,8 @@
   "tutor_retry_last_question": "c9e42ce9fdb1a4fedc006436da8c3d3af0904c49c0a09f8c25ebffc2a720e442",
   "tutor_send": "2047d1407c0c50eb5c855d6f16b251f1dab26dad1aea15a7eba9229814c9825e",
   "tutor_sign_in": "d23f584f291cbc1505c3364073677eeceecbde01a5efc77bc9d0cb2d842acd33",
+  "tutor_step_closed": "b7e49605b35e5f989d25aac90d31f80fc61bdc37bd4152c9fb7129d89a863fc6",
+  "tutor_step_open_failed": "d973150cfa6bd01b1e80733a4dc0da648026cc4b29d5774709c57beef9c51b15",
   "tutor_suggest_chapter": "68490b023ef2b19ef27bd80081129fcc895e3ece99428c4f0fe69d3026d34220",
   "tutor_suggest_item_asking": "26dd1095e3b846d71aa816461c9d6ceeb56ad0279fa4c05d7498d74395915e9d",
   "tutor_suggest_item_idea": "df9cebcd8f14eeaf7412929bd5673a4755fb85969f3ecee197fafe4289798cab",
@@ -199,6 +201,10 @@
     <string name="tutor_link_description">Ten link otwiera stronę poza Zoonkiem.</string>
     <string name="tutor_link_cancel">Anuluj</string>
     <string name="tutor_link_open">Otwórz link</string>
+    <!-- Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since -->
+    <string name="tutor_step_closed">Ten krok nie jest już dostępny.</string>
+    <!-- Under a buddy answer whose link to a step of the day didn't open -->
+    <string name="tutor_step_open_failed">Nie udało się przejść do tego kroku. Spróbuj ponownie.</string>
     <string name="tutor_offer_open">Otwórz</string>
     <string name="tutor_offer_choose">Wybierz</string>
     <string name="tutor_offer_start">Zacznij</string>

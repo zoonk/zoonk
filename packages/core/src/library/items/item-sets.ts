@@ -23,6 +23,10 @@ export async function listItemSetsForSkills({
   skillIds: readonly string[];
   userId: string | null;
 }): Promise<ItemSetPick[]> {
+  if (skillIds.length === 0) {
+    return [];
+  }
+
   const sets = await prisma.itemSet.findMany({
     include: {
       items: {
@@ -45,13 +49,16 @@ export async function listItemSetsForSkills({
     },
   });
 
-  const answers = userId
-    ? await prisma.attempt.groupBy({
-        _max: { answeredAt: true },
-        by: ["itemId"],
-        where: { itemId: { in: sets.flatMap((set) => set.items.map((item) => item.id)) }, userId },
-      })
-    : [];
+  const itemIds = sets.flatMap((set) => set.items.map((item) => item.id));
+
+  const answers =
+    userId && itemIds.length > 0
+      ? await prisma.attempt.groupBy({
+          _max: { answeredAt: true },
+          by: ["itemId"],
+          where: { itemId: { in: itemIds }, userId },
+        })
+      : [];
 
   const lastAnswers = new Map(answers.map((answer) => [answer.itemId, answer._max.answeredAt]));
 

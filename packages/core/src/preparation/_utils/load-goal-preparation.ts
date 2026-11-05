@@ -11,6 +11,7 @@ import { type OwnedGoal } from "../../learner/_utils/owned-goal";
 import { readCatchUpItems } from "../../learner/facts/catch-up-items";
 import { readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { countSkillStates } from "../../learner/mastery-state";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
@@ -101,7 +102,11 @@ export async function loadOwnedGoalPreparation({
       goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
       selectedPlan?.catchUp === undefined ? readCatchUpItems(userId, goalId) : [],
       loadExamPrepAccess({ goal, readViewer: readEntitlementViewer, timeZone, today }),
-      arePhaseChallengesRequired({ goalKind: goal.kind, userId }),
+      arePhaseChallengesRequired({
+        goalKind: goal.kind,
+        readSubscription: readActiveSubscription,
+        userId,
+      }),
     ]);
 
   const schedule = getStatusSchedule({ savedPlan, selectedPlan });

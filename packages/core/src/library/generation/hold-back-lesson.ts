@@ -8,6 +8,7 @@ import { toPlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { getSeenChange } from "../../plans/planner/plan-effect";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
+import { oweStartedDaySettlements } from "../../sessions/_utils/owe-started-day-settlements";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type HeldBackDraft, MAX_LESSON_DRAFTS, parseHeldBackDrafts } from "./held-back-drafts";
 
@@ -62,8 +63,8 @@ export async function moveOnWithoutLesson(
   const planById = new Map(plans.map((plan) => [plan.id, plan]));
 
   /** Queue changes lock blocks before plan items; use the same order to avoid a cycle. */
-  const blocks = await tx.$queryRaw<{ id: string }[]>`
-    SELECT block.id FROM study_session_blocks AS block
+  const blocks = await tx.$queryRaw<{ id: string; sessionId: string }[]>`
+    SELECT block.id, block.session_id AS "sessionId" FROM study_session_blocks AS block
     JOIN study_sessions AS session ON session.id = block.session_id
     WHERE block.kind = 'learn' AND block.lesson_id = ${lessonId}::uuid
       AND session.status IN ('planned', 'active') AND block.status IN ('active', 'pending')
@@ -80,6 +81,8 @@ export async function moveOnWithoutLesson(
       status: { in: ["active", "pending"] },
     },
   });
+
+  await oweStartedDaySettlements(tx, blocks);
 
   await tx.planItem.updateMany({
     data: { status: "skipped" },

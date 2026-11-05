@@ -5,7 +5,6 @@ import { type CallLength, type TimedCue, takeDueExamCue } from "./live-call-cloc
 import { sendLiveCallCue } from "./live-call-commands";
 import {
   type CallEndingCommand,
-  type CallEndingEvent,
   type CallEndingState,
   type CallEndingView,
   type CallHangUpReason,
@@ -13,6 +12,7 @@ import {
   startCallEnding,
   stepCallEnding,
 } from "./live-call-ending";
+import { type CallEndingEvent } from "./live-call-ending-event";
 import { type LiveCallCue } from "./live-call-script";
 import { type LiveCallSession } from "./live-call-session";
 import { type ObjectiveCheckResult } from "./use-objective-checks";
@@ -72,6 +72,7 @@ export function useCallEnding({
 
         if (command.type === "progress" && progress.current) {
           sendLiveCallCue({ cue: progress.current, session: call.session });
+          progress.current = null;
         }
 
         if (command.type === "hangUp") {
@@ -80,8 +81,6 @@ export function useCallEnding({
           onCue();
         }
       }
-
-      progress.current = null;
     },
     [onCue, onHangUp],
   );
@@ -128,7 +127,7 @@ export function useCallEnding({
 
   const checked = useCallback(
     (result: ObjectiveCheckResult) => {
-      progress.current = result.progress;
+      progress.current = result.progress ?? progress.current;
 
       dispatch({
         allMet: result.allMet,

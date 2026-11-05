@@ -68,6 +68,7 @@ export function localAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapte
         completion: {
           brainPower: 10,
           ceremony: null,
+          certificates: [],
           correctCount: 1,
           energyDelta: 1,
           incorrectCount: 0,

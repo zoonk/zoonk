@@ -25,7 +25,7 @@ protocol PlanAPIClient: Sendable {
   func standing(token: String, goalId: String) async throws -> GoalStanding
   func languageStanding(token: String, goalId: String) async throws -> LanguageStanding
   func languageUnits(token: String, goalId: String) async throws -> LanguageUnitsOverview
-  func studyNext(token: String, goalId: String) async throws -> StudyNext?
+  func planEnd(token: String, goalId: String) async throws -> PlanEnd
   func resumeChangesPlan(token: String, goalId: String) async throws -> Bool
   func setStatus(token: String, goalId: String, status: GoalStatusChange) async throws
     -> GoalStatusOutcome
@@ -87,10 +87,6 @@ private struct ToolChoiceRequest: Encodable {
   let system: String?
   let timeZone: String
   let tools: [String]
-}
-
-private struct FieldMapNext: Decodable {
-  let next: StudyNext?
 }
 
 struct PlanAPI: PlanAPIClient {
@@ -167,12 +163,11 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  func studyNext(token: String, goalId: String) async throws -> StudyNext? {
+  func planEnd(token: String, goalId: String) async throws -> PlanEnd {
     try await clients.perform(token: token) { client in
       switch try await client.getGoalMap(path: .init(goalId: goalId)) {
       case .ok(let response):
-        let map: FieldMapNext = try PracticeJSON.recode(try response.body.json)
-        return map.next
+        return try PracticeJSON.recode(try response.body.json)
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable

@@ -140,82 +140,76 @@ struct AccountFailureMessage: View {
   @ViewBuilder
   var body: some View {
     if let failure {
-      Label {
-        message(for: failure)
-      } icon: {
-        Image(systemName: "exclamationmark.circle")
-      }
-      .font(.footnote)
-      .foregroundStyle(.destructive)
-      .multilineTextAlignment(.center)
-      .accessibilityElement(children: .combine)
+      FailureLine(message: message(for: failure), systemImage: "exclamationmark.circle")
+        .font(.footnote)
+        .multilineTextAlignment(.center)
+        .accessibilityElement(children: .combine)
     }
   }
 
-  @ViewBuilder
-  private func message(for failure: AccountFailure) -> some View {
+  private func message(for failure: AccountFailure) -> LocalizedStringResource {
     switch failure {
     case .botDetected:
-      Text(
+      LocalizedStringResource(
         "A security check blocked this request. Try again or contact hello@zoonk.com.",
-        tableName: "Account",
+        table: "Account",
         comment:
           "Recovery when the security check blocks a sign-in or a verification code; avoids the verb on the Verify and delete button"
       )
     case .emailCodeDelivery:
-      Text(
+      LocalizedStringResource(
         "Zoonk couldn't send the verification code. Try again or contact hello@zoonk.com.",
-        tableName: "Account",
+        table: "Account",
         comment: "Generic email verification code delivery failure")
     case .accountDeletion:
-      Text(
+      LocalizedStringResource(
         "Zoonk couldn't delete your account. Try again or contact hello@zoonk.com.",
-        tableName: "Account",
+        table: "Account",
         comment: "Generic account deletion failure message")
     case .accountMismatch:
-      Text(
+      LocalizedStringResource(
         "That code belongs to a different account. Request a new code for this account.",
-        tableName: "Account",
+        table: "Account",
         comment: "Error shown when an account deletion code belongs to a different account")
     case .invalidCode:
-      Text(
+      LocalizedStringResource(
         "That code is invalid or expired. Request a new code and try again.",
-        tableName: "Account",
+        table: "Account",
         comment: "Error shown when an email verification code is invalid or expired")
     case .invalidEmail:
-      Text(
+      LocalizedStringResource(
         "Enter a valid email address.",
-        tableName: "Account",
+        table: "Account",
         comment: "Error shown when an email address is invalid")
     case .disposableEmail:
-      Text(
+      LocalizedStringResource(
         "Temporary email addresses aren't supported. Use another email or a privacy alias.",
-        tableName: "Account",
+        table: "Account",
         comment: "Temporary inbox rejection; persistent privacy aliases remain supported")
     case .network:
-      Text(
+      LocalizedStringResource(
         "Zoonk couldn't connect. Check your connection and try again.",
-        tableName: "Account",
+        table: "Account",
         comment: "Error shown when an account request cannot reach the service")
     case .rateLimited:
-      Text(
+      LocalizedStringResource(
         "Too many tries. Wait a minute, then try again.",
-        tableName: "Account",
+        table: "Account",
         comment: "Error shown when sign-in attempts are temporarily rate limited")
     case .usernameTaken:
-      Text(
+      LocalizedStringResource(
         "That username is already taken.",
-        tableName: "Account",
+        table: "Account",
         comment: "Error shown when a chosen username is unavailable")
     case .validation:
-      Text(
+      LocalizedStringResource(
         "Check the information and try again.",
-        tableName: "Account",
+        table: "Account",
         comment: "Error shown when profile information is invalid")
     case .signIn:
-      Text(
+      LocalizedStringResource(
         "Zoonk couldn't sign you in. Try again or contact hello@zoonk.com.",
-        tableName: "Account",
+        table: "Account",
         comment: "Generic sign-in failure message")
     }
   }

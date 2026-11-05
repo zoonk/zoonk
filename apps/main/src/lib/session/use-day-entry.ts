@@ -1,12 +1,12 @@
 "use client";
 
 import { usePathname } from "@/i18n/navigation";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
+import { getLearnerId } from "@/lib/learner/learner-store";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { useSearchParams } from "next/navigation";
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { type DayEntry, findDayTap } from "./day-entry";
-import { getDayEntry, subscribeToDayEntry } from "./day-entry-registry";
+import { getDayEntry, markDayEntryShown, subscribeToDayEntry } from "./day-entry-registry";
 
 export function useDayEntry(): DayEntry | null {
   return useSyncExternalStore(subscribeToDayEntry, getDayEntry, () => null);
@@ -16,13 +16,11 @@ export function useDayEntry(): DayEntry | null {
 function useEntryScope() {
   const pathname = usePathname();
   const search = useSearchParams().toString();
-  const summary = useLearnerSummary();
 
-  return {
-    generation: getLearnerGeneration(),
-    href: search ? `${pathname}?${search}` : pathname,
-    userId: summary.status === "ready" ? summary.summary.identity.userId : null,
-  };
+  // Subscribed, so it draws again when who holds the session changes.
+  useLearnerSummary();
+
+  return { href: search ? `${pathname}?${search}` : pathname, learner: getLearnerId() };
 }
 
 export function useDayTap<Step extends { position: number; status: string }>(day: {
@@ -32,5 +30,14 @@ export function useDayTap<Step extends { position: number; status: string }>(day
 }) {
   const entry = useDayEntry();
   const scope = useEntryScope();
-  return findDayTap({ ...scope, day, entry });
+  const tapped = findDayTap({ ...scope, day, entry });
+  const shownId = tapped && entry ? entry.id : null;
+
+  useEffect(() => {
+    if (shownId !== null) {
+      markDayEntryShown(shownId);
+    }
+  }, [shownId]);
+
+  return tapped;
 }

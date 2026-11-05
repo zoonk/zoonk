@@ -8,7 +8,10 @@ import { NOTHING_REACHED } from "../../sessions/reached";
 import { settleFinishedLesson } from "../../sessions/settle-finished-lesson";
 import { type LibraryLessonCompletion } from "../contract";
 
-export type RunCompletion = Omit<LibraryLessonCompletion, "ceremony" | "reached" | "studyBlock">;
+export type RunCompletion = Omit<
+  LibraryLessonCompletion,
+  "ceremony" | "certificates" | "reached" | "studyBlock"
+>;
 
 export type LessonProgress = { brainPower: ProgressChange; energy: ProgressChange };
 
@@ -45,6 +48,7 @@ export async function withStudyBlock({
     return {
       ...completion,
       ceremony: null,
+      certificates: [],
       reached: NOTHING_REACHED,
       studyBlock: serializeStudyBlockCompletion(studyBlock),
     };

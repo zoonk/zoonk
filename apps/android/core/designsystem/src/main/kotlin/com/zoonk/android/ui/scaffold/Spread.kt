@@ -1,7 +1,6 @@
 package com.zoonk.android.ui.scaffold
 
 import androidx.compose.material3.adaptive.allVerticalHingeBounds
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -29,6 +28,19 @@ fun SpreadScreen(content: @Composable () -> Unit) {
 fun spreadShows(): Boolean = LocalSpread.current?.shows == true
 
 /**
+ * Whether this sits on a book's page: anywhere in a window an unfolded book's fold crosses, or on a
+ * [SpreadScreen]'s page while it shows two. A book's page is about a phone wide, so what follows
+ * main's breakpoints there lays out as on a phone.
+ */
+@Composable
+fun isOnBookPage(): Boolean = windowAdaptiveInfo().windowPosture.allVerticalHingeBounds.isNotEmpty() || spreadShows()
+
+/** Main's `sm` and `md`: a medium or wider window, except on a book's page ([isOnBookPage]), which lays out as on a phone. */
+@Composable
+fun isMediumLayout(): Boolean =
+    windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) && !isOnBookPage()
+
+/**
  * Where a page [width] wide splits, for what keeps off the split (a bar, a snackbar, a sheet): inside
  * a [SpreadScreen] where it splits, elsewhere at an unfolded book's fold ([pageFold]).
  */
@@ -52,7 +64,7 @@ internal val LocalSpread = compositionLocalOf<Spread?> { null }
 
 @Composable
 private fun spread(): Spread {
-    val info = currentWindowAdaptiveInfoV2()
+    val info = windowAdaptiveInfo()
     val density = LocalDensity.current
     val window = LocalWindowInfo.current.containerSize
     val hinge = info.windowPosture.allVerticalHingeBounds.firstOrNull()

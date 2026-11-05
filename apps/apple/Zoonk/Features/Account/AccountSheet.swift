@@ -1,6 +1,8 @@
 import SwiftUI
 
 private enum AccountDestination: Hashable {
+  case certificate(code: String)
+  case certificates
   case createAccount
   case deleteAccount(AccountDeletionDestination)
   case memory
@@ -11,6 +13,7 @@ private enum AccountDestination: Hashable {
 }
 
 enum AccountPage: Hashable {
+  case certificates
   case memory
   case preferences
   case profile
@@ -19,6 +22,7 @@ enum AccountPage: Hashable {
 extension AccountDestination {
   fileprivate init(_ page: AccountPage) {
     switch page {
+    case .certificates: self = .certificates
     case .memory: self = .memory
     case .preferences: self = .preferences
     case .profile: self = .profile
@@ -144,7 +148,11 @@ struct AccountSheet: View {
   }
 
   private func page(_ destination: AccountDestination, isBeside: Bool) -> some View {
-    let isSection = if case .deleteAccount = destination { false } else { true }
+    let isSection =
+      switch destination {
+      case .certificate, .deleteAccount: false
+      default: true
+      }
 
     return self.destination(destination)
       // Inline like the hub: a page the sheet opens at can't take it from a hub shown before it.
@@ -162,6 +170,12 @@ struct AccountSheet: View {
   @ViewBuilder
   private func destination(_ destination: AccountDestination) -> some View {
     switch destination {
+    case .certificate(let code):
+      CertificateScreen(code: code)
+    case .certificates:
+      CertificatesScreen { code in
+        path.append(.certificate(code: code))
+      }
     case .createAccount:
       LoginView()
     case .deleteAccount(let deletion):
@@ -293,7 +307,8 @@ struct AccountSheet: View {
       path.removeAll()
     case .signedOut, .unavailable:
       switch path.last {
-      case .createAccount, .memory, .plus, .preferences, .profile, .subscription:
+      case .certificate, .certificates, .createAccount, .memory, .plus, .preferences, .profile,
+        .subscription:
         path.removeAll()
       case .deleteAccount, nil:
         break
@@ -307,6 +322,7 @@ struct AccountSheet: View {
 
 /// A guest gets "Create an account" instead of logging out, which would lose their plan.
 private struct SettingsHubView: View {
+  @Environment(CertificatesStore.self) private var certificates
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
@@ -318,8 +334,8 @@ private struct SettingsHubView: View {
 
   var body: some View {
     List {
-      if !isGuest {
-        Section {
+      Section {
+        if !isGuest {
           AccountSectionLink(destination: .profile, sectionOpen: sectionOpen) {
             AccessibilityStack(spacing: 12, stackedSpacing: 8) {
               AccountAvatar(user: account.user, size: avatarSize)
@@ -332,6 +348,24 @@ private struct SettingsHubView: View {
                   .font(.subheadline)
                   .foregroundStyle(.secondary)
               }
+            }
+          }
+        }
+
+        AccountSectionLink(destination: .certificates, sectionOpen: sectionOpen) {
+          LabeledContent {
+            if let count = certificates.list.value?.count {
+              Text(count, format: .number)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+            }
+          } label: {
+            Label {
+              Text(
+                "Certificates", tableName: "Account",
+                comment: "Settings row for the learner's certificates")
+            } icon: {
+              Image(systemName: "rosette")
             }
           }
         }
@@ -410,7 +444,7 @@ private struct SettingsHubView: View {
         }
       }
     }
-    .loads(settings.preferences, settings.memory, refreshable: false)
+    .loads(settings.preferences, settings.memory, certificates.list, refreshable: false)
   }
 
   private var isGuest: Bool {

@@ -69,12 +69,12 @@ function MockWordAnswer({ question }: { question: MockQuestion }) {
           autoComplete="off"
           autoCorrect="off"
           autoFocus
-          className="text-lg disabled:opacity-100 md:text-lg"
-          disabled={locked}
+          className="text-lg md:text-lg"
           enterKeyHint="done"
           id={inputId}
           maxLength={MAX_TYPED_ANSWER}
           onChange={(event) => runner.write({ text: event.target.value })}
+          readOnly={locked}
           spellCheck={false}
           value={answer && "text" in answer ? answer.text : ""}
         />

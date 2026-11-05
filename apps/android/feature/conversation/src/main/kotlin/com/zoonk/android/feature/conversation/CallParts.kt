@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -49,15 +49,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.isWideWindow
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.withWords
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.isOnBookPage
+import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.api.models.ExamSpeakingTask
 import com.zoonk.api.models.LanguageConversation
@@ -66,12 +69,18 @@ import com.zoonk.api.models.LanguageConversationIntroObjectivesInner
 import com.zoonk.api.models.SpeakingMockExam
 
 internal val CALL_COLUMN = 640.dp
+private val CALL_ITEM_MARGIN = 16.dp
+
+/** The task's bar keeps its own 16dp sides, so its actions line up with the items' text. */
+private val CALL_BAR_WIDTH = CALL_COLUMN - CALL_ITEM_MARGIN * 2
 private val MARK_MIN = 40.dp
 
 /**
  * A call's task frame: its [content] in one column, and [aside] beside it where there's room (main's
  * task aside from `lg`); where there isn't, [content] is told so and shows it inline. On wide
- * windows the main action sits at its own width at the bar's end.
+ * windows the main action sits at its own width at the bar's end. With [barUnderAside], an unfolded
+ * book's fold docks the bar under [aside], on the page after the fold, as an intro's main action
+ * sits under the goals or card it starts.
  */
 @Composable
 internal fun CallFrame(
@@ -85,39 +94,48 @@ internal fun CallFrame(
     listModifier: Modifier = Modifier,
     bottomBar: (@Composable () -> Unit)? = null,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
+    barUnderAside: Boolean = false,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    TaskScaffold(
-        onClose = onClose,
-        modifier = modifier,
-        title = title,
-        exitConfirmation = exitConfirmation,
-        bottomBar =
-            bottomBar?.let { bar ->
-                {
-                    CompositionLocalProvider(LocalWideBar provides wide) {
-                        Box(
-                            Modifier.fillMaxWidth(),
-                            Alignment.Center,
-                        ) { Box(Modifier.widthIn(max = CALL_COLUMN), Alignment.CenterEnd) { bar() } }
-                    }
+    val wide = isWideWindow() && !isOnBookPage()
+    val bar: (@Composable () -> Unit)? =
+        bottomBar?.let { bar ->
+            {
+                CompositionLocalProvider(LocalWideBar provides wide) {
+                    Box(
+                        Modifier.fillMaxWidth(),
+                        Alignment.Center,
+                    ) { Box(Modifier.widthIn(max = CALL_BAR_WIDTH).fillMaxWidth(), Alignment.CenterEnd) { bar() } }
                 }
-            },
-        aside = aside?.let { TaskAside(content = it) },
-    ) { padding ->
-        val beside = taskAsideBeside()
-        Column(Modifier.fillMaxSize().padding(padding), horizontalAlignment = Alignment.CenterHorizontally) {
-            header?.invoke()
-            Box(Modifier.weight(1f)) {
-                LazyColumn(
-                    state = listState,
-                    modifier = listModifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(top = if (header == null) 8.dp else 20.dp, bottom = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                ) { content(beside) }
-                floating?.invoke(this)
+            }
+        }
+
+    BoxWithConstraints {
+        val fold = pageFold(maxWidth)
+        val asideBeside = supportingPaneBeside(maxWidth, panesTouch = true)
+        val barAfterFold = barUnderAside && aside != null && fold != null && asideBeside
+
+        TaskScaffold(
+            onClose = onClose,
+            modifier = modifier,
+            title = title,
+            exitConfirmation = exitConfirmation,
+            bottomBar = bar.takeUnless { barAfterFold },
+            aside = aside?.let { TaskAside(footer = bar.takeIf { barAfterFold }, content = it) },
+        ) { padding ->
+            val beside = taskAsideBeside()
+            Column(Modifier.fillMaxSize().padding(padding), horizontalAlignment = Alignment.CenterHorizontally) {
+                header?.invoke()
+                Box(Modifier.weight(1f)) {
+                    LazyColumn(
+                        state = listState,
+                        modifier = listModifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        contentPadding = PaddingValues(top = if (header == null) 8.dp else 20.dp, bottom = 24.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                    ) { content(beside) }
+                    floating?.invoke(this)
+                }
             }
         }
     }
@@ -128,15 +146,15 @@ internal fun CallTitle(text: String) {
     Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
 }
 
-/** Whether the bar is on a wide window, where its main action keeps its own width. */
+/** Whether the bar is as wide as main's `lg` for a task, off a book's page, where its main action keeps its own width. */
 internal val LocalWideBar = staticCompositionLocalOf { false }
 
-/** A bar's main action: the bar's width on a phone, its own at the bar's end on wide windows. */
+/** A bar's main action: the bar's width on a phone and on a book's page, its own at the bar's end on wide windows. */
 @Composable
 internal fun Modifier.barAction(): Modifier = if (LocalWideBar.current) this else fillMaxWidth()
 
 /** One item of a call's column, at its reading width. */
-internal fun Modifier.callItem(): Modifier = widthIn(max = CALL_COLUMN).fillMaxWidth().padding(horizontal = 16.dp)
+internal fun Modifier.callItem(): Modifier = widthIn(max = CALL_COLUMN).fillMaxWidth().padding(horizontal = CALL_ITEM_MARGIN)
 
 @Composable
 internal fun conversationTitle(conversation: LanguageConversation): String =

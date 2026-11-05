@@ -2,6 +2,7 @@ import { isPrismaTransactionConflictError, isPrismaUniqueConstraintError, prisma
 import { lockCourseHome } from "@zoonk/db/course-home";
 import { lockLearner, markPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { safeAsync } from "@zoonk/utils/error";
+import { issueEarnedCertificates } from "../certificate-issuance";
 import { type GuestLinkContext, moveKeyedRows } from "./_utils/merge-keyed-rows";
 import { mergeLanguageLevels } from "./_utils/merge-language-levels";
 import {
@@ -120,6 +121,7 @@ async function moveGuestData({
       await movePrivateCourses(context);
       await moveOwnedRows(context);
       await moveKeyedRows(context);
+      await issueEarnedCertificates(transaction, { now: new Date(), plus: "check", userId });
       await mergeLanguageLevels(context);
 
       // Lifetime progress before the day, in the order settlements lock them.

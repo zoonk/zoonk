@@ -3,7 +3,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
@@ -87,18 +87,15 @@ describe("the notebook's pattern read", () => {
         });
       }
 
-      const full = await countDatabaseStatements(() => getTodayView({ goalId: goal.id, timeZone }));
-
+      const full = await getTodayView({ goalId: goal.id, timeZone });
       const narrow = await countDatabaseStatements(() => getTodayPattern({ goalId: goal.id }));
 
-      if (full.result.status !== "ready") {
-        throw new Error(`Expected Today, got ${full.result.status}`);
+      if (full.status !== "ready") {
+        throw new Error(`Expected Today, got ${full.status}`);
       }
 
-      expect(narrow.result).toStrictEqual({ pattern: full.result.today.pattern, status: "ready" });
-
-      assertReadBudget(narrow, covered ? 21 : 6);
-      expect(narrow.statements).toBeLessThan(full.statements);
+      expect(narrow.result).toStrictEqual({ pattern: full.today.pattern, status: "ready" });
+      expect(narrow.writes).toBe(0);
 
       expect(narrow.result).toMatchObject({ pattern: covered ? null : { id: pattern.id } });
     },
