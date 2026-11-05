@@ -20,6 +20,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
 import com.zoonk.api.models.PlayableLibraryStepAnyOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfOptionPicturesValue
 import com.zoonk.api.models.ScreenPicture
+import com.zoonk.api.models.StepMarks
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -64,6 +65,8 @@ data class PlayableLesson(
     val steps: List<LessonStep>,
     val map: LessonMap?,
     val tutorSuggestions: List<LessonTutorSuggestion>,
+    /** The screens' marks and the map's `about` lines and icons are still on their way: read the lesson again within the picture wait. */
+    val marksPending: Boolean = false,
 )
 
 fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
@@ -82,6 +85,7 @@ fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
                     steps = lesson.steps.map(PlayableLibraryStep::toLessonStep),
                     map = lesson.summary.withIdeas(),
                     tutorSuggestions = value.tutorSuggestions,
+                    marksPending = lesson.marksPending == true,
                 ),
             )
         }
@@ -108,6 +112,7 @@ fun ExplanationLesson.toPlayableLesson(): PlayableLesson =
         steps = steps.map(PlayableLibraryStep::toLessonStep),
         map = summary.withIdeas(),
         tutorSuggestions = emptyList(),
+        marksPending = marksPending == true,
     )
 
 private fun LessonMap?.withIdeas() = this?.takeIf { it.ideas.isNotEmpty() }
@@ -130,6 +135,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation = citation,
                     picture = picture,
                     position = position.toInt(),
+                    marks = marks,
                 )
             }
         }
@@ -147,6 +153,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -164,6 +171,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -181,6 +189,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -203,6 +212,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -220,6 +230,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -237,6 +248,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -254,6 +266,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -271,6 +284,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
                     citation,
                     picture,
                     position.toInt(),
+                    marks,
                 )
             }
         }
@@ -299,6 +313,7 @@ private fun teaching(
     citation: StepCitation?,
     picture: ScreenPicture?,
     position: Int,
+    marks: StepMarks?,
 ) = LessonStep(
     id = id,
     skillId = skillId,
@@ -313,6 +328,7 @@ private fun teaching(
     citation = citation,
     picture = picture,
     position = position,
+    marks = marks,
 )
 
 /** Main's `toCanvasContent`: the explore's template, fields and data, drawn as an activity with nothing to ask. */

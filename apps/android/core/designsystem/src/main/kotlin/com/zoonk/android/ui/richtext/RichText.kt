@@ -13,9 +13,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.semantics.CollectionInfo
 import androidx.compose.ui.semantics.CollectionItemInfo
@@ -26,6 +30,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -46,7 +51,9 @@ import java.util.Locale
  * the `mark` sentence highlighted where the text shows it (main's `RichTextBlocks`). Paragraphs
  * take `style` (the surrounding `LocalTextStyle` by default); tables use the smaller body size.
  * `literalNumbers` keeps numbers as written, for text whose digits are characters (main's
- * `LessonRichText`).
+ * `LessonRichText`). A teaching screen also draws its `underline` phrase with a hand-drawn line and,
+ * with [marksTerms], its bold term on a highlighter, so the term stays bold and the marks are only
+ * drawing.
  */
 @Composable
 fun RichText(
@@ -55,24 +62,27 @@ fun RichText(
     mark: String? = null,
     style: TextStyle = LocalTextStyle.current,
     literalNumbers: Boolean = false,
+    underline: String? = null,
+    marksTerms: Boolean = false,
 ) {
     val locale = currentLocale()
     val blocks =
-        remember(text, mark, locale, literalNumbers) {
+        remember(text, mark, underline, locale, literalNumbers) {
             val parsed = parseRichBlocks(text)
             val marked = if (mark.isNullOrEmpty()) parsed else markRichBlocks(parsed, mark)
-            if (literalNumbers) marked else marked.map { typesetBlock(it, locale) }
+            val underlined = if (underline.isNullOrEmpty()) marked else underlineRichBlocks(marked, underline)
+            if (literalNumbers) underlined else underlined.map { typesetBlock(it, locale) }
         }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(BLOCK_GAP)) {
         blocks.forEach { block ->
             when (block) {
                 is RichBlock.Paragraph -> {
-                    RichLines(block.lines, style)
+                    RichLines(block.lines, style, marksTerms)
                 }
 
                 is RichBlock.ListBlock -> {
-                    RichList(block, style)
+                    RichList(block, style, marksTerms)
                 }
 
                 is RichBlock.Table -> {
@@ -185,16 +195,20 @@ private fun typesetBlock(
 /** Main's `bg-warning/15`. */
 private const val MARK_ALPHA = 0.15f
 
+/** [marksTerms] puts bold runs, a teaching screen's new term, on the highlighter. */
 @Composable
-fun richText(segments: List<RichSegment>): SpokenText {
+fun richText(
+    segments: List<RichSegment>,
+    marksTerms: Boolean = false,
+): SpokenText {
     val words = rememberMathWords()
     val codeBackground = MaterialTheme.colorScheme.surfaceContainerHigh
-    val mark = MaterialTheme.zoonk.warning.copy(alpha = MARK_ALPHA)
 
-    return remember(segments, words, codeBackground, mark) {
+    return remember(segments, words, codeBackground, marksTerms) {
         var hasMath = false
         val spoken = StringBuilder()
         var markFrom: Int? = null
+        var underlineFrom: Int? = null
 
         val text =
             buildAnnotatedString {
@@ -211,6 +225,7 @@ fun richText(segments: List<RichSegment>): SpokenText {
 
                         SegmentKind.Bold -> {
                             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(segment.text) }
+                            if (marksTerms) addStringAnnotation(TextMarkKind.Highlight.tag, "", start, length)
                         }
 
                         SegmentKind.Italic -> {
@@ -229,16 +244,23 @@ fun richText(segments: List<RichSegment>): SpokenText {
                     }
 
                     if (segment.kind != SegmentKind.Math && segment.kind != SegmentKind.DisplayMath) spoken.append(segment.text)
-                    // One highlight per marked run, so it spans a whole sentence.
+                    // One mark per marked run, so it spans a whole sentence or phrase.
                     val from = markFrom
                     if (segment.marked && from == null) markFrom = start
                     if (!segment.marked && from != null) {
-                        addStyle(SpanStyle(background = mark), from, start)
+                        addStringAnnotation(TextMarkKind.Highlight.tag, "", from, start)
                         markFrom = null
+                    }
+                    val underlineStart = underlineFrom
+                    if (segment.underlined && underlineStart == null) underlineFrom = start
+                    if (!segment.underlined && underlineStart != null) {
+                        addStringAnnotation(TextMarkKind.Underline.tag, "", underlineStart, start)
+                        underlineFrom = null
                     }
                 }
 
-                markFrom?.let { addStyle(SpanStyle(background = mark), it, length) }
+                markFrom?.let { addStringAnnotation(TextMarkKind.Highlight.tag, "", it, length) }
+                underlineFrom?.let { addStringAnnotation(TextMarkKind.Underline.tag, "", it, length) }
             }
 
         SpokenText(text, if (hasMath) spoken.toString() else null)
@@ -255,11 +277,12 @@ private val LINE_BREAK = RichSegment(SegmentKind.Text, "\n")
 private fun RichLines(
     lines: List<List<RichSegment>>,
     style: TextStyle,
+    marksTerms: Boolean,
 ) {
     val segments = lines.flatMapIndexed { index, line -> if (index == 0) line else listOf(LINE_BREAK) + line }
 
     if (segments.none { it.kind == SegmentKind.DisplayMath }) {
-        RichTextLine(richText(segments), Modifier, style)
+        RichTextLine(richText(segments, marksTerms), Modifier, style)
         return
     }
 
@@ -272,7 +295,7 @@ private fun RichLines(
                 val math = remember(part, words) { typesetMath(part[0].text, words) }
                 DisplayMath(math, Modifier, style)
             } else {
-                RichTextLine(richText(part), Modifier, style)
+                RichTextLine(richText(part, marksTerms), Modifier, style)
             }
         }
     }
@@ -315,13 +338,20 @@ fun RichTextLine(
     maxLines: Int = Int.MAX_VALUE,
 ) {
     val spoken = text.spoken
+    val marks = remember(text.text) { textMarks(text.text) }
+    var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
+    val highlight = MaterialTheme.zoonk.warning.copy(alpha = MARK_ALPHA)
+    val ink = MaterialTheme.zoonk.warning
 
     Text(
         text = text.text,
-        modifier = if (spoken == null) modifier else modifier.semantics { contentDescription = spoken },
+        modifier =
+            (if (spoken == null) modifier else modifier.semantics { contentDescription = spoken })
+                .then(if (marks.isEmpty()) Modifier else Modifier.drawBehind { layout?.let { drawTextMarks(it, marks, highlight, ink) } }),
         style = style,
         overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
         maxLines = maxLines,
+        onTextLayout = { if (marks.isNotEmpty()) layout = it },
     )
 }
 
@@ -345,6 +375,7 @@ private fun DisplayMath(
 private fun RichList(
     block: RichBlock.ListBlock,
     style: TextStyle,
+    marksTerms: Boolean,
 ) {
     Column(
         modifier = Modifier.semantics { collectionInfo = CollectionInfo(rowCount = block.items.size, columnCount = 1) },
@@ -370,7 +401,7 @@ private fun RichList(
                     textAlign = TextAlign.End,
                 )
 
-                RichTextLine(richText(item), Modifier.weight(1f).alignByBaseline(), style)
+                RichTextLine(richText(item, marksTerms), Modifier.weight(1f).alignByBaseline(), style)
             }
         }
     }

@@ -72,8 +72,8 @@ sealed interface LessonAction {
         val optionalStepIds: List<String> = emptyList(),
     ) : LessonAction
 
-    /** A fresh read of the lesson's screens while some pictures were still being drawn. */
-    data class PicturesRead(
+    /** A fresh read of the lesson's screens, map included, while some pictures or marks were still on their way. */
+    data class LessonRead(
         val fresh: List<LessonStep>,
         val openedAt: Long,
     ) : LessonAction
@@ -172,8 +172,8 @@ fun reduce(
             state.startRun(action, now)
         }
 
-        is LessonAction.PicturesRead -> {
-            state.withPictures(action.fresh, action.openedAt, now)
+        is LessonAction.LessonRead -> {
+            state.withLateContent(action.fresh, action.openedAt, now)
         }
 
         is LessonAction.RunResynced -> {

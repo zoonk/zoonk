@@ -22,28 +22,45 @@ fun LessonStep.isWaitingForPicture(
     now: Long,
 ): Boolean = imagePending && now - (pictureWaitStartedAt ?: openedAt) < PICTURE_WAIT_MS
 
+/** Core's `marksPending`: a new lesson's marks, `about` lines and icons come within its screens' picture wait. */
+fun LessonPlayerState.isWaitingForMarks(
+    openedAt: Long,
+    now: Long,
+): Boolean = now - (steps.values.mapNotNull(LessonStep::pictureWaitStartedAt).minOrNull() ?: openedAt) < PICTURE_WAIT_MS
+
 /**
- * Pictures drawn since the lesson opened; then, with their wait over, screens stop waiting and a
- * numbered picture's question that never got it is left out (main's `getLostNumberedScreens`).
+ * Pictures drawn and marks tagged since the lesson opened; then, with their wait over, screens stop
+ * waiting and a numbered picture's question that never got it is left out (main's
+ * `getLostNumberedScreens`). Marks reach only the screens ahead, so the one on view never moves
+ * under the learner; the map takes its `about` lines and icons at once.
  */
-fun LessonPlayerState.withPictures(
+fun LessonPlayerState.withLateContent(
     fresh: List<LessonStep>,
     openedAt: Long,
     now: Long,
 ): LessonPlayerState {
+    val shown = queue.take(position + 1).toSet()
     val drawn =
         steps.mapValues { (id, step) ->
             val read = fresh.firstOrNull { it.id == id }
             val updated =
-                if (step.imagePending && read != null) {
-                    step.copy(
-                        image = read.image ?: step.image,
-                        imagePending = read.imagePending,
-                        optionPictures =
-                            step.optionPictures + read.optionPictures,
-                    )
-                } else {
-                    step
+                when {
+                    read == null -> {
+                        step
+                    }
+
+                    step.content is StepContent.Map -> {
+                        step.copy(content = read.content)
+                    }
+
+                    else -> {
+                        step.copy(
+                            image = if (step.imagePending) read.image ?: step.image else step.image,
+                            imagePending = step.imagePending && read.imagePending,
+                            optionPictures = if (step.imagePending) step.optionPictures + read.optionPictures else step.optionPictures,
+                            marks = if (id in shown) step.marks else read.marks ?: step.marks,
+                        )
+                    }
                 }
             if (updated.imagePending && !updated.isWaitingForPicture(openedAt, now)) updated.copy(imagePending = false) else updated
         }

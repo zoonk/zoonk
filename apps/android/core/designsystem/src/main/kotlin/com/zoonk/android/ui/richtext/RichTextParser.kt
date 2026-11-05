@@ -9,12 +9,14 @@ enum class SegmentKind { Bold, Code, DisplayMath, Italic, Math, Text }
 
 /**
  * A run of lesson text with one formatting primitive. `marked` runs are a sentence the screen
- * points at, such as the one a question rests on, read again after a wrong answer.
+ * points at, such as the one a question rests on, read again after a wrong answer; `underlined`
+ * runs are a teaching screen's main idea phrase.
  */
 data class RichSegment(
     val kind: SegmentKind,
     val text: String,
     val marked: Boolean = false,
+    val underlined: Boolean = false,
 )
 
 sealed interface RichBlock {
@@ -260,6 +262,7 @@ private fun markSegment(
     segment: RichSegment,
     start: Int,
     end: Int,
+    mark: (RichSegment) -> RichSegment,
 ): List<RichSegment> {
     val from = maxOf(0, start)
     val to = minOf(segment.text.length, end)
@@ -270,13 +273,13 @@ private fun markSegment(
         }
 
         !segment.canSplit() -> {
-            listOf(segment.copy(marked = true))
+            listOf(mark(segment))
         }
 
         else -> {
             listOf(
                 segment.copy(text = segment.text.substring(0, from)),
-                segment.copy(text = segment.text.substring(from, to), marked = true),
+                mark(segment.copy(text = segment.text.substring(from, to))),
                 segment.copy(text = segment.text.substring(to)),
             ).filter { it.text.isNotEmpty() }
         }
@@ -286,6 +289,7 @@ private fun markSegment(
 private fun markLine(
     segments: List<RichSegment>,
     quote: String,
+    mark: (RichSegment) -> RichSegment,
 ): List<RichSegment>? {
     val start = segments.shownText().indexOf(quote)
     if (start == -1) return null
@@ -294,16 +298,17 @@ private fun markLine(
     var offset = 0
 
     return segments.flatMap { segment ->
-        markSegment(segment, start - offset, end - offset).also { offset += segment.text.length }
+        markSegment(segment, start - offset, end - offset, mark).also { offset += segment.text.length }
     }
 }
 
 private fun markLines(
     lines: List<List<RichSegment>>,
     quote: String,
+    mark: (RichSegment) -> RichSegment,
 ): List<List<RichSegment>>? {
     lines.forEachIndexed { index, line ->
-        val marked = markLine(line, quote)
+        val marked = markLine(line, quote, mark)
         if (marked != null) return lines.mapIndexed { at, other -> if (at == index) marked else other }
     }
 
@@ -313,10 +318,11 @@ private fun markLines(
 private fun markBlock(
     block: RichBlock,
     quote: String,
+    mark: (RichSegment) -> RichSegment,
 ): RichBlock? =
     when (block) {
-        is RichBlock.Paragraph -> markLines(block.lines, quote)?.let { block.copy(lines = it) }
-        is RichBlock.ListBlock -> markLines(block.items, quote)?.let { block.copy(items = it) }
+        is RichBlock.Paragraph -> markLines(block.lines, quote, mark)?.let { block.copy(lines = it) }
+        is RichBlock.ListBlock -> markLines(block.items, quote, mark)?.let { block.copy(items = it) }
         is RichBlock.Table -> null
     }
 
@@ -337,7 +343,7 @@ fun markRichInline(
     quote: String,
 ): List<RichSegment> {
     val shown = shownQuote(quote)
-    return shown.takeIf { it.isNotEmpty() }?.let { markLine(segments, it) } ?: segments
+    return shown.takeIf { it.isNotEmpty() }?.let { markLine(segments, it) { segment -> segment.copy(marked = true) } } ?: segments
 }
 
 /**
@@ -347,11 +353,23 @@ fun markRichInline(
 fun markRichBlocks(
     blocks: List<RichBlock>,
     quote: String,
+): List<RichBlock> = markBlocks(blocks, quote) { it.copy(marked = true) }
+
+/** The blocks with a teaching screen's main idea phrase underlined, found as [markRichBlocks] finds its quote. */
+fun underlineRichBlocks(
+    blocks: List<RichBlock>,
+    phrase: String,
+): List<RichBlock> = markBlocks(blocks, phrase) { it.copy(underlined = true) }
+
+private fun markBlocks(
+    blocks: List<RichBlock>,
+    quote: String,
+    mark: (RichSegment) -> RichSegment,
 ): List<RichBlock> {
     val shown = shownQuote(quote).takeIf { it.isNotEmpty() } ?: return blocks
 
     blocks.forEachIndexed { index, block ->
-        val marked = markBlock(block, shown)
+        val marked = markBlock(block, shown, mark)
         if (marked != null) return blocks.mapIndexed { at, other -> if (at == index) marked else other }
     }
 

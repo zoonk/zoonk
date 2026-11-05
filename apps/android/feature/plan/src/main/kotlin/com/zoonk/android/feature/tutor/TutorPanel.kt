@@ -262,14 +262,14 @@ internal fun TutorSheet(
     identity: TutorIdentity,
     onDismiss: () -> Unit,
     lessonSuggestions: List<TutorSuggestion> = emptyList(),
-    offer: TutorSuggestion? = null,
+    offer: TutorOffer? = null,
     onOfferTaken: () -> Unit = {},
 ) {
     val vm = rememberTutor(scope, app)
     // Taken once, so a sheet made again by a fold keeps what the learner made of it.
     LaunchedEffect(offer) {
         if (offer != null) {
-            vm.offer(offer)
+            if (offer.asked) vm.ask(offer.suggestion) else vm.offer(offer.suggestion)
             onOfferTaken()
         }
     }

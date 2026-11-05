@@ -116,6 +116,7 @@ import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.FillsView
 import com.zoonk.android.feature.player.steps.LessonMapView
+import com.zoonk.android.feature.player.steps.LocalAskSimpler
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.feature.player.steps.LocalScreenWork
 import com.zoonk.android.feature.player.steps.LocalStepViewHeight
@@ -125,6 +126,7 @@ import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
 import com.zoonk.android.feature.player.steps.rememberScreenWork
+import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.CelebrationScope
@@ -380,8 +382,10 @@ fun LessonPlayer(
     var asking by rememberSaveable { mutableStateOf(false) }
     // Ask opened beside the screen on an open book sits on the page after the fold, so it hides while the device is closed.
     var askedOnSpread by rememberSaveable { mutableStateOf(false) }
-    // A suggestion the help beside a teaching screen put in the buddy's composer, until the buddy takes it.
+    // A suggestion the help beside a teaching screen put in the buddy's composer, or "I didn't get this" asked at once,
+    // until the buddy takes it.
     var offerId by rememberSaveable { mutableStateOf<String?>(null) }
+    var offerAsked by rememberSaveable { mutableStateOf(false) }
     // Main's offer to ask the buddy stops for a question once it's turned down or the buddy is asked about it.
     var closedOffers by rememberSaveable { mutableStateOf(emptyList<String>()) }
     val stepId = screen?.step?.id
@@ -407,8 +411,17 @@ fun LessonPlayer(
                 val spread = spreadShows()
                 ScreenHelp(buddy) { suggestion ->
                     offerId = suggestion?.id
+                    offerAsked = false
                     ask(spread)
                 }
+            }
+        }
+    val askSimpler: ((Boolean) -> Unit)? =
+        tutor?.let { buddy ->
+            { onSpread ->
+                offerId = buddy.suggestions.firstOrNull { it.id == SIMPLER_SUGGESTION }?.id
+                offerAsked = true
+                ask(onSpread)
             }
         }
     val unsent = screen?.unsentAnswer == true
@@ -481,8 +494,11 @@ fun LessonPlayer(
                                         state.tutorScope(screen),
                                         state.showsMiss(screen) && screen.struggleOffer == null,
                                         asking && (spread || !askedOnSpread),
-                                        tutor.suggestions.firstOrNull { it.id == offerId },
-                                        { offerId = null },
+                                        tutor.suggestions.firstOrNull { it.id == offerId }?.let { TutorOffer(it, offerAsked) },
+                                        {
+                                            offerId = null
+                                            offerAsked = false
+                                        },
                                     ) { open -> if (open) ask(spread) else asking = false }
                                 }
                             }
@@ -499,7 +515,11 @@ fun LessonPlayer(
                     Starting()
                 } else {
                     Segments(screen.segments, state)
-                    CompositionLocalProvider(LocalPrimaryFocus provides primaryFocus) {
+                    val spread = spreadShows()
+                    CompositionLocalProvider(
+                        LocalPrimaryFocus provides primaryFocus,
+                        LocalAskSimpler provides askSimpler?.let { asks -> { asks(spread) } },
+                    ) {
                         Content(
                             state,
                             screen,
@@ -698,6 +718,7 @@ private fun Content(
                 BoxWithConstraints(
                     Modifier
                         .fillMaxSize()
+                        .then(if (language.languages.isLanguageLesson) Modifier else Modifier.dottedPaper())
                         .onPageSpan { span = it }
                         .pointerInput(screen.canGoBack, screen.canGoForward) {
                             var travelled = 0f
@@ -717,6 +738,8 @@ private fun Content(
                     val fold = spreadFold(maxWidth, span)
                     // The turn's page is the whole column without a fold, so the work in it keeps when the book opens or closes.
                     val part = if (fold == null) StepPart.Whole else StepPart.Turn
+                    // Beside a teaching screen's text on a spread, the buddy's help already offers the simpler explanation.
+                    val helpBeside = help != null && fold != null && step.teachesInText
 
                     StepColumn(
                         Modifier
@@ -729,12 +752,15 @@ private fun Content(
                     ) {
                         Notice(state, screen, viewModel, part)
                         CompositionLocalProvider(LocalStepViewHeight provides if (fold == null) maxHeight - STEP_PADDING * 2 else null) {
-                            work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
+                            CompositionLocalProvider(LocalAskSimpler provides LocalAskSimpler.current.takeUnless { helpBeside }) {
+                                work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
+                            }
                         }
-                        // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause.
-                        if (help != null && fold != null && step.teachesInText) {
+                        // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause;
+                        // a knowledge lesson's explanations have "I didn't get this" instead.
+                        if (helpBeside) {
                             help()
-                        } else if (offer != null && screen.quickCheck == null) {
+                        } else if (offer != null && screen.quickCheck == null && language.languages.isLanguageLesson) {
                             StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
                         }
                         Result(state, screen, if (fold == null) scroll else turnScroll, reveal, viewModel, exits, offer)
@@ -754,7 +780,9 @@ private fun Content(
                                 align = Alignment.End,
                             ) {
                                 Notice(state, screen, viewModel, StepPart.Screen)
-                                work.Page(turn = false) { StepView(step, state, screen, actions, navigator, language, StepPart.Screen) }
+                                CompositionLocalProvider(LocalAskSimpler provides LocalAskSimpler.current.takeUnless { helpBeside }) {
+                                    work.Page(turn = false) { StepView(step, state, screen, actions, navigator, language, StepPart.Screen) }
+                                }
                                 recap()
                             }
                         }

@@ -242,6 +242,26 @@ class RichTextParserTest {
     }
 
     @Test
+    fun underlinesAPhraseBesideAMarkedQuoteWithoutTakingItsMark() {
+        val text = "Essas transformações químicas que mantêm a vida se chamam **metabolismo**."
+        val quoted = markRichBlocks(parseRichBlocks(text), "se chamam **metabolismo**.")
+
+        assertEquals(
+            listOf(
+                listOf(
+                    text("Essas "),
+                    RichSegment(Text, "transformações químicas que mantêm a vida", underlined = true),
+                    text(" "),
+                    marked(Text, "se chamam "),
+                    marked(Bold, "metabolismo"),
+                    marked(Text, "."),
+                ),
+            ),
+            (underlineRichBlocks(quoted, "transformações químicas que mantêm a vida").single() as RichBlock.Paragraph).lines,
+        )
+    }
+
+    @Test
     fun marksNothingWhenNoLineShowsTheQuoteOrTheQuoteCutsAMarkInTwo() {
         val blocks = parseRichBlocks("A **bold** idea.\n\n- One item")
 

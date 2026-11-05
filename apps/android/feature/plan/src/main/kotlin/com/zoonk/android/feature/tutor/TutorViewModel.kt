@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
@@ -193,6 +194,14 @@ class TutorViewModel internal constructor(
 
     /** A lesson's own suggestion goes by its id, so its shared answer is reused. */
     fun send(suggestion: TutorSuggestion) = ask(suggestion.label, suggestion.id)
+
+    /** A suggestion the learner asked for from the screen ("I didn't get this"), sent once the conversation has loaded. */
+    fun ask(suggestion: TutorSuggestion) {
+        viewModelScope.launch {
+            thread.state.first { it.value != null }
+            send(suggestion)
+        }
+    }
 
     /** A lesson's suggestion put in the composer, ready to send; sent as it is, it still goes by its id. */
     fun offer(suggestion: TutorSuggestion) {
@@ -540,6 +549,13 @@ data class SendingQuestion(
 data class TutorSuggestion(
     val label: String,
     val id: String? = null,
+)
+
+/** A suggestion a screen hands the buddy as it opens: put in its composer, or [asked] at once. */
+@Immutable
+data class TutorOffer(
+    val suggestion: TutorSuggestion,
+    val asked: Boolean = false,
 )
 
 /** Main's backoff: 1 s doubling up to 5 s, each within 20% either way. */
