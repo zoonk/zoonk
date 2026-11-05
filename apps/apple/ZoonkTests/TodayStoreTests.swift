@@ -796,7 +796,7 @@ private func today(
 private func moment(blockID: String, nextBlockID: String?) throws -> BlockMoment {
   try decode(
     """
-    {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"comesBackOn":null,
+    {"blockId":"\(blockID)","brainPower":10,"ceremony":null,"certificates":[],"comesBackOn":null,
     "completedMissions":[],"correct":1,"fullMeal":{"bonus":0,"paid":false},"missions":[],
     "nextBlockId":\(json(nextBlockID)),"reached":null,"sessionCompleted":\(nextBlockID == nil),
     "total":1}

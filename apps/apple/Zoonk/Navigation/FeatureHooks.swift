@@ -37,10 +37,7 @@ extension PracticeHooks {
         read: { blockId, token in
           try await voice.liveCalls.checkpointCall(blockId: blockId, token: token)
         },
-        screen: { blockId in AnyView(ConversationScreen(checkpointBlockId: blockId)) }),
-      ceremony: { milestone, onClose in
-        AnyView(MilestoneCeremony(milestone: Milestone(milestone), onClose: onClose))
-      })
+        screen: { blockId in AnyView(ConversationScreen(checkpointBlockId: blockId)) }))
   }
 }
 

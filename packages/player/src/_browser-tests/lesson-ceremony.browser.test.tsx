@@ -77,14 +77,15 @@ describe("a lesson's milestone ceremony", () => {
       ),
       lesson,
       slots: {
-        ceremony: (milestone, onClose) => (
-          <MilestoneCeremony
-            buddy={null}
-            milestone={milestone}
-            onClose={onClose}
-            onShown={vi.fn()}
-          />
-        ),
+        ceremony: ({ ceremony: milestone }, onClose) =>
+          milestone && (
+            <MilestoneCeremony
+              buddy={null}
+              milestone={milestone}
+              onClose={onClose}
+              onShown={vi.fn()}
+            />
+          ),
       },
     });
 

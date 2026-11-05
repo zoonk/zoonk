@@ -438,7 +438,7 @@ private struct PronunciationResultView: View {
         }
         .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
       }
-      .milestoneCeremony(day?.ceremony)
+      .completionMoments(day)
     }
   }
 

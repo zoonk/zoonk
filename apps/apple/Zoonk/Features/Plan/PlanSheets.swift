@@ -7,6 +7,7 @@ enum PlanSheet: Identifiable, Hashable {
   case standing
   case pace
   case farTopic(skillId: String, title: String)
+  case certificate(code: String)
 
   var id: Self { self }
 }
@@ -61,6 +62,8 @@ private struct PlanSheets: ViewModifier {
             .presentationDetents([.medium, .large])
           case .farTopic(let skillId, let title):
             FarTopicSheet(goal: context.goal, skillId: skillId, title: title)
+          case .certificate(let code):
+            CertificateSheet(code: code)
           }
         }
         .environment(

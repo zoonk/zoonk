@@ -17,11 +17,19 @@ final class SessionStore {
       if oldValue.account?.account.subscription != account?.account.subscription {
         subscriptionChanged?()
       }
+
+      if let user = account?.user, oldValue.account?.user.id == user.id,
+        oldValue.account?.user.name != user.name
+      {
+        nameChanged?()
+      }
     }
   }
   /// A purchase, a restore, a web cancellation, StoreKit's updates and the account refresh all
   /// change it here, with or without a window open.
   @ObservationIgnored var subscriptionChanged: (@MainActor () -> Void)?
+  /// The same learner's name changed, here or on another device.
+  @ObservationIgnored var nameChanged: (@MainActor () -> Void)?
 
   private let api: any AccountAPIClient
   private let credentialStore: any SessionCredentialStoring
@@ -318,14 +326,18 @@ final class SessionStore {
     try? await api.isUsernameAvailable(username)
   }
 
-  /// Sends the name only when it changed, so a name saved before the length limit doesn't block
-  /// a username change.
-  func updateProfile(name: String, username: String) async -> Bool {
+  /// A nil `username` keeps the current one. Sends the name only when it changed, so a name saved
+  /// before the length limit doesn't block a username change.
+  func updateProfile(name: String, username: String? = nil) async -> Bool {
     guard let authenticatedSession else {
       return false
     }
 
     let changedName = ProfileName.isChange(name, saved: account?.user.name ?? "") ? name : nil
+    guard changedName != nil || username != nil else {
+      return true
+    }
+
     markInteractiveOperationStarted()
     let profileRevision = interactiveOperationRevision
     let profileRefreshRevision = accountRefreshRevision

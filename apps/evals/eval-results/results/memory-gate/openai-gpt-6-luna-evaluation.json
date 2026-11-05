@@ -145,6 +145,26 @@
       ],
       "testCase": {
         "expected": { "decision": "notLasting" },
+        "id": "en-goal-exam-date-expires-1",
+        "userInput": {
+          "candidate": {
+            "category": "goals",
+            "evidence": "my ENEM is on November 8",
+            "expiresAt": "2026-11-09T00:00:00.000Z",
+            "statement": "Has the ENEM on November 8"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "decision": "notLasting" },
         "id": "pt-goal-exam-month-1",
         "userInput": {
           "candidate": {
@@ -170,6 +190,46 @@
             "category": "context",
             "evidence": "I'm moving to Italy in June next year",
             "statement": "Moves to Italy in June 2027"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "keep", "predicted": "keep" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "decision": "keep" },
+        "id": "pt-keep-dated-interview-1",
+        "userInput": {
+          "candidate": {
+            "category": "context",
+            "evidence": "I can't on Friday because I have a job interview at a bank",
+            "expiresAt": "2026-10-03T00:00:00.000Z",
+            "statement": "Tem entrevista de emprego num banco em 2 de outubro"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "keep", "predicted": "keep" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "decision": "keep" },
+        "id": "en-keep-dated-trip-1",
+        "userInput": {
+          "candidate": {
+            "category": "context",
+            "evidence": "il mese prossimo vado a Napoli, il diciassette ottobre",
+            "expiresAt": "2026-10-18T00:00:00.000Z",
+            "statement": "Goes to Naples on October 17"
           }
         }
       }

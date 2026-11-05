@@ -119,6 +119,12 @@ const learnerSummarySchema = z
     }),
     places: z
       .object({
+        certificates: z
+          .boolean()
+          .meta({
+            description:
+              "The learner holds a certificate to list (`GET /me/certificates`), whatever the goal",
+          }),
         completedLessons: z
           .boolean()
           .meta({
@@ -136,7 +142,9 @@ const learnerSummarySchema = z
           }),
         speaking: z.boolean(),
       })
-      .meta({ description: "The active goal's own places beside the tabs" }),
+      .meta({
+        description: "The places beside the tabs: the active goal's own, and the certificates",
+      }),
     readAt: millisecondsSchema,
     tier: z.enum(["free", "guest", "plus"]),
     timeZone: z.string().nullable().meta({ description: "The active goal's saved time zone" }),

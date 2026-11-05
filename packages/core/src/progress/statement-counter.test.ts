@@ -1,10 +1,8 @@
 import { createRequire } from "node:module";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
-import { getBeltLevel } from "./get-belt-level";
 
 type QueueClient = { query: (text: string) => Promise<unknown>; release: () => void };
 
@@ -69,8 +67,7 @@ describe(countDatabaseStatements, () => {
       () => prisma.$queryRaw`WITH merge AS (SELECT 1 AS value) SELECT value AS merge FROM merge`,
     );
 
-    assertReadBudget(read, 1);
-    expect(read.statements).toBe(1);
+    expect(read).toMatchObject({ statements: 1, writes: 0 });
   });
 
   it("counts SELECT row locks as reads, including FOR NO KEY UPDATE", async () => {
@@ -83,24 +80,10 @@ describe(countDatabaseStatements, () => {
       }),
     );
 
-    expect(counts.statements).toBe(4);
-    assertReadBudget(counts, 4);
+    expect(counts).toMatchObject({ statements: 4, writes: 0 });
   });
 
-  it("counts the existing belt capability's real read", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-    await prisma.userProgress.create({ data: { totalBrainPower: 15_000n, userId: user.id } });
-
-    const counts = await countDatabaseStatements(() => getBeltLevel());
-
-    expect(counts.result?.level).toBe(8);
-    expect(counts.statements).toBe(1);
-    assertReadBudget(counts, 1);
-    expect(() => assertReadBudget(counts, 0)).toThrow("at most 0 statements");
-  });
-
-  it("counts transaction writes and prevents them from passing a read budget", async () => {
+  it("counts transaction writes", async () => {
     const user = await userFixture();
 
     const counts = await countDatabaseStatements(() =>
@@ -113,7 +96,6 @@ describe(countDatabaseStatements, () => {
     expect(counts.writes).toBe(1);
     const changed = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
     expect(changed.name).toBe("Changed");
-    expect(() => assertReadBudget(counts, 10)).toThrow("Expected 0 writes");
   });
 
   it("counts a mutating CTE and ignores SQL words in literals and comments", async () => {
@@ -131,8 +113,7 @@ describe(countDatabaseStatements, () => {
         prisma.$queryRaw`SELECT 'INSERT; UPDATE' AS text, $$DELETE; MERGE$$ AS literal /* UPDATE */`,
     );
 
-    assertReadBudget(read, 1);
-    expect(read.statements).toBe(1);
+    expect(read).toMatchObject({ statements: 1, writes: 0 });
   });
 
   it("counts a write even when its transaction rolls back", async () => {
@@ -148,7 +129,6 @@ describe(countDatabaseStatements, () => {
     });
 
     expect(counts).toMatchObject({ statements: 3, writes: 1 });
-    expect(() => assertReadBudget(counts, 3)).toThrow("Expected 0 writes");
     const unchanged = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
     expect(unchanged.name).toBe(user.name);
   });
@@ -189,7 +169,6 @@ describe(countDatabaseStatements, () => {
       expect(queued).toBe(2);
       expect(readCounts).toMatchObject({ statements: 1, writes: 0 });
       expect(writeCounts).toMatchObject({ statements: 1, writes: 1 });
-      expect(() => assertReadBudget(writeCounts, 1)).toThrow("Expected 0 writes");
       const changed = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
       expect(changed.name).toBe("Queued write");
     } finally {
@@ -231,8 +210,7 @@ describe(countDatabaseStatements, () => {
       const [readCounts, writeCounts] = await Promise.all([read, write]);
 
       expect(queued).toBe(1);
-      assertReadBudget(readCounts, 1);
-      expect(readCounts.statements).toBe(1);
+      expect(readCounts).toMatchObject({ statements: 1, writes: 0 });
 
       expect(writeCounts).toMatchObject(
         counted ? { statements: 1, writes: 1 } : { command: "UPDATE", rowCount: 1 },

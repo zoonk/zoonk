@@ -4,6 +4,7 @@ import SwiftUI
 enum PlanSlotItem: Hashable {
   case behind(String)
   case choice(GoalPlan.ExamChoice)
+  case courseComplete
   case coverage(String)
   case finished
   case fitLessons
@@ -12,7 +13,10 @@ enum PlanSlotItem: Hashable {
   case paused
   case tooTight
 
-  static func items(plan: GoalPlan, isPaused: Bool, isExam: Bool) -> [PlanSlotItem] {
+  /// `courseComplete` while a finished part's certificate isn't written yet.
+  static func items(
+    plan: GoalPlan, isPaused: Bool, isExam: Bool, courseComplete: Bool
+  ) -> [PlanSlotItem] {
     let fix = planPaceFix(plan, isExam: isExam)
     let status = plan.status?.kind
     let finished = plan.end != nil
@@ -23,7 +27,7 @@ enum PlanSlotItem: Hashable {
       open && !(plan.feasibility?.timeCovers ?? false) ? coverage.map { .coverage($0) } : nil,
     ].compactMap(\.self)
 
-    var items: [PlanSlotItem] = []
+    var items: [PlanSlotItem] = !finished && courseComplete ? [.courseComplete] : []
 
     if isPaused {
       items.append(.paused)
@@ -69,8 +73,12 @@ struct PlanSuggestionSection: View {
 
   var body: some View {
     let state = store.suggestionState(goalId: context.goal.id)
+    let isExam = context.goal.kind == .exam
+    let unclaimed =
+      isExam ? store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? [] : []
     let items = PlanSlotItem.items(
-      plan: context.plan, isPaused: context.isPaused, isExam: context.goal.kind == .exam
+      plan: context.plan, isPaused: context.isPaused, isExam: isExam,
+      courseComplete: !unclaimed.isEmpty
     ).filter { !state.dismissed.contains($0) }
     let index = min(state.position, max(items.count - 1, 0))
 
@@ -139,6 +147,25 @@ struct PlanSuggestionSection: View {
     store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
       $0.position = (index + count) % count
     }
+  }
+
+  /// "Beginner complete" when the claim certifies one level, else "Course complete".
+  private var completeTitle: Text {
+    let unclaimed = store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? []
+
+    if let level = unclaimed.first?.courseLevel, unclaimed.count == 1 {
+      return Text(
+        "\(String(localized: level.localizedTitle)) complete", tableName: "Plan",
+        comment:
+          "A Plan suggestion's title once every lesson and challenge of a course level is done, such as \"Beginner complete\", before the plan's end"
+      )
+    }
+
+    return Text(
+      "Course complete", tableName: "Plan",
+      comment:
+        "A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead"
+    )
   }
 
   @ViewBuilder
@@ -226,6 +253,17 @@ struct PlanSuggestionSection: View {
         }
 
         notNow(item)
+      }
+    case .courseComplete:
+      VStack(alignment: .leading, spacing: 8) {
+        Label {
+          completeTitle
+            .font(.headline)
+        } icon: {
+          StatusMark(status: .done)
+        }
+
+        CertificateClaimButton(context: context)
       }
     case .finished:
       PlanFinishedSlot(context: context)
@@ -479,6 +517,94 @@ private struct PlanPausedSlot: View {
   }
 }
 
+/// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment.
+private struct CertificateClaimButton: View {
+  @State private var isClaiming = false
+  @State private var failed = false
+
+  let context: PlanContext
+
+  var body: some View {
+    let failure = String(
+      localized: "That didn't save. Try again.", table: "Plan",
+      comment: "The plan's certificate couldn't be written; Get your certificate tries again")
+
+    Button {
+      Task {
+        isClaiming = true
+        failed = !(await context.claimCertificate())
+        isClaiming = false
+
+        if failed {
+          AccessibilityNotification.Announcement(failure).post()
+        }
+      }
+    } label: {
+      Label {
+        Text(
+          "Get your certificate", tableName: "Plan",
+          comment: "Writes the certificate of the plan's finished course or level and shows it")
+      } icon: {
+        Image(systemName: "rosette")
+      }
+    }
+    .buttonStyle(.mainAction)
+    .disabled(isClaiming)
+
+    if failed {
+      Text(failure)
+        .font(.subheadline)
+        .foregroundStyle(.destructive)
+    }
+  }
+}
+
+/// One certificate opens; several open Certificates.
+private struct PlanCertificatesButton: View {
+  @Environment(AppRouter.self) private var router
+
+  let context: PlanContext
+  let earned: [PlanEnd.Certificates.Earned]
+
+  var body: some View {
+    if let only = earned.first, earned.count == 1 {
+      Button {
+        context.show(.certificate(code: only.code))
+      } label: {
+        label(
+          Text(
+            "View certificate", tableName: "Plan",
+            comment: "Opens the certificate of the finished plan's course or level"))
+      }
+      .buttonStyle(.bordered)
+    } else if !earned.isEmpty {
+      Button {
+        router.present(.account(.certificates))
+      } label: {
+        label(
+          Text(
+            "View certificates", tableName: "Plan",
+            comment: "Opens the learner's certificates, from a plan that earned several"))
+      }
+      .buttonStyle(.bordered)
+    }
+  }
+
+  private func label(_ title: Text) -> some View {
+    HStack {
+      Label {
+        title
+      } icon: {
+        Image(systemName: "rosette")
+      }
+
+      if earned.contains(where: \.locked) {
+        PlusMark()
+      }
+    }
+  }
+}
+
 private struct PlanFinishedSlot: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
@@ -488,7 +614,7 @@ private struct PlanFinishedSlot: View {
   let context: PlanContext
 
   var body: some View {
-    let next = store.studyNext(goalId: context.goal.id)
+    let end = store.planEnd(goalId: context.goal.id)
 
     VStack(alignment: .leading, spacing: 8) {
       Label {
@@ -498,7 +624,15 @@ private struct PlanFinishedSlot: View {
         StatusMark(status: .done)
       }
 
-      if let value = next.value, value.nextLevel != nil || !value.related.isEmpty {
+      if let certificates = end.value?.certificates {
+        if certificates.unclaimed.isEmpty {
+          PlanCertificatesButton(context: context, earned: certificates.earned)
+        } else {
+          CertificateClaimButton(context: context)
+        }
+      }
+
+      if let value = end.value?.next, value.nextLevel != nil || !value.related.isEmpty {
         Text(
           "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"
         )
@@ -537,7 +671,7 @@ private struct PlanFinishedSlot: View {
         .font(.subheadline)
       }
     }
-    .loads(next, refreshable: false)
+    .loads(end, refreshable: false)
   }
 
   private func continueAtNextLevel() async {

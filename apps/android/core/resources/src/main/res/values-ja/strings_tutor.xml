@@ -106,6 +106,8 @@
   "tutor_retry_last_question": "5ac1d9c02aa755d3d4b6518472cf219bc23679279996f8228fabd635d814035b",
   "tutor_send": "029efbce94f6801698e1c30b218000d859ff3a3623117559888368a14c810734",
   "tutor_sign_in": "93bcb30db7a78d3c06cf9a155e824af4636d65095a1c7072ba9dba5d90b8bf00",
+  "tutor_step_closed": "16f2a8e64628c7a07cd95df18e7b502c7772adced20df0cc670f293b8b363adb",
+  "tutor_step_open_failed": "d839eb1cc2b6658b302b2dad4bab501ed25f0c8298796c5ddd96a19887c3305d",
   "tutor_suggest_chapter": "796f3551f96cd2aa09c5f69ab8770410d286db1adfb195ba68d6530baff52c0c",
   "tutor_suggest_item_asking": "cd704217835a1016856cc83618c97731c1944feac6d0985ce99d8ab620f0d213",
   "tutor_suggest_item_idea": "b9602d58183a9e7d9151e77a20efd76276a5f11d38a5b6c781166d5901544f69",
@@ -199,6 +201,10 @@
     <string name="tutor_link_description">このリンクを開くと、Zoonk以外のウェブサイトに移動します。</string>
     <string name="tutor_link_cancel">キャンセル</string>
     <string name="tutor_link_open">リンクを開く</string>
+    <!-- Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since -->
+    <string name="tutor_step_closed">このステップはもう利用できません。</string>
+    <!-- Under a buddy answer whose link to a step of the day didn't open -->
+    <string name="tutor_step_open_failed">このステップを開けませんでした。もう一度お試しください。</string>
     <string name="tutor_offer_open">開く</string>
     <string name="tutor_offer_choose">選ぶ</string>
     <string name="tutor_offer_start">始める</string>

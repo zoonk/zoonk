@@ -17,6 +17,10 @@ final class AppCache {
     session.subscriptionChanged = { [weak self] in
       self?.invalidate([.allowance, .userSubscription])
     }
+    // Main expires the session's tag on a rename: certificates and the buddy say the name.
+    session.nameChanged = { [weak self] in
+      self?.invalidate([.userSession])
+    }
   }
 
   /// A fetch returning nil is empty too.

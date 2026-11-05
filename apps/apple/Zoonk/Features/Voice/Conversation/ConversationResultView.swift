@@ -47,7 +47,7 @@ struct ConversationResultView: View {
         DayMomentSections(result: day)
       }
     }
-    .milestoneCeremony(day?.ceremony)
+    .completionMoments(day)
     .onDisappear { again?.cancel() }
     .safeAreaBar(edge: .bottom) {
       VStack(spacing: 8) {
