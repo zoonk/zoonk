@@ -95,6 +95,7 @@ function buildTeachingStep<TKind extends TeachingStepKind>(
     pictureWaitStartedAt,
     ...(Object.keys(optionPictures).length > 0 ? { optionPictures } : {}),
     kind,
+    marks: null,
     position: row.position,
     skillId: row.skillId,
   };

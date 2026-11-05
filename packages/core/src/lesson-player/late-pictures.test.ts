@@ -148,6 +148,7 @@ describe("a question whose numbered picture was missing during the run", () => {
         ...step,
         content: step.content ?? {},
         id: crypto.randomUUID(),
+        marks: step.marks ?? undefined,
         pictureAvailableAt: null,
         retiredAt: null,
         version: 2,

@@ -30181,6 +30181,20 @@
             "items": {
               "type": "object",
               "properties": {
+                "about": {
+                  "description": "One line in the lesson's language on what the idea covers, without giving away its answer, for before the lesson (the opening map's popover). Null until the lesson is tagged",
+                  "nullable": true,
+                  "type": "string"
+                },
+                "icon": {
+                  "description": "The idea's icon. Null until it's drawn; only the playable lesson has it",
+                  "nullable": true,
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/LessonIcon"
+                    }
+                  ]
+                },
                 "label": {
                   "description": "The idea's name in 1 to 4 words; maps written before labels have none",
                   "type": "string",
@@ -30214,6 +30228,25 @@
         ],
         "additionalProperties": false,
         "description": "A small map of what the lesson teaches: its ideas, each in one complete sentence"
+      },
+      "LessonIcon": {
+        "type": "object",
+        "properties": {
+          "smallUrl": {
+            "type": "string",
+            "description": "96 px square WebP, for small spots such as the maps and the strip"
+          },
+          "url": {
+            "type": "string",
+            "description": "256 px square WebP, for the corner of a text block"
+          }
+        },
+        "required": [
+          "smallUrl",
+          "url"
+        ],
+        "additionalProperties": false,
+        "description": "A small drawing in the lesson's house style, with a white sticker border baked in, so one file works in light and dark. Decorative: screen readers skip it, since the text beside it says the same"
       },
       "CatalogSearchResponse": {
         "type": "object",
@@ -41954,6 +41987,10 @@
                       "intermediate",
                       "advanced"
                     ]
+                  },
+                  "marksPending": {
+                    "description": "The screens' `marks` and the map's `about` lines and icons are still on their way (the lesson was written moments ago): play without them and read the lesson again in a few seconds, for at most five minutes from the screens' `pictureWaitStartedAt`",
+                    "type": "boolean"
                   },
                   "skills": {
                     "type": "array",
@@ -56285,6 +56322,14 @@
                   "activity"
                 ]
               },
+              "marks": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepMarks"
+                  }
+                ]
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -57017,6 +57062,14 @@
                   "challenge"
                 ]
               },
+              "marks": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepMarks"
+                  }
+                ]
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -57517,6 +57570,14 @@
                 "type": "string",
                 "enum": [
                   "check"
+                ]
+              },
+              "marks": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepMarks"
+                  }
                 ]
               },
               "optionPictures": {
@@ -62444,6 +62505,14 @@
                   "explanation"
                 ]
               },
+              "marks": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepMarks"
+                  }
+                ]
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -63135,6 +63204,14 @@
                   "hook"
                 ]
               },
+              "marks": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepMarks"
+                  }
+                ]
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -63396,6 +63473,14 @@
                 "type": "string",
                 "enum": [
                   "spokenAnswer"
+                ]
+              },
+              "marks": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepMarks"
+                  }
                 ]
               },
               "optionPictures": {
@@ -66438,6 +66523,14 @@
                   "summary"
                 ]
               },
+              "marks": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepMarks"
+                  }
+                ]
+              },
               "optionPictures": {
                 "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
                 "type": "object",
@@ -66878,6 +66971,14 @@
                 "type": "string",
                 "enum": [
                   "typedAnswer"
+                ]
+              },
+              "marks": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepMarks"
+                  }
                 ]
               },
               "optionPictures": {
@@ -67333,6 +67434,14 @@
                 "type": "string",
                 "enum": [
                   "workedExample"
+                ]
+              },
+              "marks": {
+                "nullable": true,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepMarks"
+                  }
                 ]
               },
               "optionPictures": {
@@ -70246,6 +70355,45 @@
             "description": "A language exercise screen: `exercise` holds what it shows and checks"
           }
         ]
+      },
+      "StepMarks": {
+        "type": "object",
+        "properties": {
+          "example": {
+            "nullable": true,
+            "description": "Whole sentences of the screen's marked text to frame as its example: an exact substring of it, markup included, so splitting the text around it never cuts a run of markup. Null when the screen has none",
+            "type": "string"
+          },
+          "icon": {
+            "nullable": true,
+            "description": "Shown on the corner of the example's frame, or of the text block when there's no example. Only on an explanation with no picture, visual or activity of its own, and null until it's drawn",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonIcon"
+              }
+            ]
+          },
+          "ideaIndex": {
+            "nullable": true,
+            "description": "The lesson map idea the screen belongs to, as an index into `summary.ideas` from 0. Null when the lesson has no map or the screen belongs to none of its ideas",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "underline": {
+            "nullable": true,
+            "description": "The phrase that states the screen's main point, to underline: an exact substring of the marked text, in plain words with no markup inside, so it reads the same in the rendered text. Often null",
+            "type": "string"
+          }
+        },
+        "required": [
+          "example",
+          "icon",
+          "ideaIndex",
+          "underline"
+        ],
+        "additionalProperties": false,
+        "description": "Light marks on a teaching screen. The marked text is an explanation's `text` or a worked example's `problem`; on other screens only `ideaIndex` is set. Null until the lesson is tagged, and on screens it never tags"
       },
       "ScreenPicture": {
         "nullable": true,
@@ -85642,6 +85790,10 @@
                   "intermediate",
                   "advanced"
                 ]
+              },
+              "marksPending": {
+                "description": "The screens' `marks` and the map's `about` lines and icons are still on their way (the lesson was written moments ago): play without them and read the lesson again in a few seconds, for at most five minutes from the screens' `pictureWaitStartedAt`",
+                "type": "boolean"
               },
               "skills": {
                 "type": "array",

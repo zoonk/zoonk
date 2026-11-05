@@ -224,6 +224,9 @@ model Step {
   source             Source?             @relation(fields: [sourceId], references: [id], onDelete: SetNull)
   /// Starts at 1.
   sourcePage         Int?                @map("source_page") @db.SmallInt
+  /// What the tagging step found on a teaching screen (core's `savedStepMarksSchema`); null until
+  /// the lesson is tagged.
+  marks              Json?
   model              String
   promptVersion      String              @map("prompt_version")
   runId              String              @map("run_id")
@@ -337,6 +340,33 @@ model MediaAsset {
 
   @@index([ownerId])
   @@map("media_assets")
+}
+
+/// A small drawing in the lessons' house style. Every lesson shares it, private ones included, so
+/// its words are English and name a generic thing, never anything of a learner's.
+model LessonIcon {
+  id            String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  /// Lowercase and singular ("rubber stamp"), so two runs can't draw the same icon.
+  name          String           @unique
+  /// More English search words; with the name they make the icon's text-search document.
+  tags          String[]
+  /// What the drawing shows, in one English sentence.
+  description   String
+  /// `running` while `runId` draws it; `failed` when drawing it failed for good.
+  status        GenerationStatus @default(running)
+  runId         String           @map("run_id")
+  /// 256 px WebP with its sticker border.
+  url           String?
+  /// 96 px WebP with its sticker border.
+  smallUrl      String?          @map("small_url")
+  styleVersion  Int              @map("style_version") @db.SmallInt
+  model         String?
+  promptVersion String?          @map("prompt_version")
+  generatedAt   DateTime?        @map("generated_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @default(now()) @updatedAt @map("updated_at")
+
+  @@map("lesson_icons")
 }
 
 /// A private chapter's picture stays in its owner's private files. A picture with serious mistakes

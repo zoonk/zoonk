@@ -2,6 +2,7 @@ import { type TeachingStepKind } from "@zoonk/core/lesson-player/playable-lesson
 import { lessonTutorSuggestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { activityExpectedSchema } from "@zoonk/core/library/activities/expected-answer";
 import { toleranceSchema } from "@zoonk/core/library/activities/schemas";
+import { stepMarksSchema } from "@zoonk/core/library/marks/contract";
 import { stepContentSchemas } from "@zoonk/core/library/steps/contract";
 import { EXERCISE_KINDS } from "@zoonk/core/player/contracts/exercise-content";
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
@@ -94,6 +95,7 @@ function teachingStepSchema<TKind extends TeachingStepKind>(kind: TKind) {
           "The screen asks for a picture that is still being drawn (the lesson was written moments ago): read the lesson again in a few seconds for `image`",
       }),
     kind: z.literal(kind),
+    marks: stepMarksSchema.nullable().optional(),
     optionPictures: z
       .record(z.string(), stepImageObjectSchema)
       .optional()
@@ -193,6 +195,13 @@ export const playableLibraryLessonResponseSchema = z
         canDo: z.string().nullable().meta({ description: "What the learner will be able to do" }),
         chapter: lessonChapterSchema,
         level: z.enum(CourseLevel),
+        marksPending: z
+          .boolean()
+          .optional()
+          .meta({
+            description:
+              "The screens' `marks` and the map's `about` lines and icons are still on their way (the lesson was written moments ago): play without them and read the lesson again in a few seconds, for at most five minutes from the screens' `pictureWaitStartedAt`",
+          }),
         skills: z.array(lessonSkillSchema),
         steps: z.array(playableStepSchema),
         summary: lessonMapResponseSchema

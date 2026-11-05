@@ -12,7 +12,7 @@ const DEFAULT_STEP_CONTENT = { text: "Test step content", title: "Test step" };
 
 /** Tests that create several steps in parallel should pass positions. */
 export async function libraryStepFixture(
-  attrs: FixtureAttrs<Step, "content"> & Pick<Step, "lessonId">,
+  attrs: FixtureAttrs<Step, "content" | "marks"> & Pick<Step, "lessonId">,
 ) {
   const position =
     attrs.position ?? (await prisma.step.count({ where: { lessonId: attrs.lessonId } }));

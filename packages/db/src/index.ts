@@ -49,6 +49,7 @@ export type {
   LearnerSource,
   LearningEvent,
   Lesson,
+  LessonIcon,
   LessonQuestion,
   LessonQuestionContextKind,
   LessonQuestionStatus,

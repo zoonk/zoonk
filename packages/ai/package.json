@@ -99,6 +99,7 @@
     "./tasks/lesson-spec/rules": "./src/tasks/lesson-spec/lesson-spec-rules.ts",
     "./tasks/lesson-spec/visuals": "./src/tasks/lesson-spec/lesson-visuals.ts",
     "./tasks/novice-rules": "./src/tasks/_utils/novice-rules.ts",
+    "./tasks/lesson-marks/quotes": "./src/tasks/lesson-marks/mark-quotes.ts",
     "./tasks/lesson-writer": "./src/tasks/lesson-writer/lesson-writer.ts",
     "./tasks/lesson-writer/fix": "./src/tasks/lesson-writer/lesson-fix.ts",
     "./tasks/lesson-writer/map": "./src/tasks/lesson-writer/lesson-map.ts",
