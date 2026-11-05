@@ -54,7 +54,6 @@ fun CertificateName.languageWord(): String {
     return targetLanguage?.let { languageName(it, locale).replaceFirstChar { first -> first.titlecase(locale) } }.orEmpty()
 }
 
-/** "Python", "Python · Beginner" for a course level, or "Spanish B1": what names it wherever it's named. */
 @Composable
 @ReadOnlyComposable
 fun CertificateName.words(): String =

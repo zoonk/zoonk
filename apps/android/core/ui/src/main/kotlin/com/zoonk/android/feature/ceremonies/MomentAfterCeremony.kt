@@ -55,7 +55,6 @@ fun MomentAfterCeremony(
     if (open == null || open.kind == Milestone.Kind.BADGE) moment()
 }
 
-/** [onSeePlus] opens Plus from a locked certificate's moment. */
 @Composable
 fun MomentAfterCeremony(
     app: AppContainer,
