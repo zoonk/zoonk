@@ -1,10 +1,12 @@
+import { type LessonMarks } from "@zoonk/core/lesson-player/playable-lesson";
 import { type LessonIcon } from "@zoonk/core/library/icons/contract";
 import { type LessonMap } from "@zoonk/core/library/lessons/map";
 import { type StepMarks } from "@zoonk/core/library/marks/contract";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
-import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { nextFrames } from "../_test-utils/tutor-api";
 import { buildLesson } from "../preview/preview-lesson";
 import { contentStep, teachingStep } from "../preview/preview-steps";
 
@@ -61,6 +63,12 @@ function lesson({ summary = MAP, tagged = true }: { summary?: LessonMap; tagged?
 
 function strip() {
   return page.getByRole("main").getByText(/^Idea \d of \d$/u);
+}
+
+function shownIdeas() {
+  return [...document.querySelectorAll('[data-slot="orientation-strip"]')]
+    .filter((shown) => shown.checkVisibility())
+    .map((shown) => shown.querySelector("p")?.textContent);
 }
 
 function underlined() {
@@ -146,6 +154,63 @@ describe("lesson marks", () => {
     await expect
       .element(ideas.last())
       .toMatchTextContent(/Reading the cloud.*The darker the cloud/u);
+  });
+
+  it("underlines a main point that runs through a new term", async () => {
+    const explanation = teachingStep("explanation", {
+      marks: marks({ ideaIndex: 0, underline: "a cloud of possibilities: a map" }),
+    });
+
+    renderLessonPlayer({ lesson: buildLesson([explanation], { summary: MAP }) });
+
+    await expect.element(page.getByText("cloud of possibilities", { exact: true })).toBeVisible();
+    expect(underlined()).toStrictEqual(["a cloud of possibilities: a map"]);
+  });
+
+  it("fills in marks that arrive after the lesson opened, without changing the screen being read", async () => {
+    const tagged = lesson();
+    const [scene, explanation, check] = tagged.steps;
+    const arrival = Promise.withResolvers<LessonMarks>();
+    const getLessonMarks = vi.fn(() => arrival.promise);
+
+    const opened = buildLesson(
+      tagged.steps.map((step) => ({ ...step, marks: null })),
+      {
+        marksPending: true,
+        summary: { ...MAP, ideas: MAP.ideas.map(({ label, text }) => ({ label, text })) },
+      },
+    );
+
+    renderLessonPlayer({
+      adapters: { ...buildAdapters(opened), getLessonMarks },
+      lesson: { ...opened, id: tagged.id },
+    });
+
+    await next();
+    await expect.element(page.getByText("It spreads out into", { exact: false })).toBeVisible();
+
+    arrival.resolve({
+      marksPending: false,
+      steps: [scene, explanation, check].flatMap((step) =>
+        step && "marks" in step ? [{ marks: step.marks, stepId: step.id }] : [],
+      ),
+      summary: MAP,
+    });
+
+    await arrival.promise;
+    await nextFrames();
+    await expect.element(strip()).not.toBeInTheDocument();
+    expect(underlined()).toStrictEqual([]);
+
+    await next();
+    await expect.element(strip()).toHaveTextContent("Idea 2 of 2");
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+    await expect.poll(shownIdeas).toStrictEqual(["Idea 1 of 2"]);
+    expect(underlined()).toStrictEqual(["a map of where it might be"]);
+
+    await page.getByRole("button", { name: "Previous screen" }).click();
+    await expect.element(page.getByText("2 ideas to discover in this lesson")).toBeVisible();
   });
 
   it("keeps a numbered list's numbers when its middle step is the example", async () => {

@@ -28,6 +28,11 @@ function splitAtExample({ example, text }: { example: string | null; text: strin
   ].filter((part) => part.text.trim());
 }
 
+/** Core finds `underline` in the text with its bold marks removed, so it may run through a new term. */
+function withoutBold(text: string): string {
+  return text.replaceAll("**", "");
+}
+
 export function CornerIcon({ className, icon }: { className?: string; icon: LessonIcon }) {
   return (
     <LessonIconImage
@@ -70,7 +75,10 @@ export function MarkedText({
 }) {
   const parts = splitAtExample({ example: marks?.example ?? null, text });
   const underline = marks?.underline ?? null;
-  const underlined = underline ? parts.findIndex((part) => part.text.includes(underline)) : -1;
+
+  const underlined = underline
+    ? parts.findIndex((part) => withoutBold(part.text).includes(underline))
+    : -1;
 
   const views = parts.map((part, index) => {
     const blocks = (

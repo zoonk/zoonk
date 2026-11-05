@@ -2,6 +2,7 @@
 
 import { type TrackEvent } from "@zoonk/core/analytics/events";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
+import { type StepMarks } from "@zoonk/core/library/marks/contract";
 import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { type MomentCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { type ReactNode, createContext, use } from "react";
@@ -53,6 +54,8 @@ export type LessonPlayerSlots = {
 
 type LessonPlayerConfig = {
   adapters: LessonPlayerAdapters;
+  /** Each screen's marks as the latest read has them, once marks arrived after the lesson's first read. */
+  arrivedMarks: ReadonlyMap<string, StepMarks | null> | null;
   buddy?: LearnBuddy | null;
   challengeTeam: ChallengeTeam | null;
   exampleLinesWriting: Promise<unknown> | null;
