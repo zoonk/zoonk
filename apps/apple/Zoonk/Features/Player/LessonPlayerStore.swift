@@ -68,7 +68,7 @@ final class LessonPlayerStore {
   /// Any touch or scroll on the screen: a learner who touches it isn't stuck.
   var touches = 0
   var isAsking = false
-  private(set) var askingOffer: LessonTutorOffer?
+  private var askingOffer: LessonTutorOffer?
   /// The lesson shows as a spread, where Ask opens beside it; elsewhere Ask is a sheet. Kept by the
   /// stage, which measures it. Once Ask is beside the lesson, closing iPhone Duo doesn't bring its
   /// sheet back.
@@ -147,8 +147,17 @@ final class LessonPlayerStore {
     return work
   }
 
-  func ask(suggestionId: String? = nil) {
-    askingOffer = suggestionId.map { LessonTutorOffer(suggestionId: $0) }
+  /// Ask stays open as the lesson moves on, and only the screen an offer was made about starts with
+  /// it, so moving on never asks again.
+  func startingOffer(about stepId: String?) -> LessonTutorOffer? {
+    askingOffer.flatMap { $0.stepId == stepId ? $0 : nil }
+  }
+
+  func ask(suggestionId: String? = nil, sendsAtOnce: Bool = false) {
+    askingOffer = suggestionId.map {
+      LessonTutorOffer(
+        suggestionId: $0, stepId: state?.currentStep?.id, sendsAtOnce: sendsAtOnce)
+    }
     isAskingInSheet = !isSpread
     isAsking = true
   }
@@ -257,12 +266,15 @@ final class LessonPlayerStore {
     screen = .playing
   }
 
-  /// Every few seconds, as the API asks, until the pictures come or the wait ends.
-  func followLatePictures() async {
-    while !Task.isCancelled, let state, let identity,
-      state.steps.values.contains(where: \.imagePending)
+  /// Every few seconds, as the API asks, until a lesson written moments ago has its pictures and
+  /// marks or the wait ends.
+  func followLateContent() async {
+    while !Task.isCancelled, let state, let identity, let lesson,
+      lesson.marksPending || state.steps.values.contains(where: \.imagePending)
     {
-      let isLastRead = !state.steps.values.contains { $0.isWaitingForPicture(openedAt: openedAt) }
+      let isLastRead =
+        !lesson.isWaitingForMarks(openedAt: openedAt)
+        && !state.steps.values.contains { $0.isWaitingForPicture(openedAt: openedAt) }
 
       if !isLastRead {
         try? await Task.sleep(for: .seconds(4))
@@ -271,8 +283,13 @@ final class LessonPlayerStore {
       await lessonResource.refresh()
       guard isCurrent(identity) else { return }
 
-      if case .ready(let lesson) = lessonResource.value {
-        self.state?.applyPictures(from: lesson.steps)
+      if case .ready(let fresh) = lessonResource.value {
+        self.state?.applyPictures(from: fresh.steps)
+
+        if lesson.marksPending {
+          self.state?.applyMarks(from: fresh.steps)
+          self.lesson = fresh
+        }
       }
 
       // A numbered picture that never came leaves its question out once the wait is over.

@@ -129,6 +129,22 @@ final class TutorConversation {
   /// made of it.
   func prepare(_ draft: TutorDraft) {
     guard preparedOffers.insert(draft.offer).inserted else { return }
+    fill(draft)
+  }
+
+  /// While an earlier question still needs its answer, the suggestion waits in the composer.
+  func ask(_ draft: TutorDraft) async {
+    guard preparedOffers.insert(draft.offer).inserted else { return }
+    await thread.load()
+
+    if canAsk {
+      await send(draft.suggestion)
+    } else {
+      fill(draft)
+    }
+  }
+
+  private func fill(_ draft: TutorDraft) {
     self.draft = draft.suggestion.label
     draftSuggestion = draft.suggestion
   }
@@ -469,10 +485,11 @@ final class TutorConversation {
   }
 }
 
-/// A suggestion offered once, to wait in the composer.
+/// A suggestion offered once.
 struct TutorDraft: Hashable, Sendable {
   let suggestion: TutorSuggestion
   let offer: UUID
+  var sendsAtOnce = false
 }
 
 /// A lesson's own suggestion carries its id.

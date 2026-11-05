@@ -10,6 +10,7 @@ struct PlayableLesson: Hashable, Sendable {
   let steps: [LessonStep]
   let summary: LessonSummary?
   let tutorSuggestions: [Components.Schemas.LessonTutorSuggestion]
+  var marksPending = false
 }
 
 struct LessonOutline: Hashable, Sendable {
@@ -105,7 +106,8 @@ struct LessonPlayerAPI: Sendable {
             targetLanguage: lesson.targetLanguage, chapterTitle: lesson.chapter?.title,
             steps: lesson.steps,
             summary: lesson.summary?.value1,
-            tutorSuggestions: ready.tutorSuggestions))
+            tutorSuggestions: ready.tutorSuggestions,
+            marksPending: lesson.marksPending == true))
       case .case2(let outline):
         let lesson = outline.lesson
         return .notGenerated(

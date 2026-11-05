@@ -83,6 +83,8 @@ struct LessonStageView: View {
         let offersHelp =
           spread != nil && step.teachesInText && tutor.panel != nil && !store.isGuest
         let recap = state.recap
+        let map = store.lesson?.taggedSummary
+        let offersDidntGetIt = step.isExplained && store.lesson?.targetLanguage == nil
 
         HStack(spacing: 0) {
           if let pages = spread {
@@ -91,10 +93,15 @@ struct LessonStageView: View {
                 LessonNotice(state: state, store: store)
 
                 VStack(alignment: .leading, spacing: 20) {
+                  LessonIdeaHeader(step: step, map: map)
                   LessonStepView(step: step, state: state, store: store, part: .screen)
                   LessonStepNotes(step: step, store: store)
                 }
                 .id(Self.screenId)
+
+                if offersDidntGetIt {
+                  LessonDidntGetIt(store: store)
+                }
 
                 // The page the learner reads ends with what the question rests on.
                 if let recap {
@@ -112,13 +119,17 @@ struct LessonStageView: View {
           }
 
           ScrollViewReader { scroll in
-            LessonPage(store: store, fillsHeight: spread == nil && step.hasWordBank) {
+            LessonPage(
+              store: store,
+              fillsHeight: spread == nil && (step.hasWordBank || (step.opensLesson && map != nil))
+            ) {
               if spread == nil {
                 LessonNotice(state: state, store: store)
               }
 
               VStack(alignment: .leading, spacing: 20) {
                 if spread == nil {
+                  LessonIdeaHeader(step: step, map: map)
                   LessonStepView(step: step, state: state, store: store, part: .screen)
                 }
 
@@ -156,7 +167,9 @@ struct LessonStageView: View {
                 .id(Self.verdictId)
               }
 
-              if step.strugglePause != nil, !offersHelp {
+              if spread == nil, offersDidntGetIt {
+                LessonDidntGetIt(store: store)
+              } else if step.strugglePause != nil, !offersHelp, !offersDidntGetIt {
                 LessonPauseOffer(step: step, store: store)
               }
 
@@ -216,6 +229,11 @@ struct LessonStageView: View {
             LessonAskPanel(store: store, isBeside: true)
               .safeAreaPadding(.leading, pages.gap)
               .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+          }
+        }
+        .background {
+          if store.lesson?.isTagged == true {
+            LessonPaper()
           }
         }
         .environment(\.isPaneSplit, spread != nil)
@@ -288,6 +306,17 @@ struct LessonPage<Content: View>: View {
       if phase != .idle {
         store.touches += 1
       }
+    }
+  }
+}
+
+private struct LessonIdeaHeader: View {
+  let step: LessonStep
+  let map: LessonSummary?
+
+  var body: some View {
+    if let map, let index = step.idea(in: map) {
+      LessonIdeaStrip(summary: map, index: index)
     }
   }
 }

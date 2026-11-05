@@ -13,12 +13,13 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
   public let optionPictures: [String: LessonStepImage]
   /// Epoch milliseconds.
   public let pictureWaitStartedAt: Int?
+  public let marks: StepMarks?
   public let content: LessonStepContent
 
   public var kind: LessonStepKind { content.kind }
 
   private enum CodingKeys: String, CodingKey {
-    case baseMap, citation, content, exercise, id, image, imagePending, kind, listening
+    case baseMap, citation, content, exercise, id, image, imagePending, kind, listening, marks
     case minTolerance, optionPictures, picture, pictureWaitStartedAt, position, skillId, wordHints
   }
 
@@ -32,6 +33,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     picture: LessonStepPicture? = nil,
     optionPictures: [String: LessonStepImage] = [:],
     pictureWaitStartedAt: Int? = nil,
+    marks: StepMarks? = nil,
     content: LessonStepContent
   ) {
     self.id = id
@@ -43,6 +45,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     self.picture = picture
     self.optionPictures = optionPictures
     self.pictureWaitStartedAt = pictureWaitStartedAt
+    self.marks = marks
     self.content = content
   }
 
@@ -58,6 +61,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     optionPictures =
       try container.decodeIfPresent([String: LessonStepImage].self, forKey: .optionPictures) ?? [:]
     pictureWaitStartedAt = try container.decodeIfPresent(Int.self, forKey: .pictureWaitStartedAt)
+    marks = try container.decodeIfPresent(StepMarks.self, forKey: .marks)
 
     let kind = try container.decode(String.self, forKey: .kind)
 
@@ -120,6 +124,7 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     try container.encode(picture, forKey: .picture)
     try container.encode(optionPictures, forKey: .optionPictures)
     try container.encodeIfPresent(pictureWaitStartedAt, forKey: .pictureWaitStartedAt)
+    try container.encode(marks, forKey: .marks)
 
     switch content {
     case .hook(let value): try container.encode(value, forKey: .content)
@@ -143,6 +148,26 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
   }
 }
 
+/// `underline` and `example` quote the marked text exactly: an explanation's `text` or a worked
+/// example's `problem`. The underline has no markup inside; the example is whole sentences with
+/// balanced markup.
+public struct StepMarks: Codable, Hashable, Sendable {
+  public let ideaIndex: Int?
+  public let underline: String?
+  public let example: String?
+  public let icon: LessonIcon?
+
+  public init(
+    ideaIndex: Int? = nil, underline: String? = nil, example: String? = nil,
+    icon: LessonIcon? = nil
+  ) {
+    self.ideaIndex = ideaIndex
+    self.underline = underline
+    self.example = example
+    self.icon = icon
+  }
+}
+
 /// A screen's own picture, drawn or not.
 public struct LessonStepPicture: Codable, Hashable, Sendable {
   public let alt: String
@@ -162,24 +187,31 @@ extension LessonStep {
       image: fresh.image ?? image, imagePending: fresh.imagePending,
       picture: picture,
       optionPictures: optionPictures.merging(fresh.optionPictures) { _, drawn in drawn },
-      pictureWaitStartedAt: pictureWaitStartedAt, content: content)
+      pictureWaitStartedAt: pictureWaitStartedAt, marks: marks, content: content)
+  }
+
+  public func withMarks(_ marks: StepMarks?) -> LessonStep {
+    LessonStep(
+      id: id, position: position, skillId: skillId, citation: citation, image: image,
+      imagePending: imagePending, picture: picture, optionPictures: optionPictures,
+      pictureWaitStartedAt: pictureWaitStartedAt, marks: marks, content: content)
   }
 
   public var withoutPendingPictures: LessonStep {
     LessonStep(
       id: id, position: position, skillId: skillId, citation: citation, image: image,
       imagePending: false, picture: picture, optionPictures: optionPictures,
-      pictureWaitStartedAt: pictureWaitStartedAt, content: content)
+      pictureWaitStartedAt: pictureWaitStartedAt, marks: marks, content: content)
   }
 
-  public func isWaitingForPicture(openedAt: Date, now: Date = .now) -> Bool {
-    guard imagePending else {
-      return false
-    }
+  public static let lateWait: TimeInterval = 5 * 60
 
-    let start =
-      pictureWaitStartedAt.map { Date(timeIntervalSince1970: Double($0) / 1000) } ?? openedAt
-    return now.timeIntervalSince(start) < 5 * 60
+  public func isWaitingForPicture(openedAt: Date, now: Date = .now) -> Bool {
+    imagePending && now.timeIntervalSince(waitStart(openedAt: openedAt)) < Self.lateWait
+  }
+
+  public func waitStart(openedAt: Date) -> Date {
+    pictureWaitStartedAt.map { Date(timeIntervalSince1970: Double($0) / 1000) } ?? openedAt
   }
 }
 

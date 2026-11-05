@@ -11,6 +11,16 @@ struct LessonMapStage: View {
   let summary: LessonSummary
 
   var body: some View {
+    stage
+      .background {
+        if store.lesson?.isTagged == true {
+          LessonPaper()
+        }
+      }
+  }
+
+  @ViewBuilder
+  private var stage: some View {
     if tutor.panel != nil, !store.isGuest {
       PaneSplit(isSpread: true) {
         mapPage
@@ -113,7 +123,7 @@ struct LessonMapSheet: View {
   }
 }
 
-/// Every idea shows its label and sentence at once: no icons, color or motion.
+/// Every idea shows its label and sentence at once: no color or motion.
 struct LessonMapView: View {
   static let name = LocalizedStringResource(
     "Lesson map", table: "Player",
@@ -127,6 +137,8 @@ struct LessonMapView: View {
 
   var body: some View {
     switch summary.shape {
+    case .hub where summary.isTagged && LessonMindMapRows.fits(summary.ideas.count):
+      LessonMindMap(title: title, ideas: summary.ideas)
     case .hub: LessonMapHub(title: title, ideas: summary.ideas)
     case .nested: LessonMapNested(ideas: summary.ideas)
     }
@@ -137,19 +149,174 @@ private struct LessonMapIdea: View {
   let idea: LessonSummary.Idea
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 2) {
-      if let label = idea.label {
-        Text(label)
-          .font(.headline)
+    HStack(alignment: .firstTextBaseline, spacing: 10) {
+      if let icon = idea.icon {
+        LessonIconImage(icon: icon, size: 32)
+          .alignmentGuide(.firstTextBaseline) { $0.height / 2 + 6 }
+      }
 
-        LessonRichText(idea.text)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-      } else {
-        LessonRichText(idea.text)
+      VStack(alignment: .leading, spacing: 2) {
+        if let label = idea.label {
+          Text(label)
+            .font(.headline)
+
+          LessonRichText(idea.text)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        } else {
+          LessonRichText(idea.text)
+        }
       }
     }
     .accessibilityElement(children: .combine)
+  }
+}
+
+/// Large text, a narrow pane and maps with more ideas than it holds read as the tree instead.
+private struct LessonMindMap: View {
+  @Environment(\.stacksContent) private var isStacked
+  @ScaledMetric(relativeTo: .subheadline) private var minimumIdeaWidth: CGFloat = 150
+
+  let title: String
+  let ideas: [LessonSummary.Idea]
+
+  private let spacing: CGFloat = 10
+
+  var body: some View {
+    if isStacked {
+      LessonMapHub(title: title, ideas: ideas)
+    } else {
+      let width = minimumIdeaWidth * 2 + spacing
+
+      ViewThatFits(in: .horizontal) {
+        branches
+          .frame(minWidth: width, idealWidth: width, maxWidth: .infinity)
+        LessonMapHub(title: title, ideas: ideas)
+      }
+    }
+  }
+
+  private var branches: some View {
+    let rows = LessonMindMapRows(count: ideas.count)
+
+    return Grid(horizontalSpacing: spacing, verticalSpacing: 18) {
+      ForEach(rows.above, id: \.self) { row in
+        ideaRow(row)
+      }
+
+      GridRow {
+        Text(title)
+          .font(.subheadline.weight(.semibold))
+          .multilineTextAlignment(.center)
+          .padding(.vertical, 8)
+          .padding(.horizontal, 14)
+          .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 12))
+          .frame(maxWidth: 260)
+          .anchorPreference(key: LessonMindMapAnchors.self, value: .bounds) {
+            LessonMindMapAnchors(center: $0)
+          }
+          .gridCellColumns(2)
+          .accessibilitySortPriority(1)
+      }
+
+      ForEach(rows.below, id: \.self) { row in
+        ideaRow(row)
+      }
+    }
+    .backgroundPreferenceValue(LessonMindMapAnchors.self) { anchors in
+      GeometryReader { proxy in
+        if let center = anchors.center.map({ proxy[$0] }) {
+          Self.connectors(from: center, to: anchors.ideas.values.map { proxy[$0] })
+            .stroke(.separator, lineWidth: 1.5)
+        }
+      }
+    }
+    .accessibilityElement(children: .contain)
+  }
+
+  private func ideaRow(_ row: [Int]) -> some View {
+    GridRow {
+      ForEach(row, id: \.self) { index in
+        LessonMindMapIdea(number: index + 1, idea: ideas[index])
+          .anchorPreference(key: LessonMindMapAnchors.self, value: .bounds) {
+            LessonMindMapAnchors(ideas: [index: $0])
+          }
+          .gridCellColumns(row.count == 1 ? 2 : 1)
+      }
+    }
+  }
+
+  private static func connectors(from center: CGRect, to ideas: [CGRect]) -> Path {
+    var path = Path()
+
+    for idea in ideas {
+      let isAbove = idea.maxY <= center.minY
+      let side: CGFloat =
+        abs(idea.midX - center.midX) < 1 ? 0 : idea.midX < center.midX ? -1 : 1
+      let start = CGPoint(
+        x: center.midX + side * center.width / 4, y: isAbove ? center.minY : center.maxY)
+      let end = CGPoint(x: idea.midX, y: isAbove ? idea.maxY : idea.minY)
+      let middle = (start.y + end.y) / 2
+
+      path.move(to: start)
+      path.addCurve(
+        to: end, control1: CGPoint(x: start.x, y: middle), control2: CGPoint(x: end.x, y: middle))
+    }
+
+    return path
+  }
+}
+
+private struct LessonMindMapIdea: View {
+  let number: Int
+  let idea: LessonSummary.Idea
+
+  var body: some View {
+    let shape = RoundedRectangle(cornerRadius: 14, style: .continuous)
+
+    VStack(alignment: .leading, spacing: 6) {
+      HStack(spacing: 8) {
+        if let icon = idea.icon {
+          LessonIconImage(icon: icon, size: 32)
+        }
+
+        VStack(alignment: .leading, spacing: 0) {
+          Text(number, format: .number)
+            .font(.caption.monospacedDigit())
+            .foregroundStyle(.secondary)
+
+          if let label = idea.label {
+            Text(label)
+              .font(.subheadline.weight(.semibold))
+          }
+        }
+      }
+
+      LessonRichText(idea.text)
+        .font(.footnote)
+        .foregroundStyle(idea.label == nil ? .primary : .secondary)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+    .padding(10)
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .background(.background, in: shape)
+    .overlay {
+      shape.strokeBorder(.separator)
+    }
+    .accessibilityElement(children: .combine)
+  }
+}
+
+private struct LessonMindMapAnchors: PreferenceKey {
+  var center: Anchor<CGRect>?
+  var ideas: [Int: Anchor<CGRect>] = [:]
+
+  static let defaultValue = LessonMindMapAnchors()
+
+  static func reduce(value: inout LessonMindMapAnchors, nextValue: () -> LessonMindMapAnchors) {
+    let next = nextValue()
+    value.center = next.center ?? value.center
+    value.ideas.merge(next.ideas) { _, new in new }
   }
 }
 
