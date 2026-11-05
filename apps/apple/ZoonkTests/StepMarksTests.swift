@@ -163,7 +163,10 @@ final class StepMarksTests: XCTestCase {
     let marks = InlineMarks(drawn, underline: "come ração", highlightsTerms: true)
 
     XCTAssertEqual(marks.terms, [10..<15], "the emoji takes two UTF-16 units")
-    XCTAssertEqual(marks.underline, 5..<15, "through the bold term, found in the drawn text")
+    XCTAssertEqual(
+      marks.underline, [5..<9, 10..<15],
+      "its words, through the bold term, found in the drawn text, without the spaces a line can break at"
+    )
     XCTAssertEqual(
       InlineMarks(drawn, underline: "não está aqui", highlightsTerms: false), InlineMarks())
   }
