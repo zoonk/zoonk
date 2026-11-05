@@ -3,10 +3,12 @@ package com.zoonk.android.feature.player.steps
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,7 +52,7 @@ internal fun LessonMapStepView(content: StepContent.Map) {
             Modifier.semantics(mergeDescendants = true) { heading() },
             icon = R.drawable.ic_lan,
         )
-        LessonMapView(content.map, content.title)
+        LessonMapView(content)
     }
 }
 
@@ -61,13 +63,12 @@ internal fun LessonMapStepView(content: StepContent.Map) {
  */
 @Composable
 fun LessonMapView(
-    map: LessonMap,
-    title: String,
+    content: StepContent.Map,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        MindMap(title, map.ideas)
-        if (map.shape == LessonMap.Shape.NESTED) {
+        MindMap(content.title, content.map.ideas, content.keepsIconRoom)
+        if (content.map.shape == LessonMap.Shape.NESTED) {
             Text(
                 stringResource(R.string.player_lesson_map_nested),
                 Modifier.fillMaxWidth(),
@@ -88,6 +89,7 @@ fun LessonMapView(
 private fun MindMap(
     title: String,
     ideas: List<LessonMapIdeasInner>,
+    keepsIconRoom: Boolean,
 ) {
     val line = MaterialTheme.colorScheme.outline
     var branches by remember { mutableStateOf(emptyList<Pair<Offset, Offset>>()) }
@@ -107,6 +109,7 @@ private fun MindMap(
                 MindMapIdea(
                     index,
                     idea,
+                    keepsIconRoom,
                     Modifier.semantics {
                         collectionItemInfo = CollectionItemInfo(rowIndex = index, rowSpan = 1, columnIndex = 0, columnSpan = 1)
                     },
@@ -177,6 +180,7 @@ private fun MindMap(
 private fun MindMapIdea(
     index: Int,
     idea: LessonMapIdeasInner,
+    keepsIconRoom: Boolean,
     modifier: Modifier,
 ) {
     Column(
@@ -188,7 +192,7 @@ private fun MindMapIdea(
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            idea.icon?.let { LessonIconImage(it, CARD_ICON) }
+            if (keepsIconRoom) Box(Modifier.size(CARD_ICON)) { idea.icon?.let { LessonIconImage(it, CARD_ICON) } }
             Column {
                 Text(
                     count(index + 1),

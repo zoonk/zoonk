@@ -57,7 +57,9 @@ fun LessonPlayerState.withLateContent(
                     }
 
                     step.content is StepContent.Map -> {
-                        step.copy(content = read.content)
+                        val map = read.content as StepContent.Map
+                        // The icons' room stays once kept, even when their wait ends without them, so nothing on the map moves.
+                        step.copy(content = map.copy(keepsIconRoom = map.keepsIconRoom || (step.content as StepContent.Map).keepsIconRoom))
                     }
 
                     else -> {

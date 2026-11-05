@@ -6,9 +6,19 @@ import com.zoonk.android.feature.player.model.StepContent
 
 const val LESSON_MAP_STEP_ID = "lesson-map"
 
-/** The lesson's screens and, when it has one, its map, which the queue takes only once the rest is done. */
+/**
+ * The lesson's screens and, when it has one, its map, which the queue takes only once the rest is done.
+ * The map keeps its icons' room while they're on their way or once any came.
+ */
 val PlayableLesson.playedSteps: List<LessonStep>
-    get() = steps + listOfNotNull(map?.let { LessonStep(LESSON_MAP_STEP_ID, null, StepContent.Map(it, title)) })
+    get() =
+        steps +
+            listOfNotNull(
+                map?.let { map ->
+                    val keepsIconRoom = marksPending || map.ideas.any { it.icon != null }
+                    LessonStep(LESSON_MAP_STEP_ID, null, StepContent.Map(map, title, keepsIconRoom))
+                },
+            )
 
 internal val LessonPlayerState.isMapAhead: Boolean
     get() = LESSON_MAP_STEP_ID in steps && LESSON_MAP_STEP_ID !in queue && quickCheck == null
