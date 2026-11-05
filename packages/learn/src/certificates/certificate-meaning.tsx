@@ -27,16 +27,6 @@ function useMeaning(facts: CertificateFacts): string[] {
     "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",
   );
 
-  if (facts.kind === "placement") {
-    return [
-      t(
-        "Zoonk's placement test asks 3 reading questions, 3 listening questions and one sentence to say aloud, each adapted to the answers before it. It estimated this level from those {count, plural, one {# answer} other {# answers}}; skills the learner skipped aren't counted.",
-        { count: facts.answered ?? 0 },
-      ),
-      `${cefr} ${nameNote}`,
-    ];
-  }
-
   if (facts.kind === "languageLevel") {
     return [
       t(

@@ -7,12 +7,7 @@ import { getLanguageName } from "@zoonk/utils/languages";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { getExtracted } from "next-intl/server";
-import {
-  formatCertificateDate,
-  formatCount,
-  getLadderFill,
-  getShownTopics,
-} from "./certificate-format";
+import { formatCertificateDate, getLadderFill, getShownTopics } from "./certificate-format";
 import { CERTIFICATE_COLORS, SUBJECT_COLORS } from "./certificate-palette";
 import {
   type CertificateStat,
@@ -99,17 +94,10 @@ async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> 
   return {
     date: formatCertificateDate({ isoDate: facts.completedOn, locale }),
     displayUrl: getCertificateDisplayUrl(links.url),
-    kindLabel:
-      facts.kind === "placement"
-        ? t({
-            description:
-              "The kind of document, above the learner's name: the level Zoonk's level test measured.",
-            message: "Placement result",
-          })
-        : t({
-            description: "The kind of document, above the learner's name on a certificate.",
-            message: "Certificate of completion",
-          }),
+    kindLabel: t({
+      description: "The kind of document, above the learner's name on a certificate.",
+      message: "Certificate of completion",
+    }),
     name: facts.recipientName
       ? { isPlaceholder: false, text: facts.recipientName }
       : { isPlaceholder: true, text: placeholder },
@@ -120,45 +108,6 @@ async function getCommonView({ facts, locale }: KindInput): Promise<CommonView> 
         "Above a certificate's link and QR code, which open the page that proves it's real.",
       message: "Verify this certificate",
     }),
-  };
-}
-
-async function getPlacementView(input: KindInput): Promise<KindView> {
-  const { facts, locale } = input;
-  const [t, readouts] = await Promise.all([getExtracted({ locale }), getSkillReadouts(input)]);
-
-  return {
-    covered: { kind: "readouts", readouts },
-    facts: [
-      {
-        label: t({
-          description: "A placement result's fact: the day the learner took the level test.",
-          message: "Taken",
-        }),
-        value: formatCertificateDate({ isoDate: facts.completedOn, locale }),
-      },
-      {
-        label: t({
-          description: "A placement result's fact: how many of the test's questions they answered.",
-          message: "Answers",
-        }),
-        value: formatCount({ count: facts.answered ?? 0, locale }),
-      },
-    ],
-    finePrint: t({
-      description: "The fine print on a placement result.",
-      message:
-        "{count, plural, one {Estimated from # answer.} other {Estimated from # answers.}} This is not an official exam result.",
-      values: { count: facts.answered ?? 0 },
-    }),
-    graph: { filled: getLadderFill(facts), kind: "ladder", reached: facts.level },
-    meta: t({
-      description:
-        "How a placement result was measured. The level follows the CEFR scale, without claiming official recognition.",
-      message: "Measured by Zoonk's placement test · aligned with the CEFR",
-    }),
-    stats: getSkillStats(readouts),
-    subject: null,
   };
 }
 
@@ -182,7 +131,7 @@ async function getLanguageLevelView(input: KindInput): Promise<KindView> {
         "Awarded when every skill this learner practiced on Zoonk reached {level}, measured from their answers. This is not an official exam result.",
       values: { level: facts.level ? NEXT_BAND[facts.level] : "" },
     }),
-    graph: { filled: getLadderFill(facts), kind: "ladder", reached: facts.level },
+    graph: { filled: getLadderFill(facts.level), kind: "ladder", reached: facts.level },
     meta: t({
       description:
         "How a language level certificate was earned. The level follows the CEFR scale, without claiming official recognition.",
@@ -282,19 +231,13 @@ async function getCourseView(input: KindInput): Promise<KindView> {
   };
 }
 
-const KIND_VIEWS = {
-  course: getCourseView,
-  languageLevel: getLanguageLevelView,
-  placement: getPlacementView,
-} satisfies Record<CertificateFacts["kind"], (input: KindInput) => Promise<KindView>>;
-
 /** Every word on a certificate, in its own language: Satori draws synchronous components. */
 export async function getCertificateView(facts: CertificateFacts): Promise<CertificateView> {
   const input = { facts, locale: getSupportedLocaleFromLanguage(facts.language) };
 
   const [common, kindView] = await Promise.all([
     getCommonView(input),
-    KIND_VIEWS[facts.kind](input),
+    facts.kind === "course" ? getCourseView(input) : getLanguageLevelView(input),
   ]);
 
   return { ...common, ...kindView };

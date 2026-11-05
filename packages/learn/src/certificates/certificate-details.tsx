@@ -48,7 +48,6 @@ function useFactRows(facts: CertificateFacts) {
   const studyTime = useStudyTime();
   const courseLevels = useCourseLevels();
   const skillName = useSkillName();
-  const completed = date.short(facts.completedOn);
 
   const skills = facts.skillLevels.map(({ label, skill }) => ({
     label: skillName(skill),
@@ -61,9 +60,7 @@ function useFactRows(facts: CertificateFacts) {
   const rows = [
     facts.kind === "course" && levels && { label: t("Levels"), mono: false, value: levels },
     ...(facts.kind === "course" ? [] : skills),
-    facts.kind === "placement"
-      ? { label: t("Taken"), mono: true, value: completed }
-      : { label: t("Completed"), mono: true, value: completed },
+    { label: t("Completed"), mono: true, value: date.short(facts.completedOn) },
     facts.lessonsStudied
       ? { label: t("Lessons studied"), mono: true, value: format.number(facts.lessonsStudied) }
       : null,
@@ -71,11 +68,6 @@ function useFactRows(facts: CertificateFacts) {
       ? { label: t("Passed by test"), mono: true, value: format.number(facts.lessonsTestedOut) }
       : null,
     facts.minutes ? { label: t("Study time"), mono: true, value: studyTime(facts.minutes) } : null,
-    facts.answered !== null && {
-      label: t("Answers"),
-      mono: true,
-      value: format.number(facts.answered),
-    },
     { label: t("Certificate ID"), mono: true, value: formatCertificateCode(facts.code) },
   ];
 

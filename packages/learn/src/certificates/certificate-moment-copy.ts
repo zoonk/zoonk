@@ -20,13 +20,6 @@ function useOneCertificateCopy() {
       };
     }
 
-    if (facts.kind === "placement") {
-      return {
-        line: t("Your {certificate} placement result is ready.", { certificate }),
-        title: t("Placement result"),
-      };
-    }
-
     return {
       line: t("Your certificate for {course} is ready.", { course: certificate }),
       title: t("Course complete!"),

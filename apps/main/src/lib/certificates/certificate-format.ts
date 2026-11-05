@@ -83,17 +83,8 @@ export function getShownTopics(topics: readonly string[]): string[] {
 
 const HALF_STEPS_PER_BAND = 2;
 
-/**
- * The ladder's cells to fill, two per band from A1: a level fills through its whole band, a
- * placement to the half step it measured.
- */
-export function getLadderFill(facts: Pick<CertificateFacts, "kind" | "level" | "measuredLevel">) {
-  const measured = facts.kind === "placement" ? parseCefrScore(facts.measuredLevel) : null;
-  const level = parseCefrScore(facts.level);
-
-  if (measured !== null) {
-    return measured * HALF_STEPS_PER_BAND + 1;
-  }
-
-  return level === null ? 0 : (level + 1) * HALF_STEPS_PER_BAND;
+/** The ladder's cells to fill, two per band from A1: a level fills through its whole band. */
+export function getLadderFill(level: CertificateFacts["level"]) {
+  const score = parseCefrScore(level);
+  return score === null ? 0 : (score + 1) * HALF_STEPS_PER_BAND;
 }

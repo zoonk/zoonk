@@ -1538,11 +1538,6 @@ msgid "Levels"
 msgstr "Seviyeler"
 
 #: src/certificates/certificate-details.tsx
-msgctxt "avtgF2"
-msgid "Taken"
-msgstr "Test tarihi"
-
-#: src/certificates/certificate-details.tsx
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Tamamlanma tarihi"
@@ -1561,11 +1556,6 @@ msgstr "Testle geçilen dersler"
 msgctxt "KHL8ap"
 msgid "Study time"
 msgstr "Çalışma süresi"
-
-#: src/certificates/certificate-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Cevaplar"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "LbAVCO"
@@ -1608,17 +1598,6 @@ msgctxt "ZP9lOu"
 msgid "{language} {level}"
 msgstr "{language} {level}"
 
-#: src/certificates/certificate-labels.ts
-#: src/certificates/certificate-moment-copy.ts
-msgctxt "WSC4bY"
-msgid "Placement result"
-msgstr "Seviye tespit testi sonucu"
-
-#: src/certificates/certificate-labels.ts
-msgctxt "zaINXN"
-msgid "Certificate of completion"
-msgstr "Tamamlama sertifikası"
-
 #. An approximate study time, such as "about 41 hr".
 #: src/certificates/certificate-labels.ts
 msgctxt "8QINPM"
@@ -1630,17 +1609,6 @@ msgstr "yaklaşık {duration}"
 msgctxt "LZF2Ia"
 msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
 msgstr "{from, select, overview {Genel bakıştan} beginner {Başlangıçtan} intermediate {Orta seviyeden} other {İleri seviyeden}} {to, select, overview {genel bakışa} beginner {başlangıca} intermediate {orta seviyeye} other {ileri seviyeye}}"
-
-#: src/certificates/certificate-labels.ts
-msgctxt "u9fD-O"
-msgid "Placement result for {name}: {certificate}"
-msgstr "{name} için seviye tespit testi sonucu: {certificate}"
-
-#: src/certificates/certificate-labels.ts
-#: src/certificates/placement-row.tsx
-msgctxt "vc8W5b"
-msgid "Placement result: {certificate}"
-msgstr "Seviye tespit testi sonucu: {certificate}"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "ZfBPq3"
@@ -1661,12 +1629,6 @@ msgstr "{name}, {course} kursunu tamamladı"
 msgctxt "z9WxBG"
 msgid "{course}, completed on Zoonk"
 msgstr "{course}, Zoonk’ta tamamlandı"
-
-#. A certificate's name on LinkedIn, such as "Spanish B1 placement result": the language and level, then the kind.
-#: src/certificates/certificate-linkedin.tsx
-msgctxt "2i1LGp"
-msgid "{certificate} placement result"
-msgstr "{certificate} seviye tespit testi sonucu"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "B-Co6Y"
@@ -1740,11 +1702,6 @@ msgid "Levels are aligned with the CEFR, the Common European Framework of Refere
 msgstr "Seviyeler, CEFR (Common European Framework of Reference for Languages) ile uyumludur. Bu, resmî bir sınav sonucu değildir."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "_1AldP"
-msgid "Zoonk's placement test asks 3 reading questions, 3 listening questions and one sentence to say aloud, each adapted to the answers before it. It estimated this level from those {count, plural, one {# answer} other {# answers}}; skills the learner skipped aren't counted."
-msgstr "Zoonk’un seviye tespit testinde 3 okuma sorusu, 3 dinleme sorusu ve sesli söylenecek bir cümle bulunur; her biri önceki cevaplara göre uyarlanır. Bu seviye, verilen {count, plural, other {# cevaba}} göre tahmin edildi; atlanan beceriler hesaba katılmaz."
-
-#: src/certificates/certificate-meaning.tsx
 msgctxt "X1QrOq"
 msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
 msgstr "Zoonk, her beceriyi (okuma, dinleme, konuşma, yazma) öğrencinin derslerde ve alıştırmalarda verdiği cevaplara göre ölçer. Bu cevaplarla seviyesi yükselen tüm beceriler bir sonraki seviyeye ulaştığında seviye tamamlanır; bu sertifika da bu becerilerin her biri {level} seviyesine ulaştığında verildi."
@@ -1809,11 +1766,6 @@ msgstr "{certificate} sertifikan hazır."
 msgctxt "e63c09"
 msgid "{level} complete!"
 msgstr "{level} tamamlandı!"
-
-#: src/certificates/certificate-moment-copy.ts
-msgctxt "BAZS05"
-msgid "Your {certificate} placement result is ready."
-msgstr "{certificate} seviye tespit testi sonucun hazır."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "lopydx"
@@ -1901,11 +1853,6 @@ msgid "Verified certificate · issued by Zoonk"
 msgstr "Doğrulanmış sertifika · Zoonk tarafından verildi"
 
 #: src/certificates/certificate-page.tsx
-msgctxt "PDKCn3"
-msgid "Measured by Zoonk's placement test on {date}."
-msgstr "{date} tarihinde Zoonk’un seviye tespit testiyle ölçüldü."
-
-#: src/certificates/certificate-page.tsx
 msgctxt "faSg-e"
 msgid "Certificate of completion, issued on {date}."
 msgstr "Bitirme sertifikası, {date} tarihinde verildi."
@@ -1927,11 +1874,6 @@ msgstr "Yazdır"
 msgctxt "5q3qC0"
 msgid "Download"
 msgstr "İndir"
-
-#: src/certificates/certificate-share.tsx
-msgctxt "dkg2AU"
-msgid "My {language} placement result on Zoonk: {level}."
-msgstr "Zoonk’taki {language} seviye tespit testi sonucum: {level}."
 
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
@@ -2009,6 +1951,11 @@ msgid "Add to LinkedIn"
 msgstr "LinkedIn’e ekle"
 
 #: src/certificates/certificates-screen.tsx
+msgctxt "zaINXN"
+msgid "Certificate of completion"
+msgstr "Tamamlama sertifikası"
+
+#: src/certificates/certificates-screen.tsx
 msgctxt "lX2csU"
 msgid "Certificates"
 msgstr "Sertifikalar"
@@ -2029,9 +1976,9 @@ msgid "No certificates yet"
 msgstr "Henüz sertifikan yok"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "SHp4oN"
-msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
-msgstr "Bir kursu veya dil seviyesini tamamladığında, ücretsiz yazdırıp paylaşabileceğin sertifikan burada görünür. Seviye tespit testinin sonucu da burada görünür."
+msgctxt "YdN3p3"
+msgid "Finish a course or a language level and its certificate shows up here, free to print and share."
+msgstr "Bir kursu ya da dil seviyesini tamamladığında sertifikan burada görünür. Ücretsiz yazdırıp paylaşabilirsin."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -2047,16 +1994,6 @@ msgstr "{count, plural, other {# sertifika}}"
 msgctxt "svDFL8"
 msgid "Print, download or share your certificates anytime."
 msgstr "Sertifikalarını istediğin zaman yazdır, indir veya paylaş."
-
-#: src/certificates/placement-row.tsx
-msgctxt "BnNTsQ"
-msgid "Create a free account to keep it and share it."
-msgstr "Sonucunu kaydetmek ve paylaşmak için ücretsiz bir hesap oluştur."
-
-#: src/certificates/placement-row.tsx
-msgctxt "DcP7sL"
-msgid "Saved in your certificates. Share it anytime."
-msgstr "Sertifikalarına kaydedildi. İstediğin zaman paylaş."
 
 #: src/challenge/challenge-call-intro.tsx
 #: src/challenge/challenge-intro.tsx

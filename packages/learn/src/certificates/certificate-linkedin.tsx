@@ -23,21 +23,6 @@ type LinkedInCertificate = Pick<
   "code" | "completedOn" | "kind" | "level" | "targetLanguage" | "title"
 >;
 
-function useLinkedInName() {
-  const t = useExtracted();
-  const certificateName = useCertificateName();
-
-  return (facts: LinkedInCertificate): string =>
-    facts.kind === "placement"
-      ? t({
-          description:
-            'A certificate\'s name on LinkedIn, such as "Spanish B1 placement result": the language and level, then the kind.',
-          message: "{certificate} placement result",
-          values: { certificate: certificateName(facts) },
-        })
-      : certificateName(facts);
-}
-
 function FieldRow({
   copy,
   label,
@@ -79,7 +64,7 @@ export function CertificateLinkedInDialog({
   open: boolean;
 }) {
   const t = useExtracted();
-  const linkedInName = useLinkedInName();
+  const certificateName = useCertificateName();
   const date = useCertificateDate();
 
   return (
@@ -109,7 +94,7 @@ export function CertificateLinkedInDialog({
               id: "linkedInCertificationName",
               message: "Name",
             })}
-            value={linkedInName(facts)}
+            value={certificateName(facts)}
           />
           <FieldRow
             copy={t("Copy the issuing organization")}

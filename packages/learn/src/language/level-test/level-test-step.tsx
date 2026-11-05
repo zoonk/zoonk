@@ -8,7 +8,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { useState, useTransition } from "react";
 import { usePoll } from "../../_utils/use-poll";
-import { type LevelTestPlacement } from "../../certificates/placement-row";
 import { StepLoading } from "../../onboarding/steps/step-parts";
 import { rememberStepStart, wasStepStarted } from "../../onboarding/steps/step-started";
 import { useReadOnOpen } from "../../onboarding/steps/use-read-on-open";
@@ -28,13 +27,9 @@ const POLL_MS = 3000;
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 
-/** Null when it didn't save. */
-export type LevelTestFinish = { placement: LevelTestPlacement | null } | null;
-
 export type LanguageLevelTestActions = {
   answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
-  finish: () => Promise<LevelTestFinish>;
-  markPlacementShown: (code: string) => Promise<void>;
+  finish: () => Promise<boolean>;
   /** Read-only: it never starts writing questions. */
   get: () => Promise<LanguageLevelTestView | null>;
   /** Only from the learner's tap, never when the screen opens; false when it couldn't start. */
@@ -91,51 +86,6 @@ function withReadAudio({ phase, view }: { phase: Phase; view: LanguageLevelTestV
   return { kind: "test", test: { ...phase.test, next: view.next } };
 }
 
-/**
- * The test ends when its last answer lands (or the learner stops): saving the finish then lets a
- * reload or another device show this result, and the last screen show its placement. Leaving with
- * the placement's row on screen counts it as seen; one never shown comes back at the end of the
- * learner's next task instead.
- */
-function useLevelTestFinish({
-  actions,
-  onDone,
-}: {
-  actions: LanguageLevelTestActions;
-  onDone: () => void;
-}) {
-  const [saved, setSaved] = useState<LevelTestFinish>(null);
-  const [failed, setFailed] = useState(false);
-  const [isPending, startTransition] = useTransition();
-
-  const save = () => {
-    startTransition(async () => {
-      const { data } = await safeAsync(actions.finish);
-      setFailed(!data);
-      setSaved(data ?? null);
-    });
-  };
-
-  /** Only a finish this screen didn't save (a failed save, a resumed screen, a skip) saves here. */
-  const finish = () =>
-    startTransition(async () => {
-      setFailed(false);
-      const shown = saved?.placement?.facts.code;
-
-      if (!saved) {
-        await actions.finish();
-      }
-
-      if (shown) {
-        await safeAsync(() => actions.markPlacementShown(shown));
-      }
-
-      onDone();
-    });
-
-  return { failed, finish, isPending, placement: saved?.placement ?? null, save };
-}
-
 export function LanguageLevelTestStep({
   actions,
   goal,
@@ -150,9 +100,9 @@ export function LanguageLevelTestStep({
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
   const [levels, setLevels] = useState<ReadyTest["levels"]>([]);
   const [bank, setBank] = useState<BankWait>(INITIAL_BANK_WAIT);
+  const [stopFailed, setStopFailed] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [isStarting, startStarting] = useTransition();
-  const ending = useLevelTestFinish({ actions, onDone });
-  const { finish, isPending } = ending;
 
   const show = (view: LanguageLevelTestView) => {
     if (view.status === "preparing") {
@@ -235,18 +185,21 @@ export function LanguageLevelTestStep({
       setBank(askedBankWait({ preparing: view, started: Boolean(started) }));
     });
 
+  const finish = () =>
+    startTransition(async () => {
+      setStopFailed(false);
+      await actions.finish();
+      onDone();
+    });
+
+  // Saving the finish ends the test, so a reload or another device shows this result too.
   const stop = () => {
     setPhase({ kind: "done" });
-    ending.save();
-  };
 
-  /** The learner's last answer ends the test: saving it then lets its result show its placement. */
-  const showAnswered = (view: LanguageLevelTestView) => {
-    show(view);
-
-    if (view.status === "ready" && view.next.kind === "done") {
-      ending.save();
-    }
+    startTransition(async () => {
+      const { data: saved } = await safeAsync(actions.finish);
+      setStopFailed(!saved);
+    });
   };
 
   switch (phase.kind) {
@@ -278,13 +231,7 @@ export function LanguageLevelTestStep({
       );
     case "done":
       return (
-        <TestDone
-          failed={ending.failed}
-          levels={levels}
-          onContinue={finish}
-          pending={isPending}
-          placement={ending.placement}
-        />
+        <TestDone failed={stopFailed} levels={levels} onContinue={finish} pending={isPending} />
       );
     case "test":
       return (
@@ -293,7 +240,7 @@ export function LanguageLevelTestStep({
           audioPending={audioPoll.status === "polling"}
           next={phase.test.next}
           onStop={stop}
-          onView={showAnswered}
+          onView={show}
           progress={phase.test.answered / phase.test.total}
           targetLanguage={goal.targetLanguage}
         />

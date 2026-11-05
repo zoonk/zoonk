@@ -63,16 +63,13 @@ export function CertificateIntro({ facts }: { facts: CertificateFacts }) {
   const t = useExtracted();
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
-  const issued = date.long(facts.completedOn);
 
   return (
     <div className="flex flex-col">
       <CertificateVerified />
       <h1 className="text-headline mt-3.5 max-w-4xl">{sentence(facts)}</h1>
       <p className="text-lead mt-2.5">
-        {facts.kind === "placement"
-          ? t("Measured by Zoonk's placement test on {date}.", { date: issued })
-          : t("Certificate of completion, issued on {date}.", { date: issued })}
+        {t("Certificate of completion, issued on {date}.", { date: date.long(facts.completedOn) })}
       </p>
     </div>
   );

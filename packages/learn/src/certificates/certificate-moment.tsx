@@ -88,9 +88,9 @@ function OwnerPart({
 }
 
 /**
- * The moment a course, a language level or a placement is certified: shown first, full screen,
- * before any milestone's ceremony and the task's own result. The name is the profile's, so fixing
- * it here fixes every certificate.
+ * The moment a course or a language level is certified: shown first, full screen, before any
+ * milestone's ceremony and the task's own result. The name is the profile's, so fixing it here
+ * fixes every certificate.
  */
 export function CertificateMoment({
   account,

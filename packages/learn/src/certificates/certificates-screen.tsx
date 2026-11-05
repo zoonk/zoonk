@@ -31,7 +31,6 @@ import { GoalMark } from "../shell/goal-mark";
 import { LearnPageBar } from "../shell/learn-bar";
 import {
   useCertificateDate,
-  useCertificateKind,
   useCertificateName,
   useCertificateSentence,
 } from "./certificate-labels";
@@ -52,7 +51,7 @@ const UP_NEXT_ID = "certificates-up-next";
 
 function CertificateItem({ facts, links }: ListedCertificate) {
   const certificateName = useCertificateName();
-  const certificateKind = useCertificateKind();
+  const t = useExtracted();
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
 
@@ -77,7 +76,7 @@ function CertificateItem({ facts, links }: ListedCertificate) {
           {certificateName(facts)}
         </span>
         <span className="text-muted-foreground text-xs leading-snug">
-          {certificateKind(facts.kind)}
+          {t("Certificate of completion")}
           {" · "}
           <span className="font-mono tabular-nums">{date.short(facts.completedOn)}</span>
         </span>
@@ -180,7 +179,7 @@ function EmptyCertificates({
         </h2>
         <p className="text-muted-foreground mt-1.5 text-sm text-pretty">
           {t(
-            "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too.",
+            "Finish a course or a language level and its certificate shows up here, free to print and share.",
           )}
         </p>
         <LearnLink

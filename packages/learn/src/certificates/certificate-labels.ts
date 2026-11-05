@@ -51,13 +51,6 @@ export function useCertificateName() {
   };
 }
 
-export function useCertificateKind() {
-  const t = useExtracted();
-
-  return (kind: CertificateFacts["kind"]): string =>
-    kind === "placement" ? t("Placement result") : t("Certificate of completion");
-}
-
 /** "about 41 hr", "about 45 min". */
 export function useStudyTime() {
   const t = useExtracted();
@@ -119,12 +112,6 @@ export function useCertificateSentence() {
     const level = facts.level ?? "";
     const language = languageName(facts.targetLanguage);
     const certificate = certificateName(facts);
-
-    if (facts.kind === "placement") {
-      return name
-        ? t("Placement result for {name}: {certificate}", { certificate, name })
-        : t("Placement result: {certificate}", { certificate });
-    }
 
     if (facts.kind === "languageLevel") {
       return name
