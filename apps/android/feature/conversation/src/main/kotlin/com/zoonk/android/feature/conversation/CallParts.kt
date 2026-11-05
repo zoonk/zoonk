@@ -52,13 +52,12 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.components.isWideWindow
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.withWords
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.isOnBookPage
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.scaffold.taskAsideBeside
@@ -97,7 +96,7 @@ internal fun CallFrame(
     barUnderAside: Boolean = false,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    val wide = isWideWindow() && !isOnBookPage()
+    val wide = isWideLayout()
     val bar: (@Composable () -> Unit)? =
         bottomBar?.let { bar ->
             {
