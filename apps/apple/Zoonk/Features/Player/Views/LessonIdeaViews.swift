@@ -237,6 +237,7 @@ private struct LessonOpeningIdea: View {
         .frame(width: Self.size, height: Self.size)
         .overlay(alignment: .bottomTrailing) {
           number
+            .padding(3)
             .frame(minWidth: 22, minHeight: 22)
             .background(Color(.systemBackground), in: .circle)
             .overlay {
