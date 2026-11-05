@@ -25,6 +25,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.StudyMissionMoment
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -163,8 +164,12 @@ class TutorViewModel internal constructor(
     /** Where an answer's step link leads once it opened, even after the answer scrolled away or the screen was made again. */
     val blockRoutes: Flow<AppRoute> = openedBlocks.receiveAsFlow()
 
-    /** The learner left the conversation, so a step link's open still on its way leads and says nothing when it lands. */
+    /**
+     * The learner left the conversation, so a step link's open still on its way leads and says
+     * nothing when it lands, and a screen's ask still waiting for the conversation isn't sent.
+     */
     fun leave() {
+        screenAsk?.cancel()
         leadsWhereTapped = false
         blockNotice = null
         do {
@@ -201,15 +206,19 @@ class TutorViewModel internal constructor(
      * which goes first, as on main.
      */
     fun ask(suggestion: TutorSuggestion) {
-        viewModelScope.launch {
-            val turns =
-                thread.state
-                    .first { it.value != null }
-                    .value
-                    ?.turns ?: return@launch
-            if (unresolved == null && state.value.canAsk(turns)) send(suggestion) else offer(suggestion)
-        }
+        screenAsk?.cancel()
+        screenAsk =
+            viewModelScope.launch {
+                val turns =
+                    thread.state
+                        .first { it.value != null }
+                        .value
+                        ?.turns ?: return@launch
+                if (unresolved == null && state.value.canAsk(turns)) send(suggestion) else offer(suggestion)
+            }
     }
+
+    private var screenAsk: Job? = null
 
     /** A lesson's suggestion put in the composer, ready to send; sent as it is, it still goes by its id. */
     fun offer(suggestion: TutorSuggestion) {
