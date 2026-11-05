@@ -178,6 +178,20 @@ const counterRepairs: ImageScene = {
   supportingObjects: ["a pegboard with a screwdriver and a wrench"],
 };
 
+const carbonShells: ImageScene = {
+  focalObject:
+    "a simplified carbon atom diagram with a small solid center and two concentric circular rings, containing two small dots on the inner ring and four small dots on the outer ring",
+  labels: [
+    { target: "above the whole atom diagram", text: "carbono" },
+    { target: "next to the center circle", text: "centro" },
+    { target: "next to one dot on the outer ring", text: "elétron" },
+  ],
+  layout: "single",
+  motion: null,
+  relation: null,
+  supportingObjects: [],
+};
+
 const discount = sceneOf("discount-pt");
 const electronCloud = sceneOf("electron-cloud-en");
 const microwave = sceneOf("microwave-en");
@@ -428,6 +442,16 @@ export const TEST_CASES = [
       alt: "Igor entrega uma torradeira consertada no balcão e, à noite, anota o valor recebido num caderno em casa.",
       language: "pt",
       scene: counterRepairs,
+    },
+  }),
+  checkCase({
+    expected: false,
+    id: "carbon-extra-outer-electron",
+    imageFile: "flare-carbon-extra-electron-pt.webp",
+    input: {
+      alt: "Átomo de carbono com centro pequeno, dois pontos na faixa de dentro e quatro na faixa de fora, com os rótulos centro, elétron e carbono.",
+      language: "pt",
+      scene: carbonShells,
     },
   }),
 ];
