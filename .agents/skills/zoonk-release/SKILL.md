@@ -9,54 +9,57 @@ metadata:
 
 # Releases
 
-Publishing a stable GitHub release deploys production: the release workflow checks that the tagged commit passed CI, migrates the production database once and deploys the API, Main and Admin ([deployments](../../../.github/DEPLOYMENTS.md)). The user's request to create a release approves publishing it. When they ask to review the notes first, create the release as a draft (`--draft`) and hand back its link; publishing the draft starts the deployment.
+Publishing a stable GitHub release deploys production: the release workflow checks that the tagged commit passed CI, migrates the production database once and deploys the API, Main and Admin ([releases and hotfixes](../../../.github/DEPLOYMENTS.md#releases-and-hotfixes)). The user's request to create a release approves publishing it. When they ask to review the notes first, create the release as a draft (`--draft`) and hand back its link; publishing the draft starts the deployment.
 
 ## 1. Pick the commit and the version
 
-- **Last release:** the newest published stable release: `gh release list --exclude-drafts --exclude-pre-releases --limit 1`.
-- **Release commit:** the newest `main` commit whose CI passed: `gh run list --workflow ci.yml --branch main --event push --json headSha,status,conclusion`. When the newest commit's run is still going, wait for it, so the release doesn't leave it out. When it failed, release the newest commit that passed and name the commits left for the next release in the handoff.
-- **Version:** bump the minor of the last release's tag, keeping its format (`v2.0` to `v2.1`). A hotfix bumps the patch (`v2.1` to `v2.1.1`), and the major changes only when the user asks. A version the user gives wins.
+Choose both once, before reading what changed, and keep them.
 
-The tag is the release's version, and nothing in the repository reads it, so a release needs no commit. The `version` fields in workspace `package.json` files, the OpenAPI document's `info.version` and the native apps' store versions are not the release version; leave them alone.
+- **Last release:** the newest published stable release whose tag is on `main` (`gh release list --exclude-drafts --exclude-pre-releases`, then `git merge-base --is-ancestor <tag> origin/main`). A hotfix's tag sits on its own branch, so the release before it is the base.
+- **Release commit:** the newest commit in `git log --first-parent origin/main` whose CI passed (`gh run list --workflow ci.yml --commit <sha>`). When the newest commit's run is still going, wait for that run only, and keep that commit even if `main` moves on. When it failed, take the newest commit that passed and name the ones left out in the handoff.
+- **Version:** bump the minor of the newest release's tag, keeping its format (`v2.0` to `v2.1`). A hotfix bumps the patch (`v2.1` to `v2.1.1`), and the major changes only when the user asks. A version the user gives wins. A draft release that already has the version is this release's: finish it instead of creating another.
+
+The tag is the release's version, and nothing in the repository reads it, so a release changes no files. Leave the `version` fields in `package.json` files, the OpenAPI document's `info.version` and the native apps' store versions alone.
 
 A hotfix follows [releases and hotfixes](../../../.github/DEPLOYMENTS.md#releases-and-hotfixes): its release commit is the fix on its branch, and its notes cover that fix.
 
-If nothing since the last release changes what learners get (step 2), tell the user and stop.
-
 ## 2. Read what changed
 
-Each commit on `main` is a squashed PR whose number ends its subject. List them with `git log --first-parent --format='%h %s' <last tag>..<release commit>`. Read each PR's title and description (`gh pr view <number> --json title,body`), which say what changed for learners, and open the diff when they don't. Understand what a change does for a learner before you write about it.
+Each commit on `main` is a squashed PR whose number ends its subject: `git log --first-parent --format='%h %s' <last release tag>..<release commit>`. Sort them by the paths they touch (`git show --name-only --format= <commit>`) rather than by the scope in their title, which can hide a web change. Read the description of every PR that might reach learners (`gh pr view <number> --json title,body`), and open its diff when the description doesn't say what changed for them.
 
-On a long range, read the titles first and drop what is clearly left out, then split the rest across subagents by area ([orchestration guide](../../guides/orchestration.md)). Each returns, per PR, what a learner notices, or that they notice nothing.
+On a long range, group the PRs that clearly belong together, then split the reading across subagents by product area, such as calls, lessons, Today and plans, and accounts. Each returns, per PR: what a learner notices before and after (or nothing), whether the problem existed at the last release, any numbers the PR measured, and the related PRs it saw.
 
 Leave out what learners don't get from this release:
 
 - Agent instructions, CI, tooling, tests, evals, and refactors or dependency updates that change nothing a learner sees.
 - Admin, which only the team uses, and the blog, which deploys on its own.
-- Changes to the Apple or Android app while that app isn't in its store (look `com.zoonk` up in the App Store and on Google Play). Once it is, include them and name the platform.
-- What the last release's notes already announced, such as a hotfix brought back to `main`.
+- Changes to the Apple or Android app while that app isn't in its store: `https://itunes.apple.com/lookup?bundleId=com.zoonk` returns `"resultCount":0`, and `https://play.google.com/store/apps/details?id=com.zoonk` returns a 404. Describe a PR that also changes the web by its web effect, without naming an app that isn't out. Once an app is in its store, include its changes and name the platform.
+- Performance work that only counted database statements or queries: learners notice time, not counts.
+- What a release since the last release tag already announced, such as a hotfix brought back to `main`.
 
-A fix to something that never reached learners, such as a feature added in this same release, is part of building it: fold it into that feature's item.
+A fix to something that never reached learners, such as a feature added in this same release, is part of building it: fold it into that feature's item. The code at the last release tag tells you whether the problem shipped.
+
+If nothing left changes what learners get, tell the user and stop.
 
 ## 3. Write the notes
 
-The readers are learners and people following Zoonk, not the team. They want to know what they can do now that they couldn't before, what works better and what stopped going wrong. Group the PRs that changed the same thing into one item, start with what the learner notices, and end each item with its PR numbers, such as `(#1956, #1965)`.
+The readers are learners and people following Zoonk, not the team. They want to know what they can do now that they couldn't before, what works better and what stopped going wrong. Write in English. Group the PRs that changed the same thing into one item, start with what the learner notices, and end each item with its PR numbers, such as `(#1956, #1965)`.
 
 Place each item by what the learner experiences, not by its commit type: a `fix` can add something new, and a `feat` can polish something that existed.
 
-| Section           | What goes there                                                                                                                                                                         |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `## Highlights`   | The two to four changes that matter most to the most learners. Each gets a `###` heading that says what learners get and a short paragraph with a concrete example. Not repeated below. |
-| `## Features`     | New things learners can do.                                                                                                                                                             |
-| `## Enhancements` | Things that already existed and now work better: easier, faster, clearer, more accessible.                                                                                              |
-| `## Bug Fixes`    | Things that went wrong for learners in the last release and no longer do. Say what went wrong as they saw it and how it behaves now.                                                    |
+| Section           | What goes there                                                                                                                                                                                      |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `## Highlights`   | The two to four changes that matter most to the most learners. Each gets a `###` heading that says what learners get and a paragraph of a few sentences with a concrete example. Not repeated below. |
+| `## Features`     | New things learners can do.                                                                                                                                                                          |
+| `## Enhancements` | Things that already existed and now work better: easier, faster, clearer, more accessible.                                                                                                           |
+| `## Bug Fixes`    | Things that went wrong for learners in the last release and no longer do. Say what went wrong as they saw it and how it behaves now.                                                                 |
 
-Leave out an empty section. A fix that only a rare path hit can go; ten small fixes to one screen can be one item about that screen. Spend more words on what matters more.
+Below Highlights, each item is one bullet of one or two sentences. Leave out an empty section. Most people read the Highlights and skim the rest, so keep the whole thing to a few minutes' read: ten small fixes to one screen become one item about that screen, and when a section runs long, cut what the fewest learners would notice. A rare fix can go unless it blocked something completely, such as signing in.
 
 Write the way someone on the team would explain the change to a learner:
 
-- "You" for the learner, "we" for Zoonk, in plain words. No internal names: packages, tables, workflows, components, file paths, model or provider names.
-- Say what changed. "Bug fixes and improvements", "improved performance" and "a better experience" say nothing; "Lessons open about twice as fast on a phone" does, when a PR measured it. Make only claims the PRs support, and never invent a number.
+- "You" for the learner, "we" for Zoonk, in plain words. No internal names: packages, tables, workflows, components, file paths, model or provider names. Names learners know, such as an exam, a browser or LinkedIn, are fine.
+- Say what changed. "Bug fixes and improvements", "improved performance" and "a better experience" say nothing; "Lessons open about twice as fast on a phone" does, when a PR measured it. Quote a number only from a PR that measured it, after checking that no later PR in the release measured it differently. A number measured only before the change describes the wait that went away, not how much faster things got. Never invent one.
 - Run the self-check in [copywriting's AI tells](../copywriting/references/ai-tells.md) on the draft and rewrite what it flags. No em dashes, no "we're excited to", no closing line that sums up the release.
 
 ```text
@@ -70,9 +73,9 @@ Write the way someone on the team would explain the change to a learner:
 Write the notes to a file outside the repository and publish:
 
 ```sh
-gh release create <tag> --target <release commit sha> --title <tag> --notes-file <notes file>
+gh release create <tag> --target <release commit's full sha> --title <tag> --notes-file <notes file>
 ```
 
-This creates the tag on the release commit and publishes the release, which starts the Production Release workflow. Find its run (`gh run list --workflow production.yml --limit 1`) and wait for it to finish ([orchestration guide](../../guides/orchestration.md)). Investigate a failure like a failing check ([root verification rules](../../../AGENTS.md#verification)): a failed release can leave one app on the new version and another on the old one. Re-run the failed jobs once (`gh run rerun <run id> --failed`) only when the log shows an outage before any of our code ran; never delete and republish the release to retry it.
+This creates the tag on the release commit and publishes the release. To publish a draft the user reviewed, run `gh release edit <tag> --draft=false`. Either one starts the Production Release workflow: find the run whose branch is the new tag (`gh run list --workflow production.yml --event release`; it can take a few seconds to show up) and wait for it to finish. Investigate a failure from its log: a failed release can leave one app on the new version and another on the old one. Re-run the failed jobs once (`gh run rerun <run id> --failed`) only when the log shows an outage before any of our code ran; never delete and republish the release to retry it.
 
 Hand back with the release link, its tag and commit, the deployment's result, and the commits left for the next release.
