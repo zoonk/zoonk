@@ -21,8 +21,7 @@ import { updateGoal } from "../goals/update-goal";
 import { testOutKnownPlanItems } from "../learner/_utils/known-skills";
 import { writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { celebrateProgress } from "../milestones/celebrate-progress";
-import { checkOffLesson } from "../sessions/_test-utils/check-off-lesson";
-import { completePlanItem } from "../sessions/_utils/plan-items";
+import { completeLessonPlanItems, completePlanItem } from "../sessions/_utils/plan-items";
 import { reconcileAppleSubscription } from "../subscriptions/reconcile-apple-subscription";
 import { getFieldMapView } from "../view-models/map/get-field-map-view";
 import { claimCourseCertificate } from "./claim-course-certificate";
@@ -146,12 +145,18 @@ function lastTodo({ plan }: CourseGoal) {
   return item;
 }
 
+/** What a lesson's completion does to the learner's plans, in the transaction that closes its run. */
 function finishLesson(fixture: CourseGoal, item = lastTodo(fixture)) {
-  if (!item.lessonId) {
+  const { lessonId } = item;
+  const userId = fixture.user.id;
+
+  if (!lessonId) {
     throw new Error("Expected a lesson item");
   }
 
-  return checkOffLesson({ lessonId: item.lessonId, userId: fixture.user.id });
+  return writeLearnerChange({ planInputs: true, userId }, (tx) =>
+    completeLessonPlanItems(tx, { lessonId, now: new Date(), userId }),
+  );
 }
 
 function listCertificates(userId: string) {

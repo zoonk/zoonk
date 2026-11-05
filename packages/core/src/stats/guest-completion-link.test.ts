@@ -1,6 +1,10 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { describe, expect, it, vi } from "vitest";
 import {
   createExistingAccount,
@@ -10,6 +14,7 @@ import {
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { lessonRunFixture } from "../lesson-player/_test-utils/lesson-run-fixture";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
+import { finishStudyBlock } from "../sessions/finish-study-block";
 import { getCompletionEnergyContext } from "./completion-energy";
 import { upsertDailyProgress } from "./daily-progress";
 import { recordAnsweredActivity } from "./record-answered-activity";
@@ -268,6 +273,53 @@ describe("guest completion during account linking", () => {
     await expect(
       prisma.userProgress.findUniqueOrThrow({ where: { userId: account.userId } }),
     ).resolves.toMatchObject({ totalBrainPower: 10n });
+  });
+
+  it("checks off the account's plan item when the block a guest's linked lesson finished completes", async () => {
+    const { account, guest } = await createLinkOwners();
+    const { lesson } = await playableLessonFixture({ steps: ["hook", "explanation", "summary"] });
+    const goal = await goalFixture({ timezone: "UTC", userId: account.userId });
+
+    const [
+      {
+        items: [planItem],
+      },
+      session,
+    ] = await Promise.all([
+      planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id }] }),
+      studySessionFixture({
+        goalId: goal.id,
+        startedAt: new Date(),
+        status: "active",
+        userId: account.userId,
+      }),
+    ]);
+
+    const block = await studySessionBlockFixture({
+      kind: "learn",
+      lessonId: lesson.id,
+      sessionId: session.id,
+      startedAt: new Date(),
+      status: "active",
+    });
+
+    const run = await lessonRunFixture({ lessonId: lesson.id, userId: guest.guestId });
+    mockGuestSession(guest.guestId);
+
+    await expect(
+      completeLibraryLesson({ input: { runId: run.id, timeZone: "UTC" }, lessonId: lesson.id }),
+    ).resolves.toMatchObject({ status: "completed" });
+
+    await signInWithPassword({ email: account.email, headers: guest.headers });
+    mockSession(account.userId);
+
+    await expect(
+      finishStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: planItem?.id ?? "" } }),
+    ).resolves.toMatchObject({ status: "done" });
   });
 
   it("rolls back a waiting answered activity and safely records it under the linked account", async () => {

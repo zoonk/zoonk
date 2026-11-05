@@ -10,6 +10,7 @@ import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
 import { readBlockPayload } from "../block-payload";
 import { capReviewDay, getCapsuleOpening } from "../capsules";
 import { oweDaySettlement } from "../settle-owed-session-day";
+import { completeLessonPlanItems, scheduleLessonCanDos } from "./plan-items";
 import { type StudySessionRow } from "./study-session-access";
 
 const lessonIdsSchema = z.object({ lessonId: z.string() });
@@ -135,18 +136,35 @@ export async function completeLessonBlock(
   return true;
 }
 
-/** For a block its lesson's run didn't complete; that run already paid the lesson and checked off its plan items. */
-export function markLessonBlockDone(input: {
+/** For a block its lesson's run didn't complete. That run checked off only its own learner's plans, so a guest's run linked to this account later still checks off the account's. */
+export async function markLessonBlockDone(input: {
   block: StudySessionBlock;
   brainPower: number;
   lessonId: string | null;
   timeZone: string;
   userId: string;
 }): Promise<boolean> {
-  return writeLearnerChange({ planInputs: true, userId: input.userId }, async (tx) => {
-    const done = await completeLessonBlock(tx, { ...input, now: new Date() });
-    return done || unchanged(false);
+  const { lessonId, userId } = input;
+
+  const languageGoals = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
+    const now = new Date();
+
+    if (!(await completeLessonBlock(tx, { ...input, now }))) {
+      return unchanged(null);
+    }
+
+    return lessonId ? completeLessonPlanItems(tx, { lessonId, now, userId }) : [];
   });
+
+  if (!languageGoals) {
+    return false;
+  }
+
+  if (lessonId) {
+    scheduleLessonCanDos({ goals: languageGoals, lessonId, userId });
+  }
+
+  return true;
 }
 
 /** Returns a learner-local UTC-midnight label, never later than the goal's date. */
