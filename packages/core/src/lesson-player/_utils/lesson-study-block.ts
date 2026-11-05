@@ -4,6 +4,7 @@ import { getString, isJsonObject } from "@zoonk/utils/json";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { findDayLessonBlock } from "../../sessions/_utils/day-lesson-block";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
+import { readBlockPayload } from "../../sessions/block-payload";
 import { serializeStudyBlockCompletion } from "../../sessions/completion-contract";
 import { NOTHING_REACHED } from "../../sessions/reached";
 import { settleFinishedLesson } from "../../sessions/settle-finished-lesson";
@@ -54,7 +55,7 @@ export async function lockRunBlock({
 
 type RunBlock = NonNullable<Awaited<ReturnType<typeof lockRunBlock>>>;
 
-/** Commits the block with the run that finished it and owes its day's settlement, so a request that fails or ends before settling still leaves the block done and its day settled. */
+/** Commits the block with the run that finished it and the Brain Power it paid, and owes its day's settlement, so a request that fails or ends before settling still leaves the block done, its day settled and its milestones awarded. */
 export async function completeRunBlock(
   tx: TransactionClient,
   {
@@ -66,7 +67,7 @@ export async function completeRunBlock(
     userId,
   }: {
     block: RunBlock;
-    brainPower: number;
+    brainPower: ProgressChange;
     now: Date;
     run: LearningEvent;
     timeZone: string;
@@ -78,7 +79,12 @@ export async function completeRunBlock(
   }
 
   await tx.studySessionBlock.update({
-    data: { brainPower, completedAt: now, status: "completed" },
+    data: {
+      brainPower: brainPower.after - brainPower.before,
+      completedAt: now,
+      payload: { ...readBlockPayload(block), milestoneReward: { bossWon: false, brainPower } },
+      status: "completed",
+    },
     where: { id: block.id },
   });
 
