@@ -9,10 +9,6 @@ import {
 import { finishLanguageLevelTest } from "@zoonk/core/language/level-test/finish";
 import { getLanguageLevelTest } from "@zoonk/core/language/level-test/get";
 import { gradeLevelTestSpeech } from "@zoonk/core/language/level-test/speech";
-import { getSession } from "@zoonk/core/users/session";
-import { type LevelTestFinish } from "@zoonk/learn/onboarding/actions";
-import { getCertificateLinks } from "@zoonk/utils/certificate-links";
-import { getBaseUrl } from "@zoonk/utils/origin";
 import { isUuid } from "@zoonk/utils/uuid";
 
 /** The test's next step; null when the goal can't take it. Read-only: it never writes questions. */
@@ -70,21 +66,7 @@ export async function speakLevelTestAction(
   return result.status === "ready" ? result.test : null;
 }
 
-/** The placement's links come from this page's own origin, so a preview's point at the preview. */
-export async function finishLevelTestAction(goalId: string): Promise<LevelTestFinish> {
-  const [result, session] = await Promise.all([finishLanguageLevelTest(goalId), getSession()]);
-
-  if (result.status !== "ready") {
-    return null;
-  }
-
-  const facts = result.certificate;
-
-  return {
-    placement: facts && {
-      account: session?.user.isAnonymous ? "guest" : "account",
-      facts,
-      links: getCertificateLinks({ ...facts, origin: getBaseUrl() }),
-    },
-  };
+export async function finishLevelTestAction(goalId: string): Promise<boolean> {
+  const result = await finishLanguageLevelTest(goalId);
+  return result.status === "ready";
 }

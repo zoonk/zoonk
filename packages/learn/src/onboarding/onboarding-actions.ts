@@ -21,8 +21,6 @@ import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type LanguageLevelTestActions } from "../language/level-test/level-test-step";
 import { type ItemPictureData } from "../questions/item-picture";
 
-export type { LevelTestFinish } from "../language/level-test/level-test-step";
-
 export type StartUnderstandingOutcome =
   | { draft: OnboardingDraftView; status: "started" }
   | { draft: OnboardingDraftView; status: "startFailed" }

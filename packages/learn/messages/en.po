@@ -1538,11 +1538,6 @@ msgid "Levels"
 msgstr "Levels"
 
 #: src/certificates/certificate-details.tsx
-msgctxt "avtgF2"
-msgid "Taken"
-msgstr "Taken"
-
-#: src/certificates/certificate-details.tsx
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Completed"
@@ -1561,11 +1556,6 @@ msgstr "Passed by test"
 msgctxt "KHL8ap"
 msgid "Study time"
 msgstr "Study time"
-
-#: src/certificates/certificate-details.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Answers"
 
 #: src/certificates/certificate-details.tsx
 msgctxt "LbAVCO"
@@ -1608,17 +1598,6 @@ msgctxt "ZP9lOu"
 msgid "{language} {level}"
 msgstr "{language} {level}"
 
-#: src/certificates/certificate-labels.ts
-#: src/certificates/certificate-moment-copy.ts
-msgctxt "WSC4bY"
-msgid "Placement result"
-msgstr "Placement result"
-
-#: src/certificates/certificate-labels.ts
-msgctxt "zaINXN"
-msgid "Certificate of completion"
-msgstr "Certificate of completion"
-
 #. An approximate study time, such as "about 41 hr".
 #: src/certificates/certificate-labels.ts
 msgctxt "8QINPM"
@@ -1630,17 +1609,6 @@ msgstr "about {duration}"
 msgctxt "LZF2Ia"
 msgid "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
 msgstr "{from, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}} to {to, select, overview {Overview} beginner {Beginner} intermediate {Intermediate} other {Advanced}}"
-
-#: src/certificates/certificate-labels.ts
-msgctxt "u9fD-O"
-msgid "Placement result for {name}: {certificate}"
-msgstr "Placement result for {name}: {certificate}"
-
-#: src/certificates/certificate-labels.ts
-#: src/certificates/placement-row.tsx
-msgctxt "vc8W5b"
-msgid "Placement result: {certificate}"
-msgstr "Placement result: {certificate}"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "ZfBPq3"
@@ -1661,12 +1629,6 @@ msgstr "{name} completed {course}"
 msgctxt "z9WxBG"
 msgid "{course}, completed on Zoonk"
 msgstr "{course}, completed on Zoonk"
-
-#. A certificate's name on LinkedIn, such as "Spanish B1 placement result": the language and level, then the kind.
-#: src/certificates/certificate-linkedin.tsx
-msgctxt "2i1LGp"
-msgid "{certificate} placement result"
-msgstr "{certificate} placement result"
 
 #: src/certificates/certificate-linkedin.tsx
 msgctxt "B-Co6Y"
@@ -1740,11 +1702,6 @@ msgid "Levels are aligned with the CEFR, the Common European Framework of Refere
 msgstr "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "_1AldP"
-msgid "Zoonk's placement test asks 3 reading questions, 3 listening questions and one sentence to say aloud, each adapted to the answers before it. It estimated this level from those {count, plural, one {# answer} other {# answers}}; skills the learner skipped aren't counted."
-msgstr "Zoonk's placement test asks 3 reading questions, 3 listening questions and one sentence to say aloud, each adapted to the answers before it. It estimated this level from those {count, plural, one {# answer} other {# answers}}; skills the learner skipped aren't counted."
-
-#: src/certificates/certificate-meaning.tsx
 msgctxt "X1QrOq"
 msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
 msgstr "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
@@ -1809,11 +1766,6 @@ msgstr "Your {certificate} certificate is ready."
 msgctxt "e63c09"
 msgid "{level} complete!"
 msgstr "{level} complete!"
-
-#: src/certificates/certificate-moment-copy.ts
-msgctxt "BAZS05"
-msgid "Your {certificate} placement result is ready."
-msgstr "Your {certificate} placement result is ready."
 
 #: src/certificates/certificate-moment-copy.ts
 msgctxt "lopydx"
@@ -1901,11 +1853,6 @@ msgid "Verified certificate · issued by Zoonk"
 msgstr "Verified certificate · issued by Zoonk"
 
 #: src/certificates/certificate-page.tsx
-msgctxt "PDKCn3"
-msgid "Measured by Zoonk's placement test on {date}."
-msgstr "Measured by Zoonk's placement test on {date}."
-
-#: src/certificates/certificate-page.tsx
 msgctxt "faSg-e"
 msgid "Certificate of completion, issued on {date}."
 msgstr "Certificate of completion, issued on {date}."
@@ -1927,11 +1874,6 @@ msgstr "Print"
 msgctxt "5q3qC0"
 msgid "Download"
 msgstr "Download"
-
-#: src/certificates/certificate-share.tsx
-msgctxt "dkg2AU"
-msgid "My {language} placement result on Zoonk: {level}."
-msgstr "My {language} placement result on Zoonk: {level}."
 
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
@@ -2009,6 +1951,11 @@ msgid "Add to LinkedIn"
 msgstr "Add to LinkedIn"
 
 #: src/certificates/certificates-screen.tsx
+msgctxt "zaINXN"
+msgid "Certificate of completion"
+msgstr "Certificate of completion"
+
+#: src/certificates/certificates-screen.tsx
 msgctxt "lX2csU"
 msgid "Certificates"
 msgstr "Certificates"
@@ -2029,9 +1976,9 @@ msgid "No certificates yet"
 msgstr "No certificates yet"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "SHp4oN"
-msgid "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
-msgstr "Finish a course or a language level and its certificate shows up here, free to print and share. A placement test's result shows up here too."
+msgctxt "YdN3p3"
+msgid "Finish a course or a language level and its certificate shows up here, free to print and share."
+msgstr "Finish a course or a language level and its certificate shows up here, free to print and share."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -2047,16 +1994,6 @@ msgstr "{count, plural, one {# certificate} other {# certificates}}"
 msgctxt "svDFL8"
 msgid "Print, download or share your certificates anytime."
 msgstr "Print, download or share your certificates anytime."
-
-#: src/certificates/placement-row.tsx
-msgctxt "BnNTsQ"
-msgid "Create a free account to keep it and share it."
-msgstr "Create a free account to keep it and share it."
-
-#: src/certificates/placement-row.tsx
-msgctxt "DcP7sL"
-msgid "Saved in your certificates. Share it anytime."
-msgstr "Saved in your certificates. Share it anytime."
 
 #: src/challenge/challenge-call-intro.tsx
 #: src/challenge/challenge-intro.tsx

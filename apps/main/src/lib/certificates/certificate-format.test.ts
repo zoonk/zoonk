@@ -49,14 +49,9 @@ describe(getStudyTimeStat, () => {
 
 describe(getLadderFill, () => {
   it("fills a level through its whole band", () => {
-    expect(getLadderFill({ kind: "languageLevel", level: "A1", measuredLevel: null })).toBe(2);
-    expect(getLadderFill({ kind: "languageLevel", level: "B1", measuredLevel: null })).toBe(6);
-    expect(getLadderFill({ kind: "languageLevel", level: "C1", measuredLevel: null })).toBe(10);
-  });
-
-  it("fills a placement to the half step it measured", () => {
-    expect(getLadderFill({ kind: "placement", level: "A2", measuredLevel: "A2+" })).toBe(4);
-    expect(getLadderFill({ kind: "placement", level: "B1", measuredLevel: "B1" })).toBe(5);
+    expect(getLadderFill("A1")).toBe(2);
+    expect(getLadderFill("B1")).toBe(6);
+    expect(getLadderFill("C1")).toBe(10);
   });
 });
 

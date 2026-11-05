@@ -1857,9 +1857,7 @@ msgctxt "WDXXIC"
 msgid "In the last 90 days"
 msgstr "최근 90일간"
 
-#. A placement result's fact: how many of the test's questions they answered.
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/lib/certificates/certificate-view.ts
 msgctxt "2mUitd"
 msgid "Answers"
 msgstr "답변 수"
@@ -3552,12 +3550,6 @@ msgctxt "vlKhIl"
 msgid "Your name"
 msgstr "이름"
 
-#. The kind of document, above the learner's name: the level Zoonk's level test measured.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "WSC4bY"
-msgid "Placement result"
-msgstr "레벨 테스트 결과"
-
 #. The kind of document, above the learner's name on a certificate.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "zaINXN"
@@ -3569,24 +3561,6 @@ msgstr "수료 인증서"
 msgctxt "5FXh-Z"
 msgid "Verify this certificate"
 msgstr "인증서 진위 확인"
-
-#. A placement result's fact: the day the learner took the level test.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "avtgF2"
-msgid "Taken"
-msgstr "응시일"
-
-#. The fine print on a placement result.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "I7kswm"
-msgid "{count, plural, one {Estimated from # answer.} other {Estimated from # answers.}} This is not an official exam result."
-msgstr "{count, plural, other {답변 #개를 바탕으로 추정했어요.}} 공식 시험 결과가 아니에요."
-
-#. How a placement result was measured. The level follows the CEFR scale, without claiming official recognition.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "fPhAJC"
-msgid "Measured by Zoonk's placement test · aligned with the CEFR"
-msgstr "Zoonk 레벨 테스트로 측정 · CEFR 기준"
 
 #. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
 #: src/lib/certificates/certificate-view.ts

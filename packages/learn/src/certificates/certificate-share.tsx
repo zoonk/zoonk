@@ -38,10 +38,6 @@ function useShareText() {
     const level = facts.level ?? "";
     const language = languageName(facts.targetLanguage);
 
-    if (facts.kind === "placement") {
-      return t("My {language} placement result on Zoonk: {level}.", { language, level });
-    }
-
     if (facts.kind === "languageLevel") {
       return t("I just completed level {level} in {language} on Zoonk.", { language, level });
     }

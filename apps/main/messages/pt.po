@@ -1857,9 +1857,7 @@ msgctxt "WDXXIC"
 msgid "In the last 90 days"
 msgstr "Nos últimos 90 dias"
 
-#. A placement result's fact: how many of the test's questions they answered.
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-#: src/lib/certificates/certificate-view.ts
 msgctxt "2mUitd"
 msgid "Answers"
 msgstr "Respostas"
@@ -3552,12 +3550,6 @@ msgctxt "vlKhIl"
 msgid "Your name"
 msgstr "Seu nome"
 
-#. The kind of document, above the learner's name: the level Zoonk's level test measured.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "WSC4bY"
-msgid "Placement result"
-msgstr "Resultado do teste de nível"
-
 #. The kind of document, above the learner's name on a certificate.
 #: src/lib/certificates/certificate-view.ts
 msgctxt "zaINXN"
@@ -3569,24 +3561,6 @@ msgstr "Certificado de conclusão"
 msgctxt "5FXh-Z"
 msgid "Verify this certificate"
 msgstr "Verifique este certificado"
-
-#. A placement result's fact: the day the learner took the level test.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "avtgF2"
-msgid "Taken"
-msgstr "Realizado em"
-
-#. The fine print on a placement result.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "I7kswm"
-msgid "{count, plural, one {Estimated from # answer.} other {Estimated from # answers.}} This is not an official exam result."
-msgstr "{count, plural, one {Estimado com base em # resposta.} other {Estimado com base em # respostas.}} Este não é um resultado oficial de prova."
-
-#. How a placement result was measured. The level follows the CEFR scale, without claiming official recognition.
-#: src/lib/certificates/certificate-view.ts
-msgctxt "fPhAJC"
-msgid "Measured by Zoonk's placement test · aligned with the CEFR"
-msgstr "Medido pelo teste de nível do Zoonk · alinhado ao CEFR"
 
 #. The fine print on a language level certificate. {level} is the next level's start, such as B2 on a B1 certificate.
 #: src/lib/certificates/certificate-view.ts
