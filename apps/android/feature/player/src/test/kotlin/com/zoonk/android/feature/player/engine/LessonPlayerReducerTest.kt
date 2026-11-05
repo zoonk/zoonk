@@ -13,6 +13,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.numberAnswerStep
+import com.zoonk.android.feature.player.playable
 import com.zoonk.android.feature.player.stepResult
 import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.android.feature.player.typedAnswerStep
@@ -20,6 +21,7 @@ import com.zoonk.android.feature.player.workedExampleStep
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.api.models.LessonIcon
 import com.zoonk.api.models.ScreenPicture
 import com.zoonk.api.models.StepMarks
 import org.junit.Assert.assertEquals
@@ -783,6 +785,26 @@ class LessonPlayerReducerTest {
                 ?.about,
         )
         assertEquals(marks, read.then(LessonAction.Continue).steps["seen"]?.marks)
+    }
+
+    @Test
+    fun aTaggedLessonsMapKeepsItsIconRoomFromTheFirstReadThroughTheIconsArrivalWhileAnUntaggedOnesHasNone() {
+        val map = (lessonMapStep().content as StepContent.Map).map
+        val drawn =
+            map.copy(
+                ideas =
+                    map.ideas.map {
+                        it.copy(icon = LessonIcon(smallUrl = "https://zoonk.test/s.webp", url = "https://zoonk.test/l.webp"))
+                    },
+            )
+        val tagging = playable(listOf(explanationStep("idea")), map).copy(marksPending = true)
+        val opened = play(tagging.playedSteps, started())
+        val iconsCame = opened.then(LessonAction.LessonRead(tagging.copy(map = drawn, marksPending = false).playedSteps, openedAt = 0))
+        val untagged = play(playable(listOf(explanationStep("idea")), map).playedSteps, started())
+
+        assertEquals(true, opened.lessonMap?.keepsIconRoom)
+        assertEquals(true, iconsCame.lessonMap?.keepsIconRoom)
+        assertEquals(false, untagged.lessonMap?.keepsIconRoom)
     }
 
     @Test

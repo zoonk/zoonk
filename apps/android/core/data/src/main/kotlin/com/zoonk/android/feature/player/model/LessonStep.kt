@@ -166,12 +166,19 @@ sealed interface StepContent {
         override val kind get() = StepKind.Summary
     }
 
-    /** The map that ends a lesson, rooted on its [title]; the player adds it, so it has no screen on the server. */
+    /**
+     * The map that ends a lesson, rooted on its [title]; the player adds it, so it has no screen on the
+     * server. [marksPending] is the lesson's: its ideas' icons may still be on their way.
+     */
     data class Map(
         val map: LessonMap,
         val title: String,
+        val marksPending: Boolean,
     ) : StepContent {
         override val kind get() = StepKind.Map
+
+        /** A tagged lesson's ideas each keep an icon's room, so an icon that comes while the map is on view moves nothing. */
+        val keepsIconRoom get() = marksPending || map.ideas.any { it.icon != null }
     }
 
     data class TypedAnswer(

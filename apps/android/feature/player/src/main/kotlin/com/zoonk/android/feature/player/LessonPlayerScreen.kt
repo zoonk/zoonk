@@ -103,6 +103,7 @@ import com.zoonk.android.feature.player.engine.PrimaryLabel
 import com.zoonk.android.feature.player.engine.Segment
 import com.zoonk.android.feature.player.engine.isLanguageStep
 import com.zoonk.android.feature.player.engine.isReadStep
+import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.round
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.language.LessonLanguage
@@ -148,7 +149,6 @@ import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.LearnerSummaryBuddy
-import com.zoonk.api.models.LessonMap
 import kotlin.math.abs
 
 /** Where the player leads: other features' routes, over the lesson or in its place. */
@@ -223,7 +223,7 @@ internal fun LessonEndPages(
                             Modifier.semantics { heading() },
                             style = MaterialTheme.typography.titleMedium,
                         )
-                        LessonMapView(map.map, map.title)
+                        LessonMapView(map)
                     }
                 }
                 EndPage(
@@ -452,7 +452,7 @@ fun LessonPlayer(
                             }
                     },
             title = { LessonTitle(lesson.title) },
-            actions = { ScreenMenu(lesson, state, screen, viewModel) },
+            actions = { ScreenMenu(state, screen, viewModel) },
             exitConfirmation =
                 if (unsent) {
                     TaskExitConfirmation(
@@ -977,7 +977,6 @@ private fun PrimaryLabel.text(): Int =
 
 @Composable
 private fun ScreenMenu(
-    lesson: PlayableLesson,
     state: LessonPlayerState?,
     screen: LessonScreen?,
     viewModel: LessonPlayerViewModel,
@@ -985,6 +984,7 @@ private fun ScreenMenu(
     var open by rememberSaveable { mutableStateOf(false) }
     var mapOpen by rememberSaveable { mutableStateOf(false) }
     val isDone = state?.phase == LessonPhase.Completed
+    val map = state?.lessonMap
 
     if (screen?.step == null && !isDone) return
 
@@ -1010,7 +1010,7 @@ private fun ScreenMenu(
                     leadingIcon = { Icon(painterResource(R.drawable.ic_bolt), contentDescription = null) },
                 )
             }
-            if (isDone && lesson.map != null) {
+            if (isDone && map != null) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.player_lesson_map)) },
                     onClick = {
@@ -1023,23 +1023,21 @@ private fun ScreenMenu(
         }
     }
 
-    val map = lesson.map
     if (mapOpen && isDone && map != null) {
-        LessonMapSheet(map, lesson.title, onDismiss = { mapOpen = false })
+        LessonMapSheet(map, onDismiss = { mapOpen = false })
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LessonMapSheet(
-    map: LessonMap,
-    title: String,
+    map: StepContent.Map,
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         LessonColumn(Modifier.verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
             Text(stringResource(R.string.player_lesson_map), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-            LessonMapView(map, title)
+            LessonMapView(map)
         }
     }
 }
