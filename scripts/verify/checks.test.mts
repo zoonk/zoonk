@@ -13,7 +13,7 @@ import {
   pathOf,
   redactQuery,
 } from "./requests.mts";
-import { parseCpuTime } from "./server-process.mts";
+import { parseCpuTime, parseListeningPid } from "./server-process.mts";
 
 const PAGE = "http://localhost:3000";
 const STEADY_GAP_MS = 800;
@@ -259,5 +259,13 @@ describe("server CPU time", () => {
     { ms: 3_723_000, text: "01:02:03" },
   ])("reads $text as $ms ms", ({ ms, text }) => {
     assert.equal(parseCpuTime(text), ms);
+  });
+
+  it("finds the server listening on a port in ss's listing, and none when nothing listens", () => {
+    const pid = 4297;
+    const listing = `LISTEN 0 511 *:4246 *:* users:(("next-server (v1",pid=${pid},fd=21))`;
+
+    assert.equal(parseListeningPid(listing), pid);
+    assert.equal(parseListeningPid(""), null);
   });
 });

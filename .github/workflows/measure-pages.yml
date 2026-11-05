@@ -1,0 +1,152 @@
+name: Measure pages
+
+# Times pages on a runner of their own, for when the local machine is too busy to judge speed.
+on:
+  workflow_dispatch:
+    inputs:
+      paths:
+        description: Pages to measure, separated by spaces
+        required: true
+        default: /today /plan
+      email:
+        description: Seeded learner to sign in as; empty measures the pages signed out
+        default: v2-exam@zoonk.test
+      base:
+        description: Ref measured first on the same runner, to compare with; empty skips it
+        default: main
+      flags:
+        description: More `pnpm verify:pages` flags
+        default: --viewports phone,laptop --schemes light
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BASE: ${{ inputs.base }}
+      EMAIL: ${{ inputs.email }}
+      FLAGS: ${{ inputs.flags }}
+      PATHS: ${{ inputs.paths }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    steps:
+      - name: Start Postgres
+        run: >-
+          docker run --detach --name db --publish 5432:5432
+          --env POSTGRES_PASSWORD=postgres postgres:18-alpine -c max_connections=200
+          > "$RUNNER_TEMP/db.log" 2>&1 &
+
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Check out the base
+        if: inputs.base != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.base }}
+          path: base
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: package.json
+
+      - name: Setup pnpm
+        uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
+        with:
+          node-version-file: false
+          cache: true
+          save-cache: false
+
+      - name: Wait for Postgres
+        run: |
+          for _ in $(seq 120); do
+            docker exec db pg_isready --host 127.0.0.1 --quiet 2> /dev/null && exit 0
+            sleep 0.5
+          done
+
+          cat "$RUNNER_TEMP/db.log"
+          docker logs db
+          exit 1
+
+      # The base runs first: the ref's migrations then apply on top of the same seeded learners.
+      - name: Measure
+        run: |
+          measure() {
+            local checkout=$1 out=$2
+            shift 2
+
+            (
+              cd "$checkout"
+              pnpm install --frozen-lockfile --prefer-offline
+              pnpm exec playwright install --with-deps chromium
+              # db:setup leaves the databases to CI when CI is set; here it makes and seeds them.
+              env -u CI pnpm db:setup
+              mkdir -p "$out"
+              # In CI, Turbo holds a task's output until it ends, and a server never ends.
+              TURBO_LOG_ORDER=stream ZOONK_QUERY_LOG="$out/queries.jsonl" \
+                setsid pnpm start main > "$out/start.log" 2>&1 &
+              local server=$!
+              # pnpm start outlives a TERM, and its services stop by themselves once it's gone.
+              trap 'kill -KILL -- -"$server" 2> /dev/null || true; wait "$server" || true' EXIT
+              local deadline=$((SECONDS + 1200)) url
+              url=$(node -e "import('./scripts/dev/config.mts').then((config) => console.log(config.getServiceUrl({ currentDirectory: process.cwd(), serviceName: 'main' })))")
+
+              # Next prints that it's ready before its port answers.
+              until curl --silent --fail --output /dev/null "$url"; do
+                if ! kill -0 "$server" 2> /dev/null || [ "$SECONDS" -gt "$deadline" ]; then
+                  cat "$out/start.log"
+                  exit 1
+                fi
+
+                sleep 2
+              done
+
+              # shellcheck disable=SC2086 # FLAGS and PATHS are lists.
+              pnpm verify:pages ${EMAIL:+--email "$EMAIL"} --queries "$out/queries.jsonl" \
+                --out "$out" "$@" $FLAGS $PATHS
+            )
+          }
+
+          if [ -n "$BASE" ]; then
+            measure base "$RUNNER_TEMP/base" || true
+          fi
+
+          baseline=()
+
+          if [ -f "$RUNNER_TEMP/base/report.json" ]; then
+            baseline=(--baseline "$RUNNER_TEMP/base")
+          elif [ -n "$BASE" ]; then
+            echo "::warning::$BASE couldn't be measured, so the ref has nothing to compare with."
+          fi
+
+          measure . "$RUNNER_TEMP/ref" "${baseline[@]}" || true
+
+      # A failing check is a finding in the report: the runner is slower than a laptop, so its
+      # timings are read against the base's. Only a ref that couldn't be measured fails the run.
+      - name: Summarize
+        if: always()
+        run: |
+          for side in ref base; do
+            if [ -f "$RUNNER_TEMP/$side/report.md" ]; then
+              echo "::notice title=The $side::$(grep -m 1 '^## ' "$RUNNER_TEMP/$side/report.md" | cut -c 4-)"
+              echo "# The $side" >> "$GITHUB_STEP_SUMMARY"
+              cat "$RUNNER_TEMP/$side/report.md" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
+
+          test -f "$RUNNER_TEMP/ref/report.json"
+
+      - name: Upload the reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: measure-pages
+          path: |
+            ${{ runner.temp }}/ref
+            ${{ runner.temp }}/base
+          if-no-files-found: warn
