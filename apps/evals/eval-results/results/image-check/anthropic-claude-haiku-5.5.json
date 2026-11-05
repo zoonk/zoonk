@@ -1058,6 +1058,47 @@
           }
         }
       }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. ALT says the inner band has two dots and the outer band has four, but the image shows four dots on the inner ring and four on the outer ring (eight total), so the electron count is wrong The 'centro' label line points into the outer ring dot region at the right rather than clearly to the center circle, though it touches the center area",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. ALT says the inner band has two dots and the outer band has four, but the image shows four dots on the inner ring and four on the outer ring (eight total), so the electron count is wrong The 'centro' label line points into the outer ring dot region at the right rather than clearly to the center circle, though it touches the center area",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. ALT says the inner band has two dots and the outer band has four, but the image shows four dots on the inner ring and four on the outer ring (eight total), so the electron count is wrong The 'centro' label line points into the outer ring dot region at the right rather than clearly to the center circle, though it touches the center area",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "carbon-extra-outer-electron-1",
+        "userInput": {
+          "imageFile": "flare-carbon-extra-electron-pt.webp",
+          "alt": "Átomo de carbono com centro pequeno, dois pontos na faixa de dentro e quatro na faixa de fora, com os rótulos centro, elétron e carbono.",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a simplified carbon atom diagram with a small solid center and two concentric circular rings, containing two small dots on the inner ring and four small dots on the outer ring",
+            "labels": [
+              { "target": "above the whole atom diagram", "text": "carbono" },
+              { "target": "next to the center circle", "text": "centro" },
+              { "target": "next to one dot on the outer ring", "text": "elétron" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": []
+          }
+        }
+      }
     }
   ],
   "taskId": "image-check"
