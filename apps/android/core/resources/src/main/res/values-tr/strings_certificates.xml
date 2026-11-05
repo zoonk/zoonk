@@ -33,7 +33,7 @@
   "certificates_kind_completion": "5be0df23bc47dd0260c4163330e737dad7fa34a079671517fb8538573548fe01",
   "certificates_language_level": "942070bd341fcc34f5cf7e3d7133194d944054a0e70eba1f2aa380b4ae35c408",
   "certificates_language_ready": "f1444af26c07163b7c9f7ca80d324f541d4239ef28905f69e156a6330248502f",
-  "certificates_lead": "83d91954369b20aa71a07f32c23ba5dd48d6b47ab4af9553902422cfb48df7e1",
+  "certificates_lead": "867842555baa2036685439ce2fa5fcb0e839201e5439e66e77b1aeb20fbc7001",
   "certificates_lessons": "c1ff000e889b6cf45614b278202ef229ed8c42ae3550c3459a01eb1e6e30be8d",
   "certificates_level_complete": "a13652607fbf5370bbe837c527761a65554c4be84de994cda021428105e00968",
   "certificates_link_copied": "cc71403a8d392f2545666a320985451f6d5e17889cb32d2c3ed62a26644b5560",
@@ -57,7 +57,7 @@
   "certificates_not_found": "f0443b9fcad5b26800a1c836e4d1f06014ccefc6252938e6d3dc7bd5abe0f3d8",
   "certificates_on_your_certificate": "fa472d989f62466ffa1532d5ebecc7c0c25505681a412efc069552cd5d31f2ec",
   "certificates_picture_failed": "73ef0451ea37fad5495f434e63ea8206c8f1b2ced5c8329edbe70f0842f00b8f",
-  "certificates_plus_description": "a2de686a15942cf251b6a5fa91ce6116b72284e799cf7be75438a650ec0bd7f8",
+  "certificates_plus_description": "3b387f8c12dc69b7ee472e688a8a9c1802fdea997d47b946ce71f159b1cedfa2",
   "certificates_plus_list_title": "63947d20703300bbba3fe63861fff87edaebba3b6fd2b203cd5d92e3d970af51",
   "certificates_plus_title": "2b146a4bd9714f8be7662a436259ed4991c9ed9821b374288984b9824a53a314",
   "certificates_print": "103aeacea9c31618fc4f79c27929acea6f62a38fdaad99df69e13125db974f2f",
@@ -71,7 +71,7 @@
   "certificates_up_next_course": "69a83fbfbe47c65bb6b81a6261e3aedacb81dc4a788695c8f626ecf9601aaaf3",
   "certificates_up_next_language": "a61fe9215a0c99fa53332c83f3d75dbac1a5fd902836379513fcafba26c1d273",
   "certificates_view": "cd42dc9fe7ca27340f613bb5f781207d9cfefdf03285c57bf78c243de7045754",
-  "certificates_view_several": "9297e1fd722675e5ac5eea1bade81dbf81b8f328017f6e5288783205f1e983fb"
+  "certificates_view_several": "2901bd1a4f679e496f6bd1b62f0da5dceea48f35171e95ea68af69fbf4d377e9"
 }
 -->
 <resources>
@@ -82,20 +82,19 @@
         <item quantity="one">%1$d sertifika</item>
         <item quantity="other">%1$d sertifika</item>
     </plurals>
-    <string name="certificates_lead">Sertifikalarını istediğin zaman yazdır, indir veya paylaş.</string>
+    <string name="certificates_lead">Tamamladığın her seviye ve plan için bir sertifika.</string>
     <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Tamamlama sertifikası</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
-    <!-- A course level's certificate name, such as "Python · Beginner": %1$s is the course's title, then %2$s the level's name. -->
+    <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">Henüz sertifikan yok</string>
     <string name="certificates_empty_description">Bir seviyeyi veya planı tamamladığında sertifikaların burada görünür.</string>
     <string name="certificates_continue_learning">Öğrenmeye devam et</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">Sertifikayı görüntüle</string>
-    <!-- On a finished plan's card: opens Certificates, which lists the plan's several certificates (one per course level, say). -->
-    <string name="certificates_view_several">Sertifikaları gör</string>
+    <string name="certificates_view_several">Sertifikaları görüntüle</string>
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">Sertifikanı al</string>
     <string name="certificates_up_next">Sıradaki</string>
@@ -104,7 +103,6 @@
     <string name="certificates_up_next_language">Çalıştığın her beceride bir sonraki seviyeye ulaştığında alırsın</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Kurs tamamlandı!</string>
-    <!-- The title of a full screen shown once, right after the learner finishes a level. %1$s is a CEFR level, such as "B1", or a course level's name, such as "Beginner". -->
     <string name="certificates_level_complete">%1$s tamamlandı!</string>
     <!-- The title when the learner earned two or more certificates at once. -->
     <plurals name="certificates_earned">
@@ -141,12 +139,9 @@
     <!-- "Certificates" is the place name. -->
     <string name="certificates_saved_several">Sertifikalar bölümüne kaydedildi.</string>
     <string name="certificates_continue">Devam et</string>
-    <!-- Where a certificate earned without Plus shows: TalkBack's word for the lock in place of its picture. -->
     <string name="certificates_locked">Kilitli</string>
-    <!-- The Plus notice beside a certificate earned without Plus, on its award moment and its page. -->
     <string name="certificates_plus_title">Plus ile sertifikanı al</string>
-    <string name="certificates_plus_description">Plus ile tamamladığın her seviye için yazdırıp paylaşabileceğin bir sertifika alırsın. Plus sona erse de aldığın sertifikalar sende kalır.</string>
-    <!-- The Plus notice atop Certificates while the learner isn't on Plus. -->
+    <string name="certificates_plus_description">Plus ile tamamladığın her seviye için yazdırıp paylaşabileceğin bir sertifika alırsın. Plus üyeliğin sona erse de aldığın sertifikalar sende kalır.</string>
     <string name="certificates_plus_list_title">Sertifikalar Plus’a dahil</string>
     <!-- The title of the screen showing one certificate. -->
     <string name="certificates_certificate">Sertifika</string>

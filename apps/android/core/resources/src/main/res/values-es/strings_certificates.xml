@@ -33,7 +33,7 @@
   "certificates_kind_completion": "d3e34cb25ce64bfadd26851806769c5c67e9fc171f183b9844763278af26b406",
   "certificates_language_level": "0dd433b41516294b069638cb615817d3cf47f1d65d0d73b6dd4d1b02136f3909",
   "certificates_language_ready": "5bca67d1c10c7b95455103fc8415ccf6d34d935a937a162ce56939588552a994",
-  "certificates_lead": "ac583cc43148c978757aa7d867b92fc00f2ea408f21214cef6ccddf0a33afb51",
+  "certificates_lead": "7076dce917a47e762ed1e0d6d61dfdffd4ee14a09c8db3a7f4854309822b84ee",
   "certificates_lessons": "2fc4894e9f4238b33f77cc2b487512540805f030ffb55979b1e7e64f8fd6a010",
   "certificates_level_complete": "7768e0bc90a1832b10654abbf19fbb97dd8c986058b73b56c7509d657f60430f",
   "certificates_link_copied": "ce985a684ffd676e7b62611100c2b7c2abf1bc23975b9abb73990869d07b8db1",
@@ -57,7 +57,7 @@
   "certificates_not_found": "70e4c98448d2d7551e32db2e305e0864bf0186e9d4ebcb1166a7cbbc7705f999",
   "certificates_on_your_certificate": "160c8c2292313b173755c7f3b68a68796b42ec8c5146b73a2187036f17653b03",
   "certificates_picture_failed": "ac13e6b0ffb77454fbb0cded9ba22a2a9285f70e059099c296c659fa201ae2e2",
-  "certificates_plus_description": "15e1940f39466854be8f680f737c6cf260695f25c9b86f8452fc409da19a718e",
+  "certificates_plus_description": "00674cb4cc328451a442e0dedd11d6b08f93fba073b8775abe8b4d4e26aef733",
   "certificates_plus_list_title": "e286e8067e892eed5390079c3e17aa008a3e434be9f45be91c84952a86d35702",
   "certificates_plus_title": "4f5483ed834a506921ecdd6c79d99834fef7eb9f761829248abde228ccf34fb5",
   "certificates_print": "60c87b26e13ce7a90406b36466b7ec09e3fe994e28323e0484f55ca6a024677e",
@@ -83,19 +83,18 @@
         <item quantity="many">%1$d certificados</item>
         <item quantity="other">%1$d certificados</item>
     </plurals>
-    <string name="certificates_lead">Imprime, descarga o comparte tus certificados cuando quieras.</string>
+    <string name="certificates_lead">Un certificado por cada nivel y plan que completes.</string>
     <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Certificado de finalización</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
-    <!-- A course level's certificate name, such as "Python · Beginner": %1$s is the course's title, then %2$s the level's name. -->
+    <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">Aún no tienes certificados</string>
     <string name="certificates_empty_description">Tus certificados aparecerán aquí cuando completes un nivel o un plan.</string>
     <string name="certificates_continue_learning">Seguir aprendiendo</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">Ver certificado</string>
-    <!-- On a finished plan's card: opens Certificates, which lists the plan's several certificates (one per course level, say). -->
     <string name="certificates_view_several">Ver certificados</string>
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">Obtener tu certificado</string>
@@ -105,7 +104,6 @@
     <string name="certificates_up_next_language">Lo recibes cuando todas las habilidades que practicas alcanzan el siguiente nivel</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">¡Curso completado!</string>
-    <!-- The title of a full screen shown once, right after the learner finishes a level. %1$s is a CEFR level, such as "B1", or a course level's name, such as "Beginner". -->
     <string name="certificates_level_complete">¡%1$s completado!</string>
     <!-- The title when the learner earned two or more certificates at once. -->
     <plurals name="certificates_earned">
@@ -143,12 +141,9 @@
     <!-- "Certificates" is the place name. -->
     <string name="certificates_saved_several">Están guardados en Certificados.</string>
     <string name="certificates_continue">Continuar</string>
-    <!-- Where a certificate earned without Plus shows: TalkBack's word for the lock in place of its picture. -->
     <string name="certificates_locked">Bloqueado</string>
-    <!-- The Plus notice beside a certificate earned without Plus, on its award moment and its page. -->
     <string name="certificates_plus_title">Obtén tu certificado con Plus</string>
-    <string name="certificates_plus_description">Con Plus, recibes un certificado por cada nivel que completes, para imprimir y compartir. Si dejas de tener Plus, los certificados siguen siendo tuyos.</string>
-    <!-- The Plus notice atop Certificates while the learner isn't on Plus. -->
+    <string name="certificates_plus_description">Plus te da un certificado por cada nivel que completes, para imprimir y compartir. Los certificados que obtengas siguen siendo tuyos aunque termine tu suscripción a Plus.</string>
     <string name="certificates_plus_list_title">Plus incluye certificados</string>
     <!-- The title of the screen showing one certificate. -->
     <string name="certificates_certificate">Certificado</string>

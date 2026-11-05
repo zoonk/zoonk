@@ -27,13 +27,13 @@
   "certificates_download": "a7ef56337b4757bbefd8d71a0ba278236afd3035ca445e7942d371643ab4fdab",
   "certificates_downloaded": "862c8e9ae03463d24baa71aabbcab1fc448e39fca1f7da5b6657bbd45a2e418d",
   "certificates_earned": "1a5c8500bd794b75aa094f43c5db66da29cd8a8156af92b3666e1c055faec035",
-  "certificates_empty_description": "5f8af4f5be53764a3966a7538c65270f70a315dbf8dc121b1a1a4e1722d722f5",
+  "certificates_empty_description": "f2f0529dcb33e25a11c1ef94a0745a2f67757fd06d577a4af041d0cc942ab3cb",
   "certificates_empty_title": "a1647625f3b3cfd4e2af45bde1d985d8f2048ac49168f96ab580b8f6f160cfc5",
   "certificates_get": "549d5f8fbbba6eb8771c1395f237372d6791d9ebabb3c283bc1ce05406f07b72",
   "certificates_kind_completion": "f417e86beb3e24e610d49ca7ab105f21929aad6fa8d2f7343c6293ae52a529c1",
   "certificates_language_level": "9a929089174b475ba8499786dc5907e76d95c0a0a217b247b927293f7cceb9f1",
   "certificates_language_ready": "d8ee76c9cefe0e4b5c949d102698aff299a16dbd34b0cf91057670c5b7851eb9",
-  "certificates_lead": "48eefd4fc3bccdf9dcfad1a364a54df74d010a868480004e15c843fb63d01aa1",
+  "certificates_lead": "9bf4e1b8863f15cb4208b49563b4e607bc87136ed022f6c2db6f5144ed8af49d",
   "certificates_lessons": "cbb5836737560926feadde2fe45c4afbc1b6d1f6fbf752d37b789e6f58fd4614",
   "certificates_level_complete": "eff50704b3c23634ac951b3803c3488999df00f18779993f7d9d4c98f626b33f",
   "certificates_link_copied": "9855b0eef3cb17904436b02b463f568dab7101093c52932576d6a66842f9227f",
@@ -57,8 +57,8 @@
   "certificates_not_found": "32b562ec63ca8c3120392afd941c3d07415f4d9e14aa1d178443db930f58c290",
   "certificates_on_your_certificate": "14d1cb3ac472941a031297814367351fb9595ca0688b0a26eaaaad678056eb0e",
   "certificates_picture_failed": "b5726ca716a6a049673950171174927f3bd94ef084b3545ed552a3e71d85e4c2",
-  "certificates_plus_description": "f09c419ee8e0dbe450f8f226394ff5cf184a4a89276bf509f323c8cedc4b41bd",
-  "certificates_plus_list_title": "8134f141456ddf97ea74e3682599e3ce7950d0dd555e78474e5ad82154783d3b",
+  "certificates_plus_description": "a394d9a75d32b5d027c0855b3578c67ad173c6539f23b1a29aba87568315cb43",
+  "certificates_plus_list_title": "604f989f52c65decb1c97b85bc457a816568ecc7d7743b4cd4868573a2ab3a69",
   "certificates_plus_title": "0f635d9398fb384c3ca712b8a088b53ff2063480fbd8a410551349c636106c75",
   "certificates_print": "76cc37eab3020054d4093ebed2127b220546291aec2a37657bde322110f6c353",
   "certificates_save": "b390ac37e7061ea024360fef33c44f7a52741c28e25e1bbaa903e4d7989bac1f",
@@ -81,19 +81,18 @@
     <plurals name="certificates_count">
         <item quantity="other">인증서 %1$d개</item>
     </plurals>
-    <string name="certificates_lead">인증서를 언제든 인쇄, 다운로드, 공유할 수 있어요.</string>
+    <string name="certificates_lead">레벨과 계획을 마칠 때마다 인증서를 받아요.</string>
     <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">수료 인증서</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
-    <!-- A course level's certificate name, such as "Python · Beginner": %1$s is the course's title, then %2$s the level's name. -->
+    <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">아직 인증서가 없어요</string>
-    <string name="certificates_empty_description">레벨이나 계획을 마치면 인증서가 여기에 표시돼요.</string>
+    <string name="certificates_empty_description">레벨이나 계획을 마치면 여기에 인증서가 표시돼요.</string>
     <string name="certificates_continue_learning">계속 학습하기</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">인증서 보기</string>
-    <!-- On a finished plan's card: opens Certificates, which lists the plan's several certificates (one per course level, say). -->
     <string name="certificates_view_several">인증서 보기</string>
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">인증서 받기</string>
@@ -103,7 +102,6 @@
     <string name="certificates_up_next_language">연습 중인 모든 스킬이 다음 레벨에 오르면 받을 수 있어요</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">코스 완료!</string>
-    <!-- The title of a full screen shown once, right after the learner finishes a level. %1$s is a CEFR level, such as "B1", or a course level's name, such as "Beginner". -->
     <string name="certificates_level_complete">%1$s 완료!</string>
     <!-- The title when the learner earned two or more certificates at once. -->
     <plurals name="certificates_earned">
@@ -139,13 +137,10 @@
     <!-- "Certificates" is the place name. -->
     <string name="certificates_saved_several">인증서 목록에 저장했어요.</string>
     <string name="certificates_continue">계속하기</string>
-    <!-- Where a certificate earned without Plus shows: TalkBack's word for the lock in place of its picture. -->
     <string name="certificates_locked">잠김</string>
-    <!-- The Plus notice beside a certificate earned without Plus, on its award moment and its page. -->
     <string name="certificates_plus_title">Plus로 인증서 받기</string>
-    <string name="certificates_plus_description">Plus를 이용하면 레벨을 마칠 때마다 인쇄하고 공유할 수 있는 인증서를 받아요. Plus 이용이 끝나도 받은 인증서는 계속 보관할 수 있어요.</string>
-    <!-- The Plus notice atop Certificates while the learner isn't on Plus. -->
-    <string name="certificates_plus_list_title">인증서는 Plus 혜택이에요</string>
+    <string name="certificates_plus_description">Plus를 이용하면 레벨을 마칠 때마다 인쇄하고 공유할 수 있는 인증서를 받아요. 받은 인증서는 Plus 이용이 끝나도 계속 보관할 수 있어요.</string>
+    <string name="certificates_plus_list_title">Plus로 인증서를 받을 수 있어요</string>
     <!-- The title of the screen showing one certificate. -->
     <string name="certificates_certificate">인증서</string>
     <!-- Prints the certificate, or saves it as a PDF from the printing screen. -->

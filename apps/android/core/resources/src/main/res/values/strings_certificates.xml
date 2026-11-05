@@ -7,19 +7,18 @@
         <item quantity="one">%1$d certificate</item>
         <item quantity="other">%1$d certificates</item>
     </plurals>
-    <string name="certificates_lead">Print, download or share your certificates anytime.</string>
+    <string name="certificates_lead">A certificate for every level and plan you finish.</string>
     <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
     <string name="certificates_kind_completion">Certificate of completion</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
-    <!-- A course level's certificate name, such as "Python · Beginner": %1$s is the course's title, then %2$s the level's name. -->
+    <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">No certificates yet</string>
     <string name="certificates_empty_description">Your certificates show up here when you finish a level or a plan.</string>
     <string name="certificates_continue_learning">Continue learning</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">View certificate</string>
-    <!-- On a finished plan's card: opens Certificates, which lists the plan's several certificates (one per course level, say). -->
     <string name="certificates_view_several">View certificates</string>
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">Get your certificate</string>
@@ -30,7 +29,6 @@
 
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Course complete!</string>
-    <!-- The title of a full screen shown once, right after the learner finishes a level. %1$s is a CEFR level, such as "B1", or a course level's name, such as "Beginner". -->
     <string name="certificates_level_complete">%1$s complete!</string>
     <!-- The title when the learner earned two or more certificates at once. -->
     <plurals name="certificates_earned">
@@ -67,12 +65,9 @@
     <!-- "Certificates" is the place name. -->
     <string name="certificates_saved_several">They\'re saved in Certificates.</string>
     <string name="certificates_continue">Continue</string>
-    <!-- Where a certificate earned without Plus shows: TalkBack's word for the lock in place of its picture. -->
     <string name="certificates_locked">Locked</string>
-    <!-- The Plus notice beside a certificate earned without Plus, on its award moment and its page. -->
     <string name="certificates_plus_title">Get your certificate with Plus</string>
     <string name="certificates_plus_description">Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends.</string>
-    <!-- The Plus notice atop Certificates while the learner isn't on Plus. -->
     <string name="certificates_plus_list_title">Certificates come with Plus</string>
 
     <!-- The title of the screen showing one certificate. -->

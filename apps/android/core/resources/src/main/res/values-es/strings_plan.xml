@@ -318,7 +318,7 @@
   "plan_lessons_on_the_way": "2bebe1674eec2ef1dbe45d3b275e48968eafbaa6f75f426410db89f7ca9888de",
   "plan_lessons_studied": "db6054399a05f11816d0bfc2727efbc6d41653ec3183904eb3c6599b99c0714e",
   "plan_level": "f241b293f97ab59bd3916f7d29f7ea1ddfa88b1840e6fdb7f459e1ffeb2857e0",
-  "plan_level_complete": "3f42b5999ce1d198782707ff6ea6802a71e9c94e0629e34749adf53ee19df930",
+  "plan_level_complete": "2a4e00df08b0f2a413978f585c286f73c8b4e25a3663d7bad096cb821ee25d0b",
   "plan_long_term_memory": "baf613a15f0387ac76a7c75ac8199557ef381b7a8a477f7c69d21a9aa48bf828",
   "plan_loss_this_week": "2e94afecc630b19367c9f4c45a63507d4198cb84ec20a493b6b0f2d3feb21ae6",
   "plan_mastery": "2758e8e6ecb4651243dc97c4bf1f851adcbccc4474f03b0c8376eb9e7c4bd57e",
@@ -1637,6 +1637,6 @@
     <string name="plan_continue_at">Continuar en %1$s</string>
     <!-- A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead. -->
     <string name="plan_course_complete">Curso completado</string>
-    <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, before the plan's end. %1$s is the level's name, such as "Beginner". -->
-    <string name="plan_level_complete">Completaste %1$s</string>
+    <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
+    <string name="plan_level_complete">%1$s completado</string>
 </resources>
