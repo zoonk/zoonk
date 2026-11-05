@@ -311,6 +311,7 @@ describe("ending a session", () => {
       ["prepareSession", today.session.id],
       ["rememberSession", today.session.id],
       ["checkDailyInsight", "2026-09-30"],
+      ["settleSessionDay", first?.id],
     ]);
 
     vi.setSystemTime(SESSION_NOW.getTime() + 60_000);

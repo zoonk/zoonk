@@ -115,7 +115,13 @@ function MomentActions({
 
       <TaskActions className={cn(!sessionCompleted && "max-lg:flex-col max-lg:items-stretch")}>
         {!sessionCompleted && (
-          <Button disabled={stop.isPending} onClick={stop.run} size="xl" variant="outline">
+          <Button
+            disabled={stop.isPending}
+            focusableWhenDisabled
+            onClick={stop.run}
+            size="xl"
+            variant="outline"
+          >
             {t("Stop for today")}
           </Button>
         )}

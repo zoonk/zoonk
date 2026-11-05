@@ -185,7 +185,7 @@ export function ExamResultSection() {
 
         {status === "error" && <ChangeSaveError />}
 
-        <Button disabled={!canSave || status === "pending"} type="submit">
+        <Button disabled={!canSave || status === "pending"} focusableWhenDisabled type="submit">
           {t("Save my result")}
         </Button>
       </form>
