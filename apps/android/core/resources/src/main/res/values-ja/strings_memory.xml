@@ -29,6 +29,7 @@
   "memory_source_you": "f14d7be85b4d50991a43a5909639c7662a4357b65b3cb58b8335f47e159cc2f6",
   "memory_undo": "5256769217e7610dd5e7056121ad021f69347c976d5c3ba138bf6570aeb99df8",
   "memory_undo_failed": "5b60bf6bb232247a035552cb3fc4d36cf32f37272427a165abbfb83d1c7348e1",
+  "memory_undo_retry": "eb520f1e88bd3ed807f162dfe8f1ba1775a01ce46861eebd8320de3d4b694a79",
   "memory_updated": "241cbd11d496f2f566b222f5f4d9ab792879b9ad2a295ed9d90cbc03e3ec0f30",
   "memory_updated_more": "2a7fa74cb7a372f52bf8e0370feddf87171a4c14521e6008b1a9bb537940e3ab",
   "memory_use": "f5e1bee57b5fbfaa9b4f3ff355301ac7d374dece2d091e54060e6a9b02c83d60",
@@ -77,4 +78,5 @@
     <string name="memory_undo">元に戻す</string>
     <string name="memory_change_undone">変更を取り消しました</string>
     <string name="memory_undo_failed">取り消せませんでした。その後、内容が変更されています。</string>
+    <string name="memory_undo_retry">取り消せませんでした。もう一度お試しください。</string>
 </resources>

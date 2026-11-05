@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.LayoutDirection
@@ -33,6 +32,7 @@ import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -144,7 +144,7 @@ class MindMapScreenshots {
         SCREENS.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            write("${SCREENS[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("${SCREENS[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

@@ -9,7 +9,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.lifecycle.SavedStateHandle
@@ -39,6 +38,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LibraryLessonCompletion
@@ -329,7 +329,7 @@ class LessonPlayerScreenshots {
         states.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            write("${states[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("${states[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

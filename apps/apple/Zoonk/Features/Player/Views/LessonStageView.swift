@@ -5,6 +5,8 @@ struct LessonStageView: View {
   @Environment(\.lessonTutor) private var tutor
   @Environment(\.lessonAudio) private var audio
   @Environment(\.spokenAnswerRecording) private var recording
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @State private var isCheckSlow = false
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -17,6 +19,18 @@ struct LessonStageView: View {
   private static let verdictId = "verdict"
   private static let checkNoteId = "check-note"
   private static let turnId = "turn"
+  private static let screenId = "screen"
+
+  /// What a step has added under the rest, where the page may have run out of room: "Show the
+  /// next step" adds a worked example's step, and each decision a challenge's replies and what
+  /// comes next. As on main, a challenge's first screen after its intro adds nothing.
+  private func addedBelow(_ step: LessonStep) -> Int? {
+    switch step.kind {
+    case .workedExample: state.revealed[step.id]
+    case .challenge: max((state.revealed[step.id] ?? 0) - 1, 0)
+    default: nil
+    }
+  }
 
   /// A verdict that counts: a hook's guess is never wrong and "I don't know yet" has none.
   private func countedVerdict(_ step: LessonStep) -> Bool? {
@@ -81,17 +95,26 @@ struct LessonStageView: View {
 
         HStack(spacing: 0) {
           if let pages = spread {
-            LessonPage(store: store) {
-              LessonNotice(state: state, store: store)
+            ScrollViewReader { scroll in
+              LessonPage(store: store) {
+                LessonNotice(state: state, store: store)
 
-              VStack(alignment: .leading, spacing: 20) {
-                LessonStepView(step: step, state: state, store: store, part: .screen)
-                LessonStepNotes(step: step, store: store)
+                VStack(alignment: .leading, spacing: 20) {
+                  LessonStepView(step: step, state: state, store: store, part: .screen)
+                  LessonStepNotes(step: step, store: store)
+                }
+                .id(Self.screenId)
+
+                // The page the learner reads ends with what the question rests on.
+                if let recap {
+                  recapView(recap, on: step)
+                }
               }
-
-              // The page the learner reads ends with what the question rests on.
-              if let recap {
-                recapView(recap, on: step)
+              // A worked example adds its steps beside this page; a challenge adds to its end.
+              .onChange(of: step.kind == .challenge ? addedBelow(step) : nil) {
+                withAnimation(reduceMotion ? nil : .default) {
+                  scroll.scrollTo(Self.screenId, anchor: .bottom)
+                }
               }
             }
             .frame(width: pages.primary)
@@ -123,7 +146,7 @@ struct LessonStageView: View {
                 }
               }
 
-              LessonCheckNote(state: state)
+              LessonCheckNote(state: state, isSlow: isCheckSlow)
                 .id(Self.checkNoteId)
 
               if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
@@ -163,16 +186,17 @@ struct LessonStageView: View {
                 announceVerdict()
               }
             }
-            .onChange(of: state.notice == .selfCorrect || state.checkFailed) { _, hasNote in
+            .onChange(of: state.notice == .selfCorrect || state.checkFailed || isCheckSlow) {
+              _, hasNote in
               if hasNote {
                 scroll.scrollTo(Self.checkNoteId, anchor: .bottom)
               }
             }
-            // "Show the next step" adds a worked example's step under the others, where the page
-            // may have run out of room.
-            .onChange(of: step.kind == .workedExample ? state.revealed[step.id] : nil) {
-              withAnimation {
-                scroll.scrollTo(Self.turnId, anchor: .bottom)
+            // A worked example's newest step is its last. A challenge's turn is its newest
+            // decision, which main scrolls into view as little as it can.
+            .onChange(of: addedBelow(step)) {
+              withAnimation(reduceMotion ? nil : .default) {
+                scroll.scrollTo(Self.turnId, anchor: step.kind == .challenge ? nil : .bottom)
               }
             }
             // Raising the keyboard reveals only a field's text; the learner's turn shows whole above
@@ -223,6 +247,15 @@ struct LessonStageView: View {
       .task(id: step.id) {
         if step.hasExampleLineSlot {
           await store.loadExampleLine(stepId: step.id)
+        }
+      }
+      // Here rather than on the note, which would add a gap to the page while it's empty.
+      .task(id: state.phase == .checking) {
+        isCheckSlow = false
+
+        if state.phase == .checking {
+          try? await Task.sleep(for: LessonGrading.slowCheck)
+          isCheckSlow = !Task.isCancelled
         }
       }
       .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
@@ -283,6 +316,7 @@ private struct LessonStepNotes: View {
 
 private struct LessonCheckNote: View {
   let state: LessonPlayerState
+  let isSlow: Bool
 
   var body: some View {
     if state.notice == .selfCorrect {
@@ -298,9 +332,18 @@ private struct LessonCheckNote: View {
     }
 
     if state.checkFailed {
+      FailureLine(
+        message: LocalizedStringResource(
+          "We couldn't check your answer this time. Try again.", table: "Player",
+          comment: "The server couldn't grade a written or spoken answer")
+      )
+      .font(.subheadline)
+    }
+
+    if isSlow, state.phase == .checking {
       Text(
-        "We couldn't check your answer this time. Try again.", tableName: "Player",
-        comment: "The server couldn't grade a written or spoken answer"
+        "Still checking. This is taking longer than usual.", tableName: "Player",
+        comment: "Grading the answer is taking longer than usual"
       )
       .font(.subheadline)
       .foregroundStyle(.secondary)
@@ -319,23 +362,12 @@ struct LessonActionBar: View {
   var body: some View {
     HStack(spacing: 12) {
       if state.canGoBack {
-        Button {
+        StepBackButton(
+          label: Text(
+            "Previous screen", tableName: "Player", comment: "Goes back one screen in the lesson")
+        ) {
           store.goBack()
-        } label: {
-          Label {
-            Text(
-              "Previous screen", tableName: "Player",
-              comment: "Goes back one screen in the lesson")
-          } icon: {
-            Image(systemName: "chevron.left")
-          }
-          .labelStyle(.iconOnly)
-          .frame(minHeight: 32)
         }
-        .buttonStyle(.bordered)
-        .buttonBorderShape(.circle)
-        .controlSize(.large)
-        .keyboardShortcut(.leftArrow, modifiers: [])
       }
 
       if step.isRead {
@@ -364,6 +396,7 @@ struct LessonActionBar: View {
       HStack {
         if primary.isBusy {
           ProgressView()
+            .controlSize(.small)
         }
 
         Text(primary.title)
@@ -527,6 +560,17 @@ private struct LessonNotice: View {
             comment: "The lesson came back to a screen whose answer was never saved")
         } icon: {
           Image(systemName: "icloud.slash")
+        }
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      case .pictureReady:
+        Label {
+          Text(
+            "This question was waiting for its picture. Answer it to finish the lesson.",
+            tableName: "Player",
+            comment: "A question left out while its picture was drawn came back once it was drawn")
+        } icon: {
+          Image(systemName: "photo")
         }
         .font(.subheadline)
         .foregroundStyle(.secondary)

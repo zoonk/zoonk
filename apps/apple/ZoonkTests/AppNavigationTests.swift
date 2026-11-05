@@ -107,6 +107,19 @@ final class AppNavigationTests: XCTestCase {
   }
 
   @MainActor
+  func testAQuestionBlockOpenedFromAStepBringsTheSessionToTheFront() {
+    let router = AppRouter()
+    router.open(.session)
+    router.open(.lesson(lessonId: "l1", sessionId: "s1"))
+
+    router.openStudy(.questionBlock(blockID: "b2"))
+
+    XCTAssertEqual(
+      router.tasks, [.session], "The lesson gives way to the session playing the block")
+    XCTAssertEqual(router.playback.playingBlockID, "b2")
+  }
+
+  @MainActor
   func testTheAppSheetShowsOnTheTopmostLayer() {
     let router = AppRouter()
     router.open(.session)

@@ -6,9 +6,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -22,12 +21,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
@@ -51,7 +48,9 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.CompletedLanguageConversation
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationIntro
@@ -83,7 +82,7 @@ fun ConversationScreen(
         }
     val id = remember(route.conversationId) { runCatching { UUID.fromString(route.conversationId) }.getOrNull() }
     if (id == null) {
-        NotFound(onClose = exits::close)
+        NotFound(exits)
         return
     }
     ConversationEntry(id, app, exits, from = route.from, mock = route.mock)
@@ -174,7 +173,7 @@ internal fun ConversationContent(
 
         is LoadState.Failed -> {
             if (state.error == ApiError.NotFound) {
-                NotFound(onClose = exits::close)
+                NotFound(exits)
             } else {
                 CallFrame(title = {}, onClose = exits::close) {
                     item(
@@ -185,7 +184,7 @@ internal fun ConversationContent(
         }
 
         LoadState.Empty -> {
-            NotFound(onClose = exits::close)
+            NotFound(exits)
         }
 
         is LoadState.Loaded -> {
@@ -425,16 +424,8 @@ internal fun rememberCallLauncher(
 }
 
 @Composable
-private fun NotFound(onClose: () -> Unit) {
-    CallFrame(title = {}, onClose = onClose) {
-        item(key = "not-found") {
-            CallOffMessage(stringResource(R.string.conversation_not_found_title), Modifier.callItem()) {
-                Text(
-                    stringResource(R.string.conversation_not_found_description),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-        }
+private fun NotFound(exits: ConversationExits) {
+    TaskScaffold(onClose = exits::close) { padding ->
+        NotFoundMessage(onGoHome = { exits.open(AppRoute.Today) }, Modifier.padding(padding))
     }
 }

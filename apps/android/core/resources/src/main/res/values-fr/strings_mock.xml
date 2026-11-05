@@ -20,7 +20,6 @@
   "mock_flagged_count": "b9b260b8917541db6aeda2f3276f62219336691d7e5160cb715b5414bd4f9a9c",
   "mock_full_day": "4e106facff176e31a1a5467a898d9dcc71138941d7696dd4e75a535511a3750b",
   "mock_full_day_number": "631d4d2f6dcb05f620a5a58c296702cef02894002109e6ce30d1c4cdd6049d55",
-  "mock_go_to_today": "b4c0ba9f5bdb893579adaf80b7d763d021317080a95f5f4461e61c629dce8aab",
   "mock_grading": "7d00bbf54fb0252aa22a9178f0fc0ab8140b44f3dbd715ae946b639fbb108375",
   "mock_half_day": "ed84d25ff00da8eefaf1a16342cdb5925c6b54340da77a9a63e478573e447685",
   "mock_half_day_number": "ba8419fa72d6d5436075d2dd31e66e9952a4955925eb6924d99ed7cb4dad84d0",
@@ -54,8 +53,6 @@
   "mock_next": "52950ba51810ebb97e4a3bb6610a90910924b83cab9c14c28fc7dedc054d07ef",
   "mock_next_named": "4f84160efa1dfb61f764f9bc0015c1c5ddd0dc830f5c964215054f2501a35e08",
   "mock_next_section": "bfa3e6ee5502569bbaf87be606ac356dcf4d197446027339bebd51af63b5452f",
-  "mock_not_found_description": "bc34814a29a9b3774de75183b9c8df963981d9735dd45ccb1e16678a60c3cacc",
-  "mock_not_found_title": "9e0296bd228fe6e5da62c6431490f79bbde7b70bfc66124b9079e1cd8bc46353",
   "mock_not_saved_retrying": "59962502244ff8136af0467b10ba63c5a49e30b0f6fcf7472f4739e368fceeab",
   "mock_place": "bfd44e514b37acddfd1cba0b38791b1360749df5d1dc3eeb8818889f3944d4bf",
   "mock_progress_label": "b2fe95a753be7a84831b820738c5ea21eaf7670b4793a9d4dd8a2512c90a6bce",
@@ -139,9 +136,6 @@
     <string name="mock_label">Examen blanc</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
     <string name="mock_label_shape">Examen blanc · %1$s</string>
-    <string name="mock_not_found_title">Impossible de trouver cette page</string>
-    <string name="mock_not_found_description">Le lien est peut-être ancien ou mal saisi.</string>
-    <string name="mock_go_to_today">Aller à Aujourd’hui</string>
     <!-- What screen readers call the section's countdown. -->
     <string name="mock_time_left_label">Temps restant</string>
     <!-- Under the section's countdown, such as "1:24:09". -->

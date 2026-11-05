@@ -73,7 +73,6 @@ import com.zoonk.android.feature.practice.RunFrame
 import com.zoonk.android.feature.practice.RunHeader
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
-import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.runAccount
 import com.zoonk.android.feature.practice.runColumn
@@ -90,6 +89,7 @@ import com.zoonk.android.feature.questions.answerText
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.characters.TricksterAct
 import com.zoonk.android.ui.characters.TricksterActorState
@@ -139,7 +139,7 @@ fun CheckpointScreen(
 ) {
     val blockId = remember(route.blockId) { runCatching { UUID.fromString(route.blockId) }.getOrNull() }
     if (blockId == null) {
-        RunNotFound(navigator::closeTask)
+        TaskNotFound(navigator)
         return
     }
     val viewModel = viewModel(key = "checkpoint:$blockId:${runAccount(app)}") { CheckpointViewModel(blockId, app.checkpoints) }
@@ -204,7 +204,7 @@ private fun CheckpointRead(
                 }
 
                 intro -> {
-                    RunNotFound(navigator::closeTask)
+                    TaskNotFound(navigator)
                 }
 
                 else -> {
@@ -216,14 +216,14 @@ private fun CheckpointRead(
 
         is LoadState.Failed -> {
             if (read.error == ApiError.NotFound) {
-                RunNotFound(navigator::closeTask)
+                TaskNotFound(navigator)
             } else {
                 RunLoadFailed(navigator::closeTask, onRetry = { scope.launch { viewModel.checkpoint.refresh() } })
             }
         }
 
         LoadState.Empty -> {
-            RunNotFound(navigator::closeTask)
+            TaskNotFound(navigator)
         }
 
         else -> {

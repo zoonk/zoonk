@@ -52,6 +52,8 @@ struct TestOutScreen: View {
           }
         } else {
           switch load {
+          case .loading where summary.summary.value != nil && goalId == nil:
+            PracticeRedirect { hooks.navigate(.today) }
           case .loading:
             ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
           case .failed(let error):
@@ -93,6 +95,7 @@ struct TestOutScreen: View {
     }
     .onDisappear { openResult = nil }
     .task(id: "\(session.authenticatedSession?.bearerToken ?? ""):\(goalId ?? "")") { await read() }
+    .clearsRefusal { writeFailure = nil }
   }
 
   private func preparing(failure: (any Error)?) -> some View {
@@ -136,11 +139,12 @@ struct TestOutScreen: View {
         day: DayResult(result))
     } response: {
       if undo == .failed {
-        Text(
-          "We couldn't put the lessons back. Try again.", tableName: "Practice",
-          comment: "Undoing a test-out's skip failed."
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't put the lessons back. Try again.", table: "Practice",
+            comment: "Undoing a test-out's skip failed.")
         )
-        .font(.subheadline).foregroundStyle(.destructive)
+        .font(.subheadline)
       }
     } actions: {
       if let changeId = result.changeId, undo != .done {

@@ -36,8 +36,8 @@
   "player_challenge_improve": "3c915b96f96c1ecd454ddfa2b635174b1f21085aaf681eaf7cc126fb00aedcdf",
   "player_challenge_meters": "a21fefaecb61cdeb0a7b9641b4f6e6a910cd8910ec55348514d261b81b629e49",
   "player_challenge_mission": "0f9fc221410a9625feb405e901bc468ef38a82de44217e03bfa5548be83174c7",
-  "player_challenge_much_higher": "1e4a10dc30553240d632402205983bb5c3593a88163494908f4297649dc4bde1",
-  "player_challenge_much_lower": "a572f1c35b958b930b5b84dbd83ba2dcd327ae5b225e187aef90ddcf755a1f72",
+  "player_challenge_much_higher": "e654869e1da1699f2438156d8d8c1eb98734d204b4e00bbf72a2e819c0340f19",
+  "player_challenge_much_lower": "b51acec1fbde9ef5210b9fe3a5c13b11e216b5fbfc1ad1a9546f2aac5727aff1",
   "player_challenge_no_change": "63cf8bd9cd8b2b594bf6ae6ef4c69f2e2601880387d1b46d743f87b517ceb48c",
   "player_challenge_practice": "5c2021af5ac8ecf27ffd2e116515ee1ef399694fb386f93b91490a37edcaa251",
   "player_challenge_said": "6bff46ca30a231daa77e87394c18d19311cc7fbb7600d0c7a503f9f0525bdf2b",
@@ -336,9 +336,9 @@
     <string name="player_challenge_meters">Come procede la situazione</string>
     <!-- How a meter moved after the learner's decision. -->
     <string name="player_challenge_no_change">nessun cambiamento</string>
-    <string name="player_challenge_much_higher">molto più alto</string>
+    <string name="player_challenge_much_higher">in forte aumento</string>
     <string name="player_challenge_bit_higher">in leggero aumento</string>
-    <string name="player_challenge_much_lower">molto più basso</string>
+    <string name="player_challenge_much_lower">in forte calo</string>
     <string name="player_challenge_bit_lower">in leggero calo</string>
     <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
     <string name="player_challenge_you">Tu: %1$s</string>

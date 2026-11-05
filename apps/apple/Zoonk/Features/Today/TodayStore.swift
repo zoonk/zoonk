@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-enum StudyDestination: Equatable, Sendable {
+enum StudyDestination: Hashable, Sendable {
   case challenge(planItemID: String, sessionID: String)
   case checkpoint(blockID: String, sessionID: String)
   case essay(blockID: String)

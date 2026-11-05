@@ -13,7 +13,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -41,6 +40,7 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.Placement
@@ -133,7 +133,7 @@ class OnboardingSpreadScreenshots {
                 rule.onNodeWithText("Start").performScrollTo().performClick()
                 rule.waitForIdle()
             }
-            val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+            val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
             val file = File(folder, "${shown.name}-$name.png").apply { parentFile?.mkdirs() }
             file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
             println("Screenshot ${file.path}")
