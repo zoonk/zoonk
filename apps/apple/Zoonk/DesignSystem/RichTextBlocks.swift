@@ -41,32 +41,35 @@ struct RichTextBlocks: View {
   let text: String
   /// A quote of the text, in its markup, to highlight where it first shows.
   let mark: String?
+  let marks: RichTextMarks?
   let inline: (String) -> RichInline
 
   init(
-    _ text: String, mark: String? = nil, inline: @escaping (String) -> RichInline
+    _ text: String, mark: String? = nil, marks: RichTextMarks? = nil,
+    inline: @escaping (String) -> RichInline
   ) {
     self.text = text
     self.mark = mark
+    self.marks = marks
     self.inline = inline
   }
 
   var body: some View {
     let blocks = RichTextBlock.parse(text)
-    let marked = mark.flatMap { quote in
-      RichTextBlock.mark(quote, in: blocks) { String(inline($0).text.characters) }
-    }
+    let shown = { (markup: String) in String(inline(markup).text.characters) }
+    let marked = mark.flatMap { RichTextBlock.mark($0, in: blocks, shown: shown) }
+    let underlined = marks?.underline.flatMap { RichTextBlock.mark($0, in: blocks, shown: shown) }
 
     VStack(alignment: .leading, spacing: 12) {
       ForEach(Array(blocks.enumerated()), id: \.offset) { index, block in
         let mark = marked?.block == index ? marked : nil
+        let underline = underlined?.block == index ? underlined : nil
 
         switch block {
         case .paragraph(let lines):
-          Text(highlighting(inline(lines.joined(separator: "\n")), mark))
-            .fixedSize(horizontal: false, vertical: true)
+          line(inline(lines.joined(separator: "\n")), mark: mark, underline: underline)
         case .list(let items, let ordered):
-          list(items, ordered: ordered, mark: mark)
+          list(items, ordered: ordered, mark: mark, underline: underline)
         case .table(let header, let alignments, let rows):
           RichTable(header: header, alignments: alignments, rows: rows, inline: inline)
         }
@@ -75,7 +78,9 @@ struct RichTextBlocks: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  private func list(_ items: [String], ordered: Bool, mark: RichTextBlock.Mark?) -> some View {
+  private func list(
+    _ items: [String], ordered: Bool, mark: RichTextBlock.Mark?, underline: RichTextBlock.Mark?
+  ) -> some View {
     VStack(alignment: .leading, spacing: 6) {
       ForEach(Array(items.enumerated()), id: \.offset) { index, item in
         HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -84,11 +89,25 @@ struct RichTextBlocks: View {
             .foregroundStyle(.secondary)
             .accessibilityHidden(true)
 
-          Text(highlighting(inline(item), mark?.item == index ? mark : nil))
-            .fixedSize(horizontal: false, vertical: true)
+          line(
+            inline(item), mark: mark?.item == index ? mark : nil,
+            underline: underline?.item == index ? underline : nil)
         }
       }
     }
+  }
+
+  private func line(
+    _ inline: RichInline, mark: RichTextBlock.Mark?, underline: RichTextBlock.Mark?
+  ) -> some View {
+    let drawn = highlighting(inline, mark)
+
+    return Text(drawn)
+      .handMarks(
+        InlineMarks(
+          drawn.text, underline: underline?.text, highlightsTerms: marks?.highlightsTerms == true)
+      )
+      .fixedSize(horizontal: false, vertical: true)
   }
 
   private func highlighting(_ inline: RichInline, _ mark: RichTextBlock.Mark?) -> RichInline {

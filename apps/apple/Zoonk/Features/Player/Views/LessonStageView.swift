@@ -83,14 +83,16 @@ struct LessonStageView: View {
         let offersHelp =
           spread != nil && step.teachesInText && tutor.panel != nil && !store.isGuest
         let recap = state.recap
+        let map = store.lesson?.taggedSummary
 
         HStack(spacing: 0) {
           if let pages = spread {
             ScrollViewReader { scroll in
-              LessonPage(store: store) {
+              LessonPage {
                 LessonNotice(state: state, store: store)
 
                 VStack(alignment: .leading, spacing: 20) {
+                  LessonIdeaHeader(step: step, map: map)
                   LessonStepView(step: step, state: state, store: store, part: .screen)
                   LessonStepNotes(step: step, store: store)
                 }
@@ -112,13 +114,16 @@ struct LessonStageView: View {
           }
 
           ScrollViewReader { scroll in
-            LessonPage(store: store, fillsHeight: spread == nil && step.hasWordBank) {
+            LessonPage(
+              fillsHeight: spread == nil && (step.hasWordBank || (step.opensLesson && map != nil))
+            ) {
               if spread == nil {
                 LessonNotice(state: state, store: store)
               }
 
               VStack(alignment: .leading, spacing: 20) {
                 if spread == nil {
+                  LessonIdeaHeader(step: step, map: map)
                   LessonStepView(step: step, state: state, store: store, part: .screen)
                 }
 
@@ -150,14 +155,14 @@ struct LessonStageView: View {
                   )
 
                   if state.struggleOffer != nil {
-                    LessonAskBuddyOffer(reason: .misses, store: store)
+                    LessonAskBuddyOffer(store: store)
                   }
                 }
                 .id(Self.verdictId)
               }
 
-              if step.strugglePause != nil, !offersHelp {
-                LessonPauseOffer(step: step, store: store)
+              if step.isExplained, !offersHelp, store.lesson?.targetLanguage == nil {
+                LessonDidntGetIt(store: store)
               }
 
               if spread == nil, let recap {
@@ -218,6 +223,11 @@ struct LessonStageView: View {
               .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
           }
         }
+        .background {
+          if store.lesson?.isTagged == true {
+            LessonPaper()
+          }
+        }
         .environment(\.isPaneSplit, spread != nil)
         .environment(\.isLessonStepChecked, state.phase == .feedback)
         .environment(
@@ -250,7 +260,6 @@ struct LessonStageView: View {
           isCheckSlow = !Task.isCancelled
         }
       }
-      .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
       .sensoryFeedback(trigger: state.countedVerdict(step.id)) { _, isCorrect in
         isCorrect.map { $0 ? .success : .error }
@@ -267,7 +276,6 @@ struct LessonStageView: View {
 struct LessonPage<Content: View>: View {
   @State private var visibleHeight: CGFloat?
 
-  let store: LessonPlayerStore
   var fillsHeight = false
   @ViewBuilder let content: Content
 
@@ -284,10 +292,16 @@ struct LessonPage<Content: View>: View {
     .onScrollGeometryChange(for: CGFloat.self, of: \.containerSize.height) { _, height in
       visibleHeight = height
     }
-    .onScrollPhaseChange { _, phase in
-      if phase != .idle {
-        store.touches += 1
-      }
+  }
+}
+
+private struct LessonIdeaHeader: View {
+  let step: LessonStep
+  let map: LessonSummary?
+
+  var body: some View {
+    if let map, let index = step.idea(in: map) {
+      LessonIdeaStrip(summary: map, index: index)
     }
   }
 }

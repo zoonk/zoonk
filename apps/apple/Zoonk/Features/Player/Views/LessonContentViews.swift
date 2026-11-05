@@ -53,16 +53,24 @@ struct LessonRichText: View {
 }
 
 struct LessonTextBlocks: View {
+  @Environment(\.highlightsLessonTerms) private var highlightsTerms
+
   let text: String
   let mark: String?
+  let underline: String?
 
-  init(_ text: String, mark: String? = nil) {
+  init(_ text: String, mark: String? = nil, underline: String? = nil) {
     self.text = text
     self.mark = mark
+    self.underline = underline
   }
 
   var body: some View {
-    RichTextBlocks(text, mark: mark) { LessonRichText.typeset($0) }
+    RichTextBlocks(
+      text, mark: mark,
+      marks: underline != nil || highlightsTerms
+        ? RichTextMarks(underline: underline, highlightsTerms: highlightsTerms) : nil
+    ) { LessonRichText.typeset($0) }
   }
 }
 
@@ -124,6 +132,7 @@ extension LessonQuestionParts {
 }
 
 extension EnvironmentValues {
+  @Entry var highlightsLessonTerms = false
   @Entry var lessonScreenHeight: CGFloat = .infinity
   /// Between the lesson's bars: what a screen and its action bar share.
   @Entry var lessonPageHeight: CGFloat = .infinity

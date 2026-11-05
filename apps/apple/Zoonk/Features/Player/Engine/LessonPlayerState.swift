@@ -705,6 +705,15 @@ struct LessonPlayerState: Equatable, Sendable {
     leaveOutAhead({ unavailable.contains($0) }, completionStatus: .ready, now: now)
   }
 
+  /// Marks that came late reach every screen but the one in view, which keeps its layout.
+  mutating func applyMarks(from fresh: [LessonStep]) {
+    for step in fresh where step.id != currentStep?.id {
+      if let current = steps[step.id], current.marks != step.marks {
+        steps[step.id] = current.withMarks(step.marks)
+      }
+    }
+  }
+
   mutating func applyPictures(from fresh: [LessonStep]) {
     for step in fresh {
       guard let current = steps[step.id], current.imagePending else {

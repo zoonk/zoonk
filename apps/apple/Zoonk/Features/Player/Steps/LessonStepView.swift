@@ -14,13 +14,16 @@ struct LessonStepView: View {
   var body: some View {
     content
       .environment(store.work(for: step.id, round: state.rounds[step.id] ?? 0))
+      .environment(\.highlightsLessonTerms, step.marks != nil && step.isExplained)
   }
 
   @ViewBuilder
   private var content: some View {
     switch step.content {
     case .hook(let content):
-      HookStepView(step: step, content: content, context: context, part: part)
+      HookStepView(
+        step: step, content: content, context: context, part: part,
+        openingMap: store.lesson?.taggedSummary)
     case .explanation(let content):
       ExplanationStepView(step: step, content: content, part: part)
     case .workedExample(let content):
@@ -95,6 +98,7 @@ private struct HookStepView: View {
   let content: HookContent
   let context: LessonStepContext
   let part: LessonStepPart
+  let openingMap: LessonSummary?
 
   var body: some View {
     switch part {
@@ -126,6 +130,12 @@ private struct HookStepView: View {
 
       LessonTextBlocks(content.text ?? "")
         .font(.body)
+
+      if let openingMap {
+        // On one page the map takes the room the scene leaves at its bottom.
+        Spacer(minLength: 8)
+        LessonOpeningMap(summary: openingMap)
+      }
     }
   }
 
@@ -170,7 +180,7 @@ private struct ExplanationStepView: View {
         LessonQuestionText(text: title)
       }
 
-      LessonTextBlocks(content.text)
+      LessonScreenText(text: content.text, marks: step.marks)
         .font(.body)
     case .turn:
       if isPaneSplit {
@@ -229,7 +239,7 @@ private struct WorkedExampleStepView: View {
       LessonQuestionText(text: title)
     }
 
-    LessonTextBlocks(content.problem)
+    LessonScreenText(text: content.problem, marks: step.marks)
     StepMedia(step: step, visual: content.visual)
   }
 
@@ -561,6 +571,10 @@ extension HookContent {
 }
 
 extension LessonStep {
+  var opensLesson: Bool {
+    if case .hook(let hook) = content { !hook.asksGuess } else { false }
+  }
+
   /// Text that teaches, which the buddy can explain another way, as main's aside offers beside it.
   var teachesInText: Bool {
     switch content {

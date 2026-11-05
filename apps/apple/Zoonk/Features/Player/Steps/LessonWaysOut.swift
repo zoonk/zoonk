@@ -129,17 +129,12 @@ struct LessonScreenHelp: View {
   }
 }
 
-/// After two misses in a row on the same idea, or a long pause on an explanation.
+/// After two misses in a row on the same idea.
 struct LessonAskBuddyOffer: View {
-  enum Reason {
-    case misses, pause
-  }
-
   @Environment(\.lessonTutor) private var tutor
   @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
   @State private var isDismissed = false
 
-  let reason: Reason
   let store: LessonPlayerStore
 
   var body: some View {
@@ -177,23 +172,14 @@ struct LessonAskBuddyOffer: View {
 
   @ViewBuilder
   private var message: some View {
-    switch (reason, buddyName) {
-    case (.misses, let name?):
+    if let buddyName {
       Text(
-        "This one is tricky. \(name) can explain it another way.", tableName: "Player",
+        "This one is tricky. \(buddyName) can explain it another way.", tableName: "Player",
         comment: "Offer to ask the buddy after two misses")
-    case (.misses, nil):
+    } else {
       Text(
         "This one is tricky. Your buddy can explain it another way.", tableName: "Player",
         comment: "Offer to ask the buddy after two misses")
-    case (.pause, let name?):
-      Text(
-        "Taking your time? \(name) can explain it another way.", tableName: "Player",
-        comment: "Offer to ask the buddy after a long pause")
-    case (.pause, nil):
-      Text(
-        "Taking your time? Your buddy can explain it another way.", tableName: "Player",
-        comment: "Offer to ask the buddy after a long pause")
     }
   }
 
@@ -207,58 +193,43 @@ struct LessonAskBuddyOffer: View {
   }
 }
 
-struct LessonPauseOffer: View {
-  @Environment(\.scenePhase) private var scenePhase
-  @State private var isStuck = false
+/// Learners who don't follow a screen rarely think to ask the buddy, so one tap asks for them.
+struct LessonDidntGetIt: View {
+  @Environment(\.lessonTutor) private var tutor
 
-  let step: LessonStep
   let store: LessonPlayerStore
 
   var body: some View {
-    // A stack rather than a group, so the timer runs while nothing shows yet.
-    VStack(alignment: .leading, spacing: 0) {
-      if isStuck, store.state?.quickCheck == nil {
-        LessonAskBuddyOffer(reason: .pause, store: store)
+    if tutor.panel != nil {
+      Button {
+        store.ask(suggestionId: "simpler", sendsAtOnce: true)
+      } label: {
+        Label {
+          Text(
+            "I didn't get this", tableName: "Player",
+            comment:
+              "Quiet button under a lesson's explanation, in the learner's own voice: what they'd say when the screen lost them (\"Não entendi\" in Portuguese). Tapping it has the buddy explain the screen more simply."
+          )
+        } icon: {
+          Image(systemName: "questionmark.bubble")
+        }
       }
+      .buttonStyle(.borderless)
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+      .accessibilityHint(
+        Text(
+          "Your buddy explains this screen more simply", tableName: "Player",
+          comment: "VoiceOver hint of the \"I didn't get this\" button under an explanation"))
     }
-    .task(id: PauseKey(stepId: step.id, isActive: scenePhase == .active, touches: store.touches)) {
-      guard !isStuck, scenePhase == .active, let delay = step.strugglePause else {
-        return
-      }
-
-      try? await Task.sleep(for: delay)
-
-      if !Task.isCancelled {
-        isStuck = true
-      }
-    }
-  }
-
-  private struct PauseKey: Hashable {
-    let stepId: String
-    let isActive: Bool
-    let touches: Int
   }
 }
 
 extension LessonStep {
-  /// How long a learner can stay on an explanation or worked example without touching anything
-  /// before help is offered: three times its reading time at 150 words a minute, at least 45 s.
-  var strugglePause: Duration? {
-    let text: String
-
+  var isExplained: Bool {
     switch content {
-    case .explanation(let content):
-      text = "\(content.title ?? "") \(content.text)"
-    case .workedExample(let content):
-      text = ([content.problem] + content.steps.map(\.text) + [content.result]).joined(
-        separator: " ")
-    default:
-      return nil
+    case .explanation, .workedExample: true
+    default: false
     }
-
-    let words = WordCount.count(text)
-    let readingSeconds = Double(words) / 150 * 60
-    return .seconds(max(45, readingSeconds * 3))
   }
 }

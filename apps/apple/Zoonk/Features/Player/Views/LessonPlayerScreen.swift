@@ -139,7 +139,7 @@ private struct LessonPlayerContent: View {
         return activityRenderers.renderer(for: content.template) == nil
       }
       await store.load()
-      await store.followLatePictures()
+      await store.followLateContent()
     }
     // A visitor who starts the lesson as a guest gets the session first and the summary after it.
     .onChange(of: learnerSummary?.summary.value?.identity.isAnonymous, initial: true) {

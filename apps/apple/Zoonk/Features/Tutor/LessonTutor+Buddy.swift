@@ -9,7 +9,7 @@ extension LessonTutor {
         scope: tutorScope, isPane: isBeside,
         draft: scope.startingOffer.flatMap { offer in
           tutorScope.lessonSuggestions.first { $0.id == offer.suggestionId }.map {
-            TutorDraft(suggestion: $0, offer: offer.id)
+            TutorDraft(suggestion: $0, offer: offer.id, sendsAtOnce: offer.sendsAtOnce)
           }
         }))
   }

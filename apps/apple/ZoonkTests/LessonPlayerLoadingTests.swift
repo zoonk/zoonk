@@ -78,13 +78,32 @@ final class LessonPlayerLoadingTests: XCTestCase {
 
     let first = player(cache: cache, content: content, transport: OfflineLessonTransport())
     await first.load()
-    await first.followLatePictures()
+    await first.followLateContent()
     let reopened = player(cache: cache, content: content, transport: OfflineLessonTransport())
     await reopened.load()
 
     XCTAssertEqual(reads, 2)
     XCTAssertEqual(reopened.state?.steps["check"]?.imagePending, false)
     XCTAssertEqual(reopened.state?.steps["check"]?.image?.url, "https://example.com/a.png")
+  }
+
+  func testMarksThatComeLateReachTheScreensAheadAndLeaveTheOneInView() async throws {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    var reads = 0
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      reads += 1
+      return .ready(try markedLesson(isTagged: reads > 1))
+    }
+
+    let store = player(cache: cache, content: content, transport: OfflineLessonTransport())
+    await store.load()
+    await store.followLateContent()
+
+    XCTAssertEqual(reads, 2)
+    XCTAssertEqual(store.state?.currentStep?.id, "first")
+    XCTAssertNil(store.state?.steps["first"]?.marks, "the screen in view keeps its layout")
+    XCTAssertEqual(store.state?.steps["second"]?.marks?.ideaIndex, 1)
+    XCTAssertEqual(store.lesson?.isTagged, true)
   }
 
   /// Loading the lesson again (a session renewed for the same learner) starts every answer over,
@@ -175,6 +194,24 @@ private func pictureLesson(isDrawn: Bool) throws -> PlayableLesson {
   return PlayableLesson(
     id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
     steps: [step], summary: nil, tutorSuggestions: [])
+}
+
+/// Written long ago, so following its marks reads once instead of polling.
+private func markedLesson(isTagged: Bool) throws -> PlayableLesson {
+  let steps = try ["first", "second"].enumerated().map { index, id in
+    try JSONDecoder().decode(
+      LessonStep.self,
+      from: Data(
+        """
+        {"id": "\(id)", "position": \(index), "pictureWaitStartedAt": 0, "kind": "explanation",
+         "content": {"title": null, "text": "Cells make up living things."},
+         "marks": \(isTagged ? #"{"ideaIndex": \#(index)}"# : "null")}
+        """.utf8))
+  }
+
+  return PlayableLesson(
+    id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
+    steps: steps, summary: nil, tutorSuggestions: [], marksPending: !isTagged)
 }
 
 extension CurrentAccount {
