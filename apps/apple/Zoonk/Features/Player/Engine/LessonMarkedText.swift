@@ -59,6 +59,11 @@ extension PlayableLesson {
   var taggedSummary: LessonSummary? {
     steps.contains { $0.marks != nil } || summary?.isTagged == true ? summary : nil
   }
+
+  /// Tagged, or being tagged: its map's ideas get icons, which can come after the map shows.
+  var expectsIdeaIcons: Bool {
+    marksPending || taggedSummary != nil
+  }
 }
 
 extension LessonSummary {

@@ -121,8 +121,10 @@ private struct LessonPlayerContent: View {
     }
     .sheet(isPresented: $isShowingMap) {
       if let lesson = store.lesson, let summary = lesson.summary {
-        LessonMapSheet(title: lesson.title, summary: summary)
-          .accessibilitySizeStyles()
+        LessonMapSheet(
+          title: lesson.title, summary: summary, keepsIconRoom: lesson.expectsIdeaIcons
+        )
+        .accessibilitySizeStyles()
       }
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.
@@ -420,7 +422,7 @@ struct LessonAskPanel: View {
           lessonId: lesson.id, stepId: stepId,
           stepNumber: store.state.flatMap { $0.currentStep == nil ? nil : $0.position + 1 },
           answer: store.state?.answerInView, stepIds: store.state?.lessonOrder ?? [],
-          suggestions: lesson.tutorSuggestions,
+          suggestions: isBeside ? store.suggestionsBeside : lesson.tutorSuggestions,
           startingOffer: store.startingOffer(about: stepId)),
         isBeside)
     }

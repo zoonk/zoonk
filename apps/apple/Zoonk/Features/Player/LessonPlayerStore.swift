@@ -154,12 +154,23 @@ final class LessonPlayerStore {
   }
 
   func ask(suggestionId: String? = nil, sendsAtOnce: Bool = false) {
-    askingOffer = suggestionId.map {
-      LessonTutorOffer(
-        suggestionId: $0, stepId: state?.currentStep?.id, sendsAtOnce: sendsAtOnce)
+    askingOffer = lesson?.tutorSuggestions.first { $0.id.rawValue == suggestionId }.map {
+      LessonTutorOffer(suggestion: $0, stepId: state?.currentStep?.id, sendsAtOnce: sendsAtOnce)
     }
     isAskingInSheet = !isSpread
     isAsking = true
+  }
+
+  /// What the buddy offers beside the lesson. Beside a screen with "I didn't get this", that button
+  /// is the one way to ask for `simpler`.
+  var suggestionsBeside: [Components.Schemas.LessonTutorSuggestion] {
+    let suggestions = lesson?.tutorSuggestions ?? []
+
+    guard let lesson, let step = state?.currentStep, lesson.offersDidntGetIt(on: step) else {
+      return suggestions
+    }
+
+    return suggestions.filter { $0.id != .simpler }
   }
 
   /// An unwritten lesson waits for the learner's tap, since writing it runs AI.
