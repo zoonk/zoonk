@@ -9,7 +9,10 @@ import { LESSON_ICON_DOCUMENT } from "../identity/_utils/search-documents";
 import { findRankedIds, orderByIds, toTextSearch } from "../identity/_utils/text-search-sql";
 import { toIconFiles } from "./_utils/icon-files";
 
-/** Longer than one drawing attempt takes; each attempt renews the claim, so only a dead run loses it. */
+/**
+ * Each draw attempt renews the claim and its image call times out after 2 minutes, so a run still
+ * drawing never goes this long without renewing; only one that stopped loses its claim.
+ */
 const STALE_CLAIM_MS = 600_000;
 
 export type IconRow = { id: string; name: string; runId: string; status: GenerationStatus };

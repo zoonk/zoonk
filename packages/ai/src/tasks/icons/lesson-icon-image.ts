@@ -13,6 +13,8 @@ import stylePrompt from "./lesson-icon-style.prompt.md";
 const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY: ImageGenerationQuality = "low";
 const ICON_SIZE = "1024x1024";
+/** Drawings take about 10 seconds; the bound keeps a live run inside core's 10-minute icon claim. */
+const ATTEMPT_TIMEOUT_MS = 120_000;
 
 /** Bump it when the style changes, so icons drawn before can be found and redrawn. */
 export const LESSON_ICON_STYLE_VERSION = 1;
@@ -48,6 +50,7 @@ export async function generateLessonIconImage({
     analytics,
     generate: ({ promptTraining }) =>
       generateImage({
+        abortSignal: AbortSignal.timeout(ATTEMPT_TIMEOUT_MS),
         maxImagesPerCall: 1,
         model,
         prompt,
