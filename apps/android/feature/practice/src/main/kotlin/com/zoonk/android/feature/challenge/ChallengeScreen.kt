@@ -338,11 +338,12 @@ private fun IntroScreen(
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
     BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        // An open book reads the intro and what it covers on one page, and its way on on the other.
+        // An open book keeps the whole intro, what it covers and its way on included, on the page before the fold.
         val beside = aside?.takeIf { pageFold(maxWidth, span) == null }
 
         TaskScaffold(
             onClose = actions::close,
+            lonePage = true,
             bottomBar = { TaskActionBar { ChallengeFooter(challenge, ui, actions) } },
             aside = beside?.let { TaskAside(title = it.title) { it.content(false) } },
         ) { padding ->

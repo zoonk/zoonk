@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -70,7 +69,6 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -259,7 +257,7 @@ internal fun TestOutPreparing(
         viewModel.retryWriting()
     }
 
-    TaskScaffold(
+    RunPage(
         onClose = navigator::closeTask,
         title = { LessonTitle(title) },
         bottomBar =
@@ -268,23 +266,21 @@ internal fun TestOutPreparing(
             } else {
                 { TaskActionBar { StartActions(ui, locked, navigator, focus.requester, start) } }
             },
-    ) { padding ->
-        RunPage(Modifier.padding(padding)) {
-            if (waiting) {
-                GenerationWait(
-                    kind = GenerationKind.TestOutQuestions,
-                    run = if (ui.writing) run else GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted),
-                    onRetry = if (ui.writing) retryWriting.takeIf { viewModel.canRestart } else start,
-                ) {
-                    RunIntro(
-                        stringResource(R.string.testout_writing_title),
-                        stringResource(R.string.testout_writing_detail),
-                        titleFocus = focus.requester,
-                    )
-                }
-            } else {
-                RunIntro(stringResource(R.string.testout_intro_title), stringResource(R.string.testout_intro_detail))
+    ) {
+        if (waiting) {
+            GenerationWait(
+                kind = GenerationKind.TestOutQuestions,
+                run = if (ui.writing) run else GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted),
+                onRetry = if (ui.writing) retryWriting.takeIf { viewModel.canRestart } else start,
+            ) {
+                RunIntro(
+                    stringResource(R.string.testout_writing_title),
+                    stringResource(R.string.testout_writing_detail),
+                    titleFocus = focus.requester,
+                )
             }
+        } else {
+            RunIntro(stringResource(R.string.testout_intro_title), stringResource(R.string.testout_intro_detail))
         }
     }
 }

@@ -174,11 +174,24 @@ private fun RunDone(
 }
 
 /**
- * A screen of a run with one decision, its action in the docked bar (an intro, a wait, a note): its
- * column keeps to the page before an unfolded book's fold, and the page after it holds only the way on.
+ * A screen of a run with one decision (an intro, a wait, a note), its way on in [bottomBar]: across
+ * an unfolded book's fold it keeps to the page before it, the way on under what it acts on.
  */
 @Composable
 fun RunPage(
+    onClose: () -> Unit,
+    title: @Composable () -> Unit = {},
+    bottomBar: (@Composable () -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    TaskScaffold(onClose = onClose, title = title, bottomBar = bottomBar, lonePage = true) { padding ->
+        RunColumn(Modifier.padding(padding), content = content)
+    }
+}
+
+/** A run's column, scrolled, kept to the page before an unfolded book's fold that crosses it. */
+@Composable
+fun RunColumn(
     modifier: Modifier,
     scroll: ScrollState = rememberScrollState(),
     content: @Composable ColumnScope.() -> Unit,

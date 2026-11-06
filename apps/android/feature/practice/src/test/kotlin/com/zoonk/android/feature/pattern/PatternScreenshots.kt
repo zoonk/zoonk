@@ -168,6 +168,14 @@ class PatternScreenshots {
     fun bookIntroRightToLeft() = show("intro-book-rtl", fold = true, direction = LayoutDirection.Rtl)
 
     @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookIntroDark() = show("intro-book-dark", dark = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletIntro() = show("intro-tablet")
+
+    @Test
     @Config(qualifiers = "w700dp-h840dp-xhdpi")
     fun mediumIntro() = show("intro-medium")
 

@@ -215,6 +215,25 @@ class EssayScreenshots {
 
     @Test
     @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookSkippedDarkMoreContrast() = show("essay-book-skipped-dark-more-contrast", status = "skipped", fold = true, dark = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookSkippedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("essay-book-skipped-font200", status = "skipped", fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookSkippedRightToLeft() = show("essay-book-skipped-rtl", status = "skipped", fold = true, direction = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletSkipped() = show("essay-tablet-skipped", status = "skipped")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
     fun bookWriteDarkMoreContrast() =
         show("essay-book-write-dark-more-contrast", text = "A mobilidade urbana é um desafio.", withTexts = false, fold = true, dark = true)
 
