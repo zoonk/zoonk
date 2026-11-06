@@ -4,7 +4,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
-import { CURRENT_STEPS } from "../lessons/lesson-versions";
+import { toPreparedSteps } from "../lessons/lesson-versions";
 import {
   type ImageAnalytics,
   type LibraryPicture,
@@ -71,18 +71,13 @@ function toOutcome({ alt, picture }: { alt: string; picture: LibraryPicture }): 
 }
 
 export async function listLessonImageSteps({ lessonId }: { lessonId: string }): Promise<string[]> {
-  const lesson = await prisma.lesson.findUnique({
-    select: {
-      steps: {
-        orderBy: { position: "asc" },
-        select: { content: true, id: true, kind: true, mediaAssetId: true },
-        where: CURRENT_STEPS,
-      },
-    },
-    where: { id: lessonId },
+  const steps = await prisma.step.findMany({
+    orderBy: { position: "asc" },
+    select: { content: true, id: true, kind: true, mediaAssetId: true, staged: true },
+    where: { lessonId, retiredAt: null },
   });
 
-  const pending = (lesson?.steps ?? []).filter(
+  const pending = toPreparedSteps(steps).filter(
     (step) => !step.mediaAssetId && getStepImageRequest(step),
   );
 
@@ -166,23 +161,19 @@ export async function listLessonOptionPictures({
 }: {
   lessonId: string;
 }): Promise<OptionPictureTarget[]> {
-  const lesson = await prisma.lesson.findUnique({
+  const steps = await prisma.step.findMany({
+    orderBy: { position: "asc" },
     select: {
-      steps: {
-        orderBy: { position: "asc" },
-        select: {
-          content: true,
-          id: true,
-          kind: true,
-          optionPictures: { select: { optionId: true } },
-        },
-        where: { ...CURRENT_STEPS, kind: "check" },
-      },
+      content: true,
+      id: true,
+      kind: true,
+      optionPictures: { select: { optionId: true } },
+      staged: true,
     },
-    where: { id: lessonId },
+    where: { lessonId, retiredAt: null },
   });
 
-  return (lesson?.steps ?? []).flatMap((step) => {
+  return toPreparedSteps(steps).flatMap((step) => {
     const drawn = new Set(step.optionPictures.map((picture) => picture.optionId));
 
     return getOptionPictureRequests(step)

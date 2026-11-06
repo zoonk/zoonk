@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { CURRENT_STEPS } from "@zoonk/core/library/lessons/versions";
 import { prisma } from "@zoonk/db";
 
 const libraryLessonInclude = {
@@ -34,7 +35,7 @@ const libraryLessonInclude = {
       variants: { orderBy: [{ kind: "asc" as const }, { key: "asc" as const }] },
     },
     orderBy: { position: "asc" as const },
-    where: { retiredAt: null },
+    where: CURRENT_STEPS,
   },
   words: {
     include: { word: { select: { audioUrl: true, word: true } } },

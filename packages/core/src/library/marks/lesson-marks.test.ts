@@ -2,11 +2,13 @@ import { randomUUID } from "node:crypto";
 import { matchLessonIcons } from "@zoonk/ai/tasks/icons/match";
 import { tagLesson } from "@zoonk/ai/tasks/lesson-marks";
 import { prisma } from "@zoonk/db";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
   languageLessonFixture,
   lessonIconFixture,
   playableLessonFixture,
 } from "@zoonk/testing/fixtures/playable-lessons";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it, vi } from "vitest";
 import { readSavedLessonMap } from "../lessons/lesson-map";
 import { linkLessonIcons, pickLessonIcons } from "./lesson-icons";
@@ -124,6 +126,65 @@ describe(tagLessonMarks, () => {
 
     await expect(tagLessonMarks({ lessonId: lesson.id })).resolves.toStrictEqual(tagged);
     expect(tagLesson).toHaveBeenCalledOnce();
+  });
+
+  it("tags a fixed version staged to replace the one learners get, its map included, and links its icons there", async () => {
+    const [cloud, nucleus] = [uniqueName("electron cloud"), uniqueName("atom")];
+    taggedAs({ cloud, nucleus });
+    const map = { ideas, shape: "hub" };
+
+    const [{ lesson }, drawn] = await Promise.all([
+      playableLessonFixture({
+        lesson: { stagedSummary: map, summary: map },
+        steps: ["explanation"],
+      }),
+      lessonIconFixture({ name: cloud }),
+    ]);
+
+    await libraryStepFixture({
+      content: playableStepContent.explanation,
+      lessonId: lesson.id,
+      position: 0,
+      staged: true,
+      version: 2,
+    });
+
+    await tagLessonMarks({ lessonId: lesson.id });
+
+    await expect(readLessonMarking(lesson.id)).resolves.toStrictEqual({
+      drawingIcons: false,
+      tagged: true,
+    });
+
+    await linkLessonIcons({
+      lessonId: lesson.id,
+      picked: [
+        { iconId: drawn.id, name: cloud },
+        { iconId: null, name: nucleus },
+      ],
+    });
+
+    const [steps, stored] = await Promise.all([
+      prisma.step.findMany({ orderBy: { version: "asc" }, where: { lessonId: lesson.id } }),
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ]);
+
+    expect(steps.map((step) => step.marks)).toMatchObject([
+      null,
+      { iconId: drawn.id, iconPending: false },
+    ]);
+
+    expect(stored.summary).toStrictEqual(map);
+
+    expect(
+      readSavedLessonMap(stored.stagedSummary)?.ideas.map(({ about, iconId }) => ({
+        about,
+        iconId,
+      })),
+    ).toStrictEqual([
+      { about: "What the electron does", iconId: drawn.id },
+      { about: "How to read the cloud", iconId: null },
+    ]);
   });
 
   it("leaves a language lesson alone and never writes over a map rewritten meanwhile", async () => {

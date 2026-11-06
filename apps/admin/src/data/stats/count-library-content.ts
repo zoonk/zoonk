@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { CURRENT_STEPS } from "@zoonk/core/library/lessons/versions";
 import { prisma } from "@zoonk/db";
 
 export const countLibraryContent = cacheAdminData(async () => {
@@ -20,7 +21,7 @@ export const countLibraryContent = cacheAdminData(async () => {
     prisma.chapter.count({ where: { outlineStatus: "completed" } }),
     prisma.lesson.count({ where: { contentStatus: "completed" } }),
     prisma.lesson.count(),
-    prisma.step.count({ where: { retiredAt: null } }),
+    prisma.step.count({ where: CURRENT_STEPS }),
     prisma.skill.count({ where: { mergedIntoId: null } }),
     prisma.item.count(),
     prisma.mediaAsset.count({ where: { kind: "image" } }),

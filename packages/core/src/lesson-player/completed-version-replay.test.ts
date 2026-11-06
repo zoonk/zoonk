@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
-import { saveLessonVersion } from "../library/lessons/_utils/save-lesson-content";
+import { publishLessonVersion } from "../_test-utils/publish-lesson-version";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "./check-lesson-step";
 import { completeLibraryLesson } from "./complete-library-lesson";
@@ -80,7 +80,7 @@ describe("completed lesson version replay", () => {
 
       vi.setSystemTime(new Date(Date.now() + elapsedMs));
 
-      await saveLessonVersion({
+      await publishLessonVersion({
         language: setup.lesson.language,
         lessonId,
         replaces: 1,

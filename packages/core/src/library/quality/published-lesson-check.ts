@@ -27,12 +27,16 @@ import {
   loadPublishedLessonInputs,
   toWritingContext,
 } from "../lessons/_utils/lesson-writing-inputs";
-import { saveLessonVersion } from "../lessons/_utils/save-lesson-content";
+import {
+  publishStagedLessonVersion,
+  stageLessonVersion,
+} from "../lessons/_utils/save-lesson-content";
 import { loadLessonReuse } from "../lessons/lesson-reuse";
 import {
   CURRENT_STEPS,
   lockCurrentLessonVersion,
   readCurrentLessonVersion,
+  readStagedLessonVersion,
 } from "../lessons/lesson-versions";
 import { type LessonCheckPlan } from "../lessons/write-lesson-content";
 import {
@@ -52,7 +56,7 @@ export type PublishedLessonOutcome =
   | { status: "republished"; version: number }
   | { draft: HeldBackDraft; incorrect: boolean; status: "heldBack" };
 
-async function publishFixedVersion({
+async function stageFixedVersion({
   checked,
   context,
   inputs,
@@ -80,7 +84,7 @@ async function publishFixedVersion({
     version: checked.version,
   });
 
-  const version = await saveLessonVersion({
+  const version = await stageLessonVersion({
     language: inputs.language,
     lessonId: context.lessonId,
     replaces,
@@ -89,6 +93,12 @@ async function publishFixedVersion({
   });
 
   return version === null ? { status: "replaced" } : { status: "republished", version };
+}
+
+/** A step run again after staging its fix answers with that fix instead of writing another. */
+async function readStagedFix(lessonId: string): Promise<PublishedLessonOutcome | null> {
+  const version = await readStagedLessonVersion(lessonId);
+  return version === null ? null : { status: "republished", version };
 }
 
 function toReviewFindings(gate: GateResult): GateResult {
@@ -106,6 +116,12 @@ export async function checkPublishedLesson({
   plan,
   ...context
 }: CheckContext & { plan: LessonCheckPlan }): Promise<PublishedLessonOutcome> {
+  const staged = await readStagedFix(context.lessonId);
+
+  if (staged) {
+    return staged;
+  }
+
   const loaded = await loadCheck({ context, version: plan.version, writerModel: plan.writerModel });
 
   if (!loaded) {
@@ -143,7 +159,7 @@ export async function checkPublishedLesson({
     };
   }
 
-  return publishFixedVersion({ checked, context, inputs, replaces: plan.version });
+  return stageFixedVersion({ checked, context, inputs, replaces: plan.version });
 }
 
 /** Internal workflow bridge; not an app authorization boundary. */
@@ -155,12 +171,17 @@ export async function redraftPublishedLesson({
   heldBackDrafts: HeldBackDraft[];
   version: number;
 }): Promise<PublishedLessonOutcome> {
-  const [inputs, current, analytics, reuse] = await Promise.all([
+  const [inputs, current, staged, analytics, reuse] = await Promise.all([
     loadPublishedLessonInputs(context.lessonId),
     readCurrentLessonVersion(context.lessonId),
+    readStagedFix(context.lessonId),
     toTaskAnalytics(context),
     loadLessonReuse({ forExam: context.forExam, lessonId: context.lessonId }),
   ]);
+
+  if (staged) {
+    return staged;
+  }
 
   if (!inputs || current !== version) {
     return { status: "replaced" };
@@ -203,7 +224,18 @@ export async function redraftPublishedLesson({
     };
   }
 
-  return publishFixedVersion({ checked, context, inputs: loaded.inputs, replaces: version });
+  return stageFixedVersion({ checked, context, inputs: loaded.inputs, replaces: version });
+}
+
+/** Internal workflow bridge: makes a staged fix the version learners get. */
+export async function publishFixedVersion({
+  lessonId,
+  version,
+}: {
+  lessonId: string;
+  version: number;
+}): Promise<boolean> {
+  return (await publishStagedLessonVersion({ lessonId, version })) !== null;
 }
 
 /** Internal workflow bridge; a failed citation call throws so the workflow step can retry. */

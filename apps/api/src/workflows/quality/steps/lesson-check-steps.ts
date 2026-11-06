@@ -4,6 +4,7 @@ import {
   type PublishedLessonOutcome,
   checkPublishedLesson,
   citePublishedLesson,
+  publishFixedVersion,
   redraftPublishedLesson,
   setAsidePublishedLesson,
 } from "@zoonk/core/library/quality/published-checks";
@@ -49,6 +50,15 @@ export async function setAsidePublishedLessonStep(input: {
   "use step";
 
   return setAsidePublishedLesson(input);
+}
+
+export async function publishFixedVersionStep(input: {
+  lessonId: string;
+  version: number;
+}): Promise<boolean> {
+  "use step";
+
+  return publishFixedVersion(input);
 }
 
 export async function readLessonImageScopeStep(lessonId: string): Promise<ImageScope> {

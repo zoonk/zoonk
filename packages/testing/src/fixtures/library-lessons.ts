@@ -5,7 +5,10 @@ import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
 
 const DEFAULT_ESTIMATED_MINUTES = 4;
 
-type LessonAttrs = FixtureAttrs<Lesson, "heldBackDrafts" | "spec" | "summary">;
+export type LessonAttrs = FixtureAttrs<
+  Lesson,
+  "heldBackDrafts" | "spec" | "stagedSummary" | "summary"
+>;
 
 function lessonData(attrs?: LessonAttrs) {
   const key = randomUUID();

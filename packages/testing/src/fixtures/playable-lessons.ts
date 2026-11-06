@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { type Lesson, type LessonIcon, prisma } from "@zoonk/db";
-import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
-import { libraryLessonFixture } from "./library-lessons";
+import { type LessonIcon, prisma } from "@zoonk/db";
+import { fixtureProvenance } from "./_utils/fixture-attrs";
+import { type LessonAttrs, libraryLessonFixture } from "./library-lessons";
 import { organizationFixture } from "./orgs";
 import {
   type PlayableStepKind,
@@ -21,10 +21,7 @@ type PlayableStepAttrs = {
 export async function playableLessonFixture({
   lesson,
   steps = TEACHING_LESSON_STEPS,
-}: {
-  lesson?: FixtureAttrs<Lesson, "heldBackDrafts" | "spec" | "summary">;
-  steps?: (PlayableStepAttrs | PlayableStepKind)[];
-} = {}) {
+}: { lesson?: LessonAttrs; steps?: (PlayableStepAttrs | PlayableStepKind)[] } = {}) {
   const created = await libraryLessonFixture({
     contentStatus: "completed",
     specStatus: "completed",
@@ -92,9 +89,7 @@ function savedMarks(marks: {
  * A tagged lesson with its icons drawn: a map whose ideas have `about` lines and icons, and
  * screens with their idea, an underline, an example and an icon.
  */
-export async function markedPlayableLessonFixture({
-  lesson,
-}: { lesson?: FixtureAttrs<Lesson, "heldBackDrafts" | "spec" | "summary"> } = {}) {
+export async function markedPlayableLessonFixture({ lesson }: { lesson?: LessonAttrs } = {}) {
   const [cloud, nucleus, planet] = await Promise.all([
     lessonIconFixture({ name: `electron cloud ${randomUUID()}`, tags: ["electron", "cloud"] }),
     lessonIconFixture({ name: `atom nucleus ${randomUUID()}`, tags: ["atom", "nucleus"] }),

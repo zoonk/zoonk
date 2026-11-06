@@ -19,7 +19,7 @@ import { holdBackLessonDraft } from "../generation/hold-back-lesson";
 import {
   type LessonScreenToSave,
   saveLessonContent,
-  saveLessonVersion,
+  stageLessonVersion,
 } from "./_utils/save-lesson-content";
 
 const WRITERS = ["holdback", "publish", "version"] as const;
@@ -113,7 +113,7 @@ function write({
     });
   }
 
-  return saveLessonVersion({ ...input, replaces: stale ? 0 : 1 });
+  return stageLessonVersion({ ...input, replaces: stale ? 0 : 1 });
 }
 
 async function sourceVersion(planId: string) {

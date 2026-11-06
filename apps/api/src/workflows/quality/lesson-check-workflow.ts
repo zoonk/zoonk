@@ -5,14 +5,13 @@ import {
 import { type LessonCheckPlan } from "@zoonk/core/library/lessons/write-content";
 import { type PublishedLessonOutcome } from "@zoonk/core/library/quality/published-checks";
 import { getWorkflowMetadata } from "workflow";
-import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
-import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
-import { lessonMarksWorkflow } from "../marks/lesson-marks-workflow";
+import { markAndDraw } from "../lessons/mark-and-draw";
 import {
   checkPublishedLessonStep,
   citePublishedLessonStep,
+  publishFixedVersionStep,
   readLessonImageScopeStep,
   redraftPublishedLessonStep,
   setAsidePublishedLessonStep,
@@ -79,16 +78,14 @@ export async function settlePublishedLesson({
   const settled = redrafted?.outcome ?? outcome;
 
   if (settled.status === "republished") {
-    const imageScope = await readLessonImageScopeStep(context.lessonId);
+    const { analytics, lessonId } = context;
+    const imageScope = await readLessonImageScopeStep(lessonId);
 
     if (imageScope) {
-      const { analytics, lessonId } = context;
-      await start(lessonMarksWorkflow, [{ analytics, lessonId }]);
-
-      await start(lessonImagesWorkflow, [
-        { analytics: { ...analytics, contentScope: imageScope }, lessonId },
-      ]);
+      await markAndDraw({ analytics, imageScope, lessonId });
     }
+
+    await publishFixedVersionStep({ lessonId, version: settled.version });
   }
 
   if (settled.status === "heldBack" && outcome.status === "heldBack" && outcome.incorrect) {

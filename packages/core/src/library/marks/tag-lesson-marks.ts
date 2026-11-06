@@ -4,7 +4,7 @@ import { type CallWait } from "@zoonk/ai/provider-options";
 import { type IconNeed } from "@zoonk/ai/tasks/icons/need";
 import { tagLesson } from "@zoonk/ai/tasks/lesson-marks";
 import { type MarksScreen, type ScreenMarks } from "@zoonk/ai/tasks/lesson-marks/schema";
-import { DbNull, type StepKind, prisma } from "@zoonk/db";
+import { DbNull, type Lesson, type StepKind, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { PICTURE_WAIT_MS } from "../../lesson-player/picture-wait";
@@ -13,7 +13,7 @@ import {
   type SavedLessonMapIdea,
   readSavedLessonMap,
 } from "../lessons/lesson-map";
-import { CURRENT_STEPS } from "../lessons/lesson-versions";
+import { toPreparedVersion } from "../lessons/lesson-versions";
 import { safeParseStepContent } from "../steps/contract/step-contract";
 import {
   type MarkedScreen,
@@ -31,16 +31,17 @@ export type TaggedLesson = { contentScope: "personal" | "shared"; requests: Less
 
 type TaggedStep = { id: string; marks: SavedStepMarks | null; screen: MarksScreen };
 
-function findLessonToTag(lessonId: string) {
-  return prisma.lesson.findUnique({
+async function findLessonToTag(lessonId: string) {
+  const lesson = await prisma.lesson.findUnique({
     select: {
       id: true,
       language: true,
       ownerId: true,
+      stagedSummary: true,
       steps: {
         orderBy: { position: "asc" },
-        select: { content: true, id: true, kind: true, marks: true },
-        where: CURRENT_STEPS,
+        select: { content: true, id: true, kind: true, marks: true, staged: true },
+        where: { retiredAt: null },
       },
       summary: true,
       targetLanguage: true,
@@ -48,6 +49,8 @@ function findLessonToTag(lessonId: string) {
     },
     where: { id: lessonId },
   });
+
+  return lesson && { ...lesson, ...toPreparedVersion(lesson) };
 }
 
 type LessonToTag = NonNullable<Awaited<ReturnType<typeof findLessonToTag>>>;
@@ -176,6 +179,29 @@ function toSavedMarks(marks: ScreenMarks): SavedStepMarks {
   };
 }
 
+/** Saves the map of the version `toPreparedVersion` read, unless something rewrote it since `read`. */
+export function savePreparedMap({
+  lessonId,
+  map,
+  read,
+  staged,
+}: {
+  lessonId: string;
+  map: SavedLessonMap;
+  read: NonNullable<Lesson["summary"]>;
+  staged: boolean;
+}) {
+  return staged
+    ? prisma.lesson.updateMany({
+        data: { stagedSummary: map },
+        where: { id: lessonId, stagedSummary: { equals: read } },
+      })
+    : prisma.lesson.updateMany({
+        data: { summary: map },
+        where: { id: lessonId, summary: { equals: read } },
+      });
+}
+
 /** Writes only over untagged screens and the same map, so a lesson rewritten meanwhile keeps its own. */
 async function saveMarks({
   lesson,
@@ -188,12 +214,7 @@ async function saveMarks({
 }) {
   const mapUpdate =
     map && lesson.summary !== null
-      ? [
-          prisma.lesson.updateMany({
-            data: { summary: map },
-            where: { id: lesson.id, summary: { equals: lesson.summary } },
-          }),
-        ]
+      ? [savePreparedMap({ lessonId: lesson.id, map, read: lesson.summary, staged: lesson.staged })]
       : [];
 
   await prisma.$transaction([
