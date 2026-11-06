@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
+import { type AnswerSender } from "../mistakes/drill/drill-types";
 import { usePreloadMath } from "../rich-text/use-preload-math";
 import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
 import { getResumableAnswers, readAnswerDraft, writeAnswerDraft } from "./_utils/answer-draft";
@@ -132,6 +133,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<ChoiceQuestionAnswer[]>([]);
   const [selected, setSelected] = useState<ChoiceAnswer | null>(null);
+  const [sender, setSender] = useState<AnswerSender | null>(null);
   const shownAt = useRef(0);
   const questionRef = useRef<HTMLDivElement>(null);
   const question = questions[index];
@@ -155,7 +157,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
 
   useFocusNewQuestion({ container: questionRef, itemId });
 
-  const answer = (choice: ChoiceAnswer) => {
+  const answer = (choice: ChoiceAnswer, by: AnswerSender) => {
     if (!question) {
       return;
     }
@@ -172,6 +174,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
       return;
     }
 
+    setSender(by);
     draft.finish(next);
     onFinish(next);
   };
@@ -194,12 +197,13 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
             <QuestionsFooter
               canFinish={!question && Boolean(upcoming?.ended)}
               isLast={index + 1 >= total}
-              onDontKnow={() => answer({ dontKnow: true })}
+              onDontKnow={() => answer({ dontKnow: true }, "notSure")}
               onFinish={finishNow}
-              onNext={() => selected && answer(selected)}
+              onNext={() => selected && answer(selected, "check")}
               pending={pending}
               question={question !== undefined}
               selected={selected !== null}
+              sender={sender}
             />
           </>
         )
@@ -257,6 +261,7 @@ function QuestionsFooter({
   pending,
   question,
   selected,
+  sender,
 }: {
   canFinish: boolean;
   isLast: boolean;
@@ -266,6 +271,7 @@ function QuestionsFooter({
   pending: boolean;
   question: boolean;
   selected: boolean;
+  sender: AnswerSender | null;
 }) {
   const t = useExtracted();
 
@@ -282,6 +288,7 @@ function QuestionsFooter({
   return (
     <TaskActions>
       <Button
+        busy={pending && sender === "notSure"}
         className="shrink-0"
         disabled={pending}
         focusableWhenDisabled
@@ -291,7 +298,11 @@ function QuestionsFooter({
       >
         {t("I don't know yet")}
       </Button>
-      <TaskMainButton disabled={!selected || pending} onClick={onNext}>
+      <TaskMainButton
+        busy={pending && sender === "check"}
+        disabled={!selected || pending}
+        onClick={onNext}
+      >
         {isLast ? t("Finish") : t("Next")}
       </TaskMainButton>
     </TaskActions>

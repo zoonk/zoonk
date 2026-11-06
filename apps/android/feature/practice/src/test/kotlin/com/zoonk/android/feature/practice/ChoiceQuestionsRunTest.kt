@@ -9,7 +9,9 @@ import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasAnySibling
 import androidx.compose.ui.test.hasProgressBarRangeInfo
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -64,26 +66,17 @@ class ChoiceQuestionsRunTest {
 
     private fun spinners() = rule.onAllNodes(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true)
 
+    private fun spinnersIn(button: String) =
+        rule.onAllNodes(
+            hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate) and hasAnySibling(hasText(button)),
+            useUnmergedTree = true,
+        )
+
     @Test
-    fun finishKeepsFocusWithoutASpinnerWhileTheAnswersAreSent() {
+    fun onlyFinishSpinsWhileTheAnswersItSentGoOutAndNotSureKeepsFocus() {
         show()
         rule.onNodeWithText("Mars").performClick()
-        rule.onNodeWithText("Finish").requestFocus().assertIsFocused()
-
-        sendingTheAnswers()
-
-        rule
-            .onNodeWithText("Finish")
-            .assertIsFocused()
-            .assertIsNotEnabled()
-            .performClick()
-        spinners().assertCountEquals(0)
-        assertEquals(0, presses)
-    }
-
-    @Test
-    fun notSureKeepsFocusWhileTheAnswersAreSent() {
-        show()
+        rule.onNodeWithText("Finish").performClick()
         rule.onNodeWithText("I don't know yet").requestFocus().assertIsFocused()
 
         sendingTheAnswers()
@@ -93,7 +86,28 @@ class ChoiceQuestionsRunTest {
             .assertIsFocused()
             .assertIsNotEnabled()
             .performClick()
-        assertEquals(0, presses)
+        spinners().assertCountEquals(1)
+        spinnersIn("Finish").assertCountEquals(1)
+        assertEquals(1, presses)
+    }
+
+    @Test
+    fun onlyNotSureSpinsWhileTheAnswersItSentGoOutAndFinishKeepsFocus() {
+        show()
+        rule.onNodeWithText("Mars").performClick()
+        rule.onNodeWithText("I don't know yet").performClick()
+        rule.onNodeWithText("Finish").requestFocus().assertIsFocused()
+
+        sendingTheAnswers()
+
+        rule
+            .onNodeWithText("Finish")
+            .assertIsFocused()
+            .assertIsNotEnabled()
+            .performClick()
+        spinners().assertCountEquals(1)
+        spinnersIn("I don't know yet").assertCountEquals(1)
+        assertEquals(1, presses)
     }
 
     private companion object {

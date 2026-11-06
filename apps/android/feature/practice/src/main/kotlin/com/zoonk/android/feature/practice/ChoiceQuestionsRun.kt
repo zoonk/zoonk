@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -116,10 +118,20 @@ internal fun ChoiceQuestionsRun(
     var saved by rememberDraft()
     val pick = saved.answerFor(shown, question)
     val locked = pending || failed || sent
+    var sender by rememberSaveable { mutableStateOf<AnswerSender?>(null) }
+
+    fun send(
+        by: AnswerSender,
+        action: () -> Unit,
+    ) {
+        sender = by
+        action()
+    }
+
     val next: (() -> Unit)? =
         when {
-            (sent || finishNow) && !pending -> onSend
-            question != null && pick != null && !locked -> ({ onAnswer(question, pick) })
+            (sent || finishNow) && !pending -> ({ send(AnswerSender.Check, onSend) })
+            question != null && pick != null && !locked -> ({ send(AnswerSender.Check) { onAnswer(question, pick) } })
             else -> null
         }
 
@@ -141,14 +153,15 @@ internal fun ChoiceQuestionsRun(
                     TaskActions { width ->
                         if (question != null) {
                             NotSureButton(
-                                onClick = { onAnswer(question, Answer.DontKnow) },
+                                onClick = { send(AnswerSender.NotSure) { onAnswer(question, Answer.DontKnow) } },
                                 enabled = !locked,
+                                busy = pending && sender == AnswerSender.NotSure,
                                 focusableWhenDisabled = pending,
                                 dontKnowYet = true,
                             )
                         }
                         BusyButton(
-                            busy = pending && question == null,
+                            busy = pending && (question == null || sender == AnswerSender.Check),
                             onClick = { next?.invoke() },
                             modifier = width,
                             enabled = next != null,
@@ -201,7 +214,7 @@ internal fun ChoiceQuestionsRun(
                 draft = pick,
                 enabled = !locked,
                 onAnswer = { answer -> saved = Draft(shown, question.itemId, answer) },
-                onSubmit = { answer -> if (!locked) onAnswer(question, answer) },
+                onSubmit = { answer -> if (!locked) send(AnswerSender.Check) { onAnswer(question, answer) } },
                 part = part,
             )
         }
