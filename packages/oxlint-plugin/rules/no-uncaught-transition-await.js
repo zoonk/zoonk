@@ -64,10 +64,24 @@ function isGlobal(node, scan) {
   );
 }
 
-function isImported(node, scan) {
+/** An import, or a `const` bound from one (`saveAction.bind(null, id)`). */
+function isImportedFunction(node, scan) {
+  if (node?.type !== "Identifier") {
+    return false;
+  }
+
+  const definition = findDefinition({ node, sourceCode: scan.sourceCode });
+
+  if (definition?.type === "ImportBinding") {
+    return true;
+  }
+
+  const init = definition?.type === "Variable" ? definition.node.init : null;
+
   return (
-    node.type === "Identifier" &&
-    findDefinition({ node, sourceCode: scan.sourceCode })?.type === "ImportBinding"
+    init?.type === "CallExpression" &&
+    getMethod(init) === "bind" &&
+    isImportedFunction(init.callee.object, scan)
   );
 }
 
@@ -108,9 +122,12 @@ function localFunctionSettles(node, scan) {
   return fn !== null && functionSettles(fn, scan);
 }
 
-/** A built-in handler (`.then(Boolean, …)`) runs at once. */
+/**
+ * A built-in handler (`.then(Boolean, …)`) runs at once; any other handler's returned promise
+ * settles the chain, so it's checked as one.
+ */
 function handlerSettles(node, scan) {
-  return isGlobal(node, scan) || localFunctionSettles(node, scan);
+  return isGlobal(node, scan) || localFunctionSettles(node, { ...scan, returnsPromise: true });
 }
 
 /**
@@ -144,14 +161,14 @@ function callSettles(call, scan) {
 }
 
 /**
- * A function React doesn't await makes a promise only from an import (a Server Action), a promise
- * method or a function in this file; anything else it returns (`router.push(url)`) is a value.
+ * A function nothing awaits makes a promise only from an import (a Server Action, bound or not), a
+ * promise method or a function in this file; anything else it returns (`router.push(url)`) is a value.
  */
 function mayReturnPromise(call, scan) {
   return (
     scan.returnsPromise ||
     ["catch", "finally", "then"].includes(getMethod(call)) ||
-    isImported(call.callee, scan) ||
+    isImportedFunction(call.callee, scan) ||
     getLocalFunction(call.callee, scan) !== null
   );
 }
@@ -271,7 +288,12 @@ function findRejections(node, { caught, scan }) {
   ];
 }
 
-function findFunctionRejections(fn, outerScan, { returnsPromise = fn.async } = {}) {
+/** A helper's return reaches its caller, so it's a promise when the caller's is; an async one's always is. */
+function findFunctionRejections(
+  fn,
+  outerScan,
+  { returnsPromise = outerScan.returnsPromise || fn.async } = {},
+) {
   const scan = { ...outerScan, returnsPromise };
 
   const returned =
