@@ -230,7 +230,8 @@ private struct CertificateDetail: View {
             "Name", tableName: "Certificates",
             comment: "Labels the learner's full name, as their certificates print it")
         ) {
-          HStack(alignment: .firstTextBaseline, spacing: 8) {
+          // Stacked, the name keeps its lines together and Change goes under it.
+          AccessibilityStack(alignment: .firstTextBaseline, spacing: 8) {
             Text(name)
               .typeWeight(.medium)
 
@@ -256,7 +257,7 @@ private struct CertificateDetail: View {
         label: Text(
           "Link", tableName: "Certificates", comment: "Labels a certificate's web address")
       ) {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
+        AccessibilityStack(alignment: .firstTextBaseline, spacing: 8) {
           Text(verbatim: certificate.shownURL)
             .typeStyle(.data)
 
@@ -405,6 +406,14 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
         ) {
           Text(level.localizedTitle)
             .typeWeight(.medium)
+        }
+      }
+
+      if facts.kind == .languageLevel {
+        ForEach(facts.skillLevels ?? [], id: \.skill) { level in
+          CertificateDetailRow(label: Text(languageSkillName(level.skill)), isData: true) {
+            Text(verbatim: level.label)
+          }
         }
       }
 
