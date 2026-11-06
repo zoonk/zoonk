@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSpokenMath } from "./spoken-math";
+import { speakMath } from "./math-speech";
+import { useMathWords } from "./use-spoken-text";
 
 function useScrollsSideways() {
   const scrollerRef = useRef<HTMLSpanElement>(null);
@@ -28,8 +29,8 @@ function useScrollsSideways() {
   return { contentRef, scrollerRef, scrolls };
 }
 
-export function DisplayMath({ children }: { children: React.ReactNode }) {
-  const spoken = useSpokenMath();
+export function DisplayMath({ children, latex }: { children: React.ReactNode; latex: string }) {
+  const words = useMathWords();
   const { contentRef, scrollerRef, scrolls } = useScrollsSideways();
 
   return (
@@ -38,10 +39,12 @@ export function DisplayMath({ children }: { children: React.ReactNode }) {
       data-slot="display-math"
     >
       <span
+        aria-label={scrolls ? speakMath({ latex, words }) : undefined}
         className="scroll-fade-x block overflow-x-auto overflow-y-hidden p-1 outline-none"
         ref={scrollerRef}
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A formula wider than its column scrolls sideways, which needs focus by keyboard, and WebKit doesn't give a scroller focus (https://bugs.webkit.org/show_bug.cgi?id=277290). Inside a name, such as an answer option, it would be a second tab stop in a control.
-        tabIndex={scrolls && !spoken ? 0 : undefined}
+        role={scrolls ? "region" : undefined}
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A formula wider than its column scrolls sideways, which needs focus by keyboard, and WebKit doesn't give a scroller focus (https://bugs.webkit.org/show_bug.cgi?id=277290). As a region it keeps the arrow keys for scrolling instead of turning the screen.
+        tabIndex={scrolls ? 0 : undefined}
       >
         <span className="block w-max min-w-full" ref={contentRef}>
           {children}

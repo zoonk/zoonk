@@ -12,12 +12,8 @@ export function SpokenMath({ children }: { children: React.ReactNode }) {
   return <SpokenMathContext value>{children}</SpokenMathContext>;
 }
 
-export function useSpokenMath(): boolean {
-  return use(SpokenMathContext);
-}
-
 export function MathMarkupView({ markup, words }: { markup: string; words: string }) {
-  const spoken = useSpokenMath();
+  const spoken = use(SpokenMathContext);
 
   const drawing = (
     <span
