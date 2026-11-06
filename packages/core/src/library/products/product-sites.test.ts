@@ -131,10 +131,10 @@ describe(inspectProductSites, () => {
   });
 
   it("takes a product site at its domain's root as its own brand when no brand page was found", async () => {
-    serve({ "https://orbit.example/": [], "https://www.orbit.example/": [] });
+    serve({ "https://www.orbit.example/": [] });
 
     await expect(inspect(null, "https://www.orbit.example/")).resolves.toMatchObject({
-      brand: { domain: "orbit.example", url: "https://orbit.example/" },
+      brand: { domain: "orbit.example", url: "https://www.orbit.example/" },
       product: { domain: "orbit.example" },
     });
   });
