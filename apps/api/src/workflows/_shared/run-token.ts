@@ -71,7 +71,8 @@ async function startOrFindHolder<TArgs extends unknown[]>(
 /**
  * Starts a run that holds `token` until it ends and returns its id, or the id of the run already
  * holding it, so a duplicate never becomes a run. A stalled holder is stopped and replaced once.
- * Throws when the holder can't be read, so the caller's failure keeps the work for a later start.
+ * Throws when the holder can't be read or the replacement's holder stalled too, so the caller's
+ * failure keeps the work for a later start.
  */
 export async function startOnce<TArgs extends unknown[]>(
   workflow: (...args: TArgs) => Promise<unknown>,
@@ -85,6 +86,11 @@ export async function startOnce<TArgs extends unknown[]>(
   }
 
   const second = await startOrFindHolder(workflow, args, token);
+
+  if (second.stopped) {
+    throw new Error(`The run holding this token stalled again: ${second.runId}`);
+  }
+
   return second.runId;
 }
 

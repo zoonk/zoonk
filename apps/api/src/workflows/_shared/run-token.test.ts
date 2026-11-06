@@ -82,6 +82,19 @@ describe(startOnce, () => {
     expect(getStartMock()).toHaveBeenCalledTimes(2);
   });
 
+  it("throws instead of returning a second holder it stopped", async () => {
+    getStartMock()
+      .mockImplementationOnce(() => conflictWith("stalled"))
+      .mockImplementationOnce(() => conflictWith("next-stalled"));
+
+    lastHeardFrom("stalled", HOUR_MS);
+    lastHeardFrom("next-stalled", HOUR_MS);
+
+    await expect(startOnce(writeLesson, ["lesson-1"], TOKEN)).rejects.toThrow("next-stalled");
+    expect(cancel).toHaveBeenCalledTimes(2);
+    expect(getStartMock()).toHaveBeenCalledTimes(2);
+  });
+
   it("throws instead of returning a holder that was admitted but never became a run", async () => {
     vi.mocked(getRun).mockReturnValue({ exists: Promise.resolve(false) } as never);
     getStartMock().mockImplementationOnce(() => conflictWith("admitted"));
