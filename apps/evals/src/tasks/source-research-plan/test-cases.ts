@@ -17,15 +17,57 @@ export const TEST_CASES: TestCase<ResearchPlanExpected, SourceResearchPlanParams
   {
     expected: {
       country: "ZZ",
-      domains: ["nextjs.org"],
+      domains: ["nextjs.org", "vercel.com"],
       language: "en",
       nameIncludes: ["next.js", "nextjs"],
+      product: { brand: ["vercel"], name: ["next.js", "nextjs"], release: null },
     },
     id: "nextjs",
     language: "en",
     userInput: {
       goal: "what's new in the latest Next.js version and how to migrate",
-      topic: "software",
+      topic: "product",
+    },
+  },
+  {
+    expected: {
+      country: "ZZ",
+      domains: ["apple.com"],
+      language: "en",
+      nameIncludes: ["iphone"],
+      otherCountries: ["US"],
+      product: { brand: ["apple"], name: ["iphone"], release: ["iphone 13"] },
+    },
+    id: "iphone-13",
+    language: "en",
+    userInput: { goal: "Use my iPhone 13 camera better", topic: "product" },
+  },
+  {
+    expected: {
+      country: "ZZ",
+      domains: ["linear.app"],
+      language: "en",
+      nameIncludes: ["linear"],
+      product: { brand: ["linear"], name: ["linear"], release: null },
+    },
+    id: "jira-to-linear",
+    language: "en",
+    userInput: { goal: "Move my team from Jira to Linear", topic: "product" },
+  },
+  {
+    expected: {
+      country: "ZZ",
+      domains: ["hubspot.com"],
+      language: "en",
+      nameIncludes: ["hubspot"],
+      otherCountries: ["US"],
+      product: { brand: ["hubspot"], name: ["hubspot"], release: null },
+    },
+    id: "employer-kept-out",
+    language: "en",
+    userInput: {
+      goal: "Learn HubSpot for my new sales job at Brightwave Dental in Leeds",
+      topic: "product",
     },
   },
   {

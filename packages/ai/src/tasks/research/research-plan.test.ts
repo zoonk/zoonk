@@ -68,4 +68,22 @@ describe("research plans", () => {
       { disallowPromptTraining: true },
     ]);
   });
+
+  it("return product hints for a product goal only", async () => {
+    const hints = { brand: "Lumen Works", name: "Orbit Notes", release: "Orbit Notes 5" };
+
+    vi.mocked(generateText).mockResolvedValue(
+      createGenerateTextResult({ ...PLAN, product: hints }),
+    );
+
+    const product = await generateSourceResearchPlan({
+      goal: "my Orbit Notes 5",
+      topic: "product",
+    });
+
+    vi.mocked(generateText).mockResolvedValue(createGenerateTextResult(PLAN));
+    const syllabus = await generateSourceResearchPlan({ goal: "calculus", topic: "syllabus" });
+
+    expect([product.data.product, syllabus.data.product]).toStrictEqual([hints, null]);
+  });
 });

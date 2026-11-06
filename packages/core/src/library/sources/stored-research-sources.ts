@@ -18,7 +18,7 @@ import {
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
 import { type SourceTopic } from "./source-contract";
 
-export type ResearchSourceTopic = Exclude<SourceTopic, "exam">;
+export type ResearchSourceTopic = Exclude<SourceTopic, "exam" | "software">;
 
 export type StoredSourcesRequest = {
   /** ISO 3166-1 alpha-2, or "ZZ" when any country fits (a product, most syllabi). */
@@ -35,8 +35,8 @@ const ANY_COUNTRY = "ZZ";
 const MAX_REUSED_SOURCES = 4;
 
 const WANTED_DOCUMENTS: Record<ResearchSourceTopic, string> = {
+  product: "The current official documentation or release notes of this product",
   regulation: "The current official text of this law or regulation",
-  software: "The current official documentation or release notes of this product",
   syllabus: "A course syllabus or official curriculum that lists this subject's topics",
 };
 

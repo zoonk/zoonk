@@ -11,7 +11,7 @@ import systemPrompt from "./changing-facts.prompt.md";
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
-const CHANGING_FACTS_TOPICS = ["exam", "regulation", "software", "none"] as const;
+const CHANGING_FACTS_TOPICS = ["exam", "regulation", "product", "none"] as const;
 
 export type ChangingFactsTopic = (typeof CHANGING_FACTS_TOPICS)[number];
 
@@ -36,8 +36,8 @@ export const changingFactsClassifier = {
   labels: {
     exam: "A specific exam, admission, license or certification set by an organizer.",
     none: "Stable knowledge that can be taught without a dated source.",
+    product: "Using or switching to one branded product the goal is about.",
     regulation: "Current laws, taxes, official procedures or policies that get amended.",
-    software: "A named product's current version, features or recommended practices.",
   } satisfies Record<ChangingFactsTopic, string>,
   toInput,
 };

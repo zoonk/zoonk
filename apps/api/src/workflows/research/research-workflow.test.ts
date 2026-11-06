@@ -1570,6 +1570,7 @@ function syllabusPlan(word: string, queries = ["quantum mechanics course syllabu
     language: "en",
     name: `Quantum Mechanics ${word}`,
     officialDomains: ["ocw.mit.edu"],
+    product: null,
     queries,
     searchTerms: [`quantum mechanics ${word}`],
   };
@@ -1724,6 +1725,7 @@ describe("research for goals that aren't exams", () => {
         language: "pt",
         name: `LGPD ${word}`,
         officialDomains: ["planalto.gov.br"],
+        product: null,
         queries: ["lei 13.709 texto compilado"],
         searchTerms: [`Proteção de Dados ${word}`],
       },

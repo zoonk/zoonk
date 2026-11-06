@@ -10,6 +10,7 @@ const SYLLABUS_VALID_DAYS = 365;
 
 const VALID_DAYS: Record<SourceTopic, number> = {
   exam: REGULATION_VALID_DAYS,
+  product: WEEK_DAYS,
   regulation: REGULATION_VALID_DAYS,
   software: SOFTWARE_VALID_DAYS,
   syllabus: SYLLABUS_VALID_DAYS,
