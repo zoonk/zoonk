@@ -209,11 +209,7 @@ export function AlternativeButton({
   const other = useSessionAction({ action: () => actions.start(alternative), enterKey: true });
 
   return (
-    <EnterButton
-      className="h-auto min-h-11 py-2 text-balance whitespace-normal"
-      disabled={other.isPending}
-      onClick={other.run}
-    >
+    <EnterButton disabled={other.isPending} onClick={other.run}>
       {reason === "instead"
         ? t("Instead: {title}", { title: title(alternative) })
         : t("While you wait: {title}", { title: title(alternative) })}
