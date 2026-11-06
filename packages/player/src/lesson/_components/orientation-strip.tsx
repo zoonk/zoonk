@@ -8,9 +8,6 @@ import { type PlayableLibraryStep } from "../lesson-player-types";
 import { IdeaMiniMap } from "./idea-mini-map";
 import { LessonIconImage } from "./lesson-icon";
 
-/** The icon's room is kept before it's drawn, so a late icon doesn't move the screen under the strip. */
-const ICON_SLOT_CLASS = "ms-auto hidden size-11 shrink-0 @[16rem]/strip:block";
-
 export function OrientationStrip({ step }: { step: PlayableLibraryStep }) {
   const t = useExtracted();
   const { lesson } = useLessonPlayerConfig();
@@ -46,10 +43,12 @@ export function OrientationStrip({ step }: { step: PlayableLibraryStep }) {
           )}
         </div>
 
-        {idea.icon ? (
-          <LessonIconImage className={ICON_SLOT_CLASS} icon={idea.icon} size={44} />
-        ) : (
-          <span aria-hidden="true" className={ICON_SLOT_CLASS} />
+        {idea.icon && (
+          <LessonIconImage
+            className="ms-auto hidden size-11 shrink-0 @[16rem]/strip:block"
+            icon={idea.icon}
+            size={44}
+          />
         )}
       </div>
     </PlayerContentFrame>

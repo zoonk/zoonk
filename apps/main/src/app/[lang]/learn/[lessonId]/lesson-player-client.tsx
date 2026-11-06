@@ -32,11 +32,7 @@ import {
 } from "@zoonk/player/lesson/types";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo, useState } from "react";
-import {
-  completeLibraryLessonAction,
-  getLessonMarksAction,
-  getLessonPicturesAction,
-} from "./lesson-player-actions";
+import { completeLibraryLessonAction, getLessonPicturesAction } from "./lesson-player-actions";
 import { startLibraryLesson } from "./start-library-lesson";
 
 type LessonPlayerSlots = NonNullable<LessonPlayerProviderProps["slots"]>;
@@ -68,7 +64,6 @@ function createAdapters({
       completeLibraryLessonAction({ ...input, lessonId, timeZone: getLocalTimeZone() }),
     explainAnswer: requestAnswerExplanation,
     getExampleLine,
-    getLessonMarks: () => getLessonMarksAction(lessonId),
     getLessonPictures: (stepIds) => getLessonPicturesAction(lessonId, stepIds),
     gradeSpokenAnswer: (input) => requestSpokenGrade({ ...input, studySessionId }),
     requestExampleLine,
