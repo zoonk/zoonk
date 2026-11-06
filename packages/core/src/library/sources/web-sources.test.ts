@@ -32,7 +32,7 @@ const NOTICE_TEXT = [
 
 const SCRIPT_PAGE_TEXT = "É necessário habilitar o javascript para ver esta página corretamente.";
 
-const SOURCE_WRITE = /\bsources\b|unnoticed_source_changes/u;
+const SOURCE_WRITE = /\bsources\b/u;
 
 const EDITAL = { kind: "official", language: "pt", publisher: null, title: "Edital" } as const;
 
@@ -231,25 +231,21 @@ describe(refreshWebSource, () => {
       Promise.all([refreshWebSource(exam.id), refreshWebSource(law.id)]),
     ).resolves.toMatchObject([{ status: "changed" }, { status: "changed" }]);
 
-    const ids = [exam.id, law.id];
+    const [storedExam, storedLaw] = await Promise.all(
+      [exam.id, law.id].map((id) => prisma.source.findUniqueOrThrow({ where: { id } })),
+    );
 
-    const [stored, owed] = await Promise.all([
-      prisma.source.findMany({ where: { id: { in: ids } } }),
-      prisma.unnoticedSourceChange.findMany({ where: { sourceId: { in: ids } } }),
-    ]);
-
-    expect(stored.map((source) => source.extractedText)).toStrictEqual([
+    expect([storedExam?.extractedText, storedLaw?.extractedText]).toStrictEqual([
       expect.stringContaining("60 questões"),
       expect.stringContaining("60 questões"),
     ]);
 
-    expect(owed).toMatchObject([
-      {
-        changes: expect.stringContaining("- A prova terá 50 questões."),
-        previousHash: law.contentHash,
-        sourceId: law.id,
-      },
-    ]);
+    expect(storedExam).toMatchObject({ unnoticedChangedAt: null, unnoticedChanges: null });
+
+    expect(storedLaw).toMatchObject({
+      unnoticedChanges: expect.stringContaining("- A prova terá 50 questões."),
+      unnoticedFromHash: law.contentHash,
+    });
   });
 
   it("keeps what each of two saves at once changed in a law, whichever saves first", async () => {
@@ -271,12 +267,12 @@ describe(refreshWebSource, () => {
     held.release();
     await Promise.all([research, check, held.done]);
 
-    const owed = await prisma.unnoticedSourceChange.findUniqueOrThrow({
-      where: { sourceId: source.id },
+    const { unnoticedChanges } = await prisma.source.findUniqueOrThrow({
+      where: { id: source.id },
     });
 
-    expect(owed.changes).toContain("+ Art. 1º A alíquota é de 17%.");
-    expect(owed.changes).toContain("+ Art. 2º Declare até maio.");
+    expect(unnoticedChanges).toContain("+ Art. 1º A alíquota é de 17%.");
+    expect(unnoticedChanges).toContain("+ Art. 2º Declare até maio.");
   });
 
   it("returns null for a source without an address", async () => {

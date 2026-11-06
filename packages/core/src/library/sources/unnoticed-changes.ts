@@ -1,19 +1,32 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { type Source, type TransactionClient } from "@zoonk/db";
 import { type SourceTopic, hasOwnFreshnessChecks } from "./source-contract";
 import { appendTextChange, summarizeTextChange } from "./text-change";
+
+const NOTICE_FAILURES = 3;
+
+export const owesSourceNotice = {
+  noticeFailures: { lt: NOTICE_FAILURES },
+  unnoticedChangedAt: { not: null },
+} as const;
+
+type OwedColumns = Pick<
+  Source,
+  "contentHash" | "noticeFailures" | "unnoticedChangedAt" | "unnoticedChanges" | "unnoticedFromHash"
+>;
 
 export type OwedSourceChange = {
   change: string;
   changedAt: Date;
   contentHash: string;
+  noticeFailures: number;
   previousHash: string;
 };
 
 /**
- * Call in the transaction that moves the source's `contentHash`, before `text` is saved over the
- * stored one. A change already owed keeps its earlier lines, so a page that changes back still
- * flags what was written from the version in between.
+ * Call in the transaction that saves `text` as the source's new content, and save what it returns
+ * with it. A change already owed keeps its earlier lines, so a page that changes back still flags
+ * what was written from the version in between, and a new change gets its notice new attempts.
  */
 export async function oweSourceChangeNotice({
   changedAt,
@@ -27,49 +40,58 @@ export async function oweSourceChangeNotice({
   text: string | null;
   topic: SourceTopic;
   tx: TransactionClient;
-}): Promise<void> {
+}): Promise<Partial<OwedColumns>> {
   if (!hasOwnFreshnessChecks(topic)) {
-    return;
+    return {};
   }
 
   // Saves of one page at once take turns, so each diffs against the text the one before it saved.
   await tx.$queryRaw`SELECT id FROM sources WHERE id = ${sourceId}::uuid FOR NO KEY UPDATE`;
 
   const stored = await tx.source.findUniqueOrThrow({
-    select: { contentHash: true, extractedText: true, unnoticedChange: true },
+    select: {
+      contentHash: true,
+      extractedText: true,
+      unnoticedChanges: true,
+      unnoticedFromHash: true,
+    },
     where: { id: sourceId },
   });
 
   const change = summarizeTextChange({ current: text, previous: stored.extractedText });
 
   if (!change) {
-    return;
+    return {};
   }
 
-  const owed = stored.unnoticedChange;
-
-  await tx.unnoticedSourceChange.upsert({
-    create: { changedAt, changes: change, previousHash: stored.contentHash, sourceId },
-    update: {
-      changedAt,
-      changes: owed ? appendTextChange({ earlier: owed.changes, later: change }) : change,
-    },
-    where: { sourceId },
-  });
+  return {
+    noticeFailures: 0,
+    unnoticedChangedAt: changedAt,
+    unnoticedChanges: stored.unnoticedChanges
+      ? appendTextChange({ earlier: stored.unnoticedChanges, later: change })
+      : change,
+    unnoticedFromHash: stored.unnoticedFromHash ?? stored.contentHash,
+  };
 }
 
-export async function readOwedSourceChange(sourceId: string): Promise<OwedSourceChange | null> {
-  const owed = await prisma.unnoticedSourceChange.findUnique({
-    include: { source: { select: { contentHash: true } } },
-    where: { sourceId },
-  });
+/** Null when nothing is owed, or when the notice failed every time it was tried. */
+export function getOwedSourceChange(source: OwedColumns): OwedSourceChange | null {
+  const { noticeFailures, unnoticedChangedAt, unnoticedChanges, unnoticedFromHash } = source;
 
-  return (
-    owed && {
-      change: owed.changes,
-      changedAt: owed.changedAt,
-      contentHash: owed.source.contentHash,
-      previousHash: owed.previousHash,
-    }
-  );
+  if (
+    !unnoticedChangedAt ||
+    !unnoticedChanges ||
+    !unnoticedFromHash ||
+    noticeFailures >= NOTICE_FAILURES
+  ) {
+    return null;
+  }
+
+  return {
+    change: unnoticedChanges,
+    changedAt: unnoticedChangedAt,
+    contentHash: source.contentHash,
+    noticeFailures,
+    previousHash: unnoticedFromHash,
+  };
 }

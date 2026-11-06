@@ -34,8 +34,14 @@ export function recordSourceChangeNotice(
   const { changedAt, provenance, ...notice } = input;
 
   return prisma.$transaction(async (tx) => {
-    const { count } = await tx.unnoticedSourceChange.deleteMany({
-      where: { changedAt, sourceId: notice.sourceId },
+    const { count } = await tx.source.updateMany({
+      data: {
+        noticeFailures: 0,
+        unnoticedChangedAt: null,
+        unnoticedChanges: null,
+        unnoticedFromHash: null,
+      },
+      where: { id: notice.sourceId, unnoticedChangedAt: changedAt },
     });
 
     if (count === 0) {
@@ -47,6 +53,26 @@ export function recordSourceChangeNotice(
       data: { ...notice, examBlueprintId: null, ...toProvenanceData(provenance) },
       tx,
     });
+  });
+}
+
+/**
+ * Internal workflow bridge: a notice run that failed after its retries. It moves the count on from
+ * the one its check read, so a retry of this write counts the failure once, and a page that changed
+ * since keeps its fresh attempts.
+ */
+export async function recordFailedSourceNotice({
+  changedAt,
+  noticeFailures,
+  sourceId,
+}: {
+  changedAt: Date;
+  noticeFailures: number;
+  sourceId: string;
+}): Promise<void> {
+  await prisma.source.updateMany({
+    data: { noticeFailures: noticeFailures + 1 },
+    where: { id: sourceId, noticeFailures, unnoticedChangedAt: changedAt },
   });
 }
 

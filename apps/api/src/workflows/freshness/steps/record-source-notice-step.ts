@@ -1,7 +1,10 @@
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/research/source-change-notice";
 import { type SourceChange } from "@zoonk/core/library/exams/check-freshness";
-import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
+import {
+  recordFailedSourceNotice,
+  recordSourceChangeNotice,
+} from "@zoonk/core/library/sources/notices";
 import { type ResearchAnalytics } from "../../research/_utils/research-analytics";
 
 export async function recordSourceNoticeStep({
@@ -33,4 +36,10 @@ export async function recordSourceNoticeStep({
   });
 
   return notice?.id ?? null;
+}
+
+export async function recordFailedSourceNoticeStep(change: SourceChange): Promise<void> {
+  "use step";
+
+  await recordFailedSourceNotice(change);
 }

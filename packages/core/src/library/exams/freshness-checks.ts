@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { owesSourceNotice } from "../sources/unnoticed-changes";
 import { type FreshnessTarget } from "./check-freshness";
 import { type FreshnessCommandAccess, getFreshnessCommandAccess } from "./freshness-access";
 
@@ -66,8 +67,9 @@ export async function listDueFreshnessTargets({ now = new Date() }: { now?: Date
   const due = { nextCheckAt: { lt: nextSweep } };
 
   const owesNotice = {
+    ...owesSourceNotice,
     nextCheckAt: { not: null },
-    unnoticedChange: { changedAt: { lt: nextSweep } },
+    unnoticedChangedAt: { lt: nextSweep },
   };
 
   const [exams, sources] = await Promise.all([

@@ -5,7 +5,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { getNextExamCheck, getNextSourceCheck } from "../sources/freshness-schedule";
-import { type OwedSourceChange, readOwedSourceChange } from "../sources/unnoticed-changes";
+import { type OwedSourceChange, getOwedSourceChange } from "../sources/unnoticed-changes";
 import { refreshWebSource } from "../sources/web-sources";
 import {
   countActiveExamGoals,
@@ -217,10 +217,9 @@ async function checkSource({
     }),
   });
 
-  const [owed] = await Promise.all([
-    readOwedSourceChange(source.id),
-    prisma.source.update({ data: { nextCheckAt }, where: { id: source.id } }),
-  ]);
+  await prisma.source.update({ data: { nextCheckAt }, where: { id: source.id } });
+
+  const owed = getOwedSourceChange(refresh?.source ?? source);
 
   return {
     blueprintUpdate: null,

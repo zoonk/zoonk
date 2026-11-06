@@ -62,15 +62,20 @@ describe(listDueFreshnessTargets, () => {
     }
   });
 
-  it("finds a checked source that still owes a notice before its check is due", async () => {
-    const [owing, stopped] = await Promise.all([
-      sourceFixture({ nextCheckAt: hoursFromSweep(30 * 24) }),
+  it("finds a checked source that still owes a notice before its check is due, until its notice failed three times", async () => {
+    const nextCheckAt = hoursFromSweep(30 * 24);
+
+    const [owing, stopped, exhausted] = await Promise.all([
+      sourceFixture({ nextCheckAt }),
       sourceFixture({ nextCheckAt: null }),
+      sourceFixture({ nextCheckAt, noticeFailures: 3 }),
     ]);
 
+    const ids = [owing.id, stopped.id, exhausted.id];
+
     await Promise.all(
-      [owing, stopped].map((source) =>
-        unnoticedSourceChangeFixture({ changedAt: hoursFromSweep(-1), sourceId: source.id }),
+      ids.map((sourceId) =>
+        unnoticedSourceChangeFixture({ changedAt: hoursFromSweep(-1), sourceId }),
       ),
     );
 
@@ -79,8 +84,9 @@ describe(listDueFreshnessTargets, () => {
 
       expect(targets).toContainEqual({ kind: "source", sourceId: owing.id });
       expect(targets).not.toContainEqual({ kind: "source", sourceId: stopped.id });
+      expect(targets).not.toContainEqual({ kind: "source", sourceId: exhausted.id });
     } finally {
-      await prisma.source.deleteMany({ where: { id: { in: [owing.id, stopped.id] } } });
+      await prisma.source.deleteMany({ where: { id: { in: ids } } });
     }
   });
 });

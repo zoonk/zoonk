@@ -697,6 +697,10 @@ describe(freshnessWorkflow, () => {
       "Gateway timeout",
     );
 
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ noticeFailures: 1 });
+
     writeLawNotice();
     await freshnessWorkflow({ kind: "source", sourceId: source.id });
 
@@ -707,6 +711,10 @@ describe(freshnessWorkflow, () => {
     await expect(
       prisma.sourceChangeNotice.findMany({ where: { sourceId: source.id } }),
     ).resolves.toMatchObject([{ message: LAW_NOTICE, previousHash: source.contentHash }]);
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ noticeFailures: 0, unnoticedChanges: null });
   });
 
   it("writes the line when research stored the changed law first, flagging only what was written from the old text", async () => {
