@@ -2,7 +2,6 @@ package com.zoonk.android.feature.practice.block
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,11 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -250,7 +245,6 @@ internal fun Runner(
     val mainAction: (() -> Unit)? =
         when (run.phase) {
             RunPhase.FinishReady, RunPhase.FinishFailed -> viewModel::finish
-            RunPhase.AlreadyAnswered -> viewModel::reread
             else -> answerAction(questions, question, run, draft, viewModel)
         }
 
@@ -309,18 +303,6 @@ private fun BlockActions(
             SaveErrorText()
             TaskActions { width ->
                 Button(onClick = viewModel::finish, modifier = width) { Text(stringResource(R.string.practice_try_again)) }
-            }
-        }
-
-        RunPhase.AlreadyAnswered -> {
-            Text(
-                stringResource(R.string.practice_already_answered),
-                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            TaskActions { width ->
-                Button(onClick = viewModel::reread, modifier = width) { Text(stringResource(R.string.practice_continue)) }
             }
         }
 

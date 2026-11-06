@@ -13,6 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.semantics
 
 /*
  * Material draws outlined buttons' borders in `outlineVariant`, our hairline `border`, which nearly
@@ -20,24 +22,26 @@ import androidx.compose.ui.graphics.Shape
  * our `outline`, with ink labels, so these take both.
  */
 
+/** While [busy] it looks disabled and ignores presses, but keeps focus, so a learner who pressed it keeps their place. */
 @Composable
 fun OutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    busy: Boolean = false,
     shape: Shape = ButtonDefaults.outlinedShape,
     colors: ButtonColors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
     elevation: ButtonElevation? = null,
-    border: BorderStroke? = outlinedBorder(enabled, ButtonDefaults.outlinedButtonBorder(enabled)),
+    border: BorderStroke? = outlinedBorder(enabled && !busy, ButtonDefaults.outlinedButtonBorder(enabled && !busy)),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) = androidx.compose.material3.OutlinedButton(
-    onClick = onClick,
-    modifier = modifier,
-    enabled = enabled,
+    onClick = { if (!busy) onClick() },
+    modifier = modifier.semantics { if (busy) disabled() },
+    enabled = enabled || busy,
     shape = shape,
-    colors = colors,
+    colors = if (busy) colors.copy(containerColor = colors.disabledContainerColor, contentColor = colors.disabledContentColor) else colors,
     elevation = elevation,
     border = border,
     contentPadding = contentPadding,

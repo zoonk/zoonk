@@ -7606,11 +7606,6 @@ msgid "The trap:"
 msgstr "La trappola:"
 
 #: src/mistakes/drill/drill-controls.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "Ho letto. Mostra le risposte"
-
-#: src/mistakes/drill/drill-controls.tsx
 msgctxt "XUx7zX"
 msgid "I'm not sure"
 msgstr "Ho dei dubbi"
@@ -12820,6 +12815,11 @@ msgstr "Qualche errore di fila. Una breve pausa spesso aiuta e tutto quello che 
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "Stiamo mettendo a punto il tuo piano. Qui le risposte sbagliate non vengono mai salvate come errori."
+
+#: src/session/question-block/question-actions.tsx
+msgctxt "tvAkCd"
+msgid "I've read it. Show the answers"
+msgstr "Ho letto. Mostra le risposte"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

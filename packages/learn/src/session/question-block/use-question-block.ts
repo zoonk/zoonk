@@ -103,6 +103,7 @@ export function useQuestionBlock({
       dispatch({ type: "next" });
     },
     question,
+    refresh: actions.refresh,
     retryFinish: () => dispatch({ type: "finish" }),
     state,
     submit,
