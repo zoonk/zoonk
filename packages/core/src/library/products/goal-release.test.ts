@@ -6,11 +6,13 @@ const OLD = { id: "old", releasedAt: new Date("2024-03-01T00:00:00Z") };
 const CURRENT = { id: "current", releasedAt: new Date("2026-10-01T00:00:00Z") };
 const ANNOUNCED = { id: "announced", releasedAt: new Date("2027-01-01T00:00:00Z") };
 
-describe(toGoalProductLink, () => {
-  function pinned(named: { id: string; releasedAt: Date | null } | null, current = CURRENT) {
-    return toGoalProductLink({ current, named, now: NOW, productId: "p" }).productReleaseId;
-  }
+type Release = { id: string; releasedAt: Date | null };
 
+function pinned(named: Release | null, current: Release | null = CURRENT) {
+  return toGoalProductLink({ current, named, now: NOW, productId: "p" }).productReleaseId;
+}
+
+describe(toGoalProductLink, () => {
   it("pins a named release older than the current one", () => {
     expect(pinned(OLD)).toBe("old");
   });
