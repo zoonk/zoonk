@@ -1,10 +1,9 @@
-import { type BuildPlanInput } from "./build-plan";
 import { findDayIndex, isLessonRoom } from "./day-index";
 import { canHoldPhaseChallenge } from "./phase-challenge-days";
 import { listWonPhases } from "./phase-time";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { LEARN_KINDS } from "./plan-item-rules";
-import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
+import { type ExistingPlanItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanPhase } from "./plan-state";
 import { type QueueUnit, getBossKey } from "./plan-units";
@@ -301,48 +300,4 @@ export function listStrainedEnds({
         ]
       : [];
   });
-}
-
-export function listEndsBeforeLessons({
-  ends,
-  input,
-  items,
-  units,
-}: {
-  ends: ReadonlyMap<number, Date>;
-  input: Pick<BuildPlanInput, "graph">;
-  items: readonly Pick<
-    PlannedItem,
-    "key" | "kind" | "phase" | "scheduledFor" | "skillId" | "status"
-  >[];
-  units: readonly Pick<ScheduledUnit, "depth" | "key">[];
-}): number[] {
-  const phaseOf = new Map(input.graph.skills.map((skill) => [skill.skillId, skill.phase]));
-  const core = new Set(units.flatMap((unit) => (unit.depth ? [] : [unit.key])));
-
-  const depth = new Set(
-    units.flatMap((unit) => (unit.depth && !core.has(unit.key) ? [unit.key] : [])),
-  );
-
-  const lessons = items.filter(
-    (item) =>
-      LEARN_KINDS.has(item.kind) &&
-      item.status === "todo" &&
-      item.scheduledFor !== null &&
-      !depth.has(item.key),
-  );
-
-  const won = listWonPhases(items);
-
-  return [...ends].flatMap(([phase, date]) =>
-    !won.has(phase) &&
-    lessons.some(
-      (item) =>
-        (phaseOf.get(item.skillId ?? "") ?? item.phase) <= phase &&
-        item.scheduledFor !== null &&
-        item.scheduledFor > date,
-    )
-      ? [phase]
-      : [],
-  );
 }

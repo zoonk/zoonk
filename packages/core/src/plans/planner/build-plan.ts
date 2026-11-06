@@ -5,6 +5,7 @@ import { type BossMinutes } from "./boss-minutes";
 import { type BuiltPlan } from "./built-plan";
 import { type CarryOver } from "./carry-over";
 import { getKeptBaseChoices, hasBaseChoices, withBaseChoices } from "./chosen-bases";
+import { listEndsBeforeLessons } from "./ends-before-lessons";
 import { type ExamBossDays, listBossDayFacts } from "./exam-boss-days";
 import { listLessonDays } from "./interval-study-minutes";
 import {
@@ -15,7 +16,7 @@ import {
   splitExistingItems,
   toKeptItem,
 } from "./kept-items";
-import { listEndsBeforeLessons, listStrainedEnds } from "./kept-phase-ends";
+import { listStrainedEnds } from "./kept-phase-ends";
 import {
   type LandedUnits,
   findLanding,
