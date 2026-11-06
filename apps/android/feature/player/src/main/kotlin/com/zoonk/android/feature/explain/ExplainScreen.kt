@@ -52,7 +52,6 @@ import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
-import com.zoonk.android.feature.player.LessonColumn
 import com.zoonk.android.feature.player.LessonColumnBeforeFold
 import com.zoonk.android.feature.player.LessonEndSlot
 import com.zoonk.android.feature.player.LessonPlayerExits
@@ -60,7 +59,6 @@ import com.zoonk.android.feature.player.LessonReadouts
 import com.zoonk.android.feature.player.PlayingLesson
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonPlayerState
-import com.zoonk.android.feature.player.lessonColumnWidth
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toPlayableLesson
 import com.zoonk.android.navigation.AppNavigator
@@ -71,6 +69,8 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SuccessEyebrow
+import com.zoonk.android.ui.components.taskBarColumn
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
@@ -229,11 +229,12 @@ internal fun ExplainWaiting(
 
     TaskScaffold(
         onClose = navigator::closeTask,
+        lonePage = true,
         bottomBar =
             if (ready) {
                 {
-                    LessonColumn(Modifier.padding(vertical = 12.dp)) {
-                        Button(onClick = onStart, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.explain_see)) }
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Button(onClick = onStart, modifier = Modifier.taskBarColumn()) { Text(stringResource(R.string.explain_see)) }
                     }
                 }
             } else {
@@ -440,7 +441,7 @@ internal fun ExplainEnding(
 
     ResultPages(
         withMoment = !saving,
-        columnModifier = Modifier.lessonColumnWidth(),
+        columnModifier = Modifier.taskColumn(),
         done = {
             ExplainHeading(explanation.title) {
                 SuccessEyebrow(stringResource(R.string.explain_now_you_know))

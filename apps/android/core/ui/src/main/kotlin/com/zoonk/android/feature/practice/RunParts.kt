@@ -3,18 +3,14 @@ package com.zoonk.android.feature.practice
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -50,6 +46,7 @@ import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -148,7 +145,7 @@ private fun RunDone(
     ResultPages(
         modifier = modifier,
         withMoment = !saving,
-        columnModifier = Modifier.runColumn(),
+        columnModifier = Modifier.taskColumn(),
         done = {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
@@ -194,7 +191,7 @@ fun RunPage(
                 .padding(vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column(Modifier.runColumn(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+            Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
         }
     }
 }
@@ -215,11 +212,6 @@ fun RunIntro(
         if (facts.isNotEmpty()) Facts(facts)
     }
 }
-
-/** A run's reading column, centered on wide windows, with every screen of the run on the same edges. */
-fun Modifier.runColumn(): Modifier = widthIn(max = RUN_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)
-
-private val RUN_WIDTH = 640.dp
 
 @Composable
 fun RunFinished(

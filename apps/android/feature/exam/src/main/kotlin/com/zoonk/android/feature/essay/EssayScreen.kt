@@ -83,7 +83,6 @@ import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.SaveErrorText
-import com.zoonk.android.feature.practice.runColumn
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.NoteRow
 import com.zoonk.android.feature.questions.QuestionTitle
@@ -106,6 +105,7 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.components.stepHeading
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageSpan
@@ -341,7 +341,7 @@ private fun EssayWriteColumn(
     BoxWithConstraints {
         if (fill && maxHeight >= FILL_HEIGHT) {
             Column(Modifier.fillMaxSize().padding(vertical = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Column(Modifier.runColumn().weight(1f), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                Column(Modifier.taskColumn().weight(1f), verticalArrangement = Arrangement.spacedBy(24.dp)) {
                     prompt()
                     guide()
                     EssayBox(ui, rubric, box, value, onValueChange, viewModel::write, Modifier.weight(1f).heightIn(min = BOX_MIN_HEIGHT))
@@ -645,7 +645,7 @@ internal fun EssayGradeSteps(
                         ResultPages(
                             modifier = Modifier.padding(padding),
                             withMoment = false,
-                            columnModifier = Modifier.runColumn(),
+                            columnModifier = Modifier.taskColumn(),
                             done = {
                                 CompositionLocalProvider(LocalStepHeading provides heading) { EssayGradeCard(grade, rubric) }
                                 Comments(grade)
