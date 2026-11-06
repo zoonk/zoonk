@@ -285,6 +285,7 @@ class QuestionBlockViewModelTest {
 
             answer = { feedback(isCorrect = false) }
             viewModel.retry()
+            assertEquals(RunPhase.Checking(AnswerSender.Timer), viewModel.state.value?.phase)
             advanceUntilIdle()
 
             assertTrue(viewModel.state.value?.phase is RunPhase.Checked)
@@ -297,6 +298,21 @@ class QuestionBlockViewModelTest {
                     sent.last().answer,
                 ),
             )
+        }
+
+    @Test
+    fun aBlankAnswerIsChecksRequestWhenCheckSendsIt() =
+        runTest(dispatcher) {
+            val viewModel = viewModel()
+            val read = started(viewModel)
+
+            viewModel.submit(read.questions[0], Answer.DontKnow)
+            assertEquals(RunPhase.Checking(AnswerSender.Check), viewModel.state.value?.phase)
+            advanceUntilIdle()
+            viewModel.next(read.questions)
+
+            viewModel.submit(read.questions[1], Answer.DontKnow, AnswerSender.NotSure)
+            assertEquals(RunPhase.Checking(AnswerSender.NotSure), viewModel.state.value?.phase)
         }
 
     @Test

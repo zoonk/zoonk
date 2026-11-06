@@ -7,11 +7,14 @@ import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.api.models.StudyBlockCompletion
 
+/** A blank answer can come from any of them: Leave blank with Check, the not-sure button, or the clock. */
+enum class AnswerSender { Check, NotSure, Timer }
+
 sealed interface RunPhase {
     data object Answering : RunPhase
 
     data class Checking(
-        val answer: Answer,
+        val sender: AnswerSender,
     ) : RunPhase
 
     data class Checked(
@@ -54,7 +57,7 @@ data class QuestionRun(
 ) {
     val canAnswer: Boolean get() = phase == RunPhase.Answering || phase == RunPhase.AnswerFailed
 
-    fun checking(answer: Answer) = copy(phase = RunPhase.Checking(answer))
+    fun checking(sender: AnswerSender) = copy(phase = RunPhase.Checking(sender))
 
     /** [blank] answers are neither right nor wrong: a block's blank statement, a practice's honest "I don't know". */
     fun answered(

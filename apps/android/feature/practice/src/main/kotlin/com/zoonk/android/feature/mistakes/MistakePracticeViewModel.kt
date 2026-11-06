@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.recode
+import com.zoonk.android.feature.practice.AnswerSender
 import com.zoonk.android.feature.practice.QuestionRun
 import com.zoonk.android.feature.practice.RunControls
 import com.zoonk.android.feature.practice.RunPhase
@@ -79,6 +80,7 @@ class MistakePracticeViewModel(
     private data class Submission(
         val question: Question,
         val answer: Answer,
+        val sender: AnswerSender,
         val minDurationMs: Long,
     )
 
@@ -102,13 +104,14 @@ class MistakePracticeViewModel(
     override fun submit(
         question: Question,
         answer: Answer,
+        sender: AnswerSender,
         minDurationMs: Long,
     ) {
         val current = mutableState.value ?: return
         val mistakeId = question.mistakeId ?: return
         if (!current.run.canAnswer) return
-        mutableState.value = current.copy(run = current.run.checking(answer))
-        sent = Submission(question, answer, minDurationMs)
+        mutableState.value = current.copy(run = current.run.checking(sender))
+        sent = Submission(question, answer, sender, minDurationMs)
         val attemptId = attempts.getOrPut(current.run.index) { UUID.randomUUID() }
 
         viewModelScope.launch {
@@ -135,7 +138,7 @@ class MistakePracticeViewModel(
     }
 
     override fun retry() {
-        sent?.let { submit(it.question, it.answer, it.minDurationMs) }
+        sent?.let { submit(it.question, it.answer, it.sender, it.minDurationMs) }
     }
 
     override fun timeUp(
@@ -143,7 +146,7 @@ class MistakePracticeViewModel(
         seconds: Int,
     ) {
         updateRun(QuestionRun::timeUp)
-        submit(question, Answer.DontKnow, minDurationMs = seconds.seconds.inWholeMilliseconds)
+        submit(question, Answer.DontKnow, AnswerSender.Timer, seconds.seconds.inWholeMilliseconds)
     }
 
     override fun next(questions: List<Question>) {

@@ -27,7 +27,7 @@ final class QuestionBlockStateTests: XCTestCase {
   func testAnsweringTheLastQuestionMovesToFinishing() {
     var state = QuestionBlockState(questions: [makeQuestion("a")])
 
-    state.check(.choice(1))
+    state.check(by: .check)
     state.answered(.choice(1), feedback: makeFeedback(isCorrect: true, level: 2), itemId: "a")
     XCTAssertEqual(state.hyperdrive, 2)
     XCTAssertEqual(state.segments, [.right])
@@ -142,8 +142,22 @@ final class QuestionBlockRunTests: XCTestCase {
     await run.submit(.choice(0))
 
     XCTAssertEqual(
-      run.state.phase, .checking(answer: .choice(0)),
+      run.state.phase, .checking(sender: .check),
       "no grade, no failure, no retry for someone else")
+  }
+
+  func testLeaveBlankSentWithCheckIsChecksRequestAndNotSureIsItsOwn() async {
+    let client = FakeQuestionBlockClient(answers: [
+      .failure(QuestionBlockWriteObsolete()), .failure(QuestionBlockWriteObsolete()),
+    ])
+    let check = QuestionBlockRun(detail: makeDetail(["a"]), client: client)
+    let notSure = QuestionBlockRun(detail: makeDetail(["a"]), client: client)
+
+    await check.submit(.dontKnow)
+    await notSure.submit(.dontKnow, by: .notSure)
+
+    XCTAssertEqual(check.state.phase.checking, .check)
+    XCTAssertEqual(notSure.state.phase.checking, .notSure)
   }
 
   func testFailedFinishOffersItAgain() async {

@@ -1,3 +1,4 @@
+import { type AnswerSender } from "../../mistakes/drill/drill-types";
 import {
   type StudyAnswerFeedback,
   type StudyBlockDetail,
@@ -7,7 +8,7 @@ import {
 
 export type QuestionBlockPhase =
   | { kind: "answering" }
-  | { answer: StudyQuestionAnswer; kind: "checking" }
+  | { kind: "checking"; sender: AnswerSender }
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; kind: "feedback" }
   | { kind: "answerFailed" }
   | { kind: "alreadyAnswered" }
@@ -24,7 +25,7 @@ export type QuestionBlockState = {
 };
 
 type QuestionBlockAction =
-  | { answer: StudyQuestionAnswer; type: "check" }
+  | { sender: AnswerSender; type: "check" }
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; itemId: string; type: "answered" }
   | { type: "answerFailed" }
   | { type: "alreadyAnswered" }
@@ -66,7 +67,7 @@ export function questionBlockReducer(
   return (state, action) => {
     switch (action.type) {
       case "check":
-        return { ...state, phase: { answer: action.answer, kind: "checking" } };
+        return { ...state, phase: { kind: "checking", sender: action.sender } };
       case "answered":
         return {
           ...state,

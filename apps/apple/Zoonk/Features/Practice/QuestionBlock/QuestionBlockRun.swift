@@ -90,10 +90,12 @@ final class QuestionBlockRun {
   }
 
   /// `minDurationMs` is a timed drill's whole time box when it ran out, however the clock ticked.
-  func submit(_ answer: PracticeAnswer, minDurationMs: Int = 0) async {
+  func submit(_ answer: PracticeAnswer, by sender: AnswerSender = .check, minDurationMs: Int = 0)
+    async
+  {
     guard let question, state.phase.acceptsAnswer else { return }
 
-    state.check(answer)
+    state.check(by: sender)
     let durationMs = max(minDurationMs, Int(now().timeIntervalSince(shownAt) * 1000))
 
     do {
@@ -156,7 +158,7 @@ final class QuestionBlockRun {
   /// A timed drill's clock ran out: it counts as a miss, sent as "I don't know yet".
   func timeUp() async {
     timedOut = true
-    await submit(.dontKnow, minDurationMs: (drill?.timeLimitSeconds ?? 0) * 1000)
+    await submit(.dontKnow, by: .timer, minDurationMs: (drill?.timeLimitSeconds ?? 0) * 1000)
   }
 
   private func openingStage() -> DrillStage {

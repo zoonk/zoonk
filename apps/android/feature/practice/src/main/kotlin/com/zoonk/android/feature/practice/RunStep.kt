@@ -107,6 +107,7 @@ interface RunControls {
     fun submit(
         question: Question,
         answer: Answer,
+        sender: AnswerSender = AnswerSender.Check,
         minDurationMs: Long = 0,
     )
 
@@ -447,23 +448,22 @@ internal fun AnswerActions(
 
         else -> {
             if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
-            val checking = phase as? RunPhase.Checking
-            val notSure = checking?.answer == Answer.DontKnow
+            val sender = (phase as? RunPhase.Checking)?.sender
             TaskActions { width ->
                 when (notSureOffer(question, every = notSureOnEvery)) {
                     NotSure.Drill -> {
                         NotSureButton(
-                            onClick = { controls.submit(question, Answer.DontKnow) },
+                            onClick = { controls.submit(question, Answer.DontKnow, AnswerSender.NotSure) },
                             enabled = run.canAnswer,
-                            busy = notSure && !run.timedOut,
+                            busy = sender == AnswerSender.NotSure,
                         )
                     }
 
                     NotSure.DontKnowYet -> {
                         NotSureButton(
-                            onClick = { controls.submit(question, Answer.DontKnow) },
+                            onClick = { controls.submit(question, Answer.DontKnow, AnswerSender.NotSure) },
                             enabled = run.canAnswer,
-                            busy = notSure && !run.timedOut,
+                            busy = sender == AnswerSender.NotSure,
                             dontKnowYet = true,
                         )
                     }
@@ -471,7 +471,7 @@ internal fun AnswerActions(
                     null -> {}
                 }
                 BusyButton(
-                    busy = checking != null && !notSure,
+                    busy = sender == AnswerSender.Check,
                     onClick = { draft?.let { controls.submit(question, it) } },
                     modifier = width,
                     enabled = run.canAnswer && draft != null,

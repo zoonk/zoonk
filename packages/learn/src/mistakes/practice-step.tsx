@@ -89,20 +89,16 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   const selected = phase.kind === "answering" ? phase.selected : null;
   const retry = phase.kind === "answerFailed" ? phase.answer : null;
   const answer = selected ?? retry;
-  const checking = phase.kind === "checking";
-  const notSure = checking && "dontKnow" in phase.answer;
+  const sender = phase.kind === "checking" ? phase.sender : null;
+  const checking = sender !== null;
 
   return (
     <>
       {step.entry.drill.kind === "noGuessing" ? (
-        <NotSureButton
-          busy={notSure && !phase.timedOut}
-          disabled={checking}
-          onClick={run.notSure}
-        />
+        <NotSureButton busy={sender === "notSure"} disabled={checking} onClick={run.notSure} />
       ) : (
         <Button
-          busy={notSure && !phase.timedOut}
+          busy={sender === "notSure"}
           disabled={checking}
           focusableWhenDisabled
           onClick={run.notSure}
@@ -114,7 +110,7 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
       )}
 
       <CheckButton
-        busy={checking && !notSure}
+        busy={sender === "check"}
         disabled={!answer}
         onCheck={() => (answer ? run.check(answer) : undefined)}
       />
@@ -279,12 +275,12 @@ export function PracticeStepView({
       {graded && (
         <PracticeFeedback
           feedback={graded.feedback}
-          notSure={!graded.timedOut && "dontKnow" in graded.answer}
+          notSure={graded.sender !== "timer" && "dontKnow" in graded.answer}
           notes={
             <DrillAnswerNotes
               drill={drill}
               notSure={"dontKnow" in graded.answer}
-              timedOut={graded.timedOut}
+              timedOut={graded.sender === "timer"}
               trap={graded.feedback.trap}
             />
           }

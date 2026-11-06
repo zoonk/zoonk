@@ -350,8 +350,6 @@ struct QuestionBlockView: View {
   private func answerButtons(phase: QuestionBlockPhase) -> some View {
     let question = run.question
     let accepts = phase.acceptsAnswer
-    let notSureChecking = phase.checking?.isDontKnow == true
-    let notSureBusy = notSureChecking && !run.timedOut
 
     PracticeActionRow {
       if run.drill?.kind == .noGuessing, phase.isAnswering {
@@ -360,23 +358,23 @@ struct QuestionBlockView: View {
             "I'm not sure", table: "Practice",
             comment: "Honest way out of a guess in a no-guessing drill."),
           systemImage: "questionmark.circle",
-          isBusy: notSureBusy,
+          isBusy: phase.checking == .notSure,
           isDisabled: !accepts
-        ) { Task { await run.submit(.dontKnow) } }
+        ) { Task { await run.submit(.dontKnow, by: .notSure) } }
       } else if question?.placement == true || question?.format == .typed, phase.isAnswering {
         PracticeSecondaryButton(
           title: LocalizedStringResource(
             "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."),
           systemImage: "questionmark.circle",
-          isBusy: notSureBusy,
+          isBusy: phase.checking == .notSure,
           isDisabled: !accepts
-        ) { Task { await run.submit(.dontKnow) } }
+        ) { Task { await run.submit(.dontKnow, by: .notSure) } }
       }
 
       PracticeMainButton(
         title: LocalizedStringResource(
           "Check", table: "Practice", comment: "Sends the answer to be graded."),
-        isBusy: phase.checking != nil && !notSureChecking,
+        isBusy: phase.checking == .check,
         isDisabled: !accepts || run.draft?.complete == nil
       ) {
         if let answer = run.draft?.complete { Task { await run.submit(answer) } }

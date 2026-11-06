@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useEffectEvent, useReducer, useRef } from "react";
+import { type AnswerSender } from "../../mistakes/drill/drill-types";
 import {
   type StudyAnswerOutcome,
   type StudyBlockDetail,
@@ -63,13 +64,13 @@ export function useQuestionBlock({
   /** `minDurationMs` is a timed drill's whole time box when it ran out, however the clock ticked. */
   const submit = async (
     answer: StudyQuestionAnswer,
-    { minDurationMs = 0 }: { minDurationMs?: number } = {},
+    { minDurationMs = 0, sender = "check" }: { minDurationMs?: number; sender?: AnswerSender } = {},
   ) => {
     if (!question || (state.phase.kind !== "answering" && state.phase.kind !== "answerFailed")) {
       return;
     }
 
-    dispatch({ answer, type: "check" });
+    dispatch({ sender, type: "check" });
 
     const outcome = await actions
       .answer({
