@@ -20,6 +20,7 @@ import {
   saveWhatsNewSkills,
 } from "@zoonk/core/library/products/release-advance";
 import {
+  findWhatsNewChapter,
   loadWhatsNewOutline,
   offerWhatsNew,
   saveWhatsNewChapter,
@@ -147,6 +148,13 @@ export async function saveWhatsNewChapterStep(
   return collectCourseContentTags(() =>
     saveWhatsNewChapter({ ...input, analytics: toAnalytics(input.workflowRunId) }),
   );
+}
+
+export async function findWhatsNewChapterStep(
+  input: Parameters<typeof findWhatsNewChapter>[0],
+): Promise<Awaited<ReturnType<typeof findWhatsNewChapter>>> {
+  "use step";
+  return findWhatsNewChapter(input);
 }
 
 export async function offerWhatsNewStep(

@@ -30,6 +30,42 @@ export async function loadWhatsNewOutline(courseId: string) {
   };
 }
 
+/**
+ * Internal workflow bridge: the course's chapter teaching the release's What's new skills, when an
+ * earlier run that failed before the move already saved it, so a new run offers what that chapter
+ * teaches instead of writing a second one.
+ */
+export async function findWhatsNewChapter({
+  courseId,
+  releaseId,
+}: {
+  courseId: string;
+  releaseId: string;
+}): Promise<{ lessonIds: string[]; skills: GoalSkillRef[] } | null> {
+  const chapter = await prisma.chapter.findFirst({
+    select: {
+      goalSkills: {
+        select: { skill: { select: { description: true, id: true, name: true } } },
+        where: { skill: { identityKey: { startsWith: `whats-new:${releaseId}:` } } },
+      },
+      lessons: { select: { lessonId: true } },
+    },
+    where: {
+      courses: { some: { courseId } },
+      goalSkills: { some: { skill: { identityKey: { startsWith: `whats-new:${releaseId}:` } } } },
+    },
+  });
+
+  if (!chapter) {
+    return null;
+  }
+
+  return {
+    lessonIds: chapter.lessons.map((placement) => placement.lessonId),
+    skills: chapter.goalSkills.map(({ skill }) => ({ ...skill, key: skill.id })),
+  };
+}
+
 /** Internal workflow bridge: the chapter goes last in its band of the product's main course. */
 export async function saveWhatsNewChapter({
   analytics,

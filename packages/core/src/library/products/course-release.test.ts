@@ -304,14 +304,14 @@ describe(saveWhatsNewSkills, () => {
 describe(loadReleaseComparison, () => {
   it("reads an older release's notes from a changelog whose newer releases fill its top", async () => {
     const { course, first, page, product, second } = await mainCourse();
-    const newer = `Test Product 9 adds sync.\n${"Fixes and improvements.\n".repeat(4000)}`;
+    const newer = `Test Product 20 adds sync.\n${"Fixes and improvements.\n".repeat(4000)}`;
 
     await Promise.all([
       prisma.source.update({
         data: { extractedText: `${newer}${second.name} moves export to a panel.` },
         where: { id: page.id },
       }),
-      productReleaseFixture({ name: "Test Product 9", productId: product.id }),
+      productReleaseFixture({ name: "Test Product 20", productId: product.id }),
     ]);
 
     const input = await loadReleaseComparison({

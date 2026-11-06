@@ -79,6 +79,29 @@ async function homedLessons(courseId: string, count: number) {
   );
 }
 
+function exportOutline() {
+  return taskResult({
+    chapters: [
+      {
+        description: "The new export panel.",
+        lessons: [
+          {
+            canDo: "Export from the panel",
+            description: "Where export lives now.",
+            estimatedMinutes: 3,
+            skills: ["Export from the panel"],
+            title: `Export panel ${randomUUID()}`,
+          },
+        ],
+        objectives: ["Export from the panel"],
+        skillKeys: [],
+        title: "Another title",
+        tools: [],
+      },
+    ],
+  });
+}
+
 function compareWith(...comparisons: ReleaseComparison[]) {
   comparisons.reduce(
     (mock, comparison) => mock.mockResolvedValueOnce(taskResult(comparison) as never),
@@ -126,29 +149,7 @@ describe(courseReleaseWorkflow, () => {
       whatsNew: WHATS_NEW,
     });
 
-    vi.mocked(generateCourseOutline).mockImplementation(
-      async () =>
-        taskResult({
-          chapters: [
-            {
-              description: "The new export panel.",
-              lessons: [
-                {
-                  canDo: "Export from the panel",
-                  description: "Where export lives now.",
-                  estimatedMinutes: 3,
-                  skills: ["Export from the panel"],
-                  title: `Export panel ${randomUUID()}`,
-                },
-              ],
-              objectives: ["Export from the panel"],
-              skillKeys: [],
-              title: "Another title",
-              tools: [],
-            },
-          ],
-        }) as never,
-    );
+    vi.mocked(generateCourseOutline).mockImplementation(async () => exportOutline() as never);
 
     await expect(courseReleaseWorkflow({ courseId: course.id })).resolves.toStrictEqual({
       releasesApplied: 1,
@@ -186,6 +187,37 @@ describe(courseReleaseWorkflow, () => {
     await expect(
       prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
     ).resolves.toMatchObject({ productReleaseId: releases[0]?.id });
+  });
+
+  it("offers the chapter an earlier run saved, instead of writing a second one, when that run failed before the move", async () => {
+    const { course, releases } = await productCourse();
+    await follow(course.id);
+    vi.mocked(generateCourseOutline).mockImplementation(async () => exportOutline() as never);
+    compareWith({ changed: [], whatsNew: WHATS_NEW }, UNCHANGED);
+    await courseReleaseWorkflow({ courseId: course.id });
+
+    await prisma.course.update({
+      data: { productReleaseId: releases[0]?.id ?? null },
+      where: { id: course.id },
+    });
+
+    compareWith(
+      {
+        changed: [],
+        whatsNew: {
+          ...WHATS_NEW,
+          level: "advanced",
+          skills: [...WHATS_NEW.skills, { description: "Share a link.", name: "Share a link" }],
+        },
+      },
+      UNCHANGED,
+    );
+
+    await courseReleaseWorkflow({ courseId: course.id });
+
+    expect(generateCourseOutline).toHaveBeenCalledOnce();
+
+    await expect(prisma.courseChapter.count({ where: { courseId: course.id } })).resolves.toBe(1);
   });
 
   it("leaves a pinned or unfollowed course alone, without comparing", async () => {

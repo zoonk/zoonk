@@ -7,6 +7,7 @@ import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow
 import {
   advanceCourseReleaseStep,
   compareReleaseStep,
+  findWhatsNewChapterStep,
   loadCourseReleaseStep,
   offerWhatsNewStep,
   outlineWhatsNewChapterStep,
@@ -14,6 +15,8 @@ import {
   saveWhatsNewChapterStep,
   saveWhatsNewSkillsStep,
 } from "./steps/course-release-steps";
+
+type WhatsNewChapter = NonNullable<Awaited<ReturnType<typeof findWhatsNewChapterStep>>>;
 
 /** The most lessons `flaggedContentWorkflow` prepares in one run. */
 const FLAGS_PER_REWRITE = 10;
@@ -48,7 +51,34 @@ async function startRewrites(flagIds: readonly string[]): Promise<void> {
   await Promise.all(batches.map((batch) => start(flaggedContentWorkflow, [{ flagIds: batch }])));
 }
 
-/** Before the course moves, so a failure here leaves it behind and the next run does it again. */
+async function writeWhatsNewChapter({
+  courseId,
+  provenance,
+  releaseId,
+  whatsNew,
+  workflowRunId,
+}: ReleaseRun & Parameters<typeof saveWhatsNewSkillsStep>[0]): Promise<WhatsNewChapter> {
+  const skills = await saveWhatsNewSkillsStep({ courseId, provenance, releaseId, whatsNew });
+  const outline = await outlineWhatsNewChapterStep({ courseId, skills, whatsNew, workflowRunId });
+
+  const { lessonIds } = await deliverCourseContent(
+    saveWhatsNewChapterStep({
+      chapter: outline.chapter,
+      courseId,
+      level: whatsNew.level,
+      provenance: outline.provenance,
+      skills,
+      workflowRunId,
+    }),
+  );
+
+  return { lessonIds, skills };
+}
+
+/**
+ * Before the course moves, so a failure here leaves it behind and the next run does it again; that
+ * run offers the chapter an earlier one saved instead of writing another.
+ */
 async function addWhatsNew({
   comparison,
   courseId,
@@ -65,19 +95,10 @@ async function addWhatsNew({
   }
 
   const releaseId = state.toReleaseId;
-  const skills = await saveWhatsNewSkillsStep({ courseId, provenance, releaseId, whatsNew });
-  const outline = await outlineWhatsNewChapterStep({ courseId, skills, whatsNew, workflowRunId });
 
-  const { lessonIds } = await deliverCourseContent(
-    saveWhatsNewChapterStep({
-      chapter: outline.chapter,
-      courseId,
-      level: whatsNew.level,
-      provenance: outline.provenance,
-      skills,
-      workflowRunId,
-    }),
-  );
+  const { lessonIds, skills } =
+    (await findWhatsNewChapterStep({ courseId, releaseId })) ??
+    (await writeWhatsNewChapter({ courseId, provenance, releaseId, whatsNew, workflowRunId }));
 
   const offer = {
     courseId,

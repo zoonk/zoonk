@@ -11,13 +11,32 @@ const NOTES_WINDOW = 60_000;
 /** Text before the release's name, where a changelog puts its date and heading. */
 const NOTES_LEAD = 500;
 
+/** Where `token` first stands alone: "Product 1" and "2" never match inside "Product 12". */
+function findToken({ text, token }: { text: string; token: string | null }): number {
+  if (!token) {
+    return -1;
+  }
+
+  const escaped = token.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
+  return text.search(new RegExp(`(?<![\\p{L}\\p{N}.])${escaped}(?![\\p{L}\\p{N}]|\\.\\p{N})`, "u"));
+}
+
 /**
- * A changelog lists every release, so a course catching up on an older one reads from where that
- * release's name first appears rather than from the newest release at the top.
+ * A changelog lists every release, so a course catching up on an older one reads from where the
+ * release's name first appears, or else its version, rather than from the newest release at the top.
  */
-function toReleaseNotes({ names, text }: { names: (string | null)[]; text: string }): string {
-  const found = names.flatMap((name) => (name ? [text.indexOf(name)] : [])).filter((at) => at >= 0);
-  const start = found.length > 0 ? Math.max(0, Math.min(...found) - NOTES_LEAD) : 0;
+function toReleaseNotes({
+  name,
+  text,
+  version,
+}: {
+  name: string;
+  text: string;
+  version: string | null;
+}): string {
+  const byName = findToken({ text, token: name });
+  const found = byName === -1 ? findToken({ text, token: version }) : byName;
+  const start = Math.max(0, found - NOTES_LEAD);
 
   return text.slice(start, start + NOTES_WINDOW);
 }
@@ -41,10 +60,7 @@ async function loadReleaseNotes(releaseId: string) {
       ? {
           contentHash: page.contentHash,
           sourceId: page.id,
-          text: toReleaseNotes({
-            names: [release.name, release.version],
-            text: page.extractedText,
-          }),
+          text: toReleaseNotes({ ...release, text: page.extractedText }),
         }
       : null,
     product: release.product.name,
