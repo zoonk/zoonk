@@ -31,11 +31,13 @@ struct SectionTitle<Trailing: View>: View {
 }
 
 extension View {
-  /// `SectionTitle`'s look for a header that isn't one text, such as a `Label` with its icon.
+  /// `SectionTitle`'s look for a header that isn't one text, such as a `Label` with its icon. It's
+  /// a heading wherever it's drawn, as a `Section`'s header or as a title in a page's block grid.
   func sectionTitleStyle() -> some View {
     typeStyle(.sectionTitle)
       .foregroundStyle(Color(.foreground))
       .textCase(nil)
+      .accessibilityAddTraits(.isHeader)
   }
 }
 
