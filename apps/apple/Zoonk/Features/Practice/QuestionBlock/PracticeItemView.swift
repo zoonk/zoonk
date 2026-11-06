@@ -415,28 +415,42 @@ struct OrderItemView: View {
 
       ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
         let place = placed.firstIndex(of: index)
+        let result = stepResult(index, placed: placed)
 
         AnswerOption(
           marker: index + 1,
           isPicked: place != nil,
-          result: stepResult(index, placed: placed),
+          result: result,
           isLocked: isLocked,
           tag: place.map { AnyView(PairBadge(number: $0 + 1)) },
           action: { tap(index) },
           label: { Text(ItemTextBlock.inline(step), legibility: legibilityWeight) }
         )
-        .accessibilityValue(placeValue(place))
+        .accessibilityValue(placeValue(place, result: result))
         .practiceFocus(index == 0 ? .answer : nil)
       }
     }
   }
 
-  private func placeValue(_ place: Int?) -> Text {
+  /// The badge that shows a checked step's place is hidden from VoiceOver, so its value carries the
+  /// place and, as main's and Android's do, whether it's the right one.
+  private func placeValue(_ place: Int?, result: AnswerOptionResult?) -> Text {
     guard let place else { return Text(verbatim: "") }
 
-    return Text(
-      "Place \(place + 1)", tableName: "Practice",
-      comment: "VoiceOver value of a step placed in an ordering question.")
+    switch result {
+    case .right:
+      return Text(
+        "Place \(place + 1), right place", tableName: "Practice",
+        comment: "VoiceOver value of a checked ordering step the learner put in its right place.")
+    case .wrong:
+      return Text(
+        "Place \(place + 1), wrong place", tableName: "Practice",
+        comment: "VoiceOver value of a checked ordering step the learner put in a wrong place.")
+    case .guess, nil:
+      return Text(
+        "Place \(place + 1)", tableName: "Practice",
+        comment: "VoiceOver value of a step placed in an ordering question.")
+    }
   }
 
   private func stepResult(_ index: Int, placed: [Int]) -> AnswerOptionResult? {
