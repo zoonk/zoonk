@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { buildPlan } from "./build-plan";
 import { listEndsBeforeLessons } from "./ends-before-lessons";
-import { fromIsoDate } from "./plan-calendar";
+import { fromIsoDate, toIsoDate } from "./plan-calendar";
+import { parsePlanSettings } from "./plan-state";
 
 function filed(key: string, skillId: string, date: string) {
   return {
@@ -22,7 +24,7 @@ describe(listEndsBeforeLessons, () => {
   const end = fromIsoDate("2026-10-18");
   const ends = new Map([[0, end]]);
 
-  const input = {
+  const given = {
     graph: { phases: [], skills: [skill("arrival", 0), skill("renting", 1)] },
     lessons: [],
   };
@@ -31,7 +33,7 @@ describe(listEndsBeforeLessons, () => {
     const items = [filed("a", "arrival", "2026-10-19"), filed("b", "renting", "2026-10-20")];
 
     expect(
-      listEndsBeforeLessons({ ends, input, items, units: [{ depth: false, key: "a" }] }),
+      listEndsBeforeLessons({ ends, given, items, units: [{ depth: false, key: "a" }] }),
     ).toStrictEqual([0]);
   });
 
@@ -39,7 +41,7 @@ describe(listEndsBeforeLessons, () => {
     const items = [filed("a", "arrival", "2026-10-19")];
 
     const course = {
-      ...input,
+      ...given,
       lessons: [
         {
           chapterId: "revisit",
@@ -53,7 +55,7 @@ describe(listEndsBeforeLessons, () => {
     };
 
     expect(
-      listEndsBeforeLessons({ ends, input: course, items, units: [{ depth: false, key: "a" }] }),
+      listEndsBeforeLessons({ ends, given: course, items, units: [{ depth: false, key: "a" }] }),
     ).toStrictEqual([]);
   });
 
@@ -61,7 +63,65 @@ describe(listEndsBeforeLessons, () => {
     const items = [filed("a", "arrival", "2026-10-19"), filed("b", "renting", "2026-10-20")];
 
     expect(
-      listEndsBeforeLessons({ ends, input, items, units: [{ depth: true, key: "a" }] }),
+      listEndsBeforeLessons({ ends, given, items, units: [{ depth: true, key: "a" }] }),
     ).toStrictEqual([]);
+  });
+});
+
+function courseLesson(lessonId: string, skillId: string, phase: number, position: number) {
+  return {
+    chapterId: phase === 0 ? "beginner" : "intermediate",
+    courseOrder: { phase, position },
+    lessonId,
+    minutes: 8,
+    skillIds: [skillId],
+    title: lessonId,
+  };
+}
+
+describe("kept ends when a course's lessons land", () => {
+  const today = fromIsoDate("2026-11-02");
+
+  const input = {
+    goal: { dailyMinutes: 10, kind: "learn" as const, targetDate: null },
+    graph: {
+      phases: [
+        { milestone: null, name: "Beginner" },
+        { milestone: null, name: "Intermediate" },
+      ],
+      skills: [
+        { ...skill("basics", 0), outlined: true },
+        { ...skill("written-later", 0), lessons: 2 },
+        { ...skill("deeper", 1), outlined: true },
+      ],
+    },
+    items: [],
+    lessons: [courseLesson("basics-0", "basics", 0, 0), courseLesson("deeper-0", "deeper", 1, 1)],
+    mockMinutes: 150,
+    mode: "forced" as const,
+    paceFactor: 1,
+    prerequisites: new Map(),
+    readiness: new Map(),
+    settings: parsePlanSettings({ startDate: toIsoDate(today) }),
+    today,
+  };
+
+  it("leaves an earlier level's end to the later level's lessons that land", () => {
+    const first = buildPlan(input);
+    const beginnerEnd = first.items.find((item) => item.key === "boss:0")?.scheduledFor;
+
+    const landed = Array.from({ length: 6 }, (_, index) =>
+      courseLesson(`later-${index}`, "written-later", 1, index + 2),
+    );
+
+    const next = buildPlan({
+      ...input,
+      items: first.items.map((entry, position) => ({ ...entry, id: entry.key, position })),
+      lessons: [...input.lessons, ...landed],
+      mode: "automatic",
+      phaseEnds: new Map([[0, beginnerEnd ?? today]]),
+    });
+
+    expect(next.endsBeforeLessons).toStrictEqual([]);
   });
 });

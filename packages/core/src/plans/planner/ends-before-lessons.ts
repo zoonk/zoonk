@@ -6,22 +6,22 @@ import { type ScheduledUnit } from "./schedule-units";
 
 export function listEndsBeforeLessons({
   ends,
-  input,
+  given,
   items,
   units,
 }: {
   ends: ReadonlyMap<number, Date>;
-  input: Pick<BuildPlanInput, "graph" | "lessons">;
+  given: Pick<BuildPlanInput, "graph" | "lessons">;
   items: readonly Pick<
     PlannedItem,
     "key" | "kind" | "lessonId" | "phase" | "scheduledFor" | "skillId" | "status"
   >[];
   units: readonly Pick<ScheduledUnit, "depth" | "key">[];
 }): number[] {
-  const skillPhases = new Map(input.graph.skills.map((skill) => [skill.skillId, skill.phase]));
+  const skillPhases = new Map(given.graph.skills.map((skill) => [skill.skillId, skill.phase]));
 
   const courseLevels = new Map(
-    input.lessons.flatMap((lesson) =>
+    given.lessons.flatMap((lesson) =>
       lesson.courseOrder ? [[lesson.lessonId, lesson.courseOrder.phase] as const] : [],
     ),
   );
