@@ -42,7 +42,7 @@ export async function readProductReleases({
 }
 
 /** One release update per course at a time: a course already updating keeps its run. */
-export async function startCourseReleases(courseIds: readonly string[]): Promise<void> {
+async function startCourseReleases(courseIds: readonly string[]): Promise<void> {
   await Promise.all(
     courseIds.map((courseId) =>
       startOnce(courseReleaseWorkflow, [{ courseId }], `course-release:${courseId}`),
