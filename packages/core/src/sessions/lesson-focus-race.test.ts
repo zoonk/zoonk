@@ -12,6 +12,57 @@ import { completeLibraryLesson } from "../lesson-player/complete-library-lesson"
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { startStudyBlock } from "./start-study-block";
 
+/** Two sittings of one session lesson, 31 minutes apart, both still open. */
+async function twoSittings() {
+  freezeClock();
+  const now = new Date("2026-10-13T12:00:00Z");
+  vi.setSystemTime(now);
+  const { lesson, user } = await setupPlayableLesson({ steps: ["explanation", "summary"] });
+  const goal = await goalFixture({ userId: user.id });
+  const plan = await planFixture({ goalId: goal.id });
+  const item = await planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id });
+  const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+
+  const block = await studySessionBlockFixture({
+    kind: "learn",
+    lessonId: lesson.id,
+    payload: { planItemId: item.id },
+    sessionId: session.id,
+  });
+
+  await expect(
+    startStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id }),
+  ).resolves.toMatchObject({ status: "ready" });
+
+  const first = await startLibraryLesson({
+    input: { studySessionId: session.id, timeZone: "UTC" },
+    lessonId: lesson.id,
+  });
+
+  vi.setSystemTime(new Date(now.getTime() + 31 * 60_000));
+
+  const second = await startLibraryLesson({
+    input: { studySessionId: session.id, timeZone: "UTC" },
+    lessonId: lesson.id,
+  });
+
+  if (first.status !== "started" || second.status !== "started") {
+    throw new Error("Expected two starts");
+  }
+
+  expect(first.run.runId).not.toBe(second.run.runId);
+
+  const complete = (runId: string) =>
+    completeLibraryLesson({ input: { runId, timeZone: "UTC" }, lessonId: lesson.id });
+
+  return { complete, runIds: [first.run.runId, second.run.runId] as const, session, user };
+}
+
+async function creditedSeconds(runIds: readonly string[]) {
+  const rows = await prisma.learningEvent.findMany({ where: { id: { in: [...runIds] } } });
+  return rows.reduce((sum, row) => sum + row.seconds, 0);
+}
+
 describe("session lesson focus settlement", () => {
   it("replays the bound lesson's evidence when a later run finished for another block", async () => {
     freezeClock();
@@ -68,54 +119,11 @@ describe("session lesson focus settlement", () => {
   });
 
   it("credits a session lesson's focused duration once when two of its runs finish at once", async () => {
-    freezeClock();
-    const now = new Date("2026-10-13T12:00:00Z");
-    vi.setSystemTime(now);
-    const { lesson, user } = await setupPlayableLesson({ steps: ["explanation", "summary"] });
-    const goal = await goalFixture({ userId: user.id });
-    const plan = await planFixture({ goalId: goal.id });
-    const item = await planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id });
-    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
-
-    const block = await studySessionBlockFixture({
-      kind: "learn",
-      lessonId: lesson.id,
-      payload: { planItemId: item.id },
-      sessionId: session.id,
-    });
-
-    await expect(
-      startStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id }),
-    ).resolves.toMatchObject({ status: "ready" });
-
-    const first = await startLibraryLesson({
-      input: { studySessionId: session.id, timeZone: "UTC" },
-      lessonId: lesson.id,
-    });
-
-    vi.setSystemTime(new Date(now.getTime() + 31 * 60_000));
-
-    const second = await startLibraryLesson({
-      input: { studySessionId: session.id, timeZone: "UTC" },
-      lessonId: lesson.id,
-    });
-
-    if (first.status !== "started" || second.status !== "started") {
-      throw new Error("Expected two starts");
-    }
-
-    expect(first.run.runId).not.toBe(second.run.runId);
-    const runIds = [first.run.runId, second.run.runId];
-
-    const results = await Promise.allSettled(
-      runIds.map((runId) =>
-        completeLibraryLesson({ input: { runId, timeZone: "UTC" }, lessonId: lesson.id }),
-      ),
-    );
+    const { complete, runIds, session, user } = await twoSittings();
+    const results = await Promise.allSettled(runIds.map((runId) => complete(runId)));
 
     expect(results.map((result) => result.status)).toStrictEqual(["fulfilled", "fulfilled"]);
-    const rows = await prisma.learningEvent.findMany({ where: { id: { in: runIds } } });
-    expect(rows.reduce((sum, row) => sum + row.seconds, 0)).toBe(1800);
+    await expect(creditedSeconds(runIds)).resolves.toBe(1800);
 
     await expect(
       prisma.dailyProgress.findFirstOrThrow({ where: { userId: user.id } }),
@@ -130,5 +138,14 @@ describe("session lesson focus settlement", () => {
         },
       }),
     ).resolves.toMatchObject({ seconds: 1800 });
+  });
+
+  it("credits a session lesson's focused duration once when its later sitting finishes first", async () => {
+    const { complete, runIds } = await twoSittings();
+    const [earlier, later] = runIds;
+
+    await expect(complete(later)).resolves.toMatchObject({ status: "completed" });
+    await expect(complete(earlier)).resolves.toMatchObject({ status: "completed" });
+    await expect(creditedSeconds(runIds)).resolves.toBe(1800);
   });
 });
