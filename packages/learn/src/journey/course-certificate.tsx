@@ -55,12 +55,7 @@ function ClaimAction({
   const t = useExtracted();
 
   return (
-    <SuggestionAction
-      aria-busy={isPending || undefined}
-      disabled={isPending}
-      onClick={claim}
-      variant={variant}
-    >
+    <SuggestionAction busy={isPending} onClick={claim} variant={variant}>
       {t("Get your certificate")}
     </SuggestionAction>
   );

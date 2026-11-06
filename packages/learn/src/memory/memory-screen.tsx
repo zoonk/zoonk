@@ -8,7 +8,6 @@ import {
   type MemoryView,
 } from "@zoonk/core/memory/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { downloadFile } from "@zoonk/utils/download";
 import { safeAsync } from "@zoonk/utils/error";
 import { DownloadIcon } from "lucide-react";
@@ -116,15 +115,14 @@ function MemoryExportRow({ exportMemory }: Pick<MemoryActions, "exportMemory">) 
           label={t("Download my memory")}
         >
           <Button
-            aria-label={isPending ? t("Preparing your memory…") : t("Download my memory")}
-            disabled={isPending}
-            focusableWhenDisabled
+            aria-label={t("Download my memory")}
+            busy={isPending}
             onClick={download}
             size="sm"
             variant="outline"
           >
-            {isPending ? <Spinner aria-hidden="true" /> : <DownloadIcon aria-hidden="true" />}
-            {isPending ? t("Preparing…") : t("Download")}
+            <DownloadIcon aria-hidden="true" />
+            {t("Download")}
           </Button>
         </SettingRow>
       </ListGroup>

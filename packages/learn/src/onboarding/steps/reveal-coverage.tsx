@@ -10,7 +10,6 @@ import { usePlanScreen } from "../../plan/plan-context";
 import {
   MoveDateFailure,
   MoveDateLabel,
-  PendingLabel,
   useCanMoveDate,
   useCoveredText,
   useMoveDate,
@@ -81,17 +80,8 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
         {canMoveDate && (
           <>
             {space}
-            {/* Focusable while disabled: the action keeps focus through a search of seconds. */}
-            <Button
-              aria-busy={move.pending || undefined}
-              disabled={move.pending}
-              focusableWhenDisabled
-              onClick={() => void move.move()}
-              variant="link"
-            >
-              <PendingLabel pending={move.pending}>
-                <MoveDateLabel move={move} />
-              </PendingLabel>
+            <Button busy={move.pending} onClick={() => void move.move()} variant="link">
+              <MoveDateLabel move={move} />
             </Button>
           </>
         )}

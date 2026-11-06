@@ -72,7 +72,7 @@ function StartButton({
   const ref = useTapFocus(focus);
 
   return (
-    <EnterButton aria-busy={busy || undefined} disabled={busy} onClick={onClick} ref={ref}>
+    <EnterButton busy={busy} onClick={onClick} ref={ref}>
       {step.status === "active" ? t("Continue") : t("Start")}
     </EnterButton>
   );

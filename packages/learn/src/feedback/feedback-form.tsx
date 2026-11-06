@@ -10,7 +10,6 @@ import {
 } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { parseFormField } from "@zoonk/utils/form";
@@ -112,8 +111,7 @@ function SendButton({ disabled, pending }: { disabled: boolean; pending: boolean
   const t = useExtracted("feedback");
 
   return (
-    <Button disabled={disabled || pending} focusableWhenDisabled size="sm" type="submit">
-      {pending && <Spinner aria-hidden="true" />}
+    <Button busy={pending} disabled={disabled} focusableWhenDisabled size="sm" type="submit">
       {t("Send message")}
     </Button>
   );

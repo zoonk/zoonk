@@ -50,8 +50,10 @@ describe("bounded waits", () => {
       .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
       .fill(TYPO);
 
-    await page.getByRole("button", { name: /^Check/u }).click();
-    await expect.element(page.getByRole("button", { name: "Checking your answer" })).toBeDisabled();
+    const check = page.getByRole("button", { name: /^Check/u });
+    await check.click();
+    await expect.element(check).toHaveAttribute("aria-busy", "true");
+    await expect.element(check).toBeDisabled();
 
     await vi.advanceTimersByTimeAsync(CHECK_BOUNDS.slowMs + 1000);
 

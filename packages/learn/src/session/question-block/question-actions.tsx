@@ -1,6 +1,5 @@
 "use client";
 
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
@@ -23,8 +22,7 @@ export function CheckButton({
   useEnterKey(onCheck, { enabled: !disabled && !busy });
 
   return (
-    <EnterButton disabled={disabled || busy} id={QUESTION_CHECK_ID} onClick={onCheck}>
-      {busy && <Spinner aria-hidden="true" />}
+    <EnterButton busy={busy} disabled={disabled} id={QUESTION_CHECK_ID} onClick={onCheck}>
       {t("Check")}
     </EnterButton>
   );

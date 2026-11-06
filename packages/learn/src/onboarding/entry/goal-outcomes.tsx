@@ -140,8 +140,8 @@ export function ExplainGoal({
       </OnboardingHeading>
 
       <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton disabled={isStarting} onClick={onStart}>
-          {isStarting ? t("Opening your explanation…") : t("Explain it")}
+        <OnboardingPrimaryButton busy={isStarting} onClick={onStart}>
+          {t("Explain it")}
         </OnboardingPrimaryButton>
       </GoalFooter>
     </OnboardingColumn>
@@ -299,8 +299,8 @@ export function InstrumentGoal({
       <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
 
       <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton disabled={isStarting} onClick={onStartMusicianship}>
-          {isStarting ? t("Saving your goal…") : t("Start musicianship")}
+        <OnboardingPrimaryButton busy={isStarting} onClick={onStartMusicianship}>
+          {t("Start musicianship")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
           disabled={isJoining || waitlist === "joined"}

@@ -109,8 +109,7 @@ function StartButton() {
           disabled={move.pending}
           onClick={() => void start.start()}
         >
-          {start.busy && t("Starting…")}
-          {!start.busy && (challenge.mock ? t("Start the mock exam") : t("Start"))}
+          {challenge.mock ? t("Start the mock exam") : t("Start")}
         </TaskMainButton>
       </TaskActions>
     </>
@@ -167,7 +166,7 @@ function ResumeButton() {
 
   return (
     <TaskActions>
-      <TaskMainButton disabled={start.busy} onClick={() => void start.start()}>
+      <TaskMainButton busy={start.busy} onClick={() => void start.start()}>
         {t("Continue")}
       </TaskMainButton>
     </TaskActions>

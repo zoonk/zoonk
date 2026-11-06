@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
@@ -115,19 +114,12 @@ function MomentActions({
 
       <TaskActions className={cn(!sessionCompleted && "max-lg:flex-col max-lg:items-stretch")}>
         {!sessionCompleted && (
-          <Button
-            disabled={stop.isPending}
-            focusableWhenDisabled
-            onClick={stop.run}
-            size="xl"
-            variant="outline"
-          >
+          <Button busy={stop.isPending} onClick={stop.run} size="xl" variant="outline">
             {t("Stop for today")}
           </Button>
         )}
 
-        <EnterButton disabled={proceed.isPending} onClick={proceed.run}>
-          {proceed.isPending && <Spinner aria-hidden="true" />}
+        <EnterButton busy={proceed.isPending} onClick={proceed.run}>
           {sessionCompleted ? t("See today's summary") : t("Continue")}
         </EnterButton>
       </TaskActions>

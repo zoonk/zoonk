@@ -196,8 +196,10 @@ describe("an essay sent for grading", () => {
     renderEssay(() => graded.promise);
 
     await userEvent.type(answer(), "Charging cars clears the air.");
-    await page.getByRole("button", { name: "Send for grading" }).click();
-    await expect.element(page.getByRole("button", { name: "Grading…" })).toBeDisabled();
+    const send = page.getByRole("button", { name: "Send for grading" });
+    await send.click();
+    await expect.element(send).toHaveAttribute("aria-busy", "true");
+    await expect.element(send).toBeDisabled();
 
     await userEvent.type(answer(), " It also funds buses.");
     graded.resolve(gradedDraft("Charging cars clears the air."));
@@ -231,7 +233,9 @@ describe("an essay sent for grading", () => {
 
     await page.getByRole("button", { name: "See the grade" }).click();
     await openRewrite();
-    await expect.element(page.getByRole("button", { name: "Grading…" })).toBeDisabled();
+    const grade = page.getByRole("button", { name: "Grade the rewrite" });
+    await expect.element(grade).toHaveAttribute("aria-busy", "true");
+    await expect.element(grade).toBeDisabled();
 
     await userEvent.fill(
       rewrite(),

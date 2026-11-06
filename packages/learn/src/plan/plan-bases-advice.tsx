@@ -5,7 +5,6 @@ import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useSentenceSpace } from "../_utils/locale";
 import { usePlanScreen } from "./plan-context";
-import { PendingLabel } from "./plan-coverage";
 import { type RecommendedBases, useAdviceText } from "./use-bases-texts";
 import { requestWithin } from "./use-time-to-cover";
 
@@ -91,17 +90,8 @@ export function BasesAdvice({
       )}
 
       {!answered && (
-        <Button
-          aria-busy={pending || undefined}
-          disabled={pending}
-          focusableWhenDisabled
-          onClick={ask}
-          size="sm"
-          variant="outline"
-        >
-          <PendingLabel pending={pending}>
-            {retry ? t("Try again") : t("Get a recommendation")}
-          </PendingLabel>
+        <Button busy={pending} onClick={ask} size="sm" variant="outline">
+          {retry ? t("Try again") : t("Get a recommendation")}
         </Button>
       )}
     </div>

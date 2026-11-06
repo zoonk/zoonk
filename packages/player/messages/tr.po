@@ -3251,11 +3251,6 @@ msgid "Why that answer misses"
 msgstr "Bu cevap neden doğru değil"
 
 #: src/lesson/feedback/explain-answer.tsx
-msgctxt "g00v5Z"
-msgid "Explaining your answer"
-msgstr "Cevabını açıklıyoruz"
-
-#: src/lesson/feedback/explain-answer.tsx
 msgctxt "aIkpfv"
 msgid "Explain my answer"
 msgstr "Cevabımı açıkla"
@@ -3362,11 +3357,6 @@ msgstr "Doğru cevap"
 msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Kontrol et"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "IYUwzO"
-msgid "Checking your answer"
-msgstr "Cevabını kontrol ediyoruz"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "N2IrpM"

@@ -146,15 +146,13 @@ function MapRequestTile({
 
         {!isGenerating && (
           <Button
-            disabled={isPending || isCapped}
+            busy={isPending}
+            disabled={isCapped}
             focusableWhenDisabled
             onClick={isFailure ? retry : create}
             size="sm"
             variant="outline"
           >
-            {isPending && (
-              <Spinner aria-hidden="true" data-icon="inline-start" role="presentation" />
-            )}
             {isFailure ? t("Try again") : t("Create")}
           </Button>
         )}

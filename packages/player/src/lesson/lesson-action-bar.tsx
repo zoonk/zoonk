@@ -8,7 +8,6 @@ import {
 } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PromptAudioButton } from "../components/prompt-audio-button";
@@ -54,7 +53,6 @@ function PrimaryLabel({ label }: { label: LessonPrimaryLabel }) {
 
   const labels: Record<LessonPrimaryLabel, string> = {
     check: t("Check"),
-    checking: t("Checking your answer"),
     confirm: t("Confirm"),
     continue: t("Continue"),
     dontKnowYet: t("I don't know yet"),
@@ -110,6 +108,7 @@ export function LessonActionBar() {
 
         <Button
           aria-keyshortcuts="Enter"
+          busy={primary.busy}
           className={TASK_MAIN_ACTION_CLASS}
           disabled={primary.disabled}
           focusableWhenDisabled
@@ -118,9 +117,8 @@ export function LessonActionBar() {
           size="xl"
           variant={isReveal ? "secondary" : "default"}
         >
-          {primary.busy && <Spinner aria-hidden="true" />}
           <PrimaryLabel label={primary.label} />
-          {!primary.busy && <ShortcutKbd tone={isReveal ? undefined : "inverse"}>⏎</ShortcutKbd>}
+          <ShortcutKbd tone={isReveal ? undefined : "inverse"}>⏎</ShortcutKbd>
         </Button>
 
         <TutorAskButton quiet={Boolean(screen.struggleOffer)} />

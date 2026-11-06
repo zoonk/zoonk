@@ -43,15 +43,8 @@ export function TestOutOffer({
         <TestOutStartStatus isPending={isPending} result={result} />
       </div>
 
-      <Button
-        className="shrink-0"
-        disabled={opening}
-        focusableWhenDisabled
-        onClick={start}
-        size="sm"
-        variant="outline"
-      >
-        {opening ? t("Opening the test…") : t("Take the test")}
+      <Button busy={opening} className="shrink-0" onClick={start} size="sm" variant="outline">
+        {t("Take the test")}
       </Button>
     </div>
   );

@@ -246,7 +246,7 @@ export function OnboardingPrimaryButton({
   className,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const ref = useEnterClick<HTMLButtonElement>({ enabled: !props.disabled });
+  const ref = useEnterClick<HTMLButtonElement>({ enabled: !props.disabled && !props.busy });
 
   return (
     <Button

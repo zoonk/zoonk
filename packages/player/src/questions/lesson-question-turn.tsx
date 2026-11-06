@@ -13,7 +13,6 @@ import {
   MessageContent,
   MessageHeader,
 } from "@zoonk/ui/components/message";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { QuestionAnswer, Thinking } from "./lesson-question-answer";
@@ -80,14 +79,12 @@ export function EarlierTurns({ page = false }: { page?: boolean }) {
         </p>
       )}
       <Button
-        disabled={state.isLoadingEarlier}
-        focusableWhenDisabled
+        busy={state.isLoadingEarlier}
         onClick={() => void loadEarlier()}
         size="sm"
         type="button"
         variant="outline"
       >
-        {state.isLoadingEarlier && <Spinner aria-hidden="true" />}
         {page ? t("Load earlier messages") : t("Load earlier questions")}
       </Button>
     </div>

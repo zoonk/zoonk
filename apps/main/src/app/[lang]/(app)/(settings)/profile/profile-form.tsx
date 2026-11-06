@@ -71,8 +71,7 @@ function SaveButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus();
 
   return (
-    <Button disabled={disabled || pending} focusableWhenDisabled size="sm" type="submit">
-      {pending && <Spinner aria-hidden="true" />}
+    <Button busy={pending} disabled={disabled} focusableWhenDisabled size="sm" type="submit">
       {t("Save")}
     </Button>
   );

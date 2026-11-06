@@ -1,7 +1,6 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { PendingLabel } from "../../plan/plan-coverage";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -61,12 +60,8 @@ export function StepForm({
         {children}
 
         <OnboardingFooter>
-          <OnboardingPrimaryButton
-            aria-busy={pending || undefined}
-            disabled={!canContinue || pending}
-            type="submit"
-          >
-            <PendingLabel pending={pending}>{continueLabel ?? t("Continue")}</PendingLabel>
+          <OnboardingPrimaryButton busy={pending} disabled={!canContinue} type="submit">
+            {continueLabel ?? t("Continue")}
           </OnboardingPrimaryButton>
 
           {onSkip && (

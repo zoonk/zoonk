@@ -211,7 +211,7 @@ export function AlternativeButton({
   return (
     <EnterButton
       className="h-auto min-h-11 py-2 text-balance whitespace-normal"
-      disabled={other.isPending}
+      busy={other.isPending}
       onClick={other.run}
     >
       {reason === "instead"

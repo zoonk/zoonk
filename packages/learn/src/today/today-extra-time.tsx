@@ -25,14 +25,7 @@ export function TodayExtraTime({
 
   return (
     <>
-      <Button
-        className={className}
-        disabled={isPending}
-        focusableWhenDisabled
-        onClick={run}
-        size={size}
-        variant={variant}
-      >
+      <Button busy={isPending} className={className} onClick={run} size={size} variant={variant}>
         {label ?? t("Study {minutes} more minutes", { minutes: String(minutes) })}
       </Button>
 

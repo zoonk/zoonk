@@ -2,7 +2,6 @@
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { createOnDemand } from "@zoonk/ui/lib/on-demand";
@@ -277,16 +276,16 @@ export function TaskMainButton({
   return (
     <Button
       aria-keyshortcuts="Enter"
+      busy={busy}
       className={cn(TASK_MAIN_ACTION_CLASS, className)}
-      disabled={isDisabled}
+      disabled={disabled || !mounted}
       focusableWhenDisabled
       onClick={onClick}
       ref={ref}
       size="xl"
     >
-      {busy && <Spinner aria-hidden="true" />}
       {children}
-      {!busy && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
+      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </Button>
   );
 }

@@ -3,7 +3,6 @@
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterKey, useKeyboardCallback, useLetterKey } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
@@ -147,16 +146,16 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
         <FlagButton />
         <Button
           aria-keyshortcuts={isLastQuestion ? undefined : "Enter ArrowRight"}
+          busy={handingIn}
           className={TASK_MAIN_ACTION_CLASS}
           disabled={runner.pending || waiting}
           focusableWhenDisabled
           onClick={next}
           size="xl"
         >
-          {handingIn && <Spinner aria-hidden="true" />}
-          {handingIn && t("Handing in…")}
-          {!handingIn && isLastQuestion && nextLabel}
-          {!handingIn && !isLastQuestion && (
+          {isLastQuestion ? (
+            nextLabel
+          ) : (
             <>
               {t("Next")}
               <ShortcutKbd tone="inverse">⏎</ShortcutKbd>

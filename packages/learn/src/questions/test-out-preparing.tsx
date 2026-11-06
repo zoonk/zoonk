@@ -66,7 +66,7 @@ function TestOutStart({
       {!plusRequired && !limit && (
         <TaskActions>
           <TaskMainButton busy={starting} onClick={onStart}>
-            {starting ? t("Starting…") : t("Start the test")}
+            {t("Start the test")}
           </TaskMainButton>
         </TaskActions>
       )}

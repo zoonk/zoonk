@@ -1201,16 +1201,6 @@ msgid "Download my data"
 msgstr "Baixar meus dados"
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-msgctxt "cQNx6-"
-msgid "Preparing your data…"
-msgstr "Preparando seus dados…"
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-msgctxt "Ob8gKI"
-msgid "Preparing…"
-msgstr "Preparando…"
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 msgctxt "5q3qC0"
 msgid "Download"
 msgstr "Baixar"
@@ -2553,11 +2543,6 @@ msgstr "Esta aula ainda não foi criada"
 msgctxt "BdqTEJ"
 msgid "Zoonk writes it when you start. It takes a few minutes."
 msgstr "O Zoonk cria a aula quando você começa. Leva alguns minutos."
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "RFCwI6"
-msgid "Starting…"
-msgstr "Começando…"
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"

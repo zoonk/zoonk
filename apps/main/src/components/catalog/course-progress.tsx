@@ -175,10 +175,8 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
 
   return (
     <Button
-      aria-busy={isPending}
+      busy={isPending}
       className={getStartControlClassName()}
-      disabled={isPending}
-      focusableWhenDisabled
       onClick={continueGoal}
       size="lg"
     >

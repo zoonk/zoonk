@@ -77,7 +77,8 @@ test.describe("Exam goal", () => {
 
       const start = page.getByRole("button", { name: "Start the mock exam" });
       await start.click();
-      await expect(page.getByRole("button", { name: "Starting…" })).toBeDisabled();
+      await expect(start).toHaveAttribute("aria-busy", "true");
+      await expect(start).toBeDisabled();
       await page.clock.fastForward(11_000);
 
       await expect(
@@ -95,7 +96,9 @@ test.describe("Exam goal", () => {
       const handingIn = await holdServerActions(page, isHandIn);
       await playMock({ answers: mock.answers, page });
 
-      await expect(page.getByRole("button", { name: "Handing in…" })).toBeDisabled();
+      const handIn = page.getByRole("button", { name: "Hand in the mock exam" });
+      await expect(handIn).toHaveAttribute("aria-busy", "true");
+      await expect(handIn).toBeDisabled();
       await page.clock.fastForward(11_000);
 
       await expect(
@@ -170,7 +173,8 @@ test.describe("Exam goal", () => {
       await send.click();
       const firstRequest = await firstSend;
       const { attemptId } = firstRequest.postDataJSON() as { attemptId: string };
-      await expect(page.getByRole("button", { name: "Grading…" })).toBeDisabled();
+      await expect(send).toHaveAttribute("aria-busy", "true");
+      await expect(send).toBeDisabled();
       await page.clock.fastForward(21_000);
 
       await expect(

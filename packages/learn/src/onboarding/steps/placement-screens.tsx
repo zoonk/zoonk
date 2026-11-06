@@ -17,7 +17,6 @@ import { PlusMark } from "../../_components/plus-lock";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import { useFormatDuration } from "../../_utils/time-format";
 import { LearnLink } from "../../learn-link";
-import { PendingLabel } from "../../plan/plan-coverage";
 import { type PlacementMockOutcome } from "../onboarding-actions";
 import {
   OnboardingColumn,
@@ -114,12 +113,8 @@ export function PlacementIntro({
       {mock && <PlacementMockRow mock={mock} />}
 
       <OnboardingFooter>
-        <OnboardingPrimaryButton
-          aria-busy={starting || undefined}
-          disabled={pending || starting}
-          onClick={onStart}
-        >
-          <PendingLabel pending={starting}>{t("Start")}</PendingLabel>
+        <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
+          {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
           disabled={pending || starting}

@@ -117,13 +117,13 @@ function FarTopicBody({
 
       {copy.action && (
         <Button
-          disabled={isPending || isCapped}
+          busy={isPending}
+          disabled={isCapped}
           focusableWhenDisabled
           onClick={isFailure ? retry : request}
           size="lg"
           variant={isFailure ? "outline" : "default"}
         >
-          {isPending && <Spinner aria-hidden="true" data-icon="inline-start" role="presentation" />}
           {copy.action}
         </Button>
       )}

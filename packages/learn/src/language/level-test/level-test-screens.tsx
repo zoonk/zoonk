@@ -21,7 +21,6 @@ import {
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
 import { StepIcon } from "../../onboarding/steps/step-parts";
-import { PendingLabel } from "../../plan/plan-coverage";
 import { LevelBars } from "./level-test-parts";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
@@ -98,12 +97,8 @@ export function TestIntro({
       )}
 
       <OnboardingFooter>
-        <OnboardingPrimaryButton
-          aria-busy={starting || undefined}
-          disabled={pending || starting}
-          onClick={onStart}
-        >
-          <PendingLabel pending={starting}>{t("Start")}</PendingLabel>
+        <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
+          {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
           disabled={pending || starting}

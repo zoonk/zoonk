@@ -196,14 +196,13 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
 
       <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
         <Button
-          disabled={
-            isPending || chosen.length === 0 || sameAreas(chosen, current) || unchanged !== null
-          }
+          busy={isPending}
+          disabled={chosen.length === 0 || sameAreas(chosen, current) || unchanged !== null}
           focusableWhenDisabled
           form={formId}
           type="submit"
         >
-          {isPending ? t("Saving…") : t("Focus on these")}
+          {t("Focus on these")}
         </Button>
 
         {failed && <ChangeSaveError />}

@@ -8,7 +8,6 @@ import {
 } from "@zoonk/ui/components/input-otp";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 
 export function OTP({ children, className }: React.ComponentProps<"div">) {
@@ -148,19 +147,17 @@ export function OTPSubmit({
   disabled,
   ...props
 }: React.ComponentProps<"button"> & { isLoading?: boolean }) {
-  const isDisabled = isLoading || disabled;
-
   return (
     <Button
       aria-keyshortcuts="Enter"
+      busy={isLoading ?? false}
       className={cn("w-full font-[560]", className)}
-      disabled={isDisabled}
+      disabled={disabled}
       focusableWhenDisabled
       size="lg"
       type="submit"
       {...props}
     >
-      {isLoading && <Spinner />}
       {children}
       <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </Button>

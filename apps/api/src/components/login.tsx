@@ -8,7 +8,6 @@ import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { Loader2Icon } from "lucide-react";
 
 export function Login({ children, className }: React.ComponentProps<"div">) {
   return <div className={cn("flex w-full flex-col gap-6", className)}>{children}</div>;
@@ -71,14 +70,12 @@ function LoginWithProvider({
 }: LoginWithProviderProps) {
   return (
     <Button
+      busy={isLoading ?? false}
       className={cn("w-full", className)}
-      disabled={isLoading}
-      focusableWhenDisabled
       size="lg"
       variant="outline"
       {...props}
     >
-      {isLoading && <Loader2Icon className="animate-spin" />}
       {Icon && <Icon aria-hidden="true" />}
       {children}
     </Button>

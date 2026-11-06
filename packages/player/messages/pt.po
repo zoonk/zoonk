@@ -3251,11 +3251,6 @@ msgid "Why that answer misses"
 msgstr "Por que essa resposta não está certa"
 
 #: src/lesson/feedback/explain-answer.tsx
-msgctxt "g00v5Z"
-msgid "Explaining your answer"
-msgstr "Explicando sua resposta"
-
-#: src/lesson/feedback/explain-answer.tsx
 msgctxt "aIkpfv"
 msgid "Explain my answer"
 msgstr "Explicar minha resposta"
@@ -3362,11 +3357,6 @@ msgstr "Resposta correta"
 msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Conferir"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "IYUwzO"
-msgid "Checking your answer"
-msgstr "Conferindo sua resposta"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "N2IrpM"

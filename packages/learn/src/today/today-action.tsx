@@ -2,7 +2,6 @@
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -113,7 +112,7 @@ function ContinueButton() {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const { started } = useSessionState();
-  const { isPending, run, wait } = useTodayContinue();
+  const { isPending, run } = useTodayContinue();
 
   if (actions.continueHref) {
     return <ContinueLink href={actions.continueHref} />;
@@ -124,13 +123,11 @@ function ContinueButton() {
       <Button
         aria-describedby={NEXT_TITLE_ID}
         aria-keyshortcuts="Enter"
+        busy={isPending}
         className={ACTION_CLASS}
-        disabled={isPending}
-        focusableWhenDisabled
         onClick={run}
         size="lg"
       >
-        {wait !== "none" && <Spinner aria-hidden="true" />}
         {started ? t("Continue session") : t("Start session")}
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
       </Button>
@@ -187,14 +184,7 @@ function PrepareLessons() {
 
   return (
     <>
-      <Button
-        className={ACTION_CLASS}
-        disabled={isPending}
-        focusableWhenDisabled
-        onClick={run}
-        size="lg"
-      >
-        {isPending && <Spinner aria-hidden="true" />}
+      <Button busy={isPending} className={ACTION_CLASS} onClick={run} size="lg">
         {t({
           description: "Button that has Zoonk write today's lessons.",
           message: "Get today's lessons",
@@ -214,13 +204,11 @@ function KeepLearning() {
     <>
       <Button
         aria-keyshortcuts="Enter"
+        busy={isPending}
         className={ACTION_CLASS}
-        disabled={isPending}
-        focusableWhenDisabled
         onClick={run}
         size="lg"
       >
-        {wait !== "none" && <Spinner aria-hidden="true" />}
         {t("Keep learning")}
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
       </Button>

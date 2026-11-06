@@ -10,7 +10,6 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -139,15 +138,7 @@ function CallSetup({
         <PlusNotice inset>{t("Longer calls come with Plus.")}</PlusNotice>
       ) : (
         // It opens the call's intro, whose button is the one that calls.
-        <Button
-          aria-busy={call.isStarting}
-          className="w-full"
-          disabled={call.isStarting}
-          focusableWhenDisabled
-          onClick={call.start}
-          size="lg"
-        >
-          {call.isStarting && <Spinner aria-hidden="true" />}
+        <Button busy={call.isStarting} className="w-full" onClick={call.start} size="lg">
           {t("Continue")}
         </Button>
       )}

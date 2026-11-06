@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { Loader2Icon } from "lucide-react";
 import { useFormStatus } from "react-dom";
 
 export function AdminActionSubmitButton({
@@ -16,8 +15,8 @@ export function AdminActionSubmitButton({
   const status = useFormStatus();
 
   return (
-    <Button disabled={status.pending} size={size} type="submit" variant="outline">
-      {status.pending ? <Loader2Icon className="animate-spin" /> : icon}
+    <Button busy={status.pending} size={size} type="submit" variant="outline">
+      {icon}
       {children}
     </Button>
   );

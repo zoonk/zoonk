@@ -131,8 +131,8 @@ export function PlanDate() {
           value={value}
         />
         {canSave && (
-          <Button disabled={isPending} focusableWhenDisabled type="submit" variant="outline">
-            {isPending ? t("Saving…") : t("Save")}
+          <Button busy={isPending} type="submit" variant="outline">
+            {t("Save")}
           </Button>
         )}
       </form>

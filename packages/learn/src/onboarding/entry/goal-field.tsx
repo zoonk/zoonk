@@ -2,7 +2,6 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffect, useRef } from "react";
 import { useKeptTyping } from "../../use-kept-typing";
@@ -176,9 +175,8 @@ export function GoalFieldText({
 export function GoalFieldSubmit({
   children,
   className,
-  pending = false,
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "size" | "type" | "variant"> & { pending?: boolean }) {
+}: Omit<React.ComponentProps<typeof Button>, "size" | "type" | "variant">) {
   return (
     <Button
       aria-keyshortcuts="Enter"
@@ -189,11 +187,7 @@ export function GoalFieldSubmit({
       {...props}
     >
       {children}
-      {pending ? (
-        <Spinner aria-hidden="true" data-icon="inline-end" />
-      ) : (
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      )}
+      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </Button>
   );
 }

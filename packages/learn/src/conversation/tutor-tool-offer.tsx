@@ -69,8 +69,8 @@ function ChapterTestOffer({
       }
       title={t("Test: {chapter}", { chapter: offer.chapterTitle })}
     >
-      <OfferButton disabled={test.opening} focusableWhenDisabled onClick={test.start}>
-        {test.opening ? t("Opening the test…") : t("Take the test")}
+      <OfferButton busy={test.opening} onClick={test.start}>
+        {t("Take the test")}
       </OfferButton>
       <TestOutStartStatus isPending={test.isPending} result={test.result} />
     </OfferCard>

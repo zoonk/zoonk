@@ -2,7 +2,6 @@
 
 import { type EssayDraft, type EssayView } from "@zoonk/core/exams/essays/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { countWords } from "@zoonk/utils/string";
 import { settleWithin } from "@zoonk/utils/timeout";
@@ -165,15 +164,14 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
           </Button>
         )}
         <Button
+          busy={pending}
           className={TASK_MAIN_ACTION_CLASS}
           disabled={!writer.canSend || finishing.pending}
           focusableWhenDisabled
           onClick={() => void writer.send()}
           size="xl"
         >
-          {pending && <Spinner aria-hidden="true" />}
-          {pending && t("Grading…")}
-          {!pending && (drafts.length > 0 ? t("Grade the rewrite") : t("Send for grading"))}
+          {drafts.length > 0 ? t("Grade the rewrite") : t("Send for grading")}
         </Button>
       </TaskActions>
     </>

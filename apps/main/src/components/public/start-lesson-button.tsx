@@ -7,7 +7,7 @@ import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
 import { ORIGIN_PARAM, withOrigin } from "@/lib/public/public-hrefs";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
-import { ArrowRightIcon, Loader2Icon } from "lucide-react";
+import { ArrowRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 import { START_FAILURE_SLOT, getStartControlClassName } from "./public-start";
@@ -118,19 +118,13 @@ export function StartLessonButton({
       <input name={ORIGIN_PARAM} type="hidden" value={origin} />
 
       <Button
+        busy={pending}
         className={getStartControlClassName(className)}
-        disabled={pending}
-        focusableWhenDisabled
         size="lg"
         type="submit"
       >
         {children}
-
-        {pending ? (
-          <Loader2Icon aria-hidden="true" className="animate-spin" data-icon="inline-end" />
-        ) : (
-          <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
-        )}
+        <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
       </Button>
 
       {pending && (

@@ -230,8 +230,8 @@ export function UnderstoodScreen({
         </OnboardingFooter>
       ) : (
         <GoalFooter error={error} signUpHref={signUpHref}>
-          <OnboardingPrimaryButton disabled={isCreating || rewriting} onClick={onConfirm}>
-            {isCreating ? t("Saving your goal…") : t("Looks right")}
+          <OnboardingPrimaryButton busy={isCreating} disabled={rewriting} onClick={onConfirm}>
+            {t("Looks right")}
           </OnboardingPrimaryButton>
           <OnboardingSecondaryButton
             disabled={isCreating || rewriting}

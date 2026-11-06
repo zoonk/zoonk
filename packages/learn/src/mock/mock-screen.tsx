@@ -42,7 +42,7 @@ function MockGrading() {
               disabled={runner.pending}
               onClick={() => void runner.finish()}
             >
-              {runner.busy === "finish" ? t("Grading…") : t("See how it went")}
+              {t("See how it went")}
             </TaskMainButton>
           </TaskActions>
         </>
@@ -73,7 +73,7 @@ function MockTimeUp() {
               disabled={runner.pending}
               onClick={() => void runner.submitSection()}
             >
-              {handingIn ? t("Handing in…") : action}
+              {action}
             </TaskMainButton>
           </TaskActions>
         </>

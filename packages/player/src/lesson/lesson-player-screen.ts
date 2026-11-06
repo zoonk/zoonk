@@ -15,7 +15,6 @@ import { type LessonPlayerAnswer, type PlayableLibraryStep } from "./lesson-play
 
 export type LessonPrimaryLabel =
   | "check"
-  | "checking"
   | "confirm"
   | "continue"
   | "dontKnowYet"
@@ -102,22 +101,7 @@ function getChallengeAction(
   return { action: "continue", busy: false, disabled: !progress.pendingChoiceId, label: "confirm" };
 }
 
-function getPrimaryAction(
-  state: LessonPlayerState,
-  step: PlayableLibraryStep,
-): LessonPrimaryAction | null {
-  if (state.phase === "completed" || state.run.status === "refused") {
-    return null;
-  }
-
-  if (state.phase === "feedback") {
-    return { action: "continue", busy: false, disabled: false, label: "continue" };
-  }
-
-  if (state.phase === "checking") {
-    return { action: "check", busy: true, disabled: true, label: "checking" };
-  }
-
+function getAnswerAction(state: LessonPlayerState, step: PlayableLibraryStep): LessonPrimaryAction {
   if (isReadStep(step)) {
     return { action: "continue", busy: false, disabled: false, label: getReadLabel(state, step) };
   }
@@ -138,6 +122,22 @@ function getPrimaryAction(
     disabled: !isAnswerReady(state.answers[step.id]),
     label: "check",
   };
+}
+
+function getPrimaryAction(
+  state: LessonPlayerState,
+  step: PlayableLibraryStep,
+): LessonPrimaryAction | null {
+  if (state.phase === "completed" || state.run.status === "refused") {
+    return null;
+  }
+
+  if (state.phase === "feedback") {
+    return { action: "continue", busy: false, disabled: false, label: "continue" };
+  }
+
+  const action = getAnswerAction(state, step);
+  return state.phase === "checking" ? { ...action, busy: true, disabled: true } : action;
 }
 
 function canTurnForward(state: LessonPlayerState, step: PlayableLibraryStep | null): boolean {

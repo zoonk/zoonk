@@ -3,7 +3,6 @@
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { type MockAdaptView } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -227,14 +226,7 @@ export function MockPlanChange({
 
       {!change.settled && (
         <div className="flex flex-wrap gap-2">
-          <Button
-            disabled={change.isPending}
-            focusableWhenDisabled
-            onClick={change.apply}
-            size="sm"
-            variant="outline"
-          >
-            {change.isPending && <Spinner aria-hidden="true" />}
+          <Button busy={change.isPending} onClick={change.apply} size="sm" variant="outline">
             {t("Apply")}
           </Button>
           <Button

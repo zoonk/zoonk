@@ -122,7 +122,7 @@ export function CertificateNameField({
           value={name}
         />
         <Button
-          aria-busy={pending || undefined}
+          busy={pending}
           className="shrink-0"
           disabled={!canSave}
           focusableWhenDisabled
@@ -195,13 +195,7 @@ function NameDialogForm({
         <Button onClick={onClose} size="lg" type="button" variant="outline">
           {t("Cancel")}
         </Button>
-        <Button
-          aria-busy={pending || undefined}
-          disabled={!canSave}
-          focusableWhenDisabled
-          size="lg"
-          type="submit"
-        >
+        <Button busy={pending} disabled={!canSave} focusableWhenDisabled size="lg" type="submit">
           {t("Save")}
         </Button>
       </DialogFooter>

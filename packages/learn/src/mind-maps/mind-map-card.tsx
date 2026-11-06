@@ -162,14 +162,14 @@ function MindMapRequestCard({
 
       {copy.action && (
         <Button
+          busy={isPending}
           className="self-start"
-          disabled={isPending || isCapped}
+          disabled={isCapped}
           focusableWhenDisabled
           onClick={isFailure ? retry : create}
           size="sm"
           variant="outline"
         >
-          {isPending && <Spinner aria-hidden="true" data-icon="inline-start" role="presentation" />}
           {copy.action}
         </Button>
       )}

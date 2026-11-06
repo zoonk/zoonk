@@ -169,8 +169,14 @@ export function TaskRow({
           <div className="flex flex-wrap gap-2">
             {paused && <p className="text-muted-foreground text-sm">{t("Calls are paused")}</p>}
             {!locked && (
-              <Button disabled={busy} focusableWhenDisabled onClick={onStart} size="sm">
-                {starting ? t("Starting…") : t("Start this task")}
+              <Button
+                busy={starting}
+                disabled={busy}
+                focusableWhenDisabled
+                onClick={onStart}
+                size="sm"
+              >
+                {t("Start this task")}
               </Button>
             )}
             {task.lastTry && (

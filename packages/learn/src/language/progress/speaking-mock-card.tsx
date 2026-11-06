@@ -83,14 +83,13 @@ export function SpeakingMockCard({
         ) : (
           <>
             <Button
+              busy={call.isStarting}
               className="self-start"
-              disabled={call.isStarting}
-              focusableWhenDisabled
               onClick={call.start}
               size="lg"
               variant="outline"
             >
-              {call.isStarting ? t("Starting…") : t("Start the mock")}
+              {t("Start the mock")}
             </Button>
 
             {call.failed && (

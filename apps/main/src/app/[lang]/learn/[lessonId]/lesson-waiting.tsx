@@ -212,7 +212,7 @@ function StartLessonBar({ busy, onStart }: { busy: boolean; onStart: () => void 
     <TaskActionBar>
       <TaskActions>
         <TaskMainButton busy={busy} onClick={onStart}>
-          {busy ? t("Starting…") : t("Start this lesson")}
+          {t("Start this lesson")}
         </TaskMainButton>
       </TaskActions>
     </TaskActionBar>

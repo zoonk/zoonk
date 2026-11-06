@@ -91,7 +91,7 @@ function FocusTestIntro({
 
           {!limit && (
             <TaskMainButton busy={preparing?.starting ?? false} onClick={onStart}>
-              {preparing?.starting ? t("Starting…") : t("Start the test")}
+              {t("Start the test")}
             </TaskMainButton>
           )}
         </>

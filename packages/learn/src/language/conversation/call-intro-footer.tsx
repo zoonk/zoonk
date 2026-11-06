@@ -240,9 +240,8 @@ function CallIntroActions({
         onPointerEnter={preloadLiveCall}
       >
         <TaskMainButton busy={starting} onClick={onStart}>
-          {!starting && <PhoneIcon aria-hidden="true" />}
-          {starting && t("Starting…")}
-          {!starting && (isCall ? t("Call {name}", { name }) : t("Start the call"))}
+          <PhoneIcon aria-hidden="true" />
+          {isCall ? t("Call {name}", { name }) : t("Start the call")}
         </TaskMainButton>
       </TaskActions>
     </>
