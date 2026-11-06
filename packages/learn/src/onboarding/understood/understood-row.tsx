@@ -4,6 +4,7 @@ import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { safeAsync } from "@zoonk/utils/error";
 import { ArrowUpRightIcon, PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
@@ -86,7 +87,8 @@ function RowEditor({
 
         startSaving(async () => {
           setFailed(false);
-          setFailed(!(await onSave(value.trim())));
+          const { data: saved } = await safeAsync(() => onSave(value.trim()));
+          setFailed(!saved);
         });
       }}
     >
@@ -132,6 +134,7 @@ function SuggestedDate({
   timeZone: string;
 }) {
   const [failed, setFailed] = useState(false);
+  const [isSaving, startSaving] = useTransition();
   const bounds = useDateBounds(timeZone);
 
   if (!isWithin({ bounds, date })) {
@@ -141,10 +144,14 @@ function SuggestedDate({
   return (
     <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
       <UseDateButton
-        onUse={async () => {
-          setFailed(false);
-          setFailed(!(await onSave(date)));
-        }}
+        disabled={isSaving}
+        onUse={() =>
+          startSaving(async () => {
+            setFailed(false);
+            const { data: saved } = await safeAsync(() => onSave(date));
+            setFailed(!saved);
+          })
+        }
       />
       {failed && <ChangeSaveError />}
     </div>
@@ -180,7 +187,8 @@ function ChoiceDates({
           onClick={() =>
             startSaving(async () => {
               setFailed(false);
-              setFailed(!(await onSave(date)));
+              const { data: saved } = await safeAsync(() => onSave(date));
+              setFailed(!saved);
             })
           }
           size="sm"

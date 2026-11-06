@@ -74,7 +74,7 @@ export function LevelTestQuestion({
             durationMs,
             questionId: question.id,
             ...(skipped && { skipped }),
-          });
+          }).catch(() => null);
 
           setFailed(!view);
 
@@ -130,7 +130,7 @@ export function SpeakingStep({
           error={error}
           onRecorded={(audio) =>
             startTransition(async () => {
-              const result = await speak(audio);
+              const result = await speak(audio).catch(() => null);
               setNeedsAccount(result === "signUpRequired");
 
               if (result === "noSpeech") {

@@ -2,6 +2,7 @@
 
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { safeAsync } from "@zoonk/utils/error";
 import { CompassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -29,7 +30,7 @@ function useSuggestedGoalAnswer(onAnswer: (status: SuggestedGoalAnswer) => Promi
 
   const answer = (status: SuggestedGoalAnswer) => {
     startTransition(async () => {
-      const saved = await onAnswer(status);
+      const { data: saved } = await safeAsync(() => onAnswer(status));
       setFailed(!saved);
     });
   };

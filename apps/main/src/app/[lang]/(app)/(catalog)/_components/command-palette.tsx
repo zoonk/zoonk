@@ -20,6 +20,7 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import { listenForCommandPaletteOpen } from "@zoonk/ui/lib/command-palette-event";
+import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -86,8 +87,13 @@ function useContinueFromPalette() {
 
   return (sessionId: string) => {
     startTransition(async () => {
-      const opened = await open(() =>
-        openStudyBlockAction({ target: { kind: "next", sessionId }, timeZone: getLocalTimeZone() }),
+      const { data: opened } = await safeAsync(() =>
+        open(() =>
+          openStudyBlockAction({
+            target: { kind: "next", sessionId },
+            timeZone: getLocalTimeZone(),
+          }),
+        ),
       );
 
       if (!opened) {
@@ -150,6 +156,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   const t = useExtracted();
   const locale = useAppLocale();
   const contentFeedback = useContentFeedback();
+  const switchFailed = t("We couldn't switch goals. Try again.");
   const [, startGoalSwitch] = useGoalSwitchTransition();
   const continueSession = useContinueFromPalette();
 
@@ -202,7 +209,13 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
 
     if (item.kind === "goal") {
       startGoalSwitch(async () => {
-        await shown.learner?.onSwitchGoal(item.goalId);
+        const { data: switched } = await safeAsync(
+          async () => shown.learner?.onSwitchGoal(item.goalId) ?? false,
+        );
+
+        if (!switched) {
+          showErrorToast(switchFailed);
+        }
       });
 
       return;

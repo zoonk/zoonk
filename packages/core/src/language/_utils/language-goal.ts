@@ -1,28 +1,49 @@
 import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { findActiveGoalId } from "../../goals/_utils/goal-view";
 
 export function readGoalDetails(goal: Pick<Goal, "details"> | null): Record<string, unknown> {
   return goal && isJsonObject(goal.details) ? goal.details : {};
 }
 
-/** A supplied goal must belong to the learner; otherwise falls back to their active or latest goal for the language. */
+/**
+ * A supplied goal must belong to the learner; otherwise the goal they chose, when it's for the
+ * language, then their latest active or latest goal for it. GET reads pass the chosen goal they
+ * loaded with `readActiveGoal` (null for none); writes leave it out and it's read fresh.
+ */
 export async function findLearnerLanguageGoal({
+  activeGoal,
   db = prisma,
   goalId,
   targetLanguage,
   userId,
 }: {
+  activeGoal?: Goal | null;
   db?: TransactionClient;
   goalId?: string;
   targetLanguage: string;
   userId: string;
 }): Promise<Goal | null> {
-  const goals = await db.goal.findMany({
-    orderBy: { updatedAt: "desc" },
-    where: { kind: "language", targetLanguage, userId },
-  });
+  if (
+    activeGoal?.kind === "language" &&
+    activeGoal.targetLanguage === targetLanguage &&
+    (!goalId || goalId === activeGoal.id)
+  ) {
+    return activeGoal;
+  }
 
-  const asked = goalId ? goals.find((goal) => goal.id === goalId) : null;
-  return asked ?? goals.find((goal) => goal.status === "active") ?? goals[0] ?? null;
+  const [goals, activeGoalId] = await Promise.all([
+    db.goal.findMany({
+      orderBy: { updatedAt: "desc" },
+      where: { kind: "language", targetLanguage, userId },
+    }),
+    activeGoal === undefined ? findActiveGoalId(userId) : (activeGoal?.id ?? null),
+  ]);
+
+  const [preferred] = [goalId, activeGoalId].flatMap(
+    (id) => goals.find((goal) => goal.id === id) ?? [],
+  );
+
+  return preferred ?? goals.find((goal) => goal.status === "active") ?? goals[0] ?? null;
 }
