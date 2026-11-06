@@ -244,7 +244,10 @@ export function checkProductReading({
   const releases = reading.releases.flatMap((release) => checkRelease({ pages, release }) ?? []);
 
   return {
-    brand: brand && isClaimStated({ claim: brand, name: brand.name, pages }) ? brand : null,
+    brand:
+      brand && !brand.steward && isClaimStated({ claim: brand, name: brand.name, pages })
+        ? brand
+        : null,
     learnerRelease: releases.some((release) => release.name === reading.learnerRelease)
       ? reading.learnerRelease
       : null,

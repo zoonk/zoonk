@@ -29,9 +29,19 @@ const releasesSchema = z.object({ releases: z.array(releaseSchema) });
 
 const learnerReleaseSchema = releasesSchema.extend({ learnerRelease: z.string().nullable() });
 
-const brandSchema = z.object({ ...cited, description: z.string(), name: z.string() });
+const productSchema = z.object({
+  ...cited,
+  aliases: z.array(z.string()),
+  description: z.string(),
+  name: z.string(),
+});
 
-const productSchema = brandSchema.extend({ aliases: z.array(z.string()) });
+const brandSchema = z.object({
+  ...cited,
+  description: z.string(),
+  name: z.string(),
+  steward: z.boolean(),
+});
 
 const newProductSchema = learnerReleaseSchema.extend({
   brand: brandSchema.nullable(),

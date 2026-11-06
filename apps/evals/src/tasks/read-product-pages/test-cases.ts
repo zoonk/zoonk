@@ -2,6 +2,8 @@ import { type TestCase } from "@/lib/types";
 import {
   APPLE_HOME,
   IPHONE_MODELS,
+  KUBERNETES_HOME,
+  KUBERNETES_RELEASES,
   LINEAR_HOME,
   NEXTJS_BLOG,
   NEXTJS_HOME,
@@ -61,6 +63,16 @@ export const TEST_CASES: TestCase<ReadProductPagesExpected, ReadProductPagesInpu
       hints: { brand: "Apple", name: "iPhone", release: "iPhone 13" },
       language: "en",
       pages: [APPLE_HOME, IPHONE_MODELS],
+    },
+  },
+  {
+    expected: { brand: null, product: "Kubernetes", releases: [] },
+    id: "foundation-steward",
+    language: "en",
+    userInput: {
+      hints: { brand: "Cloud Native Computing Foundation", name: "Kubernetes", release: null },
+      language: "en",
+      pages: [KUBERNETES_HOME, KUBERNETES_RELEASES],
     },
   },
   {

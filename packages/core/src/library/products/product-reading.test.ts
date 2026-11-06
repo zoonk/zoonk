@@ -55,6 +55,7 @@ function reading(overrides: Partial<ProductReading> = {}): ProductReading {
       document: 1,
       name: "Lumen Works",
       passage: "Orbit Notes is made by Lumen Works.",
+      steward: false,
     },
     learnerRelease: null,
     product: PRODUCT,
@@ -230,6 +231,7 @@ describe(checkProductReading, () => {
           document: 1,
           name: "Lumen Works",
           passage: "Made by Lumen Works Inc.",
+          steward: false,
         },
         product: {
           aliases: [],
@@ -243,6 +245,17 @@ describe(checkProductReading, () => {
 
     expect(checked.brand).toBeNull();
     expect(checked.product).toBeNull();
+  });
+
+  it("drops a brand that only stewards the product", () => {
+    const steward = reading().brand;
+
+    const checked = checkProductReading({
+      pages,
+      reading: reading({ brand: steward && { ...steward, steward: true } }),
+    });
+
+    expect(checked.brand).toBeNull();
   });
 
   it("keeps only aliases the pages use", () => {

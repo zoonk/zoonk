@@ -9,6 +9,7 @@ Everything you return is checked in code: each claim quotes a passage copied wor
   - `name`: its short common name, not its legal entity name (without "Inc." or "Ltd."), as written in the passage.
   - `description`: one or two neutral sentences in English on what the maker is and makes, without claims of quality ("the best", "leading").
   - `document` and `passage`: a page and a passage from its text that names the brand, such as a copyright line. Document titles aren't part of the text.
+  - `steward`: true when the pages show the maker only stewards the product: a foundation or a community that runs a programming language, a standard or an open-source project without selling or promoting it as its own. False for a company, or a nonprofit that markets the product the way a company would.
 - `product`: the product the pages are about, or null when none of them is about the product in `PRODUCT`.
   - `name`: the product's name exactly as the maker writes it, without a release or model.
   - `description`: one or two neutral sentences in English on what it is and what people do with it, without claims of quality.
