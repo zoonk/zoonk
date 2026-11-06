@@ -27,7 +27,7 @@ final class QuestionBlockStateTests: XCTestCase {
   func testAnsweringTheLastQuestionMovesToFinishing() {
     var state = QuestionBlockState(questions: [makeQuestion("a")])
 
-    state.check(by: .check)
+    state.check(SentAnswer(answer: .choice(1), sender: .check, minDurationMs: 0))
     state.answered(.choice(1), feedback: makeFeedback(isCorrect: true, level: 2), itemId: "a")
     XCTAssertEqual(state.hyperdrive, 2)
     XCTAssertEqual(state.segments, [.right])
@@ -96,21 +96,38 @@ final class QuestionBlockRunTests: XCTestCase {
     XCTAssertEqual(finishes, 1)
   }
 
-  func testFailedAnswerKeepsTheDraftToRetry() async {
+  func testTryAgainSendsTheFailedAnswerAsItsSenderWhateverIsPicked() async {
     let client = FakeQuestionBlockClient(answers: [
-      .failure(APIError.network), .success(.answered(makeFeedback(isCorrect: false))),
+      .failure(APIError.network), .failure(QuestionBlockWriteObsolete()),
     ])
     let run = QuestionBlockRun(detail: makeDetail(["a"]), client: client)
     run.draft = .choice(2)
 
-    await run.submit(.choice(2))
-    XCTAssertEqual(run.state.phase, .answerFailed)
-
+    await run.submit(.dontKnow, by: .notSure)
     await run.retryAnswer()
-    guard case .feedback(let answer, _) = run.state.phase else {
-      return XCTFail("expected feedback")
-    }
-    XCTAssertEqual(answer, .choice(2))
+
+    let sent = await client.sent
+    XCTAssertEqual(sent, [.dontKnow, .dontKnow])
+    XCTAssertEqual(run.state.phase.checking, .notSure)
+  }
+
+  func testTryAgainAfterAFailedTimeUpKeepsTheWholeTimeBox() async {
+    var question = makeQuestion("a")
+    question.drill = PracticeDrill(kind: .timed, lesson: nil, timeLimitSeconds: 30)
+    question.mistakeId = "m"
+    let client = FakeQuestionBlockClient(answers: [
+      .failure(APIError.network), .failure(QuestionBlockWriteObsolete()),
+    ])
+    let run = QuestionBlockRun(
+      detail: makeDetail(questions: [question]), client: client,
+      now: { Date(timeIntervalSince1970: 0) })
+
+    await run.timeUp()
+    await run.retryAnswer()
+
+    let durations = await client.durations
+    XCTAssertEqual(durations, [30_000, 30_000])
+    XCTAssertEqual(run.state.phase.checking, .timer)
   }
 
   func testAnswerIsIgnoredWhileCheckingOrGraded() async {
@@ -142,7 +159,7 @@ final class QuestionBlockRunTests: XCTestCase {
     await run.submit(.choice(0))
 
     XCTAssertEqual(
-      run.state.phase, .checking(sender: .check),
+      run.state.phase, .checking(SentAnswer(answer: .choice(0), sender: .check, minDurationMs: 0)),
       "no grade, no failure, no retry for someone else")
   }
 

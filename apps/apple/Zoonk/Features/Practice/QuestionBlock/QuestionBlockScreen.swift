@@ -336,7 +336,7 @@ struct QuestionBlockView: View {
         ask(answered: true, missed: !feedback.isCorrect)
       }
     case .answering, .checking, .answerFailed:
-      if phase == .answerFailed {
+      if case .answerFailed = phase {
         PracticeSaveError { Task { await run.retryAnswer() } }
       }
 

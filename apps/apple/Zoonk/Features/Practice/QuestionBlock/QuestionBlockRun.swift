@@ -95,7 +95,7 @@ final class QuestionBlockRun {
   {
     guard let question, state.phase.acceptsAnswer else { return }
 
-    state.check(by: sender)
+    state.check(SentAnswer(answer: answer, sender: sender, minDurationMs: minDurationMs))
     let durationMs = max(minDurationMs, Int(now().timeIntervalSince(shownAt) * 1000))
 
     do {
@@ -117,8 +117,8 @@ final class QuestionBlockRun {
   }
 
   func retryAnswer() async {
-    guard let answer = draft?.complete else { return }
-    await submit(answer)
+    guard case .answerFailed(let sent) = state.phase else { return }
+    await submit(sent.answer, by: sent.sender, minDurationMs: sent.minDurationMs)
   }
 
   func next() async {
