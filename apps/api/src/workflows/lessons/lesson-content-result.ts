@@ -1,13 +1,13 @@
-import { z } from "zod";
+/** `busy`: another run, such as an explanation saving the lesson, holds its token or claim. */
+export type LessonContentResult = {
+  lessonId: string;
+  status: "busy" | "heldBack" | "missing" | "ready";
+};
 
-/** `busy`: a run outside this lesson's hook, such as an explanation saving it, holds the claim. */
-export const lessonContentResultSchema = z.object({
-  lessonId: z.string(),
-  status: z.enum(["busy", "heldBack", "missing", "ready"]),
-});
-
-export type LessonContentResult = z.infer<typeof lessonContentResultSchema>;
-
+/**
+ * Starts a learner waits on carry it. A plan's starts don't: their run can fail admission and end
+ * with no final event, which a learner handed its id would wait on forever.
+ */
 export function getLessonContentHookToken(lessonId: string): string {
   return `lesson-content:${lessonId}`;
 }

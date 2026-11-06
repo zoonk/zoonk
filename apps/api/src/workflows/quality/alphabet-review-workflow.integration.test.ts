@@ -13,9 +13,10 @@ import {
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { start } from "workflow/api";
+import { getRun, start } from "workflow/api";
+import { startOnce } from "../_shared/run-token";
 import { taskResult } from "../_test-utils/recorded-outputs";
-import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
+import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { alphabetReviewWorkflow } from "./alphabet-review-workflow";
 
 vi.mock("@zoonk/ai/tasks/audio", async (importOriginal) => ({
@@ -129,8 +130,8 @@ describe(alphabetReviewWorkflow, () => {
     const { lessonId, userId } = await publishCyrillic();
     vi.mocked(checkLessonQuality).mockResolvedValue(review([]));
 
-    const run = await start(followUpsWorkflow, [{ userId }]);
-    await expect(run.returnValue).resolves.toStrictEqual({ status: "done" });
+    const runId = await startOnce(followUpsWorkflow, [{ userId }], getFollowUpsToken(userId));
+    await getRun(runId).returnValue;
 
     await vi.waitFor(() => {
       expect(checkLessonQuality).toHaveBeenCalledExactlyOnceWith(

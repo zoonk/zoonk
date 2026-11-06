@@ -1,6 +1,8 @@
+import { createHook } from "workflow";
 import { start } from "workflow/api";
 import { repeatUntil } from "../_shared/repeat-until";
-import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
+import { startOnce } from "../_shared/run-token";
+import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
@@ -20,7 +22,7 @@ import {
 
 const MAX_GUEST_BATCHES = 20;
 
-export type DailySweepsResult = {
+type SweepCounts = {
   accessRecordsPurged: number;
   sessionsPurged: number;
   evaluationRunsPurged: number;
@@ -34,6 +36,10 @@ export type DailySweepsResult = {
   retiredStepsDeleted: number;
   verificationsPurged: number;
 };
+
+export type DailySweepsResult =
+  | { runId: string; status: "alreadyRan" }
+  | (SweepCounts & { status: "swept" });
 
 function countOf(result: PromiseSettledResult<number>): number {
   return result.status === "fulfilled" ? result.value : 0;
@@ -49,7 +55,10 @@ async function checkFreshness(): Promise<number> {
 /** Owed work whose start failed, such as an API that didn't answer the learner's request. */
 async function startOldFollowUps(): Promise<number> {
   const userIds = await listLearnersWithOldFollowUpsStep();
-  await Promise.all(userIds.map((userId) => start(followUpsWorkflow, [{ userId }])));
+
+  await Promise.all(
+    userIds.map((userId) => startOnce(followUpsWorkflow, [{ userId }], getFollowUpsToken(userId))),
+  );
 
   return userIds.length;
 }
@@ -88,9 +97,7 @@ async function startLaterReviews(): Promise<number> {
   return lessonIds.length;
 }
 
-export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
-  "use workflow";
-
+async function sweep(): Promise<SweepCounts> {
   const [
     checks,
     guests,
@@ -131,4 +138,29 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     sessionsPurged: access.status === "fulfilled" ? access.value.sessionsPurged : 0,
     verificationsPurged: countOf(verifications),
   };
+}
+
+/** `executionId` is Vercel's id for one scheduled run, the same in every delivery of it. */
+export async function dailySweepsWorkflow({
+  executionId,
+}: {
+  executionId: string;
+}): Promise<DailySweepsResult> {
+  "use workflow";
+
+  // Vercel can deliver a run again until a day after it was due, and that start can wait in the
+  // workflow queue for another day, so the token stays taken for a week from this claim; `using`
+  // or `claimRunToken` would free it when the run ends.
+  const scheduledRun = createHook({
+    experimental_minRetention: "7d",
+    token: `daily-sweeps:${executionId}`,
+  });
+
+  const conflict = await scheduledRun.getConflict();
+
+  if (conflict) {
+    return { runId: conflict.runId, status: "alreadyRan" };
+  }
+
+  return { ...(await sweep()), status: "swept" };
 }

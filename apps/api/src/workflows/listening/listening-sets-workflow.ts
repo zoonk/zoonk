@@ -1,5 +1,5 @@
 import { type CallWait } from "@zoonk/ai/provider-options";
-import { createHook, getWorkflowMetadata } from "workflow";
+import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import {
   listListeningPartsToPrepareStep,
@@ -15,7 +15,11 @@ export type ListeningSetsInput = {
   wait: CallWait;
 };
 
-export type ListeningSetsResult = { status: "joined" | "none" | "prepared"; voiced: number };
+export type ListeningSetsResult = { status: "none" | "prepared"; voiced: number };
+
+export function getListeningSetsToken(goalId: string): string {
+  return `listening-sets:${goalId}`;
+}
 
 export async function listeningSetsWorkflow(
   input: ListeningSetsInput,
@@ -24,11 +28,6 @@ export async function listeningSetsWorkflow(
 
   const { analytics, goalId, userId, wait } = input;
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: `listening-sets:${goalId}` });
-
-  if (await hook.getConflict()) {
-    return { status: "joined", voiced: 0 };
-  }
 
   const unready = await listListeningPartsToPrepareStep({ goalId, userId });
 

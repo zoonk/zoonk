@@ -3,11 +3,14 @@ import { examError } from "@/lib/exam-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { mockQuestionsWorkflow } from "@/workflows/goals/mock-questions-workflow";
+import { startOnce } from "@/workflows/_shared/run-token";
+import {
+  getMockQuestionsToken,
+  mockQuestionsWorkflow,
+} from "@/workflows/goals/mock-questions-workflow";
 import { mockQuestionsInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { requestMockQuestions } from "@zoonk/core/exams/mocks/request-questions";
 import { type NextRequest, NextResponse } from "next/server";
-import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
@@ -34,19 +37,26 @@ async function createMockQuestions(
     return examError(result);
   }
 
-  const run = await start(mockQuestionsWorkflow, [
-    {
-      analytics: result.analytics,
-      goalId: path.goalId,
-      listening: result.listening,
-      quickFormat: result.quickFormat,
-      writes: result.writes,
-    },
-  ]);
+  const generationId = await startOnce(
+    mockQuestionsWorkflow,
+    [
+      {
+        analytics: result.analytics,
+        goalId: path.goalId,
+        listening: result.listening,
+        quickFormat: result.quickFormat,
+        writes: result.writes,
+      },
+    ],
+    getMockQuestionsToken(path.goalId),
+  );
 
   return NextResponse.json(
-    { generationId: run.runId, status: "generating" },
-    { headers: { Location: `/v1/generations/${encodeURIComponent(run.runId)}` }, status: ACCEPTED },
+    { generationId, status: "generating" },
+    {
+      headers: { Location: `/v1/generations/${encodeURIComponent(generationId)}` },
+      status: ACCEPTED,
+    },
   );
 }
 

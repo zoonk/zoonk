@@ -49,11 +49,9 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import * as logger from "@zoonk/utils/logger";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { createHook, getWritable, sleep } from "workflow";
+import { getWritable, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { z } from "zod";
-import { mockHookConflict } from "../../../mocks/workflow";
-import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
@@ -1599,12 +1597,16 @@ describe(goalContentWorkflow, () => {
 
     expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
 
-    expect(start).toHaveBeenCalledWith(levelTestBankWorkflow, [
-      {
-        analytics: { distinctId: user.id, goalId: goal.id, platform: undefined },
-        pair: { language: "pt", targetLanguage: "ja" },
-      },
-    ]);
+    expect(start).toHaveBeenCalledWith(
+      levelTestBankWorkflow,
+      [
+        {
+          analytics: { distinctId: user.id, goalId: goal.id, platform: undefined },
+          pair: { language: "pt", targetLanguage: "ja" },
+        },
+      ],
+      { experimental_hook: { token: "level-test-bank:pt:ja" } },
+    );
   });
 
   it("publishes a language's alphabet lesson with a clip per letter, and owes its review instead of waiting for it", async () => {
@@ -2815,67 +2817,13 @@ describe(goalContentWorkflow, () => {
     });
   });
 
-  it("takes over a build a restart left half done, instead of joining it forever", async () => {
-    const { goal } = await newGoal();
-
-    const cancel = vi.fn(() => {
-      mockHookConflict(null);
-      return Promise.resolve();
-    });
-
-    vi.mocked(getRun).mockImplementation(
-      () =>
-        ({
-          cancel,
-          exists: Promise.resolve(true),
-          status: Promise.resolve("running"),
-        }) as unknown as ReturnType<typeof getRun>,
-    );
-
-    const lastSign = new Date(Date.now() - 60 * 60 * 1000);
-
-    mockLastRunEvent("stalled-build", {
-      createdAt: lastSign,
-      eventData: { resumeAt: new Date(lastSign.getTime() + 3000) },
-      eventType: "wait_created",
-    });
-
-    mockHookConflict(
-      { returnValue: new Promise(() => {}), runId: "stalled-build" },
-      { tokens: new RegExp(`^goal-content:${goal.id}$`, "u") },
-    );
-
-    await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
-      status: "built",
-    });
-
-    expect(cancel).toHaveBeenCalledOnce();
-
-    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
-      generationRunId: "test-run-id",
-    });
-  });
-
-  it("joins the run already building the goal, and never rebuilds a goal whose plan exists", async () => {
+  it("never rebuilds a goal whose plan exists", async () => {
     const { goal } = await newGoal();
     const subjectKey = crypto.randomUUID();
 
     vi.mocked(classifyGoalSpecificity).mockResolvedValue(
       taskResult({ ...recordedSpecificity, generalGoal: `Arithmetic ${subjectKey}` }),
     );
-
-    mockHookConflict({ returnValue: Promise.resolve(null), runId: "owner-run" });
-
-    await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
-      status: "joined",
-    });
-
-    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
-      generationRunId: null,
-    });
-
-    expect(generateWarmUpCards).not.toHaveBeenCalled();
-    mockHookConflict(null);
 
     await prisma.plan.update({
       data: {
@@ -3054,8 +3002,6 @@ describe(goalContentWorkflow, () => {
       speculativeLessonIds: [],
       status: "built",
     });
-
-    expect(vi.mocked(createHook)).toHaveBeenCalledWith({ token: `goal-rebuild:${goal.id}` });
 
     expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
       examBlueprint: expect.objectContaining({ name: "Immunology board exam" }),

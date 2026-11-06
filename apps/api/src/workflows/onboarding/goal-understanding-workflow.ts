@@ -11,7 +11,6 @@ import {
 } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
-import { claimRunToken } from "../_shared/run-token";
 import {
   classifyGoalIntentStep,
   completeUnderstandingStep,
@@ -159,10 +158,11 @@ async function understandDraft(
   }
 }
 
-export type GoalUnderstandingRunResult = {
-  draftId: string;
-  status: "joined" | "missing" | "understood";
-};
+export type GoalUnderstandingRunResult = { draftId: string; status: "missing" | "understood" };
+
+export function getGoalUnderstandingToken(draftId: string): string {
+  return `goal-understanding:${draftId}`;
+}
 
 export async function goalUnderstandingWorkflow({
   draftId,
@@ -174,16 +174,6 @@ export async function goalUnderstandingWorkflow({
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
-  const { conflict } = await claimRunToken(`goal-understanding:${draftId}`);
-
-  if (conflict) {
-    await understandingProgressStep(
-      { entityId: conflict.runId, status: "started", step: "joinRunningUnderstanding" },
-      { last: true },
-    );
-
-    return { draftId, status: "joined" };
-  }
 
   const draft = await recordUnderstandingRunStep({ draftId, runId: workflowRunId });
 

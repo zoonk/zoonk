@@ -12,8 +12,9 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { start } from "workflow/api";
-import { followUpsWorkflow } from "./follow-ups-workflow";
+import { getRun } from "workflow/api";
+import { startOnce } from "../_shared/run-token";
+import { followUpsWorkflow, getFollowUpsToken } from "./follow-ups-workflow";
 
 vi.mock("@zoonk/ai/tasks/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
@@ -67,9 +68,12 @@ function countOwed(userId: string) {
   return prisma.followUp.count({ where: { userId } });
 }
 
+function startFollowUps(userId: string) {
+  return startOnce(followUpsWorkflow, [{ userId }], getFollowUpsToken(userId));
+}
+
 async function runFollowUps(userId: string) {
-  const run = await start(followUpsWorkflow, [{ userId }]);
-  return run.returnValue;
+  await getRun(await startFollowUps(userId)).returnValue;
 }
 
 describe(followUpsWorkflow, () => {
@@ -96,7 +100,7 @@ describe(followUpsWorkflow, () => {
       },
     });
 
-    await expect(runFollowUps(userId)).resolves.toStrictEqual({ status: "done" });
+    await runFollowUps(userId);
     await expect(countOwed(userId)).resolves.toBe(0);
 
     await vi.waitFor(async () => {
@@ -239,12 +243,18 @@ describe(followUpsWorkflow, () => {
     expect(classifyMistakeCause).toHaveBeenCalledTimes(2);
   });
 
-  it("runs a learner's rows once when two runs start together", async () => {
+  it("starts one run for a learner however many ask together, and runs their rows once", async () => {
     const { mistakeId, userId } = await owedCause();
 
-    const results = await Promise.all([runFollowUps(userId), runFollowUps(userId)]);
+    // A run gives up its token once it ends its rows, and a start decided after that rightly starts
+    // a new run, so the row stays locked until every ask is answered.
+    const runIds = await prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM follow_ups WHERE user_id = ${userId}::uuid FOR UPDATE`;
+      return Promise.all([startFollowUps(userId), startFollowUps(userId)]);
+    });
 
-    expect(results).toContainEqual({ status: "done" });
+    expect(new Set(runIds).size).toBe(1);
+    await getRun(runIds[0] ?? "").returnValue;
 
     await vi.waitFor(async () => {
       await expect(readCause(mistakeId)).resolves.toBe("trap");
@@ -283,7 +293,7 @@ describe(followUpsWorkflow, () => {
         where: { key: mistakeId, userId },
       });
 
-      await start(followUpsWorkflow, [{ userId }]);
+      await startFollowUps(userId);
       return classified();
     });
 
@@ -298,8 +308,7 @@ describe(followUpsWorkflow, () => {
   it("leaves a stopped run's rows to the next one", async () => {
     const { mistakeId, userId } = await owedCause();
 
-    const stopped = await start(followUpsWorkflow, [{ userId }]);
-    await stopped.cancel();
+    await getRun(await startFollowUps(userId)).cancel();
 
     await runFollowUps(userId);
 

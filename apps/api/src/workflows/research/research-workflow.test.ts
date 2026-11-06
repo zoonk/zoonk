@@ -40,7 +40,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
-import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { goalContentWorkflow } from "../goals/goal-content-workflow";
 import { researchWorkflow } from "./research-workflow";
 import { storeSource } from "./steps/store-sources-step";
@@ -77,8 +76,6 @@ const TASK_RESULT = {
   usage: {} as never,
   userPrompt: "",
 };
-
-const READING_RESULT = { ...TASK_RESULT, formatsProvenance: null };
 
 type RecordedSearch = Awaited<ReturnType<typeof findOfficialSources>>["data"];
 
@@ -122,7 +119,7 @@ async function replayTcdfResearch() {
     data: { ...search, documents },
   });
 
-  vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: extraction });
+  vi.mocked(extractExamBlueprint).mockResolvedValue({ ...TASK_RESULT, data: extraction });
 
   vi.mocked(extractQuestionFormats).mockResolvedValue({
     ...TASK_RESULT,
@@ -345,7 +342,7 @@ describe(researchWorkflow, () => {
     const rules = [{ ...scoring, kind: "other" as const }, passMark];
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...READING_RESULT,
+      ...TASK_RESULT,
       data: { ...extraction, rules },
     });
 
@@ -655,7 +652,7 @@ describe(researchWorkflow, () => {
       readFixture("tcdf-2026-notice.txt"),
     ]);
 
-    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: extraction });
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...TASK_RESULT, data: extraction });
 
     const suffix = randomUUID();
 
@@ -820,7 +817,7 @@ describe(researchWorkflow, () => {
     const passage = extraction.subjects.at(-1)?.passages[0]?.passage ?? "";
     const leftOut = { ...extraction, subjects: extraction.subjects.slice(0, -1) };
 
-    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: leftOut });
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...TASK_RESULT, data: leftOut });
 
     vi.mocked(checkExamReading).mockResolvedValue({
       ...TASK_RESULT,
@@ -1059,21 +1056,6 @@ describe(researchWorkflow, () => {
     });
   });
 
-  it("follows the goal's research already running instead of paying for it again", async () => {
-    const { goal } = await examGoal();
-    const result = { reason: "noOfficialSource", status: "needsUpload" } as const;
-    otherRun("completed");
-
-    mockHookConflict(
-      { returnValue: Promise.resolve(result), runId: "first-request" },
-      { tokens: new RegExp(`^research-goal:${goal.id}$`, "u") },
-    );
-
-    await expect(researchWorkflow({ goalId: goal.id })).resolves.toStrictEqual(result);
-    expect(generateExamResearchPlan).not.toHaveBeenCalled();
-    expect(findOfficialSources).not.toHaveBeenCalled();
-  });
-
   it("researches the exam itself when the run it joined fails, instead of failing with it", async () => {
     const { goal } = await examGoal();
     await replayTcdfResearch();
@@ -1087,26 +1069,6 @@ describe(researchWorkflow, () => {
     await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
 
     expect(findOfficialSources).toHaveBeenCalledOnce();
-  });
-
-  it("researches the goal itself when its earlier run stalled, and stops that run", async () => {
-    const { goal } = await examGoal();
-    await replayTcdfResearch();
-    const { cancel } = otherRun("running");
-
-    mockLastRunEvent("first-request", {
-      createdAt: new Date(Date.now() - 60 * 60 * 1000),
-      eventType: "step_started",
-    });
-
-    mockHookConflict(
-      { returnValue: new Promise(() => {}), runId: "first-request" },
-      { tokens: new RegExp(`^research-goal:${goal.id}$`, "u") },
-    );
-
-    await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
-
-    expect(cancel).toHaveBeenCalledWith({ cancelReason: expect.any(String) });
   });
 
   it("refuses a readable coaching page when official downloads fail and no copy is found", async () => {
@@ -1214,7 +1176,7 @@ describe(researchWorkflow, () => {
     });
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...READING_RESULT,
+      ...TASK_RESULT,
       data: {
         ...extraction,
         dates: extraction.dates.map((date) => ({
@@ -1402,7 +1364,10 @@ describe(researchWorkflow, () => {
 
     expect(result).toMatchObject({ status: "ready" });
     expect(findOfficialSources).not.toHaveBeenCalled();
-    expect(start).toHaveBeenCalledWith(goalContentWorkflow, [{ goalId: goal.id, rebuild: true }]);
+
+    expect(start).toHaveBeenCalledWith(goalContentWorkflow, [{ goalId: goal.id, rebuild: true }], {
+      experimental_hook: { token: `goal-rebuild:${goal.id}` },
+    });
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       examBlueprintId: expect.any(String),
@@ -1442,7 +1407,7 @@ describe(researchWorkflow, () => {
     const { extraction, plan } = await replayTcdfResearch();
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...READING_RESULT,
+      ...TASK_RESULT,
       data: {
         ...extraction,
         dates: [],

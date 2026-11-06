@@ -3,7 +3,8 @@
 import { Button } from "@zoonk/ui/components/button";
 import { FileTextIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useFocusOnRemovedControl } from "../../_components/suggestion-focus";
 import { useAppLocale } from "../../_utils/locale";
 import { type GoalError } from "../goal-errors";
 import {
@@ -57,6 +58,7 @@ function GoalAttachments({
   onChange,
   onIntentChange,
   open,
+  ref,
   signUpHref,
 }: {
   attach: GoalAttachActions;
@@ -67,10 +69,29 @@ function GoalAttachments({
   onChange: (items: AttachedSource[]) => void;
   onIntentChange: (intent: MaterialIntent) => void;
   open: boolean;
+  ref: React.Ref<HTMLDivElement>;
   signUpHref: string;
 }) {
+  const t = useExtracted();
+  const [added, setAdded] = useState<AttachedSource | null>(null);
+  const shownAdded = items.find((item) => item.id === added?.id);
+
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3" ref={ref}>
+      <p className="sr-only" role="status">
+        {/* Keyed, so a second "Your text" is announced too. */}
+        {shownAdded && (
+          <span key={shownAdded.id}>
+            {t({
+              description:
+                "Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.",
+              message: "Added to your material: {title}",
+              values: { title: shownAdded.title || t("Your text") },
+            })}
+          </span>
+        )}
+      </p>
+
       {items.length > 0 && (
         <AttachedChips
           items={items}
@@ -88,9 +109,10 @@ function GoalAttachments({
         <AttachPanel
           attach={attach}
           language={language}
-          onAttached={(source) =>
-            onChange([...items.filter((item) => item.id !== source.id), source])
-          }
+          onAttached={(source) => {
+            setAdded(source);
+            onChange([...items.filter((item) => item.id !== source.id), source]);
+          }}
         />
       )}
     </div>
@@ -126,9 +148,16 @@ export function AttachableGoalEntry({
 }) {
   const locale = useAppLocale();
   const [open, setOpen] = useState(false);
+  const material = useRef<HTMLDivElement>(null);
+  const toggle = useRef<HTMLButtonElement>(null);
+
+  // Not the new material's Remove: a learner still pressing Enter would remove what they added.
+  useFocusOnRemovedControl(material, () => toggle.current);
 
   return (
     <GoalEntry
+      attachOpen={open}
+      attachRef={toggle}
       attachment={
         <GoalAttachments
           attach={attach}
@@ -142,6 +171,7 @@ export function AttachableGoalEntry({
           }}
           onIntentChange={onIntentChange}
           open={open}
+          ref={material}
           signUpHref={routes.signUp}
         />
       }

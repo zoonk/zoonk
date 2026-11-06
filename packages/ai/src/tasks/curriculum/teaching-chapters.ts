@@ -177,7 +177,6 @@ export async function findTeachingChapters(params: TeachingChaptersParams) {
       return answer ? [toTeachingChapter({ answer, key })] : [];
     }),
     provenance: kept.provenance,
-    setAside: kept.setAside,
     systemPrompt,
     usage: kept.usage,
     userPrompt,

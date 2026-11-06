@@ -4,7 +4,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
-import { getItemAudienceFilter } from "../../library/items/item-field";
+import { getAskedItemFilter } from "../../library/items/item-field";
 import { gradeChoiceAnswer } from "../_utils/choice-items";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
@@ -37,7 +37,7 @@ async function findGoalItem({
     where: {
       id: itemId,
       skill: libraryRowsVisibleTo(userId),
-      ...getItemAudienceFilter({ examBlueprintId }),
+      ...getAskedItemFilter({ examBlueprintId }),
     },
   });
 

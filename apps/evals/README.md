@@ -121,6 +121,8 @@ pnpm --filter evals eval:run --task course-intent --model typesafe-ai/jev --mode
 
 Generation runs at most four calls at a time so a model's own requests don't slow each other down. "Spent" is what the run paid. Every text and decision model call counts as it ends, so an answer that then fails its schema or a task's checks, or that a task retries, still counts. Images (with their per-image fee) and GPT-Live seconds count from the outputs the run wrote. Saved outputs and scores the run reuses cost nothing again; with `--saved`, "Spent" is what the sampled cases' saved outputs and judge calls cost. A run that fails prints what its model calls cost before the failure. A run scores only its sampled case runs, so an older run number left in an outputs file is never judged. Search tool fees (`find-official-sources`), speech and transcription calls, image or GPT-Live calls that fail, and decision calls whose answer fails validation aren't included.
 
+A saved output's cost is every text call its run made, including drafts it set aside; an output saved before runs were metered counts only its kept answer. A case run that fails keeps its calls beside the outputs: `--saved` counts them in "Spent", and "Cost / 1k runs" spreads them over the runs that succeeded.
+
 ## Language Coverage
 
 `eval:languages` lists every task's cases per language and how many came from production samples. It fails when a task has no English or no Portuguese case, or a case whose language can't be told. Code Quality runs it on every pull request:

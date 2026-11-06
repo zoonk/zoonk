@@ -1,3 +1,4 @@
+import { startCallWriting } from "@/lib/call-writing";
 import { generateConversationScenario } from "@zoonk/ai/tasks/language/conversation-scenario";
 import { generateExamSpeakingCard } from "@zoonk/ai/tasks/language/exam-speaking-card";
 import { mockConditionsSchema } from "@zoonk/core/exams/mocks/contract";
@@ -6,7 +7,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { start } from "workflow/api";
+import { getRun, start } from "workflow/api";
 import { callContentWorkflow } from "./call-content-workflow";
 
 vi.mock("@zoonk/ai/tasks/language/conversation-scenario", () => ({
@@ -90,7 +91,7 @@ describe(callContentWorkflow, () => {
     vi.mocked(generateExamSpeakingCard).mockReset().mockResolvedValue(modelAnswer(CARD));
   });
 
-  it("writes a unit's call once: a second run on the same key joins the first", async () => {
+  it("writes a unit's call once: a second start on the same key answers with the first run", async () => {
     const { renting, writing } = await unwrittenUnitCall();
     const release = Promise.withResolvers<null>();
 
@@ -99,18 +100,16 @@ describe(callContentWorkflow, () => {
       return modelAnswer(RENTING_SCENARIO);
     });
 
-    const first = await start(callContentWorkflow, [writing]);
+    const first = await startCallWriting(writing);
 
     await vi.waitFor(
       () => expect(generateConversationScenario).toHaveBeenCalledWith(expect.anything()),
       { interval: 100, timeout: 10_000 },
     );
 
-    const second = await start(callContentWorkflow, [writing]);
-
-    await expect(second.returnValue).resolves.toStrictEqual({ status: "joined" });
+    await expect(startCallWriting(writing)).resolves.toBe(first);
     release.resolve(null);
-    await expect(first.returnValue).resolves.toStrictEqual({ status: "written" });
+    await expect(getRun(first).returnValue).resolves.toStrictEqual({ status: "written" });
 
     expect(generateConversationScenario).toHaveBeenCalledOnce();
 

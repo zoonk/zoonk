@@ -3,8 +3,7 @@ import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateLevelTestBank } from "@zoonk/ai/tasks/language/level-test-bank";
 import { prisma } from "@zoonk/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createHook, sleep } from "workflow";
-import { mockHookConflict } from "../../../mocks/workflow";
+import { sleep } from "workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { levelTestBankWorkflow } from "./level-test-bank-workflow";
 
@@ -91,10 +90,6 @@ describe(levelTestBankWorkflow, () => {
       levelTestBankWorkflow({ analytics: { distinctId: "learner-id", goalId: "goal-id" }, pair }),
     ).resolves.toStrictEqual({ status: "written" });
 
-    expect(vi.mocked(createHook)).toHaveBeenCalledWith({
-      token: `level-test-bank:${pair.language}:ja`,
-    });
-
     expect(generateLevelTestBank).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         analytics: expect.objectContaining({ distinctId: "learner-id", goalId: "goal-id" }),
@@ -179,20 +174,6 @@ describe(levelTestBankWorkflow, () => {
 
     expect(vi.mocked(generateLanguageAudio).mock.calls.map(([input]) => input.text)).toStrictEqual([
       failing,
-    ]);
-  });
-
-  it("joins the run already writing the pair", async () => {
-    mockHookConflict({ returnValue: Promise.resolve(null), runId: "writing-run" });
-
-    await expect(levelTestBankWorkflow({ pair: freshPair() })).resolves.toStrictEqual({
-      status: "joined",
-    });
-
-    expect(generateLevelTestBank).not.toHaveBeenCalled();
-
-    expect(getStreamedEvents()).toStrictEqual([
-      { entityId: "writing-run", status: "started", step: "joinLevelTestBank" },
     ]);
   });
 

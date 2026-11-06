@@ -10,6 +10,7 @@ import {
   type Experimental_DecisionQuestion,
   type Experimental_DecisionResult,
   experimental_decide,
+  wrapLanguageModel,
 } from "ai";
 import { getModelFamily } from "../_utils/model-family";
 import { NO_PROMPT_TRAINING } from "../data-protection";
@@ -17,7 +18,9 @@ import { zoonkGateway } from "../gateway";
 import { computeCallCostUsd } from "../pricing/call-cost";
 import { type AiGenerationContext } from "../provenance/ai-generation-event";
 import { captureAiGeneration } from "../provenance/ai-generation-sink";
+import { billedCallMiddleware } from "../provenance/billed-calls";
 import { readGatewayMetadata } from "../provenance/gateway-metadata";
+import { logBilledCallsWhenFailed } from "../provenance/run-task-generation";
 import { toEvaluationRunRecord } from "./evaluation-event";
 import { fitsTokenLimit } from "./evaluation-limits";
 import {
@@ -36,7 +39,14 @@ function getEvaluationModel(modelId: string): Experimental_DecisionModel {
     return zoonkGateway.decisionModel(modelId);
   }
 
-  return new Experimental_DecisionLanguageModel({ model: zoonkGateway.languageModel(modelId) });
+  // The middleware sees only language models: a native decision model reports usage only with an
+  // answer that passes.
+  return new Experimental_DecisionLanguageModel({
+    model: wrapLanguageModel({
+      middleware: billedCallMiddleware,
+      model: zoonkGateway.languageModel(modelId),
+    }),
+  });
 }
 
 const TIMEOUT_MS = 10_000;
@@ -83,23 +93,31 @@ function selectModel({
  * (`EvaluationTimeoutError`), never the cancellation the SDK reports it as.
  */
 async function runModel<QUESTIONS extends EvaluationQuestions>({
+  analytics,
   model,
   questions,
   state,
+  task,
 }: {
+  analytics?: AiGenerationContext;
   model: string;
   questions: QUESTIONS;
   state: string;
+  task: string;
 }) {
   const deadline = AbortSignal.timeout(TIMEOUT_MS);
 
-  const result = await experimental_decide({
-    abortSignal: deadline,
-    model: getEvaluationModel(model),
-    providerOptions: { gateway: NO_PROMPT_TRAINING },
-    questions,
-    state,
-  }).catch((error: unknown) => {
+  const result = await logBilledCallsWhenFailed(
+    { analytics, systemPrompt: JSON.stringify(questions), task },
+    () =>
+      experimental_decide({
+        abortSignal: deadline,
+        model: getEvaluationModel(model),
+        providerOptions: { gateway: NO_PROMPT_TRAINING },
+        questions,
+        state,
+      }),
+  ).catch((error: unknown) => {
     if (deadline.aborted) {
       throw new EvaluationTimeoutError(`${model} didn't answer within ${TIMEOUT_MS} ms.`, {
         cause: error,
@@ -204,7 +222,9 @@ export async function evaluateQuestions<const QUESTIONS extends EvaluationQuesti
   const state = formatUntrustedInput(input);
   const primaryModel = selectModel({ fallbackModel, model, questions, state });
 
-  const primary = await safeAsync(() => runModel({ model: primaryModel, questions, state }));
+  const primary = await safeAsync(() =>
+    runModel({ analytics, model: primaryModel, questions, state, task }),
+  );
 
   if (
     primary.error &&
@@ -221,7 +241,8 @@ export async function evaluateQuestions<const QUESTIONS extends EvaluationQuesti
   }
 
   const result =
-    primary.data ?? (await runModel({ model: fallbackModel ?? primaryModel, questions, state }));
+    primary.data ??
+    (await runModel({ analytics, model: fallbackModel ?? primaryModel, questions, state, task }));
 
   const run: EvaluationRun<QUESTIONS> = {
     answers: result.answers,
