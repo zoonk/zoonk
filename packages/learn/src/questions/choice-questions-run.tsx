@@ -272,7 +272,9 @@ function QuestionsFooter({
   if (!question) {
     return canFinish ? (
       <TaskActions>
-        <TaskMainButton onClick={onFinish}>{t("Finish with these answers")}</TaskMainButton>
+        <TaskMainButton busy={pending} onClick={onFinish}>
+          {t("Finish with these answers")}
+        </TaskMainButton>
       </TaskActions>
     ) : null;
   }
