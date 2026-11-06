@@ -12,6 +12,7 @@ import { lessonRunFixture } from "../../../lesson-player/_test-utils/lesson-run-
 import { checkLessonStep } from "../../../lesson-player/check-lesson-step";
 import { mistakeListInputSchema } from "../../../mistakes/contract";
 import { listCurrentUserMistakes } from "../../../mistakes/list-current-user-mistakes";
+import { completeLessonContent } from "../../generation/lesson-generation-state";
 import { writtenTemperatureLesson } from "../../quality/_test-utils/written-lessons";
 import { toStepContent } from "../../steps/written-screens";
 import { readLessonMap } from "../lesson-map";
@@ -55,6 +56,11 @@ async function claimedLesson() {
 
   await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
   return { lesson, skill, workflowRunId };
+}
+
+async function saveReadyLesson(input: Parameters<typeof saveLessonContent>[0]) {
+  await saveLessonContent(input);
+  await completeLessonContent(input);
 }
 
 describe(saveLessonContent, () => {
@@ -278,7 +284,7 @@ describe(saveLessonContent, () => {
     const plan = await planFixture({ goalId: goal.id, sourceSkillIds: [skill.id] });
     const readPlan = () => prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
-    await saveLessonContent({
+    await saveReadyLesson({
       language: "en",
       lessonId: lesson.id,
       screens: [screen(skill.id)],
@@ -324,7 +330,7 @@ describe(saveLessonContent, () => {
       return readLessonMap(stored.summary);
     };
 
-    await saveLessonContent({
+    await saveReadyLesson({
       language: "en",
       lessonId: lesson.id,
       screens: [screen(skill.id)],
@@ -348,7 +354,7 @@ describe(saveLessonContent, () => {
   it("repairs skills in replacement versions too", async () => {
     const { lesson, skill, workflowRunId } = await claimedLesson();
 
-    await saveLessonContent({
+    await saveReadyLesson({
       language: "en",
       lessonId: lesson.id,
       screens: [screen(skill.id)],

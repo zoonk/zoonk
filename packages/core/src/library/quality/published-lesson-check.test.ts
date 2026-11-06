@@ -15,6 +15,7 @@ import { describe, expect, it, vi } from "vitest";
 import { holdPlanLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { writeLessonContent } from "../../_test-utils/write-lesson-content";
 import * as refresh from "../../plans/refresh-goal-plan";
+import { completeLessonContent } from "../generation/lesson-generation-state";
 import { readLessonMap } from "../lessons/lesson-map";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
@@ -146,6 +147,8 @@ async function publishLesson({
   if (result.status !== "published") {
     throw new Error(`The test lesson wasn't published: ${result.status}`);
   }
+
+  await completeLessonContent({ lessonId: lesson.id, workflowRunId });
 
   return { draft, lesson, plan: result.check };
 }

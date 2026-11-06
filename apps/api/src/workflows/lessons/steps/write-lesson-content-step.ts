@@ -3,7 +3,11 @@ import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { parseChallengeLessonSpec } from "@zoonk/core/library/challenges/lesson-spec";
 import { writeChallengeLessonContent } from "@zoonk/core/library/challenges/write";
 import { getScopeModel } from "@zoonk/core/library/curriculum/scope";
-import { canRedraftLesson, getLessonGenerationState } from "@zoonk/core/library/generation/state";
+import {
+  canRedraftLesson,
+  getLessonGenerationState,
+  isLessonSavedByRun,
+} from "@zoonk/core/library/generation/state";
 import { writeLanguageLessonContent } from "@zoonk/core/library/language/write-lesson-content";
 import { loadLessonReuse } from "@zoonk/core/library/lessons/reuse";
 import {
@@ -117,8 +121,6 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
 
   const lesson = await prisma.lesson.findUnique({
     select: {
-      contentRunId: true,
-      contentStatus: true,
       owner: { select: { isAnonymous: true } },
       ownerId: true,
       spec: true,
@@ -132,8 +134,8 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
   }
 
   // The runtime runs a step's body again when its result was lost after the body ended, so a lesson
-  // this run already published isn't written again.
-  if (lesson.contentStatus === "completed" && lesson.contentRunId === input.workflowRunId) {
+  // this run already saved isn't written again.
+  if (await isLessonSavedByRun(input)) {
     return { check: null, imageScope: getPublishedImageScope(lesson), status: "published" };
   }
 
@@ -174,12 +176,7 @@ export async function checkLessonContentStep({
 }): Promise<LessonWriteOutcome | LessonDraftToFix> {
   "use step";
 
-  const published = await prisma.lesson.findUnique({
-    select: { contentRunId: true, contentStatus: true },
-    where: { id: input.lessonId },
-  });
-
-  if (published?.contentStatus === "completed" && published.contentRunId === input.workflowRunId) {
+  if (await isLessonSavedByRun(input)) {
     return { check: null, imageScope, status: "published" };
   }
 

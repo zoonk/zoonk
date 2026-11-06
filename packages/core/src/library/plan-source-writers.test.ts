@@ -726,7 +726,7 @@ async function publishLessonCase(): Promise<WriterCase> {
 
   return {
     expectWritten: () =>
-      expect(readLesson(lesson.id)).resolves.toMatchObject({ contentStatus: "completed" }),
+      expect(prisma.step.count({ where: { lessonId: lesson.id } })).resolves.toBe(1),
     plan,
     root: lessonRoot(lesson.id),
     write: () =>

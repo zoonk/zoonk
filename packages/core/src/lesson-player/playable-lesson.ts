@@ -49,7 +49,6 @@ export type PlayableTeachingStepOf<TKind extends TeachingStepKind> = PlayableSte
   /** Original screen-generation time in epoch milliseconds; reopening does not restart its wait. */
   pictureWaitStartedAt?: number;
   kind: TKind;
-  /** Optional: the screen plays as plain text without them, and they arrive after its first read. */
   marks: StepMarks | null;
   /** Missing option pictures must fall back to their descriptions. */
   optionPictures?: Readonly<Record<string, PlayableStepImage>>;
@@ -97,11 +96,6 @@ export type PlayableLibraryLesson = {
   id: string;
   language: string;
   level: CourseLevel;
-  /**
-   * Marks, `about` lines and icons are still on their way (the lesson was written moments ago):
-   * read again in a few seconds, within the screens' five-minute picture wait.
-   */
-  marksPending: boolean;
   skills: { id: string; name: string }[];
   steps: PlayableLibraryStep[];
   /**
@@ -111,8 +105,4 @@ export type PlayableLibraryLesson = {
   summary: LessonMap | null;
   targetLanguage: string | null;
   title: string;
-};
-
-export type LessonMarks = Pick<PlayableLibraryLesson, "marksPending" | "summary"> & {
-  steps: { marks: StepMarks | null; stepId: string }[];
 };
