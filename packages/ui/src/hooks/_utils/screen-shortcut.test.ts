@@ -146,4 +146,21 @@ describe("scrollable question regions", () => {
     expect(isScreenShortcut(pressOn(cell, { key: "ArrowLeft" }))).toBe(false);
     expect(isScreenShortcut(pressOn(document.body, { key: "ArrowRight" }))).toBe(true);
   });
+
+  it("leaves the side arrows to a focused line that has more to scroll sideways, and only those", () => {
+    const line = mount('<span data-target tabindex="0" style="overflow-x: auto">x + y</span>');
+
+    Object.defineProperties(line, {
+      clientWidth: { value: 260 },
+      scrollWidth: { configurable: true, value: 302 },
+    });
+
+    expect(isScreenShortcut(pressOn(line, { key: "ArrowRight" }))).toBe(false);
+    expect(isScreenShortcut(pressOn(line, { key: "ArrowLeft" }))).toBe(false);
+    expect(isScreenShortcut(pressOn(line, { key: "ArrowDown" }))).toBe(true);
+
+    Object.defineProperty(line, "scrollWidth", { value: 260 });
+
+    expect(isScreenShortcut(pressOn(line, { key: "ArrowRight" }))).toBe(true);
+  });
 });
