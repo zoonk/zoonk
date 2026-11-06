@@ -248,6 +248,16 @@ private struct LessonPlanDay: View {
             tableName: "Courses", comment: "Under a lesson's example plan")
         }
       }
+
+      // Main's `StartPlanLink`, secondary beside the lesson's own start: past the first chapter
+      // the plan starts from this one.
+      Section {
+        CatalogStartActions(
+          courseID: lesson.chapter.courseID,
+          chapterID: (lesson.chapterNumber ?? 1) > 1 ? lesson.chapter.id : nil,
+          tryLessonID: nil, isSecondary: true)
+      }
+      .listRowSeparator(.hidden)
     }
   }
 }

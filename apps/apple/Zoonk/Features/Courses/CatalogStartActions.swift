@@ -13,6 +13,8 @@ struct CatalogStartActions: View {
   let tryLessonID: String?
   /// Nil shows the visitor's "Start free, no account needed."
   var note: Text?
+  /// Main's secondary start, where the page's main action is something else (a lesson's start).
+  var isSecondary = false
 
   @State private var switchingTo: LearnerGoal.ID?
   @State private var switchFailed = false
@@ -80,15 +82,12 @@ struct CatalogStartActions: View {
       }
       .buttonStyle(.mainAction)
       .disabled(switchingTo != nil)
+    } else if isSecondary {
+      buildPlan
+        .buttonStyle(.outline)
     } else {
-      Button {
-        router.open(.courseStart(courseId: courseID, chapterId: chapterID))
-      } label: {
-        Text(
-          "Build my plan", tableName: "Courses",
-          comment: "Opens the start screen that builds the learner's plan from this course")
-      }
-      .buttonStyle(.mainAction)
+      buildPlan
+        .buttonStyle(.mainAction)
     }
 
     if let tryLessonID {
@@ -100,6 +99,16 @@ struct CatalogStartActions: View {
           comment: "Opens one of the course's lessons to try before starting a plan")
       }
       .buttonStyle(.outline)
+    }
+  }
+
+  private var buildPlan: some View {
+    Button {
+      router.open(.courseStart(courseId: courseID, chapterId: chapterID))
+    } label: {
+      Text(
+        "Build my plan", tableName: "Courses",
+        comment: "Opens the start screen that builds the learner's plan from this course")
     }
   }
 
