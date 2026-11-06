@@ -757,4 +757,79 @@ Obs.: a prova tem 5 questões abertas e 5 de marcar. Não cai divisão celular (
     id: "tr-personal-finance-beginner",
     userInput: { courseTitle: "Kişisel finans", language: "tr", level: "beginner" },
   },
+  {
+    expectations: `
+      - MUST be in US English
+      - A product course: chapters are tasks done with Next.js (start an app, build pages and layouts, link them, fetch and show data, handle forms, deploy), named for what the learner gets done, never a tour of features or a concept tree ("Rendering strategies", "The Next.js architecture")
+      - The first lessons of the first chapter end with the learner's own app running and showing a page they made
+      - Written for Next.js 16 with its current conventions (the App Router), naming a release only where a feature depends on it and then saying which releases have it; most titles and descriptions name no release
+      - No "What is Next.js", course overview or history chapter
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { tool: "next|node|editor|terminal" },
+    id: "en-product-nextjs-beginner",
+    userInput: {
+      courseTitle: "Next.js",
+      language: "en",
+      level: "beginner",
+      product: {
+        brand: "Vercel",
+        name: "Next.js",
+        release: { name: "Next.js 16", releasedOn: "2025-10-21" },
+      },
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - A product course for one older model: chapters are tasks done on an iPhone 13 (set it up, calls and messages, the camera, apps, privacy and security, battery), never a tour of the settings menu
+      - The first lessons of the first chapter end with something real done on the phone
+      - Nothing the iPhone 13 can't do: no Dynamic Island, Action button, Camera Control, always-on display or Apple Intelligence
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { tool: "iphone" },
+    id: "en-product-iphone-13-pinned-beginner",
+    userInput: {
+      courseTitle: "iPhone 13",
+      language: "en",
+      level: "beginner",
+      product: {
+        brand: "Apple",
+        name: "iPhone",
+        release: { name: "iPhone 13", releasedOn: "2021-09-24" },
+      },
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - A product with no releases: no title, description or objective names a version
+      - The two required skills are the size of a tutorial (moving a team's work over from Jira): they sit together in one chapter, not spread over several
+      - Chapters are tasks done in Linear (issues, projects, cycles, the team's workflow, triage), and the first lessons end with real work in it
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { tool: "linear" },
+    id: "pt-product-linear-jira-import",
+    userInput: {
+      courseTitle: "Linear",
+      language: "pt",
+      level: "beginner",
+      product: { brand: "Linear", name: "Linear", release: null },
+      requiredSkills: [
+        {
+          description: "Trazer as issues, os projetos e os responsáveis do Jira para o Linear.",
+          key: "jira-import",
+          name: "Importar issues do Jira",
+        },
+        {
+          description: "Ligar cada status do Jira a um status do fluxo do time no Linear.",
+          key: "jira-statuses",
+          name: "Mapear status do Jira para o Linear",
+        },
+      ],
+    },
+  },
 ];
