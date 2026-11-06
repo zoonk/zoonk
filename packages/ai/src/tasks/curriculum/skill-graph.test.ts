@@ -191,6 +191,26 @@ describe(generateSkillGraph, () => {
     expect(provenance.promptVersion).toBe(SKILL_GRAPH_PROMPT_VERSION);
   });
 
+  it("writes a big exam's graph whole when its frame lists no sections, and reports the frame's call", async () => {
+    vi.mocked(streamText).mockReset();
+
+    vi.mocked(streamText)
+      .mockReturnValueOnce(answer({ ...FRAME, sections: [] }) as never)
+      .mockReturnValueOnce(answer(WHOLE_GRAPH, { ...usage, inputTokens: 2000 }) as never);
+
+    const { data, provenance, setAside } = await generateSkillGraph({
+      examBlueprint: NOTICE,
+      goal: "Passar no concurso",
+      goalKind: "exam",
+      language: "pt",
+    });
+
+    expect(streamText).toHaveBeenCalledTimes(2);
+    expect(data.skills).toHaveLength(1);
+    expect(provenance.usage.inputTokens).toBe(2000);
+    expect(setAside.map((call) => call.usage.inputTokens)).toStrictEqual([1000]);
+  });
+
   it("writes any other goal's graph whole, in one call", async () => {
     vi.mocked(streamText).mockReset();
     vi.mocked(streamText).mockReturnValue(answer(WHOLE_GRAPH) as never);

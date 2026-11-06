@@ -297,7 +297,8 @@ async function generateSectionedGraph(params: SkillGraphParams) {
   const calls = toSectionCalls(frame.output.sections);
 
   if (calls.length === 0) {
-    return generateCheckedWholeGraph(params);
+    const whole = await generateCheckedWholeGraph(params);
+    return { ...whole, setAside: [...whole.setAside, frame.provenance] };
   }
 
   const written = await Promise.all(
