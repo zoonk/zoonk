@@ -277,12 +277,10 @@ function canSkipBuild({
 
 /** Plan displays retain catch-up lessons even on Today's quiet days. */
 export function getSelectedCatchUpItems({
-  computed,
   items,
   left,
-}: Pick<SelectedDayPlan, "computed" | "items" | "left">): SessionPlanItem[] {
-  const held = computed?.built.heldForChallenges ?? new Set<string>();
-  const leftKeys = new Set(left.map((item) => getItemKey(item)).filter((key) => !held.has(key)));
+}: Pick<SelectedDayPlan, "items" | "left">): SessionPlanItem[] {
+  const leftKeys = new Set(left.map((item) => getItemKey(item)));
 
   return items.filter(
     (item) =>

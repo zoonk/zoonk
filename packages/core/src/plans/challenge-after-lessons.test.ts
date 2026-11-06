@@ -3,8 +3,6 @@ import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { loadCatchUpItems } from "../sessions/_utils/catch-up";
-import { getSelectedCatchUpItems, selectDayPlan } from "../sessions/_utils/selected-day-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { takenChallengeFixture } from "./_test-utils/taken-challenge";
 import { createGoalPlan } from "./create-goal-plan";
@@ -234,31 +232,6 @@ describe("a phase's challenge after missed days", () => {
 
     expect(runs.map((run) => run.name)).toStrictEqual(PHASES_IN_ORDER.slice(2));
     expect(runs[0]?.first).toBe(Date.parse("2020-10-19"));
-  });
-
-  it("counts only the lessons that come before the challenge as catching up", async () => {
-    const { goal, library, plan } = await setup({ dailyMinutes: 12, lessons: [8, 8, 8, 8] });
-    const phaseOf = new Map(library.graph.skills.map((skill) => [skill.skillId, skill.phase]));
-
-    await studyToday({ goal, planId: plan.id });
-    vi.setSystemTime(new Date(SUNDAY.getTime() + 7 * DAY));
-
-    const preview = await selectDayPlan({ goal, now: new Date(), timeZone: "UTC" });
-
-    if (!preview) {
-      throw new Error("Expected the returning learner's day");
-    }
-
-    await refreshGoalPlan({ goalId: goal.id });
-
-    const catchUp = [getSelectedCatchUpItems(preview), await loadCatchUpItems(goal.id)];
-
-    expect(
-      catchUp.map((items) => items.map((item) => phaseOf.get(item.skillId ?? ""))),
-    ).toStrictEqual([
-      [0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0],
-    ]);
   });
 
   it("names each move on Today's card from the end the plan it comes with shows", async () => {

@@ -14,7 +14,6 @@ export type BuiltPlan = PlanOutline & {
   lessonRawMinutes: ReadonlyMap<string, ReadonlyMap<string, number>>;
   droppedSkillIds: string[];
   endsBeforeLessons: number[];
-  heldForChallenges: ReadonlySet<string>;
   items: PlannedItem[];
   keptKeys: ReadonlySet<string>;
   mockFunding: MockFunding[];

@@ -1,5 +1,5 @@
 import { keepCarriedAfterBases, listBegunSkillIds } from "./carried-bases";
-import { holdBehindChallenges } from "./carried-challenges";
+import { keepCarriedBeforeChallenges } from "./carried-challenges";
 import { findChapterInProgress } from "./chapter-in-progress";
 import { takeFocusedToday } from "./focused-today";
 import { getSkillArea } from "./graph-areas";
@@ -294,11 +294,10 @@ export function placeCarriedWork({
   const today = listKeptTodayKeys(input);
 
   const left = listCarriedKeys(input).filter((key) => today.has(key) || !yielded.has(key));
-  const { held, kept } = holdBehindChallenges({ keys: left, today, units });
 
   const keys = keepCarriedAfterBases({
     begun: listBegunSkillIds({ carried: [], items: input.items }),
-    keys: kept,
+    keys: keepCarriedBeforeChallenges({ keys: left, today, units }),
     prerequisites: input.prerequisites,
     today,
     units,
@@ -336,7 +335,6 @@ export function placeCarriedWork({
   return {
     carried: [...carried, ...steered.today],
     days: steered.days,
-    heldForChallenges: held,
     released: left.filter((key) => !keys.includes(key)),
     rest: steered.rest,
     schedule: { ...schedule, units: [...schedule.units, ...steered.today] },
