@@ -45,10 +45,12 @@ async function saveSkillLevels(
     where: { language, skill: { in: levels.map(({ skill }) => skill) }, userId },
   });
 
-  const restarted = levels.filter(
-    ({ score, skill }) =>
-      !isFreshStart({ row: existing.find((row) => row.skill === skill), score }),
-  );
+  // A skill the learner's answers raised moves only by evidence: a seven-question test, or the
+  // typed level a skipped skill falls back to, must not rewrite what lessons measured.
+  const restarted = levels.filter(({ score, skill }) => {
+    const row = existing.find((level) => level.skill === skill);
+    return !row?.raisedAt && !isFreshStart({ row, score });
+  });
 
   for (const { score, skill } of restarted) {
     // oxlint-disable-next-line no-await-in-loop -- An interactive transaction uses one Postgres connection.

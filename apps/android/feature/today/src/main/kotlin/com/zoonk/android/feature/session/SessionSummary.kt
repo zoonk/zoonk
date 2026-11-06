@@ -2,6 +2,7 @@ package com.zoonk.android.feature.session
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -18,14 +19,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -35,9 +37,10 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.ActReaction
 import com.zoonk.android.ui.characters.BuddyAct
@@ -56,8 +59,13 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
+import com.zoonk.android.ui.components.StepBackButton
 import com.zoonk.android.ui.components.StepDots
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.celebrates
+import com.zoonk.android.ui.components.isWideLayout
+import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -66,7 +74,12 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatProgressShare
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.StudyMission
@@ -75,6 +88,7 @@ import com.zoonk.api.models.StudySessionSummaryBelt
 import com.zoonk.api.models.StudySessionSummarySkillsMovedInner
 import com.zoonk.api.models.TodayGoal
 import kotlinx.datetime.toJavaLocalDate
+import kotlin.math.max
 
 /** What the summary needs beyond the session's own numbers. [bonus] is the day's missions bonus, from its session. */
 internal data class SummaryFacts(
@@ -94,7 +108,8 @@ internal class SummaryActions(
 
 /**
  * Main's `SessionSummary`: how the session went, then what it earned. A phone shows the rewards as
- * a second step; a wide window keeps them beside the session, as main's "Earned today" does.
+ * a second step; a wide window keeps them beside the session, as main's "Earned today" does. An
+ * open book shows the session and what it earned before the fold and what comes next after it.
  */
 @Composable
 internal fun SessionSummary(
@@ -106,62 +121,79 @@ internal fun SessionSummary(
     failed: SessionAction?,
     actions: SummaryActions,
 ) {
-    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-    val stepped = !wide && !facts.stopped && summary.hasRewardsBeyondBrainPower()
-    var onRewards by rememberSaveable { mutableStateOf(false) }
-    var leftRewards by rememberSaveable { mutableStateOf(false) }
-    val rewardsShown = stepped && onRewards
+    ResultScreen {
+        var onRewards by rememberSaveable { mutableStateOf(false) }
+        var leftRewards by rememberSaveable { mutableStateOf(false) }
+        val scroll = rememberScrollState()
+        var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    BackHandler(enabled = rewardsShown) {
-        onRewards = false
-        leftRewards = true
-    }
+        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+            val pages = spreadFold(maxWidth, span) != null
+            val wide = isWideLayout()
+            val stepped = !pages && !wide && !facts.stopped && summary.hasRewardsBeyondBrainPower()
+            val rewardsShown = stepped && onRewards
 
-    TaskScaffold(
-        onClose = actions.finish,
-        title = { if (stepped) StepDots(count = 2, index = if (rewardsShown) 1 else 0) },
-        bottomBar = {
-            SummaryBar(
-                summary = summary,
-                facts = facts,
-                busy = busy,
-                failed = failed,
-                actions = actions,
-                toRewards = if (stepped && !rewardsShown) ({ onRewards = true }) else null,
-                fromRewards =
-                    if (rewardsShown) {
-                        {
-                            onRewards = false
-                            leftRewards = true
+            BackHandler(enabled = rewardsShown) {
+                onRewards = false
+                leftRewards = true
+            }
+
+            TaskScaffold(
+                onClose = actions.finish,
+                title = { if (stepped) StepDots(count = 2, index = if (rewardsShown) 1 else 0) },
+                bottomBar = {
+                    SummaryBar(
+                        summary = summary,
+                        facts = facts,
+                        busy = busy,
+                        failed = failed,
+                        actions = actions,
+                        toRewards = if (stepped && !rewardsShown) ({ onRewards = true }) else null,
+                        fromRewards =
+                            if (rewardsShown) {
+                                {
+                                    onRewards = false
+                                    leftRewards = true
+                                }
+                            } else {
+                                null
+                            },
+                    )
+                },
+            ) { padding ->
+                if (pages) {
+                    ResultPages(
+                        modifier = Modifier.padding(padding),
+                        withMoment = true,
+                        columnModifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        done = {
+                            DoneTitle(summary, facts)
+                            SessionNumbers(summary, facts, brainPowerTile = false)
+                            EarnedToday(summary, facts, buddy, buddyName)
+                        },
+                        next = { Onward(summary, facts) },
+                    )
+                } else {
+                    Column(
+                        modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(scroll),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Row(
+                            modifier = Modifier.widthIn(max = 960.dp).padding(horizontal = 16.dp, vertical = 24.dp),
+                            horizontalArrangement = Arrangement.spacedBy(32.dp),
+                        ) {
+                            Column(Modifier.weight(1f)) {
+                                // Going back to a step already seen shows it still.
+                                CelebrationScope(play = !leftRewards) {
+                                    if (rewardsShown) {
+                                        RewardsStep(summary, facts, buddy, buddyName)
+                                    } else {
+                                        DoneStep(summary, facts, wide)
+                                    }
+                                }
+                            }
+                            if (wide) EarnedToday(summary, facts, buddy, buddyName, Modifier.widthIn(max = 320.dp))
                         }
-                    } else {
-                        null
-                    },
-            )
-        },
-    ) { padding ->
-        Column(
-            modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Row(
-                modifier = Modifier.widthIn(max = 960.dp).padding(horizontal = 16.dp, vertical = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(32.dp),
-            ) {
-                Column(Modifier.weight(1f)) {
-                    // Going back to a step already seen shows it still.
-                    CelebrationScope(play = !leftRewards) {
-                        if (rewardsShown) {
-                            RewardsStep(summary, facts, buddy, buddyName)
-                        } else {
-                            DoneStep(summary, facts, wide)
-                        }
-                    }
-                }
-                if (wide) {
-                    Column(Modifier.widthIn(max = 320.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        SectionLabel(stringResource(R.string.session_summary_earned_today))
-                        Rewards(summary, facts, buddy, buddyName, title = null)
                     }
                 }
             }
@@ -175,8 +207,19 @@ private fun DoneStep(
     facts: SummaryFacts,
     wide: Boolean,
 ) {
-    val locale = currentLocale()
-    val time = formatMinutes(summary.minutes.toInt(), locale)
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        DoneTitle(summary, facts)
+        SessionNumbers(summary, facts, brainPowerTile = !wide)
+        Onward(summary, facts)
+    }
+}
+
+@Composable
+private fun DoneTitle(
+    summary: StudySessionSummary,
+    facts: SummaryFacts,
+) {
+    val time = formatMinutes(summary.minutes.toInt(), currentLocale())
     val title =
         when {
             facts.stopped -> stringResource(R.string.session_summary_done_for_now)
@@ -184,25 +227,43 @@ private fun DoneStep(
             else -> stringResource(R.string.session_summary_done_in, time)
         }
 
-    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Eyebrow(stringResource(R.string.session_summary_eyebrow))
-            Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
-            if (facts.stopped && summary.minutes >= 1) {
-                Text(
-                    stringResource(R.string.session_summary_so_far, time),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Eyebrow(stringResource(R.string.session_summary_eyebrow))
+        Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
+        if (facts.stopped && summary.minutes >= 1) {
+            Text(
+                stringResource(R.string.session_summary_so_far, time),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
-        SessionNumbers(summary, facts, brainPowerTile = !wide)
-        SkillRises(summary)
-        summary.tomorrow?.takeIf { !facts.stopped }?.let { tomorrow ->
-            SummaryList(stringResource(R.string.session_summary_tomorrow)) {
-                SummaryRow(R.drawable.ic_menu_book) { Text(tomorrow.title, style = MaterialTheme.typography.bodyLarge) }
-            }
+    }
+}
+
+@Composable
+private fun Onward(
+    summary: StudySessionSummary,
+    facts: SummaryFacts,
+) {
+    SkillRises(summary)
+    summary.tomorrow?.takeIf { !facts.stopped }?.let { tomorrow ->
+        SummaryList(stringResource(R.string.session_summary_tomorrow)) {
+            SummaryRow(R.drawable.ic_menu_book) { Text(tomorrow.title, style = MaterialTheme.typography.bodyLarge) }
         }
+    }
+}
+
+@Composable
+private fun EarnedToday(
+    summary: StudySessionSummary,
+    facts: SummaryFacts,
+    buddy: BuddyLook,
+    buddyName: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        SectionLabel(stringResource(R.string.session_summary_earned_today))
+        Rewards(summary, facts, buddy, buddyName, title = null)
     }
 }
 
@@ -514,32 +575,32 @@ private fun SummaryBar(
 ) {
     val locale = currentLocale()
     val extraTime = summary.extraTime.takeIf { !facts.stopped && it.available && toRewards == null }
+    val seesMistakes = fromRewards == null && summary.mistakesSaved > 0
+    val crowded = seesMistakes && facts.stopped
+    val options: @Composable () -> Unit = {
+        if (seesMistakes) {
+            OutlinedButton(onClick = actions.seeMistakes) { Text(stringResource(R.string.session_summary_see_mistakes)) }
+        }
+        if (facts.stopped) {
+            OutlinedButton(
+                onClick = actions.keepGoing,
+                enabled = busy == null,
+            ) { Text(stringResource(R.string.session_summary_keep_going)) }
+        }
+    }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (failed == SessionAction.KeepGoing) SummaryError()
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            fromRewards?.let { OutlinedButton(onClick = it) { Text(stringResource(R.string.navigation_back)) } }
-            if (fromRewards == null && summary.mistakesSaved > 0) {
-                OutlinedButton(onClick = actions.seeMistakes) { Text(stringResource(R.string.session_summary_see_mistakes)) }
-            }
-            if (facts.stopped) {
-                OutlinedButton(
-                    onClick = actions.keepGoing,
-                    enabled = busy == null,
-                ) { Text(stringResource(R.string.session_summary_keep_going)) }
-            }
+    TaskActionBar {
+        if (failed == SessionAction.KeepGoing) SummaryError(stringResource(R.string.today_open_failed))
+        TaskActions(back = fromRewards?.let { { StepBackButton(onClick = it) } }) { main ->
+            if (crowded) SharedRow(Modifier.taskOption(), options) else options()
             if (toRewards != null) {
-                Button(onClick = toRewards) { Text(stringResource(R.string.steps_continue)) }
+                Button(onClick = toRewards, modifier = main) { Text(stringResource(R.string.steps_continue)) }
             } else {
-                Button(onClick = actions.finish) { Text(stringResource(R.string.session_summary_finish)) }
+                Button(onClick = actions.finish, modifier = main) { Text(stringResource(R.string.session_summary_finish)) }
             }
         }
         extraTime?.let { extra ->
-            TextButton(onClick = actions.extraTime, modifier = Modifier.fillMaxWidth(), enabled = busy == null) {
+            TextButton(onClick = actions.extraTime, modifier = Modifier.taskOption(), enabled = busy == null) {
                 Text(
                     if (extra.lessons.isNotEmpty()) {
                         stringResource(R.string.today_keep_learning)
@@ -548,14 +609,19 @@ private fun SummaryBar(
                     },
                 )
             }
-            if (failed == SessionAction.ExtraTime) SummaryError()
+            if (failed == SessionAction.ExtraTime) SummaryError(stringResource(R.string.today_save_failed))
         }
         if (facts.guest) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalArrangement = Arrangement.Center) {
+            FlowRow(
+                modifier = Modifier.taskOption(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                verticalArrangement = Arrangement.Center,
+            ) {
                 Text(
                     stringResource(R.string.session_summary_save_note),
                     Modifier.align(Alignment.CenterVertically),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodySmall,
                 )
                 TextButton(onClick = actions.signUp) { Text(stringResource(R.string.session_summary_create_account)) }
@@ -564,10 +630,53 @@ private fun SummaryBar(
     }
 }
 
+/**
+ * Main's `SHARED_ROW_ACTION_CLASS` grows each button from its label's width; a `FlowRow` weight would
+ * split the line evenly and wrap the longer label.
+ */
 @Composable
-private fun SummaryError() {
+private fun SharedRow(
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
+    Layout(content, modifier) { measurables, constraints ->
+        val gap = 12.dp.roundToPx()
+        val labels = measurables.map { it.maxIntrinsicWidth(constraints.maxHeight) }
+        val row = labels.sum() + gap * (labels.size - 1)
+
+        if (row <= constraints.maxWidth) {
+            val width = max(row, constraints.minWidth)
+            val rest = width - row
+            val placeables =
+                measurables.mapIndexed { index, measurable ->
+                    val share = rest / labels.size + if (index < rest % labels.size) 1 else 0
+                    measurable.measure(Constraints.fixedWidth(labels[index] + share))
+                }
+            val height = placeables.maxOf { it.height }
+            layout(width, height) {
+                var x = 0
+                placeables.forEach {
+                    it.placeRelative(x, (height - it.height) / 2)
+                    x += it.width + gap
+                }
+            }
+        } else {
+            val placeables = measurables.map { it.measure(Constraints.fixedWidth(constraints.maxWidth)) }
+            layout(constraints.maxWidth, placeables.sumOf { it.height } + gap * (placeables.size - 1)) {
+                var y = 0
+                placeables.forEach {
+                    it.placeRelative(0, y)
+                    y += it.height + gap
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SummaryError(text: String) {
     Text(
-        stringResource(R.string.today_open_failed),
+        text,
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )

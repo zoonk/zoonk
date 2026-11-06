@@ -26,8 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.width
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
@@ -65,18 +63,6 @@ class PageWithSupportingPaneTest {
         }
     }
 
-    /** A fold down the middle of the window, as a book foldable's when it's open; horizontal when held on its side. */
-    private fun fold(
-        state: FoldingFeature.State,
-        orientation: FoldingFeature.Orientation = FoldingFeature.Orientation.VERTICAL,
-    ) {
-        rule.waitForIdle()
-        folds.overrideWindowLayoutInfo(
-            TestWindowLayoutInfo(listOf(FoldingFeature(rule.activity, state = state, orientation = orientation))),
-        )
-        rule.waitForIdle()
-    }
-
     private fun bounds(tag: String): DpRect = rule.onNodeWithTag(tag).getUnclippedBoundsInRoot()
 
     private fun assertPageOnEachSide(fold: Dp) {
@@ -107,11 +93,11 @@ class PageWithSupportingPaneTest {
     fun anOpenBookShowsAPageOnEachSideOfItsFold() {
         show(width = 772.dp)
 
-        fold(FoldingFeature.State.FLAT)
+        rule.unfoldBook(folds)
         assertPageOnEachSide(fold = 426.dp)
         val flat = bounds(PAGE) to bounds(ASIDE)
 
-        fold(FoldingFeature.State.HALF_OPENED)
+        rule.unfoldBook(folds, FoldingFeature.State.HALF_OPENED)
         assertPageOnEachSide(fold = 426.dp)
         assertEquals("folding leaves both pages where they were", flat, bounds(PAGE) to bounds(ASIDE))
     }
@@ -122,7 +108,7 @@ class PageWithSupportingPaneTest {
     fun aNarrowerBookSplitsAtItsFoldToo() {
         show(width = 627.dp)
 
-        fold(FoldingFeature.State.FLAT)
+        rule.unfoldBook(folds)
 
         assertPageOnEachSide(fold = 353.5.dp)
     }
@@ -133,7 +119,7 @@ class PageWithSupportingPaneTest {
     fun largeTextKeepsAPageOnEachSideOfTheFold() {
         show(width = 627.dp)
 
-        fold(FoldingFeature.State.FLAT)
+        rule.unfoldBook(folds)
 
         assertPageOnEachSide(fold = 353.5.dp)
     }
@@ -152,7 +138,7 @@ class PageWithSupportingPaneTest {
             }
         }
 
-        fold(FoldingFeature.State.FLAT)
+        rule.unfoldBook(folds)
 
         assertEquals(426f, bounds(PAGE).left.value, 0.5f)
         assertEquals(852f, bounds(PAGE).right.value, 0.5f)
@@ -164,7 +150,7 @@ class PageWithSupportingPaneTest {
     fun aPageWithNoRoomToSplitKeepsItsWidthWhenTheBookFolds() {
         show(width = 492.dp)
 
-        fold(FoldingFeature.State.HALF_OPENED)
+        rule.unfoldBook(folds, FoldingFeature.State.HALF_OPENED)
 
         assertOnePage(492.dp)
     }
@@ -189,7 +175,7 @@ class PageWithSupportingPaneTest {
                 }
             }
         }
-        fold(FoldingFeature.State.FLAT)
+        rule.unfoldBook(folds)
         rule.onNodeWithText("Aside beside").assertIsDisplayed()
 
         scale = 0.7f
@@ -213,7 +199,7 @@ class PageWithSupportingPaneTest {
     fun aSpreadSplitsAtAnOpenBooksFold() {
         show(atFoldOnly = true)
 
-        fold(FoldingFeature.State.FLAT)
+        rule.unfoldBook(folds)
 
         assertPageOnEachSide(fold = 426.dp)
     }

@@ -17,6 +17,7 @@ import {
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAlphabetIdentityKey } from "../../library/language/alphabet/alphabet-identity";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
+import { runOwedSettlements } from "../../sessions/_test-utils/owed-settlements";
 import { getLanguageUnitsView } from "../../view-models/language/get-language-units-view";
 import { skipAlphabetIntro } from "./skip-alphabet-intro";
 
@@ -120,6 +121,34 @@ describe("alphabet intro", () => {
     await expect(unitsAlphabet(goal.id)).resolves.toMatchObject({ pending: false });
 
     await expect(skipAlphabetIntro(goal.id)).resolves.toStrictEqual({ status: "skipped" });
+  });
+
+  it("completes a started day whose last open lesson was the alphabet", async () => {
+    const [alphabet, { goal, user }] = await Promise.all([hiraganaLesson(), japaneseGoal()]);
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      startedAt: new Date(),
+      status: "active",
+      userId: user.id,
+    });
+
+    await Promise.all([
+      studySessionBlockFixture({
+        completedAt: new Date(),
+        position: 0,
+        sessionId: session.id,
+        status: "completed",
+      }),
+      studySessionBlockFixture({ lessonId: alphabet.id, position: 1, sessionId: session.id }),
+    ]);
+
+    await expect(skipAlphabetIntro(goal.id)).resolves.toStrictEqual({ status: "skipped" });
+    await runOwedSettlements(user.id);
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+    ).resolves.toMatchObject({ endedAt: expect.any(Date), status: "completed" });
   });
 
   it("is done once the learner finished the lesson", async () => {

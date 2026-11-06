@@ -26,9 +26,6 @@
     <string name="mock_label">Mock exam</string>
     <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
     <string name="mock_label_shape">Mock exam · %1$s</string>
-    <string name="mock_not_found_title">We couldn\'t find this page</string>
-    <string name="mock_not_found_description">The link may be old or mistyped.</string>
-    <string name="mock_go_to_today">Go to Today</string>
     <!-- What screen readers call the section's countdown. -->
     <string name="mock_time_left_label">Time left</string>
     <!-- Under the section's countdown, such as "1:24:09". -->

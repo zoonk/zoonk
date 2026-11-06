@@ -62,7 +62,9 @@ struct SessionSummaryView: View {
       }
     }
     .loads(summary)
-    .milestoneCeremony(summary.value?.ceremony)
+    .completionMoments(
+      certificates: summary.value?.certificates ?? [], milestone: summary.value?.ceremony
+    )
     .onDisappear {
       action?.cancel()
     }
@@ -248,8 +250,8 @@ struct SessionSummaryView: View {
     VStack(spacing: 12) {
       if failed == .keepGoing {
         failure(
-          Text(
-            "We couldn't open the next step. Try again.", tableName: "Session",
+          LocalizedStringResource(
+            "We couldn't open the next step. Try again.", table: "Session",
             comment: "Keep going failed"))
       }
 
@@ -260,8 +262,8 @@ struct SessionSummaryView: View {
 
         if failed == .extraTime {
           failure(
-            Text(
-              "That didn't save. Try again.", tableName: "Session",
+            LocalizedStringResource(
+              "That didn't save. Try again.", table: "Session",
               comment: "Adding more time failed"))
         }
       }
@@ -421,10 +423,9 @@ struct SessionSummaryView: View {
     .disabled(isBusy)
   }
 
-  private func failure(_ message: Text) -> some View {
-    message
+  private func failure(_ message: LocalizedStringResource) -> some View {
+    FailureLine(message: message)
       .font(.footnote)
-      .foregroundStyle(.destructive)
   }
 
   private func title(_ summary: SessionSummary) -> Text {

@@ -47,27 +47,15 @@ final class PracticeHooks: Sendable {
   let askButton: (@MainActor @Sendable (PracticeAskTarget) -> AnyView)?
   /// Nil reads every checkpoint as a duel or the week's challenge.
   let checkpointCall: PracticeCheckpointCall?
-  /// Nil shows the result alone.
-  let ceremony:
-    (
-      @MainActor @Sendable (
-        Components.Schemas.Milestone, _ onClose: @escaping @MainActor () -> Void
-      ) -> AnyView
-    )?
 
   init(
     navigate: @escaping @MainActor @Sendable (PracticeDestination) -> Void = { _ in },
     askButton: (@MainActor @Sendable (PracticeAskTarget) -> AnyView)? = nil,
-    checkpointCall: PracticeCheckpointCall? = nil,
-    ceremony: (
-      @MainActor @Sendable (Components.Schemas.Milestone, @escaping @MainActor () -> Void) ->
-        AnyView
-    )? = nil
+    checkpointCall: PracticeCheckpointCall? = nil
   ) {
     self.navigate = navigate
     self.askButton = askButton
     self.checkpointCall = checkpointCall
-    self.ceremony = ceremony
   }
 
   static let none = PracticeHooks()

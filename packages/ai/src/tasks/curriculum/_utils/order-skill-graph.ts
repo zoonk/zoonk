@@ -1,5 +1,66 @@
 type GraphNode = { key: string; phase: number; prerequisites: string[] };
 
+function findFirstSubjectPhase<T extends GraphNode>({
+  dependents,
+  memo,
+  node,
+  supporting,
+}: {
+  dependents: ReadonlyMap<string, readonly T[]>;
+  memo: Map<string, number>;
+  node: T;
+  supporting: ReadonlySet<string>;
+}): number {
+  if (!supporting.has(node.key)) {
+    return node.phase;
+  }
+
+  const known = memo.get(node.key);
+
+  if (known !== undefined) {
+    return known;
+  }
+
+  const phase = Math.min(
+    ...(dependents.get(node.key) ?? []).map((dependent) =>
+      findFirstSubjectPhase({ dependents, memo, node: dependent, supporting }),
+    ),
+  );
+
+  memo.set(node.key, phase);
+  return phase;
+}
+
+export function orderSkillGraph<T extends GraphNode>({
+  nodes,
+  supporting,
+}: {
+  nodes: readonly T[];
+  supporting: ReadonlySet<string>;
+}): T[] {
+  const phased = pushPhasesAfterPrerequisites(removeCycles(nodes));
+  const dependents = new Map<string, T[]>();
+
+  phased.forEach((node) => {
+    node.prerequisites.forEach((key) =>
+      dependents.set(key, [...(dependents.get(key) ?? []), node]),
+    );
+  });
+
+  const memo = new Map<string, number>();
+
+  const deferred = phased
+    .filter((node) => supporting.has(node.key))
+    .map((node) => {
+      const phase = findFirstSubjectPhase({ dependents, memo, node, supporting });
+      return { ...node, phase: phase === Infinity ? node.phase : phase };
+    });
+
+  const subjectFirst = [...phased.filter((node) => !supporting.has(node.key)), ...deferred];
+
+  return sortSkillsTopologically(pushPhasesAfterPrerequisites(subjectFirst));
+}
+
 /** Walks skills in the order the model listed them, so the first path wins. */
 export function removeCycles<T extends GraphNode>(nodes: readonly T[]): T[] {
   const byKey = new Map(nodes.map((node) => [node.key, node]));

@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { type findActiveSubscription } from "../../auth/subscription";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { countLessonProgress } from "../../plans/_utils/work-progress";
 import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar";
@@ -22,7 +23,10 @@ function getStudyDays({ dailyMinutes, settings }: { dailyMinutes: number; settin
   );
 }
 
-async function loadChallengeRequirements(facts: readonly PlanPhaseFacts[]) {
+async function loadChallengeRequirements(
+  facts: readonly PlanPhaseFacts[],
+  readSubscription?: typeof findActiveSubscription,
+) {
   const languageOwners = [
     ...new Set(facts.filter((plan) => plan.goalKind === "language").map((plan) => plan.userId)),
   ];
@@ -30,7 +34,10 @@ async function loadChallengeRequirements(facts: readonly PlanPhaseFacts[]) {
   const required = await Promise.all(
     languageOwners.map(
       async (userId) =>
-        [userId, await arePhaseChallengesRequired({ goalKind: "language", userId })] as const,
+        [
+          userId,
+          await arePhaseChallengesRequired({ goalKind: "language", readSubscription, userId }),
+        ] as const,
     ),
   );
 
@@ -39,9 +46,10 @@ async function loadChallengeRequirements(facts: readonly PlanPhaseFacts[]) {
 
 export async function loadCurrentPhases(
   plans: readonly Pick<PlanRow, "id">[],
+  readSubscription?: typeof findActiveSubscription,
 ): Promise<Map<string, number | null>> {
   const facts = await loadPlanPhaseFacts({ planIds: plans.map((plan) => plan.id) });
-  const required = await loadChallengeRequirements(facts);
+  const required = await loadChallengeRequirements(facts, readSubscription);
 
   return new Map(
     plans.map((plan) => {
@@ -60,7 +68,10 @@ export async function loadCurrentPhases(
   );
 }
 
-async function loadPlanProgress(plans: readonly PlanRow[]) {
+async function loadPlanProgress(
+  plans: readonly PlanRow[],
+  readSubscription?: typeof findActiveSubscription,
+) {
   const planIds = plans.map((plan) => plan.id);
 
   const [lessons, ends, currentPhases] = await Promise.all([
@@ -70,7 +81,7 @@ async function loadPlanProgress(plans: readonly PlanRow[]) {
       by: ["planId"],
       where: { planId: { in: planIds } },
     }),
-    loadCurrentPhases(plans),
+    loadCurrentPhases(plans, readSubscription),
   ]);
 
   return { currentPhases, ends, lessons };
@@ -128,19 +139,22 @@ function toGoalView({
   };
 }
 
+/** GET callers pass `readActiveSubscription`; writes read the subscription fresh. */
 export async function loadGoalViews({
   activeGoalId,
   goals,
+  readSubscription,
 }: {
   activeGoalId: string | null;
   goals: readonly Goal[];
+  readSubscription?: typeof findActiveSubscription;
 }): Promise<GoalView[]> {
   const plans = await prisma.plan.findMany({
     select: { goalId: true, id: true, phases: true, settings: true },
     where: { goalId: { in: goals.map((goal) => goal.id) } },
   });
 
-  const progress = await loadPlanProgress(plans);
+  const progress = await loadPlanProgress(plans, readSubscription);
 
   return goals.map((goal) =>
     toGoalView({

@@ -39,8 +39,13 @@ export const accountDataExportSchema = z
         description: "Language levels, words, pronunciation reviews, calls and mistake patterns",
       }),
     learnerModel: z
-      .object({ milestones: rowsSchema, mistakes: rowsSchema, skills: rowsSchema })
-      .meta({ description: "Skill states, the mistakes notebook and milestones" }),
+      .object({
+        certificates: rowsSchema,
+        milestones: rowsSchema,
+        mistakes: rowsSchema,
+        skills: rowsSchema,
+      })
+      .meta({ description: "Skill states, the mistakes notebook, milestones and certificates" }),
     memory: memoryExportSchema,
     profile: learningProfileSchema,
     progress: z

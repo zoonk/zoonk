@@ -121,6 +121,7 @@ function getPlaces({
 }): LearnerSummaryPlaces {
   if (!goal || !activeGoal) {
     return {
+      certificates: facts.hasCertificates,
       completedLessons: false,
       exam: false,
       mindMaps: false,
@@ -134,6 +135,7 @@ function getPlaces({
     : null;
 
   return {
+    certificates: facts.hasCertificates,
     completedLessons: facts.completedLessonGoalIds.includes(goal.id),
     exam: goal.kind === "exam",
     mindMaps: facts.mindMapGoalIds.includes(goal.id),
@@ -229,13 +231,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
       timeZone,
     }),
     activeGoal
-      ? countReadyMistakes({
-          goal: activeGoal,
-          goalId: activeGoal.id,
-          timeZone,
-          today: localDate,
-          userId,
-        })
+      ? countReadyMistakes({ goalId: activeGoal.id, timeZone, today: localDate, userId })
       : 0,
     findWaitingGoals({ goals, tier, today: toIsoDate(localDate), userId }),
   ]);

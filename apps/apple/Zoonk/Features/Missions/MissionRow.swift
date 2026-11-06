@@ -204,6 +204,8 @@ struct MissionRow: View {
   var block: StudyBlock?
   /// Its place among the missions a result just completed, which stamp in one after another.
   var justDone: Int?
+  var isBusy = false
+  var failed = false
   var open: (() -> Void)?
 
   private var waits: Bool { mission.waitReason != nil }
@@ -241,6 +243,15 @@ struct MissionRow: View {
       Text(mission.name(buddy: buddyName))
         .foregroundStyle((mission.isDone && justDone == nil) || waits ? .secondary : .primary)
 
+      if failed {
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't open this step. Try again.", table: "Today",
+            comment: "Under a step of the day, or a mission, that didn't open")
+        )
+        .font(.footnote)
+      }
+
       if !mission.isDone, !detail.isEmpty {
         Text(verbatim: detail.joinedFacts())
           .font(.footnote)
@@ -264,7 +275,9 @@ struct MissionRow: View {
         .accessibilityHidden(true)
     }
 
-    if opensSomewhere {
+    if isBusy {
+      ProgressView()
+    } else if opensSomewhere {
       DisclosureChevron()
     }
   }

@@ -90,6 +90,35 @@ export const fieldMapViewSchema = z
     areas: z
       .array(mapAreaSchema)
       .meta({ description: "Every chapter of the plan with its skills, in plan order" }),
+    certificates: z
+      .object({
+        earned: z
+          .array(
+            z.object({
+              code: z.string(),
+              courseLevel: z.enum(CourseLevel).nullable(),
+              locked: z
+                .boolean()
+                .meta({ description: "Earned without Plus: show it with the Plus mark" }),
+            }),
+          )
+          .meta({
+            description:
+              "The certificates of this plan's levels and of the plan itself the learner holds, in level order with the plan's last; a level they certified in another goal too",
+          }),
+        unclaimed: z
+          .array(z.object({ courseLevel: z.enum(CourseLevel).nullable() }))
+          .meta({
+            description:
+              "Finished levels, or the finished plan (`courseLevel` null), without a certificate yet: offer them with POST /v1/goals/{goalId}/certificates",
+          }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "A learn or exam goal's certificates: one per level of a Library course it finishes whole, and one for the plan when it finishes with lessons no certified level covers. Null until one is finished or held, and for language and explain goals",
+        id: "PlanCertificates",
+      }),
     counts: skillStateCountsSchema,
     course: planCourseSchema.nullable(),
     courses: z

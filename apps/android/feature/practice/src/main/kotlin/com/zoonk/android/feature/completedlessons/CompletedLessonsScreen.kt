@@ -41,6 +41,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LoadMoreFooter
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
@@ -217,10 +218,5 @@ private fun dayTitle(
         today.minusDays(1) -> stringResource(R.string.completed_lessons_yesterday)
         else -> formatDate(day, currentLocale(), if (day.year == today.year) DateStyle.WeekdayDay else DateStyle.WeekdayDayYear, today)
     }
-
-@Composable
-private fun PageLoading() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-}
 
 private const val LOAD_AHEAD = 4

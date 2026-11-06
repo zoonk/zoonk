@@ -37,10 +37,7 @@ extension PracticeHooks {
         read: { blockId, token in
           try await voice.liveCalls.checkpointCall(blockId: blockId, token: token)
         },
-        screen: { blockId in AnyView(ConversationScreen(checkpointBlockId: blockId)) }),
-      ceremony: { milestone, onClose in
-        AnyView(MilestoneCeremony(milestone: Milestone(milestone), onClose: onClose))
-      })
+        screen: { blockId in AnyView(ConversationScreen(checkpointBlockId: blockId)) }))
   }
 }
 
@@ -79,7 +76,7 @@ extension TutorPlaces {
       case .mission(let opens):
         switch opens {
         case .case1(let block):
-          router.open(blockID: block.blockId)
+          Task { await router.open(blockID: block.blockId) }
         case .case7(let area):
           router.open(.chapter(chapterId: area.areaId))
         case .case2:
@@ -95,6 +92,8 @@ extension TutorPlaces {
         case .case8:
           router.open(.mockChooser)
         }
+      case .missionStep(let destination):
+        router.openStudy(destination)
       }
     }
   }

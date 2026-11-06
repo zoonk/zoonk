@@ -1,3 +1,4 @@
+import { type LearnerId, isTapLearner } from "@/lib/learner/learner-snapshot";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
 import { type NextStopTap } from "@zoonk/learn/session/next-stop";
@@ -35,14 +36,32 @@ export type DayEntry = {
   day: TapDay;
   expired: boolean;
   focusMain: boolean;
-  generation: number;
+  /** Taken after the tap's own navigation, so only a later one counts as leaving. */
+  here: () => Promise<boolean>;
   href: string;
   id: number;
   next: boolean;
   result: TapResult | null;
+  shown: boolean;
   step: TapStep;
   tappedAt: number;
 };
+
+/**
+ * Whether the learner left the screen a tap opens: they're anywhere else, or back where they tapped
+ * once the step showed there. Until it shows, the screen they tapped on is still on its way to it.
+ */
+export function hasLeftEntry({
+  at,
+  entry,
+  origin,
+}: {
+  at: string;
+  entry: Pick<DayEntry, "href" | "shown">;
+  origin: string;
+}): boolean {
+  return at !== entry.href && (entry.shown || at !== origin);
+}
 
 /** While its POST is out it never lets go, so a slow reply still moves the screen on. */
 export function getEntryExpiry({
@@ -59,13 +78,12 @@ function toDayDate(localDate: Date): string {
   return localDate.toISOString().slice(0, 10);
 }
 
-type EntryScope = { generation: number; href: string; userId: string | null };
+type EntryScope = { href: string; learner: LearnerId };
 
-function isCurrent({ entry, generation, href, userId }: EntryScope & { entry: DayEntry }) {
+function isCurrent({ entry, href, learner }: EntryScope & { entry: DayEntry }) {
   return (
     !entry.expired &&
-    entry.generation === generation &&
-    (userId === null || entry.day.shown.userId === userId) &&
+    isTapLearner({ held: learner, tapped: entry.day.shown.userId }) &&
     entry.href === href
   );
 }

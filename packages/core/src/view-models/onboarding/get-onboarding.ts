@@ -16,6 +16,7 @@ import { readCourseStart } from "../../goals/course-start-details";
 import { getDaySplit } from "../../goals/daily-budget";
 import { getQuickTestMinutes } from "../../language/level-test/level-test-contract";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { readPlanReadiness } from "../../plans/_utils/plan-readiness";
 import { DAILY_TIME_CHOICES } from "../../plans/daily-minutes";
@@ -241,7 +242,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
 
   const [earlierGoals, [view]] = await Promise.all([
     prisma.goal.count({ where: { id: { notIn: goalIds }, userId } }),
-    loadGoalViews({ activeGoalId, goals: [goal] }),
+    loadGoalViews({ activeGoalId, goals: [goal], readSubscription: readActiveSubscription }),
   ]);
 
   if (!view) {

@@ -37,8 +37,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.TrackShown
@@ -50,6 +48,7 @@ import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.BuddyStage
 import com.zoonk.android.ui.components.Belt
+import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -108,10 +107,7 @@ fun MilestoneCeremony(
         onClose()
     }
 
-    Dialog(
-        onDismissRequest = ::close,
-        properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
-    ) {
+    FullScreenDialog(onDismissRequest = ::close) {
         Surface(Modifier.fillMaxSize()) {
             val words =
                 @Composable {
@@ -296,5 +292,5 @@ private fun glassesCopy(glasses: BuddyGlasses?): Pair<Int, Int> =
         BuddyGlasses.Round, null -> R.string.ceremony_glasses_new to R.string.ceremony_glasses_new_detail
     }
 
-private val STEADY = 500.milliseconds
+internal val STEADY = 500.milliseconds
 private const val STAGE_ALPHA = 0.2f

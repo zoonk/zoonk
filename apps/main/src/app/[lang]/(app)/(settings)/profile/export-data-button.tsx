@@ -37,6 +37,7 @@ export function ExportDataButton() {
           <Button
             aria-label={isPending ? t("Preparing your data…") : t("Download my data")}
             disabled={isPending}
+            focusableWhenDisabled
             onClick={download}
             size="sm"
             variant="outline"

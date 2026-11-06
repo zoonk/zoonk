@@ -50,8 +50,8 @@ export function MistakePracticeClient({
       buddy={tutor.buddy}
       lessonHref={lessonHref}
       practice={practice}
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={tutor.buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={tutor.buddy} moments={moments} onClose={onClose} />
       )}
       trueFalseLabels={trueFalseLabels}
       tutor={questionTutor}

@@ -32,7 +32,7 @@ describe(sendDayOpen, () => {
   it("sends once more, in a request of its own, after losing a race", async () => {
     vi.mocked(openStudyDayAction).mockResolvedValueOnce(RETRYABLE).mockResolvedValueOnce(OPENED);
 
-    await expect(sendDayOpen({ input: INPUT, stillHere: () => true })).resolves.toBe(OPENED);
+    await expect(sendDayOpen({ input: INPUT, stillHere: async () => true })).resolves.toBe(OPENED);
     expect(openStudyDayAction).toHaveBeenCalledTimes(2);
     expect(openStudyDayAction).toHaveBeenNthCalledWith(2, INPUT);
   });
@@ -40,7 +40,7 @@ describe(sendDayOpen, () => {
   it("never sends a third time: a second loss is the tap's failure", async () => {
     vi.mocked(openStudyDayAction).mockResolvedValue(RETRYABLE);
 
-    const outcome = await sendDayOpen({ input: INPUT, stillHere: () => true });
+    const outcome = await sendDayOpen({ input: INPUT, stillHere: async () => true });
 
     expect(openStudyDayAction).toHaveBeenCalledTimes(2);
     expect(toTapResult(outcome)).toStrictEqual({ kind: "failed" });
@@ -49,7 +49,7 @@ describe(sendDayOpen, () => {
   it("doesn't try again once the learner left the screen the tap was made on", async () => {
     vi.mocked(openStudyDayAction).mockResolvedValue(RETRYABLE);
 
-    await sendDayOpen({ input: INPUT, stillHere: () => false });
+    await sendDayOpen({ input: INPUT, stillHere: async () => false });
     expect(openStudyDayAction).toHaveBeenCalledOnce();
   });
 });

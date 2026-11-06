@@ -3,7 +3,8 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it } from "vitest";
-import { registerAiCallLog } from "./ai-call-log";
+import { registerServerSinks } from "../server-sinks";
+import { logAiCall } from "./ai-call-log";
 import { toAiCallRow, writeAiCalls } from "./write-ai-calls";
 
 const FLUSH_WAIT_MS = 3000;
@@ -213,13 +214,13 @@ describe(writeAiCalls, () => {
   });
 });
 
-describe(registerAiCallLog, () => {
+describe(logAiCall, () => {
   afterEach(() => {
     globalThis.zoonkAiGenerationSinks = undefined;
   });
 
   it("saves calls in the background, together, once they finish", async () => {
-    registerAiCallLog();
+    registerServerSinks();
     const sink = globalThis.zoonkAiGenerationSinks?.get("ai-calls");
     const calls = [generation(), generation(), generation()];
 

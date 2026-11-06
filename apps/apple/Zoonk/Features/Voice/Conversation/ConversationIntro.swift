@@ -317,6 +317,7 @@ private struct HowTheCallWorks: View {
 struct CharacterRow: View {
   let intro: CallIntro
   let isTalking: Bool
+  @ScaledMetric(relativeTo: .subheadline) private var markSize = 32.0
 
   var body: some View {
     let character = intro.character
@@ -324,7 +325,7 @@ struct CharacterRow: View {
     HStack(spacing: 12) {
       Text(character.name.prefix(1).uppercased())
         .font(.subheadline.weight(.medium))
-        .frame(minWidth: 32, minHeight: 32)
+        .frame(width: markSize, height: markSize)
         .background(Color(.secondarySystemFill), in: .circle)
         .overlay {
           Circle().strokeBorder(isTalking ? Color.secondary : .clear, lineWidth: 1.5)

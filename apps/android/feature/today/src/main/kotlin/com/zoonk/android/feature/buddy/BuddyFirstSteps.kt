@@ -21,7 +21,6 @@ import com.zoonk.android.feature.missions.MissionListRow
 import com.zoonk.android.feature.missions.MissionMark
 import com.zoonk.android.feature.missions.missionOpenLabel
 import com.zoonk.android.feature.session.DayMission
-import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.toMissionOpens
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.MarkStatus
@@ -45,7 +44,7 @@ internal fun BuddyFirstStepsSection(
     firstSteps: BuddyFirstSteps?,
     look: BuddyLook,
     name: String,
-    onMission: (MissionOpens) -> Unit,
+    taps: BuddyDayTaps,
 ) {
     firstSteps ?: return
     val done = firstSteps.done.toString()
@@ -71,7 +70,7 @@ internal fun BuddyFirstStepsSection(
         Column {
             firstSteps.steps.forEachIndexed { index, step ->
                 if (index > 0) HorizontalDivider()
-                FirstStepRow(step, look, name, onMission)
+                FirstStepRow(step, look, name, taps)
             }
         }
         if (firstSteps.completedOn != null) {
@@ -89,7 +88,7 @@ private fun FirstStepRow(
     step: BuddyFirstStepsStepsInner,
     look: BuddyLook,
     name: String,
-    onMission: (MissionOpens) -> Unit,
+    taps: BuddyDayTaps,
 ) {
     val done = step.status == Status.DONE
     val later = step.status == Status.LATER
@@ -103,7 +102,9 @@ private fun FirstStepRow(
         muted = done || later,
         mark = { if (later) StatusMark(MarkStatus.Todo) else MissionMark(mission.kind, done, look) },
         openLabel = missionOpenLabel(mission, name),
-        onOpen = opens?.let { { onMission(it) } },
+        onOpen = opens?.let { { taps.open(BuddyTap(it, firstStep = true)) } },
+        busy = taps.isOpening(mission.tap(firstStep = true)),
+        openFailed = taps.hasFailed(mission.tap(firstStep = true)),
     )
 }
 

@@ -7,7 +7,7 @@
     "dev:app": "vite",
     "dev:direct": "vite",
     "start": "node ../../scripts/dev/run-service.mts mailbox",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@zoonk/ui": "workspace:*",
