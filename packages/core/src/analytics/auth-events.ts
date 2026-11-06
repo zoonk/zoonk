@@ -32,3 +32,13 @@ export function trackAuthEvent(event: AuthEvent): void {
     await trackLearnerEvents({ events: [await toAnalyticsEvent(event)], userId: event.userId });
   });
 }
+
+export async function trackSignInCompleted({
+  locale,
+  userId,
+}: {
+  locale: string;
+  userId: string;
+}): Promise<void> {
+  await trackLearnerEvents({ events: [{ name: "Sign In Completed" }], locale, userId });
+}

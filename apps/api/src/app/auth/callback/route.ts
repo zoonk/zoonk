@@ -1,5 +1,5 @@
 import { getBrowserLocale } from "@/i18n/locale";
-import { trackSignInCompleted } from "@/lib/server-track-events";
+import { trackSignInCompleted } from "@zoonk/core/analytics/auth-events";
 import { getRouterPayloadFallback } from "@zoonk/core/navigation/document-route";
 import { getSession } from "@zoonk/core/users/session";
 import { MAIN_URL } from "@zoonk/utils/url";
