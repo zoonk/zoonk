@@ -36,7 +36,7 @@ export type StudyBlockCompletion = {
   blockId: string;
   brainPower: number;
   capsulesOpened: number;
-  /** The one milestone the block earned that gets a full-screen moment right after it. */
+  /** The one milestone the learner hasn't been shown yet, usually one the block earned, for a full-screen moment right after it. */
   ceremony: Milestone | null;
   certificates: OwnedCertificateFacts[];
   checkpoint: CheckpointResultView | null;
@@ -222,7 +222,7 @@ export const studyBlockCompletionSchema = z
       .nullable()
       .meta({
         description:
-          "The one milestone this block earned that gets a full-screen moment right after it (a new belt, the buddy's next stage, new glasses); null otherwise and on a retry",
+          "The one milestone the learner hasn't been shown yet, usually one this block earned (a new belt, the buddy's next stage, new glasses): show it as a full-screen moment right after the block, then mark it shown; null when there's none",
       }),
     certificates: unshownCertificatesSchema,
     checkpoint: checkpointResultSchema
