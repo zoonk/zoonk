@@ -41,4 +41,27 @@ describe(buildSkillGraphSystemPrompt, () => {
     expect(prompt).toContain("When `LESSON_BUDGET` is given");
     expect(prompt).toContain("(with `LESSON_BUDGET`, in a skill of its own)");
   });
+
+  it.each(["none", "basic"] as const)(
+    "adds subject-first rules for a deep beginner at %s",
+    (ownLevel) => {
+      const prompt = buildSkillGraphSystemPrompt({ goalKind: "learn", ownLevel, purpose: "deep" });
+
+      expect(prompt).toContain("Build a progression of subject capabilities");
+      expect(prompt).not.toContain("{{");
+    },
+  );
+
+  it.each([
+    { ownLevel: "advanced", purpose: "deep" },
+    { ownLevel: "none", purpose: "work" },
+    { ownLevel: "none", purpose: "careerChange" },
+    { ownLevel: "none", purpose: "refresh" },
+    { hasMaterial: true, ownLevel: "none", purpose: "deep" },
+  ] as const)("keeps the subject-first rules out of other learning paths: %j", (params) => {
+    const prompt = buildSkillGraphSystemPrompt({ goalKind: "learn", ...params });
+
+    expect(prompt).not.toContain("Build a progression of subject capabilities");
+    expect(prompt).not.toContain("{{");
+  });
 });

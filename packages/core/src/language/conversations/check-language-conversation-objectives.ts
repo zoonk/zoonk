@@ -12,10 +12,6 @@ import {
 import { getMetObjectives } from "./conversation-rules";
 import { findOwnedConversation } from "./get-language-conversation";
 
-const MS_PER_MINUTE = 60_000;
-
-const LATE_CHECK_MS = 180_000;
-
 /** The exchange before a check's new turns, so a short answer reads with its question. */
 const CONTEXT_TURNS = 2;
 
@@ -23,23 +19,32 @@ const CONTEXT_TURNS = 2;
 const CHECKS_PER_CALL_MINUTE = 4;
 
 /**
- * Claims the turns after the ones the call's checks have read, from exactly the count this
+ * Claims the turns after the ones the connection's checks have read, from exactly the count this
  * request read, before the model runs: a transcript sent again or at once asks no model, and a
  * call's checks read its transcript about once, a few times a minute at most.
  */
 async function checkNewTurns({
+  connectionId,
   row,
   ...check
 }: Parameters<typeof runObjectiveCheck>[0] & {
-  row: Pick<LanguageConversation, "checkedTurns" | "id" | "minutes">;
+  connectionId: string;
+  row: Pick<LanguageConversation, "checkedConnectionId" | "checkedTurns" | "id" | "minutes">;
 }): Promise<ObjectiveCheck> {
-  if (check.turns.length <= row.checkedTurns) {
+  const checked = row.checkedConnectionId === connectionId ? row.checkedTurns : 0;
+
+  if (check.turns.length <= checked) {
     return NOTHING_FOUND;
   }
 
   const { count } = await prisma.languageConversation.updateMany({
-    data: { checkedTurns: check.turns.length, objectiveChecks: { increment: 1 } },
+    data: {
+      checkedConnectionId: connectionId,
+      checkedTurns: check.turns.length,
+      objectiveChecks: { increment: 1 },
+    },
     where: {
+      checkedConnectionId: row.checkedConnectionId,
       checkedTurns: row.checkedTurns,
       id: row.id,
       objectiveChecks: { lt: row.minutes * CHECKS_PER_CALL_MINUTE },
@@ -50,7 +55,7 @@ async function checkNewTurns({
     return NOTHING_FOUND;
   }
 
-  const turns = check.turns.slice(Math.max(0, row.checkedTurns - CONTEXT_TURNS));
+  const turns = check.turns.slice(Math.max(0, checked - CONTEXT_TURNS));
   return runObjectiveCheck({ ...check, row, turns });
 }
 
@@ -85,22 +90,29 @@ export async function checkLanguageConversationObjectives({
     return { status: "conversationEnded" };
   }
 
-  if (!scenario || !row.startedAt) {
+  if (!scenario) {
     return { status: "invalid" };
   }
 
-  if (Date.now() > row.startedAt.getTime() + row.minutes * MS_PER_MINUTE + LATE_CHECK_MS) {
-    return { status: "conversationEnded" };
-  }
-
-  await prisma.liveCallConnection.updateMany({
+  const [connection] = await prisma.liveCallConnection.updateManyAndReturn({
     data: { lastActiveAt: new Date() },
-    where: { conversationId: row.id, state: "live", userId },
+    select: { id: true },
+    where: { conversationId: row.id, id: input.connectionId, state: "live", userId },
   });
+
+  if (!connection) {
+    return { status: "invalid" };
+  }
 
   const found = scenario.examTask
     ? NOTHING_FOUND
-    : await checkNewTurns({ row, scenario, turns: input.turns, userId });
+    : await checkNewTurns({
+        connectionId: connection.id,
+        row,
+        scenario,
+        turns: input.turns,
+        userId,
+      });
 
   const newlyMet = found.met;
 

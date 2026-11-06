@@ -1,6 +1,7 @@
 "use server";
 
 import { getAuthError } from "@zoonk/auth/errors";
+import { NAME_TOO_LONG_ERROR_CODE } from "@zoonk/auth/name-rules";
 import { isUsernameSyntaxValid } from "@zoonk/auth/username-rules";
 import { updateCurrentUser } from "@zoonk/core/users/current";
 import { safeAsync } from "@zoonk/utils/error";
@@ -9,11 +10,7 @@ import { logError } from "@zoonk/utils/logger";
 import { redirect } from "next/navigation";
 import { getCallbackHref } from "../../_utils/auth-redirect";
 
-type SetupState = { status: "error" | "idle" | "usernameTaken" };
-
-function isUsernameTaken(error: unknown): boolean {
-  return getAuthError(error)?.code === "USERNAME_IS_ALREADY_TAKEN";
-}
+type SetupState = { status: "error" | "idle" | "nameTooLong" | "usernameTaken" };
 
 export async function setupProfileAction(
   redirectTo: string | null,
@@ -28,8 +25,13 @@ export async function setupProfileAction(
   }
 
   const { data, error } = await safeAsync(() => updateCurrentUser({ input: { name, username } }));
+  const errorCode = getAuthError(error)?.code;
 
-  if (isUsernameTaken(error)) {
+  if (errorCode === NAME_TOO_LONG_ERROR_CODE) {
+    return { status: "nameTooLong" };
+  }
+
+  if (errorCode === "USERNAME_IS_ALREADY_TAKEN") {
     return { status: "usernameTaken" };
   }
 

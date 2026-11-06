@@ -84,7 +84,7 @@ export async function loadLaterCatchUp({
   const items = await loadCatchUpItems(goalId);
   const later = listLater({ blocks, items });
 
-  return { items, lessons: later.length > 0 ? await loadPlanLessons({ items: later }) : [] };
+  return { items, lessons: await loadPlanLessons({ items: later }) };
 }
 
 /** A long break leaves thousands of lessons for later: count and size them without loading them. */
@@ -133,6 +133,7 @@ export async function loadCatchUpView({
   examTomorrow,
   freshStart,
   goalId,
+  readItems,
   selectedItems,
   trialEnded,
 }: {
@@ -142,6 +143,8 @@ export async function loadCatchUpView({
   examTomorrow: boolean;
   freshStart: StudyFreshStart | null;
   goalId: string | null;
+  /** A GET's request-wide catch-up items; without it, they're read fresh. */
+  readItems?: () => Promise<readonly SessionPlanItem[]>;
   selectedItems?: readonly SessionPlanItem[];
   trialEnded: boolean;
 }): Promise<CatchUpView | null> {
@@ -150,7 +153,8 @@ export async function loadCatchUpView({
   }
 
   // A stale preview uses the selected work before persistence records its missed-day notice.
-  const items: readonly SessionPlanItem[] = selectedItems ?? (await loadCatchUpItems(goalId));
+  const items: readonly SessionPlanItem[] =
+    selectedItems ?? (await (readItems ? readItems() : loadCatchUpItems(goalId)));
 
   if (items.length === 0) {
     return null;

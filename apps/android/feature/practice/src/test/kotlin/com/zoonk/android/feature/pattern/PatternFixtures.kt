@@ -87,6 +87,7 @@ internal class FakePatternApi(
         saved++
         return MistakePatternPracticeResult(
             ceremony = null,
+            certificates = emptyList(),
             reached = MistakePatternPracticeResultReached(energy = null, level = null),
             brainPower = 6,
             correct = correct.toLong(),

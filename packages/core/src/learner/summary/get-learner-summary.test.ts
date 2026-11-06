@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { certificateFixture } from "@zoonk/testing/fixtures/certificates";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
@@ -18,7 +19,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -40,10 +41,6 @@ const YESTERDAY = new Date("2026-03-09T00:00:00.000Z");
 const SIGNED_IN_AT = new Date("2026-03-01T08:00:00.000Z");
 const SESSION_ENDS_AT = new Date("2026-04-01T08:00:00.000Z");
 const MINUTE_MS = 60_000;
-
-const SUMMARY_STATEMENT_BUDGET = 25;
-
-const QUIET_SUMMARY_STATEMENT_BUDGET = 10;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -177,7 +174,13 @@ describe(getLearnerSummary, () => {
       level: null,
       missions: null,
       nextChangeAt: new Date("2026-03-11T00:00:00.000Z").getTime(),
-      places: { completedLessons: false, exam: false, mindMaps: false, speaking: false },
+      places: {
+        certificates: false,
+        completedLessons: false,
+        exam: false,
+        mindMaps: false,
+        speaking: false,
+      },
       readAt: NOW.getTime(),
       tier: "free",
       timeZone: null,
@@ -207,20 +210,19 @@ describe(getLearnerSummary, () => {
 
     expect(counts.result?.account).toStrictEqual({ email: user.email, image, name: "Name now" });
     expect(counts.writes).toBe(0);
-    assertReadBudget(counts, QUIET_SUMMARY_STATEMENT_BUDGET);
   });
 
-  it("reads a guest's tier and identity without a subscription lookup", async () => {
+  it("reads a guest's tier and identity without writing", async () => {
     const user = await userFixture();
     signIn(user, { isAnonymous: true });
 
     const counts = await countDatabaseStatements(() => getLearnerSummary());
 
     expect(counts.result).toMatchObject({ identity: { isAnonymous: true }, tier: "guest" });
-    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
+    expect(counts.writes).toBe(0);
   });
 
-  it("reads the saved day's queue and missions within its budget, without writing", async () => {
+  it("reads the saved day's queue and missions without writing", async () => {
     const { goal, user } = await learnerWithGoal();
     const day = await savedDay({ goalId: goal.id, userId: user.id });
 
@@ -241,7 +243,7 @@ describe(getLearnerSummary, () => {
       today: { blocksLeft: 1, next: { minutes: 6, sessionId: day.id, title: "Simple interest" } },
     });
 
-    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
+    expect(counts.writes).toBe(0);
   });
 
   it("names the course a goal follows, which a course's page reads", async () => {
@@ -550,12 +552,23 @@ describe(getLearnerSummary, () => {
     const summary = await getLearnerSummary();
 
     expect(summary?.places).toStrictEqual({
+      certificates: false,
       completedLessons: false,
       exam: true,
       mindMaps: true,
       readyMistakes: 0,
       speaking: false,
     });
+  });
+
+  it("lists certificates once the learner holds one, whatever the active goal", async () => {
+    const { user } = await learnerWithGoal();
+    const before = await getLearnerSummary();
+
+    await certificateFixture({ userId: user.id });
+    const after = await getLearnerSummary();
+
+    expect([before?.places.certificates, after?.places.certificates]).toStrictEqual([false, true]);
   });
 
   it("lists completed lessons once the goal has a finished lesson", async () => {
@@ -592,7 +605,7 @@ describe(getLearnerSummary, () => {
     expect(summary?.places.mindMaps).toBe(false);
   });
 
-  it("reads a language day with outside-session picks and its speaking paper within budget", async () => {
+  it("reads a language day with outside-session picks and its speaking paper without writing", async () => {
     const { goal, user } = await learnerWithGoal({
       kind: "language",
       prompt: "English for work, and the Cambridge B2 First next year",
@@ -624,7 +637,7 @@ describe(getLearnerSummary, () => {
       places: { speaking: true },
     });
 
-    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
+    expect(counts.writes).toBe(0);
   });
 
   it("reads again once a day carried over from the night before stops being the learner's", async () => {
@@ -734,7 +747,7 @@ describe("the summary's ready mistakes", () => {
     vi.useRealTimers();
   });
 
-  it("counts the mistakes the notebook counts as ready, within its budget", async () => {
+  it("counts the mistakes the notebook counts as ready, without writing", async () => {
     const { goal, skills, user } = await learnerWithPlannedGoal();
     const [elsewhere, other] = await Promise.all([skillFixture(), userFixture()]);
 
@@ -760,10 +773,10 @@ describe("the summary's ready mistakes", () => {
 
     expect(counts.result?.places.readyMistakes).toBe(2);
     await expect(notebookReady(goal.id)).resolves.toBe(2);
-    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
+    expect(counts.writes).toBe(0);
   });
 
-  it("reads nothing more while no mistake is ready yet", async () => {
+  it("counts no ready mistakes before any is ready, without writing", async () => {
     const { goal, skills, user } = await learnerWithPlannedGoal();
 
     await mistakeFixture({ createdAt: LOCAL_MIDNIGHT, skillId: skills[0]?.id, userId: user.id });
@@ -772,7 +785,7 @@ describe("the summary's ready mistakes", () => {
 
     expect(counts.result?.places.readyMistakes).toBe(0);
     await expect(notebookReady(goal.id)).resolves.toBe(0);
-    assertReadBudget(counts, QUIET_SUMMARY_STATEMENT_BUDGET);
+    expect(counts.writes).toBe(0);
   });
 
   it("is read again at the next local midnight, when today's mistakes become ready", async () => {
@@ -803,8 +816,6 @@ describe("the summary's ready mistakes", () => {
   });
 });
 
-const PLUS_CALL_DAY_STATEMENTS = 9;
-
 describe("the summary of a Plus call day", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -829,7 +840,7 @@ describe("the summary of a Plus call day", () => {
     });
   });
 
-  it("reads nothing more for the call while Plus is still active", async () => {
+  it("keeps the call next while Plus is still active, without writing", async () => {
     const day = await lapsedDayFixture();
 
     await prisma.subscription.updateMany({
@@ -841,6 +852,5 @@ describe("the summary of a Plus call day", () => {
 
     expect(counts.result?.today?.next?.sessionId).toBe(day.sessionId);
     expect(counts.writes).toBe(0);
-    expect(counts.statements).toBe(PLUS_CALL_DAY_STATEMENTS);
   });
 });

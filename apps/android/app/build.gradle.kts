@@ -127,7 +127,9 @@ dependencies {
     debugImplementation(libs.leakcanary.android)
 
     testImplementation(testFixtures(project(":core:data")))
+    testImplementation(testFixtures(project(":core:designsystem")))
     testImplementation(testFixtures(project(":core:navigation")))
+    testImplementation(testFixtures(project(":core:designsystem")))
     testImplementation(testFixtures(project(":feature:account")))
     testImplementation(testFixtures(project(":feature:activities")))
     testImplementation(testFixtures(project(":feature:conversation")))
@@ -135,7 +137,6 @@ dependencies {
     testImplementation(composeBom)
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.androidx.test.ext.junit)
-    testImplementation(libs.androidx.window.testing)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)

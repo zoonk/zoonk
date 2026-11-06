@@ -2,6 +2,7 @@ package com.zoonk.android.feature.activities.geometry
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
+import com.zoonk.android.feature.activities.ActivityExpression
 import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.android.feature.activities.snapToStep
 import kotlin.math.PI
@@ -9,8 +10,6 @@ import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.roundToLong
-import kotlin.math.sin
-import kotlin.math.tan
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf7Fields.Show as Trig
 
 /** Main's `unit-circle-angle.ts`: angles in degrees, one turn from 0 to 360. */
@@ -71,9 +70,9 @@ internal object UnitCircleAngle {
     ): Double? {
         val radians = degrees * PI / HALF_TURN
         return when (trig) {
-            Trig.SIN -> sin(radians)
-            Trig.COS -> cos(radians)
-            Trig.TAN -> if (abs(cos(radians)) < TANGENT_LIMIT) null else tan(radians)
+            Trig.SIN -> ActivityExpression.sine(radians)
+            Trig.COS -> ActivityExpression.cosine(radians)
+            Trig.TAN -> if (abs(cos(radians)) < TANGENT_LIMIT) null else ActivityExpression.tangent(radians)
         }
     }
 

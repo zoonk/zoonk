@@ -246,7 +246,7 @@ private final class ProgressAccountAPIStub: AccountAPIClient, @unchecked Sendabl
     throw AccountAPIError.invalidResponse
   }
 
-  func updateProfile(token: String, name: String, username: String) async throws
+  func updateProfile(token: String, name: String?, username: String?) async throws
     -> CurrentAccount
   {
     throw AccountAPIError.invalidResponse
@@ -270,7 +270,6 @@ extension CurrentAccount {
       deletion: AccountDeletionRequirements(hasAppleAccount: false),
       subscription: nil),
     user: AccountUser(
-      displayUsername: "learner",
       email: "learner@zoonk.test",
       id: "progress-test-user",
       image: nil,

@@ -13,7 +13,7 @@
     "./fixtures/users": "./src/fixtures/users.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
     "@zoonk/db": "workspace:*",

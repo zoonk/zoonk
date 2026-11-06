@@ -21,7 +21,12 @@ export function getNumberFormatter(
     return cached;
   }
 
-  const formatter = new Intl.NumberFormat(getFormattingLocale(locale), options);
+  /* A number that reads as zero takes no sign, though -0 and -0.0001 at two decimals are negative. */
+  const formatter = new Intl.NumberFormat(getFormattingLocale(locale), {
+    signDisplay: "negative",
+    ...options,
+  });
+
   formatters.set(key, formatter);
   return formatter;
 }
@@ -32,6 +37,7 @@ export function formatLocalizedNumber({
   grouping = true,
   locale,
   maximumFractionDigits = DEFAULT_FRACTION_DIGITS,
+  percent = false,
   signed = false,
   value,
 }: {
@@ -39,6 +45,8 @@ export function formatLocalizedNumber({
   grouping?: boolean;
   locale: string;
   maximumFractionDigits?: number;
+  /** Writes a ratio as a percent: 0.3 reads "30%". */
+  percent?: boolean;
   signed?: boolean;
   value: number;
 }): string {
@@ -47,7 +55,8 @@ export function formatLocalizedNumber({
   const formatted = getNumberFormatter(locale, {
     maximumFractionDigits: digits,
     notation: compact ? "compact" : "standard",
-    signDisplay: signed ? "exceptZero" : "auto",
+    ...(signed && { signDisplay: "exceptZero" }),
+    ...(percent && { style: "percent" }),
     useGrouping: grouping,
   }).format(value);
 

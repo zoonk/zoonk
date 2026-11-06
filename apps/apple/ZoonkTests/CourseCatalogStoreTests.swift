@@ -587,7 +587,6 @@ private func makeCourseCatalogTestAccount() -> CurrentAccount {
       deletion: AccountDeletionRequirements(hasAppleAccount: false),
       subscription: nil),
     user: AccountUser(
-      displayUsername: "learner",
       email: "learner@zoonk.test",
       id: "course-catalog-test-user",
       image: nil,

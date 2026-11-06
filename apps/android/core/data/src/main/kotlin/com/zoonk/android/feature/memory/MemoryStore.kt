@@ -45,11 +45,11 @@ interface MemoryApi {
         id: UUID,
     ): MemoryFactDeletionChange
 
-    /** True when every change was undone; false when one changed since. */
+    /** Throws a 409 when one of [changes] was undone or changed since. */
     suspend fun undo(
         session: AuthenticatedSession,
         changes: List<MemoryChangeReference>,
-    ): Boolean
+    )
 
     suspend fun export(session: AuthenticatedSession): MemoryExport
 }
@@ -78,9 +78,8 @@ class LiveMemoryApi(
     override suspend fun undo(
         session: AuthenticatedSession,
         changes: List<MemoryChangeReference>,
-    ): Boolean {
+    ) {
         perform { api.clients(session).memory.createMemoryChangeReversal(MemoryUndoInput(changes)) }
-        return true
     }
 
     override suspend fun export(session: AuthenticatedSession): MemoryExport =
@@ -115,9 +114,11 @@ class MemoryStore(
         return change
     }
 
-    /** Undoing restores facts the page doesn't have, so it reads memory again. */
-    suspend fun undo(changes: List<MemoryChangeReference>): Boolean =
-        cache.mutate(invalidating = setOf(DataDomain.Memory)) { session -> api.undo(session, changes) } is MutationResult.Done
+    /** Undoing restores facts the page doesn't have, and a refused one means memory changed since, so either reads memory again. */
+    suspend fun undo(changes: List<MemoryChangeReference>): MutationResult<Unit> =
+        cache.mutate(invalidating = setOf(DataDomain.Memory)) { session -> api.undo(session, changes) }.also {
+            if (it is MutationResult.Failed) memory.invalidate()
+        }
 
     suspend fun export(): String? =
         when (val result = cache.mutate { session -> api.export(session) }) {

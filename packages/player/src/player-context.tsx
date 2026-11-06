@@ -3,6 +3,7 @@
 import { type MouseEvent, type ReactNode, type Ref, createContext, useContext } from "react";
 
 type PlayerLinkComponentProps = {
+  "aria-busy"?: boolean;
   "aria-keyshortcuts"?: string;
   children: ReactNode;
   className?: string;

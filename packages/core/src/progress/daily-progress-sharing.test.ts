@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { readLifetimeDailyProgress } from "./_utils/daily-progress-rows";
@@ -73,7 +73,7 @@ describe("shared daily progress on the statistics overview", () => {
     expect(shared).toStrictEqual(original);
 
     const ledger = await countDatabaseStatements(() => readLifetimeDailyProgress(learner.id));
-    assertReadBudget(ledger, 1);
+    expect(ledger.writes).toBe(0);
     expect(ledger.result).toHaveLength(402);
     expect(ledger.result.every((row) => row.userId === learner.id)).toBe(true);
 

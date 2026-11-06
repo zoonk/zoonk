@@ -137,7 +137,7 @@ final class SessionStoreTests: XCTestCase {
 
       let sent = await request.value
       XCTAssertFalse(sent)
-      XCTAssertEqual(session.state, .signedOut)
+      XCTAssertEqual(session.state, .signedOut(sessionEnded: false))
       XCTAssertNil(session.authenticatedSession)
       XCTAssertNil(store.token)
       XCTAssertNil(session.failure)
@@ -186,7 +186,9 @@ final class SessionStoreTests: XCTestCase {
       XCTAssertEqual(result, isDeletion ? (error == nil ? .deleted : .failed) : nil)
       XCTAssertFalse(session.isWorking)
       XCTAssertEqual(session.failure, error == nil ? nil : .network)
-      XCTAssertEqual(session.state, isDeletion && error == nil ? .signedOut : .signedIn(account))
+      XCTAssertEqual(
+        session.state,
+        isDeletion && error == nil ? .signedOut(sessionEnded: false) : .signedIn(account))
       XCTAssertEqual(store.token, isDeletion && error == nil ? nil : "old-session")
     }
   }
@@ -227,7 +229,9 @@ final class SessionStoreTests: XCTestCase {
       XCTAssertEqual(result, isDeletion ? (error == nil ? .deleted : .failed) : nil)
       XCTAssertFalse(session.isWorking)
       XCTAssertEqual(session.failure, isDeletion && error == nil ? nil : .signIn)
-      XCTAssertEqual(session.state, isDeletion && error == nil ? .signedOut : .signedIn(account))
+      XCTAssertEqual(
+        session.state,
+        isDeletion && error == nil ? .signedOut(sessionEnded: false) : .signedIn(account))
       XCTAssertEqual(store.token, isDeletion && error == nil ? nil : "old-session")
     }
   }
@@ -303,7 +307,7 @@ final class SessionStoreTests: XCTestCase {
     await session.restore()
     let result = await session.deleteAccount(reauthorizedEmail: account.user.email, code: "123456")
     XCTAssertEqual(result, .deleted)
-    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertEqual(session.state, .signedOut(sessionEnded: false))
     XCTAssertNil(store.token)
     XCTAssertEqual(store.savedTokens, [])
   }
@@ -366,7 +370,7 @@ final class SessionStoreTests: XCTestCase {
 
     XCTAssertFalse(didSendCode)
     XCTAssertEqual(session.failure, .disposableEmail)
-    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertEqual(session.state, .signedOut(sessionEnded: false))
     XCTAssertFalse(session.isWorking)
 
     api.emailCodeResult = .success(())
@@ -374,7 +378,7 @@ final class SessionStoreTests: XCTestCase {
 
     XCTAssertTrue(didSendReplacementCode)
     XCTAssertNil(session.failure)
-    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertEqual(session.state, .signedOut(sessionEnded: false))
   }
 
   @MainActor
@@ -388,7 +392,7 @@ final class SessionStoreTests: XCTestCase {
     await session.signInWithEmailCode(email: "learner@mailinator.com", code: "123456")
 
     XCTAssertEqual(session.failure, .disposableEmail)
-    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertEqual(session.state, .signedOut(sessionEnded: false))
     XCTAssertTrue(credentialStore.savedTokens.isEmpty)
   }
 
@@ -399,7 +403,7 @@ final class SessionStoreTests: XCTestCase {
 
     await session.restore()
 
-    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertEqual(session.state, .signedOut(sessionEnded: false))
     XCTAssertNil(session.failure)
   }
 
@@ -429,11 +433,23 @@ final class SessionStoreTests: XCTestCase {
 
     await session.restore()
 
-    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertEqual(session.state, .signedOut(sessionEnded: true))
     XCTAssertNil(credentialStore.token)
     XCTAssertEqual(credentialStore.deleteCallCount, 1)
     XCTAssertEqual(googleAuthentication.signOutCallCount, 1)
     XCTAssertNil(session.failure)
+  }
+
+  @MainActor
+  func testAnEndedSessionStillSaysSoWhenTheLearnerComesBackToTheApp() async {
+    let session = makeSession(
+      api: SessionStoreAPIStub(currentAccountResult: .failure(.unauthorized)),
+      credentialStore: SessionCredentialStoreSpy(token: "expired-session"))
+    await session.restore()
+
+    await session.reconcileSynchronizedCredential()
+
+    XCTAssertEqual(session.state, .signedOut(sessionEnded: true))
   }
 
   @MainActor
@@ -694,7 +710,7 @@ final class SessionStoreTests: XCTestCase {
       expectedAccountID: "session-store-test-user")
 
     XCTAssertEqual(result, .authenticationRequired)
-    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertEqual(session.state, .signedOut(sessionEnded: true))
     XCTAssertNil(credentialStore.token)
   }
 
@@ -994,7 +1010,7 @@ final class SessionStoreTests: XCTestCase {
     let didUpdateProfile = await updateTask.value
 
     XCTAssertFalse(didUpdateProfile)
-    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertEqual(session.state, .signedOut(sessionEnded: true))
     XCTAssertNil(session.authenticatedSession)
   }
 
@@ -1081,7 +1097,7 @@ final class SessionStoreTests: XCTestCase {
     validation.resume(returning: makeAccount())
     await restore.value
 
-    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertEqual(session.state, .signedOut(sessionEnded: true))
     XCTAssertNil(credentials.token)
     XCTAssertEqual(today.state, .idle)
   }
@@ -1116,6 +1132,52 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testOnlyARenameReadsAgainWhatSaysTheName() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount()),
+      updateProfileResult: .success(makeAccount(name: "Ana Souza")))
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+    let cache = AppCache(session: session)
+    var reads = 0
+    let certificates: Resource<Int> = cache.resource(audience: .signedIn, domains: [.userSession]) {
+      _ in
+      reads += 1
+      return reads
+    }
+    await certificates.load()
+
+    _ = await session.updateProfile(name: "Ana Souza")
+    await certificates.load()
+    _ = await session.updateProfile(name: "Ana Souza", username: "ana_souza")
+    await certificates.load()
+
+    XCTAssertEqual(api.profileUpdates.map(\.name), ["Ana Souza", nil])
+    XCTAssertEqual(certificates.state, .loaded(2))
+  }
+
+  @MainActor
+  func testProfileSaveSendsTheNameOnlyWhenItChanged() async {
+    let longName = String(repeating: "a", count: ProfileName.maxLength + 50)
+    let savedName = " \(longName) "
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount(name: savedName)),
+      updateProfileResult: .success(makeAccount(name: savedName)))
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let savedUsername = await session.updateProfile(name: longName, username: "new_username")
+    let savedNewName = await session.updateProfile(name: "Ana", username: "new_username")
+
+    XCTAssertTrue(savedUsername)
+    XCTAssertTrue(savedNewName)
+    XCTAssertEqual(api.profileUpdates.map(\.name), [nil, "Ana"])
+    XCTAssertEqual(api.profileUpdates.map(\.username), ["new_username", "new_username"])
+  }
+
+  @MainActor
   private func makeSession(
     api: any AccountAPIClient = SessionStoreAPIStub(),
     credentialStore: SessionCredentialStoreSpy,
@@ -1138,7 +1200,6 @@ final class SessionStoreTests: XCTestCase {
         deletion: AccountDeletionRequirements(hasAppleAccount: false),
         subscription: subscription),
       user: AccountUser(
-        displayUsername: "learner",
         email: "learner@zoonk.test",
         id: userID,
         image: nil,
@@ -1173,8 +1234,9 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     )?
   var emailCodeResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
   var signOutResult: Result<Void, AccountAPIError> = .failure(.invalidResponse)
-  var updateProfileHandler: (@MainActor (String, String, String) async throws -> CurrentAccount)?
+  var updateProfileHandler: (@MainActor (String, String?, String?) async throws -> CurrentAccount)?
   var updateProfileResult: Result<CurrentAccount, AccountAPIError> = .failure(.invalidResponse)
+  private(set) var profileUpdates = [(name: String?, username: String?)]()
 
   init(
     appleSubscriptionResult: Result<AppleSubscriptionSynchronization, AccountAPIError> = .failure(
@@ -1247,7 +1309,11 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     try signOutResult.get()
   }
 
-  func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
+  func updateProfile(token: String, name: String?, username: String?) async throws
+    -> CurrentAccount
+  {
+    profileUpdates.append((name, username))
+
     if let updateProfileHandler {
       return try await updateProfileHandler(token, name, username)
     }
@@ -1342,7 +1408,9 @@ extension AccountAPIClient {
     throw AccountAPIError.invalidResponse
   }
 
-  func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
+  func updateProfile(token: String, name: String?, username: String?) async throws
+    -> CurrentAccount
+  {
     throw AccountAPIError.invalidResponse
   }
 

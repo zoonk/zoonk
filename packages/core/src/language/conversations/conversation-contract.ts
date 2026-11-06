@@ -217,6 +217,12 @@ export type CompletedLanguageConversation = z.infer<typeof completedLanguageConv
 export const languageConversationSetupSchema = z
   .object({
     connectionId: z.uuid(),
+    continuesCall: z
+      .boolean()
+      .meta({
+        description:
+          "This connection continues the call's talk window after a drop: keep the call so far on screen and send its turns with the SDP offer. False when it opens a new call: start from nothing",
+      }),
     deadlineAt: z.iso.datetime().meta({ description: "When the server hangs the call up" }),
     script: liveCallScriptSchema,
     seconds: z
@@ -262,9 +268,24 @@ export const liveCallSdpInputSchema = z
       .refine(isWebRtcAudioOffer, { message: "Expected a WebRTC offer with an audio section" })
       .meta({ description: "The browser's WebRTC SDP offer, with an audio section" }),
     sessionConfig: z
-      .unknown()
+      .object({
+        providerOptions: z
+          .object({
+            zoonk: z
+              .object({
+                turns: conversationTurnsSchema
+                  .optional()
+                  .meta({
+                    description:
+                      "The call so far, when the connection continues it (`continuesCall`): the character carries on from it. Ignored otherwise",
+                  }),
+              })
+              .optional(),
+          })
+          .optional(),
+      })
       .optional()
-      .meta({ description: "Ignored: configuration is owned by the server" }),
+      .meta({ description: "Everything else in it is ignored: the server owns the configuration" }),
   })
   .strict()
   .meta({ id: "LiveCallSdpInput" });
@@ -274,7 +295,10 @@ export const liveCallSdpResponseSchema = z
   .meta({ id: "LiveCallSdpResponse" });
 
 export const languageConversationObjectiveCheckInputSchema = z
-  .object({ turns: conversationTurnsSchema })
+  .object({
+    connectionId: z.uuid().meta({ description: "The live connection the learner is talking on" }),
+    turns: conversationTurnsSchema,
+  })
   .strict()
   .meta({ id: "LanguageConversationObjectiveCheckInput" });
 

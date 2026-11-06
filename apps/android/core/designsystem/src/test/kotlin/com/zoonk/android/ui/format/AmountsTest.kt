@@ -41,6 +41,16 @@ class AmountsTest {
         )
     }
 
+    @Test
+    fun aNumberThatReadsAsZeroTakesNoSign() {
+        assertEquals("0", formatAmount(-0.0001, en, maximumFractionDigits = 2))
+        assertEquals("0", formatAmount(-0.0001, en, compact = true, maximumFractionDigits = 2))
+        assertEquals("$0", money(-0.001, en, "$"))
+        assertEquals("$0", money(-0.001, en, "$", compact = true))
+        assertEquals("−0.5", formatAmount(-0.5, en))
+        assertEquals("−∞", formatAmount(Double.NEGATIVE_INFINITY, en))
+    }
+
     private fun String.plain() = replace(Regex("[\u00A0\u202F]"), " ")
 
     private fun money(

@@ -1,6 +1,7 @@
 "use client";
 
 import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
+import { safeAsync } from "@zoonk/utils/error";
 import { LibraryIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -26,8 +27,11 @@ import {
 } from "../_components/suggestion";
 import { useLevelName } from "../course/use-level-name";
 import { SlotContent } from "../plan/plan-suggestion-context";
+import { CertificateAction, type PlanCertificates } from "./course-certificate";
 
 type CourseLink = StudyNextView["related"][number];
+
+export type StudyNext = { onContinue: () => Promise<boolean>; view: StudyNextView };
 
 function ContinueAtNextLevel({
   next,
@@ -43,7 +47,8 @@ function ContinueAtNextLevel({
 
   const start = () => {
     startTransition(async () => {
-      setFailed(!(await onContinue()));
+      const { data: started } = await safeAsync(onContinue);
+      setFailed(!started);
     });
   };
 
@@ -91,11 +96,13 @@ function RelatedCourses({
 }
 
 export function StudyNextSuggestion({
+  certificates,
   courseHref,
   next: { onContinue, view: next },
 }: {
+  certificates: PlanCertificates | null;
   courseHref: (course: CourseLink) => string;
-  next: { onContinue: () => Promise<boolean>; view: StudyNextView };
+  next: StudyNext;
 }) {
   const t = useExtracted();
   const hasNext = next.nextLevel !== null || next.related.length > 0;
@@ -114,9 +121,14 @@ export function StudyNextSuggestion({
           <SuggestionDescription>{t("Here's what to study next.")}</SuggestionDescription>
         )}
 
-        {next.nextLevel && (
+        {(next.nextLevel || certificates) && (
           <SuggestionActions>
-            <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />
+            {certificates && (
+              <CertificateAction certificates={certificates} primary={!next.nextLevel} />
+            )}
+            {next.nextLevel && (
+              <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />
+            )}
           </SuggestionActions>
         )}
 

@@ -76,7 +76,7 @@ export function ConversationClient({
 
   const actions = useMemo<ConversationActions>(
     () => ({
-      checkObjectives: (turns) => checkObjectivesAction(id, { turns }),
+      checkObjectives: (input) => checkObjectivesAction(id, input),
       complete: (input) =>
         completeConversationAction(id, { ...input, timeZone: getLocalTimeZone() }),
       connect: (input) => connectConversationAction({ conversationId: id, input, locale }),
@@ -102,8 +102,8 @@ export function ConversationClient({
       conversation={conversation}
       hrefs={getHrefs({ conversation, fromExam, fromMock })}
       onSaved={fromMock ? () => router.replace(`/mock/${fromMock}`) : undefined}
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}
     />
   );

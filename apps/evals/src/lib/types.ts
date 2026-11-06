@@ -1,5 +1,6 @@
 import { type Reasoning } from "@zoonk/ai/provider-options";
 import z from "zod";
+import { type RequiredLanguage } from "./case-languages";
 
 const MIN_SCORE = 6;
 
@@ -146,6 +147,7 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   scoreCategories?: ScoreCategory[];
   latencyBudget?: LatencyBudget;
   output?: "image" | "realtime" | "speech" | "transcription";
+  skippedLanguages?: Partial<Record<RequiredLanguage, string>>;
 };
 
 /** Only invoke generate or score with the test case paired with this type-erased task. */

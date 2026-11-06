@@ -11,6 +11,14 @@ describe(cn, () => {
     expect(cn("text-title", "text-sm")).toBe("text-sm");
   });
 
+  it("lets a type role replace a component's default weight, leading and tracking", () => {
+    expect(cn("text-base leading-none font-medium tracking-tight", "text-headline")).toBe(
+      "text-headline",
+    );
+
+    expect(cn("text-headline", "font-medium")).toBe("text-headline font-medium");
+  });
+
   it("treats the type roles as sizes and keeps a readout's face beside a size and a color", () => {
     expect(cn("text-section", "text-sm")).toBe("text-sm");
     expect(cn("text-lead", "text-foreground")).toBe("text-lead text-foreground");

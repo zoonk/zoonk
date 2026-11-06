@@ -73,8 +73,8 @@ import com.zoonk.android.feature.livecall.LiveCallPhase
 import com.zoonk.android.feature.livecall.LiveCallState
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
-import com.zoonk.android.ui.components.formatClock
 import com.zoonk.android.ui.format.WORDS_MARK
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -112,7 +112,6 @@ internal class EndedCall(
 internal fun ConversationLive(
     conversation: LanguageConversation,
     call: LiveCallState,
-    usedHelp: Boolean,
     actions: LiveCallActions,
     ended: EndedCall? = null,
 ) {
@@ -171,7 +170,7 @@ internal fun ConversationLive(
         onClose = ended?.onClose ?: actions.onEnd,
         listState = listState,
         exitConfirmation = endFirst,
-        header = { CallClock(call) },
+        header = { CallClock(call, conversation.talkSeconds) },
         floating = {
             if (!following) {
                 ScrollToLatest {
@@ -191,7 +190,7 @@ internal fun ConversationLive(
             } else {
                 SpeakingCardView(examTask.card, conversation.targetLanguage, compact = true)
             }
-            if (usedHelp) Phrases(conversation)
+            if (call.usedHelp) Phrases(conversation)
         },
     ) { beside ->
         item(key = "character") {
@@ -225,9 +224,12 @@ internal fun ConversationLive(
 
 /** Main's header detail and task bar: the time talked, and a bar filling toward the call's length; neither shows before it connects. */
 @Composable
-private fun CallClock(call: LiveCallState) {
+private fun CallClock(
+    call: LiveCallState,
+    talkSeconds: Long,
+) {
     val started = call.phase != LiveCallPhase.Connecting && call.phase != LiveCallPhase.Idle
-    val share = if (call.talkSeconds > 0) call.elapsedSeconds.toFloat() / call.talkSeconds else 0f
+    val share = if (talkSeconds > 0) call.elapsedSeconds.toFloat() / talkSeconds else 0f
     Column(
         Modifier.callItem().padding(top = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -474,7 +476,7 @@ private fun TurnMark(
             Box(contentAlignment = Alignment.Center) {
                 MarkDisc(R.drawable.ic_call, MaterialTheme.colorScheme.surfaceContainerHigh)
                 if (ValueAnimator.areAnimatorsEnabled()) {
-                    CircularProgressIndicator(Modifier.size(MARK_SIZE), strokeWidth = 2.dp)
+                    CircularProgressIndicator(Modifier.size(markSide()), strokeWidth = 2.dp)
                 }
             }
         }
@@ -512,9 +514,10 @@ private fun MarkDisc(
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     ring: BorderStroke? = null,
 ) {
-    Surface(shape = CircleShape, color = color, contentColor = contentColor, border = ring, modifier = Modifier.size(MARK_SIZE)) {
+    val side = markSide()
+    Surface(shape = CircleShape, color = color, contentColor = contentColor, border = ring, modifier = Modifier.size(side)) {
         Box(contentAlignment = Alignment.Center) {
-            Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(20.dp))
+            Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(side / 2))
         }
     }
 }
@@ -685,7 +688,6 @@ private suspend fun LazyListState.scrollToEnd(animate: Boolean) {
 
 private const val BUBBLE_SHARE = 0.8f
 private val CONTROL_SIZE = 56.dp
-private val MARK_SIZE = 40.dp
 private const val HEARD_RING_ALPHA = 0.4f
 private const val TRANSCRIPT_TAIL = 3
 

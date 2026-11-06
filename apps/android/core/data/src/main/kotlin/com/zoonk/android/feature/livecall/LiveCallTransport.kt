@@ -6,7 +6,8 @@ interface LiveCallTransport {
 
     suspend fun accept(answer: String)
 
-    fun send(command: LiveClientCommand)
+    /** Whether the channel took it: one closing with a lost connection refuses it. */
+    fun send(command: LiveClientCommand): Boolean
 
     /** Stops the learner's audio going out and the character's playing, for good. */
     fun silence()

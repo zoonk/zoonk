@@ -8,7 +8,7 @@ import { getAllowanceCacheTag } from "../../cache/tags";
 import { claimLiveCallUsageForViewer } from "../../entitlements/_utils/claim-usage-for-viewer";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { type StartStudyBlockResult, startStudyBlock } from "../../sessions/start-study-block";
-import { buildLiveCall } from "./_utils/conversation-view";
+import { getLiveCallBuilder } from "./_utils/conversation-view";
 import { endPreviousLiveCall } from "./_utils/end-previous-live-call";
 import { getTalkEndsAt } from "./_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
@@ -83,9 +83,9 @@ export async function connectLanguageConversation({
     return { status: "notFound" };
   }
 
-  const call = buildLiveCall({ row: owned.row });
+  const buildCall = getLiveCallBuilder({ row: owned.row });
 
-  if (!call || owned.row.reviewRunId !== null) {
+  if (!buildCall || owned.row.reviewRunId !== null) {
     return { status: "conversationEnded" };
   }
 
@@ -137,8 +137,9 @@ export async function connectLanguageConversation({
     setup: {
       ...getCallTimes(connection),
       connectionId: connection.id,
+      continuesCall: connection.continuesCall,
       deadlineAt: connection.deadlineAt.toISOString(),
-      script: call.script,
+      script: buildCall(connection.continuesCall).script,
       sessionUrl: `/v1/language-conversations/${conversationId}/connections/${connection.id}/sdp`,
       voice: getLiveConversationVoice(owned.row.targetLanguage),
     },

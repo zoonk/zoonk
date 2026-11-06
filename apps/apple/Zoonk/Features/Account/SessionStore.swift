@@ -17,11 +17,19 @@ final class SessionStore {
       if oldValue.account?.account.subscription != account?.account.subscription {
         subscriptionChanged?()
       }
+
+      if let user = account?.user, oldValue.account?.user.id == user.id,
+        oldValue.account?.user.name != user.name
+      {
+        nameChanged?()
+      }
     }
   }
   /// A purchase, a restore, a web cancellation, StoreKit's updates and the account refresh all
   /// change it here, with or without a window open.
   @ObservationIgnored var subscriptionChanged: (@MainActor () -> Void)?
+  /// The same learner's name changed, here or on another device.
+  @ObservationIgnored var nameChanged: (@MainActor () -> Void)?
 
   private let api: any AccountAPIClient
   private let credentialStore: any SessionCredentialStoring
@@ -104,7 +112,7 @@ final class SessionStore {
 
     markInteractiveOperationStarted()
     failure = nil
-    _ = clearLocalSession()
+    _ = clearLocalSession(sessionEnded: true)
   }
 
   var isGoogleSignInAvailable: Bool {
@@ -126,7 +134,7 @@ final class SessionStore {
     if let account {
       store.state = .signedIn(account)
     } else {
-      store.state = .signedOut
+      store.state = .signedOut(sessionEnded: false)
     }
 
     return store
@@ -318,10 +326,16 @@ final class SessionStore {
     try? await api.isUsernameAvailable(username)
   }
 
-  func updateProfile(name: String, username: String) async -> Bool {
+  /// A nil `username` keeps the current one. Sends the name only when it changed, so a name saved
+  /// before the length limit doesn't block a username change.
+  func updateProfile(name: String, username: String? = nil) async -> Bool {
     guard let authenticatedSession else {
-      state = .signedOut
       return false
+    }
+
+    let changedName = ProfileName.isChange(name, saved: account?.user.name ?? "") ? name : nil
+    guard changedName != nil || username != nil else {
+      return true
     }
 
     markInteractiveOperationStarted()
@@ -334,7 +348,7 @@ final class SessionStore {
     do {
       let updatedAccount = try await api.updateProfile(
         token: authenticatedSession.bearerToken,
-        name: name,
+        name: changedName,
         username: username)
 
       guard
@@ -373,7 +387,6 @@ final class SessionStore {
     }
 
     guard let account, let token else {
-      state = .signedOut
       return .authenticationRequired
     }
 
@@ -410,7 +423,7 @@ final class SessionStore {
         return .authenticationRequired
       }
 
-      _ = clearLocalSession()
+      _ = clearLocalSession(sessionEnded: true)
       return .authenticationRequired
     } catch {
       return .failed
@@ -421,7 +434,7 @@ final class SessionStore {
   /// no other device keeps an unrevoked credential.
   func signOut() async {
     guard let token else {
-      _ = clearLocalSession()
+      _ = clearLocalSession(sessionEnded: false)
       return
     }
 
@@ -433,14 +446,14 @@ final class SessionStore {
     do {
       try await api.signOut(token: token)
     } catch AccountAPIError.unauthorized {
-      _ = clearLocalSession()
+      _ = clearLocalSession(sessionEnded: false)
       return
     } catch {
       failure = getFailure(error)
       return
     }
 
-    _ = clearLocalSession()
+    _ = clearLocalSession(sessionEnded: false)
   }
 
   func deleteAccount() async -> AccountDeletionResult {
@@ -470,7 +483,7 @@ final class SessionStore {
       guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
         return .failed
       }
-      return clearLocalSession() ? .signedOut : .failed
+      return clearLocalSession(sessionEnded: false) ? .signedOut : .failed
     } catch {
       guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
         return .failed
@@ -526,7 +539,7 @@ final class SessionStore {
       guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
         return .failed
       }
-      return clearLocalSession() ? .signedOut : .failed
+      return clearLocalSession(sessionEnded: false) ? .signedOut : .failed
     } catch {
       guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
         return .failed
@@ -588,7 +601,7 @@ final class SessionStore {
       guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
         return .failed
       }
-      return clearLocalSession() ? .signedOut : .failed
+      return clearLocalSession(sessionEnded: false) ? .signedOut : .failed
     } catch {
       guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
         return .failed
@@ -629,7 +642,7 @@ final class SessionStore {
 
   /// False while the Keychain still holds the token, so a failed delete never restores a stale
   /// session later.
-  private func clearLocalSession() -> Bool {
+  private func clearLocalSession(sessionEnded: Bool) -> Bool {
     googleAuthentication.signOut()
 
     do {
@@ -642,14 +655,14 @@ final class SessionStore {
 
     markInteractiveOperationStarted()
     token = nil
-    state = .signedOut
+    state = .signedOut(sessionEnded: sessionEnded)
     return true
   }
 
   private func completeAccountDeletion(_ response: AccountDeletionResponse)
     -> AccountDeletionResult
   {
-    guard clearLocalSession() else {
+    guard clearLocalSession(sessionEnded: false) else {
       return .failed
     }
 
@@ -684,7 +697,7 @@ final class SessionStore {
       guard isCurrentAccountOperation(session, revision: revision),
         accountRefreshRevision == reconciliationRevision
       else { return .unavailable }
-      return clearLocalSession() ? .signedOut : .unavailable
+      return clearLocalSession(sessionEnded: false) ? .signedOut : .unavailable
     } catch {
       return .unavailable
     }
@@ -697,7 +710,8 @@ final class SessionStore {
         googleAuthentication.signOut()
         token = nil
         failure = nil
-        state = .signedOut
+        // Coming back to the app checks the Keychain again, which an ended session already emptied.
+        state = .signedOut(sessionEnded: state == .signedOut(sessionEnded: true))
         return true
       }
 
@@ -755,7 +769,7 @@ final class SessionStore {
       failure = nil
       state = .signedIn(account)
     case .unauthorized:
-      if clearLocalSession() {
+      if clearLocalSession(sessionEnded: true) {
         failure = nil
       }
     case .unavailable:

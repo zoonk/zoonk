@@ -9,6 +9,7 @@ struct ProfileEditorView: View {
   @State private var username: String
   @State private var isChangingUsername = false
   @State private var usernameCheck: UsernameCheck?
+  @State private var isSaved = false
 
   let account: CurrentAccount
   let isRequiredSetup: Bool
@@ -20,7 +21,7 @@ struct ProfileEditorView: View {
     self.isRequiredSetup = isRequiredSetup
     self.deleteAccount = deleteAccount
     _name = State(initialValue: account.user.name)
-    _username = State(initialValue: account.user.displayUsername ?? account.user.username ?? "")
+    _username = State(initialValue: account.user.username ?? "")
   }
 
   var body: some View {
@@ -47,10 +48,16 @@ struct ProfileEditorView: View {
       } header: {
         Text("Name", tableName: "Account", comment: "Profile name field label")
       } footer: {
-        if !isRequiredSetup {
+        if isNameTooLong {
           Text(
-            "How Zoonk and your buddy call you", tableName: "Account",
-            comment: "What the profile name is for")
+            "Use 150 characters or fewer.", tableName: "Account",
+            comment: "Shown under the profile name field when the typed name is too long"
+          )
+          .foregroundStyle(.destructive)
+        } else if !isRequiredSetup {
+          Text(
+            "How Zoonk and your buddy call you, and the name on your certificates.",
+            tableName: "Account", comment: "What the profile name is for")
         }
       }
 
@@ -122,6 +129,18 @@ struct ProfileEditorView: View {
       if session.failure != nil {
         Section {
           AccountFailureMessage(failure: session.failure)
+        }
+      } else if isSaved {
+        Section {
+          Label {
+            Text(
+              "Saved.", tableName: "Account",
+              comment: "The profile saved and its editor stays open beside the settings")
+          } icon: {
+            Image(systemName: "checkmark.circle")
+          }
+          .font(.footnote)
+          .foregroundStyle(.success)
         }
       }
 
@@ -195,6 +214,8 @@ struct ProfileEditorView: View {
         isChangingUsername = true
       }
     }
+    .onChange(of: name) { isSaved = false }
+    .onChange(of: username) { isSaved = false }
     .toolbar {
       if !isRequiredSetup {
         ToolbarItem(placement: .confirmationAction) {
@@ -287,11 +308,19 @@ struct ProfileEditorView: View {
   }
 
   private func save() {
+    isSaved = false
+
     Task {
       let didUpdate = await session.updateProfile(
         name: normalizedName, username: normalizedUsername)
 
-      if didUpdate && !isRequiredSetup && !isBesideTheList {
+      guard didUpdate, !isRequiredSetup else {
+        return
+      }
+
+      if isBesideTheList {
+        isSaved = true
+      } else {
         dismiss()
       }
     }
@@ -311,8 +340,12 @@ struct ProfileEditorView: View {
       set: { username = $0.lowercased() })
   }
 
+  private var isNameTooLong: Bool {
+    ProfileName.isChangeTooLong(normalizedName, saved: account.user.name)
+  }
+
   private var isValid: Bool {
-    !normalizedName.isEmpty && UsernameStatus.isWellFormed(normalizedUsername)
+    !normalizedName.isEmpty && !isNameTooLong && UsernameStatus.isWellFormed(normalizedUsername)
       && usernameStatus.canSave
   }
 }
@@ -325,7 +358,6 @@ struct ProfileEditorView: View {
           deletion: AccountDeletionRequirements(hasAppleAccount: false),
           subscription: nil),
         user: AccountUser(
-          displayUsername: "zoonk_user",
           email: "hello@zoonk.com",
           id: UUID().uuidString,
           image: nil,

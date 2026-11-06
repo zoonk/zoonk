@@ -23,7 +23,6 @@ commonmark = "0.31.0"
 
 # Navigation, routes and the adaptive shell.
 androidxBrowser = "1.10.0"
-# window-testing publishes a fold to tests; the app gets androidx.window through the adaptive libraries.
 androidxWindow = "1.5.1"
 composeAdaptive = "1.3.0"
 kotlinxCoroutines = "1.11.0"
@@ -51,6 +50,9 @@ aboutLibraries = "15.3.0"
 
 # Speech clips and recorded answers.
 media3 = "1.11.1"
+
+# Printing certificates.
+androidxPrint = "1.1.0"
 
 # Live calls.
 webrtc = "150.7871.04"
@@ -103,6 +105,7 @@ androidx-compose-material3-adaptive = { module = "androidx.compose.material3.ada
 androidx-compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "composeAdaptive" }
 androidx-compose-material3-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "composeAdaptive" }
 androidx-compose-material3-adaptive-navigation3 = { module = "androidx.compose.material3.adaptive:adaptive-navigation3", version.ref = "composeAdaptive" }
+androidx-window = { module = "androidx.window:window", version.ref = "androidxWindow" }
 androidx-window-testing = { module = "androidx.window:window-testing", version.ref = "androidxWindow" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "androidxLifecycle" }
@@ -137,6 +140,9 @@ googleid = { module = "com.google.android.libraries.identity.googleid:googleid",
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutines" }
 play-integrity = { module = "com.google.android.play:integrity", version.ref = "playIntegrity" }
 aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
+
+# Printing certificates.
+androidx-print = { module = "androidx.print:print", version.ref = "androidxPrint" }
 
 # Speech clips and recorded answers.
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }

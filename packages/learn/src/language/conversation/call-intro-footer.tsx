@@ -6,10 +6,12 @@ import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { StatusRegion } from "../../_components/status-region";
 import { StudyTimeUsedUpActions, StudyTimeUsedUpNote } from "../../_components/study-time-used-up";
 import { TaskActions } from "../../_components/task-layout";
 import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challenge-plus-lock";
 import { TaskMainButton } from "../../shell/task-frame";
+import { CallReason } from "./conversation-parts";
 import { loadLiveCallSession } from "./load-live-call-session";
 import {
   type CallAudio,
@@ -128,14 +130,7 @@ export function CallIntroFooter({
 
   return (
     <>
-      <div
-        aria-atomic="true"
-        aria-live="polite"
-        className="outline-none empty:absolute"
-        ref={status}
-        role="status"
-        tabIndex={-1}
-      >
+      <StatusRegion className="outline-none" ref={status} tabIndex={-1}>
         {start === "dailyLimitReached" && (
           <StudyTimeUsedUpNote>
             {t({
@@ -153,7 +148,7 @@ export function CallIntroFooter({
             {t("Allow the microphone to talk with {name}.", { name })}
           </p>
         )}
-      </div>
+      </StatusRegion>
 
       {microphone.problem && start !== "dailyLimitReached" && start !== "plusRequired" ? (
         <TaskActions>
@@ -180,15 +175,15 @@ export function CallIntroFooter({
   );
 }
 
-function MicrophoneOff({ name, problem }: { name: string; problem: MicrophoneProblem }) {
+export function MicrophoneOff({ name, problem }: { name: string; problem: MicrophoneProblem }) {
   const t = useExtracted();
   const unavailable = problem === "unavailable";
 
   return (
-    <div className="flex flex-col gap-1 pb-1">
-      <p className="font-medium">
-        {unavailable ? t("We can't use your microphone") : t("Your microphone is off")}
-      </p>
+    <CallReason
+      className="pb-1"
+      title={unavailable ? t("We can't use your microphone") : t("Your microphone is off")}
+    >
       <p className="text-muted-foreground text-sm text-pretty">
         {unavailable
           ? t(
@@ -199,7 +194,7 @@ function MicrophoneOff({ name, problem }: { name: string; problem: MicrophonePro
               { name },
             )}
       </p>
-    </div>
+    </CallReason>
   );
 }
 

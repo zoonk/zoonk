@@ -7,6 +7,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.account.accountEntries
 import com.zoonk.android.feature.buddy.buddyEntries
 import com.zoonk.android.feature.catalog.catalogEntries
+import com.zoonk.android.feature.certificates.certificatesEntries
 import com.zoonk.android.feature.challenge.challengeEntries
 import com.zoonk.android.feature.checkpoint.checkpointEntries
 import com.zoonk.android.feature.completedlessons.completedLessonsEntries
@@ -43,9 +44,8 @@ import com.zoonk.android.feature.testout.testOutEntries
 import com.zoonk.android.feature.today.todayEntries
 
 /**
- * Every route's screen, one call per feature's `<Name>Navigation.kt`, where each lane registers
- * its own routes (with their scene metadata, such as list-detail panes) in place of the
- * placeholders. Nothing else changes here.
+ * Every route's screen, one call per feature's `<Name>Navigation.kt`, where each feature registers
+ * its own routes (with their scene metadata, such as list-detail panes). Nothing else changes here.
  */
 fun appEntries(
     app: AppContainer,
@@ -70,6 +70,7 @@ fun appEntries(
         practiceBlockEntries(app, navigator)
         mistakesEntries(app, navigator)
         completedLessonsEntries(app, navigator)
+        certificatesEntries(app, navigator)
         checkpointEntries(app, navigator)
         challengeEntries(app, navigator)
         testOutEntries(app, navigator)

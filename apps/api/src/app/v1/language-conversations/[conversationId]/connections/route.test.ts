@@ -248,6 +248,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
 
     const response = await checkObjectives(
       request(`/v1/language-conversations/${conversationId}/objective-checks`, {
+        connectionId: setup.connectionId,
         turns: [
           { speaker: "learner", text: "Is it free?" },
           { speaker: "character", text: "Yes, it is." },
@@ -258,13 +259,17 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
 
     expect(response.status).toBe(200);
 
-    expect(languageConversationObjectiveCheckSchema.parse(await response.json())).toStrictEqual({
+    const check = languageConversationObjectiveCheckSchema.parse(await response.json());
+
+    expect(check).toStrictEqual({
       goodbye: false,
       objectivesMet: [first?.label],
       progress: {
         channel: "thinking",
-        text: expect.stringContaining(`Still to do: "${second?.label}"`),
+        text: expect.stringContaining(`achieved "${first?.label}"`),
       },
     });
+
+    expect(check.progress?.text).not.toContain(String(second?.label));
   });
 });

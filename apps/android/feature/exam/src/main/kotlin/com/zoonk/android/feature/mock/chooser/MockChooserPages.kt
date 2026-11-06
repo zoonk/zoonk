@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.mock.chooser
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -7,14 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -24,10 +22,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -38,8 +33,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -63,6 +59,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.mock.MockSummaryRow
+import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -75,6 +72,7 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.detailPagePadding
@@ -95,6 +93,8 @@ internal fun PracticeChooser(
     viewModel: MockChooserViewModel,
     navigator: AppNavigator,
     listState: LazyListState,
+    replacementFocus: FocusRequester? = null,
+    onStart: () -> Unit = {},
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
     val busy by viewModel.busy.collectAsStateWithLifecycle()
@@ -109,12 +109,22 @@ internal fun PracticeChooser(
         option?.let { MockNotes(view.examDocument, view.sizeSource, it.questions, it.minutes, it.leftOut) }
     }
 
-    val start = { option?.let { viewModel.start(MockChoice.Practice(it.shape), it.key) } }
+    val start = {
+        option?.let {
+            onStart()
+            viewModel.start(MockChoice.Practice(it.shape), it.key)
+        }
+    }
     val action: @Composable (Modifier) -> Unit = { modifier ->
-        when {
-            !open -> SeePlusButton(navigator, modifier)
-            shown is ChooserStatus.Short -> StartButton(startWith(shown.outcome), busy, enabled = option != null, modifier) { start() }
-            else -> StartButton(stringResource(R.string.mock_chooser_start), busy, enabled = option != null, modifier) { start() }
+        if (open) {
+            StartButton(
+                if (shown is ChooserStatus.Short) startWith(shown.outcome) else stringResource(R.string.mock_chooser_start),
+                busy,
+                enabled = option != null,
+                modifier.focus(replacementFocus),
+            ) { start() }
+        } else {
+            SeePlusButton(navigator, modifier.focus(replacementFocus))
         }
     }
 
@@ -178,6 +188,8 @@ internal fun PlacementChooser(
     viewModel: MockChooserViewModel,
     navigator: AppNavigator,
     listState: LazyListState,
+    replacementFocus: FocusRequester? = null,
+    onStart: () -> Unit = {},
 ) {
     val placement = view.placement ?: return
     val status by viewModel.status.collectAsStateWithLifecycle()
@@ -201,12 +213,22 @@ internal fun PlacementChooser(
             )
         }
 
-    val start = { option?.let { viewModel.start(MockChoice.Placement(it.length), it.key) } }
+    val start = {
+        option?.let {
+            onStart()
+            viewModel.start(MockChoice.Placement(it.length), it.key)
+        }
+    }
     val action: @Composable (Modifier) -> Unit = { modifier ->
         if (open) {
-            StartButton(stringResource(R.string.mock_chooser_placement_start), busy, enabled = option != null, modifier) { start() }
+            StartButton(
+                stringResource(R.string.mock_chooser_placement_start),
+                busy,
+                enabled = option != null,
+                modifier.focus(replacementFocus),
+            ) { start() }
         } else {
-            SeePlusButton(navigator, modifier)
+            SeePlusButton(navigator, modifier.focus(replacementFocus))
         }
     }
 
@@ -255,24 +277,27 @@ internal fun PlacementChooser(
 internal fun MockWriting(
     run: GenerationRun,
     onRetry: () -> Unit,
+    titleFocus: FocusRequester? = null,
 ) {
-    Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopStart) {
-        GenerationWait(
-            kind = GenerationKind.MockQuestions,
-            run = run,
-            onRetry = onRetry,
-            modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(detailPagePadding()),
-        ) {
-            Text(
-                stringResource(R.string.mock_chooser_preparing),
-                Modifier.semantics { heading() },
-                style = MaterialTheme.typography.headlineSmall,
-            )
-            Text(
-                stringResource(R.string.mock_chooser_preparing_detail),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+    BeforeFold { beforeFold ->
+        Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopStart) {
+            GenerationWait(
+                kind = GenerationKind.MockQuestions,
+                run = run,
+                onRetry = onRetry,
+                modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(detailPagePadding()),
+            ) {
+                Text(
+                    stringResource(R.string.mock_chooser_preparing),
+                    (titleFocus?.let { Modifier.focusRequester(it).focusable() } ?: Modifier).semantics { heading() },
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                Text(
+                    stringResource(R.string.mock_chooser_preparing_detail),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
         }
     }
 }
@@ -399,22 +424,16 @@ private fun StartButton(
     modifier: Modifier,
     onClick: () -> Unit,
 ) {
-    // Disabled while it gets the mock ready, keeping its ink as main does.
-    val colors =
-        ButtonDefaults.buttonColors(
-            disabledContainerColor = if (busy) MaterialTheme.colorScheme.primary else Color.Unspecified,
-            disabledContentColor = if (busy) MaterialTheme.colorScheme.onPrimary else Color.Unspecified,
-        )
-    Button(onClick = onClick, modifier = modifier, enabled = enabled && !busy, colors = colors) {
-        if (busy) {
-            CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
-            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-            Text(stringResource(R.string.mock_chooser_getting_ready))
-        } else {
-            Text(label)
-        }
-    }
+    BusyButton(
+        label = if (busy) stringResource(R.string.mock_chooser_getting_ready) else label,
+        busy = busy,
+        enabled = enabled,
+        modifier = modifier,
+        onClick = onClick,
+    )
 }
+
+private fun Modifier.focus(requester: FocusRequester?): Modifier = requester?.let { focusRequester(it) } ?: this
 
 @Composable
 private fun SeePlusButton(
@@ -445,6 +464,7 @@ private fun Refusal(
         subject = LimitSubject.Help,
         onCreateAccount = { navigator.open(AppRoute.Login) },
         onSeePlus = { navigator.open(AppRoute.Subscription) },
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
     )
 }
 

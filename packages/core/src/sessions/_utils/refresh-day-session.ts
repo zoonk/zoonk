@@ -11,6 +11,7 @@ import { loadDayPlan } from "./day-plan";
 import { AWAITING_OUTLINES_VERSION, loadDayPlanVersion } from "./day-plan-version";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
+import { oweStartedDaySettlements } from "./owe-started-day-settlements";
 import { planStudyDay } from "./plan-study-day";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
 import { type SelectedDayPlan, selectDayPlan, selectDayPlanFromContext } from "./selected-day-plan";
@@ -100,11 +101,11 @@ function withoutKept({
 async function planRestOfDayWithPlan({
   day,
   kept,
+  readSubscription,
   selection,
-}: {
+}: Pick<Parameters<typeof loadDayPlan>[0], "readSubscription" | "selection"> & {
   day: DaySession;
   kept: readonly StudySessionBlock[];
-  selection?: SelectedDayPlan;
 }) {
   const { goal, session, timeZone } = day;
 
@@ -112,6 +113,7 @@ async function planRestOfDayWithPlan({
     goal,
     localDate: session.localDate,
     now: new Date(),
+    readSubscription,
     timeZone,
     userId: session.userId,
   };
@@ -141,11 +143,9 @@ async function planRestOfDayWithPlan({
 }
 
 /** Excludes a second block of any kind already kept by the day. */
-export async function planRestOfDay(input: {
-  selection?: SelectedDayPlan;
-  day: DaySession;
-  kept: readonly StudySessionBlock[];
-}): Promise<PlannedBlock[]> {
+export async function planRestOfDay(
+  input: Parameters<typeof planRestOfDayWithPlan>[0],
+): Promise<PlannedBlock[]> {
   const { blocks } = await planRestOfDayWithPlan(input);
   return blocks;
 }
@@ -312,6 +312,8 @@ async function replaceNotStartedBlocks({
         },
         where: { id: session.id },
       });
+
+      await oweStartedDaySettlements(transaction, planned.length > 0 ? [] : replaced);
 
       return "rebuilt";
     },

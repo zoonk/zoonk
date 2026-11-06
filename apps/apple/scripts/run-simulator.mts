@@ -1,77 +1,22 @@
 import { spawnSync } from "node:child_process";
 import path from "node:path";
-import { waitForTurn } from "../../../scripts/dev/queue.mts";
-
-type DeviceFamily = "ipad" | "iphone";
-
-type Simulator = {
-  deviceTypeIdentifier: string;
-  isAvailable: boolean;
-  name: string;
-  state: string;
-  udid: string;
-};
-
-type SimulatorCatalog = { devices: Record<string, Simulator[]> };
-
-type SimulatorDestination = { device: Simulator; runtimeIdentifier: string };
+import { BOOT_LIMIT, leaseSimulator, releaseLease } from "./leases.mts";
+import {
+  type DeviceFamily,
+  type Simulator,
+  appleDirectory,
+  getNewestSimulators,
+  listSimulators,
+  readCommand,
+  runCommand,
+} from "./simulators.mts";
 
 const APP_SCHEME = "Zoonk";
 
-const DEVICE_TYPE_PREFIXES = {
-  ipad: "com.apple.CoreSimulator.SimDeviceType.iPad-",
-  iphone: "com.apple.CoreSimulator.SimDeviceType.iPhone-",
-} satisfies Record<DeviceFamily, string>;
-
-const PREFERRED_DEVICE_TYPES = {
-  ipad: "com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB",
-  iphone: "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
-} satisfies Record<DeviceFamily, string>;
-
 const SIMULATOR_APP_BUNDLE_IDENTIFIERS = ["com.apple.iphonesimulator", "com.apple.dt.Devices"];
 
-const appleDirectory = path.resolve(import.meta.dirname, "..");
 const derivedDataPath = path.join(appleDirectory, "DerivedData", "Simulator");
 const projectPath = path.join(appleDirectory, `${APP_SCHEME}.xcodeproj`);
-
-function runCommand({
-  arguments: commandArguments,
-  command,
-}: {
-  arguments: string[];
-  command: string;
-}) {
-  const result = spawnSync(command, commandArguments, { cwd: appleDirectory, stdio: "inherit" });
-
-  if (result.error) {
-    throw result.error;
-  }
-
-  if (result.status !== 0) {
-    throw new Error(`${command} exited with status ${result.status ?? 1}.`);
-  }
-}
-
-function readCommand({
-  arguments: commandArguments,
-  command,
-}: {
-  arguments: string[];
-  command: string;
-}) {
-  const result = spawnSync(command, commandArguments, { cwd: appleDirectory, encoding: "utf8" });
-
-  if (result.error) {
-    throw result.error;
-  }
-
-  if (result.status !== 0) {
-    process.stderr.write(result.stderr);
-    throw new Error(`${command} exited with status ${result.status ?? 1}.`);
-  }
-
-  return result.stdout.trim();
-}
 
 function getDeviceFamily(value: string | undefined): DeviceFamily {
   if (value === "iphone" || value === "ipad") {
@@ -81,99 +26,11 @@ function getDeviceFamily(value: string | undefined): DeviceFamily {
   throw new Error("Usage: run-simulator.mts <iphone|ipad>");
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
-
-function isSimulator(value: unknown): value is Simulator {
-  if (!isRecord(value)) {
-    return false;
-  }
-
-  return (
-    typeof value.deviceTypeIdentifier === "string" &&
-    typeof value.isAvailable === "boolean" &&
-    typeof value.name === "string" &&
-    typeof value.state === "string" &&
-    typeof value.udid === "string"
-  );
-}
-
-function isSimulatorCatalog(value: unknown): value is SimulatorCatalog {
-  if (!isRecord(value) || !isRecord(value.devices)) {
-    return false;
-  }
-
-  return Object.values(value.devices).every(
-    (devices) => Array.isArray(devices) && devices.every((device) => isSimulator(device)),
-  );
-}
-
-function parseSimulatorCatalog(value: string): SimulatorCatalog {
-  const catalog: unknown = JSON.parse(value);
-
-  if (!isSimulatorCatalog(catalog)) {
-    throw new Error("CoreSimulator returned an unexpected device list.");
-  }
-
-  return catalog;
-}
-
-function compareRuntimeEntries(
-  [leftIdentifier]: [string, Simulator[]],
-  [rightIdentifier]: [string, Simulator[]],
-) {
-  return rightIdentifier.localeCompare(leftIdentifier, undefined, { numeric: true });
-}
-
-function isFamilySimulator({ device, family }: { device: Simulator; family: DeviceFamily }) {
-  return device.isAvailable && device.deviceTypeIdentifier.startsWith(DEVICE_TYPE_PREFIXES[family]);
-}
-
-function getSimulatorDestination({
-  catalog,
-  family,
-}: {
-  catalog: SimulatorCatalog;
-  family: DeviceFamily;
-}): SimulatorDestination {
-  const runtimeEntries = Object.entries(catalog.devices)
-    .filter(([runtimeIdentifier]) => runtimeIdentifier.includes(".SimRuntime.iOS-"))
-    .toSorted(compareRuntimeEntries);
-
-  const runtimeEntry = runtimeEntries.find(([, devices]) =>
-    devices.some((device) => isFamilySimulator({ device, family })),
-  );
-
-  if (!runtimeEntry) {
-    throw new Error(`No available ${family} simulator is installed.`);
-  }
-
-  const [runtimeIdentifier, devices] = runtimeEntry;
-  const familyDevices = devices.filter((device) => isFamilySimulator({ device, family }));
-
-  const preferredDevice = familyDevices.find(
-    (device) => device.deviceTypeIdentifier === PREFERRED_DEVICE_TYPES[family],
-  );
-
-  const device = preferredDevice ?? familyDevices[0];
-
-  if (!device) {
-    throw new Error(`No available ${family} simulator is installed.`);
-  }
-
-  return { device, runtimeIdentifier };
-}
-
 function getRuntimeName(runtimeIdentifier: string) {
   return runtimeIdentifier.split(".SimRuntime.").at(-1)?.replaceAll("-", " ") ?? runtimeIdentifier;
 }
 
-function bootSimulator(device: Simulator) {
-  if (device.state === "Shutdown") {
-    runCommand({ arguments: ["simctl", "boot", device.udid], command: "xcrun" });
-  }
-
+function waitUntilBooted(device: Simulator) {
   runCommand({ arguments: ["simctl", "bootstatus", device.udid, "-b"], command: "xcrun" });
 }
 
@@ -250,30 +107,37 @@ function installAndLaunchApp({ appPath, device }: { appPath: string; device: Sim
   });
 }
 
+/** Leased until the app runs, so no test run or hold takes the simulator in the meantime. */
 async function runSimulator(family: DeviceFamily) {
-  const catalog = parseSimulatorCatalog(
-    readCommand({
-      arguments: ["simctl", "list", "devices", "available", "--json"],
-      command: "xcrun",
-    }),
-  );
+  const { runtimeIdentifier } = getNewestSimulators({ catalog: listSimulators(), family });
 
-  const { device, runtimeIdentifier } = getSimulatorDestination({ catalog, family });
+  const { lease, turn } = await leaseSimulator({
+    describeWait: (booted) =>
+      `Waiting for a free ${family} simulator, with ${BOOT_LIMIT}. Booted now: ` +
+      `${booted.map(({ name }) => name).join(", ")}.\n`,
+    getCandidates: () => getNewestSimulators({ catalog: listSimulators(), family }).devices,
+    isTestRun: false,
+  });
 
-  process.stdout.write(
-    `Building ${APP_SCHEME} for ${device.name} (${getRuntimeName(runtimeIdentifier)})...\n`,
-  );
-
-  const turn = await waitForTurn();
+  const { device } = lease;
 
   try {
-    bootSimulator(device);
-    buildApp(device);
+    process.stdout.write(
+      `Building ${APP_SCHEME} for ${device.name} (${getRuntimeName(runtimeIdentifier)})...\n`,
+    );
+
+    try {
+      waitUntilBooted(device);
+      buildApp(device);
+    } finally {
+      turn?.release();
+    }
+
+    installAndLaunchApp({ appPath: getAppPath(), device });
   } finally {
-    turn?.release();
+    releaseLease(lease);
   }
 
-  installAndLaunchApp({ appPath: getAppPath(), device });
   process.stdout.write(`${APP_SCHEME} is running on ${device.name}.\n`);
 }
 

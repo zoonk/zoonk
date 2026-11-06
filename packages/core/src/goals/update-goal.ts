@@ -1,6 +1,7 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type Goal, type TransactionClient } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -27,7 +28,12 @@ import { assertTargetDates } from "../plans/target-date-range";
 import { findActiveGoalLimit, moveActiveGoalAway } from "./_utils/goal-status";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { trackGoalReached } from "./_utils/track-goal-reached";
-import { type GoalUpdateInput, type GoalView } from "./goal-contract";
+import {
+  type GoalUpdateInput,
+  type GoalView,
+  onlyCoreDetails,
+  withoutCoreDetails,
+} from "./goal-contract";
 
 export type GoalUpdateResult =
   | { change: PlanChangeView | null; goal: GoalView; status: "updated" }
@@ -39,9 +45,25 @@ export type GoalUpdateResult =
 const SETTINGS_NOTE = "Changed by the learner in the goal's settings.";
 const RESUMED_NOTE = "The goal started again after a pause.";
 
-function goalMetadata(input: GoalUpdateInput) {
+/** A learner's details replace theirs whole but keep what only core writes. */
+function mergeDetails({
+  current,
+  details,
+}: {
+  current: Goal;
+  details: GoalUpdateInput["details"];
+}) {
+  if (details === undefined) {
+    return details;
+  }
+
+  const stored = isJsonObject(current.details) ? current.details : {};
+  return { ...withoutCoreDetails(details), ...onlyCoreDetails(stored) };
+}
+
+function goalMetadata({ current, input }: { current: Goal; input: GoalUpdateInput }) {
   return {
-    details: input.details,
+    details: mergeDetails({ current, details: input.details }),
     status: input.status,
     studyTime: input.studyTime,
     timezone: input.timeZone,
@@ -50,7 +72,7 @@ function goalMetadata(input: GoalUpdateInput) {
 }
 
 function changesMetadata(goal: Goal, input: GoalUpdateInput): boolean {
-  return Object.entries(goalMetadata(input)).some(
+  return Object.entries(goalMetadata({ current: goal, input })).some(
     ([key, value]) => value !== undefined && !isDeepStrictEqual(value, Reflect.get(goal, key)),
   );
 }
@@ -85,7 +107,7 @@ async function saveMetadataInTransaction(
   const changed = changesMetadata(current, input);
 
   const updated = changed
-    ? await tx.goal.update({ data: goalMetadata(input), where: { id: current.id } })
+    ? await tx.goal.update({ data: goalMetadata({ current, input }), where: { id: current.id } })
     : current;
 
   const moved = input.status
@@ -132,7 +154,9 @@ async function resumePlan(
 
 async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput }) {
   return withPlanRetry(async () => {
-    const context = await loadPlanAtToken(goal.id, { goalChanges: goalMetadata(input) });
+    const context = await loadPlanAtToken(goal.id, {
+      goalChanges: goalMetadata({ current: goal, input }),
+    });
 
     const writes: { metadata: Awaited<ReturnType<typeof saveMetadataInTransaction>> | null } = {
       metadata: null,

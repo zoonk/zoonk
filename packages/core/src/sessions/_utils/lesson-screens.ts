@@ -23,7 +23,7 @@ export async function readBlockLessonStates(blocks: readonly LessonBlock[]): Pro
     ),
   ];
 
-  return lessonIds.length > 0 ? getLessonGenerationStates(lessonIds) : new Map();
+  return getLessonGenerationStates(lessonIds);
 }
 
 /** A day returned to the learner, with where each lesson block plays read from its lesson. */

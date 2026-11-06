@@ -1,6 +1,7 @@
 import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { readBlockPayload } from "../block-payload";
 import { toDayBlockRef } from "../day-block";
@@ -32,7 +33,14 @@ export async function readSavedDayView({
 }): Promise<DayView> {
   const [view, refill] = await Promise.all([
     loadStudySessionView({ blueprint, session, timeZone, userId, weekDate }),
-    session.goal ? planEntitlementLapseRefill({ goal: session.goal, session, timeZone }) : null,
+    session.goal
+      ? planEntitlementLapseRefill({
+          goal: session.goal,
+          readSubscription: readActiveSubscription,
+          session,
+          timeZone,
+        })
+      : null,
   ]);
 
   if (!refill || !view.current || !session.goalId) {

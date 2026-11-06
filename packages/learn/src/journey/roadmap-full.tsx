@@ -14,7 +14,13 @@ import { usePhaseLabel } from "./path-phase-row";
 import { PhaseDetails } from "./phase-details";
 import { BandFace } from "./roadmap-band";
 import { PhaseAxis, PhaseLane } from "./roadmap-lane";
-import { BAND_CLASS, BAND_COLUMN_CLASS, BAND_STATE_CLASS } from "./roadmap-styles";
+import {
+  BAND_CLASS,
+  BAND_COLUMN_CLASS,
+  BAND_ROWS_CLASS,
+  BAND_STATE_CLASS,
+  getBandColumnsStyle,
+} from "./roadmap-styles";
 import { useRoadmapFinish, useRoadmapPhases, useRoadmapPosition } from "./use-roadmap";
 
 const PERCENT = 100;
@@ -124,13 +130,7 @@ function PhaseColumn({
   todayShare: number | null;
 }) {
   return (
-    <li
-      className={cn(
-        BAND_COLUMN_CLASS,
-        "transition-[flex-grow] duration-150 ease-out motion-reduce:transition-none",
-      )}
-      style={{ flexGrow: getPhaseWeight(phase) }}
-    >
+    <li className={BAND_COLUMN_CLASS}>
       <PhaseBand focusable={focusable} links={links} phase={phase} todayShare={todayShare} />
 
       <PhaseLane isLast={isLast} phase={phase} />
@@ -211,7 +211,14 @@ export function RoadmapFull({ className, links }: { className?: string; links: J
       </div>
 
       {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside. */}
-      <ol className="flex gap-[3px]" onKeyDown={moveBetweenBands}>
+      <ol
+        className={cn(
+          BAND_ROWS_CLASS,
+          "grid-rows-[repeat(3,auto)] transition-[grid-template-columns] duration-150 ease-out motion-reduce:transition-none",
+        )}
+        onKeyDown={moveBetweenBands}
+        style={getBandColumnsStyle(phases.map((phase) => getPhaseWeight(phase)))}
+      >
         {phases.map((phase, position) => {
           const isCurrent = position === currentIndex;
 

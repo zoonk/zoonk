@@ -14,10 +14,11 @@ The iPad app also remains available in Apple's Designed for iPad compatibility m
 
 Build and run the Debug app from the repository root:
 
-| Command       | Purpose                                                    |
-| ------------- | ---------------------------------------------------------- |
-| `pnpm iphone` | Build, install, and launch the app on an iPhone simulator. |
-| `pnpm ipad`   | Build, install, and launch the app on an iPad simulator.   |
+| Command                        | Purpose                                                                 |
+| ------------------------------ | ----------------------------------------------------------------------- |
+| `pnpm iphone`                  | Build, install, and launch the app on an iPhone simulator.              |
+| `pnpm ipad`                    | Build, install, and launch the app on an iPad simulator.                |
+| `pnpm iphone:hold <simulator>` | Keep test runs and `pnpm iphone` off an iPhone simulator while it runs. |
 
 Run commands from this directory:
 
@@ -25,8 +26,8 @@ Run commands from this directory:
 | -------------------- | ----------------------------------------------------- |
 | `make build`         | Build the iPhone and iPad app in Debug configuration. |
 | `make build-ios`     | Build the iPhone and iPad app in Debug configuration. |
-| `make test`          | Run the unit tests on the default iPhone simulator.   |
-| `make ui-test`       | Run the UI tests on the default iPhone simulator.     |
+| `make test`          | Run the unit tests on a free iPhone simulator.        |
+| `make ui-test`       | Run the UI tests on a free iPhone simulator.          |
 | `make format`        | Format Swift source files in place.                   |
 | `make format-check`  | Check Swift formatting without changing files.        |
 | `make strings-check` | Check that built strings are in their catalogs.       |
@@ -36,10 +37,10 @@ From the repository root, add `-C apps/apple`, for example `make -C apps/apple c
 
 To check a Release build, run `make build CONFIGURATION=Release`.
 
-Override the test destination when the default simulator is unavailable:
+`make test` and `make ui-test` lease one of Xcode's own iPhone simulators for each run, trying iPhone 17 last since `pnpm iphone` prefers it: they boot a shut-down one, or reuse one a killed run left booted, and shut it down when the run ends, so several checkouts can test at once. They wait while three simulators are booted, or six while the Mac is quiet. `pnpm iphone` and `pnpm ipad` lease a simulator the same way until the app launches, then leave it booted. Before you drive one of those iPhones by hand, such as in a walk, hold it with `pnpm iphone:hold "iPhone 17e"` (a name or udid) for as long as you use it, so a test run can't take it: the hold boots the simulator if it's shut down, waits while something else has it, and leaves it booted when it stops. To test on a simulator you choose, such as one you keep booted, pass its destination:
 
 ```sh
-make test TEST_DESTINATION='platform=iOS Simulator,name=iPhone 16 Pro,OS=latest'
+make test TEST_DESTINATION='platform=iOS Simulator,id=<udid>'
 ```
 
 Run one test or test class by passing an Xcode test identifier:

@@ -53,6 +53,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.StudyNext
@@ -86,6 +87,10 @@ internal sealed interface SlotItem {
         override val key = "coverage"
     }
 
+    data object CourseComplete : SlotItem {
+        override val key = "courseComplete"
+    }
+
     data object Finished : SlotItem {
         override val key = "finished"
     }
@@ -102,11 +107,12 @@ internal sealed interface SlotItem {
     }
 }
 
-/** [finished] once what to study next is known; [fix] is the pace's sentence. */
+/** [finished] once what to study next is known, [courseComplete] while a finished unit's certificate isn't written; [fix] is the pace's sentence. */
 internal fun slotItems(
     page: PlanPageState,
     fix: PaceFix?,
     finished: Boolean,
+    courseComplete: Boolean,
 ): List<SlotItem> {
     val plan = page.plan
     val pace = plan.status?.pace
@@ -119,6 +125,7 @@ internal fun slotItems(
         )
 
     return buildList {
+        if (!finished && courseComplete) add(SlotItem.CourseComplete)
         if (page.isPaused) add(SlotItem.Paused)
         plan.examChoices
             .filter { it.subjects.isEmpty() }
@@ -194,6 +201,10 @@ internal class SlotHost(
     val next: StudyNext? = null,
     val nextLevel: NextLevelStart = NextLevelStart.Idle,
     val onContinue: () -> Unit = {},
+    val certificates: PlanCertificates? = null,
+    val claimingCertificate: Boolean = false,
+    val claimFailed: Boolean = false,
+    val onCertificate: () -> Unit = {},
 )
 
 /** Where the slot moves a keyboard's or screen reader's focus once the control they used gives way, as main's does. */
@@ -276,7 +287,12 @@ private fun slotItemsLeft(
         page.plan.status
             ?.pace
             ?.let { paceFix(it, page.isExam) }
-    return slotItems(page, fix, finished = host.next != null).filter { it.key !in state.dismissed }
+    val courseComplete =
+        host.certificates
+            ?.unclaimed
+            .orEmpty()
+            .isNotEmpty()
+    return slotItems(page, fix, finished = host.next != null, courseComplete).filter { it.key !in state.dismissed }
 }
 
 /** Whether the slot shows anything, so a page leaves no room for it when it doesn't. */
@@ -404,6 +420,10 @@ private fun SlotSuggestion(
 
         SlotItem.Coverage -> {
             CoverageSuggestion(slot)
+        }
+
+        SlotItem.CourseComplete -> {
+            CourseCompleteSuggestion(slot)
         }
 
         SlotItem.Finished -> {

@@ -18,7 +18,10 @@ import {
 } from "./learner";
 import { type LiveCall, type LiveCallCue, openLiveCall } from "./live-call";
 
-type RolePlayCall = Extract<LiveConversationInstructionsParams, { kind: "unit" }>;
+type RolePlayCall = Omit<
+  Extract<LiveConversationInstructionsParams, { kind: "unit" }>,
+  "continuesCall"
+>;
 
 export type LiveConversationInput = { call: RolePlayCall; learner: SimulatedLearner };
 
@@ -170,10 +173,11 @@ async function playStep({
  * falls quiet, and answers what the character says.
  */
 export async function runLiveCall({ call, learner }: LiveConversationInput) {
-  const instructions = buildLiveConversationInstructions(call);
+  const instructions = buildLiveConversationInstructions({ ...call, continuesCall: false });
 
   const script = buildLiveCallScript({
     character: call.scenario.character,
+    continuesCall: false,
     examiner: false,
     language: getLiveConversationLanguageName(call),
     openingLine: call.scenario.openingLine,

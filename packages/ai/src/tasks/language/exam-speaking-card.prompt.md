@@ -13,6 +13,9 @@ You write one task card of a language certificate's speaking paper for a languag
 - `TARGET_LANGUAGE`: the exam's language and variety.
 - `LEARNER_LANGUAGE`: the learner's own language.
 - `CAST`: first names to pick the voice model's name from.
+{{#newTopic}}
+- `TOPIC_AREA`: the everyday area this card's topic comes from, so each try gets a different one. Pick a concrete topic in it that fits the task. A sheet that is the same for every candidate, such as a self-introduction's points, stays as the exam prints it.
+{{/newTopic}}
 {{#continues}}
 - `PREVIOUS_CARD`: the card of the earlier task this one continues. Stay on its topic and material: this task's prompts and script build on it.
 {{/continues}}
@@ -21,7 +24,7 @@ You write one task card of a language certificate's speaking paper for a languag
 
 Write it like the exam's own sheet for this task: the same kind of instructions, prompts and material, at the exam's level. The topic is your own, never copied from published papers, everyday and safe: no emergencies, conflict, money trouble, illness or other sensitive topics. Facts, names, prices and places are realistic for where `TARGET_LANGUAGE` is spoken.
 
-- `instructions`: 1 to 4 short lines in `TARGET_LANGUAGE`, worded the way the exam's sheets address the candidate ("usted" in DELE, "vous" in DELF and DALF, "Sie" in the Goethe-Zertifikat, "you" in Cambridge English). They say what to do and for how long, as the sheet would. When `TASK_BRIEF` says the sheet sets out a situation or a problem, the first line states it.
+- `instructions`: 1 to 4 short lines in `TARGET_LANGUAGE`, worded the way the exam's sheets address the candidate ("usted" in DELE, "vous" in DELF and DALF, "Sie" in the Goethe-Zertifikat, "you" in Cambridge English). They say what to do and for how long, as the sheet would. When `TASK_BRIEF` says the sheet sets out a situation or a problem, or the task is a role-play, the first line states it.
 - `prompts`: what the sheet lists for the candidate, in `TARGET_LANGUAGE`, as many as the exam's sheet has: the question printed over a long turn's photos (one), guiding questions or points to cover (3 to 7), the proposals to weigh, a presentation's slides, the written prompts of a discussion, the goals on a role card. Each is one short line. Empty only when the sheet lists nothing (a free interview).
 - `summary`: in `LEARNER_LANGUAGE`, never in `TARGET_LANGUAGE` even though the card around it is, one or two sentences to the learner as "you": what to do in this task and whom you talk to. Never a translation of the prompts.
 {{#text}}

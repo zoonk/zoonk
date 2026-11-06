@@ -183,7 +183,6 @@ extension CurrentAccount {
       deletion: AccountDeletionRequirements(hasAppleAccount: false),
       subscription: nil),
     user: AccountUser(
-      displayUsername: "learner",
       email: "learner@zoonk.test",
       id: "lesson-loading-test-user",
       image: nil,
@@ -256,12 +255,13 @@ private struct JSONTransport: ClientTransport {
 }
 
 private let sessionLessonCompletion = #"""
-  {"brainPower": 62, "ceremony": null, "correctCount": 1, "energyDelta": 0.5, "incorrectCount": 0,
+  {"brainPower": 62, "ceremony": null, "certificates": [], "correctCount": 1, "energyDelta": 0.5, "incorrectCount": 0,
    "isFirstCompletion": true, "nextReviewAt": null, "seconds": 120, "totalBrainPower": 400,
    "reached": {"energy": null, "level": {"color": "yellow", "level": 3}},
    "studyBlock": {
      "blockId": "0192f8a4-3c2b-7d1e-8f00-000000000001", "brainPower": 62, "capsulesOpened": 0,
-     "ceremony": null, "checkpoint": null, "comesBackOn": null, "completedMissions": ["somethingNew"],
+     "ceremony": null, "certificates": [], "checkpoint": null, "comesBackOn": null,
+     "completedMissions": ["somethingNew"],
      "correct": 1, "fullMeal": {"bonus": 50, "paid": true}, "milestones": [],
      "missions": [{"kind": "somethingNew", "status": "done", "done": 1, "total": 1}],
      "netScore": null, "nextBlockId": null,

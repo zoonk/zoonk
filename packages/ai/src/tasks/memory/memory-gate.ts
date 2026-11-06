@@ -35,8 +35,8 @@ export const memoryGateClassifier = {
     sensitive: {
       criteria: {
         false:
-          "An everyday fact about study, work, schedule, hobbies, place or learning preferences.",
-        true: "It reveals health, beliefs, politics, sexual life, identity, ethnicity, a criminal record, detailed finances or another person's private details.",
+          "An everyday fact about study, work, schedule, hobbies, place or learning preferences, even when its evidence mentions something sensitive that the fact leaves out.",
+        true: "The fact's own words reveal health, beliefs, politics, sexual life, identity, ethnicity, a criminal record, detailed finances or another person's private details.",
       },
       instructions,
       type: "boolean",

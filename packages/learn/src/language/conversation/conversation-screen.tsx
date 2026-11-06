@@ -17,8 +17,11 @@ import { ConversationIntro } from "./conversation-intro";
 import { useConversationTitle } from "./conversation-labels";
 import { ConversationLive } from "./conversation-live";
 import { ConversationResult } from "./conversation-result";
+import { getDroppedCall } from "./dropped-call";
+import { DroppedCallScreen } from "./dropped-call-screen";
+import { type CallSoFar, newCallSoFar } from "./live-call-so-far";
 import { SpeakingMockResult } from "./speaking-mock-result";
-import { type TappedCallAudio } from "./use-call-microphone";
+import { type CallAudio, type TappedCallAudio } from "./use-call-microphone";
 import { type CallStartOutcome } from "./use-call-start";
 import { type LiveCallActions, useLiveCall } from "./use-live-call";
 
@@ -42,14 +45,13 @@ type RunStart = "call" | "intro" | "takeover";
 
 type SaveState = "closing" | "ended" | "failed" | "saving" | "takenOver";
 
-const FIRST_RUN = { attempt: 0, startWith: "intro" } as const;
-
 const SAVE_FAILED = { status: "failed" } as const;
 
 function LiveCallRun({
   actions,
   callAudio,
   conversation,
+  earlier,
   hrefs,
   onRestart,
   onSaved,
@@ -58,16 +60,44 @@ function LiveCallRun({
   actions: ConversationActions;
   callAudio?: TappedCallAudio;
   conversation: LanguageConversationView;
+  earlier: CallSoFar;
   hrefs: ConversationHrefs;
-  onRestart: (startWith: RunStart) => void;
+  onRestart: (run: { earlier: CallSoFar; startWith: RunStart }) => void;
   onSaved: (view: CompletedLanguageConversation) => void;
   startWith: RunStart;
 }) {
   const title = useConversationTitle(conversation);
-  const call = useLiveCall({ actions, conversation, tappedAudio: callAudio });
-  const [usedHelp, setUsedHelp] = useState(false);
+  const call = useLiveCall({ actions, conversation, earlier, tappedAudio: callAudio });
   const [saving, setSaving] = useState<SaveState | null>(null);
   const { finish, start } = call;
+
+  // A dropped call's reconnect may still be reserving: the next run must name its connection. Only
+  // the latest restart goes ahead, and none once the call was ended or the screen left.
+  const restarts = useRef(0);
+
+  const restart = (next: RunStart) => {
+    restarts.current += 1;
+    const mine = restarts.current;
+    const settled = call.continuing ? call.settle() : Promise.resolve();
+
+    void settled.then(() => {
+      if (restarts.current === mine) {
+        onRestart({ earlier: call.getCallSoFar(), startWith: next });
+      }
+    });
+  };
+
+  const hangUp = () => {
+    restarts.current += 1;
+    call.hangUp();
+  };
+
+  useEffect(
+    () => () => {
+      restarts.current += 1;
+    },
+    [],
+  );
 
   const save = useCallback(async () => {
     setSaving("saving");
@@ -79,7 +109,7 @@ function LiveCallRun({
       return;
     }
 
-    const completion = await actions.complete({ ...summary, usedHelp }).catch(() => SAVE_FAILED);
+    const completion = await actions.complete(summary).catch(() => SAVE_FAILED);
 
     if (completion.status === "completed") {
       onSaved(completion.conversation);
@@ -87,7 +117,7 @@ function LiveCallRun({
     }
 
     setSaving(completion.status);
-  }, [actions, finish, onSaved, usedHelp]);
+  }, [actions, finish, onSaved]);
 
   const saved = useRef(false);
 
@@ -125,10 +155,40 @@ function LiveCallRun({
     call.phase === "connecting"
       ? () => {
           call.cancel();
-          onRestart("intro");
-        }
-      : call.hangUp;
 
+          if (call.continuing) {
+            call.dropStart();
+          } else {
+            restart("intro");
+          }
+        }
+      : hangUp;
+
+  const onStart = (audio: CallAudio | null) =>
+    void start({ audio, takeover: startWith === "takeover" });
+
+  const onRetry = () => restart("call");
+  const onTakeover = () => restart("takeover");
+
+  const dropped = getDroppedCall(call);
+
+  if (dropped) {
+    return (
+      <DroppedCallScreen
+        dropped={dropped}
+        limit={call.limit}
+        microphoneProblem={call.microphoneProblem}
+        name={conversation.character.name}
+        onEnd={hangUp}
+        onRetry={onRetry}
+        onStart={onStart}
+        onTakeover={onTakeover}
+        title={title}
+      />
+    );
+  }
+
+  const problem = { exitHref: hrefs.exit, onRetry, onTakeover, title };
   const locked = conversation.locked || call.error === "plusRequired";
 
   if (locked || (call.phase === "idle" && (startWith === "intro" || call.microphoneProblem))) {
@@ -138,18 +198,10 @@ function LiveCallRun({
         exitHref={hrefs.exit}
         locked={locked}
         microphoneProblem={call.microphoneProblem}
-        onStart={(audio) => void start({ audio, takeover: startWith === "takeover" })}
+        onStart={onStart}
       />
     );
   }
-
-  const problem = {
-    exitHref: hrefs.exit,
-    onEnd: call.hangUp,
-    onRetry: () => onRestart("call"),
-    onTakeover: () => onRestart("takeover"),
-    title,
-  };
 
   if (saving === "ended" || saving === "takenOver") {
     return <CallProblem {...problem} error={saving} limit={null} />;
@@ -157,7 +209,7 @@ function LiveCallRun({
 
   const ended = saving || call.phase === "ended";
 
-  if (!ended && call.phase === "failed") {
+  if (!ended && call.phase === "failed" && call.error !== "dropped") {
     return <CallProblem {...problem} error={call.error} limit={call.limit} />;
   }
 
@@ -168,8 +220,6 @@ function LiveCallRun({
       ending={ended ? { onRetry: () => void save(), state: saving ?? "saving" } : null}
       grading={conversation.kind === "speakingMock" || conversation.examTask !== null}
       onEnd={end}
-      onHelp={() => setUsedHelp(true)}
-      usedHelp={usedHelp}
     />
   );
 }
@@ -195,19 +245,23 @@ export function ConversationScreen({
   const [view, setView] = useState<CompletedLanguageConversation>({
     ...conversation,
     ceremony: null,
+    certificates: [],
     missionMoment: null,
     reached: NOTHING_REACHED,
   });
 
-  const [run, setRun] = useState<{ attempt: number; startWith: RunStart }>({
-    ...FIRST_RUN,
-    startWith: callAudio ? "call" : "intro",
-  });
+  const [run, setRun] = useState<{ attempt: number; earlier: CallSoFar; startWith: RunStart }>(
+    () => ({
+      attempt: 0,
+      earlier: newCallSoFar(conversation),
+      startWith: callAudio ? "call" : "intro",
+    }),
+  );
 
   // oxlint-disable-next-line react/hook-use-state -- Read once as the screen opens, never updated.
   const [openedWithResult] = useState(Boolean(conversation.result));
   const { result } = view;
-  const ceremony = getCeremonyMoment({ milestone: view.ceremony, render: renderCeremony });
+  const ceremony = getCeremonyMoment({ moments: view, render: renderCeremony });
 
   const dayMoment = (
     <DayMoment
@@ -270,9 +324,10 @@ export function ConversationScreen({
       actions={actions}
       callAudio={callAudio}
       conversation={view}
+      earlier={run.earlier}
       hrefs={hrefs}
       key={run.attempt}
-      onRestart={(startWith) => setRun((current) => ({ attempt: current.attempt + 1, startWith }))}
+      onRestart={(next) => setRun((current) => ({ ...next, attempt: current.attempt + 1 }))}
       onSaved={onSaved ?? setView}
       startWith={run.startWith}
     />

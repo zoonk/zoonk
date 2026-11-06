@@ -46,6 +46,7 @@ catalog:
   "@vitejs/plugin-react": 6.1.2
   ai: 7.0.159
   botid: 1.5.12
+  fast-check: 4.10.2
   icu-minify: 4.14.9
   jose: 6.2.14
   jsdom: 30.1.3
@@ -63,7 +64,7 @@ catalog:
   server-only: 0.0.1
   sharp: 0.35.5
   tsx: 4.23.15
-  typescript: 7.0.2
+  typescript: 7.1.0-beta
   undici: 8.12.3
   vite: 8.3.5
   vitest: 5.0.5

@@ -9,7 +9,8 @@ struct TranscriptTurn: Equatable, Sendable {
   var endMs: Double?
 }
 
-/// The longest turn and the most turns the API takes (core's `conversation-turn-limits`).
+/// The longest turn and the most turns the API takes (core's `conversation-turn-limits`): a longer
+/// call keeps its newest turns, where the character carries on and the review sees how it ended.
 private let maxTurnLength = 2000
 private let maxTurns = 300
 /// A pause this long between two fragments starts a new sentence.
@@ -59,7 +60,7 @@ extension [TranscriptTurn] {
           turn.text.trimmingCharacters(in: .whitespacesAndNewlines).prefix(maxTurnLength))
         return text.isEmpty ? nil : ConversationTurn(speaker: turn.speaker, text: text)
       }
-      .prefix(maxTurns))
+      .suffix(maxTurns))
   }
 }
 

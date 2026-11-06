@@ -13,7 +13,7 @@ class FakeAccountApi : AccountApi {
     var codeFailure: ApiException? = null
     var takenUsernames = setOf<String>()
     var saveFailure: ApiException? = null
-    val saved = mutableListOf<Pair<String, String>>()
+    val saved = mutableListOf<Pair<String?, String?>>()
     val deletionCodesSent = mutableListOf<String>()
     val deletions = mutableListOf<String?>()
     var deletionFailures = mutableListOf<ApiException>()
@@ -49,12 +49,14 @@ class FakeAccountApi : AccountApi {
 
     override suspend fun updateProfile(
         session: AuthenticatedSession,
-        name: String,
-        username: String,
+        name: String?,
+        username: String?,
     ): MeResponse {
         saveFailure?.let { throw it }
         saved += name to username
-        return account(session.accountId).let { it.copy(user = it.user.copy(name = name, username = username)) }
+        return account(session.accountId).let {
+            it.copy(user = it.user.copy(name = name ?: it.user.name, username = username ?: it.user.username))
+        }
     }
 
     override suspend fun exportData(session: AuthenticatedSession): AccountDataExport = throw ApiException(ApiError.Unavailable)

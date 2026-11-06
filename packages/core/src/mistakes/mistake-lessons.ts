@@ -88,10 +88,12 @@ export async function findMistakeLessons({
 
   const [teaching, lessons] = await Promise.all([
     findNotebookTeachingLessons({ skillIds, userId }),
-    prisma.lesson.findMany({
-      select: { id: true, title: true },
-      where: { ...libraryRowsVisibleTo(userId), id: { in: lessonIds } },
-    }),
+    lessonIds.length > 0
+      ? prisma.lesson.findMany({
+          select: { id: true, title: true },
+          where: { ...libraryRowsVisibleTo(userId), id: { in: lessonIds } },
+        })
+      : [],
   ]);
 
   const byId = new Map(lessons.map((lesson) => [lesson.id, lesson]));

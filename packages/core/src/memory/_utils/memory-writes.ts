@@ -8,6 +8,7 @@ import {
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type MemorySource } from "../memory-contract";
 import { forgetExampleLines } from "./forget-example-lines";
+import { isMemoryEnabled } from "./memory-access";
 import { LEARNER_CONFIDENCE } from "./memory-candidates";
 
 const MAX_HISTORY_DEPTH = 50;
@@ -40,16 +41,21 @@ function toFactData({ fact, userId }: { fact: NewMemoryFact; userId: string }) {
   };
 }
 
+/** Returns null, writing nothing, when memory is off. */
 export async function addMemoryFact({
   fact,
   userId,
 }: {
   fact: NewMemoryFact;
   userId: string;
-}): Promise<MemoryFact> {
-  return writeLearnerChange({ userId }, (transaction) =>
-    transaction.memoryFact.create({ data: toFactData({ fact, userId }) }),
-  );
+}): Promise<MemoryFact | null> {
+  return writeLearnerChange({ userId }, async (transaction) => {
+    if (!(await isMemoryEnabled(userId, transaction))) {
+      return unchanged(null);
+    }
+
+    return transaction.memoryFact.create({ data: toFactData({ fact, userId }) });
+  });
 }
 
 /**
@@ -63,8 +69,8 @@ function changeableBy(source: MemorySource | null | undefined) {
 }
 
 /**
- * Returns null, writing nothing, when another update already replaced or removed the old fact, or
- * when a call may not change it.
+ * Returns null, writing nothing, when memory is off, when another update already replaced or
+ * removed the old fact, or when a call may not change it.
  */
 export async function replaceMemoryFact({
   fact,
@@ -76,6 +82,10 @@ export async function replaceMemoryFact({
   userId: string;
 }): Promise<{ fact: MemoryFact; previous: MemoryFact } | null> {
   return writeLearnerChange({ userId }, async (transaction) => {
+    if (!(await isMemoryEnabled(userId, transaction))) {
+      return unchanged(null);
+    }
+
     const where = {
       ...changeableBy(fact.source),
       id: previousId,

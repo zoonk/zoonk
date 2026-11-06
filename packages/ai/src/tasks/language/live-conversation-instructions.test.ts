@@ -33,6 +33,7 @@ vi.mock("./live-conversation-exam-task.prompt.md", () =>
 );
 
 const apartmentCall: LiveConversationInstructionsParams = {
+  continuesCall: false,
   kind: "unit",
   learnerLanguage: "pt",
   level: "A2",
@@ -67,6 +68,41 @@ describe(buildLiveConversationInstructions, () => {
     expect(instructions).toMatch(/Delegate to the backend when:\s+- Never\./u);
     expect(instructions).toContain("The app tells you when it's time to end the call.");
     expect(instructions).not.toMatch(/\d minutes?/u);
+    expect(instructions).not.toContain("The call dropped");
+  });
+
+  it.each<Partial<LiveConversationInstructionsParams>>([
+    { kind: "unit" },
+    { exam: "ielts", kind: "speakingMock" },
+    { exam: "toefl", kind: "speakingMock" },
+    {
+      examTask: {
+        card: { instructions: ["Hable."], prompts: [] },
+        exam: "dele",
+        task: { brief: "A talk.", name: "Tarea 1", role: "examiner" },
+        title: "DELE B2",
+      },
+      kind: "examTask",
+    },
+    {
+      examTask: {
+        card: { instructions: ["Talk together."], prompts: [] },
+        exam: "cambridge",
+        task: { brief: "A discussion.", name: "Part 3", role: "partner" },
+        title: "B2 First",
+      },
+      kind: "examTask",
+    },
+  ])("carries a dropped $kind call on from the call so far instead of starting it", (role) => {
+    const params = { ...apartmentCall, ...role } as LiveConversationInstructionsParams;
+    const starting = buildLiveConversationInstructions(params);
+    const continuing = buildLiveConversationInstructions({ ...params, continuesCall: true });
+
+    expect(starting).toContain("with this line");
+    expect(continuing).not.toContain("{{");
+    expect(continuing).not.toContain("with this line");
+    expect(continuing).toContain("The call dropped and the learner called you back.");
+    expect(continuing).toContain("never make up what was said before the drop");
   });
 
   it("runs a speaking mock as an examiner without the role-play hints", () => {

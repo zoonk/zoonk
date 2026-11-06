@@ -83,6 +83,10 @@
     <string name="tutor_link_description">This link opens a website outside Zoonk.</string>
     <string name="tutor_link_cancel">Cancel</string>
     <string name="tutor_link_open">Open link</string>
+    <!-- Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since -->
+    <string name="tutor_step_closed">This step isn\'t available anymore.</string>
+    <!-- Under a buddy answer whose link to a step of the day didn't open -->
+    <string name="tutor_step_open_failed">We couldn\'t open this step. Try again.</string>
 
     <string name="tutor_offer_open">Open</string>
     <string name="tutor_offer_choose">Choose</string>
