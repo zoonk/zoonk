@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { refreshWebSource } from "../sources/web-sources";
 import { isNewer, isReleased, pickCurrentRelease } from "./current-release";
+import { findDocsSourceId } from "./goal-product-link";
 
 type DatedRelease = { id: string; releasedAt: Date | null };
 
@@ -129,19 +130,6 @@ async function hasOpenFlags({ courseId, now }: { courseId: string; now: Date }):
   return flag !== null;
 }
 
-async function findDocsSource(product: NonNullable<MainCourse["product"]>) {
-  if (!product.docsUrl) {
-    return null;
-  }
-
-  const source = await prisma.source.findFirst({
-    select: { id: true },
-    where: { productId: product.id, url: product.docsUrl },
-  });
-
-  return source?.id ?? null;
-}
-
 export type CourseReleaseState =
   | { status: "current" | "notMain" | "unfollowed" | "rewriting" }
   | {
@@ -182,7 +170,7 @@ export async function loadCourseRelease({
   }
 
   const pageId = next.sourceId ?? course.product.releasesSourceId;
-  const docsId = await findDocsSource(course.product);
+  const docsId = await findDocsSourceId(course.product);
 
   return {
     fromReleaseId: course.productReleaseId,
