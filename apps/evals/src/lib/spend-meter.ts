@@ -36,6 +36,11 @@ export async function meterWork<T>(
   return { calls: calls.slice(start), result };
 }
 
-export function isMeteredKind(kind: ModelConfig["kind"]): boolean {
-  return kind === "generation" || kind === "evaluation";
+/** AI SDK telemetry doesn't see image or GPT-Live calls, so a run records the outputs they wrote. */
+export function isPricedFromOutputs(kind: ModelConfig["kind"]): boolean {
+  return kind === "image" || kind === "realtime";
+}
+
+export function recordCalls(newCalls: ModelCall[]): void {
+  calls.push(...newCalls);
 }

@@ -21,18 +21,17 @@ import {
 } from "@/lib/format";
 import { meetsLatencyBudget } from "@/lib/latency";
 import { calculateAverageScore } from "@/lib/leaderboard";
-import { sum } from "@/lib/math";
 import { type ModelConfig, getModelById, getModelDisplayName } from "@/lib/models";
 import { generateOutputs } from "@/lib/output-generator";
 import { getAllOutputsForTask, removeModelOutputRuns } from "@/lib/output-loader";
-import { getMeteredCalls, isMeteredKind, meterModelCalls, meterWork } from "@/lib/spend-meter";
 import {
-  type TaskStats,
-  getCallsCost,
-  getRunCosts,
-  getSpent,
-  getStatsFromResults,
-} from "@/lib/stats";
+  getMeteredCalls,
+  isPricedFromOutputs,
+  meterModelCalls,
+  meterWork,
+  recordCalls,
+} from "@/lib/spend-meter";
+import { type TaskStats, getCallsCost, getSpent, getStatsFromResults } from "@/lib/stats";
 import { getTestCaseRunIds } from "@/lib/test-case-runs";
 import {
   type ModelOutputs,
@@ -209,14 +208,15 @@ async function generateAndScore({
 
   const { calls, result } = await meterWork(async () => {
     const generated = await generateOutputs(task, model.id);
-    return { generated, results: await runEval(task, model.id) };
+
+    if (isPricedFromOutputs(model.kind)) {
+      recordCalls(generated.map((usage) => ({ modelId: model.gatewayModelId, usage })));
+    }
+
+    return runEval(task, model.id);
   });
 
-  const unmeteredSpent = isMeteredKind(model.kind)
-    ? 0
-    : sum(getRunCosts({ model, prices, runs: result.generated }));
-
-  return { results: result.results, spent: getCallsCost({ calls, prices }) + unmeteredSpent };
+  return { results: result, spent: getCallsCost({ calls, prices }) };
 }
 
 async function runModel({
