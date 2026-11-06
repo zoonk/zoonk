@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { type ProductSites, isOfficialPage, isProductOfBrand, readPageTags } from "./product-sites";
+import {
+  type ProductSites,
+  decodeHtml,
+  isOfficialPage,
+  isProductOfBrand,
+  readPageTags,
+} from "./product-sites";
 
 const BASE = "https://orbit.example/notes/";
 
@@ -80,6 +86,11 @@ describe(readPageTags, () => {
     expect(readHtml(html).links).toStrictEqual(["https://orbit.example/about"]);
   });
 
+  it("reads a directory page with a hundred thousand links", () => {
+    const html = `<ul>${"<li><a href='/x'>x</a></li>".repeat(130_000)}</ul>`;
+    expect(readHtml(html).links).toStrictEqual(["https://orbit.example/x"]);
+  });
+
   it("resolves links against the page's base address", () => {
     expect(
       readHtml(`<base href="https://cdn.orbit.example/"><a href="docs">Docs</a>`).links,
@@ -97,6 +108,31 @@ describe(readPageTags, () => {
   ])("ignores a link inside %s", (_case, html) => {
     const { links } = readHtml(`<html><body>${html}</body></html>`);
     expect(links).not.toContain("https://hidden.example/");
+  });
+});
+
+describe(decodeHtml, () => {
+  it("decodes a page in the charset it declares", () => {
+    const html = `<meta charset="windows-1252"><a href="https://caf\u00E9.example/">Caf\u00E9</a>`;
+    const bytes = Uint8Array.from(html, (character) => character.codePointAt(0) ?? 0);
+
+    expect(readPageTags({ html: decodeHtml(bytes), url: BASE }).links).toStrictEqual([
+      "https://xn--caf-dma.example/",
+    ]);
+  });
+
+  it("decodes a UTF-16 page by its byte-order mark", () => {
+    const html = `<a href="https://lumen.example/">Lumen</a>`;
+    const withMark = `\uFEFF${html}`;
+    const units = Uint16Array.from(withMark, (character) => character.codePointAt(0) ?? 0);
+    const bytes = new Uint8Array(units.buffer);
+
+    expect(decodeHtml(bytes)).toBe(html);
+  });
+
+  it("reads UTF-8 when the page declares nothing or a charset no decoder knows", () => {
+    const html = `<meta charset="x-unknown"><p>caf\u00E9</p>`;
+    expect(decodeHtml(new TextEncoder().encode(html))).toBe(html);
   });
 });
 
