@@ -208,6 +208,7 @@ function saveBuiltGraph({
         ...context,
         courses: orderGoalCourses(graph),
         goal,
+        product: inputs.product,
         provenance,
         scope,
       });

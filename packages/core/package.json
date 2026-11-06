@@ -377,6 +377,8 @@
     "./library/products/course": "./src/library/products/product-course.ts",
     "./library/products/current-release": "./src/library/products/current-release.ts",
     "./library/products/find": "./src/library/products/find-product.ts",
+    "./library/products/goal-courses": "./src/library/products/goal-courses.ts",
+    "./library/products/goal-product": "./src/library/products/goal-product.ts",
     "./library/products/keys": "./src/library/products/product-keys.ts",
     "./library/products/link-goal": "./src/library/products/link-goal-product.ts",
     "./library/products/product-reading": "./src/library/products/product-reading.ts",

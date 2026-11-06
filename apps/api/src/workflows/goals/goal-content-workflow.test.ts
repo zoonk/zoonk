@@ -40,6 +40,7 @@ import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { brandFixture, productFixture } from "@zoonk/testing/fixtures/products";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   examBlueprintFixture,
@@ -1832,6 +1833,57 @@ describe(goalContentWorkflow, () => {
     ]);
   });
 
+  it("waits for research to decide a learn goal's product, then titles its course for it and makes the product's course", async () => {
+    const { goal } = await newGoal();
+    const brand = await brandFixture({ name: "Acme" });
+    const name = `Gizmo ${crypto.randomUUID().slice(0, 8)}`;
+    const product = await productFixture({ name, organizationId: brand.id });
+    const built = isolatedGraph();
+
+    vi.mocked(generateSkillGraph).mockResolvedValue(
+      graphResult({
+        ...built,
+        courses: built.courses.map((course, index) =>
+          index === 0 ? { ...course, title: name } : course,
+        ),
+      }),
+    );
+
+    vi.mocked(getRun).mockReturnValue({
+      exists: Promise.resolve(true),
+      status: Promise.resolve("running"),
+    } as never);
+
+    vi.mocked(sleep).mockImplementationOnce(async () => {
+      expect(generateSkillGraph).not.toHaveBeenCalled();
+
+      await prisma.goal.update({
+        data: { productCheckedAt: new Date(), productId: product.id },
+        where: { id: goal.id },
+      });
+    });
+
+    await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
+
+    expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].product).toStrictEqual({
+      brand: "Acme",
+      courseTitle: name,
+      name,
+    });
+
+    const { primaryCourse } = await prisma.goal.findUniqueOrThrow({
+      include: { primaryCourse: true },
+      where: { id: goal.id },
+    });
+
+    expect(primaryCourse).toMatchObject({
+      isPinned: false,
+      organizationId: brand.id,
+      productId: product.id,
+      title: name,
+    });
+  });
+
   it("builds an exam's graph at once when onboarding already found its current blueprint, whatever instructions read it", async () => {
     const blueprint = await examBlueprintFixture({
       examDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
@@ -2915,8 +2967,11 @@ describe(goalContentWorkflow, () => {
     expect(calls.every((params) => params.skills.length >= 2)).toBe(true);
   });
 
-  it("writes a learn goal's graph while research runs, and only its coverage check waits for research", async () => {
-    const { goal, user } = await newGoal({ details: { level: "none", purpose: "deep" } });
+  it("writes a learn goal's graph once research decides it's no product, and only its coverage check waits for research's end", async () => {
+    const { goal, user } = await newGoal({
+      details: { level: "none", purpose: "deep" },
+      productCheckedAt: new Date(),
+    });
     const events: string[] = [];
     const { promise: graphWritten, resolve: markGraphWritten } = Promise.withResolvers<boolean>();
 
