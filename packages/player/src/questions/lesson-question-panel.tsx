@@ -116,7 +116,7 @@ export function LessonQuestionDrawer({
       <Drawer onOpenChange={(next) => !next && controller.close()} open={open}>
         <DrawerPopup
           backdropClassName="[--backdrop-opacity:0.4] dark:[--backdrop-opacity:0.4]"
-          className="h-[70dvh] max-h-[70dvh] outline-none"
+          className="h-[max(70dvh,27rem)] max-h-[calc(100dvh-1rem)] outline-none sm:max-h-[calc(100dvh-2rem)]"
           data-slot="lesson-question-drawer"
           finalFocus={getFinalFocus}
         >
