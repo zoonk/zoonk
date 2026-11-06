@@ -3,6 +3,7 @@ import {
   type ImageAssetCheck,
   type PictureRedraw,
   checkImageAsset,
+  claimPictureCheck,
   planImageAssetAgain,
   redrawImageAsset,
   removeImageAsset,
@@ -17,6 +18,12 @@ export async function checkPictureStep(
   "use step";
 
   return checkImageAsset(input);
+}
+
+export async function claimPictureCheckStep(assetId: string): Promise<boolean> {
+  "use step";
+
+  return claimPictureCheck(assetId);
 }
 
 export async function planPictureAgainStep(

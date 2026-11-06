@@ -173,20 +173,22 @@ describe(dailySweepsWorkflow, () => {
   });
 
   it("starts the check of pictures still owing one, such as a picture whose storing step failed before starting it", async () => {
-    const [owed, justStored] = await Promise.all([
-      mediaAssetFixture({ checkOwedAt: new Date(Date.now() - 2 * DAY_MS) }),
-      mediaAssetFixture({ checkOwedAt: new Date() }),
+    const [owed, checked] = await Promise.all([
+      // The sweep takes the longest-owed first, so other tests' owed pictures can't push this one out
+      // of its batch.
+      mediaAssetFixture({ checkOwedAt: new Date(Date.now() - 30 * DAY_MS) }),
+      mediaAssetFixture({ checkOwedAt: null }),
     ]);
 
     const result = await dailySweepsWorkflow();
 
-    const checked = getStartMock()
+    const started = getStartMock()
       .mock.calls.filter(([workflow]) => workflow === pictureChecksWorkflow)
       .flatMap(([, args]) => (args as [{ assetIds: string[] }])[0].assetIds);
 
-    expect(checked).toContain(owed.id);
-    expect(checked).not.toContain(justStored.id);
-    expect(result.pictureChecks).toBe(checked.length);
+    expect(started).toContain(owed.id);
+    expect(started).not.toContain(checked.id);
+    expect(result.pictureChecks).toBe(started.length);
   });
 
   it("starts the rewrite of what a changed source left flagged", async () => {

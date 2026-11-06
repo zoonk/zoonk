@@ -8,12 +8,12 @@ import { startPictureChecks } from "../images/start-picture-checks";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
-  claimOwedPictureChecksStep,
   countOpenReviewFlagsStep,
   deleteInactiveGuestsStep,
   deleteRetiredStepsStep,
   listDueFreshnessTargetsStep,
   listLessonsForLaterReviewStep,
+  listOwedPictureChecksStep,
   purgeEvaluationRunsStep,
   purgeExpiredAuthRecordsStep,
   purgeExpiredVerificationsStep,
@@ -62,7 +62,7 @@ async function startOldFollowUps(): Promise<number> {
 }
 
 async function checkOwedPictures(): Promise<number> {
-  const assetIds = await claimOwedPictureChecksStep();
+  const assetIds = await listOwedPictureChecksStep();
   await startPictureChecks({ assetIds });
 
   return assetIds.length;

@@ -21,7 +21,8 @@ import {
 import {
   type PictureRedraw,
   checkImageAsset,
-  claimOwedPictureChecks,
+  claimPictureCheck,
+  listOwedPictureChecks,
   planImageAssetAgain,
   redrawImageAsset,
   removeImageAsset,
@@ -275,39 +276,47 @@ describe(replaceImageAsset, () => {
   });
 });
 
-describe(claimOwedPictureChecks, () => {
-  it("claims a picture owing its check for over a day once, even when two sweeps claim at the same time", async () => {
-    const owed = await mediaAssetFixture({
-      checkOwedAt: new Date(Date.now() - 2 * DAY_MS),
-      createdAt: new Date(Date.now() - 2 * DAY_MS),
-    });
+describe(claimPictureCheck, () => {
+  it("claims an attempt at an owed picture's check until three were started", async () => {
+    const asset = await mediaAssetFixture({ checkAttempts: 1, checkOwedAt: new Date() });
 
-    const sweeps = await Promise.all([claimOwedPictureChecks(), claimOwedPictureChecks()]);
+    await expect(claimPictureCheck(asset.id)).resolves.toBe(true);
+    await expect(claimPictureCheck(asset.id)).resolves.toBe(true);
+    await expect(claimPictureCheck(asset.id)).resolves.toBe(false);
 
-    expect(sweeps.flat().filter((assetId) => assetId === owed.id)).toHaveLength(1);
-
-    const claimedAt = await owedCheckOf(owed.id);
-    expect(claimedAt?.getTime()).toBeGreaterThan(Date.now() - 60_000);
-    await expect(claimOwedPictureChecks()).resolves.not.toContain(owed.id);
+    await expect(
+      prisma.mediaAsset.findUniqueOrThrow({ where: { id: asset.id } }),
+    ).resolves.toMatchObject({ checkAttempts: 3 });
   });
 
-  it("leaves a picture its storing step is still checking, one checked already, and one a week of sweeps gave up on", async () => {
+  it("claims nothing for a picture that owes no check or is gone", async () => {
+    const asset = await mediaAssetFixture({ checkOwedAt: null });
+
+    await expect(claimPictureCheck(asset.id)).resolves.toBe(false);
+    await expect(claimPictureCheck(randomUUID())).resolves.toBe(false);
+  });
+});
+
+describe(listOwedPictureChecks, () => {
+  it("lists the pictures still owing a check, longest-owed first, leaving checked ones and those whose checks kept failing", async () => {
     const now = Date.now();
 
-    const [justStored, checked, givenUp] = await Promise.all([
-      mediaAssetFixture({ checkOwedAt: new Date(now - 60_000) }),
-      mediaAssetFixture({ checkOwedAt: null, createdAt: new Date(now - 2 * DAY_MS) }),
-      mediaAssetFixture({
-        checkOwedAt: new Date(now - 2 * DAY_MS),
-        createdAt: new Date(now - 8 * DAY_MS),
-      }),
+    const [older, newer, checked, failing] = await Promise.all([
+      mediaAssetFixture({ checkOwedAt: new Date(now - 30 * DAY_MS) }),
+      mediaAssetFixture({ checkAttempts: 2, checkOwedAt: new Date(now - 29 * DAY_MS) }),
+      mediaAssetFixture({ checkOwedAt: null }),
+      mediaAssetFixture({ checkAttempts: 3, checkOwedAt: new Date(now - 31 * DAY_MS) }),
     ]);
 
-    const claimed = await claimOwedPictureChecks();
+    const listed = await listOwedPictureChecks();
 
-    expect(claimed).not.toContain(justStored.id);
-    expect(claimed).not.toContain(checked.id);
-    expect(claimed).not.toContain(givenUp.id);
+    expect(listed.filter((id) => id === older.id || id === newer.id)).toStrictEqual([
+      older.id,
+      newer.id,
+    ]);
+
+    expect(listed).not.toContain(checked.id);
+    expect(listed).not.toContain(failing.id);
   });
 });
 

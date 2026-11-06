@@ -8,7 +8,6 @@ import {
 } from "@zoonk/ai/tasks/images/scene-schema";
 import { type ImageCanvas, getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { prisma } from "@zoonk/db";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { logInfo } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -22,8 +21,8 @@ import { uploadImageFile } from "./_utils/save-image-asset";
 
 const CHECK_TIER = chooseServiceTier({ wait: "later" });
 
+const CHECK_ATTEMPTS = 3;
 const OWED_PICTURES_PER_SWEEP = 100;
-const SWEEPS_GIVE_UP_AFTER_MS = 7 * MS_PER_DAY;
 
 export type PictureRedraw = Awaited<ReturnType<typeof uploadImageFile>> & {
   provenance: LibraryProvenance;
@@ -226,31 +225,28 @@ export async function replaceImageAsset({
 }
 
 /**
- * Internal bridge for the daily sweep. It waits a day, so the check a picture's storing step started
- * has ended, and claims each picture, so two sweeps never check it at once. A picture stored over a
- * week ago kept failing its check, so the sweep stops paying for it.
+ * Internal workflow bridge: claims an attempt at the picture's check before it starts. A picture
+ * that owes none, or whose checks kept failing, gets none, since another try would only pay again.
  */
-export async function claimOwedPictureChecks(): Promise<string[]> {
-  const now = new Date();
-  const dayAgo = new Date(now.getTime() - MS_PER_DAY);
+export async function claimPictureCheck(assetId: string): Promise<boolean> {
+  const { count } = await prisma.mediaAsset.updateMany({
+    data: { checkAttempts: { increment: 1 } },
+    where: { checkAttempts: { lt: CHECK_ATTEMPTS }, checkOwedAt: { not: null }, id: assetId },
+  });
 
-  const owed = await prisma.mediaAsset.findMany({
+  return count > 0;
+}
+
+/** Internal bridge for the daily sweep. */
+export async function listOwedPictureChecks(): Promise<string[]> {
+  const pictures = await prisma.mediaAsset.findMany({
     orderBy: { checkOwedAt: "asc" },
     select: { id: true },
     take: OWED_PICTURES_PER_SWEEP,
-    where: {
-      checkOwedAt: { lt: dayAgo },
-      createdAt: { gte: new Date(now.getTime() - SWEEPS_GIVE_UP_AFTER_MS) },
-    },
+    where: { checkAttempts: { lt: CHECK_ATTEMPTS }, checkOwedAt: { not: null } },
   });
 
-  const claimed = await prisma.mediaAsset.updateManyAndReturn({
-    data: { checkOwedAt: now },
-    select: { id: true },
-    where: { checkOwedAt: { lt: dayAgo }, id: { in: owed.map((picture) => picture.id) } },
-  });
-
-  return claimed.map((picture) => picture.id);
+  return pictures.map((picture) => picture.id);
 }
 
 /** Drops the questions about the picture, since they can't be asked without it. */
