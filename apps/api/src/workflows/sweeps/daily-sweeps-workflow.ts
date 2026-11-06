@@ -1,3 +1,4 @@
+import { createHook } from "workflow";
 import { start } from "workflow/api";
 import { repeatUntil } from "../_shared/repeat-until";
 import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
@@ -20,7 +21,7 @@ import {
 
 const MAX_GUEST_BATCHES = 20;
 
-export type DailySweepsResult = {
+type SweepCounts = {
   accessRecordsPurged: number;
   sessionsPurged: number;
   evaluationRunsPurged: number;
@@ -34,6 +35,10 @@ export type DailySweepsResult = {
   retiredStepsDeleted: number;
   verificationsPurged: number;
 };
+
+export type DailySweepsResult =
+  | { runId: string; status: "alreadyRan" }
+  | (SweepCounts & { status: "swept" });
 
 function countOf(result: PromiseSettledResult<number>): number {
   return result.status === "fulfilled" ? result.value : 0;
@@ -88,9 +93,7 @@ async function startLaterReviews(): Promise<number> {
   return lessonIds.length;
 }
 
-export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
-  "use workflow";
-
+async function sweep(): Promise<SweepCounts> {
   const [
     checks,
     guests,
@@ -131,4 +134,23 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     sessionsPurged: access.status === "fulfilled" ? access.value.sessionsPurged : 0,
     verificationsPurged: countOf(verifications),
   };
+}
+
+export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
+  "use workflow";
+
+  // Vercel can deliver a scheduled run again after the first one ended, so the day's token stays
+  // taken for a day; `using` or `claimRunToken` would free it when this run ends.
+  const day = createHook({
+    experimental_minRetention: "1d",
+    token: `daily-sweeps:${new Date().toISOString().slice(0, 10)}`,
+  });
+
+  const conflict = await day.getConflict();
+
+  if (conflict) {
+    return { runId: conflict.runId, status: "alreadyRan" };
+  }
+
+  return { ...(await sweep()), status: "swept" };
 }

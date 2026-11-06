@@ -9,8 +9,9 @@ import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { assert, describe, expect, it, onTestFinished, vi } from "vitest";
 import { start } from "workflow/api";
+import { mockHookConflict } from "../../../mocks/workflow";
 import { getStartMock } from "../_test-utils/start-mock";
 import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
@@ -100,6 +101,7 @@ describe(dailySweepsWorkflow, () => {
     ]);
 
     const result = await dailySweepsWorkflow();
+    assert(result.status === "swept");
 
     expect(result.sessionsPurged).toBeGreaterThanOrEqual(1);
     expect(result.accessRecordsPurged).toBeGreaterThanOrEqual(1);
@@ -157,6 +159,7 @@ describe(dailySweepsWorkflow, () => {
     });
 
     const result = await dailySweepsWorkflow();
+    assert(result.status === "swept");
 
     expect(start).toHaveBeenCalledWith(followUpsWorkflow, [{ userId: waiting.id }]);
     expect(start).not.toHaveBeenCalledWith(followUpsWorkflow, [{ userId: recent.id }]);
@@ -190,6 +193,40 @@ describe(dailySweepsWorkflow, () => {
     expect(start).toHaveBeenCalledWith(flaggedContentWorkflow, [{}]);
   });
 
+  it("starts nothing when another delivery already took today's sweep", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-11-06T06:00:40Z"));
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    await examBlueprintFixture({ nextCheckAt: new Date(Date.now() + DAY_MS - 60_000) });
+
+    mockHookConflict(
+      { returnValue: Promise.resolve(null), runId: "first-delivery" },
+      { tokens: /^daily-sweeps:2026-11-06$/u },
+    );
+
+    await expect(dailySweepsWorkflow()).resolves.toStrictEqual({
+      runId: "first-delivery",
+      status: "alreadyRan",
+    });
+
+    expect(start).not.toHaveBeenCalled();
+  });
+
+  it("sweeps a new day while yesterday's sweep still holds its day", async () => {
+    const yesterday = new Date(Date.now() - DAY_MS).toISOString().slice(0, 10);
+
+    mockHookConflict(
+      { returnValue: Promise.resolve(null), runId: "yesterdays-sweep" },
+      { tokens: new RegExp(`^daily-sweeps:${yesterday}$`, "u") },
+    );
+
+    await expect(dailySweepsWorkflow()).resolves.toMatchObject({ status: "swept" });
+  });
+
   it("counts a sweep that failed as nothing and still runs the others", async () => {
     const [exam] = await Promise.all([
       // The sweep takes the latest due first, so other tests' due exams can't push this one out of
@@ -207,6 +244,7 @@ describe(dailySweepsWorkflow, () => {
     });
 
     const result = await dailySweepsWorkflow();
+    assert(result.status === "swept");
 
     expect(start).toHaveBeenCalledWith(freshnessWorkflow, [
       { examBlueprintId: exam.id, kind: "exam" },
