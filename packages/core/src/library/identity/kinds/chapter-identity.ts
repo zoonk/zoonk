@@ -24,6 +24,10 @@ async function findExactChapter({
     : null;
 }
 
+/**
+ * A pinned course teaches one older release of a product: its chapters are never reused, and it
+ * reuses none, so a general chapter can't carry a lesson the main course rewrites into it.
+ */
 async function findChapterCandidateIds({
   request,
   search,
@@ -40,6 +44,12 @@ async function findChapterCandidateIds({
       AND NOT EXISTS (
         SELECT 1 FROM course_chapters cc
         WHERE cc.chapter_id = c.id AND cc.course_id = ${request.course.id}::uuid
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM courses home WHERE home.id = c.home_course_id AND home.is_pinned
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM courses asking WHERE asking.id = ${request.course.id}::uuid AND asking.is_pinned
       )`,
     search,
   });
