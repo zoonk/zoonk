@@ -4,7 +4,7 @@ import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
-import { courseReleaseWorkflow, getCourseReleaseToken } from "../products/course-release-workflow";
+import { startCourseReleases } from "../products/course-release-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
@@ -53,12 +53,7 @@ async function checkFreshness(): Promise<number> {
 /** Also catches an update whose start failed. */
 async function updateCoursesBehind(): Promise<number> {
   const courseIds = await listCoursesBehindStep();
-
-  await Promise.all(
-    courseIds.map((courseId) =>
-      startOnce(courseReleaseWorkflow, [{ courseId }], getCourseReleaseToken(courseId)),
-    ),
-  );
+  await startCourseReleases(courseIds);
 
   return courseIds.length;
 }

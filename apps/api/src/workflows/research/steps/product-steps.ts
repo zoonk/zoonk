@@ -13,7 +13,6 @@ import { copyBrandLogo, copyProductImage } from "@zoonk/core/library/products/me
 import { readProductSources } from "@zoonk/core/library/products/read-sources";
 import {
   type ProductResearch,
-  saveProductReleases,
   saveProductResearch,
 } from "@zoonk/core/library/products/save-research";
 import {
@@ -235,17 +234,9 @@ export async function saveProductResearchStep({
   };
 }
 
-export async function saveProductReleasesStep(input: Parameters<typeof saveProductReleases>[0]) {
+export async function refreshProductReleasesStep(sourceId: string): Promise<void> {
   "use step";
-  await saveProductReleases(input);
-}
-
-/** Null when the page is gone; otherwise the hash of what it states now. */
-export async function refreshProductReleasesStep(sourceId: string): Promise<string | null> {
-  "use step";
-
-  const refreshed = await failPermanently(() => refreshWebSource(sourceId));
-  return refreshed?.source.contentHash ?? null;
+  await failPermanently(() => refreshWebSource(sourceId));
 }
 
 export async function copyBrandLogoStep(input: { iconUrl: string; organizationId: string }) {

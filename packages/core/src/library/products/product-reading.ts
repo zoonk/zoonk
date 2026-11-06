@@ -8,7 +8,7 @@ import { isDateStated, isVersionStated } from "./release-claims";
 /** A page's language names its months ("21 de outubro de 2025"). */
 export type ReadProductPage = { language: string; text: string };
 
-export type CheckedProductRelease = {
+type CheckedProductRelease = {
   name: string;
   version: string | null;
   releasedAt: Date | null;

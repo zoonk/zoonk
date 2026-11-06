@@ -1,29 +1,25 @@
 import "server-only";
+import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { prisma } from "@zoonk/db";
-import { type LibraryProvenance } from "../_utils/library-rows";
 import { listCoursesBehind } from "./course-release";
-import { type CheckedProductRelease } from "./product-reading";
+import { type ProductSourcesReading, readProductSources } from "./read-product-sources";
 import { saveProductReleases } from "./save-product-research";
 
-/**
- * Internal workflow bridge: a known product's releases page, when its text differs from the one its
- * releases were read from, whether this check or an earlier one saved it. Null when it's read already.
- */
-export async function loadUnreadReleasesPage(productId: string) {
+export type ReleasesReading = Pick<ProductSourcesReading, "provenance" | "releases"> & {
+  contentHash: string;
+  productId: string;
+  sourceId: string;
+};
+
+async function findUnreadReleasesPage(productId: string) {
   const product = await prisma.product.findUnique({
     select: {
       name: true,
       organization: { select: { name: true } },
       releasesHash: true,
       releasesSource: {
-        select: {
-          contentHash: true,
-          extractedText: true,
-          id: true,
-          language: true,
-          title: true,
-          url: true,
-        },
+        select: { contentHash: true, extractedText: true, id: true, language: true },
       },
     },
     where: { id: productId },
@@ -35,50 +31,66 @@ export async function loadUnreadReleasesPage(productId: string) {
     return null;
   }
 
+  return { brand: product.organization.name, name: product.name, source };
+}
+
+/**
+ * Internal workflow bridge for research's refresh of a stale product and the freshness check: reads
+ * a known product's releases page when its text differs from the one its releases were read from,
+ * whether this run or an earlier one saved it. Null when it's read already.
+ */
+export async function readProductReleases({
+  analytics,
+  productId,
+  release,
+  serviceTier,
+}: {
+  analytics?: AiGenerationContext;
+  productId: string;
+  /** A release the learner named, so the reading looks for it even past the newest ones. */
+  release: string | null;
+  serviceTier?: ServiceTier;
+}): Promise<ReleasesReading | null> {
+  const unread = await findUnreadReleasesPage(productId);
+
+  if (!unread) {
+    return null;
+  }
+
+  const { brand, name, source } = unread;
+
+  const reading = await readProductSources({
+    analytics,
+    hints: { brand, name, release },
+    known: true,
+    language: source.language,
+    serviceTier,
+    sourceIds: [source.id],
+  });
+
   return {
-    contentHash: source.contentHash,
-    hints: { brand: product.organization.name, name: product.name, release: null },
-    page: {
-      language: source.language,
-      text: source.extractedText,
-      title: source.title,
-      url: source.url ?? "",
-    },
+    contentHash: reading.hashes[source.id] ?? source.contentHash,
+    productId,
+    provenance: reading.provenance,
+    releases: reading.releases,
     sourceId: source.id,
   };
 }
 
 /**
- * Internal workflow bridge. Saves the releases checked on the page with the hash they were read
+ * Internal workflow bridge. Saves the releases read from the page with the hash they were read
  * from, and returns the product's main courses now behind that a learner follows.
  */
-export async function saveCheckedReleases({
+export async function saveReadReleases({
   contentHash,
   productId,
   provenance,
   releases,
   sourceId,
-}: {
-  contentHash: string;
-  productId: string;
-  provenance: LibraryProvenance;
-  releases: readonly CheckedProductRelease[];
-  sourceId: string;
-}): Promise<string[]> {
+}: ReleasesReading): Promise<string[]> {
   await saveProductReleases({
     productId,
-    reading: {
-      provenance,
-      releases: releases.map((release) => ({
-        name: release.name,
-        releasedAt: release.releasedAt,
-        sourceId,
-        supportEndsAt: release.supportEndsAt,
-        version: release.version,
-      })),
-      releasesHash: contentHash,
-      releasesSourceId: sourceId,
-    },
+    reading: { provenance, releases, releasesHash: contentHash, releasesSourceId: sourceId },
   });
 
   return listCoursesBehind({ productId });

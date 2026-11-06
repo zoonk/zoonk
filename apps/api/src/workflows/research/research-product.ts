@@ -1,7 +1,9 @@
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { type ProductHints, type SourceResearchPlan } from "@zoonk/ai/tasks/research/source-plan";
 import { toNameKey } from "@zoonk/core/library/products/keys";
 import { type GoalProductLink } from "@zoonk/core/library/products/link-goal";
 import { claimRunToken, waitForRunToken } from "../_shared/run-token";
+import { readProductReleases } from "../products/product-releases";
 import { type ResearchResult } from "./research-result";
 import { type ResearchContext } from "./research-sources";
 import { linkGoalToSourcesStep } from "./steps/link-goal-step";
@@ -18,7 +20,6 @@ import {
   markProductCheckedStep,
   readProductPagesStep,
   refreshProductReleasesStep,
-  saveProductReleasesStep,
   saveProductResearchStep,
   storeProductPageStep,
 } from "./steps/product-steps";
@@ -172,8 +173,9 @@ async function researchNewProduct(research: Research): Promise<GoalProductLink |
 }
 
 /**
- * Re-reads the releases page only when its hash differs from the one the saved releases came from,
- * which also catches a refresh that saved the new hash and then failed before reading.
+ * Fetches the releases page again and reads it only when its hash differs from the one the saved
+ * releases came from, which also catches a refresh that saved the new hash and then failed before
+ * reading. A page that no longer answers keeps the releases already saved.
  */
 async function refreshReleases({
   known,
@@ -184,34 +186,16 @@ async function refreshReleases({
 }): Promise<KnownProduct> {
   const sourceId = known.product.releasesSourceId;
 
-  if (!sourceId || !(await claimOrWait(`product:${known.product.id}`))) {
-    return (await findKnown(research)) ?? known;
+  if (sourceId) {
+    await Promise.allSettled([refreshProductReleasesStep(sourceId)]);
+
+    await readProductReleases({
+      analytics: research.analytics,
+      productId: known.product.id,
+      release: research.hints.release,
+      serviceTier: chooseServiceTier({ wait: "learner" }),
+    });
   }
-
-  const [refreshed] = await Promise.allSettled([refreshProductReleasesStep(sourceId)]);
-  const hash = refreshed.status === "fulfilled" ? refreshed.value : null;
-
-  if (!hash || hash === known.product.releasesHash) {
-    return known;
-  }
-
-  const reading = await readProductPagesStep({
-    analytics: research.analytics,
-    hints: { ...research.hints, brand: known.brand.name, name: known.product.name },
-    known: true,
-    language: research.plan.language,
-    sourceIds: [sourceId],
-  });
-
-  await saveProductReleasesStep({
-    productId: known.product.id,
-    reading: {
-      provenance: reading.provenance,
-      releases: reading.releases,
-      releasesHash: reading.hashes[sourceId] ?? hash,
-      releasesSourceId: sourceId,
-    },
-  });
 
   return (await findKnown(research)) ?? known;
 }

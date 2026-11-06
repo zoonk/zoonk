@@ -3,6 +3,7 @@ import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { repeatUntil } from "../_shared/repeat-until";
+import { startOnce } from "../_shared/run-token";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
   advanceCourseReleaseStep,
@@ -139,7 +140,7 @@ async function applyRelease({ state, ...run }: ReleaseRun & { state: Behind }): 
  * Moves a product's main course to its current release, one release at a time: one comparison of
  * the release notes with the course's lessons, a "What's new" chapter offered to learners already
  * past the course's start, then the move itself, with the changed lessons rewritten in place. System work no learner
- * waits on; one run per course (`getCourseReleaseToken`).
+ * waits on; one run per course (`startCourseReleases`).
  */
 export async function courseReleaseWorkflow({
   courseId,
@@ -167,7 +168,11 @@ export async function courseReleaseWorkflow({
   });
 }
 
-/** One release update per course: start it with `startOnce` and this token. */
-export function getCourseReleaseToken(courseId: string): string {
-  return `course-release:${courseId}`;
+/** One release update per course at a time: a course already updating keeps its run. */
+export async function startCourseReleases(courseIds: readonly string[]): Promise<void> {
+  await Promise.all(
+    courseIds.map((courseId) =>
+      startOnce(courseReleaseWorkflow, [{ courseId }], `course-release:${courseId}`),
+    ),
+  );
 }
