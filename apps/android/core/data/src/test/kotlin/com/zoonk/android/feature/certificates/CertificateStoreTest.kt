@@ -39,6 +39,19 @@ class CertificateStoreTest {
         }
 
     @Test
+    fun closingAMomentLeavesTheListAsItIs() =
+        runTest {
+            val api = FakeCertificatesApi(listOf(owned("K7QF2M9XHD4P")))
+            val store = store(api)
+
+            store.certificates.load()
+            store.markShown("K7QF2M9XHD4P")
+            store.certificates.load()
+
+            assertEquals(1, api.reads)
+        }
+
+    @Test
     fun upNextKeepsActiveCoursesWithLessonsAndLanguagesAsMainDoes() {
         val upNext =
             certificateUpNext(

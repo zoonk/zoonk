@@ -108,12 +108,13 @@ class CertificateStore(
     /** Closed while this app runs: a result read before its views were saved doesn't play the moment again. */
     fun isClosed(code: String) = code in closed
 
-    /** So its award moment shows once: completion results stop returning it. */
+    /**
+     * So its award moment shows once: completion results stop returning it. Like main's, it refreshes
+     * nothing: only results show the mark, and [isClosed] skips it there.
+     */
     suspend fun markShown(code: String): Boolean {
         closed += code
-        return cache.mutate(
-            invalidating = setOf(DataDomain.Certificates),
-        ) { session -> api.markShown(session, code) } is MutationResult.Done
+        return cache.mutate { session -> api.markShown(session, code) } is MutationResult.Done
     }
 
     /** Every certificate of the plan's finished units, the ones it writes now included; the goal map then shows them. */
