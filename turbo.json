@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
-  "agentGuidance": false,
+  "agentGuidance": true,
   "futureFlags": { "globalConfiguration": true },
   "global": {
     "env": [
