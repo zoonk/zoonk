@@ -51,16 +51,20 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return;
     }
     case "askToCancelSecondStorePlus":
-    case "checkDailyInsight":
     case "checkFactSensitivity":
     case "classifyMistakeCause":
     case "endWebPlusBesideStore":
-    case "findMistakePattern":
-    case "rememberOnboarding":
     case "rememberSession":
     case "settleSessionDay":
     case "voiceWord":
       await startOnce(backgroundTaskWorkflow, [followUp], getBackgroundTaskToken(followUp));
+      return;
+    // These read the learner's state as of when they run. A run that's working may have read it
+    // before this ask, so this one gets its own run, after it.
+    case "checkDailyInsight":
+    case "findMistakePattern":
+    case "rememberOnboarding":
+      await start(backgroundTaskWorkflow, [followUp]);
       return;
     case "writeSpeakingPaper": {
       const { mockId } = followUp.input;
