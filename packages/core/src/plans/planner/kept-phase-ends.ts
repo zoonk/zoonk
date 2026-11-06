@@ -1,4 +1,3 @@
-import { type BuildPlanInput } from "./build-plan";
 import { findDayIndex, isLessonRoom } from "./day-index";
 import { canHoldPhaseChallenge } from "./phase-challenge-days";
 import { listWonPhases } from "./phase-time";
@@ -303,28 +302,31 @@ export function listStrainedEnds({
   });
 }
 
+/**
+ * Takes the items before `placeItemsInPhaseTime` files the lessons past a kept end under the next
+ * phase's time; a saved plan already filed some, so the queue's phase wins.
+ */
 export function listEndsBeforeLessons({
-  ends,
-  input,
   items,
+  phaseEnds,
+  queue,
   units,
 }: {
-  ends: ReadonlyMap<number, Date>;
-  input: Pick<BuildPlanInput, "graph">;
-  items: readonly Pick<
-    PlannedItem,
-    "key" | "kind" | "phase" | "scheduledFor" | "skillId" | "status"
-  >[];
+  items: readonly Pick<PlannedItem, "key" | "kind" | "phase" | "scheduledFor" | "status">[];
+  phaseEnds: ReadonlyMap<number, Date>;
+  queue: readonly Pick<QueueUnit, "key" | "phase">[];
   units: readonly Pick<ScheduledUnit, "depth" | "key">[];
 }): number[] {
-  const phaseOf = new Map(input.graph.skills.map((skill) => [skill.skillId, skill.phase]));
   const core = new Set(units.flatMap((unit) => (unit.depth ? [] : [unit.key])));
 
   const depth = new Set(
     units.flatMap((unit) => (unit.depth && !core.has(unit.key) ? [unit.key] : [])),
   );
 
-  const lessons = items.filter(
+  const queued = new Map(queue.map((unit) => [unit.key, unit.phase]));
+  const placed = items.map((item) => ({ ...item, phase: queued.get(item.key) ?? item.phase }));
+
+  const lessons = placed.filter(
     (item) =>
       LEARN_KINDS.has(item.kind) &&
       item.status === "todo" &&
@@ -332,15 +334,12 @@ export function listEndsBeforeLessons({
       !depth.has(item.key),
   );
 
-  const won = listWonPhases(items);
+  const won = listWonPhases(placed);
 
-  return [...ends].flatMap(([phase, date]) =>
+  return [...phaseEnds].flatMap(([phase, date]) =>
     !won.has(phase) &&
     lessons.some(
-      (item) =>
-        (phaseOf.get(item.skillId ?? "") ?? item.phase) <= phase &&
-        item.scheduledFor !== null &&
-        item.scheduledFor > date,
+      (item) => item.phase <= phase && item.scheduledFor !== null && item.scheduledFor > date,
     )
       ? [phase]
       : [],

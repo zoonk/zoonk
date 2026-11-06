@@ -207,44 +207,54 @@ describe(keepPhaseEnds, () => {
   });
 });
 
-function filed(key: string, skillId: string, date: string) {
+function filed(key: string, date: string) {
   return {
     key,
     kind: "lesson" as const,
     phase: 1,
     scheduledFor: fromIsoDate(date),
-    skillId,
     status: "todo" as const,
   };
 }
 
 describe(listEndsBeforeLessons, () => {
   const end = fromIsoDate("2026-10-18");
-  const ends = new Map([[0, end]]);
+  const phaseEnds = new Map([[0, end]]);
+  const items = [filed("a", "2026-10-19"), filed("b", "2026-10-20")];
 
-  const input = {
-    graph: {
-      phases: [],
-      skills: [
-        { phase: 0, skillId: "arrival" },
-        { phase: 1, skillId: "renting" },
-      ],
-    },
-  } as unknown as Parameters<typeof listEndsBeforeLessons>[0]["input"];
+  const queue = [
+    { key: "a", phase: 0 },
+    { key: "b", phase: 1 },
+  ];
 
-  it("reads a lesson filed under the next phase by its own skill's phase", () => {
-    const items = [filed("a", "arrival", "2026-10-19"), filed("b", "renting", "2026-10-20")];
-
+  it("reads a lesson filed under the next phase by the phase the plan put it in", () => {
     expect(
-      listEndsBeforeLessons({ ends, input, items, units: [{ depth: false, key: "a" }] }),
+      listEndsBeforeLessons({ items, phaseEnds, queue, units: [{ depth: false, key: "a" }] }),
     ).toStrictEqual([0]);
   });
 
   it("lets depth a plan short on time studies later come after the challenge", () => {
-    const items = [filed("a", "arrival", "2026-10-19"), filed("b", "renting", "2026-10-20")];
+    expect(
+      listEndsBeforeLessons({ items, phaseEnds, queue, units: [{ depth: true, key: "a" }] }),
+    ).toStrictEqual([]);
+  });
+
+  it("never counts the end of a phase whose challenge the learner already won", () => {
+    const won = {
+      key: "boss:0",
+      kind: "boss" as const,
+      phase: 0,
+      scheduledFor: end,
+      status: "done" as const,
+    };
 
     expect(
-      listEndsBeforeLessons({ ends, input, items, units: [{ depth: true, key: "a" }] }),
+      listEndsBeforeLessons({
+        items: [won, ...items],
+        phaseEnds,
+        queue,
+        units: [{ depth: false, key: "a" }],
+      }),
     ).toStrictEqual([]);
   });
 });
