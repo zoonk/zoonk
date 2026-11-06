@@ -1,8 +1,8 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
-import { holdScripts } from "./helpers/hold-scripts";
 import { clickWithConnectionDown } from "./helpers/server-actions";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
 

@@ -63,11 +63,8 @@ test.describe("Mocks whenever the learner wants", () => {
 
     const answer = page.getByLabel("Your answer");
 
-    // Typing before the page hydrates is lost, so fill until the word count React keeps follows it.
-    await expect(async () => {
-      await answer.fill(essayText);
-      await expect(page.getByText(/^\d+ words$/u)).toBeVisible({ timeout: 1000 });
-    }).toPass();
+    await answer.fill(essayText);
+    await expect(page.getByText(/^\d+ words$/u)).toBeVisible();
 
     const resumeGrading = await failEssayGrading(page);
     await page.getByRole("button", { name: "Hand in the mock exam" }).click();

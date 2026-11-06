@@ -7,8 +7,10 @@ declare global {
 }
 
 /**
- * Runs inline in the page's `<head>` so words typed before hydration survive it. Serialized with
- * `toString`, so it may use only its argument and globals.
+ * Runs inline in the page's `<head>` so words typed before hydration survive it. React replays them
+ * since https://github.com/facebook/react/pull/33129, but only with `enableHydrationChangeEvent`,
+ * which the canary build Next runs leaves off. Serialized with `toString`, so it may use only its
+ * argument and globals.
  */
 function keepTypingBeforeReady(attribute: string) {
   const kept: KeptTyping = { taken: new Set(), typed: new Map() };
@@ -19,7 +21,11 @@ function keepTypingBeforeReady(attribute: string) {
     (event) => {
       const field = event.target;
 
-      if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) {
+      const isText =
+        field instanceof HTMLTextAreaElement ||
+        (field instanceof HTMLInputElement && !["checkbox", "file", "radio"].includes(field.type));
+
+      if (!isText) {
         return;
       }
 
