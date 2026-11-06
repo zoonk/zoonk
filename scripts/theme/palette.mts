@@ -9,6 +9,7 @@ export const PALETTE_TOKENS = [
   "foreground",
   "card",
   "popover",
+  "ground",
   "primary",
   "primary-foreground",
   "muted",

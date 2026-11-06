@@ -61,6 +61,7 @@ import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CatalogTryLesson
 import com.zoonk.api.models.CourseChapter
@@ -358,7 +359,7 @@ private fun CourseMap(
     chapterId: String,
     line: Color,
 ) {
-    val band = MaterialTheme.colorScheme.surfaceContainerHigh
+    val band = MaterialTheme.zoonk.ground
     val ink = MaterialTheme.colorScheme.onSurface
 
     Row(Modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(4.dp)) {

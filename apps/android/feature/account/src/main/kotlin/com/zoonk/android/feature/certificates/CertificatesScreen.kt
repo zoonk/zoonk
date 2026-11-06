@@ -62,6 +62,7 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.launch
@@ -246,7 +247,7 @@ private fun UpNextRow(item: CertificateUpNext) {
 /** Main's `GhostCertificate`: shapes that stand for a certificate without saying one, so nothing reads as real. */
 @Composable
 private fun GhostCertificate() {
-    val ground = MaterialTheme.colorScheme.surfaceContainerHigh
+    val ground = MaterialTheme.zoonk.ground
     val edge = MaterialTheme.colorScheme.outline
     val bar = MaterialTheme.colorScheme.surfaceContainerHighest
 
