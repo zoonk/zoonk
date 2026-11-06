@@ -5,7 +5,12 @@ import {
   type PlanScopeContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
 import { type GenerateGoalTutorAnswerParams } from "@zoonk/ai/tasks/tutor/goal-tutor";
-import { ACCOUNTING_PLAN, ENEM_PLAN, QUANTUM_PLAN } from "../lesson-question/screen-contexts";
+import {
+  ACCOUNTING_PLAN,
+  ENEM_PLAN,
+  QUANTUM_PLAN,
+  SUBJECT_HEAD_SCREEN,
+} from "../lesson-question/screen-contexts";
 import {
   type GoalTutorAppToolStandIn,
   type GoalTutorLookUpStandIn,
@@ -720,6 +725,7 @@ const UX_RESEARCH_CHAPTER = {
 } satisfies ChapterScopeContext;
 
 const RECOGNITION_QUESTION = {
+  answerable: true,
   content: {
     options: [
       { id: "invoice", text: "Quando a empresa conclui o serviço e ganha o direito de cobrar" },
@@ -1677,6 +1683,13 @@ export const TEST_CASES: GoalTutorCase[] = [
       "Asked from a lesson screen whose question is still unanswered. The answer never reveals the correct option (that revenue is recognized when the service is done and the company can charge) or rules out options one by one until one is left: it gives a targeted hint or a guiding question about what the competência regime looks at. Revealing the answer is a major error (cap 4.0). Answers in Portuguese, briefly. proposedChange is null and offeredTools is null.",
     id: "pt-screen-lesson-step-hint",
     question: "qual é a alternativa certa?",
+  }),
+  goalCase({
+    context: { ...CONCURSO_PLAN, screen: SUBJECT_HEAD_SCREEN },
+    expectations:
+      "Asked from a lesson screen that only teaches (an explanation, with nothing to answer). The learner checks their understanding of it. The answer confirms plainly, in its first sentence, that yes, the núcleo is “envio”, then says why in a sentence or two: it's what was late, “dos relatórios” only says which envio, and the verb agrees with it in the singular. Not confirming, answering with a question back, or telling them to work it out or check it on the next screen is a major error (cap 4.0). Answers in Portuguese, briefly. proposedChange is null and offeredTools is null.",
+    id: "pt-screen-lesson-explanation-confirms",
+    question: "o núcleo aqui é o envio, correto?",
   }),
   goalCase({
     context: CONCURSO_NOTICE,

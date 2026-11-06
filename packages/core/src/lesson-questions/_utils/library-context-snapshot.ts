@@ -9,6 +9,7 @@ import { findOpenedVersion, findPlayableLessonRow } from "../../lesson-player/_u
 import { loadPlayableSteps } from "../../lesson-player/_utils/load-playable-steps";
 import { type LessonStepAnswer } from "../../lesson-player/contract";
 import { gradeStepAnswer } from "../../lesson-player/grade-step-answer";
+import { isAnswerableStep } from "../../lesson-player/lesson-run";
 import { type PlayableLibraryStep } from "../../lesson-player/playable-lesson";
 import { type LessonScopeContextInput } from "../contract";
 import { type LibraryQuestionLesson } from "./question-access";
@@ -23,6 +24,7 @@ function toStepContext({
   stepNumber: number;
 }): LessonQuestionStepContext {
   return {
+    answerable: isAnswerableStep(step),
     content: "exercise" in step ? step.exercise : step.content,
     kind: step.kind,
     sentence: null,
