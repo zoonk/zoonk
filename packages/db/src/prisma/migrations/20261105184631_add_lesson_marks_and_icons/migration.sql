@@ -8,7 +8,6 @@ CREATE TABLE "lesson_icons" (
     "tags" TEXT[],
     "description" TEXT NOT NULL,
     "status" "GenerationStatus" NOT NULL,
-    "run_id" TEXT NOT NULL,
     "url" TEXT,
     "small_url" TEXT,
     "style_version" SMALLINT NOT NULL,
