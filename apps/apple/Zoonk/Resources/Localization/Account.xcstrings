@@ -1179,6 +1179,65 @@
         }
       }
     },
+    "A certificate for every level you finish" : {
+      "comment" : "Zoonk Plus benefit: certificates for finished course and language levels",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Zertifikat für jedes Level, das du abschließt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un certificado por cada nivel que completes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un certificat pour chaque niveau que tu termines"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un certificato per ogni livello che completi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レベルを修了するたびに証明書を取得"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레벨을 마칠 때마다 받는 인증서"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certyfikat za każdy ukończony poziom"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um certificado para cada nível que você concluir"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamladığın her seviye için bir sertifika"
+          }
+        }
+      }
+    },
     "A plan for your goal and your date" : {
       "comment" : "Free plan: a plan for the learner's goal",
       "localizations" : {
@@ -2292,6 +2351,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plus iptal edilsin mi?"
+          }
+        }
+      }
+    },
+    "Certificates" : {
+      "comment" : "Settings row for the learner's certificates",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zertifikate"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certificados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certificats"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certificati"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "証明書"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인증서"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certyfikaty"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certificados"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sertifikalar"
           }
         }
       }
@@ -4912,67 +5030,61 @@
         }
       }
     },
-    "How Zoonk and your buddy call you" : {
+    "How Zoonk and your buddy call you, and the name on your certificates." : {
       "comment" : "What the profile name is for",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So nennen dich Zoonk und dein Kumpel"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How Zoonk and your buddy call you"
+            "value" : "So nennen dich Zoonk und dein Kumpel. Dieser Name steht auf deinen Zertifikaten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo te llaman Zoonk y tu compañero"
+            "value" : "El nombre que usan Zoonk y tu compañero para llamarte y que aparece en tus certificados."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le nom utilisé par Zoonk et ton Compagnon pour s’adresser à toi"
+            "value" : "Le nom qu’utilisent Zoonk et ton compagnon pour t’appeler et qui figure sur tes certificats."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Come ti chiamano Zoonk e il tuo compagno"
+            "value" : "Il nome con cui ti chiamano Zoonk e il tuo compagno e che compare sui tuoi certificati."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonkと相棒が呼びかけるときの名前"
+            "value" : "Zoonkや相棒が呼びかけるときの名前で、証明書にも記載されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk와 짝꿍이 부를 이름"
+            "value" : "Zoonk와 짝꿍이 부를 이름이에요. 인증서에도 이 이름이 표시돼요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jak Zoonk i twój kumpel się do ciebie zwracają"
+            "value" : "Tak zwracają się do ciebie Zoonk i twój kumpel. To imię widnieje też na twoich certyfikatach."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como o Zoonk e seu parceiro te chamam"
+            "value" : "O nome que o Zoonk e seu parceiro usam para te chamar e que aparece nos seus certificados."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk ve arkadaşının sana nasıl hitap ettiği"
+            "value" : "Zoonk ve ders arkadaşın sana bu adla seslenir. Sertifikalarında da bu ad görünür."
           }
         }
       }
@@ -7050,6 +7162,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydet"
+          }
+        }
+      }
+    },
+    "Saved." : {
+      "comment" : "The profile saved and its editor stays open beside the settings",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeichert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistré."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장했어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisano."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedildi."
           }
         }
       }

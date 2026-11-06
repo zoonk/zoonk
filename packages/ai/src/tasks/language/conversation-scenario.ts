@@ -1,14 +1,16 @@
 import "server-only";
 import { type CefrLevel } from "@zoonk/utils/cefr";
+import { isSameLanguage } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { type z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages } from "../_utils/prompt-language";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import { scenarioSchema } from "./_utils/scenario-schema";
-import systemPrompt from "./conversation-scenario.prompt.md";
+import promptTemplate from "./conversation-scenario.prompt.md";
 
 /** Cached per chapter and level and shared, so it runs rarely: Luna scored 9.22 (Sep 2026). */
 const defaultModel = "openai/gpt-6-luna";
@@ -29,27 +31,30 @@ export type GenerateConversationScenarioParams = {
   analytics?: AiGenerationContext;
 };
 
-function buildUserPrompt(params: GenerateConversationScenarioParams): string {
-  const languages = getLanguagePromptContext({
-    targetLanguage: params.targetLanguage,
-    userLanguage: params.learnerLanguage,
+function buildSystemPrompt(params: GenerateConversationScenarioParams): string {
+  const template = selectPromptVariants({
+    template: promptTemplate,
+    variants: { bilingual: !isSameLanguage(params) },
   });
 
+  return fillPromptLanguages({ ...params, template });
+}
+
+function buildUserPrompt(params: GenerateConversationScenarioParams): string {
   return `
-    TARGET_LANGUAGE: ${languages.targetLanguageName}
-    LEARNER_LANGUAGE: ${languages.userLanguageName}
     LEVEL: ${params.level}
     UNIT_TITLE: ${params.unitTitle}
     UNIT_DESCRIPTION: ${params.unitDescription}
     UNIT_CAN_DO:
 ${params.canDo.map((item) => `- ${item}`).join("\n")}
 
-${formatLocalContext(params.targetLanguage)}
+${formatLocalContext(params.targetLanguage, { register: false })}
   `;
 }
 
 export async function generateConversationScenario(params: GenerateConversationScenarioParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const systemPrompt = buildSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

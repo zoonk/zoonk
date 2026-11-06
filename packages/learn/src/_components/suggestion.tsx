@@ -268,8 +268,8 @@ export function SuggestionResult({ className, ...props }: React.ComponentProps<"
   );
 }
 
-export function SuggestionSaveError() {
-  return <ChangeSaveError className="text-[0.8125rem] leading-snug" />;
+export function SuggestionSaveError({ className }: { className?: string }) {
+  return <ChangeSaveError className={cn("text-[0.8125rem] leading-snug", className)} />;
 }
 
 const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {

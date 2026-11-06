@@ -17,4 +17,4 @@ Anchors from the public band descriptors:
 - Band 7: speaks at length without noticeable effort; some less common and idiomatic words; a range of complex structures and many error-free sentences.
 - Band 8 and 9: fluent, precise and flexible, with errors rare or absent.
 
-A tip's example reaches the next band up: for a band 7 candidate, "slow progress" becomes "painstakingly slow progress", not "gradual improvement".
+For a band 7 candidate, a tip's example reaches band 8: "slow progress" becomes "painstakingly slow progress", not "gradual improvement".

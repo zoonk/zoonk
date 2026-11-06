@@ -7,7 +7,8 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
-import { isInputRangeError } from "../../plans/target-date-range";
+import { getTargetDateBounds, isInputRangeError } from "../../plans/target-date-range";
+import { getLearnerToday } from "./_utils/understanding-view";
 import { type GoalUnderstandingView } from "./onboarding-contract";
 import { reviseOnboardingDraft } from "./revise-onboarding-draft";
 
@@ -37,7 +38,15 @@ async function createExam() {
   return { blueprint, examName, source };
 }
 
-function examCard({ blueprintId, examName }: { blueprintId: string; examName: string }) {
+function examCard({
+  blueprintId,
+  examName,
+  targetDate,
+}: {
+  blueprintId: string;
+  examName: string;
+  targetDate: string;
+}) {
   return {
     goals: [
       {
@@ -47,7 +56,7 @@ function examCard({ blueprintId, examName }: { blueprintId: string; examName: st
           kind: "exam" as const,
           language: "en",
           prompt: "pass the exam by june 2099",
-          targetDate: "2099-06-01",
+          targetDate,
           title: "Pass the exam in 2099",
         },
         examDates: [],
@@ -68,12 +77,20 @@ function examCard({ blueprintId, examName }: { blueprintId: string; examName: st
   };
 }
 
-async function setup() {
+async function setup({
+  targetDate = "2099-06-01",
+  timeZone = "UTC",
+}: { targetDate?: string; timeZone?: string } = {}) {
   const [user, exam] = await Promise.all([userFixture(), createExam()]);
   mockSession(user.id);
 
   const draft = await onboardingDraftFixture({
-    understanding: examCard({ blueprintId: exam.blueprint.id, examName: exam.examName }),
+    timeZone,
+    understanding: examCard({
+      blueprintId: exam.blueprint.id,
+      examName: exam.examName,
+      targetDate,
+    }),
     userId: user.id,
   });
 
@@ -183,21 +200,46 @@ describe(reviseOnboardingDraft, () => {
     expect(stored.updatedAt).toStrictEqual(draft.updatedAt);
   });
 
+  it("takes a deadline from the day after the learner's today, as the goal it becomes does", async () => {
+    const timeZone = "Pacific/Kiritimati";
+    // The card was read before its own date went by, so even that date is refused now.
+    const { draft } = await setup({ targetDate: "2001-01-01", timeZone });
+    const today = getLearnerToday(timeZone);
+    const tomorrow = getTargetDateBounds(today).min;
+
+    const refusals = await Promise.all(
+      ["2001-01-01", today].map((value) =>
+        reviseOnboardingDraft({ draftId: draft.id, edit: { field: "targetDate", goal: 0, value } })
+          .then(() => null)
+          .catch((error: unknown) => (isInputRangeError(error) ? error.issues : error)),
+      ),
+    );
+
+    const earliest = { params: { bound: "earliest", limit: tomorrow } };
+    expect(refusals).toMatchObject([[earliest], [earliest]]);
+
+    const stored = await prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
+    expect(stored.updatedAt).toStrictEqual(draft.updatedAt);
+
+    const card = readCard(
+      await reviseOnboardingDraft({
+        draftId: draft.id,
+        edit: { field: "targetDate", goal: 0, value: tomorrow },
+      }),
+    );
+
+    expect(card.goals[0]?.draft.targetDate).toBe(tomorrow);
+  });
+
   it("refuses fixes that don't apply to the goal", async () => {
     const { draft } = await setup();
 
-    const results = await Promise.all([
-      reviseOnboardingDraft({
-        draftId: draft.id,
-        edit: { field: "targetDate", goal: 0, value: "2001-01-01" },
-      }),
-      reviseOnboardingDraft({
-        draftId: draft.id,
-        edit: { field: "title", goal: 5, value: "More" },
-      }),
-    ]);
+    const result = await reviseOnboardingDraft({
+      draftId: draft.id,
+      edit: { field: "title", goal: 5, value: "More" },
+    });
 
-    expect(results.map((result) => result.status)).toStrictEqual(["invalid", "invalid"]);
+    expect(result.status).toBe("invalid");
 
     const stored = await prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
     expect(stored.updatedAt).toStrictEqual(draft.updatedAt);

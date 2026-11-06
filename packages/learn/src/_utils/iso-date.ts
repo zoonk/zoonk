@@ -1,6 +1,7 @@
 "use client";
 
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { type DateTimeFormatOptions, useFormatter } from "next-intl";
 import { use } from "react";
 import { PlanScreenContext } from "../plan/plan-context";
@@ -8,6 +9,15 @@ import { PlanScreenContext } from "../plan/plan-context";
 /** UTC midnight, formatted in UTC, so the day never shifts in the viewer's timezone. */
 export function isoDateToUtc(isoDate: string): Date {
   return new Date(`${isoDate}T00:00:00Z`);
+}
+
+/** Core counts a goal's or draft's days in its zone, UTC without one, so date pickers do too. */
+export function getTodayInZone({ now, timeZone }: { now: Date; timeZone: string | null }): string {
+  const zone = timeZone && isValidTimeZone(timeZone) ? timeZone : "UTC";
+
+  return getDateInTimeZone({ date: now, timeZone: zone })
+    .toISOString()
+    .slice(0, "YYYY-MM-DD".length);
 }
 
 export function toLocalIsoDate(date: Date): string {

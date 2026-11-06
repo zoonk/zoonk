@@ -3,7 +3,6 @@
 {
   "practice_already_answered": "3347398909e718469e04c189b1cbe30b21e01a68c77afd662f0a96b1341a6fec",
   "practice_check": "219a07227035d0f246ca24923d1b1fc3e35798e091836043c625d2edc200b852",
-  "practice_close": "eb02b9b55140525f1c6dcb507b38b8561d80c1d166d19d1f7b69808e5888aae7",
   "practice_continue": "7650da6357fd8a77a5319173f7a9b4dcd88da81f0b6271ce4b91ca8e18b0d074",
   "practice_count": "fecd5bdc19290c8f90cb7f3c9155abe759d53ca4fa8dc16bc763356300926ec4",
   "practice_done_review": "8283401843db0c1f6f734f3ef5e1a8a334e7fad2d513c6adaf2a50f62cc1efa3",
@@ -18,8 +17,6 @@
   "practice_net_tally": "626503113da8962ea4835d99a7cdea53cb169ed0a279e5a63baeeb80cded1b4f",
   "practice_net_wrong": "8fa00df7a69455016a7b034ef5932b906c61e7b7bc828272f348995dbc90c08b",
   "practice_next": "7a449d11dbce2c6834f5d7efc8506dda7310f865e99c91821e2523bb40eb506b",
-  "practice_not_found_description": "df8156f29a1d98731c273985a42bebb8254230a67ed711e320865af6a481f1d2",
-  "practice_not_found_title": "fbca5a9c646394a85966ad817aab6e9ce14262c6d5bd0b800c6211f03dff2c97",
   "practice_pause_failed": "c0fc20abceb6fecae4d590d5d219f92fb49fc0255564c6b21803d792e6b47593",
   "practice_pause_stop": "adb723e5f466508787036d40320504d5842e6bbabcd5cb286fe03903a1adff23",
   "practice_pause_text": "366dc9094c8dfc148f27b058c9e4d241fa2fc178b11f4e4c9a8aacd6e7b186db",
@@ -76,7 +73,4 @@
     <string name="practice_pause_failed">学習を終了できませんでした。もう一度お試しください。</string>
     <string name="practice_done_title">練習完了</string>
     <string name="practice_done_review">復習完了</string>
-    <string name="practice_not_found_title">この問題はもう見られません</string>
-    <string name="practice_not_found_description">終了したか、移動した可能性があります。「今日」で次の学習を確認できます。</string>
-    <string name="practice_close">閉じる</string>
 </resources>

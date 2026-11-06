@@ -268,6 +268,7 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
     <Button
       className="shrink-0"
       disabled={finishing.pending}
+      focusableWhenDisabled
       onClick={() => void finishing.finish()}
       size="xl"
       variant="outline"

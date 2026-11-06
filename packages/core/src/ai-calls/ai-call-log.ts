@@ -1,6 +1,6 @@
 import "server-only";
 import { waitUntil } from "@vercel/functions";
-import { registerAiGenerationSink } from "@zoonk/ai/ai-generation-sink";
+import { type AiGeneration } from "@zoonk/ai/ai-generation-sink";
 import { logError } from "@zoonk/utils/logger";
 import { type AiCallRow, toAiCallRow, writeAiCalls } from "./write-ai-calls";
 
@@ -45,9 +45,7 @@ function scheduleFlush(): Promise<void> {
   return queue.flush;
 }
 
-export function registerAiCallLog() {
-  registerAiGenerationSink("ai-calls", (generation) => {
-    getQueue().rows.push(toAiCallRow(generation));
-    waitUntil(scheduleFlush());
-  });
+export function logAiCall(generation: AiGeneration): void {
+  getQueue().rows.push(toAiCallRow(generation));
+  waitUntil(scheduleFlush());
 }

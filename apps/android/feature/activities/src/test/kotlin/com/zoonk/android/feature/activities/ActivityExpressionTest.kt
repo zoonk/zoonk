@@ -27,6 +27,16 @@ class ActivityExpressionTest {
             Triple("+-+3", emptyMap(), -3.0),
             Triple("2 * (3 + 4) ^ 2 / 7", emptyMap(), 14.0),
             Triple("cbrt(-27) + sign(-4)", emptyMap(), -4.0),
+            Triple("sin(pi)", emptyMap(), 0.0),
+            Triple("-sin(pi)", emptyMap(), 0.0),
+            Triple("sin(pi) / -2", emptyMap(), 0.0),
+            Triple("(0.1 + 0.2) - 0.3", emptyMap(), 0.0),
+            Triple("1000000000001 - 1000000000000", emptyMap(), 1.0),
+            Triple("1e308 * 10 - 1", emptyMap(), null),
+            Triple("((0.1 + 0.2) - 0.3) * 1000", emptyMap(), 0.0),
+            Triple("(1 / sqrt(1 - (v / c)^2) - 1) * m * c^2", mapOf("c" to 3e8, "m" to 1.0, "v" to 20.0), 199.84014443252818),
+            Triple("speed^2 * sin(rad(2 * angle)) / 9.81", mapOf("angle" to 90.0, "speed" to 20.0), 0.0),
+            Triple("1 + 1e-10 - 1", emptyMap(), 1.000000082740371e-10),
             Triple("1 / 0", emptyMap(), null),
             Triple("sqrt(-1)", emptyMap(), null),
             Triple("sqrt 4", emptyMap(), null),
@@ -38,6 +48,11 @@ class ActivityExpressionTest {
             Triple("max()", emptyMap(), null),
             Triple("1 2", emptyMap(), null),
         )
+
+    @Test
+    fun keepsTheTrigOfAHugeAngle() {
+        assertEquals(1.0, ActivityExpression.evaluate("sin(1e16)^2 + cos(1e16)^2")!!, 1e-12)
+    }
 
     @Test
     fun evaluatesFormulasAsCoreDoes() {

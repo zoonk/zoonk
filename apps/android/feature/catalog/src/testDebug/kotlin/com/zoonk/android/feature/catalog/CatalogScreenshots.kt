@@ -15,15 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
@@ -31,6 +27,8 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -149,25 +147,11 @@ class CatalogScreenshots {
             }
         }
 
+        if (fold) compose.unfoldBook(folds)
         screens.forEachIndexed { index, (name) ->
             shown = index
             compose.waitForIdle()
-            // Each screen reads the window's posture afresh, and the test's fold isn't replayed to it.
-            if (fold) {
-                folds.overrideWindowLayoutInfo(
-                    TestWindowLayoutInfo(
-                        listOf(
-                            FoldingFeature(
-                                compose.activity,
-                                state = FoldingFeature.State.FLAT,
-                                orientation = FoldingFeature.Orientation.VERTICAL,
-                            ),
-                        ),
-                    ),
-                )
-                compose.waitForIdle()
-            }
-            write("$prefix-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("$prefix-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

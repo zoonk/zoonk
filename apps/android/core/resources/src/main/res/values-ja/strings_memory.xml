@@ -22,6 +22,7 @@
   "memory_fact_source": "2efc6248821d436441090be9ecaf1704dd03caded6cf3e0b3f39943008e4fa00",
   "memory_save_failed": "5559ecf6ba3ffb331fc7a16e9753087b5922089b178930db5dd1daa852cf158a",
   "memory_sensitive_note": "f788b11c7cbcec3d872349c523d2c06d228fb6d0bc76ae227311603fdb8a1137",
+  "memory_source_call": "a0cbecf395171f63656c4f5f5737e7eec8f117afa75b233e759bac17865645ac",
   "memory_source_chat": "0ea68b3e634f578522feef39e7aa457dd5b46a5870c96cb756c72268ebfeaf6e",
   "memory_source_noticed": "ece509397b15d56b5d3aabbbd1a20a98e9af48bb9b3fd660b4f27bc5f6f7dbe9",
   "memory_source_onboarding": "71c1f46a4eb70cf8684e564d8ac546ddbb4276dd3cbddb70c1aeb46259989c63",
@@ -29,17 +30,18 @@
   "memory_source_you": "f14d7be85b4d50991a43a5909639c7662a4357b65b3cb58b8335f47e159cc2f6",
   "memory_undo": "5256769217e7610dd5e7056121ad021f69347c976d5c3ba138bf6570aeb99df8",
   "memory_undo_failed": "5b60bf6bb232247a035552cb3fc4d36cf32f37272427a165abbfb83d1c7348e1",
+  "memory_undo_retry": "eb520f1e88bd3ed807f162dfe8f1ba1775a01ce46861eebd8320de3d4b694a79",
   "memory_updated": "241cbd11d496f2f566b222f5f4d9ab792879b9ad2a295ed9d90cbc03e3ec0f30",
   "memory_updated_more": "2a7fa74cb7a372f52bf8e0370feddf87171a4c14521e6008b1a9bb537940e3ab",
   "memory_use": "f5e1bee57b5fbfaa9b4f3ff355301ac7d374dece2d091e54060e6a9b02c83d60",
   "memory_use_off": "9bd26e3ee0262341cd951f4c59f315098ea6870deaa1605e2b7831ecae8ae3e6",
-  "memory_use_on": "61174645c4180607da24d8727cd89141ddfd0fbf62adf510ac2daf2d25c8415a"
+  "memory_use_on": "02523f6d9409760a10fb10f38323b406e2d93082f6759b01e723d1a89138ca4b"
 }
 -->
 <resources>
     <string name="memory_description">生活に合った例や学習計画を用意するために、Zoonkが覚えている情報です。</string>
     <string name="memory_use">メモリを使う</string>
-    <string name="memory_use_on">身近な例や、1週間の予定に合う学習計画</string>
+    <string name="memory_use_on">身近な例、1週間の予定に合った学習計画、近況を踏まえた会話</string>
     <string name="memory_use_off">メモリはオフです。新しい情報は保存されず、ここにある情報も使われません。</string>
     <string name="memory_empty_on">まだ何もありません。学習やチャットを進めると、Zoonkが学習をサポートするための短いメモがここに表示されます。</string>
     <string name="memory_empty_off">メモはありません。メモリがオフの間、Zoonkはメモを保存しません。</string>
@@ -53,6 +55,8 @@
     <string name="memory_category_context">状況</string>
     <string name="memory_source_noticed">利用状況からわかったこと</string>
     <string name="memory_source_you">教えてもらったこと</string>
+    <!-- Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor. -->
+    <string name="memory_source_call">会話から</string>
     <string name="memory_source_chat">チャットから</string>
     <string name="memory_source_onboarding">初期設定から</string>
     <string name="memory_source_session">学習から</string>
@@ -77,4 +81,5 @@
     <string name="memory_undo">元に戻す</string>
     <string name="memory_change_undone">変更を取り消しました</string>
     <string name="memory_undo_failed">取り消せませんでした。その後、内容が変更されています。</string>
+    <string name="memory_undo_retry">取り消せませんでした。もう一度お試しください。</string>
 </resources>

@@ -9,13 +9,16 @@ export type UnderstandingDraft = {
   lockedGoals: UnderstoodGoalView[];
   minutesSaid: boolean;
   schedule: UnderstoodSchedule;
+  timeZone: string;
 };
 
 export function toUnderstandingDraft({
   activeGoalLimit,
+  timeZone,
   understanding: { goals, schedule },
 }: {
   activeGoalLimit: number | null;
+  timeZone: string;
   understanding: { goals: UnderstoodGoalView[]; schedule: UnderstoodSchedule };
 }): UnderstandingDraft {
   const answered = goals[0]?.draft.details?.answered;
@@ -27,6 +30,7 @@ export function toUnderstandingDraft({
     lockedGoals: goals.slice(allowed),
     minutesSaid,
     schedule,
+    timeZone,
   };
 }
 
@@ -49,16 +53,15 @@ function withMaterialIntent({
   return { ...draft, details: needsPurpose ? { ...details, purpose: "other" } : details };
 }
 
+/** In the draft's zone, which counted the learner's today for the card's dates. */
 export function toGoalCreateInput({
   draft,
   materialIntent = null,
   sourceIds = [],
-  timeZone,
 }: {
   draft: UnderstandingDraft;
   materialIntent?: "exam" | "questions" | "understand" | null;
   sourceIds?: string[];
-  timeZone: string;
 }): GoalCreateInput {
   return {
     dailyMinutes: draft.schedule.dailyMinutes,
@@ -68,6 +71,6 @@ export function toGoalCreateInput({
     sourceIds: sourceIds.length > 0 ? sourceIds : undefined,
     studyDays: draft.schedule.studyDays ?? undefined,
     studyTime: draft.schedule.studyTime ?? undefined,
-    timeZone,
+    timeZone: draft.timeZone,
   };
 }

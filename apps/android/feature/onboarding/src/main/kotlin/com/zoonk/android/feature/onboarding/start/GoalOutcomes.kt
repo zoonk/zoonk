@@ -21,7 +21,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +40,7 @@ import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 
 @Composable
 internal fun OnboardingHeading(
@@ -86,7 +86,7 @@ internal fun OutcomeIcon(
 
 @Composable
 internal fun isCompactWidth(): Boolean =
-    !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    !windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
 
 @Composable
 internal fun ColumnScope.OnboardingActions(content: @Composable ColumnScope.() -> Unit) {

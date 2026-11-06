@@ -46,7 +46,8 @@ jobs:
     timeout-minutes: 30
     concurrency:
       group: ${{ github.workflow }}-build-${{ github.event.pull_request.number || github.run_id }}
-      # Let the running build finish and save its compilation cache.
+      # A newer push waits for the running build instead of cancelling it, so a busy PR's build still
+      # finishes.
       cancel-in-progress: false
     steps:
       - name: Check out code
@@ -58,15 +59,19 @@ jobs:
           set -o pipefail
           xcodebuild -version | shasum -a 256 | awk '{ print "version=" $1 }' >> "$GITHUB_OUTPUT"
 
-      - name: Cache Swift packages
-        uses: actions/cache@v6
+      # Only main saves these caches. A pull request's own entries serve only its later runs, and in
+      # the repository's shared cache storage they evict main's, which every pull request restores.
+      - name: Restore Swift packages
+        id: swiftpm
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ runner.temp }}/apple-source-packages
           # Frozen resolution needs a cache containing this lockfile's revisions.
           key: ${{ runner.os }}-${{ runner.arch }}-apple-swiftpm-${{ hashFiles('apps/apple/**/Package.resolved') }}
 
-      - name: Cache Xcode compilations
-        uses: actions/cache@v6
+      - name: Restore Xcode compilations
+        id: compilations
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/apple/DerivedData/Make/CompilationCache.noindex
           # Any app edit recompiles the whole app module, so the key follows the packages, the API
@@ -86,6 +91,20 @@ jobs:
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
         run: make -C apps/apple build
+
+      - name: Save Swift packages
+        if: github.ref == 'refs/heads/main' && steps.swiftpm.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ runner.temp }}/apple-source-packages
+          key: ${{ steps.swiftpm.outputs.cache-primary-key }}
+
+      - name: Save Xcode compilations
+        if: github.ref == 'refs/heads/main' && steps.compilations.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/apple/DerivedData/Make/CompilationCache.noindex
+          key: ${{ steps.compilations.outputs.cache-primary-key }}
 
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0

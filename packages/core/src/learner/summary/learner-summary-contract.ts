@@ -66,6 +66,8 @@ export type LearnerSummaryToday = {
 
 /** Mistakes become practice-ready at the next learner-local midnight, covered by nextChangeAt. */
 export type LearnerSummaryPlaces = {
+  /** Account-wide, unlike the active goal's places. */
+  certificates: boolean;
   completedLessons: boolean;
   exam: boolean;
   mindMaps: boolean;

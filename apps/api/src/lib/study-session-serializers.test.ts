@@ -20,6 +20,7 @@ const SUMMARY: StudySessionSummary = {
     shownAt: null,
     userId: "01a12345-0000-7000-8000-000000000002",
   },
+  certificates: [],
   comesBack: [],
   correct: 0,
   energy: null,

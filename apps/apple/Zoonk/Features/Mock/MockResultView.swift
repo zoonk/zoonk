@@ -74,33 +74,23 @@ struct MockResultView: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
   @State private var choices = MockResultChoices()
-  @State private var isAtHinge = false
   let run: MockRun
   let view: MockView
 
   var body: some View {
-    // With nothing to review, an open book reads the areas and what the mock showed after the
-    // fold, so that page isn't left with only the notes. Tablets keep them with the score.
-    let diagnosisAfterFold = isAtHinge && view.review.isEmpty
-
     PaneSplit {
       List {
         scoreSections
-        if !diagnosisAfterFold {
-          diagnosisSections
-        }
+        diagnosisSections
         partSections
       }
     } secondary: {
       ReviewList(review: view.review, place: $choices.reviewPlace) {
-        if diagnosisAfterFold {
-          diagnosisSections
-        }
         planSections
         reviewSections
       }
-      // Without a plan change or a question to review it's empty, and an empty list draws the
-      // plain background.
+      // Without a plan change, a question to review or a note it's empty, and an empty list draws
+      // the plain background.
       .scrollContentBackground(.hidden)
       .background(Color(.systemGroupedBackground))
       .safeAreaBar(edge: .bottom) { actionBar }
@@ -114,13 +104,8 @@ struct MockResultView: View {
       }
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
-    .onGeometryChange(for: Bool.self) {
-      PaneSpace($0).hinge != nil
-    } action: {
-      isAtHinge = $0
-    }
     .navigationTitle(MockLabels.title(number: view.number))
-    .milestoneCeremony(view.day.ceremony)
+    .completionMoments(view.day)
     .toolbar {
       if view.purpose != .placement {
         TutorAskToolbarItem(scope: .mock(blockId: view.blockId))
@@ -432,7 +417,7 @@ private struct MockScoreSections: View {
       )
       : (
         String(
-          localized: "\(change) since the last one", table: "Mock",
+          localized: "\(MockLabels.number(Double(change))) since the last one", table: "Mock",
           comment: "Score went down since the learner's previous mock exam"),
         false
       )
@@ -755,11 +740,10 @@ private struct MockEssaySections: View {
         .foregroundStyle(.secondary)
       case .failed, .idle:
         if run.essayGrading == .failed {
-          Text(
-            "That didn't go through. Try again in a moment.", tableName: "Mock",
-            comment: "Grading failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Mock",
+              comment: "Grading failed"))
         } else {
           Text("It hasn't been graded yet.", tableName: "Mock", comment: "An ungraded essay")
             .foregroundStyle(.secondary)
@@ -1008,11 +992,10 @@ private struct MockPlanSection: View {
         }
       } else {
         if answers.byOffer.values.contains(.failed) {
-          Text(
-            "That didn't go through. Try again in a moment.", tableName: "Mock",
-            comment: "Applying the plan change failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't go through. Try again in a moment.", table: "Mock",
+              comment: "Applying the plan change failed"))
         }
 
         ButtonRow {

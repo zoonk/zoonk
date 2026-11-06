@@ -33,7 +33,6 @@ private let uiTestAccountJSON = """
       "subscription": null
     },
     "user": {
-      "displayUsername": "ui_test_user",
       "email": "ui-test@zoonk.test",
       "id": "7846d3f5-b9c4-4ded-b283-35f70a48af86",
       "image": null,
@@ -192,7 +191,7 @@ final class ZoonkUITests: XCTestCase {
   @MainActor
   private func makeApp(for scenario: UITestScenario) -> XCUIApplication {
     let app = XCUIApplication()
-    app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US", "--ui-testing"]
+    app.launchArguments += ["--ui-testing"]
     // Reads without a fixture fail as offline, whatever runs on the machine.
     app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
     app.launchEnvironment["ZOONK_UI_TEST_ACCOUNT"] = uiTestAccountJSON

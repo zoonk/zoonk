@@ -6,6 +6,7 @@ import {
   getUserSubscriptionCacheTag,
 } from "../cache/tags";
 import { readActiveGoal, readLearningProfile } from "../learner/facts/learning-profile";
+import { readActiveSubscription } from "../learner/facts/subscription";
 import { getOwnedGoal } from "../learner/get-owned-goal";
 import { loadGoalViews } from "./_utils/goal-view";
 import { type GoalView } from "./goal-contract";
@@ -32,7 +33,12 @@ export async function getGoal(goalId: string): Promise<GoalResult> {
   const profile = await readLearningProfile(owned.userId);
   const fallbackGoal = profile?.activeGoalId ? null : await readActiveGoal(owned.userId);
   const activeGoalId = profile?.activeGoalId ?? fallbackGoal?.id ?? null;
-  const [goal] = await loadGoalViews({ activeGoalId, goals: [owned.goal] });
+
+  const [goal] = await loadGoalViews({
+    activeGoalId,
+    goals: [owned.goal],
+    readSubscription: readActiveSubscription,
+  });
 
   return goal ? { goal, status: "ready" } : { status: "notFound" };
 }

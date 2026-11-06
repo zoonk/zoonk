@@ -6,9 +6,10 @@ import {
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { type HelpLimit, HelpLimitNotice } from "../../_components/help-limit-notice";
 import { AnswersSaveError } from "../../_components/save-error";
+import { StatusRegion } from "../../_components/status-region";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../../_components/step-card";
 import { TaskMeta } from "../../_components/task-meta";
 import { useFormatDuration } from "../../_utils/time-format";
@@ -66,19 +67,34 @@ function FocusTestIntro({
   const questions = test.areas.length * test.questionsPerArea;
   const minutes = Math.max(1, Math.round((questions * SECONDS_PER_QUESTION) / SECONDS_PER_MINUTE));
   const limit = preparing?.limit ?? null;
+  const status = useRef<HTMLDivElement>(null);
+
+  /**
+   * The notice replaces the button the learner pressed: keep their place there, not at the top. A
+   * refused retry of a failed run swaps in this whole screen, and a region that's new isn't read out.
+   */
+  useEffect(() => {
+    if (limit && document.activeElement === document.body) {
+      status.current?.focus();
+    }
+  }, [limit]);
 
   return (
     <TaskFrame
       closeOnEscape
       exitHref={closeHref}
       footer={
-        limit ? (
-          <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
-        ) : (
-          <TaskMainButton busy={preparing?.starting ?? false} onClick={onStart}>
-            {preparing?.starting ? t("Starting…") : t("Start the test")}
-          </TaskMainButton>
-        )
+        <>
+          <StatusRegion className="outline-none" ref={status} tabIndex={-1}>
+            {limit && <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />}
+          </StatusRegion>
+
+          {!limit && (
+            <TaskMainButton busy={preparing?.starting ?? false} onClick={onStart}>
+              {preparing?.starting ? t("Starting…") : t("Start the test")}
+            </TaskMainButton>
+          )}
+        </>
       }
     >
       <StepCard>
@@ -208,7 +224,12 @@ function FocusTestRun({
       ? {
           ended: limit !== null || writing.status === "failed" || writing.status === "ready",
           total,
-          waiting: limit ? <FocusTestLimited limit={limit} /> : <FocusTestWaiting run={writing} />,
+          waiting: (
+            <>
+              <StatusRegion>{limit && <FocusTestLimited limit={limit} />}</StatusRegion>
+              {!limit && <FocusTestWaiting run={writing} />}
+            </>
+          ),
         }
       : null;
 

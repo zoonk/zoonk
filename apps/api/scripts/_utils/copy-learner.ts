@@ -162,7 +162,6 @@ function copyValue({
 function withCopyAccount(row: CopiedRow, account: { email: string; username: string }) {
   return {
     ...row,
-    display_username: account.username,
     email: account.email,
     email_verified: true,
     stripe_customer_id: null,

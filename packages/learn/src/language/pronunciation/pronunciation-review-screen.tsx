@@ -147,7 +147,7 @@ export function PronunciationReviewScreen({
     const result = step.kind === "result" ? step.result : null;
 
     return (
-      <MomentAfterCeremony milestone={result?.ceremony ?? null} render={renderCeremony}>
+      <MomentAfterCeremony moments={result ?? null} render={renderCeremony}>
         <TaskFrame
           exitHref={exitHref}
           exitToApp

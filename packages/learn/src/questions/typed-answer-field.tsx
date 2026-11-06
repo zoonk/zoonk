@@ -2,9 +2,11 @@
 
 import { MAX_SESSION_TYPED_ANSWER_LENGTH } from "@zoonk/core/sessions/answer-limits";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
+import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { ANSWER_GROUP_CLASS, putAwayOnScreenKeyboard } from "./answer-field";
 
 export function TypedAnswerField({
   children,
@@ -31,6 +33,7 @@ export function TypedAnswerField({
         event.preventDefault();
 
         if (text.trim() && !locked) {
+          putAwayOnScreenKeyboard();
           onSubmit(text.trim());
         }
       }}
@@ -39,17 +42,13 @@ export function TypedAnswerField({
         {t("Your answer")}
       </label>
 
-      <InputGroup
-        className="bg-background data-[result=correct]:border-success data-[result=wrong]:border-destructive h-14 rounded-lg"
-        data-result={result ?? undefined}
-      >
+      <InputGroup className={ANSWER_GROUP_CLASS} data-result={result ?? undefined}>
         <InputGroupInput
           autoCapitalize="off"
           autoComplete="off"
           autoCorrect="off"
           autoFocus
-          className="text-lg disabled:opacity-100 md:text-lg"
-          disabled={locked}
+          className="text-lg md:text-lg"
           enterKeyHint="done"
           id={inputId}
           maxLength={MAX_SESSION_TYPED_ANSWER_LENGTH}
@@ -57,6 +56,8 @@ export function TypedAnswerField({
             setText(event.target.value);
             onChange?.(event.target.value.trim());
           }}
+          onKeyDown={ignoreHeldEnter}
+          readOnly={locked}
           spellCheck={false}
           value={text}
         />

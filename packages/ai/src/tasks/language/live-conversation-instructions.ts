@@ -18,7 +18,7 @@ import speakingMockTemplate from "./live-conversation-speaking-mock.prompt.md";
  * The same limits the scenario's opening line and hints follow, so the call sounds like the unit.
  */
 const LEVEL_RULES: Record<CefrLevel, string> = {
-  A1: "The learner is a beginner (A1). Use very short sentences of about 3 to 6 words, the most common everyday words and the present tense. Speak slowly and clearly. When a question is hard, offer a choice.",
+  A1: 'The learner is a beginner (A1). Use very short sentences of about 3 to 6 words, the most common everyday words and the present tense, with no clause inside another (no "do you want me to…", "if…" or "because…"). Speak slowly and clearly. When a question is hard, offer a choice.',
   A2: "The learner is at A2. Use short, simple sentences of up to about 10 words and common everyday words. Simple past and future forms are fine; avoid idioms and slang. Speak slowly and clearly.",
   B1: "The learner is at B1. Use clear, natural sentences of up to about 15 words and common vocabulary. Avoid rare idioms and slang. Speak at a relaxed pace.",
   B2: "The learner is at B2. Speak naturally at a normal pace, with some less common words and everyday idioms when they fit.",
@@ -61,6 +61,8 @@ export type LiveConversationInstructionsParams = LiveConversationRole &
     continuesCall: boolean;
     scenario: GenerateConversationScenarioSchema;
     level: CefrLevel;
+    /** A memory fact a role-play character may bring up. Other roles leave it out. */
+    learnerNote?: string;
   };
 
 /**
@@ -75,13 +77,17 @@ function getExamTaskLevelRules({ examTask, level }: { examTask: ExamTaskRole; le
   return `Keep the exam's standard wording at every level: the candidate is preparing for ${examTask.title}.`;
 }
 
-function getRoleRules(params: LiveConversationRole & { level: CefrLevel }): {
+function getRoleRules(params: LiveConversationRole & { learnerNote?: string; level: CefrLevel }): {
   levelRules: string;
   template: string;
   variants: Readonly<Record<string, boolean>>;
 } {
   if (params.kind === "unit") {
-    return { levelRules: LEVEL_RULES[params.level], template: rolePlayTemplate, variants: {} };
+    return {
+      levelRules: LEVEL_RULES[params.level],
+      template: rolePlayTemplate,
+      variants: { learnerNote: Boolean(params.learnerNote) },
+    };
   }
 
   if (params.kind === "examTask") {
@@ -190,6 +196,7 @@ export function buildLiveConversationInstructions(
       CHARACTER_PLACE: scenario.character.place,
       CHARACTER_ROLE: scenario.character.role,
       HINTS: scenario.hints.map((hint) => `- "${hint}"`).join("\n"),
+      LEARNER_NOTE: params.learnerNote ?? "",
       OPENING_LINE: scenario.openingLine,
       SITUATION: scenario.situation,
       TITLE: scenario.title,
@@ -197,10 +204,10 @@ export function buildLiveConversationInstructions(
   );
 
   const instructions = fillTemplate(
-    selectPromptVariants({ template, variants: { resuming: continuesCall } }).replace(
-      "{{ROLE}}",
-      () => role.trim(),
-    ),
+    selectPromptVariants({
+      template,
+      variants: { resuming: continuesCall, rolePlay: params.kind === "unit" },
+    }).replace("{{ROLE}}", () => role.trim()),
     {
       LEARNER_LANGUAGE: userLanguageName,
       LEVEL_RULES: levelRules,

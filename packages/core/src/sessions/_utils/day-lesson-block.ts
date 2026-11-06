@@ -1,26 +1,23 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { type TransactionClient } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isCurrentSession, isRunStartDay } from "./current-session";
 import { STUDY_SESSION_INCLUDE } from "./study-session-access";
 
-/** Replayed completions must use the persisted block id, never another block opened for the same lesson meanwhile. */
+/** A block completed before the run began belongs to an earlier play of the lesson. */
 export async function findDayLessonBlock({
-  blockId,
-  client = prisma,
+  client,
   lessonId,
-  now = new Date(),
+  now,
   runStartedAt,
   timeZone,
   userId,
 }: {
-  blockId?: string;
-  client?: Pick<TransactionClient, "studySessionBlock">;
+  client: Pick<TransactionClient, "studySessionBlock">;
   lessonId: string;
-  now?: Date;
-  /** Exclude blocks completed before this run began. */
-  runStartedAt?: Date;
+  now: Date;
+  runStartedAt: Date;
   timeZone: string;
   userId: string;
 }) {
@@ -30,25 +27,19 @@ export async function findDayLessonBlock({
     include: { session: { include: STUDY_SESSION_INCLUDE } },
     orderBy: [{ completedAt: { nulls: "first", sort: "desc" } }, { position: "asc" }],
     where: {
-      ...(blockId && { id: blockId }),
+      OR: [{ completedAt: null }, { completedAt: { gte: runStartedAt } }],
       kind: "learn",
       lessonId,
-      session: {
-        ...(!blockId && { localDate: { in: [today, new Date(today.getTime() - MS_PER_DAY)] } }),
-        userId,
-      },
+      session: { localDate: { in: [today, new Date(today.getTime() - MS_PER_DAY)] }, userId },
       status: { in: ["active", "pending", "completed"] },
-      ...(runStartedAt && { OR: [{ completedAt: null }, { completedAt: { gte: runStartedAt } }] }),
     },
   });
 
-  const current = blockId
-    ? blocks
-    : blocks.filter(
-        ({ session }) =>
-          isCurrentSession({ now, session, timeZone }) ||
-          (runStartedAt !== undefined && isRunStartDay({ now, runStartedAt, session, timeZone })),
-      );
+  const current = blocks.filter(
+    ({ session }) =>
+      isCurrentSession({ now, session, timeZone }) ||
+      isRunStartDay({ now, runStartedAt, session, timeZone }),
+  );
 
   return current.find((block) => block.status === "active") ?? current[0] ?? null;
 }

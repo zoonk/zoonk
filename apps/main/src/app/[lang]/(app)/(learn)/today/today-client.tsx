@@ -16,7 +16,8 @@ import { getLessonAgainHref } from "@/lib/public/public-hrefs";
 import { type TapStep } from "@/lib/session/day-entry";
 import { answerMemoryInsightAction } from "@/lib/session/study-session-actions";
 import { useDayTaps } from "@/lib/session/use-day-taps";
-import { getSessionHref, useMissionLinks } from "@/lib/session/use-study-navigation";
+import { useMissionLinks } from "@/lib/session/use-mission-links";
+import { getSessionHref } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { type GoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
@@ -135,7 +136,7 @@ export function TodayClient({
     [steps, taps],
   );
 
-  const missionLinks = useMissionLinks(today.goal.id, { openStep, refresh });
+  const missionLinks = useMissionLinks(today.goal.id, { learner: userId, openStep, refresh });
   const [answeredUpload, setAnsweredUpload] = useState<GoalUploadRequest | null>(null);
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
   const startTestOut = useStartTestOut();

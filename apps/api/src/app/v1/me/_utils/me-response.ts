@@ -10,7 +10,6 @@ function serializeUser(user: CurrentUser) {
   return {
     analyticsDisabled: user.analyticsDisabled,
     createdAt: serializeDate(user.createdAt) ?? "",
-    displayUsername: user.displayUsername ?? null,
     email: user.email,
     emailVerified: user.emailVerified,
     id: user.id,

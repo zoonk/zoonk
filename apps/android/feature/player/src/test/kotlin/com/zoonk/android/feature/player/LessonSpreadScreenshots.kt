@@ -3,7 +3,6 @@ package com.zoonk.android.feature.player
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -13,9 +12,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.language.alphabet
@@ -25,6 +21,8 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepVisual
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.api.ApiJson
 import kotlinx.serialization.decodeFromString
 import org.junit.Assume.assumeTrue
@@ -75,19 +73,10 @@ class LessonSpreadScreenshots {
             withTutor = withTutor,
             withSpeech = true,
         )
-        if (open) {
-            rule.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                    ),
-                ),
-            )
-        }
+        if (open) rule.unfoldBook(folds)
         then()
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
@@ -282,6 +271,18 @@ class LessonSpreadScreenshots {
     @Config(qualifiers = PHONE)
     fun phoneReadingWithPicture() = capture("phone-reading-picture", picturedExplanation(), open = false)
 
+    @Test
+    @Config(qualifiers = GALAXY_FOLD)
+    fun galaxyFoldProgress() = capture("galaxy-fold-progress", checkStep("quiz"))
+
+    @Test
+    @Config(qualifiers = GALAXY_FOLD)
+    fun galaxyFoldProgressRightToLeft() = capture("galaxy-fold-progress-rtl", checkStep("quiz"), layoutDirection = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = "w700dp-h840dp-xhdpi")
+    fun mediumProgress() = capture("medium-progress", checkStep("quiz"), open = false)
+
     private fun chart(): StepVisual =
         ApiJson.decodeFromString<StepVisual>(
             """
@@ -303,6 +304,7 @@ class LessonSpreadScreenshots {
         const val SOUND = "https://cdn.zoonk.test/sound.mp3"
         const val BOOK = "w852dp-h883dp-xhdpi"
         const val PHONE = "w411dp-h891dp-xxhdpi"
+        const val GALAXY_FOLD = "w707dp-h823dp-xhdpi"
 
         /** A Pixel Tablet, which has no fold. */
         const val TABLET = "w1280dp-h800dp-land-xhdpi"

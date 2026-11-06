@@ -1,8 +1,7 @@
-import { strict as assert } from "node:assert";
 import { AsyncLocalStorage, AsyncResource } from "node:async_hooks";
 import { createRequire } from "node:module";
 
-export type StatementCounts = { statements: number; writes: number };
+type StatementCounts = { statements: number; writes: number };
 
 const counters = new AsyncLocalStorage<StatementCounts[]>();
 const rowCounters = new AsyncLocalStorage<{ matching: string | null; rows: number }[]>();
@@ -229,14 +228,4 @@ export async function countDatabaseRows<T>(
   });
 
   return { result, rows: counts.rows };
-}
-
-/** A capability budget also forbids mutating statements, even ones later rolled back. */
-export function assertReadBudget(counts: StatementCounts, maximum: number): void {
-  assert.equal(counts.writes, 0, `Expected 0 writes, received ${counts.writes}`);
-
-  assert.ok(
-    counts.statements <= maximum,
-    `Expected at most ${maximum} statements, received ${counts.statements}`,
-  );
 }

@@ -24,6 +24,7 @@
   "subscription_available_with_plus": "8812b4079aa6602eb03d804bbc74e68b4f855e9b199aeff4f0c59126294c9b4e",
   "subscription_benefit_buddy": "0ec30aae7af8d91fd5bc4cf5d24a94cd4938a0e54076ace470a1e33d8f3e5bdd",
   "subscription_benefit_calls": "0927da5682489885e41a3813e42ec8ad25bdbab2799ca3cfabd584460075e5a7",
+  "subscription_benefit_certificates": "2b0f5aaffb212b019895ef088209c9c0f12c299764221aedb5338fc25db4cce0",
   "subscription_benefit_exam": "6ab5c43a06dee2d5cd62ee003563871b4e7217e3125c21059d2ade285cbf8f72",
   "subscription_benefit_mocks": "495851e8c4fa073ef9dd8107d61a22fb7335763cc41f11ed453df421553e7e7d",
   "subscription_benefits_summary": "8d8c9b8f1dd7499399eeb16c24b648f10f70ef9b6162a157ed5c2b1c26a75fe9",
@@ -167,6 +168,7 @@
     <string name="subscription_benefit_mocks">Simulacros, con el mismo límite de tiempo que el examen real</string>
     <string name="subscription_benefit_buddy">Un compañero de estudio con IA cuando no sepas cómo seguir</string>
     <string name="subscription_benefit_calls">Límites más altos para las llamadas de práctica oral</string>
+    <string name="subscription_benefit_certificates">Un certificado por cada nivel que completes</string>
     <string name="subscription_start_free">Empezar gratis</string>
     <string name="subscription_no_card_needed">No necesitas tarjeta.</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->

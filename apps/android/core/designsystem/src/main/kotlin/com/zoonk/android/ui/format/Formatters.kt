@@ -89,13 +89,14 @@ fun formatPercent(
     share: Double,
     locale: Locale,
     maximumFractionDigits: Int = 0,
-): String =
-    NumberFormat
-        .getPercentInstance(ULocale.forLocale(locale))
-        .apply {
+): String {
+    val format =
+        NumberFormat.getPercentInstance(ULocale.forLocale(locale)).apply {
             this.maximumFractionDigits = maximumFractionDigits
             roundingMode = BigDecimal.ROUND_HALF_UP
-        }.format(share)
+        }
+    return withSign(format.format(abs(share)), share, locale)
+}
 
 /** Main's goal progress: up to two decimals, so a small step still moves it. */
 fun formatGoalProgress(
