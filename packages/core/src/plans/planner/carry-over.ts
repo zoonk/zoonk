@@ -3,7 +3,6 @@ import { markAfterCarried, scheduleCarriedWork, shiftReserved } from "./carried-
 import { findChapterInProgress } from "./chapter-in-progress";
 import { takeFocusedToday } from "./focused-today";
 import { getSkillArea } from "./graph-areas";
-import { addDays } from "./plan-calendar";
 import { LEARN_KINDS, PHASE_WORK_KINDS } from "./plan-item-rules";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
@@ -217,20 +216,7 @@ export function placeCarriedWork({
 
   const { carried, rest } = splitCarriedUnits({ keys, units });
 
-  const first = days[0]?.date;
-
-  // A focus day gives what today has left to its focus lessons (`takeFocusedToday`), so no
-  // challenge can use time kept on it.
-  const roomsFrom = first && input.carryOver?.todayExceptAreas ? addDays(first, 1) : first;
-
-  const { room, roomed, schedule } = scheduleCarriedWork({
-    carried,
-    days,
-    phaseEnds,
-    rest,
-    roomsFrom,
-    today,
-  });
+  const { room, roomed, schedule } = scheduleCarriedWork({ carried, days, phaseEnds, rest, today });
 
   const reserved = shiftReserved({
     days: reserveCarriedTime({
