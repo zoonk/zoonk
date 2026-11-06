@@ -1,6 +1,6 @@
 import { instant } from "@next/playwright";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 import { createStudyDay, openAs } from "./study-day";
 
 /**

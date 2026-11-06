@@ -2,7 +2,7 @@ import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
-import { dropNextServerAction } from "./helpers/server-actions";
+import { clickWithConnectionDown } from "./helpers/server-actions";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
 
 const REDIRECT_URL = `${E2E_MAIN_APP_URL}/test`;
@@ -125,8 +125,7 @@ test.describe("Profile Setup Flow", () => {
     const submit = page.getByRole("button", { name: /^continue$/iu });
     await expect(name).toHaveValue("Named Learner");
 
-    await dropNextServerAction(page);
-    await submit.click();
+    await clickWithConnectionDown(submit);
     await expect(page.getByText("We couldn't save your profile. Try again.")).toBeVisible();
     await expect(name).toHaveValue("Named Learner");
 

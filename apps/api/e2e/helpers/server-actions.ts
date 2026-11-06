@@ -1,9 +1,15 @@
-import { type Page, type Route } from "@playwright/test";
+import { type Locator, type Route } from "@playwright/test";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 
 const AUTH_PAGES = "**/auth/**";
 
-/** Fails the page's next Server Action the way a dropped connection does; later ones go through. */
-export async function dropNextServerAction(page: Page): Promise<void> {
+/**
+ * Before hydration the form posts natively, which no `next-action` header marks, so this waits for it.
+ * Only the click's Server Action fails; later ones go through.
+ */
+export async function clickWithConnectionDown(submit: Locator): Promise<void> {
+  const page = submit.page();
+
   const drop = async (route: Route) => {
     if (!route.request().headers()["next-action"]) {
       await route.fallback();
@@ -14,5 +20,7 @@ export async function dropNextServerAction(page: Page): Promise<void> {
     await page.unroute(AUTH_PAGES, drop);
   };
 
+  await expectHydrated(submit);
   await page.route(AUTH_PAGES, drop);
+  await submit.click();
 }

@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { expectHydrated } from "./hydration";
 import { continueToLastStep } from "./result-steps";
 import { answerRight, createStudyDay, openAs, pressUntil, writeStudyLesson } from "./study-day";
 

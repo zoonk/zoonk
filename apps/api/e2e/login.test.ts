@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { cleanupVerifications, getOTPForEmail } from "./helpers/db";
-import { dropNextServerAction } from "./helpers/server-actions";
+import { clickWithConnectionDown } from "./helpers/server-actions";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
 
 test.describe("Login Page", () => {
@@ -14,8 +14,7 @@ test.describe("Login Page", () => {
 
     await page.goto("/auth/login");
     await emailField.fill(email);
-    await dropNextServerAction(page);
-    await sendCode.click();
+    await clickWithConnectionDown(sendCode);
 
     await expect(page.getByText(/There was an error signing you in/u)).toBeVisible();
     await expect(emailField).toHaveValue(email);
