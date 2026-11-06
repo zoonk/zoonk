@@ -122,7 +122,12 @@ export function useSendLessonQuestion({
         suggestion,
       });
 
-      dispatch({ question: request.input.question, type: "questionCreateStarted" });
+      dispatch({
+        question: request.input.question,
+        suggestion: request.input.suggestion,
+        type: "questionCreateStarted",
+      });
+
       const input = { ...request.input, requestId: request.requestId };
       setPendingRequests((current) => new Map(current).set(scope, request));
       const result = await createLessonQuestionRequest({ connection, input, target });

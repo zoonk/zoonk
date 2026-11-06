@@ -581,6 +581,33 @@ describe(lessonQuestionReducer, () => {
     expect(loaded.creating).toStrictEqual({ draft: "Why?", question: "Why?" });
     expect(loaded.draft).toBe("");
   });
+
+  it("puts a turned-away suggestion in the composer, unless the learner typed there meanwhile", () => {
+    const asked = lessonQuestionReducer(INITIAL_LESSON_QUESTION_STATE, {
+      question: "Explain it more simply",
+      suggestion: "simpler",
+      type: "questionCreateStarted",
+    });
+
+    const unfinished = { questions: [questionResource({ status: "failed" })] };
+
+    const returned = lessonQuestionReducer(asked, {
+      ...unfinished,
+      type: "latestThreadReconciled",
+    });
+
+    expect(returned).toMatchObject({
+      creating: null,
+      draft: "Explain it more simply",
+      suggestion: { question: "Explain it more simply", suggestion: "simpler" },
+    });
+
+    const typed = lessonQuestionReducer(asked, { draft: "Why a cloud?", type: "draftChanged" });
+
+    const kept = lessonQuestionReducer(typed, { ...unfinished, type: "latestThreadReconciled" });
+
+    expect(kept).toMatchObject({ creating: null, draft: "Why a cloud?", suggestion: null });
+  });
 });
 
 function planChange(overrides: Partial<PlanChangeView>): PlanChangeView {
