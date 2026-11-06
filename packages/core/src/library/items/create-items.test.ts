@@ -16,6 +16,7 @@ import {
   drawBlankImage,
   drawTestImage,
   mockDrawnImages,
+  mockDrawnImagesAtOnce,
   mockImageScene,
   resetImageModels,
   testScene,
@@ -184,6 +185,29 @@ describe(createItems, () => {
 
     await createItems(input);
     await expect(prisma.item.count({ where: { runId: provenance.runId } })).resolves.toBe(2);
+  });
+
+  it("leaves the check of a picture two questions drew at once to the one that stored it", async () => {
+    mockUploads();
+    const skill = await biologySkill();
+    const pictured = generatedMultipleChoice({ context: FIGURE_CONTEXT, image: figure });
+
+    mockImageScene(testScene({ focalObject: `a plant cell ${randomUUID()}` }));
+    mockSearchTerms([]);
+    mockDrawnImagesAtOnce([await drawTestImage(), await drawTestImage()]);
+
+    const { created, unchecked } = await createItems({
+      format: "multipleChoice",
+      items: [pictured, { ...pictured }],
+      language: "pt",
+      provenance: generatedProvenance(),
+      skillId: skill.id,
+    });
+
+    const [first, second] = created.map((item) => item.mediaAssetId);
+
+    expect(second).toBe(first);
+    expect(unchecked).toStrictEqual([first]);
   });
 
   it("leaves out a question whose picture can't be drawn instead of storing it bare", async () => {

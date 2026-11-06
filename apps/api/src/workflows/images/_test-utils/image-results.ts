@@ -8,6 +8,11 @@ export const TEST_IMAGE = new Uint8Array(
   ),
 );
 
+/** One flat color, so the blank-frame check rejects it. */
+export const BLANK_IMAGE = new Uint8Array(
+  Buffer.from("UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoQAAwAAUAmJaQAA3AA/vz0AAA=", "base64"),
+);
+
 export const imageProvenance = {
   costUsd: 0.004,
   generatedAt: "2026-09-26T12:00:00.000Z",

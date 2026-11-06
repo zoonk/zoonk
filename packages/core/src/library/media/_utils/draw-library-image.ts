@@ -34,7 +34,11 @@ function numberLabels(parts: readonly string[]): ImageScene["labels"] {
   }));
 }
 
-/** The caller must dispatch the background image check when the returned picture is newly drawn. */
+/**
+ * The caller must dispatch the background image check when the returned picture is newly drawn.
+ * Only the call that stored it says so, even when another drew the same scene at once, so each
+ * picture is checked, and repaired, once.
+ */
 export async function drawLibraryImage({
   alt,
   analytics,
@@ -87,7 +91,7 @@ export async function drawLibraryImage({
     return null;
   }
 
-  const { data: asset, error } = await safeAsync(() =>
+  const { data: saved, error } = await safeAsync(() =>
     saveImageAsset({
       image: drawn.image,
       language: hasLabels ? language : null,
@@ -105,5 +109,5 @@ export async function drawLibraryImage({
     return null;
   }
 
-  return { assetId: asset.id, drawn: true };
+  return { assetId: saved.row.id, drawn: saved.created };
 }

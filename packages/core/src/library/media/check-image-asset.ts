@@ -8,6 +8,7 @@ import {
 } from "@zoonk/ai/tasks/images/scene-schema";
 import { type ImageCanvas, getImagePalette } from "@zoonk/ai/tasks/images/style";
 import { prisma } from "@zoonk/db";
+import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { logInfo } from "@zoonk/utils/logger";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../../cache/tags";
@@ -22,6 +23,7 @@ const CHECK_TIER = chooseServiceTier({ wait: "later" });
 
 export type PictureRedraw = Awaited<ReturnType<typeof uploadImageFile>> & {
   provenance: LibraryProvenance;
+  reuseKey: string;
   scene: ImageScene;
 };
 
@@ -177,7 +179,15 @@ export async function redrawImageAsset({
   }
 
   const file = await uploadImageFile({ image: drawn.image, ownerId: asset.ownerId });
-  return { ...file, provenance: drawn.provenance, scene };
+
+  return {
+    ...file,
+    provenance: drawn.provenance,
+    // The old key names the scene that was planned away, and no request makes this one, so only
+    // search, which reads the new prompt, reuses the redraw.
+    reuseKey: scopeIdentityKey({ key: `image:replanned:${assetId}`, ownerId: asset.ownerId }),
+    scene,
+  };
 }
 
 export async function replaceImageAsset({
@@ -196,6 +206,7 @@ export async function replaceImageAsset({
         ...toProvenanceData(redraw.provenance),
         height: redraw.height,
         prompt: describeImageScene(redraw.scene),
+        reuseKey: redraw.reuseKey,
         scene: redraw.scene,
         url: redraw.url,
         width: redraw.width,
@@ -212,7 +223,7 @@ export async function replaceImageAsset({
 /** Drops the questions about the picture, since they can't be asked without it. */
 export async function removeImageAsset({ assetId }: { assetId: string }): Promise<void> {
   const lessonTags = await findLessonTags(assetId);
-  logInfo("[images] Picture taken out of use after its redraw failed its check", { assetId });
+  logInfo("[images] Picture taken out of use without a redraw that passed its check", { assetId });
 
   await writePlanInputs(async (tx) => {
     const questions = await tx.item.findMany({
