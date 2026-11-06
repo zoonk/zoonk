@@ -79,8 +79,8 @@ struct PlanSlotAnswer {
 
 /// One thing at a time, paged as main's slot is: "Not now" puts one off for as long as the app runs.
 /// An answer that changes the plan says what it did, with Undo, for a moment. In the page's column
-/// it's main's suggestion line, its summary with "View" opening the whole suggestion in a sheet;
-/// beside the page (`isInline`) it's the whole suggestion.
+/// it's main's suggestion line, its summary with "View" opening the whole suggestion in a sheet,
+/// which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole suggestion.
 struct PlanSuggestionSection: View {
   private enum Focus: Hashable {
     case item
@@ -92,14 +92,28 @@ struct PlanSuggestionSection: View {
 
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
+  @Environment(\.dismiss) private var dismiss
   @AccessibilityFocusState private var focus: Focus?
   @State private var isHovering = false
 
   let context: PlanContext
   @Binding var answer: PlanSlotAnswer?
   var isInline = false
+  /// The suggestion the screen's sheet shows in full.
+  var sheetItem: PlanSlotItem?
 
   var body: some View {
+    if let sheetItem {
+      sheet(sheetItem)
+    } else {
+      section
+    }
+  }
+
+  /// What the slot shows: its suggestions, the one paged to, and what an answer just did.
+  private var shown:
+    (items: [PlanSlotItem], index: Int, applied: (change: AppliedPlanChange, sentence: String)?)
+  {
     let state = store.suggestionState(goalId: context.goal.id)
     let isExam = context.goal.kind == .exam
     let unclaimed =
@@ -108,7 +122,6 @@ struct PlanSuggestionSection: View {
       plan: context.plan, isPaused: context.isPaused, isExam: isExam,
       courseComplete: !unclaimed.isEmpty
     ).filter { !state.dismissed.contains($0) }
-    let index = min(state.position, max(items.count - 1, 0))
     let answer = currentAnswer
     let applied: (change: AppliedPlanChange, sentence: String)? =
       if case .applied(let change, let sentence) = answer?.editor.latest, answer?.isOver == false {
@@ -116,6 +129,35 @@ struct PlanSuggestionSection: View {
       } else {
         nil
       }
+
+    return (items, min(state.position, max(items.count - 1, 0)), applied)
+  }
+
+  /// The sheet closes once its suggestion stops showing: answered, put off or paged past.
+  private func sheet(_ item: PlanSlotItem) -> some View {
+    let shown = shown
+    let isShowing =
+      shown.applied == nil && shown.items.indices.contains(shown.index)
+      && shown.items[shown.index] == item
+
+    return Group {
+      if isShowing {
+        slot(item)
+        answerFailure(item)
+      }
+    }
+    .disabled(currentAnswer?.editor.isSaving == true)
+    .onChange(of: isShowing, initial: true) { _, isShowing in
+      if !isShowing {
+        dismiss()
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var section: some View {
+    let (items, index, applied) = shown
+    let answer = currentAnswer
     let paged = items.indices.contains(index) ? items[index] : nil
 
     if let item = applied == nil ? paged : answer?.item {
@@ -134,7 +176,6 @@ struct PlanSuggestionSection: View {
           } else {
             let summary = summary(item)
 
-            // A new suggestion starts closed, so an answer in the sheet never shows the next one there.
             SuggestionLine {
               SuggestionMark(kind: summary.mark)
             } summary: {
@@ -147,13 +188,11 @@ struct PlanSuggestionSection: View {
                   .buttonStyle(.outline)
                   .controlSize(.small)
               } else {
-                SuggestionOpen {
-                  slot(item)
-                  answerFailure(item)
+                SuggestionViewButton {
+                  context.show(.suggestion(item))
                 }
               }
             }
-            .id(item)
           }
         }
         .padding(.vertical, isInline ? 4 : 0)

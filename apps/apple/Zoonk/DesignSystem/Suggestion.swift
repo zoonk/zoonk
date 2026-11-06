@@ -76,33 +76,56 @@ struct SuggestionOpen<Content: View>: View {
   private var shown: Binding<Bool> { isOpen ?? $isOpenHere }
 
   var body: some View {
-    Button {
+    SuggestionViewButton {
       shown.wrappedValue = true
-    } label: {
+    }
+    .sheet(isPresented: shown) {
+      SuggestionSheet {
+        content
+      }
+      .zoonkStyles()
+    }
+  }
+}
+
+/// `SuggestionOpen`'s "View", for a screen that presents the sheet itself, above panes that a
+/// resize or a fold rebuilds.
+struct SuggestionViewButton: View {
+  let action: () -> Void
+
+  var body: some View {
+    Button(action: action) {
       Text("View", tableName: "Plan", comment: "Opens the Plan's suggestion in full")
     }
     .buttonStyle(.outline)
     .controlSize(.small)
-    .sheet(isPresented: shown) {
-      NavigationStack {
-        ScrollView {
-          VStack(alignment: .leading, spacing: 8) {
-            content
-          }
-          .controlSize(.large)
-          .padding()
+  }
+}
+
+/// `SuggestionOpen`'s sheet: the whole suggestion, closed with its close button.
+struct SuggestionSheet<Content: View>: View {
+  @Environment(\.dismiss) private var dismiss
+
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    NavigationStack {
+      ScrollView {
+        VStack(alignment: .leading, spacing: 8) {
+          content
         }
-        .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button(role: .close) {
-              shown.wrappedValue = false
-            }
+        .controlSize(.large)
+        .padding()
+      }
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button(role: .close) {
+            dismiss()
           }
         }
       }
-      .presentationDetents([.medium, .large])
-      .zoonkStyles()
     }
+    .presentationDetents([.medium, .large])
   }
 }
 

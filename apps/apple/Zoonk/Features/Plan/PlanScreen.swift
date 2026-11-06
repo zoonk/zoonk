@@ -205,7 +205,7 @@ private struct PlanContent: View {
     }
     .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     .modifier(PlanToolbar(context: context))
-    .planSheets($sheet, context: context, syllabus: syllabus)
+    .planSheets($sheet, context: context, syllabus: syllabus, slotAnswer: $slotAnswer)
     .completionMoments(certificates: claimed)
     .loads(courseEnd, refreshable: false)
     .sheet(item: $adjusting) { section in

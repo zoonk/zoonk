@@ -8,15 +8,18 @@ enum PlanSheet: Identifiable, Hashable {
   case pace
   case farTopic(skillId: String, title: String)
   case certificate(code: String)
+  case suggestion(PlanSlotItem)
 
   var id: Self { self }
 }
 
 extension View {
   func planSheets(
-    _ sheet: Binding<PlanSheet?>, context: PlanContext, syllabus: GoalSyllabus?
+    _ sheet: Binding<PlanSheet?>, context: PlanContext, syllabus: GoalSyllabus?,
+    slotAnswer: Binding<PlanSlotAnswer?> = .constant(nil)
   ) -> some View {
-    modifier(PlanSheets(sheet: sheet, context: context, syllabus: syllabus))
+    modifier(
+      PlanSheets(sheet: sheet, slotAnswer: slotAnswer, context: context, syllabus: syllabus))
   }
 }
 
@@ -26,6 +29,7 @@ private struct PlanSheets: ViewModifier {
   @State private var then: Then?
 
   @Binding var sheet: PlanSheet?
+  @Binding var slotAnswer: PlanSlotAnswer?
   let context: PlanContext
   let syllabus: GoalSyllabus?
 
@@ -64,6 +68,10 @@ private struct PlanSheets: ViewModifier {
             FarTopicSheet(goal: context.goal, skillId: skillId, title: title)
           case .certificate(let code):
             CertificateSheet(code: code)
+          case .suggestion(let item):
+            SuggestionSheet {
+              PlanSuggestionSection(context: context, answer: $slotAnswer, sheetItem: item)
+            }
           }
         }
         .environment(
