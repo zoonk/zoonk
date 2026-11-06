@@ -201,3 +201,11 @@ export function answerPlanChange({
       : question;
   });
 }
+
+export function hasConversation({
+  creating,
+  hasMore,
+  questions,
+}: Pick<LessonQuestionState, "creating" | "hasMore" | "questions">): boolean {
+  return questions.length > 0 || hasMore || creating !== null;
+}

@@ -21,6 +21,7 @@ import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-erro
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { type OfferedSuggestion } from "./lesson-question-state";
+import { hasConversation } from "./lesson-question-state-helpers";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 import {
   ThreadPanel,
@@ -219,7 +220,7 @@ export function QuestionThread({ identity }: { identity: TutorIdentity }) {
     );
   }
 
-  if (state.questions.length === 0 && !state.hasMore && !state.creating) {
+  if (!hasConversation(state)) {
     return (
       <ThreadPanel>
         <EmptyThread

@@ -27,18 +27,9 @@ function QuestionScrollTarget({ questionId }: { questionId: string | null | unde
 
 const THREAD_INSET_CLASS = "px-4 py-6 sm:px-5";
 
-/** Reads from the top, unlike the conversation, which opens at its latest message. */
+/** Scrolls with its host from the top; only the conversation has its own scroller, opened at the latest message. */
 export function ThreadPanel({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      className={cn(
-        "scroll-fade-b size-full min-h-0 scrollbar-thin scrollbar-gutter-stable overflow-y-auto overscroll-contain",
-        THREAD_INSET_CLASS,
-      )}
-    >
-      {children}
-    </div>
-  );
+  return <div className={THREAD_INSET_CLASS}>{children}</div>;
 }
 
 export function ThreadViewport({
