@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
 import { followRun, stopRuns } from "./generation-run";
-import { expectHydrated } from "./hydration";
 import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
 
 /** The page gives a run 45 s to appear. */

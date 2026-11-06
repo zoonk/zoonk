@@ -122,11 +122,12 @@ function PasteText({ onAdd, pending }: { onAdd: (text: string) => void; pending:
 
 type AttachControlsProps = {
   attach: GoalAttachActions;
+  autoFocus?: boolean;
   language: string;
   onAttached: (source: AttachedSource) => void;
 };
 
-export function AttachControls({ attach, language, onAttached }: AttachControlsProps) {
+export function AttachControls({ attach, autoFocus, language, onAttached }: AttachControlsProps) {
   const t = useExtracted();
   const fileId = useId();
   const errorFor = useAttachError();
@@ -165,6 +166,7 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
           <input
             accept={ACCEPTED_FILES}
             aria-disabled={isPending || undefined}
+            autoFocus={autoFocus}
             className="sr-only"
             id={fileId}
             onChange={(event) => {

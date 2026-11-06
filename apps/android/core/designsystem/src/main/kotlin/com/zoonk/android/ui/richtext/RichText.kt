@@ -1,6 +1,5 @@
 package com.zoonk.android.ui.richtext
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -361,7 +361,7 @@ private fun DisplayMath(
     modifier: Modifier,
     style: TextStyle,
 ) {
-    Box(modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), contentAlignment = Alignment.Center) {
+    Box(modifier.fillMaxWidth().fadingHorizontalScroll(rememberScrollState()), contentAlignment = Alignment.Center) {
         Text(
             text = math.text,
             modifier = Modifier.semantics { contentDescription = math.spoken },

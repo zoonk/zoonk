@@ -1,3 +1,4 @@
+import { type BilledCall } from "@zoonk/ai/billed-calls";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 import z from "zod";
 import { type RequiredLanguage } from "./case-languages";
@@ -68,6 +69,7 @@ export function supportsJudgeMode(
 
 type TaskUsage = {
   audioSeconds?: number;
+  images?: number;
   inputTokens: number | undefined;
   outputTokens: number | undefined;
   inputTokenDetails?: { cacheReadTokens: number | undefined; cacheWriteTokens: number | undefined };
@@ -76,6 +78,7 @@ type TaskUsage = {
 
 export type TokenUsage = {
   audioSeconds?: number;
+  images?: number;
   inputTokens: number;
   outputTokens: number;
   cacheReadTokens?: number;
@@ -88,6 +91,7 @@ export function toTokenUsage(usage: TaskUsage): TokenUsage {
     audioSeconds: usage.audioSeconds,
     cacheReadTokens: usage.inputTokenDetails?.cacheReadTokens,
     cacheWriteTokens: usage.inputTokenDetails?.cacheWriteTokens,
+    images: usage.images,
     inputTokens: usage.inputTokens ?? 0,
     outputTokens: usage.outputTokens ?? 0,
     reasoningTokens: usage.outputTokenDetails?.reasoningTokens,
@@ -97,7 +101,6 @@ export function toTokenUsage(usage: TaskUsage): TokenUsage {
 type TaskResult<T = unknown> = {
   data: T;
   usage: TaskUsage;
-  extraCalls?: ModelCall[];
   userPrompt: string;
   systemPrompt: string;
   probabilities?: Record<string, number>;
@@ -106,6 +109,19 @@ type TaskResult<T = unknown> = {
 export type ClassificationOutcome = { expected: string; predicted: string | null };
 
 export type ModelCall = { modelId: string; usage: TokenUsage };
+
+export function toModelCall({ model, usage }: BilledCall): ModelCall {
+  return {
+    modelId: model,
+    usage: {
+      cacheReadTokens: usage.cacheReadTokens,
+      cacheWriteTokens: usage.cacheWriteTokens,
+      inputTokens: usage.inputTokens ?? 0,
+      outputTokens: usage.outputTokens ?? 0,
+      reasoningTokens: usage.reasoningTokens,
+    },
+  };
+}
 
 export type JudgeRun = ModelCall;
 
@@ -145,6 +161,7 @@ export type EvalResult = TokenUsage & {
   testCase: TestCase;
   output: string;
   extraCalls?: ModelCall[];
+  calls?: ModelCall[];
   steps: Score["steps"];
   categoryScores?: CategoryScore[];
   classification?: ClassificationOutcome;
@@ -152,7 +169,12 @@ export type EvalResult = TokenUsage & {
   duration: number;
 };
 
-export type TaskEvalResults = { taskId: string; modelId: string; results: EvalResult[] };
+export type TaskEvalResults = {
+  taskId: string;
+  modelId: string;
+  results: EvalResult[];
+  failedRuns?: FailedRun[];
+};
 
 /** Execute registry tasks only with their paired test case; the default input type intentionally forbids arbitrary input. */
 export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
@@ -184,18 +206,24 @@ export type RegisteredTask = Omit<
 export type OutputEntry = TokenUsage & {
   testCaseId: string;
   output: string;
+  /** Calls the eval made around the task, such as a simulated learner: spent, but not run cost. */
   extraCalls?: ModelCall[];
+  /** Every call the run made. Unset on outputs saved before runs were metered. */
+  calls?: ModelCall[];
   duration: number;
   systemPrompt: string;
   userPrompt: string;
   probabilities?: Record<string, number>;
 };
 
+export type FailedRun = Pick<OutputEntry, "calls" | "extraCalls" | "testCaseId">;
+
 export type ModelOutputs = {
   taskId: string;
   modelId: string;
   generatedAt: string;
   outputs: OutputEntry[];
+  failedRuns?: FailedRun[];
 };
 
 export type TestCaseOutput = OutputEntry & { testCase: TestCase };

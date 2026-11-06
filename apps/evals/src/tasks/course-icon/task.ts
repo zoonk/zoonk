@@ -68,6 +68,7 @@ async function generate({
     data: { imagePath, subject: `The icon of the course "${title}": ${description}` },
     systemPrompt: "",
     usage: {
+      images: provenance.usage.images,
       inputTokens: provenance.usage.inputTokens,
       outputTokens: provenance.usage.outputTokens,
     },

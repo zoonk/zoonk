@@ -3,10 +3,13 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
-import { testOutQuestionsWorkflow } from "@/workflows/goals/test-out-questions-workflow";
+import { startOnce } from "@/workflows/_shared/run-token";
+import {
+  getTestOutQuestionsToken,
+  testOutQuestionsWorkflow,
+} from "@/workflows/goals/test-out-questions-workflow";
 import { requestTestOutQuestions } from "@zoonk/core/learner/test-out/request-questions";
 import { NextResponse } from "next/server";
-import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
@@ -42,18 +45,25 @@ async function createTestOutGeneration(
     return NextResponse.json({ generationId: null, status: "ready" });
   }
 
-  const run = await start(testOutQuestionsWorkflow, [
-    {
-      analytics: result.analytics,
-      questionsPerSkill: result.questionsPerSkill,
-      skillIds: result.skillIds,
-      ...path,
-    },
-  ]);
+  const generationId = await startOnce(
+    testOutQuestionsWorkflow,
+    [
+      {
+        analytics: result.analytics,
+        questionsPerSkill: result.questionsPerSkill,
+        skillIds: result.skillIds,
+        ...path,
+      },
+    ],
+    getTestOutQuestionsToken(path),
+  );
 
   return NextResponse.json(
-    { generationId: run.runId, status: "generating" },
-    { headers: { Location: `/v1/generations/${encodeURIComponent(run.runId)}` }, status: ACCEPTED },
+    { generationId, status: "generating" },
+    {
+      headers: { Location: `/v1/generations/${encodeURIComponent(generationId)}` },
+      status: ACCEPTED,
+    },
   );
 }
 

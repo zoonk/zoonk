@@ -20,21 +20,23 @@ const TEST_OUT_FORMATS = ["multipleChoice"] as const;
 /** At least a few per skill, so a retake has questions the learner hasn't seen. */
 const TEST_OUT_QUESTIONS_PER_SKILL = 3;
 
+export function getTestOutQuestionsToken({
+  chapterId,
+  goalId,
+}: Pick<TestOutQuestionsInput, "chapterId" | "goalId">): string {
+  return `test-out-questions:${goalId}:${chapterId}`;
+}
+
 export async function testOutQuestionsWorkflow(
   input: TestOutQuestionsInput,
 ): Promise<QuestionWritingResult> {
   "use workflow";
 
-  const { analytics, chapterId, goalId, questionsPerSkill, skillIds } = input;
+  const { analytics, goalId, questionsPerSkill, skillIds } = input;
   const { workflowRunId } = getWorkflowMetadata();
 
   return runQuestionWriting<TestOutQuestionsStepName>({
-    steps: {
-      join: "joinTestOutQuestions",
-      ready: TEST_OUT_QUESTIONS_READY_STEP,
-      write: "writeTestOutQuestions",
-    },
-    token: `test-out-questions:${goalId}:${chapterId}`,
+    steps: { ready: TEST_OUT_QUESTIONS_READY_STEP, write: "writeTestOutQuestions" },
     write: async () => {
       const { failed, written } = await preparePlacementItems({
         analytics,

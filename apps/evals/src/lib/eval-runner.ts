@@ -1,10 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { cache } from "react";
 import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
+import { getTestCaseRunIds } from "./test-case-runs";
 import {
+  type ModelOutputs,
   type OutputEntry,
   type RegisteredTask,
   type ScoredResult,
@@ -125,6 +128,11 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
 
   const modelOutputs = await loadModelOutputs(task.id, modelId);
 
+  if (modelOutputs?.outputs.length === 0 && modelOutputs.failedRuns) {
+    logInfo("No outputs to score: every run failed.");
+    return combineOutputsAndResults(task.id, modelId, modelOutputs, []);
+  }
+
   if (!modelOutputs || modelOutputs.outputs.length === 0) {
     throw new Error(`No outputs found for model ${modelId}. Generate outputs first.`);
   }
@@ -134,15 +142,20 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
   const existingResults = await loadExistingScoredResults(task.id, modelId);
   logInfo(`Found ${existingResults.length} existing scored results`);
 
+  const runIds = new Set(
+    getTestCaseRunIds({ runsPerTestCase: RUNS_PER_TEST_CASE, testCases: task.testCases }),
+  );
+
   const outputsToScore = modelOutputs.outputs.filter(
-    (output) => !isAlreadyScored(existingResults, output.testCaseId),
+    (output) =>
+      runIds.has(output.testCaseId) && !isAlreadyScored(existingResults, output.testCaseId),
   );
 
   logInfo(`Scoring ${outputsToScore.length} outputs`);
 
   if (outputsToScore.length === 0) {
     logInfo("All outputs already scored");
-    return combineOutputsAndResults(task.id, modelId, modelOutputs.outputs, existingResults);
+    return combineOutputsAndResults(task.id, modelId, modelOutputs, existingResults);
   }
 
   const results = await Promise.allSettled(
@@ -174,13 +187,13 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
   await saveScoredResults(task.id, modelId, allScoredResults);
   logInfo(`Saved ${allScoredResults.length} total scored results`);
 
-  return combineOutputsAndResults(task.id, modelId, modelOutputs.outputs, allScoredResults);
+  return combineOutputsAndResults(task.id, modelId, modelOutputs, allScoredResults);
 }
 
 function combineOutputsAndResults(
   taskId: string,
   modelId: string,
-  outputs: OutputEntry[],
+  { failedRuns, outputs }: Pick<ModelOutputs, "failedRuns" | "outputs">,
   scoredResults: ScoredResult[],
 ): TaskEvalResults {
   const results = scoredResults.flatMap((scored) => {
@@ -194,10 +207,12 @@ function combineOutputsAndResults(
       audioSeconds: output.audioSeconds,
       cacheReadTokens: output.cacheReadTokens,
       cacheWriteTokens: output.cacheWriteTokens,
+      calls: output.calls,
       categoryScores: scored.categoryScores,
       classification: scored.classification,
       duration: output.duration,
       extraCalls: output.extraCalls,
+      images: output.images,
       inputTokens: output.inputTokens,
       judge: scored.judge,
       output: output.output,
@@ -208,7 +223,7 @@ function combineOutputsAndResults(
     };
   });
 
-  return { modelId, results, taskId };
+  return { failedRuns, modelId, results, taskId };
 }
 
 export const getTaskResults = cache(
@@ -225,6 +240,6 @@ export const getTaskResults = cache(
       return null;
     }
 
-    return combineOutputsAndResults(taskId, modelId, modelOutputs.outputs, scoredResults);
+    return combineOutputsAndResults(taskId, modelId, modelOutputs, scoredResults);
   },
 );

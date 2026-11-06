@@ -107,7 +107,7 @@ describe(stopFreshnessChecks, () => {
     const examTarget = { examBlueprintId: exam.id, kind: "exam" as const };
     mockSessionWithRole({ role: "user", userId: learner.id });
 
-    await expect(stopFreshnessChecks(examTarget)).resolves.toBe("forbidden");
+    await expect(stopFreshnessChecks(examTarget)).resolves.toStrictEqual({ status: "forbidden" });
 
     await expect(
       prisma.examBlueprint.findUniqueOrThrow({ where: { id: exam.id } }),
@@ -120,7 +120,10 @@ describe(stopFreshnessChecks, () => {
         stopFreshnessChecks(examTarget),
         stopFreshnessChecks({ kind: "source", sourceId: source.id }),
       ]),
-    ).resolves.toStrictEqual(["ready", "ready"]);
+    ).resolves.toStrictEqual([
+      { status: "ready", target: examTarget },
+      { status: "ready", target: { kind: "source", sourceId: source.id } },
+    ]);
 
     const [storedExam, storedSource] = await Promise.all([
       prisma.examBlueprint.findUniqueOrThrow({ where: { id: exam.id } }),

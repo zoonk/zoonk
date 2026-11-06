@@ -1,6 +1,9 @@
-import { type CallWriting } from "@zoonk/core/language/conversations/call-writing";
+import {
+  type CallWriting,
+  getCallWritingKey,
+} from "@zoonk/core/language/conversations/call-writing";
 import { listLanguageCallWritings } from "@zoonk/core/language/conversations/prepare";
-import { start } from "workflow/api";
+import { startOnce } from "../../_shared/run-token";
 import { callContentWorkflow } from "../../calls/call-content-workflow";
 import { startAll } from "../../goals/goal-outlines";
 
@@ -12,8 +15,13 @@ async function listLanguageCallWritingsStep(input: LearnerGoal): Promise<CallWri
   return listLanguageCallWritings(input);
 }
 
-/** Each call is its own run on its writing's key, so a learner who taps Start joins it. */
+/** Each call is its own run on its writing's key, so a learner who taps Start follows it. */
 export async function writeLanguageCalls(input: LearnerGoal): Promise<void> {
   const writings = await listLanguageCallWritingsStep(input);
-  await startAll(writings.map((writing) => start(callContentWorkflow, [writing])));
+
+  await startAll(
+    writings.map((writing) =>
+      startOnce(callContentWorkflow, [writing], getCallWritingKey(writing)),
+    ),
+  );
 }

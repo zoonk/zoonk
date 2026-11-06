@@ -19,6 +19,7 @@ const IMAGE_MIME_TYPE = "image/webp";
 const IMAGE_FILE_NAME = "step.webp";
 
 export type SaveImageAssetInput = {
+  alt: string | null;
   image: Uint8Array;
   reuseKey: string;
   prompt: string;
@@ -76,6 +77,8 @@ export async function saveImageAsset(
 
       return prisma.mediaAsset.create({
         data: {
+          alt: input.alt,
+          checkOwedAt: new Date(),
           kind: "image",
           language: input.language,
           mimeType: IMAGE_MIME_TYPE,

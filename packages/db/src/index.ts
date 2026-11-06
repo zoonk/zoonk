@@ -139,6 +139,7 @@ export type {
   LessonQuestionWhereInput,
 } from "./generated/prisma/models/LessonQuestion";
 export type { LessonQuestionThreadGetPayload } from "./generated/prisma/models/LessonQuestionThread";
+export type { StepWhereInput } from "./generated/prisma/models/Step";
 
 export { prisma };
 export const sql = Prisma.sql;

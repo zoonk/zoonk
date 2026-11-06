@@ -1,5 +1,4 @@
 import { getBrowserLocale } from "@/i18n/locale";
-import { trackSignInCompleted } from "@/lib/server-track-events";
 import { getRouterPayloadFallback } from "@zoonk/core/navigation/document-route";
 import { getSession } from "@zoonk/core/users/session";
 import { MAIN_URL } from "@zoonk/utils/url";
@@ -59,8 +58,6 @@ export async function GET(request: NextRequest) {
   if (!handoff.success) {
     return redirectTo(getUntrustedOriginHref(locale));
   }
-
-  await trackSignInCompleted({ locale, userId: session.user.id });
 
   return redirectTo(handoff.url);
 }

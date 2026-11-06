@@ -45,16 +45,29 @@ export function TaskActionBar({ children, className, ...props }: React.Component
 export function TaskActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex w-full items-center gap-2.5 lg:justify-end", className)}
+      className={cn("flex w-full flex-wrap items-center gap-2.5 lg:justify-end", className)}
       data-slot="task-actions"
       {...props}
     />
   );
 }
 
-/** Not `flex-1`: a zero basis would squeeze its 44px height to its label's in a column. */
-export const TASK_MAIN_ACTION_CLASS =
-  "w-full min-w-0 shrink grow lg:w-auto lg:min-w-40 lg:shrink-0 lg:grow-0";
+export const TASK_WRAPPING_ACTION_CLASS =
+  "h-auto min-h-11 max-w-full shrink py-2 text-center text-balance whitespace-normal";
+
+/** A button's bare text can't shrink below its longest word, so a word wider than the whole line would spill out. */
+export function TaskActionLabel({ children }: { children: React.ReactNode }) {
+  return <span className="min-w-0 wrap-break-word">{children}</span>;
+}
+
+/**
+ * Its longest word decides when it takes a line of its own. Not `basis-0`, which would squeeze a
+ * wrapped label's height to one line in a column.
+ */
+export const TASK_MAIN_ACTION_CLASS = cn(
+  TASK_WRAPPING_ACTION_CLASS,
+  "grow basis-[min-content] lg:min-w-40 lg:shrink-0 lg:grow-0 lg:basis-auto",
+);
 
 export const TASK_OPTION_CLASS = "w-full lg:w-auto";
 

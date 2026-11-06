@@ -115,6 +115,26 @@ describe(getMistakePractice, () => {
     expect(JSON.stringify(result)).not.toContain("isCorrect");
   });
 
+  it("drills a mistake with its skill's other questions once a fix retires the original", async () => {
+    const { extra, original, skill, user } = await setup();
+
+    await Promise.all([
+      prisma.item.update({ data: { retiredAt: new Date() }, where: { id: original.id } }),
+      mistakeFixture({
+        createdAt: YESTERDAY,
+        itemId: original.id,
+        skillId: skill.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const result = await getMistakePractice({ timeZone: "UTC" });
+
+    expect(
+      result.status === "ready" && result.practice[0]?.questions.map((question) => question.itemId),
+    ).toStrictEqual([extra.id]);
+  });
+
   it("shows the picture of a question about a figure, with the writer's alt text", async () => {
     const { extra, skill, user } = await setup();
     const picture = await mediaAssetFixture({ height: 1024, width: 1536 });

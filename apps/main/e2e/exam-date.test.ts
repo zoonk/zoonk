@@ -4,6 +4,7 @@ import { ONBOARDING_QUESTIONS } from "@zoonk/core/view-models/onboarding/contrac
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -16,7 +17,6 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
 const citation = { passage: "", sourceId: "notice" };

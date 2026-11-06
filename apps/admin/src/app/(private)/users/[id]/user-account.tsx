@@ -3,8 +3,7 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { getUser } from "@/data/users/get-user";
 import { formatDate } from "@/lib/format";
 import { Avatar, AvatarImage } from "@zoonk/ui/components/avatar";
-import { Button } from "@zoonk/ui/components/button";
-import { updateUserAnalyticsDisabledAction } from "./_actions/update-user-analytics-disabled";
+import { AnalyticsTrackingForm } from "./analytics-tracking-form";
 
 export async function UserAccount({ userId }: { userId: string }) {
   "use cache: private";
@@ -60,25 +59,5 @@ export async function UserAccount({ userId }: { userId: string }) {
         </DetailField>
       </DetailFields>
     </AdminSection>
-  );
-}
-
-function AnalyticsTrackingForm({
-  analyticsDisabled,
-  userId,
-}: {
-  analyticsDisabled: boolean;
-  userId: string;
-}) {
-  const nextValue = !analyticsDisabled;
-
-  return (
-    <form action={updateUserAnalyticsDisabledAction}>
-      <input name="userId" type="hidden" value={userId} />
-      <input name="analyticsDisabled" type="hidden" value={String(nextValue)} />
-      <Button size="sm" type="submit" variant="outline">
-        {analyticsDisabled ? "Include in analytics" : "Exclude from analytics"}
-      </Button>
-    </form>
   );
 }

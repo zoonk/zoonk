@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      @font-face {
+        font-family: "GeistLocal";
+        src: url(/fonts/GeistVF.woff2) format("woff2");
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: "GeistMonoLocal";
+        src: url(/fonts/GeistMonoVF.woff2) format("woff2");
+        font-weight: 100 900;
+      }
+      :root {
+        --font-geist-sans: "GeistLocal";
+        --font-geist-mono: "GeistMonoLocal";
+      }
+      html,
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>

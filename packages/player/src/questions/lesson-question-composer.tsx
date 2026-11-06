@@ -86,7 +86,10 @@ const LIMIT_FRAME_CLASS: Record<ComposerVariant, string> = {
 const ONE_LINE_PLACEHOLDER_CLASS = "placeholder-shown:truncate placeholder:truncate";
 
 const TEXTAREA_CLASS: Record<ComposerVariant, string> = {
-  compact: cn("max-h-32 min-h-11 py-3 pl-3 text-base md:text-sm", ONE_LINE_PLACEHOLDER_CLASS),
+  compact: cn(
+    "max-h-[min(8rem,25dvh)] min-h-11 py-3 pl-3 text-base md:text-sm",
+    ONE_LINE_PLACEHOLDER_CLASS,
+  ),
   page: cn(
     "max-h-40 min-h-12 py-3 pl-3.5 text-[0.9375rem] md:text-[0.9375rem]",
     ONE_LINE_PLACEHOLDER_CLASS,

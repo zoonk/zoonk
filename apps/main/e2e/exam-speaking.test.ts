@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 import { CHARACTER_REPLY, answerLiveCalls } from "./live-peer";
 import { openAs } from "./study-day";
 

@@ -1,9 +1,10 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getCheckpointQuestionCount } from "../../checkpoints/_utils/checkpoint-answer-evidence";
+import { ITEM_IMAGE_INCLUDE, isStillAsked } from "../../library/items/item-image";
 import { parseSessionItem } from "./session-items";
 
-/** Includes previously answered ids; removed bank content cannot hold a checkpoint open forever. */
+/** Includes previously answered ids; removed bank content cannot hold a block open forever. */
 export async function countAskableQuestions({
   answeredItemIds = [],
   itemIds,
@@ -12,12 +13,23 @@ export async function countAskableQuestions({
   itemIds: readonly string[];
 }): Promise<number> {
   const rows = await prisma.item.findMany({
-    select: { content: true, format: true, id: true, language: true, skillId: true },
+    select: {
+      ...ITEM_IMAGE_INCLUDE,
+      content: true,
+      format: true,
+      id: true,
+      language: true,
+      skillId: true,
+    },
     where: { id: { in: [...itemIds] } },
   });
 
   return getCheckpointQuestionCount({
     answeredItemIds,
-    askableItemIds: rows.filter((row) => parseSessionItem(row) !== null).map((row) => row.id),
+    askableItemIds: rows
+      .map((row) => parseSessionItem(row))
+      .filter((item) => item !== null)
+      .filter((item) => isStillAsked({ answered: false, item }))
+      .map((item) => item.id),
   });
 }

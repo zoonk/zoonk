@@ -10,7 +10,8 @@
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
     "./fixtures/personas": "./src/fixtures/personas.ts",
     "./fixtures/seed": "./src/fixtures/seed.ts",
-    "./fixtures/users": "./src/fixtures/users.ts"
+    "./fixtures/users": "./src/fixtures/users.ts",
+    "./hydration": "./src/hydration.ts"
   },
   "scripts": {
     "typecheck": "tsrs --noEmit"

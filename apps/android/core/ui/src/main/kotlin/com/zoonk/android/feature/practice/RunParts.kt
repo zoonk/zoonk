@@ -1,17 +1,20 @@
 package com.zoonk.android.feature.practice
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -291,13 +295,20 @@ fun BusyButton(
     busy: Boolean,
     enabled: Boolean,
     modifier: Modifier = Modifier,
+    @DrawableRes icon: Int? = null,
     onClick: () -> Unit,
 ) {
     Button(
         onClick = { if (!busy) onClick() },
         enabled = enabled || busy,
         modifier = modifier.semantics { if (busy) disabled() },
-    ) { PendingLabel(busy, label) }
+    ) {
+        if (icon != null && !busy) {
+            Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+        }
+        PendingLabel(busy, label)
+    }
 }
 
 /** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */

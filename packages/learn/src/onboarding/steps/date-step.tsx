@@ -14,7 +14,6 @@ import { useId, useState } from "react";
 import { getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
 import { useSentenceSpace } from "../../_utils/locale";
 import { NoSittingWords } from "../../plan/notice-day";
-import { useKeptTyping } from "../../use-kept-typing";
 import { StepForm } from "./step-form";
 
 type StepProps = {
@@ -134,7 +133,6 @@ function DateFieldStep({
   const inputId = useId();
   const noteId = useId();
   const [date, setDate] = useState(initialDate ?? "");
-  const kept = useKeptTyping(setDate);
   const space = useSentenceSpace();
 
   // The browser explains a day past the bounds on Continue.
@@ -169,7 +167,6 @@ function DateFieldStep({
           aria-describedby={noteId}
           className="h-11 text-base md:text-[0.9375rem]"
           id={inputId}
-          {...kept.field}
           max={bounds.max}
           min={bounds.min}
           onChange={(event) => setDate(event.target.value)}

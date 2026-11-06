@@ -8,8 +8,6 @@ import { start } from "workflow/api";
 import { POST as startFromCourse } from "./route";
 
 vi.mock("@zoonk/core/goals/start-course", () => ({ startCourseGoal: vi.fn() }));
-vi.mock("@/workflows/goals/goal-content-workflow", () => ({ goalContentWorkflow: vi.fn() }));
-vi.mock("@/workflows/research/research-workflow", () => ({ researchWorkflow: vi.fn() }));
 
 vi.mock("@zoonk/core/goals/generation-id", () => ({
   getGoalGenerationId: vi.fn(async () => ({ generationId: null, status: "ready" })),
@@ -53,11 +51,15 @@ describe("POST /v1/courses/{courseId}/goals", () => {
     const response = await startRequest();
     expect(response.status).toBe(201);
 
-    expect(start).toHaveBeenCalledWith(researchWorkflow, [{ goalId: GOAL_ID }]);
+    expect(start).toHaveBeenCalledWith(researchWorkflow, [{ goalId: GOAL_ID }], {
+      experimental_hook: { token: `research-goal:${GOAL_ID}` },
+    });
 
-    expect(start).toHaveBeenCalledWith(goalContentWorkflow, [
-      expect.objectContaining({ goalId: GOAL_ID, researchId: "wrun_research" }),
-    ]);
+    expect(start).toHaveBeenCalledWith(
+      goalContentWorkflow,
+      [expect.objectContaining({ goalId: GOAL_ID, researchId: "wrun_research" })],
+      { experimental_hook: { token: `goal-content:${GOAL_ID}` } },
+    );
   });
 
   it.each([
@@ -68,8 +70,10 @@ describe("POST /v1/courses/{courseId}/goals", () => {
 
     await startRequest();
 
-    expect(start).toHaveBeenCalledExactlyOnceWith(goalContentWorkflow, [
-      expect.objectContaining({ goalId: GOAL_ID, researchId: null }),
-    ]);
+    expect(start).toHaveBeenCalledExactlyOnceWith(
+      goalContentWorkflow,
+      [expect.objectContaining({ goalId: GOAL_ID, researchId: null })],
+      { experimental_hook: { token: `goal-content:${GOAL_ID}` } },
+    );
   });
 });

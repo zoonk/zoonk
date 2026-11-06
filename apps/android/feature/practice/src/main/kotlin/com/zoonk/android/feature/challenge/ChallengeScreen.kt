@@ -752,7 +752,7 @@ private fun ChallengeFooter(
                     TaskActions { width ->
                         if (movable) {
                             OutlinedButton(onClick = actions::toToday) { Text(stringResource(R.string.challenge_back_to_today)) }
-                            BusyButton(stringResource(R.string.challenge_move), ui.moving, !ui.starting, width, vm::moveToMonday)
+                            BusyButton(stringResource(R.string.challenge_move), ui.moving, !ui.starting, width, onClick = vm::moveToMonday)
                         } else {
                             Button(
                                 onClick = actions::toToday,
@@ -768,7 +768,7 @@ private fun ChallengeFooter(
 
                 else -> {
                     TaskActions { width ->
-                        BusyButton(stringResource(R.string.challenge_continue), ui.starting, true, width, vm::start)
+                        BusyButton(stringResource(R.string.challenge_continue), ui.starting, true, width, onClick = vm::start)
                     }
                 }
             }
@@ -860,7 +860,7 @@ private fun StartActions(
                 challenge.mock -> stringResource(R.string.challenge_mock_start)
                 else -> stringResource(R.string.challenge_start)
             }
-        BusyButton(label, ui.starting, !ui.moving, width, vm::start)
+        BusyButton(label, ui.starting, !ui.moving, width, onClick = vm::start)
     }
 }
 

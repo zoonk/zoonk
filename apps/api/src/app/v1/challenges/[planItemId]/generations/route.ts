@@ -3,10 +3,13 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { challengePathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
-import { challengeQuestionsWorkflow } from "@/workflows/goals/challenge-questions-workflow";
+import { startOnce } from "@/workflows/_shared/run-token";
+import {
+  challengeQuestionsWorkflow,
+  getChallengeQuestionsToken,
+} from "@/workflows/goals/challenge-questions-workflow";
 import { requestChallengeQuestions } from "@zoonk/core/checkpoints/challenge-questions";
 import { NextResponse } from "next/server";
-import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
@@ -38,20 +41,27 @@ async function createChallengeGeneration(
     return NextResponse.json({ generationId: null, status: "ready" });
   }
 
-  const run = await start(challengeQuestionsWorkflow, [
-    {
-      analytics: result.analytics,
-      goalId: result.analytics.goalId,
-      key: result.key,
-      later: false,
-      quickFormat: result.quickFormat,
-      writes: result.writes,
-    },
-  ]);
+  const generationId = await startOnce(
+    challengeQuestionsWorkflow,
+    [
+      {
+        analytics: result.analytics,
+        goalId: result.analytics.goalId,
+        key: result.key,
+        later: false,
+        quickFormat: result.quickFormat,
+        writes: result.writes,
+      },
+    ],
+    getChallengeQuestionsToken(result),
+  );
 
   return NextResponse.json(
-    { generationId: run.runId, status: "generating" },
-    { headers: { Location: `/v1/generations/${encodeURIComponent(run.runId)}` }, status: ACCEPTED },
+    { generationId, status: "generating" },
+    {
+      headers: { Location: `/v1/generations/${encodeURIComponent(generationId)}` },
+      status: ACCEPTED,
+    },
   );
 }
 

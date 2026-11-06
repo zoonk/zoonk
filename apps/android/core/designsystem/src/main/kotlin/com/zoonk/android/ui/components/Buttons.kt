@@ -18,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
 
@@ -97,26 +99,29 @@ fun DestructiveButton(
  * Material draws outlined buttons' borders in `outlineVariant`, our hairline `border`, which nearly
  * vanishes in dark theme, and their labels in a muted grey. Main's outline buttons use `--input`,
  * our `outline`, with ink labels, so these take both.
+ *
+ * While [busy] it looks disabled and ignores presses, but keeps focus, so a learner who pressed it keeps their place.
  */
 @Composable
 fun OutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    busy: Boolean = false,
     size: ButtonSize = LocalButtonSize.current,
     shape: Shape = size.shape(),
     colors: ButtonColors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
     elevation: ButtonElevation? = null,
-    border: BorderStroke? = outlinedBorder(enabled, ButtonDefaults.outlinedButtonBorder(enabled)),
+    border: BorderStroke? = outlinedBorder(enabled && !busy, ButtonDefaults.outlinedButtonBorder(enabled && !busy)),
     contentPadding: PaddingValues = size.contentPadding(),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) = androidx.compose.material3.OutlinedButton(
-    onClick = onClick,
-    modifier = modifier.sized(size),
-    enabled = enabled,
+    onClick = { if (!busy) onClick() },
+    modifier = modifier.sized(size).semantics { if (busy) disabled() },
+    enabled = enabled || busy,
     shape = shape,
-    colors = colors,
+    colors = if (busy) colors.copy(containerColor = colors.disabledContainerColor, contentColor = colors.disabledContentColor) else colors,
     elevation = elevation,
     border = border,
     contentPadding = contentPadding,

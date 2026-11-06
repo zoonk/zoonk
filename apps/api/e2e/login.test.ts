@@ -1,15 +1,34 @@
 import { randomUUID } from "node:crypto";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { cleanupVerifications, getOTPForEmail } from "./helpers/db";
+import { clickWithConnectionDown } from "./helpers/server-actions";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
 
 test.describe("Login Page", () => {
-  test("signing in directly on the API ends in the main app", async ({ page }) => {
+  test("signing in directly on the API ends in the main app, after a mistyped email sent before the page loaded and a dropped connection", async ({
+    page,
+  }) => {
     const email = `e2e-direct-login-${randomUUID()}@zoonk.test`;
+    const emailField = page.getByLabel(/email/iu);
+    const sendCode = page.getByRole("button", { name: /^continue$/iu });
 
-    await page.goto("/auth/login");
-    await page.getByLabel(/email/iu).fill(email);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
+    const loadScripts = await holdScripts(page);
+    await page.goto("/auth/login", { waitUntil: "domcontentloaded" });
+    await emailField.fill("a@b");
+    await sendCode.click();
+    await loadScripts();
+
+    await expect(page.getByText("Enter a valid email address")).toBeVisible();
+    await expect(emailField).toHaveValue("a@b");
+
+    await emailField.fill(email);
+    await clickWithConnectionDown(sendCode);
+
+    await expect(page.getByText(/There was an error signing you in/u)).toBeVisible();
+    await expect(emailField).toHaveValue(email);
+
+    await sendCode.click();
     await page.waitForURL(/\/auth\/en\/otp\?email=[^&]+$/u);
 
     const otp = await getOTPForEmail(email);

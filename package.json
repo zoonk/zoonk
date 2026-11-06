@@ -2,6 +2,8 @@
   "name": "zoonk",
   "private": true,
   "scripts": {
+    "agent-rules:check": "node scripts/agent-rules.mts --check",
+    "agent-rules:sync": "node scripts/agent-rules.mts",
     "android:build": "make -C apps/android build",
     "android:check": "pnpm --filter android i18n:lint && pnpm --filter android test && make -C apps/android check",
     "android:phone": "node apps/android/scripts/run-emulator.mts phone",

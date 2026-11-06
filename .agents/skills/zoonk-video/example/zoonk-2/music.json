@@ -1,0 +1,14 @@
+[
+  {
+    "id": "music-long",
+    "model": "elevenlabs/music-v2.5",
+    "text": "Instrumental underscore for a calm, warm, optimistic product launch film in the style of Apple, made to sit quietly under a voice-over narrator. Gentle felt piano, soft warm synth pads, a subtle plucked guitar and very light, soft percussion, around 100 BPM, major key. Structure for 150 seconds: 0:00 to 0:10 sparse, curious, quiet piano notes; at 0:10 a gentle lift into a warm major chord for a logo reveal; 0:12 to 2:15 a steady, understated, lightly pulsing groove that stays at one consistent level with no sudden drops, breaks or big builds, leaving space for the voice and slowly evolving so it never feels repetitive; 2:15 to 2:30 a soft resolution ending on a sustained final chord. No vocals, no heavy drums, no bright lead melody, nothing busy.",
+    "providerOptions": { "elevenlabs": { "musicLengthMs": 150000, "forceInstrumental": true } }
+  },
+  {
+    "id": "music-short",
+    "model": "elevenlabs/music-v2.5",
+    "text": "A 40-second instrumental cue, warm and optimistic, in the style of an Apple product video, to sit quietly under a narrator. Felt piano arpeggio with warm synth pads and a soft, gentle pulse, about 100 BPM, major key, one consistent level. Starts softly with piano, settles into the gentle pulse by second 4, and ends with a soft sustained piano chord at second 40. No vocals, nothing busy.",
+    "providerOptions": { "elevenlabs": { "musicLengthMs": 40000, "forceInstrumental": true } }
+  }
+]

@@ -1,10 +1,10 @@
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 import { openAs } from "./study-day";
 
 async function createTwoGoalLearner() {

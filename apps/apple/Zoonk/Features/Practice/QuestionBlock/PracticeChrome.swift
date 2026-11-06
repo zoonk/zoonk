@@ -248,6 +248,55 @@ extension EnvironmentValues {
   @Entry var practiceActionsSideBySide = false
 }
 
+enum PracticeFocus: Hashable {
+  case answer
+  case check
+  case next
+  case notSure
+  case reveal
+}
+
+/// `move(to:)` sets both kinds of focus: a button takes keyboard focus only under Full Keyboard
+/// Access, and VoiceOver focus only while VoiceOver runs, so it never moves a touch learner's.
+struct PracticeFocusState {
+  let keyboard: FocusState<PracticeFocus?>.Binding
+  let voiceOver: AccessibilityFocusState<PracticeFocus?>.Binding
+
+  func has(_ control: PracticeFocus) -> Bool {
+    keyboard.wrappedValue == control || voiceOver.wrappedValue == control
+  }
+
+  func move(to control: PracticeFocus) {
+    keyboard.wrappedValue = control
+    voiceOver.wrappedValue = control
+  }
+}
+
+extension EnvironmentValues {
+  @Entry var practiceFocus: PracticeFocusState?
+}
+
+extension View {
+  func practiceFocus(_ control: PracticeFocus?) -> some View {
+    modifier(PracticeFocusTag(control: control))
+  }
+}
+
+private struct PracticeFocusTag: ViewModifier {
+  let control: PracticeFocus?
+  @Environment(\.practiceFocus) private var focus
+
+  func body(content: Content) -> some View {
+    if let control, let focus {
+      content
+        .focused(focus.keyboard, equals: control)
+        .accessibilityFocused(focus.voiceOver, equals: control)
+    } else {
+      content
+    }
+  }
+}
+
 struct PracticeSecondaryButton: View {
   @Environment(\.practiceActionsSideBySide) private var sideBySide
 

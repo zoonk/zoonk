@@ -339,6 +339,14 @@ model MediaAsset {
   promptVersion String              @map("prompt_version")
   runId         String              @map("run_id")
   generatedAt   DateTime            @default(now()) @map("generated_at")
+  /// What the screen or question a picture was drawn for tells learners who can't see it. Its check
+  /// holds the picture to it, so a check started later checks it the same way.
+  alt           String?
+  /// Set when a drawn picture is stored and cleared once its check passes it or replaces it, so the
+  /// daily sweep checks a picture whose storing step failed before starting its check.
+  checkOwedAt   DateTime?           @map("check_owed_at")
+  /// Checks that failed after their retries; a picture whose checks keep failing isn't checked again.
+  checkFailures Int                 @default(0) @map("check_failures")
   createdAt     DateTime            @default(now()) @map("created_at")
   steps         Step[]
   stepOptions   StepOptionPicture[]
@@ -346,6 +354,7 @@ model MediaAsset {
   itemSets      ItemSet[]
 
   @@index([ownerId])
+  @@index([checkOwedAt])
   @@map("media_assets")
 }
 

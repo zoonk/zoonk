@@ -1,7 +1,7 @@
 "use client";
 
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { ignoreHeldEnter, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
@@ -103,6 +103,7 @@ export function MatchPairsQuestion({
               className={cn(entryClass, selected === index && ANSWER_TONE.picked)}
               disabled={disabled}
               onClick={() => pickLeft(index)}
+              onKeyDown={ignoreHeldEnter}
               type="button"
             >
               {matches[index] !== UNMATCHED && <PairBadge number={index + 1} />}
@@ -130,6 +131,7 @@ export function MatchPairsQuestion({
                 className={entryClass}
                 disabled={disabled || (selected === null && owner === UNMATCHED)}
                 onClick={() => pickRight(index)}
+                onKeyDown={ignoreHeldEnter}
                 type="button"
               >
                 {owner !== UNMATCHED && <PairBadge number={owner + 1} />}

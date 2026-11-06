@@ -1,4 +1,4 @@
-import { KEEP_TYPING_SCRIPT } from "@zoonk/learn/kept-typing-script";
+import { KEEP_TYPING_SCRIPT } from "@zoonk/ui/lib/kept-typing-script";
 
 /** In `<head>`, so it listens before any field paints. */
 export function KeepTypingScript() {

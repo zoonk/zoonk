@@ -5,6 +5,7 @@ import { wrapProvider } from "ai";
 import { isTestEnvironment } from "./_utils/is-test-environment";
 import { noPromptTrainingImageMiddleware, noPromptTrainingMiddleware } from "./data-protection";
 import { promptCacheMiddleware } from "./prompt-cache";
+import { billedCallMiddleware } from "./provenance/billed-calls";
 
 const isTest = isTestEnvironment();
 
@@ -20,6 +21,10 @@ export const zoonkGateway = createGateway({
  */
 export const zoonkDefaultProvider = wrapProvider({
   imageModelMiddleware: noPromptTrainingImageMiddleware,
-  languageModelMiddleware: [noPromptTrainingMiddleware, promptCacheMiddleware],
+  languageModelMiddleware: [
+    noPromptTrainingMiddleware,
+    promptCacheMiddleware,
+    billedCallMiddleware,
+  ],
   provider: zoonkGateway,
 });

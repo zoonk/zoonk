@@ -1,29 +1,30 @@
 import { type PictureRedraw } from "@zoonk/core/library/media/check-image";
+import { claimRunToken } from "../_shared/run-token";
 import {
   type PictureAnalytics,
   checkPictureStep,
+  findOwedPictureCheckStep,
   planPictureAgainStep,
+  recordFailedPictureCheckStep,
   redrawPictureStep,
   removePictureStep,
   replacePictureStep,
 } from "./steps/picture-check-steps";
 
-export type PictureCheckStatus = "missing" | "passed" | "removed" | "replaced";
+export type PictureCheckStatus = "missing" | "passed" | "removed" | "replaced" | "skipped";
 
 async function redrawPicture({
-  alt,
   analytics,
   assetId,
   findings,
 }: {
-  alt?: string | null;
   analytics?: PictureAnalytics;
   assetId: string;
   findings: string[];
 }): Promise<PictureRedraw | null> {
-  const scene = await planPictureAgainStep({ alt, analytics, assetId, findings });
+  const scene = await planPictureAgainStep({ analytics, assetId, findings });
   const redraw = await redrawPictureStep({ analytics, assetId, findings, scene });
-  const recheck = await checkPictureStep({ alt, analytics, assetId, redraw });
+  const recheck = await checkPictureStep({ analytics, assetId, redraw });
 
   return recheck.status === "passed" ? redraw : null;
 }
@@ -33,23 +34,21 @@ async function redrawPicture({
  * redraw only if it passes its own check. Otherwise it's taken out of use, also when a redraw step
  * runs out of retries.
  */
-export async function checkPicture({
-  alt,
+async function checkOwedPicture({
   analytics,
   assetId,
 }: {
-  alt?: string | null;
   analytics?: PictureAnalytics;
   assetId: string;
 }): Promise<PictureCheckStatus> {
-  const check = await checkPictureStep({ alt, analytics, assetId });
+  const check = await checkPictureStep({ analytics, assetId });
 
   if (check.status !== "rejected") {
     return check.status;
   }
 
   const { findings } = check;
-  const redraw = await redrawPicture({ alt, analytics, assetId, findings }).catch(() => null);
+  const redraw = await redrawPicture({ analytics, assetId, findings }).catch(() => null);
 
   if (!redraw) {
     await removePictureStep(assetId);
@@ -58,4 +57,27 @@ export async function checkPicture({
 
   await replacePictureStep({ assetId, redraw });
   return "replaced";
+}
+
+/**
+ * Every run checking a picture holds its token, since two checks at once could each remove the
+ * redraw the other just showed.
+ */
+export async function checkPicture(input: {
+  analytics?: PictureAnalytics;
+  assetId: string;
+}): Promise<PictureCheckStatus> {
+  using claim = await claimRunToken(`picture-check:${input.assetId}`);
+  const owed = claim.conflict ? null : await findOwedPictureCheckStep(input.assetId);
+
+  if (!owed) {
+    return "skipped";
+  }
+
+  try {
+    return await checkOwedPicture(input);
+  } catch (error) {
+    await recordFailedPictureCheckStep({ ...owed, assetId: input.assetId });
+    throw error;
+  }
 }

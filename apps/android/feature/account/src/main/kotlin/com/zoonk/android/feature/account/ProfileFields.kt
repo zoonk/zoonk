@@ -2,7 +2,7 @@ package com.zoonk.android.feature.account
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -82,10 +82,10 @@ fun ProfileFields(
         } else {
             val change = stringResource(R.string.account_change_username)
 
-            FlowRow {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = stringResource(R.string.account_username_line, form.username),
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )

@@ -14,6 +14,10 @@ export type MockQuestionsInput = MockQuestionWrites & {
   listening?: boolean;
 };
 
+export function getMockQuestionsToken(goalId: string): string {
+  return `mock-questions:${goalId}`;
+}
+
 export async function mockQuestionsWorkflow(
   input: MockQuestionsInput,
 ): Promise<QuestionWritingResult> {
@@ -23,12 +27,7 @@ export async function mockQuestionsWorkflow(
   const { workflowRunId } = getWorkflowMetadata();
 
   return runQuestionWriting<MockQuestionsStepName>({
-    steps: {
-      join: "joinMockQuestions",
-      ready: MOCK_QUESTIONS_READY_STEP,
-      write: "writeMockQuestions",
-    },
-    token: `mock-questions:${goalId}`,
+    steps: { ready: MOCK_QUESTIONS_READY_STEP, write: "writeMockQuestions" },
     write: async () => {
       const [{ failed, written }, voiced] = await Promise.all([
         writeMockQuestions({ analytics, goalId, later: false, quickFormat, workflowRunId, writes }),

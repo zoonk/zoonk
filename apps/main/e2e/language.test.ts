@@ -1,7 +1,7 @@
 import { type Locator, type Page } from "@playwright/test";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 
 async function selectLanguage({
   expectedPath,

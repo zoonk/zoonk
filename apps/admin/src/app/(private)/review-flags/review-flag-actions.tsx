@@ -1,19 +1,27 @@
 "use client";
 
 import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
+import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { CheckIcon, RefreshCwIcon } from "lucide-react";
-import { useActionState } from "react";
 import {
   type ReviewFlagActionState,
   dismissReviewFlagAction,
   rewriteReviewFlagAction,
 } from "./_actions/review-flag-actions";
 
-const INITIAL_STATE: ReviewFlagActionState = { error: null, message: null };
+const INITIAL_STATE: ReviewFlagActionState = { error: null, message: null, submissionId: 0 };
 
 export function ReviewFlagActions({ flagId }: { flagId: string }) {
-  const [rewrite, rewriteAction] = useActionState(rewriteReviewFlagAction, INITIAL_STATE);
-  const [dismiss, dismissAction] = useActionState(dismissReviewFlagAction, INITIAL_STATE);
+  const [rewrite, rewriteAction] = useAdminActionState({
+    action: rewriteReviewFlagAction,
+    initialState: INITIAL_STATE,
+  });
+
+  const [dismiss, dismissAction] = useAdminActionState({
+    action: dismissReviewFlagAction,
+    initialState: INITIAL_STATE,
+  });
+
   const outcome = [rewrite, dismiss].find((state) => state.error ?? state.message);
 
   return (

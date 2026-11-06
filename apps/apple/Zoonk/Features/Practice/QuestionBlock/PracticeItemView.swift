@@ -94,7 +94,9 @@ struct ChoiceItemView: View {
             result: optionResult(index, correct: correct, picked: shownPicks),
             isLocked: isLocked,
             action: { pick(index) },
-            label: { Text(ItemTextBlock.inline(option), legibility: legibilityWeight) })
+            label: { Text(ItemTextBlock.inline(option), legibility: legibilityWeight) }
+          )
+          .practiceFocus(index == 0 ? .answer : nil)
         }
       }
     }
@@ -181,7 +183,9 @@ struct TrueFalseItemView: View {
               result: optionResult(answer),
               isLocked: isLocked,
               action: { draft = draft == answer ? nil : answer },
-              label: { Text(TrueFalseWords.label(for: answer, labels: labels)) })
+              label: { Text(TrueFalseWords.label(for: answer, labels: labels)) }
+            )
+            .practiceFocus(index == 0 ? .answer : nil)
           }
         }
       }
@@ -296,7 +300,9 @@ struct MatchPairsItemView: View {
             isLocked: isLocked,
             tag: current[index] == nil ? nil : AnyView(PairBadge(number: index + 1)),
             action: { pickLeft(index, current: current) },
-            label: { Text(ItemTextBlock.inline(entry), legibility: legibilityWeight) })
+            label: { Text(ItemTextBlock.inline(entry), legibility: legibilityWeight) }
+          )
+          .practiceFocus(index == 0 ? .answer : nil)
         }
       }
       .accessibilityElement(children: .contain)
@@ -420,6 +426,7 @@ struct OrderItemView: View {
           label: { Text(ItemTextBlock.inline(step), legibility: legibilityWeight) }
         )
         .accessibilityValue(placeValue(place))
+        .practiceFocus(index == 0 ? .answer : nil)
       }
     }
   }

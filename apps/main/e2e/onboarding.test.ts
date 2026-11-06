@@ -3,12 +3,12 @@ import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 import { mapGoalSkills } from "./onboarding-fixtures";
 import { openAs } from "./study-day";
 

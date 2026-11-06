@@ -1,12 +1,13 @@
+import { getCallWritingKey } from "@zoonk/core/language/conversations/call-writing";
 import {
   type ConversationReview,
   type ConversationReviewInput,
   type ConversationReviewOutcome,
 } from "@zoonk/core/language/conversations/review";
 import { getWorkflowMetadata } from "workflow";
-import { start } from "workflow/api";
+import { startOnce } from "../_shared/run-token";
 import { callContentWorkflow } from "./call-content-workflow";
-import { callMemoryWorkflow } from "./call-memory-workflow";
+import { callMemoryWorkflow, getCallMemoryToken } from "./call-memory-workflow";
 import {
   checkObjectivesStep,
   claimReviewStep,
@@ -40,7 +41,7 @@ async function writeNextCall({ conversationId, userId }: ConversationReviewInput
   const writing = await findNextCallWritingStep({ conversationId, userId });
 
   if (writing) {
-    await start(callContentWorkflow, [writing]);
+    await startOnce(callContentWorkflow, [writing], getCallWritingKey(writing));
   }
 }
 
@@ -68,7 +69,12 @@ export async function conversationReviewWorkflow(
 
   // Not owed with oweFollowUps: that would store the transcript, which calls never keep.
   const { conversationId, timeZone, turns, userId } = input;
-  await start(callMemoryWorkflow, [{ conversationId, timeZone, turns, userId }]).catch(() => null);
+
+  await startOnce(
+    callMemoryWorkflow,
+    [{ conversationId, timeZone, turns, userId }],
+    getCallMemoryToken(conversationId),
+  ).catch(() => null);
 
   return outcome;
 }
