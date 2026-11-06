@@ -1532,6 +1532,19 @@ describe("phase challenges a learner reaches together, a day before the date", (
       plan.phases.map((phase, index) => phase.challengeLeftOut === true || planned(index)),
     ).toStrictEqual([true, true, true]);
   });
+
+  it("plan every one without a date, each day past the learner's time by one challenge at most", () => {
+    const plan = buildPlan({ ...input, goal: { ...input.goal, targetDate: null } });
+    const challenge = getPlannedBossMinutes({ goalKind: "learn", phase: 0 });
+
+    expect(plan.phases.filter((phase) => phase.challengeLeftOut)).toStrictEqual([]);
+
+    expect(
+      plan.items.filter((item) => item.kind === "boss").map((item) => item.phase),
+    ).toStrictEqual([0, 1, 2]);
+
+    expect(plan.checkpointOverflow.filter((day) => day.minutes > challenge)).toStrictEqual([]);
+  });
 });
 
 describe("a plan's first day", () => {
