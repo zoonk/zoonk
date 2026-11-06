@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.explain
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,11 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +28,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -66,9 +61,12 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SuccessEyebrow
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.taskBarColumn
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
@@ -374,16 +372,12 @@ private fun GoFurtherRow(
     description: String,
     onClick: () -> Unit,
 ) {
-    ListItem(
-        headlineContent = { Text(title) },
-        supportingContent = { Text(description) },
-        leadingContent = { Icon(painterResource(icon), contentDescription = null) },
-        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-        modifier =
-            Modifier
-                .padding(vertical = 2.dp)
-                .clip(MaterialTheme.shapes.medium)
-                .clickable(onClick = onClick),
+    ListRow(
+        headline = { Text(title) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET),
+        onClick = onClick,
+        leading = { Icon(painterResource(icon), contentDescription = null) },
+        supporting = { Text(description) },
     )
 }
 

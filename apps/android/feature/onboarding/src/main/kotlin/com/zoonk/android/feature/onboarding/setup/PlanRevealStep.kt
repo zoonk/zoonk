@@ -16,8 +16,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -31,7 +29,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -60,6 +57,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
@@ -69,7 +67,6 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -279,17 +276,25 @@ private fun LibraryCourseOffer(
     val chapters = course.chapterCount.toInt()
 
     OutlinedCard(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
-        ListItem(
-            overlineContent = { Text(stringResource(R.string.onboarding_library_course_fits)) },
-            headlineContent = { Text(course.title) },
-            supportingContent =
+        ListRow(
+            headline = {
+                Column {
+                    Text(
+                        stringResource(R.string.onboarding_library_course_fits),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    Text(course.title)
+                }
+            },
+            leading = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
+            supporting =
                 if (chapters > 0) {
                     { Text(pluralStringResource(R.plurals.catalog_chapters, chapters, chapters)) }
                 } else {
                     null
                 },
-            leadingContent = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+            chevron = true,
         )
     }
 }

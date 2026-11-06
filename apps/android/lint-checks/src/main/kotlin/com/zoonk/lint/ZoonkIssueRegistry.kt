@@ -14,6 +14,7 @@ class ZoonkIssueRegistry : IssueRegistry() {
             ImplicitLocaleFormatDetector.ISSUE,
             MaterialComponentDetector.BUTTON,
             MaterialComponentDetector.TEXT_FIELD,
+            MaterialComponentDetector.LIST_ITEM,
             MaterialWindowAdaptiveInfoDetector.ISSUE,
         )
     override val vendor: Vendor = Vendor(vendorName = "Zoonk", identifier = "com.zoonk.lint")

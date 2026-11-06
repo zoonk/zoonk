@@ -8,7 +8,8 @@ import com.android.tools.lint.detector.api.Issue
 class MaterialComponentDetectorTest : LintDetectorTest() {
     override fun getDetector(): Detector = MaterialComponentDetector()
 
-    override fun getIssues(): List<Issue> = listOf(MaterialComponentDetector.BUTTON, MaterialComponentDetector.TEXT_FIELD)
+    override fun getIssues(): List<Issue> =
+        listOf(MaterialComponentDetector.BUTTON, MaterialComponentDetector.TEXT_FIELD, MaterialComponentDetector.LIST_ITEM)
 
     override fun lint(): TestLintTask = super.lint().allowMissingSdk()
 
@@ -24,6 +25,7 @@ class MaterialComponentDetectorTest : LintDetectorTest() {
         fun ElevatedButton(onClick: () -> Unit) {}
         fun OutlinedTextField(value: String) {}
         fun TextField(value: String) {}
+        fun ListItem(headlineContent: () -> Unit) {}
         """,
         ).indented()
 
@@ -65,7 +67,9 @@ class MaterialComponentDetectorTest : LintDetectorTest() {
                 import androidx.compose.material3.OutlinedIconButton as MaterialIconButton
                 import androidx.compose.material3.OutlinedTextField
                 import androidx.compose.material3.TextField
+                import androidx.compose.material3.ListItem
                 fun Screen() {
+                    ListItem(headlineContent = {})
                     OutlinedTextField("")
                     TextField("")
                     com.zoonk.android.ui.components.OutlinedTextField("")
@@ -82,6 +86,6 @@ class MaterialComponentDetectorTest : LintDetectorTest() {
                 """,
                 ).indented(),
             ).run()
-            .expectErrorCount(8)
+            .expectErrorCount(9)
     }
 }
