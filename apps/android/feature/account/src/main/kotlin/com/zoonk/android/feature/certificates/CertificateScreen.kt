@@ -79,8 +79,8 @@ import kotlinx.datetime.toJavaLocalDate
 
 /**
  * Main's `/c/<code>` for its owner: the certificate's headline, Share, Print, Download and Add to
- * LinkedIn, its picture, its details (the name, with Change, and the link, with Copy) and what it
- * covers, or, earned without Plus, locked with the Plus notice. It reads the learner's list, so a
+ * LinkedIn, its picture, its details (the name, with Change, and the link, with Copy), what it
+ * means and what it covers, or, earned without Plus, locked with the Plus notice. It reads the learner's list, so a
  * rename or a subscription shows here at once, and a locked one, which the public read refuses,
  * shows at all.
  */
@@ -138,7 +138,7 @@ fun CertificateScreen(
 
 /**
  * Main's page, in its order: the headline, what the learner can do with it, the picture, the
- * details and what it covers, which on an open book take the page after the fold.
+ * details, what it means and what it covers, which on an open book take the page after the fold.
  */
 @Composable
 private fun Certificate(
@@ -157,6 +157,7 @@ private fun Certificate(
         @Composable { modifier: Modifier ->
             Column(modifier) {
                 CertificateDetails(certificate, name, actions)
+                CertificateMeaning(certificate, Modifier.padding(top = 32.dp))
                 CertificateCovered(certificate, Modifier.padding(top = 32.dp))
             }
         }
@@ -450,6 +451,60 @@ private fun certificateFacts(certificate: OwnedCertificate): List<CertificateFac
             },
         )
 }
+
+/** Main's `CertificateMeaning`: how Zoonk decides to issue this kind of certificate, and what it isn't. */
+@Composable
+private fun CertificateMeaning(
+    certificate: OwnedCertificate,
+    modifier: Modifier = Modifier,
+) {
+    val nameNote = stringResource(R.string.certificates_meaning_name)
+    val paragraphs =
+        if (certificate.kind == OwnedCertificate.Kind.LANGUAGE_LEVEL) {
+            listOf(
+                stringResource(R.string.certificates_meaning_language, certificate.level?.let(::bandAbove).orEmpty()),
+                "${stringResource(R.string.certificates_meaning_cefr)} $nameNote",
+            )
+        } else {
+            listOf(
+                stringResource(
+                    if (certificate.courseLevel !=
+                        null
+                    ) {
+                        R.string.certificates_meaning_level
+                    } else {
+                        R.string.certificates_meaning_plan
+                    },
+                ),
+                "${stringResource(R.string.certificates_meaning_record)} $nameNote",
+            )
+        }
+
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text(
+            stringResource(R.string.certificates_meaning_title),
+            Modifier.semantics { heading() },
+            style = MaterialTheme.typography.titleLarge,
+        )
+        paragraphs.forEach {
+            Text(
+                it,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp, lineHeight = 24.sp),
+            )
+        }
+    }
+}
+
+/** Main's `BAND_ABOVE`: a level is finished when every counted skill reaches the band above it. */
+private fun bandAbove(level: OwnedCertificate.Level): String =
+    when (level) {
+        OwnedCertificate.Level.A1 -> "A2"
+        OwnedCertificate.Level.A2 -> "B1"
+        OwnedCertificate.Level.B1 -> "B2"
+        OwnedCertificate.Level.B2 -> "C1"
+        OwnedCertificate.Level.C1 -> "C2"
+    }
 
 /** Main's `CertificateCovered`: a course's topics, counted, or what a language level's learner can do. */
 @Composable

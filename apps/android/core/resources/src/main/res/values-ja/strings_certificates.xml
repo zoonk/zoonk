@@ -59,6 +59,13 @@
   "certificates_linkedin_organization": "216df24c16efe8fcecfa6bdcbe5de9907ebb938924a896d2eb433eb702359a90",
   "certificates_linkedin_title": "5a0582159cc95faa005f0db7a32f0b6ca82f0c0d87697c06aedfba91ebfdc5b2",
   "certificates_locked": "f70a88098cfd74d90e8b79706535da5e4bc83e6b707e9a196c4a5c4c562d32fd",
+  "certificates_meaning_cefr": "878b00f1533d2ff7117f7ffbb0171b4bca0aebc2423af40b58a33b4363649b77",
+  "certificates_meaning_language": "ec4707183e4af3660632efb4df80757b368bf8b510175a4b8927d51305c40689",
+  "certificates_meaning_level": "ef5cab6d24e236a3b9aa1c0be1d615ca9fe732887b89b729b483effc6cda2196",
+  "certificates_meaning_name": "9f0c1dbbff4a5d36028d9ff3c55b53a2c0dbaa7b53d3b23ee8fd81c58fa3378f",
+  "certificates_meaning_plan": "7b688f7e4d50fa33681a29c8b744c6e85dfe7bba9bcf24d86fe293e6b447c20a",
+  "certificates_meaning_record": "70dc13b93581af26e13584fa7139becb8cfda44f2f0332270f1072373c1b3ba1",
+  "certificates_meaning_title": "cf5fdafdb0cd1e121dea41ef12cc089fb6044eeb0219b7cf661f4127aa6ad077",
   "certificates_name_hint": "20294b9fec6373fea26e213b0d70e5391a4e8c34312e3a60b6e30e4049380b9b",
   "certificates_name_hint_new": "059348423b74a6f4785cc873762c9fdaf123cc1c0b6538cf3faacfd77d0a6170",
   "certificates_name_label": "0bf86507c76d9dc6a33b06aa319feb5c1e5a49a79ba7c169e107c3e6ea6a2ebb",
@@ -196,6 +203,13 @@
     <string name="certificates_detail_link">リンク</string>
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">約%1$s</string>
+    <string name="certificates_meaning_title">この証明書が示すこと</string>
+    <string name="certificates_meaning_language">Zoonkは、レッスンや練習での回答から、各スキル（リーディング、リスニング、スピーキング、ライティング）を測定します。回答を通じて伸びたスキルがすべて次のレベルに達すると、学習中のレベルを修了したことになります。この証明書は、それらのスキルがすべて%1$sに達した時点で発行されました。</string>
+    <string name="certificates_meaning_level">Zoonkは、コースの各レベルで、各レッスンを学習するかテストに合格してすべての章を終え、すべてのチャレンジをクリアした学習者に、この証明書を発行します。</string>
+    <string name="certificates_meaning_plan">Zoonkでは、コースの学習計画にあるすべてのレッスンを、学習またはテストへの合格で終え、計画内のすべてのチャレンジに勝つと、この証明書が発行されます。</string>
+    <string name="certificates_meaning_record">Zoonkでの修了記録で、学校の単位にはなりません。</string>
+    <string name="certificates_meaning_cefr">レベルは、ヨーロッパ言語共通参照枠（CEFR）に沿っています。公式試験の結果ではありません。</string>
+    <string name="certificates_meaning_name">名前は学習者がZoonkアカウントに登録したもので、Zoonkでは身分証明書による確認はしていません。</string>
     <!-- Heading over the chapters a course certificate covers -->
     <string name="certificates_topics_covered">学習したトピック</string>
     <!-- Heading over what a language certificate's learner can do -->

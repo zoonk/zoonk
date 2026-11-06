@@ -59,6 +59,13 @@
   "certificates_linkedin_organization": "1e44a195682d60bb2438631bfc84779103b15d621219c18ab9d2412c74e98d08",
   "certificates_linkedin_title": "c151ecbdb72973075f02d1edafa9a078b04979c4fada21f07168911301205d0c",
   "certificates_locked": "9000021ab686cdf931b21e9982f7c2d491b7c60d97236dd33cde7b3da9cf43dd",
+  "certificates_meaning_cefr": "ac48947f020c687b4b087e61e6cfad108e0c1e9eca8c08a9e739a5c756e37037",
+  "certificates_meaning_language": "2620d39792f09187893f1121433d31f539c5e3e4f2911cae999da93a92b7bfd6",
+  "certificates_meaning_level": "60641d25c148f16e14ab7db86f43cb4b4b712f8802a012ea96a3d0011bb89c0e",
+  "certificates_meaning_name": "bbde9a1085dfe2f901b557b3103541d164414a99773d3f75f42e381150178a98",
+  "certificates_meaning_plan": "b56cda80d85fabc95aa07a3371dea7ecbf179dd4e8c1a708bf6bc9d0cde19a0a",
+  "certificates_meaning_record": "e8b3a6fd116a7e3a335594e06c81ed3af9c5bc9234fe071aadd34a2a1897a684",
+  "certificates_meaning_title": "682a4aa6c8c94c8dc3d476520470624b168b199c0da794e483591a960ad497d9",
   "certificates_name_hint": "08ff55f152370badff03597e212907e2553bbce0d9f3e7cdbcb8744f597c35b1",
   "certificates_name_hint_new": "a932c7d52c83a3a310d6e79c697f17bddd0d04a63197645377a1fae05390af21",
   "certificates_name_label": "f7708abd8b65b140db0313d88e397eba271970366712ddb04e6d1c6999d18f0f",
@@ -196,6 +203,13 @@
     <string name="certificates_detail_link">링크</string>
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">약 %1$s</string>
+    <string name="certificates_meaning_title">이 인증서의 의미</string>
+    <string name="certificates_meaning_language">Zoonk는 학습자가 레슨과 연습에서 한 답변을 바탕으로 각 스킬(읽기, 듣기, 말하기, 쓰기)을 측정해요. 답변을 통해 레벨이 오른 스킬이 모두 다음 레벨에 도달하면 현재 레벨을 완료한 것으로 봐요. 이 인증서는 해당 스킬이 모두 %1$s에 도달했을 때 발급됐어요.</string>
+    <string name="certificates_meaning_level">코스의 한 레벨에서 각 레슨을 공부하거나 해당 레슨의 테스트를 통과해 모든 챕터를 마치고, 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요.</string>
+    <string name="certificates_meaning_plan">코스 계획의 모든 레슨을 학습하거나 테스트에 통과하는 방식으로 완료하고, 그 안의 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요.</string>
+    <string name="certificates_meaning_record">Zoonk에서 학습을 완료했다는 기록이에요. 학점으로 인정되지는 않아요.</string>
+    <string name="certificates_meaning_cefr">레벨은 유럽 공통 언어 참조 기준인 CEFR에 맞춰져 있어요. 공식 시험 결과는 아니에요.</string>
+    <string name="certificates_meaning_name">이름은 학습자가 Zoonk 계정에 등록한 이름이에요. Zoonk는 신분증을 확인하지 않아요.</string>
     <!-- Heading over the chapters a course certificate covers -->
     <string name="certificates_topics_covered">학습한 주제</string>
     <!-- Heading over what a language certificate's learner can do -->

@@ -59,6 +59,13 @@
   "certificates_linkedin_organization": "96f4e4f548bdbb694ed5d44cda4d415ad2cd12ecff50c8f768ac73dd334c03dd",
   "certificates_linkedin_title": "599adf54c4b2723ffc056a874b9b332847af11b756dc67d95082f202b5fe3eaa",
   "certificates_locked": "be35d6600e6715411dffdff96767bcf1940dc9715dfe315389c36fa1be5afa18",
+  "certificates_meaning_cefr": "b3ac47023357a9122fedec3c21a9f68899a90d2a8ee1f52d7f0bd9b85f4cbffc",
+  "certificates_meaning_language": "d6b2ca966a687d79c1df3ef454806afded93aa0af42de1a476cfdfeea352eba7",
+  "certificates_meaning_level": "d4b0bc20f00db4b7504315914493c927055b9c8abf60c9f401c4562d5c56c303",
+  "certificates_meaning_name": "7b7df8e215bdb0b39eef6c4527749a2818223a5183ca84ca9b3e4e6730b9bc7c",
+  "certificates_meaning_plan": "4850258ba7d2e0b4d7540bbe33ae6a21277471177c0e844b2123b8706473b2dd",
+  "certificates_meaning_record": "3e93c8fc1646528473d0a64b4069c8fdfdb6687559632bab1b97a07361b26d1a",
+  "certificates_meaning_title": "da18a3236e4705fefe46dcc5d6e619c263496f8b49e5863bd6a39b062735914c",
   "certificates_name_hint": "87e14a35365099f6d705703980a7603d4f06b2b00f78b1d1a4780fd18a24c49f",
   "certificates_name_hint_new": "d17fc8a65465989a8fdd36af6971c51ae603eacdbc6360f094dce0b691f2569e",
   "certificates_name_label": "c8af5fec62aba030d37dc119113cc7e2e2c5eec5c72473b5316f6fa7f5aabdd3",
@@ -200,6 +207,13 @@
     <string name="certificates_detail_link">Enlace</string>
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">aproximadamente %1$s</string>
+    <string name="certificates_meaning_title">Qué significa este certificado</string>
+    <string name="certificates_meaning_language">Zoonk mide cada habilidad (lectura, escucha, expresión oral, expresión escrita) a partir de las respuestas de cada persona en las lecciones y las prácticas. Un nivel se completa cuando todas las habilidades que mejoraron con esas respuestas alcanzan el siguiente nivel, así que este certificado se emitió cuando cada una llegó a %1$s.</string>
+    <string name="certificates_meaning_level">Zoonk emite este certificado cuando una persona completa todos los capítulos de un nivel de un curso, estudiando cada lección o aprobando su prueba, y supera todos los desafíos de ese nivel.</string>
+    <string name="certificates_meaning_plan">Zoonk emite este certificado cuando una persona completa todas las lecciones del plan de un curso, ya sea estudiándolas o aprobando sus pruebas, y gana todos los desafíos del plan.</string>
+    <string name="certificates_meaning_record">Es una constancia de finalización en Zoonk, pero no otorga créditos académicos.</string>
+    <string name="certificates_meaning_cefr">Los niveles se ajustan al CEFR (Common European Framework of Reference for Languages). Este no es el resultado de un examen oficial.</string>
+    <string name="certificates_meaning_name">El nombre es el que la persona registró en su cuenta de Zoonk; Zoonk no verifica documentos de identidad.</string>
     <!-- Heading over the chapters a course certificate covers -->
     <string name="certificates_topics_covered">Temas cubiertos</string>
     <!-- Heading over what a language certificate's learner can do -->

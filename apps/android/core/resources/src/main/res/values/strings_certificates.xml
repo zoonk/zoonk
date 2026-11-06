@@ -111,6 +111,13 @@
     <string name="certificates_detail_link">Link</string>
     <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
     <string name="certificates_about_duration">about %1$s</string>
+    <string name="certificates_meaning_title">What this certificate means</string>
+    <string name="certificates_meaning_language">Zoonk measures each skill (reading, listening, speaking, writing) from the learner\'s answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached %1$s.</string>
+    <string name="certificates_meaning_level">Zoonk issues this certificate when a learner finishes every chapter of a course\'s level, studying each lesson or passing its test, and wins every challenge in it.</string>
+    <string name="certificates_meaning_plan">Zoonk issues this certificate when a learner finishes every lesson of a course\'s plan, by studying it or passing its test, and wins every challenge in it.</string>
+    <string name="certificates_meaning_record">It\'s a record of completion on Zoonk, not academic credit.</string>
+    <string name="certificates_meaning_cefr">Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.</string>
+    <string name="certificates_meaning_name">The name is the one the learner gave their Zoonk account; Zoonk doesn\'t check IDs.</string>
     <!-- Heading over the chapters a course certificate covers -->
     <string name="certificates_topics_covered">Topics covered</string>
     <!-- Heading over what a language certificate's learner can do -->
