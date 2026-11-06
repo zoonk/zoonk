@@ -36,7 +36,7 @@ function IdeaContent({
             {number}
           </span>
           {idea.label && (
-            <span className="text-foreground text-sm leading-tight font-semibold tracking-tight text-balance wrap-break-word hyphens-auto">
+            <span className="text-foreground text-sm leading-tight font-semibold tracking-tight text-balance wrap-break-word">
               {idea.label}
             </span>
           )}

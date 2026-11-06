@@ -40,7 +40,7 @@ export function OrientationStrip({ step }: { step: PlayableLibraryStep }) {
             })}
           </p>
           {idea.label && (
-            <p className="text-foreground text-base leading-snug font-semibold text-pretty wrap-break-word hyphens-auto">
+            <p className="text-foreground text-base leading-snug font-semibold text-pretty wrap-break-word">
               {idea.label}
             </p>
           )}

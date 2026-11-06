@@ -77,7 +77,7 @@ function OpeningMapIdea({
 
       <PopoverContent className="w-64 max-w-(--available-width)">
         <PopoverHeader>
-          <PopoverTitle className="text-pretty wrap-break-word hyphens-auto">
+          <PopoverTitle className="text-pretty wrap-break-word">
             {idea.label ?? ideaOfTotal}
           </PopoverTitle>
           <PopoverDescription className="leading-snug text-pretty">{about}</PopoverDescription>
