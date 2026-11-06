@@ -4,7 +4,7 @@ import { getCheckpointQuestionCount } from "../../checkpoints/_utils/checkpoint-
 import { ITEM_IMAGE_INCLUDE, isMissingItsPicture } from "../../library/items/item-image";
 import { parseSessionItem } from "./session-items";
 
-/** Includes previously answered ids; removed bank content cannot hold a checkpoint open forever. */
+/** Includes previously answered ids; removed bank content cannot hold a block open forever. */
 export async function countAskableQuestions({
   answeredItemIds = [],
   itemIds,

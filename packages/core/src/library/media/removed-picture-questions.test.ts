@@ -33,7 +33,12 @@ function picturedContent() {
 async function heldQuestions({
   kind = "practice",
   payload = {},
-}: { kind?: "checkpoint" | "practice"; payload?: Partial<BlockPayload> } = {}) {
+  withPlain = true,
+}: {
+  kind?: "checkpoint" | "practice";
+  payload?: Partial<BlockPayload>;
+  withPlain?: boolean;
+} = {}) {
   const [user, skill, asset] = await Promise.all([
     userFixture(),
     skillFixture(),
@@ -55,7 +60,10 @@ async function heldQuestions({
 
   const block = await studySessionBlockFixture({
     kind,
-    payload: toBlockPayload({ ...payload, itemIds: [pictured.id, plain.id] }),
+    payload: toBlockPayload({
+      ...payload,
+      itemIds: withPlain ? [pictured.id, plain.id] : [pictured.id],
+    }),
     sessionId: session.id,
     startedAt: new Date(),
     status: "active",
@@ -96,6 +104,25 @@ describe("a question whose picture is removed after a failed check", () => {
     });
   });
 
+  it("ends a practice block it leaves without questions, so the learner can go on", async () => {
+    const { asset, ids } = await heldQuestions({ withPlain: false });
+
+    await removeImageAsset({ assetId: asset.id });
+
+    const view = await getStudyBlock(ids);
+
+    expect(view.status === "ready" && view.detail.questions).toStrictEqual([]);
+
+    await expect(finishStudyBlock({ ...ids, input: { timeZone: "UTC" } })).resolves.toMatchObject({
+      completion: { correct: 0, total: 0 },
+      status: "ready",
+    });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: ids.blockId } }),
+    ).resolves.toMatchObject({ status: "skipped" });
+  });
+
   it("drops out of a checkpoint that hasn't asked it yet, which then finishes without it", async () => {
     const { answer, asset, ids, plain } = await heldQuestions({
       kind: "checkpoint",
@@ -126,14 +153,15 @@ describe("a question whose picture is removed after a failed check", () => {
     });
   });
 
-  it("drops out of a running mock, which still grades the learner's answer to it", async () => {
+  it("leaves a running mock's unanswered question ungraded, and grades an answered one", async () => {
     const [user, skill, asset] = await Promise.all([
       userFixture(),
       skillFixture(),
       mediaAssetFixture(),
     ]);
 
-    const [pictured, plain] = await Promise.all([
+    const [answered, unasked, plain] = await Promise.all([
+      itemFixture({ content: picturedContent(), mediaAssetId: asset.id, skillId: skill.id }),
       itemFixture({ content: picturedContent(), mediaAssetId: asset.id, skillId: skill.id }),
       itemFixture({ skillId: skill.id }),
     ]);
@@ -151,10 +179,10 @@ describe("a question whose picture is removed after a failed check", () => {
           sections: [
             {
               essays: [],
-              itemIds: [pictured.id, plain.id],
+              itemIds: [answered.id, unasked.id, plain.id],
               minutes: 30,
               name: "Questions",
-              questions: 2,
+              questions: 3,
               routing: null,
             },
           ],
@@ -172,29 +200,39 @@ describe("a question whose picture is removed after a failed check", () => {
 
     mockSession(user.id);
 
-    await saveMockAnswer({
-      blockId: mock.id,
-      input: { answer: RIGHT, durationMs: 4000, flagged: false, itemId: pictured.id },
-    });
+    const save = (itemId: string) =>
+      saveMockAnswer({
+        blockId: mock.id,
+        input: { answer: RIGHT, durationMs: 4000, flagged: false, itemId },
+      });
 
+    await save(answered.id);
     await removeImageAsset({ assetId: asset.id });
 
     const view = await getMock(mock.id);
 
     expect(
       view.status === "ready" && view.mock.current?.questions.map((question) => question.itemId),
-    ).toStrictEqual([plain.id]);
+    ).toStrictEqual([answered.id, plain.id]);
+
+    await save(plain.id);
 
     await expect(finishMock({ blockId: mock.id, input: {} })).resolves.toStrictEqual({
       status: "finished",
     });
 
-    await expect(
-      prisma.attempt.findFirst({
-        select: { isCorrect: true },
-        where: { itemId: pictured.id, mockExamId: mock.id },
-      }),
-    ).resolves.toStrictEqual({ isCorrect: true });
+    const attempts = await prisma.attempt.findMany({
+      select: { isCorrect: true, itemId: true },
+      where: { mockExamId: mock.id },
+    });
+
+    expect(
+      attempts.toSorted((a, b) => (a.itemId ?? "").localeCompare(b.itemId ?? "")),
+    ).toStrictEqual(
+      [answered, plain]
+        .map((item) => ({ isCorrect: true, itemId: item.id }))
+        .toSorted((a, b) => a.itemId.localeCompare(b.itemId)),
+    );
   });
 
   it("grades a test-out the learner answered while it had the picture", async () => {

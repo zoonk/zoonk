@@ -2,10 +2,12 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { gradeTypedItemAnswer } from "../../../learner/_utils/typed-grading";
 import { recordLearnerAnswer } from "../../../learner/record-learner-answer";
+import { isMissingItsPicture } from "../../../library/items/item-image";
 import { getItemMarking } from "../../scoring/mock-points";
 import { getPickOutcome } from "../../scoring/partial-credit";
 import { type GradedMockAnswer } from "../mock-analysis";
 import { type MockAnswer } from "../mock-answer-contract";
+import { isMockAnswerPresent } from "../mock-answer-presence";
 import { readMockAnswer } from "./mock-answers";
 import { type MockItemGrade, gradeMockItem } from "./mock-item-grading";
 import { type MockItem, loadMockItems } from "./mock-items";
@@ -151,11 +153,12 @@ export async function gradeMock({
   const allAsked = askedIds.flatMap((entry): AskedQuestion[] => {
     const item = items.get(entry.itemId);
     const draft = mock.answers.find((answer) => answer.itemId === entry.itemId);
+    const answer = readMockAnswer(draft?.answer);
 
-    return item
+    return item && (isMockAnswerPresent(answer) || !isMissingItsPicture(item))
       ? [
           {
-            answer: readMockAnswer(draft?.answer),
+            answer,
             durationMs: draft?.durationMs ?? 0,
             flagged: draft?.flagged ?? false,
             item,

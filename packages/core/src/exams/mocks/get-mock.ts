@@ -42,6 +42,7 @@ import {
   getSectionDeadline,
 } from "./_utils/owned-mock";
 import { readMockSizeSource } from "./_utils/read-mock-structure";
+import { isMockAnswerPresent } from "./mock-answer-presence";
 import { type MockConditions, type MockView, mockResultSchema } from "./mock-contract";
 import { type MockTypedPart, listSatMockLeftOut } from "./mock-left-out";
 import { getMockDays } from "./mock-plan";
@@ -83,10 +84,16 @@ async function loadCurrentSection({
 
   const first = getFirstNumber({ conditions: mock.conditions, section: mock.sectionIndex });
 
+  const answered = new Set(
+    mock.answers.flatMap((answer) =>
+      isMockAnswerPresent(readMockAnswer(answer.answer)) ? [answer.itemId] : [],
+    ),
+  );
+
   const questions = section.itemIds.flatMap((itemId, index): MockQuestion[] => {
     const item = items.get(itemId);
 
-    return item && !isMissingItsPicture(item)
+    return item && (answered.has(itemId) || !isMissingItsPicture(item))
       ? [
           {
             ...toMockQuestionView({ item, mockId: mock.id }),
