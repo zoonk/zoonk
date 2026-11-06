@@ -202,6 +202,35 @@ describe(loadLessonSpecInputs, () => {
     expect(inputs?.prompt.sources).toContain("hold the base station button");
   });
 
+  it("grounds a product lesson in its product's pages even in another language than theirs", async () => {
+    const brand = await brandFixture();
+    const product = await productFixture({ organizationId: brand.id });
+    const course = await courseFixture({
+      language: "pt",
+      organizationId: brand.id,
+      productId: product.id,
+    });
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id, language: "pt" });
+
+    const [lesson] = await Promise.all([
+      libraryLessonFixture({
+        description: "Conecte o controle remoto à base.",
+        homeChapterId: chapter.id,
+        language: "pt",
+        title: "Parear o controle",
+      }),
+      sourceFixture({
+        extractedText: "To pair the remote, hold the base station button until the light blinks.",
+        productId: product.id,
+        structure: { images: 0, pages: null, topic: "product" },
+      }),
+    ]);
+
+    const inputs = await loadLessonSpecInputs(lesson.id);
+
+    expect(inputs?.prompt.sources).toContain("hold the base station button");
+  });
+
   it("plans a lesson outside any chapter without other lessons", async () => {
     const lesson = await libraryLessonFixture({ title: "Temperature drops" });
     const inputs = await loadLessonSpecInputs(lesson.id);

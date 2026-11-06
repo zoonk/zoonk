@@ -15,7 +15,10 @@ const MIN_SHARED_TERMS = 3;
 /** Exam notices describe one exam's syllabus; using them as factual sources would leak that context into shared lessons. */
 const FACT_TOPICS: ReadonlySet<SourceTopic | null> = new Set(["product", "regulation", "software"]);
 
-type LessonSourceRow = Pick<Source, "extractedText" | "id" | "mimeType" | "structure" | "title">;
+type LessonSourceRow = Pick<
+  Source,
+  "extractedText" | "id" | "mimeType" | "productId" | "structure" | "title"
+>;
 
 function statesFacts(source: LessonSourceRow): boolean {
   if (source.structure === null) {
@@ -41,7 +44,14 @@ async function loadLessonSourcePages({
 
   const sources = await prisma.source.findMany({
     orderBy: { fetchedAt: "desc" },
-    select: { extractedText: true, id: true, mimeType: true, structure: true, title: true },
+    select: {
+      extractedText: true,
+      id: true,
+      mimeType: true,
+      productId: true,
+      structure: true,
+      title: true,
+    },
     take: MAX_LESSON_SOURCES,
     where: {
       OR: [
@@ -61,7 +71,8 @@ async function loadLessonSourcePages({
 
   return selectSourcePages({
     maxCharacters: LESSON_SOURCE_CHARACTERS,
-    minShared: MIN_SHARED_TERMS,
+    // A product's own pages are about the lesson whatever words they share, often in another language.
+    minShared: documents.some((source) => source.productId) ? 0 : MIN_SHARED_TERMS,
     pages: toMaterialPages(documents),
     query,
   });

@@ -174,6 +174,22 @@ describe(loadGoalCurriculumInputs, () => {
       references: [{ text: docs.extractedText, title: "Gizmo docs" }],
     });
 
+    const linked = await Promise.all(
+      [1, 2, 3].map((index) =>
+        sourceFixture({ extractedText: `Linked ${index}`, title: `Linked ${index}` }),
+      ),
+    );
+
+    await Promise.all(
+      linked.map((source) =>
+        learnerSourceFixture({ goalId: main.id, sourceId: source.id, userId: user.id }),
+      ),
+    );
+
+    await expect(loadGoalCurriculumInputs(main.id)).resolves.toMatchObject({
+      references: [{ title: "Gizmo docs" }],
+    });
+
     await expect(loadGoalCurriculumInputs(pinned.id)).resolves.toMatchObject({
       product: { courseTitle: "Gizmo 2", pinnedReleaseId: release.id },
     });
