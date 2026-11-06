@@ -14,6 +14,8 @@ model Source {
   visibility     LibraryVisibility    @default(public)
   ownerId        String?              @map("owner_id") @db.Uuid
   owner          User?                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  productId      String?              @map("product_id") @db.Uuid
+  product        Product?             @relation("ProductSources", fields: [productId], references: [id], onDelete: SetNull)
   url            String?
   title          String
   publisher      String?
@@ -35,11 +37,14 @@ model Source {
   changeNotices  SourceChangeNotice[]
   steps          Step[]
   uploads        SourceUpload[]
+  releases       ProductRelease[]
+  releasesOf     Product[]            @relation("ProductReleasesSource")
 
   @@unique([language, identityKey], name: "languageIdentity")
   @@index([contentHash])
   @@index([nextCheckAt])
   @@index([ownerId])
+  @@index([productId])
   @@map("sources")
 }
 

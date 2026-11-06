@@ -8,6 +8,13 @@ model Course {
   organization         Organization?        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   userId               String?              @map("user_id") @db.Uuid
   user                 User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId            String?              @map("product_id") @db.Uuid
+  product              Product?             @relation(fields: [productId], references: [id], onDelete: SetNull)
+  /// The release the course teaches now: a product's main course moves to each new release.
+  productReleaseId     String?              @map("product_release_id") @db.Uuid
+  productRelease       ProductRelease?      @relation(fields: [productReleaseId], references: [id], onDelete: SetNull)
+  /// For an older release a learner named; it never moves. A product has one main course per language.
+  isPinned             Boolean              @default(false) @map("is_pinned")
   format               CourseFormat         @default(core)
   isPublished          Boolean              @default(false) @map("is_published")
   language             String               @db.VarChar(10)
@@ -55,6 +62,8 @@ model Course {
   @@index([isPublished, language, userCount, id])
   @@index([userId, format])
   @@index([familyId, language])
+  @@index([productId, language])
+  @@index([productReleaseId])
   @@map("courses")
 }
 

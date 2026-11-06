@@ -6,12 +6,15 @@ function organizationAttrs(
   attrs?: Partial<Organization>,
 ): Omit<Organization, "id" | "createdAt" | "updatedAt"> {
   return {
+    description: null,
+    domain: null,
     kind: "brand",
     logo: null,
     metadata: null,
     name: "Test Organization",
     slug: `test-org-${randomUUID()}`,
     stripeCustomerId: null,
+    website: null,
     ...attrs,
   };
 }

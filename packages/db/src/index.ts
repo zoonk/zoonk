@@ -68,6 +68,8 @@ export type {
   Plan,
   PlanChange,
   PlanItem,
+  Product,
+  ProductRelease,
   PronunciationReview,
   Skill,
   SkillPrerequisite,
