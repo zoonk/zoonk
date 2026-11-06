@@ -228,4 +228,31 @@ describe("a started day after a plan change", () => {
     expect.soft(after).toStrictEqual({ ...started, planVersion: savedPlan.version });
     expect.soft(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
   });
+
+  it("keeps the started day's blocks once the lessons the change asked for are written", async () => {
+    const { before, goal, plan, timeZone } = await openPlannedDay();
+    const first = before.blocks[0];
+
+    await startStudyBlock({ blockId: first?.id ?? "", input: { timeZone }, sessionId: before.id });
+
+    const started = await prisma.studySession.findUniqueOrThrow({
+      include: SESSION_INCLUDE,
+      where: { id: before.id },
+    });
+
+    await applyFutureRestDay({ goalId: goal.id, planId: plan.id, timeZone });
+
+    // The preparation the change owes ends its ask once it has written the lessons.
+    await prisma.plan.update({ data: { lessonsAskedAt: null }, where: { id: plan.id } });
+    await getTodayStudySession({ goalId: goal.id, timeZone });
+
+    const after = await prisma.studySession.findUniqueOrThrow({
+      include: SESSION_INCLUDE,
+      where: { id: before.id },
+    });
+
+    expect(after.blocks.map((block) => block.id)).toStrictEqual(
+      started.blocks.map((block) => block.id),
+    );
+  });
 });
