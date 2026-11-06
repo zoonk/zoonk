@@ -51,7 +51,7 @@ jobs:
           cache: true
           save-cache: ${{ github.ref == 'refs/heads/main' }}
       - name: Require successful CI for the tagged commit
-        run: pnpm deploy:validate-release
+        run: pnpm deploy:require-ci
       - name: Load production database credentials
         run: pnpm deploy:database
       - name: Migrate production once
