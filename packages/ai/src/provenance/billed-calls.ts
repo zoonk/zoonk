@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { type LanguageModelMiddleware, type LanguageModelUsage } from "ai";
-import { type BilledCall, type GenerationStep, describeStep } from "./task-provenance";
+import { type GenerationStep, describeStep } from "./task-provenance";
 
 type WrapGenerate = NonNullable<LanguageModelMiddleware["wrapGenerate"]>;
 type CallOptions = Parameters<WrapGenerate>[0];
@@ -8,10 +8,11 @@ type ProviderResult = Awaited<ReturnType<CallOptions["doGenerate"]>>;
 type ProviderStream = Awaited<ReturnType<CallOptions["doStream"]>>["stream"];
 type StreamPart = ProviderStream extends ReadableStream<infer Part> ? Part : never;
 
-export type { BilledCall } from "./task-provenance";
+/** `extra` marks a call made for work around a task, such as an eval's simulated learner. */
+export type BilledCall = ReturnType<typeof describeStep> & { extra: boolean };
 
 /** Each list belongs to the innermost run or meter around the call, so a nested one keeps its own. */
-type Listeners = { meter?: BilledCall[]; run?: GenerationStep[] };
+type Listeners = { extra?: boolean; meter?: BilledCall[]; run?: GenerationStep[] };
 
 const listeners = new AsyncLocalStorage<Listeners>();
 
@@ -51,7 +52,7 @@ function record({
   };
 
   heard?.run?.push(step);
-  heard?.meter?.push(describeStep(step));
+  heard?.meter?.push({ ...describeStep(step), extra: heard.extra === true });
 }
 
 /**
@@ -113,4 +114,9 @@ export function collectRunCalls<T>(steps: GenerationStep[], work: () => Promise<
 /** `calls` gets each call `work` makes, whether it resolves or throws. */
 export function meterBilledCalls<T>(calls: BilledCall[], work: () => Promise<T>): Promise<T> {
   return listeners.run({ ...listeners.getStore(), meter: calls }, work);
+}
+
+/** The meter around `work` gets its calls marked `extra`. */
+export function meterAsExtra<T>(work: () => Promise<T>): Promise<T> {
+  return listeners.run({ ...listeners.getStore(), extra: true }, work);
 }

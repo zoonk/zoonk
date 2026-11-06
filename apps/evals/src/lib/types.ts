@@ -98,8 +98,6 @@ export function toTokenUsage(usage: TaskUsage): TokenUsage {
 type TaskResult<T = unknown> = {
   data: T;
   usage: TaskUsage;
-  /** Calls the eval makes around the task, such as a simulated learner: spent, but not run cost. */
-  extraCalls?: ModelCall[];
   userPrompt: string;
   systemPrompt: string;
   probabilities?: Record<string, number>;
@@ -168,7 +166,12 @@ export type EvalResult = TokenUsage & {
   duration: number;
 };
 
-export type TaskEvalResults = { taskId: string; modelId: string; results: EvalResult[] };
+export type TaskEvalResults = {
+  taskId: string;
+  modelId: string;
+  results: EvalResult[];
+  failedRuns?: FailedRun[];
+};
 
 /** Execute registry tasks only with their paired test case; the default input type intentionally forbids arbitrary input. */
 export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
@@ -200,11 +203,9 @@ export type RegisteredTask = Omit<
 export type OutputEntry = TokenUsage & {
   testCaseId: string;
   output: string;
+  /** Calls the eval made around the task, such as a simulated learner: spent, but not run cost. */
   extraCalls?: ModelCall[];
-  /**
-   * Every call the run made, including attempts that failed before it. Unset on outputs saved
-   * before runs were metered, which priced only the kept answer.
-   */
+  /** Every call the run made. Unset on outputs saved before runs were metered. */
   calls?: ModelCall[];
   duration: number;
   systemPrompt: string;
@@ -212,8 +213,7 @@ export type OutputEntry = TokenUsage & {
   probabilities?: Record<string, number>;
 };
 
-/** A run that failed, kept until a later attempt succeeds and takes on its calls. */
-export type FailedRun = { testCaseId: string; calls: ModelCall[] };
+export type FailedRun = Pick<OutputEntry, "calls" | "extraCalls" | "testCaseId">;
 
 export type ModelOutputs = {
   taskId: string;

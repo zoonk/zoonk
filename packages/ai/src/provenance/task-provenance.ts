@@ -133,9 +133,7 @@ function getServedModel(step: GenerationStep): string {
 }
 
 /** What one call cost, at the model that answered it. */
-export type BilledCall = { model: string; usage: TaskUsage };
-
-export function describeStep(step: GenerationStep): BilledCall {
+export function describeStep(step: GenerationStep): { model: string; usage: TaskUsage } {
   return { model: getServedModel(step), usage: toTaskUsage(step.usage) };
 }
 

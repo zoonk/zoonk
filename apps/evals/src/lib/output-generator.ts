@@ -7,7 +7,6 @@ import { loadModelOutputs, saveModelOutputs } from "./output-loader";
 import { getTestCaseRunId } from "./test-case-runs";
 import {
   type FailedRun,
-  type ModelCall,
   type ModelOutputs,
   type OutputEntry,
   type RegisteredTask,
@@ -43,9 +42,20 @@ function getTaskRunInput({ model, testCase }: { model: ModelConfig; testCase: Te
   };
 }
 
+type FailedAttempt = { billed: BilledCall[]; testCaseId: string };
+
+function toRunCalls(billed: readonly BilledCall[]): Pick<OutputEntry, "calls" | "extraCalls"> {
+  const extraCalls = billed.filter((call) => call.extra).map((call) => toModelCall(call));
+
+  return {
+    calls: billed.filter((call) => !call.extra).map((call) => toModelCall(call)),
+    extraCalls: extraCalls.length > 0 ? extraCalls : undefined,
+  };
+}
+
 /**
- * `failed` holds each run's calls from attempts that failed; a run that succeeds takes them on, so
- * its cost covers the attempts it took.
+ * A failed run keeps its meter, read when the outputs are saved, so a call it started that ends
+ * after it failed still counts if it ends before the save.
  */
 async function generateOutputForTestCase({
   failed,
@@ -54,7 +64,7 @@ async function generateOutputForTestCase({
   task,
   testCase,
 }: {
-  failed: Map<string, ModelCall[]>;
+  failed: FailedAttempt[];
   model: ModelConfig;
   runNumber: number;
   task: RegisteredTask;
@@ -66,30 +76,21 @@ async function generateOutputForTestCase({
   const runTask = getTaskRunner({ model, task });
   const input = getTaskRunInput({ model, testCase });
   const billed: BilledCall[] = [];
-
-  const toCalls = () => [
-    ...(failed.get(testCaseId) ?? []),
-    ...billed.map((call) => toModelCall(call)),
-  ];
-
   const startTime = performance.now();
 
   const result = await meterBilledCalls(billed, () => runTask(input as never)).catch(
     (error: unknown) => {
-      failed.set(testCaseId, toCalls());
+      failed.push({ billed, testCaseId });
       throw error;
     },
   );
 
   const duration = performance.now() - startTime;
-  const calls = toCalls();
-  failed.delete(testCaseId);
 
   return {
     ...toTokenUsage(result.usage),
-    calls,
+    ...toRunCalls(billed),
     duration,
-    extraCalls: result.extraCalls,
     output: JSON.stringify(result.data, null, 2),
     probabilities: result.probabilities,
     systemPrompt: result.systemPrompt,
@@ -146,22 +147,27 @@ function extractSuccessfulOutputs(results: PromiseSettledResult<OutputEntry>[]):
 }
 
 function createModelOutputs({
-  failed,
+  failed = [],
+  failedRuns = [],
   modelId,
   outputs,
   taskId,
 }: {
-  failed: Map<string, ModelCall[]>;
+  failed?: FailedAttempt[];
+  failedRuns?: FailedRun[];
   modelId: string;
   outputs: OutputEntry[];
   taskId: string;
 }): ModelOutputs {
-  const failedRuns: FailedRun[] = [...failed]
-    .filter(([, calls]) => calls.length > 0)
-    .map(([testCaseId, calls]) => ({ calls, testCaseId }));
+  const allFailedRuns = [
+    ...failedRuns,
+    ...failed
+      .filter(({ billed }) => billed.length > 0)
+      .map(({ billed, testCaseId }) => ({ ...toRunCalls(billed), testCaseId })),
+  ];
 
   return {
-    failedRuns: failedRuns.length > 0 ? failedRuns : undefined,
+    failedRuns: allFailedRuns.length > 0 ? allFailedRuns : undefined,
     generatedAt: new Date().toISOString(),
     modelId,
     outputs,
@@ -191,10 +197,6 @@ export async function generateOutputs(
   const existingEntries = existingOutputs?.outputs ?? [];
   logInfo(`Found ${existingEntries.length} existing outputs`);
 
-  const failed = new Map(
-    existingOutputs?.failedRuns?.map((run) => [run.testCaseId, run.calls] as const),
-  );
-
   const runsToExecute = collectTestCaseRuns({
     existingEntries,
     runsPerTestCase,
@@ -205,8 +207,10 @@ export async function generateOutputs(
 
   if (runsToExecute.length === 0) {
     logInfo("All outputs already generated");
-    return existingOutputs ?? createModelOutputs({ failed, modelId, outputs: [], taskId: task.id });
+    return existingOutputs ?? createModelOutputs({ modelId, outputs: [], taskId: task.id });
   }
+
+  const failed: FailedAttempt[] = [];
 
   const results = await settleWithConcurrency({
     concurrency: GENERATION_CONCURRENCY,
@@ -219,6 +223,7 @@ export async function generateOutputs(
 
   const modelOutputs = createModelOutputs({
     failed,
+    failedRuns: existingOutputs?.failedRuns,
     modelId,
     outputs: allOutputs,
     taskId: task.id,

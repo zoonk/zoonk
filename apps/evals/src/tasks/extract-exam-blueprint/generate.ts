@@ -1,5 +1,4 @@
-import { toModelCall } from "@/lib/types";
-import { type BilledCall, meterBilledCalls } from "@zoonk/ai/billed-calls";
+import { meterAsExtra } from "@zoonk/ai/billed-calls";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 import { checkCitedFacts } from "@zoonk/ai/tasks/research/check-cited-facts";
 import { checkExamReading } from "@zoonk/ai/tasks/research/check-exam-reading";
@@ -139,10 +138,9 @@ async function readChecked({
   });
 
   const checked = result.data;
-  const checkCalls: BilledCall[] = [];
 
   // The app runs these checks in a later step, so they're spent here but aren't the reading's cost.
-  const [kept, findings] = await meterBilledCalls(checkCalls, () =>
+  const [kept, findings] = await meterAsExtra(() =>
     Promise.all([
       keepCheckedFacts({ documents, extraction: checked }),
       checkExamReading({
@@ -165,7 +163,7 @@ async function readChecked({
     read: checked,
   });
 
-  return { ...kept, calls: checkCalls.map((call) => toModelCall(call)), problems, result };
+  return { ...kept, problems, result };
 }
 
 export async function generateExtraction(
@@ -173,7 +171,7 @@ export async function generateExtraction(
 ) {
   const documents = await Promise.all(input.documents.map((document) => loadDocument(document)));
 
-  const { calls, check, kept, problems, result } = await readChecked({
+  const { check, kept, problems, result } = await readChecked({
     corrections: input.leftOut ?? [],
     documents,
     input,
@@ -188,6 +186,5 @@ export async function generateExtraction(
       passageCheck: checkPassages({ documents, extraction: result.data }),
       reading: { problems },
     },
-    extraCalls: calls,
   };
 }

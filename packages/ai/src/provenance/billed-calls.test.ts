@@ -10,7 +10,12 @@ import { MockLanguageModelV4, convertArrayToReadableStream } from "ai/test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { type AiGeneration, registerAiGenerationSink } from "./ai-generation-sink";
-import { type BilledCall, billedCallMiddleware, meterBilledCalls } from "./billed-calls";
+import {
+  type BilledCall,
+  billedCallMiddleware,
+  meterAsExtra,
+  meterBilledCalls,
+} from "./billed-calls";
 import { runTaskGeneration, streamTaskGeneration } from "./run-task-generation";
 
 const MODEL = "openai/gpt-6-sol";
@@ -209,24 +214,21 @@ describe("billed calls", () => {
 });
 
 describe(meterBilledCalls, () => {
-  it("meters every call its work makes, leaving a meter inside it the calls made there", async () => {
-    const outer: BilledCall[] = [];
-    const inner: BilledCall[] = [];
+  it("meters every call its work makes, whether its runs pass or throw, marking extra work's", async () => {
+    const calls: BilledCall[] = [];
 
-    const work = meterBilledCalls(outer, async () => {
+    const work = meterBilledCalls(calls, async () => {
       await nameCourse('{"title":"Kept"}', 1000);
       await nameCourse('{"name":"Rejected"}', 2000).catch(() => null);
-      await meterBilledCalls(inner, () => nameCourse('{"title":"Checked"}', 3000));
-      throw new Error("The work failed after its calls.");
+      await meterAsExtra(() => nameCourse('{"name":"Checked"}', 3000));
     });
 
-    await expect(work).rejects.toThrow("after its calls");
+    await expect(work).rejects.toThrow(NoObjectGeneratedError);
 
-    expect(outer.map((call) => [call.model, call.usage.inputTokens])).toStrictEqual([
-      [MODEL, 1000],
-      [MODEL, 2000],
+    expect(calls.map((call) => [call.model, call.usage.inputTokens, call.extra])).toStrictEqual([
+      [MODEL, 1000, false],
+      [MODEL, 2000, false],
+      [MODEL, 3000, true],
     ]);
-
-    expect(inner.map((call) => call.usage.inputTokens)).toStrictEqual([3000]);
   });
 });

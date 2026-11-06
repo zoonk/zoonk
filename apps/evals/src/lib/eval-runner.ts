@@ -5,6 +5,7 @@ import { cache } from "react";
 import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
 import {
+  type ModelOutputs,
   type OutputEntry,
   type RegisteredTask,
   type ScoredResult,
@@ -142,7 +143,7 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
 
   if (outputsToScore.length === 0) {
     logInfo("All outputs already scored");
-    return combineOutputsAndResults(task.id, modelId, modelOutputs.outputs, existingResults);
+    return combineOutputsAndResults(task.id, modelId, modelOutputs, existingResults);
   }
 
   const results = await Promise.allSettled(
@@ -174,13 +175,13 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
   await saveScoredResults(task.id, modelId, allScoredResults);
   logInfo(`Saved ${allScoredResults.length} total scored results`);
 
-  return combineOutputsAndResults(task.id, modelId, modelOutputs.outputs, allScoredResults);
+  return combineOutputsAndResults(task.id, modelId, modelOutputs, allScoredResults);
 }
 
 function combineOutputsAndResults(
   taskId: string,
   modelId: string,
-  outputs: OutputEntry[],
+  { failedRuns, outputs }: Pick<ModelOutputs, "failedRuns" | "outputs">,
   scoredResults: ScoredResult[],
 ): TaskEvalResults {
   const results = scoredResults.flatMap((scored) => {
@@ -209,7 +210,7 @@ function combineOutputsAndResults(
     };
   });
 
-  return { modelId, results, taskId };
+  return { failedRuns, modelId, results, taskId };
 }
 
 export const getTaskResults = cache(
@@ -226,6 +227,6 @@ export const getTaskResults = cache(
       return null;
     }
 
-    return combineOutputsAndResults(taskId, modelId, modelOutputs.outputs, scoredResults);
+    return combineOutputsAndResults(taskId, modelId, modelOutputs, scoredResults);
   },
 );

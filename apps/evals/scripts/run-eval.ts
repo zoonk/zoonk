@@ -10,7 +10,7 @@ import {
   getTestCaseLanguage,
   summarizeByLanguage,
 } from "@/lib/case-languages";
-import { getRunCost } from "@/lib/cost";
+import { getFailedRunsCost, getRunCost } from "@/lib/cost";
 import { getTaskResults, removeModelResultRuns, runEval } from "@/lib/eval-runner";
 import {
   formatDollars,
@@ -227,6 +227,7 @@ async function runModel({
 
   const evalResults: TaskEvalResults = {
     ...allResults,
+    failedRuns: allResults.failedRuns?.filter((run) => runIds.has(run.testCaseId)),
     results: allResults.results.filter((result) => runIds.has(result.testCase.id)),
   };
 
@@ -353,6 +354,7 @@ function onlyRuns({
               modelId,
               {
                 ...modelOutputs,
+                failedRuns: modelOutputs.failedRuns?.filter((run) => runIds.has(run.testCaseId)),
                 outputs: modelOutputs.outputs.filter((output) => runIds.has(output.testCaseId)),
               },
             ],
@@ -417,10 +419,11 @@ async function runBattle({
 
   const spentBy = (modelId: string) => {
     const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
+    const modelOutputs = outputs.get(modelId);
 
-    return (outputs.get(modelId)?.outputs ?? []).reduce(
+    return (modelOutputs?.outputs ?? []).reduce(
       (total, run) => total + getRunCost({ model, prices: GATEWAY_PRICES, run }),
-      0,
+      getFailedRunsCost({ failedRuns: modelOutputs?.failedRuns, prices: GATEWAY_PRICES }),
     );
   };
 
