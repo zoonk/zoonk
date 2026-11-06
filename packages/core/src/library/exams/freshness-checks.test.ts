@@ -1,5 +1,9 @@
 import { prisma } from "@zoonk/db";
-import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  examBlueprintFixture,
+  sourceFixture,
+  unnoticedSourceChangeFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { getSession } from "../../users/get-session";
@@ -55,6 +59,28 @@ describe(listDueFreshnessTargets, () => {
           where: { id: { in: [overdueSource.id, unscheduledSource.id] } },
         }),
       ]);
+    }
+  });
+
+  it("finds a checked source that still owes a notice before its check is due", async () => {
+    const [owing, stopped] = await Promise.all([
+      sourceFixture({ nextCheckAt: hoursFromSweep(30 * 24) }),
+      sourceFixture({ nextCheckAt: null }),
+    ]);
+
+    await Promise.all(
+      [owing, stopped].map((source) =>
+        unnoticedSourceChangeFixture({ changedAt: hoursFromSweep(-1), sourceId: source.id }),
+      ),
+    );
+
+    try {
+      const targets = await listDueFreshnessTargets({ now: SWEEP_AT });
+
+      expect(targets).toContainEqual({ kind: "source", sourceId: owing.id });
+      expect(targets).not.toContainEqual({ kind: "source", sourceId: stopped.id });
+    } finally {
+      await prisma.source.deleteMany({ where: { id: { in: [owing.id, stopped.id] } } });
     }
   });
 });

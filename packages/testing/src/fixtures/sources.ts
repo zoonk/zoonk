@@ -4,6 +4,7 @@ import {
   type LearnerSource,
   type Source,
   type SourceChangeNotice,
+  type UnnoticedSourceChange,
   prisma,
 } from "@zoonk/db";
 import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
@@ -59,6 +60,19 @@ export async function sourceChangeNoticeFixture(
       message: "The exam notice changed: the test now has 60 questions.",
       previousHash: `test-hash-${randomUUID()}`,
       ...fixtureProvenance(),
+      ...attrs,
+    },
+  });
+}
+
+export async function unnoticedSourceChangeFixture(
+  attrs: FixtureAttrs<UnnoticedSourceChange> & Pick<UnnoticedSourceChange, "sourceId">,
+) {
+  return prisma.unnoticedSourceChange.create({
+    data: {
+      changedAt: new Date(),
+      previousHash: `test-hash-${randomUUID()}`,
+      previousText: "Test source text before it changed.",
       ...attrs,
     },
   });

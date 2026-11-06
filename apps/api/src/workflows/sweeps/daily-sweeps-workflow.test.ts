@@ -7,7 +7,11 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  examBlueprintFixture,
+  sourceFixture,
+  unnoticedSourceChangeFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { assert, describe, expect, it } from "vitest";
 import { start } from "workflow/api";
@@ -190,12 +194,15 @@ describe(dailySweepsWorkflow, () => {
       sourceId: law.id,
     });
 
+    const owed = await unnoticedSourceChangeFixture({ previousHash: "old", sourceId: law.id });
+
     await recordSourceChangeNotice({
+      changedAt: owed.changedAt,
       contentHash: "new",
       fields: ["text"],
       language: "pt",
       message: "A lei mudou.",
-      previousHash: "old",
+      previousHash: owed.previousHash,
       provenance: { generatedAt: new Date(), model: "test", promptVersion: "v1", runId: "r1" },
       sourceId: law.id,
     });

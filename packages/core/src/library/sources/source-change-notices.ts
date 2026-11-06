@@ -13,6 +13,7 @@ const NOTICE_DAYS = 14;
 const MAX_GOAL_NOTICES = 3;
 
 export type SourceNoticeInput = {
+  changedAt: Date;
   contentHash: string;
   fields: string[];
   language: string;
@@ -22,16 +23,31 @@ export type SourceNoticeInput = {
   sourceId: string;
 };
 
-/** For source changes; record exam notices through `saveExamBlueprint` so the notice and blueprint commit together. */
-export function recordSourceChangeNotice(input: SourceNoticeInput): Promise<SourceChangeNotice> {
-  const { provenance, ...notice } = input;
+/**
+ * Covers the source's owed change read at `changedAt`; null when another run already covered it or
+ * the page changed again since, which leaves the newer change owed. Record exam notices through
+ * `saveExamBlueprint` so the notice and blueprint commit together.
+ */
+export function recordSourceChangeNotice(
+  input: SourceNoticeInput,
+): Promise<SourceChangeNotice | null> {
+  const { changedAt, provenance, ...notice } = input;
 
-  return prisma.$transaction((tx) =>
-    createSourceChangeNotice({
+  return prisma.$transaction(async (tx) => {
+    const { count } = await tx.unnoticedSourceChange.deleteMany({
+      where: { changedAt, sourceId: notice.sourceId },
+    });
+
+    if (count === 0) {
+      return null;
+    }
+
+    return createSourceChangeNotice({
+      builtBefore: changedAt,
       data: { ...notice, examBlueprintId: null, ...toProvenanceData(provenance) },
       tx,
-    }),
-  );
+    });
+  });
 }
 
 async function listNoticesInPlanChanges(goalId: string): Promise<Set<string>> {

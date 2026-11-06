@@ -1,9 +1,11 @@
+import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import {
   examBlueprintFixture,
   learnerSourceFixture,
   sourceChangeNoticeFixture,
   sourceFixture,
+  unnoticedSourceChangeFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -125,22 +127,28 @@ describe(listGoalChangeNotices, () => {
   });
 });
 
+const DOCS_NOTICE = {
+  contentHash: "new",
+  fields: ["text"],
+  language: "en",
+  message: "The documentation changed: version 5 removed the old API.",
+  provenance: {
+    generatedAt: "2026-09-26T12:00:00.000Z",
+    model: "openai/gpt-6-luna",
+    promptVersion: "v1",
+    runId: "r1",
+  },
+};
+
 describe(recordSourceChangeNotice, () => {
   it("stores the line with the model that wrote it", async () => {
     const source = await sourceFixture();
+    const owed = await unnoticedSourceChangeFixture({ sourceId: source.id });
 
     const notice = await recordSourceChangeNotice({
-      contentHash: "new",
-      fields: ["text"],
-      language: "en",
-      message: "The documentation changed: version 5 removed the old API.",
-      previousHash: source.contentHash,
-      provenance: {
-        generatedAt: "2026-09-26T12:00:00.000Z",
-        model: "openai/gpt-6-luna",
-        promptVersion: "v1",
-        runId: "r1",
-      },
+      ...DOCS_NOTICE,
+      changedAt: owed.changedAt,
+      previousHash: owed.previousHash,
       sourceId: source.id,
     });
 
@@ -150,5 +158,39 @@ describe(recordSourceChangeNotice, () => {
       model: "openai/gpt-6-luna",
       sourceId: source.id,
     });
+
+    await expect(
+      prisma.unnoticedSourceChange.findUnique({ where: { sourceId: source.id } }),
+    ).resolves.toBeNull();
+  });
+
+  it("covers a change once, and leaves a newer change owed for the next check", async () => {
+    const source = await sourceFixture();
+    const owed = await unnoticedSourceChangeFixture({ sourceId: source.id });
+    const covering = { ...DOCS_NOTICE, previousHash: owed.previousHash, sourceId: source.id };
+
+    await prisma.unnoticedSourceChange.update({
+      data: { changedAt: new Date(owed.changedAt.getTime() + MINUTE_MS) },
+      where: { sourceId: source.id },
+    });
+
+    await expect(
+      recordSourceChangeNotice({ ...covering, changedAt: owed.changedAt }),
+    ).resolves.toBeNull();
+
+    const newer = await prisma.unnoticedSourceChange.findUniqueOrThrow({
+      where: { sourceId: source.id },
+    });
+
+    const [first, second] = await Promise.all([
+      recordSourceChangeNotice({ ...covering, changedAt: newer.changedAt }),
+      recordSourceChangeNotice({ ...covering, changedAt: newer.changedAt }),
+    ]);
+
+    expect([first, second].filter(Boolean)).toHaveLength(1);
+
+    await expect(prisma.sourceChangeNotice.count({ where: { sourceId: source.id } })).resolves.toBe(
+      1,
+    );
   });
 });

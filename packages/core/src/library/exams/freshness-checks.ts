@@ -62,20 +62,26 @@ export async function stopFreshnessChecks(
 export async function listDueFreshnessTargets({ now = new Date() }: { now?: Date } = {}): Promise<
   FreshnessTarget[]
 > {
-  const where = { nextCheckAt: { lt: new Date(now.getTime() + SWEEP_INTERVAL_MS) } };
+  const nextSweep = new Date(now.getTime() + SWEEP_INTERVAL_MS);
+  const due = { nextCheckAt: { lt: nextSweep } };
+
+  const owesNotice = {
+    nextCheckAt: { not: null },
+    unnoticedChange: { changedAt: { lt: nextSweep } },
+  };
 
   const [exams, sources] = await Promise.all([
     prisma.examBlueprint.findMany({
       orderBy: { nextCheckAt: "desc" },
       select: { id: true },
       take: MAX_DUE_TARGETS,
-      where,
+      where: due,
     }),
     prisma.source.findMany({
       orderBy: { nextCheckAt: "desc" },
       select: { id: true },
       take: MAX_DUE_TARGETS,
-      where,
+      where: { OR: [due, owesNotice] },
     }),
   ]);
 

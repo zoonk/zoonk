@@ -13,21 +13,16 @@ export async function recordSourceNoticeStep({
 }): Promise<string | null> {
   "use step";
 
-  const changes = change.change;
-
-  if (!changes) {
-    return null;
-  }
-
   const { data, provenance } = await generateSourceChangeNotice({
     analytics,
-    changes,
+    changes: change.change,
     language: change.language,
     serviceTier: chooseServiceTier({ wait: "later" }),
     source: change.title,
   });
 
   const notice = await recordSourceChangeNotice({
+    changedAt: change.changedAt,
     contentHash: change.contentHash,
     fields: ["text"],
     language: change.language,
@@ -37,5 +32,5 @@ export async function recordSourceNoticeStep({
     sourceId: change.sourceId,
   });
 
-  return notice.id;
+  return notice?.id ?? null;
 }

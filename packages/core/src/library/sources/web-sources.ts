@@ -9,7 +9,7 @@ import { getSourceValidUntil } from "./freshness-schedule";
 import { hashDocument, parseDocument } from "./parse-document";
 import { getKnownReusePolicy } from "./reuse-policy";
 import { type SourceStructure, type SourceTopic, sourceStructureSchema } from "./source-contract";
-import { summarizeTextChange } from "./text-change";
+import { oweSourceChangeNotice } from "./unnoticed-changes";
 
 type WebSource = Omit<Source, "extractedText">;
 
@@ -44,19 +44,65 @@ function toStructure({
   return { images: parsed.images.length, pages: parsed.pages, topic };
 }
 
-export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSource> {
-  const fetched = await fetchAndParse(input.url);
-  const identityKey = buildSourceIdentityKey({ contentHash: null, url: fetched.url });
-  const now = new Date();
-
-  const content = {
+function toSourceContent({
+  fetched,
+  now,
+  topic,
+  validUntil,
+}: {
+  fetched: Awaited<ReturnType<typeof fetchAndParse>>;
+  now: Date;
+  topic: SourceTopic;
+  validUntil: Date | null;
+}) {
+  return {
     contentHash: fetched.contentHash,
     extractedText: fetched.parsed.text,
     fetchedAt: now,
     mimeType: fetched.contentType,
-    structure: toStructure({ parsed: fetched.parsed, topic: input.topic }),
-    validUntil: getSourceValidUntil({ fetchedAt: now, topic: input.topic }),
+    structure: toStructure({ parsed: fetched.parsed, topic }),
+    validUntil,
   };
+}
+
+function saveChangedContent({
+  content,
+  sourceId,
+  topic,
+}: {
+  content: ReturnType<typeof toSourceContent>;
+  sourceId: string;
+  topic: SourceTopic;
+}): Promise<WebSource> {
+  return prisma.$transaction(async (tx) => {
+    await oweSourceChangeNotice({ changedAt: content.fetchedAt, sourceId, topic, tx });
+
+    return tx.source.update({
+      data: content,
+      omit: { extractedText: true },
+      where: { id: sourceId },
+    });
+  });
+}
+
+export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSource> {
+  const fetched = await fetchAndParse(input.url);
+  const identityKey = buildSourceIdentityKey({ contentHash: null, url: fetched.url });
+  const where = { languageIdentity: { identityKey, language: input.language } };
+  const now = new Date();
+
+  const content = toSourceContent({
+    fetched,
+    now,
+    topic: input.topic,
+    validUntil: getSourceValidUntil({ fetchedAt: now, topic: input.topic }),
+  });
+
+  const stored = await prisma.source.findUnique({ select: { contentHash: true, id: true }, where });
+
+  if (stored && stored.contentHash !== content.contentHash) {
+    return saveChangedContent({ content, sourceId: stored.id, topic: input.topic });
+  }
 
   return prisma.source.upsert({
     create: {
@@ -73,7 +119,7 @@ export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSou
     },
     omit: { extractedText: true },
     update: content,
-    where: { languageIdentity: { identityKey, language: input.language } },
+    where,
   });
 }
 
@@ -115,16 +161,17 @@ export async function listReadableSourceIds(sourceIds: readonly string[]): Promi
   return sourceIds.filter((id) => readable.has(id));
 }
 
-export type SourceRefresh =
-  | { change: null; source: WebSource; status: "unchanged" }
-  | { change: string | null; previousHash: string; source: WebSource; status: "changed" };
+export type SourceRefresh = { source: WebSource; status: "changed" | "unchanged" };
 
-function getTopic(source: Source): SourceTopic {
+function getTopic(source: WebSource): SourceTopic {
   return sourceStructureSchema.safeParse(source.structure).data?.topic ?? "regulation";
 }
 
 export async function refreshWebSource(sourceId: string): Promise<SourceRefresh | null> {
-  const source = await prisma.source.findUnique({ where: { id: sourceId } });
+  const source = await prisma.source.findUnique({
+    omit: { extractedText: true },
+    where: { id: sourceId },
+  });
 
   if (!source?.url) {
     return null;
@@ -140,29 +187,21 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
       where: { id: source.id },
     });
 
-    return { change: null, source: updated, status: "unchanged" };
+    return { source: updated, status: "unchanged" };
   }
 
   const topic = getTopic(source);
 
-  const updated = await prisma.source.update({
-    data: {
-      contentHash: fetched.contentHash,
-      extractedText: fetched.parsed.text,
-      fetchedAt: now,
-      mimeType: fetched.contentType,
-      structure: toStructure({ parsed: fetched.parsed, topic }),
-      validUntil:
-        topic === "exam" ? source.validUntil : getSourceValidUntil({ fetchedAt: now, topic }),
-    },
-    omit: { extractedText: true },
-    where: { id: source.id },
+  const content = toSourceContent({
+    fetched,
+    now,
+    topic,
+    validUntil:
+      topic === "exam" ? source.validUntil : getSourceValidUntil({ fetchedAt: now, topic }),
   });
 
   return {
-    change: summarizeTextChange({ current: fetched.parsed.text, previous: source.extractedText }),
-    previousHash: source.contentHash,
-    source: updated,
+    source: await saveChangedContent({ content, sourceId: source.id, topic }),
     status: "changed",
   };
 }

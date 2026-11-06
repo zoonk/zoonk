@@ -31,6 +31,8 @@ const NOTICE_TEXT = [
 
 const SCRIPT_PAGE_TEXT = "É necessário habilitar o javascript para ver esta página corretamente.";
 
+const EDITAL = { kind: "official", language: "pt", publisher: null, title: "Edital" } as const;
+
 function noticePage({ questions, token }: { questions: number; token: string }) {
   return `<html><body><input type="hidden" value="${token}"><h1>Edital 2026</h1><p>A prova terá ${questions} questões.</p></body></html>`;
 }
@@ -205,39 +207,46 @@ describe(refreshWebSource, () => {
 
     servePage(noticePage({ questions: 50, token: "c" }));
 
-    await expect(refreshWebSource(source.id)).resolves.toMatchObject({
-      change: null,
-      status: "unchanged",
-    });
+    await expect(refreshWebSource(source.id)).resolves.toMatchObject({ status: "unchanged" });
   });
 
-  it("stores a new version and describes what changed", async () => {
-    const url = `https://example.gov.br/${randomUUID()}`;
+  it("stores a new version, and keeps a law's earlier text until a notice covers the change", async () => {
     servePage(noticePage({ questions: 50, token: "a" }));
 
-    const source = await storeWebSource({
-      kind: "official",
-      language: "pt",
-      publisher: null,
-      title: "Edital",
-      topic: "exam",
-      url,
-    });
+    const [exam, law] = await Promise.all([
+      storeWebSource({ ...EDITAL, topic: "exam", url: `https://example.gov.br/${randomUUID()}` }),
+      storeWebSource({
+        ...EDITAL,
+        topic: "regulation",
+        url: `https://example.gov.br/${randomUUID()}`,
+      }),
+    ]);
 
     servePage(noticePage({ questions: 60, token: "d" }));
 
-    const refresh = await refreshWebSource(source.id);
+    await expect(
+      Promise.all([refreshWebSource(exam.id), refreshWebSource(law.id)]),
+    ).resolves.toMatchObject([{ status: "changed" }, { status: "changed" }]);
 
-    expect(refresh).toMatchObject({
-      change: expect.stringContaining("+ A prova terá 60 questões."),
-      previousHash: source.contentHash,
-      status: "changed",
-    });
+    const ids = [exam.id, law.id];
 
-    const stored = await prisma.source.findUniqueOrThrow({ where: { id: source.id } });
+    const [stored, owed] = await Promise.all([
+      prisma.source.findMany({ where: { id: { in: ids } } }),
+      prisma.unnoticedSourceChange.findMany({ where: { sourceId: { in: ids } } }),
+    ]);
 
-    expect(stored.extractedText).toContain("60 questões");
-    expect(stored.contentHash).not.toBe(source.contentHash);
+    expect(stored.map((source) => source.extractedText)).toStrictEqual([
+      expect.stringContaining("60 questões"),
+      expect.stringContaining("60 questões"),
+    ]);
+
+    expect(owed).toMatchObject([
+      {
+        previousHash: law.contentHash,
+        previousText: expect.stringContaining("50 questões"),
+        sourceId: law.id,
+      },
+    ]);
   });
 
   it("returns null for a source without an address", async () => {

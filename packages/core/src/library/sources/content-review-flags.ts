@@ -18,15 +18,17 @@ type NoticeData = Pick<
 >;
 
 async function flagContentBuiltOnSource({
+  builtBefore,
   notice,
   sourceIds,
   tx,
 }: {
+  builtBefore: Date;
   notice: SourceChangeNotice;
   sourceIds: readonly string[];
   tx: TransactionClient;
 }): Promise<number> {
-  const writtenBefore = { lt: notice.createdAt };
+  const writtenBefore = { lt: builtBefore };
   const builtOn = { in: [...new Set(sourceIds)] };
 
   const [lessons, items] = await Promise.all([
@@ -54,10 +56,12 @@ async function flagContentBuiltOnSource({
 }
 
 export async function createSourceChangeNotice({
+  builtBefore,
   data,
   replacedSourceId = null,
   tx,
 }: {
+  builtBefore?: Date;
   data: NoticeData;
   replacedSourceId?: string | null;
   tx: TransactionClient;
@@ -65,7 +69,13 @@ export async function createSourceChangeNotice({
   const notice = await tx.sourceChangeNotice.create({ data });
   const sourceIds = [data.sourceId, ...(replacedSourceId ? [replacedSourceId] : [])];
 
-  await flagContentBuiltOnSource({ notice, sourceIds, tx });
+  await flagContentBuiltOnSource({
+    builtBefore: builtBefore ?? notice.createdAt,
+    notice,
+    sourceIds,
+    tx,
+  });
+
   return notice;
 }
 

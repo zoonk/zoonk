@@ -82,6 +82,7 @@ export type {
   Subscription,
   SuggestedGoal,
   TutorSharedAnswer,
+  UnnoticedSourceChange,
   User,
   UsageRecord,
   UserLearningProfile,
