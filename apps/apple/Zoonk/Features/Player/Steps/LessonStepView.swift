@@ -191,11 +191,7 @@ private struct ExplanationStepView: View {
         StepMedia(step: step, visual: content.visual, hero: true)
       }
 
-      if let title = content.title {
-        LessonQuestionText(text: title)
-      }
-
-      LessonScreenText(text: content.text, marks: step.marks)
+      LessonScreenText(title: content.title, text: content.text, marks: step.marks)
         .font(.body)
     case .turn:
       if isPaneSplit {
@@ -250,11 +246,7 @@ private struct WorkedExampleStepView: View {
     }
     .chip()
 
-    if let title = content.title {
-      LessonQuestionText(text: title)
-    }
-
-    LessonScreenText(text: content.problem, marks: step.marks)
+    LessonScreenText(title: content.title, text: content.problem, marks: step.marks)
     StepMedia(step: step, visual: content.visual)
   }
 
