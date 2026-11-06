@@ -308,13 +308,14 @@ describe(getLearnerSummary, () => {
     expect(later?.goals[0]).toMatchObject({ courseChapterId: null, courseLevel: "advanced" });
   });
 
-  it("marks a language goal with its language's flag, which the goal switcher shows", async () => {
+  it("marks only a language goal with its language's flag, which the goal switcher shows", async () => {
     const { user } = await learnerWithGoal({ kind: "language", targetLanguage: "es" });
     await goalFixture({ userId: user.id });
+    await goalFixture({ kind: "exam", targetLanguage: "es", title: "DELE B2", userId: user.id });
 
     const summary = await getLearnerSummary();
 
-    expect(summary?.goals.map((goal) => goal.languageFlag)).toStrictEqual(["mx", null]);
+    expect(summary?.goals.map((goal) => goal.languageFlag)).toStrictEqual(["mx", null, null]);
   });
 
   it("says which goals still have setup questions, so continuing one opens its setup", async () => {
