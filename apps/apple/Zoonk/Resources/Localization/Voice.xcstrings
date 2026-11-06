@@ -184,6 +184,124 @@
         }
       }
     },
+    "%@ is an AI playing the other candidate, in place of a real one." : {
+      "comment" : "Before an exam task: who the AI plays",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ist eine KI und übernimmt die Rolle einer weiteren teilnehmenden Person."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ es una IA que hace el papel del otro candidato en lugar de una persona real."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ est une IA qui joue le rôle de l’autre candidat à la place d’une vraie personne."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ è un’IA che fa la parte dell’altro candidato al posto di una persona reale."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@さんは、人間に代わってほかの受験者役を務めるAIです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@은(는) 실제 사람 대신 다른 응시자 역할을 맡은 AI예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ to sztuczna inteligencja, która zastępuje prawdziwą osobę w roli drugiego zdającego."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ é uma IA que faz o papel do outro candidato no lugar de uma pessoa real."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, gerçek bir adayın yerine diğer aday rolünü üstlenen bir yapay zekâ."
+          }
+        }
+      }
+    },
+    "%@ is an AI standing in for a human examiner." : {
+      "comment" : "Before an exam task: who the AI plays",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ist eine KI und übernimmt die Rolle einer menschlichen Prüfperson."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ es una IA que sustituye a un examinador humano."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ est une IA qui remplace un examinateur humain."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ è un’IA che sostituisce un esaminatore umano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@さんは、人間に代わって試験官を務めるAIです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@은(는) 실제 면접관을 대신하는 AI예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ to sztuczna inteligencja, która zastępuje prawdziwego egzaminatora."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ é uma IA que faz o papel de um examinador humano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, gerçek bir değerlendiricinin yerini alan bir yapay zekâ."
+          }
+        }
+      }
+    },
     "%@ is an official exam. Practice its speaking tasks whether or not you plan to take it." : {
       "comment" : "The exam is official; practicing doesn't mean taking it",
       "localizations" : {
@@ -487,6 +605,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ / %2$@ puan"
+          }
+        }
+      }
+    },
+    "%@ opens the call, and your card stays on screen." : {
+      "comment" : "An exam task's call: the AI speaks first, the card stays visible",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ eröffnet das Gespräch und deine Karte bleibt auf dem Bildschirm."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ inicia la llamada y tu tarjeta permanece en pantalla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ commence l’appel et ta fiche reste affichée à l’écran."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ inizia la conversazione e la tua scheda resta sullo schermo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@さんが会話を始めます。カードは会話中も画面に表示されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@(이)가 대화를 시작하고, 카드는 화면에 계속 표시돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ rozpoczyna rozmowę, a twoja karta pozostaje na ekranie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ começa a conversa e seu cartão fica na tela."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ sohbeti başlatır, kartın ekranda kalır."
           }
         }
       }
@@ -4936,6 +5113,65 @@
         }
       }
     },
+    "It's practice: the estimate after it isn't an official score." : {
+      "comment" : "Before an exam task: its estimate isn't an official score",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist eine Übung: Die anschließende Schätzung ist kein offizieller Score."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es una práctica: la estimación final no es un puntaje oficial."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est un entraînement : l’estimation obtenue ensuite n’est pas un score officiel."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È un’esercitazione: la stima finale non è un punteggio ufficiale."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これは練習です。終了後の推定スコアは、公式のスコアではありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연습이므로, 마친 뒤 나오는 예상 결과는 공식 점수가 아니에요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To ćwiczenie: podany po nim wynik jest orientacyjny, a nie oficjalny."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "É uma prática: a estimativa que você recebe depois não é uma pontuação oficial."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu bir alıştırma: sonunda verilen tahmini sonuç resmî puan yerine geçmez."
+          }
+        }
+      }
+    },
     "It's the same for everyone right now. Try again later." : {
       "comment" : "Calls are paused for everyone",
       "localizations" : {
@@ -6960,6 +7196,65 @@
         }
       }
     },
+    "Other candidate" : {
+      "comment" : "Whom the AI plays in an exam task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere teilnehmende Person"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otro candidato"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autre candidat"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altro candidato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかの受験者"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 응시자"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drugi zdający"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outro candidato"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diğer aday"
+          }
+        }
+      }
+    },
     "Overall impression" : {
       "comment" : "A speaking criterion",
       "localizations" : {
@@ -7609,61 +7904,61 @@
         }
       }
     },
-    "Rated on %@" : {
+    "Rated on %@." : {
       "comment" : "The official criteria a speaking task is rated on",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bewertet nach %@"
+            "value" : "Bewertet nach %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se evalúa según %@"
+            "value" : "Criterios de evaluación: %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Évalué selon %@"
+            "value" : "Évaluation selon %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Valutazione in base a %@"
+            "value" : "Criteri di valutazione: %@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "評価基準：%@"
+            "value" : "%@を基準に評価します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "평가 기준: %@"
+            "value" : "%@ 기준으로 평가해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kryteria oceny: %@"
+            "value" : "Kryteria oceny: %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avaliação com base em %@"
+            "value" : "A avaliação considera %@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Değerlendirme ölçütleri: %@"
+            "value" : "%@ ölçütlerine göre değerlendirilir."
           }
         }
       }
@@ -8490,6 +8785,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doğru söylendi"
+          }
+        }
+      }
+    },
+    "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call." : {
+      "comment" : "Before an exam task's call: why to speak rather than type, and the microphone",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprich deine Antworten: Bei getippten Antworten kann nicht bewertet werden, wie du klingst. Das Mikrofon wird nur während des Gesprächs verwendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responde en voz alta: si escribes tus respuestas, no se evalúa cómo suenas. El micrófono solo se usa durante la llamada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réponds à l’oral : les réponses écrites ne permettent pas d’évaluer ta façon de parler. Le micro est utilisé uniquement pendant l’appel."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rispondi a voce: con le risposte scritte non possiamo valutare come parli. Usiamo il microfono solo durante la conversazione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "声に出して答えてください。文字で入力した回答では、発音や話し方は評価されません。マイクは会話中だけ使用します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "말로 답변해 주세요. 글로 입력한 답변은 음성 평가에 반영되지 않아요. 마이크는 대화 중에만 사용해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odpowiadaj na głos: przy wpisanych odpowiedziach nie oceniamy tego, jak mówisz. Mikrofon jest używany tylko podczas rozmowy."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fale suas respostas: respostas digitadas não são avaliadas pela forma como você fala. O microfone é usado apenas durante a conversa."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cevaplarını sesli söyle: yazılı cevaplarda konuşma becerin değerlendirilmez. Mikrofon yalnızca sohbet sırasında kullanılır."
           }
         }
       }
@@ -13942,65 +14296,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavın hazır olur olmaz açılır."
-          }
-        }
-      }
-    },
-    "Your partner" : {
-      "comment" : "Whom the AI plays in an exam task",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Gegenüber"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu interlocutor"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton partenaire"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con chi parli"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "会話の相手"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대화 상대"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój rozmówca"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu parceiro"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konuşma arkadaşın"
           }
         }
       }
