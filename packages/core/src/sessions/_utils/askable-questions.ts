@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getCheckpointQuestionCount } from "../../checkpoints/_utils/checkpoint-answer-evidence";
-import { ITEM_IMAGE_INCLUDE, isMissingItsPicture } from "../../library/items/item-image";
+import { ITEM_IMAGE_INCLUDE, isStillAsked } from "../../library/items/item-image";
 import { parseSessionItem } from "./session-items";
 
 /** Includes previously answered ids; removed bank content cannot hold a block open forever. */
@@ -29,7 +29,7 @@ export async function countAskableQuestions({
     askableItemIds: rows
       .map((row) => parseSessionItem(row))
       .filter((item) => item !== null)
-      .filter((item) => !isMissingItsPicture(item))
+      .filter((item) => isStillAsked({ answered: false, item }))
       .map((item) => item.id),
   });
 }

@@ -8,7 +8,7 @@ import { EXAM_DAY_CHECKLIST } from "../../checkpoints/weekly-challenge-rules";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { getTrueFalseLabels } from "../../library/exams/true-false-labels";
-import { isMissingItsPicture } from "../../library/items/item-image";
+import { isStillAsked } from "../../library/items/item-image";
 import { NO_RESULT_MOMENTS, loadResultMoments } from "../../milestones/load-ceremony";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
@@ -93,7 +93,7 @@ async function loadCurrentSection({
   const questions = section.itemIds.flatMap((itemId, index): MockQuestion[] => {
     const item = items.get(itemId);
 
-    return item && (answered.has(itemId) || !isMissingItsPicture(item))
+    return item && isStillAsked({ answered: answered.has(itemId), item })
       ? [
           {
             ...toMockQuestionView({ item, mockId: mock.id }),

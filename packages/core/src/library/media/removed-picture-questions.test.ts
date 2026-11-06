@@ -12,6 +12,7 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { finishMock } from "../../exams/mocks/finish-mock";
 import { getMock } from "../../exams/mocks/get-mock";
 import { saveMockAnswer } from "../../exams/mocks/save-mock-answer";
+import { submitMockSection } from "../../exams/mocks/submit-mock-section";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { getChapterTestOut } from "../../learner/test-out/get-chapter-test-out";
 import { submitChapterTestOut } from "../../learner/test-out/submit-chapter-test-out";
@@ -235,6 +236,72 @@ describe("a question whose picture is removed after a failed check", () => {
     );
   });
 
+  it("leaves a running mock's unanswered question out of the next module's routing", async () => {
+    const [user, skill, asset] = await Promise.all([
+      userFixture(),
+      skillFixture(),
+      mediaAssetFixture(),
+    ]);
+
+    const [unasked, plain, easier, harder] = await Promise.all([
+      itemFixture({ content: picturedContent(), mediaAssetId: asset.id, skillId: skill.id }),
+      itemFixture({ skillId: skill.id }),
+      itemFixture({ skillId: skill.id }),
+      itemFixture({ skillId: skill.id }),
+    ]);
+
+    const section = { essays: [], minutes: 30, name: "Module" };
+
+    const mock = await prisma.mockExam.create({
+      data: {
+        conditions: {
+          day: null,
+          examQuestions: null,
+          fullLength: true,
+          partialCredit: "allOrNothing",
+          purpose: "practice",
+          reused: 0,
+          scoring: "raw",
+          sections: [
+            { ...section, itemIds: [unasked.id, plain.id], questions: 2, routing: null },
+            {
+              ...section,
+              itemIds: [],
+              questions: 1,
+              routing: { easier: [easier.id], harder: [harder.id] },
+            },
+          ],
+          shape: null,
+          startTime: null,
+          timeZone: null,
+          timedOutSections: [],
+          wrongPenalty: 1,
+        },
+        sectionStartedAt: new Date(),
+        startedAt: new Date(),
+        userId: user.id,
+      },
+    });
+
+    mockSession(user.id);
+    await removeImageAsset({ assetId: asset.id });
+
+    await saveMockAnswer({
+      blockId: mock.id,
+      input: { answer: RIGHT, durationMs: 4000, flagged: false, itemId: plain.id },
+    });
+
+    await expect(
+      submitMockSection({ blockId: mock.id, input: {}, section: 0 }),
+    ).resolves.toStrictEqual({ status: "next" });
+
+    const view = await getMock(mock.id);
+
+    expect(
+      view.status === "ready" && view.mock.current?.questions.map((question) => question.itemId),
+    ).toStrictEqual([harder.id]);
+  });
+
   it("grades a test-out the learner answered while it had the picture", async () => {
     const user = await userFixture();
 
@@ -269,5 +336,45 @@ describe("a question whose picture is removed after a failed check", () => {
         },
       }),
     ).resolves.toMatchObject({ outcome: { correct: 4, total: 4 }, status: "ready" });
+  });
+});
+
+describe("a question block with nothing answered yet", () => {
+  it("keeps an essay block open, since its essay isn't a question that can go missing", async () => {
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+
+    const essay = await itemFixture({
+      content: {
+        question: "Describe what happened yesterday.",
+        rubric: [{ criterion: "Clarity", description: "A clear account" }],
+        sampleOutline: "Describe the events in order.",
+      },
+      format: "essay",
+      skillId: skill.id,
+    });
+
+    mockSession(user.id);
+
+    const session = await studySessionFixture({
+      startedAt: new Date(),
+      status: "active",
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({
+      kind: "produce",
+      payload: toBlockPayload({ itemIds: [essay.id] }),
+      sessionId: session.id,
+      startedAt: new Date(),
+      status: "active",
+    });
+
+    await expect(
+      finishStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id }),
+    ).resolves.toStrictEqual({ status: "noAnswers" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ status: "active" });
   });
 });

@@ -107,8 +107,10 @@ export async function prepareQuestionBlock({
   if (!firstAnsweredAt) {
     const itemIds = getBlockItemIds(payload);
 
+    // An essay is never a session question, so a produce block would always count as empty.
     if (
       block.status === "active" &&
+      block.kind !== "produce" &&
       itemIds.length > 0 &&
       (await countAskableQuestions({ itemIds })) === 0
     ) {

@@ -12,7 +12,7 @@ import { loadBlockedTestOutChapters } from "../learner/test-out/_utils/offer-eli
 import { readNoticeFormats } from "../library/exams/notice-formats";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { isQuotedItem } from "../library/items/item-content";
-import { ITEM_IMAGE_INCLUDE, isMissingItsPicture } from "../library/items/item-image";
+import { ITEM_IMAGE_INCLUDE, isStillAsked } from "../library/items/item-image";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../library/items/item-sets";
 import { citedSourceSelect, toItemCitation } from "../library/sources/source-citation";
 import { loadDrillLessons, toDrillView } from "../mistakes/drill-lessons";
@@ -181,7 +181,7 @@ export async function loadStudyBlock(
   const items = rows
     .map((row) => parseSessionItem(row))
     .filter((item) => item !== null)
-    .filter((item) => answered.has(item.id) || !isMissingItsPicture(item));
+    .filter((item) => isStillAsked({ answered: answered.has(item.id), item }));
 
   const timeMachines = await loadTimeMachines({
     blockId,

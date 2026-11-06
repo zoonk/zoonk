@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { gradeTypedItemAnswer } from "../../../learner/_utils/typed-grading";
 import { recordLearnerAnswer } from "../../../learner/record-learner-answer";
-import { isMissingItsPicture } from "../../../library/items/item-image";
+import { isStillAsked } from "../../../library/items/item-image";
 import { getItemMarking } from "../../scoring/mock-points";
 import { getPickOutcome } from "../../scoring/partial-credit";
 import { type GradedMockAnswer } from "../mock-analysis";
@@ -155,7 +155,7 @@ export async function gradeMock({
     const draft = mock.answers.find((answer) => answer.itemId === entry.itemId);
     const answer = readMockAnswer(draft?.answer);
 
-    return item && (isMockAnswerPresent(answer) || !isMissingItsPicture(item))
+    return item && isStillAsked({ answered: isMockAnswerPresent(answer), item })
       ? [
           {
             answer,
