@@ -136,17 +136,22 @@ async function sweep(): Promise<SweepCounts> {
   };
 }
 
-export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
+/** `executionId` is Vercel's id for one scheduled run, the same in every delivery of it. */
+export async function dailySweepsWorkflow({
+  executionId,
+}: {
+  executionId: string;
+}): Promise<DailySweepsResult> {
   "use workflow";
 
-  // Vercel can deliver a scheduled run again after the first one ended, so the day's token stays
-  // taken for a day; `using` or `claimRunToken` would free it when this run ends.
-  const day = createHook({
-    experimental_minRetention: "1d",
-    token: `daily-sweeps:${new Date().toISOString().slice(0, 10)}`,
+  // Vercel can deliver a run again until a day after it was due, even after the first delivery
+  // ended, so the token outlives this run; `using` or `claimRunToken` would free it when it ends.
+  const scheduledRun = createHook({
+    experimental_minRetention: "2d",
+    token: `daily-sweeps:${executionId}`,
   });
 
-  const conflict = await day.getConflict();
+  const conflict = await scheduledRun.getConflict();
 
   if (conflict) {
     return { runId: conflict.runId, status: "alreadyRan" };
