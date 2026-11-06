@@ -19,8 +19,8 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { adoptTextTypedBeforeHydration } from "@zoonk/ui/lib/typed-before-hydration";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
-import { useFormActionState } from "../../_utils/use-form-action-state";
+import { unstable_rethrow } from "next/navigation";
+import { useActionState, useId, useState } from "react";
 import { type SetupState, setupProfileAction } from "./actions";
 
 function UsernameDescription({
@@ -110,11 +110,14 @@ export function SetupProfileForm({
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
   const [isChangingUsername, setIsChangingUsername] = useState(!defaultUsername);
 
-  const [state, formAction] = useFormActionState<SetupState>({
-    action: setupProfileAction.bind(null, redirectTo),
-    initialState: { status: "idle" },
-    onRejected: () => ({ status: "error" }),
-  });
+  const [state, formAction] = useActionState<SetupState, FormData>(
+    (previous, formData) =>
+      setupProfileAction(redirectTo, previous, formData).catch((error: unknown): SetupState => {
+        unstable_rethrow(error);
+        return { status: "error" };
+      }),
+    { status: "idle" },
+  );
 
   const isNameTooLong = isNameChangeTooLong({ name, savedName: defaultName });
   const canSubmit = !isNameTooLong && (status === "idle" || status === "available");

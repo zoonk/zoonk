@@ -11,7 +11,8 @@ import {
 import { parseFormField } from "@zoonk/utils/form";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
-import { useFormActionState } from "../../_utils/use-form-action-state";
+import { unstable_rethrow } from "next/navigation";
+import { useActionState } from "react";
 import { type VerificationOTPState, sendVerificationOTPAction } from "./actions";
 import { readPageRedirectTo } from "./page-url";
 
@@ -21,17 +22,19 @@ const initialEmailLoginState: VerificationOTPState = { status: "idle" };
 export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
   const t = useExtracted();
 
-  const [state, formAction] = useFormActionState({
-    action: (previous: VerificationOTPState, formData: FormData) => {
+  const [state, formAction] = useActionState(
+    (previous: VerificationOTPState, formData: FormData) => {
       formData.set("redirectTo", readPageRedirectTo() ?? "");
-      return sendVerificationOTPAction(previous, formData);
+
+      return sendVerificationOTPAction(previous, formData).catch(
+        (error: unknown): VerificationOTPState => {
+          unstable_rethrow(error);
+          return { email: parseFormField(formData, "email") ?? "", status: "error" };
+        },
+      );
     },
-    initialState: initialEmailLoginState,
-    onRejected: (formData): VerificationOTPState => ({
-      email: parseFormField(formData, "email") ?? "",
-      status: "error",
-    }),
-  });
+    initialEmailLoginState,
+  );
 
   const hasError = state.status !== "idle";
 
