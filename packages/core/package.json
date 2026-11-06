@@ -536,6 +536,7 @@
     "./plans/time-advice": "./src/plans/get-time-advice.ts",
     "./plans/time-advice-contract": "./src/plans/time-advice-contract.ts",
     "./plans/today-change-contract": "./src/plans/today-change-contract.ts",
+    "./plans/tool-choice-contract": "./src/plans/plan-tool-choice-contract.ts",
     "./plans/tools-contract": "./src/plans/plan-tools-contract.ts",
     "./plans/view-contract": "./src/plans/plan-view-contract.ts",
     "./plans/week-shape": "./src/plans/planner/week-shape.ts",

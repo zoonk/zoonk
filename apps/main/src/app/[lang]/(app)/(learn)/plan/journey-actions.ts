@@ -8,11 +8,11 @@ import {
   type PlanChangeDecisionInput,
   planChangeDecisionInputSchema,
   planChangeInputSchema,
-  planToolChoiceInputSchema,
 } from "@zoonk/core/plans/contract";
 import { decidePlanChange } from "@zoonk/core/plans/decide-change";
 import { previewPlanChange } from "@zoonk/core/plans/preview";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
+import { planToolChoiceInputSchema } from "@zoonk/core/plans/tool-choice-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type PlanChangeOutcome } from "@zoonk/learn/journey";
 import { z } from "zod";
