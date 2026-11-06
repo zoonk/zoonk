@@ -15,7 +15,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { getHookByToken, getRun } from "workflow/api";
 import { getWorld } from "workflow/runtime";
 import { startOnce } from "../_shared/run-token";
@@ -140,6 +140,7 @@ async function runFollowUps(userId: string) {
 describe(followUpsWorkflow, () => {
   beforeEach(() => {
     vi.mocked(classifyMistakeCause).mockReset().mockResolvedValue(classified());
+    vi.mocked(findMistakePattern).mockReset().mockResolvedValue(noPattern());
 
     vi.mocked(gateMemoryFact)
       .mockReset()
@@ -403,6 +404,43 @@ describe(followUpsWorkflow, () => {
     await waiting.wakeUp({ correlationIds: [sleepId] });
 
     await vi.waitFor(() => expect(checked).toStrictEqual([3, 6]), WAIT);
+    await expect(countOwed(user.id)).resolves.toBe(0);
+  });
+
+  it("starts one check for an ask when the queue takes its run but the answer is lost", async () => {
+    const user = await userFixture();
+    const lesson = await libraryLessonFixture({ targetLanguage: "en" });
+    const world = await getWorld();
+    const queue = world.queue.bind(world);
+    const queued = new Set<string>();
+
+    const enqueue = vi.spyOn(world, "queue").mockImplementation(async (...args) => {
+      const result = await queue(...args);
+      const [, message] = args;
+
+      if (
+        "runInput" in message &&
+        message.runInput?.workflowName.endsWith("//backgroundTaskWorkflow")
+      ) {
+        const isFirst = queued.size === 0;
+        queued.add(message.runId);
+
+        if (isFirst) {
+          throw new Error("The queue took the run, but its answer was lost");
+        }
+      }
+
+      return result;
+    });
+
+    onTestFinished(() => enqueue.mockRestore());
+
+    await addMistakes({ from: 0, lessonId: lesson.id, userId: user.id });
+    await owePatternCheck(user.id);
+    await runFollowUps(user.id);
+
+    expect(queued.size).toBe(1);
+    await vi.waitFor(() => expect(findMistakePattern).toHaveBeenCalledOnce(), WAIT);
     await expect(countOwed(user.id)).resolves.toBe(0);
   });
 
