@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
@@ -15,6 +15,7 @@ import { mockHookConflict } from "../../../mocks/workflow";
 import { getStartMock } from "../_test-utils/start-mock";
 import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
+import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
@@ -176,6 +177,26 @@ describe(dailySweepsWorkflow, () => {
     );
 
     expect(result.followUpsStarted).toBeGreaterThanOrEqual(1);
+  });
+
+  it("starts the check of pictures still owing one, such as a picture whose storing step failed before starting it", async () => {
+    const [owed, checked] = await Promise.all([
+      // The sweep takes the longest-owed first, so other tests' owed pictures can't push this one out
+      // of its batch.
+      mediaAssetFixture({ checkOwedAt: new Date(Date.now() - 30 * DAY_MS) }),
+      mediaAssetFixture({ checkOwedAt: null }),
+    ]);
+
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === pictureChecksWorkflow)
+      .flatMap(([, args]) => (args as [{ assetIds: string[] }])[0].assetIds);
+
+    expect(started).toContain(owed.id);
+    expect(started).not.toContain(checked.id);
+    expect(result.pictureChecks).toBe(started.length);
   });
 
   it("starts the rewrite of what a changed source left flagged", async () => {
