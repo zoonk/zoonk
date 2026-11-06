@@ -209,6 +209,9 @@ model Step {
   retiredAt          DateTime?           @map("retired_at")
   /// A fixed version waits unread until its marks and pictures settle, then replaces the current one.
   staged             Boolean             @default(false)
+  /// A staged screen's numeric question as written. It joins the practice bank as the screen's
+  /// item when its version is published, so learners never get it before.
+  stagedItem         Json?               @map("staged_item")
   kind               StepKind
   contractVersion    Int                 @default(1) @map("contract_version") @db.SmallInt
   content            Json

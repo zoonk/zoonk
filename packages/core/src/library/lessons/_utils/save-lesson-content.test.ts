@@ -7,11 +7,13 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { waitForBlockedStatement } from "../../../_test-utils/learner-lock";
 import { mockSession } from "../../../_test-utils/mock-session";
+import { listCheckpointQuestions } from "../../../checkpoints/_utils/checkpoint-candidates";
 import { learnerGoalFixture } from "../../../learner/_test-utils/learner-goal";
 import { lessonRunFixture } from "../../../lesson-player/_test-utils/lesson-run-fixture";
 import { checkLessonStep } from "../../../lesson-player/check-lesson-step";
 import { mistakeListInputSchema } from "../../../mistakes/contract";
 import { listCurrentUserMistakes } from "../../../mistakes/list-current-user-mistakes";
+import { loadPracticeItems } from "../../../sessions/_utils/load-practice";
 import { completeLessonContent } from "../../generation/lesson-generation-state";
 import { writtenTemperatureLesson } from "../../quality/_test-utils/written-lessons";
 import { toStepContent } from "../../steps/written-screens";
@@ -45,6 +47,17 @@ function screen(skillId: string | null = null): LessonScreenToSave {
     },
     skillId,
   };
+}
+
+function numericScreen(skillId: string): LessonScreenToSave {
+  const written = writtenTemperatureLesson().screens[3];
+  const converted = written && toStepContent(written, { allowImage: false, language: "en" });
+
+  if (!converted?.ok) {
+    throw new Error("Expected a valid numeric screen");
+  }
+
+  return { ...screen(skillId), ...converted };
 }
 
 async function claimedLesson() {
@@ -352,6 +365,149 @@ describe(saveLessonContent, () => {
     await expect(readMap()).resolves.toStrictEqual(nested);
     await publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
     await expect(readMap()).resolves.toStrictEqual(hub);
+  });
+
+  it("keeps a staged version's numeric questions out of practice and checkpoints until it's published", async () => {
+    const [{ lesson, skill, workflowRunId }, user] = await Promise.all([
+      claimedLesson(),
+      userFixture(),
+    ]);
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const version = await stageLessonVersion({
+      language: "en",
+      lessonId: lesson.id,
+      replaces: 1,
+      screens: [numericScreen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+    });
+
+    const listAskable = async () => {
+      const [checkpoint, practice] = await Promise.all([
+        listCheckpointQuestions({ examBlueprintId: null, skillIds: [skill.id] }),
+        loadPracticeItems({
+          difficultyBias: "standard",
+          everySkill: true,
+          examBlueprintId: null,
+          excludeItemIds: new Set(),
+          field: null,
+          maxMinutes: 45,
+          now: new Date(),
+          skillIds: [skill.id],
+          typed: true,
+          userId: user.id,
+        }),
+      ]);
+
+      return {
+        checkpoint: checkpoint.map((item) => item.id),
+        practice: practice.map((item) => item.itemId),
+      };
+    };
+
+    await expect(listAskable()).resolves.toStrictEqual({ checkpoint: [], practice: [] });
+
+    await publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
+
+    const step = await prisma.step.findFirstOrThrow({
+      where: { lessonId: lesson.id, version: version ?? 0 },
+    });
+
+    expect(step.itemId).not.toBeNull();
+
+    await expect(listAskable()).resolves.toStrictEqual({
+      checkpoint: [step.itemId],
+      practice: [step.itemId],
+    });
+  });
+
+  it("publishes a staged question while a newer fix is staged at once, without a deadlock", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const stage = () =>
+      stageLessonVersion({
+        language: "en",
+        lessonId: lesson.id,
+        replaces: 1,
+        screens: [numericScreen(skill.id)],
+        summary: { ideas: [], shape: "hub" },
+      });
+
+    const version = await stage();
+    const held = Promise.withResolvers<number>();
+    const released = Promise.withResolvers<null>();
+
+    const learnerWrite = prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lesson.id}::uuid FOR KEY SHARE`;
+      const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      held.resolve(backend?.pid ?? 0);
+      await released.promise;
+    });
+
+    learnerWrite.catch((error: unknown) => held.reject(error));
+    const pid = await held.promise;
+    const publishing = publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
+    let staging: ReturnType<typeof stage> = Promise.resolve(null);
+
+    try {
+      await waitForBlockedStatement(pid, /library_lessons WHERE id = \$1::uuid FOR UPDATE/u);
+      staging = stage();
+      await waitForBlockedStatement(pid, /FOR NO KEY UPDATE/u);
+    } finally {
+      released.resolve(null);
+      await learnerWrite;
+    }
+
+    const settled = await Promise.allSettled([publishing, staging]);
+    expect(settled.map((result) => result.status)).toStrictEqual(["fulfilled", "fulfilled"]);
+  });
+
+  it("leaves no bank questions behind for a staged version a newer one replaced", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const stage = () =>
+      stageLessonVersion({
+        language: "en",
+        lessonId: lesson.id,
+        replaces: 1,
+        screens: [numericScreen(skill.id)],
+        summary: { ideas: [], shape: "hub" },
+      });
+
+    await stage();
+    const version = await stage();
+    await publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
+
+    const published = await prisma.step.findFirstOrThrow({
+      where: { lessonId: lesson.id, version: version ?? 0 },
+    });
+
+    await expect(
+      prisma.item.findMany({ select: { id: true }, where: { skillId: skill.id } }),
+    ).resolves.toStrictEqual([{ id: published.itemId }]);
   });
 
   it("repairs skills in replacement versions too", async () => {

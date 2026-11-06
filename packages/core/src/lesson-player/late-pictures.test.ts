@@ -151,6 +151,7 @@ describe("a question whose numbered picture was missing during the run", () => {
         marks: step.marks ?? undefined,
         pictureAvailableAt: null,
         retiredAt: null,
+        stagedItem: undefined,
         version: 2,
       })),
     });

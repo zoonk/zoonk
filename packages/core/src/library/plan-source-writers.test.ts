@@ -64,6 +64,7 @@ import { getAlphabetIdentityKey } from "./language/alphabet/alphabet-identity";
 import { publishAlphabetLesson } from "./language/alphabet/write-alphabet-lesson";
 import {
   type LessonScreenToSave,
+  publishStagedLessonVersion,
   saveLessonContent,
   stageLessonVersion,
 } from "./lessons/_utils/save-lesson-content";
@@ -319,7 +320,14 @@ const REGISTRY: Record<string, Registration[]> = {
     {
       verdict: "marks",
       why: "bank items on the screens' skills",
-      writes: ["item.create", "lesson.update", "lesson.updateMany"],
+      writes: ["lesson.update", "lesson.updateMany"],
+    },
+  ],
+  "library/lessons/_utils/screen-question-item.ts": [
+    {
+      verdict: "covered",
+      why: "its callers in `save-lesson-content.ts` lock the question's skill first",
+      writes: ["item.create"],
     },
   ],
   "library/lessons/create-library-lesson.ts": [
@@ -731,15 +739,20 @@ async function publishLessonCase(): Promise<WriterCase> {
   };
 }
 
-async function mathItemCase(): Promise<WriterCase> {
-  const { lesson, skill, workflowRunId } = await claimedLesson();
-  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+function mathScreen(skillId: string): LessonScreenToSave {
   const written = writtenTemperatureLesson().screens[3];
   const converted = written && toStepContent(written, { allowImage: false, language: "en" });
 
   if (!converted?.ok) {
     throw new Error("Expected a numeric screen");
   }
+
+  return { ...checkScreen(skillId), ...converted };
+}
+
+async function mathItemCase(): Promise<WriterCase> {
+  const { lesson, skill, workflowRunId } = await claimedLesson();
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
 
   return {
     expectWritten: () =>
@@ -750,10 +763,32 @@ async function mathItemCase(): Promise<WriterCase> {
       saveLessonContent({
         language: "en",
         lessonId: lesson.id,
-        screens: [{ ...checkScreen(skill.id), ...converted }],
+        screens: [mathScreen(skill.id)],
         summary: { ideas: [], shape: "hub" },
         workflowRunId,
       }),
+  };
+}
+
+async function stagedMathItemCase(): Promise<WriterCase> {
+  const { lesson, skill } = await publishedLesson();
+
+  const version = await stageLessonVersion({
+    language: "en",
+    lessonId: lesson.id,
+    replaces: 1,
+    screens: [mathScreen(skill.id)],
+    summary: { ideas: [], shape: "hub" },
+  });
+
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+
+  return {
+    expectWritten: () =>
+      expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(1),
+    plan,
+    root: skillRoot(skill.id),
+    write: () => publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 }),
   };
 }
 
@@ -1550,6 +1585,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/items/past-questions.ts": { savePastQuestions: pastQuestionsCase },
   "library/language/alphabet/write-alphabet-lesson.ts": { publishAlphabetLesson: alphabetCase },
   "library/lessons/_utils/save-lesson-content.ts": {
+    "publishStagedLessonVersion (a math item's skill)": stagedMathItemCase,
     "saveLessonContent (a math item's skill)": mathItemCase,
     "saveLessonContent (the lesson)": publishLessonCase,
     "stageLessonVersion (the lesson)": lessonVersionCase,
