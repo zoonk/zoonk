@@ -23,6 +23,7 @@ import { taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { courseReleaseWorkflow } from "./course-release-workflow";
+import * as releaseSteps from "./steps/course-release-steps";
 
 const UNCHANGED: ReleaseComparison = { changed: [], whatsNew: null };
 
@@ -138,6 +139,26 @@ describe(courseReleaseWorkflow, () => {
     expect(lessons.flatMap(({ lesson }) => lesson.skills.map(({ skill }) => skill.name))).toContain(
       WHATS_NEW.skills[0]?.name,
     );
+  });
+
+  it("offers What's new to every page of followers, however many", async () => {
+    const { course } = await productCourse();
+    await follow(course.id);
+    compareWith({ changed: [], whatsNew: WHATS_NEW }, UNCHANGED);
+    vi.mocked(generateCourseOutline).mockImplementation(async () => exportOutline() as never);
+
+    const pages = 250;
+
+    const offers = vi
+      .spyOn(releaseSteps, "offerWhatsNewStep")
+      .mockImplementation(async ({ after }) => {
+        const page = after ? Number(after) + 1 : 0;
+        return page < pages - 1 ? String(page) : null;
+      });
+
+    await courseReleaseWorkflow({ courseId: course.id });
+
+    expect(offers).toHaveBeenCalledTimes(pages);
   });
 
   it("applies each release in turn until the course teaches the current one", async () => {

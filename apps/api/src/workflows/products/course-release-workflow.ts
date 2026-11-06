@@ -24,7 +24,6 @@ const FLAGS_PER_REWRITE = 10;
 const MAX_RELEASES = 5;
 const REWRITE_WAIT = "30m";
 const MAX_REWRITE_WAITS = 12;
-const MAX_OFFER_PAGES = 200;
 
 type Behind = Extract<CourseReleaseState, { status: "behind" }>;
 
@@ -110,11 +109,12 @@ async function addWhatsNew({
     skills,
   };
 
-  await repeatUntil<string | null>({
-    done: (next) => next === null,
-    run: (after) => offerWhatsNewStep({ ...offer, after: after ?? null }),
-    times: MAX_OFFER_PAGES,
-  });
+  let after: string | null = null;
+
+  do {
+    // oxlint-disable-next-line no-await-in-loop -- Each page starts after the last one's goal.
+    after = await offerWhatsNewStep({ ...offer, after });
+  } while (after);
 }
 
 async function applyRelease({ state, ...run }: ReleaseRun & { state: Behind }): Promise<boolean> {
