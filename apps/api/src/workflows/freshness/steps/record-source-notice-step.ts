@@ -26,6 +26,7 @@ export async function recordSourceNoticeStep({
 
   const notice = await recordSourceChangeNotice({
     changedAt: change.changedAt,
+    changes: change.change,
     contentHash: change.contentHash,
     fields: ["text"],
     language: change.language,

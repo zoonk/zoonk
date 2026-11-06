@@ -14,6 +14,7 @@ const MAX_GOAL_NOTICES = 3;
 
 export type SourceNoticeInput = {
   changedAt: Date;
+  changes: string;
   contentHash: string;
   fields: string[];
   language: string;
@@ -24,14 +25,14 @@ export type SourceNoticeInput = {
 };
 
 /**
- * Covers the source's owed change read at `changedAt`; null when another run already covered it or
- * the page changed again since, which leaves the newer change owed. Record exam notices through
+ * Covers the owed `changes` a check read; null when another run already covered them or the page
+ * changed again since, which leaves the newer change owed. Record exam notices through
  * `saveExamBlueprint` so the notice and blueprint commit together.
  */
 export function recordSourceChangeNotice(
   input: SourceNoticeInput,
 ): Promise<SourceChangeNotice | null> {
-  const { changedAt, provenance, ...notice } = input;
+  const { changedAt, changes, provenance, ...notice } = input;
 
   return prisma.$transaction(async (tx) => {
     const { count } = await tx.source.updateMany({
@@ -41,7 +42,7 @@ export function recordSourceChangeNotice(
         unnoticedChanges: null,
         unnoticedFromHash: null,
       },
-      where: { id: notice.sourceId, unnoticedChangedAt: changedAt },
+      where: { id: notice.sourceId, unnoticedChangedAt: changedAt, unnoticedChanges: changes },
     });
 
     if (count === 0) {
@@ -62,17 +63,24 @@ export function recordSourceChangeNotice(
  * since keeps its fresh attempts.
  */
 export async function recordFailedSourceNotice({
+  change,
   changedAt,
   noticeFailures,
   sourceId,
 }: {
+  change: string;
   changedAt: Date;
   noticeFailures: number;
   sourceId: string;
 }): Promise<void> {
   await prisma.source.updateMany({
     data: { noticeFailures: noticeFailures + 1 },
-    where: { id: sourceId, noticeFailures, unnoticedChangedAt: changedAt },
+    where: {
+      id: sourceId,
+      noticeFailures,
+      unnoticedChangedAt: changedAt,
+      unnoticedChanges: change,
+    },
   });
 }
 

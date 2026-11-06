@@ -220,12 +220,11 @@ describe(dailySweepsWorkflow, () => {
     const owed = await unnoticedSourceChangeFixture({ previousHash: "old", sourceId: law.id });
 
     await recordSourceChangeNotice({
-      changedAt: owed.changedAt,
+      ...owed,
       contentHash: "new",
       fields: ["text"],
       language: "pt",
       message: "A lei mudou.",
-      previousHash: owed.previousHash,
       provenance: { generatedAt: new Date(), model: "test", promptVersion: "v1", runId: "r1" },
       sourceId: law.id,
     });

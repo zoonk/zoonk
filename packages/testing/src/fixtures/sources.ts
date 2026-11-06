@@ -66,22 +66,23 @@ export async function sourceChangeNoticeFixture(
 
 export async function unnoticedSourceChangeFixture({
   changedAt = new Date(),
+  changes = "- Test source text before it changed.\n+ Test source text after it changed.",
   previousHash = `test-hash-${randomUUID()}`,
   sourceId,
 }: {
   changedAt?: Date;
+  changes?: string;
   previousHash?: string;
   sourceId: string;
 }) {
   await prisma.source.update({
     data: {
       unnoticedChangedAt: changedAt,
-      unnoticedChanges:
-        "- Test source text before it changed.\n+ Test source text after it changed.",
+      unnoticedChanges: changes,
       unnoticedFromHash: previousHash,
     },
     where: { id: sourceId },
   });
 
-  return { changedAt, previousHash };
+  return { changedAt, changes, previousHash };
 }

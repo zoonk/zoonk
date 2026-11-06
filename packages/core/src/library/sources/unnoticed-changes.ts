@@ -29,13 +29,11 @@ export type OwedSourceChange = {
  * what was written from the version in between, and a new change gets its notice new attempts.
  */
 export async function oweSourceChangeNotice({
-  changedAt,
   sourceId,
   text,
   topic,
   tx,
 }: {
-  changedAt: Date;
   sourceId: string;
   text: string | null;
   topic: SourceTopic;
@@ -47,6 +45,9 @@ export async function oweSourceChangeNotice({
 
   // Saves of one page at once take turns, so each diffs against the text the one before it saved.
   await tx.$queryRaw`SELECT id FROM sources WHERE id = ${sourceId}::uuid FOR NO KEY UPDATE`;
+
+  // Taken once the save holds the row: content written before it read the text this save replaces.
+  const changedAt = new Date();
 
   const stored = await tx.source.findUniqueOrThrow({
     select: {

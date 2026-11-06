@@ -75,13 +75,7 @@ function saveChangedContent({
   topic: SourceTopic;
 }): Promise<WebSource> {
   return prisma.$transaction(async (tx) => {
-    const owed = await oweSourceChangeNotice({
-      changedAt: content.fetchedAt,
-      sourceId,
-      text: content.extractedText,
-      topic,
-      tx,
-    });
+    const owed = await oweSourceChangeNotice({ sourceId, text: content.extractedText, topic, tx });
 
     return tx.source.update({
       data: { ...content, ...owed },

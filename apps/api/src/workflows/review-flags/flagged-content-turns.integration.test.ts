@@ -61,12 +61,11 @@ async function flaggedDrill() {
   const owed = await unnoticedSourceChangeFixture({ previousHash: "old", sourceId: law.id });
 
   const notice = await recordSourceChangeNotice({
-    changedAt: owed.changedAt,
+    ...owed,
     contentHash: "new",
     fields: ["text"],
     language: "pt",
     message: "A lei mudou: a posse agora ocorre em quinze dias.",
-    previousHash: owed.previousHash,
     provenance: { generatedAt: new Date(), model: "test", promptVersion: "v1", runId: "r1" },
     sourceId: law.id,
   });

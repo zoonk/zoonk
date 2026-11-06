@@ -47,12 +47,11 @@ async function noticeFor(sourceId: string) {
   const owed = await unnoticedSourceChangeFixture({ previousHash: "old", sourceId });
 
   const notice = await recordSourceChangeNotice({
-    changedAt: owed.changedAt,
+    ...owed,
     contentHash: `new-${crypto.randomUUID()}`,
     fields: ["text"],
     language: "pt",
     message: "A lei mudou: a posse agora ocorre em quinze dias.",
-    previousHash: owed.previousHash,
     provenance: PROVENANCE,
     sourceId,
   });

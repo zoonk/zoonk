@@ -150,12 +150,7 @@ describe(recordSourceChangeNotice, () => {
     const source = await sourceFixture();
     const owed = await unnoticedSourceChangeFixture({ sourceId: source.id });
 
-    const notice = await recordSourceChangeNotice({
-      ...DOCS_NOTICE,
-      changedAt: owed.changedAt,
-      previousHash: owed.previousHash,
-      sourceId: source.id,
-    });
+    const notice = await recordSourceChangeNotice({ ...DOCS_NOTICE, ...owed, sourceId: source.id });
 
     expect(notice).toMatchObject({
       examBlueprintId: null,
@@ -169,24 +164,23 @@ describe(recordSourceChangeNotice, () => {
     ).resolves.toMatchObject({ unnoticedChangedAt: null, unnoticedChanges: null });
   });
 
-  it("covers a change once, and leaves a newer change owed for the next check", async () => {
+  it("covers a change once, and leaves a newer change owed, though saved in the same millisecond", async () => {
     const source = await sourceFixture();
     const owed = await unnoticedSourceChangeFixture({ sourceId: source.id });
-    const covering = { ...DOCS_NOTICE, previousHash: owed.previousHash, sourceId: source.id };
 
     const newer = await unnoticedSourceChangeFixture({
-      changedAt: new Date(owed.changedAt.getTime() + MINUTE_MS),
-      previousHash: owed.previousHash,
+      ...owed,
+      changes: `${owed.changes}\n- Version 5.\n+ Version 6.`,
       sourceId: source.id,
     });
 
-    await expect(
-      recordSourceChangeNotice({ ...covering, changedAt: owed.changedAt }),
-    ).resolves.toBeNull();
+    const covering = { ...DOCS_NOTICE, sourceId: source.id };
+
+    await expect(recordSourceChangeNotice({ ...covering, ...owed })).resolves.toBeNull();
 
     const [first, second] = await Promise.all([
-      recordSourceChangeNotice({ ...covering, changedAt: newer.changedAt }),
-      recordSourceChangeNotice({ ...covering, changedAt: newer.changedAt }),
+      recordSourceChangeNotice({ ...covering, ...newer }),
+      recordSourceChangeNotice({ ...covering, ...newer }),
     ]);
 
     expect([first, second].filter(Boolean)).toHaveLength(1);
@@ -198,7 +192,8 @@ describe(recordSourceChangeNotice, () => {
 
   it("counts a failed notice run once, and stops trying after three until the page changes", async () => {
     const source = await sourceFixture();
-    const { changedAt } = await unnoticedSourceChangeFixture({ sourceId: source.id });
+    const { changedAt, changes } = await unnoticedSourceChangeFixture({ sourceId: source.id });
+    const failed = { change: changes, changedAt, sourceId: source.id };
 
     const readOwed = async () =>
       getOwedSourceChange(await prisma.source.findUniqueOrThrow({ where: { id: source.id } }));
@@ -206,8 +201,8 @@ describe(recordSourceChangeNotice, () => {
     for (const noticeFailures of [0, 1, 2]) {
       // oxlint-disable-next-line no-await-in-loop -- Each failure is counted from the one before.
       await Promise.all([
-        recordFailedSourceNotice({ changedAt, noticeFailures, sourceId: source.id }),
-        recordFailedSourceNotice({ changedAt, noticeFailures, sourceId: source.id }),
+        recordFailedSourceNotice({ ...failed, noticeFailures }),
+        recordFailedSourceNotice({ ...failed, noticeFailures }),
       ]);
     }
 
