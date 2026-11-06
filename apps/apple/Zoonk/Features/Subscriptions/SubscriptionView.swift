@@ -510,12 +510,18 @@ struct PlusStatusView: View {
       }
 
       Section {
-        PlusBenefits()
-      } header: {
-        SectionTitle(
+        VStack(alignment: .leading, spacing: 16) {
           Text(
             "Every goal\u{00A0}· every lesson", tableName: "Account",
-            comment: "What Zoonk Plus includes, in one line"))
+            comment: "What Zoonk Plus includes, in one line"
+          )
+          .typeStyle(.section)
+          .foregroundStyle(Color(.foreground))
+          .accessibilityAddTraits(.isHeader)
+
+          PlusBenefits()
+        }
+        .listRowSeparator(.hidden)
       }
 
       if isWebsite {
@@ -613,43 +619,57 @@ struct PlusStatusView: View {
     }
   }
 
-  /// Main's `ManagedSubscription`: the stores' own controls change a store purchase.
+  /// Main's `ManagedSubscription`: where the purchase is changed, then the store's own control and
+  /// support.
   private var managedSection: some View {
-    Section {
-      if StoreSubscriptionProvider(rawValue: subscription.provider) == .apple {
-        Button {
-          isAppStoreManagementPresented = true
-        } label: {
-          Text(
-            "Manage in App Store", tableName: "Account",
-            comment:
-              "Button that opens Apple's subscription settings for Plus bought in the App Store")
-        }
-      }
+    let provider = StoreSubscriptionProvider(rawValue: subscription.provider)
 
-      Link(destination: AccountLinks.support) {
-        Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
-      }
-    } footer: {
-      SectionFooter {
-        switch StoreSubscriptionProvider(rawValue: subscription.provider) {
-        case .apple:
-          Text(
-            "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings.",
-            tableName: "Account", comment: "Where Plus bought in the App Store is changed")
-        case .google:
-          Text(
-            "Use Google Play on an Android device to change or cancel this subscription.",
-            tableName: "Account",
-            comment:
-              "Explains how to manage a Google-owned subscription without linking to external purchasing"
-          )
-        case nil:
-          Text(
-            "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
-            tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
+    return Section {
+      VStack(alignment: .leading, spacing: 16) {
+        Group {
+          switch provider {
+          case .apple:
+            Text(
+              "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings.",
+              tableName: "Account", comment: "Where Plus bought in the App Store is changed")
+          case .google:
+            Text(
+              "Use Google Play on an Android device to change or cancel this subscription.",
+              tableName: "Account",
+              comment:
+                "Explains how to manage a Google-owned subscription without linking to external purchasing"
+            )
+          case nil:
+            Text(
+              "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
+              tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
+          }
         }
+        .typeStyle(.body)
+        .foregroundStyle(.mutedForeground)
+
+        ButtonRow(spacing: 8) {
+          if provider == .apple {
+            Button {
+              isAppStoreManagementPresented = true
+            } label: {
+              Text(
+                "Manage in App Store", tableName: "Account",
+                comment:
+                  "Button that opens Apple's subscription settings for Plus bought in the App Store"
+              )
+            }
+            .buttonStyle(.mainAction)
+          }
+
+          Link(destination: AccountLinks.support) {
+            Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
+          }
+          .buttonStyle(.outline)
+        }
+        .controlSize(.small)
       }
+      .listRowSeparator(.hidden)
     }
   }
 }

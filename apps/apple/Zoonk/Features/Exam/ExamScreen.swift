@@ -620,8 +620,7 @@ private struct ExamMocksSection: View {
           PlusNotice(
             description: Text(
               "Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time.",
-              tableName: "Exam", comment: "What mocks with Plus unlock"),
-            isInset: true)
+              tableName: "Exam", comment: "What mocks with Plus unlock"))
         }
       } header: {
         SectionTitle(
@@ -707,27 +706,8 @@ private struct ExamProgressSection: View {
         ForEach(progress.subjects) { subject in
           let share = Double(subject.percents.last ?? 0) / 100
 
-          VStack(alignment: .leading, spacing: 6) {
-            LabeledContent {
-              HStack(spacing: 12) {
-                Text(share.formatted(.percent))
-                if trends {
-                  Text(subject.change.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? "–")
-                    .foregroundStyle(subject.change == nil ? .mutedForeground : .primary)
-                    .accessibilityLabel(
-                      subject.change.map {
-                        Text("Since the first mock: \($0)", tableName: "Exam", comment: "A change")
-                      } ?? Text(""))
-                }
-              }
-              .monospacedDigit()
-            } label: {
-              Text(subject.name)
-            }
-
-            Meter(value: min(max(share, 0), 1), fill: .success)
-              .accessibilityHidden(true)
-          }
+          ExamAreaRow(
+            name: subject.name, share: share, change: subject.change, showsChange: trends)
         }
       } header: {
         SectionTitle(
@@ -1173,5 +1153,46 @@ private struct ExamScoringSection: View {
     case nil:
       return nil
     }
+  }
+}
+
+/// Main's `SubjectRow`: an area's name, a short meter and its share on one line, and how it moved
+/// since the first mock once there's more than one. They stack at accessibility sizes.
+private struct ExamAreaRow: View {
+  let name: String
+  let share: Double
+  let change: Int?
+  let showsChange: Bool
+
+  @ScaledMetric(relativeTo: .caption) private var meterWidth = 80.0
+
+  var body: some View {
+    AccessibilityStack(spacing: 12, stackedSpacing: 6) {
+      Text(name)
+        .typeStyle(.rowTitle)
+        .foregroundStyle(Color(.foreground))
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+      HStack(spacing: 12) {
+        Meter(value: min(max(share, 0), 1), fill: .success)
+          .frame(width: meterWidth)
+          .accessibilityHidden(true)
+
+        Text(share.formatted(.percent))
+          .foregroundStyle(Color(.foreground))
+
+        if showsChange {
+          Text(change.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? "–")
+            .foregroundStyle(change == nil ? .mutedForeground : Color(.foreground))
+            .accessibilityLabel(
+              change.map {
+                Text("Since the first mock: \($0)", tableName: "Exam", comment: "A change")
+              } ?? Text(""))
+        }
+      }
+      .typeStyle(.data)
+    }
+    .frame(minHeight: 44)
+    .accessibilityElement(children: .combine)
   }
 }

@@ -118,7 +118,10 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
 
     Section {
       VStack(spacing: 0) {
-        AccessibilityStack(alignment: .firstTextBaseline, spacing: 8) {
+        // Tops rather than first baselines: a vertical `TextField` reports its baseline above its
+        // first line, which dropped the hint under "I want to". Both are the lead role, so their
+        // first lines still share a baseline.
+        AccessibilityStack(alignment: .top, spacing: 8) {
           Text(
             "I want to", tableName: "Onboarding",
             comment: "The goal box's label, before the learner's words"
