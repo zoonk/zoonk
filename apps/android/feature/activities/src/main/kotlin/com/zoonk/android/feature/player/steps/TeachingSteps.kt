@@ -154,10 +154,7 @@ private fun BodyText(text: String) {
     RichText(text = text, style = MaterialTheme.typography.bodyLarge)
 }
 
-/**
- * The opening scene. Once a knowledge lesson's map is tagged, its opening map follows the scene's
- * words, at the foot of one narrow column, where the screen has room left.
- */
+/** The opening scene. Once a knowledge lesson's map is tagged, its opening map follows the scene's words. */
 @Composable
 internal fun FactHookView(
     step: LessonStep,
@@ -165,27 +162,13 @@ internal fun FactHookView(
     part: StepPart,
     marking: LessonMarking?,
 ) {
-    val scene =
-        @Composable {
-            ReadScene {
-                if (part.showsTurn) StepPicture(step, PictureFrame.Hero)
-                if (part.showsScreen) BodyText(content.content.text)
-                if (part.showsTurn) LessonStepVisual(content.content.visual)
-            }
-        }
     val map = marking?.map?.takeIf { part.showsScreen && it.opensLesson }
 
-    if (map == null) {
-        scene()
-        return
-    }
-
-    Column(
-        Modifier.fillMaxWidth().then(if (isWideLayout()) Modifier else Modifier.layoutId(FillsView)),
-        verticalArrangement = Arrangement.SpaceBetween,
-    ) {
-        scene()
-        OpeningMap(map, Modifier.padding(top = QUESTION_SPACING))
+    ReadScene {
+        if (part.showsTurn) StepPicture(step, PictureFrame.Hero)
+        if (part.showsScreen) BodyText(content.content.text)
+        if (part.showsTurn) LessonStepVisual(content.content.visual)
+        if (map != null) OpeningMap(map)
     }
 }
 

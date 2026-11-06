@@ -19,29 +19,27 @@ class UnderlineStrokeTest {
         val unbroken = underlineStroke(listOf(LineSpan(0f, 260f, 50f)), em)
         val split = underlineStroke(wrapped, em)
 
-        listOf(unbroken.pen to split.pen, unbroken.echo to split.echo).forEach { (whole, lines) ->
-            val joined = lines[0].depths(50f) + lines[1].depths(100f).drop(1)
-            assertArrayEquals(whole.single().depths(50f).toFloatArray(), joined.toFloatArray(), 0.001f)
-        }
-        assertEquals(listOf(0f, 60f), listOf(split.pen[1].first().x, split.pen[1].last().x))
+        val joined = split[0].depths(50f) + split[1].depths(100f).drop(1)
+        assertArrayEquals(unbroken.single().depths(50f).toFloatArray(), joined.toFloatArray(), 0.001f)
+        assertEquals(listOf(0f, 60f), listOf(split[1].first().x, split[1].last().x))
     }
 
     @Test
     fun curlsOnlyWhereThePhraseEndsNeverAtALineBreak() {
-        val pen = underlineStroke(wrapped, em).pen
-        val longer = underlineStroke(listOf(LineSpan(0f, 400f, 50f)), em).pen.single().depths(50f)
+        val pen = underlineStroke(wrapped, em)
+        val longer = underlineStroke(listOf(LineSpan(0f, 400f, 50f)), em).single().depths(50f)
         val alongLonger = { at: Int -> longer[at / 2] }
 
         assertEquals(alongLonger(200), pen[0].last().y - 50f, 0.001f)
         assertTrue(pen[1].last().y - 100f < alongLonger(260) - em * 0.1f)
 
-        val shortLastLine = underlineStroke(listOf(LineSpan(100f, 300f, 50f), LineSpan(0f, 4f, 100f)), em).pen
+        val shortLastLine = underlineStroke(listOf(LineSpan(100f, 300f, 50f), LineSpan(0f, 4f, 100f)), em)
         assertEquals(alongLonger(200), shortLastLine[0].last().y - 50f, 0.001f)
     }
 
     @Test
     fun startsAtTheRightEdgeOfLinesReadRightToLeft() {
-        val pen = underlineStroke(listOf(LineSpan(100f, 300f, 50f, rtl = true), LineSpan(240f, 300f, 100f, rtl = true)), em).pen
+        val pen = underlineStroke(listOf(LineSpan(100f, 300f, 50f, rtl = true), LineSpan(240f, 300f, 100f, rtl = true)), em)
 
         assertEquals(listOf(300f, 100f, 300f, 240f), listOf(pen[0].first().x, pen[0].last().x, pen[1].first().x, pen[1].last().x))
     }

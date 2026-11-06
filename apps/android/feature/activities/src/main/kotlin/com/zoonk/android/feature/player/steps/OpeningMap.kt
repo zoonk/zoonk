@@ -38,7 +38,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupPositionProvider
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LessonMap
@@ -133,6 +138,7 @@ private fun OpeningIdea(
     val ground = MaterialTheme.colorScheme.surface
     val line = MaterialTheme.colorScheme.outline
     val showLabel = stringResource(R.string.player_opening_map_show)
+    val below = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below)
 
     val place =
         @Composable { placeModifier: Modifier ->
@@ -180,7 +186,7 @@ private fun OpeningIdea(
     }
 
     TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+        positionProvider = remember(below) { BelowIdea(below) },
         tooltip = { RichTooltip { Text(about) } },
         state = tooltip,
     ) {
@@ -189,6 +195,25 @@ private fun OpeningIdea(
                 .clickable(onClickLabel = showLabel, role = Role.Button) { scope.launch { tooltip.show() } }
                 .semantics(mergeDescendants = true) { contentDescription = name },
         )
+    }
+}
+
+/**
+ * An idea's popover goes under it, away from the scene's words right above the map. Material's
+ * placement below an anchor flips above it when the window has no room left, onto those words, so
+ * there the popover sits on the window's bottom edge instead.
+ */
+private class BelowIdea(
+    private val below: PopupPositionProvider,
+) : PopupPositionProvider {
+    override fun calculatePosition(
+        anchorBounds: IntRect,
+        windowSize: IntSize,
+        layoutDirection: LayoutDirection,
+        popupContentSize: IntSize,
+    ): IntOffset {
+        val placed = below.calculatePosition(anchorBounds, windowSize, layoutDirection, popupContentSize)
+        return if (placed.y >= anchorBounds.bottom) placed else placed.copy(y = maxOf(0, windowSize.height - popupContentSize.height))
     }
 }
 
