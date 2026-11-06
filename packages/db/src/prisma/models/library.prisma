@@ -362,6 +362,8 @@ model LessonIcon {
   /// `running` while the one lesson that claimed the name draws it, then `completed`, or `failed`
   /// when the model couldn't draw it, so later lessons skip the name.
   status        GenerationStatus
+  /// The workflow run whose insert claimed the name, so a retry of its claim step still draws it.
+  runId         String           @map("run_id")
   /// 256 px WebP with its sticker border.
   url           String?
   /// 96 px WebP with its sticker border.

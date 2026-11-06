@@ -78,7 +78,11 @@ export async function lessonMarksWorkflow({
   const picked = await pickIcons({ analytics: context, lessonId, requests: tagged.requests, wait });
 
   const newNames = picked.flatMap((icon) => (icon.iconId ? [] : [icon.need]));
-  const claims = newNames.length > 0 ? await claimLessonIconsStep(newNames) : [];
+
+  const claims =
+    newNames.length > 0
+      ? await claimLessonIconsStep({ needs: newNames, runId: workflowRunId })
+      : [];
 
   const drawn = await Promise.all(
     claims.filter((claim) => claim.claimed).map((claim) => drawIcon({ analytics: context, claim })),
