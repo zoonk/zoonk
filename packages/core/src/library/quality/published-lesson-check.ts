@@ -31,13 +31,13 @@ import {
   publishStagedLessonVersion,
   stageLessonVersion,
 } from "../lessons/_utils/save-lesson-content";
-import { dropUnaskedQuestions } from "../lessons/_utils/screen-question-item";
 import { loadLessonReuse } from "../lessons/lesson-reuse";
 import {
   CURRENT_STEPS,
   lockCurrentLessonVersion,
   readCurrentLessonVersion,
   readStagedLessonVersion,
+  retireUnaskedQuestions,
 } from "../lessons/lesson-versions";
 import { type LessonCheckPlan } from "../lessons/write-lesson-content";
 import {
@@ -327,7 +327,7 @@ export async function setAsidePublishedLesson({
         where: { id: lessonId },
       });
 
-      await dropUnaskedQuestions(tx, lessonId);
+      await retireUnaskedQuestions(tx, { lessonId });
       return { changed: true, planIds: await moveOnWithoutLesson(tx, lessonId, holdKey) };
     }),
   );

@@ -41,7 +41,6 @@ import { computePlan } from "../plans/_utils/replan";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getSession } from "../users/get-session";
 import { attachChapterToCourse } from "./chapters/attach-course-chapter";
-import { claimLibraryGeneration } from "./claims/generation-claim";
 import { findEarlyOutlineChapter } from "./curriculum/early-outline-chapter";
 import { addMissingExamGraphSkills } from "./curriculum/exam-graph-repair";
 import { resetExamSkillGraphForAdmin } from "./curriculum/exam-skill-graph-reset";
@@ -70,6 +69,7 @@ import {
   stageLessonVersion,
 } from "./lessons/_utils/save-lesson-content";
 import { createLibraryLesson } from "./lessons/create-library-lesson";
+import { deleteRetiredSteps } from "./lessons/lesson-versions";
 import { placeChapterLessons } from "./lessons/place-chapter-lessons";
 import { voiceListeningSet } from "./listening/voice-listening-set";
 import { removeImageAsset } from "./media/check-image-asset";
@@ -330,14 +330,12 @@ const REGISTRY: Record<string, Registration[]> = {
       why: "its callers in `save-lesson-content.ts` lock the question's skill first",
       writes: ["item.create"],
     },
-    {
-      verdict: "marks",
-      why: "removes a replaced lesson's bank items",
-      writes: ["item.deleteMany"],
-    },
   ],
   "library/lessons/create-library-lesson.ts": [
     { verdict: "marks", why: "a new lesson teaching skills", writes: ["lesson.create"] },
+  ],
+  "library/lessons/lesson-versions.ts": [
+    { verdict: "marks", why: "retires bank items no screen asks", writes: ["item.updateMany"] },
   ],
   "library/lessons/place-chapter-lessons.ts": [
     {
@@ -1262,27 +1260,21 @@ async function drillsCase(): Promise<WriterCase> {
   };
 }
 
-async function replacedQuestionCase(): Promise<WriterCase> {
-  const [lesson, skill] = await Promise.all([
-    libraryLessonFixture({ contentStatus: "failed" }),
-    skillFixture(),
-  ]);
-
+async function retiredQuestionCase(): Promise<WriterCase> {
+  const [lesson, skill] = await Promise.all([libraryLessonFixture(), skillFixture()]);
   const question = await itemFixture({ skillId: skill.id });
-  await libraryStepFixture({ itemId: question.id, kind: "check", lessonId: lesson.id });
+  const retiredAt = new Date(Date.now() - 2 * MS_PER_DAY);
+  await libraryStepFixture({ itemId: question.id, lessonId: lesson.id, retiredAt });
   const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
 
   return {
     expectWritten: () =>
-      expect(prisma.item.findUnique({ where: { id: question.id } })).resolves.toBeNull(),
+      expect(
+        prisma.item.findUniqueOrThrow({ select: { retiredAt: true }, where: { id: question.id } }),
+      ).resolves.toStrictEqual({ retiredAt: expect.any(Date) }),
     plan,
     root: skillRoot(skill.id),
-    write: () =>
-      claimLibraryGeneration({
-        id: lesson.id,
-        target: "lessonContent",
-        workflowRunId: randomUUID(),
-      }),
+    write: () => deleteRetiredSteps(),
   };
 }
 
@@ -1620,10 +1612,10 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
     "saveLessonContent (the lesson)": publishLessonCase,
     "stageLessonVersion (the lesson)": lessonVersionCase,
   },
-  "library/lessons/_utils/screen-question-item.ts": {
-    "claimLibraryGeneration (a pulled lesson's question)": replacedQuestionCase,
-  },
   "library/lessons/create-library-lesson.ts": { createLibraryLesson: newLessonCase },
+  "library/lessons/lesson-versions.ts": {
+    "deleteRetiredSteps (a question only deleted screens asked)": retiredQuestionCase,
+  },
   "library/lessons/place-chapter-lessons.ts": { placeChapterLessons: placeLessonsCase },
   "library/listening/voice-listening-set.ts": { voiceListeningSet: listeningCase },
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },

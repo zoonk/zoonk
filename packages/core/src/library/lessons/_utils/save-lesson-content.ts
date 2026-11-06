@@ -14,14 +14,14 @@ import {
 import { resolveReviewFlags } from "../../sources/content-review-flags";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type ScreenMathItem } from "../../steps/written-screens";
-import { CURRENT_STEPS, lockCurrentLessonVersion, startLessonVersion } from "../lesson-versions";
-import { getLessonScreenSkillId, isNotebookQuestionStep } from "./lesson-screen-skill";
 import {
-  dropUnaskedQuestions,
-  parseScreenQuestion,
-  saveQuestionItems,
-  toScreenQuestion,
-} from "./screen-question-item";
+  CURRENT_STEPS,
+  lockCurrentLessonVersion,
+  retireUnaskedQuestions,
+  startLessonVersion,
+} from "../lesson-versions";
+import { getLessonScreenSkillId, isNotebookQuestionStep } from "./lesson-screen-skill";
+import { parseScreenQuestion, saveQuestionItems, toScreenQuestion } from "./screen-question-item";
 import { toStepData } from "./step-data";
 
 class LessonPublicationLostError extends Error {
@@ -167,7 +167,7 @@ async function writeScreens(
     })),
   });
 
-  await dropUnaskedQuestions(tx, lessonId);
+  await retireUnaskedQuestions(tx, { lessonId });
   await resolveReviewFlags({ target: { lessonId }, tx, writtenAt: new Date() });
 
   return version;
@@ -346,7 +346,7 @@ export async function publishStagedLessonVersion({
     );
 
     await tx.step.updateMany({ data: { staged: false, stagedItem: DbNull }, where: staged });
-    await dropUnaskedQuestions(tx, lessonId);
+    await retireUnaskedQuestions(tx, { lessonId });
 
     await tx.lesson.update({
       data: { stagedSummary: DbNull, summary: lesson.stagedSummary ?? DbNull },

@@ -3,6 +3,10 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { waitForBlockedStatement } from "../../../_test-utils/learner-lock";
@@ -14,6 +18,8 @@ import { checkLessonStep } from "../../../lesson-player/check-lesson-step";
 import { mistakeListInputSchema } from "../../../mistakes/contract";
 import { listCurrentUserMistakes } from "../../../mistakes/list-current-user-mistakes";
 import { loadPracticeItems } from "../../../sessions/_utils/load-practice";
+import { answerStudyQuestion } from "../../../sessions/answer-study-question";
+import { finishStudyBlock } from "../../../sessions/finish-study-block";
 import { completeLessonContent } from "../../generation/lesson-generation-state";
 import { writtenTemperatureLesson } from "../../quality/_test-utils/written-lessons";
 import { toStepContent } from "../../steps/written-screens";
@@ -476,6 +482,57 @@ describe(saveLessonContent, () => {
     });
   });
 
+  it("lets a learner finish a practice block they answered after a fix retires its question", async () => {
+    const [{ lesson, skill, workflowRunId }, user] = await Promise.all([
+      claimedLesson(),
+      userFixture(),
+    ]);
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [numericScreen(skill.id, "Fix me: {start} °C and {rise} more?")],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const old = await prisma.step.findFirstOrThrow({ where: { lessonId: lesson.id } });
+    const itemId = old.itemId ?? "";
+    mockSession(user.id);
+    const session = await studySessionFixture({ status: "active", userId: user.id });
+
+    const block = await studySessionBlockFixture({
+      kind: "practice",
+      payload: { itemIds: [itemId] },
+      sessionId: session.id,
+      startedAt: new Date(),
+      status: "active",
+    });
+
+    const ids = { blockId: block.id, sessionId: session.id };
+
+    await expect(
+      answerStudyQuestion({
+        ...ids,
+        input: { answer: { number: 0 }, durationMs: 8000, itemId, timeZone: "UTC" },
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    const version = await stageLessonVersion({
+      language: "en",
+      lessonId: lesson.id,
+      replaces: 1,
+      screens: [numericScreen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+    });
+
+    await publishStagedLessonVersion({ lessonId: lesson.id, version: version ?? 0 });
+
+    await expect(finishStudyBlock({ ...ids, input: { timeZone: "UTC" } })).resolves.toMatchObject({
+      status: "ready",
+    });
+  });
+
   it("keeps one bank question when a retried save writes the same screens again", async () => {
     const { lesson, skill, workflowRunId } = await claimedLesson();
 
@@ -496,7 +553,7 @@ describe(saveLessonContent, () => {
     });
 
     await expect(
-      prisma.item.findMany({ select: { id: true }, where: { skillId: skill.id } }),
+      prisma.item.findMany({ select: { id: true }, where: { retiredAt: null, skillId: skill.id } }),
     ).resolves.toStrictEqual([{ id: current.itemId }]);
   });
 
@@ -537,7 +594,7 @@ describe(saveLessonContent, () => {
     ).resolves.toMatchObject({ itemId: first.itemId });
 
     await expect(
-      prisma.item.findMany({ select: { id: true }, where: { skillId: skill.id } }),
+      prisma.item.findMany({ select: { id: true }, where: { retiredAt: null, skillId: skill.id } }),
     ).resolves.toStrictEqual([{ id: first.itemId }]);
   });
 

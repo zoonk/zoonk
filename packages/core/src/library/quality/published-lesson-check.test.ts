@@ -531,7 +531,10 @@ describe(setAsidePublishedLesson, () => {
     expect(stored).toMatchObject({ contentStatus: "failed", setAsideAt: expect.any(Date) });
     expect(planItem.status).toBe("skipped");
     expect(steps.every((step) => step.retiredAt === null)).toBe(true);
-    await expect(prisma.item.count({ where: { id: { in: asked } } })).resolves.toBe(0);
+
+    await expect(
+      prisma.item.count({ where: { id: { in: asked }, retiredAt: null } }),
+    ).resolves.toBe(0);
 
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 7 })).resolves.toBe(false);
   });
