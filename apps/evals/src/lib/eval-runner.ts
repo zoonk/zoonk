@@ -211,6 +211,7 @@ function combineOutputsAndResults(
       output: output.output,
       outputTokens: output.outputTokens,
       reasoningTokens: output.reasoningTokens,
+      setAside: output.setAside,
       steps: scored.steps,
       testCase: scored.testCase,
     };

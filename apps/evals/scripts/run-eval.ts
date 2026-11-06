@@ -10,7 +10,7 @@ import {
   getTestCaseLanguage,
   summarizeByLanguage,
 } from "@/lib/case-languages";
-import { getCallCost } from "@/lib/cost";
+import { getCallsCost, getRunCost } from "@/lib/cost";
 import { getTaskResults, removeModelResultRuns, runEval } from "@/lib/eval-runner";
 import {
   formatDollars,
@@ -31,7 +31,7 @@ import {
   meterWork,
   recordCalls,
 } from "@/lib/spend-meter";
-import { type TaskStats, getCallsCost, getSpent, getStatsFromResults } from "@/lib/stats";
+import { type TaskStats, getSpent, getStatsFromResults } from "@/lib/stats";
 import { getTestCaseRunIds } from "@/lib/test-case-runs";
 import {
   type ModelOutputs,
@@ -431,11 +431,15 @@ async function runBattle({
   const { matchups, unjudged } = judging.result;
   const outputs = onlyRuns({ modelIds, outputs: await getAllOutputsForTask(task.id), runIds });
 
-  const costOf = (modelId: string) =>
-    (outputs.get(modelId)?.outputs ?? []).reduce(
-      (total, usage) => total + getCallCost({ modelId, prices: GATEWAY_PRICES, usage }),
+  const costOf = (modelId: string) => {
+    const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
+
+    return (outputs.get(modelId)?.outputs ?? []).reduce(
+      (total, run) =>
+        total + getRunCost({ modelId: model.gatewayModelId, prices: GATEWAY_PRICES, run }),
       0,
     );
+  };
 
   const generationSpent = saved
     ? modelIds.reduce((total, modelId) => total + costOf(modelId), 0)

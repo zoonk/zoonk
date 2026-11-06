@@ -1,4 +1,4 @@
-import { type ModelCall } from "@/lib/types";
+import { type ModelCall, toModelCall } from "@/lib/types";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 import { checkCitedFacts } from "@zoonk/ai/tasks/research/check-cited-facts";
 import { checkExamReading } from "@zoonk/ai/tasks/research/check-exam-reading";
@@ -75,30 +75,6 @@ function checkPassages({
 }
 
 type EvalDocumentSource = { sourceId: string; text: string | null };
-
-type CallProvenance = {
-  model: string;
-  usage: {
-    cacheReadTokens?: number;
-    cacheWriteTokens?: number;
-    inputTokens?: number;
-    outputTokens?: number;
-    reasoningTokens?: number;
-  };
-};
-
-function toModelCall({ model, usage }: CallProvenance): ModelCall {
-  return {
-    modelId: model,
-    usage: {
-      cacheReadTokens: usage.cacheReadTokens,
-      cacheWriteTokens: usage.cacheWriteTokens,
-      inputTokens: usage.inputTokens ?? 0,
-      outputTokens: usage.outputTokens ?? 0,
-      reasoningTokens: usage.reasoningTokens,
-    },
-  };
-}
 
 function toSources(documents: ResearchDocument[]): EvalDocumentSource[] {
   return documents.map((document, index) => ({

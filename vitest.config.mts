@@ -17,7 +17,6 @@ export default defineConfig({
       "scripts/dev/*.test.mts",
       "scripts/e2e/*.test.mts",
       "scripts/perf/*.test.mts",
-      "scripts/pr/*.test.mts",
       "scripts/verify/*.test.mts",
       "scripts/worktree/*.test.mts",
     ],
