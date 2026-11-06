@@ -2972,6 +2972,7 @@ describe(goalContentWorkflow, () => {
       details: { level: "none", purpose: "deep" },
       productCheckedAt: new Date(),
     });
+
     const events: string[] = [];
     const { promise: graphWritten, resolve: markGraphWritten } = Promise.withResolvers<boolean>();
 
