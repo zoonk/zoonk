@@ -314,20 +314,20 @@ export function BlockQuestionActions(props: BlockActionsProps) {
   const t = useExtracted();
   const { drill, stage } = props.blockDrill;
   const { phase } = props.run.state;
-  const answering = phase.kind === "answering" || phase.kind === "answerFailed";
-  const offersNotSure = stage !== "reading" && answering;
+  const checking = phase.kind === "checking";
+  const offersNotSure = stage !== "reading" && phase.kind !== "feedback";
   const notSure = () => void props.run.submit(NOT_SURE);
 
   return (
     <>
       {drill?.kind === "noGuessing" && offersNotSure && (
-        <NotSureButton disabled={false} onClick={notSure} />
+        <NotSureButton disabled={checking} onClick={notSure} />
       )}
 
       {(props.question.placement || props.question.format === "typed") &&
         drill?.kind !== "noGuessing" &&
         offersNotSure && (
-          <NotSureButton disabled={false} label={t("I don't know yet")} onClick={notSure} />
+          <NotSureButton disabled={checking} label={t("I don't know yet")} onClick={notSure} />
         )}
 
       <QuestionMainButton {...getMainAction(props)} />
