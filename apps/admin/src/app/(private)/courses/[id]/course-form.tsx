@@ -5,6 +5,7 @@ import {
   AdminEditFormActions,
   AdminEditFormFeedback,
 } from "@/components/admin-edit-form";
+import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { type Course } from "@zoonk/db";
 import {
   Field,
@@ -15,18 +16,27 @@ import {
 } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
+import { parseFormField } from "@zoonk/utils/form";
 import { CheckIcon } from "lucide-react";
-import { useActionState } from "react";
 import { type UpdateCourseState, updateCourseAction } from "./_actions/update-course";
 
 export function CourseForm({ course }: { course: Pick<Course, "id" | "slug" | "title"> }) {
-  const [state, formAction] = useActionState(updateCourseAction, {
-    error: null,
-    slug: course.slug,
-    status: "idle",
-    submissionId: 0,
-    title: course.title,
-  } satisfies UpdateCourseState);
+  const [state, formAction] = useAdminActionState<UpdateCourseState>({
+    action: updateCourseAction,
+    initialState: {
+      error: null,
+      slug: course.slug,
+      status: "idle",
+      submissionId: 0,
+      title: course.title,
+    },
+    onRejected: (previous, formData) => ({
+      ...previous,
+      slug: parseFormField(formData, "slug") ?? previous.slug,
+      status: "error",
+      title: parseFormField(formData, "title") ?? previous.title,
+    }),
+  });
 
   return (
     <AdminEditForm action={formAction}>

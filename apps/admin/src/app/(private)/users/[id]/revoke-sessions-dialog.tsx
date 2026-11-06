@@ -1,5 +1,6 @@
 "use client";
 
+import { useAdminFormAction } from "@/lib/use-admin-action-state";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
+import { FieldError } from "@zoonk/ui/components/field";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { revokeSessionsAction } from "./_actions/revoke-sessions";
 
@@ -33,22 +35,29 @@ export function RevokeSessionsDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <form
-          action={async (formData) => {
-            await revokeSessionsAction(formData);
-            onOpenChange(false);
-          }}
-        >
-          <input type="hidden" name="userId" value={userId} />
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <SubmitButton className="w-auto" variant="destructive">
-              Revoke sessions
-            </SubmitButton>
-          </AlertDialogFooter>
-        </form>
+        <RevokeSessionsForm onRevoked={() => onOpenChange(false)} userId={userId} />
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+function RevokeSessionsForm({ onRevoked, userId }: { onRevoked: () => void; userId: string }) {
+  const [state, formAction] = useAdminFormAction(async (formData) => {
+    await revokeSessionsAction(formData);
+    onRevoked();
+  });
+
+  return (
+    <form action={formAction} className="flex flex-col gap-6">
+      <input type="hidden" name="userId" value={userId} />
+      <FieldError key={state.submissionId}>{state.error}</FieldError>
+
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <SubmitButton className="w-auto" variant="destructive">
+          Revoke sessions
+        </SubmitButton>
+      </AlertDialogFooter>
+    </form>
   );
 }

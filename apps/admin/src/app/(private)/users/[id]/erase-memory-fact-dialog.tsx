@@ -1,5 +1,6 @@
 "use client";
 
+import { useAdminFormAction } from "@/lib/use-admin-action-state";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -11,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
 import { Button } from "@zoonk/ui/components/button";
+import { FieldError } from "@zoonk/ui/components/field";
 import { useState } from "react";
 import { eraseMemoryFactAction } from "./_actions/erase-memory-fact";
 
@@ -31,23 +33,38 @@ export function EraseMemoryFactDialog({ factId, userId }: { factId: string; user
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <form
-          action={async (formData) => {
-            await eraseMemoryFactAction(formData);
-            setOpen(false);
-          }}
-        >
-          <input name="factId" type="hidden" value={factId} />
-          <input name="userId" type="hidden" value={userId} />
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button type="submit" variant="destructive">
-              Erase
-            </Button>
-          </AlertDialogFooter>
-        </form>
+        <EraseMemoryFactForm factId={factId} onErased={() => setOpen(false)} userId={userId} />
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+function EraseMemoryFactForm({
+  factId,
+  onErased,
+  userId,
+}: {
+  factId: string;
+  onErased: () => void;
+  userId: string;
+}) {
+  const [state, formAction] = useAdminFormAction(async (formData) => {
+    await eraseMemoryFactAction(formData);
+    onErased();
+  });
+
+  return (
+    <form action={formAction} className="flex flex-col gap-6">
+      <input name="factId" type="hidden" value={factId} />
+      <input name="userId" type="hidden" value={userId} />
+      <FieldError key={state.submissionId}>{state.error}</FieldError>
+
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <Button type="submit" variant="destructive">
+          Erase
+        </Button>
+      </AlertDialogFooter>
+    </form>
   );
 }
