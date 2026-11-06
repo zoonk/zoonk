@@ -1964,6 +1964,47 @@ describe("work an earlier day left", () => {
     },
   );
 
+  it("keeps an overdue challenge's time on the next shown end while that end's own lessons reach it", () => {
+    const input = planInput({
+      graph: {
+        phases: [
+          { milestone: null, name: "First" },
+          { milestone: null, name: "Second" },
+          { milestone: null, name: "Third" },
+        ],
+        skills: [
+          skill("s1", { lessons: 3 }),
+          skill("s2", { lessons: 4, phase: 1 }),
+          skill("s3", { lessons: 5, phase: 2 }),
+        ],
+      },
+      lessons: [...lessonsFor("s1", 3), ...lessonsFor("s2", 4), ...lessonsFor("s3", 5)],
+    });
+
+    const first = buildPlan(input);
+    const items = store(first, new Set(lessonsOn(first, monday)));
+    const shown = first.items.find((item) => item.key === "boss:1")?.scheduledFor ?? monday;
+
+    const kept = buildPlan({
+      ...input,
+      carryOver: { lessonIds: [] },
+      items,
+      phaseEnds: getShownPhaseEnds({ items, phases: first.phases }),
+      setAsideLeftWork: true,
+      today: shown,
+    });
+
+    expect(
+      kept.items
+        .filter((item) => item.kind === "boss")
+        .map((item) => [item.key, item.status, dateOf(item)]),
+    ).toStrictEqual([
+      ["boss:0", "todo", toIsoDate(shown)],
+      ["boss:1", "todo", expect.any(String)],
+      ["boss:2", "todo", expect.any(String)],
+    ]);
+  });
+
   it("leaves a lesson given ahead where its phase has it while an earlier phase has days of work left", () => {
     const input = planInput({
       graph: {

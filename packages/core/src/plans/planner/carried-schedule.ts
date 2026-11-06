@@ -73,9 +73,9 @@ function findRoomEnd({
   ends: ReadonlyMap<number, Date>;
   from: Date;
   phase: number;
-}): readonly [number, Date] | undefined {
+}): Date | undefined {
   const ahead = [...ends].filter(([kept, end]) => kept >= phase && end >= from);
-  return ahead.toSorted(([a], [b]) => a - b)[0];
+  return ahead.toSorted(([a], [b]) => a - b)[0]?.[1];
 }
 
 function listChallengeRooms({
@@ -87,20 +87,14 @@ function listChallengeRooms({
   from: Date;
   units: readonly QueueUnit[];
 }): ChallengeRoom[] {
-  const rooms = units.reduce((byEnd, unit) => {
-    const end = unit.kind === "boss" ? findRoomEnd({ ends, from, phase: unit.phase }) : undefined;
+  return units
+    .flatMap((unit) => {
+      const date =
+        unit.kind === "boss" ? findRoomEnd({ ends, from, phase: unit.phase }) : undefined;
 
-    if (!end) {
-      return byEnd;
-    }
-
-    const [phase, date] = end;
-    const minutes = (byEnd.get(phase)?.minutes ?? 0) + unit.minutes;
-
-    return byEnd.set(phase, { date, minutes, phase });
-  }, new Map<number, ChallengeRoom>());
-
-  return [...rooms.values()].toSorted((a, b) => a.date.getTime() - b.date.getTime());
+      return date ? [{ date, minutes: unit.minutes, phase: unit.phase }] : [];
+    })
+    .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
 
 function sumRoomMinutes(rooms: readonly ChallengeRoom[]): Map<number, number> {
@@ -129,7 +123,7 @@ export function markAfterCarried({
 }
 
 /**
- * A kept end lets go once the lessons its challenge comes after reach its day (`keepPhaseEnd`), so
+ * A challenge whose lessons reach the day kept for it moves after them anyway (`keepPhaseEnd`), so
  * time kept there would only push those lessons, and the challenge after them, a day later.
  */
 function listHeldRooms({
