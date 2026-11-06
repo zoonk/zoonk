@@ -33,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -284,10 +283,7 @@ internal fun announcedSeconds(
         else -> announced
     }
 
-/**
- * A no-guessing drill's "I'm not sure", or "I don't know yet" elsewhere: quieter than Check, as main's.
- * While [busy] it keeps focus but ignores presses.
- */
+/** A no-guessing drill's "I'm not sure", or "I don't know yet" elsewhere: quieter than Check, as main's. */
 @Composable
 fun NotSureButton(
     onClick: () -> Unit,
@@ -296,11 +292,7 @@ fun NotSureButton(
     busy: Boolean = false,
     dontKnowYet: Boolean = false,
 ) {
-    OutlinedButton(
-        onClick = { if (!busy) onClick() },
-        modifier = modifier.semantics { if (busy) disabled() },
-        enabled = enabled || busy,
-    ) {
+    OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled, busy = busy) {
         if (!dontKnowYet) {
             Icon(
                 painterResource(R.drawable.ic_help),
