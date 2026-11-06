@@ -351,6 +351,18 @@ describe(buildSearchQueries, () => {
     ).toStrictEqual([]);
   });
 
+  it("sends no query left without a subject word", () => {
+    const thisYear = new Date().getUTCFullYear();
+
+    // On a private screen, a grammar query keeps only the words every language shares.
+    expect(
+      build(asking({ ...SOFIA_PLAN, privateContent: undefined }), [
+        "núcleo do sujeito concordância verbal envio dos relatórios atrasou",
+        `what changed in ${thisYear}`,
+      ]),
+    ).toStrictEqual([]);
+  });
+
   it("sends at most three queries of up to 200 characters, each once", () => {
     const sources = asking(SOFIA_PLAN);
     const long = Array.from({ length: 25 }, () => "honorários").join(" ");
