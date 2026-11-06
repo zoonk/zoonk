@@ -145,8 +145,8 @@ export async function dailySweepsWorkflow({
   "use workflow";
 
   // Vercel can deliver a run again until a day after it was due, and that start can wait in the
-  // workflow queue for another day, so the token outlives this run by a week; `using` or
-  // `claimRunToken` would free it when the run ends.
+  // workflow queue for another day, so the token stays taken for a week from this claim; `using`
+  // or `claimRunToken` would free it when the run ends.
   const scheduledRun = createHook({
     experimental_minRetention: "7d",
     token: `daily-sweeps:${executionId}`,
