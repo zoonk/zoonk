@@ -136,11 +136,7 @@ export type ReleaseComparisonResult = {
 export function toWhatsNewKeys(releaseId: string): OutlineKeys {
   const prefix = `whats-new:${releaseId}`;
 
-  return {
-    chapter: prefix,
-    lesson: (title) => `${prefix}:lesson:${toNameKey(title)}`,
-    skill: (name) => `${prefix}:${toNameKey(name)}`,
-  };
+  return { chapter: prefix, skill: (name) => `${prefix}:${toNameKey(name)}` };
 }
 
 function toSkillKeys({ releaseId, whatsNew }: { releaseId: string; whatsNew: WhatsNew }) {

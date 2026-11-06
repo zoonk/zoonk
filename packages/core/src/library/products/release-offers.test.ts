@@ -14,7 +14,8 @@ import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-util
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
-import { findWhatsNewChapter, offerWhatsNew } from "./release-offers";
+import { saveWhatsNewSkills } from "./release-advance";
+import { findWhatsNewChapter, offerWhatsNew, saveWhatsNewChapter } from "./release-offers";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
@@ -164,5 +165,63 @@ describe(findWhatsNewChapter, () => {
     await expect(findWhatsNewChapter({ courseId: course.id, releaseId })).resolves.toMatchObject({
       skills: [{ id: skill.id, key: skill.id }],
     });
+  });
+});
+
+describe(saveWhatsNewChapter, () => {
+  it("keeps apart lessons whose titles differ only in symbols", async () => {
+    const { course } = await setup();
+    const releaseId = crypto.randomUUID();
+
+    const lessons = [
+      { skill: "Compile native programs", title: "Use C++" },
+      { skill: "Build managed applications", title: "Use C#" },
+    ];
+
+    const whatsNew = {
+      level: "beginner" as const,
+      offer: "Learn the new languages.",
+      skills: lessons.map(({ skill }) => ({ description: skill, name: skill })),
+      title: "What's new",
+    };
+
+    const skills = await saveWhatsNewSkills({
+      courseId: course.id,
+      provenance: PROVENANCE,
+      releaseId,
+      whatsNew,
+    });
+
+    const saved = await saveWhatsNewChapter({
+      chapter: {
+        description: "New languages.",
+        lessons: lessons.map(({ skill, title }) => ({
+          canDo: skill,
+          description: skill,
+          estimatedMinutes: 3,
+          skills: [skill],
+          title,
+        })),
+        objectives: lessons.map(({ skill }) => skill),
+        skillKeys: skills.map((skill) => skill.key),
+        title: whatsNew.title,
+        tools: [],
+      },
+      courseId: course.id,
+      level: "beginner",
+      provenance: PROVENANCE,
+      releaseId,
+      skills,
+      workflowRunId: crypto.randomUUID(),
+    });
+
+    const titles = await prisma.lesson.findMany({
+      select: { title: true },
+      where: { id: { in: saved.lessonIds } },
+    });
+
+    expect(titles.map(({ title }) => title)).toStrictEqual(
+      expect.arrayContaining(["Use C++", "Use C#"]),
+    );
   });
 });

@@ -1,6 +1,7 @@
 import "server-only";
 import { type generateCourseOutline } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { type CourseLevel, prisma } from "@zoonk/db";
+import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { type LibraryProvenance } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { createChapterChallenge } from "../challenges/chapter-challenge";
@@ -25,14 +26,11 @@ export type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["d
 export type OutlineChapter = CourseOutline["chapters"][number];
 
 /**
- * Identities for a chapter that's new with new lessons, such as a release's What's new, so nothing
- * is matched against the library and a retry finds what an earlier try saved.
+ * Identities for a chapter that's new with new skills, such as a release's What's new, so nothing
+ * is matched against the library and a retry finds what an earlier try saved. Its lessons are named
+ * by those skills and their titles.
  */
-export type OutlineKeys = {
-  chapter: string;
-  lesson: (title: string) => string;
-  skill: (name: string) => string;
-};
+export type OutlineKeys = { chapter: string; skill: (name: string) => string };
 
 type ChapterContext = {
   analytics?: CurriculumAnalytics;
@@ -106,7 +104,7 @@ async function createKeyedLessons({
   chapterId: string;
   context: OutlineContext;
   keys: OutlineKeys;
-}): Promise<string[]> {
+}): Promise<(string | null)[]> {
   const { level, provenance, scope } = context;
 
   const named = new Map(
@@ -135,24 +133,42 @@ async function createKeyedLessons({
 
   const skillIds = new Map(skills);
 
+  const keyed = chapter.lessons.flatMap((lesson, index) => {
+    const ids = lesson.skills.flatMap((name) => skillIds.get(name) ?? []);
+    return ids.length > 0 ? [{ ids, index, lesson }] : [];
+  });
+
   const created = await createHomeChapterLessons({
     homeChapterId: chapterId,
-    lessons: chapter.lessons.map((lesson) => ({
+    lessons: keyed.map(({ ids, lesson }) => ({
       canDo: lesson.canDo,
       description: lesson.description,
       estimatedMinutes: lesson.estimatedMinutes,
-      identityKey: keys.lesson(lesson.title),
+      identityKey: scopeIdentityKey({
+        key: buildLessonIdentityKey({
+          courseId: context.course.id,
+          level,
+          skillIds: ids,
+          targetLanguage: scope.targetLanguage,
+          title: lesson.title,
+        }),
+        ownerId: scope.ownerId,
+      }),
       language: scope.language,
       level,
       provenance,
-      skillIds: lesson.skills.flatMap((name) => skillIds.get(name) ?? []),
+      skillIds: ids,
       targetLanguage: scope.targetLanguage,
       title: lesson.title,
     })),
     ownerId: scope.ownerId,
   });
 
-  return created.map(({ lesson }) => lesson.id);
+  const byIndex = new Map(
+    keyed.map(({ index }, position) => [index, created[position]?.lesson.id]),
+  );
+
+  return chapter.lessons.map((_, index) => byIndex.get(index) ?? null);
 }
 
 async function resolveChapterLessons({
