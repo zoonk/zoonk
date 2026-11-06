@@ -1,4 +1,4 @@
-import { scrollsAlong } from "@zoonk/ui/lib/scroll-overflow";
+import { canScrollAlong } from "@zoonk/ui/lib/scroll-overflow";
 
 const MAX_NUMBER_KEY = 9;
 
@@ -86,7 +86,7 @@ function isHandledByControl(event: KeyboardEvent): boolean {
 function scrollsToward(element: Element | null, arrow: string): boolean {
   return (
     element !== null &&
-    scrollsAlong(element, arrow === "ArrowLeft" || arrow === "ArrowRight" ? "x" : "y")
+    canScrollAlong(element, arrow === "ArrowLeft" || arrow === "ArrowRight" ? "x" : "y")
   );
 }
 

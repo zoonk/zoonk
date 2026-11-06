@@ -1,5 +1,4 @@
-/** Whether the element scrolls along the axis and has more there than it shows. */
-export function scrollsAlong(element: Element, axis: "x" | "y"): boolean {
+export function canScrollAlong(element: Element, axis: "x" | "y"): boolean {
   const { overflowX, overflowY } = getComputedStyle(element);
   const overflow = axis === "x" ? overflowX : overflowY;
 
