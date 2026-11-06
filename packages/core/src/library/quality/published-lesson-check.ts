@@ -31,6 +31,7 @@ import {
   publishStagedLessonVersion,
   stageLessonVersion,
 } from "../lessons/_utils/save-lesson-content";
+import { dropUnaskedQuestions } from "../lessons/_utils/screen-question-item";
 import { loadLessonReuse } from "../lessons/lesson-reuse";
 import {
   CURRENT_STEPS,
@@ -326,6 +327,7 @@ export async function setAsidePublishedLesson({
         where: { id: lessonId },
       });
 
+      await dropUnaskedQuestions(tx, lessonId);
       return { changed: true, planIds: await moveOnWithoutLesson(tx, lessonId, holdKey) };
     }),
   );

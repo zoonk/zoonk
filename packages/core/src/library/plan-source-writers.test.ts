@@ -41,6 +41,7 @@ import { computePlan } from "../plans/_utils/replan";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getSession } from "../users/get-session";
 import { attachChapterToCourse } from "./chapters/attach-course-chapter";
+import { claimLibraryGeneration } from "./claims/generation-claim";
 import { findEarlyOutlineChapter } from "./curriculum/early-outline-chapter";
 import { addMissingExamGraphSkills } from "./curriculum/exam-graph-repair";
 import { resetExamSkillGraphForAdmin } from "./curriculum/exam-skill-graph-reset";
@@ -328,6 +329,11 @@ const REGISTRY: Record<string, Registration[]> = {
       verdict: "covered",
       why: "its callers in `save-lesson-content.ts` lock the question's skill first",
       writes: ["item.create"],
+    },
+    {
+      verdict: "marks",
+      why: "removes a replaced lesson's bank items",
+      writes: ["item.deleteMany"],
     },
   ],
   "library/lessons/create-library-lesson.ts": [
@@ -1256,6 +1262,30 @@ async function drillsCase(): Promise<WriterCase> {
   };
 }
 
+async function replacedQuestionCase(): Promise<WriterCase> {
+  const [lesson, skill] = await Promise.all([
+    libraryLessonFixture({ contentStatus: "failed" }),
+    skillFixture(),
+  ]);
+
+  const question = await itemFixture({ skillId: skill.id });
+  await libraryStepFixture({ itemId: question.id, kind: "check", lessonId: lesson.id });
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+
+  return {
+    expectWritten: () =>
+      expect(prisma.item.findUnique({ where: { id: question.id } })).resolves.toBeNull(),
+    plan,
+    root: skillRoot(skill.id),
+    write: () =>
+      claimLibraryGeneration({
+        id: lesson.id,
+        target: "lessonContent",
+        workflowRunId: randomUUID(),
+      }),
+  };
+}
+
 async function pictureCase(): Promise<WriterCase> {
   const [asset, skill] = await Promise.all([mediaAssetFixture(), skillFixture()]);
   const question = await itemFixture({ mediaAssetId: asset.id, skillId: skill.id });
@@ -1589,6 +1619,9 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
     "saveLessonContent (a math item's skill)": mathItemCase,
     "saveLessonContent (the lesson)": publishLessonCase,
     "stageLessonVersion (the lesson)": lessonVersionCase,
+  },
+  "library/lessons/_utils/screen-question-item.ts": {
+    "claimLibraryGeneration (a pulled lesson's question)": replacedQuestionCase,
   },
   "library/lessons/create-library-lesson.ts": { createLibraryLesson: newLessonCase },
   "library/lessons/place-chapter-lessons.ts": { placeChapterLessons: placeLessonsCase },

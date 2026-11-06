@@ -7,6 +7,7 @@ import {
   getLibraryLessonCacheTag,
 } from "../../cache/tags";
 import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
+import { dropUnaskedQuestions } from "../lessons/_utils/screen-question-item";
 import { startLessonVersion } from "../lessons/lesson-versions";
 
 export type LibraryGenerationTarget =
@@ -84,7 +85,10 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
 
       return lesson && { runId: lesson.contentRunId, status: lesson.contentStatus };
     },
-    reset: (db, id) => startLessonVersion(db, id),
+    reset: async (db, id) => {
+      await startLessonVersion(db, id);
+      await dropUnaskedQuestions(db, id);
+    },
     tags: (id) => [getLibraryLessonCacheTag(id)],
   },
   lessonSpec: {

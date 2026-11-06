@@ -4,6 +4,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { revalidateTag } from "next/cache";
 import { describe, expect, it } from "vitest";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
@@ -60,6 +61,30 @@ describe(claimLibraryGeneration, () => {
     await expect(prisma.step.findUniqueOrThrow({ where: { id: step.id } })).resolves.toMatchObject({
       retiredAt: expect.any(Date),
     });
+  });
+
+  it("takes a pulled lesson's questions out of the practice bank when a new run claims its content", async () => {
+    const [lesson, skill] = await Promise.all([
+      libraryLessonFixture({ contentStatus: "failed" }),
+      skillFixture(),
+    ]);
+
+    const [asked, bank] = await Promise.all([
+      itemFixture({ skillId: skill.id }),
+      itemFixture({ skillId: skill.id }),
+    ]);
+
+    await libraryStepFixture({ itemId: asked.id, kind: "check", lessonId: lesson.id });
+
+    await claimLibraryGeneration({
+      id: lesson.id,
+      target: "lessonContent",
+      workflowRunId: randomUUID(),
+    });
+
+    await expect(
+      prisma.item.findMany({ select: { id: true }, where: { skillId: skill.id } }),
+    ).resolves.toStrictEqual([{ id: bank.id }]);
   });
 
   it("claims the outline of a course made before outlines existed", async () => {

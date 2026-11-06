@@ -502,11 +502,14 @@ describe(citePublishedLesson, () => {
 });
 
 describe(setAsidePublishedLesson, () => {
-  it("takes a lesson out of play and moves plans on, while its screens stay for learners playing it", async () => {
+  it("takes a lesson and its questions out of play and moves plans on, while its screens stay for learners playing it", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
     const plan = await planFixture({ goalId: goal.id });
     const { lesson, plan: check } = await publishLesson();
+    const published = await listSteps(lesson.id);
+    const asked = published.flatMap((step) => step.itemId ?? []);
+    expect(asked).toHaveLength(1);
 
     const item = await planItemFixture({
       lessonId: lesson.id,
@@ -528,6 +531,7 @@ describe(setAsidePublishedLesson, () => {
     expect(stored).toMatchObject({ contentStatus: "failed", setAsideAt: expect.any(Date) });
     expect(planItem.status).toBe("skipped");
     expect(steps.every((step) => step.retiredAt === null)).toBe(true);
+    await expect(prisma.item.count({ where: { id: { in: asked } } })).resolves.toBe(0);
 
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 7 })).resolves.toBe(false);
   });
