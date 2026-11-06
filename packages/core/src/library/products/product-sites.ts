@@ -3,9 +3,8 @@ import { prisma } from "@zoonk/db";
 import { fetchDocument } from "../sources/fetch-document";
 import { toRegistrableDomain } from "./product-keys";
 
-/** Comments, scripts and templates aren't links a visitor follows, so they never tie two sites. */
-const INERT =
-  /<!--[\s\S]*?-->|<(?<inert>script|style|template|noscript)\b[\s\S]*?<\/\k<inert>\s*>/giu;
+const INERT_START = /<!--|<(?<element>script|style|template|noscript)\b/giu;
+const TEMPLATE_TAG = /<(?<closing>\/?)template\b[^>]*>/giu;
 
 const TAG = /<(?<name>a|link|meta)\b(?<attributes>[^>]*)>/giu;
 
@@ -41,8 +40,72 @@ function readAttributes(text: string): Map<string, string> {
   );
 }
 
+/** Where a template ends, counting the templates nested in it; -1 when it never does. */
+function findTemplateEnd({ html, start }: { html: string; start: number }): number {
+  let depth = 0;
+
+  for (const tag of html.slice(start).matchAll(TEMPLATE_TAG)) {
+    depth += tag.groups?.closing ? -1 : 1;
+
+    if (depth === 0) {
+      return start + tag.index + tag[0].length;
+    }
+  }
+
+  return -1;
+}
+
+/** Where a comment or raw-text element (a script, a style) ends; -1 when it never does. */
+function findInertEnd({
+  element,
+  html,
+  start,
+}: {
+  element: string | undefined;
+  html: string;
+  start: number;
+}): number {
+  if (!element) {
+    const end = html.indexOf("-->", start + "<!--".length);
+    return end === -1 ? -1 : end + "-->".length;
+  }
+
+  if (element.toLowerCase() === "template") {
+    return findTemplateEnd({ html, start });
+  }
+
+  const closing = html.toLowerCase().indexOf(`</${element.toLowerCase()}`, start);
+  const end = closing === -1 ? -1 : html.indexOf(">", closing);
+  return end === -1 ? -1 : end + 1;
+}
+
+/**
+ * Comments, scripts and templates aren't links a visitor follows, so they never tie two sites. One
+ * left open hides the rest of the page, as a browser would.
+ */
+function removeInert(html: string): string {
+  let visible = "";
+  let index = 0;
+
+  for (;;) {
+    INERT_START.lastIndex = index;
+    const match = INERT_START.exec(html);
+
+    if (!match) {
+      return visible + html.slice(index);
+    }
+
+    visible += html.slice(index, match.index);
+    index = findInertEnd({ element: match.groups?.element, html, start: match.index });
+
+    if (index === -1) {
+      return visible;
+    }
+  }
+}
+
 function readTags(html: string): Tag[] {
-  return [...html.replaceAll(INERT, "").matchAll(TAG)].map(({ groups }) => ({
+  return [...removeInert(html).matchAll(TAG)].map(({ groups }) => ({
     attributes: readAttributes(groups?.attributes ?? ""),
     name: groups?.name?.toLowerCase() ?? "",
   }));
@@ -209,29 +272,30 @@ export async function inspectProductSites({
  * A saved product's sites: its brand's and product's domains, and its stored pages as the addresses
  * research verified, so a later page under one (a release under its releases page) counts too.
  */
-export async function loadProductSites(productId: string): Promise<ProductSites | null> {
-  const product = await prisma.product.findUnique({
-    select: {
-      organization: { select: { domain: true, website: true } },
-      sources: { select: { url: true } },
-      website: true,
-    },
-    where: { id: productId },
-  });
+export async function loadProductSites({
+  brand,
+  product,
+}: {
+  brand: { domain: string | null; website: string | null };
+  product: { id: string; website: string };
+}): Promise<ProductSites | null> {
+  const productDomain = toRegistrableDomain(product.website);
 
-  const productDomain = product ? toRegistrableDomain(product.website) : null;
-  const brand = product?.organization;
-
-  if (!product || !brand?.domain || !brand.website || !productDomain) {
+  if (!brand.domain || !brand.website || !productDomain) {
     return null;
   }
+
+  const sources = await prisma.source.findMany({
+    select: { url: true },
+    where: { productId: product.id },
+  });
 
   return {
     brand: { domain: brand.domain, iconUrl: null, url: brand.website },
     product: {
       domain: productDomain,
       imageUrl: null,
-      links: product.sources.flatMap((source) => source.url ?? []),
+      links: sources.flatMap((source) => source.url ?? []),
       url: product.website,
     },
   };

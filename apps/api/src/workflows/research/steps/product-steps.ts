@@ -95,8 +95,12 @@ export async function findProductStep(hints: LookupHints): Promise<KnownProduct 
 
   const now = new Date();
   const found = await findProduct({ hints, now });
-  const sites = found ? await loadProductSites(found.product.id) : null;
   const organization = found?.product.organization;
+
+  const sites =
+    found && organization
+      ? await loadProductSites({ brand: organization, product: found.product })
+      : null;
 
   if (!found || !sites || !organization) {
     return null;

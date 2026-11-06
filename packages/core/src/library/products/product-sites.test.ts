@@ -82,6 +82,20 @@ describe(isProductOfBrand, () => {
     ).toBe(false);
   });
 
+  it.each([
+    [
+      "a nested template",
+      "<template><template></template><a href='https://impostor.example/'>x</a></template>",
+    ],
+    ["an unterminated comment", "<!-- <a href='https://impostor.example/'>x</a>"],
+    ["an unterminated script", "<script>const a = \"<a href='https://impostor.example/'>x</a>\";"],
+  ])("ignores a link inside %s", (_case, html) => {
+    expect(
+      readPageTags({ base: "https://lumen.example/", html: `${html}<a href="/about">About</a>` })
+        .links,
+    ).not.toContain("https://impostor.example/");
+  });
+
   it("refuses a page that links to a brand the brand never links back to", () => {
     expect(
       isProductOfBrand({
