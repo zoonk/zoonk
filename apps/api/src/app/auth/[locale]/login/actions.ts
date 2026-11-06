@@ -12,7 +12,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getOtpHref, readRedirectToParam } from "../../_utils/auth-redirect";
 
-type VerificationOTPState = {
+export type VerificationOTPState = {
   email?: string;
   status: "idle" | "invalidEmail" | "disposableEmail" | "rateLimited" | "error";
 };

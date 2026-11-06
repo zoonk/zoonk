@@ -4,7 +4,7 @@ import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 import { cache } from "react";
 import { resolveBattleMatchupModelIds } from "./battle-mapping";
-import { estimateCostPer1000Runs, getCallCost } from "./cost";
+import { estimateCostPer1000Runs, getCallCost, getRunCost } from "./cost";
 import { summarizeLatency } from "./latency";
 import { average, sum } from "./math";
 import {
@@ -127,7 +127,7 @@ function calculateModelMetrics({
   const entries = outputs?.outputs ?? [];
 
   const costs = entries.map((output) =>
-    getCallCost({ modelId: model.gatewayModelId, prices, usage: output }),
+    getRunCost({ modelId: model.gatewayModelId, prices, run: output }),
   );
 
   const latency = summarizeLatency(entries.map((output) => output.duration));

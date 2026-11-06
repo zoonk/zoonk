@@ -3,7 +3,7 @@ import { canHoldPhaseChallenge } from "./phase-challenge-days";
 import { listWonPhases } from "./phase-time";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { LEARN_KINDS } from "./plan-item-rules";
-import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
+import { type ExistingPlanItem } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanPhase } from "./plan-state";
 import { type QueueUnit, getBossKey } from "./plan-units";
@@ -300,51 +300,4 @@ export function listStrainedEnds({
         ]
       : [];
   });
-}
-
-/**
- * Reads each lesson's phase from the unit this run scheduled for it, or from the queue for an item
- * kept from the saved plan, because `placeItemsInPhaseTime` files a lesson past a kept end under the
- * next phase.
- */
-export function listEndsBeforeLessons({
-  items,
-  laidOut,
-  phaseEnds,
-  queue,
-  units,
-}: {
-  items: readonly Pick<PlannedItem, "key" | "kind" | "phase" | "scheduledFor" | "status">[];
-  laidOut: readonly Pick<ScheduledUnit, "depth" | "key">[];
-  phaseEnds: ReadonlyMap<number, Date>;
-  queue: readonly Pick<QueueUnit, "key" | "phase">[];
-  units: readonly Pick<ScheduledUnit, "key" | "phase">[];
-}): number[] {
-  const core = new Set(laidOut.flatMap((unit) => (unit.depth ? [] : [unit.key])));
-
-  const depth = new Set(
-    laidOut.flatMap((unit) => (unit.depth && !core.has(unit.key) ? [unit.key] : [])),
-  );
-
-  const phases = new Map([...queue, ...units].map((unit) => [unit.key, unit.phase]));
-  const placed = items.map((item) => ({ ...item, phase: phases.get(item.key) ?? item.phase }));
-
-  const lessons = placed.filter(
-    (item) =>
-      LEARN_KINDS.has(item.kind) &&
-      item.status === "todo" &&
-      item.scheduledFor !== null &&
-      !depth.has(item.key),
-  );
-
-  const won = listWonPhases(placed);
-
-  return [...phaseEnds].flatMap(([phase, date]) =>
-    !won.has(phase) &&
-    lessons.some(
-      (item) => item.phase <= phase && item.scheduledFor !== null && item.scheduledFor > date,
-    )
-      ? [phase]
-      : [],
-  );
 }

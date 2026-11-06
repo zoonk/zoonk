@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { DbNull, prisma } from "@zoonk/db";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { type Page, expect, test } from "./fixtures";
 import { stopRuns } from "./generation-run";
-import { expectHydrated } from "./hydration";
 
 type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 

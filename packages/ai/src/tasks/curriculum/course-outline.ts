@@ -161,26 +161,17 @@ ${params.material ? `\n${formatUntrustedInput({ MATERIAL: params.material })}` :
 }
 
 export async function generateCourseOutline(params: CourseOutlineParams) {
-  const drafts: OutlineDraft[] = [];
-
   // A chapter that still mixes areas after code splits what it can is written again once, told
   // which; when the second draft mixes as many, the first stays.
   const kept = await draftAgainWhenFlawed<OutlineDraft>({
     countProblems: (draft) => draft.mixed.length,
-    draft: async (previous) => {
-      const draft = await draftOutline({ mixed: previous?.mixed ?? [], params });
-      drafts.push(draft);
-      return draft;
-    },
+    draft: (previous) => draftOutline({ mixed: previous?.mixed ?? [], params }),
   });
 
   return {
     data: kept.data,
     provenance: kept.provenance,
-    /** So a draft written again for mixing areas counts in the spend too. */
-    setAside: drafts
-      .filter((draft) => draft !== kept)
-      .map(({ provenance, usage }) => ({ model: provenance.model, usage })),
+    setAside: kept.setAside,
     systemPrompt: kept.systemPrompt,
     usage: kept.usage,
     userPrompt: kept.userPrompt,

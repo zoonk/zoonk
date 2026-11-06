@@ -68,6 +68,7 @@ export function supportsJudgeMode(
 
 type TaskUsage = {
   audioSeconds?: number;
+  images?: number;
   inputTokens: number | undefined;
   outputTokens: number | undefined;
   inputTokenDetails?: { cacheReadTokens: number | undefined; cacheWriteTokens: number | undefined };
@@ -76,6 +77,7 @@ type TaskUsage = {
 
 export type TokenUsage = {
   audioSeconds?: number;
+  images?: number;
   inputTokens: number;
   outputTokens: number;
   cacheReadTokens?: number;
@@ -88,6 +90,7 @@ export function toTokenUsage(usage: TaskUsage): TokenUsage {
     audioSeconds: usage.audioSeconds,
     cacheReadTokens: usage.inputTokenDetails?.cacheReadTokens,
     cacheWriteTokens: usage.inputTokenDetails?.cacheWriteTokens,
+    images: usage.images,
     inputTokens: usage.inputTokens ?? 0,
     outputTokens: usage.outputTokens ?? 0,
     reasoningTokens: usage.outputTokenDetails?.reasoningTokens,
@@ -98,6 +101,8 @@ type TaskResult<T = unknown> = {
   data: T;
   usage: TaskUsage;
   extraCalls?: ModelCall[];
+  /** Drafts a task wrote and didn't keep: part of what the run cost, unlike `extraCalls`. */
+  setAside?: readonly CallProvenance[];
   userPrompt: string;
   systemPrompt: string;
   probabilities?: Record<string, number>;
@@ -106,6 +111,30 @@ type TaskResult<T = unknown> = {
 export type ClassificationOutcome = { expected: string; predicted: string | null };
 
 export type ModelCall = { modelId: string; usage: TokenUsage };
+
+type CallProvenance = {
+  model: string;
+  usage: {
+    cacheReadTokens?: number;
+    cacheWriteTokens?: number;
+    inputTokens?: number;
+    outputTokens?: number;
+    reasoningTokens?: number;
+  };
+};
+
+export function toModelCall({ model, usage }: CallProvenance): ModelCall {
+  return {
+    modelId: model,
+    usage: {
+      cacheReadTokens: usage.cacheReadTokens,
+      cacheWriteTokens: usage.cacheWriteTokens,
+      inputTokens: usage.inputTokens ?? 0,
+      outputTokens: usage.outputTokens ?? 0,
+      reasoningTokens: usage.reasoningTokens,
+    },
+  };
+}
 
 export type JudgeRun = ModelCall;
 
@@ -145,6 +174,7 @@ export type EvalResult = TokenUsage & {
   testCase: TestCase;
   output: string;
   extraCalls?: ModelCall[];
+  setAside?: ModelCall[];
   steps: Score["steps"];
   categoryScores?: CategoryScore[];
   classification?: ClassificationOutcome;
@@ -185,6 +215,7 @@ export type OutputEntry = TokenUsage & {
   testCaseId: string;
   output: string;
   extraCalls?: ModelCall[];
+  setAside?: ModelCall[];
   duration: number;
   systemPrompt: string;
   userPrompt: string;

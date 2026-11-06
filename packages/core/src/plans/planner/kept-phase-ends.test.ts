@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  getShownPhaseEnds,
-  keepPhaseEnds,
-  listEndsBeforeLessons,
-  listStrainedEnds,
-} from "./kept-phase-ends";
+import { getShownPhaseEnds, keepPhaseEnds, listStrainedEnds } from "./kept-phase-ends";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem } from "./plan-items";
 import { type PlanPhase } from "./plan-state";
@@ -204,58 +199,5 @@ describe(keepPhaseEnds, () => {
     const scheduled = scheduleUnits({ days, units: keepPhaseEnds({ days, ends, units }) });
 
     expect(listStrainedEnds({ days, ends, units: scheduled.units })).toStrictEqual([]);
-  });
-});
-
-function filed(key: string, date: string) {
-  return {
-    key,
-    kind: "lesson" as const,
-    phase: 1,
-    scheduledFor: fromIsoDate(date),
-    status: "todo" as const,
-  };
-}
-
-describe(listEndsBeforeLessons, () => {
-  const end = fromIsoDate("2026-10-18");
-  const phaseEnds = new Map([[0, end]]);
-  const items = [filed("a", "2026-10-19"), filed("b", "2026-10-20")];
-
-  const queue = [
-    { key: "a", phase: 0 },
-    { key: "b", phase: 1 },
-  ];
-
-  it("reads a lesson the saved plan filed under the next phase by its phase in the queue", () => {
-    expect(
-      listEndsBeforeLessons({ items, laidOut: [], phaseEnds, queue, units: [] }),
-    ).toStrictEqual([0]);
-  });
-
-  it("lets depth a plan short on time studies later come after the challenge", () => {
-    expect(
-      listEndsBeforeLessons({
-        items,
-        laidOut: [{ depth: true, key: "a" }],
-        phaseEnds,
-        queue,
-        units: [],
-      }),
-    ).toStrictEqual([]);
-  });
-
-  it("never counts the end of a phase whose challenge the learner already won", () => {
-    const won = {
-      key: "boss:0",
-      kind: "boss" as const,
-      phase: 0,
-      scheduledFor: end,
-      status: "done" as const,
-    };
-
-    expect(
-      listEndsBeforeLessons({ items: [won, ...items], laidOut: [], phaseEnds, queue, units: [] }),
-    ).toStrictEqual([]);
   });
 });

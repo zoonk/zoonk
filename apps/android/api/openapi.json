@@ -71290,7 +71290,7 @@
           },
           "ceremony": {
             "nullable": true,
-            "description": "The one milestone this block earned that gets a full-screen moment right after it (a new belt, the buddy's next stage, new glasses); null otherwise and on a retry",
+            "description": "The one milestone the learner hasn't been shown yet, usually one this block earned (a new belt, the buddy's next stage, new glasses): show it as a full-screen moment right after the block, then mark it shown; null when there's none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Milestone"

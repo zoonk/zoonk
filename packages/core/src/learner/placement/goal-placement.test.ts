@@ -698,6 +698,20 @@ describe(answerPlacementQuestion, () => {
     ).resolves.toBe(1);
   });
 
+  it("still takes the open question after a lesson fix retired it from the bank", async () => {
+    const { goal, items, skills } = await setup();
+    const asked = items.find((item) => item.skillId === skills[2]?.id);
+
+    await prisma.item.update({ data: { retiredAt: new Date() }, where: { id: asked?.id ?? "" } });
+
+    const result = await answerPlacementQuestion({
+      goalId: goal.id,
+      input: { answer: RIGHT, durationMs: 5000, itemId: asked?.id ?? "" },
+    });
+
+    expect(result.status === "ready" && result.isCorrect).toBe(true);
+  });
+
   it("rejects another learner's private question and another exam's", async () => {
     const { goal } = await setup();
     const owner = await userFixture();

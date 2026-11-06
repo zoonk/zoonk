@@ -1,8 +1,8 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 import { asPersona } from "./learn-personas";
 import { routeTimeToCover } from "./time-to-cover-routes";
 

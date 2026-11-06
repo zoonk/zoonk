@@ -7,7 +7,9 @@ import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { MomentHeader, MomentSaving, PendingMainAction } from "@zoonk/learn/session/moment-header";
 import {
   TASK_MAIN_ACTION_CLASS,
+  TASK_WRAPPING_ACTION_CLASS,
   TaskActionBar,
+  TaskActionLabel,
   TaskActions,
   TaskBody,
 } from "@zoonk/learn/task-layout";
@@ -52,12 +54,17 @@ function CompletionReadouts({
 
 function BackLabel({ exitTo }: { exitTo: "chapter" | "unit" | null }) {
   const t = useExtracted();
-  return exitTo === "unit" ? t("Back to unit") : t("Back to chapter");
+
+  return (
+    <TaskActionLabel>
+      {exitTo === "unit" ? t("Back to unit") : t("Back to chapter")}
+    </TaskActionLabel>
+  );
 }
 
 function NextLabel({ nextLesson }: { nextLesson: boolean }) {
   const t = useExtracted();
-  return nextLesson ? t("Next lesson") : t("Continue");
+  return <TaskActionLabel>{nextLesson ? t("Next lesson") : t("Continue")}</TaskActionLabel>;
 }
 
 function CompletionLinks({ pending }: { pending: boolean }) {
@@ -73,7 +80,10 @@ function CompletionLinks({ pending }: { pending: boolean }) {
       <TaskActions>
         {nextLessonHref && (
           <LinkComponent
-            className={buttonVariants({ size: "xl", variant: "outline" })}
+            className={cn(
+              buttonVariants({ size: "xl", variant: "outline" }),
+              TASK_WRAPPING_ACTION_CLASS,
+            )}
             href={routes.exit}
           >
             <BackLabel exitTo={routes.exitTo} />

@@ -113,6 +113,7 @@ async function generate({
     data: { imagePath, language, structure },
     systemPrompt: "",
     usage: {
+      images: provenance.usage.images,
       inputTokens: provenance.usage.inputTokens,
       outputTokens: provenance.usage.outputTokens,
     },

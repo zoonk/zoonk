@@ -165,10 +165,10 @@ export async function writeListeningSet(params: WriteListeningSetParams) {
     };
   };
 
-  const { problems, provenance, set, usage } = await draftAgainWhenFlawed({
+  const { problems, provenance, set, setAside, usage } = await draftAgainWhenFlawed({
     countProblems: (output) => output.problems.length,
     draft,
   });
 
-  return { data: { problems, set }, provenance, systemPrompt, usage, userPrompt };
+  return { data: { problems, set }, provenance, setAside, systemPrompt, usage, userPrompt };
 }

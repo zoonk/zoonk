@@ -5,6 +5,7 @@ import { type BossMinutes } from "./boss-minutes";
 import { type BuiltPlan } from "./built-plan";
 import { type CarryOver } from "./carry-over";
 import { getKeptBaseChoices, hasBaseChoices, withBaseChoices } from "./chosen-bases";
+import { listEndsBeforeLessons } from "./ends-before-lessons";
 import { type ExamBossDays, listBossDayFacts } from "./exam-boss-days";
 import { listLessonDays } from "./interval-study-minutes";
 import {
@@ -15,7 +16,7 @@ import {
   splitExistingItems,
   toKeptItem,
 } from "./kept-items";
-import { listEndsBeforeLessons, listStrainedEnds } from "./kept-phase-ends";
+import { listStrainedEnds } from "./kept-phase-ends";
 import {
   type LandedUnits,
   findLanding,
@@ -23,7 +24,7 @@ import {
   listLandedUnits,
 } from "./landed-lessons";
 import { listKeptTime, putLandedLessons } from "./landed-placement";
-import { type LaidOutOrder, toQueueUnit } from "./learned-order";
+import { type LaidOutOrder, toLaidOutOrder } from "./learned-order";
 import { type MockClock, type MockResolution } from "./mock-identity";
 import { createLayOut } from "./pass-layout";
 import { listChallengesLeftOut, listTaughtPhases } from "./phase-checkpoints";
@@ -115,6 +116,7 @@ function buildWithBosses(given: BuildPlanInput): BuiltPlan {
   if (!hasBaseChoices(input)) {
     return resolvePlannedMocks((resolution) =>
       planGoal({
+        given,
         input: essential,
         keepsRest,
         landedUnits: landedFor([]),
@@ -126,6 +128,7 @@ function buildWithBosses(given: BuildPlanInput): BuiltPlan {
 
   const reference = resolvePlannedMocks((resolution) =>
     planGoal({
+      given,
       input: { ...essential, mode: "forced" },
       keepsRest: false,
       landedUnits: null,
@@ -139,6 +142,7 @@ function buildWithBosses(given: BuildPlanInput): BuiltPlan {
 
   return resolvePlannedMocks((resolution) =>
     planGoal({
+      given,
       input: chosen,
       keepsRest,
       landedUnits: landedFor(choices),
@@ -158,12 +162,15 @@ function listDroppedSkills(dropped: readonly { depth?: boolean; skillId: string 
 }
 
 function planGoal({
+  given,
   input,
   keepsRest,
   landedUnits,
   learnedOrder,
   resolution,
 }: {
+  /** The build's own input, before a landing holds its newly written lessons back from `input`. */
+  given: BuildPlanInput;
   input: BuildPlanInput;
   keepsRest: boolean;
   landedUnits: LandedUnits | null;
@@ -306,16 +313,13 @@ function planGoal({
       windows: days.windows,
     }),
     ...listDroppedSkills(dropped),
-    endsBeforeLessons: listEndsBeforeLessons({ items: merged, laidOut, phaseEnds, queue, units }),
+    endsBeforeLessons: listEndsBeforeLessons({ ends: phaseEnds, given, items, units: laidOut }),
     items,
     keptKeys: new Set([...kept, ...setAside].map((item) => item.key)),
     ...listLessonDays(units, keptPortions),
     mockFunding: mocks.mockFunding,
     mocks,
-    order: {
-      dropped: restSchedule.dropped.map((unit) => toQueueUnit(unit)),
-      placed: restSchedule.units.map((unit) => toQueueUnit(unit)),
-    },
+    order: toLaidOutOrder(restSchedule),
     planDays,
     skillMinutes: getLandingSkillMinutes({
       dropped: [...dropped, ...listKeptStandInCuts({ frozen, units: unitsByKey })],

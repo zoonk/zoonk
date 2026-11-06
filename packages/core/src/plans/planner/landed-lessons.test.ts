@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
-import { getShownPhaseEnds } from "./kept-phase-ends";
 import { putLandedLessons } from "./landed-placement";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, type PlannedItem, getItemKey } from "./plan-items";
@@ -442,58 +441,5 @@ describe("a run whose only news is lessons that landed", () => {
     expect(skillsByDay).toStrictEqual(
       skillsByDay.map((skills) => skills.toSorted((a, b) => order.indexOf(a) - order.indexOf(b))),
     );
-  });
-});
-
-describe("a lesson that lands after a kept end's challenge", () => {
-  it("never counts as a lesson that challenge comes before", () => {
-    const phased = {
-      ...learn,
-      goal: { ...learn.goal, dailyMinutes: 20 },
-      graph: {
-        phases: [
-          { milestone: null, name: "First" },
-          { milestone: null, name: "Second" },
-        ],
-        skills: [
-          { ...skill("first", "First"), lessons: 4 },
-          { ...skill("bridge", "Bridge"), lessons: 4 },
-          { ...skill("second", "Second"), lessons: 4, phase: 1 },
-        ],
-      },
-      lessons: [
-        ...writeLessons({ count: 4, minutes: 4, skillId: "first" }),
-        ...writeLessons({ count: 4, minutes: 4, skillId: "bridge" }),
-      ],
-      prerequisites: new Map([["second", ["bridge"]]]),
-    } satisfies BuildPlanInput;
-
-    const first = buildPlan(phased);
-
-    const items = saveItems(first).map((entry) =>
-      entry.skillId === "first" ? { ...entry, completedAt: TODAY, status: "done" as const } : entry,
-    );
-
-    const next = buildPlan({
-      ...phased,
-      items,
-      lessons: [
-        ...phased.lessons,
-        {
-          chapterId: "shared-chapter",
-          lessonId: "shared",
-          minutes: 4,
-          skillIds: ["first", "second"],
-          title: "Shared",
-        },
-      ],
-      mode: "automatic",
-      phaseEnds: getShownPhaseEnds({ items, phases: first.phases }),
-    });
-
-    const dateOf = (key: string) => next.items.find((entry) => entry.key === key)?.scheduledFor;
-
-    expect(Number(dateOf("lesson:shared"))).toBeGreaterThan(Number(dateOf("boss:0")));
-    expect(next.endsBeforeLessons).toStrictEqual([]);
   });
 });

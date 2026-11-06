@@ -73,6 +73,7 @@ async function generate({
     data: { imagePath, scene: describeImageScene(scene) },
     systemPrompt: "",
     usage: {
+      images: provenance.usage.images,
       inputTokens: provenance.usage.inputTokens,
       outputTokens: provenance.usage.outputTokens,
     },

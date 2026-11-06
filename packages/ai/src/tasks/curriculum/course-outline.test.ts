@@ -215,7 +215,9 @@ describe(generateCourseOutline, () => {
       "Multimodal texts",
     ]);
 
-    expect(outline.setAside).toStrictEqual([{ model: MODEL, usage }]);
+    expect(
+      outline.setAside.map((call) => ({ inputTokens: call.usage.inputTokens, model: call.model })),
+    ).toStrictEqual([{ inputTokens: 1000, model: MODEL }]);
   });
 
   it("splits a chapter that mixes subjects in code, without another call, when its lessons name them", async () => {

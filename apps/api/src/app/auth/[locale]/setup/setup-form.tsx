@@ -18,8 +18,9 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/componen
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useActionState, useId, useState } from "react";
-import { setupProfileAction } from "./actions";
+import { useId, useState } from "react";
+import { useFormActionState } from "../../_utils/use-form-action-state";
+import { type SetupState, setupProfileAction } from "./actions";
 
 function UsernameDescription({
   id,
@@ -105,8 +106,13 @@ export function SetupProfileForm({
   const [name, setName] = useState(defaultName);
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
   const [isChangingUsername, setIsChangingUsername] = useState(!defaultUsername);
-  const boundAction = setupProfileAction.bind(null, redirectTo);
-  const [state, formAction] = useActionState(boundAction, { status: "idle" as const });
+
+  const [state, formAction] = useFormActionState<SetupState>({
+    action: setupProfileAction.bind(null, redirectTo),
+    initialState: { status: "idle" },
+    onRejected: () => ({ status: "error" }),
+  });
+
   const isNameTooLong = isNameChangeTooLong({ name, savedName: defaultName });
   const canSubmit = !isNameTooLong && (status === "idle" || status === "available");
   const showsUsernameField = isChangingUsername || state.status === "usernameTaken";
