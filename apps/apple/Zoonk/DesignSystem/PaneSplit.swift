@@ -121,10 +121,10 @@ struct PaneSpace: Equatable {
   /// where it would, a hinge sets the pages anyway, and elsewhere stacked content gets one column.
   static let minimumPane: CGFloat = 360
 
-  /// Without a hinge, a page and what supports it go side by side only from about a landscape
-  /// iPad's width. Narrower, such as any iPad in portrait or a window that size, the page is one
-  /// centered column with the phone's structure, as main's tablet portrait.
-  static let minimumPagesWidth: CGFloat = 1100
+  /// Without a hinge, a page and what supports it go side by side only past the widest iPad in
+  /// portrait (1032pt). Narrower, such as any iPad in portrait or a window that size, the page is
+  /// one centered column with the phone's structure, as main's tablet portrait.
+  static let minimumPagesWidth: CGFloat = 1040
 
   struct Panes: Equatable {
     var primary: CGFloat
