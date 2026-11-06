@@ -1,10 +1,13 @@
 import { createHook, getWorkflowMetadata, sleep } from "workflow";
-import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
+import { startOnce } from "../_shared/run-token";
 import { preparePlacementItems } from "./placement-items";
-import { shortPlanPracticeWorkflow } from "./short-plan-practice-workflow";
+import {
+  getShortPlanPracticeToken,
+  shortPlanPracticeWorkflow,
+} from "./short-plan-practice-workflow";
 import { readPlacementExamWaitStep } from "./steps/exam-format-step";
 import { recordPlacementPreparedStep } from "./steps/goal-build-outcome-steps";
 import { readShortPlanPracticeStep } from "./steps/short-plan-practice-step";
@@ -85,7 +88,11 @@ export async function placementItemsWorkflow(
   ]);
 
   if (practice) {
-    await start(shortPlanPracticeWorkflow, [{ analytics, goalId, need: practice }]);
+    await startOnce(
+      shortPlanPracticeWorkflow,
+      [{ analytics, goalId, need: practice }],
+      getShortPlanPracticeToken(goalId),
+    );
   }
 
   return { failed, status: "written", written };

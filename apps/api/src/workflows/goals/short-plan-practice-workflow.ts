@@ -1,5 +1,5 @@
 import { type ShortPlanPracticeNeed } from "@zoonk/core/lookahead/short-plan-practice";
-import { createHook, getWorkflowMetadata } from "workflow";
+import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { preparePlacementItems } from "./placement-items";
 
@@ -9,20 +9,15 @@ export type ShortPlanPracticeInput = {
   need: ShortPlanPracticeNeed;
 };
 
-export type ShortPlanPracticeResult = { status: "joined" | "written" };
+export function getShortPlanPracticeToken(goalId: string): string {
+  return `short-plan-practice:${goalId}`;
+}
 
-export async function shortPlanPracticeWorkflow(
-  input: ShortPlanPracticeInput,
-): Promise<ShortPlanPracticeResult> {
+export async function shortPlanPracticeWorkflow(input: ShortPlanPracticeInput): Promise<void> {
   "use workflow";
 
   const { analytics, goalId, need } = input;
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: `short-plan-practice:${goalId}` });
-
-  if (await hook.getConflict()) {
-    return { status: "joined" };
-  }
 
   await preparePlacementItems({
     analytics,
@@ -32,6 +27,4 @@ export async function shortPlanPracticeWorkflow(
     skillIds: need.skillIds,
     workflowRunId,
   });
-
-  return { status: "written" };
 }

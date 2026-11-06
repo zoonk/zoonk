@@ -2,11 +2,11 @@ import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { createResearchRequestSchema } from "@/lib/openapi/schemas/research-sources";
 import { readBody } from "@/lib/request-input";
+import { startResearch } from "@/lib/research";
 import { readClientRunStatus } from "@/workflows/_shared/run-activity";
-import { researchWorkflow } from "@/workflows/research/research-workflow";
 import { answerGoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
 import { type NextRequest, NextResponse } from "next/server";
-import { start } from "workflow/api";
+import { getRun } from "workflow/api";
 
 const RESTARTABLE_STATUSES = new Set(["cancelled", "failed"]);
 
@@ -58,11 +58,9 @@ async function createResearch(request: NextRequest) {
     return researchResponse(followed);
   }
 
-  const run = await start(researchWorkflow, [
-    { goalId: access.goalId, sourceIds: access.sourceIds },
-  ]);
+  const runId = await startResearch({ goalId: access.goalId, sourceIds: access.sourceIds });
 
-  return researchResponse({ runId: run.runId, status: await run.status });
+  return researchResponse({ runId, status: await getRun(runId).status });
 }
 
 export const POST = withApiErrorBoundary(createResearch);

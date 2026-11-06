@@ -1,6 +1,6 @@
 import { LEVEL_TEST_BANK_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
-import { createHook, getWorkflowMetadata, sleep } from "workflow";
+import { getWorkflowMetadata, sleep } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
 import {
@@ -13,12 +13,16 @@ import {
 
 export type LevelTestBankInput = { analytics?: ContentAnalytics; pair: LanguagePair };
 
-export type LevelTestBankResult = { status: "joined" | "ready" | "unfinished" | "written" };
+export type LevelTestBankResult = { status: "ready" | "unfinished" | "written" };
 
 const CLAIM_POLL = "10s";
 const MAX_CLAIM_POLLS = 72;
 
 const DONE = new Set(["ready", "written"]);
+
+export function getLevelTestBankToken({ language, targetLanguage }: LanguagePair): string {
+  return `level-test-bank:${language}:${targetLanguage}`;
+}
 
 export async function levelTestBankWorkflow(
   input: LevelTestBankInput,
@@ -27,17 +31,6 @@ export async function levelTestBankWorkflow(
 
   const { pair } = input;
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: `level-test-bank:${pair.language}:${pair.targetLanguage}` });
-  const conflict = await hook.getConflict();
-
-  if (conflict) {
-    await levelTestBankProgressStep(
-      { entityId: conflict.runId, status: "started", step: "joinLevelTestBank" },
-      { last: true },
-    );
-
-    return { status: "joined" };
-  }
 
   await levelTestBankProgressStep({ status: "started", step: "writeLevelTestBank" });
 

@@ -1,5 +1,6 @@
 import { getWorkflowMetadata } from "workflow";
-import { start } from "workflow/api";
+import { startOnce } from "../_shared/run-token";
+import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { pullLessonStep } from "../quality/steps/later-review-steps";
 import {
@@ -27,7 +28,11 @@ export async function flaggedContentWorkflow({
   const [, rewritten] = await Promise.all([
     Promise.all(
       lessonsPulled.map((lessonId) =>
-        start(lessonContentWorkflow, [{ forceReview: true, lessonId }]),
+        startOnce(
+          lessonContentWorkflow,
+          [{ forceReview: true, lessonId }],
+          getLessonContentHookToken(lessonId),
+        ),
       ),
     ),
     Promise.allSettled(

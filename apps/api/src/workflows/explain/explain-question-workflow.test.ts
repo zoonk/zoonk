@@ -12,7 +12,6 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
-import { mockHookConflict } from "../../../mocks/workflow";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { getWorkflowWriteMock } from "../_test-utils/workflow-mock";
@@ -536,29 +535,6 @@ describe(explainQuestionWorkflow, () => {
     expect(start).not.toHaveBeenCalled();
 
     expect(getStreamedEvents()).toStrictEqual([{ status: "completed", step: "explanationReady" }]);
-  });
-
-  it("leaves a question another run is answering to that run", async () => {
-    const { goal } = await explainGoal(`why do prices rise? ${crypto.randomUUID()}`);
-
-    await prisma.goal.update({ data: { generationRunId: "owner-run" }, where: { id: goal.id } });
-    mockHookConflict({ returnValue: Promise.resolve(null), runId: "owner-run" });
-
-    await expect(explainQuestionWorkflow({ goalId: goal.id })).resolves.toStrictEqual({
-      goalId: goal.id,
-      lessonId: null,
-      status: "joined",
-    });
-
-    expect(classifyQuestionGenerality).not.toHaveBeenCalled();
-
-    expect(getStreamedEvents()).toStrictEqual([
-      { entityId: "owner-run", status: "started", step: "joinRunningExplanation" },
-    ]);
-
-    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
-      generationRunId: "owner-run",
-    });
   });
 
   it("reports a question whose goal no longer exists", async () => {
