@@ -20,14 +20,22 @@ function markPendingLinks(attribute: string) {
       const isPlain =
         event.button === 0 && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
 
-      if (link && isPlain) {
-        setTimeout(() => {
-          if (!event.defaultPrevented) {
-            link.setAttribute("aria-busy", "true");
-            link.setAttribute("aria-disabled", "true");
-          }
-        }, 0);
+      if (!link || !isPlain) {
+        return;
       }
+
+      // A busy link is already on its way; another tap or Enter would only send it again.
+      if (link.getAttribute("aria-busy") === "true") {
+        event.preventDefault();
+        return;
+      }
+
+      setTimeout(() => {
+        if (!event.defaultPrevented) {
+          link.setAttribute("aria-busy", "true");
+          link.setAttribute("aria-disabled", "true");
+        }
+      }, 0);
     },
     { capture: true },
   );
