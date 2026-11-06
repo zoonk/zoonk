@@ -4,7 +4,7 @@ import {
 } from "@zoonk/ai/tasks/research/read-product-pages";
 import { describe, expect, it } from "vitest";
 import { isPassageInDocument } from "../exams/passage-check";
-import { checkProductReading, isDateStated } from "./product-reading";
+import { checkProductReading, isDateStated, isVersionStated } from "./product-reading";
 
 const DAYS = 731;
 const MS_PER_DAY = 86_400_000;
@@ -277,5 +277,73 @@ describe(checkProductReading, () => {
       checkProductReading({ pages, reading: reading({ learnerRelease: "Orbit Notes 3" }) })
         .learnerRelease,
     ).toBeNull();
+  });
+});
+
+describe(isVersionStated, () => {
+  const name = "Orbit Server 1.37";
+
+  it("accepts a version with a separator as a whole token", () => {
+    expect(isVersionStated({ name, passage: "1.37 | 1.37.2 | 2027-10-28", version: "1.37" })).toBe(
+      true,
+    );
+
+    expect(isVersionStated({ name, passage: "Latest: v1.37 (stable)", version: "1.37" })).toBe(
+      true,
+    );
+
+    expect(
+      isVersionStated({ name: "Orbit Server 2025.1", passage: "2025.1 LTS", version: "2025.1" }),
+    ).toBe(true);
+  });
+
+  it("refuses a version that's only part of another token", () => {
+    expect(isVersionStated({ name, passage: "1.37.2 | 2027-10-28", version: "1.37" })).toBe(false);
+    expect(isVersionStated({ name, passage: "11.37 | 2027-10-28", version: "1.37" })).toBe(false);
+    expect(isVersionStated({ name, passage: "release1.37 is out", version: "1.37" })).toBe(false);
+  });
+
+  it("needs the release name for a bare integer or a single character", () => {
+    const short = { name: "Orbit Notes 5", passage: "5 | 2025-10-21 | supported" };
+
+    expect(isVersionStated({ ...short, version: "5" })).toBe(false);
+
+    expect(
+      isVersionStated({ name: "Orbit Notes 16", passage: "16 | 2026-01-02", version: "16" }),
+    ).toBe(false);
+  });
+
+  it("refuses a version the release's own name doesn't carry", () => {
+    expect(
+      isVersionStated({ name: "Orbit Server 1.38", passage: "1.37 | 2027-10-28", version: "1.37" }),
+    ).toBe(false);
+  });
+});
+
+function tableRelease(name: string, version: string, passage: string): ProductReleaseClaim {
+  return { document: 1, name, passage, releasedOn: null, supportEndsOn: null, version };
+}
+
+describe("a releases table that lists versions without the product's name", () => {
+  const table = `Orbit Server releases
+| Version | Latest patch | Released   | End of life |
+| 1.37    | 1.37.2       | 2026-09-15 | 2027-10-28  |
+| 1.36    | 1.36.5       | 2026-05-12 | 2027-06-28  |
+| 5       | 5.0.9        | 2019-03-01 | 2020-03-01  |`;
+
+  it("keeps a row whose version has a separator and drops one with a bare integer", () => {
+    const checked = checkProductReading({
+      pages: [{ language: "en", text: table }],
+      reading: reading({
+        brand: null,
+        product: null,
+        releases: [
+          tableRelease("Orbit Server 1.37", "1.37", "| 1.37    | 1.37.2       | 2026-09-15 |"),
+          tableRelease("Orbit Server 5", "5", "| 5       | 5.0.9        | 2019-03-01 |"),
+        ],
+      }),
+    });
+
+    expect(checked.releases.map((item) => item.name)).toStrictEqual(["Orbit Server 1.37"]);
   });
 });

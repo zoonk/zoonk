@@ -32,6 +32,7 @@ const NAMING_YEAR = 2000;
 const ISO_DATE = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})$/u;
 const TOKEN = /\p{L}+|\p{N}+/gu;
 const SHORT_NUMBER = /^\d{1,2}$/u;
+const VERSION_SEPARATOR = /[\p{L}\p{N}][._-][\p{L}\p{N}]/u;
 
 function toTokens(text: string): string[] {
   return text.normalize("NFKC").toLowerCase().match(TOKEN) ?? [];
@@ -166,6 +167,24 @@ function toStatedDate({
   return date && isDateStated({ date, language, passage }) ? date : null;
 }
 
+function isQuoted({
+  claim,
+  pages,
+}: {
+  claim: { document: number; passage: string };
+  pages: readonly ReadProductPage[];
+}): boolean {
+  const page = pages[claim.document - 1];
+
+  return (
+    page !== undefined && isPassageExactlyInDocument({ passage: claim.passage, text: page.text })
+  );
+}
+
+function isNamed({ name, passage }: { name: string; passage: string }): boolean {
+  return findNamesInDocument({ names: [name], text: passage }).size > 0;
+}
+
 /** The cited page holds the passage word for word, and the passage names what the claim names. */
 function isClaimStated({
   claim,
@@ -176,12 +195,35 @@ function isClaimStated({
   name: string;
   pages: readonly ReadProductPage[];
 }): boolean {
-  const page = pages[claim.document - 1];
+  return isQuoted({ claim, pages }) && isNamed({ name, passage: claim.passage });
+}
 
+function hasVersionToken({ text, version }: { text: string; version: string }): boolean {
+  const escaped = version.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
+
+  return new RegExp(`(?<![\\p{L}\\p{N}.])v?${escaped}(?![\\p{L}\\p{N}]|\\.\\p{N})`, "iu").test(
+    text,
+  );
+}
+
+/**
+ * A releases table often lists a version without the product's name ("1.37 | 2026-09-15"). A
+ * version with a separator is specific enough to stand for its release there; a bare "5" isn't.
+ */
+export function isVersionStated({
+  name,
+  passage,
+  version,
+}: {
+  name: string;
+  passage: string;
+  version: string | null;
+}): boolean {
   return (
-    page !== undefined &&
-    isPassageExactlyInDocument({ passage: claim.passage, text: page.text }) &&
-    findNamesInDocument({ names: [name], text: claim.passage }).size > 0
+    version !== null &&
+    VERSION_SEPARATOR.test(version) &&
+    hasVersionToken({ text: name, version }) &&
+    hasVersionToken({ text: passage, version })
   );
 }
 
@@ -194,7 +236,11 @@ function checkRelease({
 }): CheckedProductRelease | null {
   const page = pages[release.document - 1];
 
-  if (!page || !isClaimStated({ claim: release, name: release.name, pages })) {
+  if (
+    !page ||
+    !isQuoted({ claim: release, pages }) ||
+    !(isNamed({ name: release.name, passage: release.passage }) || isVersionStated(release))
+  ) {
     return null;
   }
 
