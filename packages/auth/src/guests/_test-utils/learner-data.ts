@@ -237,3 +237,26 @@ export async function countLearnerRows(userId: string) {
     usage,
   };
 }
+
+export function createCertificate({
+  key = `es:${randomUUID()}`,
+  userId,
+}: {
+  key?: string;
+  userId: string;
+}) {
+  return prisma.certificate.create({
+    data: {
+      code: randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase(),
+      completedOn: new Date("2026-09-01T00:00:00Z"),
+      createdAt: new Date("2026-09-01T00:00:00Z"),
+      details: { canDo: [], lessonsStudied: 20, minutes: null, skillLevels: [] },
+      key,
+      kind: "languageLevel",
+      language: "en",
+      level: "A1",
+      targetLanguage: "es",
+      userId,
+    },
+  });
+}

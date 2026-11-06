@@ -56,8 +56,6 @@
   "catalog_load_more_failed": "06d802867aac0e79512b2e3caeed4d298addebe43e72b9aa71bc6c2043be6938",
   "catalog_loading_more": "a0add4b83cb50801a53a5b4b44c979f400f47628d4eac80f126b16b6a290f61a",
   "catalog_no_sign_up": "514c9ac8f83654fab958fbe48be90cdffe9a233783b48e17ffbe105a4694ede2",
-  "catalog_not_found_description": "80ece5121476e7456e21c63597692f38ac00000dfbb777438168e7c4e6a83f31",
-  "catalog_not_found_title": "1c6c67646eab873506fbf7e24246295e7b66bbaf5aba020aba450994ebdb26ee",
   "catalog_open_course": "467ab9ecfba7c3b471e33051dce5ead329c66642276a16a34fa1a5486dab2b15",
   "catalog_outcomes": "d05e4df00789cef6639c67f01f3911cf2192187f03d106483b469b82c50916ef",
   "catalog_outline": "bcd84f9794684e77c29425fa3ba72c32a09c832645d98d22959c76ac0efee33b",
@@ -165,8 +163,6 @@
     <string name="catalog_start_goal">Wyznacz cel</string>
     <string name="catalog_loading_more">Wczytujemy kolejne kursy…</string>
     <string name="catalog_load_more_failed">Coś poszło nie tak. Spróbuj ponownie.</string>
-    <string name="catalog_not_found_title">Nie udało się znaleźć tej strony</string>
-    <string name="catalog_not_found_description">Link może być nieaktualny lub zawierać literówkę.</string>
     <string name="catalog_edition_notice">Ten kurs jest też dostępny w twoim języku.</string>
     <string name="catalog_exam_on_today">Egzamin: %1$s · dziś</string>
     <plurals name="catalog_exam_on">

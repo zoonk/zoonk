@@ -18,9 +18,9 @@ import kotlin.time.TestTimeSource
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LanguageUnitStoreTest {
-    /** Starting a lesson from Today, changing the plan or reserving a call all change what the unit shows. */
+    /** Starting a lesson from Today, changing the plan, reserving a call or switching goals all change what the unit shows. */
     @Test
-    fun theUnitReadsAgainWhenThePlanTodaysSessionOrCallTimeChange() =
+    fun theUnitReadsAgainWhenThePlanTodaysSessionCallTimeOrChosenGoalChange() =
         runTest {
             val cache =
                 AppCache(
@@ -37,12 +37,18 @@ class LanguageUnitStoreTest {
             val screen = launch { unit.shown.collect {} }
             advanceUntilIdle()
 
-            listOf(DataDomain.Goals, DataDomain.UserSession, DataDomain.Allowance, DataDomain.LearnerModel).forEach {
+            listOf(
+                DataDomain.Goals,
+                DataDomain.UserSession,
+                DataDomain.Allowance,
+                DataDomain.LearnerModel,
+                DataDomain.LearningProfile,
+            ).forEach {
                 cache.invalidate(setOf(it))
                 advanceUntilIdle()
             }
 
-            assertEquals(5, reads)
+            assertEquals(6, reads)
             screen.cancel()
         }
 }

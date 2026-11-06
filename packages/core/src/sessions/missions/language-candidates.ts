@@ -1,7 +1,7 @@
 import { type Goal, prisma } from "@zoonk/db";
 import "server-only";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { countUsage } from "../../entitlements/_utils/usage-counts";
+import { type UsageTotals, getUsageCounts } from "../../entitlements/_utils/usage-counts";
 import { type EntitlementTier } from "../../entitlements/contract";
 import { mistakePatternContentSchema } from "../../language/patterns/pattern-contract";
 import { MAX_PRONUNCIATION_ROUND_WORDS } from "../../language/pronunciation/pronunciation-rules";
@@ -19,6 +19,7 @@ export async function languageCandidates({
   items,
   now,
   tier,
+  usage,
   userId,
 }: {
   blocks: readonly MissionFactBlock[];
@@ -26,13 +27,14 @@ export async function languageCandidates({
   items: readonly SessionPlanItem[];
   now: Date;
   tier: EntitlementTier;
+  usage: UsageTotals;
   userId: string;
 }): Promise<{ candidates: MissionPick[]; patternExpiresTomorrow: boolean }> {
   if (goal.kind !== "language" || !goal.targetLanguage) {
     return { candidates: [], patternExpiresTomorrow: false };
   }
 
-  const [patterns, pronunciation, usage, assistUsage] = await Promise.all([
+  const [patterns, pronunciation] = await Promise.all([
     prisma.mistakePattern.findMany({
       orderBy: [{ createdAt: "asc" }, { id: "asc" }],
       where: {
@@ -47,8 +49,6 @@ export async function languageCandidates({
     prisma.pronunciationReview.count({
       where: { dueAt: { lte: now }, language: goal.targetLanguage, userId },
     }),
-    tier === "guest" ? null : countUsage({ client: prisma, kind: "conversation", now, userId }),
-    countUsage({ client: prisma, kind: "assist", now, userId }),
   ]);
 
   const pattern = patterns.find(
@@ -61,7 +61,7 @@ export async function languageCandidates({
     items.findLast((item) => item.chapterId)?.chapterId;
 
   const callAllowed = hasMissionAllowance({
-    counts: usage,
+    counts: tier === "guest" ? null : getUsageCounts(usage, "conversation"),
     kind: "conversation",
     now,
     seconds: SECONDS_PER_MINUTE,
@@ -69,7 +69,7 @@ export async function languageCandidates({
   });
 
   const pronunciationAllowed = hasMissionAllowance({
-    counts: assistUsage,
+    counts: getUsageCounts(usage, "assist"),
     kind: "assist",
     now,
     tier,

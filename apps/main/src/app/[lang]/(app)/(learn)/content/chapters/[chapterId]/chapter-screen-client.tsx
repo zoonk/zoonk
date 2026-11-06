@@ -2,11 +2,12 @@
 
 import { MainAskTutor, type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { useMindMapActions } from "@/lib/mind-maps/use-mind-map-actions";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { useGoToStudyDestination } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
-import { type ChapterHrefs, ChapterScreen } from "@zoonk/learn/chapter";
+import { type AreaPracticeOutcome, type ChapterHrefs, ChapterScreen } from "@zoonk/learn/chapter";
 import { type MindMapLimit } from "@zoonk/learn/mind-maps";
 import { LessonRichText } from "@zoonk/player/lesson/rich-text";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
@@ -36,17 +37,25 @@ export function ChapterScreenClient({
   const { chapterId } = chapter.chapter;
   const target = useMemo(() => ({ chapterId, kind: "chapter" as const }), [chapterId]);
 
-  const practice = async () => {
-    const result = await practiceAreaAction(chapter.goal.id, {
-      areaId: chapterId,
-      timeZone: getLocalTimeZone(),
-    });
+  const practice = async (): Promise<AreaPracticeOutcome> => {
+    const here = openingHere();
 
-    if (result.outcome === "started") {
-      await go(result.destination);
+    const practiced = await answerHere(
+      practiceAreaAction(chapter.goal.id, { areaId: chapterId, timeZone: getLocalTimeZone() }),
+      here,
+    );
+
+    if (typeof practiced === "boolean") {
+      return practiced ? "started" : "failed";
     }
 
-    return result.outcome;
+    const { answer } = practiced;
+
+    if (answer.outcome === "started") {
+      await go(answer.destination, { here });
+    }
+
+    return answer.outcome;
   };
 
   return (

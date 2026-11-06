@@ -48,6 +48,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.language.LanguageUnitScreen
 import com.zoonk.android.feature.mindmaps.ChapterMindMapCard
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
@@ -55,7 +56,6 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.navigation.RoutePlaceholder
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
@@ -69,6 +69,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TestOutRow
@@ -112,7 +113,7 @@ fun ChapterScreen(
 
             // A language's chapters are its units: drawn here too, as main does, so a link never redirects.
             goal.kind == LearnerSummaryGoal.Kind.LANGUAGE -> {
-                RoutePlaceholder(AppRoute.LanguageUnit(route.chapterId), navigator)
+                LanguageUnitScreen(AppRoute.LanguageUnit(route.chapterId), app, navigator)
             }
 
             else -> {
@@ -206,7 +207,7 @@ internal fun ChapterContent(
         }
 
         LoadState.Idle, LoadState.Loading -> {
-            PageScaffold(onBack = back) { PageLoading(it) }
+            PageScaffold(onBack = back) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
         }
     }
 }

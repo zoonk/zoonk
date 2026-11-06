@@ -2,19 +2,25 @@ package com.zoonk.android.feature.session
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
+import com.zoonk.android.ui.scaffold.unfoldBook
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.TodayGoal
@@ -25,6 +31,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
@@ -33,7 +40,10 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class SessionSummaryScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -43,59 +53,92 @@ class SessionSummaryScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h900dp-xxhdpi")
-    fun phone() = capture("phone", rewardsStep = true)
+    fun phone() = capture("phone")
 
     @Test
     @Config(qualifiers = "w411dp-h900dp-night-xxhdpi")
-    fun phoneDark() = capture("phone-dark", rewardsStep = true)
+    fun phoneDark() = capture("phone-dark")
 
     @Test
     @Config(qualifiers = "w1000dp-h800dp-xhdpi")
-    fun wide() = capture("wide", rewardsStep = false)
+    fun wide() = capture("wide")
 
     @Test
     @Config(qualifiers = "w700dp-h900dp-xhdpi")
-    fun medium() = capture("medium", rewardsStep = true)
+    fun medium() = capture("medium")
 
     @Test
     @Config(qualifiers = "w411dp-h900dp-xxhdpi", fontScale = 2f)
-    fun phoneLargeText() = capture("phone-large-text", rewardsStep = true)
+    fun phoneLargeText() = capture("phone-large-text")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tablet() = capture("tablet")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDarkMoreContrast() = capture("book-dark-more-contrast", fold = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookRightToLeft() = capture("book-rtl", fold = true, layoutDirection = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("book-font200", fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("small-book", fold = true)
 
     private fun capture(
         name: String,
-        rewardsStep: Boolean,
+        fold: Boolean = false,
+        moreContrast: Boolean = false,
+        layoutDirection: LayoutDirection = LayoutDirection.Ltr,
     ) {
         val states = listOf("done" to (earned to false), "stopped" to (stopped to true))
         var index by mutableIntStateOf(0)
         compose.setContent {
-            ZoonkTheme(darkTheme = name.endsWith("dark")) {
-                CelebrationScope(play = false) {
-                    key(index) {
-                        val (summary, isStopped) = states[index].second
-                        SessionSummary(
-                            summary = summary,
-                            facts = SummaryFacts(stopped = isStopped, goalKind = TodayGoal.Kind.EXAM, bonus = 50, guest = isStopped),
-                            buddy = BuddyLook(),
-                            buddyName = "Zu",
-                            busy = null,
-                            failed = null,
-                            actions = SummaryActions({}, {}, {}, {}, {}),
-                        )
+            ZoonkTheme(darkTheme = name.contains("dark"), moreContrast = moreContrast) {
+                CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                    CelebrationScope(play = false) {
+                        key(index) {
+                            val (summary, isStopped) = states[index].second
+                            SessionSummary(
+                                summary = summary,
+                                facts = SummaryFacts(stopped = isStopped, goalKind = TodayGoal.Kind.EXAM, bonus = 50, guest = isStopped),
+                                buddy = BuddyLook(),
+                                buddyName = "Zu",
+                                busy = null,
+                                failed = null,
+                                actions = SummaryActions({}, {}, {}, {}, {}),
+                            )
+                        }
                     }
                 }
             }
         }
+
+        if (fold) compose.unfoldBook(folds)
         states.indices.forEach { state ->
             index = state
             compose.waitForIdle()
-            write("session-summary-${states[state].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("session-summary-${states[state].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
-        if (rewardsStep) {
-            index = 0
-            compose.waitForIdle()
+        index = 0
+        compose.waitForIdle()
+        if (compose.onAllNodes(hasText("Continue")).fetchSemanticsNodes().isNotEmpty()) {
             compose.onNodeWithText("Continue").performClick()
             compose.waitForIdle()
-            write("session-summary-rewards-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("session-summary-rewards-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 

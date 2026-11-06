@@ -26,8 +26,8 @@
   "player_can_talk_now": "bab11818c6669056c15f0d514d9d1669fff2230ebcd80f0e78950ce2dac42560",
   "player_cant_talk_now": "caba6fe3a67e472c2b0c2035d1a4e3ab44da83a2f386e1ba7c80781c236cdd38",
   "player_cant_write_now": "778dd85d71021e72ea9b99487b511f317c1f3be323c0dcc4c81b115a4091b9d1",
-  "player_challenge_bit_higher": "5c02789f44eaa39218cbca25f6df527653b487e26fb05d2017d0b0ad4197e1e7",
-  "player_challenge_bit_lower": "c5847fb87f7fcd5b9dfb45aecd87ee97cc60f2ab7e6e33cf0e9c3383e437c8cc",
+  "player_challenge_bit_higher": "d3f5b8d942358ee65623fbd9e23b0fe2059abff30b169950440a7ae7bfa307e0",
+  "player_challenge_bit_lower": "8442390c3c8e6063bf61632425ecc436c32d174d0d6b8c413aa0001d5eecde68",
   "player_challenge_case": "f1c17bddb372348d7a7bb28ec93b94be5bc49ee199b0526f4ba49d78bc8e10d7",
   "player_challenge_complete": "3c3c8e825ca5ac00a795642c181d6054d8258c18f9203a8ce8951ccb2907a5f1",
   "player_challenge_good": "c635aa67bd5cb61ae521656f41418257ffdb699bd92799ad93ad05d13ced1e6f",
@@ -36,8 +36,8 @@
   "player_challenge_improve": "cecb87356249c61af5da7c4f0b9c4c558ea2c89a86563b868e0a97fe46663077",
   "player_challenge_meters": "c6cefc963917f9c1efcc33259cb02ae327f3d315adadf4d4bc42ac98ec0cd089",
   "player_challenge_mission": "2bf7769a88ac30c3284eeec05133fdcedb31baa2d5d2d2a1506a5114247745f2",
-  "player_challenge_much_higher": "e13f2ce6097ca38882489c7c93ceb1c9e7e6d465581281bb7bbaeb60ad58d711",
-  "player_challenge_much_lower": "babf535da75a4a90b2edb22254a381b03340bd9996d3e3cb2f118e1246d3685b",
+  "player_challenge_much_higher": "e9ccd5a47969be53f24ab657dbcbc2defc5583290554d5e3f2de158f3ef65de0",
+  "player_challenge_much_lower": "c31945da843dd242e64ee73540c521af344db7fed1e5ae024c9c943a161d17a2",
   "player_challenge_no_change": "a828f68efcfff311e819d3598b96b04b6a48cb5c0102339fee9910599b8e4057",
   "player_challenge_practice": "ab1cd730bfe29b619c6300f6a434f3129a85d9c8f9898bc1c19674e74bb63b43",
   "player_challenge_said": "d19d32fd552700d61cab7243e2751012e82c38f1ddaa734983423fe02602eb77",
@@ -336,10 +336,10 @@
     <string name="player_challenge_meters">Comment la situation évolue</string>
     <!-- How a meter moved after the learner's decision. -->
     <string name="player_challenge_no_change">aucun changement</string>
-    <string name="player_challenge_much_higher">beaucoup plus élevé</string>
-    <string name="player_challenge_bit_higher">un peu plus élevé</string>
-    <string name="player_challenge_much_lower">beaucoup moins élevé</string>
-    <string name="player_challenge_bit_lower">un peu moins élevé</string>
+    <string name="player_challenge_much_higher">beaucoup plus haut</string>
+    <string name="player_challenge_bit_higher">un peu plus haut</string>
+    <string name="player_challenge_much_lower">beaucoup plus bas</string>
+    <string name="player_challenge_bit_lower">un peu plus bas</string>
     <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
     <string name="player_challenge_you">Toi : %1$s</string>
     <!-- A message read out by screen readers as it arrives in a challenge's conversation: who says it, then what they say, like "Bia: The customer is upset." -->

@@ -6,7 +6,6 @@ import { findMeantExamDay, getKeptMonthStart } from "../../../exams/kept-month";
 import { type GoalDraft } from "../../../goals/goal-contract";
 import { DEFAULT_DAILY_MINUTES } from "../../../plans/daily-minutes";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
-import { getTargetDateBounds } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboarding-contract";
 import { type FoundExam, toExamFacts } from "./exam-facts";
 
@@ -102,8 +101,6 @@ async function toGoalView({
 
   const cutoff = await loadTargetCutoff({ details, examBlueprintId: exam?.blueprintId });
 
-  const understoodDate = goal.targetDate ?? exam?.targetDate ?? undefined;
-
   return {
     cutoff,
     draft: {
@@ -112,11 +109,7 @@ async function toGoalView({
       kind: goal.kind,
       language,
       prompt: context.goal,
-      // Dates beyond the planner's supported range require another onboarding answer.
-      targetDate:
-        understoodDate && understoodDate <= getTargetDateBounds(today).max
-          ? understoodDate
-          : undefined,
+      targetDate: goal.targetDate ?? exam?.targetDate ?? undefined,
       targetLanguage: goal.targetLanguage,
       title: goal.title,
     },

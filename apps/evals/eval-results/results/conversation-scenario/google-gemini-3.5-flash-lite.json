@@ -5,36 +5,36 @@
       "categoryScores": [
         {
           "categoryId": "unitFit",
-          "reasoning": "The landlord call directly practices asking about rent, checking included utilities, and arranging a viewing. Emma, Chicago, the short property name, dollar rent, and afternoon appointment are plausible US details.",
+          "reasoning": "The rental inquiry is an everyday service call directly aligned with the unit. Liam is a plausible landlord with a common US name, Pine Street is a suitable location, and $1,200 per month is plausible. The scenario does not assume personal facts beyond the rental-search premise.",
           "score": 10,
           "label": "Fits the unit and real life",
           "weight": 25
         },
         {
           "categoryId": "level",
-          "reasoning": "The opening is short, introduces Emma, and invites the learner to speak without supplying objective answers. All hints are complete, usable sentences with A2-appropriate structures and relevant rental vocabulary.",
+          "reasoning": "The opening greets the learner, identifies Liam and the property, and invites conversation without answering an objective. The hints are short, complete, usable A2 sentences covering rent, inclusion, proposing a visit, and accepting an appointment.",
           "score": 10,
           "label": "At the learner's level",
           "weight": 20
         },
         {
           "categoryId": "objectives",
-          "reasoning": "The three objectives follow a natural sequence and are achievable in a short call. Each is checkable from the learner’s speech, has a verb-led label of two to five words, and includes a clear description.",
-          "score": 10,
+          "reasoning": "The three objectives are ordered naturally, checkable from speech, and achievable in a short call. Labels meet the verb-first length requirement, and descriptions reveal neither answers nor the twist. However, the description for 'Book a viewing' only requires suggesting a day, which falls short of securing the appointment.",
+          "score": 8,
           "label": "Objectives",
           "weight": 25
         },
         {
           "categoryId": "brief",
-          "reasoning": "The English brief supplies a friendly personality, explicit A2 guidance, the rent, included utilities, and concrete viewing availability. Saturday being unavailable provides one simple twist, and the brief specifies a polite ending after booking.",
-          "score": 10,
+          "reasoning": "The English brief supplies personality, A2 guidance, concrete rent and water-inclusion facts, an appointment option, a simple twist, and a closing instruction. Its unconditional rejection of the first proposed day can produce a contradiction if the learner proposes Saturday, the same day Liam must then offer.",
+          "score": 8,
           "label": "Character brief",
           "weight": 15
         },
         {
           "categoryId": "languages",
-          "reasoning": "Fields use the required languages, with natural Brazilian Portuguese descriptions and an English brief. However, “flat” in one hint does not match the requested US variant; “apartment” is the appropriate choice. There are no emojis or em dashes.",
-          "score": 8,
+          "reasoning": "All fields use the required languages: natural Brazilian Portuguese for the title, situation, role, and descriptions; US English for the place, opening, labels, and hints; and English for the brief. There are no emojis or em dashes.",
+          "score": 10,
           "label": "Right language per field",
           "weight": 15
         }
@@ -44,19 +44,27 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2170,
-          "outputTokens": 694,
-          "reasoningTokens": 223
+          "inputTokens": 2545,
+          "outputTokens": 768,
+          "reasoningTokens": 197
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The hint “Can I see the flat on Saturday?” uses British housing vocabulary. For the requested US English, use “apartment” instead.",
-          "kind": "minorErrors",
-          "score": 9
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "The brief requires Liam to reject the learner's first proposed day and offer Saturday instead, even if the learner already proposed Saturday. Also, the booking objective's description asks only for a suggested day, not an agreed appointment.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the scheduling twist conditional on a genuinely unavailable day, and have the booking description ask the learner to agree on and confirm a day and time.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "Brazilian learner of US English at A2, renting an apartment. A call to a landlord or agent to ask about a flat and book a viewing, with objectives like asking the rent, asking what's included and booking a day. US name and dollars. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.",
@@ -68,10 +76,10 @@
             "Entender um anúncio de aluguel"
           ],
           "learnerLanguage": "pt",
-          "level": "A2",
           "targetLanguage": "en",
           "unitDescription": "Encontre um apartamento, pergunte sobre o aluguel e marque uma visita",
-          "unitTitle": "Alugando um apartamento"
+          "unitTitle": "Alugando um apartamento",
+          "level": "A2"
         }
       }
     },
@@ -79,36 +87,36 @@
       "categoryScores": [
         {
           "categoryId": "unitFit",
-          "reasoning": "This is a plausible, safe landlord call in Mexico City. Sofía, Condesa, pesos, renta, and departamento fit the setting, and the price and viewing time are plausible. However, it omits the deposit and narrows the question about what is included to maintenance alone. The outside-unit cap does not apply.",
-          "score": 8,
+          "reasoning": "This is a realistic first call to a landlord about rent, included utilities, and a viewing. Emma is a common US name, the dollar amount is plausible, and nothing names the learner or assumes personal facts beyond the scenario.",
+          "score": 10,
           "label": "Fits the unit and real life",
           "weight": 25
         },
         {
           "categoryId": "level",
-          "reasoning": "The opening greets, identifies Sofía, and invites the learner to speak without revealing objective answers. Its formal le supports usted. All three hints are short, complete, usable A2 sentences that cover the stated objectives. The above-level cap does not apply.",
-          "score": 10,
+          "reasoning": "The opening correctly identifies Emma as the speaker, greets the learner without naming them, and invites a response without answering an objective. However, its 14 words and multiple clauses substantially exceed the required 3–6-word A1 opening. Two hints are also seven words long. The opening-length failure warrants the level cap of 6.",
+          "score": 6,
           "label": "At the learner's level",
           "weight": 20
         },
         {
           "categoryId": "objectives",
-          "reasoning": "There are three speech-checkable objectives in a natural order. Each label starts with a verb and contains two to five words, and the descriptions clearly specify what to ask. The final objective could better capture arranging a viewing by requiring agreement on a day and time; currently, simply requesting one satisfies it.",
-          "score": 8,
+          "reasoning": "The three objectives are speech-checkable, naturally ordered, and achievable in a short call. All labels begin with verbs and contain 2–5 words. Their Portuguese descriptions disclose neither the rent, included utilities, appointment time, nor scheduling twist.",
+          "score": 10,
           "label": "Objectives",
           "weight": 25
         },
         {
           "categoryId": "brief",
-          "reasoning": "The English brief provides personality, an A2 instruction, rent, maintenance inclusion, a simple scheduling twist, and a closing instruction. It supplies the facts needed for the stated objectives, so the missing-objective-facts cap does not apply. However, deposit and utility details are missing despite being foreseeable questions within this rental unit, and the brief does not explicitly preserve usted.",
-          "score": 7,
+          "reasoning": "The English brief supplies personality, rent, included utilities, an available appointment, a simple scheduling twist, an A1 instruction, and a closing procedure. No essential objective facts are missing. Its main weakness is that the twist depends on the learner choosing Saturday, with no guidance for other requested days.",
+          "score": 8,
           "label": "Character brief",
           "weight": 15
         },
         {
           "categoryId": "languages",
-          "reasoning": "The title, situation, objective descriptions, and brief are in English; the place, opening, labels, and hints are in appropriate Spanish. There are no emojis or em dashes. However, the role “proprietaria” is not English, triggering the explicit maximum score of 5 for a field in the wrong language.",
-          "score": 5,
+          "reasoning": "Title, situation, role, and objective descriptions are natural Brazilian Portuguese. Place, opening, labels, and hints are English, and the brief is English. There are no emojis or em dashes and no wrong-language fields.",
+          "score": 10,
           "label": "Right language per field",
           "weight": 15
         }
@@ -118,38 +126,1106 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 2286,
-          "outputTokens": 929,
-          "reasoningTokens": 242
+          "inputTokens": 2613,
+          "outputTokens": 982,
+          "reasoningTokens": 397
         }
       },
       "steps": [
         {
-          "conclusion": "The role field is not in US English: “proprietaria” should be “landlord.” It also does not correctly spell Spanish “propietaria.” This triggers the wrong-language category cap.",
+          "conclusion": "The opening is 14 words, well beyond the explicit A1 limit of 3–6 words. Two hints also exceed that limit at seven words each. Although the vocabulary is mostly simple, the opening should be substantially shorter for this task.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The rental content is incomplete: there is no deposit amount or information about included utilities/services. Maintenance is covered, but the brief cannot reliably support other basic questions within this unit. The expected Mexican vocabulary “depósito” and “servicios” is absent.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Explicitly instruct Sofía to use usted and identify herself as the dueña. Make the final objective ask the learner to agree on a viewing day and time, rather than merely request a viewing, so the scheduling twist leads to a checkable arrangement.",
+          "conclusion": "Make the scheduling twist work without depending on the learner requesting Saturday. Give Emma a simple rule for handling other requested days while keeping Sunday at 2:00 p.m. as the available appointment.",
           "kind": "potentialImprovements",
           "score": 8
         }
       ],
       "testCase": {
-        "expectations": "US English speaker learning Mexican Spanish at A2, renting an apartment in Mexico City. A call to a landlord (\"dueño\" or \"dueña\") about a \"departamento\", with pesos, Mexican vocabulary (\"renta\", \"depósito\", \"servicios\", \"departamento\", not \"piso\") and \"usted\". Opening line and hints short (A2). Title, situation and descriptions in US English.",
+        "expectations": "Brazilian learner of US English at A1, renting an apartment. A call to a landlord or agent, a stranger, to ask about a flat and book a viewing. The opening line introduces the character as the one speaking (\"this is Sarah from...\", \"I'm Sarah\") or names the place, and addresses no one by name: never \"Hi, Emma\" when Emma is the character, and never a name for the learner. Opening line and hints very short (A1: 3 to 6 words, present tense, the most common words). US name and dollars. Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-a1-renting-1",
+        "userInput": {
+          "canDo": [
+            "Ligar para marcar uma visita a um apartamento",
+            "Perguntar o que está incluído no aluguel",
+            "Entender um anúncio de aluguel"
+          ],
+          "learnerLanguage": "pt",
+          "targetLanguage": "en",
+          "unitDescription": "Encontre um apartamento, pergunte sobre o aluguel e marque uma visita",
+          "unitTitle": "Alugando um apartamento",
+          "level": "A1"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The restaurant setting, stranger serving the learner, Brazilian name, reais prices, and ordering tasks fit the unit. However, asking for seating during a call explicitly motivated by takeout creates an incoherent real-life sequence. No explicit category cap is triggered.",
+          "score": 7,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening identifies both the restaurant and João, greets appropriately, and invites a response without completing an objective. The hints cover the objectives with short utterances. However, the opening combines several clauses instead of using the requested very short A1 introduction. It is not clearly above A1 overall, so the level cap is not triggered.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are three speech-checkable objectives in a sensible table-order-bill sequence. Each Portuguese label starts with a verb and contains two to five words. The English descriptions specify what to ask or say without revealing prices, prescribing menu choices, or disclosing the twist.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, A1 speaking instructions, seating availability, concrete menu prices, payment options, a simple twist, and a closing instruction. Required facts are present, so the missing-facts cap does not apply. However, the unconditional R$ 51,00 total could produce an incorrect bill if the learner orders different quantities.",
+          "score": 8,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields use the required languages, and the Portuguese is Brazilian rather than European. There are no emojis or em dashes. The main weakness is the unnatural bill question \"Quanto custa a conta?\"; a natural restaurant phrase would be \"A conta, por favor\" or \"Qual é o total?\" No wrong-language cap applies.",
+          "score": 8,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2601,
+          "outputTokens": 989,
+          "reasoningTokens": 316
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The situation mixes incompatible intentions: the learner already wants takeout but is instructed to ask for a table. The brief then uses unavailable seating to redirect them to takeout again. This makes the interaction feel contrived rather than like a coherent restaurant call.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The opening is longer than the requested very short A1 model. The bill hint, \"Quanto custa a conta?\", is unnatural for requesting the bill; \"A conta, por favor\" would fit better. The brief also fixes the total at R$ 51,00 without conditioning it on ordering exactly one dish and one drink.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Give João a more specific restaurant role, such as restaurant attendant, rather than the generic \"worker\".",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Brazilian Portuguese at A1, at a restaurant. A face-to-face order or a call to a restaurant, with a Brazilian name and reais. Opening line and hints very short (A1): \"Eu quero...\", \"A conta, por favor\". Brazilian words (\"cardápio\", not \"ementa\"). Title, situation, role and every objective description in US English, never Portuguese.",
+        "id": "en-pt-a1-restaurant-1",
+        "userInput": {
+          "canDo": [
+            "Ask for a table",
+            "Order food and drinks",
+            "Ask for the bill"
+          ],
+          "learnerLanguage": "en",
+          "level": "A1",
+          "targetLanguage": "pt",
+          "unitDescription": "Ask for a table, order and pay at a restaurant",
+          "unitTitle": "At a restaurant"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "Restaurant ordering fits the unit, and Liam is a plausible unfamiliar employee at a short-named US diner with realistic dollar prices. However, the takeout premise, required table request, and offer of a table for takeout do not form a coherent everyday interaction. The scenario remains within the unit, so the outside-unit cap does not apply.",
+          "score": 7,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets the learner, identifies both Liam and the diner, and invites a response without completing an objective. The opening and complete-sentence hints use short, familiar A2 structures and address nobody by name.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are three speech-checkable objectives with appropriately sized verb-led labels in a sensible restaurant sequence. However, the first description supplies the learner's party-size choice, triggering the cap of 6 for giving away a choice. The final description also substitutes asking the total cost for actually requesting the bill.",
+          "score": 6,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies a friendly personality, concrete menu prices, a wait time, an A2 speaking instruction, and a closing procedure. Necessary menu facts are present, so the missing-facts cap does not apply. Its main weakness is the illogical twist: choosing takeout should not be what makes a dine-in table immediately available.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields are in natural US English, including the brief. The five-word title starts with a verb, and the output uses dollar prices with no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2573,
+          "outputTokens": 976,
+          "reasoningTokens": 365
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The scenario mixes takeout with dine-in service without a coherent path: the learner wants takeout but must request a table, and Liam offers an immediate table if they choose takeout. This makes the central interaction and twist confusing. The first objective also supplies a party size of two rather than leaving that choice to the learner or establishing it in the situation.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The final objective's description and hint practice asking the total price rather than requesting the bill. These are related but distinct restaurant actions, so the exercise only partially practices the stated can-do.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker practicing US English at A2, at a restaurant. A face-to-face order or a call to a restaurant, with a US name and dollars. Opening line and hints short and simple (A2). Every field is in US English: title, situation, role, objective labels and descriptions, opening line and hints. The title is a 3 to 6 word goal starting with a verb (\"Order dinner at a diner\").",
+        "id": "en-en-a2-restaurant-1",
+        "userInput": {
+          "canDo": [
+            "Ask for a table",
+            "Order food and drinks",
+            "Ask for the bill"
+          ],
+          "learnerLanguage": "en",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "Ask for a table, order and pay at a restaurant",
+          "unitTitle": "At a restaurant"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is an everyday, safe clinic call that directly practices booking and explaining symptoms and duration. Emma is a plausible US receptionist meeting the learner as a service worker. The clinic name and appointment times are realistic, and no learner identity or personal background is assumed.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets, identifies the speaker and clinic, and invites the learner to speak without completing an objective. Its length and the hints' vocabulary and structures fit B1. However, hint coverage is incomplete: there is no clear model for confirming the offered day and exact time.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives are speech-checkable, manageable in a short call, and have appropriately sized verb-led labels. However, 'para esta semana' supplies a timing choice that the learner should make, so the explicit cap of 6 applies. The descriptions otherwise avoid revealing the unavailable-slot twist or the offered appointment times.",
+          "score": 6,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, B1 guidance, concrete appointment times, symptom questions, and a closing procedure. However, Monday is simultaneously described as available and taken. The twist is also conditional on requesting Monday rather than reliably presenting the required first-time-unavailable complication. Necessary scheduling facts are present, so the missing-facts cap does not apply.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, role, and objective descriptions use natural Brazilian Portuguese. The place, opening, labels, and hints are in US English, and the brief is in English. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2620,
+          "outputTokens": 1194,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The first objective preselects 'this week' rather than leaving appointment timing to the learner, triggering the cap for descriptions that supply a learner choice. The brief also contradicts itself by listing Monday at 10:00 a.m. as available and then saying it is taken. Its twist depends on the learner requesting Monday, so it may never occur, especially because a hint suggests Tuesday.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The hints do not clearly model confirming the offered day and exact time. 'Can I come in on Tuesday afternoon?' requests a broad period instead, while the insurance-card hint covers an action outside the stated objectives.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Describe the booking objective without prescribing a week. Make the unavailable first slot and available alternative unambiguous, and ensure the small scheduling twist occurs without requiring a particular learner request. Include a hint that explicitly confirms the offered appointment.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of US English at B1, at the doctor. A call to a clinic receptionist to book an appointment and explain symptoms and since when, with a small twist (the first time is taken). Opening line and hints at B1 (up to about 15 words, connectors). Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-b1-doctor-1",
+        "userInput": {
+          "canDo": [
+            "Marcar uma consulta",
+            "Explicar sintomas e desde quando",
+            "Entender as instruções do remédio"
+          ],
+          "learnerLanguage": "pt",
+          "level": "B1",
+          "targetLanguage": "en",
+          "unitDescription": "Marque uma consulta, explique o que está sentindo e entenda as instruções",
+          "unitTitle": "No médico e na farmácia"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is a safe, everyday weekend-planning call with an existing friend. The situation explicitly identifies Liam as the learner's friend, and the opening sounds familiar rather than transactional. Liam is a suitable US name, the diner and afternoon time are plausible, and no learner name, city, or personal plans are assumed.",
+          "score": 9,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening and hints use short, accessible A2 English. The opening greets, identifies Liam as the speaker, and invites a response without supplying a planning answer or addressing anyone by name. The hints are complete sentences covering invitation, scheduling, place, and acceptance.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives are speech-checkable, logically ordered, and feasible in a short call. Their Portuguese descriptions disclose neither the character's availability nor a prescribed learner choice or twist. However, \"Suggest a day and time\" exceeds the explicit two-to-five-word label requirement.",
+          "score": 8,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, A2 speaking instructions, Saturday unavailability, a Sunday alternative, and a warm ending. Its main weakness is instructing Liam to supply virtually the whole plan instead of letting the learner perform the planning objectives. The Saturday restriction is not conditional on what the learner proposes, so it may not produce the required failed first idea. The ending also lacks explicit confirmation of the agreed arrangement.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields use the required languages: Brazilian Portuguese for the title, situation, role, and objective descriptions; English for the place, opening, labels, hints, and brief. The wording is concise and understandable, with no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2657,
+          "outputTokens": 1428,
+          "reasoningTokens": 738
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The character brief tells Liam to propose the activity, day, time, and place immediately after the invitation. This does much of the learner's planning work for them, particularly the objectives of suggesting a day and time and choosing a place.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "\"Suggest a day and time\" has six words, exceeding the five-word objective-label limit. The twist is also not reliably tied to the learner's first suggestion: announcing that Saturday is unavailable does not make the first idea fail if the learner suggests Sunday or gives no day.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Have Liam ask for the learner's proposed day, time, and place before offering alternatives, and confirm the final arrangement before ending the call. A named diner or meeting point would make the plan more concrete. Keep Liam described consistently as a friend rather than adding an unnecessary colleague relationship in the brief.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of US English at A2, making weekend plans. The character already knows the learner: a friend, colleague, neighbor or host family member (role in Brazilian Portuguese, such as \"amiga\" or \"colega de trabalho\"), never a relative, and the situation says who they are to the learner (\"sua amiga Emma\"). Together they choose what to do and agree on a day, time and place, with a small twist (the first idea doesn't work). The opening line greets the way a friend would and says who is calling, without the learner's name. Nothing names the learner or assumes facts about their life (their job, family or city). US name, places and prices. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-a2-weekend-plans-1",
+        "userInput": {
+          "canDo": [
+            "Convidar alguém para fazer algo",
+            "Sugerir um dia, um horário e um lugar",
+            "Aceitar ou recusar um convite"
+          ],
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "Convide alguém para sair, combine o que fazer e marque dia, hora e lugar",
+          "unitTitle": "Planos para o fim de semana"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "An existing colleague calling about the weekend fits the social unit. Liam is a plausible US name, and no city or learner name is supplied. However, asking whether the learner is ready for a specific Monday work project assumes a commitment beyond the established colleague premise, triggering the maximum score of 6.",
+          "score": 6,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets, identifies Liam as the speaker and invites the learner to talk without supplying an answer. Its language and all three complete-sentence hints are short, common and appropriate for A2. The hints cover the objectives.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are three short, verb-led labels, and each objective is checkable from speech within a brief call. However, the final description explicitly reveals the Monday readiness topic introduced as the brief's turn in the conversation. This exposes the twist and triggers the maximum score of 6.",
+          "score": 6,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief provides a friendly personality, a concrete weekend activity, an A2 instruction and a closing. However, it tells Liam to volunteer his weekend activity before the learner asks, doing the informational work of the second objective. Its project question is also a weakly developed topic switch rather than a well-grounded small twist.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, role and objective descriptions are natural Brazilian Portuguese. The place, opening, labels and hints are English, and the brief is in English. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2594,
+          "outputTokens": 995,
+          "reasoningTokens": 365
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The Monday work project assumes a shared commitment beyond the colleague relationship established in the situation. The third objective reveals the brief's Monday topic switch rather than keeping the twist hidden. The brief also directs Liam to disclose his weekend activity before the learner asks, undermining the second objective.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The title describes calling the colleague, but the situation describes receiving his call. The Monday project also makes an otherwise natural weekend conversation feel abruptly redirected.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a title consistent with receiving a call. Let Liam ask about the learner's weekend first and wait for a reciprocal question before sharing his own activity. Replace the assumed project with a simple conversational twist, and describe the final objective without revealing that twist.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of US English at A2, in a unit about chatting with neighbors, colleagues and new friends. The character already knows the learner: a friend, colleague or neighbor (role in Brazilian Portuguese), never a relative or someone they're meeting for the first time, and the situation says who they are to the learner. The objectives say what to do without giving anything away: no day, time or plan for the learner to propose and no hint of the character's twist (never \"Suggest coffee on Saturday at 10 and pick another time if she can't\"). The place and situation name no city or neighborhood, since that would be where the learner lives. Nothing names the learner or assumes facts about their life. US name. Opening line and hints short and simple (A2). Title, situation, role and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-a2-social-life-1",
+        "userInput": {
+          "canDo": [
+            "Consigo conversar com vizinhos e colegas"
+          ],
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "Conversa com vizinhos, colegas e novos amigos.",
+          "unitTitle": "Vida social"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The call is an everyday family conversation with an established friend. Mateo is a plausible Mexican name, the situation explicitly identifies him as the learner's friend, and the opening is familiar. No learner name, location, or family facts are imposed.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The six-word opening greets naturally, identifies Mateo, and invites a response without completing an objective. The hints use common present-tense Spanish and cover the goals, but the eight-word age-and-occupation hint exceeds the explicit A1 length expectation. Neither the opening nor most hints are above level, so no cap applies.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are three speech-checkable objectives that fit a short call. Their descriptions disclose no character facts or prescribed learner choices. However, 'Decir la edad y el trabajo' has six words rather than the required two to five.",
+          "score": 8,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, A1 guidance, and concrete family information: Lucía is Mateo's sister, is 20, and is a student. It leaves the learner's goals to the learner. Its small complication concerns an unsolicited invitation to meet rather than the family exchange, and its closing guidance is attached only to that conditional branch.",
+          "score": 8,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields use the required languages: English for the title, situation, role, descriptions, and brief; Spanish for the place, opening, labels, and hints. The Spanish is compatible with Mexican usage, and there are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2684,
+          "outputTokens": 1039,
+          "reasoningTokens": 418
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The third objective label has six words, exceeding the two-to-five-word limit. The age-and-occupation hint has eight words, exceeding the A1 three-to-six-word expectation. The brief's twist and explicit closing instruction depend on an unrelated invitation to meet, so they do not support the expected family conversation reliably.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Shorten the third label to 'Decir edad y ocupación' and split the long hint into short sentences. Make the small twist relevant to asking about family, and give Mateo a closing instruction that applies once the learner has completed the objectives.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish at A1, talking about family. The character already knows the learner: a friend, colleague, neighbor or host family member (role in US English), never one of the learner's relatives, and the situation says who they are to the learner (\"your neighbor Lupita\"). The learner says who is in their family and asks about the character's. The character's own family is in the brief; nothing assumes who is in the learner's family, and nothing names the learner. The opening line greets the way a friend would and says who is speaking. Opening line and hints very short (A1: 3 to 6 words, present tense): \"Tengo dos hermanos.\", \"¿Tienes hijos?\". Title, situation and descriptions in US English.",
+        "id": "en-es-a1-family-1",
+        "userInput": {
+          "canDo": [
+            "Say who is in your family",
+            "Ask someone about their family",
+            "Say people's ages and what they do"
+          ],
+          "learnerLanguage": "en",
+          "level": "A1",
+          "targetLanguage": "es",
+          "unitDescription": "Talk about your family and ask about someone else's",
+          "unitTitle": "My family"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The receptionist is an appropriate service stranger, Lucas is a common Brazilian name, and the gym name, reais pricing, and opening hours are plausible. The interaction covers membership pricing, hours, and trial booking. However, a single plan does not support meaningful comparison, and São Paulo is not established.",
+          "score": 8,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets the learner, identifies both Lucas and the gym, and invites a response without answering an objective or addressing anyone by name. Its 14 words fit the requested length. All hints are short, complete, usable Brazilian Portuguese sentences accessible at B1.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives follow a natural sequence, are checkable through speech, and are achievable in a short conversation. Their descriptions disclose neither supplied answers nor the scheduling twist, and the booking description leaves the day to the learner. However, the hours label contains six words rather than the required two to five.",
+          "score": 8,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, B1 guidance, a concrete monthly price, opening hours, trial slots, a small twist, and closing instructions. The facts needed for the stated objective descriptions are present, so the missing-facts cap does not apply. Its main weakness is the mechanically staged booking reversal: Lucas offers Monday and retracts it after any response, rather than checking availability naturally.",
+          "score": 8,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "Title, situation, role, and objective descriptions are in natural US English. The place, opening, labels, and hints are in Brazilian Portuguese, and the brief is in English. Currency and time notation suit Brazil. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2612,
+          "outputTokens": 1064,
+          "reasoningTokens": 429
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Only one membership plan is provided, limiting the unit's plan-comparison goal. The situation does not establish the requested São Paulo setting. The objective label 'Perguntar o horário de funcionamento' has six words, exceeding the five-word limit.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a second plan with a concrete price and distinguishing feature, mention São Paulo in the situation, and shorten the hours label to 'Perguntar sobre os horários'. Make the scheduling twist a natural availability check rather than instructing Lucas to offer a slot and then retract it automatically.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Brazilian Portuguese at B1, joining a gym in São Paulo. A service moment, so the character is a stranger who works there (a receptionist or a trainer), never a friend or neighbor. The learner asks about plans and prices, hours or classes, and books a trial class, with reais and a Brazilian name. Opening line and hints at B1 (up to about 15 words, connectors). Title, situation and descriptions in US English.",
+        "id": "en-pt-b1-gym-1",
+        "userInput": {
+          "canDo": [
+            "Ask about membership plans and prices",
+            "Ask about opening hours and classes",
+            "Book a trial class"
+          ],
+          "learnerLanguage": "en",
+          "level": "B1",
+          "targetLanguage": "pt",
+          "unitDescription": "Find a gym, compare plans and book a trial class",
+          "unitTitle": "Joining a gym"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is an appropriate first-contact rental inquiry with a plausible landlord, local neighborhood, and peso-denominated rent and deposit. All goals can be reached by phone, and the scenario does not assume personal facts beyond its premise.",
+          "score": 9,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The hints are short, complete, usable A2 sentences covering all objectives. The opening greets, names the location, and invites a response without revealing answers, so no opening-line cap applies. However, “le hablo de parte de los departamentos” is unnecessarily indirect and awkward compared with a simple self-introduction.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives are ordered naturally, achievable in a short call, and checkable from speech. Their Spanish labels contain two to five words and start with verbs. The English descriptions disclose neither answers nor the scheduling twist and leave the learner's choices open.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, A2 and usted instructions, concrete prices, viewing times, a small twist, and a closing condition. However, it never establishes what services are included, despite that being an explicit objective; the missing required fact triggers the maximum score of 5. The contradictory instructions about the availability of 10:00 a.m. also need clarification.",
+          "score": 5,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields use their required languages. The Spanish uses Mexican rental vocabulary, including renta, servicios, and departamento, and the opening uses formal address. The English fields are concise and natural. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2739,
+          "outputTokens": 990,
+          "reasoningTokens": 340
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The brief does not specify what, if anything, is included in the rent. It only excludes water and electricity, leaving the answer to the services objective incomplete and requiring the character to invent information.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The viewing instructions contradict themselves: Saturday at 10:00 a.m. is described as available, but the character must say it is taken if requested. The opening also sounds like an outgoing representative calling on behalf of apartments rather than a landlord answering an inquiry.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a simpler opening that identifies Sofía directly, such as “Hola, soy Sofía, la dueña. ¿En qué le puedo ayudar?” A deposit question would also be a useful optional hint because the unit covers deposits and the brief supplies the amount.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Mexican Spanish at A2, renting an apartment in Mexico City. A call to a landlord (\"dueño\" or \"dueña\") about a \"departamento\", with pesos, Mexican vocabulary (\"renta\", \"depósito\", \"servicios\", \"departamento\", not \"piso\") and \"usted\". Opening line and hints short (A2). Title, situation, role and every objective description in US English, never Spanish.",
         "id": "en-es-a2-renting-1",
         "userInput": {
-          "canDo": ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+          "canDo": [
+            "Call about an apartment",
+            "Ask what's included",
+            "Arrange a viewing"
+          ],
           "learnerLanguage": "en",
           "level": "A2",
           "targetLanguage": "es",
           "unitDescription": "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
           "unitTitle": "Renting an apartment in Mexico City"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is an appropriate, everyday phone call to a German medical practice, with achievable appointment and symptom-reporting goals. The receptionist is a suitable service stranger, and the symptoms are part of the scenario premise rather than unsupported personal assumptions. However, naming both the doctor and receptionist Mia creates role ambiguity, and the incorrect calendar details weaken realism. No unit-fit cap is triggered.",
+          "score": 8,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening identifies the practice and speaker, greets naturally, and invites the learner to speak without completing an objective. The opening and complete-sentence hints are accessible at B1. Formal Sie is used appropriately. The final hint could align more directly with confirming an offered appointment instead of proposing one.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are three concise, speech-checkable objectives in a workable order for a short call. However, the first description prescribes requesting an appointment today, which is a choice the learner should make; the explicit cap of 6 applies. All three labels also place the infinitive last rather than starting with a verb.",
+          "score": 6,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, B1 and Sie instructions, opening hours, an appointment slot, a simple availability twist, and a clear wrap-up. Necessary appointment facts are present, so the missing-facts cap does not apply. However, both weekday/date pairings are factually wrong, and the stated current date falls outside the practice's opening days. These errors undermine the scheduling information the voice model needs.",
+          "score": 6,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, role, and objective descriptions are natural Brazilian Portuguese. The place, opening, labels, and hints are German, and the brief is English. The opening uses Sie and the brief explicitly requires it. There are no emojis or em dashes, and no wrong-language field triggers a cap.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2713,
+          "outputTokens": 972,
+          "reasoningTokens": 248
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The brief contains incorrect calendar facts: 27.09.2026 is Sunday, not Monday, and 28.09.2026 is Monday, not Tuesday. This also conflicts with the stated Monday–Friday opening hours. The first objective description dictates that the learner request an appointment today, although descriptions must not prescribe the learner's choice; this triggers the objectives score cap of 6.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None of the objective labels starts with a verb, as required. The situation names the doctor as Mia Weber while the character is a receptionist named Mia, creating avoidable ambiguity about who answers the call.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the final hint model confirmation of the offered appointment rather than asking whether that appointment works. Keep the initial appointment request open so the learner can choose whether to request a particular day.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of German at B1, at the doctor. A call to a German Praxis to book an appointment and explain symptoms and since when, with a German name. The doctor or receptionist never says \"du\" to the caller: a line that addresses them, in the opening line or the hints, uses \"Sie\" (\"Wie kann ich Ihnen helfen?\"), and the brief tells the voice model to use \"Sie\". An opening that addresses no one is fine. Opening line and hints at B1. Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-de-b1-doctor-1",
+        "userInput": {
+          "canDo": [
+            "Marcar uma consulta",
+            "Explicar sintomas e desde quando",
+            "Entender as instruções do remédio"
+          ],
+          "learnerLanguage": "pt",
+          "level": "B1",
+          "targetLanguage": "de",
+          "unitDescription": "Marque uma consulta, explique o que está sentindo e entenda as instruções",
+          "unitTitle": "No médico"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is a plausible first phone call to a landlord, with an appropriate French name, street, euro prices, and phone-achievable goals. However, it omits charges and asking what is included, an explicit part of the expected rental interaction.",
+          "score": 8,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening identifies Lucas, invites the learner to speak, and uses vous. The sentences and rental vocabulary are suitable for A2. However, \"Bonjour, jeappelle pour l'appartement\" is not a correctly formed sentence the learner can use as supplied.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives are ordered naturally, achievable in a short call, and checkable from speech. Each French label starts with a verb and has two to five words. Descriptions reveal no prices, appointment answers, or twist and leave the viewing-day choice to the learner.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, A2 and vous instructions, rent, deposit, viewing availability, and a simple scheduling twist. Facts needed for the stated objectives are present, so the missing-objective-facts cap does not apply. Nevertheless, charges and inclusions are missing, and the wrap-up prescribes Thursday rather than confirming only after agreement. The twist also depends on an unsupported assumption that the learner asks for Tuesday.",
+          "score": 7,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields use their required languages, with French place, opening, labels, and hints, and English learner-facing descriptions and brief. There are no emojis or em dashes. The malformed \"jeappelle\" reduces the naturalness and correctness of the French hint.",
+          "score": 8,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2669,
+          "outputTokens": 943,
+          "reasoningTokens": 296
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Charges are entirely missing: the learner cannot find out their amount or what is included because the brief supplies neither. This leaves an explicit rental-topic expectation unsupported.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The first hint contains malformed French: \"jeappelle\" should be \"j'appelle\". The brief also assumes the learner requests Tuesday and instructs Lucas to confirm Thursday without requiring the learner to accept that appointment.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Extend the rent objective and hints to cover charges, with concrete amounts and inclusions in the brief. Make the scheduling twist work with the learner's actual request and confirm only an agreed appointment. Specify whether the apartment is furnished to contextualize the two-month deposit.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning French at A2, renting an apartment in France. A call to a landlord about an appartement, with the loyer, charges and dépôt de garantie in euros. The landlord never says \"tu\" to the caller: a line that addresses them, in the opening line or the hints, uses \"vous\" (\"Comment puis-je vous aider ?\"), and the brief tells the voice model to use \"vous\". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.",
+        "id": "en-fr-a2-renting-1",
+        "userInput": {
+          "canDo": [
+            "Call about an apartment",
+            "Ask what's included",
+            "Arrange a viewing"
+          ],
+          "learnerLanguage": "en",
+          "level": "A2",
+          "targetLanguage": "fr",
+          "unitDescription": "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+          "unitTitle": "Renting an apartment"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is a plausible phone call to an unfamiliar landlord, with realistic euro rent and viewing times. All goals are achievable by phone and fit the unit. However, the learner-facing practice omits asking about the deposit despite its explicit importance in the scenario.",
+          "score": 8,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening identifies Sofia, greets the caller, and invites them to speak without answering an objective. It uses formal Lei through \"aiutarla\"; lowercase capitalization is acceptable. The hints are short, complete, A2-appropriate sentences covering the three objectives.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives follow a natural sequence, are checkable from speech, and fit a short call. Their Italian labels begin with verbs and contain two to five words. Descriptions reveal neither prices nor appointment options and leave the viewing choice to the learner.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, rent, utility inclusion, a calculable deposit, concrete viewing options, a simple scheduling variation, and a closing instruction. It explicitly requires A2 language and polite Lei. No facts needed by the objectives are missing. Writing the deposit as 1.600,00 € would provide a useful additional safeguard.",
+          "score": 9,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields use the required languages, and there are no emojis or em dashes. The Italian is appropriate, and the brief is in English. The English title is not fully natural because \"rent apartment\" is missing an article.",
+          "score": 8,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2910,
+          "outputTokens": 1069,
+          "reasoningTokens": 477
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The deposit appears only in the character brief, so the objectives and hints do not help the learner practice asking about the cauzione, an explicit focus of this scenario. The title also needs an article: \"Call to rent an apartment.\"",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a fourth objective and a short hint for asking about the deposit. State its amount explicitly as 1.600,00 € in the brief, alongside \"two months of rent,\" to make the voice model's response more reliable.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Italian at A2, renting an apartment in Italy. A call to a landlord about an appartamento, with the affitto and the cauzione in euros. The landlord never says \"tu\" to the caller: a line that addresses them, in the opening line or the hints, uses \"Lei\" (\"Come posso aiutarLa?\"), and the brief tells the voice model to use \"Lei\". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.",
+        "id": "en-it-a2-renting-1",
+        "userInput": {
+          "canDo": [
+            "Call about an apartment",
+            "Ask what's included",
+            "Arrange a viewing"
+          ],
+          "learnerLanguage": "en",
+          "level": "A2",
+          "targetLanguage": "it",
+          "unitDescription": "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+          "unitTitle": "Renting an apartment"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is an everyday clinic phone call covering appointment booking, symptoms, and appointment time. Anna is a plausible Polish receptionist meeting the caller as a stranger. The clinic name and appointment times are realistic, and no learner identity or personal history is assumed beyond the scenario premise.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening uses short, accessible A2 Polish, identifies both the clinic and Anna, and politely invites the caller to speak without completing an objective. The hints are complete, usable sentences and cover all three objectives.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives are achievable in a short call, checkable from the learner's speech, and sensibly ordered. Their Polish labels contain two to five words and start with verbs. The English descriptions reveal neither appointment options nor the twist and leave symptom choices to the learner.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief provides personality, concrete appointment times, a simple twist, an A2 instruction, polite address, and a closing procedure. Required scheduling facts are present, so the missing-facts cap does not apply. However, Monday is described as both available and taken without a clear transition. The Thursday hint also lacks explicit scheduling support, and gender-neutral polite address could be specified more clearly.",
+          "score": 8,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields use the required languages: English for the title, situation, role, descriptions, and brief; Polish for the place, opening, labels, and hints. The wording is concise and understandable, with no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2979,
+          "outputTokens": 973,
+          "reasoningTokens": 368
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The brief calls Monday at 10:00 available and then says it is taken, without explaining when its status changes. This leaves the receptionist's scheduling behavior ambiguous. The Thursday hint also introduces a day whose availability the brief does not explicitly address.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Clarify that Monday is unavailable and Tuesday is the available alternative, or explicitly explain the availability change. Tell the receptionist to use impersonal polite wording until the caller's form of address is known, rather than leaving the choice between pan and pani unspecified.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Polish at A2, at the doctor. A call to a przychodnia to book an appointment and say what hurts, with a Polish name. The receptionist is polite with a stranger in the opening line and the brief, never \"ty\"; impersonal polite phrasing (\"W czym mogę pomóc?\") is fine, since the caller's gender is unknown. Opening line and hints short (A2). Title, situation and descriptions in US English.",
+        "id": "en-pl-a2-doctor-1",
+        "userInput": {
+          "canDo": [
+            "Book an appointment",
+            "Say what hurts",
+            "Ask about the time"
+          ],
+          "learnerLanguage": "en",
+          "level": "A2",
+          "targetLanguage": "pl",
+          "unitDescription": "Book an appointment and say how you feel",
+          "unitTitle": "At the doctor"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is an appropriate first-contact phone call to a landlord, with achievable rental and viewing goals. Mehmet and Bağdat Caddesi fit the Turkish setting, and both monetary amounts are in Turkish lira. Nothing assumes personal facts about the learner. No score cap applies.",
+          "score": 9,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening identifies Mehmet, greets the caller, and asks whether they are calling about the apartment without revealing objective answers. The hints are short, complete, usable A2 sentences. The landlord uses polite second-person morphology, not sen. No score cap applies.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives are ordered sensibly, checkable through speech, and achievable in a short call. Their descriptions reveal neither answers nor the scheduling twist. However, every label places the verb last instead of first, and the objectives do not explicitly support asking about the deposit required by the task context. No numerical cap is triggered.",
+          "score": 8,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, rent, deposit, utility exclusions, a concrete viewing alternative, an A2 instruction, explicit siz usage, and a closing instruction. Necessary objective facts are present, so the missing-facts cap does not apply. Its scheduling guidance is unnecessarily dependent on the learner asking for Saturday and gives no fallback for other requests.",
+          "score": 8,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "English is used for the title, situation, role, descriptions, and brief; Turkish is used for the place, opening, labels, and hints. The English is natural, and there are no emojis or em dashes. The explicit siz instruction and polite opening satisfy the register requirement.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3061,
+          "outputTokens": 1046,
+          "reasoningTokens": 427
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All three objective labels end with the verb rather than starting with it, contrary to the explicit label requirement. The deposit is supplied in the brief but is absent from both the objectives and hints, leaving an important part of the requested rental conversation unsupported.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the viewing instructions flexible enough to handle a learner who does not request Saturday. Add a short deposit question such as “Depozito ne kadar?” and specify a building number or meeting point for the viewing.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord never says \"sen\" to the caller: a line that addresses them, in the opening line or the hints, uses \"siz\" (\"Size nasıl yardımcı olabilirim?\"), and the brief tells the voice model to use \"siz\". An opening with no second-person form, such as \"Nasıl yardımcı olabilirim?\", is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.",
+        "id": "en-tr-a2-renting-1",
+        "userInput": {
+          "canDo": [
+            "Call about an apartment",
+            "Ask what's included",
+            "Arrange a viewing"
+          ],
+          "learnerLanguage": "en",
+          "level": "A2",
+          "targetLanguage": "tr",
+          "unitDescription": "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+          "unitTitle": "Renting an apartment"
         }
       }
     }

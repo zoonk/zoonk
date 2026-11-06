@@ -2,6 +2,8 @@
 
 import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { retryGenerationAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
+import { claimCourseCertificateAction } from "@/components/learn/certificate-actions";
+import { SessionCertificates } from "@/components/learn/session-ceremony";
 import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
 import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
@@ -11,7 +13,9 @@ import { useStartLanguageConversation } from "@/lib/language/use-start-language-
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
+import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { type LanguageProgressView } from "@zoonk/core/view-models/language/contract";
+import { type FieldMapView } from "@zoonk/core/view-models/map/contract";
 import {
   type GoalStatusControl,
   JourneyBuilding,
@@ -19,10 +23,13 @@ import {
   JourneyScreen,
   type JourneyStanding,
   type PlanActions,
+  type PlanEnd,
   type PlanTutor,
+  type StudyNext,
 } from "@zoonk/learn/journey";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
-import { useSyncExternalStore } from "react";
+import { getCertificatePath } from "@zoonk/utils/certificate-links";
+import { useState, useSyncExternalStore } from "react";
 
 /** "Try again" starts the run only on the learner's tap. */
 export function JourneyBuildingClient({
@@ -108,14 +115,16 @@ function useLanguageStanding(language: LanguageProgressView | null): JourneyStan
 
 type JourneyClientProps = Omit<
   JourneyScreenProps,
-  "actions" | "goalStatus" | "links" | "refresh" | "standing" | "tutor"
+  "actions" | "end" | "goalStatus" | "links" | "refresh" | "standing" | "tutor"
 > & {
   actions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
+  certificates: FieldMapView["certificates"];
   completedLessons: boolean;
   goalId: string;
   goalStatus: GoalStatusControl["status"];
   hasMindMaps: boolean;
   language: LanguageProgressView | null;
+  next: StudyNext | null;
   preparation: Extract<JourneyStanding, { kind: "preparation" }> | null;
   readAt: number;
   resume: GoalStatusControl["resume"];
@@ -149,9 +158,27 @@ function useGoalStatus({
   };
 }
 
+/** One opens its page; several open Certificates, marked for Plus while any is locked. */
+function getCertificatesView(
+  earned: NonNullable<FieldMapView["certificates"]>["earned"],
+): NonNullable<PlanEnd["certificates"]>["view"] {
+  const [first] = earned;
+
+  if (!first) {
+    return null;
+  }
+
+  return {
+    href: earned.length > 1 ? "/certificates" : getCertificatePath(first.code),
+    locked: earned.some((certificate) => certificate.locked),
+    several: earned.length > 1,
+  };
+}
+
 export function JourneyClient({
   actions,
   buddy,
+  certificates,
   completedLessons,
   goalId,
   goalStatus,
@@ -169,6 +196,21 @@ export function JourneyClient({
   const status = useGoalStatus({ goalId, resume, status: goalStatus });
   const arrival = useArrivalChoice();
   const outlineActions = useTopicOutlineActions(goalId);
+
+  const [claimed, setClaimed] = useState<OwnedCertificateFacts[]>([]);
+
+  /** Plays the moment for the ones not closed before, oldest first, then reads the plan again. */
+  const claimCertificates = async () => {
+    const held = await claimCourseCertificateAction(goalId);
+    const unshown = (held ?? []).filter((facts) => facts.shownAt === null);
+
+    if (held && unshown.length === 0) {
+      router.refresh();
+    }
+
+    setClaimed(unshown);
+    return held !== null;
+  };
 
   const continueNextLevel = async (onContinue: () => Promise<boolean>) => {
     const started = await onContinue();
@@ -198,9 +240,16 @@ export function JourneyClient({
           },
           findTimeToCover: () => findGoalTimeToCover({ goalId }),
         }}
+        end={{
+          certificates: certificates && {
+            onClaim: claimCertificates,
+            unclaimed: certificates.unclaimed,
+            view: getCertificatesView(certificates.earned),
+          },
+          next: next && { ...next, onContinue: () => continueNextLevel(next.onContinue) },
+        }}
         goalStatus={status}
         links={getJourneyLinks({ completedLessons, goalKind: props.goal.kind, hasMindMaps })}
-        next={next && { ...next, onContinue: () => continueNextLevel(next.onContinue) }}
         openAdjust={arrival === ADJUST_TIME ? "time" : arrival === ADJUST_PLAN}
         openFocus={arrival === CHOOSE_FOCUS}
         openFullCourse={arrival === STUDY_EVERYTHING}
@@ -208,6 +257,16 @@ export function JourneyClient({
         standing={languageStanding ?? preparation}
         tutor={{ buddy, href: "/buddy" }}
       />
+
+      {claimed.length > 0 && (
+        <SessionCertificates
+          certificates={claimed}
+          onClose={() => {
+            setClaimed([]);
+            router.refresh();
+          }}
+        />
+      )}
     </TopicOutlineProvider>
   );
 }

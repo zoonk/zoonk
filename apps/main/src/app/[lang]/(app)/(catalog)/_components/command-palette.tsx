@@ -3,7 +3,7 @@
 import { usePathname } from "@/i18n/navigation";
 import { logout } from "@/lib/logout";
 import { openStudyBlockAction } from "@/lib/session/study-session-actions";
-import { useGoToStudyDestination } from "@/lib/session/use-study-navigation";
+import { useOpenDestination } from "@/lib/session/use-study-navigation";
 import { useContentFeedback } from "@zoonk/learn/feedback";
 import { useGoalSwitchTransition } from "@zoonk/learn/goal-switcher";
 import { useAppLocale } from "@zoonk/learn/locale";
@@ -20,6 +20,7 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import { listenForCommandPaletteOpen } from "@zoonk/ui/lib/command-palette-event";
+import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -81,17 +82,19 @@ function usePalettePlan({ enabled, goalId }: { enabled: boolean; goalId: string 
 /** The palette has closed by then, so a block that couldn't be opened says so in a toast. */
 function useContinueFromPalette() {
   const t = useExtracted();
-  const go = useGoToStudyDestination();
+  const open = useOpenDestination();
   const [, startTransition] = useTransition();
 
   return (sessionId: string) => {
     startTransition(async () => {
-      const destination = await openStudyBlockAction({
-        target: { kind: "next", sessionId },
-        timeZone: getLocalTimeZone(),
-      });
-
-      const opened = await go(destination);
+      const { data: opened } = await safeAsync(() =>
+        open(() =>
+          openStudyBlockAction({
+            target: { kind: "next", sessionId },
+            timeZone: getLocalTimeZone(),
+          }),
+        ),
+      );
 
       if (!opened) {
         showErrorToast(t("Couldn't open your next step. Try again."));
@@ -153,6 +156,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   const t = useExtracted();
   const locale = useAppLocale();
   const contentFeedback = useContentFeedback();
+  const switchFailed = t("We couldn't switch goals. Try again.");
   const [, startGoalSwitch] = useGoalSwitchTransition();
   const continueSession = useContinueFromPalette();
 
@@ -205,7 +209,13 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
 
     if (item.kind === "goal") {
       startGoalSwitch(async () => {
-        await shown.learner?.onSwitchGoal(item.goalId);
+        const { data: switched } = await safeAsync(
+          async () => shown.learner?.onSwitchGoal(item.goalId) ?? false,
+        );
+
+        if (!switched) {
+          showErrorToast(switchFailed);
+        }
       });
 
       return;

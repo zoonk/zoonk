@@ -115,7 +115,8 @@ function BehindChoices({
   return <SuggestionActions>{sorted.map((option) => options[option])}</SuggestionActions>;
 }
 
-function useSeeChange({
+/** Keeping their time changes nothing: the learner's "seen" is their answer. */
+function useKeepTime({
   change,
   onAnswer,
   onHold,
@@ -125,30 +126,29 @@ function useSeeChange({
   onHold: (held: boolean) => void;
 }) {
   const { actions } = useTodayScreen();
-  const [seen, setSeen] = useState(false);
   const [superseded, setSuperseded] = useState<Change | null>(null);
+  const [isPending, startTransition] = useTransition();
 
-  async function see(): Promise<boolean> {
-    if (seen) {
-      return true;
-    }
+  const keep = () => {
+    onHold(true);
 
-    const { data } = await safeAsync(() =>
-      actions.decidePlanChange({ changeId: change.id, status: "seen", surface: "behind" }),
-    );
+    startTransition(async () => {
+      const { data } = await safeAsync(() =>
+        actions.decidePlanChange({ changeId: change.id, status: "seen", surface: "behind" }),
+      );
 
-    if (!data || data === "stale") {
-      onAnswer(data === "stale" ? null : { failed: true });
-      setSuperseded(data === "stale" ? change : null);
-      onHold(false);
-      return false;
-    }
+      if (!data || data === "stale") {
+        onAnswer(data === "stale" ? null : { failed: true });
+        setSuperseded(data === "stale" ? change : null);
+        onHold(false);
+        return;
+      }
 
-    setSeen(true);
-    return true;
-  }
+      onAnswer({ kept: true });
+    });
+  };
 
-  return { see, superseded: superseded === change };
+  return { isPending, keep, superseded: superseded === change };
 }
 
 export function FallingBehindNotice({
@@ -163,22 +163,8 @@ export function FallingBehindNotice({
   const t = useExtracted();
   const sentence = useBehindSentence();
   const [answer, setAnswer] = useState<Answer>(null);
-  const [isPending, startTransition] = useTransition();
-  const { see, superseded } = useSeeChange({ change, onAnswer: setAnswer, onHold });
+  const { isPending, keep, superseded } = useKeepTime({ change, onAnswer: setAnswer, onHold });
   const answered = answer !== null && !("failed" in answer);
-
-  // Keeping their time changes nothing: the learner's "seen" is their answer.
-  const keep = () => {
-    onHold(true);
-
-    startTransition(async () => {
-      if (!(await see())) {
-        return;
-      }
-
-      setAnswer({ kept: true });
-    });
-  };
 
   const result = t("Noted. You keep your time, with less depth where it counts least.");
 

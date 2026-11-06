@@ -84,8 +84,8 @@ function WritingFocusTest({
       onSubmit={submitFocusTestAction.bind(null, page.goalId)}
       onUndo={(changeId) => decidePlanChangeAction(page.goalId, { changeId, status: "undone" })}
       preparing={{ limit, onStart: () => run.retry?.(), run: shown, starting: false }}
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}
       started
       test={test}
@@ -113,7 +113,9 @@ export function FocusTestClient({
 
   const start = () =>
     startTransition(async () => {
-      const result = await requestFocusTestWriting(page.goalId);
+      const result = await requestFocusTestWriting(page.goalId).catch((): QuestionWriting => ({
+        status: "failed",
+      }));
 
       if (result.status === "ready") {
         router.replace(getTestHref({ page, run: null }));
@@ -138,8 +140,8 @@ export function FocusTestClient({
       doneHref={page.doneHref}
       onSubmit={submitFocusTestAction.bind(null, page.goalId)}
       onUndo={(changeId) => decidePlanChangeAction(page.goalId, { changeId, status: "undone" })}
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}
       preparing={
         isFocusTestComplete(test)

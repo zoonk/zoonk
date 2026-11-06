@@ -133,7 +133,7 @@ export function MaterialQuestions({
         language: locale,
         question: trimmed,
         sourceIds: sources.map((source) => source.id),
-      });
+      }).catch((): MaterialQuestionOutcome => ({ status: "failed" }));
 
       setTurns((previous) => [
         ...previous,
@@ -200,6 +200,7 @@ export function MaterialQuestions({
           aria-label={t("Ask")}
           className="size-11 shrink-0 rounded-full"
           disabled={!trimmed || isPending}
+          focusableWhenDisabled
           size="icon-lg"
           type="submit"
         >

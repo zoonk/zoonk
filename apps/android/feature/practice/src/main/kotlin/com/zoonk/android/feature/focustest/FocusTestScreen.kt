@@ -2,6 +2,7 @@ package com.zoonk.android.feature.focustest
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
@@ -59,6 +60,7 @@ import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.UndoAction
 import com.zoonk.android.feature.practice.UndoState
 import com.zoonk.android.feature.practice.UpcomingQuestions
+import com.zoonk.android.feature.practice.runColumn
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -69,15 +71,22 @@ import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.PressFocus
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.rememberMoveFocus
+import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -125,6 +134,17 @@ fun FocusTestScreen(
         }
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     val loaded by viewModel.test.collectShown()
+    val focus =
+        rememberPressFocus(
+            when {
+                ui.outcome != null || (ui.started && ui.questions.isNotEmpty()) -> null
+                ui.started && ui.writing -> "wait"
+                ui.startFailed -> "startFailed"
+                ui.refused != null -> "limit"
+                else -> "start"
+            },
+        )
+
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
 
     ui.outcome?.let {
@@ -137,8 +157,8 @@ fun FocusTestScreen(
             LaunchedEffect(read.value) { viewModel.arrive(read.value) }
             when {
                 ui.started && ui.questions.isNotEmpty() -> FocusTestQuestions(read.value, ui, viewModel, app, navigator, close)
-                ui.started && ui.writing -> FocusTestWriting(viewModel, close)
-                else -> FocusTestIntro(read.value, ui, viewModel, navigator)
+                ui.started && ui.writing -> FocusTestWriting(viewModel, close, focus)
+                else -> FocusTestIntro(read.value, ui, viewModel, navigator, focus.requester, focus::press)
             }
         }
 
@@ -163,11 +183,20 @@ internal fun FocusTestIntro(
     ui: FocusTestUi,
     viewModel: FocusTestViewModel,
     navigator: AppNavigator,
+    replacementFocus: FocusRequester? = null,
+    onStart: () -> Unit = {},
 ) {
+    val start = {
+        onStart()
+        viewModel.start(read)
+    }
     if (ui.startFailed) {
-        FocusTestWaitScreen(GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted), {
-            viewModel.start(read)
-        }, navigator::closeTask)
+        FocusTestWaitScreen(
+            GenerationRun(GenerationRun.Status.Failed, GenerationFailure.NotStarted),
+            start,
+            navigator::closeTask,
+            replacementFocus,
+        )
         return
     }
     val minutes = maxOf(1, (read.total * SECONDS_PER_QUESTION / SECONDS_PER_MINUTE.toFloat()).roundToInt())
@@ -183,6 +212,10 @@ internal fun FocusTestIntro(
                         LimitSubject.Help,
                         onCreateAccount = { navigator.open(AppRoute.Login) },
                         onSeePlus = { navigator.open(AppRoute.Subscription) },
+                        modifier =
+                            replacementFocus?.let {
+                                Modifier.focusRequester(it).semantics(mergeDescendants = true) {}.focusable()
+                            } ?: Modifier,
                     )
                 } else {
                     TaskActions { width ->
@@ -190,8 +223,8 @@ internal fun FocusTestIntro(
                             stringResource(if (ui.starting) R.string.focustest_starting else R.string.focustest_start),
                             busy = ui.starting,
                             enabled = true,
-                            modifier = width,
-                        ) { viewModel.start(read) }
+                            modifier = replacementFocus?.let { width.focusRequester(it) } ?: width,
+                        ) { start() }
                     }
                 }
             }
@@ -216,9 +249,14 @@ internal fun FocusTestIntro(
 private fun FocusTestWriting(
     viewModel: FocusTestViewModel,
     onClose: () -> Unit,
+    focus: PressFocus,
 ) {
     val run by viewModel.run.collectAsStateWithLifecycle()
-    FocusTestWaitScreen(run, viewModel::retryWriting.takeIf { viewModel.canRestart }, onClose)
+    val retry = {
+        focus.pressInHolder()
+        viewModel.retryWriting()
+    }
+    FocusTestWaitScreen(run, retry.takeIf { viewModel.canRestart }, onClose, focus.requester)
 }
 
 @Composable
@@ -226,11 +264,16 @@ private fun FocusTestWaitScreen(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     onClose: () -> Unit,
+    titleFocus: FocusRequester?,
 ) {
     TaskScaffold(onClose = onClose) { padding ->
         RunPage(Modifier.padding(padding)) {
             GenerationWait(GenerationKind.FocusTestQuestions, run, onRetry) {
-                RunIntro(stringResource(R.string.focustest_writing_title), stringResource(R.string.focustest_writing_detail))
+                RunIntro(
+                    stringResource(R.string.focustest_writing_title),
+                    stringResource(R.string.focustest_writing_detail),
+                    titleFocus = titleFocus,
+                )
             }
         }
     }
@@ -273,6 +316,7 @@ internal fun FocusTestQuestions(
                     LimitSubject.Help,
                     onCreateAccount = { navigator.open(AppRoute.Login) },
                     onSeePlus = { navigator.open(AppRoute.Subscription) },
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 )
             } else {
                 GenerationWait(GenerationKind.FocusTestQuestions, run, viewModel::retryWriting.takeIf { viewModel.canRestart }) {
@@ -295,61 +339,84 @@ internal fun FocusTestResult(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val chosen = outcome.areas.filter { it.chosen }.map { it.label }
-    var index by rememberSaveable { mutableIntStateOf(0) }
-    var leftFirst by rememberSaveable { mutableStateOf(false) }
-    val count = if (chosen.isEmpty()) 1 else 2
-    val shown = index.coerceIn(0, count - 1)
-    val canUndo = outcome.changeId != null && ui.undo != UndoState.Done
-    val stepTitle = remember { FocusRequester() }
-    val moveFocus = rememberMoveFocus()
-    var announced by rememberSaveable { mutableIntStateOf(shown) }
+    ResultScreen {
+        val chosen = outcome.areas.filter { it.chosen }.map { it.label }
+        var index by rememberSaveable { mutableIntStateOf(0) }
+        var leftFirst by rememberSaveable { mutableStateOf(false) }
+        val canUndo = outcome.changeId != null && ui.undo != UndoState.Done
+        val stepTitle = remember { FocusRequester() }
+        val moveFocus = rememberMoveFocus()
+        var span by remember { mutableStateOf<PageSpan?>(null) }
 
-    // Main's `focusStepTitle`: a new step takes TalkBack to its heading, never the first one.
-    LaunchedEffect(shown) {
-        if (shown != announced) {
-            announced = shown
-            moveFocus(stepTitle)
-        }
-    }
-
-    MomentAfterCeremony(app, outcome.ceremony.takeIf { ui.celebrate }) { buddy ->
-        TaskScaffold(
-            onClose = navigator::closeTask,
-            title = { StepDots(count, shown) },
-            bottomBar = {
-                TaskActionBar {
-                    StepPagerActions(
-                        count,
-                        shown,
-                        onIndexChange = {
-                            if (shown == 0) leftFirst = true
-                            index = it
-                        },
-                    ) { main ->
-                        Button(
-                            onClick = { navigator.showRoot(AppTab.Plan) },
-                            modifier = main,
-                        ) { Text(stringResource(R.string.focustest_see_plan)) }
-                    }
-                    if (canUndo && shown == count - 1) UndoAction(ui.undo, viewModel::undo)
-                }
+        MomentAfterCeremony(
+            app,
+            outcome.ceremony.takeIf {
+                ui.celebrate
             },
-        ) { padding ->
-            RunPage(Modifier.padding(padding)) {
-                if (shown == 0) {
-                    CelebrationScope(play = ui.celebrate && !leftFirst) {
-                        AreasStep(outcome, stepTitle)
-                        DayMoment(
-                            missions = null,
-                            reached = outcome.reached,
-                            ceremony = outcome.ceremony?.kind,
-                            buddy = buddy.look,
-                            buddyName = buddy.name,
-                        )
+            outcome.certificates,
+            { navigator.open(AppRoute.Subscription) },
+        ) { buddy ->
+            BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+                // Where the result splits, both steps show at once: how the learner did before the fold, the new focus after it.
+                val whole = spreadFold(maxWidth, span) != null
+                val count = if (whole || chosen.isEmpty()) 1 else 2
+                val shown = index.coerceIn(0, count - 1)
+                var announced by rememberSaveable { mutableIntStateOf(shown) }
+
+                // Main's `focusStepTitle`: a new step takes TalkBack to its heading, never the first one.
+                LaunchedEffect(shown) {
+                    if (shown != announced) {
+                        announced = shown
+                        moveFocus(stepTitle)
                     }
-                } else {
-                    FocusStep(chosen, undone = ui.undo == UndoState.Done, stepTitle)
+                }
+
+                TaskScaffold(
+                    onClose = navigator::closeTask,
+                    title = { StepDots(count, shown) },
+                    bottomBar = {
+                        TaskActionBar {
+                            StepPagerActions(
+                                count,
+                                shown,
+                                onIndexChange = {
+                                    if (shown == 0) leftFirst = true
+                                    index = it
+                                },
+                            ) { main ->
+                                Button(
+                                    onClick = { navigator.showRoot(AppTab.Plan) },
+                                    modifier = main,
+                                ) { Text(stringResource(R.string.focustest_see_plan)) }
+                            }
+                            if (canUndo && shown == count - 1) UndoAction(ui.undo, viewModel::undo)
+                        }
+                    },
+                ) { padding ->
+                    ResultPages(
+                        modifier = Modifier.padding(padding),
+                        withMoment = true,
+                        columnModifier = Modifier.runColumn(),
+                        done = {
+                            if (whole || shown == 0) {
+                                CelebrationScope(play = ui.celebrate && !leftFirst) {
+                                    AreasStep(outcome, stepTitle)
+                                    DayMoment(
+                                        missions = null,
+                                        reached = outcome.reached,
+                                        ceremony = outcome.ceremony?.kind,
+                                        buddy = buddy.look,
+                                        buddyName = buddy.name,
+                                    )
+                                }
+                            }
+                        },
+                        next = {
+                            if (chosen.isNotEmpty() && (whole || shown == 1)) {
+                                FocusStep(chosen, undone = ui.undo == UndoState.Done, stepTitle)
+                            }
+                        },
+                    )
                 }
             }
         }

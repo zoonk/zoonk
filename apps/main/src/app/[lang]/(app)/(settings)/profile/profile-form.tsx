@@ -32,7 +32,7 @@ function NameHint({ isTooLong }: { isTooLong: boolean }) {
     return <span className="text-destructive-text">{t("Use 150 characters or fewer.")}</span>;
   }
 
-  return t("How Zoonk and your buddy call you");
+  return t("How Zoonk and your buddy call you, and the name on your certificates.");
 }
 
 function UsernameHint({ status, username }: { status: UsernameStatusType; username: string }) {
@@ -71,7 +71,7 @@ function SaveButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus();
 
   return (
-    <Button disabled={disabled || pending} size="sm" type="submit">
+    <Button disabled={disabled || pending} focusableWhenDisabled size="sm" type="submit">
       {pending && <Spinner aria-hidden="true" />}
       {t("Save")}
     </Button>
@@ -118,7 +118,16 @@ export function ProfileForm({
   const t = useExtracted();
   const nameHintId = useId();
   const usernameHintId = useId();
-  const [state, formAction] = useActionState(profileFormAction, initialState);
+
+  const [state, formAction] = useActionState(
+    (previous: typeof initialState, formData: FormData) =>
+      profileFormAction(previous, formData).catch(() => ({
+        ...previous,
+        status: "error" as const,
+      })),
+    initialState,
+  );
+
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
   const [name, setName] = useState(defaultName);
 

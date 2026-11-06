@@ -14,5 +14,4 @@ dependencies {
 
     testImplementation(testFixtures(project(":feature:account")))
     testImplementation(testFixtures(project(":feature:plan")))
-    testImplementation(libs.androidx.window.testing)
 }

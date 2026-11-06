@@ -4,7 +4,7 @@ import { type SkillOutline } from "@zoonk/core/lookahead/skill-outline-contract"
 import { useEffect, useState, useTransition } from "react";
 import { type OutlineLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
-import { type TopicOutlineActions } from "./topic-outline-actions";
+import { type TopicOutlineActions, type TopicOutlineRequestOutcome } from "./topic-outline-actions";
 
 const POLL_MS = 4000;
 
@@ -76,7 +76,9 @@ export function useTopicOutline({
 
   const request = () =>
     startTransition(async () => {
-      const outcome = await actions.request(skillId);
+      const outcome = await actions
+        .request(skillId)
+        .catch((): TopicOutlineRequestOutcome => ({ status: "failed" }));
 
       if (outcome.status === "refused") {
         setFailure({ limit: outcome.limit, shown: "refused" });
@@ -95,7 +97,9 @@ export function useTopicOutline({
         return;
       }
 
-      setOutline(await actions.read(skillId));
+      const read = await actions.read(skillId).catch(() => null);
+      setOutline(read);
+      setFailure(read ? null : { shown: "unreachable" });
       onLanded();
     });
 

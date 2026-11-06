@@ -133,7 +133,7 @@ export function reportDecision() {
         notes: [
           {
             example:
-              "If the two buttons were the same, a gap like this would show up all the time.",
+              "“If the two buttons were the same, a gap like this would show up all the time.”",
             kind: "improve" as const,
             skill: "explaining",
             text: "You explained it to {{product}} with “p-value.” Not everyone is a data person.",

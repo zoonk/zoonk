@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { certificateFixture } from "@zoonk/testing/fixtures/certificates";
 import { feedbackFixture } from "@zoonk/testing/fixtures/feedback";
 import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
@@ -72,6 +73,7 @@ async function createLearnerWithData() {
     attemptFixture({ userId: user.id }),
     mistakeFixture({ userId: user.id }),
     milestoneFixture({ userId: user.id }),
+    certificateFixture({ goalId: goal.id, userId: user.id }),
     memoryFactFixture({ statement: "Wants Law at a public university", userId: user.id }),
     feedbackFixture({ email: user.email, message: "Loving the new plan", userId: user.id }),
   ]);
@@ -120,6 +122,7 @@ describe(exportCurrentUserData, () => {
         },
       ],
       learnerModel: {
+        certificates: [expect.objectContaining({ goalId: goal.id, userId: user.id })],
         milestones: [expect.objectContaining({ userId: user.id })],
         mistakes: [expect.objectContaining({ userId: user.id })],
       },

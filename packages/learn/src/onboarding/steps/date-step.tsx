@@ -9,10 +9,9 @@ import {
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { useFormatIsoDate } from "../../_utils/iso-date";
+import { getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
 import { useSentenceSpace } from "../../_utils/locale";
 import { NoSittingWords } from "../../plan/notice-day";
 import { useKeptTyping } from "../../use-kept-typing";
@@ -68,15 +67,6 @@ function ExamDateStep({
   );
 }
 
-/** Core counts the goal's days in its zone, UTC without one, so the date screen does too. */
-function getGoalToday({ now, timeZone }: { now: Date; timeZone: string | null }): string {
-  const zone = timeZone && isValidTimeZone(timeZone) ? timeZone : "UTC";
-
-  return getDateInTimeZone({ date: now, timeZone: zone })
-    .toISOString()
-    .slice(0, "YYYY-MM-DD".length);
-}
-
 export function DateStep({
   dateProblem,
   exam,
@@ -91,7 +81,7 @@ export function DateStep({
 }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const today = getGoalToday({ now: useMountTime(), timeZone });
+  const today = getTodayInZone({ now: useMountTime(), timeZone });
   const gone = dateProblem?.kind === "passed" || dateProblem?.kind === "today";
   const kept = gone ? null : initialDate;
 

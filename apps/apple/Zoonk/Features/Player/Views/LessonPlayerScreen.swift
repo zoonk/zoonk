@@ -84,6 +84,7 @@ private struct LessonPlayerContent: View {
             if hasVerticalBar, let progress {
               progressBar(progress)
                 .scenePadding(.horizontal)
+                .keepsBeforeHinge()
             }
           }
           .navigationTitle(title)

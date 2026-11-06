@@ -15,8 +15,8 @@ object AppLink {
 
     private val hosts = setOf("zoonk.com", "www.zoonk.com")
 
-    /** Main's `localePrefix: "as-needed"`: English pages have no prefix. */
-    private val localePrefixes = setOf("de", "en", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr")
+    /** Main's languages, which the app's translations match; English pages have no prefix (`localePrefix: "as-needed"`). */
+    val languages = setOf("de", "en", "es", "fr", "it", "ja", "ko", "pl", "pt", "tr")
 
     /**
      * The route for one of main's pages: a `zoonk.com` URL or a path on it (`/pt/plan`), or null
@@ -45,7 +45,7 @@ object AppLink {
                     .split('/')
                     .filter(String::isNotEmpty)
                     .map(::decodeSegment)
-            val path = if (segments.firstOrNull() in localePrefixes) segments.drop(1) else segments
+            val path = if (segments.firstOrNull() in languages) segments.drop(1) else segments
             route(path, query(uri.rawQuery), uri.rawFragment?.let(::decodeSegment)?.takeIf(String::isNotEmpty))
         } catch (_: IllegalArgumentException) {
             null
@@ -81,7 +81,7 @@ object AppLink {
         path: String,
         language: String,
     ): String {
-        val prefix = if (language in localePrefixes && language != "en") "/$language" else ""
+        val prefix = if (language in languages && language != "en") "/$language" else ""
         return "$SITE_URL$prefix$path"
     }
 
@@ -127,6 +127,10 @@ object AppLink {
 
                     "completed-lessons" -> {
                         AppRoute.CompletedLessons
+                    }
+
+                    "certificates" -> {
+                        AppRoute.Certificates
                     }
 
                     "speaking" -> {
@@ -259,6 +263,8 @@ object AppLink {
                     "explain" -> AppRoute.Explain(goalId = second)
 
                     "plan-link" -> AppRoute.PlanLink(planId = second)
+
+                    "c" -> AppRoute.Certificate(code = second)
 
                     else -> null
                 }

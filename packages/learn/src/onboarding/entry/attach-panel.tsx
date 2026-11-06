@@ -107,7 +107,13 @@ function PasteText({ onAdd, pending }: { onAdd: (text: string) => void; pending:
         placeholder={t("Paste the syllabus, your notes or a chapter")}
         value={text}
       />
-      <Button className="self-start" disabled={pending || !text.trim()} size="sm" type="submit">
+      <Button
+        className="self-start"
+        disabled={pending || !text.trim()}
+        focusableWhenDisabled
+        size="sm"
+        type="submit"
+      >
         {t("Add text")}
       </Button>
     </form>
@@ -136,7 +142,7 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
   const add = (run: () => Promise<AttachOutcome>) =>
     startTransition(async () => {
       setError(null);
-      const outcome = await run();
+      const outcome = await run().catch((): AttachOutcome => ({ status: "failed" }));
 
       if (outcome.status === "attached") {
         setPasting(null);
@@ -158,8 +164,8 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
           {t("Upload a file")}
           <input
             accept={ACCEPTED_FILES}
+            aria-disabled={isPending || undefined}
             className="sr-only"
-            disabled={isPending}
             id={fileId}
             onChange={(event) => {
               const file = event.target.files?.[0];
@@ -167,6 +173,12 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
 
               if (file) {
                 add(() => attach.file({ file, language }));
+              }
+            }}
+            // Not `disabled`: that would drop keyboard focus to the page while the file uploads.
+            onClick={(event) => {
+              if (isPending) {
+                event.preventDefault();
               }
             }}
             type="file"

@@ -81,6 +81,23 @@ final class ImageLoaderTests: XCTestCase {
     XCTAssertEqual(authorizations, ["Bearer session-a"])
   }
 
+  func testDecodesALargePictureOnlyAsLargeAsItsPlace() async throws {
+    let fetcher = ImageFetchRecorder(status: 200, pixels: CGSize(width: 400, height: 200))
+    let loader = ImageLoader(
+      apiBaseURL: URL(string: "https://api.zoonk.test")!, fetch: fetcher.fetch)
+    let url = URL(string: "https://zoonk.test/en/c/K7QF2M9XHD4P/image/print.png")!
+
+    let thumbnailImage = await loader.image(for: url, token: nil, maxPixelSize: 100)
+    let fullImage = await loader.image(for: url, token: nil)
+    let thumbnail = try XCTUnwrap(thumbnailImage)
+    let full = try XCTUnwrap(fullImage)
+
+    XCTAssertEqual(thumbnail.cgImage?.width, 100)
+    XCTAssertEqual(thumbnail.cgImage?.height, 50)
+    XCTAssertEqual(full.cgImage?.width, 400, "Expected each size to be kept apart")
+    XCTAssertEqual(loader.cachedImage(for: url, token: nil, maxPixelSize: 100), thumbnail)
+  }
+
   func testRefusedPictureKeepsTheFallback() async {
     let fetcher = ImageFetchRecorder(status: 401)
     let loader = ImageLoader(
@@ -94,10 +111,12 @@ final class ImageLoaderTests: XCTestCase {
 
 private actor ImageFetchRecorder {
   private let status: Int
+  private let pixels: CGSize
   private(set) var authorizations: [String?] = []
 
-  init(status: Int) {
+  init(status: Int, pixels: CGSize = CGSize(width: 2, height: 2)) {
     self.status = status
+    self.pixels = pixels
   }
 
   nonisolated var fetch: ImageLoader.Fetch {
@@ -113,9 +132,12 @@ private actor ImageFetchRecorder {
   }
 
   private func samplePNG() -> Data {
-    UIGraphicsImageRenderer(size: CGSize(width: 2, height: 2)).pngData { context in
+    let format = UIGraphicsImageRendererFormat()
+    format.scale = 1
+
+    return UIGraphicsImageRenderer(size: pixels, format: format).pngData { context in
       UIColor.systemGreen.setFill()
-      context.fill(CGRect(x: 0, y: 0, width: 2, height: 2))
+      context.fill(CGRect(origin: .zero, size: pixels))
     }
   }
 }

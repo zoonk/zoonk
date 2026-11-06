@@ -4,7 +4,6 @@ import {
   type GoalUnderstandingView,
   type OnboardingDraftView,
 } from "@zoonk/core/view-models/onboarding/contract";
-import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useTransition } from "react";
 import { useAppLocale } from "../../_utils/locale";
 import { type GoalError } from "../goal-errors";
@@ -61,7 +60,11 @@ function InstrumentDraft({
       isStarting={creation.isCreating}
       onJoinWaitlist={() =>
         startJoining(async () => {
-          setWaitlist(await actions.joinWaitlist({ instrument, language: locale }));
+          setWaitlist(
+            await actions
+              .joinWaitlist({ instrument, language: locale })
+              .catch((): WaitlistOutcome => "failed"),
+          );
         })
       }
       onStartMusicianship={() => creation.run(() => createMusicianship({ draft, instrument }))}
@@ -98,7 +101,11 @@ function ReadDraft({
 }) {
   switch (understanding.status) {
     case "goals": {
-      const card = toUnderstandingDraft({ activeGoalLimit: draft.activeGoalLimit, understanding });
+      const card = toUnderstandingDraft({
+        activeGoalLimit: draft.activeGoalLimit,
+        timeZone: draft.timeZone,
+        understanding,
+      });
 
       return (
         <UnderstoodScreen
@@ -115,7 +122,6 @@ function ReadDraft({
                   draft: card,
                   materialIntent: attached.length > 0 ? intent : null,
                   sourceIds: attached.map((source) => source.id),
-                  timeZone: getLocalTimeZone(),
                 }),
               ),
             )

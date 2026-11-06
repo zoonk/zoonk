@@ -99,7 +99,7 @@ export function UploadRequestCard({
   const run = (action: () => Promise<Failure | null>, done: CardState) =>
     startTransition(async () => {
       setFailure(null);
-      const failed = await action();
+      const failed = await action().catch((): Failure => "failed");
       setFailure(failed);
 
       if (!failed) {
@@ -146,6 +146,7 @@ export function UploadRequestCard({
         <div className="flex flex-wrap gap-2">
           <Button
             disabled={isPending}
+            focusableWhenDisabled
             onClick={() => setState("uploading")}
             size="sm"
             variant="outline"
@@ -156,6 +157,7 @@ export function UploadRequestCard({
 
           <Button
             disabled={isPending}
+            focusableWhenDisabled
             onClick={() =>
               run(async () => ((await actions.dismiss()) ? null : "failed"), "dismissed")
             }

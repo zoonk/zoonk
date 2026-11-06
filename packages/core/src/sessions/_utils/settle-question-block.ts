@@ -18,6 +18,8 @@ import {
   scoreAnswers,
 } from "../brain-power";
 import { getBlockMinutes } from "../daily-goal";
+import { type MissionCompletionSource } from "../missions/settle-missions";
+import { oweDaySettlement } from "../settle-owed-session-day";
 import { countAskableQuestions } from "./askable-questions";
 import { getBlockEvents } from "./block-events";
 import { getBlockElapsedMs, pausedBlockTiming } from "./block-timing";
@@ -210,14 +212,16 @@ async function getBlockBrainPower(
 }
 
 /** Settles a block once under the progress lock, caps extra practice rewards, and emits completion only after settlement. */
-export async function settleQuestionBlock(input: SettleInput): Promise<SettleQuestionBlockResult> {
+export async function settleQuestionBlock(
+  input: SettleInput & { source?: MissionCompletionSource },
+): Promise<SettleQuestionBlockResult> {
   const prepared = await prepareQuestionBlock(input);
 
   if (prepared === "emptyCheckpoint" || prepared === "noAnswers" || prepared === "unanswered") {
     return { status: prepared };
   }
 
-  const { block, session, timeZone, userId } = input;
+  const { block, session, source, timeZone, userId } = input;
   const { checkpoint, correct, own, payload, scored } = prepared;
 
   const { data: result, error } = await safeAsync(() =>
@@ -234,6 +238,8 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
       if (count === 0) {
         throw new QuestionBlockUnchangedError("The question block was already settled");
       }
+
+      await oweDaySettlement(tx, { block, source, timeZone, userId });
 
       const reward = await getBlockBrainPower(tx, { prepared, session, userId });
 

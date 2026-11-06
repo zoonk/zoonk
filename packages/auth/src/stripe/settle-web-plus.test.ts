@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { sendEmail } from "@zoonk/mailer";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { guestAuth, signUp } from "../guests/_test-utils/guest-auth";
+import { createCertificate } from "../guests/_test-utils/learner-data";
 import pt from "../translations/pt.json";
 import { endWebPlusBesideStorePlus } from "./settle-web-plus";
 import type Stripe from "stripe";
@@ -182,8 +183,8 @@ function addCheckoutRow(userId: string) {
   });
 }
 
-function deliverStripeEvent(event: { data: { object: unknown }; type: string }) {
-  stripe.constructEvent.mockResolvedValue(event);
+function deliverStripeEvent(event: { created?: number; data: { object: unknown }; type: string }) {
+  stripe.constructEvent.mockResolvedValue({ created: Math.floor(Date.now() / 1000), ...event });
 
   return guestAuth.handler(
     new Request("http://localhost:3000/api/auth/stripe/webhook", {
@@ -218,6 +219,15 @@ function deliverCheckoutCompleted({
     },
     type: "checkout.session.completed",
   });
+}
+
+function returnFromCheckout(headers: Headers) {
+  return guestAuth.handler(
+    new Request(
+      "http://localhost:3000/api/auth/subscription/success?callbackURL=%2F&checkoutSessionId=cs_plus",
+      { headers },
+    ),
+  );
 }
 
 function sentSubjects() {
@@ -344,12 +354,7 @@ describe("one Plus per learner on the website", () => {
       return active;
     });
 
-    const returned = await guestAuth.handler(
-      new Request(
-        "http://localhost:3000/api/auth/subscription/success?callbackURL=%2F&checkoutSessionId=cs_plus",
-        { headers },
-      ),
-    );
+    const returned = await returnFromCheckout(headers);
 
     expect(returned.status).toBe(302);
 
@@ -525,5 +530,138 @@ describe("one Plus per learner on the website", () => {
     await expect(
       prisma.subscription.findUniqueOrThrow({ where: { id: rowId } }),
     ).resolves.toMatchObject({ provider: "stripe", status: "incomplete" });
+  });
+});
+
+function readIssuedAt(userId: string) {
+  return prisma.certificate.findMany({ select: { issuedAt: true }, where: { userId } });
+}
+
+describe("certificates on a website purchase", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("issues them on a paid checkout, even when a refund already ended our copy", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const [row] = await Promise.all([addCheckoutRow(userId), createCertificate({ userId })]);
+    const subscriptionId = stripeFake.add("canceled");
+
+    const delivered = await deliverStripeEvent({
+      data: {
+        object: {
+          client_reference_id: userId,
+          customer: CUSTOMER,
+          metadata: { referenceId: userId, subscriptionId: row.id, userId },
+          mode: "subscription",
+          payment_status: "paid",
+          subscription: subscriptionId,
+        },
+      },
+      type: "checkout.session.completed",
+    });
+
+    expect(delivered.status).toBe(200);
+
+    await expect(
+      prisma.subscription.findUniqueOrThrow({ where: { id: row.id } }),
+    ).resolves.toMatchObject({ status: "canceled" });
+
+    await expect(readIssuedAt(userId)).resolves.toStrictEqual([{ issuedAt: expect.any(Date) }]);
+  });
+
+  it("issues one earned within the second Stripe dates the grant, after a refund ended our copy", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const created = Math.floor(Date.now() / 1000);
+
+    const [row, certificate] = await Promise.all([
+      addCheckoutRow(userId),
+      createCertificate({ userId }),
+    ]);
+
+    await prisma.certificate.update({
+      data: { createdAt: new Date(created * 1000 + 500) },
+      where: { id: certificate.id },
+    });
+
+    const delivered = await deliverStripeEvent({
+      created,
+      data: {
+        object: {
+          client_reference_id: userId,
+          customer: CUSTOMER,
+          metadata: { referenceId: userId, subscriptionId: row.id, userId },
+          mode: "subscription",
+          payment_status: "paid",
+          subscription: stripeFake.add("canceled"),
+        },
+      },
+      type: "checkout.session.completed",
+    });
+
+    expect(delivered.status).toBe(200);
+    await expect(readIssuedAt(userId)).resolves.toStrictEqual([{ issuedAt: expect.any(Date) }]);
+  });
+
+  it("issues them when a subscription turns active, as after a failed payment is paid", async () => {
+    const stripeFake = fakeStripe();
+    const { userId } = await learner();
+    const subscriptionId = stripeFake.add("active");
+
+    await Promise.all([
+      createCertificate({ userId }),
+      prisma.subscription.create({
+        data: {
+          plan: "plus",
+          referenceId: userId,
+          status: "past_due",
+          stripeCustomerId: CUSTOMER,
+          stripeSubscriptionId: subscriptionId,
+        },
+      }),
+    ]);
+
+    const delivered = await deliverStripeEvent({
+      data: { object: stripeFake.read(subscriptionId) },
+      type: "customer.subscription.updated",
+    });
+
+    expect(delivered.status).toBe(200);
+    await expect(readIssuedAt(userId)).resolves.toStrictEqual([{ issuedAt: expect.any(Date) }]);
+  });
+
+  it("issues them as the learner lands back from checkout, and never from someone else's", async () => {
+    const stripeFake = fakeStripe();
+    const [buyer, other] = await Promise.all([learner(), learner()]);
+    const subscriptionId = stripeFake.add("active");
+
+    const [row] = await Promise.all([
+      addCheckoutRow(buyer.userId),
+      createCertificate({ userId: buyer.userId }),
+      createCertificate({ userId: other.userId }),
+    ]);
+
+    stripe.retrieveCheckout.mockImplementation(
+      async (id: string, params?: { expand?: string[] }) => ({
+        client_reference_id: buyer.userId,
+        id,
+        metadata: { referenceId: buyer.userId, subscriptionId: row.id },
+        payment_status: "paid",
+        subscription: params?.expand?.includes("subscription")
+          ? stripeFake.read(subscriptionId)
+          : subscriptionId,
+      }),
+    );
+
+    await expect(returnFromCheckout(other.headers)).resolves.toMatchObject({ status: 302 });
+    await expect(readIssuedAt(other.userId)).resolves.toStrictEqual([{ issuedAt: null }]);
+
+    await expect(returnFromCheckout(buyer.headers)).resolves.toMatchObject({ status: 302 });
+
+    await expect(readIssuedAt(buyer.userId)).resolves.toStrictEqual([
+      { issuedAt: expect.any(Date) },
+    ]);
   });
 });

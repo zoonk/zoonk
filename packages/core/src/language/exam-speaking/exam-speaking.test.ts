@@ -725,6 +725,7 @@ describe("exam speaking tasks", () => {
     expect(generateExamSpeakingCard).toHaveBeenCalledWith(
       expect.objectContaining({
         previous: expect.objectContaining({
+          photos: [expect.objectContaining({ scene: "A family at a train station, photo 1" })],
           task: "Tarea 3: Describir una fotografía y participar en una conversación",
         }),
         task: expect.objectContaining({ name: "Tarea 4: Diálogo en una situación simulada" }),

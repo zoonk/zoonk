@@ -52,15 +52,7 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.roundToLong
 
 @Composable
-internal fun CourseChapter.Level.label(): String =
-    stringResource(
-        when (this) {
-            CourseChapter.Level.OVERVIEW -> R.string.catalog_level_overview
-            CourseChapter.Level.BEGINNER -> R.string.catalog_level_beginner
-            CourseChapter.Level.INTERMEDIATE -> R.string.catalog_level_intermediate
-            CourseChapter.Level.ADVANCED -> R.string.catalog_level_advanced
-        },
-    )
+internal fun CourseChapter.Level.label(): String = courseLevelName(value)
 
 /** Main's `LibraryCourseOutline`: every chapter by level (or by exam area, for a dated plan), with the plan's weeks. */
 @Composable

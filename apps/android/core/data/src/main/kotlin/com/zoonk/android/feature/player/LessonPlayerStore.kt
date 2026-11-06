@@ -212,9 +212,12 @@ class LessonPlayerStore(
     val api: LessonPlayerApi,
     cache: AppCache,
 ) {
-    // A language lesson leaves out the activities its goal's plan skips, so it follows the learner's goals.
+    // A language lesson leaves out what the learner's goals for that language skip, and its field and tool versions
+    // follow the plan it's in, or the active goal's plan for one in none, so it follows their goals and active goal.
     private val lessons =
-        cache.keyed<String, LessonLoad>(Audience.Viewer, setOf(DataDomain.Goals)) { session, id -> api.lesson(session, id) }
+        cache.keyed<String, LessonLoad>(Audience.Viewer, setOf(DataDomain.Goals, DataDomain.LearningProfile)) { session, id ->
+            api.lesson(session, id)
+        }
 
     private val teams =
         cache.keyed<String, List<String>>(Audience.SignedIn) { session, id ->

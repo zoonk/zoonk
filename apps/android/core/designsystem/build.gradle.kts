@@ -5,6 +5,7 @@ plugins {
 
 android {
     namespace = "com.zoonk.android.designsystem"
+    testFixtures.enable = true
 }
 
 dependencies {
@@ -24,6 +25,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.window)
     implementation(libs.coil.compose)
     implementation(libs.commonmark)
     implementation(libs.commonmark.ext.gfm.strikethrough)
@@ -33,11 +35,14 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
+    testFixturesApi(libs.androidx.window.testing)
+    testFixturesImplementation(composeBom)
+    testFixturesImplementation(libs.androidx.compose.ui.test.junit4)
+
     testImplementation(testFixtures(project(":core:data")))
     testImplementation(composeBom)
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.androidx.test.ext.junit)
-    testImplementation(libs.androidx.window.testing)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)

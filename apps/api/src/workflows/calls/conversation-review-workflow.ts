@@ -6,6 +6,7 @@ import {
 import { getWorkflowMetadata } from "workflow";
 import { start } from "workflow/api";
 import { callContentWorkflow } from "./call-content-workflow";
+import { callMemoryWorkflow } from "./call-memory-workflow";
 import {
   checkObjectivesStep,
   claimReviewStep,
@@ -64,6 +65,10 @@ export async function conversationReviewWorkflow(
   const outcome = await settleReviewStep({ ...input, review, runId });
 
   await writeNextCall(input).catch(() => null);
+
+  // Not owed with oweFollowUps: that would store the transcript, which calls never keep.
+  const { conversationId, timeZone, turns, userId } = input;
+  await start(callMemoryWorkflow, [{ conversationId, timeZone, turns, userId }]).catch(() => null);
 
   return outcome;
 }

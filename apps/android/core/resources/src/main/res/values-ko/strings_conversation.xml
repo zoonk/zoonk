@@ -101,8 +101,6 @@
   "conversation_no_score_title": "6eb9a5063257e6c038a5bf71e43eb212d4642ff3deeb463a2aab2265daa5457e",
   "conversation_not_connected": "fb61bcef91aae1fcd92b8532079073382d5dfcd15bcf7003aa3cae524f21ad0e",
   "conversation_not_connected_title": "fe41b5dc552e48f953c93c4d0033025ce5361417988a55af1b6f2abe8030f929",
-  "conversation_not_found_description": "b533384b377d8eae2afae1ec672945a1cabe75fc6e7d15b6030bb542290e26b5",
-  "conversation_not_found_title": "763dd635fedcc0e9b50abe2c0aa7d7de6a02522a713e527d6077b35503005434",
   "conversation_not_rated": "2af1db42b26c5f02a2f03afe1d9eb70ac4fd229786a8f5744bfceb002f2d1021",
   "conversation_not_this_time": "81e4fb4b8e351c924c9d279356904ec1db5109985d581be9e4bfbaaf06981b09",
   "conversation_opens_and_card": "6c5a9cfab0e52a83f4fdea0883c6ef5fb2caa326d5e38787faad9449c0776d39",
@@ -218,8 +216,6 @@
     <string name="conversation_mic_off">설정에서 마이크 사용을 허용하면 %1$s와(과) 말로 대화할 수 있어요. 글로 답해도 돼요.</string>
     <!-- Starts the call without the microphone, answering by typing. -->
     <string name="conversation_type_instead">글로 답하기</string>
-    <string name="conversation_not_found_title">이 대화를 찾을 수 없어요</string>
-    <string name="conversation_not_found_description">오래된 링크이거나 주소가 잘못 입력되었을 수 있어요.</string>
     <!-- Read before what the learner said in the call's transcript. -->
     <string name="conversation_you_said">나: %1$s</string>
     <!-- Read before what the character said in the call's transcript: the character's name, then the words. -->

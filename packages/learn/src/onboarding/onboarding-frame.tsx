@@ -252,6 +252,7 @@ export function OnboardingPrimaryButton({
     <Button
       aria-keyshortcuts="Enter"
       className={cn("w-full font-[560]", className)}
+      focusableWhenDisabled
       size="lg"
       {...props}
       ref={ref}
@@ -266,5 +267,13 @@ export function OnboardingSecondaryButton({
   className,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  return <Button className={cn("w-full", className)} size="lg" variant="ghost" {...props} />;
+  return (
+    <Button
+      className={cn("w-full", className)}
+      focusableWhenDisabled
+      size="lg"
+      variant="ghost"
+      {...props}
+    />
+  );
 }
