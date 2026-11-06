@@ -1,12 +1,15 @@
 import { randomUUID } from "node:crypto";
 import { checkLessonImage } from "@zoonk/ai/tasks/images/check";
+import { describeImageScene } from "@zoonk/ai/tasks/images/scene-schema";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { buildImageReuseKey } from "@zoonk/utils/identity-key";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../../_test-utils/blob-uploads";
+import { mockSearchTerms } from "../identity/_test-utils/identity-mocks";
 import {
   drawBlankImage,
   drawTestImage,
@@ -23,6 +26,7 @@ import {
   removeImageAsset,
   replaceImageAsset,
 } from "./check-image-asset";
+import { createStepImage } from "./lesson-images";
 
 const alt = "Mão com um pequeno corte na pele e micróbios entrando pelo corte.";
 
@@ -55,6 +59,7 @@ function redrawOf(scene = testScene({ focalObject: `a ${randomUUID()} hand` })):
       promptVersion: "style-v1-test",
       runId: "redraw-run",
     },
+    reuseKey: `image:replanned:${randomUUID()}`,
     scene,
     url: `https://blob.test/${randomUUID()}-step.webp`,
     width: 48,
@@ -201,6 +206,44 @@ describe(replaceImageAsset, () => {
     expect(screen.pictureAvailableAt).toStrictEqual(step.pictureAvailableAt);
     expect(screen.updatedAt.getTime()).toBeGreaterThan(step.updatedAt.getTime());
     expect(question.mediaAssetId).toBe(asset.id);
+  });
+
+  it("no longer answers a request for the scene it was planned away from", async () => {
+    vi.resetAllMocks();
+    storeBlobUploads();
+    const original = testScene({ focalObject: `a ${randomUUID()} skin section` });
+    const prompt = describeImageScene(original);
+
+    const [asset, lesson] = await Promise.all([
+      mediaAssetFixture({
+        prompt,
+        reuseKey: buildImageReuseKey({ canvas: "landscape", language: null, prompt }),
+        scene: original,
+      }),
+      libraryLessonFixture(),
+    ]);
+
+    mockDrawnImages([await drawTestImage(), await drawTestImage()]);
+
+    const redraw = await redrawImageAsset({
+      assetId: asset.id,
+      findings: ["no hand"],
+      scene: testScene({ focalObject: `a ${randomUUID()} hand with a small cut` }),
+    });
+
+    await replaceImageAsset({ assetId: asset.id, redraw });
+
+    const step = await libraryStepFixture({
+      content: { image: { alt, prompt: "A skin section" }, text: "Skin keeps germs out." },
+      lessonId: lesson.id,
+    });
+
+    mockImageScene(original);
+    mockSearchTerms([]);
+
+    await expect(createStepImage({ stepId: step.id })).resolves.toMatchObject({
+      status: "generated",
+    });
   });
 });
 
