@@ -101,7 +101,8 @@ function isQuestionPhase(phase: QuestionBlockPhase): boolean {
     phase.kind === "answering" ||
     phase.kind === "checking" ||
     phase.kind === "answerFailed" ||
-    phase.kind === "feedback"
+    phase.kind === "feedback" ||
+    phase.kind === "alreadyAnswered"
   );
 }
 
@@ -258,7 +259,6 @@ export function QuestionBlock({
       {showsQuestionActions({ phase, stage: blockDrill.stage }) && (
         <TaskActionBar>
           <QuestionBlockStatus
-            onContinue={actions.refresh}
             onRetryAnswer={() => draft.answer && void run.submit(draft.answer)}
             onRetryFinish={run.retryFinish}
             phase={phase}

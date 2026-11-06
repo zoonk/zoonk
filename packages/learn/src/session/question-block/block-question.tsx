@@ -302,6 +302,10 @@ function getMainAction({
     return { action: "continue", onPress: run.next };
   }
 
+  if (phase.kind === "alreadyAnswered") {
+    return { action: "continue", onPress: run.refresh };
+  }
+
   return {
     action: "check",
     busy: phase.kind === "checking",
@@ -315,7 +319,8 @@ export function BlockQuestionActions(props: BlockActionsProps) {
   const { drill, stage } = props.blockDrill;
   const { phase } = props.run.state;
   const checking = phase.kind === "checking";
-  const offersNotSure = stage !== "reading" && phase.kind !== "feedback";
+  const asking = phase.kind === "answering" || checking || phase.kind === "answerFailed";
+  const offersNotSure = stage !== "reading" && asking;
   const notSure = () => void props.run.submit(NOT_SURE);
 
   return (
