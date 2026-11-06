@@ -60,7 +60,7 @@ __build((Z) => {
       dontKnow: [96, 680],
       mean: [129, 202],
       check: [195, 756],
-      apply: [110, 607],
+      review: [8, 184, 124, 26],
       speaker: [168, 93],
       chip: [120, 600],
     },
@@ -69,7 +69,7 @@ __build((Z) => {
       dontKnow: [88, 680],
       mean: [90, 202],
       check: [195, 756],
-      apply: [110, 607],
+      review: [8, 184, 158, 26],
       speaker: [100, 93],
       chip: [150, 618],
     },
@@ -391,85 +391,73 @@ __build((Z) => {
     );
     Z.sfx("pop", t0 + 0.1);
 
-    // Help, then the lesson's end in the same phone
+    // Help, then the lesson's end and the review it schedules, in the same phone
     [t0] = seg(2);
-    const [r0, r1] = seg(1);
+    const [r0, r1] = seg(2);
     L = K.scene(t0, r1);
-    let p = rigAt(L);
-    const tut = K.seq(p.screen, "tutor", t0 + 0.9, r0 - 0.2, { from: 1 });
-    const done = K.seq(p.screen, "complete", r0 + 0.3, r0 + 1.9, { from: 1 });
+    const p = rigAt(L);
+    const s = p.screen;
+    const tut = K.seq(s, "tutor", t0 + 0.9, r0 - 0.2, { from: 1 });
+    const done = K.seq(s, "complete", r0 + 0.3, r0 + 1.9, { from: 1 });
     K.track([
       { at: t0, el: tut },
       { at: r0, el: done, trans: "push" },
     ]);
     focusIn(p, t0 + 0.15, [400, 1.6]);
-    K.tapAt(p.screen, T.chip[0], T.chip[1], t0 + 1.15);
+    K.tapAt(s, T.chip[0], T.chip[1], t0 + 1.15);
     cam(p, t0 + 1.8, 500, 1.9, 1.0);
     cam(p, r0, 180, 2.0, 0.6);
+    cam(p, r0 + 2.0, 196, 2.6, 1.0);
+    K.ring(s, ...T.review, r0 + 2.6, r1 - 0.6);
+    Z.sfx("tick", r0 + 2.6);
     focusOut(p, r1);
-
-    [t0, t1] = seg(2);
-    L = K.scene(t0, t1);
-    p = rigAt(L);
-    const zt = K.still(p.screen, "zu-tab");
-    const za = K.still(p.screen, "zu-tab-applied");
-    K.track([
-      { at: t0, el: zt },
-      { at: t0 + 3.0, el: za, trans: "fade" },
-    ]);
-    focusIn(p, t0, [360, 1.7]);
-    cam(p, t0 + 1.2, 520, 2.0, 1.0);
-    K.tapAt(p.screen, T.apply[0], T.apply[1], t0 + 2.9);
-    Z.sfx("chime", t0 + 3.1);
-    focusOut(p, t1);
   }
 
-  // 11. Progress
+  // 11. Progress: belts, Zu growing up, a break that resets nothing, and the Trickster
   {
-    let [t0, t1] = seg(2);
+    let [t0, t1] = seg(3);
     let L = K.scene(t0, t1);
     let p = rigAt(L);
-    const nap = K.still(p.screen, "energy-napping-sheet");
-    const glow = K.still(p.screen, "energy-glowing-sheet");
-    K.track([
-      { at: t0, el: nap },
-      { at: t0 + 2.6, el: glow, trans: "fade" },
-    ]);
-    focusIn(p, t0, [400, 1.9]);
-    focusOut(p, t1);
-
-    [t0, t1] = seg(2);
-    L = K.scene(t0, t1);
-    p = rigAt(L);
     const lv = K.still(p.screen, "level");
     const grew = K.still(p.screen, "buddy-grew");
     K.track([
       { at: t0, el: lv },
-      { at: t0 + 2.25, el: grew, trans: "push" },
+      { at: t0 + 4.4, el: grew, trans: "push" },
     ]);
     focusIn(p, t0, [360, 1.7]);
-    cam(p, t0 + 2.25, 360, 1.75, 0.55);
-    Z.sfx("pop", t0 + 2.5);
+    cam(p, t0 + 1.6, 560, 1.9, 1.2);
+    cam(p, t0 + 4.4, 360, 1.75, 0.55);
+    Z.sfx("pop", t0 + 4.65);
     focusOut(p, t1);
 
     [t0, t1] = seg(2);
     L = K.scene(t0, t1);
     p = rigAt(L);
-    const ci = K.still(p.screen, "checkpoint-intro");
-    const cw = K.still(p.screen, "checkpoint-won");
+    const nap = K.still(p.screen, "energy-napping-sheet");
+    const glow = K.still(p.screen, "energy-glowing-sheet");
     K.track([
-      { at: t0, el: ci },
-      { at: t0 + 2.6, el: cw, trans: "push" },
+      { at: t0, el: nap },
+      { at: t0 + 3.0, el: glow, trans: "fade" },
     ]);
+    focusIn(p, t0, [400, 1.9]);
+    focusOut(p, t1);
+
+    // The Trickster is a final boss: the camera creeps in on him and the scene ends there.
+    [t0, t1] = seg(3);
+    L = K.scene(t0, t1);
+    p = rigAt(L);
+    K.track([{ at: t0, el: K.still(p.screen, "checkpoint-intro") }]);
     focusIn(p, t0, [260, 1.8]);
-    Z.sfx("chime", t0 + 2.8);
+    Z.sfx("hit", t0 + 2.1);
+    cam(p, t0 + 0.6, 130, 2.8, 6.0);
     focusOut(p, t1);
   }
 
   // 12. Payoff
   {
-    let [t0, t1] = seg(2);
-    let L = K.scene(t0, t1, { fadeOut: 0.3 });
+    const [t0, t1] = seg(2);
+    const L = K.scene(t0, t1, { fadeOut: 0 });
+    Z.sfx("whoosh", t0 - 0.1);
     C.goalsDone.forEach((g, i) => {
       const row = div(
         "abs row",
@@ -505,40 +493,11 @@ __build((Z) => {
     one.style.cssText += ";left:0;right:0;top:700px;font-size:92px";
     gsap.set(one, { autoAlpha: 0 });
     Z.reveal(one, t0 + 2.6, { stagger: 0.05, dur: 0.6 });
-
-    [t0, t1] = seg(1.5);
-    t0 += 0.3;
-    L = K.scene(t0, t1, { fadeIn: 0.3 });
-    const big = div("abs hero", L);
-    big.style.cssText += ";left:0;right:0;top:400px;font-size:100px";
-    const tr = [
-      "What do you want to achieve?",
-      "O que você quer alcançar?",
-      "¿Qué quieres lograr?",
-      "何を達成したいですか？",
-      "Was möchtest du erreichen?",
-      "Que veux-tu accomplir ?",
-      "무엇을 이루고 싶으세요?",
-      "Cosa vuoi ottenere?",
-      "Co chcesz osiągnąć?",
-      "Ne başarmak istiyorsun?",
-    ];
-    const order = Z.lang === "pt" ? [1, 0, 2, 3, 4, 5, 6, 7, 8, 9] : tr.map((_, i) => i);
-    const step = 0.27;
-    Z.dyn((t) => {
-      const k = Math.floor((t - t0 - 0.1) / step);
-      big.textContent = tr[order[k >= 0 && k < order.length ? k : 0]];
-    });
-    for (let i = 0; i < tr.length; i++) Z.sfx("tick", t0 + 0.1 + i * step);
-    const kick = div("abs sub", L, C.browser);
-    kick.style.cssText += ";left:0;right:0;top:700px;font-size:40px";
-    gsap.set(kick, { autoAlpha: 0 });
-    Z.reveal(kick, t0 + 0.3, { stagger: 0.04, dur: 0.6 });
   }
 
   // 13. CTA
   {
-    const [t0, t1] = seg(5);
+    const [t0, t1] = seg(5.5);
     const L = K.scene(t0, undefined, { dark: true, fadeIn: 0 });
     const glow = div("abs", L);
     glow.style.cssText =

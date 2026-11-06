@@ -24,12 +24,9 @@
   "tools-setup": "view=tools&pick=setup&system=windows",
   "plan-learn": "view=plan-learn",
   "plan-learn-adjust": "view=plan-learn&state=adjust",
-  "zu-tab": "view=zu-tab",
-  "zu-tab-applied": "view=zu-tab&state=applied",
-  "energy-napping-sheet": "view=energy&energy=12&studied=0&sheet=1",
-  "energy-glowing-sheet": "view=energy&energy=96&studied=1&sheet=1",
+  "energy-napping-sheet": "view=energy&energy=12&studied=0&sheet=1&bp=7500",
+  "energy-glowing-sheet": "view=energy&energy=96&studied=1&sheet=1&bp=7500",
   "level": "view=level",
   "checkpoint-intro": "view=checkpoint&state=intro",
-  "checkpoint-won": "view=checkpoint&state=won",
   "buddy-grew": "view=buddy-grew"
 }

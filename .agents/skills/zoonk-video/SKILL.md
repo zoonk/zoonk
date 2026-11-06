@@ -24,6 +24,7 @@ A Zoonk video shows the real product, says only what the code backs, and ships i
    - Use the blog for inspiration, never as the source.
    - Check every claim, number and label against `packages/core`, the components and the `.po` catalogs.
    - Take goals per locale from the landing page's example sets.
+   - Write every line for someone who has never opened Zoonk: their problem and how Zoonk solves it, in everyday words, with only claims that last ([first-time viewers](references/story.md#write-for-someone-who-has-never-opened-zoonk)).
    - Write the plan as a scene table with the text for both languages side by side, and get it approved before building.
 3. **Studio.** Run `node .agents/skills/zoonk-video/scripts/init.mjs <work-dir>`.
    - Use a scratch folder outside the repo; nothing a video produces is committed.

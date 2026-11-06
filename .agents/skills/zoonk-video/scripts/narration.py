@@ -53,8 +53,10 @@ def text(n, row, lang):
 
 def spec(film, out):
     n = load(film)
+    tone = getattr(n, "TONE", {})
     clips = [
-        {"id": f"{cut}-{lang}-{row[0]}", "model": n.MODEL, "voice": n.VOICE, "instructions": n.INSTR[lang],
+        {"id": f"{cut}-{lang}-{row[0]}", "model": n.MODEL, "voice": n.VOICE,
+         "instructions": " ".join(filter(None, [n.INSTR[lang], tone.get(row[0], {}).get(lang)])),
          "text": text(n, row, lang), "outputFormat": "wav"}
         for cut, rows in n.CUTS.items()
         for lang in n.LANGS

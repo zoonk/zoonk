@@ -96,11 +96,11 @@ __build((Z) => {
   gsap.set(p.phone, { autoAlpha: 1 });
   K.track([{ at: t0, el: K.seq(p.screen, "averages", t0 + 0.2, t0 + 2.4) }]);
   const T = {
-    en: { mean: [129, 202], chip: [120, 508] },
-    pt: { mean: [90, 202], chip: [150, 508] },
+    en: { mean: [129, 202], chip: [120, 600] },
+    pt: { mean: [90, 202], chip: [150, 618] },
   }[Z.lang];
   K.tapAt(p.screen, T.mean[0], T.mean[1], t0 + 0.8);
-  K.tapAt(p.screen, 195, 756, t0 + 1.4);
+  K.tapAt(p.screen, 195, 756, t0 + 1.3);
   Z.sfx("wrong", t0 + 1.7);
   tl.to(p.phone, { y: -420, duration: 1.0, ease: "swing" }, t0 + 2.2);
 
@@ -110,8 +110,8 @@ __build((Z) => {
   top(L, C.vZu, null, t0 + 0.15, t0 + 2.4);
   p = phoneAt(L);
   gsap.set(p.phone, { autoAlpha: 1 });
-  K.track([{ at: t0, el: K.seq(p.screen, "tutor", t0 + 0.2, t1 - 0.2, { from: 1 }) }]);
-  K.tapAt(p.screen, T.chip[0], T.chip[1], t0 + 1.0);
+  K.track([{ at: t0, el: K.seq(p.screen, "tutor", t0 + 0.6, t1 - 0.2, { from: 1 }) }]);
+  K.tapAt(p.screen, T.chip[0], T.chip[1], t0 + 0.9);
   tl.to(p.phone, { y: -330, duration: 1.0, ease: "swing" }, t0 + 2.4);
 
   // 6. Energy, not streaks

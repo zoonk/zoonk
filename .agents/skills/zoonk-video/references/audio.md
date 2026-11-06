@@ -14,6 +14,7 @@ You can't listen. An audio-capable model judges, transcription checks the words,
 1. **Script.** Write the film's `narration.py` (see `example/zoonk-2/narration.py`): the model, the voice, per-language instructions, and per cut `(id, start s, scene end s, en, pt)` rows. A line may run past its scene's end into the next scene, never into the next line.
    - In a narrated 16:9 film the voice carries each product scene on its own. In the vertical it complements the supers instead of reading them.
    - Spell out what TTS mangles: "Zoonk two point oh", "zoonk dot com", "dois ponto zero", "zoonk ponto com".
+   - A line that needs another register, such as a villain, gets its own direction in `TONE`, appended to the language's instructions. A slower delivery runs long, so give its scene room, generate a few takes, keep one that fits its window, and have the judge confirm the tone.
 2. **Voice.** Gemini TTS `google/gemini-3.8-flash-tts` with the voice `Charon` won blind rankings in both languages, so one narrator covers both channels.
    - Pass `instructions`: warm, calm, confident, unhurried, never salesy.
    - Add pronunciation rules:
@@ -24,7 +25,7 @@ You can't listen. An audio-capable model judges, transcription checks the words,
 4. **Fit.** `python3 scripts/narration.py <film> fit` measures each clip's speech against its window, which ends 0.15 s before the next line starts. Shorten the copy or move starts until no line runs into the next one.
 5. **Check the words.** `transcribe.mjs <spec.json> <film>/audio/vo` (`openai/gpt-4o-transcribe`) prints what each clip says next to the script.
    - Made-up names come back misspelled ("Zunk", "Zoom"). Confirm those with the judge instead (`judge-audio.mjs` with a "how is the brand pronounced, give IPA" prompt).
-   - Real misreads ("by your day" for "by your date") need new wording, not retries.
+   - Real misreads need new wording, not retries: "by your day" for "by your date", "Vá tirar" (an order) for "Vai tirar" (a question), "Yuzu" for "E o Zu".
 6. **Pick voices fairly.** `rank-audio.mjs` has a strong position bias: the first clip tends to win. Run four shuffled orders and average the ranks.
 
 ## Music

@@ -6,14 +6,29 @@ The 2.0 launch film (`example/zoonk-2/long.js`) follows a proven shape:
 
 1. **Cold open.** Real goals typed into the goal box, then the questions every learner has. The brand comes in about 10 s.
 2. **Reveal.** A dark frame, the logo, the version and the tagline.
-3. **How it works.** One phone stays in the scene while its screens change and the camera follows the voice: goal, what you know, honest time, Today, missed day.
+3. **How it works.** One phone stays in the scene while its screens change and the camera follows the voice: your goal, what you already know, whether your daily time is enough, lessons ready each day, a missed day.
 4. **Every goal.** The four goal cards, then exams, languages, career and learn anything, each with its best real screens.
 5. **Lessons.** Real activities in one phone, a wrong answer explained, Zu, help inside a lesson.
-6. **Progress.** Energy instead of streaks, Brain Power and belts, the Trickster.
-7. **Payoff.** The cold-open goals checked off, "one day at a time", the ten languages.
+6. **Progress.** Belts like in martial arts, Zu growing up, a break that resets nothing, and the Trickster as the final boss.
+7. **Payoff.** The cold-open goals checked off, "one day at a time".
 8. **CTA.** Held long enough for the end screen.
 
 The vertical cut keeps the hook, the plan, learning by doing, a wrong answer, Zu, progress, any goal and the CTA, ending on the first frame.
+
+## Write for someone who has never opened Zoonk
+
+The viewer has never seen the app. Every line names a problem they have and how Zoonk solves it. Before generating any audio, read each line and ask: what does this mean to someone who has never seen Zoonk, and why would they care?
+
+- **No app vocabulary.** "The Today screen", Energy, Brain Power and the other names inside the app mean nothing yet. Say what they do for the viewer:
+  - "Just open Zoonk each day. Your lessons are ready", not "your day starts on the Today screen".
+  - "Taking a few days off? Nothing resets", not "no streak to lose, Energy just dips".
+  - "Ten belts, like in martial arts", not "Brain Power".
+  - A name appears only in the line that introduces it, such as Zu or the Trickster.
+- **Lead with the problem.** "Changing careers? Learn the skills and tools the new job asks for." A detail only a current learner notices ("your portfolio always stays in the plan") answers no question the viewer has.
+- **Cut what isn't a reason to care.** Power-user features, like changing the plan by asking, take time from the story without making anyone want the product.
+- **Plain words.** "See right away if it's enough to reach your goal", not "shows you, honestly, what your daily time covers by your date". Which date? Why "honestly"?
+- **Only claims that last.** A film stays up for years. Leave out what may soon change: platforms ("in your browser"), counts ("ten languages"), sign-up terms ("no account needed") and prices.
+- **Characters can change the tone.** A line can get its own voice direction (`TONE` in `narration.py`). The Trickster is introduced like a final boss, the camera creeps in on him, and his scene ends there.
 
 ## Facts come from the code
 
@@ -40,10 +55,10 @@ The blog and old copy go stale. For every claim, open the code that decides it:
 
 - **Supers:** a headline of at most about 20 characters per line, broken with `<br>`, used only where [composition](#composition) allows. Write the pt line yourself in natural Brazilian Portuguese; don't translate word by word.
   - Vertical: a short subline under the headline, since many watch with the sound off.
-- **Brand terms in pt:** Energia, Poder Mental, faixas, Pegadinha, parceiro (not "buddy"), ofensiva (for streak), edital, simulado.
+- **Brand terms in pt:** Energia, Poder Mental, faixas, Pegadinha, parceiro (not "buddy"), ofensiva (for streak), edital, simulado. Narration rarely needs them ([first-time viewers](#write-for-someone-who-has-never-opened-zoonk)); they're for supers and post copy that name a feature.
 - **CTA:**
-  - "What's your goal? · zoonk.com · Start free, no account needed."
-  - pt: "Qual é o seu objetivo? · zoonk.com · Comece grátis, sem precisar de uma conta."
+  - "What's your goal? · zoonk.com · Start free."
+  - pt: "Qual é o seu objetivo? · zoonk.com · Comece grátis."
   - The site sends Portuguese browsers to `/pt` by itself.
 - **No prices** in videos.
 
@@ -54,7 +69,7 @@ One focal point at a time. When a launch film put the headline on the left and t
 - **Never put text beside the phone.**
 - **Narrated: no headlines on product scenes.** The voice says it, and the uploaded `.srt` captions carry it with the sound off.
   - A headline before each screen took about 2 s from the screen and cut away before anyone finished reading it.
-  - Text stays only where the words are the picture: the typed goals and questions of the cold open, the brand reveal, the checked-off goals, the ten languages and the CTA.
+  - Text stays only where the words are the picture: the typed goals and questions of the cold open, the brand reveal, the checked-off goals and the CTA.
   - A chapter visual keeps its picture and drops the headline the voice says: the four goal cards, Zu cheering.
 - **Unnarrated:** each beat shows its headline alone in the middle, then the phone alone. The phone blurs out under the headline, and the headline clears before the phone comes back.
 - **Frame what the voice describes.** A scene's phone comes into focus already framed on that part of the screen, at 1.6–2.4× (`focusIn()` and `cam()` in `example/zoonk-2/long.js`), so the UI reads even on a phone. Pan to the next part as the voice moves on instead of pulling back to the whole screen.
@@ -76,6 +91,6 @@ One focal point at a time. When a launch film put the headline on the left and t
 
 ## Plan before building
 
-- Write a scene table (time, visual, en and pt narration or supers) plus the goals per locale.
+- Write a scene table (time, visual, en and pt narration or supers) plus the goals per locale. Check every line against [first-time viewers](#write-for-someone-who-has-never-opened-zoonk) before showing it.
 - Get it approved before rendering anything.
 - List the corrections the code made to earlier assumptions, so the user sees why the story changed.
