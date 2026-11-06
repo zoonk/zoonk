@@ -36,7 +36,7 @@ export const changingFactsClassifier = {
   labels: {
     exam: "A specific exam, admission, license or certification set by an organizer.",
     none: "Stable knowledge that can be taught without a dated source.",
-    product: "Using or switching to one branded product the goal is about.",
+    product: "Using or switching to one product its maker sells or promotes as its own.",
     regulation: "Current laws, taxes, official procedures or policies that get amended.",
   } satisfies Record<ChangingFactsTopic, string>,
   toInput,

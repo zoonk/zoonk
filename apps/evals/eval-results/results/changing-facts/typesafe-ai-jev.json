@@ -834,6 +834,216 @@
             "none"
           ]
         },
+        "id": "rust-language-1",
+        "language": "en",
+        "userInput": {
+          "goal": "learn Rust to write fast command-line tools"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "kubernetes-1",
+        "language": "en",
+        "userInput": {
+          "goal": "deploy my services on Kubernetes"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "postgresql-1",
+        "language": "pt",
+        "userInput": {
+          "goal": "aprender PostgreSQL para o backend da minha loja"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
+        "id": "html-css-1",
+        "language": "en",
+        "userInput": {
+          "goal": "master HTML and CSS for responsive pages"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
+        "id": "github-actions-1",
+        "language": "en",
+        "userInput": {
+          "goal": "automate my repo's tests and deploys with GitHub Actions"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "product",
+        "predicted": "product"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "product"
+          ]
+        },
+        "id": "firefox-privacy-1",
+        "language": "en",
+        "userInput": {
+          "goal": "set up Firefox to protect my privacy"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "none",
+        "predicted": "none"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "topics": [
+            "none"
+          ]
+        },
         "id": "calculus-1",
         "language": "en",
         "userInput": {
