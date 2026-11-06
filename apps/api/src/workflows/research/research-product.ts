@@ -49,7 +49,10 @@ function findKnown({ hints, plan }: Research): Promise<KnownProduct | null> {
 
 type StoredPage = NonNullable<Awaited<ReturnType<typeof storeProductPageStep>>>;
 
-/** Stored pages in reading order; a page that isn't official or didn't download is left out. */
+/**
+ * Stored pages in reading order; a page that isn't official or can never be downloaded is left out.
+ * One that keeps failing fails the run: a product saved without its releases page looks fresh.
+ */
 async function storePages({
   language,
   sites,
@@ -61,14 +64,11 @@ async function storePages({
 }): Promise<(StoredPage | null)[]> {
   const unique = [...new Set(urls.filter((url) => url !== null))];
 
-  const stored = await Promise.allSettled(
+  const stored = await Promise.all(
     unique.map((url) => storeProductPageStep({ language, sites, url })),
   );
 
-  return urls.map((url) => {
-    const result = url ? stored[unique.indexOf(url)] : undefined;
-    return result?.status === "fulfilled" ? result.value : null;
-  });
+  return urls.map((url) => (url ? (stored[unique.indexOf(url)] ?? null) : null));
 }
 
 async function copyMedia({

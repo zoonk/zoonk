@@ -170,8 +170,9 @@ export async function inspectProductSitesStep(pages: {
 }
 
 /**
- * Null when the address isn't official (`isOfficialPage`); one that redirects off the official sites
- * fails without being stored. Titled by its address: the product's name is a claim until read.
+ * Null when the address isn't official (`isOfficialPage`) or can never be downloaded, such as one
+ * that redirects off the official sites. Titled by its address: the product's name is a claim until
+ * read.
  */
 export async function storeProductPageStep({
   language,
@@ -190,7 +191,7 @@ export async function storeProductPageStep({
 
   const { hostname, pathname } = new URL(url);
 
-  const source = await failPermanently(() =>
+  const { data: source, error } = await safeAsync(() =>
     storeWebSource({
       acceptUrl: (final) => isOfficialPage({ sites, url: final }),
       kind: "official",
@@ -201,6 +202,14 @@ export async function storeProductPageStep({
       url,
     }),
   );
+
+  if (error instanceof PermanentDocumentError) {
+    return null;
+  }
+
+  if (error) {
+    throw error;
+  }
 
   return { sourceId: source.id, url: source.url ?? url };
 }

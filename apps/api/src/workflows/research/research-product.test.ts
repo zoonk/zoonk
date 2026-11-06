@@ -267,6 +267,37 @@ describe("product research", () => {
     await expect(prisma.learnerSource.count({ where: { userId: goal.userId } })).resolves.toBe(0);
   });
 
+  it("saves nothing while the releases page fails, so a later learner researches it again", async () => {
+    const site = newSite();
+    const [first, later] = [await productGoal(), await productGoal()];
+    planProduct({ site });
+    findPages(site);
+    servePages({ site });
+    readPages();
+
+    const serve = vi.mocked(fetch).getMockImplementation();
+    const releasesUrl = `https://${site.product}/releases`;
+
+    vi.mocked(fetch).mockImplementation(async (input, init) =>
+      requestedUrl(input) === releasesUrl
+        ? new PageResponse("Unavailable", { status: 503 })
+        : serve!(input, init),
+    );
+
+    await expect(researchWorkflow({ goalId: first.id })).rejects.toThrow("503");
+    await expect(prisma.organization.count({ where: { domain: site.brand } })).resolves.toBe(0);
+
+    servePages({ site });
+    await researchWorkflow({ goalId: later.id });
+
+    const product = await prisma.product.findFirstOrThrow({
+      include: { releasesSource: true },
+      where: { organization: { domain: site.brand } },
+    });
+
+    expect(product.releasesSource?.url).toBe(releasesUrl);
+  });
+
   it("pins a named older model when the models page gives only years", async () => {
     const site = newSite();
     const goal = await productGoal();
