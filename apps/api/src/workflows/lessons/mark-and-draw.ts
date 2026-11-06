@@ -44,6 +44,9 @@ export async function markAndDraw({
   lessonId: string;
   wait?: CallWait;
 }): Promise<void> {
+  // Workflow code reads the run's logical clock, the same on every replay.
+  const opensAt = Date.now() + PICTURE_WAIT_MS;
+
   const [marks, pictures] = await Promise.all([
     start(lessonMarksWorkflow, [{ analytics, lessonId, wait }]),
     start(lessonImagesWorkflow, [
@@ -54,9 +57,6 @@ export async function markAndDraw({
   ]);
 
   const runs = { lessonId, marksRunId: marks.runId, picturesRunId: pictures.runId };
-
-  // Workflow code reads the run's logical clock, the same on every replay.
-  const opensAt = Date.now() + PICTURE_WAIT_MS;
 
   const last = await repeatUntil<MarksAndPictures>({
     done: (settled) => (settled.marked && settled.drawn) || Date.now() >= opensAt,

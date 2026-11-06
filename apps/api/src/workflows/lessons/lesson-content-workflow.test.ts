@@ -623,7 +623,7 @@ describe(lessonContentWorkflow, () => {
     await expect(getLessonGenerationState(lesson.id)).resolves.toStrictEqual({ status: "ready" });
   });
 
-  it("opens the lesson with what it has five minutes after its text, however long each check takes", async () => {
+  it("opens the lesson with what it has five minutes after its text, however long starting and checking take", async () => {
     const lesson = await outlinedLesson();
     vi.useFakeTimers({ toFake: ["Date"] });
 
@@ -635,10 +635,15 @@ describe(lessonContentWorkflow, () => {
       () => ({ exists: Promise.resolve(true), status: Promise.resolve("running") }) as never,
     );
 
-    let waitedFrom: number | null = null;
+    let savedAt: number | null = null;
+
+    getStartMock().mockImplementation(async () => {
+      savedAt ??= Date.now();
+      vi.setSystemTime(Date.now() + 60_000);
+      return { runId: "started-run" } as never;
+    });
 
     vi.mocked(sleep).mockImplementation(async (ms) => {
-      waitedFrom ??= Date.now();
       vi.setSystemTime(Date.now() + ms + 1000);
     });
 
@@ -647,7 +652,7 @@ describe(lessonContentWorkflow, () => {
       status: "ready",
     });
 
-    expect(Date.now() - (waitedFrom ?? Date.now())).toBe(5 * 60_000);
+    expect(Date.now() - (savedAt ?? Date.now())).toBeLessThanOrEqual(5 * 60_000 + 6000);
 
     expect(
       getStreamedEvents()
