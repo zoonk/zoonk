@@ -69,17 +69,29 @@ function html(body: string): PageResponse {
 }
 
 /** The brand's and the product's sites, linking to each other unless `tied` is false. */
+/** `others` answers exact addresses: a page's body, or `{ redirect }` for a 302. */
 function servePages({
+  others = {},
   releases = "<p>Orbit Notes 5 shipped on October 21, 2025.</p>",
   site,
   tied = true,
 }: {
+  others?: Record<string, string | { redirect: string }>;
   releases?: string;
   site: Site;
   tied?: boolean;
 }) {
   vi.mocked(fetch).mockImplementation(async (input) => {
     const url = new URL(requestedUrl(input));
+    const other = others[url.href];
+
+    if (typeof other === "string") {
+      return html(other);
+    }
+
+    if (other) {
+      return new PageResponse(null, { headers: { location: other.redirect }, status: 302 });
+    }
 
     if (url.pathname.endsWith(".svg")) {
       return new PageResponse(ICON, { headers: { "content-type": "image/svg+xml" } });
@@ -290,6 +302,144 @@ describe("product research", () => {
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       productId: named.productId,
+      productReleaseId: named.id,
+    });
+  });
+
+  it("never stores a page that redirects off the official sites", async () => {
+    const site = newSite();
+    const goal = await productGoal();
+    const elsewhere = `https://unrelated-${randomUUID().slice(0, 8)}.example/releases`;
+    planProduct({ site });
+    findPages(site);
+
+    servePages({
+      others: {
+        [`https://${site.product}/releases`]: { redirect: elsewhere },
+        [elsewhere]: "<p>Orbit Notes 999 shipped on January 1, 2026.</p>",
+      },
+      site,
+    });
+
+    readPages({ ...READING, releases: [] });
+
+    await researchWorkflow({ goalId: goal.id });
+
+    await expect(prisma.source.count({ where: { url: elsewhere } })).resolves.toBe(0);
+
+    expect(
+      vi.mocked(readProductPages).mock.calls[0]?.[0].pages.map((page) => page.url),
+    ).toStrictEqual([
+      `https://${site.brand}/`,
+      `https://${site.product}/`,
+      `https://${site.product}/docs`,
+    ]);
+  });
+
+  it("keeps a stale product's releases when its page now redirects to another site", async () => {
+    const site = newSite();
+    const releasesUrl = `https://${site.product}/releases`;
+    const elsewhere = `https://unrelated-${randomUUID().slice(0, 8)}.example/releases`;
+
+    servePages({
+      others: {
+        [elsewhere]: "<p>Orbit Notes 999 shipped on January 1, 2026.</p>",
+        [releasesUrl]: { redirect: elsewhere },
+      },
+      site,
+    });
+
+    const releasesSource = await sourceFixture({
+      contentHash: "old-hash",
+      fetchedAt: new Date("2026-01-01T00:00:00Z"),
+      structure: { images: 0, pages: null, topic: "product" },
+      url: releasesUrl,
+    });
+
+    const [goal, product] = await Promise.all([
+      productGoal(),
+      savedProduct(site, {
+        releasesHash: "old-hash",
+        releasesSourceId: releasesSource.id,
+      } as never),
+    ]);
+
+    planProduct({ site });
+
+    await researchWorkflow({ goalId: goal.id });
+
+    expect(readProductPages).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: releasesSource.id } }),
+    ).resolves.toMatchObject({ contentHash: "old-hash" });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      productId: product.id,
+    });
+  });
+
+  it("finds a named release under the product's verified code host", async () => {
+    const site = newSite();
+    const repo = `https://code.example/lumen-${randomUUID().slice(0, 8)}/orbit`;
+    const releaseUrl = `${repo}/releases/tag/v13`;
+    const product = await savedProduct(site);
+
+    await sourceFixture({ productId: product.id, url: `${repo}/releases` });
+
+    const [goal] = await Promise.all([
+      productGoal(),
+      productReleaseFixture({
+        name: "Orbit Notes 15",
+        normalizedName: "orbitnotes15",
+        productId: product.id,
+        releasedAt: new Date("2025-10-21"),
+      }),
+    ]);
+
+    planProduct({ release: "Orbit Notes 13", site });
+
+    servePages({
+      others: { [releaseUrl]: "<p>Orbit Notes 13 released on May 2, 2024.</p>" },
+      site,
+    });
+
+    vi.mocked(findProductPages).mockResolvedValue({
+      ...TASK_RESULT,
+      data: {
+        brandUrl: null,
+        docsUrl: null,
+        productUrl: null,
+        releaseUrl,
+        releasesUrl: null,
+        searchCalls: 1,
+      },
+    });
+
+    readPages({
+      brand: null,
+      learnerRelease: "Orbit Notes 13",
+      product: null,
+      releases: [
+        {
+          document: 1,
+          name: "Orbit Notes 13",
+          passage: "Orbit Notes 13 released on May 2, 2024.",
+          releasedOn: "2024-05-02",
+          supportEndsOn: null,
+          version: "13",
+        },
+      ],
+    });
+
+    await researchWorkflow({ goalId: goal.id });
+
+    const named = await prisma.productRelease.findFirstOrThrow({
+      where: { name: "Orbit Notes 13", productId: product.id },
+    });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      productId: product.id,
       productReleaseId: named.id,
     });
   });

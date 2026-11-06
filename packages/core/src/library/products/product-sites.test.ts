@@ -66,6 +66,22 @@ describe(isProductOfBrand, () => {
     ).toBe(true);
   });
 
+  it("ignores links in comments and scripts, which no visitor follows", () => {
+    const hidden = readPageTags({
+      base: "https://lumen.example/",
+      html: `<!-- <a href="https://impostor.example/">old</a> --><script>"<a href='https://impostor.example/x'>"</script><a href="/about">About</a>`,
+    });
+
+    expect(hidden.links).toStrictEqual(["https://lumen.example/about"]);
+
+    expect(
+      isProductOfBrand({
+        brand: { ...page({ domain: "lumen.example", links: [] }), tags: hidden },
+        product: page({ domain: "impostor.example", links: ["https://lumen.example/"] }),
+      }),
+    ).toBe(false);
+  });
+
   it("refuses a page that links to a brand the brand never links back to", () => {
     expect(
       isProductOfBrand({

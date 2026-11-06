@@ -8,7 +8,6 @@ import {
   findProductCheckedSourceId,
 } from "@zoonk/core/library/products/goal-link";
 import { linkSavedProduct, toGoalProductLink } from "@zoonk/core/library/products/goal-release";
-import { toRegistrableDomain } from "@zoonk/core/library/products/keys";
 import { type GoalProductLink, linkGoalToProduct } from "@zoonk/core/library/products/link-goal";
 import { copyBrandLogo, copyProductImage } from "@zoonk/core/library/products/media";
 import { readProductSources } from "@zoonk/core/library/products/read-sources";
@@ -21,6 +20,7 @@ import {
   type ProductSites,
   inspectProductSites,
   isOfficialPage,
+  loadProductSites,
 } from "@zoonk/core/library/products/sites";
 import { PermanentDocumentError } from "@zoonk/core/library/sources/fetch";
 import { refreshWebSource, storeWebSource } from "@zoonk/core/library/sources/web";
@@ -95,10 +95,10 @@ export async function findProductStep(hints: LookupHints): Promise<KnownProduct 
 
   const now = new Date();
   const found = await findProduct({ hints, now });
+  const sites = found ? await loadProductSites(found.product.id) : null;
   const organization = found?.product.organization;
-  const productDomain = found ? toRegistrableDomain(found.product.website) : null;
 
-  if (!found || !organization?.domain || !organization.website || !productDomain) {
+  if (!found || !sites || !organization) {
     return null;
   }
 
@@ -107,9 +107,9 @@ export async function findProductStep(hints: LookupHints): Promise<KnownProduct 
   return {
     brand: {
       description: organization.description ?? "",
-      domain: organization.domain,
+      domain: sites.brand.domain,
       name: organization.name,
-      website: organization.website,
+      website: sites.brand.url,
     },
     hasNamedRelease: found.namedRelease !== null,
     isFresh: found.isFresh,
@@ -129,10 +129,7 @@ export async function findProductStep(hints: LookupHints): Promise<KnownProduct 
       releasesSourceId: product.releasesSourceId,
       website: product.website,
     },
-    sites: {
-      brand: { domain: organization.domain, iconUrl: null, url: organization.website },
-      product: { domain: productDomain, imageUrl: null, links: [], url: product.website },
-    },
+    sites,
   };
 }
 
@@ -169,8 +166,8 @@ export async function inspectProductSitesStep(pages: {
 }
 
 /**
- * Null when the page, or the address it redirected to, isn't official (`isOfficialPage`). Titled by
- * its address: the product's name is still a claim until the reading checks it.
+ * Null when the address isn't official (`isOfficialPage`); one that redirects off the official sites
+ * fails without being stored. Titled by its address: the product's name is a claim until read.
  */
 export async function storeProductPageStep({
   language,
@@ -191,6 +188,7 @@ export async function storeProductPageStep({
 
   const source = await failPermanently(() =>
     storeWebSource({
+      acceptUrl: (final) => isOfficialPage({ sites, url: final }),
       kind: "official",
       language,
       publisher: null,
@@ -200,9 +198,7 @@ export async function storeProductPageStep({
     }),
   );
 
-  return source.url && isOfficialPage({ sites, url: source.url })
-    ? { sourceId: source.id, url: source.url }
-    : null;
+  return { sourceId: source.id, url: source.url ?? url };
 }
 
 export async function readProductPagesStep(

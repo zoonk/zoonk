@@ -1,6 +1,11 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { fetchDocument } from "../sources/fetch-document";
 import { toRegistrableDomain } from "./product-keys";
+
+/** Comments, scripts and templates aren't links a visitor follows, so they never tie two sites. */
+const INERT =
+  /<!--[\s\S]*?-->|<(?<inert>script|style|template|noscript)\b[\s\S]*?<\/\k<inert>\s*>/giu;
 
 const TAG = /<(?<name>a|link|meta)\b(?<attributes>[^>]*)>/giu;
 
@@ -37,7 +42,7 @@ function readAttributes(text: string): Map<string, string> {
 }
 
 function readTags(html: string): Tag[] {
-  return [...html.matchAll(TAG)].map(({ groups }) => ({
+  return [...html.replaceAll(INERT, "").matchAll(TAG)].map(({ groups }) => ({
     attributes: readAttributes(groups?.attributes ?? ""),
     name: groups?.name?.toLowerCase() ?? "",
   }));
@@ -196,6 +201,38 @@ export async function inspectProductSites({
       imageUrl: product.tags.imageUrl,
       links: product.tags.links,
       url: product.url,
+    },
+  };
+}
+
+/**
+ * A saved product's sites: its brand's and product's domains, and its stored pages as the addresses
+ * research verified, so a later page under one (a release under its releases page) counts too.
+ */
+export async function loadProductSites(productId: string): Promise<ProductSites | null> {
+  const product = await prisma.product.findUnique({
+    select: {
+      organization: { select: { domain: true, website: true } },
+      sources: { select: { url: true } },
+      website: true,
+    },
+    where: { id: productId },
+  });
+
+  const productDomain = product ? toRegistrableDomain(product.website) : null;
+  const brand = product?.organization;
+
+  if (!product || !brand?.domain || !brand.website || !productDomain) {
+    return null;
+  }
+
+  return {
+    brand: { domain: brand.domain, iconUrl: null, url: brand.website },
+    product: {
+      domain: productDomain,
+      imageUrl: null,
+      links: product.sources.flatMap((source) => source.url ?? []),
+      url: product.website,
     },
   };
 }
