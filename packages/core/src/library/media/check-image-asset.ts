@@ -23,7 +23,6 @@ import { uploadImageFile } from "./_utils/save-image-asset";
 const CHECK_TIER = chooseServiceTier({ wait: "later" });
 
 const OWED_PICTURES_PER_SWEEP = 100;
-const STORING_STEP_CHECKS_WITHIN_MS = 3_600_000;
 const SWEEPS_GIVE_UP_AFTER_MS = 7 * MS_PER_DAY;
 
 export type PictureRedraw = Awaited<ReturnType<typeof uploadImageFile>> & {
@@ -39,6 +38,7 @@ export type ImageAssetCheck =
 async function findAsset(assetId: string) {
   const asset = await prisma.mediaAsset.findUnique({
     select: {
+      alt: true,
       height: true,
       id: true,
       language: true,
@@ -93,13 +93,10 @@ async function findLessonTags(assetId: string): Promise<string[]> {
 
 /** Internal workflow bridge: checks the stored picture, or its `redraw` before it's shown. */
 export async function checkImageAsset({
-  alt,
   analytics,
   assetId,
   redraw,
 }: {
-  /** The alt of the screen the picture was drawn for. */
-  alt?: string | null;
   analytics?: ImageAnalytics;
   assetId: string;
   redraw?: PictureRedraw;
@@ -111,7 +108,7 @@ export async function checkImageAsset({
   }
 
   const review = await reviewImage({
-    alt,
+    alt: asset.alt,
     analytics,
     image: await readStoredImage({ url: redraw?.url ?? asset.url }),
     language: getAssetLanguage(asset),
@@ -135,12 +132,10 @@ export async function checkImageAsset({
  * that plan fails the same way. Labels stay as they were: screens and questions point at them.
  */
 export async function planImageAssetAgain({
-  alt,
   analytics,
   assetId,
   findings,
 }: {
-  alt?: string | null;
   analytics?: ImageAnalytics;
   assetId: string;
   findings: string[];
@@ -148,11 +143,11 @@ export async function planImageAssetAgain({
   const asset = await readAsset(assetId);
 
   const { data } = await generateImageScene({
-    alt,
+    alt: asset.alt,
     analytics,
     findings,
     language: getAssetLanguage(asset),
-    request: alt ?? describeImageScene(asset.scene),
+    request: asset.alt ?? describeImageScene(asset.scene),
     textAllowed: asset.scene.labels.length > 0,
   });
 
@@ -231,25 +226,31 @@ export async function replaceImageAsset({
 }
 
 /**
- * Internal bridge for the daily sweep. A picture owed for over a week kept failing its check, so the
- * sweep stops paying for it.
+ * Internal bridge for the daily sweep. It waits a day, so the check a picture's storing step started
+ * has ended, and claims each picture, so two sweeps never check it at once. A picture stored over a
+ * week ago kept failing its check, so the sweep stops paying for it.
  */
-export async function listOwedPictureChecks(): Promise<string[]> {
-  const now = Date.now();
+export async function claimOwedPictureChecks(): Promise<string[]> {
+  const now = new Date();
+  const dayAgo = new Date(now.getTime() - MS_PER_DAY);
 
-  const pictures = await prisma.mediaAsset.findMany({
-    orderBy: { checkOwedAt: "desc" },
+  const owed = await prisma.mediaAsset.findMany({
+    orderBy: { checkOwedAt: "asc" },
     select: { id: true },
     take: OWED_PICTURES_PER_SWEEP,
     where: {
-      checkOwedAt: {
-        gte: new Date(now - SWEEPS_GIVE_UP_AFTER_MS),
-        lt: new Date(now - STORING_STEP_CHECKS_WITHIN_MS),
-      },
+      checkOwedAt: { lt: dayAgo },
+      createdAt: { gte: new Date(now.getTime() - SWEEPS_GIVE_UP_AFTER_MS) },
     },
   });
 
-  return pictures.map((picture) => picture.id);
+  const claimed = await prisma.mediaAsset.updateManyAndReturn({
+    data: { checkOwedAt: now },
+    select: { id: true },
+    where: { checkOwedAt: { lt: dayAgo }, id: { in: owed.map((picture) => picture.id) } },
+  });
+
+  return claimed.map((picture) => picture.id);
 }
 
 /** Drops the questions about the picture, since they can't be asked without it. */

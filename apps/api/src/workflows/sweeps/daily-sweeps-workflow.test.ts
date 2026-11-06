@@ -174,7 +174,7 @@ describe(dailySweepsWorkflow, () => {
 
   it("starts the check of pictures still owing one, such as a picture whose storing step failed before starting it", async () => {
     const [owed, justStored] = await Promise.all([
-      mediaAssetFixture({ checkOwedAt: new Date(Date.now() - DAY_MS) }),
+      mediaAssetFixture({ checkOwedAt: new Date(Date.now() - 2 * DAY_MS) }),
       mediaAssetFixture({ checkOwedAt: new Date() }),
     ]);
 

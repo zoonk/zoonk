@@ -50,13 +50,7 @@ export async function lessonImagesWorkflow({
   await Promise.allSettled(
     outcomes.flatMap((outcome) =>
       outcome.status === "fulfilled" && outcome.value.status === "generated"
-        ? [
-            checkPicture({
-              alt: outcome.value.alt,
-              analytics: context,
-              assetId: outcome.value.mediaAssetId,
-            }),
-          ]
+        ? [checkPicture({ analytics: context, assetId: outcome.value.mediaAssetId })]
         : [],
     ),
   );

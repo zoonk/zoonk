@@ -213,7 +213,7 @@ describe(createItems, () => {
 
     await expect(
       prisma.mediaAsset.findUniqueOrThrow({ where: { id: assetId } }),
-    ).resolves.toMatchObject({ checkOwedAt: expect.any(Date) });
+    ).resolves.toMatchObject({ alt: figure.alt, checkOwedAt: expect.any(Date) });
   });
 
   it("leaves the check of a picture two questions drew at once to the one that stored it", async () => {

@@ -93,6 +93,7 @@ export async function drawLibraryImage({
 
   const { data: saved, error } = await safeAsync(() =>
     saveImageAsset({
+      alt: alt ?? null,
       image: drawn.image,
       language: hasLabels ? language : null,
       ownerId,

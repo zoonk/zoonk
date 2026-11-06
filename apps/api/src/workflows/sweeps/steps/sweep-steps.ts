@@ -6,7 +6,7 @@ import { type FreshnessTarget } from "@zoonk/core/library/exams/check-freshness"
 import { listDueFreshnessTargets } from "@zoonk/core/library/exams/freshness-checks";
 import { recalibrateItemDifficulties } from "@zoonk/core/library/items/recalibrate";
 import { deleteRetiredSteps } from "@zoonk/core/library/lessons/versions";
-import { listOwedPictureChecks } from "@zoonk/core/library/media/check-image";
+import { claimOwedPictureChecks } from "@zoonk/core/library/media/check-image";
 import { listLessonsForLaterReview } from "@zoonk/core/library/quality/later-reviews";
 import { countOpenReviewFlags } from "@zoonk/core/library/review-flags/flagged";
 import { purgeMemoryFacts } from "@zoonk/core/memory/purge";
@@ -45,10 +45,10 @@ export async function listLessonsForLaterReviewStep(): Promise<string[]> {
   return listLessonsForLaterReview();
 }
 
-export async function listOwedPictureChecksStep(): Promise<string[]> {
+export async function claimOwedPictureChecksStep(): Promise<string[]> {
   "use step";
 
-  return listOwedPictureChecks();
+  return claimOwedPictureChecks();
 }
 
 export async function recalibrateItemDifficultiesStep(): Promise<number> {

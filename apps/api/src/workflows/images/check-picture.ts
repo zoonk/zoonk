@@ -11,19 +11,17 @@ import {
 export type PictureCheckStatus = "missing" | "passed" | "removed" | "replaced";
 
 async function redrawPicture({
-  alt,
   analytics,
   assetId,
   findings,
 }: {
-  alt?: string | null;
   analytics?: PictureAnalytics;
   assetId: string;
   findings: string[];
 }): Promise<PictureRedraw | null> {
-  const scene = await planPictureAgainStep({ alt, analytics, assetId, findings });
+  const scene = await planPictureAgainStep({ analytics, assetId, findings });
   const redraw = await redrawPictureStep({ analytics, assetId, findings, scene });
-  const recheck = await checkPictureStep({ alt, analytics, assetId, redraw });
+  const recheck = await checkPictureStep({ analytics, assetId, redraw });
 
   return recheck.status === "passed" ? redraw : null;
 }
@@ -34,22 +32,20 @@ async function redrawPicture({
  * runs out of retries.
  */
 export async function checkPicture({
-  alt,
   analytics,
   assetId,
 }: {
-  alt?: string | null;
   analytics?: PictureAnalytics;
   assetId: string;
 }): Promise<PictureCheckStatus> {
-  const check = await checkPictureStep({ alt, analytics, assetId });
+  const check = await checkPictureStep({ analytics, assetId });
 
   if (check.status !== "rejected") {
     return check.status;
   }
 
   const { findings } = check;
-  const redraw = await redrawPicture({ alt, analytics, assetId, findings }).catch(() => null);
+  const redraw = await redrawPicture({ analytics, assetId, findings }).catch(() => null);
 
   if (!redraw) {
     await removePictureStep(assetId);

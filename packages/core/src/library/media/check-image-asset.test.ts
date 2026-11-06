@@ -21,7 +21,7 @@ import {
 import {
   type PictureRedraw,
   checkImageAsset,
-  listOwedPictureChecks,
+  claimOwedPictureChecks,
   planImageAssetAgain,
   redrawImageAsset,
   removeImageAsset,
@@ -31,7 +31,7 @@ import { createStepImage } from "./lesson-images";
 
 const alt = "Mão com um pequeno corte na pele e micróbios entrando pelo corte.";
 
-const HOUR_MS = 3_600_000;
+const DAY_MS = 86_400_000;
 
 async function owedCheckOf(assetId: string) {
   const { checkOwedAt } = await prisma.mediaAsset.findUniqueOrThrow({ where: { id: assetId } });
@@ -41,6 +41,7 @@ async function owedCheckOf(assetId: string) {
 async function shownPicture() {
   const [asset, lesson, skill] = await Promise.all([
     mediaAssetFixture({
+      alt,
       checkOwedAt: new Date(),
       scene: testScene({ focalObject: `a ${randomUUID()} map` }),
     }),
@@ -89,7 +90,7 @@ describe(checkImageAsset, () => {
     });
   });
 
-  it("passes a shown picture its check accepts, checking it at flex, so it no longer owes its check", async () => {
+  it("passes a shown picture its check accepts against the alt it was drawn for, checking it at flex, so it no longer owes its check", async () => {
     const { asset } = await shownPicture();
     mockImageChecks([true]);
 
@@ -98,7 +99,11 @@ describe(checkImageAsset, () => {
     });
 
     expect(readStoredFile).toHaveBeenCalledWith(asset.url);
-    expect(checkLessonImage).toHaveBeenCalledWith(expect.objectContaining({ serviceTier: "flex" }));
+
+    expect(checkLessonImage).toHaveBeenCalledWith(
+      expect.objectContaining({ alt, serviceTier: "flex" }),
+    );
+
     await expect(owedCheckOf(asset.id)).resolves.toBeNull();
   });
 
@@ -119,7 +124,7 @@ describe(checkImageAsset, () => {
     const redraw = redrawOf();
     mockImageChecks([true]);
 
-    await expect(checkImageAsset({ alt, assetId: asset.id, redraw })).resolves.toStrictEqual({
+    await expect(checkImageAsset({ assetId: asset.id, redraw })).resolves.toStrictEqual({
       status: "passed",
     });
 
@@ -142,11 +147,12 @@ describe(checkImageAsset, () => {
 });
 
 describe(planImageAssetAgain, () => {
-  it("plans the scene again from the alt and the check's findings, keeping its labels", async () => {
+  it("plans the scene again from the alt it was drawn for and the check's findings, keeping its labels", async () => {
     vi.resetAllMocks();
     const labels = [{ target: "the cut", text: "corte" }];
 
     const asset = await mediaAssetFixture({
+      alt,
       language: "pt",
       scene: testScene({ focalObject: `a ${randomUUID()} skin section`, labels }),
     });
@@ -155,7 +161,7 @@ describe(planImageAssetAgain, () => {
     const sceneSpy = mockImageScene(replanned);
     const findings = ["shows a skin section with no hand"];
 
-    await expect(planImageAssetAgain({ alt, assetId: asset.id, findings })).resolves.toStrictEqual({
+    await expect(planImageAssetAgain({ assetId: asset.id, findings })).resolves.toStrictEqual({
       ...replanned,
       labels,
     });
@@ -269,23 +275,39 @@ describe(replaceImageAsset, () => {
   });
 });
 
-describe(listOwedPictureChecks, () => {
-  it("lists pictures owing their check for over an hour, past the check their storing step starts, until a week of sweeps gave up on them", async () => {
+describe(claimOwedPictureChecks, () => {
+  it("claims a picture owing its check for over a day once, even when two sweeps claim at the same time", async () => {
+    const owed = await mediaAssetFixture({
+      checkOwedAt: new Date(Date.now() - 2 * DAY_MS),
+      createdAt: new Date(Date.now() - 2 * DAY_MS),
+    });
+
+    const sweeps = await Promise.all([claimOwedPictureChecks(), claimOwedPictureChecks()]);
+
+    expect(sweeps.flat().filter((assetId) => assetId === owed.id)).toHaveLength(1);
+
+    const claimedAt = await owedCheckOf(owed.id);
+    expect(claimedAt?.getTime()).toBeGreaterThan(Date.now() - 60_000);
+    await expect(claimOwedPictureChecks()).resolves.not.toContain(owed.id);
+  });
+
+  it("leaves a picture its storing step is still checking, one checked already, and one a week of sweeps gave up on", async () => {
     const now = Date.now();
 
-    const [owed, justStored, givenUp, checked] = await Promise.all([
-      mediaAssetFixture({ checkOwedAt: new Date(now - 2 * HOUR_MS) }),
+    const [justStored, checked, givenUp] = await Promise.all([
       mediaAssetFixture({ checkOwedAt: new Date(now - 60_000) }),
-      mediaAssetFixture({ checkOwedAt: new Date(now - 8 * 24 * HOUR_MS) }),
-      mediaAssetFixture({ checkOwedAt: null }),
+      mediaAssetFixture({ checkOwedAt: null, createdAt: new Date(now - 2 * DAY_MS) }),
+      mediaAssetFixture({
+        checkOwedAt: new Date(now - 2 * DAY_MS),
+        createdAt: new Date(now - 8 * DAY_MS),
+      }),
     ]);
 
-    const listed = await listOwedPictureChecks();
+    const claimed = await claimOwedPictureChecks();
 
-    expect(listed).toContain(owed.id);
-    expect(listed).not.toContain(justStored.id);
-    expect(listed).not.toContain(givenUp.id);
-    expect(listed).not.toContain(checked.id);
+    expect(claimed).not.toContain(justStored.id);
+    expect(claimed).not.toContain(checked.id);
+    expect(claimed).not.toContain(givenUp.id);
   });
 });
 
