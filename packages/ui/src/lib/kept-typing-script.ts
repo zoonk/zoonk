@@ -19,7 +19,11 @@ function keepTypingBeforeReady(attribute: string) {
     (event) => {
       const field = event.target;
 
-      if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) {
+      const isText =
+        field instanceof HTMLTextAreaElement ||
+        (field instanceof HTMLInputElement && !["checkbox", "file", "radio"].includes(field.type));
+
+      if (!isText) {
         return;
       }
 
