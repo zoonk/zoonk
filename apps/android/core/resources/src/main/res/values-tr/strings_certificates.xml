@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "certificates_about_duration": "7d197101bdc7215f654b558acadfacfc6cd262bd4c463c967071e35b9e88475e",
   "certificates_add_to_linkedin": "342793bee65095257e8833c9ddd6ab535d69ea920220719c75c1b09c555df436",
   "certificates_alt_course": "c9751761814e61bc0639603345a99ae25e2e47ba7d37961a69838a6057b13a1b",
   "certificates_alt_dated": "45a1a67431c6c990db389d5671df223e82881bbfce4ded2bb5eb1525e6b90f10",
@@ -19,23 +20,33 @@
   "certificates_copied": "f4379c3f093f69ae620aba2396f1dd641b9cc55d6b4d2759e5e538eec2c94256",
   "certificates_copy": "5dc25a580e2022398f735cc014bdde838431e7c059db1f05ede69389d910e841",
   "certificates_copy_field": "0c5beab06d6fbffd3d51bb0ca4c32792884641e2c70f6977783f9220f93d7e94",
-  "certificates_copy_link": "eb85a74d0be8a3b37a9ce62584bdd9dc612e7571259e1b4a42b51d8d0bb9a5cd",
   "certificates_count": "e729dcddb6713406a09fe12be64c766e4ee4c7e4ded98af5a20da3c4d5510c15",
   "certificates_course_complete": "564a6e2eab423579d8f08f89fba33873946bf9aa1f854bf7bea8c1eeed7a67e8",
   "certificates_course_level": "c47f3c2e94cf30d6f5779e2915e78e9bfc53d3735d1ef0cbaf6af7faf563c900",
+  "certificates_course_on_zoonk": "74723160bf3abc3036cc464843af246b0218ebbcd94a5bd40a65e57ff7eac59f",
   "certificates_course_ready": "9b893d7f9d83692a846d89cd82984e883818668bdbcf9e0835d1a1488d93c00d",
+  "certificates_detail_completed": "1baab4aa1179f8c8d6c4d04b89b36040e67013f6f8cf6f1e99057e255f63b23f",
+  "certificates_detail_id": "b0a2f5f7e625353957a112a8cde5c346f801878802ad8d718bd2306d2facf66b",
+  "certificates_detail_lessons_studied": "0362ab07defdeb80c7f06cdf78c14033c53d4c8c52bc9b6b26fbdba89b49c832",
+  "certificates_detail_level": "cc3d3ca33ca892a76be987cc6fefbd3e201c9dae21dc2272e1dc60a3cbd9b4b5",
+  "certificates_detail_link": "18a69399011f4fbdb93d994642c75125607eeb695d06b749f385a83a518324c6",
+  "certificates_detail_passed_by_test": "29758eb0ac818d8fe5fcf1958bfc348c170e8941d17feffa41b8a4ec6dbd91a9",
+  "certificates_detail_study_time": "b72619702b7c19caebfc3c3c5493bfe94be1fb9b2693dda9f1607b406ba615e2",
+  "certificates_details": "d19a3ece9f8c3c106f0ede9e2dbb4e77fe0161a3f6b777ad2af4a9053e1ab495",
   "certificates_download": "eb6e1e11f5ff6d31905645cb6acecb49c1c167e70d5187e828ab830ec9209020",
   "certificates_downloaded": "6c150eb7c3b809be23c078b3dc8f27b1da93db1f0b377834a2014de8d4c2834e",
   "certificates_earned": "014b3ffd2bcbb6d17061123bf8ed3c754e8d6ffc0ee17e7f29fb09b748adfc7f",
   "certificates_empty_description": "22d9eca34576e40c9ac6221c736852d057a77dfccba58e1d66a31e41a39f2b2f",
   "certificates_empty_title": "c52e11f81ea5d868b3e5e6dfab5208f296228425fb79eaaeb6e676408f9d2bff",
   "certificates_get": "d08cb9679a701fbe4fdaf80a72ee9d77334278d8007c0e705705be9b0b9e78f3",
+  "certificates_issued_on": "4366a6379e28caa5f0ddfe4b9ecf247d851e75ca0e07df94c796859c7e239f79",
   "certificates_kind_completion": "5be0df23bc47dd0260c4163330e737dad7fa34a079671517fb8538573548fe01",
   "certificates_language_level": "942070bd341fcc34f5cf7e3d7133194d944054a0e70eba1f2aa380b4ae35c408",
   "certificates_language_ready": "f1444af26c07163b7c9f7ca80d324f541d4239ef28905f69e156a6330248502f",
   "certificates_lead": "867842555baa2036685439ce2fa5fcb0e839201e5439e66e77b1aeb20fbc7001",
   "certificates_lessons": "c1ff000e889b6cf45614b278202ef229ed8c42ae3550c3459a01eb1e6e30be8d",
   "certificates_level_complete": "a13652607fbf5370bbe837c527761a65554c4be84de994cda021428105e00968",
+  "certificates_level_on_zoonk": "41d443b1e5ddbe94fb9d0040dcb012e52b6c81280bbbcda3eeec309f7300c08b",
   "certificates_link_copied": "cc71403a8d392f2545666a320985451f6d5e17889cb32d2c3ed62a26644b5560",
   "certificates_link_note": "a3e3ff89c0fe7f6cc907b3e3e5cefd41faf7dc9190252bd2d4a0b206937c881a",
   "certificates_linkedin_credential_id": "8b217abcbdad52c10bbc64f8d30ee9c48b6d399ea1ac3a7bd25704745aca6eea",
@@ -51,7 +62,6 @@
   "certificates_name_hint_new": "6c684c7d2ea2249454dc1784ba92ab28ccfd2b70f081c4d44fb9e87d139e5b00",
   "certificates_name_label": "a354b326da53e7aae25c0598148487b707260dd1826e2dc982ac6c2f38c75533",
   "certificates_name_label_new": "2a19467e0274b0b19fde08360cf1ff9102a7793b0220c8c90318f25941ee4928",
-  "certificates_name_on_certificate": "cb5b57948c82b0f82d51f08322e27a3a3ccfcdec6b8416993d0d944b11f26c58",
   "certificates_name_placeholder": "de59cd4f1ebcaec302d7ea735a764dc994038c3efa5585f116c363b66aaa2593",
   "certificates_name_save_failed": "fee682ad51bfa141dd76e373f4b3771896a4b6356d5531a2ded9c8df21af2c7e",
   "certificates_not_found": "f0443b9fcad5b26800a1c836e4d1f06014ccefc6252938e6d3dc7bd5abe0f3d8",
@@ -61,6 +71,7 @@
   "certificates_plus_list_title": "63947d20703300bbba3fe63861fff87edaebba3b6fd2b203cd5d92e3d970af51",
   "certificates_plus_title": "2b146a4bd9714f8be7662a436259ed4991c9ed9821b374288984b9824a53a314",
   "certificates_print": "103aeacea9c31618fc4f79c27929acea6f62a38fdaad99df69e13125db974f2f",
+  "certificates_recipient_name": "96e9761e6480d1f7fbdd962b3455dc7339b4fa428a06291435642e191e0cf950",
   "certificates_save": "fa64e3ff34da391c213ef64a868468feaf6bb9c54333f85f824b46e50a19fd28",
   "certificates_saved_one": "cb9a0eff88b9afea06d79f3ce15b58dfc7ef8c6a39d1ef65bfdc922882d76c3c",
   "certificates_saved_several": "c1b76c21d2aeb5f701b7ee77114a23c29774a289af4d72aeb16a2b3b2b0b2765",
@@ -70,6 +81,7 @@
   "certificates_up_next": "41ac7c68c0b715bc2e2c4f2c06bde1a1d78af8fedbf29de5a60af5549faa6f23",
   "certificates_up_next_course": "69a83fbfbe47c65bb6b81a6261e3aedacb81dc4a788695c8f626ecf9601aaaf3",
   "certificates_up_next_language": "a61fe9215a0c99fa53332c83f3d75dbac1a5fd902836379513fcafba26c1d273",
+  "certificates_verified": "ebc12e6b7894dae692f213859e6bec215903b9c3dc12637a0cb7e2e5d928befa",
   "certificates_view": "cd42dc9fe7ca27340f613bb5f781207d9cfefdf03285c57bf78c243de7045754",
   "certificates_view_several": "2901bd1a4f679e496f6bd1b62f0da5dceea48f35171e95ea68af69fbf4d377e9"
 }
@@ -149,19 +161,41 @@
     <string name="certificates_print">Yazdır</string>
     <!-- Saves the certificate's picture to the phone's Pictures. -->
     <string name="certificates_download">İndir</string>
-    <string name="certificates_copy_link">Bağlantıyı kopyala</string>
     <string name="certificates_link_copied">Bağlantı kopyalandı</string>
-    <!-- A row showing the learner's name as their certificates print it, opening a field to change it. -->
-    <string name="certificates_name_on_certificate">Sertifikada görünen ad</string>
     <string name="certificates_link_note">Bağlantıya sahip herkes bu sertifikayı görebilir. Sertifika sayfası arama sonuçlarında görünmez.</string>
     <!-- A short message after the certificate's picture was saved to the phone's Pictures. -->
     <string name="certificates_downloaded">Resimler klasörüne kaydedildi</string>
     <string name="certificates_picture_failed">Sertifika yüklenemedi. Tekrar dene.</string>
     <string name="certificates_not_found">Bu sertifikayı bulamadık</string>
-    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name and %2$s the course's title. -->
+    <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name and %2$s the certificate's name, such as "Python · Beginner". -->
     <string name="certificates_alt_course">%1$s, %2$s kursunu tamamladı</string>
-    <!-- TalkBack reads the certificate's picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
+    <!-- A certificate page's headline, which TalkBack also reads for its picture. %1$s is the learner's name, %2$s the CEFR level, such as "B1", and %3$s the language, such as "Spanish". -->
     <string name="certificates_alt_level">%1$s, %2$s seviyesini %3$s dilinde tamamladı</string>
+    <!-- A certificate page's headline before the learner gave a name. %1$s is the certificate's name, such as "Python · Beginner". -->
+    <string name="certificates_course_on_zoonk">%1$s, Zoonk’ta tamamlandı</string>
+    <!-- A certificate page's headline before the learner gave a name. %1$s is the CEFR level, such as "B1", and %2$s the language, such as "Spanish". -->
+    <string name="certificates_level_on_zoonk">%1$s seviyesi, %2$s dilinde Zoonk’ta tamamlandı</string>
+    <!-- Above a certificate's headline on its page, beside a check mark. -->
+    <string name="certificates_verified">Doğrulanmış sertifika · Zoonk tarafından verildi</string>
+    <!-- Under a certificate's headline on its page. %1$s is the day it was issued, such as "October 28, 2026". -->
+    <string name="certificates_issued_on">Bitirme sertifikası, %1$s tarihinde verildi.</string>
+    <!-- The heading over a certificate's facts on its page. -->
+    <string name="certificates_details">Ayrıntılar</string>
+    <!-- Labels the learner's full name, as their certificates print it. -->
+    <string name="certificates_recipient_name">Ad soyad</string>
+    <!-- Labels the course level a certificate is for, such as "Beginner". -->
+    <string name="certificates_detail_level">Seviye</string>
+    <!-- Labels the day a certificate was earned. -->
+    <string name="certificates_detail_completed">Tamamlanma tarihi</string>
+    <string name="certificates_detail_lessons_studied">Çalışılan dersler</string>
+    <!-- Labels how many of a certificate's lessons the learner skipped by passing their test. -->
+    <string name="certificates_detail_passed_by_test">Testle geçilen dersler</string>
+    <string name="certificates_detail_study_time">Çalışma süresi</string>
+    <string name="certificates_detail_id">Sertifika kimliği</string>
+    <!-- Labels the address of a certificate's public page. -->
+    <string name="certificates_detail_link">Bağlantı</string>
+    <!-- An approximate study time. %1$s is a duration, such as "41 hr". -->
+    <string name="certificates_about_duration">yaklaşık %1$s</string>
     <!-- TalkBack reads the certificate's picture: what it certifies, then the day it was earned, such as "Ana Souza completed Python, November 3, 2026". -->
     <string name="certificates_alt_dated">%1$s, %2$s</string>
     <!-- Text the learner can post with their certificate. %1$s is the course's title and %2$s the lessons they studied, such as "148 lessons". -->

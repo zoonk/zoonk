@@ -1,10 +1,13 @@
 package com.zoonk.android.feature.certificates
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -17,8 +20,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -32,8 +44,8 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonSize
-import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.GoalMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
@@ -49,6 +61,7 @@ import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.launch
@@ -104,7 +117,7 @@ private fun androidx.compose.foundation.lazy.LazyListScope.certificates(
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (certificates.isNotEmpty()) {
                 val count = certificates.size
-                Eyebrow(pluralStringResource(R.plurals.certificates_count, count, count))
+                Eyebrow(pluralStringResource(R.plurals.certificates_count, count, count), uppercase = false)
             }
             Text(stringResource(R.string.certificates_title), Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
             Text(
@@ -181,19 +194,24 @@ private fun Empty(
     val upNext = certificateUpNext(goals.value.orEmpty())
 
     Column(Modifier.padding(top = 24.dp)) {
-        EmptyState(
-            icon = R.drawable.ic_workspace_premium,
-            title = stringResource(R.string.certificates_empty_title),
-            description = stringResource(R.string.certificates_empty_description),
-            action = {
-                Button(onClick = { navigator.showRoot(AppTab.Today) }, size = ButtonSize.Large) {
-                    Text(stringResource(R.string.certificates_continue_learning))
-                }
-            },
+        GhostCertificate()
+        Text(
+            stringResource(R.string.certificates_empty_title),
+            Modifier.padding(top = 24.dp).semantics { heading() },
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
         )
+        Text(
+            stringResource(R.string.certificates_empty_description),
+            Modifier.padding(top = 6.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = Modifier.padding(top = 20.dp), size = ButtonSize.Large) {
+            Text(stringResource(R.string.certificates_continue_learning))
+        }
 
         if (upNext.isNotEmpty()) {
-            SectionHeader(stringResource(R.string.certificates_up_next), Modifier.padding(top = 32.dp, bottom = 8.dp))
+            SectionHeader(stringResource(R.string.certificates_up_next), Modifier.padding(top = 40.dp, bottom = 8.dp))
             Column(Modifier.bleed(LIST_ITEM_INSET)) {
                 upNext.forEachIndexed { index, item ->
                     if (index > 0) ListDivider()
@@ -209,6 +227,7 @@ private fun UpNextRow(item: CertificateUpNext) {
     val progress = item.progress
     ListRow(
         headline = { Text(item.goal.title) },
+        leading = { GoalMark(item.goal.title) },
         supporting = {
             Text(stringResource(if (progress == null) R.string.certificates_up_next_language else R.string.certificates_up_next_course))
         },
@@ -223,6 +242,47 @@ private fun UpNextRow(item: CertificateUpNext) {
             },
     )
 }
+
+/** Main's `GhostCertificate`: shapes that stand for a certificate without saying one, so nothing reads as real. */
+@Composable
+private fun GhostCertificate() {
+    val ground = MaterialTheme.colorScheme.surfaceContainerHigh
+    val edge = MaterialTheme.colorScheme.outline
+    val bar = MaterialTheme.colorScheme.surfaceContainerHighest
+
+    Canvas(Modifier.widthIn(max = GHOST_WIDTH).fillMaxWidth().aspectRatio(GHOST_RATIO)) {
+        val corner = CornerRadius(ZoonkRadius.lg.toPx())
+        val small = CornerRadius(4.dp.toPx())
+        val dash = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 3.dp.toPx()))
+
+        fun block(
+            color: Color,
+            left: Float,
+            top: Float,
+            width: Float,
+            height: Float,
+        ) = drawRoundRect(color, Offset(size.width * left, size.height * top), Size(size.width * width, size.height * height), small)
+
+        drawRoundRect(ground, cornerRadius = corner)
+        drawRoundRect(edge, cornerRadius = corner, style = Stroke(1.dp.toPx(), pathEffect = dash))
+        GHOST_BARS.forEach { (top, width, height) -> block(bar, GHOST_LEFT, top, width, height) }
+        block(edge, GHOST_LEFT, 0.76f, 0.86f, 0.02f)
+        block(bar, 0.83f, 0.82f, 0.10f, 0.14f)
+    }
+}
+
+/** Main's bars: each one's top, width and height, as shares of the sheet. */
+private val GHOST_BARS =
+    listOf(
+        Triple(0.10f, 0.16f, 0.05f),
+        Triple(0.30f, 0.28f, 0.04f),
+        Triple(0.38f, 0.52f, 0.10f),
+        Triple(0.53f, 0.40f, 0.06f),
+        Triple(0.84f, 0.46f, 0.05f),
+    )
+private const val GHOST_LEFT = 0.07f
+private const val GHOST_RATIO = 297f / 210f
+private val GHOST_WIDTH = 416.dp
 
 /** Main's `w-18` thumbnail, its sheet's corners `rounded-[4px]`. */
 private val THUMB_WIDTH = 72.dp
