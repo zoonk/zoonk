@@ -26,7 +26,7 @@ When `TAUGHT_ELSEWHERE` lists skills, the learners of this band already learn th
 
 - Chapters are tasks done in the product, named for what the learner gets done ("Pull your first espresso", "Keep the machine clean"), never a tour of its menus or a tree of concepts. A concept is taught inside the task that needs it.
 - The first lessons of the first chapter, the learner's first session, end with a real result in the product: something made, set up or done that they can see. Setting the product up comes only as far as that result needs.
-- Teach the release the course is written for. Name a release or a model in a title, description or objective only when a feature depends on it, and then say which releases or models have it, so the outline stays right when the course moves to a later release.
+- Teach the release the course is written for. A title, description or objective names a release or a model only for a feature some releases or models lack, and then says which ones have it, so the outline stays right when the course moves to a later release.
 - Required skills the size of a tutorial (one task, or a few steps of one) are one chapter, not spread over several.
 
 {{/product}}
