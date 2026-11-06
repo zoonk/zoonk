@@ -267,7 +267,7 @@ export function QuestionBlock({
           <FinishReadyActions onFinish={run.retryFinish} phase={phase} />
 
           {question && isQuestionPhase(phase) && (
-            <QuestionActionsRow ask={askButton}>
+            <QuestionActionsRow ask={phase.kind === "alreadyAnswered" ? null : askButton}>
               <BlockQuestionActions
                 blockDrill={blockDrill}
                 draft={draft}
