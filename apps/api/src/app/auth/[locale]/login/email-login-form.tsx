@@ -11,7 +11,6 @@ import {
 import { parseFormField } from "@zoonk/utils/form";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
-import { useRef } from "react";
 import { useFormActionState } from "../../_utils/use-form-action-state";
 import { type VerificationOTPState, sendVerificationOTPAction } from "./actions";
 import { readPageRedirectTo } from "./page-url";
@@ -21,10 +20,12 @@ const initialEmailLoginState: VerificationOTPState = { status: "idle" };
 
 export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
   const t = useExtracted();
-  const redirectToRef = useRef<HTMLInputElement>(null);
 
   const [state, formAction] = useFormActionState({
-    action: sendVerificationOTPAction,
+    action: (previous: VerificationOTPState, formData: FormData) => {
+      formData.set("redirectTo", readPageRedirectTo() ?? "");
+      return sendVerificationOTPAction(previous, formData);
+    },
     initialState: initialEmailLoginState,
     onRejected: (formData): VerificationOTPState => ({
       email: parseFormField(formData, "email") ?? "",
@@ -45,17 +46,8 @@ export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
   }[state.status];
 
   return (
-    <LoginForm
-      action={formAction}
-      // React reads the form's data after this runs, so it carries the address the form is on.
-      onSubmit={() => {
-        if (redirectToRef.current) {
-          redirectToRef.current.value = readPageRedirectTo() ?? "";
-        }
-      }}
-    >
+    <LoginForm action={formAction}>
       <input name="locale" type="hidden" value={locale} />
-      <input name="redirectTo" ref={redirectToRef} type="hidden" />
 
       <LoginField>
         <LoginEmailLabel>{t("Email")}</LoginEmailLabel>

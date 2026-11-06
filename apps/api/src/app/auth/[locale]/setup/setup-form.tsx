@@ -16,6 +16,7 @@ import {
 } from "@zoonk/core/auth/hooks/username-availability";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { adoptTextTypedBeforeHydration } from "@zoonk/ui/lib/typed-before-hydration";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -129,6 +130,7 @@ export function SetupProfileForm({
           id="name"
           name="name"
           onChange={(event) => setName(event.target.value)}
+          ref={adoptTextTypedBeforeHydration(setName)}
           type="text"
           value={name}
         />
@@ -154,6 +156,7 @@ export function SetupProfileForm({
               minLength={USERNAME_MIN_LENGTH}
               name="username"
               onChange={(event) => setUsername(event.target.value)}
+              ref={adoptTextTypedBeforeHydration(setUsername)}
               required
               spellCheck={false}
               value={username}
