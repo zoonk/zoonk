@@ -196,6 +196,21 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertEqual(conversation.turns.first?.answer, "Yes.")
   }
 
+  func testAnOfferKeepsWhatTheLearnerTypedWhileTheThreadLoaded() async {
+    let api = TutorAPIStub(
+      thread: TutorThreadPage(
+        turns: [.fixture(id: "unanswered", status: .failed)], hasMore: false, nextCursor: nil))
+    let conversation = makeConversation(api: api)
+    api.beforeThread = { conversation.draft = "Why is it bigger?" }
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+
+    await conversation.ask(TutorDraft(suggestion: simpler, offer: UUID()))
+
+    XCTAssertEqual(conversation.draft, "Why is it bigger?")
+    XCTAssertTrue(api.suggestions.isEmpty)
+  }
+
   func testAQuestionShowsAsSentAtOnceAndGoesBackToTheComposerIfItFails() async {
     let api = TutorAPIStub(askFailures: [APIError.network, APIError.network])
     let conversation = makeConversation(api: api)
@@ -478,6 +493,7 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   var questionFailure: Error?
   var questionStatus = TutorTurn.Status.completed
   var beforeAsk: (@MainActor () async -> Void)?
+  var beforeThread: (@MainActor () async -> Void)?
   var beforeQuestion: (@MainActor () async -> Void)?
   var beforeAnswer: (@MainActor () async -> Void)?
   var undoResults: [Result<Bool, Error>] = []
@@ -499,7 +515,8 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   }
 
   func thread(_ scope: TutorScope, cursor: String?, token: String) async throws -> TutorThreadPage {
-    cursor == nil ? thread : earlier
+    await beforeThread?()
+    return cursor == nil ? thread : earlier
   }
 
   func ask(

@@ -132,14 +132,16 @@ final class TutorConversation {
     fill(draft)
   }
 
-  /// While an earlier question still needs its answer, the suggestion waits in the composer.
+  /// While an earlier question still needs its answer, the suggestion waits in the composer, unless
+  /// the learner typed there while the thread loaded.
   func ask(_ draft: TutorDraft) async {
     guard preparedOffers.insert(draft.offer).inserted else { return }
+    let typed = self.draft
     await thread.load()
 
     if canAsk {
       await send(draft.suggestion)
-    } else {
+    } else if self.draft == typed {
       fill(draft)
     }
   }
