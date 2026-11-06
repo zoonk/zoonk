@@ -102,7 +102,8 @@ struct SuggestionViewButton: View {
   }
 }
 
-/// `SuggestionOpen`'s sheet: the whole suggestion, closed with its close button.
+/// `SuggestionOpen`'s sheet: the whole suggestion, closed with its close button or by any place
+/// opened from it, such as a finished plan's next course.
 struct SuggestionSheet<Content: View>: View {
   @Environment(\.dismiss) private var dismiss
 
@@ -126,6 +127,7 @@ struct SuggestionSheet<Content: View>: View {
       }
     }
     .presentationDetents([.medium, .large])
+    .closesOnNavigation()
   }
 }
 
