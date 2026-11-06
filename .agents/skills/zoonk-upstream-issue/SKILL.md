@@ -37,7 +37,5 @@ Maintainers act on a bug they can run in a minute. Prove the bug is theirs, repr
 
 - Link the issue from the reproduction's README.
 - In this repository, record the issue under the PR description's library issues, and keep or remove any local workaround as the user decided.
-- When a local workaround stays in our code, track its removal:
-  - Open an issue in this repository through [zoonk-github-issues](../zoonk-github-issues/SKILL.md) that names the upstream issue and the workaround, so every workaround still waiting on a release is listed in one place.
-  - If your harness can run scheduled tasks, schedule a daily one that checks for a release with the fix (poll: GitHub sends release webhooks only to a repository's admins). When one ships, it removes the workaround in a fresh task, closes the tracking issue and deletes the schedule.
+- When a local workaround stays in our code, open an issue in this repository through [zoonk-github-issues](../zoonk-github-issues/SKILL.md) that names the upstream issue and the workaround, so every workaround still waiting on a release is listed in one place. The next [dependency update](../zoonk-update-dependencies/SKILL.md) after a release with the fix finds the workaround by the upstream link in its comment, removes it and closes that issue.
 - Give the user both links.
