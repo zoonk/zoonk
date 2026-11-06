@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -13,6 +14,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,11 +29,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 /*
- * Main's busy buttons. From the press until its work ends ([busy]), a button ignores presses but
- * keeps focus, which a disabled one would drop, reads as unavailable and looks as it did, so a quick
- * save shows nothing. Once the wait turns slow, [BusyContent] covers its content with a spinner, so
- * the button never changes size; the content is back the moment the work ends. A label stays as it
- * was at rest.
+ * Main's busy buttons. From the press until its work ends ([busy]), a button ignores presses and
+ * takes its disabled colors but stays enabled underneath, so it keeps the focus a disabled one would
+ * drop, and reads as unavailable. Once the wait turns slow, [BusyContent] covers its content with a
+ * spinner, so the button never changes size; the content is back the moment the work ends. A label
+ * stays as it was at rest. The content padding goes inside [BusyContent], so the spinner centers on
+ * the whole button however that padding leans.
  */
 
 @Composable
@@ -46,9 +50,9 @@ fun BusyButton(
     onClick = { if (!busy) onClick() },
     modifier = modifier.busy(busy),
     enabled = enabled || busy,
-    colors = colors,
-    contentPadding = contentPadding,
-) { BusyRow(busy, content) }
+    colors = colors.disabledWhen(busy),
+    contentPadding = NO_PADDING,
+) { BusyRow(busy, contentPadding, content) }
 
 @Composable
 fun BusyTonalButton(
@@ -64,8 +68,9 @@ fun BusyTonalButton(
     modifier = modifier.busy(busy),
     enabled = enabled || busy,
     shape = shape,
-    contentPadding = contentPadding,
-) { BusyRow(busy, content) }
+    colors = ButtonDefaults.filledTonalButtonColors().disabledWhen(busy),
+    contentPadding = NO_PADDING,
+) { BusyRow(busy, contentPadding, content) }
 
 @Composable
 fun BusyOutlinedButton(
@@ -79,8 +84,10 @@ fun BusyOutlinedButton(
     onClick = { if (!busy) onClick() },
     modifier = modifier.busy(busy),
     enabled = enabled || busy,
-    contentPadding = contentPadding,
-) { BusyRow(busy, content) }
+    colors = outlinedButtonColors().disabledWhen(busy),
+    border = outlinedButtonBorder(enabled && !busy),
+    contentPadding = NO_PADDING,
+) { BusyRow(busy, contentPadding, content) }
 
 @Composable
 fun BusyTextButton(
@@ -95,9 +102,9 @@ fun BusyTextButton(
     onClick = { if (!busy) onClick() },
     modifier = modifier.busy(busy),
     enabled = enabled || busy,
-    colors = colors,
-    contentPadding = contentPadding,
-) { BusyRow(busy, content) }
+    colors = colors.disabledWhen(busy),
+    contentPadding = NO_PADDING,
+) { BusyRow(busy, contentPadding, content) }
 
 @Composable
 fun BusyIconButton(
@@ -110,6 +117,7 @@ fun BusyIconButton(
     onClick = { if (!busy) onClick() },
     modifier = modifier.busy(busy),
     enabled = enabled || busy,
+    colors = IconButtonDefaults.iconButtonColors().disabledWhen(busy),
 ) { BusyContent(busy, content) }
 
 @Composable
@@ -123,6 +131,7 @@ fun BusyFilledIconButton(
     onClick = { if (!busy) onClick() },
     modifier = modifier.busy(busy),
     enabled = enabled || busy,
+    colors = IconButtonDefaults.filledIconButtonColors().disabledWhen(busy),
 ) { BusyContent(busy, content) }
 
 /** A row's tap, busy as a [BusyButton] is: ignored while [busy], with the row keeping focus and reading as unavailable. */
@@ -135,11 +144,18 @@ fun Modifier.busyClickable(
 
 private fun Modifier.busy(busy: Boolean): Modifier = semantics { if (busy) disabled() }
 
+private fun ButtonColors.disabledWhen(busy: Boolean): ButtonColors =
+    if (busy) copy(containerColor = disabledContainerColor, contentColor = disabledContentColor) else this
+
+private fun IconButtonColors.disabledWhen(busy: Boolean): IconButtonColors =
+    if (busy) copy(containerColor = disabledContainerColor, contentColor = disabledContentColor) else this
+
 @Composable
 private fun BusyRow(
     busy: Boolean,
+    padding: PaddingValues,
     content: @Composable RowScope.() -> Unit,
-) = BusyContent(busy) { Row(verticalAlignment = Alignment.CenterVertically, content = content) }
+) = BusyBox(busy, padding) { Row(verticalAlignment = Alignment.CenterVertically, content = content) }
 
 /**
  * [content] until a [busy] wait turns slow, then a spinner in its place at its size: a button's whole
@@ -150,13 +166,23 @@ private fun BusyRow(
 fun BusyContent(
     busy: Boolean,
     content: @Composable () -> Unit,
+) = BusyBox(busy, NO_PADDING, content)
+
+/** [BusyContent] with [padding] around the content, which the spinner centers on too. */
+@Composable
+private fun BusyBox(
+    busy: Boolean,
+    padding: PaddingValues,
+    content: @Composable () -> Unit,
 ) {
     val slow = rememberSlowWait(busy)
 
     Box(contentAlignment = Alignment.Center) {
-        Box(Modifier.drawWithContent { if (!slow) drawContent() }) { content() }
+        Box(Modifier.padding(padding).drawWithContent { if (!slow) drawContent() }) { content() }
         if (slow) {
             CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
         }
     }
 }
+
+private val NO_PADDING = PaddingValues()

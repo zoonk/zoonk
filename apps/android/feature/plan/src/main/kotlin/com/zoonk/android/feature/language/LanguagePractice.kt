@@ -26,7 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -93,7 +93,7 @@ fun AlphabetRow(
             colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surface),
         )
         if (alphabet.pending) {
-            OutlinedButton(onClick = { model.skip(goalId) }, enabled = !model.skipping) {
+            BusyOutlinedButton(model.skipping, { model.skip(goalId) }) {
                 Text(stringResource(R.string.language_alphabet_skip))
             }
             if (model.failed) {

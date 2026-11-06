@@ -26,9 +26,9 @@ fun OutlinedButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = ButtonDefaults.outlinedShape,
-    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+    colors: ButtonColors = outlinedButtonColors(),
     elevation: ButtonElevation? = null,
-    border: BorderStroke? = outlinedBorder(enabled, ButtonDefaults.outlinedButtonBorder(enabled)),
+    border: BorderStroke? = outlinedButtonBorder(enabled),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
@@ -65,6 +65,12 @@ fun OutlinedIconButton(
     interactionSource = interactionSource,
     content = content,
 )
+
+@Composable
+internal fun outlinedButtonColors(): ButtonColors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
+
+@Composable
+internal fun outlinedButtonBorder(enabled: Boolean): BorderStroke = outlinedBorder(enabled, ButtonDefaults.outlinedButtonBorder(enabled))
 
 /** Material's width. Disabled, the outline dims to half, as main dims a disabled button. */
 @Composable

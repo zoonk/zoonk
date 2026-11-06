@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
@@ -32,6 +31,7 @@ import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.FeedbackSubmissionContext
@@ -55,11 +55,7 @@ internal fun UndoAction(
         )
     }
     TaskActions { width ->
-        TextButton(
-            onClick = onUndo,
-            enabled = state != UndoState.Pending,
-            modifier = width,
-        ) { Text(stringResource(R.string.practice_undo)) }
+        BusyTextButton(state == UndoState.Pending, onUndo, width) { Text(stringResource(R.string.practice_undo)) }
     }
 }
 

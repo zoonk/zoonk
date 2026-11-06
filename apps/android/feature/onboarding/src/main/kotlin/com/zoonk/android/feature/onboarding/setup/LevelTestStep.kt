@@ -69,6 +69,7 @@ import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.components.MediaPending
@@ -197,7 +198,7 @@ private fun ColumnScope.LevelTestIntro(
         BusyButton(starting, onStart, Modifier.fillMaxWidth(), enabled = !pending) {
             Text(stringResource(R.string.onboarding_placement_start))
         }
-        TextButton(onClick = onSkip, enabled = !pending && !starting, modifier = Modifier.fillMaxWidth()) {
+        BusyTextButton(pending, onSkip, Modifier.fillMaxWidth(), enabled = !starting) {
             Text(stringResource(R.string.onboarding_language_test_skip))
         }
         InterfaceOffer(language)
@@ -239,7 +240,7 @@ private fun ColumnScope.LevelTestWaiting(
     }
     OnboardingActions {
         FinishFailed(failed)
-        TextButton(onClick = onSkip, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+        BusyTextButton(pending, onSkip, Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_skip))
         }
         Text(

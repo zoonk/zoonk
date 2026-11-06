@@ -225,7 +225,7 @@ private fun ExamChoiceNotice(
         SuggestionHeader(question)
         SuggestionDescription(examChoiceLeftOut(choice))
         if (choice.take > 1) {
-            ExamChoicePicks(choice, enabled = !saving, onSave = choose)
+            ExamChoicePicks(choice, saving, onSave = choose)
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 choice.options.forEach { option ->

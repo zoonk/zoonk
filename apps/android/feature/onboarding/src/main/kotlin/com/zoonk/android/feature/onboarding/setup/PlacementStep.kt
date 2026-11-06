@@ -75,6 +75,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
@@ -239,7 +240,7 @@ private fun ColumnScope.PlacementIntro(
         BusyButton(starting, onStart, Modifier.fillMaxWidth(), enabled = !pending) {
             Text(stringResource(R.string.onboarding_placement_start))
         }
-        TextButton(onClick = onScratch, enabled = !pending && !starting, modifier = Modifier.fillMaxWidth()) {
+        BusyTextButton(pending, onScratch, Modifier.fillMaxWidth(), enabled = !starting) {
             Text(stringResource(R.string.onboarding_placement_skip_basics))
         }
     }
@@ -323,7 +324,7 @@ private fun ColumnScope.PlacementWaiting(
     if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
         OnboardingActions {
             FinishFailed(failed)
-            TextButton(onClick = onSkip, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+            BusyTextButton(pending, onSkip, Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.onboarding_placement_skip_for_now))
             }
             Text(
@@ -606,7 +607,7 @@ private fun ColumnScope.PlacementMockRunning(
         Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_continue_mock))
         }
-        TextButton(onClick = onStop, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+        BusyTextButton(pending, onStop, Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_stop_mock))
         }
     }

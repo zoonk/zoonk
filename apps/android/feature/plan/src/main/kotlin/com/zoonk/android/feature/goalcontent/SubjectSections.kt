@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +49,7 @@ import com.zoonk.android.feature.plan.WrittenCadenceChoice
 import com.zoonk.android.feature.plan.farTopicLine
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.tutor.AskTutorAppearance
+import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -189,7 +189,7 @@ internal fun NotPlannedNotice(
 
                 when (subject.notPlannedReason) {
                     SyllabusSubject.NotPlannedReason.SKIPPED -> {
-                        FilledTonalButton(onClick = { actions.restore(subject.areas) }, enabled = !writes.restoring) {
+                        BusyTonalButton(writes.restoring, { actions.restore(subject.areas) }) {
                             Text(stringResource(R.string.goalcontent_bring_back))
                         }
                         if (writes.restoreFailed) SaveFailed()

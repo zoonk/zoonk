@@ -36,7 +36,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -71,6 +70,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -366,7 +366,7 @@ private fun LatestChange(
             icon = R.drawable.ic_tune,
         )
         if (latest.change.canUndo) {
-            TextButton(onClick = { onUndo(latest.change) }, enabled = !latest.undoing) { Text(stringResource(R.string.plan_undo)) }
+            BusyTextButton(latest.undoing, { onUndo(latest.change) }) { Text(stringResource(R.string.plan_undo)) }
         }
         if (latest.undoFailed) SaveFailedText()
     }

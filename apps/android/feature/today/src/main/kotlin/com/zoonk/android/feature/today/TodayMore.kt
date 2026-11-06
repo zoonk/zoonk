@@ -30,7 +30,6 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
-import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -123,7 +122,7 @@ private fun CatchUpLater(
                 pluralStringResource(R.plurals.today_catch_up_tomorrow, lessons, lessons)
             },
         )
-        OutlinedButton(onClick = { viewModel.catchUp(model.read) }, enabled = !viewModel.isCatchingUp) {
+        BusyOutlinedButton(viewModel.isCatchingUp, { viewModel.catchUp(model.read) }) {
             Text(stringResource(R.string.today_catch_up_today, formatMinutes(later.minutes.toInt(), currentLocale())))
         }
     }

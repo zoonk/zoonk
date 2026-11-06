@@ -500,7 +500,7 @@ internal class SlotAnswer(
                 onUndo()
                 edits.undo(change)
             },
-            enabled = tracked?.undoing != true,
+            busy = tracked?.undoing == true,
             secondary = true,
         )
     }

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.plan.noticeDayText
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.SuggestionSaveError
@@ -244,7 +244,7 @@ internal fun ExamResultSection(
     val parsedMax = parseLocalizedNumber(maxScore, locale)
     val scoreError = scoreError(score, parsedScore, scale)
     val maxError = maxScore.isNotBlank() && (parsedMax == null || parsedMax <= 0 || parsedMax > MAX_SCORE)
-    val canSave = (score.isNotBlank() || passed != null) && scoreError == null && !maxError && status != SaveStatus.Pending
+    val canSave = (score.isNotBlank() || passed != null) && scoreError == null && !maxError
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -304,7 +304,8 @@ internal fun ExamResultSection(
 
         if (status == SaveStatus.Failed) SuggestionSaveError()
 
-        Button(
+        BusyButton(
+            busy = status == SaveStatus.Pending,
             onClick = {
                 viewModel.report(
                     ExamResultReport(

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -40,6 +39,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.isNameChangeTooLong
+import com.zoonk.android.ui.components.BusyButton
 import kotlinx.coroutines.launch
 
 /**
@@ -182,7 +182,7 @@ fun CertificateNameField(
             if (current != null) {
                 TextButton(onClick = model::stop, enabled = !model.isSaving) { Text(stringResource(R.string.certificates_cancel)) }
             }
-            Button(onClick = save, enabled = name.isNotBlank() && !isTooLong && !model.isSaving) {
+            BusyButton(model.isSaving, save, enabled = name.isNotBlank() && !isTooLong) {
                 Text(stringResource(R.string.certificates_save))
             }
         }
