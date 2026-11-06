@@ -1,5 +1,6 @@
 import { type Hook, createHook, sleep } from "workflow";
-import { type Run } from "workflow/api";
+import { type Run, start } from "workflow/api";
+import { HookConflictError } from "workflow/errors";
 import { repeatUntil } from "./repeat-until";
 import { readRunState, stopStalledRun } from "./run-activity";
 
@@ -29,6 +30,44 @@ async function checkJoinedRunStep(runId: string): Promise<JoinedState> {
   }
 
   return status === "pending" || status === "running" ? "working" : "ended";
+}
+
+type StartedRun = { runId: string; started: boolean };
+
+async function startOrFindHolder<TArgs extends unknown[]>(
+  workflow: (...args: TArgs) => Promise<unknown>,
+  args: TArgs,
+  token: string,
+): Promise<StartedRun> {
+  try {
+    const run = await start(workflow, args, { experimental_hook: { token } });
+    return { runId: run.runId, started: true };
+  } catch (error) {
+    if (HookConflictError.is(error) && error.conflictingRunId) {
+      return { runId: error.conflictingRunId, started: false };
+    }
+
+    throw error;
+  }
+}
+
+/**
+ * Starts a run that holds `token` until it ends and returns its id, or the id of the run already
+ * holding it, so a duplicate never becomes a run. A stalled holder is stopped and replaced once.
+ */
+export async function startOnce<TArgs extends unknown[]>(
+  workflow: (...args: TArgs) => Promise<unknown>,
+  args: TArgs,
+  token: string,
+): Promise<string> {
+  const first = await startOrFindHolder(workflow, args, token);
+
+  if (first.started || !(await stopStalledRunStep(first.runId))) {
+    return first.runId;
+  }
+
+  const second = await startOrFindHolder(workflow, args, token);
+  return second.runId;
 }
 
 type RunTokenClaim = Disposable & { conflict: Run<unknown> | null };
