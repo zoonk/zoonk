@@ -5,7 +5,6 @@ import { type GenerationRun } from "../generation-run";
 export type PhaseStatus = "active" | "completed" | "failed" | "pending";
 
 type Definition<TPhase extends string> = GenerationKindDefinition<string, TPhase>;
-type Phase<TPhase extends string> = Definition<TPhase>["phases"][number];
 type RunState = Pick<GenerationRun, "failure" | "status" | "steps">;
 
 export type PhaseProgress<TPhase extends string> = {
@@ -54,7 +53,9 @@ function getFinishedShare<TPhase extends string>({
 }
 
 /** Phases that run at the same time make one stage, and stages run in order. */
-function toStages<TPhase extends string>(phases: readonly Phase<TPhase>[]): Phase<TPhase>[][] {
+export function toStages<TItem extends { alongside?: boolean }>(
+  phases: readonly TItem[],
+): TItem[][] {
   const starts = phases.flatMap((phase, index) => (phase.alongside && index > 0 ? [] : [index]));
   return starts.map((start, index) => phases.slice(start, starts[index + 1]));
 }
