@@ -227,7 +227,7 @@ struct LessonPlayerState: Equatable, Sendable {
 
   /// Main's `getSegments`: a screen's first copy shows its first verdict, a later copy its own.
   var segments: [TaskSegment] {
-    queue.indices.map { index in
+    let screens: [TaskSegment] = queue.indices.map { index in
       let isAnsweredInView = index == position && phase == .feedback
 
       guard index < position || isAnsweredInView || phase == .completed else {
@@ -242,6 +242,16 @@ struct LessonPlayerState: Equatable, Sendable {
       case false?: .wrong
       case nil: .read
       }
+    }
+
+    return endsWithMap ? screens + [mapSegment] : screens
+  }
+
+  private var mapSegment: TaskSegment {
+    switch phase {
+    case .map: .current
+    case .completed: .read
+    default: .ahead
     }
   }
 

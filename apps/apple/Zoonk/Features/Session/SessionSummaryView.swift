@@ -505,7 +505,7 @@ private struct SummaryTiles: View {
           detail: goal.before.map { before in
             let change = Text(verbatim: "\(before) → \(goal.value)")
             // A number that went down says so quietly, never in the color of progress.
-            return goal.dropped ? change : change.foregroundStyle(.success)
+            return goal.dropped ? change : change.foregroundStyle(.successText)
           })
       }
 
@@ -534,7 +534,7 @@ private struct SummaryTiles: View {
 
   private var rightDetail: Text? {
     let accuracy = summary.accuracy.map {
-      Text($0, format: .percent.precision(.fractionLength(0))).foregroundStyle(.success)
+      Text($0, format: .percent.precision(.fractionLength(0))).foregroundStyle(.successText)
     }
     let net = summary.netScore.map {
       Text("net \($0)", tableName: "Session", comment: "Right minus wrong answers")
