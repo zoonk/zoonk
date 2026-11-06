@@ -91,11 +91,10 @@ async function flagContentBuiltOnSource({
 }): Promise<number> {
   const builtOn = { in: [...new Set(sourceIds)] };
   const otherVersion = { not: notice.contentHash };
-  const readLessons = { distinct: ["lessonId" as const], select: { lessonId: true } };
 
   const [read, cited, items] = await Promise.all([
-    tx.step.findMany({
-      ...readLessons,
+    tx.step.groupBy({
+      by: ["lessonId"],
       where: {
         ...CURRENT_STEPS,
         sources: {
@@ -103,8 +102,8 @@ async function flagContentBuiltOnSource({
         },
       },
     }),
-    tx.step.findMany({
-      ...readLessons,
+    tx.step.groupBy({
+      by: ["lessonId"],
       where: { ...CURRENT_STEPS, sourceId: builtOn, sources: { none: {} } },
     }),
     tx.item.findMany({
