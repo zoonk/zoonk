@@ -47,6 +47,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunFinished
@@ -55,7 +56,6 @@ import com.zoonk.android.feature.practice.RunIntro
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunMeter
-import com.zoonk.android.feature.practice.RunNotFound
 import com.zoonk.android.feature.practice.RunPage
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.runAccount
@@ -70,6 +70,7 @@ import com.zoonk.android.feature.session.ReachedFacts
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
@@ -104,7 +105,7 @@ fun PatternScreen(
 ) {
     val patternId = remember(route.patternId) { runCatching { UUID.fromString(route.patternId) }.getOrNull() }
     if (patternId == null) {
-        RunNotFound(navigator::closeTask)
+        TaskNotFound(navigator)
         return
     }
     val viewModel =
@@ -116,8 +117,8 @@ fun PatternScreen(
     BackHandler(onBack = viewModel::leave)
 
     when (val drill = state) {
-        null -> PatternRead(viewModel, onClose = viewModel::leave)
-        else -> PatternContent(drill, viewModel, app)
+        null -> PatternRead(viewModel, navigator, onClose = viewModel::leave)
+        else -> PatternContent(drill, viewModel, app) { navigator.open(AppRoute.Subscription) }
     }
 }
 
@@ -125,6 +126,7 @@ fun PatternScreen(
 @Composable
 private fun PatternRead(
     viewModel: PatternViewModel,
+    navigator: AppNavigator,
     onClose: () -> Unit,
 ) {
     val loaded by viewModel.pattern.collectShown()
@@ -138,7 +140,7 @@ private fun PatternRead(
 
         is LoadState.Failed -> {
             if (read.error == ApiError.NotFound) {
-                RunNotFound(onClose)
+                TaskNotFound(navigator)
             } else {
                 RunLoadFailed(onClose, onRetry = { scope.launch { viewModel.pattern.refresh() } })
             }
@@ -155,12 +157,13 @@ internal fun PatternContent(
     drill: PatternDrill,
     viewModel: PatternViewModel,
     app: AppContainer,
+    onSeePlus: () -> Unit = {},
 ) {
     val step = drill.step
     val onClose = viewModel::leave
     when {
         drill.isTypos -> TyposPattern(drill.pattern, onClose)
-        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, app, onClose)
+        step is DrillStep.Result -> PatternResult(drill.pattern.title, step.result, app, onClose, onSeePlus)
         step is DrillStep.Question -> PatternQuestion(drill, step.index, viewModel, app, onClose)
         else -> PatternIntroPage(drill.pattern, onStart = viewModel::start, onClose = onClose)
     }
@@ -440,8 +443,9 @@ private fun PatternResult(
     result: MistakePatternPracticeResult,
     app: AppContainer,
     onClose: () -> Unit,
+    onSeePlus: () -> Unit,
 ) {
-    MomentAfterCeremony(app, result.ceremony) { buddy ->
+    MomentAfterCeremony(app, result.ceremony, result.certificates.map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.pattern_done),

@@ -55,14 +55,22 @@ function findPort(url: URL): string | undefined {
   return url.hostname.endsWith(".localhost") ? findPortlessPort(url) : undefined;
 }
 
+/** The pid in `ss -ltnpH`'s process column: `users:(("next-server (v1",pid=4297,fd=21))`. */
+export function parseListeningPid(listing: string): number | null {
+  const pid = Number(/\bpid=(?<pid>\d+)/u.exec(listing)?.groups?.pid);
+  return pid > 0 ? pid : null;
+}
+
+/** On Linux, `lsof` misses the dual-stack socket `next start` listens on; `ss` reports it. */
+function findListeningPid(port: string): number | null {
+  return process.platform === "linux"
+    ? parseListeningPid(read("ss", ["-ltnpH", `sport = :${port}`]))
+    : Number(read("lsof", ["-nP", `-iTCP:${port}`, "-sTCP:LISTEN", "-t"]).split("\n")[0]) || null;
+}
+
 export function findServerPid(url: URL): number | null {
   const port = findPort(url);
-
-  if (!port) {
-    return null;
-  }
-
-  const pid = Number(read("lsof", ["-nP", `-iTCP:${port}`, "-sTCP:LISTEN", "-t"]).split("\n")[0]);
+  const pid = port ? findListeningPid(port) : null;
 
   return pid && read("ps", ["-o", "command=", "-p", String(pid)]).includes("next") ? pid : null;
 }

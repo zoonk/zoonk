@@ -1,5 +1,5 @@
 import "server-only";
-import { type EvaluationRunRecord, registerEvaluationRunSink } from "@zoonk/ai/evaluation-run-sink";
+import { type EvaluationRunRecord } from "@zoonk/ai/evaluation-run-sink";
 import { DbNull, isPrismaForeignKeyError, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 
@@ -24,7 +24,7 @@ function toRow(run: EvaluationRunRecord) {
   };
 }
 
-async function recordEvaluationRun(run: EvaluationRunRecord): Promise<void> {
+export async function recordEvaluationRun(run: EvaluationRunRecord): Promise<void> {
   const row = toRow(run);
 
   try {
@@ -38,8 +38,4 @@ async function recordEvaluationRun(run: EvaluationRunRecord): Promise<void> {
       data: { ...row, goalId: null, input: DbNull, userId: null },
     });
   }
-}
-
-export function registerEvaluationRunLog() {
-  registerEvaluationRunSink(recordEvaluationRun);
 }

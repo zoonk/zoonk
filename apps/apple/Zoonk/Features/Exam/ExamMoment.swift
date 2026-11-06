@@ -56,15 +56,13 @@ struct ExamMomentSection<Action: View>: View {
 
         if !moment.checklist.isEmpty {
           LabeledContent {
-            Text(
-              "\(checked.intersection(moment.checklist).count) of \(moment.checklist.count)",
-              tableName: "Exam", comment: "Checklist items ticked off of all of them"
-            )
-            .monospacedDigit()
+            Text(tally)
+              .monospacedDigit()
           } label: {
             Text("For exam day", tableName: "Exam", comment: "Title of the exam day's checklist")
           }
           .font(.subheadline)
+          .announcesStatus(tally)
         }
 
         ForEach(moment.checklist, id: \.self) { item in
@@ -97,6 +95,12 @@ struct ExamMomentSection<Action: View>: View {
         }
       }
     }
+  }
+
+  private var tally: String {
+    String(
+      localized: "\(checked.intersection(moment.checklist).count) of \(moment.checklist.count)",
+      table: "Exam", comment: "Checklist items ticked off of all of them")
   }
 
   private var icon: String {

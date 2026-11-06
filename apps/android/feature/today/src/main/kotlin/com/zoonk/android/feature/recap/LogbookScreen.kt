@@ -3,7 +3,9 @@ package com.zoonk.android.feature.recap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -16,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -23,6 +26,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -57,19 +62,28 @@ import com.zoonk.android.ui.components.GoalRing
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
+import com.zoonk.android.ui.components.TaskActionBar
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.color
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.weekdayNames
+import com.zoonk.android.ui.scaffold.PageSpan
+import com.zoonk.android.ui.scaffold.ResultPages
+import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.WeeklyRecap
@@ -102,7 +116,7 @@ fun LogbookScreen(
     val close = { navigator.showRoot(AppTab.Buddy) }
 
     if (goalId == null) {
-        TaskScaffold(onClose = close) { padding -> Loading(padding) }
+        TaskScaffold(onClose = close) { padding -> PageLoading(Modifier.padding(padding)) }
         return
     }
 
@@ -125,14 +139,9 @@ fun LogbookScreen(
         }
 
         LoadState.Idle, LoadState.Loading -> {
-            TaskScaffold(onClose = close) { padding -> Loading(padding) }
+            TaskScaffold(onClose = close) { padding -> PageLoading(Modifier.padding(padding)) }
         }
     }
-}
-
-@Composable
-private fun Loading(padding: PaddingValues) {
-    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
 }
 
 private enum class RecapStep { Week, Turnaround, Learned, Next }
@@ -144,63 +153,103 @@ internal fun Logbook(
     onClose: () -> Unit,
     onStart: () -> Unit,
 ) {
-    val steps =
-        if (!recap.ready || recap.week.daysStudied.isEmpty()) {
-            listOf(RecapStep.Week)
-        } else {
-            listOfNotNull(
-                RecapStep.Week,
-                RecapStep.Turnaround.takeIf { recap.turnaround != null },
-                RecapStep.Learned.takeIf { recap.hasLearned },
-                RecapStep.Next.takeIf { recap.nextFocus != null },
-            )
-        }
-    var index by rememberSaveable { mutableIntStateOf(0) }
-    val current = steps[index.coerceIn(steps.indices)]
-
-    TaskScaffold(
-        onClose = onClose,
-        title = { StepDots(steps.size, index) },
-        bottomBar = {
-            StepPagerActions(steps.size, index, onIndexChange = { index = it }) { main ->
-                Button(onClick = onStart, modifier = main) { Text(stringResource(R.string.recap_lets_go)) }
+    ResultScreen {
+        val steps =
+            if (!recap.ready || recap.week.daysStudied.isEmpty()) {
+                listOf(RecapStep.Week)
+            } else {
+                listOfNotNull(
+                    RecapStep.Week,
+                    RecapStep.Turnaround.takeIf { recap.turnaround != null },
+                    RecapStep.Learned.takeIf { recap.hasLearned },
+                    RecapStep.Next.takeIf { recap.nextFocus != null },
+                )
             }
-        },
-    ) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-            // A step changed by Continue or Back is announced, as main moves focus to its title.
-            Column(
-                modifier =
-                    Modifier
-                        .widthIn(max = 560.dp)
-                        .fillMaxWidth()
-                        .padding(24.dp)
-                        .semantics { liveRegion = LiveRegionMode.Polite },
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
-                when (current) {
-                    RecapStep.Week -> {
-                        if (recap.ready &&
-                            recap.week.daysStudied.isNotEmpty()
-                        ) {
-                            WeekStep(recap, learnerName)
+        var index by rememberSaveable { mutableIntStateOf(0) }
+        val current = steps[index.coerceIn(steps.indices)]
+        val scroll = rememberScrollState()
+        var span by remember { mutableStateOf<PageSpan?>(null) }
+        val letsGo: @Composable FlowRowScope.(Modifier) -> Unit = { main ->
+            Button(onClick = onStart, modifier = main) { Text(stringResource(R.string.recap_lets_go)) }
+        }
+
+        BoxWithConstraints(Modifier.onPageSpan { span = it }) {
+            val pages = spreadFold(maxWidth, span) != null
+
+            TaskScaffold(
+                onClose = onClose,
+                title = { if (!pages) StepDots(steps.size, index) },
+                bottomBar = {
+                    TaskActionBar {
+                        if (pages) {
+                            TaskActions(content = letsGo)
                         } else {
-                            QuietWeekStep(recap)
+                            StepPagerActions(steps.size, index, onIndexChange = { index = it }, finalAction = letsGo)
                         }
                     }
-
-                    RecapStep.Turnaround -> {
-                        recap.turnaround?.let { TurnaroundStep(it) }
-                    }
-
-                    RecapStep.Learned -> {
-                        LearnedStep(recap)
-                    }
-
-                    RecapStep.Next -> {
-                        recap.nextFocus?.let { StepHeader(stringResource(R.string.recap_next_week), it.title) }
+                },
+            ) { padding ->
+                if (pages) {
+                    ResultPages(
+                        modifier = Modifier.padding(padding),
+                        withMoment = false,
+                        columnModifier = Modifier.taskColumn(),
+                        done = { RecapStepContent(RecapStep.Week, recap, learnerName) },
+                        next = {
+                            steps.drop(1).forEachIndexed { position, step ->
+                                if (position > 0) HorizontalDivider()
+                                RecapStepContent(step, recap, learnerName)
+                            }
+                        },
+                    )
+                } else {
+                    Box(Modifier.fillMaxSize().padding(padding).verticalScroll(scroll), contentAlignment = Alignment.TopCenter) {
+                        // A step changed by Continue or Back is announced, as main moves focus to its title.
+                        RecapStepContent(
+                            current,
+                            recap,
+                            learnerName,
+                            Modifier
+                                .taskColumn()
+                                .padding(vertical = 24.dp)
+                                .semantics { liveRegion = LiveRegionMode.Polite },
+                        )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecapStepContent(
+    step: RecapStep,
+    recap: WeeklyRecap,
+    learnerName: String?,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        when (step) {
+            RecapStep.Week -> {
+                if (recap.ready &&
+                    recap.week.daysStudied.isNotEmpty()
+                ) {
+                    WeekStep(recap, learnerName)
+                } else {
+                    QuietWeekStep(recap)
+                }
+            }
+
+            RecapStep.Turnaround -> {
+                recap.turnaround?.let { TurnaroundStep(it) }
+            }
+
+            RecapStep.Learned -> {
+                LearnedStep(recap)
+            }
+
+            RecapStep.Next -> {
+                recap.nextFocus?.let { StepHeader(stringResource(R.string.recap_next_week), it.title) }
             }
         }
     }

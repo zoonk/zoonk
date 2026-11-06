@@ -320,7 +320,20 @@ private struct ListeningPlayerView: View {
   let questions: (prompts: [String], current: Int)?
   let transcript: [PracticeTranscriptLine]?
   let served: ServedPlays?
-  @State private var played = 0
+  @State private var played: Int
+
+  init(
+    listening: PracticeItemSet.Listening, playsKey: String,
+    questions: (prompts: [String], current: Int)?, transcript: [PracticeTranscriptLine]?,
+    served: ServedPlays?
+  ) {
+    self.listening = listening
+    self.playsKey = playsKey
+    self.questions = questions
+    self.transcript = transcript
+    self.served = served
+    _played = State(initialValue: Self.played(playsKey, served: served))
+  }
 
   var body: some View {
     let answered = transcript != nil
@@ -361,12 +374,12 @@ private struct ListeningPlayerView: View {
       }
 
       if recordings.failed.contains(playsKey) {
-        Text(
-          "The recording didn't load. Check your connection and try again.", tableName: "Practice",
-          comment: "Shown when a set's recording fails to load."
+        FailureLine(
+          message: LocalizedStringResource(
+            "The recording didn't load. Check your connection and try again.",
+            table: "Practice", comment: "Shown when a set's recording fails to load.")
         )
         .font(.footnote)
-        .foregroundStyle(.destructive)
       }
 
       if let questions, !questions.prompts.isEmpty {
@@ -410,15 +423,15 @@ private struct ListeningPlayerView: View {
         }
       }
     }
-    .onAppear {
-      played = max(served?.played ?? 0, recordings.used[playsKey] ?? 0)
-      recordings.show(playsKey)
-    }
+    .announcesStatus(
+      announcement(answered: answered, playsLeft: playsLeft, isPlaying: isPlaying)
+    )
+    .onAppear { recordings.show(playsKey) }
     // The next question on another recording: this one's play ends with its questions.
     .onChange(of: playsKey) { previous, key in
       recordings.hide(previous)
       recordings.show(key)
-      played = max(served?.played ?? 0, recordings.used[key] ?? 0)
+      played = Self.played(key, served: served)
     }
     .onChange(of: served?.played) { _, count in played = max(played, count ?? 0) }
     .onDisappear { recordings.hide(playsKey) }
@@ -430,6 +443,10 @@ private struct ListeningPlayerView: View {
 
   private var recordings: SetRecordings { .shared }
 
+  private static func played(_ key: String, served: ServedPlays?) -> Int {
+    max(served?.played ?? 0, SetRecordings.shared.used[key] ?? 0)
+  }
+
   private var questionsExpanded: Binding<Bool> {
     Binding(
       get: { recordings.panels[playsKey]?.questions ?? (played == 0) },
@@ -440,6 +457,16 @@ private struct ListeningPlayerView: View {
     Binding(
       get: { recordings.panels[playsKey]?.transcript ?? false },
       set: { recordings.panels[playsKey, default: .init()].transcript = $0 })
+  }
+
+  /// Silent while an exam recording plays, since speech over it would cover what the learner must
+  /// hear, and while its failure line says the recording didn't load.
+  private func announcement(answered: Bool, playsLeft: Int, isPlaying: Bool) -> String? {
+    if recordings.failed.contains(playsKey) || (isPlaying && !answered) {
+      return nil
+    }
+
+    return String(localized: rule(answered: answered, playsLeft: playsLeft, isPlaying: isPlaying))
   }
 
   private func rule(answered: Bool, playsLeft: Int, isPlaying: Bool) -> LocalizedStringResource {

@@ -5,6 +5,8 @@ import { cacheTag } from "next/cache";
 import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../cache/tags";
 import { filterSkippedSteps } from "../language/activities/language-activities";
 import { loadSkippedActivities } from "../language/activities/skipped-activities";
+import { readActiveGoal } from "../learner/facts/learning-profile";
+import { getLearnerLessonPlanCacheTags } from "../library/_utils/learner-lesson-plan";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
 import { toSummaryIdeas } from "../library/lessons/_utils/summary-ideas";
 import { CURRENT_STEPS } from "../library/lessons/lesson-versions";
@@ -147,16 +149,22 @@ export async function getLibraryLessonOutline({
   return cached.result.status === "ready" ? toOutline(cached.result.lesson) : cached.result.lesson;
 }
 
-function loadLessonSkippedActivities({
+async function loadLessonSkippedActivities({
   lesson,
   userId,
 }: {
   lesson: PlayableLibraryLesson;
   userId: string;
 }) {
-  return lesson.targetLanguage
-    ? loadSkippedActivities({ targetLanguage: lesson.targetLanguage, userId })
-    : Promise.resolve([]);
+  if (!lesson.targetLanguage) {
+    return [];
+  }
+
+  return loadSkippedActivities({
+    activeGoal: await readActiveGoal(userId),
+    targetLanguage: lesson.targetLanguage,
+    userId,
+  });
 }
 
 /** Private lessons require ownership; screens require a learner or guest session. Visitors and unfinished lessons receive an outline. */
@@ -185,6 +193,8 @@ export async function getPlayableLibraryLesson({
   }
 
   if (cached.result.status === "ready" && session) {
+    cacheTag(...getLearnerLessonPlanCacheTags(session.user.id));
+
     const [lesson, skippedActivities] = await Promise.all([
       withLearnerLessonVersions({ lesson: cached.result.lesson, userId: session.user.id }),
       loadLessonSkippedActivities({ lesson: cached.result.lesson, userId: session.user.id }),
@@ -193,7 +203,7 @@ export async function getPlayableLibraryLesson({
     return {
       lesson: {
         ...lesson,
-        steps: filterSkippedSteps({ activities: skippedActivities, steps: lesson.steps }),
+        steps: filterSkippedSteps({ activities: skippedActivities ?? [], steps: lesson.steps }),
       },
       status: "ready",
     };

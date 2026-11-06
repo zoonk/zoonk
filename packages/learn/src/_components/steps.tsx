@@ -8,7 +8,7 @@ import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { getStepMoves } from "../_utils/step-moves";
-import { CeremonyClosingContext } from "../ceremonies/ceremony-closing";
+import { CeremonyClosingContext, useClosedOnReturn } from "../ceremonies/ceremony-closing";
 import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
 import { STEP_TITLE_SLOT } from "./step-card";
 import { StepDots } from "./step-dots";
@@ -54,6 +54,12 @@ function WideOnly({ children, when }: { children: React.ReactNode; when: boolean
 function useStepMoment(item: StepsItem | undefined) {
   const [shown, setShown] = useState<string[]>([]);
   const [closing, setClosing] = useState<string | null>(null);
+
+  useClosedOnReturn(() => {
+    if (item?.moment) {
+      setShown((ids) => [...ids, item.id]);
+    }
+  });
 
   if (!item?.moment || shown.includes(item.id)) {
     return { moment: null, shown, showsStep: true };

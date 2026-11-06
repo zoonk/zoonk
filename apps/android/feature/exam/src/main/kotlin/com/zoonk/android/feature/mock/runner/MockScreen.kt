@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -55,20 +54,21 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.mockShapeLabel
 import com.zoonk.android.feature.mock.rememberNow
 import com.zoonk.android.feature.mock.result.MockResult
-import com.zoonk.android.feature.questions.formatClock
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
@@ -92,20 +92,16 @@ fun MockScreen(
 
         when {
             loaded == null -> {
-                TaskScaffold(onClose = { navigator.closeTask() }) { padding ->
-                    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                        val current = state
-                        when {
-                            current is LoadState.Failed && current.error != ApiError.NotFound -> {
+                val current = state
+                if ((current as? LoadState.Failed)?.error == ApiError.NotFound || current is LoadState.Empty) {
+                    TaskNotFound(navigator)
+                } else {
+                    TaskScaffold(onClose = { navigator.closeTask() }) { padding ->
+                        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                            if (current is LoadState.Failed) {
                                 LoadFailedMessage(onRetry = { scope.launch { opening.mock.refresh() } })
-                            }
-
-                            current is LoadState.Failed || current is LoadState.Empty -> {
-                                MockNotFound(navigator)
-                            }
-
-                            else -> {
-                                CircularProgressIndicator()
+                            } else {
+                                PageLoading()
                             }
                         }
                     }
@@ -147,22 +143,6 @@ fun MockScreen(
 internal class MockOpening(
     val mock: Resource<OpenedMock>,
 ) : ViewModel()
-
-@Composable
-private fun MockNotFound(navigator: AppNavigator) {
-    StatusMessage(
-        icon = R.drawable.ic_search_off,
-        title = stringResource(R.string.mock_not_found_title),
-        description = stringResource(R.string.mock_not_found_description),
-    ) {
-        Button(
-            onClick = {
-                navigator.closeTask()
-                navigator.showRoot(AppTab.Today)
-            },
-        ) { Text(stringResource(R.string.mock_go_to_today)) }
-    }
-}
 
 @Composable
 private fun MockRunScreen(
@@ -226,23 +206,29 @@ internal fun MockStepFrame(
             }
         },
         aside = aside,
-    ) { padding -> StepColumn(Modifier.padding(padding), content) }
+        lonePage = true,
+    ) { padding -> StepColumn(Modifier.padding(padding), content = content) }
 }
 
+/**
+ * Scrolls on the whole pane, margins included, with the step held to a readable column on the page
+ * before a fold. A new [step] starts at its top.
+ */
 @Composable
-private fun StepColumn(
-    modifier: Modifier,
+internal fun StepColumn(
+    modifier: Modifier = Modifier,
+    step: Any? = null,
     content: @Composable () -> Unit,
 ) {
-    // The whole pane scrolls, margins included, with the step held to a readable column.
-    Box(modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-        Column(
-            Modifier
-                .widthIn(max = COLUMN_WIDTH)
-                .fillMaxWidth()
-                .padding(detailPagePadding()),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) { content() }
+    BeforeFold(modifier) { beforeFold ->
+        key(step) {
+            Box(beforeFold.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+                Column(
+                    Modifier.taskColumn().padding(vertical = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                ) { content() }
+            }
+        }
     }
 }
 
@@ -553,5 +539,4 @@ private fun MockExpired(
     }
 }
 
-internal val COLUMN_WIDTH = 640.dp
 private const val SECONDS_PER_MINUTE = 60L

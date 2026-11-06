@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -50,8 +48,10 @@ import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.search.SearchAction
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
@@ -85,7 +85,7 @@ internal fun <T : Any> CatalogPage(
         derivedStateOf { (headlineList?.firstVisibleItemIndex ?: 0) > 0 || headlineBottom < listTop }
     }
     val refresh: () -> Unit = { (listOf(resource) + alsoShown).forEach { scope.launch { it.refresh() } } }
-    val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
+    val sizeClass = windowAdaptiveInfo().windowSizeClass
     val headline = Modifier.onGloballyPositioned { headlineBottom = it.boundsInWindow().bottom }
 
     PageScaffold(
@@ -116,7 +116,7 @@ internal fun <T : Any> CatalogPage(
             ) { twoPages ->
                 when (state) {
                     LoadState.Idle, LoadState.Loading -> {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                        PageLoading()
                     }
 
                     is LoadState.Failed -> {

@@ -24,19 +24,17 @@ private struct KeyboardFretboardCanvas: View {
   let context: ActivityCanvasContext
 
   var body: some View {
-    MusicCanvas {
+    MusicCanvas(audio: audio) {
       if fields.showsPiano {
         PianoBoard(fields: fields, context: context, audio: audio, cantListen: $cantListen)
       } else {
         GuitarOnlyBoard(fields: fields, context: context, audio: audio, cantListen: $cantListen)
       }
-
-      MusicSoundNote(audio: audio)
     }
     .onChange(of: cantListen) { LessonTodayChoices.standard.setChosenToday(.cantListen, $1) }
     .onChange(of: audio.isUnavailable) { _, isUnavailable in
       if isUnavailable, fields.isByEar, context.phase == .answering, !cantListen {
-        announceActivityChange(SoundAsText.spoken(fields.target.spelling))
+        announcePolitely(SoundAsText.spoken(fields.target.spelling))
       }
     }
     .onDisappear { audio.close() }
@@ -226,13 +224,9 @@ private struct GuitarOnlyBoard: View {
 
         Spacer()
 
-        Text(
-          "Frets \(firstFret) to \(firstFret + Guitar.fretboardSpan - 1)",
-          tableName: "ActivitiesMusic",
-          comment: "Which frets of the guitar neck show, like “Frets 1 to 4”"
-        )
-        .font(.subheadline.monospacedDigit())
-        .foregroundStyle(.secondary)
+        Text(fretWindow)
+          .font(.subheadline.monospacedDigit())
+          .foregroundStyle(.secondary)
 
         Spacer()
 
@@ -253,6 +247,7 @@ private struct GuitarOnlyBoard: View {
       .buttonStyle(.bordered)
       .buttonBorderShape(.circle)
       .controlSize(.large)
+      .announcesStatus(fretWindow)
     }
 
     if state.showsAnswer {
@@ -262,6 +257,12 @@ private struct GuitarOnlyBoard: View {
           "One way to play the answer", tableName: "ActivitiesMusic",
           comment: "Above a guitar shape that plays the right notes, after the check"))
     }
+  }
+
+  private var fretWindow: String {
+    String(
+      localized: "Frets \(firstFret) to \(firstFret + Guitar.fretboardSpan - 1)",
+      table: "ActivitiesMusic", comment: "Which frets of the guitar neck show, like “Frets 1 to 4”")
   }
 
   private func markOf(string: Int, state: KeyboardFretboardState) -> NoteMarkKind {
@@ -312,6 +313,7 @@ private struct KeyboardFretboardHeader: View {
         HStack { buttons }
       }
     }
+    .announcesStatus(spokenNotes)
   }
 
   private var titles: some View {
@@ -322,15 +324,17 @@ private struct KeyboardFretboardHeader: View {
       Text(notes.isEmpty ? noNotes : notes.map(MusicLabels.display).joined(separator: ", "))
         .font(.subheadline)
         .foregroundStyle(.secondary)
-        .accessibilityLabel(
-          notes.isEmpty
-            ? Text(noNotes)
-            : Text(
-              "On the keys: \(notes.map(MusicLabels.spoken).joined(separator: ", "))",
-              tableName: "ActivitiesMusic", comment: "VoiceOver: the notes the instrument plays now"
-            ))
+        .accessibilityLabel(Text(spokenNotes))
     }
     .fixedSize(horizontal: false, vertical: true)
+  }
+
+  private var spokenNotes: String {
+    notes.isEmpty
+      ? noNotes
+      : String(
+        localized: "On the keys: \(notes.map(MusicLabels.spoken).joined(separator: ", "))",
+        table: "ActivitiesMusic", comment: "VoiceOver: the notes the instrument plays now")
   }
 
   @ViewBuilder
@@ -409,7 +413,7 @@ private struct SoundAsText: View {
         cantListen.toggle()
 
         if cantListen {
-          announceActivityChange(Self.spoken(notes))
+          announcePolitely(Self.spoken(notes))
         }
       } label: {
         if cantListen {

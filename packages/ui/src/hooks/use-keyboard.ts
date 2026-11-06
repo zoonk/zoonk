@@ -14,15 +14,20 @@ import {
 
 export const AUDIO_KEY = "p";
 
+/**
+ * A held Enter acts once, as screen shortcuts do: put it on a control whose own Enter would act
+ * again on each repeat, such as a button or a field that submits its form.
+ */
+export function ignoreHeldEnter(event: ReactKeyboardEvent) {
+  if (event.key === "Enter" && event.repeat) {
+    event.preventDefault();
+  }
+}
+
 const AUDIO_BUTTON = {
   [SCREEN_ENTER_ATTRIBUTE]: "",
   "aria-keyshortcuts": AUDIO_KEY,
-  // A held Enter acts once, so it doesn't replay the audio after the screen's action.
-  onKeyDown: (event: ReactKeyboardEvent) => {
-    if (event.key === "Enter" && event.repeat) {
-      event.preventDefault();
-    }
-  },
+  onKeyDown: ignoreHeldEnter,
 } as const;
 
 type KeyboardModifiers = {

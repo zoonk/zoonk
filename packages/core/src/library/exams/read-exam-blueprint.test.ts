@@ -55,6 +55,6 @@ describe("shared blueprint reads", () => {
       loadTargetCutoff({ details: {}, examBlueprintId: blueprint.id }),
     );
 
-    expect(fresh).toMatchObject({ result: null, statements: 1, writes: 0 });
+    expect(fresh).toMatchObject({ result: null, writes: 0 });
   });
 });

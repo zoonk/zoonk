@@ -13,7 +13,9 @@ struct ChallengeScreen: View {
   @State private var currentPlanItemId: String?
   @State private var load: PracticeLoad<Components.Schemas.Challenge> = .loading
   @State private var isStarting = false
+  @State private var isStartSlow = false
   @State private var isWriting = false
+  @State private var writeLimit: HelpLimit?
   @State private var startProblem: LocalizedStringResource?
   @State private var isMoving = false
   @State private var moveProblem: LocalizedStringResource?
@@ -40,10 +42,19 @@ struct ChallengeScreen: View {
         switch load {
         case .loading:
           ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+        case .failed(.notFound):
+          PracticeRedirect { hooks.navigate(.today) }
         case .failed(let error):
           PracticeLoadFailureView(error: error) { Task { await read() } }
         case .loaded(let challenge):
-          intro(challenge)
+          if let blockId = callBlockId(challenge) {
+            PracticeRedirect {
+              dismiss()
+              hooks.navigate(.checkpoint(blockId: blockId, sessionId: sessionId))
+            }
+          } else {
+            intro(challenge)
+          }
         }
       }
       .navigationTitle(title)
@@ -53,6 +64,17 @@ struct ChallengeScreen: View {
       }
     }
     .task(id: session.authenticatedSession) { await read() }
+    .clearsRefusal { writeLimit = nil }
+    // Writing the questions shows its own wait, and the start after it is timed afresh.
+    .task(id: isStarting && !isWriting) {
+      isStartSlow = false
+
+      if isStarting, !isWriting {
+        try? await Task.sleep(for: Self.slowStart)
+        isStartSlow = !Task.isCancelled
+      }
+    }
+    .announcesStatus(isStartSlow && isStarting && !isWriting ? Self.slowStartLine : nil)
     .onDisappear { action?.cancel() }
   }
 
@@ -100,6 +122,10 @@ struct ChallengeScreen: View {
               .foregroundStyle(.secondary)
           }
         }
+      }
+
+      if challenge.locked || challenge.status == .plusRequired {
+        plusNotice(challenge)
       }
 
       if let result = challenge.result, challenge.status == .done, !won {
@@ -161,12 +187,6 @@ struct ChallengeScreen: View {
         .foregroundStyle(.brain)
       }
 
-      if challenge.locked || challenge.status == .plusRequired {
-        PracticeCallout(systemImage: "lock.fill") {
-          Text(plusLine(challenge))
-        }
-      }
-
       if challenge.dailyLimitReached {
         PracticeCallout(systemImage: "hourglass") {
           Text(usedUpLine(challenge))
@@ -192,22 +212,23 @@ struct ChallengeScreen: View {
         }
       }
 
+      if isStartSlow, isStarting, !isWriting {
+        Text(Self.slowStartLine)
+          .font(.subheadline).foregroundStyle(.secondary)
+      }
+
       if let startProblem {
-        Text(startProblem).font(.subheadline).foregroundStyle(.destructive)
+        FailureLine(message: startProblem).font(.subheadline)
       }
 
       if let moveProblem {
-        Text(moveProblem).font(.subheadline).foregroundStyle(.destructive)
+        FailureLine(message: moveProblem).font(.subheadline)
       }
 
       if let moved, let date = challenge.date {
         HStack(alignment: .firstTextBaseline) {
           VStack(alignment: .leading, spacing: 4) {
-            Text(
-              "Moved to \(Self.weekdayDay(date))", tableName: "Practice",
-              comment:
-                "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'."
-            )
+            Text(movedTo(date))
             Text(movedDetail(moved.effect))
               .font(.subheadline)
               .foregroundStyle(.secondary)
@@ -226,6 +247,15 @@ struct ChallengeScreen: View {
       actions(challenge)
     }
     .practiceActionsHidden(!hasActions(challenge))
+    .announcesStatus(challenge.dailyLimitReached ? String(localized: usedUpLine(challenge)) : nil)
+  }
+
+  private func movedTo(_ day: String) -> String {
+    String(
+      localized: "Moved to \(Self.weekdayDay(day))", table: "Practice",
+      comment:
+        "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'."
+    )
   }
 
   private var title: Text {
@@ -255,27 +285,37 @@ struct ChallengeScreen: View {
           "See how it went", table: "Practice", comment: "Opens a finished checkpoint's result.")
       ) {
         dismiss()
-        hooks.navigate(.checkpoint(blockId: blockId, sessionId: sessionId))
+        hooks.navigate(
+          challenge.mock
+            ? .mock(blockId: blockId, sessionId: sessionId)
+            : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
     } else if challenge.status == .ready || challenge.status == .started {
-      PracticeActionRow {
-        if challenge.canMove, moved == nil {
-          PracticeSecondaryButton(
-            title: LocalizedStringResource(
-              "Move to Monday", table: "Practice",
-              comment: "Moves the weekly challenge to next Monday."),
-            isDisabled: isMoving || isStarting
-          ) { run { await move() } }
-        }
+      if let writeLimit {
+        HelpLimitNotice(limit: writeLimit)
+          .frame(maxWidth: .infinity, alignment: .leading)
+      }
 
-        PracticeMainButton(
-          title: challenge.mock
-            ? LocalizedStringResource(
-              "Start the mock exam", table: "Practice", comment: "Starts a mock exam challenge.")
-            : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
-          isBusy: isStarting || isWriting,
-          isDisabled: challenge.dailyLimitReached
-        ) { run { await start(afterWriting: false) } }
+      if writeLimit?.isShortBreak ?? true {
+        PracticeActionRow {
+          if challenge.canMove, moved == nil {
+            PracticeSecondaryButton(
+              title: LocalizedStringResource(
+                "Move to Monday", table: "Practice",
+                comment: "Moves the weekly challenge to next Monday."),
+              isDisabled: isMoving || isStarting
+            ) { run { await move() } }
+          }
+
+          PracticeMainButton(
+            title: challenge.mock
+              ? LocalizedStringResource(
+                "Start the mock exam", table: "Practice", comment: "Starts a mock exam challenge.")
+              : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
+            isBusy: isStarting || isWriting,
+            isDisabled: challenge.dailyLimitReached
+          ) { run { await start(afterWriting: false) } }
+        }
       }
     } else if challenge.canMove, moved == nil {
       PracticeSecondaryButton(
@@ -300,6 +340,15 @@ struct ChallengeScreen: View {
       || challenge.waitReason != nil
       || [.ready, .started].contains(challenge.status)
       || ([.done, .tried].contains(challenge.status) && challenge.blockId != nil)
+  }
+
+  /// A call that has its block opens on the call's own intro, as main's challenge page does.
+  private func callBlockId(_ challenge: Components.Schemas.Challenge) -> String? {
+    guard challenge.call != nil, challenge.status != .done, !challenge.locked else {
+      return nil
+    }
+
+    return challenge.blockId
   }
 
   private func isCheckpoint(_ challenge: Components.Schemas.Challenge) -> Bool {
@@ -491,17 +540,23 @@ struct ChallengeScreen: View {
     return facts
   }
 
-  private func plusLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
-    if challenge.call != nil {
-      return LocalizedStringResource(
-        "Challenge calls come with Plus. Your plan keeps going without them.", table: "Practice",
-        comment: "A challenge call is Plus-only.")
+  @ViewBuilder
+  private func plusNotice(_ challenge: Components.Schemas.Challenge) -> some View {
+    if challenge.mock {
+      PlusNotice(
+        description: Text(
+          "Mock exams come with Plus: whenever you want, and every week in your plan.",
+          tableName: "Practice", comment: "A mock exam challenge is Plus-only."),
+        showsSeePlus: false, isInset: true)
+    } else if challenge.call != nil {
+      PlusNotice(
+        description: Text(
+          "Challenge calls come with Plus. Your plan keeps going without them.",
+          tableName: "Practice", comment: "A challenge call is Plus-only."),
+        showsSeePlus: false, isInset: true)
+    } else {
+      FreeWeekOverNotice(showsSeePlus: false, isInset: true)
     }
-
-    return LocalizedStringResource(
-      "Mock exams come with Plus: whenever you want, and every week in your plan.",
-      table: "Practice",
-      comment: "A mock exam challenge is Plus-only.")
   }
 
   /// Past the daily time limit the week's challenge doesn't come back on its own, so it asks to move
@@ -595,19 +650,13 @@ struct ChallengeScreen: View {
       let challenge = try await practice.api.challenge(
         token: identity.bearerToken, planItemId: itemId)
       guard session.authenticatedSession == identity else { return }
-
-      // A call that has its block opens on the call's own intro, as main's challenge page does.
-      if challenge.call != nil, let blockId = challenge.blockId, challenge.status != .done,
-        !challenge.locked
-      {
-        dismiss()
-        hooks.navigate(.checkpoint(blockId: blockId, sessionId: sessionId))
-        return
-      }
-
       load = .loaded(challenge)
     } catch let error as APIError {
-      if error == .unauthorized { await session.expire(identity) }
+      if error == .unauthorized {
+        await session.expire(identity)
+      } else if session.authenticatedSession != identity {
+        return
+      }
       load = .failed(error)
     } catch {
       load = .failed(.unavailable)
@@ -618,6 +667,7 @@ struct ChallengeScreen: View {
   private func start(afterWriting: Bool) async {
     isStarting = true
     startProblem = nil
+    writeLimit = nil
     defer { isStarting = false }
 
     let planItemId = itemId
@@ -671,6 +721,8 @@ struct ChallengeScreen: View {
       guard !Task.isCancelled else { return }
       isWriting = false
       await start(afterWriting: true)
+    case .refused(.limit(let limit)):
+      writeLimit = limit
     case .refused:
       await read()
     case .failed:
@@ -698,6 +750,10 @@ struct ChallengeScreen: View {
         Moved(changeId: $0, effect: moved.effect.flatMap { try? PracticeJSON.recode($0) })
       }
       await read()
+
+      if let moved = self.moved, case .loaded(let challenge) = load, let date = challenge.date {
+        announcePolitely([movedTo(date), movedDetail(moved.effect)].joinedSentences())
+      }
     case .refused(.invalid(let reason)):
       moveProblem =
         reason == "mockCollision"
@@ -750,6 +806,15 @@ struct ChallengeScreen: View {
     ]
     .compactMap(\.self)
     .joinedSentences()
+  }
+
+  /// Past this, a start still running says so (main's `START_BOUNDS.slowMs`).
+  private static let slowStart = Duration.seconds(10)
+
+  private static var slowStartLine: String {
+    String(
+      localized: "Still starting. This is taking longer than usual.", table: "Practice",
+      comment: "Starting a challenge is taking longer than usual.")
   }
 
   private static let notDone = LocalizedStringResource(

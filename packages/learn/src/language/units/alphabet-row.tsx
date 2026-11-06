@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { safeAsync } from "@zoonk/utils/error";
 import { LanguagesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -33,7 +34,8 @@ export function AlphabetRow({
 
   const skip = () =>
     startTransition(async () => {
-      setFailed(!(await onSkip()));
+      const { data: skipped } = await safeAsync(onSkip);
+      setFailed(!skipped);
     });
 
   return (
@@ -60,7 +62,13 @@ export function AlphabetRow({
 
       {alphabet.pending && (
         <div className="flex flex-wrap items-center gap-2">
-          <Button disabled={isPending} onClick={skip} size="sm" variant="outline">
+          <Button
+            disabled={isPending}
+            focusableWhenDisabled
+            onClick={skip}
+            size="sm"
+            variant="outline"
+          >
             {t("I can already read it")}
           </Button>
           {failed && <ChangeSaveError />}

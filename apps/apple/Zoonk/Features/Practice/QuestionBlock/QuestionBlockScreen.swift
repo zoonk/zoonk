@@ -120,10 +120,11 @@ struct QuestionBlockView: View {
 
     Group {
       if case .finished(let completion) = phase {
-        // In a session, the session's next stop shows the ceremony.
-        BlockFinishedView(
-          kind: run.detail.block.kind, completion: completion, hostsCeremony: onFinished == nil
-        ) { dismiss() }
+        BlockFinishedView(kind: run.detail.block.kind, completion: completion) { dismiss() }
+          // In a session, the session's next stop shows them.
+          .completionMoments(
+            certificates: onFinished == nil ? completion.certificates : [],
+            ceremony: onFinished == nil ? completion.ceremony?.value1 : nil)
       } else {
         PracticeTaskLayout(segments: run.state.segments, index: run.state.index) {
           stimulus(phase: phase)
@@ -139,6 +140,7 @@ struct QuestionBlockView: View {
         onFinished?(completion)
       }
     }
+    .announcesStatus(announcement(phase))
     .onChange(of: run.needsRefresh) { _, needsRefresh in
       if needsRefresh { onRefresh() }
     }
@@ -236,22 +238,48 @@ struct QuestionBlockView: View {
       onSubmit: { answer in Task { await run.submit(answer) } })
   }
 
+  private func announcement(_ phase: QuestionBlockPhase) -> String? {
+    switch phase {
+    case .alreadyAnswered:
+      return Self.alreadyAnswered
+    case .feedback(let answer, let feedback):
+      guard let question = run.question else {
+        return nil
+      }
+
+      return [
+        run.timedOut ? DrillAnswerNotes.timesUp : nil,
+        String(localized: verdict(feedback, answer: answer).label),
+        correctLine(feedback, question: question).map(PracticeAnswerText.rightAnswerLine),
+        run.detail.isNetScored(question) ? run.state.netTally.line : nil,
+      ].compactMap(\.self).joined(separator: "\n")
+    default:
+      return nil
+    }
+  }
+
+  private func verdict(_ feedback: PracticeFeedback, answer: PracticeAnswer) -> PracticeVerdict {
+    PracticeVerdict(
+      isCorrect: feedback.isCorrect, blank: feedback.blank,
+      notSure: answer.isDontKnow && !run.timedOut)
+  }
+
+  private func correctLine(_ feedback: PracticeFeedback, question: PracticeQuestion) -> String? {
+    PracticeAnswerText.correctLine(
+      feedbackIsCorrect: feedback.isCorrect, correctAnswer: feedback.correctAnswer,
+      question: question, labels: run.detail.trueFalseLabels)
+  }
+
   private func feedback(
     _ feedback: PracticeFeedback, answer: PracticeAnswer, question: PracticeQuestion
   ) -> some View {
-    let verdict = PracticeVerdict(
-      isCorrect: feedback.isCorrect, blank: feedback.blank,
-      notSure: answer.isDontKnow && !run.timedOut)
     let mark: AnswerOptionResult = feedback.isCorrect ? .right : .wrong
 
     return VStack(alignment: .leading, spacing: 12) {
       PracticeFeedbackPanel(
-        verdict: verdict,
+        verdict: verdict(feedback, answer: answer),
         streak: feedback.isCorrect ? feedback.hyperdrive.streak : 0,
-        correctAnswerText: PracticeAnswerText.correctLine(
-          feedbackIsCorrect: feedback.isCorrect, correctAnswer: feedback.correctAnswer,
-          question: question,
-          labels: run.detail.trueFalseLabels),
+        correctAnswerText: correctLine(feedback, question: question),
         explanation: feedback.explanation,
         workedSteps: feedback.isCorrect ? [] : feedback.workedSteps,
         citation: question.citation
@@ -280,12 +308,9 @@ struct QuestionBlockView: View {
   private func actions(phase: QuestionBlockPhase) -> some View {
     switch phase {
     case .alreadyAnswered:
-      Text(
-        "You already answered this question.", tableName: "Practice",
-        comment: "Shown when an answer was saved before."
-      )
-      .font(.subheadline)
-      .foregroundStyle(.secondary)
+      Text(Self.alreadyAnswered)
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
       PracticeMainButton(title: continueTitle) { onRefresh() }
     case .finishReady:
       PracticeMainButton(title: finishTitle) { Task { await run.finish() } }
@@ -365,6 +390,12 @@ struct QuestionBlockView: View {
     }
   }
 
+  private static var alreadyAnswered: String {
+    String(
+      localized: "You already answered this question.", table: "Practice",
+      comment: "Shown when an answer was saved before.")
+  }
+
   private var continueTitle: LocalizedStringResource {
     LocalizedStringResource("Continue", table: "Practice", comment: "Moves on after a grade.")
   }
@@ -398,35 +429,39 @@ struct QuestionBlockView: View {
   }
 }
 
+extension NetTally {
+  fileprivate var line: String {
+    [
+      right == 0
+        ? String(
+          localized: "0 right", table: "Practice",
+          comment: "A net-scored block with no right answers yet.")
+        : String(
+          localized: "\(right) right", table: "Practice",
+          comment: "A net-scored block's right answers so far."),
+      wrong == 0
+        ? String(
+          localized: "0 wrong", table: "Practice",
+          comment: "A net-scored block with no wrong answers yet.")
+        : String(
+          localized: "\(wrong) wrong", table: "Practice",
+          comment: "A net-scored block's wrong answers so far."),
+      String(
+        localized: "net \(net)", table: "Practice",
+        comment: "A net-scored block's score: right answers minus wrong ones."),
+    ]
+    .joinedFacts()
+  }
+}
+
 private struct NetScoreLine: View {
   let tally: NetTally
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text(
-        [
-          tally.right == 0
-            ? String(
-              localized: "0 right", table: "Practice",
-              comment: "A net-scored block with no right answers yet.")
-            : String(
-              localized: "\(tally.right) right", table: "Practice",
-              comment: "A net-scored block's right answers so far."),
-          tally.wrong == 0
-            ? String(
-              localized: "0 wrong", table: "Practice",
-              comment: "A net-scored block with no wrong answers yet.")
-            : String(
-              localized: "\(tally.wrong) wrong", table: "Practice",
-              comment: "A net-scored block's wrong answers so far."),
-          String(
-            localized: "net \(tally.net)", table: "Practice",
-            comment: "A net-scored block's score: right answers minus wrong ones."),
-        ]
-        .joinedFacts()
-      )
-      .font(.footnote.monospacedDigit())
-      .foregroundStyle(.secondary)
+      Text(tally.line)
+        .font(.footnote.monospacedDigit())
+        .foregroundStyle(.secondary)
 
       Text(
         "A wrong answer cancels a right one. Not sure? Leave it blank.", tableName: "Practice",
@@ -482,40 +517,25 @@ private struct PauseSuggestionView: View {
       .disabled(isStopping)
 
       if failed {
-        Text(
-          "We couldn't stop the session. Try again.", tableName: "Practice",
-          comment: "Stopping the session failed."
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't stop the session. Try again.", table: "Practice",
+            comment: "Stopping the session failed.")
         )
         .font(.subheadline)
-        .foregroundStyle(.destructive)
       }
     }
   }
 }
 
 private struct BlockFinishedView: View {
-  @Environment(\.practiceHooks) private var hooks
-  @State private var ceremonyClosed = false
-
   let kind: PracticeBlock.Kind
   let completion: Components.Schemas.StudyBlockCompletion
-  let hostsCeremony: Bool
   let close: () -> Void
 
   var body: some View {
-    if hostsCeremony, let milestone = completion.ceremony?.value1, !ceremonyClosed,
-      let ceremony = hooks.ceremony
-    {
-      ceremony(milestone) { ceremonyClosed = true }
-    } else {
-      result
-    }
-  }
-
-  private var result: some View {
-    PracticeTaskLayout {
+    PracticeTaskLayout(isResult: true) {
       PracticeResultTitle(title: title)
-    } response: {
       PracticeResultNumbers(
         correct: completion.correct, total: completion.total,
         brainPower: completion.ownBrainPower,

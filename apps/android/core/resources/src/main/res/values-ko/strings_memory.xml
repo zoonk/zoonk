@@ -22,6 +22,7 @@
   "memory_fact_source": "8b95152edecc6dbceeb44b558d941dddf6b2e375276a4eab1ef49281b68097c6",
   "memory_save_failed": "a23fdb675c53837e2774b36b148092a8fd09c3323777e78c44c87348bf29d1b0",
   "memory_sensitive_note": "d5135cab5110a1737057251475590e076da0dd5912fbba9ed19093d2480f45ea",
+  "memory_source_call": "678f758613da5ad649ad5f9ef9d0e9205ccac53f8ebc97a964aa8955013d7eba",
   "memory_source_chat": "107ca14e4138514c63245f0b65d48d2434ed9d5d1877f2dce40fc579ca795b60",
   "memory_source_noticed": "c8a86056ee6a939f2947b26ab9855a9cf37a53a13998b4fd17ce87708b89f487",
   "memory_source_onboarding": "40eb26041e507adff9fe362c76e875bae3bdec602901b7a3167598c9e0950498",
@@ -29,17 +30,18 @@
   "memory_source_you": "627c4fbced9a6885774e81861a7b86c0549a36bff1d10ea056f0d837b10459f9",
   "memory_undo": "23bdc4e211dca854d156029f929e9e8a04f2a255217a461a8892710cc571b65a",
   "memory_undo_failed": "e7db3f07c39f328713b9e6373d667e9b2caea304d4484255f9ee29067d3e4f5c",
+  "memory_undo_retry": "7109a9a582ecc8dedb96aad158ae985938fa551348401e697802890565a60ad7",
   "memory_updated": "e43d811b41b1c96275a8b20b96b47580069e0fa10bb49301f152cbb026687053",
   "memory_updated_more": "f8c2d97214f2be28037800d695c393137bc9afe6e75ee22f810e77810927fe11",
   "memory_use": "3ffead7c761f1704ad003c12bd057f7a0564ae47e18238e3764703bd1a215372",
   "memory_use_off": "56f3595ea7c3a333b08a9a2cb600e6a54032fc1ac51c5924bd2a2053dd27cd7f",
-  "memory_use_on": "bce98bb25d2e37f8f9185cb666bb3d060727b1091175a72f5619f47839cfe821"
+  "memory_use_on": "d8aa7ecfe28084bfe96aae54517fa5945ffd9f9fdc500d56d4d1a356fada8da2"
 }
 -->
 <resources>
     <string name="memory_description">내 생활에 맞는 예시와 계획을 제공하기 위해 Zoonk가 기억하는 내용이에요.</string>
     <string name="memory_use">메모리 사용</string>
-    <string name="memory_use_on">내게 맞는 예시와 이번 주 일정에 맞는 계획</string>
+    <string name="memory_use_on">나에게 맞춘 예시, 한 주 일정에 맞는 계획, 내 근황을 기억하는 대화</string>
     <string name="memory_use_off">메모리가 꺼져 있어요. 새로운 정보를 기억하지 않고, 저장된 정보도 사용하지 않아요.</string>
     <string name="memory_empty_on">아직 메모가 없어요. 공부하고 대화하다 보면 Zoonk가 학습을 도울 때 참고할 짧은 메모가 여기에 생겨요.</string>
     <string name="memory_empty_off">저장된 내용이 없어요. 메모리가 꺼져 있는 동안에는 Zoonk가 메모를 남기지 않아요.</string>
@@ -53,6 +55,8 @@
     <string name="memory_category_context">상황</string>
     <string name="memory_source_noticed">활동을 보고 알게 됐어요</string>
     <string name="memory_source_you">직접 알려 주셨어요</string>
+    <!-- Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor. -->
+    <string name="memory_source_call">대화에서</string>
     <string name="memory_source_chat">채팅에서 알려 주셨어요</string>
     <string name="memory_source_onboarding">처음 시작할 때 알려 준 내용</string>
     <string name="memory_source_session">학습 중에 알려 주셨어요</string>
@@ -77,4 +81,5 @@
     <string name="memory_undo">실행 취소</string>
     <string name="memory_change_undone">변경 사항을 되돌렸어요</string>
     <string name="memory_undo_failed">그사이 내용이 바뀌어서 되돌릴 수 없어요.</string>
+    <string name="memory_undo_retry">되돌리지 못했어요. 다시 시도해 보세요.</string>
 </resources>

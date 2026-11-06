@@ -25,6 +25,7 @@ struct FarTopicSheet: View {
       List {
         content(outline)
       }
+      .announcesStatus(announcement(outline))
       .navigationTitle(Text(title))
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
@@ -71,11 +72,7 @@ struct FarTopicSheet: View {
         }
 
         if request == .limit {
-          PlusNotice(
-            description: Text(
-              "Your plan prepared all it can for now.", tableName: "Plan",
-              comment: "Says the learner's plan reached its outlines"),
-            isInset: true)
+          PlusNotice(description: Text(Self.limitLine), isInset: true)
         } else {
           Button {
             Task { await ask(outline) }
@@ -102,13 +99,36 @@ struct FarTopicSheet: View {
 
   private var writing: some View {
     Label {
-      Text(
-        "Preparing the lessons… It takes about half a minute.", tableName: "Plan",
-        comment: "A far topic's lessons being written")
+      Text(Self.writingLine)
     } icon: {
       ProgressView()
     }
     .foregroundStyle(.secondary)
+  }
+
+  private func announcement(_ outline: Resource<SkillOutline>) -> String? {
+    switch outline.state {
+    case .loaded(let value) where value.status == "ready" && !value.chapters.isEmpty:
+      nil
+    case .loaded(let value) where value.status == "writing" || request == .writing:
+      Self.writingLine
+    case .loaded, .empty:
+      request == .limit ? Self.limitLine : nil
+    case .failed, .idle, .loading:
+      nil
+    }
+  }
+
+  private static var writingLine: String {
+    String(
+      localized: "Preparing the lessons… It takes about half a minute.", table: "Plan",
+      comment: "A far topic's lessons being written")
+  }
+
+  private static var limitLine: String {
+    String(
+      localized: "Your plan prepared all it can for now.", table: "Plan",
+      comment: "Says the learner's plan reached its outlines")
   }
 
   private func ask(_ outline: Resource<SkillOutline>) async {

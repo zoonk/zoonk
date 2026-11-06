@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
@@ -200,6 +201,36 @@ describe("a language unit's page", () => {
       unit: {
         pattern: { id: unitPattern.id, kind: "pattern", title: "is e are" },
         pronunciation: { count: 1, words: [spoken] },
+      },
+    });
+  });
+
+  it("follows the goal the learner chose when another goal for the language changed more recently", async () => {
+    const { goal, items, lessons, renting, user } = await languageGoalFixture();
+    const other = await languageGoalFixture({ userId: user.id });
+    mockSession(user.id);
+
+    await Promise.all([
+      prisma.goal.update({ data: { updatedAt: new Date() }, where: { id: other.goal.id } }),
+      prisma.planItem.update({
+        data: { completedAt: new Date(), status: "done" },
+        where: { id: items[2]?.id },
+      }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    const result = await getLanguageUnitView({ chapterId: renting.id });
+
+    expect(result).toMatchObject({
+      status: "ready",
+      unit: {
+        canTestOut: true,
+        goalId: goal.id,
+        lessons: [
+          { lessonId: lessons[2]?.id, state: "done" },
+          { lessonId: lessons[3]?.id, state: "next" },
+        ],
+        unit: { position: 2 },
       },
     });
   });

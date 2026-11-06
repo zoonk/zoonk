@@ -125,6 +125,7 @@ export function QuestionErrorAction({
     <Button
       className={className}
       disabled={disabled}
+      focusableWhenDisabled
       onClick={onRetry}
       type="button"
       variant="outline"

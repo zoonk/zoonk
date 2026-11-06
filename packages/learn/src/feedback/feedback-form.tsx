@@ -91,11 +91,13 @@ async function sendMessage({
 }): Promise<FormStatus> {
   const { adapters } = feedback;
 
-  const sent = await adapters.sendMessage({
-    context: { ...context, platform: adapters.platform, url: globalThis.location.pathname },
-    email,
-    message,
-  });
+  const sent = await adapters
+    .sendMessage({
+      context: { ...context, platform: adapters.platform, url: globalThis.location.pathname },
+      email,
+      message,
+    })
+    .catch(() => false);
 
   if (!sent) {
     return "error";
@@ -110,7 +112,7 @@ function SendButton({ disabled, pending }: { disabled: boolean; pending: boolean
   const t = useExtracted("feedback");
 
   return (
-    <Button disabled={disabled || pending} size="sm" type="submit">
+    <Button disabled={disabled || pending} focusableWhenDisabled size="sm" type="submit">
       {pending && <Spinner aria-hidden="true" />}
       {t("Send message")}
     </Button>

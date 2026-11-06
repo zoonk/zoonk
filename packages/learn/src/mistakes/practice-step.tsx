@@ -96,7 +96,13 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
       {step.entry.drill.kind === "noGuessing" ? (
         <NotSureButton disabled={checking} onClick={run.notSure} />
       ) : (
-        <Button disabled={checking} onClick={run.notSure} size="lg" variant="outline">
+        <Button
+          disabled={checking}
+          focusableWhenDisabled
+          onClick={run.notSure}
+          size="lg"
+          variant="outline"
+        >
           {t("I don't know yet")}
         </Button>
       )}

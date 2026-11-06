@@ -103,7 +103,14 @@ export function StartOverMenu({
 
         <AlertDialogFooter>
           <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
-          <AlertDialogAction onClick={onStartOver}>{t("Start over")}</AlertDialogAction>
+          <AlertDialogAction
+            onClick={() => {
+              setConfirming(false);
+              onStartOver();
+            }}
+          >
+            {t("Start over")}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

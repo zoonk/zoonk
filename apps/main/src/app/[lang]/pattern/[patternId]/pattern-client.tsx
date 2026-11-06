@@ -30,8 +30,8 @@ export function PatternClient({
       buddy={buddy}
       exitHref="/today"
       pattern={pattern}
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}
     />
   );

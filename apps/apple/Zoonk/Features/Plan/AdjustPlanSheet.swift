@@ -60,6 +60,7 @@ struct AdjustPlanSheet: View {
           AdjustPlanSections(editor: editor, goal: goal, plan: plan)
         }
         .disabled(editor.isSaving)
+        .announcesStatus(PlanEditorLatestSection.announcement(of: editor.latest, plan: plan))
         .onAppear {
           if section == .everything {
             // An exam studies everything after it from its time; any other goal drops its date.
@@ -208,20 +209,7 @@ struct PlanEditorLatestSection: View {
   var body: some View {
     if let latest = editor.latest {
       Section {
-        switch latest {
-        case .undone:
-          Text(
-            "Undone. Your plan is back as it was.", tableName: "Plan",
-            comment: "Says the latest plan change was undone")
-        case .unchanged:
-          Text(
-            "Your plan already works that way.", tableName: "Plan",
-            comment: "Says a change wasn't needed")
-        case .invalid:
-          Text(
-            "That change doesn't fit your plan.", tableName: "Plan",
-            comment: "Says the API refused a plan change")
-        case .applied(let change, let sentence):
+        if case .applied(let change, let sentence) = latest {
           VStack(alignment: .leading, spacing: 4) {
             Text(sentence)
               .font(.headline)
@@ -231,7 +219,7 @@ struct PlanEditorLatestSection: View {
                 .foregroundStyle(.secondary)
             }
 
-            appliedLine(change)
+            Text(Self.appliedLine(change))
               .foregroundStyle(.secondary)
           }
           .font(.subheadline)
@@ -243,23 +231,56 @@ struct PlanEditorLatestSection: View {
               Text("Undo", tableName: "Plan", comment: "Undoes the latest plan change")
             }
           }
+        } else if let line = Self.line(of: latest) {
+          Text(line)
         }
       }
     }
   }
 
-  private func appliedLine(_ change: AppliedPlanChange) -> Text {
+  static func announcement(of latest: PlanEditor.Latest?, plan: GoalPlan) -> String? {
+    guard case .applied(let change, let sentence) = latest else {
+      return latest.flatMap(line)
+    }
+
+    return [sentence, planEffectText(change.effect, plan: plan), appliedLine(change)]
+      .compactMap(\.self).joinedSentences()
+  }
+
+  private static func line(of latest: PlanEditor.Latest) -> String? {
+    switch latest {
+    case .undone:
+      String(
+        localized: "Undone. Your plan is back as it was.", table: "Plan",
+        comment: "Says the latest plan change was undone")
+    case .unchanged:
+      String(
+        localized: "Your plan already works that way.", table: "Plan",
+        comment: "Says a change wasn't needed")
+    case .invalid:
+      String(
+        localized: "That change doesn't fit your plan.", table: "Plan",
+        comment: "Says the API refused a plan change")
+    case .applied:
+      nil
+    }
+  }
+
+  private static func appliedLine(_ change: AppliedPlanChange) -> String {
     switch change.todaySession {
     case "changed":
-      Text(
-        "It's in your plan, and today's session follows it.", tableName: "Plan",
+      String(
+        localized: "It's in your plan, and today's session follows it.", table: "Plan",
         comment: "Says a change applies to today's session too")
     case "unchanged":
-      Text(
-        "It's in your plan from your next study day. Today's session stays as it is.",
-        tableName: "Plan", comment: "Says a change starts on the next study day")
+      String(
+        localized:
+          "It's in your plan from your next study day. Today's session stays as it is.",
+        table: "Plan", comment: "Says a change starts on the next study day")
     default:
-      Text("Your plan follows it from now on.", tableName: "Plan", comment: "Says a change applies")
+      String(
+        localized: "Your plan follows it from now on.", table: "Plan",
+        comment: "Says a change applies")
     }
   }
 }

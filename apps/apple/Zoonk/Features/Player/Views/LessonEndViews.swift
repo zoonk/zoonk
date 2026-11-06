@@ -13,10 +13,10 @@ struct LessonCompletionView: View {
     PaneSplit {
       page {
         moment
+        dayMoment
       }
     } secondary: {
       page {
-        dayMoment
         guestEndingView
       }
       .safeAreaBar(edge: .bottom) { actionBar }
@@ -28,7 +28,7 @@ struct LessonCompletionView: View {
       }
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
-    .milestoneCeremony(day?.ceremony)
+    .completionMoments(day)
     .sensoryFeedback(.success, trigger: completion.status == .saved)
     .onChange(of: completion.status) { _, status in
       if status == .saved, soundsEnabled {
@@ -227,6 +227,10 @@ struct LessonUnavailableView: View {
     }
   }
 
+  var said: String {
+    [String(localized: title), String(localized: description)].joinedSentences()
+  }
+
   @ViewBuilder
   private var actions: some View {
     switch refusal {
@@ -272,9 +276,7 @@ struct LessonUnavailableView: View {
       LocalizedStringResource(
         "Take a short break", table: "Player", comment: "Fair use spaces new lessons out")
     case .plusRequired:
-      LocalizedStringResource(
-        "Your free week of exam prep is over", table: "Player",
-        comment: "A free exam plan past its first week")
+      FreeWeekOverNotice.title
     case .limitReached(.guest, _):
       LocalizedStringResource(
         "Save your progress to keep going", table: "Player", comment: "A guest used their lessons")
@@ -307,9 +309,7 @@ struct LessonUnavailableView: View {
         "New lessons open again in \(Duration.seconds(seconds).formatted(.units(allowed: [.minutes, .seconds], width: .wide)))",
         table: "Player", comment: "How long until the next lesson opens")
     case .plusRequired:
-      LocalizedStringResource(
-        "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
-        table: "Player", comment: "A free exam plan past its first week")
+      FreeWeekOverNotice.description
     case .limitReached(.guest, _):
       LocalizedStringResource(
         "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you.",
@@ -487,28 +487,40 @@ struct LessonHelpLimitNote: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
+      Text(Self.message(refusal))
+
       switch refusal {
-      case .slowDown:
-        Text("Take a short break", tableName: "Player", comment: "Fair use spaces AI help out")
       case .limitReached(.guest, _):
-        Text(
-          "Save your progress to keep going", tableName: "Player",
-          comment: "A guest used their AI help")
         SignUpButton()
       case .limitReached(.free, _):
-        Text(
-          "You used today's AI help. Plus gives you more.", tableName: "Player",
-          comment: "A free learner used the day's AI help")
         SeePlusButton()
           .buttonStyle(.bordered)
       default:
-        Text(
-          "You've used today's AI help. It's back tomorrow.", tableName: "Player",
-          comment: "A learner used the day's AI help")
+        EmptyView()
       }
     }
     .font(.subheadline)
     .foregroundStyle(.secondary)
+  }
+
+  static func message(_ refusal: LessonRunRefusal) -> String {
+    switch refusal {
+    case .slowDown:
+      String(
+        localized: "Take a short break", table: "Player", comment: "Fair use spaces AI help out")
+    case .limitReached(.guest, _):
+      String(
+        localized: "Save your progress to keep going", table: "Player",
+        comment: "A guest used their AI help")
+    case .limitReached(.free, _):
+      String(
+        localized: "You used today's AI help. Plus gives you more.", table: "Player",
+        comment: "A free learner used the day's AI help")
+    default:
+      String(
+        localized: "You've used today's AI help. It's back tomorrow.", table: "Player",
+        comment: "A learner used the day's AI help")
+    }
   }
 }
 
@@ -528,7 +540,7 @@ struct LessonWaitingView: View {
     if let warmUpID {
       List {
         Section {
-          unavailable
+          notice
         }
         .listRowBackground(Color.clear)
 
@@ -540,6 +552,20 @@ struct LessonWaitingView: View {
         label: Text(
           "Start this lesson", tableName: "Player",
           comment: "Opens a goal's first lesson, written while the learner guessed on its wait"))
+    } else {
+      notice
+    }
+  }
+
+  private var notice: some View {
+    noticeContent
+      .announcesStatus(notWrittenLine)
+  }
+
+  @ViewBuilder
+  private var noticeContent: some View {
+    if holding == nil, case .refused(let refusal) = writing {
+      LessonUnavailableView(refusal: refusal, retry: write)
     } else {
       unavailable
     }
@@ -567,11 +593,21 @@ struct LessonWaitingView: View {
         .buttonStyle(.mainAction)
       case (nil, .writing), (nil, .written):
         ProgressView()
-      case (nil, .refused(let refusal)):
-        LessonHelpLimitNote(refusal: refusal)
-      case (nil, .setAside):
+      case (nil, .refused), (nil, .setAside):
         EmptyView()
       }
+    }
+  }
+
+  private var notWrittenLine: String? {
+    guard holding == nil else {
+      return nil
+    }
+
+    return switch writing {
+    case .refused(let refusal): LessonUnavailableView(refusal: refusal) {}.said
+    case .setAside: String(localized: description)
+    default: nil
     }
   }
 
@@ -660,11 +696,12 @@ struct LessonGuestGateView: View {
         .disabled(isStarting)
 
         if startFailed {
-          Text(
-            "We couldn't open this lesson", tableName: "Player", comment: "A lesson failed to open"
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't open this lesson", table: "Player",
+              comment: "A lesson failed to open")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       } else {
         Button {

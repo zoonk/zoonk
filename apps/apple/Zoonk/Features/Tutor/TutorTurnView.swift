@@ -26,6 +26,39 @@ struct TutorTurnView: View {
         TutorMemoryUpdate(changes: changes, turnID: turn.id, conversation: conversation)
       }
     }
+    .announcesStatus(finished)
+    .announcesStatus(remembered)
+  }
+
+  /// Main's conversation log reads an answer once it's written, never word by word.
+  private var finished: String? {
+    let answer = turn.answer.map {
+      TutorAnswerText.said(
+        TutorAnswerBlock.blocks(of: $0, linksEnabled: false), buddyName: buddyName)
+    }
+
+    switch turn.status {
+    case .completed:
+      return answer ?? Self.noAnswer
+    case .failed:
+      // A failure from this visit, other than a limit, is a `FailureLine` that reads itself out.
+      let readsItself = conversation.answerFailures[turn.id]?.isLimit == false
+      let lines = [answer, readsItself ? nil : failureLine].compactMap(\.self)
+      return lines.isEmpty ? nil : lines.joinedSentences()
+    case .pending, .running:
+      return nil
+    }
+  }
+
+  /// Apart from the answer, so undoing it doesn't read the answer again.
+  private var remembered: String? {
+    guard turn.status == .completed, let changes = conversation.memoryChanges[turn.id],
+      !changes.isEmpty
+    else {
+      return nil
+    }
+
+    return TutorMemoryUpdate.line(changes)
   }
 
   private var question: some View {
@@ -76,19 +109,19 @@ struct TutorTurnView: View {
         }
 
         if let failure, failure.isLimit {
-          Text(
-            "This one wasn't answered.", tableName: "Tutor",
-            comment: "A question the learner's limit stopped"
-          )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-        } else {
-          (failure.map(answerFailureMessage)
-            ?? Text(
-              "We couldn't finish this answer.", tableName: "Tutor",
-              comment: "A buddy answer failed"))
+          Text(failureLine)
             .font(.subheadline)
-            .foregroundStyle(.destructive)
+            .foregroundStyle(.secondary)
+        } else {
+          if failure != nil {
+            FailureLine(message: failureLine)
+              .font(.subheadline)
+          } else {
+            // An answer that failed before this visit is part of the thread, not news to announce.
+            Text(failureLine)
+              .font(.subheadline)
+              .foregroundStyle(.destructive)
+          }
 
           TutorRemedyButton(failure: failure ?? .failed) {
             Task { await conversation.retryAnswer(turn.id) }
@@ -108,7 +141,7 @@ struct TutorTurnView: View {
           }
         }
       } else if turn.status == .completed {
-        Text("No answer available.", tableName: "Tutor", comment: "A buddy answer that has no text")
+        Text(Self.noAnswer)
           .foregroundStyle(.secondary)
       } else {
         VStack(alignment: .leading, spacing: 12) {
@@ -140,14 +173,28 @@ struct TutorTurnView: View {
     .disabled(conversation.answeringID != nil)
   }
 
-  private func answerFailureMessage(_ failure: TutorFailure) -> Text {
+  private var failureLine: String {
+    guard let failure = conversation.answerFailures[turn.id] else {
+      return Self.unfinished
+    }
+
     switch failure {
+    case .signUpRequired, .limitReached:
+      return String(
+        localized: "This one wasn't answered.", table: "Tutor",
+        comment: "A question the learner's limit stopped")
     case .signedOut, .plusRequired, .gone, .slowDown:
-      failure.message
-    case .signUpRequired, .limitReached, .invalid, .conflict, .failed:
-      Text("We couldn't finish this answer.", tableName: "Tutor", comment: "A buddy answer failed")
+      return failure.message
+    case .invalid, .conflict, .failed:
+      return Self.unfinished
     }
   }
+
+  private static let unfinished = String(
+    localized: "We couldn't finish this answer.", table: "Tutor", comment: "A buddy answer failed")
+
+  private static let noAnswer = String(
+    localized: "No answer available.", table: "Tutor", comment: "A buddy answer that has no text")
 }
 
 /// Its links open only once the server checked them, so an answer still streaming reads without
@@ -155,6 +202,9 @@ struct TutorTurnView: View {
 struct TutorAnswerText: View {
   @Environment(AppRouter.self) private var router
   @ScaledMetric private var listIndent = 20.0
+  @State private var blockOpen: Task<Void, Never>?
+  @State private var blockOpenFailed = false
+  @State private var isBlockClosed = false
 
   let text: String
   let linksEnabled: Bool
@@ -163,20 +213,35 @@ struct TutorAnswerText: View {
   var body: some View {
     let blocks = TutorAnswerBlock.blocks(of: text, linksEnabled: linksEnabled)
 
-    VStack(alignment: .leading, spacing: 0) {
-      ForEach(blocks) { block in
-        blockView(block)
-          .padding(.top, block.id == 0 ? 0 : block.followsListItem ? 6 : 12)
+    VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: 0) {
+        ForEach(blocks) { block in
+          blockView(block)
+            .padding(.top, block.id == 0 ? 0 : block.followsListItem ? 6 : 12)
+        }
+      }
+      .textSelection(.enabled)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .environment(\.openURL, OpenURLAction(handler: open))
+      .accessibilityElement(children: .combine)
+      .accessibilityLabel(Text(verbatim: Self.said(blocks, buddyName: buddyName)))
+
+      if blockOpenFailed {
+        FailureLine(message: .blockOpenFailed)
+          .font(.subheadline)
+      }
+
+      if isBlockClosed {
+        Text(.blockClosed)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
       }
     }
-    .textSelection(.enabled)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .environment(\.openURL, OpenURLAction(handler: open))
-    .accessibilityElement(children: .combine)
-    .accessibilityLabel(
-      Text(
-        verbatim:
-          "\(buddyName): \(blocks.map { String($0.text.characters) }.joined(separator: "\n"))"))
+    .onDisappear { blockOpen?.cancel() }
+  }
+
+  static func said(_ blocks: [TutorAnswerBlock], buddyName: String) -> String {
+    "\(buddyName): \(blocks.map { String($0.text.characters) }.joined(separator: "\n"))"
   }
 
   @ViewBuilder
@@ -212,11 +277,62 @@ struct TutorAnswerText: View {
       return .discarded
     }
 
-    return router.open(url: page) ? .handled : .discarded
+    guard case .block(let blockID) = AppLink(url: page) else {
+      return router.open(url: page) ? .handled : .discarded
+    }
+
+    open(blockID: blockID)
+    return .handled
+  }
+
+  /// One at a time, so two opens never race. An answer that leaves the screen takes its open with
+  /// it, so nothing is said over what the learner went to.
+  private func open(blockID: String) {
+    guard blockOpen == nil else {
+      return
+    }
+
+    blockOpenFailed = false
+    isBlockClosed = false
+
+    blockOpen = Task {
+      let result = await router.openAnswerLink(blockID: blockID)
+      blockOpen = nil
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      switch result {
+      case .failed:
+        blockOpenFailed = true
+      case .done(.changed):
+        isBlockClosed = true
+        announcePolitely(String(localized: .blockClosed))
+      case .done, .obsolete:
+        break
+      }
+    }
   }
 
   /// Any of main's origins: the app reads only a link's path.
   private static let mainOrigin = URL(string: "https://www.zoonk.com")
+}
+
+extension LocalizedStringResource {
+  fileprivate static var blockOpenFailed: LocalizedStringResource {
+    LocalizedStringResource(
+      "We couldn't open this step. Try again.", table: "Tutor",
+      comment: "Under a buddy answer whose link to a step of the day didn't open")
+  }
+
+  fileprivate static var blockClosed: LocalizedStringResource {
+    LocalizedStringResource(
+      "This step isn't available anymore.", table: "Tutor",
+      comment:
+        "Under a buddy answer whose link to a step of the day no longer opens: the step was done, skipped or taken off the plan since"
+    )
+  }
 }
 
 struct TutorAnswerBlock: Identifiable {

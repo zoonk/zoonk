@@ -4,11 +4,12 @@ import SwiftUI
 struct CallTurnRow: View {
   let call: LiveCall
   let conversation: LanguageConversation
+  @ScaledMetric(relativeTo: .body) private var markSize = 36.0
 
   var body: some View {
     HStack(spacing: 12) {
       mark
-        .frame(width: 36, height: 36)
+        .frame(width: markSize, height: markSize)
         .accessibilityHidden(true)
 
       VStack(alignment: .leading, spacing: 2) {
@@ -197,11 +198,4 @@ struct CallAnnouncements: ViewModifier {
         }
       }
   }
-}
-
-/// Queued after what VoiceOver is reading, not over it.
-func announcePolitely(_ text: String) {
-  var announcement = AttributedString(text)
-  announcement.accessibilitySpeechAnnouncementPriority = .low
-  AccessibilityNotification.Announcement(announcement).post()
 }

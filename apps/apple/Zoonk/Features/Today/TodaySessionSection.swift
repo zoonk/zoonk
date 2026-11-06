@@ -212,7 +212,8 @@ struct TodaySessionSection: View {
   private func blockButton(_ block: StudyBlock, isNext: Bool) -> some View {
     let row = BlockRow(
       block: block, view: view, isNext: isNext, countsTowardMission: countsTowardMission(block),
-      isBusy: busy == .block(block.position) || (isNext && busy == .main))
+      isBusy: busy == .block(block.position) || (isNext && busy == .main),
+      failed: failed == .block(block.position))
 
     if block.waitReason == nil {
       Button {
@@ -322,23 +323,26 @@ struct TodayMainAction: View {
       .disabled(isBusy)
 
       if failed {
-        failure
+        FailureLine(message: failure)
           .font(.footnote)
-          .foregroundStyle(.destructive)
       }
     }
   }
 
-  private var failure: Text {
-    if case .prepareLessons = kind {
-      return Text(
-        "That didn't save. Try again.", tableName: "Today",
-        comment: "A change couldn't be saved")
+  private var failure: LocalizedStringResource {
+    switch kind {
+    case .prepareLessons, .practice:
+      LocalizedStringResource(
+        "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
+    case .keepLearning:
+      LocalizedStringResource(
+        "We couldn't open your next lessons. Try again.", table: "Today",
+        comment: "Adding the plan's next lessons to the day failed")
+    case .continueSession, .seePlan, .startSession, .summary:
+      LocalizedStringResource(
+        "We couldn't open the next step. Try again.", table: "Today",
+        comment: "Opening the day's next step failed")
     }
-
-    return Text(
-      "We couldn't open the next step. Try again.", tableName: "Today",
-      comment: "Opening the day's next step failed")
   }
 
   private var title: Text {
@@ -397,6 +401,7 @@ struct BlockRow: View {
   let isNext: Bool
   let countsTowardMission: Bool
   var isBusy = false
+  var failed = false
   var showsDetail = false
 
   var body: some View {
@@ -408,6 +413,15 @@ struct BlockRow: View {
           Text(block.displayTitle)
             .font(isNext ? .body.weight(.semibold) : .body)
             .foregroundStyle(block.isFinished ? .secondary : .primary)
+
+          if failed {
+            FailureLine(
+              message: LocalizedStringResource(
+                "We couldn't open this step. Try again.", table: "Today",
+                comment: "Under a step of the day, or a mission, that didn't open")
+            )
+            .font(.footnote)
+          }
 
           if !block.isFinished {
             ForEach(lines, id: \.self) { line in
@@ -554,12 +568,11 @@ private struct ComingLessonsRow: View {
         .foregroundStyle(.secondary)
 
         if failed {
-          Text(
-            "That didn't save. Try again.", tableName: "Today",
-            comment: "A change couldn't be saved"
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       }
 
@@ -637,7 +650,7 @@ private struct FoldRow: View {
   }
 }
 
-private struct TodayDayStatus: View {
+struct TodayDayStatus: View {
   private enum Link {
     case changeLimit
     case summary
@@ -765,6 +778,10 @@ private struct TodayDayStatus: View {
     case .limit, .underway:
       return nil
     }
+  }
+
+  var announcement: String {
+    [sentence, clause].compactMap(\.self).joinedSentences()
   }
 
   var body: some View {

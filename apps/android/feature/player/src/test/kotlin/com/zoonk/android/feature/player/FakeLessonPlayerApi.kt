@@ -68,7 +68,7 @@ fun checkResult(
 
 val COMPLETION =
     """
-    {"ceremony":null,"reached":{"energy":null,"level":null},"brainPower":30,"correctCount":2,"energyDelta":0.5,
+    {"ceremony":null,"certificates":[],"reached":{"energy":null,"level":null},"brainPower":30,"correctCount":2,"energyDelta":0.5,
      "incorrectCount":0,"isFirstCompletion":true,"nextReviewAt":"2026-10-31T09:00:00Z","seconds":120,"studyBlock":null,
      "totalBrainPower":130}
     """.trimIndent()
@@ -85,6 +85,7 @@ class FakeLessonPlayerApi(
     var checkFailures = 0
     var grade: (String, LessonStepCheckInput) -> LessonStepCheckResult = { _, _ -> checkResult(isCorrect = true) }
     var gate: CompletableDeferred<Unit>? = null
+    var lessonGate: CompletableDeferred<Unit>? = null
     val readinessStates = ArrayDeque<String>()
     var warmUpId: String? = null
     var writes = 0
@@ -93,7 +94,10 @@ class FakeLessonPlayerApi(
     override suspend fun lesson(
         session: AuthenticatedSession?,
         lessonId: String,
-    ) = load
+    ): LessonLoad {
+        lessonGate?.await()
+        return load
+    }
 
     override suspend fun challengeTeam(
         session: AuthenticatedSession,

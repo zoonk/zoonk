@@ -271,6 +271,85 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(resource.state, .loaded(2))
   }
 
+  func testALoadAMutationInterruptsWaitsForTheNewRead() async {
+    let cache = AppCache(session: .preview(account: .resourceTestAccount))
+    let requests = Requests(suspends: true)
+    let resource: Resource<Int> = cache.resource(
+      audience: .signedIn, domains: [.userProgress], fetch: requests.fetch)
+
+    let load = Task { await resource.load() }
+    await requests.waitForCount(1)
+    cache.invalidate([.userProgress])
+    requests.resolve(0, with: .success(1))
+    await requests.waitForCount(2)
+    requests.resolve(1, with: .success(2))
+    await load.value
+
+    XCTAssertEqual(resource.state, .loaded(2))
+    XCTAssertEqual(requests.count, 2)
+  }
+
+  func testALoadAMutationInterruptsKeepsTheNewReadsFailure() async {
+    let cache = AppCache(session: .preview(account: .resourceTestAccount))
+    let requests = Requests(results: [.failure(APIError.unavailable)], suspends: true)
+    let resource: Resource<Int> = cache.resource(
+      audience: .signedIn, domains: [.userProgress], fetch: requests.fetch)
+    resource.beginViewing()
+
+    let load = Task { await resource.load() }
+    await requests.waitForCount(1)
+    requests.suspends = false
+    cache.invalidate([.userProgress])
+    await requests.waitForCount(2)
+    await resource.show()
+    requests.resolve(0, with: .success(1))
+    await load.value
+
+    XCTAssertEqual(resource.state, .failed(.unavailable))
+    XCTAssertEqual(requests.count, 2)
+  }
+
+  func testALoadAMutationInterruptsDoesntUndoALaterUpdate() async {
+    let cache = AppCache(session: .preview(account: .resourceTestAccount))
+    let requests = Requests(results: [.success(1), .success(2)])
+    let resource: Resource<Int> = cache.resource(
+      audience: .signedIn, domains: [.userProgress], fetch: requests.fetch)
+    await resource.load()
+    resource.beginViewing()
+
+    requests.suspends = true
+    let refresh = Task { await resource.refresh() }
+    await requests.waitForCount(2)
+    cache.invalidate([.userProgress])
+    await requests.waitForCount(3)
+    resource.update { _ in 5 }
+    requests.suspends = false
+    requests.resolve(2, with: .success(2))
+    requests.resolve(1, with: .success(1))
+    await refresh.value
+
+    XCTAssertEqual(resource.state, .loaded(5))
+    XCTAssertEqual(requests.count, 3)
+  }
+
+  func testACancelledLoadAMutationInterruptsDoesntReadAgain() async {
+    let cache = AppCache(session: .preview(account: .resourceTestAccount))
+    let requests = Requests(results: [.success(2)], suspends: true)
+    let resource: Resource<Int> = cache.resource(
+      audience: .viewer, domains: [.goals], fetch: requests.fetch)
+
+    let load = Task { await resource.load() }
+    await requests.waitForCount(1)
+    load.cancel()
+    cache.invalidate([.goals])
+    requests.suspends = false
+    requests.resolve(0, with: .success(1))
+    await load.value
+
+    XCTAssertEqual(resource.state, .idle)
+    XCTAssertEqual(requests.count, 1)
+  }
+
   func testACoveredScreenRevalidatesOnceWhenUncovered() async {
     let cache = AppCache(session: .preview(account: .resourceTestAccount))
     let requests = Requests(results: [.success(1), .success(2)])

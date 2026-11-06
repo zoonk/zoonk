@@ -1135,6 +1135,294 @@
         }
       }
     },
+    "/certificates/{code}": {
+      "get": {
+        "description": "What a certificate's public link shows anyone, signed in or not: the learner's profile name, what they completed and when, and the pictures to show or share. Nothing else about the learner. Not for indexing.",
+        "operationId": "getCertificate",
+        "security": [],
+        "summary": "Get a certificate",
+        "tags": [
+          "Certificates"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32,
+              "description": "The certificate's code, in any case and with or without dashes (K7QF-2M9X-HD4P)"
+            },
+            "required": true,
+            "description": "The certificate's code, in any case and with or without dashes (K7QF-2M9X-HD4P)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The certificate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Certificate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/certificates": {
+      "post": {
+        "description": "Writes the goal's finished level and plan certificates the learner doesn't hold yet, and returns all of them. A learn or exam goal on a Library course earns one per course level its plan holds whole (every chapter the level had when the plan began), once every lesson of it is studied or tested out, at least one studied, and the challenges of its phases are won; an exam's mocks don't count. The plan earns one of its own once it's all finished with studied lessons no certified level covers: a plan without levels, a partial level, other courses' lessons. Use it while the goal map lists `certificates.unclaimed`. Show the award moment of each returned certificate whose `shownAt` is null, then read the map again.",
+        "operationId": "claimCourseCertificate",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Claim a goal's course certificates",
+        "tags": [
+          "Certificates"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The goal's certificates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoalCertificates"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "`COURSE_NOT_FINISHED`: no level or plan of the goal is finished, or the goal is one that earns no course certificate (language and explain goals)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/certificates": {
+      "get": {
+        "description": "The learner's certificates, latest finished first: finished course levels and plans, and finished language levels, locked ones included. Reading them never marks one shown.",
+        "operationId": "listCertificates",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "List the current learner's certificates",
+        "tags": [
+          "Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "The learner's certificates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/certificates/{code}/views": {
+      "post": {
+        "description": "Records that a certificate's award moment was closed, so completion results stop returning it. Showing it again keeps the first time.",
+        "operationId": "markCertificateShown",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Mark a certificate as shown",
+        "tags": [
+          "Certificates"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32,
+              "description": "The certificate's code, in any case and with or without dashes (K7QF-2M9X-HD4P)"
+            },
+            "required": true,
+            "description": "The certificate's code, in any case and with or without dashes (K7QF-2M9X-HD4P)"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Marked as shown"
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/challenges/{planItemId}": {
       "get": {
         "description": "A plan's phase boss or the week's Big Challenge (an exam's mock), by its plan item, before its day and on it: when it is, what it asks (questions, minutes, a mock's sections and start time), what it's worth, whether it can move to Monday, and where it stands today. On its day, start it to open its block of today's session.",
@@ -5770,12 +6058,12 @@
             "in": "query",
             "name": "goalId",
             "schema": {
-              "description": "The language goal; the learner's goal for the unit's language when left out",
+              "description": "The language goal; when left out, the goal the learner chose if it's for the unit's language, otherwise their latest one for it",
               "type": "string",
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             },
-            "description": "The language goal; the learner's goal for the unit's language when left out"
+            "description": "The language goal; when left out, the goal the learner chose if it's for the unit's language, otherwise their latest one for it"
           }
         ],
         "responses": {
@@ -7765,7 +8053,7 @@
     },
     "/library/lessons/{lessonId}": {
       "get": {
-        "description": "A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs. The content is the same for everyone and includes the answers, so the app can give feedback at once. The screens load only with a session, a guest's included (POST /guests): without one, a written lesson returns its outline with `status: \"sessionRequired\"`, so lessons can't be scraped. While the content is being written, returns the outline with `status: \"notGenerated\"`. A private lesson is only visible to its owner.",
+        "description": "A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs. The content includes the answers, so the app can give feedback at once. A language lesson leaves out the kinds of practice the learner's plan skips (words, listening, writing or speaking), unless only the summary would be left, so its screens change with the plan. The screens load only with a session, a guest's included (POST /guests): without one, a written lesson returns its outline with `status: \"sessionRequired\"`, so lessons can't be scraped. While the content is being written, returns the outline with `status: \"notGenerated\"`. A private lesson is only visible to its owner.",
         "operationId": "getLibraryLesson",
         "security": [
           {},
@@ -7924,7 +8212,7 @@
     },
     "/library/lessons/{lessonId}/completions": {
       "post": {
-        "description": "Finishes a run once every screen that takes an answer was answered or explicitly skipped through `skippedWritingStepIds`, or once \"I know this\" got every check right. Only typed-answer screens can be explicitly skipped, in any lesson: these choices are recorded on the run without calling the grader, adding an answer verdict or changing future runs. Adds Brain Power, Energy and the day's totals; a replay counts as a review. Repeating it returns the same result without counting twice.",
+        "description": "Finishes a run once every screen that takes an answer was answered or explicitly skipped through `skippedWritingStepIds`, or once \"I know this\" got every check right. Only typed-answer screens can be explicitly skipped, in any lesson: these choices are recorded on the run without calling the grader, adding an answer verdict or changing future runs. In a language lesson of a language the learner has a plan for, it accepts any screens their plan could have served, since the app's copy may predate a plan change: a kind of practice (words, listening, writing or speaking) they didn't finish isn't needed, unless only the summary would be left; an answered screen of it still counts. Adds Brain Power, Energy and the day's totals; a replay counts as a review. Repeating it returns the same result without counting twice.",
         "operationId": "createLibraryLessonCompletion",
         "security": [
           {
@@ -14071,7 +14359,7 @@
             }
           },
           "422": {
-            "description": "GOAL_REFERENCE_NOT_FOUND when an exam or course isn't available; TARGET_DATE_OUT_OF_RANGE when a new explicit date is before tomorrow or after calendar day 3,650 from the learner's today. A range refusal writes no goal or plan; details give the nearest accepted date.",
+            "description": "GOAL_REFERENCE_NOT_FOUND when an exam or course isn't available; TARGET_DATE_OUT_OF_RANGE when a new explicit date is before tomorrow or after calendar day 3,650 from the learner's today (a goal from an onboarding card starts without such a date instead). A range refusal writes no goal or plan; details give the nearest accepted date.",
             "content": {
               "application/json": {
                 "schema": {
@@ -20192,7 +20480,7 @@
         }
       },
       "patch": {
-        "description": "One fix on the \"Here's what I understood\" card, recomputing the fields that depend on it: the learner's own date (any full date, such as the notice's day it offers) replaces the exam's dates, and null brings them back; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal (no such goal, a day already past). Fixing the words themselves is a new understanding.",
+        "description": "One fix on the \"Here's what I understood\" card, recomputing the fields that depend on it: the learner's own date (any full date, such as the notice's day it offers) replaces the exam's dates, and null brings them back; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal or its date is out of range. Fixing the words themselves is a new understanding.",
         "operationId": "reviseGoalUnderstanding",
         "security": [
           {
@@ -20282,7 +20570,7 @@
             }
           },
           "422": {
-            "description": "The request is valid but cannot be applied to the resource",
+            "description": "UNPROCESSABLE_ENTITY when the card has no such goal; TARGET_DATE_OUT_OF_RANGE when the date is before the day after the learner's today in the draft's `timeZone` or after calendar day 3,650 from it, as POST /goals refuses it. Nothing was saved; details give the nearest accepted date.",
             "content": {
               "application/json": {
                 "schema": {
@@ -22412,7 +22700,7 @@
     },
     "/study-block-openings": {
       "post": {
-        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; the daily time limit or earlier work goes back to Today; and Continue never begins a mock the learner didn't see (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
+        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card or buddy answer's link (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; the daily time limit or earlier work goes back to Today; Continue never begins a mock the learner didn't see, and a mission opens only a block of today still free to start (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
         "operationId": "openStudyBlock",
         "security": [
           {
@@ -26272,7 +26560,7 @@
             "description": "What the learner typed"
           },
           "targetDate": {
-            "description": "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created.",
+            "description": "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created, except on a goal from an onboarding card (`details.onboardingId`): a card's date can stop being ahead after the card was read, so that goal starts without it and its setup asks for one.",
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -27673,7 +27961,7 @@
               },
               "value": {
                 "nullable": true,
-                "description": "The learner's own deadline; null brings back the exam's dates. From the learner's today (an earlier one is refused with 422) to at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
+                "description": "The learner's own deadline; null brings back the exam's dates. From the day after the learner's today in the draft's `timeZone` through 3,650 days after it; a date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE, as POST /goals refuses it",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -28475,7 +28763,7 @@
           "kind"
         ],
         "additionalProperties": false,
-        "description": "A mission card's block. It opens only while the block is still free to start; otherwise nothing opens (`changed`)"
+        "description": "A block a mission card or a buddy answer links. It opens only while it's still free to start on today's session; otherwise nothing opens (`changed`), a block that's finished, from a day that's over or gone after a plan change included"
       },
       "StudyAnswerInput": {
         "type": "object",
@@ -29016,6 +29304,13 @@
           "learnerModel": {
             "type": "object",
             "properties": {
+              "certificates": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              },
               "milestones": {
                 "type": "array",
                 "items": {
@@ -29039,12 +29334,13 @@
               }
             },
             "required": [
+              "certificates",
               "milestones",
               "mistakes",
               "skills"
             ],
             "additionalProperties": false,
-            "description": "Skill states, the mistakes notebook and milestones"
+            "description": "Skill states, the mistakes notebook, milestones and certificates"
           },
           "memory": {
             "$ref": "#/components/schemas/MemoryExport"
@@ -29362,7 +29658,7 @@
         "properties": {
           "id": {
             "nullable": true,
-            "description": "The goal, conversation or study session id",
+            "description": "The goal, tutor question, study session or call id",
             "type": "string"
           },
           "kind": {
@@ -29370,7 +29666,8 @@
             "enum": [
               "onboarding",
               "chat",
-              "session"
+              "session",
+              "call"
             ]
           }
         },
@@ -31203,6 +31500,460 @@
           "title",
           "lessonCount",
           "lessons"
+        ],
+        "additionalProperties": false
+      },
+      "Certificate": {
+        "type": "object",
+        "properties": {
+          "canDo": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Language level: what the learner can do, in the certificate's words"
+          },
+          "category": {
+            "nullable": true,
+            "description": "Course: the course's first category, for its subject mark",
+            "type": "string",
+            "enum": [
+              "arts",
+              "business",
+              "communication",
+              "culture",
+              "economics",
+              "engineering",
+              "exams",
+              "geography",
+              "health",
+              "history",
+              "languages",
+              "law",
+              "math",
+              "science",
+              "society",
+              "tech"
+            ]
+          },
+          "code": {
+            "type": "string",
+            "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
+          },
+          "completedOn": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "The learner-local day it was earned"
+          },
+          "courseId": {
+            "nullable": true,
+            "description": "Course: the course while it's public, for a link to its page",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "courseLevel": {
+            "nullable": true,
+            "description": "Course: the level it certifies, named with the title (\"Python · Beginner\"). Null for a plan certified whole, and for language levels",
+            "type": "string",
+            "enum": [
+              "overview",
+              "beginner",
+              "intermediate",
+              "advanced"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "course",
+              "languageLevel"
+            ]
+          },
+          "language": {
+            "type": "string",
+            "description": "The locale the certificate's own words are in"
+          },
+          "lessonsStudied": {
+            "nullable": true,
+            "description": "Course and language level",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "lessonsTestedOut": {
+            "nullable": true,
+            "description": "Course: lessons passed by test",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "level": {
+            "nullable": true,
+            "description": "Language level: the level finished",
+            "type": "string",
+            "enum": [
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ]
+          },
+          "minutes": {
+            "nullable": true,
+            "description": "Course and language level: about how long the studied lessons take, from the plan's estimates; null when unknown",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "recipientName": {
+            "nullable": true,
+            "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
+            "type": "string"
+          },
+          "skillLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateSkillLevel"
+            },
+            "description": "Language level: each skill the learner's answers raised, at its level when earned"
+          },
+          "targetLanguage": {
+            "nullable": true,
+            "description": "Language kinds: the language",
+            "type": "string"
+          },
+          "title": {
+            "nullable": true,
+            "description": "Course: its title, as written. Null for language kinds, named from the language",
+            "type": "string"
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Course: the chapters it covers in plan order, the level's for a level and every one for a plan"
+          },
+          "imageUrls": {
+            "$ref": "#/components/schemas/CertificateImageUrls"
+          },
+          "linkedInUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Opens LinkedIn's form to add the certificate to the learner's profile; LinkedIn may not prefill it, so also show the name, issuer, issue date, ID and URL to copy"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The certificate's public verification page"
+          }
+        },
+        "required": [
+          "canDo",
+          "category",
+          "code",
+          "completedOn",
+          "courseId",
+          "courseLevel",
+          "kind",
+          "language",
+          "lessonsStudied",
+          "lessonsTestedOut",
+          "level",
+          "minutes",
+          "recipientName",
+          "skillLevels",
+          "targetLanguage",
+          "title",
+          "topics",
+          "imageUrls",
+          "linkedInUrl",
+          "url"
+        ],
+        "additionalProperties": false,
+        "description": "A certificate as anyone with its link sees it, with its page and pictures"
+      },
+      "CertificateSkillLevel": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The skill's level, such as \"B1\" or \"B2+\""
+          },
+          "skill": {
+            "type": "string",
+            "enum": [
+              "reading",
+              "listening",
+              "speaking",
+              "writing"
+            ]
+          }
+        },
+        "required": [
+          "label",
+          "skill"
+        ],
+        "additionalProperties": false
+      },
+      "CertificateImageUrls": {
+        "type": "object",
+        "properties": {
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "description": "1200 × 630, the picture a shared link unfurls with"
+          },
+          "post": {
+            "type": "string",
+            "format": "uri",
+            "description": "1080 × 1350, to upload as a social post"
+          },
+          "print": {
+            "type": "string",
+            "format": "uri",
+            "description": "The certificate itself, landscape, for print and saving"
+          },
+          "screen": {
+            "type": "string",
+            "format": "uri",
+            "description": "The same certificate at screen size (2246 × 1588), for every on-screen display; print and saving use print"
+          }
+        },
+        "required": [
+          "link",
+          "post",
+          "print",
+          "screen"
+        ],
+        "additionalProperties": false,
+        "description": "PNG pictures of the certificate, public (no auth header). They change when the learner's name changes"
+      },
+      "GoalCertificates": {
+        "type": "object",
+        "properties": {
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificate"
+            },
+            "description": "Every certificate of the goal's levels and of its plan the learner holds, in level order with the plan's last, including any just written and a level certified in another goal"
+          }
+        },
+        "required": [
+          "certificates"
+        ],
+        "additionalProperties": false
+      },
+      "OwnedCertificate": {
+        "type": "object",
+        "properties": {
+          "canDo": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Language level: what the learner can do, in the certificate's words"
+          },
+          "category": {
+            "nullable": true,
+            "description": "Course: the course's first category, for its subject mark",
+            "type": "string",
+            "enum": [
+              "arts",
+              "business",
+              "communication",
+              "culture",
+              "economics",
+              "engineering",
+              "exams",
+              "geography",
+              "health",
+              "history",
+              "languages",
+              "law",
+              "math",
+              "science",
+              "society",
+              "tech"
+            ]
+          },
+          "code": {
+            "type": "string",
+            "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
+          },
+          "completedOn": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "The learner-local day it was earned"
+          },
+          "courseId": {
+            "nullable": true,
+            "description": "Course: the course while it's public, for a link to its page",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "courseLevel": {
+            "nullable": true,
+            "description": "Course: the level it certifies, named with the title (\"Python · Beginner\"). Null for a plan certified whole, and for language levels",
+            "type": "string",
+            "enum": [
+              "overview",
+              "beginner",
+              "intermediate",
+              "advanced"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "course",
+              "languageLevel"
+            ]
+          },
+          "language": {
+            "type": "string",
+            "description": "The locale the certificate's own words are in"
+          },
+          "lessonsStudied": {
+            "nullable": true,
+            "description": "Course and language level",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "lessonsTestedOut": {
+            "nullable": true,
+            "description": "Course: lessons passed by test",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "level": {
+            "nullable": true,
+            "description": "Language level: the level finished",
+            "type": "string",
+            "enum": [
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ]
+          },
+          "minutes": {
+            "nullable": true,
+            "description": "Course and language level: about how long the studied lessons take, from the plan's estimates; null when unknown",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "recipientName": {
+            "nullable": true,
+            "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
+            "type": "string"
+          },
+          "skillLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateSkillLevel"
+            },
+            "description": "Language level: each skill the learner's answers raised, at its level when earned"
+          },
+          "targetLanguage": {
+            "nullable": true,
+            "description": "Language kinds: the language",
+            "type": "string"
+          },
+          "title": {
+            "nullable": true,
+            "description": "Course: its title, as written. Null for language kinds, named from the language",
+            "type": "string"
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Course: the chapters it covers in plan order, the level's for a level and every one for a plan"
+          },
+          "locked": {
+            "type": "boolean",
+            "description": "True when the learner earned it without Plus: show it locked, with the Plus notice, and no code, link, picture or share. It unlocks when they subscribe and stays unlocked after Plus ends"
+          },
+          "shownAt": {
+            "nullable": true,
+            "description": "When its award moment was closed (POST /me/certificates/{code}/views); null until then",
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "imageUrls": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CertificateImageUrls"
+              }
+            ]
+          },
+          "linkedInUrl": {
+            "nullable": true,
+            "type": "string",
+            "format": "uri",
+            "description": "Opens LinkedIn's form to add the certificate to the learner's profile; LinkedIn may not prefill it, so also show the name, issuer, issue date, ID and URL to copy"
+          },
+          "url": {
+            "nullable": true,
+            "type": "string",
+            "format": "uri",
+            "description": "The certificate's public verification page"
+          }
+        },
+        "required": [
+          "canDo",
+          "category",
+          "code",
+          "completedOn",
+          "courseId",
+          "courseLevel",
+          "kind",
+          "language",
+          "lessonsStudied",
+          "lessonsTestedOut",
+          "level",
+          "minutes",
+          "recipientName",
+          "skillLevels",
+          "targetLanguage",
+          "title",
+          "topics",
+          "locked",
+          "shownAt",
+          "imageUrls",
+          "linkedInUrl",
+          "url"
+        ],
+        "additionalProperties": false,
+        "description": "One of the learner's own certificates; its page, pictures and LinkedIn link are null exactly while it's `locked`"
+      },
+      "CertificateList": {
+        "type": "object",
+        "properties": {
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificate"
+            },
+            "description": "Latest finished first; empty until the learner earns one"
+          }
+        },
+        "required": [
+          "certificates"
         ],
         "additionalProperties": false
       },
@@ -38078,6 +38829,13 @@
               }
             ]
           },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+          },
           "reached": {
             "type": "object",
             "properties": {
@@ -38155,6 +38913,7 @@
         },
         "required": [
           "ceremony",
+          "certificates",
           "reached",
           "brainPower",
           "correct",
@@ -38211,6 +38970,176 @@
           "shownAt"
         ],
         "additionalProperties": false
+      },
+      "OwnedCertificateFacts": {
+        "type": "object",
+        "properties": {
+          "canDo": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Language level: what the learner can do, in the certificate's words"
+          },
+          "category": {
+            "nullable": true,
+            "description": "Course: the course's first category, for its subject mark",
+            "type": "string",
+            "enum": [
+              "arts",
+              "business",
+              "communication",
+              "culture",
+              "economics",
+              "engineering",
+              "exams",
+              "geography",
+              "health",
+              "history",
+              "languages",
+              "law",
+              "math",
+              "science",
+              "society",
+              "tech"
+            ]
+          },
+          "code": {
+            "type": "string",
+            "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
+          },
+          "completedOn": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "The learner-local day it was earned"
+          },
+          "courseId": {
+            "nullable": true,
+            "description": "Course: the course while it's public, for a link to its page",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "courseLevel": {
+            "nullable": true,
+            "description": "Course: the level it certifies, named with the title (\"Python · Beginner\"). Null for a plan certified whole, and for language levels",
+            "type": "string",
+            "enum": [
+              "overview",
+              "beginner",
+              "intermediate",
+              "advanced"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "course",
+              "languageLevel"
+            ]
+          },
+          "language": {
+            "type": "string",
+            "description": "The locale the certificate's own words are in"
+          },
+          "lessonsStudied": {
+            "nullable": true,
+            "description": "Course and language level",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "lessonsTestedOut": {
+            "nullable": true,
+            "description": "Course: lessons passed by test",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "level": {
+            "nullable": true,
+            "description": "Language level: the level finished",
+            "type": "string",
+            "enum": [
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ]
+          },
+          "minutes": {
+            "nullable": true,
+            "description": "Course and language level: about how long the studied lessons take, from the plan's estimates; null when unknown",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "recipientName": {
+            "nullable": true,
+            "description": "The learner's profile name, read live, so fixing it fixes every certificate; null when empty: ask for a name before they share, print or download",
+            "type": "string"
+          },
+          "skillLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateSkillLevel"
+            },
+            "description": "Language level: each skill the learner's answers raised, at its level when earned"
+          },
+          "targetLanguage": {
+            "nullable": true,
+            "description": "Language kinds: the language",
+            "type": "string"
+          },
+          "title": {
+            "nullable": true,
+            "description": "Course: its title, as written. Null for language kinds, named from the language",
+            "type": "string"
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Course: the chapters it covers in plan order, the level's for a level and every one for a plan"
+          },
+          "locked": {
+            "type": "boolean",
+            "description": "True when the learner earned it without Plus: show it locked, with the Plus notice, and no code, link, picture or share. It unlocks when they subscribe and stays unlocked after Plus ends"
+          },
+          "shownAt": {
+            "nullable": true,
+            "description": "When its award moment was closed (POST /me/certificates/{code}/views); null until then",
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          }
+        },
+        "required": [
+          "canDo",
+          "category",
+          "code",
+          "completedOn",
+          "courseId",
+          "courseLevel",
+          "kind",
+          "language",
+          "lessonsStudied",
+          "lessonsTestedOut",
+          "level",
+          "minutes",
+          "recipientName",
+          "skillLevels",
+          "targetLanguage",
+          "title",
+          "topics",
+          "locked",
+          "shownAt"
+        ],
+        "additionalProperties": false,
+        "description": "One of the learner's own certificates"
       },
       "StudyMissionMoment": {
         "type": "object",
@@ -39486,6 +40415,13 @@
               }
             ]
           },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+          },
           "reached": {
             "type": "object",
             "properties": {
@@ -39565,6 +40501,7 @@
           "title",
           "unit",
           "ceremony",
+          "certificates",
           "reached",
           "missionMoment"
         ],
@@ -39830,7 +40767,7 @@
           },
           "progress": {
             "nullable": true,
-            "description": "Tell the character what the learner achieved: null when this check found nothing new or a goodbye, or every objective is met",
+            "description": "Tell the character what the learner achieved, and once every objective is met to ask nothing new. Send it once the learner speaks or sends a typed reply, never into their silence, which the character would answer aloud, and drop it when the goodbye cue goes. Null when this check found nothing new or a goodbye",
             "allOf": [
               {
                 "$ref": "#/components/schemas/LiveCallCue"
@@ -39958,6 +40895,13 @@
               }
             ]
           },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+          },
           "reached": {
             "type": "object",
             "properties": {
@@ -40035,6 +40979,7 @@
         },
         "required": [
           "ceremony",
+          "certificates",
           "reached",
           "brainPower",
           "correct",
@@ -40598,6 +41543,10 @@
           "places": {
             "type": "object",
             "properties": {
+              "certificates": {
+                "type": "boolean",
+                "description": "The learner holds a certificate to list (`GET /me/certificates`), whatever the goal"
+              },
               "completedLessons": {
                 "type": "boolean",
                 "description": "The active goal has a completed lesson to list (`GET /me/completed-lessons`)"
@@ -40619,6 +41568,7 @@
               }
             },
             "required": [
+              "certificates",
               "completedLessons",
               "exam",
               "mindMaps",
@@ -40626,7 +41576,7 @@
               "speaking"
             ],
             "additionalProperties": false,
-            "description": "The active goal's own places beside the tabs"
+            "description": "The places beside the tabs: the active goal's own, and the certificates"
           },
           "readAt": {
             "type": "integer",
@@ -70729,6 +71679,13 @@
               }
             ]
           },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+          },
           "reached": {
             "type": "object",
             "properties": {
@@ -70828,6 +71785,7 @@
         },
         "required": [
           "ceremony",
+          "certificates",
           "reached",
           "brainPower",
           "correctCount",
@@ -70868,6 +71826,13 @@
                 "$ref": "#/components/schemas/Milestone"
               }
             ]
+          },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "checkpoint": {
             "nullable": true,
@@ -71150,6 +72115,7 @@
           "brainPower",
           "capsulesOpened",
           "ceremony",
+          "certificates",
           "checkpoint",
           "comesBackOn",
           "completedMissions",
@@ -75622,6 +76588,13 @@
               }
             ]
           },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+          },
           "reached": {
             "type": "object",
             "properties": {
@@ -75701,6 +76674,7 @@
         },
         "required": [
           "ceremony",
+          "certificates",
           "reached",
           "changeId",
           "correct",
@@ -76711,6 +77685,9 @@
             },
             "description": "Every chapter of the plan with its skills, in plan order"
           },
+          "certificates": {
+            "$ref": "#/components/schemas/PlanCertificates"
+          },
           "counts": {
             "$ref": "#/components/schemas/SkillStateCounts"
           },
@@ -76834,6 +77811,7 @@
         },
         "required": [
           "areas",
+          "certificates",
           "counts",
           "course",
           "courses",
@@ -76905,6 +77883,73 @@
           "skills",
           "state",
           "title"
+        ],
+        "additionalProperties": false
+      },
+      "PlanCertificates": {
+        "nullable": true,
+        "description": "A learn or exam goal's certificates: one per level of a Library course it finishes whole, and one for the plan when it finishes with lessons no certified level covers. Null until one is finished or held, and for language and explain goals",
+        "type": "object",
+        "properties": {
+          "earned": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "courseLevel": {
+                  "nullable": true,
+                  "type": "string",
+                  "enum": [
+                    "overview",
+                    "beginner",
+                    "intermediate",
+                    "advanced"
+                  ]
+                },
+                "locked": {
+                  "type": "boolean",
+                  "description": "Earned without Plus: show it with the Plus mark"
+                }
+              },
+              "required": [
+                "code",
+                "courseLevel",
+                "locked"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The certificates of this plan's levels and of the plan itself the learner holds, in level order with the plan's last; a level they certified in another goal too"
+          },
+          "unclaimed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "courseLevel": {
+                  "nullable": true,
+                  "type": "string",
+                  "enum": [
+                    "overview",
+                    "beginner",
+                    "intermediate",
+                    "advanced"
+                  ]
+                }
+              },
+              "required": [
+                "courseLevel"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Finished levels, or the finished plan (`courseLevel` null), without a certificate yet: offer them with POST /v1/goals/{goalId}/certificates"
+          }
+        },
+        "required": [
+          "earned",
+          "unclaimed"
         ],
         "additionalProperties": false
       },
@@ -79524,6 +80569,13 @@
               }
             ]
           },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+          },
           "reached": {
             "type": "object",
             "properties": {
@@ -79638,6 +80690,7 @@
         },
         "required": [
           "ceremony",
+          "certificates",
           "reached",
           "areas",
           "changeId",
@@ -82071,6 +83124,13 @@
               }
             ]
           },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+          },
           "reached": {
             "type": "object",
             "properties": {
@@ -82155,6 +83215,7 @@
         },
         "required": [
           "ceremony",
+          "certificates",
           "reached",
           "brainPower",
           "correct",
@@ -83024,6 +84085,13 @@
               }
             ]
           },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+          },
           "checklist": {
             "type": "array",
             "items": {
@@ -83775,6 +84843,7 @@
           "breakUntil",
           "canMove",
           "ceremony",
+          "certificates",
           "checklist",
           "current",
           "date",
@@ -84860,6 +85929,10 @@
             ],
             "description": "`understanding` while the words are read, `understood` once `understanding` is there, `failed` when they couldn't be read (start it again)"
           },
+          "timeZone": {
+            "type": "string",
+            "description": "The IANA zone the draft counts the learner's today in. A `targetDate` fix is accepted from the day after that today through 3,650 days after it, so a date picker offers exactly those days"
+          },
           "understanding": {
             "nullable": true,
             "description": "What was understood, with the learner's fixes; null until then",
@@ -84877,6 +85950,7 @@
           "id",
           "prompt",
           "status",
+          "timeZone",
           "understanding"
         ],
         "additionalProperties": false
@@ -87957,7 +89031,7 @@
           "kind"
         ],
         "additionalProperties": false,
-        "description": "Nothing opened: what the learner saw changed (a mock they didn't see, a mission no longer free to start). Read the screen again so they see the change first"
+        "description": "Nothing opened: what the learner saw changed (a mock they didn't see, a mission or buddy answer's block no longer free to start). Read the screen again so they see the change first; a buddy answer, which can't show it, says the step isn't available anymore"
       },
       "StudySession": {
         "type": "object",
@@ -89325,6 +90399,13 @@
               }
             ]
           },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnedCertificateFacts"
+            },
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+          },
           "comesBack": {
             "type": "array",
             "items": {
@@ -89552,6 +90633,7 @@
           "buddyAte",
           "capsulesSealed",
           "ceremony",
+          "certificates",
           "comesBack",
           "correct",
           "energy",
@@ -91962,7 +93044,7 @@
             "description": "What the learner typed"
           },
           "targetDate": {
-            "description": "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created.",
+            "description": "A new goal's deadline: from tomorrow through calendar day 3,650 after the learner's today, inclusive. A date outside either bound is refused with 422 TARGET_DATE_OUT_OF_RANGE before any goal is created, except on a goal from an onboarding card (`details.onboardingId`): a card's date can stop being ahead after the card was read, so that goal starts without it and its setup asks for one.",
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"

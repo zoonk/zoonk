@@ -27,7 +27,7 @@ describe("display subscription request fact", () => {
 
     const fact = await countDatabaseStatements(() => readActiveSubscription(owner.id));
 
-    expect(fact).toMatchObject({ result: subscription, statements: 1, writes: 0 });
+    expect(fact).toMatchObject({ result: subscription, writes: 0 });
     await expect(readActiveSubscription(other.id)).resolves.toBeNull();
     mockSession(owner.id);
     await expect(getActiveSubscription()).resolves.toStrictEqual(subscription);

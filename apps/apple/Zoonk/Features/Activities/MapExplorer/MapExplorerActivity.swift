@@ -183,7 +183,7 @@ private struct MapExplorerCanvas: View {
         visited.append(place.id)
       }
 
-      announceActivityChange(LessonRichText.spoken(place.reveals))
+      announcePolitely(LessonRichText.spoken(place.reveals))
     } label: {
       Text(number, format: .number)
         .font(.subheadline.weight(.semibold).monospacedDigit())

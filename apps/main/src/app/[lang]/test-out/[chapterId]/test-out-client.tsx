@@ -56,8 +56,8 @@ export function TestOutClient({
       }}
       onUndo={(changeId) => decidePlanChangeAction(page.goalId, { changeId, status: "undone" })}
       recorded={recorded}
-      renderCeremony={(milestone, onClose) => (
-        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      renderCeremony={(moments, onClose) => (
+        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}
       test={test}
     />
@@ -117,7 +117,7 @@ export function TestOutPreparingClient({
       const result = await requestTestOutWriting({
         chapterId: page.chapterId,
         goalId: page.goalId,
-      });
+      }).catch((): QuestionWriting => ({ status: "failed" }));
 
       if (result.status === "ready") {
         router.refresh();

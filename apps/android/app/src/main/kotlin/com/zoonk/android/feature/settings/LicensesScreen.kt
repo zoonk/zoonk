@@ -3,7 +3,6 @@ package com.zoonk.android.feature.settings
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -13,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
@@ -41,6 +39,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +55,7 @@ fun LicensesScreen(navigator: AppNavigator) {
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_licenses)) }) { padding ->
         val list = libraries
         if (list == null) {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            PageLoading(Modifier.padding(padding))
         } else {
             LazyColumn(Modifier.fillMaxSize(), contentPadding = padding, horizontalAlignment = Alignment.CenterHorizontally) {
                 items(list, key = { it.uniqueId }) { library ->

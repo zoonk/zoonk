@@ -86,11 +86,10 @@ struct LevelTestStep: View {
   @ViewBuilder private var skipSection: some View {
     if failed {
       Section {
-        Text(
-          "That didn't work. Try again in a moment.", tableName: "Onboarding",
-          comment: "Starting or skipping the level test failed"
-        )
-        .foregroundStyle(.destructive)
+        FailureLine(
+          message: LocalizedStringResource(
+            "That didn't work. Try again in a moment.", table: "Onboarding",
+            comment: "Starting or skipping the level test failed"))
       }
     }
 
@@ -375,11 +374,10 @@ private struct LevelTestIntro: View {
 
       if failed {
         Section {
-          Text(
-            "That didn't work. Try again in a moment.", tableName: "Onboarding",
-            comment: "Starting or skipping the level test failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't work. Try again in a moment.", table: "Onboarding",
+              comment: "Starting or skipping the level test failed"))
         }
       }
 
@@ -455,6 +453,7 @@ private struct ListeningMessage: View {
     }
     .background(.background, in: .rect(cornerRadius: 16))
     .clipShape(.rect(cornerRadius: 16))
+    .announcesStatus(failure(state))
     .onDisappear { voice.player.stop(owner: owner) }
   }
 
@@ -538,12 +537,9 @@ private struct ListeningMessage: View {
       if let limit {
         HelpLimitNotice(limit: limit)
       } else {
-        Text(
-          "The audio didn't play.", tableName: "Onboarding",
-          comment: "A level test listening question's message failed to play"
-        )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        Text(audioDidntPlay)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
       }
 
       if canRetry {
@@ -560,6 +556,20 @@ private struct ListeningMessage: View {
         .controlSize(.small)
       }
     }
+  }
+
+  private var audioDidntPlay: String {
+    String(
+      localized: "The audio didn't play.", table: "Onboarding",
+      comment: "A level test listening question's message failed to play")
+  }
+
+  private func failure(_ state: SpeechPlayer.State) -> String? {
+    guard case .failed(let limit) = state else {
+      return nil
+    }
+
+    return limit?.message ?? audioDidntPlay
   }
 
   private func play() {
@@ -651,11 +661,10 @@ private struct LevelTestDone: View {
 
       if failed {
         Section {
-          Text(
-            "That didn't work. Try again in a moment.", tableName: "Onboarding",
-            comment: "Starting or skipping the level test failed"
-          )
-          .foregroundStyle(.destructive)
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't work. Try again in a moment.", table: "Onboarding",
+              comment: "Starting or skipping the level test failed"))
         }
       }
 

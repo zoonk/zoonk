@@ -9,7 +9,10 @@ import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
 import { StatusMark } from "@zoonk/learn/status-mark";
+import { Button } from "@zoonk/ui/components/button";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
 import { ArrowRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -130,6 +133,7 @@ function useCourseGoal(courseId: string): LearnerSummaryGoal | null {
 export function CourseContinueLink({ courseId }: { courseId: string }) {
   const t = useExtracted();
   const router = useRouter();
+  const switchFailed = t("We couldn't switch goals. Try again.");
   const goal = useCourseGoal(courseId);
   const [isPending, startTransition] = useTransition();
 
@@ -158,21 +162,28 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
 
   const continueGoal = () => {
     startTransition(async () => {
-      await switchGoal(goal.id);
+      const { data: switched } = await safeAsync(() => switchGoal(goal.id));
+
+      if (!switched) {
+        showErrorToast(switchFailed);
+        return;
+      }
+
       router.push("/today");
     });
   };
 
   return (
-    <button
+    <Button
       aria-busy={isPending}
       className={getStartControlClassName()}
       disabled={isPending}
+      focusableWhenDisabled
       onClick={continueGoal}
-      type="button"
+      size="lg"
     >
       {label}
-    </button>
+    </Button>
   );
 }
 

@@ -10,10 +10,24 @@ struct CheckpointScreen: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var load: PracticeLoad<CheckpointLoad> = .loading
+  @State private var call = CallRead.none
   @State private var state: CheckpointDuelState?
   @State private var draft: PracticeAnswer?
   @State private var shownAt = Date.now
   @State private var showsReview = false
+
+  private enum CallRead {
+    case none
+    case call
+    case plusRequired
+  }
+
+  private enum Opening {
+    case challenge(planItemId: String)
+    case here
+    case mock
+    case notFound
+  }
 
   init(blockId: String, sessionId: String? = nil) {
     self.blockId = blockId
@@ -22,23 +36,13 @@ struct CheckpointScreen: View {
 
   var body: some View {
     Group {
-      if isCall, let checkpointCall = hooks.checkpointCall {
-        // The call's screen brings its own title, close and intro.
-        checkpointCall(blockId, sessionId)
+      if call == .call, let checkpointCall = hooks.checkpointCall {
+        checkpointCall.screen(blockId)
       } else {
         checkpoint
       }
     }
     .task(id: session.authenticatedSession) { await read() }
-  }
-
-  /// A language phase or final checkpoint is a live call, which asks no questions.
-  private var isCall: Bool {
-    guard case .loaded(let loaded) = load, let state else {
-      return false
-    }
-
-    return loaded.questions.isEmpty && !state.isResult
   }
 
   private var checkpoint: some View {
@@ -51,18 +55,30 @@ struct CheckpointScreen: View {
           PracticeLoadFailureView(error: error) { Task { await read() } }
         case .loaded(let loaded):
           if let state {
-            if isCall {
-              call
-            } else if loaded.checkpoint.status == .pending,
-              let planItemId = loaded.checkpoint.planItemId
-            {
-              notStarted(planItemId: planItemId)
-            } else if state.isResult {
-              CheckpointResultView(load: loaded, state: state, showsReview: $showsReview) {
+            switch opening(loaded.checkpoint) {
+            case .challenge(let planItemId):
+              PracticeRedirect {
                 dismiss()
+                hooks.navigate(.challenge(planItemId: planItemId, sessionId: sessionId))
               }
-            } else {
-              duel(loaded, state: state)
+            case .mock:
+              PracticeRedirect {
+                dismiss()
+                hooks.navigate(.mock(blockId: blockId, sessionId: sessionId))
+              }
+            case .notFound:
+              PracticeLoadFailureView(error: .notFound) { Task { await read() } }
+            case .here:
+              if state.isResult {
+                CheckpointResultView(load: loaded, state: state, showsReview: $showsReview) {
+                  dismiss()
+                }
+                .completionMoments(
+                  certificates: state.completion?.certificates ?? [],
+                  ceremony: state.completion?.ceremony?.value1)
+              } else {
+                duel(loaded, state: state)
+              }
             }
           }
         }
@@ -84,40 +100,18 @@ struct CheckpointScreen: View {
     return CheckpointCopy.title(loaded.checkpoint)
   }
 
-  private var call: some View {
-    ContentUnavailableView {
-      Label {
-        Text(title)
-      } icon: {
-        Image(systemName: "phone")
-      }
-    } description: {
-      Text(
-        "This challenge isn't ready yet.", tableName: "Practice",
-        comment: "A challenge that can't start on this device yet.")
-    }
-    .lonePage()
-  }
+  /// As main: a challenge not started yet or moved to another day (its block skipped), or a call
+  /// that needs Plus, opens the challenge's intro.
+  private func opening(_ checkpoint: Components.Schemas.Checkpoint) -> Opening {
+    let notOpen =
+      call == .plusRequired || checkpoint.status == .pending
+      || (checkpoint.status == .skipped && checkpoint.endedWithoutQuestions != true)
 
-  private func notStarted(planItemId: String) -> some View {
-    ContentUnavailableView {
-      Label {
-        Text(title)
-      } icon: {
-        Image(systemName: "shield.lefthalf.filled")
-      }
-    } actions: {
-      Button {
-        dismiss()
-        hooks.navigate(.challenge(planItemId: planItemId, sessionId: sessionId))
-      } label: {
-        Text(
-          "Open the challenge", tableName: "Practice",
-          comment: "Opens a checkpoint's challenge intro to start it.")
-      }
-      .buttonStyle(.mainAction)
+    if notOpen {
+      return checkpoint.planItemId.map { .challenge(planItemId: $0) } ?? .notFound
     }
-    .lonePage()
+
+    return checkpoint.mock ? .mock : .here
   }
 
   private func duel(_ loaded: CheckpointLoad, state: CheckpointDuelState) -> some View {
@@ -171,9 +165,7 @@ struct CheckpointScreen: View {
                 Text(
                   CheckpointCopy.decisionLine(decision, lessons: state.reinforcementLessons))
               } else if !feedback.isCorrect {
-                Text(
-                  "You'll see why at the end.", tableName: "Practice",
-                  comment: "A checkpoint keeps its answers until it ends.")
+                Text(seeWhyAtEnd)
               }
             }
             .foregroundStyle(.secondary)
@@ -210,13 +202,44 @@ struct CheckpointScreen: View {
         ) { Task { await confirm() } }
       }
     }
+    .announcesStatus(verdict(state))
+  }
+
+  private var seeWhyAtEnd: String {
+    String(
+      localized: "You'll see why at the end.", table: "Practice",
+      comment: "A checkpoint keeps its answers until it ends.")
+  }
+
+  private func verdict(_ state: CheckpointDuelState) -> String? {
+    guard let feedback = state.feedback else {
+      return nil
+    }
+
+    let detail =
+      state.decision.map {
+        CheckpointCopy.decisionLine($0, lessons: state.reinforcementLessons)
+      } ?? (feedback.isCorrect ? nil : seeWhyAtEnd)
+
+    return [String(localized: PracticeVerdict(isCorrect: feedback.isCorrect).label), detail]
+      .compactMap(\.self).joinedSentences()
   }
 
   private func read() async {
     guard let identity = session.authenticatedSession else { return }
 
     do {
-      let loaded = try await practice.api.checkpoint(token: identity.bearerToken, blockId: blockId)
+      async let checkpoint = practice.api.checkpoint(
+        token: identity.bearerToken, blockId: blockId)
+      let callRead = try await readCall(token: identity.bearerToken)
+      guard session.authenticatedSession == identity else { return }
+      call = callRead
+
+      if callRead == .call {
+        return
+      }
+
+      let loaded = try await checkpoint
       guard session.authenticatedSession == identity else { return }
       state = CheckpointDuelState(load: loaded)
       // Read again after an answer the server already had: the question in view may be another.
@@ -228,6 +251,26 @@ struct CheckpointScreen: View {
       load = .failed(error)
     } catch {
       load = .failed(.unavailable)
+    }
+  }
+
+  private func readCall(token: String) async throws -> CallRead {
+    guard let checkpointCall = hooks.checkpointCall else {
+      return .none
+    }
+
+    do {
+      switch try await checkpointCall.read(blockId, token) {
+      case .notLanguage:
+        return .none
+      case .plusRequired:
+        return .plusRequired
+      case .earlierFirst, .notStarted, .preparing, .ready:
+        return .call
+      }
+    } catch APIError.notFound {
+      // As on main, the checkpoint's own read answers for a block that isn't there.
+      return .none
     }
   }
 
@@ -331,9 +374,6 @@ private struct CheckpointResultView: View {
   let state: CheckpointDuelState
   @Binding var showsReview: Bool
   let close: () -> Void
-  @Environment(\.practiceHooks) private var hooks
-  @State private var ceremonyClosed = false
-
   var body: some View {
     let checkpoint = load.checkpoint
     let result = state.completion?.checkpoint
@@ -343,82 +383,86 @@ private struct CheckpointResultView: View {
     let correct = result?.correct ?? checkpoint.result?.correct ?? state.correct
     let total = result?.total ?? checkpoint.result?.total ?? state.questionCount
 
-    if let milestone = state.completion?.ceremony?.value1, !ceremonyClosed,
-      let ceremony = hooks.ceremony
-    {
-      ceremony(milestone) { ceremonyClosed = true }
-    } else {
-      PracticeTaskLayout {
-        if checkpoint.endedWithoutQuestions == true {
-          PracticeResultTitle(
-            title: LocalizedStringResource(
-              "The questions were removed", table: "Practice",
-              comment: "A checkpoint ended without questions."),
-            detail: LocalizedStringResource(
-              "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost.",
-              table: "Practice",
-              comment: "Why a checkpoint without questions isn't scored."))
-        } else {
-          // A result opened again draws him still.
-          if checkpoint.kind != .weekly {
-            TricksterCharacter(beaten: passed, reacts: state.completion != nil)
-              .frame(width: 112, height: 112)
-          }
-
-          PracticeResultTitle(
-            title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed),
-            detail: CheckpointCopy.resultDetail(
-              kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons))
-        }
-      } response: {
-        if checkpoint.endedWithoutQuestions != true {
-          PracticeResultNumbers(
-            correct: correct, total: total,
-            // A win's Brain Power is its rewards' first row, as on main.
-            brainPower: won ? 0 : state.completion?.ownBrainPower ?? 0,
-            facts: won
-              ? []
-              : (result?.passMark).map { passMark in
-                [
-                  String(
-                    localized: "\(passMark) of \(state.questionCount) right to win",
-                    table: "Practice",
-                    comment: "Under a lost phase challenge's score: the right answers it needed.")
-                ]
-              } ?? [],
-            day: state.completion.flatMap { try? StudyJSON.recode($0, as: BlockMoment.self) }?.day)
-
-          if won {
-            CheckpointRewards(
-              checkpoint: checkpoint,
-              brainPower: state.completion?.ownBrainPower ?? checkpoint.reward.brainPower)
-          } else if let next = checkpoint.nextPhase?.value1 {
-            Label {
-              Text(
-                "The next phase, \(next.name), is already open.", tableName: "Practice",
-                comment: "After a phase challenge not won: the plan goes on.")
-            } icon: {
-              Image(systemName: "arrow.forward")
-            }
-          }
-
-          if let answers = result?.answers, !answers.isEmpty {
-            DisclosureGroup(isExpanded: $showsReview) {
-              CheckpointReview(load: load, answers: answers, given: state.given)
-            } label: {
-              Text(
-                "Review the answers", tableName: "Practice",
-                comment: "Opens a finished checkpoint's answers with why."
-              )
-              .font(.headline)
-            }
-          }
-        }
-      } actions: {
-        PracticeMainButton(
+    PracticeTaskLayout(isResult: true) {
+      if checkpoint.endedWithoutQuestions == true {
+        PracticeResultTitle(
           title: LocalizedStringResource(
-            "Continue", table: "Practice", comment: "Moves on after a grade."), action: close)
+            "The questions were removed", table: "Practice",
+            comment: "A checkpoint ended without questions."),
+          detail: LocalizedStringResource(
+            "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost.",
+            table: "Practice",
+            comment: "Why a checkpoint without questions isn't scored."))
+      } else {
+        // A result opened again draws him still.
+        if checkpoint.kind != .weekly {
+          TricksterCharacter(beaten: passed, reacts: state.completion != nil)
+            .frame(width: 112, height: 112)
+        }
+
+        PracticeResultTitle(
+          title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed))
+
+        PracticeResultNumbers(
+          correct: correct, total: total,
+          // A win's Brain Power is its rewards' first row, as on main.
+          brainPower: won ? 0 : state.completion?.ownBrainPower ?? 0,
+          facts: won
+            ? []
+            : (result?.passMark).map { passMark in
+              [
+                String(
+                  localized: "\(passMark) of \(state.questionCount) right to win",
+                  table: "Practice",
+                  comment: "Under a lost phase challenge's score: the right answers it needed.")
+              ]
+            } ?? [],
+          day: state.completion.flatMap { try? StudyJSON.recode($0, as: BlockMoment.self) }?.day)
       }
+    } response: {
+      if checkpoint.endedWithoutQuestions != true {
+        if won {
+          CheckpointRewards(
+            checkpoint: checkpoint,
+            brainPower: state.completion?.ownBrainPower ?? checkpoint.reward.brainPower)
+        }
+
+        if let retry = CheckpointCopy.retryLine(
+          kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons)
+        {
+          Label {
+            Text(retry)
+          } icon: {
+            Image(systemName: "arrow.counterclockwise")
+          }
+        }
+
+        if !won, let next = checkpoint.nextPhase?.value1 {
+          Label {
+            Text(
+              "The next phase, \(next.name), is already open.", tableName: "Practice",
+              comment: "After a phase challenge not won: the plan goes on.")
+          } icon: {
+            Image(systemName: "arrow.forward")
+          }
+        }
+
+        if let answers = result?.answers, !answers.isEmpty {
+          DisclosureGroup(isExpanded: $showsReview) {
+            CheckpointReview(load: load, answers: answers, given: state.given)
+          } label: {
+            Text(
+              "Review the answers", tableName: "Practice",
+              comment: "Opens a finished checkpoint's answers with why."
+            )
+            .font(.headline)
+          }
+        }
+      }
+    } actions: {
+      PracticeMainButton(
+        title: LocalizedStringResource(
+          "Continue", table: "Practice", comment: "Moves on after a grade."), action: close)
     }
   }
 }
@@ -563,7 +607,7 @@ enum CheckpointCopy {
         "Not this time", table: "Practice", comment: "A lost phase challenge.")
   }
 
-  static func resultDetail(
+  static func retryLine(
     kind: Components.Schemas.Checkpoint.KindPayload, passed: Bool, lessons: Int
   )
     -> LocalizedStringResource?

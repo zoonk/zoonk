@@ -3,20 +3,20 @@ import { KindDot } from "@zoonk/learn/kind-tile";
 import { METER_PARTS_CLASS } from "@zoonk/learn/meter";
 import {
   AXIS_CLASS,
-  AXIS_LABEL_CLASS,
+  AXIS_TEXT_CLASS,
+  AxisLabel,
   BAND_CHECK_CLASS,
   BAND_CLASS,
   BAND_COLUMN_CLASS,
   BAND_NAME_CLASS,
+  BAND_ROWS_CLASS,
   BAND_STATE_CLASS,
+  getBandColumnsStyle,
 } from "@zoonk/learn/roadmap-styles";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, FlagIcon } from "lucide-react";
 
 const PERCENT = 100;
-
-/** A label reads leftward from its line past the middle of its band, so it stays inside. */
-const MIDDLE_SHARE = 0.5;
 
 type RoadBandState = "current" | "done" | "plus" | "upcoming";
 
@@ -46,16 +46,10 @@ const SEGMENT_STATE: Record<RoadBandState, DaySegmentState> = {
 };
 
 const FULL_FROM = {
-  lg: { compact: "lg:hidden", full: "lg:flex" },
-  md: { compact: "md:hidden", full: "md:flex" },
-  xl: { compact: "xl:hidden", full: "xl:flex" },
+  lg: { compact: "lg:hidden", full: "lg:grid" },
+  md: { compact: "md:hidden", full: "md:grid" },
+  xl: { compact: "xl:hidden", full: "xl:grid" },
 } as const;
-
-function getLabelStyle(share: number): React.CSSProperties {
-  return share < MIDDLE_SHARE
-    ? { left: `${share * PERCENT}%` }
-    : { right: `${(1 - share) * PERCENT}%` };
-}
 
 function TodayTicks({ share }: { share: number }) {
   const style = { left: `${share * PERCENT}%` };
@@ -93,7 +87,7 @@ function RoadBandFace({ band }: { band: RoadBand }) {
 
 function RoadLane({ band, isLast }: { band: RoadBand; isLast: boolean }) {
   return (
-    <span className="relative mt-1 block h-4">
+    <span className="relative mt-2 block h-4">
       {band.mocks?.map((share) => (
         <span
           className="absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2"
@@ -109,7 +103,6 @@ function RoadLane({ band, isLast }: { band: RoadBand; isLast: boolean }) {
   );
 }
 
-/** A label that wouldn't fit beside its neighbors is left out, as the Plan does. */
 function RoadAxis({
   band,
   end,
@@ -124,27 +117,22 @@ function RoadAxis({
   return (
     <span className={AXIS_CLASS}>
       {band.todayShare !== undefined && (
-        <span
-          className={cn(AXIS_LABEL_CLASS, "text-foreground")}
-          style={getLabelStyle(band.todayShare)}
-        >
-          {todayLabel}
-        </span>
+        <AxisLabel share={band.todayShare}>
+          <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>{todayLabel}</span>
+        </AxisLabel>
       )}
 
       {band.startLabel && (
-        <span
-          className={cn(
-            AXIS_LABEL_CLASS,
-            "left-0",
-            isLast ? "@max-[10rem]/phase:hidden" : "@max-[4.5rem]/phase:hidden",
-          )}
-        >
-          {band.startLabel}
-        </span>
+        <AxisLabel className={cn(isLast && "@max-[10rem]/phase:hidden")} share={0}>
+          <span className={AXIS_TEXT_CLASS}>{band.startLabel}</span>
+        </AxisLabel>
       )}
 
-      {isLast && <span className={cn(AXIS_LABEL_CLASS, "text-foreground right-0")}>{end}</span>}
+      {isLast && (
+        <AxisLabel after={band.todayShare !== undefined || Boolean(band.startLabel)} share={1}>
+          <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>{end}</span>
+        </AxisLabel>
+      )}
     </span>
   );
 }
@@ -191,12 +179,20 @@ export function PlanRoad({
         </span>
       </div>
 
-      <ol aria-hidden="true" className={cn("hidden gap-[3px]", FULL_FROM[fullFrom].full)}>
+      <ol
+        aria-hidden="true"
+        className={cn(
+          BAND_ROWS_CLASS,
+          "hidden grid-rows-[repeat(3,auto)]",
+          FULL_FROM[fullFrom].full,
+        )}
+        style={getBandColumnsStyle(bands.map((band) => band.weight))}
+      >
         {bands.map((band, index) => {
           const isLast = index === bands.length - 1;
 
           return (
-            <li className={BAND_COLUMN_CLASS} key={band.id} style={{ flexGrow: band.weight }}>
+            <li className={BAND_COLUMN_CLASS} key={band.id}>
               <RoadBandFace band={band} />
               <RoadLane band={band} isLast={isLast} />
               <RoadAxis band={band} end={end} isLast={isLast} todayLabel={todayLabel} />

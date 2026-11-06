@@ -73,6 +73,7 @@ async function findActivityGoal({
 export async function saveDayBeforeActivity({
   goalId,
   language,
+  now = new Date(),
   timeZone,
   userId,
 }: {
@@ -80,6 +81,7 @@ export async function saveDayBeforeActivity({
   goalId?: string;
   /** The language a drill, a round or a call is in; null for one in no goal's language. */
   language?: string | null;
+  now?: Date;
   timeZone?: string;
   userId: string;
 }): Promise<void> {
@@ -90,7 +92,6 @@ export async function saveDayBeforeActivity({
       return;
     }
 
-    const now = new Date();
     const zone = getAnswerTimeZone({ goal, timeZone });
 
     // An unfinished pre-midnight session retains the activity credit.

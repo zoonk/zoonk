@@ -4,6 +4,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @Environment(VoiceServices.self) private var voice
   @State private var recorder = VoiceRecorder()
   @State private var checking = false
+  @State private var isSlow = false
   @State private var grading: Task<Void, Never>?
   @State private var issue: Issue?
 
@@ -35,9 +36,18 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
         status
       }
+      .announcesStatus(announcement)
       .onDisappear {
         recorder.cancel()
         grading?.cancel()
+      }
+      .task(id: checking) {
+        isSlow = false
+
+        if checking {
+          try? await Task.sleep(for: LessonGrading.slowCheck)
+          isSlow = !Task.isCancelled
+        }
       }
     }
   }
@@ -46,12 +56,29 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   private var status: some View {
     if case .limit(let limit) = issue, !recorder.isRecording {
       HelpLimitNotice(limit: limit)
+    } else if issue == .failed, !recorder.isRecording, let hint {
+      FailureLine(message: hint)
+        .font(.subheadline)
     } else if let hint {
       Text(hint)
         .font(.subheadline)
-        .foregroundStyle(issue == .failed && !recorder.isRecording ? .destructive : .secondary)
+        .foregroundStyle(.secondary)
         .accessibilityAddTraits(.updatesFrequently)
     }
+  }
+
+  /// Silent while recording: VoiceOver's speech would end up in the take.
+  private var announcement: String? {
+    if recorder.isRecording {
+      return nil
+    }
+
+    if case .limit(let limit) = issue {
+      return limit.message
+    }
+
+    // A failure is a `FailureLine`, which reads itself out.
+    return checking || issue == .noSpeech ? hint : nil
   }
 
   private var hint: String? {
@@ -59,6 +86,12 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
       return String(
         localized: "Listening… Tap Stop to check.", table: "Voice",
         comment: "Shown while the learner records an answer")
+    }
+
+    if checking, isSlow {
+      return String(
+        localized: "Still checking. This is taking longer than usual.", table: "Voice",
+        comment: "Grading a spoken answer is taking longer than usual")
     }
 
     if checking {

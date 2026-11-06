@@ -42,6 +42,7 @@ msgstr "Zmień limit"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
+#: src/certificates/certificates-screen.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 msgctxt "nC-1Um"
@@ -146,6 +147,7 @@ msgstr "Dzienny czas nauki"
 #: src/_components/detail-page.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
+#: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
 #: src/language/conversation/conversation-result.tsx
@@ -192,6 +194,9 @@ msgstr "Ukończono {percent}%"
 
 #: src/_components/details-drawer.tsx
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
@@ -511,6 +516,12 @@ msgstr "Otwórz źródło"
 msgctxt "KPL2U8"
 msgid "Step {current, number} of {total, number}"
 msgstr "Krok {current, number} z {total, number}"
+
+#: src/_components/step-open-failed.tsx
+#: src/session/next-stop.tsx
+msgctxt "xpHtfD"
+msgid "We couldn't open this step. Try again."
+msgstr "Nie udało się przejść do tego kroku. Spróbuj ponownie."
 
 #: src/_components/steps.tsx
 #: src/language/conversation/call-problem.tsx
@@ -993,6 +1004,7 @@ msgid "Glasses"
 msgstr "Okulary"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-name.tsx
 #: src/journey/goal-actions.tsx
 #: src/language/conversation/call-control.tsx
 #: src/memory/memory-fact-row.tsx
@@ -1006,6 +1018,7 @@ msgid "Cancel"
 msgstr "Anuluj"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-name.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -1016,6 +1029,8 @@ msgid "Save"
 msgstr "Zapisz"
 
 #: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-details.tsx
+#: src/certificates/certificate-moment-parts.tsx
 #: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-tools.tsx
 msgctxt "BY343C"
@@ -1503,6 +1518,498 @@ msgstr "{buddy} wkracza w kolejny etap rozwoju!"
 msgctxt "d5UGw8"
 msgid "Wear them"
 msgstr "Załóż je kumplowi"
+
+#: src/certificates/certificate-copy-button.tsx
+msgctxt "p556q3"
+msgid "Copied"
+msgstr "Skopiowano"
+
+#: src/certificates/certificate-copy-button.tsx
+#: src/certificates/certificate-details.tsx
+msgctxt "4l6vz1"
+msgid "Copy"
+msgstr "Skopiuj"
+
+#: src/certificates/certificate-details.tsx
+#: src/journey/journey-hero.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+#: src/today/today-preparation.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Poziom"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Data ukończenia"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "mrBiB2"
+msgid "Lessons studied"
+msgstr "Przerobione lekcje"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "dx3nJs"
+msgid "Passed by test"
+msgstr "Zaliczone testem"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "KHL8ap"
+msgid "Study time"
+msgstr "Czas nauki"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "LbAVCO"
+msgid "Certificate ID"
+msgstr "Identyfikator certyfikatu"
+
+#. Labels the learner's full name, as their certificates print it
+#: src/certificates/certificate-details.tsx
+msgctxt "certificateRecipientName"
+msgid "Name"
+msgstr "Imię i nazwisko"
+
+#: src/certificates/certificate-details.tsx
+#: src/onboarding/entry/paste-link.tsx
+msgctxt "JBWS0c"
+msgid "Link"
+msgstr "Link"
+
+#: src/certificates/certificate-details.tsx
+#: src/certificates/certificate-share.tsx
+#: src/plan/use-share-plan.ts
+msgctxt "zU_q1N"
+msgid "Link copied"
+msgstr "Skopiowano link"
+
+#: src/certificates/certificate-details.tsx
+#: src/syllabus/subject-aside.tsx
+msgctxt "Lv0zJu"
+msgid "Details"
+msgstr "Szczegóły"
+
+#: src/certificates/certificate-details.tsx
+msgctxt "QshKyk"
+msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
+msgstr "Każdy, kto ma link, może zobaczyć ten certyfikat. Jego strona nie pojawia się w wynikach wyszukiwania."
+
+#. A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name.
+#: src/certificates/certificate-labels.ts
+msgctxt "LD0O-X"
+msgid "{course} · {level}"
+msgstr "{course} · {level}"
+
+#. A language and a CEFR level, such as "Spanish B1": a certificate's name.
+#: src/certificates/certificate-labels.ts
+msgctxt "ZP9lOu"
+msgid "{language} {level}"
+msgstr "{language} {level}"
+
+#. An approximate study time, such as "about 41 hr".
+#: src/certificates/certificate-labels.ts
+msgctxt "8QINPM"
+msgid "about {duration}"
+msgstr "około {duration}"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "ZfBPq3"
+msgid "{name} completed level {level} in {language}"
+msgstr "{name} ma ukończony poziom {level} ({language})"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "7ULGz_"
+msgid "Level {level} in {language}, completed on Zoonk"
+msgstr "Poziom {level} ({language}), ukończony w Zoonku"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "do3pHn"
+msgid "{name} completed {course}"
+msgstr "{name} ma ukończony kurs: {course}"
+
+#: src/certificates/certificate-labels.ts
+msgctxt "z9WxBG"
+msgid "{course}, completed on Zoonk"
+msgstr "{course}, kurs ukończony w Zoonku"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "B-Co6Y"
+msgid "Add to your LinkedIn profile"
+msgstr "Dodaj do profilu na LinkedIn"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "bv21CP"
+msgid "LinkedIn opens its form to add a license or certification. Copy each field into it."
+msgstr "LinkedIn otworzy formularz dodawania licencji lub certyfikatu. Skopiuj do niego dane z każdego pola."
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "Gsc9HO"
+msgid "Copy the name"
+msgstr "Skopiuj nazwę"
+
+#. LinkedIn's field for the certificate's name, labeled as in LinkedIn's "Add license or certification" form
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "linkedInCertificationName"
+msgid "Name"
+msgstr "Nazwa"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "Stmjvy"
+msgid "Copy the issuing organization"
+msgstr "Skopiuj nazwę organizacji wydającej"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "chGb2H"
+msgid "Issuing organization"
+msgstr "Organizacja wydająca"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "c3mXbd"
+msgid "Issue date"
+msgstr "Data wydania"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "iIH6lJ"
+msgid "Copy the credential ID"
+msgstr "Skopiuj identyfikator poświadczenia"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "NMHFhh"
+msgid "Credential ID"
+msgstr "Identyfikator poświadczenia"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "GkUPxx"
+msgid "Copy the credential URL"
+msgstr "Skopiuj adres URL poświadczenia"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "bV_-Gb"
+msgid "Credential URL"
+msgstr "Adres URL poświadczenia"
+
+#: src/certificates/certificate-linkedin.tsx
+msgctxt "CEB03t"
+msgid "Open LinkedIn"
+msgstr "Otwórz LinkedIn"
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "oL0rU6"
+msgid "Locked"
+msgstr "Zablokowany"
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "rS5epi"
+msgid "Get your certificate with Plus"
+msgstr "Odbierz certyfikat z pakietem Plus"
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "QIyGxo"
+msgid "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends."
+msgstr "W pakiecie Plus za każdy ukończony poziom dostajesz certyfikat do wydrukowania i udostępnienia. Otrzymane certyfikaty zachowujesz, nawet gdy pakiet Plus wygaśnie."
+
+#: src/certificates/certificate-lock.tsx
+msgctxt "Oe9wC5"
+msgid "Certificates come with Plus"
+msgstr "Certyfikaty w pakiecie Plus"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "l4zQLP"
+msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs."
+msgstr "Na certyfikacie widnieją imię i nazwisko podane na koncie w Zoonku; Zoonk nie sprawdza dokumentów tożsamości."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "s94wjH"
+msgid "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result."
+msgstr "Poziomy są zgodne z CEFR, czyli Europejskim Systemem Opisu Kształcenia Językowego. To nie jest wynik oficjalnego egzaminu."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "X1QrOq"
+msgid "Zoonk measures each skill (reading, listening, speaking, writing) from the learner's answers in lessons and practice. A level is complete when every skill those answers have raised reaches the next level, so this certificate was issued when each of them reached {level}."
+msgstr "Zoonk ocenia każdą umiejętność (czytanie, słuchanie, mówienie, pisanie) na podstawie odpowiedzi w lekcjach i ćwiczeniach. Poziom jest ukończony, gdy każda umiejętność, której poziom wzrósł dzięki tym odpowiedziom, osiągnie kolejny poziom. Ten certyfikat wydano więc, gdy każda z nich osiągnęła poziom {level}."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "j5jrUM"
+msgid "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it."
+msgstr "Zoonk wydaje ten certyfikat osobom, które ukończą wszystkie rozdziały danego poziomu kursu, przerabiając każdą lekcję lub zdając jej test, i wygrają wszystkie wyzwania na tym poziomie."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "9Bnhaw"
+msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it."
+msgstr "Zoonk wydaje ten certyfikat po ukończeniu wszystkich lekcji z planu kursu i wygraniu wszystkich wyzwań w tym planie. Lekcje można ukończyć, przerabiając je lub zdając ich testy."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "wB_Ebz"
+msgid "It's a record of completion on Zoonk, not academic credit."
+msgstr "To potwierdzenie ukończenia nauki w Zoonku, a nie zaliczenie na uczelni."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "I9vOlY"
+msgid "What this certificate means"
+msgstr "Co oznacza ten certyfikat"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "fAGVcM"
+msgid "Topics covered"
+msgstr "Omówione tematy"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "8Rm1i0"
+msgid "Can do"
+msgstr "Umiejętności"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "NnlD8J"
+msgid "Learn {course} on Zoonk"
+msgstr "Ucz się w Zoonku: {course}"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "1h_6la"
+msgid "Learn {language} on Zoonk"
+msgstr "Ucz się w Zoonku: {language}"
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "hxYqqG"
+msgid "A plan for each day that fits your time, starting from what you already know."
+msgstr "Plan na każdy dzień, dopasowany do czasu, który masz, i oparty na tym, co już wiesz."
+
+#: src/certificates/certificate-meaning.tsx
+msgctxt "VJA_YD"
+msgid "Start this course"
+msgstr "Zacznij ten kurs"
+
+#: src/certificates/certificate-meaning.tsx
+#: src/onboarding/how-it-works.tsx
+msgctxt "npIkqE"
+msgid "Start free, no account needed."
+msgstr "Zacznij za darmo, bez konta."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "buj2o3"
+msgid "Your {certificate} certificate is ready."
+msgstr "Twój certyfikat jest gotowy: {certificate}."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "e63c09"
+msgid "{level} complete!"
+msgstr "Poziom {level} ukończony!"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "lopydx"
+msgid "Your certificate for {course} is ready."
+msgstr "Twój certyfikat jest gotowy: {course}."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "SqnwjO"
+msgid "Course complete!"
+msgstr "Kurs ukończony!"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "H8ofJ_"
+msgid "{count, plural, other {# certificates earned}}"
+msgstr "{count, plural, few {# zdobyte certyfikaty} other {# zdobytych certyfikatów}}"
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "72XHg-"
+msgid "Your {list} certificates are ready."
+msgstr "Twoje certyfikaty są gotowe: {list}."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "_QSets"
+msgid "They're saved in Certificates."
+msgstr "Zapisano je w sekcji Certyfikaty."
+
+#: src/certificates/certificate-moment-copy.ts
+msgctxt "m77iCk"
+msgid "It's saved in Certificates."
+msgstr "Zapisano go w sekcji Certyfikaty."
+
+#: src/certificates/certificate-moment-parts.tsx
+msgctxt "e_2HUM"
+msgid "On your certificate: <strong>{name}</strong>"
+msgstr "Na twoim certyfikacie: <strong>{name}</strong>"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "Wpisz maksymalnie 150 znaków."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Vrz1pI"
+msgid "Your certificates and your buddy use this name."
+msgstr "To imię i nazwisko widnieją na twoich certyfikatach. Tak też zwraca się do ciebie twój kumpel."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "F6SpEM"
+msgid "Your certificates and your buddy use this name. You can change it anytime."
+msgstr "To imię i nazwisko widnieją na twoich certyfikatach. Tak też zwraca się do ciebie twój kumpel. Możesz je zmienić w każdej chwili."
+
+#: src/certificates/certificate-name.tsx
+msgctxt "CG1x0d"
+msgid "Name on your certificates"
+msgstr "Imię i nazwisko na certyfikatach"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Zeqtwb"
+msgid "Your name, as it should appear"
+msgstr "Imię i nazwisko, które mają widnieć na certyfikacie"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "m4c_De"
+msgid "Your full name"
+msgstr "Twoje imię i nazwisko"
+
+#: src/certificates/certificate-name.tsx
+msgctxt "Qcr1L3"
+msgid "It shows on every certificate and its link. Your buddy calls you by it too."
+msgstr "Widać je na każdym certyfikacie i pod linkiem do niego. Twój kumpel też tak się do ciebie zwraca."
+
+#: src/certificates/certificate-page.tsx
+msgctxt "5lbext"
+msgid "Your certificates"
+msgstr "Wróć do swoich certyfikatów"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "QXN1kN"
+msgid "Verified certificate · issued by Zoonk"
+msgstr "Zweryfikowany certyfikat · wystawca: Zoonk"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "faSg-e"
+msgid "Certificate of completion, issued on {date}."
+msgstr "Certyfikat ukończenia, wydany {date}."
+
+#: src/certificates/certificate-page.tsx
+msgctxt "CXRlIo"
+msgid "Print"
+msgstr "Drukuj"
+
+#: src/certificates/certificate-page.tsx
+#: src/memory/memory-screen.tsx
+#: src/mind-maps/mind-map-card.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "5q3qC0"
+msgid "Download"
+msgstr "Pobierz"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "sfDPEB"
+msgid "I just completed level {level} in {language} on Zoonk."
+msgstr "Poziom {level} ({language}) w Zoonku już za mną."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "rIzvkK"
+msgid "I just finished {course} on Zoonk."
+msgstr "Właśnie udało mi się ukończyć kurs w Zoonku: {course}."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "xgqZIz"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}."
+msgstr "Kurs „{course}” w Zoonku już za mną: {lessons, plural, =0 {# lekcji} one {# lekcja} few {# lekcje} other {# lekcji}}."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "_w9o_B"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} and about {minutes, plural, one {# minute} other {# minutes}} of study."
+msgstr "Kurs „{course}” w Zoonku już za mną: {lessons, plural, =0 {# lekcji} one {# lekcja} few {# lekcje} other {# lekcji}} i mniej więcej {minutes, plural, one {# minuta} many {# minut} other {# minuty}} nauki."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "WJJ7jr"
+msgid "I just finished {course} on Zoonk: {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} and about {hours, plural, one {# hour} other {# hours}} of study."
+msgstr "Kurs „{course}” w Zoonku już za mną: {lessons, plural, =0 {# lekcji} one {# lekcja} few {# lekcje} other {# lekcji}} i mniej więcej {hours, plural, one {# godzina} many {# godzin} other {# godziny}} nauki."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "DquYTO"
+msgid "Text copied. Paste it into your LinkedIn post."
+msgstr "Skopiowano tekst. Wklej go do swojego posta na LinkedIn."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "31QcAi"
+msgid "Text copied. Paste it into your Facebook post."
+msgstr "Skopiowano tekst. Wklej go do swojego posta w serwisie Facebook."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "tXB0F9"
+msgid "Share your certificate"
+msgstr "Udostępnianie certyfikatu"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "Mpsug3"
+msgid "Your post shows this picture and links to your certificate's page."
+msgstr "W poście pojawią się ta grafika i link do strony twojego certyfikatu."
+
+#: src/certificates/certificate-share.tsx
+msgctxt "tfBQnN"
+msgid "Suggested text"
+msgstr "Proponowany tekst"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "l2ddvP"
+msgid "Copy the suggested text"
+msgstr "Skopiuj proponowany tekst"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "rIB4Ud"
+msgid "Post on"
+msgstr "Opublikuj na"
+
+#: src/certificates/certificate-share.tsx
+msgctxt "lbr3Lq"
+msgid "Copy link"
+msgstr "Skopiuj link"
+
+#: src/certificates/certificate-sharing.tsx
+msgctxt "OKhRC6"
+msgid "Share"
+msgstr "Udostępnij"
+
+#: src/certificates/certificate-sharing.tsx
+msgctxt "L2bkq_"
+msgid "Add to LinkedIn"
+msgstr "Dodaj do profilu LinkedIn"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "zaINXN"
+msgid "Certificate of completion"
+msgstr "Certyfikat ukończenia"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "Certyfikaty"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "Ek6qb7"
+msgid "Comes when every skill you practice reaches the next level"
+msgstr "Otrzymasz go, gdy osiągniesz kolejny poziom w każdej ćwiczonej umiejętności"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "ojltlj"
+msgid "Your certificate comes when you finish the plan"
+msgstr "Otrzymasz certyfikat po ukończeniu planu"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "GyTxyv"
+msgid "No certificates yet"
+msgstr "Nie masz jeszcze certyfikatów"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "_eLagx"
+msgid "Your certificates show up here when you finish a level or a plan."
+msgstr "Twoje certyfikaty pojawią się tutaj, gdy ukończysz poziom lub plan."
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "0X-xfW"
+msgid "Continue learning"
+msgstr "Ucz się dalej"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "7yoAJi"
+msgid "{count, plural, one {# certificate} other {# certificates}}"
+msgstr "{count, plural, one {# certyfikat} few {# certyfikaty} other {# certyfikatów}}"
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "Ybfjqu"
+msgid "A certificate for every level and plan you finish."
+msgstr "Certyfikat za każdy ukończony poziom i plan."
 
 #: src/challenge/challenge-call-intro.tsx
 #: src/challenge/challenge-intro.tsx
@@ -3972,6 +4479,33 @@ msgctxt "7wkXtE"
 msgid "Adding a quick check that it works…"
 msgstr "Dodajemy szybki test działania narzędzia…"
 
+#: src/journey/course-certificate.tsx
+msgctxt "n-Px0T"
+msgid "Get your certificate"
+msgstr "Odbierz certyfikat"
+
+#: src/journey/course-certificate.tsx
+msgctxt "QlJQMD"
+msgid "View certificates"
+msgstr "Zobacz certyfikaty"
+
+#: src/journey/course-certificate.tsx
+msgctxt "koWpue"
+msgid "View certificate"
+msgstr "Zobacz certyfikat"
+
+#. A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end
+#: src/journey/course-certificate.tsx
+msgctxt "4S7nHA"
+msgid "{level} complete"
+msgstr "Ukończono poziom: {level}"
+
+#. A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead
+#: src/journey/course-certificate.tsx
+msgctxt "dhP2hY"
+msgid "Course complete"
+msgstr "Kurs ukończony"
+
 #: src/journey/goal-actions.tsx
 msgctxt "vr-vFm"
 msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
@@ -4126,13 +4660,6 @@ msgstr "Przygotowanie"
 msgctxt "Z1VCaI"
 msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} other {# lessons studied}}"
 msgstr "{studied, plural, =0 {Jeszcze żadnej lekcji} one {# przerobiona lekcja} few {# przerobione lekcje} many {# przerobionych lekcji} other {# przerobionej lekcji}}"
-
-#: src/journey/journey-hero.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-#: src/today/today-preparation.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Poziom"
 
 #: src/journey/journey-hero.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -6403,10 +6930,16 @@ msgctxt "dppJZz"
 msgid "From a study session"
 msgstr "Z nauki"
 
+#. Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.
+#: src/memory/memory-labels.tsx
+msgctxt "nxU2W7"
+msgid "From a call"
+msgstr "Z rozmowy"
+
 #: src/memory/memory-screen.tsx
-msgctxt "Nqh1Tt"
-msgid "Personal examples and plans that fit your week"
-msgstr "Przykłady z twojego życia i plany dopasowane do twojego grafiku"
+msgctxt "PRUyMZ"
+msgid "Personal examples, plans that fit your week and calls that remember your news"
+msgstr "Przykłady z twojego życia, plany dopasowane do twojego tygodnia i rozmowy, w których pamiętamy, co u ciebie nowego"
 
 #: src/memory/memory-screen.tsx
 msgctxt "yp_BUN"
@@ -6437,13 +6970,6 @@ msgstr "Przygotowujemy zawartość pamięci…"
 msgctxt "Ob8gKI"
 msgid "Preparing…"
 msgstr "Przygotowujemy…"
-
-#: src/memory/memory-screen.tsx
-#: src/mind-maps/mind-map-card.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "5q3qC0"
-msgid "Download"
-msgstr "Pobierz"
 
 #: src/memory/memory-screen.tsx
 msgctxt "owirfw"
@@ -6484,6 +7010,11 @@ msgstr "Cofnięto zmianę"
 msgctxt "_718cU"
 msgid "Couldn't undo. It changed since."
 msgstr "Nie udało się cofnąć zmiany. W międzyczasie wprowadzono kolejną."
+
+#: src/memory/memory-updated.tsx
+msgctxt "GGUKxA"
+msgid "Couldn't undo. Try again."
+msgstr "Nie udało się cofnąć zmiany. Spróbuj ponownie."
 
 #: src/mind-maps/mind-map-card.tsx
 msgctxt "FZBGji"
@@ -8871,11 +9402,6 @@ msgid "Ask"
 msgstr "Zapytaj"
 
 #: src/onboarding/entry/paste-link.tsx
-msgctxt "JBWS0c"
-msgid "Link"
-msgstr "Link"
-
-#: src/onboarding/entry/paste-link.tsx
 msgctxt "IB_QxY"
 msgid "https://… an article, a class page or a PDF"
 msgstr "https://… artykuł, strona zajęć lub PDF"
@@ -9026,11 +9552,6 @@ msgstr "Dostaniesz plan z terminami i pierwszą lekcję"
 msgctxt "HK3ph8"
 msgid "How it works"
 msgstr "Jak to działa"
-
-#: src/onboarding/how-it-works.tsx
-msgctxt "npIkqE"
-msgid "Start free, no account needed."
-msgstr "Zacznij za darmo, bez konta."
 
 #: src/onboarding/library-course-offer.tsx
 msgctxt "JHbf4S"
@@ -11603,11 +12124,6 @@ msgctxt "w-dRYG"
 msgid "{count, plural, other {# topics from {subjects} are back in your plan: you missed questions on them.}}"
 msgstr "{count, plural, one {# temat wraca do twojego planu po błędnej odpowiedzi na pytanie z przedmiotów: {subjects}.} few {# tematy wracają do twojego planu po błędnych odpowiedziach na pytania z przedmiotów: {subjects}.} other {# tematów wraca do twojego planu po błędnych odpowiedziach na pytania z przedmiotów: {subjects}.}}"
 
-#: src/plan/use-share-plan.ts
-msgctxt "zU_q1N"
-msgid "Link copied"
-msgstr "Skopiowano link"
-
 #: src/plan/use-short-list.ts
 msgctxt "WeWUAR"
 msgid "{names} and {count, number} more"
@@ -12174,11 +12690,6 @@ msgid "While you wait: {title}"
 msgstr "W międzyczasie wybierz: {title}"
 
 #: src/session/next-stop.tsx
-msgctxt "xpHtfD"
-msgid "We couldn't open this step. Try again."
-msgstr "Nie udało się przejść do tego kroku. Spróbuj ponownie."
-
-#: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx
 #: src/session/study-moment.tsx
 msgctxt "HLd8qn"
@@ -12674,6 +13185,16 @@ msgid "Start a goal"
 msgstr "Wyznacz cel"
 
 #: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.JIzivc"
+msgid "We couldn't switch goals. Try again."
+msgstr "Nie udało się zmienić celu. Spróbuj ponownie."
+
+#: src/shell/goal-switcher.tsx
+msgctxt "goalSwitcher.9_0KQP"
+msgid "We couldn't start this goal. Try again."
+msgstr "Nie udało się rozpocząć pracy nad tym celem. Spróbuj ponownie."
+
+#: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.GuLJJS"
 msgid ", current goal. Switch goal"
 msgstr ", aktualny cel. Zmień cel"
@@ -12775,11 +13296,6 @@ msgstr "Znane wcześniej"
 msgctxt "Wfs1md"
 msgid "{count, plural, one {# lesson skipped} other {# lessons skipped}}"
 msgstr "{count, plural, one {Pominięto # lekcję} few {Pominięto # lekcje} other {Pominięto # lekcji}}"
-
-#: src/syllabus/subject-aside.tsx
-msgctxt "Lv0zJu"
-msgid "Details"
-msgstr "Szczegóły"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "AGSt8i"

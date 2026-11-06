@@ -2,17 +2,17 @@ package com.zoonk.android.feature.checkpoint
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.window.layout.FoldingFeature
-import androidx.window.testing.layout.FoldingFeature
-import androidx.window.testing.layout.TestWindowLayoutInfo
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ANA
@@ -23,6 +23,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.practice.studyFeedback
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Checkpoint
@@ -118,27 +119,11 @@ class CheckpointScreenshots {
         rule.onNodeWithText("Confirm").performClick()
     }
 
-    /**
-     * Opens the book flat. Android tells a listener that starts after the fold about it; window-testing
-     * doesn't, so a frame rebuilt as the fold drops the duel's aside hears it again.
-     */
-    private fun unfold() =
-        repeat(2) {
-            rule.waitForIdle()
-            folds.overrideWindowLayoutInfo(
-                TestWindowLayoutInfo(
-                    listOf(
-                        FoldingFeature(rule.activity, state = FoldingFeature.State.FLAT, orientation = FoldingFeature.Orientation.VERTICAL),
-                    ),
-                ),
-            )
-        }
-
     @Test
     @Config(qualifiers = "w852dp-h883dp-xxhdpi")
     fun bookRight() =
         show("book-right") {
-            unfold()
+            rule.unfoldBook(folds)
             confirm()
         }
 
@@ -190,28 +175,41 @@ class CheckpointScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneResultWon() =
-        show(
-            "phone-result-won",
-            checkpoint(
-                fields =
-                    arrayOf(
-                        "status" to "completed",
-                        "result" to
-                            JsonObject(mapOf("correct" to JsonPrimitive(2), "passed" to JsonPrimitive(true), "total" to JsonPrimitive(3))),
-                        "nextPhase" to JsonObject(mapOf("index" to JsonPrimitive(1), "name" to JsonPrimitive("Energy"))),
-                        "reward" to
-                            JsonObject(
-                                mapOf(
-                                    "badge" to JsonPrimitive(true),
-                                    "brainPower" to JsonPrimitive(30),
-                                    "glasses" to kotlinx.serialization.json.JsonNull,
-                                    "phaseComplete" to JsonPrimitive(true),
-                                ),
+    fun phoneResultWon() = showWon("phone-result-won")
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookResultWon() = showWon("book-result-won", play = { rule.unfoldBook(folds) })
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletResultWon() = showWon("tablet-result-won")
+
+    private fun showWon(
+        name: String,
+        play: () -> Unit = {},
+    ) = show(
+        name,
+        checkpoint(
+            fields =
+                arrayOf(
+                    "status" to "completed",
+                    "result" to
+                        JsonObject(mapOf("correct" to JsonPrimitive(2), "passed" to JsonPrimitive(true), "total" to JsonPrimitive(3))),
+                    "nextPhase" to JsonObject(mapOf("index" to JsonPrimitive(1), "name" to JsonPrimitive("Energy"))),
+                    "reward" to
+                        JsonObject(
+                            mapOf(
+                                "badge" to JsonPrimitive(true),
+                                "brainPower" to JsonPrimitive(30),
+                                "glasses" to kotlinx.serialization.json.JsonNull,
+                                "phaseComplete" to JsonPrimitive(true),
                             ),
-                    ),
-            ),
-        )
+                        ),
+                ),
+        ),
+        play = play,
+    )
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
@@ -221,8 +219,14 @@ class CheckpointScreenshots {
                 .ApiException(com.zoonk.android.data.ApiError.Network)
         }, play = ::confirm)
 
-    private fun showResult(name: String) {
-        val read = checkpoint()
+    private fun showResult(
+        name: String,
+        read: Checkpoint = checkpoint(),
+        ended: JsonObject = JsonObject(lostBoss),
+        fold: Boolean = false,
+        dark: Boolean = false,
+        rightToLeft: Boolean = false,
+    ) {
         val answers =
             JsonArray(
                 listOf(Q1, Q2).mapIndexed { index, id ->
@@ -240,15 +244,14 @@ class CheckpointScreenshots {
         val completion: StudyBlockCompletion =
             com.zoonk.android.feature.session.decodeFixture(
                 "study-block-completion",
-                "checkpoint" to
+                "checkpoint" to JsonObject(ended + ("answers" to answers)),
+                "missions" to missions,
+                "completedMissions" to JsonArray(listOf(JsonPrimitive("challenge"))),
+                "reached" to
                     JsonObject(
                         mapOf(
-                            "answers" to answers,
-                            "correct" to JsonPrimitive(1),
-                            "kind" to JsonPrimitive("boss"),
-                            "passMark" to JsonPrimitive(2),
-                            "passed" to JsonPrimitive(false),
-                            "total" to JsonPrimitive(3),
+                            "energy" to JsonPrimitive(64),
+                            "level" to JsonObject(mapOf("color" to JsonPrimitive("yellow"), "level" to JsonPrimitive(3))),
                         ),
                     ),
             )
@@ -278,7 +281,15 @@ class CheckpointScreenshots {
             }
         val viewModel = CheckpointViewModel(read.blockId, CheckpointStore(api, cache) { "UTC" })
         val duel = Duel(read.read(), DuelState.of(read).finished(completion))
-        rule.setContent { ZoonkTheme { DuelResult(duel, viewModel, AppContainer.preview(rule.activity), ZU) } }
+        rule.setContent {
+            ZoonkTheme(darkTheme = dark, moreContrast = dark) {
+                CompositionLocalProvider(LocalLayoutDirection provides if (rightToLeft) LayoutDirection.Rtl else LayoutDirection.Ltr) {
+                    DuelResult(duel, viewModel, AppContainer.preview(rule.activity), ZU)
+                }
+            }
+        }
+        if (fold) rule.unfoldBook(folds)
+        rule.mainClock.advanceTimeBy(10_000)
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
@@ -291,6 +302,122 @@ class CheckpointScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneResultLostFresh() = showResult("phone-result-lost-fresh")
+
+    private val lostBoss =
+        mapOf(
+            "correct" to JsonPrimitive(1),
+            "kind" to JsonPrimitive("boss"),
+            "passMark" to JsonPrimitive(2),
+            "passed" to JsonPrimitive(false),
+            "total" to JsonPrimitive(3),
+        )
+
+    private val weeklyDone =
+        mapOf(
+            "correct" to JsonPrimitive(3),
+            "kind" to JsonPrimitive("weekly"),
+            "passMark" to JsonPrimitive(0),
+            "passed" to JsonPrimitive(true),
+            "total" to JsonPrimitive(3),
+        )
+
+    private val noReward =
+        "reward" to
+            JsonObject(
+                mapOf(
+                    "badge" to JsonPrimitive(false),
+                    "brainPower" to JsonPrimitive(30),
+                    "glasses" to kotlinx.serialization.json.JsonNull,
+                    "phaseComplete" to JsonPrimitive(false),
+                ),
+            )
+
+    private val weekly = checkpoint(kind = "weekly", fields = arrayOf(noReward))
+
+    private val missions =
+        JsonArray(
+            listOf("challenge" to "done", "review" to "todo").map { (kind, status) ->
+                JsonObject(
+                    mapOf(
+                        "done" to JsonPrimitive(if (status == "done") 1 else 0),
+                        "kind" to JsonPrimitive(kind),
+                        "status" to JsonPrimitive(status),
+                        "total" to JsonPrimitive(1),
+                    ),
+                )
+            },
+        )
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookResultLostFresh() = showResult("book-result-lost-fresh", fold = true)
+
+    @Test
+    @Config(qualifiers = SMALL_BOOK)
+    fun smallBookResultLostFresh() = showResult("small-book-result-lost-fresh", fold = true)
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookResultWeeklyFresh() = showResult("book-result-weekly-fresh", weekly, JsonObject(weeklyDone), fold = true)
+
+    @Test
+    @Config(qualifiers = SMALL_BOOK)
+    fun smallBookResultWeeklyFresh() = showResult("small-book-result-weekly-fresh", weekly, JsonObject(weeklyDone), fold = true)
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookResultWeeklyFreshRightToLeft() =
+        showResult("book-result-weekly-fresh-rtl", weekly, JsonObject(weeklyDone), fold = true, rightToLeft = true)
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookResultWeeklyFreshDark() =
+        showResult("book-result-weekly-fresh-dark-more-contrast", weekly, JsonObject(weeklyDone), fold = true, dark = true)
+
+    @Test
+    @Config(qualifiers = BOOK, fontScale = 2f)
+    fun bookResultWeeklyFreshLargeFont() = showResult("book-result-weekly-fresh-font200", weekly, JsonObject(weeklyDone), fold = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneResultWeeklyFresh() = showResult("phone-result-weekly-fresh", weekly, JsonObject(weeklyDone))
+
+    @Test
+    @Config(qualifiers = MEDIUM)
+    fun mediumResultWeeklyFresh() = showResult("medium-result-weekly-fresh", weekly, JsonObject(weeklyDone))
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletResultWeeklyFresh() = showResult("tablet-result-weekly-fresh", weekly, JsonObject(weeklyDone))
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookResultWeeklyAgain() =
+        show(
+            "book-result-weekly-again",
+            checkpoint(
+                kind = "weekly",
+                fields = arrayOf(noReward, "status" to "completed", "result" to JsonObject(weeklyDone - "kind" - "passMark")),
+            ),
+            play = { rule.unfoldBook(folds) },
+        )
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookResultRemoved() =
+        show(
+            "book-result-removed",
+            checkpoint(fields = arrayOf("status" to "skipped", "endedWithoutQuestions" to true)),
+            play = { rule.unfoldBook(folds) },
+        )
+
+    @Test
+    @Config(qualifiers = BOOK)
+    fun bookQuestionsRemoved() = show("book-questions-removed", checkpoint(*emptyArray<JsonObject>()), play = { rule.unfoldBook(folds) })
 }
+
+private const val BOOK = "w852dp-h883dp-xhdpi"
+private const val SMALL_BOOK = "w707dp-h823dp-xhdpi"
+private const val MEDIUM = "w700dp-h840dp-xhdpi"
 
 private val ZU = MomentBuddy(BuddyLook(), "Zu")

@@ -69,13 +69,14 @@ private struct CombinationGridCanvas: View {
       board
 
       if let caption {
-        ActivityCaption(caption)
+        ActivityCaption(Text(caption))
       }
 
       if !isLocked {
         palette
       }
     }
+    .announcesStatus(caption)
   }
 
   private var board: some View {
@@ -195,7 +196,7 @@ private struct CombinationGridCanvas: View {
     }
   }
 
-  private var caption: Text? {
+  private var caption: String? {
     let total = fill.count
 
     if isChecked, let output, !isInteraction {
@@ -204,8 +205,8 @@ private struct CombinationGridCanvas: View {
           output == "dominant" ? traits.dominant : output == "recessive" ? traits.recessive : output
         } ?? output
 
-      return Text(
-        "\(counted.count) of \(total) squares: \(what)", tableName: "Activities",
+      return String(
+        localized: "\(counted.count) of \(total) squares: \(what)", table: "Activities",
         comment:
           "After the check: how many squares of a grid the question counts, and what it counts")
     }
@@ -218,23 +219,24 @@ private struct CombinationGridCanvas: View {
       let rightCount = fill.indices.filter { index in
         fill[index].map { CombinationGrid.same($0, right[index]) } ?? false
       }.count
-      return Text(
-        "\(rightCount) of \(total) squares right", tableName: "Activities",
+      return String(
+        localized: "\(rightCount) of \(total) squares right", table: "Activities",
         comment: "After the check: how many squares of a grid the learner filled right")
     }
 
     guard let traits = fields.traits else {
-      return Text(
-        "\(fill.compactMap(\.self).count) of \(total) squares filled", tableName: "Activities",
-        comment: "How many squares of a grid the learner filled")
+      return String(
+        localized: "\(fill.compactMap(\.self).count) of \(total) squares filled",
+        table: "Activities", comment: "How many squares of a grid the learner filled")
     }
 
     let filled = fill.compactMap(\.self)
     let dominant = filled.filter(CombinationGrid.isDominant).count
 
-    return Text(
-      "\(traits.dominant): \(dominant) of \(total)\u{00A0}· \(traits.recessive): \(filled.count - dominant) of \(total)",
-      tableName: "Activities", comment: "The tally of each trait under a Punnett square")
+    return String(
+      localized:
+        "\(traits.dominant): \(dominant) of \(total)\u{00A0}· \(traits.recessive): \(filled.count - dominant) of \(total)",
+      table: "Activities", comment: "The tally of each trait under a Punnett square")
   }
 
   private var palette: some View {

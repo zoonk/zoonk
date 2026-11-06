@@ -2,16 +2,20 @@ package com.zoonk.android.feature.session
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -21,6 +25,7 @@ import com.zoonk.android.feature.warmup.WARM_UP_ID
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
@@ -50,7 +55,10 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class NextStopWarmUpScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -81,10 +89,135 @@ class NextStopWarmUpScreenshots {
         capture("font200")
     }
 
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
+    fun bookDarkMoreContrast() = capture("book-dark-more-contrast", dark = true, moreContrast = true, fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookRightToLeft() = capture("book-rtl", fold = true, layoutDirection = LayoutDirection.Rtl)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("book-font200", fold = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBook() = capture("small-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookWithWorkMeanwhile() = capture("book-meanwhile", fold = true, alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactWithWorkMeanwhile() = capture("compact-meanwhile", alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedWithWorkMeanwhile() = capture("expanded-meanwhile", alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookWithWorkMeanwhile() = capture("small-book-meanwhile", fold = true, alternative = MEANWHILE, stop = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookWithWorkMeanwhileAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("book-meanwhile-font200", fold = true, alternative = MEANWHILE, stop = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactStop() = captureStop("compact")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactStopAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureStop("compact-font200")
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun expandedStop() = captureStop("expanded")
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookStop() = captureStop("book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w707dp-h823dp-xhdpi")
+    fun smallBookStop() = captureStop("small-book", fold = true)
+
+    @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun bookStopAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureStop("book-font200", fold = true)
+    }
+
+    private fun captureStop(
+        name: String,
+        fold: Boolean = false,
+    ) {
+        val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+        val api = FakeStudyApi()
+        val viewModel =
+            SessionViewModel(
+                StudyOpener(api, api::writeLesson, cache, { "UTC" }),
+                StudySessionStore(api, cache) { "UTC" },
+                { _, _ -> },
+                cache,
+                readiness = { _, _ -> error("The lesson is written") },
+                generations = { error("Nothing is written") },
+            )
+        val steps =
+            listOf(
+                step(0, status = StudyBlock.Status.COMPLETED).copy(title = "Inside the hive"),
+                step(1, status = StudyBlock.Status.COMPLETED, kind = StudyBlock.Kind.REVIEW),
+                step(2).copy(title = "The waggle dance", estimatedMinutes = 8L, oftenTested = true),
+                step(3),
+            )
+
+        compose.setContent {
+            ZoonkTheme {
+                NextStop(
+                    viewModel = viewModel,
+                    day = day(steps = steps),
+                    step = steps[2],
+                    goalId = GOAL,
+                    asked = false,
+                    notWritten = null,
+                    alternative = null,
+                    refresh = {},
+                    onStop = {},
+                    navigator = rememberAppNavigator(),
+                    warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session),
+                )
+            }
+        }
+        if (fold) compose.unfoldBook(folds) else compose.waitForIdle()
+        write("next-stop-$name")
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        fold: Boolean = false,
+        layoutDirection: LayoutDirection = LayoutDirection.Ltr,
+        alternative: DayStep? = null,
+        stop: Boolean = false,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
@@ -124,24 +257,26 @@ class NextStopWarmUpScreenshots {
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                NextStop(
-                    viewModel = viewModel,
-                    day = day(steps = listOf(shown, step(1).copy(title = "The waggle dance"))),
-                    step = shown,
-                    goalId = GOAL,
-                    asked = true,
-                    notWritten = null,
-                    alternative = null,
-                    refresh = { shown = shown.copy(screen = StudyBlock.Screen.LESSON) },
-                    onStop = null,
-                    navigator = rememberAppNavigator(),
-                    warmUps = warmUps,
-                )
+                CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                    NextStop(
+                        viewModel = viewModel,
+                        day = day(steps = listOf(shown, step(1).copy(title = "The waggle dance"))),
+                        step = shown,
+                        goalId = GOAL,
+                        asked = true,
+                        notWritten = null,
+                        alternative = alternative,
+                        refresh = { shown = shown.copy(screen = StudyBlock.Screen.LESSON) },
+                        onStop = if (stop) ({}) else null,
+                        navigator = rememberAppNavigator(),
+                        warmUps = warmUps,
+                    )
+                }
             }
         }
 
         compose.mainClock.advanceTimeBy(1_000)
-        compose.waitForIdle()
+        if (fold) compose.unfoldBook(folds) else compose.waitForIdle()
         write("first-lesson-wait-$name")
         compose.onNodeWithText("To put the bees to sleep").performScrollTo().performClick()
         compose.waitForIdle()
@@ -161,5 +296,6 @@ class NextStopWarmUpScreenshots {
 
     private companion object {
         val LESSON: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2f00")
+        val MEANWHILE = step(2, kind = StudyBlock.Kind.PRACTICE).copy(title = "Pollen and nectar")
     }
 }

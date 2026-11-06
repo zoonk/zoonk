@@ -24,7 +24,10 @@ export function StartPlanForm({
   const [state, formAction, isPending] = useActionState(
     async (previous: StartPlanState, formData: FormData) => {
       formData.set("timeZone", getLocalTimeZone());
-      const result = await action(previous, formData);
+
+      const result = await action(previous, formData).catch((): StartPlanState => ({
+        error: "failed",
+      }));
 
       if (result && "started" in result) {
         router.push("/plan");
@@ -45,6 +48,7 @@ export function StartPlanForm({
         aria-keyshortcuts="Enter"
         className="mt-1"
         disabled={isPending}
+        focusableWhenDisabled
         size="lg"
         type="submit"
       >

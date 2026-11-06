@@ -6,22 +6,28 @@ type ConversationScenarioInput = Omit<
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 
+const PT_RENTING_UNIT = {
+  canDo: [
+    "Ligar para marcar uma visita a um apartamento",
+    "Perguntar o que está incluído no aluguel",
+    "Entender um anúncio de aluguel",
+  ],
+  learnerLanguage: "pt",
+  targetLanguage: "en",
+  unitDescription: "Encontre um apartamento, pergunte sobre o aluguel e marque uma visita",
+  unitTitle: "Alugando um apartamento",
+};
+
 export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
   {
     expectations: `Brazilian learner of US English at A2, renting an apartment. A call to a landlord or agent to ask about a flat and book a viewing, with objectives like asking the rent, asking what's included and booking a day. US name and dollars. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.`,
     id: "pt-en-a2-renting",
-    userInput: {
-      canDo: [
-        "Ligar para marcar uma visita a um apartamento",
-        "Perguntar o que está incluído no aluguel",
-        "Entender um anúncio de aluguel",
-      ],
-      learnerLanguage: "pt",
-      level: "A2",
-      targetLanguage: "en",
-      unitDescription: "Encontre um apartamento, pergunte sobre o aluguel e marque uma visita",
-      unitTitle: "Alugando um apartamento",
-    },
+    userInput: { ...PT_RENTING_UNIT, level: "A2" },
+  },
+  {
+    expectations: `Brazilian learner of US English at A1, renting an apartment. A call to a landlord or agent, a stranger, to ask about a flat and book a viewing. The opening line introduces the character as the one speaking ("this is Sarah from...", "I'm Sarah") or names the place, and addresses no one by name: never "Hi, Emma" when Emma is the character, and never a name for the learner. Opening line and hints very short (A1: 3 to 6 words, present tense, the most common words). US name and dollars. Title, situation and descriptions in Brazilian Portuguese.`,
+    id: "pt-en-a1-renting",
+    userInput: { ...PT_RENTING_UNIT, level: "A1" },
   },
   {
     expectations: `US English speaker learning Mexican Spanish at A2, renting an apartment in Mexico City. A call to a landlord ("dueño" or "dueña") about a "departamento", with pesos, Mexican vocabulary ("renta", "depósito", "servicios", "departamento", not "piso") and "usted". Opening line and hints short (A2). Title, situation, role and every objective description in US English, never Spanish.`,
@@ -37,13 +43,25 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
-    expectations: `US English speaker learning Brazilian Portuguese at A1, at a restaurant. A face-to-face order or a call to a restaurant, with a Brazilian name and reais. Opening line and hints very short (A1): "Eu quero...", "A conta, por favor". Brazilian words ("cardápio", not "ementa"). Title, situation, role and every objective description in US English, never Portuguese.`,
+    expectations: `US English speaker learning Brazilian Portuguese at A1, at a restaurant. A phone call to a restaurant, such as booking a table or ordering food for pickup, with goals a call can reach: the learner is never there in person, so nothing asks for the bill at the table. A Brazilian name and reais. Opening line and hints very short (A1): "Eu quero...", "Quanto é?". Brazilian words ("cardápio", not "ementa"). Title, situation, role and every objective description in US English, never Portuguese.`,
     id: "en-pt-a1-restaurant",
     userInput: {
       canDo: ["Ask for a table", "Order food and drinks", "Ask for the bill"],
       learnerLanguage: "en",
       level: "A1",
       targetLanguage: "pt",
+      unitDescription: "Ask for a table, order and pay at a restaurant",
+      unitTitle: "At a restaurant",
+    },
+  },
+  {
+    expectations: `US English speaker practicing US English at A2, at a restaurant. A phone call to a restaurant, such as booking a table or ordering food for pickup, with goals a call can reach: the learner is never there in person, so nothing asks for the bill at the table. A US name and dollars. Opening line and hints short and simple (A2). Every field is in US English: title, situation, role, objective labels and descriptions, opening line and hints. The title is a 3 to 6 word goal starting with a verb ("Order dinner from a diner").`,
+    id: "en-en-a2-restaurant",
+    userInput: {
+      canDo: ["Ask for a table", "Order food and drinks", "Ask for the bill"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "en",
       unitDescription: "Ask for a table, order and pay at a restaurant",
       unitTitle: "At a restaurant",
     },
@@ -62,6 +80,133 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
       targetLanguage: "en",
       unitDescription: "Marque uma consulta, explique o que está sentindo e entenda as instruções",
       unitTitle: "No médico e na farmácia",
+    },
+  },
+  {
+    expectations: `Brazilian learner of US English at A2, making weekend plans. The character already knows the learner: a friend, colleague, neighbor or host family member (role in Brazilian Portuguese, such as "amiga" or "colega de trabalho"), never a relative, and the situation says who they are to the learner ("sua amiga Emma"). Together they choose what to do and agree on a day, time and place, with a small twist (the first idea doesn't work). The opening line greets the way a friend would and says who is calling, without the learner's name. Nothing names the learner or assumes facts about their life (their job, family or city). US name, places and prices. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.`,
+    id: "pt-en-a2-weekend-plans",
+    userInput: {
+      canDo: [
+        "Convidar alguém para fazer algo",
+        "Sugerir um dia, um horário e um lugar",
+        "Aceitar ou recusar um convite",
+      ],
+      learnerLanguage: "pt",
+      level: "A2",
+      targetLanguage: "en",
+      unitDescription: "Convide alguém para sair, combine o que fazer e marque dia, hora e lugar",
+      unitTitle: "Planos para o fim de semana",
+    },
+  },
+  {
+    expectations: `Brazilian learner of US English at A2, in a unit about chatting with neighbors, colleagues and new friends. The character already knows the learner: a friend, colleague or neighbor (role in Brazilian Portuguese), never a relative or someone they're meeting for the first time, and the situation says who they are to the learner. The objectives say what to do without giving anything away: no day, time or plan for the learner to propose and no hint of the character's twist (never "Suggest coffee on Saturday at 10 and pick another time if she can't"). The place and situation name no city or neighborhood, since that would be where the learner lives. Nothing names the learner or assumes facts about their life. US name. Opening line and hints short and simple (A2). Title, situation, role and descriptions in Brazilian Portuguese.`,
+    id: "pt-en-a2-social-life",
+    userInput: {
+      canDo: ["Consigo conversar com vizinhos e colegas"],
+      learnerLanguage: "pt",
+      level: "A2",
+      targetLanguage: "en",
+      unitDescription: "Conversa com vizinhos, colegas e novos amigos.",
+      unitTitle: "Vida social",
+    },
+  },
+  {
+    expectations: `US English speaker learning Mexican Spanish at A1, talking about family. The character already knows the learner: a friend, colleague, neighbor or host family member (role in US English), never one of the learner's relatives, and the situation says who they are to the learner ("your neighbor Lupita"). The learner says who is in their family and asks about the character's. The character's own family is in the brief; nothing assumes who is in the learner's family, and nothing names the learner. The opening line greets the way a friend would and says who is speaking. Opening line and hints very short (A1: 3 to 6 words, present tense): "Tengo dos hermanos.", "¿Tienes hijos?". Title, situation and descriptions in US English.`,
+    id: "en-es-a1-family",
+    userInput: {
+      canDo: [
+        "Say who is in your family",
+        "Ask someone about their family",
+        "Say people's ages and what they do",
+      ],
+      learnerLanguage: "en",
+      level: "A1",
+      targetLanguage: "es",
+      unitDescription: "Talk about your family and ask about someone else's",
+      unitTitle: "My family",
+    },
+  },
+  {
+    expectations: `US English speaker learning Brazilian Portuguese at B1, joining a gym in São Paulo. A service moment, so the character is a stranger who works there (a receptionist or a trainer), never a friend or neighbor. The learner asks about plans and prices, hours or classes, and books a trial class, with reais and a Brazilian name. Opening line and hints at B1 (up to about 15 words, connectors). Title, situation and descriptions in US English.`,
+    id: "en-pt-b1-gym",
+    userInput: {
+      canDo: [
+        "Ask about membership plans and prices",
+        "Ask about opening hours and classes",
+        "Book a trial class",
+      ],
+      learnerLanguage: "en",
+      level: "B1",
+      targetLanguage: "pt",
+      unitDescription: "Find a gym, compare plans and book a trial class",
+      unitTitle: "Joining a gym",
+    },
+  },
+  {
+    expectations: `Brazilian learner of German at B1, at the doctor. A call to a German Praxis to book an appointment and explain symptoms and since when, with a German name. The doctor or receptionist never says "du" to the caller: a line that addresses them, in the opening line or the hints, uses "Sie" ("Wie kann ich Ihnen helfen?"), and the brief tells the voice model to use "Sie". An opening that addresses no one is fine. Opening line and hints at B1. Title, situation and descriptions in Brazilian Portuguese.`,
+    id: "pt-de-b1-doctor",
+    userInput: {
+      canDo: [
+        "Marcar uma consulta",
+        "Explicar sintomas e desde quando",
+        "Entender as instruções do remédio",
+      ],
+      learnerLanguage: "pt",
+      level: "B1",
+      targetLanguage: "de",
+      unitDescription: "Marque uma consulta, explique o que está sentindo e entenda as instruções",
+      unitTitle: "No médico",
+    },
+  },
+  {
+    expectations: `US English speaker learning French at A2, renting an apartment in France. A call to a landlord about an appartement, with the loyer, charges and dépôt de garantie in euros. The landlord never says "tu" to the caller: a line that addresses them, in the opening line or the hints, uses "vous" ("Comment puis-je vous aider ?"), and the brief tells the voice model to use "vous". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    id: "en-fr-a2-renting",
+    userInput: {
+      canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "fr",
+      unitDescription:
+        "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+      unitTitle: "Renting an apartment",
+    },
+  },
+  {
+    expectations: `US English speaker learning Italian at A2, renting an apartment in Italy. A call to a landlord about an appartamento, with the affitto and the cauzione in euros. The landlord never says "tu" to the caller: a line that addresses them, in the opening line or the hints, uses "Lei" ("Come posso aiutarLa?"), and the brief tells the voice model to use "Lei". An opening that addresses no one is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    id: "en-it-a2-renting",
+    userInput: {
+      canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "it",
+      unitDescription:
+        "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+      unitTitle: "Renting an apartment",
+    },
+  },
+  {
+    expectations: `US English speaker learning Polish at A2, at the doctor. A call to a przychodnia to book an appointment and say what hurts, with a Polish name. The receptionist is polite with a stranger in the opening line and the brief, never "ty"; impersonal polite phrasing ("W czym mogę pomóc?") is fine, since the caller's gender is unknown. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    id: "en-pl-a2-doctor",
+    userInput: {
+      canDo: ["Book an appointment", "Say what hurts", "Ask about the time"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "pl",
+      unitDescription: "Book an appointment and say how you feel",
+      unitTitle: "At the doctor",
+    },
+  },
+  {
+    expectations: `US English speaker learning Turkish at A2, renting an apartment in Türkiye. A call to a landlord about a daire, with the kira and the depozito in Turkish lira. The landlord never says "sen" to the caller: a line that addresses them, in the opening line or the hints, uses "siz" ("Size nasıl yardımcı olabilirim?"), and the brief tells the voice model to use "siz". An opening with no second-person form, such as "Nasıl yardımcı olabilirim?", is fine. Opening line and hints short (A2). Title, situation and descriptions in US English.`,
+    id: "en-tr-a2-renting",
+    userInput: {
+      canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "tr",
+      unitDescription:
+        "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+      unitTitle: "Renting an apartment",
     },
   },
 ];

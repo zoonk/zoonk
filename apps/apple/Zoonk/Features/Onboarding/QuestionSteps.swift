@@ -70,7 +70,7 @@ struct QuestionForm<Content: View>: View {
   let isSaving: Bool
   let failed: Bool
   /// Says why a save failed, when the answer itself was refused.
-  var failure: Text?
+  var failure: String?
   @ViewBuilder let content: Content
 
   var body: some View {
@@ -79,11 +79,11 @@ struct QuestionForm<Content: View>: View {
 
       if failed {
         Section {
-          (failure
-            ?? Text(
-              "That didn't save. Try again.", tableName: "Onboarding",
-              comment: "A change couldn't be saved"))
-            .foregroundStyle(.destructive)
+          FailureLine(
+            message: failure
+              ?? String(
+                localized: "That didn't save. Try again.", table: "Onboarding",
+                comment: "A change couldn't be saved"))
         }
       }
     }
@@ -180,7 +180,7 @@ struct StepButtons: View {
 struct ChoiceRows<Value: Hashable>: View {
   struct Choice {
     let value: Value
-    let label: Text
+    let label: String
     var detail: Text?
   }
 
@@ -188,6 +188,8 @@ struct ChoiceRows<Value: Hashable>: View {
   var picked: Value?
   var header: Text?
   var footer: Text?
+  /// The next question replaces this one, so VoiceOver says what was picked as it goes.
+  var movesOn = false
   let onPick: (Value) -> Void
 
   var body: some View {
@@ -195,10 +197,17 @@ struct ChoiceRows<Value: Hashable>: View {
       ForEach(choices, id: \.value) { choice in
         Button {
           onPick(choice.value)
+
+          if movesOn {
+            announcePolitely(
+              String(
+                localized: "You picked \(choice.label)", table: "Onboarding",
+                comment: "VoiceOver, as a one-answer question moves on: the answer picked"))
+          }
         } label: {
           HStack {
             VStack(alignment: .leading, spacing: 2) {
-              choice.label
+              Text(choice.label)
                 .foregroundStyle(.primary)
               if let detail = choice.detail {
                 detail
@@ -244,39 +253,46 @@ private struct PurposeQuestion: View {
       choices: [
         .init(
           value: "overview",
-          label: Text("Get an overview", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Get an overview", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "The big ideas, no formulas", tableName: "Onboarding", comment: "Purpose choice detail")
         ),
         .init(
           value: "deep",
-          label: Text("Understand it in depth", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Understand it in depth", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "From the basics to advanced", tableName: "Onboarding", comment: "Purpose choice detail"
           )),
         .init(
           value: "work",
-          label: Text("Use it at work", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Use it at work", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Apply it to real projects", tableName: "Onboarding", comment: "Purpose choice detail")),
         .init(
           value: "careerChange",
-          label: Text("Change careers", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Change careers", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Get ready for a new role", tableName: "Onboarding", comment: "Purpose choice detail")),
         .init(
           value: "refresh",
-          label: Text("Refresh what I studied", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Refresh what I studied", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Pick up what you left behind", tableName: "Onboarding",
             comment: "Purpose choice detail")),
         .init(
           value: "other",
-          label: Text("Something else", tableName: "Onboarding", comment: "Purpose choice"),
+          label: String(
+            localized: "Something else", table: "Onboarding", comment: "Purpose choice"),
           detail: Text(
             "Tell us later, in your own words", tableName: "Onboarding",
             comment: "Purpose choice detail")),
-      ]
+      ],
+      movesOn: true
     ) { purpose in
       onAnswer(["purpose": purpose, "question": "purpose"])
     }
@@ -545,7 +561,7 @@ private struct DateQuestion: View {
               date
             } set: {
               self.date = $0
-            }, in: range,
+            }, in: GoalDate.range(today: today),
             displayedComponents: .date
           ) {
             Text("Date", tableName: "Onboarding", comment: "Label of the goal's date picker")
@@ -673,14 +689,6 @@ private struct DateQuestion: View {
       picksOtherDate = true
     }
   }
-
-  /// After the goal's today, and no later than a plan reaches (3,650 days).
-  private var range: ClosedRange<Date> {
-    let calendar = Calendar.isoLocal
-    let goalToday = UnderstoodRows.day(today) ?? calendar.startOfDay(for: .now)
-    let tomorrow = calendar.date(byAdding: .day, value: 1, to: goalToday) ?? goalToday
-    return tomorrow...(calendar.date(byAdding: .day, value: 3650, to: goalToday) ?? goalToday)
-  }
 }
 
 /// Why the goal's date can't be planned as it stands, as core says.
@@ -715,12 +723,20 @@ enum GoalDate {
     }
   }
 
-  /// Core counts the goal's days in its zone, UTC without one, so the date screen does too.
+  /// Core counts a goal's or draft's days in its zone, UTC without one, so date pickers do too.
   static func today(now: Date, timeZone: String?) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = timeZone.flatMap(TimeZone.init(identifier:)) ?? .gmt
     let parts = calendar.dateComponents([.year, .month, .day], from: now)
     return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
+  }
+
+  /// The deadlines core accepts: after `today`, and no later than a plan reaches (3,650 days).
+  static func range(today: String) -> ClosedRange<Date> {
+    let calendar = Calendar.isoLocal
+    let goalToday = UnderstoodRows.day(today) ?? calendar.startOfDay(for: .now)
+    let tomorrow = calendar.date(byAdding: .day, value: 1, to: goalToday) ?? goalToday
+    return tomorrow...(calendar.date(byAdding: .day, value: 3650, to: goalToday) ?? goalToday)
   }
 }
 
@@ -870,12 +886,13 @@ private struct ExamChoiceQuestion: View {
           choices: options.map { option in
             .init(
               value: option.name,
-              label: Text(option.shortName ?? option.name),
+              label: option.shortName ?? option.name,
               detail: option.shortName.flatMap { $0 == option.name ? nil : Text(option.name) })
           },
           picked: picks[choice.group]?.first,
           header: Text(choice.group),
-          footer: leftOut
+          footer: leftOut,
+          movesOn: takes == 1
         ) { name in
           picks[choice.group] = [name]
 
@@ -924,7 +941,7 @@ private struct LevelQuestion: View {
         "It only changes where your plan starts.", tableName: "Onboarding",
         comment: "Under the level question"))
 
-    ChoiceRows(choices: LevelChoices.all(testMinutes: testMinutes)) { level in
+    ChoiceRows(choices: LevelChoices.all(testMinutes: testMinutes), movesOn: true) { level in
       onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
     }
   }
@@ -958,30 +975,31 @@ enum LevelChoices {
     [
       .init(
         value: OwnLevel.none.rawValue,
-        label: Text(OwnLevel.none.label),
+        label: String(localized: OwnLevel.none.label),
         detail: Text(
           "From scratch, with everyday examples", tableName: "Onboarding",
           comment: "Level choice detail")),
       .init(
         value: OwnLevel.basic.rawValue,
-        label: Text(OwnLevel.basic.label),
+        label: String(localized: OwnLevel.basic.label),
         detail: Text("I know a few things", tableName: "Onboarding", comment: "Level choice detail")
       ),
       .init(
         value: OwnLevel.intermediate.rawValue,
-        label: Text(OwnLevel.intermediate.label),
+        label: String(localized: OwnLevel.intermediate.label),
         detail: Text(
           "We'll skip what you already know", tableName: "Onboarding",
           comment: "Level choice detail")),
       .init(
         value: OwnLevel.advanced.rawValue,
-        label: Text(OwnLevel.advanced.label),
+        label: String(localized: OwnLevel.advanced.label),
         detail: Text(
           "Only what's new or hard", tableName: "Onboarding", comment: "Level choice detail")),
       .init(
         value: quickTest,
-        label: Text(
-          "Not sure, give me a quick test", tableName: "Onboarding", comment: "Level choice"),
+        label: String(
+          localized: "Not sure, give me a quick test", table: "Onboarding",
+          comment: "Level choice"),
         detail: testMinutes.map { minutes in
           Text(
             "Adapts to your answers, about \(Duration.seconds(minutes * 60), format: .units(allowed: [.minutes], width: .wide))",

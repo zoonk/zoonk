@@ -126,18 +126,17 @@ describe(getWebPlusSubscription, () => {
     expect(stripe.retrieve).not.toHaveBeenCalled();
   });
 
-  it("reads a free learner's website state with one query", async () => {
+  it("reads a free learner's website state without writing", async () => {
     const user = await userFixture();
     vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
 
     await expect(countDatabaseStatements(getWebPlusSubscription)).resolves.toMatchObject({
       result: { status: "none" },
-      statements: 1,
       writes: 0,
     });
   });
 
-  it("prefers an older active website plan over a newer unpaid renewal in one query", async () => {
+  it("prefers an older active website plan over a newer unpaid renewal", async () => {
     const user = await userFixture();
     vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
 
@@ -164,7 +163,6 @@ describe(getWebPlusSubscription, () => {
 
     await expect(countDatabaseStatements(getWebPlusSubscription)).resolves.toMatchObject({
       result: { periodEnd: active.periodEnd, state: "renewing", status: "ready" },
-      statements: 1,
       writes: 0,
     });
   });

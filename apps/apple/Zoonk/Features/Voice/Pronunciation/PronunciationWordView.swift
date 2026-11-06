@@ -79,15 +79,24 @@ private struct ListenButtons: View {
         if let limit {
           HelpLimitNotice(limit: limit)
         } else {
-          Text(
-            "The sound didn't play. Try again.", tableName: "Voice",
-            comment: "Playing a word's sound failed"
+          FailureLine(
+            message: LocalizedStringResource(
+              "The sound didn't play. Try again.", table: "Voice",
+              comment: "Playing a word's sound failed")
           )
           .font(.footnote)
-          .foregroundStyle(.destructive)
         }
       }
     }
+    .announcesStatus(limit(state)?.message)
+  }
+
+  private func limit(_ state: SpeechPlayer.State) -> HelpLimit? {
+    guard case .failed(let limit) = state else {
+      return nil
+    }
+
+    return limit
   }
 
   private func button(

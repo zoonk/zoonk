@@ -43,6 +43,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   @ObservationIgnored private var owner: AuthenticatedSession?
   @ObservationIgnored private var request: (id: Int, task: Task<Void, Never>)?
   @ObservationIgnored private var requestCount = 0
+  @ObservationIgnored private var droppedRequests = 0
   @ObservationIgnored private var viewers = 0
 
   init(
@@ -132,13 +133,18 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   }
 
   /// A screen showing it revalidates now, a failed load included; otherwise the next time a screen
-  /// loads it. A response already on its way may predate the mutation, so it's discarded.
+  /// loads it. A response already on its way may predate the mutation, so it's discarded, and a call
+  /// waiting for it waits for a new read instead.
   func invalidate() {
     isInvalidated = true
     hasSettledOnFailure = false
 
     guard request != nil || storedState != .idle else {
       return
+    }
+
+    if request != nil {
+      droppedRequests += 1
     }
 
     cancelRequest()
@@ -200,6 +206,16 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   }
 
   private func run() async {
+    let dropped = droppedRequests
+    let shown = revision
+    await awaitRequest()
+
+    if droppedRequests != dropped, revision == shown, !hasSettledOnFailure, !Task.isCancelled {
+      await run()
+    }
+  }
+
+  private func awaitRequest() async {
     if let request {
       await request.task.value
       return
