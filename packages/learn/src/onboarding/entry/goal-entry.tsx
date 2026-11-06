@@ -35,6 +35,8 @@ function SubmitButton() {
 }
 
 export function GoalEntry({
+  attachOpen,
+  attachRef,
   attachment,
   canSubmitEmpty = false,
   defaultGoal,
@@ -45,6 +47,8 @@ export function GoalEntry({
   onSubmit,
   signUpHref,
 }: {
+  attachOpen?: boolean;
+  attachRef?: React.Ref<HTMLButtonElement>;
   attachment?: React.ReactNode;
   canSubmitEmpty?: boolean;
   defaultGoal: string;
@@ -103,9 +107,11 @@ export function GoalEntry({
         <div className="col-span-2 flex items-end justify-end gap-1 @xl:col-span-1">
           {onAttach && (
             <Button
+              aria-expanded={attachOpen}
               aria-label={t("Study your own material")}
               className="text-muted-foreground mr-auto -ml-2.5 size-11 shrink-0 @xl:mr-0 @xl:ml-0"
               onClick={onAttach}
+              ref={attachRef}
               size="icon-lg"
               type="button"
               variant="ghost"

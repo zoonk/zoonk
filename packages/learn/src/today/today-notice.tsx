@@ -2,7 +2,8 @@
 
 import { type TodayNoticeKind } from "@zoonk/core/view-models/today/notice";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useFocusOnRemovedControl } from "../_components/suggestion-focus";
 import { useTodayScreen } from "./today-context";
 import { TodayExamAccess } from "./today-exam-access";
 import { TodayExamChoice } from "./today-exam-choice";
@@ -54,12 +55,29 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
   }
 }
 
-export function TodayNotice({ className }: { className?: string }) {
+/**
+ * A notice that goes away while it holds focus, such as one the learner dismissed, hands focus to
+ * `fallbackFocus`.
+ */
+export function TodayNotice({
+  className,
+  fallbackFocus,
+}: {
+  className?: string;
+  fallbackFocus: React.RefObject<HTMLElement | null>;
+}) {
   const { today } = useTodayScreen();
   const kind = useShownNotice(today.notice);
+  const slot = useRef<HTMLDivElement>(null);
+
+  useFocusOnRemovedControl(slot, () => fallbackFocus.current);
 
   return (
-    <div className={cn("flex flex-col empty:hidden", className)} data-slot="today-notice">
+    <div
+      className={cn("flex flex-col empty:hidden", className)}
+      data-slot="today-notice"
+      ref={slot}
+    >
       <NoticeOfKind kind={kind} />
     </div>
   );
