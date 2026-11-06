@@ -1,4 +1,5 @@
 import { keepCarriedAfterBases, listBegunSkillIds } from "./carried-bases";
+import { markAfterCarried, scheduleCarriedWork, shiftReserved } from "./carried-schedule";
 import { findChapterInProgress } from "./chapter-in-progress";
 import { takeFocusedToday } from "./focused-today";
 import { getSkillArea } from "./graph-areas";
@@ -6,7 +7,7 @@ import { LEARN_KINDS, PHASE_WORK_KINDS } from "./plan-item-rules";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
-import { type PlanDay, getLessonCapacity, scheduleUnits } from "./schedule-units";
+import { type PlanDay, getLessonCapacity } from "./schedule-units";
 
 export type CarryOver = {
   itemIds?: readonly string[];
@@ -163,50 +164,6 @@ function splitCarriedUnits({
   };
 }
 
-function shiftReserved({
-  days,
-  minutes,
-}: {
-  days: readonly PlanDay[];
-  minutes: ReadonlyMap<number, number>;
-}): PlanDay[] {
-  return days.map((day) => {
-    const shift = minutes.get(day.date.getTime());
-
-    return shift
-      ? { ...day, shape: { ...day.shape, reserved: (day.shape.reserved ?? 0) + shift } }
-      : day;
-  });
-}
-
-function findRoomEnd({
-  ends,
-  from,
-  phase,
-}: {
-  ends: ReadonlyMap<number, Date>;
-  from: Date;
-  phase: number;
-}): Date | undefined {
-  const ahead = [...ends].filter(([kept, end]) => kept >= phase && end >= from);
-  return ahead.toSorted(([a], [b]) => a - b)[0]?.[1];
-}
-
-function getChallengeRoom({
-  ends,
-  from,
-  units,
-}: {
-  ends: ReadonlyMap<number, Date>;
-  from: Date;
-  units: readonly QueueUnit[];
-}): Map<number, number> {
-  return units.reduce((room, unit) => {
-    const end = unit.kind === "boss" ? findRoomEnd({ ends, from, phase: unit.phase }) : undefined;
-    return end ? room.set(end.getTime(), (room.get(end.getTime()) ?? 0) + unit.minutes) : room;
-  }, new Map<number, number>());
-}
-
 export function reserveCarriedTime({
   days,
   minutes,
@@ -224,51 +181,6 @@ export function reserveCarriedTime({
     },
     { days: [], left: minutes },
   ).days;
-}
-
-function placeOn<TUnit extends QueueUnit>({ day, unit }: { day: PlanDay; unit: TUnit }) {
-  return {
-    ...unit,
-    date: day.date,
-    phase: day.shape.phase ?? unit.phase,
-    studyMinutes: unit.minutes / (day.shape.share || 1),
-  };
-}
-
-function scheduleCarriedUnits({
-  days,
-  today,
-  units,
-}: {
-  days: readonly PlanDay[];
-  today: ReadonlySet<string>;
-  units: readonly QueueUnit[];
-}): ReturnType<typeof scheduleUnits> {
-  const schedule = scheduleUnits({ days, units });
-  const [first] = days;
-  const lastDate = schedule.units.at(-1)?.date.getTime();
-  const day = days.find((planDay) => planDay.date.getTime() === lastDate) ?? first;
-
-  if (!day || !first) {
-    return schedule;
-  }
-
-  const placed = schedule.units.map((unit) =>
-    today.has(unit.key) && unit.date > first.date ? placeOn({ day: first, unit }) : unit,
-  );
-
-  const kept = schedule.dropped.map(({ fittedMinutes: _fitted, ...unit }) =>
-    placeOn({ day: today.has(unit.key) ? first : day, unit }),
-  );
-
-  const isToday = (unit: { date: Date }) => unit.date.getTime() === first.date.getTime();
-  const all = [...placed, ...kept];
-
-  return {
-    ...schedule,
-    dropped: [],
-    units: [...all.filter((unit) => isToday(unit)), ...all.filter((unit) => !isToday(unit))],
-  };
 }
 
 export function placeCarriedWork({
@@ -304,15 +216,7 @@ export function placeCarriedWork({
 
   const { carried, rest } = splitCarriedUnits({ keys, units });
 
-  const first = days[0]?.date;
-
-  const room =
-    carried.length > 0 && first
-      ? getChallengeRoom({ ends: phaseEnds, from: first, units: rest })
-      : new Map();
-
-  const roomed = shiftReserved({ days, minutes: room });
-  const schedule = scheduleCarriedUnits({ days: roomed, today, units: carried });
+  const { room, roomed, schedule } = scheduleCarriedWork({ carried, days, phaseEnds, rest, today });
 
   const reserved = shiftReserved({
     days: reserveCarriedTime({
@@ -331,11 +235,13 @@ export function placeCarriedWork({
       })
     : { days: reserved, rest, today: [] };
 
+  const placed = { ...schedule, units: [...schedule.units, ...steered.today] };
+
   return {
     carried: [...carried, ...steered.today],
     days: steered.days,
     released: left.filter((key) => !keys.includes(key)),
-    rest: steered.rest,
-    schedule: { ...schedule, units: [...schedule.units, ...steered.today] },
+    rest: markAfterCarried({ schedule: placed, units: steered.rest }),
+    schedule: placed,
   };
 }

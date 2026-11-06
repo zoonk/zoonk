@@ -1899,6 +1899,71 @@ describe("work an earlier day left", () => {
     expect(todoLessons(withoutRoom)).toStrictEqual(todoLessons({ items }));
   });
 
+  it.each([
+    { daily: 20, last: [], name: "one lesson left that fits beside the challenge", taught: 5 },
+    { daily: 10, last: [], name: "one lesson left that takes the comeback day", taught: 3 },
+    {
+      daily: 20,
+      last: ["s1", "s2"],
+      name: "a lesson left also tagged with a later skill",
+      taught: 5,
+    },
+  ])(
+    "teaches a challenge's own lessons left on its shown day, then the challenge ($name)",
+    ({ daily, last, taught }) => {
+      const input = planInput({
+        goal: { dailyMinutes: daily, kind: "learn", targetDate: null },
+        graph: {
+          phases: [
+            { milestone: null, name: "First" },
+            { milestone: null, name: "Second" },
+          ],
+          skills: [
+            skill("s1", { lessons: taught + (last.length > 0 ? 1 : 0) }),
+            skill("s2", { lessons: 5, phase: 1 }),
+            skill("s3", { phase: 1 }),
+          ],
+        },
+        lessons: [
+          ...lessonsFor("s1", taught).map((entry) => ({ ...entry, minutes: 5 })),
+          ...(last.length > 0 ? [lesson("last", last, 5)] : []),
+          ...lessonsFor("s2", 2).map((entry) => ({ ...entry, minutes: 5 })),
+          ...lessonsFor("s3", 2).map((entry) => ({ ...entry, minutes: 5 })),
+        ],
+      });
+
+      const first = buildPlan(input);
+      const items = store(first, new Set(lessonsOn(first, monday)));
+
+      const comeBack = (released: Set<number>) =>
+        buildPlan({
+          ...input,
+          carryOver: { lessonIds: [] },
+          items,
+          phaseEnds: getShownPhaseEnds({ items, phases: first.phases, released }),
+          setAsideLeftWork: true,
+          today: wednesday,
+        });
+
+      const kept = comeBack(new Set());
+      const firstLeft = kept.items.filter((item) => item.status === "todo" && item.phase === 0);
+
+      expect(first.phases[0]?.endDate).toBe("2026-09-30");
+      expect(lessonsOn(first, tuesday).length).toBeGreaterThan(0);
+
+      expect(firstLeft.map((item) => [item.key.split(":")[0], dateOf(item)])).toStrictEqual([
+        ...lessonsOn(first, tuesday).map(() => ["lesson", "2026-09-30"]),
+        ["boss", "2026-10-01"],
+      ]);
+
+      expect(kept.items.map((item) => [item.key, dateOf(item)])).toStrictEqual(
+        comeBack(new Set([0])).items.map((item) => [item.key, dateOf(item)]),
+      );
+
+      expect(kept.endsBeforeLessons).toStrictEqual([]);
+    },
+  );
+
   it("leaves a lesson given ahead where its phase has it while an earlier phase has days of work left", () => {
     const input = planInput({
       graph: {
