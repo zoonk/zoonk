@@ -2,10 +2,7 @@ import {
   SETUP_LESSONS_READY_STEP,
   type SetupLessonStepName,
 } from "@zoonk/core/library/generation/steps";
-import {
-  type SetupLessonWriting,
-  getSetupLessonWritingKey,
-} from "@zoonk/core/library/tools/setup-lesson-contract";
+import { type SetupLessonWriting } from "@zoonk/core/library/tools/setup-lesson-contract";
 import { writeSetupLesson } from "@zoonk/core/library/tools/write-setup-lesson";
 import { type QuestionWritingResult, runQuestionWriting } from "../goals/question-writing-run";
 
@@ -24,12 +21,7 @@ export async function setupLessonsWorkflow(
   "use workflow";
 
   return runQuestionWriting<SetupLessonStepName>({
-    steps: {
-      join: "joinSetupLessons",
-      ready: SETUP_LESSONS_READY_STEP,
-      write: "writeSetupLessons",
-    },
-    token: getSetupLessonWritingKey(writing),
+    steps: { ready: SETUP_LESSONS_READY_STEP, write: "writeSetupLessons" },
     write: async () => {
       await Promise.all(writing.tools.map((tool) => writeSetupLessonStep({ tool, writing })));
       return "written";

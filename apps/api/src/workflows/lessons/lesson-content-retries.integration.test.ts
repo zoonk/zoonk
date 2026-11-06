@@ -9,9 +9,11 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import { chapterLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { start } from "workflow/api";
+import { getRun, start } from "workflow/api";
+import { startOnce } from "../_shared/run-token";
 import { recordedLessonFixture } from "../_test-utils/recorded-lesson";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
+import { getLessonContentHookToken } from "./lesson-content-result";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 
 vi.mock("@zoonk/ai/tasks/lesson-marks", async (importOriginal) => ({
@@ -171,4 +173,99 @@ describe("lesson draft durability", () => {
     expect(calls.filter((picture) => picture === failing)).toHaveLength(4);
     expect(calls.filter((picture) => picture !== failing)).toHaveLength(pictures.length - 1);
   });
+});
+
+async function unwrittenLesson() {
+  const [chapter, owner] = await Promise.all([libraryChapterFixture(), userFixture()]);
+
+  const lesson = await recordedLessonFixture({
+    homeChapterId: chapter.id,
+    ownerId: owner.id,
+    spec: recordedSpec.lessons[0],
+    specStatus: "completed",
+    visibility: "private",
+  });
+
+  await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id });
+  return lesson;
+}
+
+function holdDraft() {
+  const release = Promise.withResolvers<null>();
+
+  vi.mocked(writeLessonDraft)
+    .mockReset()
+    .mockImplementation(async () => {
+      await release.promise;
+      return taskResult(recorded);
+    });
+
+  vi.mocked(tagLesson).mockResolvedValue({
+    data: {
+      ideas: recorded.summary.ideas.map(() => ({ about: null, icon: null })),
+      screens: recorded.screens.map(() => ({
+        example: null,
+        icon: null,
+        ideaIndex: 0,
+        underline: null,
+      })),
+    },
+  } as never);
+
+  return () => release.resolve(null);
+}
+
+function startForLearner(lessonId: string) {
+  return startOnce(
+    lessonContentWorkflow,
+    [{ lessonId, wait: "learner" }],
+    getLessonContentHookToken(lessonId),
+  );
+}
+
+async function untilDrafting() {
+  await vi.waitFor(() => expect(writeLessonDraft).toHaveBeenCalledOnce(), {
+    interval: 100,
+    timeout: 10_000,
+  });
+}
+
+describe("a learner's start beside a plan's", () => {
+  it("follows the plan's run already writing the lesson", async () => {
+    const lesson = await unwrittenLesson();
+    const release = holdDraft();
+
+    const plan = await start(lessonContentWorkflow, [{ lessonId: lesson.id }]);
+    await untilDrafting();
+
+    await expect(startForLearner(lesson.id)).resolves.toBe(plan.runId);
+
+    release();
+    await expect(plan.returnValue).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
+    expect(writeLessonDraft).toHaveBeenCalledOnce();
+  }, 60_000);
+
+  it("leaves the lesson to the learner's run when a plan's run starts after it", async () => {
+    const lesson = await unwrittenLesson();
+    const release = holdDraft();
+
+    const learner = await startForLearner(lesson.id);
+    await untilDrafting();
+
+    const plan = await start(lessonContentWorkflow, [{ lessonId: lesson.id }]);
+    await expect(plan.returnValue).resolves.toStrictEqual({ lessonId: lesson.id, status: "busy" });
+
+    release();
+
+    await expect(getRun(learner).returnValue).resolves.toStrictEqual({
+      lessonId: lesson.id,
+      status: "ready",
+    });
+
+    expect(writeLessonDraft).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ contentRunId: learner, contentStatus: "completed" });
+  }, 60_000);
 });

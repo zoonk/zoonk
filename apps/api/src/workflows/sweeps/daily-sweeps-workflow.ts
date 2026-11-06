@@ -1,6 +1,7 @@
 import { start } from "workflow/api";
 import { repeatUntil } from "../_shared/repeat-until";
-import { followUpsWorkflow } from "../follow-ups/follow-ups-workflow";
+import { startOnce } from "../_shared/run-token";
+import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
@@ -49,7 +50,10 @@ async function checkFreshness(): Promise<number> {
 /** Owed work whose start failed, such as an API that didn't answer the learner's request. */
 async function startOldFollowUps(): Promise<number> {
   const userIds = await listLearnersWithOldFollowUpsStep();
-  await Promise.all(userIds.map((userId) => start(followUpsWorkflow, [{ userId }])));
+
+  await Promise.all(
+    userIds.map((userId) => startOnce(followUpsWorkflow, [{ userId }], getFollowUpsToken(userId))),
+  );
 
   return userIds.length;
 }

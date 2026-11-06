@@ -3,8 +3,9 @@ import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { start } from "workflow/api";
-import { callMemoryWorkflow } from "./call-memory-workflow";
+import { getRun } from "workflow/api";
+import { startOnce } from "../_shared/run-token";
+import { callMemoryWorkflow, getCallMemoryToken } from "./call-memory-workflow";
 
 vi.mock("@zoonk/ai/tasks/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
 
@@ -53,7 +54,7 @@ async function settledCall() {
 }
 
 describe(callMemoryWorkflow, () => {
-  it("reads a call once when its run starts twice", async () => {
+  it("reads a call once when it's asked to twice, the second start answering with the first run", async () => {
     const call = await settledCall();
     const release = Promise.withResolvers<null>();
 
@@ -65,18 +66,20 @@ describe(callMemoryWorkflow, () => {
       })
       .mockResolvedValue(NOTHING_TO_REMEMBER);
 
-    const first = await start(callMemoryWorkflow, [call]);
+    const startMemory = () =>
+      startOnce(callMemoryWorkflow, [call], getCallMemoryToken(call.conversationId));
+
+    const first = await startMemory();
 
     await vi.waitFor(() => expect(extractMemoryFacts).toHaveBeenCalledOnce(), {
       interval: 100,
       timeout: 30_000,
     });
 
-    const second = await start(callMemoryWorkflow, [call]);
-    await second.returnValue;
+    await expect(startMemory()).resolves.toBe(first);
 
     release.resolve(null);
-    await first.returnValue;
+    await getRun(first).returnValue;
 
     expect(extractMemoryFacts).toHaveBeenCalledOnce();
   });

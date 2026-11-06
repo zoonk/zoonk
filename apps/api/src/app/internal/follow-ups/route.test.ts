@@ -50,7 +50,10 @@ describe("POST /internal/follow-ups", () => {
 
     expect(response.status).toBe(202);
     await expect(response.json()).resolves.toStrictEqual({ runId: "wrun_follow_ups" });
-    expect(start).toHaveBeenCalledExactlyOnceWith(followUpsWorkflow, [{ userId: USER_ID }]);
+
+    expect(start).toHaveBeenCalledExactlyOnceWith(followUpsWorkflow, [{ userId: USER_ID }], {
+      experimental_hook: { token: `follow-ups:${USER_ID}` },
+    });
   });
 
   it("refuses a learner id that isn't one", async () => {

@@ -7,10 +7,6 @@ import { getUserSubscriptionCacheTag } from "../../cache/tags";
 import { findWebSubscription } from "../../learner/facts/web-subscription";
 import type Stripe from "stripe";
 
-export function isPendingCancel(subscription: Stripe.Subscription): boolean {
-  return subscription.cancel_at_period_end || subscription.cancel_at !== null;
-}
-
 function hasBillingStateChanged({
   saved,
   live,

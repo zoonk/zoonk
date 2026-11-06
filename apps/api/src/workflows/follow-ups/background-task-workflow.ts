@@ -1,6 +1,5 @@
 import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import { rememberProposedMemory } from "../_shared/remember-memory";
-import { claimRunToken } from "../_shared/run-token";
 import {
   askToCancelSecondStorePlusStep,
   checkFactSensitivityStep,
@@ -29,7 +28,10 @@ export type BackgroundTask = Exclude<
   }
 >;
 
-export type BackgroundTaskResult = { status: "alreadyRunning" | "done" };
+/** One run at a time per thing: each works on one fixed thing, or on the learner's state as of when it runs. */
+export function getBackgroundTaskToken({ key, kind, userId }: BackgroundTask): string {
+  return `${kind}:${userId}:${key}`;
+}
 
 type InsightTask = Extract<BackgroundTask, { kind: "checkDailyInsight" }>;
 
@@ -76,20 +78,9 @@ async function runTask(task: BackgroundTask): Promise<void> {
   }
 }
 
-/**
- * One model call per step. A run already working on the same thing for the learner makes this one
- * exit: each works on one fixed thing, or on the learner's state as of when it runs.
- */
-export async function backgroundTaskWorkflow(task: BackgroundTask): Promise<BackgroundTaskResult> {
+/** One model call per step. */
+export async function backgroundTaskWorkflow(task: BackgroundTask): Promise<void> {
   "use workflow";
 
-  using claim = await claimRunToken(`${task.kind}:${task.userId}:${task.key}`);
-
-  if (claim.conflict) {
-    return { status: "alreadyRunning" };
-  }
-
   await runTask(task);
-
-  return { status: "done" };
 }

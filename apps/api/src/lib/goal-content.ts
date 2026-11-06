@@ -1,13 +1,16 @@
 import "server-only";
-import { explainQuestionWorkflow } from "@/workflows/explain/explain-question-workflow";
-import { goalContentWorkflow } from "@/workflows/goals/goal-content-workflow";
-import { researchWorkflow } from "@/workflows/research/research-workflow";
+import { startResearch } from "@/lib/research";
+import { startOnce } from "@/workflows/_shared/run-token";
+import {
+  explainQuestionWorkflow,
+  getExplainQuestionToken,
+} from "@/workflows/explain/explain-question-workflow";
+import { getGoalContentToken, goalContentWorkflow } from "@/workflows/goals/goal-content-workflow";
 import { getRequestPlatform } from "@zoonk/core/analytics/request-platform";
 import { getGoalGenerationId } from "@zoonk/core/goals/generation-id";
 import { recordGoalGeneration } from "@zoonk/core/goals/record-generation";
 import { isResearchedGoalKind } from "@zoonk/core/goals/research";
 import { type GoalKind } from "@zoonk/db";
-import { start } from "workflow/api";
 import { type z } from "zod";
 import { type goalGenerationSchema } from "./openapi/schemas/content-generation";
 
@@ -25,12 +28,22 @@ async function startGoalRun({
   const platform = await getRequestPlatform();
 
   if (goal.kind === "explain") {
-    const run = await start(explainQuestionWorkflow, [{ goalId: goal.id, platform }]);
-    return { generationId: run.runId, goalId: goal.id, kind: "explanation" };
+    const generationId = await startOnce(
+      explainQuestionWorkflow,
+      [{ goalId: goal.id, platform }],
+      getExplainQuestionToken(goal.id),
+    );
+
+    return { generationId, goalId: goal.id, kind: "explanation" };
   }
 
-  const run = await start(goalContentWorkflow, [{ goalId: goal.id, platform, researchId }]);
-  return { generationId: run.runId, goalId: goal.id, kind: "curriculum" };
+  const generationId = await startOnce(
+    goalContentWorkflow,
+    [{ goalId: goal.id, platform, researchId }],
+    getGoalContentToken({ goalId: goal.id }),
+  );
+
+  return { generationId, goalId: goal.id, kind: "curriculum" };
 }
 
 /** The run is saved on the goal before this answers, so the goal's screens follow it at once. */
@@ -66,8 +79,8 @@ async function startGoalResearch(goals: readonly GoalRef[]): Promise<GoalResearc
     goals
       .filter((goal) => isResearchedGoalKind(goal.kind))
       .map(async (goal) => {
-        const run = await start(researchWorkflow, [{ goalId: goal.id }]);
-        return { goalId: goal.id, researchId: run.runId };
+        const researchId = await startResearch({ goalId: goal.id });
+        return { goalId: goal.id, researchId };
       }),
   );
 

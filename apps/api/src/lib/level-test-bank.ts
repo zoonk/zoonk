@@ -1,9 +1,10 @@
 import { type ContentAnalytics } from "@/workflows/_shared/content-analytics";
+import { startOnce } from "@/workflows/_shared/run-token";
 import {
   type LevelTestBankInput,
+  getLevelTestBankToken,
   levelTestBankWorkflow,
 } from "@/workflows/language/level-test-bank-workflow";
-import { start } from "workflow/api";
 
 /** Callable from routes, steps and workflows alike. */
 export async function startLevelTestBank({
@@ -13,6 +14,11 @@ export async function startLevelTestBank({
   analytics?: ContentAnalytics;
   pair: LevelTestBankInput["pair"];
 }): Promise<{ generationId: string }> {
-  const run = await start(levelTestBankWorkflow, [{ analytics, pair }]);
-  return { generationId: run.runId };
+  const generationId = await startOnce(
+    levelTestBankWorkflow,
+    [{ analytics, pair }],
+    getLevelTestBankToken(pair),
+  );
+
+  return { generationId };
 }

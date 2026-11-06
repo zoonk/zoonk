@@ -35,6 +35,16 @@ export function toQueueUnit(
   return plain;
 }
 
+export function toLaidOutOrder(schedule: {
+  dropped: readonly Parameters<typeof toQueueUnit>[0][];
+  units: readonly Parameters<typeof toQueueUnit>[0][];
+}): LaidOutOrder {
+  return {
+    dropped: schedule.dropped.map((unit) => toQueueUnit(unit)),
+    placed: schedule.units.map((unit) => toQueueUnit(unit)),
+  };
+}
+
 function sumMinutes(units: readonly QueueUnit[]): number {
   return units.reduce((total, unit) => total + unit.minutes, 0);
 }

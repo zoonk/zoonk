@@ -1,0 +1,209 @@
+@font-face {
+  font-family: "Geist";
+  src: url(../assets/fonts/GeistVF.woff2) format("woff2");
+  font-weight: 100 900;
+}
+@font-face {
+  font-family: "GeistMono";
+  src: url(../assets/fonts/GeistMonoVF.woff2) format("woff2");
+  font-weight: 100 900;
+}
+:root {
+  --ink: oklch(0.185 0.004 286);
+  --ink-2: oklch(0.225 0.005 286);
+  --fg: oklch(0.185 0.004 286);
+  --bg: #fff;
+  --muted: oklch(0.96 0.002 106);
+  --muted-fg: oklch(0.505 0.012 286);
+  --faint: oklch(0.54 0.012 286);
+  --ground: oklch(0.975 0.0015 106);
+  --paper: oklch(0.955 0.002 106);
+  --border: oklch(0 0 0 / 8%);
+  --success: oklch(0.66 0.14 252);
+  --success-text: oklch(0.56 0.15 255);
+  --success-tint: oklch(0.95 0.025 252);
+  --destructive: oklch(0.65 0.19 6);
+  --destructive-text: oklch(0.575 0.2 4);
+  --destructive-tint: oklch(0.96 0.025 6);
+  --warning: oklch(0.74 0.14 70);
+  --energy: oklch(0.782 0.158 72.3);
+  --brain: oklch(0.64 0.17 293);
+  --brain-text: oklch(0.56 0.19 293);
+  --teal: oklch(0.57 0.1 185);
+  --conv: oklch(0.66 0.1 185);
+  --mock: oklch(0.68 0.15 45);
+  --review: oklch(0.7 0.13 68);
+  --mind: oklch(0.65 0.2 325);
+  --on-ink: oklch(0.975 0.002 286);
+  --on-ink-muted: oklch(0.74 0.012 286);
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: #000;
+}
+#stage {
+  position: relative;
+  overflow: hidden;
+  background: var(--ground);
+  font-family: "Geist", system-ui, sans-serif;
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01" 0;
+}
+.layer {
+  position: absolute;
+  inset: 0;
+}
+.abs {
+  position: absolute;
+}
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+}
+.row {
+  display: flex;
+  align-items: center;
+}
+.mono {
+  font-family: "GeistMono", ui-monospace, monospace;
+}
+.w {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+.ic {
+  display: block;
+  flex: none;
+}
+
+/* Type */
+.hero {
+  font-weight: 640;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  text-align: center;
+}
+.sub {
+  font-weight: 450;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--muted-fg);
+  text-align: center;
+}
+.dark {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+.dark .sub {
+  color: var(--on-ink-muted);
+}
+
+/* Caret + taps */
+.caret {
+  display: inline-block;
+  width: 0.08em;
+  height: 1.05em;
+  margin-left: 0.04em;
+  vertical-align: -0.16em;
+  background: var(--success);
+  border-radius: 2px;
+}
+.tapdot {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border-radius: 50%;
+  background: oklch(0.185 0.004 286 / 14%);
+  border: 2px solid oklch(0.185 0.004 286 / 22%);
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Phone */
+.phone {
+  position: absolute;
+  width: 414px;
+  height: 868px;
+  border-radius: 64px;
+  padding: 12px;
+  background: #0d0d0f;
+  box-shadow:
+    inset 0 0 0 1.5px #2c2c31,
+    inset 0 0 0 4px #0d0d0f,
+    inset 0 0 0 5px #1d1d21,
+    0 60px 120px -30px rgb(30 30 45 / 32%),
+    0 30px 60px -30px rgb(0 0 0 / 35%);
+  transform-origin: 50% 50%;
+}
+.screen {
+  position: relative;
+  width: 390px;
+  height: 844px;
+  border-radius: 52px;
+  overflow: hidden;
+  background: #fff;
+  isolation: isolate;
+}
+.statusbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 30px 0 36px;
+  font-weight: 600;
+  font-size: 16px;
+  z-index: 20;
+}
+.statusbar .icons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.btn {
+  height: 44px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 16.5px;
+  font-weight: 500;
+}
+.home-ind {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 134px;
+  height: 5px;
+  margin-left: -67px;
+  border-radius: 3px;
+  background: #111;
+  z-index: 30;
+}
+
+/* Floating card outside the phone */
+.float {
+  position: absolute;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow:
+    0 1px 0 oklch(0 0 0 / 4%),
+    0 30px 60px -20px rgb(30 30 45 / 22%),
+    0 12px 24px -12px rgb(0 0 0 / 12%);
+  border: 1px solid oklch(0 0 0 / 6%);
+}

@@ -1,5 +1,5 @@
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { type Page, expect } from "./fixtures";
-import { expectHydrated } from "./hydration";
 
 export async function startCourseWithLevel(page: Page) {
   const level = page.getByRole("radio", { name: /^The basics/u });

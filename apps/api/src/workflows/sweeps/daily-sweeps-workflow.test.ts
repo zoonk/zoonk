@@ -158,8 +158,16 @@ describe(dailySweepsWorkflow, () => {
 
     const result = await dailySweepsWorkflow();
 
-    expect(start).toHaveBeenCalledWith(followUpsWorkflow, [{ userId: waiting.id }]);
-    expect(start).not.toHaveBeenCalledWith(followUpsWorkflow, [{ userId: recent.id }]);
+    expect(start).toHaveBeenCalledWith(followUpsWorkflow, [{ userId: waiting.id }], {
+      experimental_hook: { token: `follow-ups:${waiting.id}` },
+    });
+
+    expect(start).not.toHaveBeenCalledWith(
+      followUpsWorkflow,
+      [{ userId: recent.id }],
+      expect.anything(),
+    );
+
     expect(result.followUpsStarted).toBeGreaterThanOrEqual(1);
   });
 

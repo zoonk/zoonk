@@ -31,14 +31,14 @@ function formatCodeChecks(entry: BattleLeaderboardEntry): string {
 }
 
 function leaderboardTable({
+  cost,
   failed,
   leaderboard,
-  spent,
   task,
 }: {
+  cost: (modelId: string) => number;
   failed: (modelId: string) => number;
   leaderboard: BattleLeaderboardEntry[];
-  spent: (modelId: string) => number;
   task: RegisteredTask;
 }): string[] {
   const categories = task.scoreCategories ?? [];
@@ -53,7 +53,7 @@ function leaderboardTable({
       ...(hasCodeChecks ? ["Code checks"] : []),
       "Failed",
       "p50",
-      "Spent",
+      "Cost",
     ],
     leaderboard.map((entry) => [
       entry.modelName,
@@ -68,7 +68,7 @@ function leaderboardTable({
       ...(hasCodeChecks ? [formatCodeChecks(entry)] : []),
       String(failed(entry.modelId)),
       formatSeconds(entry.latencyP50),
-      formatDollars(spent(entry.modelId)),
+      formatDollars(cost(entry.modelId)),
     ]),
   );
 }
@@ -111,13 +111,13 @@ function headToHeadTable({
 
 export function formatBattleReport(params: {
   caseRuns: number;
+  cost: (modelId: string) => number;
   failed: (modelId: string) => number;
   generationSpent: number;
   headToHead: HeadToHead[];
   judgeSpent: number;
   leaderboard: BattleLeaderboardEntry[];
   saved: boolean;
-  spent: (modelId: string) => number;
   task: RegisteredTask;
   unjudged: string[];
 }): string {

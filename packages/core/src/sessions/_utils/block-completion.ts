@@ -1,7 +1,8 @@
 import "server-only";
 import { loadUnshownCertificates } from "../../certificates/_utils/unshown-certificates";
 import { awardMilestones } from "../../milestones/award-milestones";
-import { getTrapHunterBadge, pickCeremony } from "../../milestones/milestone-rules";
+import { loadCeremony } from "../../milestones/load-ceremony";
+import { getTrapHunterBadge } from "../../milestones/milestone-rules";
 import { type BlockPayload } from "../block-payload";
 import { type StudyBlockCompletion } from "../completion-contract";
 import { getMissionBonus } from "../missions";
@@ -83,13 +84,17 @@ export async function completeBlockMoment({
   });
 
   const blocks = settled.session.blocks;
-  const certificates = await loadUnshownCertificates(userId);
+
+  const [ceremony, certificates] = await Promise.all([
+    loadCeremony(userId),
+    loadUnshownCertificates(userId),
+  ]);
 
   return {
     ...result,
     blockId,
     brainPower: result.brainPower + fullMeal,
-    ceremony: pickCeremony(milestones),
+    ceremony,
     certificates,
     completedMissions: missionResult.completed,
     fullMeal: { bonus, paid: missionResult.fullMealPaid },

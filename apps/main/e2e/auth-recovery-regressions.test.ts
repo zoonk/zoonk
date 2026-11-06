@@ -1,8 +1,8 @@
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { mockCentralAuthTransport, mockCentralSignOut } from "./auth-transport";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 import { createStudyDay } from "./study-day";
 
 test("signing in with a real token lands a learner on an interactive Today", async ({

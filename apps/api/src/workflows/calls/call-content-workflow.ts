@@ -1,7 +1,4 @@
-import {
-  type CallWriting,
-  getCallWritingKey,
-} from "@zoonk/core/language/conversations/call-writing";
+import { type CallWriting } from "@zoonk/core/language/conversations/call-writing";
 import { CALL_READY_STEP, type CallWritingStepName } from "@zoonk/core/library/generation/steps";
 import { type QuestionWritingResult, runQuestionWriting } from "../goals/question-writing-run";
 import {
@@ -113,13 +110,12 @@ async function writeCall(writing: CallWriting): Promise<"written"> {
   return "written";
 }
 
-/** One run per writing key: a learner's start, session preparation and the review ahead join it. */
+/** Started on its writing key, so a learner's start, session preparation and the review ahead share one run. */
 export async function callContentWorkflow(writing: CallWriting): Promise<QuestionWritingResult> {
   "use workflow";
 
   return runQuestionWriting<CallWritingStepName>({
-    steps: { join: "joinRunningCall", ready: CALL_READY_STEP, write: "writeCall" },
-    token: getCallWritingKey(writing),
+    steps: { ready: CALL_READY_STEP, write: "writeCall" },
     write: () => writeCall(writing),
   });
 }
