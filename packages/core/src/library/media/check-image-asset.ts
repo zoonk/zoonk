@@ -212,7 +212,7 @@ export async function replaceImageAsset({
 /** Drops the questions about the picture, since they can't be asked without it. */
 export async function removeImageAsset({ assetId }: { assetId: string }): Promise<void> {
   const lessonTags = await findLessonTags(assetId);
-  logInfo("[images] Picture taken out of use after its redraw failed its check", { assetId });
+  logInfo("[images] Picture taken out of use without a redraw that passed its check", { assetId });
 
   await writePlanInputs(async (tx) => {
     const questions = await tx.item.findMany({

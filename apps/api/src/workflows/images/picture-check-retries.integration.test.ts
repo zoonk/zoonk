@@ -5,9 +5,15 @@ import { generateImageScene } from "@zoonk/ai/tasks/images/scene";
 import { uploadImage } from "@zoonk/core/images/upload";
 import { prisma } from "@zoonk/db";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
-import { TEST_IMAGE, imageProvenance, passedCheck, sceneFor } from "./_test-utils/image-results";
+import {
+  BLANK_IMAGE,
+  TEST_IMAGE,
+  imageProvenance,
+  passedCheck,
+  sceneFor,
+} from "./_test-utils/image-results";
 import { pictureChecksWorkflow } from "./picture-checks-workflow";
 
 vi.mock("@zoonk/ai/tasks/images/check", async (importOriginal) => ({
@@ -43,6 +49,10 @@ function serveStoredPictures() {
 }
 
 describe("picture check durability", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
   afterEach(() => {
     vi.unstubAllGlobals();
   });
@@ -89,5 +99,34 @@ describe("picture check durability", () => {
     await expect(
       prisma.mediaAsset.findUniqueOrThrow({ where: { id: asset.id } }),
     ).resolves.toMatchObject({ scene: replanned, url: storedUrl });
+  });
+
+  it("takes a rejected picture out of use once every redraw is a blank frame", async () => {
+    const asset = await mediaAssetFixture({
+      scene: sceneFor(`a skin section ${randomUUID()}`),
+      url: `${STORED}${randomUUID()}.webp`,
+    });
+
+    serveStoredPictures();
+
+    vi.mocked(checkLessonImage).mockResolvedValue({
+      data: { ...passedCheck.data, passed: false, problems: ["no hand"] },
+    } as never);
+
+    vi.mocked(generateImageScene).mockResolvedValue({
+      data: sceneFor(`a hand with a small cut ${randomUUID()}`),
+    } as never);
+
+    vi.mocked(generateLessonImage).mockResolvedValue({
+      data: { image: { mediaType: "image/webp", uint8Array: BLANK_IMAGE } },
+      prompt: "test prompt",
+      provenance: imageProvenance,
+    } as never);
+
+    const run = await start(pictureChecksWorkflow, [{ assetIds: [asset.id] }]);
+
+    await expect(run.returnValue).resolves.toStrictEqual({ passed: 0, removed: 1, replaced: 0 });
+    expect(generateLessonImage).toHaveBeenCalledTimes(4);
+    await expect(prisma.mediaAsset.findUnique({ where: { id: asset.id } })).resolves.toBeNull();
   });
 });
