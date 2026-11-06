@@ -393,6 +393,7 @@
         progress: writing == .failed ? Self.sample(reported: 3) : Self.sample(reported: 1),
         alternative: .case2(.init(dueSkills: 1, kind: .review))
       ) {}
+      .lonePage()
       .navigationTitle(outline.title)
       .navigationBarTitleDisplayMode(.inline)
       .taskClose {
