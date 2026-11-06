@@ -119,8 +119,8 @@
   "player_offer_tricky": "a11fc80a555409235e6d43b60cb117f4fa77f79d25f8e28bf86262380ed29b5c",
   "player_open_failed": "1e5b88b39dcf0baaf3a9c086b52b33fe848624e2d3baf8f9b7a64a6ab7d7ba6d",
   "player_opening_lesson": "93a1a95fac960dea805841cba36cb2798df9781534e7671fe01312cfc0be691a",
+  "player_opening_map_hint": "962f86521870ac20e071fd42dbdc7fc11c8896fb135204d625b98188658f2a33",
   "player_opening_map_idea": "40f6c1aa9f29849073cb09f7ac60b28ccab29be0355e61926a52f0600711c893",
-  "player_opening_map_ideas": "625eaecc917287dd8150856451c3ab447aded980128f7487a69eb6e835222b73",
   "player_opening_map_show": "fbf3228b7bbebe65741b778352f356f3959fef8191c9ca0b6eae38c62452bcf3",
   "player_part_of": "401ba3aa3f710678f9cb3b3b8022424ea40f51340f0413596cea7e7ed5e6bbf3",
   "player_phase_draw": "3fd99af78b49241cd98725ab49e373822c31ec25fafeefe5de17a162718b1700",
@@ -207,10 +207,8 @@
     <string name="player_idea_position">ポイント%1$s（全%2$s個）</string>
     <!-- Label set into the dashed frame around a teaching screen's example sentences, as a teacher marks the example on a board. -->
     <string name="player_example">例</string>
-    <!-- Under the small map of the lesson's ideas on its opening screen, before the learner has studied them. -->
-    <plurals name="player_opening_map_ideas">
-        <item quantity="other">このレッスンで学ぶ%1$s個のポイント</item>
-    </plurals>
+    <!-- Under the lesson map on a lesson's opening screen. Tapping one of its ideas shows its name and what it covers. -->
+    <string name="player_opening_map_hint">ポイントをタップすると学ぶ内容がわかります</string>
     <!-- For TalkBack: a numbered idea on the opening map of the lesson's ideas. -->
     <string name="player_opening_map_idea">ポイント%1$s</string>
     <!-- For TalkBack: what tapping an idea on the opening map does. It shows one line on what the idea covers. -->
