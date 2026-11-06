@@ -164,23 +164,23 @@ export function scheduleCarriedWork({
   days,
   phaseEnds,
   rest,
+  roomsFrom,
   today,
 }: {
   carried: readonly QueueUnit[];
   days: readonly PlanDay[];
   phaseEnds: ReadonlyMap<number, Date>;
   rest: readonly QueueUnit[];
+  roomsFrom?: Date;
   today: ReadonlySet<string>;
 }) {
-  const first = days[0]?.date;
-
   const rooms =
-    carried.length > 0 && first
+    carried.length > 0 && roomsFrom
       ? listHeldRooms({
           carried,
           days,
           rest,
-          rooms: listChallengeRooms({ ends: phaseEnds, from: first, units: rest }),
+          rooms: listChallengeRooms({ ends: phaseEnds, from: roomsFrom, units: rest }),
           today,
         })
       : [];

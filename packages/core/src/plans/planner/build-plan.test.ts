@@ -1107,6 +1107,25 @@ function lessonsFor(skillId: string, count: number): PlannerLesson[] {
   return Array.from({ length: count }, (_, index) => lesson(`${skillId}-${index}`, [skillId]));
 }
 
+function threePhaseInput(goal?: BuildPlanInput["goal"]): BuildPlanInput {
+  return planInput({
+    ...(goal && { goal }),
+    graph: {
+      phases: [
+        { milestone: null, name: "First" },
+        { milestone: null, name: "Second" },
+        { milestone: null, name: "Third" },
+      ],
+      skills: [
+        skill("s1", { area: "A", lessons: 3 }),
+        skill("s2", { area: "B", lessons: 4, phase: 1 }),
+        skill("s3", { area: "A", lessons: 5, phase: 2 }),
+      ],
+    },
+    lessons: [...lessonsFor("s1", 3), ...lessonsFor("s2", 4), ...lessonsFor("s3", 5)],
+  });
+}
+
 function standIns(plan: ReturnType<typeof buildPlan>) {
   return plan.items
     .filter((item) => item.kind === "lesson" && !item.lessonId)
@@ -1965,22 +1984,7 @@ describe("work an earlier day left", () => {
   );
 
   it("keeps an overdue challenge's time on the next shown end while that end's own lessons reach it", () => {
-    const input = planInput({
-      graph: {
-        phases: [
-          { milestone: null, name: "First" },
-          { milestone: null, name: "Second" },
-          { milestone: null, name: "Third" },
-        ],
-        skills: [
-          skill("s1", { lessons: 3 }),
-          skill("s2", { lessons: 4, phase: 1 }),
-          skill("s3", { lessons: 5, phase: 2 }),
-        ],
-      },
-      lessons: [...lessonsFor("s1", 3), ...lessonsFor("s2", 4), ...lessonsFor("s3", 5)],
-    });
-
+    const input = threePhaseInput();
     const first = buildPlan(input);
     const items = store(first, new Set(lessonsOn(first, monday)));
     const shown = first.items.find((item) => item.key === "boss:1")?.scheduledFor ?? monday;
@@ -2004,6 +2008,32 @@ describe("work an earlier day left", () => {
       ["boss:2", "todo", expect.any(String)],
     ]);
   });
+
+  it.each([
+    { daily: 45, kind: "learn" },
+    { daily: 55, kind: "learn" },
+    { daily: 30, kind: "language" },
+  ] as const)(
+    "keeps every challenge when a focus day gives the rest of today to focus lessons ($kind, $daily min)",
+    ({ daily, kind }) => {
+      const input = threePhaseInput({ dailyMinutes: daily, kind, targetDate: null });
+      const first = buildPlan(input);
+      const items = store(first, new Set(lessonsOn(first, monday)));
+
+      const focused = buildPlan({
+        ...input,
+        carryOver: { lessonIds: [], todayExceptAreas: [] },
+        items,
+        phaseEnds: getShownPhaseEnds({ items, phases: first.phases }),
+        settings: { ...input.settings, focusAreas: ["A"] },
+        today: wednesday,
+      });
+
+      expect(
+        focused.items.filter((item) => item.kind === "boss").map((item) => item.key),
+      ).toStrictEqual(["boss:0", "boss:1", "boss:2"]);
+    },
+  );
 
   it("leaves a lesson given ahead where its phase has it while an earlier phase has days of work left", () => {
     const input = planInput({
