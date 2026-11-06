@@ -1,9 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { cache } from "react";
 import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
+import { getTestCaseRunIds } from "./test-case-runs";
 import {
   type ModelOutputs,
   type OutputEntry,
@@ -140,8 +142,13 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
   const existingResults = await loadExistingScoredResults(task.id, modelId);
   logInfo(`Found ${existingResults.length} existing scored results`);
 
+  const runIds = new Set(
+    getTestCaseRunIds({ runsPerTestCase: RUNS_PER_TEST_CASE, testCases: task.testCases }),
+  );
+
   const outputsToScore = modelOutputs.outputs.filter(
-    (output) => !isAlreadyScored(existingResults, output.testCaseId),
+    (output) =>
+      runIds.has(output.testCaseId) && !isAlreadyScored(existingResults, output.testCaseId),
   );
 
   logInfo(`Scoring ${outputsToScore.length} outputs`);
@@ -205,6 +212,7 @@ function combineOutputsAndResults(
       classification: scored.classification,
       duration: output.duration,
       extraCalls: output.extraCalls,
+      images: output.images,
       inputTokens: output.inputTokens,
       judge: scored.judge,
       output: output.output,

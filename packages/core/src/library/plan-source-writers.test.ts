@@ -69,6 +69,7 @@ import {
   stageLessonVersion,
 } from "./lessons/_utils/save-lesson-content";
 import { createLibraryLesson } from "./lessons/create-library-lesson";
+import { deleteRetiredSteps } from "./lessons/lesson-versions";
 import { placeChapterLessons } from "./lessons/place-chapter-lessons";
 import { voiceListeningSet } from "./listening/voice-listening-set";
 import { removeImageAsset } from "./media/check-image-asset";
@@ -332,6 +333,9 @@ const REGISTRY: Record<string, Registration[]> = {
   ],
   "library/lessons/create-library-lesson.ts": [
     { verdict: "marks", why: "a new lesson teaching skills", writes: ["lesson.create"] },
+  ],
+  "library/lessons/lesson-versions.ts": [
+    { verdict: "marks", why: "retires bank items no screen asks", writes: ["item.updateMany"] },
   ],
   "library/lessons/place-chapter-lessons.ts": [
     {
@@ -1256,6 +1260,24 @@ async function drillsCase(): Promise<WriterCase> {
   };
 }
 
+async function retiredQuestionCase(): Promise<WriterCase> {
+  const [lesson, skill] = await Promise.all([libraryLessonFixture(), skillFixture()]);
+  const question = await itemFixture({ skillId: skill.id });
+  const retiredAt = new Date(Date.now() - 2 * MS_PER_DAY);
+  await libraryStepFixture({ itemId: question.id, lessonId: lesson.id, retiredAt });
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+
+  return {
+    expectWritten: () =>
+      expect(
+        prisma.item.findUniqueOrThrow({ select: { retiredAt: true }, where: { id: question.id } }),
+      ).resolves.toStrictEqual({ retiredAt: expect.any(Date) }),
+    plan,
+    root: skillRoot(skill.id),
+    write: () => deleteRetiredSteps(),
+  };
+}
+
 async function pictureCase(): Promise<WriterCase> {
   const [asset, skill] = await Promise.all([mediaAssetFixture(), skillFixture()]);
   const question = await itemFixture({ mediaAssetId: asset.id, skillId: skill.id });
@@ -1591,6 +1613,9 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
     "stageLessonVersion (the lesson)": lessonVersionCase,
   },
   "library/lessons/create-library-lesson.ts": { createLibraryLesson: newLessonCase },
+  "library/lessons/lesson-versions.ts": {
+    "deleteRetiredSteps (a question only deleted screens asked)": retiredQuestionCase,
+  },
   "library/lessons/place-chapter-lessons.ts": { placeChapterLessons: placeLessonsCase },
   "library/listening/voice-listening-set.ts": { voiceListeningSet: listeningCase },
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },

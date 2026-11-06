@@ -8,19 +8,30 @@ import {
   LoginForm,
   LoginSubmit,
 } from "@/components/login";
+import { parseFormField } from "@zoonk/utils/form";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
-import { useActionState, useRef } from "react";
-import { sendVerificationOTPAction } from "./actions";
+import { useRef } from "react";
+import { useFormActionState } from "../../_utils/use-form-action-state";
+import { type VerificationOTPState, sendVerificationOTPAction } from "./actions";
 import { readPageRedirectTo } from "./page-url";
 
 const emailErrorId = "login-email-error";
-const initialEmailLoginState = { status: "idle" as const };
+const initialEmailLoginState: VerificationOTPState = { status: "idle" };
 
 export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
   const t = useExtracted();
   const redirectToRef = useRef<HTMLInputElement>(null);
-  const [state, formAction] = useActionState(sendVerificationOTPAction, initialEmailLoginState);
+
+  const [state, formAction] = useFormActionState({
+    action: sendVerificationOTPAction,
+    initialState: initialEmailLoginState,
+    onRejected: (formData): VerificationOTPState => ({
+      email: parseFormField(formData, "email") ?? "",
+      status: "error",
+    }),
+  });
+
   const hasError = state.status !== "idle";
 
   const errorMessage = {

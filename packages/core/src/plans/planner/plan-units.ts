@@ -1,5 +1,5 @@
 import { type CourseLevel } from "@zoonk/db";
-import { followCourseLessonOrder } from "./course-unit-order";
+import { followCourseLessonOrder, keepCourseLevels } from "./course-unit-order";
 import { countStandInLessons } from "./stand-in-size";
 
 export type PlannerLesson = {
@@ -92,7 +92,7 @@ function toLessonUnit({
     ...(teaches.focused ? { focused: true } : {}),
     ...(teaches.outcome ? { outcome: true } : {}),
     ...(teaches.reduced ? { reduced: true } : {}),
-    phase: skill.phase,
+    phase: lesson.courseOrder?.phase ?? skill.phase,
     skillId: teaches.skillId,
     title: lesson.title,
   };
@@ -321,5 +321,7 @@ export function buildLessonUnits({
     return missing > 0 ? [...own, toPlaceholderUnit({ lessons: missing, paceFactor, skill })] : own;
   });
 
-  return preserveCourseOrder ? followCourseLessonOrder({ lessons, units }) : units;
+  return preserveCourseOrder
+    ? followCourseLessonOrder({ lessons, units })
+    : keepCourseLevels({ lessons, units });
 }

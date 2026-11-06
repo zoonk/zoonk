@@ -2,10 +2,10 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { readBody } from "@/lib/request-input";
-import { followUpsWorkflow } from "@/workflows/follow-ups/follow-ups-workflow";
+import { startOnce } from "@/workflows/_shared/run-token";
+import { followUpsWorkflow, getFollowUpsToken } from "@/workflows/follow-ups/follow-ups-workflow";
 import { FOLLOW_UP_SECRET_HEADER } from "@zoonk/core/follow-ups/contract";
 import { NextResponse } from "next/server";
-import { start } from "workflow/api";
 import { z } from "zod";
 
 const ACCEPTED = 202;
@@ -34,9 +34,9 @@ async function acceptFollowUps(request: Request) {
   }
 
   const { userId } = await readBody(request, followUpsRequestSchema);
-  const run = await start(followUpsWorkflow, [{ userId }]);
+  const runId = await startOnce(followUpsWorkflow, [{ userId }], getFollowUpsToken(userId));
 
-  return NextResponse.json({ runId: run.runId }, { status: ACCEPTED });
+  return NextResponse.json({ runId }, { status: ACCEPTED });
 }
 
 export const POST = withApiErrorBoundary(acceptFollowUps);

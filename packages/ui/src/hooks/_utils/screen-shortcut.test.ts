@@ -78,6 +78,14 @@ describe(isScreenShortcut, () => {
     expect(isScreenShortcut(pressOn(audio, { key: "Enter" }))).toBe(true);
   });
 
+  it("leaves Enter to an input it presses, such as a file picker outside a form", () => {
+    const pressed = ["file", "button", "submit", "reset", "image"].map((type) =>
+      isEnterShortcutOn(`<input data-target type="${type}" />`),
+    );
+
+    expect(pressed).toStrictEqual([false, false, false, false, false]);
+  });
+
   it("leaves every key inside a dialog or a menu to it", () => {
     const inDialog = mount('<div role="dialog"><button data-target>Skip</button></div>');
     const inMenu = mount('<div role="menu"><div data-target role="menuitem">Helpful</div></div>');
@@ -145,5 +153,22 @@ describe("scrollable question regions", () => {
     expect(isScreenShortcut(pressOn(region, { key: "ArrowRight" }))).toBe(false);
     expect(isScreenShortcut(pressOn(cell, { key: "ArrowLeft" }))).toBe(false);
     expect(isScreenShortcut(pressOn(document.body, { key: "ArrowRight" }))).toBe(true);
+  });
+
+  it("leaves the side arrows to a focused line that has more to scroll sideways, and only those", () => {
+    const line = mount('<span data-target tabindex="0" style="overflow-x: auto">x + y</span>');
+
+    Object.defineProperties(line, {
+      clientWidth: { value: 260 },
+      scrollWidth: { configurable: true, value: 302 },
+    });
+
+    expect(isScreenShortcut(pressOn(line, { key: "ArrowRight" }))).toBe(false);
+    expect(isScreenShortcut(pressOn(line, { key: "ArrowLeft" }))).toBe(false);
+    expect(isScreenShortcut(pressOn(line, { key: "ArrowDown" }))).toBe(true);
+
+    Object.defineProperty(line, "scrollWidth", { value: 260 });
+
+    expect(isScreenShortcut(pressOn(line, { key: "ArrowRight" }))).toBe(true);
   });
 });

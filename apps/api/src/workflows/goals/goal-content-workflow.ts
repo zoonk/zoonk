@@ -4,7 +4,6 @@ import { GOAL_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
-import { claimRunToken } from "../_shared/run-token";
 import { closeStepStream } from "../_shared/stream-status";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
 import { isBuiltBeforeResearch } from "./goal-content-inputs";
@@ -32,9 +31,16 @@ export type GoalContentInput = {
 
 export type GoalContentResult = {
   goalId: string;
-  status: "built" | "joined" | "missing" | "prepared" | "ready";
+  status: "built" | "missing" | "prepared" | "ready";
   speculativeLessonIds: string[];
 };
+
+export function getGoalContentToken({
+  goalId,
+  rebuild,
+}: Pick<GoalContentInput, "goalId" | "rebuild">): string {
+  return `goal-${rebuild ? "rebuild" : "content"}:${goalId}`;
+}
 
 async function reportBuildFailure({
   context,
@@ -243,17 +249,6 @@ export async function goalContentWorkflow(input: GoalContentInput): Promise<Goal
 
   const { goalId } = input;
   const { workflowRunId } = getWorkflowMetadata();
-  const token = `goal-${input.rebuild ? "rebuild" : "content"}:${goalId}`;
-  const { conflict } = await claimRunToken(token);
-
-  if (conflict) {
-    await goalProgressStep(
-      { entityId: conflict.runId, status: "started", step: "joinRunningGoal" },
-      { last: true },
-    );
-
-    return { goalId, speculativeLessonIds: [], status: "joined" };
-  }
 
   await recordGoalRunStep({ generationId: workflowRunId, goalId });
   await goalProgressStep({ entityId: goalId, status: "started", step: "understandGoal" });

@@ -4,6 +4,7 @@ import { FinishReady } from "@zoonk/learn/finish-ready";
 import {
   TASK_MAIN_ACTION_CLASS,
   TaskActionBar,
+  TaskActionLabel,
   TaskActions,
   TaskBody,
 } from "@zoonk/learn/task-layout";
@@ -31,7 +32,7 @@ export function LessonCompletionReady({ onFinish }: { onFinish: () => void }) {
             ref={finishRef}
             size="xl"
           >
-            {t("Finish")}
+            <TaskActionLabel>{t("Finish")}</TaskActionLabel>
             <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
           </Button>
         </TaskActions>

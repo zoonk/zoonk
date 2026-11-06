@@ -69,6 +69,7 @@ export function supportsJudgeMode(
 
 type TaskUsage = {
   audioSeconds?: number;
+  images?: number;
   inputTokens: number | undefined;
   outputTokens: number | undefined;
   inputTokenDetails?: { cacheReadTokens: number | undefined; cacheWriteTokens: number | undefined };
@@ -77,6 +78,7 @@ type TaskUsage = {
 
 export type TokenUsage = {
   audioSeconds?: number;
+  images?: number;
   inputTokens: number;
   outputTokens: number;
   cacheReadTokens?: number;
@@ -89,6 +91,7 @@ export function toTokenUsage(usage: TaskUsage): TokenUsage {
     audioSeconds: usage.audioSeconds,
     cacheReadTokens: usage.inputTokenDetails?.cacheReadTokens,
     cacheWriteTokens: usage.inputTokenDetails?.cacheWriteTokens,
+    images: usage.images,
     inputTokens: usage.inputTokens ?? 0,
     outputTokens: usage.outputTokens ?? 0,
     reasoningTokens: usage.outputTokenDetails?.reasoningTokens,

@@ -147,13 +147,13 @@ function extractSuccessfulOutputs(results: PromiseSettledResult<OutputEntry>[]):
 }
 
 function createModelOutputs({
-  failed = [],
+  failed,
   failedRuns = [],
   modelId,
   outputs,
   taskId,
 }: {
-  failed?: FailedAttempt[];
+  failed: FailedAttempt[];
   failedRuns?: FailedRun[];
   modelId: string;
   outputs: OutputEntry[];
@@ -175,11 +175,12 @@ function createModelOutputs({
   };
 }
 
+/** Returns the outputs it wrote, leaving out saved ones and failed runs. */
 export async function generateOutputs(
   task: RegisteredTask,
   modelId: string,
   { runsPerTestCase = RUNS_PER_TEST_CASE }: { runsPerTestCase?: number } = {},
-): Promise<ModelOutputs> {
+): Promise<OutputEntry[]> {
   const safeModelId = modelId.replaceAll(/[\r\n]/gu, "");
   const model = getModelById(modelId);
 
@@ -207,7 +208,7 @@ export async function generateOutputs(
 
   if (runsToExecute.length === 0) {
     logInfo("All outputs already generated");
-    return existingOutputs ?? createModelOutputs({ modelId, outputs: [], taskId: task.id });
+    return [];
   }
 
   const failed: FailedAttempt[] = [];
@@ -219,18 +220,22 @@ export async function generateOutputs(
       generateOutputForTestCase({ failed, model, runNumber, task, testCase }),
   });
 
-  const allOutputs = [...existingEntries, ...extractSuccessfulOutputs(results)];
+  const newOutputs = extractSuccessfulOutputs(results);
+  const allOutputs = [...existingEntries, ...newOutputs];
 
-  const modelOutputs = createModelOutputs({
-    failed,
-    failedRuns: existingOutputs?.failedRuns,
+  await saveModelOutputs(
+    task.id,
     modelId,
-    outputs: allOutputs,
-    taskId: task.id,
-  });
+    createModelOutputs({
+      failed,
+      failedRuns: existingOutputs?.failedRuns,
+      modelId,
+      outputs: allOutputs,
+      taskId: task.id,
+    }),
+  );
 
-  await saveModelOutputs(task.id, modelId, modelOutputs);
   logInfo(`Saved ${allOutputs.length} total outputs`);
 
-  return modelOutputs;
+  return newOutputs;
 }

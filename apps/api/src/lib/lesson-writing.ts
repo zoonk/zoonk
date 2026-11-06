@@ -1,11 +1,12 @@
 import "server-only";
+import { startOnce } from "@/workflows/_shared/run-token";
+import { getLessonContentHookToken } from "@/workflows/lessons/lesson-content-result";
 import { lessonContentWorkflow } from "@/workflows/lessons/lesson-content-workflow";
 import { requestLiveLessonWriting } from "@/workflows/lessons/lesson-writing-request";
 import {
   type LessonGenerationRequest,
   requestLessonGeneration,
 } from "@zoonk/core/lookahead/request-lesson-generation";
-import { start } from "workflow/api";
 
 export type LessonWriting = Exclude<LessonGenerationRequest, { status: "start" }>;
 
@@ -20,14 +21,18 @@ export async function startLessonWriting(lessonId: string): Promise<LessonWritin
     return result;
   }
 
-  const run = await start(lessonContentWorkflow, [
-    {
-      analytics: result.analytics,
-      forExam: result.forExam,
-      lessonId: result.lessonId,
-      wait: "learner",
-    },
-  ]);
+  const generationId = await startOnce(
+    lessonContentWorkflow,
+    [
+      {
+        analytics: result.analytics,
+        forExam: result.forExam,
+        lessonId: result.lessonId,
+        wait: "learner",
+      },
+    ],
+    getLessonContentHookToken(result.lessonId),
+  );
 
-  return { generationId: run.runId, status: "generating" };
+  return { generationId, status: "generating" };
 }

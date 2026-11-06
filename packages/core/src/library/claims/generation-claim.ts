@@ -6,8 +6,9 @@ import {
   getCourseCurriculumCacheTag,
   getLibraryLessonCacheTag,
 } from "../../cache/tags";
+import { writePlanInputs } from "../_utils/plan-input-write";
 import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
-import { startLessonVersion } from "../lessons/lesson-versions";
+import { retireUnaskedQuestions, startLessonVersion } from "../lessons/lesson-versions";
 
 export type LibraryGenerationTarget =
   | "chapterOutline"
@@ -21,6 +22,8 @@ type ClaimInput = { id: string; workflowRunId: string };
 type ClaimState = { runId: string | null; status: GenerationStatus | null };
 
 type ClaimTargetOps = {
+  /** Runs each time the run holds the claim, so a retried step repeats it. */
+  afterClaim?: (id: string) => Promise<unknown>;
   claim: (db: TransactionClient, input: ClaimInput) => Promise<{ count: number }>;
   finish: (input: ClaimInput & { status: "completed" | "failed" }) => Promise<{ count: number }>;
   read: (db: TransactionClient, id: string) => Promise<ClaimState | null>;
@@ -66,6 +69,8 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
     tags: (id) => [getCourseCacheTag(id), getCourseCurriculumCacheTag(id)],
   },
   lessonContent: {
+    // Its own transaction locks plans before anything else, as placement does, so they can't deadlock.
+    afterClaim: (id) => writePlanInputs((tx) => retireUnaskedQuestions(tx, { lessonId: id })),
     claim: (db, { id, workflowRunId }) =>
       db.lesson.updateMany({
         data: { contentRunId: workflowRunId, contentStatus: "running" },
@@ -165,6 +170,10 @@ export async function claimLibraryGeneration({
   const { changed, result } = ops.reset
     ? await prisma.$transaction((tx) => claimWith(tx, input))
     : await claimWith(prisma, input);
+
+  if (result === "claimed") {
+    await ops.afterClaim?.(id);
+  }
 
   if (changed) {
     await revalidateCourseContent(await ops.tags(id));

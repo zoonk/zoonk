@@ -93,16 +93,15 @@ export async function readClientRunStatus(runId: string): Promise<string | null>
   return stalled ? "failed" : status;
 }
 
-export async function stopStalledRun(runId: string): Promise<boolean> {
-  const { stalled } = await readRunState(runId);
+export async function stopStalledRun(runId: string): Promise<RunState> {
+  const state = await readRunState(runId);
 
-  if (!stalled) {
-    return false;
+  if (state.stalled) {
+    await getRun(runId).cancel({
+      cancelReason:
+        "Stalled: no progress for 30 minutes, or since the development server restarted.",
+    });
   }
 
-  await getRun(runId).cancel({
-    cancelReason: "Stalled: no progress for 30 minutes, or since the development server restarted.",
-  });
-
-  return true;
+  return state;
 }

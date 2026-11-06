@@ -4,6 +4,7 @@ import {
   TASK_BACK_ACTION_CLASS,
   TASK_MAIN_ACTION_CLASS,
   TaskActionBar,
+  TaskActionLabel,
   TaskActions,
 } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
@@ -65,7 +66,7 @@ function PrimaryLabel({ label }: { label: LessonPrimaryLabel }) {
     start: t("Start"),
   };
 
-  return labels[label];
+  return <TaskActionLabel>{labels[label]}</TaskActionLabel>;
 }
 
 function PromptAudio() {

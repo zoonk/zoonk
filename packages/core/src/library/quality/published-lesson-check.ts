@@ -37,6 +37,7 @@ import {
   lockCurrentLessonVersion,
   readCurrentLessonVersion,
   readStagedLessonVersion,
+  retireUnaskedQuestions,
 } from "../lessons/lesson-versions";
 import { type LessonCheckPlan } from "../lessons/write-lesson-content";
 import {
@@ -326,6 +327,7 @@ export async function setAsidePublishedLesson({
         where: { id: lessonId },
       });
 
+      await retireUnaskedQuestions(tx, { lessonId });
       return { changed: true, planIds: await moveOnWithoutLesson(tx, lessonId, holdKey) };
     }),
   );
