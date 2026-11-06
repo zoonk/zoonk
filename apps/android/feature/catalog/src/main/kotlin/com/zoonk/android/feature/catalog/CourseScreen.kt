@@ -38,6 +38,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Subject
 import com.zoonk.android.ui.components.SubjectLabel
 import com.zoonk.android.ui.format.currentLocale
@@ -227,7 +228,7 @@ private fun CourseHero(
                             exam.estimated -> pluralStringResource(R.plurals.catalog_exam_around, days, dates, days)
                             else -> pluralStringResource(R.plurals.catalog_exam_on, days, dates, days)
                         }
-                    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+                    Eyebrow(text)
                 }
             }
             Spacer(Modifier.size(12.dp))
