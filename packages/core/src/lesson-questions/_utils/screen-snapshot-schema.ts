@@ -2,6 +2,8 @@ import "server-only";
 import { z } from "zod";
 
 const lessonQuestionStepContextSchema = z.object({
+  // Questions saved before screens were marked keep the rules they were asked under when retried.
+  answerable: z.boolean().default(true),
   content: z.unknown(),
   kind: z.string(),
   sentence: z

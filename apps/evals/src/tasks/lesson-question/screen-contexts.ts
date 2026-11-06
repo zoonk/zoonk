@@ -1,5 +1,6 @@
 import {
   type ChapterScopeContext,
+  type LessonQuestionStepContext,
   type LessonScopeContext,
   type MockScopeContext,
   type PlanScopeContext,
@@ -507,6 +508,7 @@ export const REVIEWS_LESSON = {
   },
   lessonSteps: [
     {
+      answerable: false,
       content: {
         text: "Local search ranks businesses partly by the number and quality of their reviews. The simplest way to get more is to ask happy customers right after a good experience, with a short link.",
         title: "Reviews help people find you",
@@ -519,5 +521,38 @@ export const REVIEWS_LESSON = {
   ],
   scope: { kind: "lesson" },
   step: null,
+  version: 1,
+} satisfies LessonScopeContext;
+
+const SUBJECT_HEAD_EXPLANATION = {
+  answerable: false,
+  content: {
+    text: "> Exemplo: Em “O envio dos relatórios atrasou”, o que atrasou foi o envio.\n\n“Dos relatórios” só diz qual envio. Por isso o verbo fica no singular. Essa palavra central, que guia a concordância, é o **núcleo do sujeito**.",
+    title: "A palavra que manda",
+  },
+  kind: "explanation",
+  sentence: null,
+  stepNumber: 5,
+  word: null,
+} satisfies LessonQuestionStepContext;
+
+export const SUBJECT_HEAD_SCREEN = {
+  answer: null,
+  chapter: { description: "Os termos essenciais da oração", title: "Sintaxe" },
+  course: {
+    description: "Língua Portuguesa para concursos",
+    language: "pt",
+    targetLanguage: null,
+    title: "Língua Portuguesa",
+  },
+  lesson: {
+    description: "Achar o sujeito, o predicado e o núcleo que comanda a concordância.",
+    kind: "library",
+    language: "pt",
+    title: "Sujeito e predicado",
+  },
+  lessonSteps: [SUBJECT_HEAD_EXPLANATION],
+  scope: { kind: "step" },
+  step: SUBJECT_HEAD_EXPLANATION,
   version: 1,
 } satisfies LessonScopeContext;

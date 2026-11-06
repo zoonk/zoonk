@@ -13,7 +13,12 @@ vi.mock("server-only", () => ({}));
 vi.mock("./goal-tutor.prompt.md", () => ({ default: "Tutor every goal." }));
 vi.mock("./goal-tutor-exam.prompt.md", () => ({ default: "Read the exam's notice." }));
 vi.mock("./goal-tutor-chapter.prompt.md", () => ({ default: "Read the chapter." }));
-vi.mock("./goal-tutor-lesson.prompt.md", () => ({ default: "Don't give the answer away." }));
+
+vi.mock("./goal-tutor-lesson.prompt.md", () => ({
+  default:
+    "{{#questionScreen}}Don't give the answer away.{{/questionScreen}}{{#teachingScreen}}Answer directly.{{/teachingScreen}}",
+}));
+
 vi.mock("./goal-tutor-mock.prompt.md", () => ({ default: "Read the mock's result." }));
 vi.mock("./goal-tutor-subject.prompt.md", () => ({ default: "Read the subject." }));
 vi.mock("./goal-tutor-item.prompt.md", () => ({ default: "Read the question." }));
@@ -112,6 +117,11 @@ describe(generateGoalTutorAnswer, () => {
   it("adds a screen's instructions only when the learner asked from that screen", async () => {
     const chapter = { scope: { kind: "chapter" } } as NonNullable<PlanScopeContext["screen"]>;
     const step = { scope: { kind: "step" } } as NonNullable<PlanScopeContext["screen"]>;
+
+    const teaching = { scope: { kind: "step" }, step: { answerable: false } } as NonNullable<
+      PlanScopeContext["screen"]
+    >;
+
     const mock = { scope: { kind: "mock" } } as NonNullable<PlanScopeContext["screen"]>;
 
     await expect(getInstructions("learn", chapter)).resolves.toBe(
@@ -120,6 +130,10 @@ describe(generateGoalTutorAnswer, () => {
 
     await expect(getInstructions("learn", step)).resolves.toBe(
       instructions(["Tutor every goal."], "Don't give the answer away."),
+    );
+
+    await expect(getInstructions("learn", teaching)).resolves.toBe(
+      instructions(["Tutor every goal."], "Answer directly."),
     );
 
     await expect(getInstructions("exam", mock)).resolves.toBe(
