@@ -3,6 +3,7 @@
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
 import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { safeAsync } from "@zoonk/utils/error";
 import { CircleMinusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -35,7 +36,8 @@ function RestoreButton({
         focusableWhenDisabled
         onClick={() =>
           startTransition(async () => {
-            setFailed(!(await restore(areas)));
+            const { data: restored } = await safeAsync(() => restore(areas));
+            setFailed(!restored);
           })
         }
         size="sm"

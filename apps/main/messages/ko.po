@@ -355,6 +355,12 @@ msgid "Couldn't open your next step. Try again."
 msgstr "다음 단계를 열지 못했어요. 다시 시도해 보세요."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/components/catalog/course-progress.tsx
+msgctxt "JIzivc"
+msgid "We couldn't switch goals. Try again."
+msgstr "목표를 바꾸지 못했어요. 다시 시도해 보세요."
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "60v8Pt"
 msgid "Search or ask"
 msgstr "검색 또는 질문"

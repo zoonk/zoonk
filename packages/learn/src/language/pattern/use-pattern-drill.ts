@@ -43,7 +43,7 @@ export function usePatternDrill({
     setFailed(false);
 
     startSaving(async () => {
-      const result = await practice({ answers: finished, requestId });
+      const result = await practice({ answers: finished, requestId }).catch(() => null);
 
       if (result) {
         setStep({ kind: "result", result });

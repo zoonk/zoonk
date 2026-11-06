@@ -32,7 +32,7 @@ export function useTestOutStart(onStart: () => Promise<TestOutStart>) {
 
   const start = () =>
     startTransition(async () => {
-      setResult(await onStart());
+      setResult(await onStart().catch((): TestOutStart => ({ status: "failed" })));
     });
 
   return { isPending, opening: isPending || result?.status === "started", result, start };

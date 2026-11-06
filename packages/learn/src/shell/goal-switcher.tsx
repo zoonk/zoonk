@@ -12,8 +12,10 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { ChevronDownIcon, LayoutGridIcon, LightbulbIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "react";
@@ -176,12 +178,16 @@ export function GoalSwitcher({
   exploreHref: string;
   goals: SwitcherGoal[];
   newGoalHref: string;
-  onSelect: (goalId: string) => Promise<void>;
-  onStartWaiting: (waitingGoalId: string) => Promise<void>;
+  /** Resolves to whether the goal is now the active one. */
+  onSelect: (goalId: string) => Promise<boolean>;
+  /** Resolves to whether the waiting goal started. */
+  onStartWaiting: (waitingGoalId: string) => Promise<boolean>;
   placement?: SwitcherPlacement;
   waitingGoals: WaitingGoal[];
 }) {
   const t = useExtracted("goalSwitcher");
+  const switchFailed = t("We couldn't switch goals. Try again.");
+  const startFailed = t("We couldn't start this goal. Try again.");
   const [isPending, startTransition] = useGoalSwitchTransition();
   const followed = goals.filter((goal) => goal.kind !== "explain");
   const explanations = goals.filter((goal) => goal.kind === "explain");
@@ -199,7 +205,12 @@ export function GoalSwitcher({
 
     startTransition(async () => {
       setSelectedId(goalId);
-      await onSelect(goalId);
+      const { data: switched } = await safeAsync(() => onSelect(goalId));
+
+      // Said in a toast: the menu has closed by then.
+      if (!switched) {
+        showErrorToast(switchFailed);
+      }
     });
   };
 
@@ -245,7 +256,11 @@ export function GoalSwitcher({
                 key={goal.id}
                 onStart={(waitingGoalId) =>
                   startTransition(async () => {
-                    await onStartWaiting(waitingGoalId);
+                    const { data: started } = await safeAsync(() => onStartWaiting(waitingGoalId));
+
+                    if (!started) {
+                      showErrorToast(startFailed);
+                    }
                   })
                 }
               />
