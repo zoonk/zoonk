@@ -12711,9 +12711,9 @@ msgid "Saving your progress…"
 msgstr "Zapisujemy twoje postępy…"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "m3SPlD"
-msgid "This lesson is being written for you. It's usually ready in about two minutes."
-msgstr "Przygotowujemy dla ciebie tę lekcję. Zwykle trwa to około dwóch minut."
+msgctxt "Icwcge"
+msgid "This lesson is being written for you. It's usually ready in a few minutes."
+msgstr "Przygotowujemy dla ciebie tę lekcję. Zwykle jest gotowa w ciągu kilku minut."
 
 #: src/session/next-stop-wait.tsx
 msgctxt "J05b6v"
