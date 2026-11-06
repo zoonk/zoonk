@@ -3,8 +3,8 @@ import { type ClassificationSummary, summarizeClassification } from "./classific
 import { estimateCostPer1000Runs, getCallCost } from "./cost";
 import { summarizeLatency } from "./latency";
 import { average, sum } from "./math";
-import { getModelById } from "./models";
-import { type ModelCall, type TaskEvalResults } from "./types";
+import { type ModelConfig, getModelById } from "./models";
+import { type ModelCall, type TaskEvalResults, type TokenUsage } from "./types";
 
 export type TaskStats = {
   averageInputTokens: number;
@@ -30,6 +30,24 @@ export function getCallsCost({
   );
 }
 
+/**
+ * Transcription is billed per minute of audio and speech per second of audio or per character,
+ * which token prices cannot express.
+ */
+export function getRunCosts({
+  model,
+  prices,
+  runs,
+}: {
+  model: ModelConfig;
+  prices: GatewayPrices;
+  runs: TokenUsage[];
+}): number[] {
+  return model.kind === "transcription" || model.kind === "speech"
+    ? []
+    : runs.map((usage) => getCallCost({ modelId: model.gatewayModelId, prices, usage }));
+}
+
 export function getSpent(stats: Pick<TaskStats, "extraCost" | "judgeCost" | "runCost">): number {
   return stats.runCost + stats.judgeCost + stats.extraCost;
 }
@@ -48,17 +66,7 @@ export function getStatsFromResults({
   }
 
   const { results } = evalResults;
-
-  /**
-   * Transcription is billed per minute of audio and speech per second of audio or per character,
-   * which token prices cannot express.
-   */
-  const runCosts =
-    model.kind === "transcription" || model.kind === "speech"
-      ? []
-      : results.map((result) =>
-          getCallCost({ modelId: model.gatewayModelId, prices, usage: result }),
-        );
+  const runCosts = getRunCosts({ model, prices, runs: results });
 
   const latency = summarizeLatency(results.map((result) => result.duration));
 

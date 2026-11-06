@@ -1,7 +1,6 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { settleWithConcurrency } from "./concurrency";
-import { keepCallsOnFailure } from "./failed-calls";
 import { type ModelConfig, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
 import { getTestCaseRunId } from "./test-case-runs";
@@ -122,11 +121,12 @@ function createModelOutputs(taskId: string, modelId: string, outputs: OutputEntr
   return { generatedAt: new Date().toISOString(), modelId, outputs, taskId };
 }
 
+/** Returns the outputs it wrote, leaving out saved ones and failed runs. */
 export async function generateOutputs(
   task: RegisteredTask,
   modelId: string,
   { runsPerTestCase = RUNS_PER_TEST_CASE }: { runsPerTestCase?: number } = {},
-): Promise<ModelOutputs> {
+): Promise<OutputEntry[]> {
   const safeModelId = modelId.replaceAll(/[\r\n]/gu, "");
   const model = getModelById(modelId);
 
@@ -154,21 +154,21 @@ export async function generateOutputs(
 
   if (runsToExecute.length === 0) {
     logInfo("All outputs already generated");
-    return existingOutputs ?? createModelOutputs(task.id, modelId, []);
+    return [];
   }
 
   const results = await settleWithConcurrency({
     concurrency: GENERATION_CONCURRENCY,
     items: runsToExecute,
     run: ({ testCase, runNumber }) =>
-      keepCallsOnFailure(() => generateOutputForTestCase({ model, runNumber, task, testCase })),
+      generateOutputForTestCase({ model, runNumber, task, testCase }),
   });
 
-  const allOutputs = [...existingEntries, ...extractSuccessfulOutputs(results)];
-  const modelOutputs = createModelOutputs(task.id, modelId, allOutputs);
+  const newOutputs = extractSuccessfulOutputs(results);
+  const allOutputs = [...existingEntries, ...newOutputs];
 
-  await saveModelOutputs(task.id, modelId, modelOutputs);
+  await saveModelOutputs(task.id, modelId, createModelOutputs(task.id, modelId, allOutputs));
   logInfo(`Saved ${allOutputs.length} total outputs`);
 
-  return modelOutputs;
+  return newOutputs;
 }

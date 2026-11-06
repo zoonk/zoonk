@@ -3,7 +3,6 @@ import path from "node:path";
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { cache } from "react";
-import { keepCallsOnFailure } from "./failed-calls";
 import { findTestCaseForOutput, loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
 import { getTestCaseRunIds } from "./test-case-runs";
@@ -161,7 +160,7 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
         return Promise.reject(new Error(`Test case not found for output: ${output.testCaseId}`));
       }
 
-      return keepCallsOnFailure(() => scoreOutput({ output, task, testCase }));
+      return scoreOutput({ output, task, testCase });
     }),
   );
 
