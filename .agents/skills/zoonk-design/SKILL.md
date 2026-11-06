@@ -1,10 +1,10 @@
 ---
 name: zoonk-design
-description: Design, implement, or assess Zoonk interfaces on the web, iOS and Android with clear hierarchy, low cognitive effort, and one coherent visual language across all three.
+description: Design, implement, or review Zoonk interfaces on the web, iOS and Android, in one visual language across all three. Hold every screen to a principal designer's bar on typography, hierarchy, spacing and density, color and contrast, iconography, consistency and polish, and clarity; rethink it from first principles with alternative concepts when it falls short; and finish by using it as a regular person.
 license: MIT
 metadata:
   author: zoonk
-  version: "5.0.0"
+  version: "5.1.0"
 ---
 
 # Zoonk design
@@ -65,16 +65,21 @@ The look is **Instrument**: a calm study instrument in the spirit of Linear and 
 
 ## The taste bar
 
-Every screen should look like a principal designer at Linear, Vercel or Apple made it: clean, quiet and exact, so the person sees their task and not the interface. Before calling a screen done, check it as they would:
+Hold every screen you design, build or review to one bar: a principal designer like Jony Ive, or one at Linear, Vercel or Apple, would love it, not merely accept it. It is clean, quiet and exact, so the person sees their task and not the interface. Judge it on the running product against all seven aspects below, every time. Where one falls short, don't decorate it or nudge pixels: find what makes the screen harder than it needs to be, and change the UI, the UX or both until it's simpler and better. Matching the mockup or what's already there doesn't clear the bar.
 
-- **Squint.** What you see first is what matters first, and there is one strongest thing (the main action, or a moment's hero). Anything competing with it goes quieter or goes away.
-- **Subtract.** Remove a box, a label, a divider or a word; if the screen still works, leave it out. One way to say each thing, once per view.
-- **Edges and rhythm.** Everything snaps to shared edges (the column's left edge, readouts' baselines, a row's text start), spacing comes from the 4px scale, and the same gap separates the same kinds of things on every screen.
-- **Type.** Three levels in a block at most, one role per job, the right face for every number (a readout in Geist with tabular figures, data in mono, a number inside a sentence in the sentence's face), no uppercase sentences, no stray hyphens for ranges (en dashes) or three dots for an ellipsis.
-- **Color.** Count the colors on the screen: each one means something from the color rules, no two meanings share a hue, and nothing is colored to decorate.
-- **Siblings.** The same thing looks and behaves the same everywhere: compare the screen with its siblings (other task ends, other lists, other asides) and reuse their pieces before drawing a new one.
-- **Every state.** 390 and 1440, light and dark, more contrast, long Portuguese and German words, empty, loading, error and keyboard focus, each looked at, not assumed.
-- **Craft.** Icons optically centered with their text, tabular figures in columns, nothing truncated that the person needs, no orphaned word in a title, no layout shift when data arrives.
+- **Typography.** One role per job from the type scale, three levels in a block at most. The right face for every number: a readout in Geist with tabular figures, data in mono, a number inside a sentence in the sentence's face. Reading text keeps a comfortable measure; no uppercase sentences, no orphaned word in a title, en dashes for ranges and an ellipsis character instead of three dots.
+- **Hierarchy.** Squint: what you see first is what matters first, and there is one strongest thing (the main action, or a moment's hero). The eye moves in the task's order, from what this is to what to do next. Anything competing with the strongest thing goes quieter or goes away; order comes from size, weight, tone and position, not from boxes or decoration.
+- **Spacing and density.** Everything snaps to shared edges (the column's left edge, readouts' baselines, a row's text start) and spacing comes from the 4px scale. Related things sit closer than unrelated ones, and the same gap separates the same kinds of things on every screen. Density fits the job: a list to scan stays compact, a decision gets room, nothing is cramped at 390px or stranded in empty space at 2560px.
+- **Color and contrast.** Count the colors on the screen: each one means something from the [color rules](references/color.md), no two meanings share a hue, and nothing is colored to decorate. Neutral text meets WCAG AA on every surface it sits on, colored marks stay soft until a device asks for more contrast, color is never the only cue, and dark mode looks designed, not inverted.
+- **Iconography.** One family at the design system's sizes (`ICON_RULES` in `apps/playground/src/design-system/shape.ts`; SF Symbols and Material Symbols in the native apps), optically centered with its text, bare beside its words rather than in a tile. Each icon says something its words or place don't, or speeds up recognizing something seen often; otherwise it goes. The same icon means the same thing everywhere, and one thing has one icon.
+- **Consistency and polish.** The same thing looks and behaves the same everywhere: compare the screen with its siblings (other task ends, other lists, other asides) and reuse their pieces before drawing a new one. Then the details: tabular figures in columns, every control's hover, pressed, focus and disabled look, nothing truncated that the person needs, no layout shift when data arrives.
+- **Clarity.** Without being told, someone knows what this screen is, what to do next and what happens when they do it. Subtract: remove a box, a label, a divider or a word; if the screen still works, leave it out. One way to say each thing, once per view, in plain and specific words, with nothing to remember from an earlier screen.
+
+Judge every aspect in every state: 390 and 1440, light and dark, more contrast, long Portuguese and German words, empty, loading, error and keyboard focus, each looked at, not assumed. The bar is the same on iOS and Android, which draw this design inside their native components (see the end of this skill).
+
+### Rethink when stuck
+
+When a screen keeps missing the bar, review rounds circle the same screen, or each fix adds another element, stop polishing: the structure is probably wrong. Ask a subagent that didn't build it for three to five alternative concepts that rethink the screen from first principles, aiming for the simplest UX and UI that does the job. Give it the person's goal, what the screen must let them do, the constraints that hold (the design system, the product rules above, the platforms) and screenshots of the current version, but not your reasoning for it. Each concept is a different structure, not a variation of the current layout, described by what the person sees and does, what it removes and what it gives up. Choose or combine the strongest, prototype it with real content, and hold it to the same bar.
 
 ## Check the experience
 
@@ -83,6 +88,18 @@ Walk through the task: can someone recognize what matters, predict what happens 
 Inspect implemented changes in the production build `pnpm start` serves on a phone (390px), a tablet in portrait (820px) and in landscape (1180px), a laptop (1440px), and large desktops (1920px and 2560px), with touch, mouse and keyboard. `pnpm verify:pages` ([verify](../verify/SKILL.md)) screenshots a page on all six in light and dark and flags overflow, shifts and small targets; look at every screenshot. Check affected loading, empty, disabled, and error states, plus focus, touch targets, long translations, dark mode and more contrast (Playwright's `colorScheme` and `contrast`, or the browser's rendering emulation). Use the product as the people it serves would, end to end, with real content: type a real goal, go through onboarding, study day one. Check every page a change can reach, not only the one you redesigned. Recheck observed friction. For proposals, show representative screens and transitions. State what remains unverified.
 
 For substantial features, walk the running product as contrasting learner personas, including their bad days, with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md). Look for redundant controls, jargon, unnecessary choices, hidden progress, and effort that grows with repeated use.
+
+### Use it as a regular person
+
+Finish every design implementation and review by using the change as someone who has never seen how it was built: a regular learner with a real goal, on their own device, from start to finish. Then answer honestly:
+
+- How does it feel to use?
+- Is it easy to use? Is it simple?
+- Is it pleasant, even delightful?
+- Is anything confusing, even for a moment?
+- Would a grandma who has never seen Zoonk get through it without help or a wrong turn?
+
+An answer you have to hedge is a finding: fix it, or [rethink the screen](#rethink-when-stuck), before calling it done.
 
 ## Related guidance
 
