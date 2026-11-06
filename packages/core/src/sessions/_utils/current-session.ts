@@ -73,6 +73,24 @@ export function isCurrentSession({
   );
 }
 
+/** A run begun outside the session is still activity in that day, so midnight keeps the day for it as a started block does. */
+export function isRunStartDay({
+  now,
+  runStartedAt,
+  session,
+  timeZone,
+}: {
+  now: Date;
+  runStartedAt: Date;
+  session: SessionTimes;
+  timeZone: string;
+}): boolean {
+  return (
+    now.getTime() < runStartedAt.getTime() + CARRY_OVER_MS &&
+    isCurrentSession({ now: runStartedAt, session, timeZone })
+  );
+}
+
 /** Today's started session takes precedence; otherwise a still-active yesterday may remain current. */
 export function pickCurrentDay<Session extends SessionTimes>({
   now,
