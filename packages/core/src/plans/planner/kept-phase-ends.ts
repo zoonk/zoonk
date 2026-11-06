@@ -303,28 +303,31 @@ export function listStrainedEnds({
 }
 
 /**
- * Takes the items before `placeItemsInPhaseTime` files the lessons past a kept end under the next
- * phase's time; a saved plan already filed some, so the queue's phase wins.
+ * Reads each lesson's phase from the unit this run scheduled for it, or from the queue for an item
+ * kept from the saved plan, because `placeItemsInPhaseTime` files a lesson past a kept end under the
+ * next phase.
  */
 export function listEndsBeforeLessons({
   items,
+  laidOut,
   phaseEnds,
   queue,
   units,
 }: {
   items: readonly Pick<PlannedItem, "key" | "kind" | "phase" | "scheduledFor" | "status">[];
+  laidOut: readonly Pick<ScheduledUnit, "depth" | "key">[];
   phaseEnds: ReadonlyMap<number, Date>;
   queue: readonly Pick<QueueUnit, "key" | "phase">[];
-  units: readonly Pick<ScheduledUnit, "depth" | "key">[];
+  units: readonly Pick<ScheduledUnit, "key" | "phase">[];
 }): number[] {
-  const core = new Set(units.flatMap((unit) => (unit.depth ? [] : [unit.key])));
+  const core = new Set(laidOut.flatMap((unit) => (unit.depth ? [] : [unit.key])));
 
   const depth = new Set(
-    units.flatMap((unit) => (unit.depth && !core.has(unit.key) ? [unit.key] : [])),
+    laidOut.flatMap((unit) => (unit.depth && !core.has(unit.key) ? [unit.key] : [])),
   );
 
-  const queued = new Map(queue.map((unit) => [unit.key, unit.phase]));
-  const placed = items.map((item) => ({ ...item, phase: queued.get(item.key) ?? item.phase }));
+  const phases = new Map([...queue, ...units].map((unit) => [unit.key, unit.phase]));
+  const placed = items.map((item) => ({ ...item, phase: phases.get(item.key) ?? item.phase }));
 
   const lessons = placed.filter(
     (item) =>

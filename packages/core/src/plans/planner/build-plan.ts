@@ -306,7 +306,7 @@ function planGoal({
       windows: days.windows,
     }),
     ...listDroppedSkills(dropped),
-    endsBeforeLessons: listEndsBeforeLessons({ items: merged, phaseEnds, queue, units: laidOut }),
+    endsBeforeLessons: listEndsBeforeLessons({ items: merged, laidOut, phaseEnds, queue, units }),
     items,
     keptKeys: new Set([...kept, ...setAside].map((item) => item.key)),
     ...listLessonDays(units, keptPortions),

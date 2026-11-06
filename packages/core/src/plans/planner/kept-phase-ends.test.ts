@@ -227,15 +227,21 @@ describe(listEndsBeforeLessons, () => {
     { key: "b", phase: 1 },
   ];
 
-  it("reads a lesson filed under the next phase by the phase the plan put it in", () => {
+  it("reads a lesson the saved plan filed under the next phase by its phase in the queue", () => {
     expect(
-      listEndsBeforeLessons({ items, phaseEnds, queue, units: [{ depth: false, key: "a" }] }),
+      listEndsBeforeLessons({ items, laidOut: [], phaseEnds, queue, units: [] }),
     ).toStrictEqual([0]);
   });
 
   it("lets depth a plan short on time studies later come after the challenge", () => {
     expect(
-      listEndsBeforeLessons({ items, phaseEnds, queue, units: [{ depth: true, key: "a" }] }),
+      listEndsBeforeLessons({
+        items,
+        laidOut: [{ depth: true, key: "a" }],
+        phaseEnds,
+        queue,
+        units: [],
+      }),
     ).toStrictEqual([]);
   });
 
@@ -249,12 +255,7 @@ describe(listEndsBeforeLessons, () => {
     };
 
     expect(
-      listEndsBeforeLessons({
-        items: [won, ...items],
-        phaseEnds,
-        queue,
-        units: [{ depth: false, key: "a" }],
-      }),
+      listEndsBeforeLessons({ items: [won, ...items], laidOut: [], phaseEnds, queue, units: [] }),
     ).toStrictEqual([]);
   });
 });
