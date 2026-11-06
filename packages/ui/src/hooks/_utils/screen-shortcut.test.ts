@@ -78,6 +78,14 @@ describe(isScreenShortcut, () => {
     expect(isScreenShortcut(pressOn(audio, { key: "Enter" }))).toBe(true);
   });
 
+  it("leaves Enter to an input it presses, such as a file picker outside a form", () => {
+    const pressed = ["file", "button", "submit", "reset", "image"].map((type) =>
+      isEnterShortcutOn(`<input data-target type="${type}" />`),
+    );
+
+    expect(pressed).toStrictEqual([false, false, false, false, false]);
+  });
+
   it("leaves every key inside a dialog or a menu to it", () => {
     const inDialog = mount('<div role="dialog"><button data-target>Skip</button></div>');
     const inMenu = mount('<div role="menu"><div data-target role="menuitem">Helpful</div></div>');
