@@ -140,7 +140,6 @@
   "conversation_start": "a77ca56a5388d13fd437c4b394ef16cc4f73554338a763c1438ae2fc173b23b9",
   "conversation_start_failed": "22d1931bd3c5a20a1f0a5e7c8ba3378eea2734afe72c94caa36ae14d454743f3",
   "conversation_start_preparing": "06daed1770416273515317d3cae894ab153b7d42ccd1cbb1a9899c968a003737",
-  "conversation_starting": "8eb2e26bb9c4c05c9ef240eaa39a8c094569d285a93e1ae9eaf4d2c845319ba4",
   "conversation_still_closing": "273752f549ceeb91137ce806a71ab1c8fabca7996a449cdf148f542bd413c14b",
   "conversation_still_to_get_across": "bdab040420d137407153f92b227cac9bd2cd91f4a1c0810919eec59062ff0a15",
   "conversation_study_time_used_up": "b1d0a25de6f0596c73b0ff373bf4533ddf29fc46a1c13f7da45da90f5de77acd",
@@ -209,7 +208,6 @@
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">%1$s와(과) 대화하기</string>
     <string name="conversation_start">대화 시작하기</string>
-    <string name="conversation_starting">시작하고 있어요…</string>
     <string name="conversation_start_failed">대화를 시작하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
     <string name="conversation_challenge_plus">챌린지 대화는 Plus에서 이용할 수 있어요. 대화 없이도 계획은 계속 진행돼요.</string>
     <!-- The microphone permission was denied; the character's name. -->

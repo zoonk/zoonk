@@ -43,7 +43,6 @@
   "challenge_start": "dd9f66c9bbf4bcde77e9323679ac9ff49f10ae307fb97347cef3b13c3c03292d",
   "challenge_start_failed": "8ec0dc605e13580d6e9ed69dc8bd4241663b60e51a7c0e67e6ad41af5538f99f",
   "challenge_start_slow": "2004f49dbb1662f1c9b93a0f17b1e47291e2d05e331303432eb3d5e4249570da",
-  "challenge_starting": "b1e7cf7c89cfa637fd2bea7665327e8e908ee8a0c6989a0203903c91f8f7e364",
   "challenge_today": "91681207a83047e77d0144e43496b8687ac377c8a5f05297e46a7d75a7c6b674",
   "challenge_tomorrow": "5561240448aa492c8be6beaf67142d422e2bf89508704e6d67345f358c8be946",
   "challenge_topic_count": "597ff0e63174b193ce00af08830a819b4c1e2020a5a07c79ccdff030d044ce07",
@@ -151,7 +150,6 @@
     </plurals>
     <string name="challenge_call_plus">Le conversazioni delle sfide sono incluse in Plus. Il tuo piano va avanti anche senza.</string>
     <string name="challenge_start">Inizia</string>
-    <string name="challenge_starting">Stiamo avviando…</string>
     <string name="challenge_start_failed">Qualcosa non ha funzionato. Riprova tra un attimo.</string>
     <string name="challenge_start_slow">Stiamo ancora avviando la sfida. Ci stiamo mettendo più tempo del solito.</string>
     <string name="challenge_continue">Continua</string>

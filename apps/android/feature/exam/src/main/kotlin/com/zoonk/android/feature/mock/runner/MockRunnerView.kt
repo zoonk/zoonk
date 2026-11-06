@@ -387,7 +387,6 @@ private fun RunnerActions(
             MockMainButton(
                 text =
                     when {
-                        handingIn -> stringResource(R.string.mock_handing_in)
                         !last -> stringResource(R.string.mock_next)
                         run.isLastSection -> stringResource(R.string.mock_hand_in_mock)
                         else -> stringResource(R.string.mock_hand_in_section)

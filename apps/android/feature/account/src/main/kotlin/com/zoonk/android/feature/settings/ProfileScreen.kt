@@ -5,7 +5,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,9 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
@@ -56,6 +53,9 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyOutlinedButton
+import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -146,9 +146,8 @@ private fun Profile(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
-                Button(onClick = form::save, enabled = form.canSave && form.isChanged, modifier = Modifier.align(Alignment.End)) {
+                BusyButton(form.isSaving, form::save, Modifier.align(Alignment.End), enabled = form.canSave && form.isChanged) {
                     Text(stringResource(R.string.settings_save))
-                    if (form.isSaving) ButtonProgress()
                 }
             }
         }
@@ -160,17 +159,14 @@ private fun Profile(
                 headlineContent = { Text(stringResource(R.string.settings_download_data)) },
                 supportingContent = { Text(stringResource(R.string.settings_download_data_description)) },
             )
-            OutlinedButton(
+            BusyOutlinedButton(
+                busy = profile.isExporting,
                 onClick = { export.launch(EXPORT_FILE_NAME) },
-                enabled = !profile.isExporting,
                 modifier =
                     Modifier
                         .align(Alignment.End)
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-            ) {
-                Text(stringResource(if (profile.isExporting) R.string.settings_download_preparing else R.string.settings_download))
-                if (profile.isExporting) ButtonProgress()
-            }
+            ) { Text(stringResource(R.string.settings_download)) }
         }
         if (profile.exportFailed) Failure(stringResource(R.string.settings_download_failed))
     }
@@ -305,14 +301,11 @@ private fun DeleteButton(
     isDeleting: Boolean,
     onClick: () -> Unit,
 ) {
-    TextButton(
+    BusyTextButton(
+        busy = isDeleting,
         onClick = onClick,
-        enabled = !isDeleting,
         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
-    ) {
-        Text(stringResource(text))
-        if (isDeleting) ButtonProgress()
-    }
+    ) { Text(stringResource(text)) }
 }
 
 @Composable
@@ -347,12 +340,6 @@ private fun Failure(message: String) {
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
-}
-
-@Composable
-private fun ButtonProgress() {
-    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-    CircularProgressIndicator(modifier = Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
 }
 
 private const val EXPORT_FILE_NAME = "zoonk-data.json"

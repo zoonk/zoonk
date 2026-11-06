@@ -140,7 +140,6 @@
   "conversation_start": "56e32900b42f04e2fd9273705e45214d0f49944d1e5800cb9f4106031bc5f651",
   "conversation_start_failed": "f2aa0d2eed3c44587129d2065c12c40dec1308550a70086b53556095503e7948",
   "conversation_start_preparing": "574a513cdd36db1355ffd74c2b928122f45a4e1e71aba5a1513a3395077878fd",
-  "conversation_starting": "0aba5c1f4b6454eed21279422e0e48de39bb63e4bdab274312a9406e1ba8dbfd",
   "conversation_still_closing": "cbb9e4caecbe05a28a7aeb26b7d3a6a3a7a7886fa6516d6ac249c9a29ba3b40b",
   "conversation_still_to_get_across": "e6da7b76beeecf6786abdcc2535574116681ada10c32c3b414e2ca3e3264d870",
   "conversation_study_time_used_up": "13bbd900cbc169655858fab10853e97ba270bab9655d659f21e4754dcab4f4fb",
@@ -209,7 +208,6 @@
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">Appeler %1$s</string>
     <string name="conversation_start">Démarrer l’appel</string>
-    <string name="conversation_starting">Démarrage…</string>
     <string name="conversation_start_failed">L’appel n’a pas pu démarrer. Réessaie dans un instant.</string>
     <string name="conversation_challenge_plus">Les appels de défi sont inclus dans Plus. Ton plan continue sans eux.</string>
     <!-- The microphone permission was denied; the character's name. -->

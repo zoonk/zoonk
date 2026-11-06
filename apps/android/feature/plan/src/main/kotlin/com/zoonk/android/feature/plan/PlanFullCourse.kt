@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -32,7 +31,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.PendingLabel
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -229,9 +228,7 @@ internal fun ColumnScope.StudyEverythingBody(
             )
         },
         actions = {
-            Button(onClick = ::choose, modifier = Modifier.fillMaxWidth()) {
-                PendingLabel(pending, stringResource(R.string.plan_study_everything))
-            }
+            BusyButton(pending, ::choose, Modifier.fillMaxWidth()) { Text(stringResource(R.string.plan_study_everything)) }
             TextButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.plan_cancel)) }
             if (save != null && edits.sheetFailed(PlanPart.FullCourse, save)) SaveFailedText()
         },

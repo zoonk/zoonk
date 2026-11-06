@@ -49,7 +49,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonTitle
-import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunFinished
 import com.zoonk.android.feature.practice.RunFrame
 import com.zoonk.android.feature.practice.RunIntro
@@ -71,6 +70,7 @@ import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
 import com.zoonk.android.ui.components.DiffLines
@@ -272,13 +272,9 @@ private fun PatternQuestion(
                 }
                 if (checked != null) {
                     val last = index + 1 == pattern.drill.size
-                    BusyButton(
-                        stringResource(if (last) R.string.pattern_see_how_you_did else R.string.practice_continue),
-                        busy = drill.saving,
-                        enabled = true,
-                        modifier = width,
-                        onClick = viewModel::next,
-                    )
+                    BusyButton(busy = drill.saving, onClick = viewModel::next, modifier = width) {
+                        Text(stringResource(if (last) R.string.pattern_see_how_you_did else R.string.practice_continue))
+                    }
                 } else {
                     Button(onClick = viewModel::check, enabled = drill.picked != null, modifier = width) {
                         Text(stringResource(R.string.practice_check))

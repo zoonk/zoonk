@@ -20,7 +20,6 @@
   "mock_flagged_count": "7e5537a26542320e4f6368011f85ca9848251a0904ae5e3ae9f557df9871109c",
   "mock_full_day": "1c019fcaa951bfa71fb224f686dfec49768988b8277f1386fa1b7f8836bd6b53",
   "mock_full_day_number": "839dc6831c9b9e05a53def869790c456a86f3713ffecae1ccfdb0b4dc9286b3d",
-  "mock_grading": "1c097fbb04d1d106105e0e4b08438d975714741a728b9b4d43069f1ea61c8b44",
   "mock_half_day": "7ccbef4e00c6a0c8fd44b45e17f7ad64d0a17ce3941bfd6e8dd02a850042d1d8",
   "mock_half_day_number": "75c7d6bb63eea052c95ec6b16d20c647dd11f2ee5db379e059b3fd84f31e124f",
   "mock_hand_in": "d575d9bcc15433fa77420f48975d339edb88907eb4639147a720d18adfe9b340",
@@ -31,7 +30,6 @@
   "mock_hand_in_section_title": "ad29edeb5833f71f6fa496b5cc74cb194ccb8c7108b255819118911d3693dc3a",
   "mock_handed_in": "a2227d859f0b537f5428a3feb0ac021bae1e2f0090319cfa8bebc54427809b58",
   "mock_handed_in_title": "259256d1b24a9193e5d181bccf7240a90e890c86551eb951f13e05ca1e8f613c",
-  "mock_handing_in": "dd0ad19eaeac716013eb01d81914d9ca52bf74209323e42bcda54c55647014cd",
   "mock_keep_answering": "decb14996fdb3b1da0638c54e81e9bb85f91f502894db1be1de414edf114ed8d",
   "mock_keep_going": "86acc8ebe29a45bc9263485cc9c11dd3b7e947f55f0bc3ae4b8a37fbc0867bfe",
   "mock_label": "3066dc588bc3f8268b7830f124b64b4c0181cac79a9e7bcf866d2a68c509759e",
@@ -150,7 +148,6 @@
     <string name="mock_next">다음</string>
     <string name="mock_hand_in_mock">모의고사 제출하기</string>
     <string name="mock_hand_in_section">이 파트 제출하기</string>
-    <string name="mock_handing_in">제출하고 있어요…</string>
     <string name="mock_moves_review_any">답안 검토: 어느 문제로든 돌아갈 수 있어요.</string>
     <string name="mock_moves_review_none">검토: 더 이상 답을 바꿀 수 없어요.</string>
     <plurals name="mock_moves_review_changes">
@@ -220,7 +217,6 @@
     <string name="mock_step_slow">아직 제출하고 있어요. 평소보다 오래 걸리고 있어요.</string>
     <string name="mock_handed_in_title">모의고사를 제출했어요</string>
     <string name="mock_see_how">결과 보기</string>
-    <string name="mock_grading">채점 중…</string>
     <string name="mock_continue_section">계속하기</string>
     <string name="mock_time_up">시간이 다 됐어요</string>
     <string name="mock_answers_saved">지금까지 답한 내용은 저장됐어요.</string>

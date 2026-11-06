@@ -14,7 +14,6 @@
   "focustest_questions": "c550db987f3db0991254714d23a63f70910ae5ab0c1c1a51ce66285226035c69",
   "focustest_see_plan": "93c916930f923dd037c885dc0c47149e28b49ae130bff7e2c6907bea66028bd3",
   "focustest_start": "981a3c1cfb728429a2883cf8ea0ae8cbc0b194368ed546ebb1eb7368c863039d",
-  "focustest_starting": "ded53717bb9064a7a8373b9fcadee91378c3ed3c8d87cecb0b5d20c0ae598bda",
   "focustest_subjects": "fac5f14a4459c6a4ded086e182dffbccef456ff03cc3fcf2164c835d88b983a7",
   "focustest_title": "1b4fd48f572eddb9253b2d0d3cd76728287d14f0c970493538b4ddb5bf72c29a",
   "focustest_undone": "3b712acae98a46f2c27aa4d3f9b69594d68c0048a4f7eeb3140157bc2059c770",
@@ -41,7 +40,6 @@
     <!-- How long the test takes. %1$s is a duration, such as "5 min". -->
     <string name="focustest_about">約%1$s</string>
     <string name="focustest_start">テストを始める</string>
-    <string name="focustest_starting">開始しています…</string>
     <string name="focustest_writing">問題を作成しています</string>
     <string name="focustest_writing_questions">各科目の問題を作成しています</string>
     <string name="focustest_writing_line">各科目で何を出題するか選んでいます…</string>

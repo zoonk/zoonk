@@ -75,6 +75,8 @@ import com.zoonk.android.ui.components.AnswerTag
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
 import com.zoonk.android.ui.components.BeltLevel
+import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.KindDot
@@ -134,6 +136,7 @@ internal val gallerySections =
         GallerySection("Color roles") { ColorRoles() },
         GallerySection("Type") { TypeRoles() },
         GallerySection("Material components") { MaterialComponents() },
+        GallerySection("Busy buttons") { BusyButtons() },
         GallerySection("Navigation") { Navigation() },
         GallerySection("Label chips") { Chips() },
         GallerySection("Meters") { Meters() },
@@ -331,6 +334,15 @@ private fun MaterialComponents() {
             modifier = Modifier.fillMaxWidth(),
         )
         CircularProgressIndicator(progress = { 0.6f }, color = MaterialTheme.colorScheme.tertiary)
+    }
+}
+
+@Composable
+private fun BusyButtons() {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        BusyButton(busy = false, onClick = {}) { Text("Start session") }
+        BusyButton(busy = true, onClick = {}) { Text("Start session") }
+        BusyOutlinedButton(busy = true, onClick = {}) { Text("Move to Monday") }
     }
 }
 

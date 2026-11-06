@@ -24,10 +24,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -128,6 +126,8 @@ import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalPrivatePictures
@@ -869,21 +869,11 @@ private fun ActionBar(
 
     TaskActions(back) { width ->
         if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
-        val label: @Composable RowScope.() -> Unit = {
-            if (primary.busy) {
-                CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
-            }
-            Text(stringResource(primary.label.text()))
-        }
+        val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
         if (primary.label == PrimaryLabel.DontKnowYet) {
-            FilledTonalButton(
-                onClick = actions::runPrimary,
-                enabled = primary.enabled,
-                modifier = width.focusRequester(primaryFocus),
-                content = label,
-            )
+            BusyTonalButton(primary.busy, actions::runPrimary, width.focusRequester(primaryFocus), primary.enabled, content = label)
         } else {
-            Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width.focusRequester(primaryFocus), content = label)
+            BusyButton(primary.busy, actions::runPrimary, width.focusRequester(primaryFocus), primary.enabled, content = label)
         }
         ask()
     }
@@ -892,7 +882,6 @@ private fun ActionBar(
 private fun PrimaryLabel.text(): Int =
     when (this) {
         PrimaryLabel.Check -> R.string.player_action_check
-        PrimaryLabel.Checking -> R.string.player_action_checking
         PrimaryLabel.Confirm -> R.string.player_action_confirm
         PrimaryLabel.Continue -> R.string.player_action_continue
         PrimaryLabel.DontKnowYet -> R.string.player_dont_know_yet

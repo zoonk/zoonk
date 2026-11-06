@@ -6,7 +6,6 @@
   "mock_chooser_failed": "0905cd2e4801cc445ef91a956c38d3f7e7001c16d4eb0334f3e7e903e1612793",
   "mock_chooser_full_day_number_without": "53b609655213d5f32e41a96f4affb91fcf14e4b0d1ffd757da84aef08bc18a7c",
   "mock_chooser_full_day_without": "ac879e638f16784b07221ef6798824c19a09be4f8a77ffb77950b2cbc8f647ff",
-  "mock_chooser_getting_ready": "013962e6237d2b1fa6bedffee4f7cc4c608fd87e4a3556043d6d2fcf4431be7b",
   "mock_chooser_last_mock": "5f93d093cd1b8418c611f269cdba232daa381a29bbb1bbd39121bf6f66d9e9b8",
   "mock_chooser_left_out_choice": "90d76fd979e13a17e7a11278dc196945a17c938d1388d7621297916792025ce8",
   "mock_chooser_left_out_listening": "69a7262e32e843e8de6f8ee4f3d0846c335e15128fc88d3d68343c2e411707f2",
@@ -79,7 +78,6 @@
     <string name="mock_chooser_rule">本番の試験と同じように、結果がわかるのは最後です。</string>
     <string name="mock_chooser_pick_free">今回は試験をどこまで受けるか選んでください。</string>
     <string name="mock_chooser_start">始める</string>
-    <string name="mock_chooser_getting_ready">準備しています…</string>
     <plurals name="mock_chooser_start_with">
         <item quantity="other">%d問から始める</item>
     </plurals>

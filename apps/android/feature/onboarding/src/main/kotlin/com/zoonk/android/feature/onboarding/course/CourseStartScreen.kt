@@ -4,18 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -61,6 +56,7 @@ import com.zoonk.android.feature.onboarding.start.GoalLimitWall
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -222,25 +218,16 @@ private fun CourseStartForm(
             }
             if (!blocked) {
                 val starting = stringResource(R.string.onboarding_course_starting)
-                Button(
+                BusyButton(
+                    busy = vm.isStarting,
                     onClick = start,
-                    enabled = !vm.isStarting && (chapter != null || vm.level != null),
                     modifier =
                         Modifier.fillMaxWidth().semantics {
                             liveRegion = LiveRegionMode.Polite
                             if (vm.isStarting) stateDescription = starting
                         },
-                ) {
-                    if (vm.isStarting) {
-                        CircularProgressIndicator(
-                            Modifier.size(ButtonDefaults.IconSize),
-                            color = LocalContentColor.current,
-                            strokeWidth = 2.dp,
-                        )
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    }
-                    Text(stringResource(R.string.onboarding_course_build))
-                }
+                    enabled = chapter != null || vm.level != null,
+                ) { Text(stringResource(R.string.onboarding_course_build)) }
                 if (!signedIn && vm.failure == null) {
                     Text(
                         stringResource(R.string.onboarding_course_start_free),

@@ -43,6 +43,7 @@ import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
@@ -101,23 +102,12 @@ fun LessonWaitingScreen(
             when {
                 showsStart -> {
                     {
-                        Button(
+                        BusyButton(
+                            busy = current == LessonWriting.Starting,
                             onClick = viewModel::start,
-                            enabled = current == LessonWriting.NotStarted,
                             modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(
-                                stringResource(
-                                    if (current ==
-                                        LessonWriting.Starting
-                                    ) {
-                                        R.string.player_starting
-                                    } else {
-                                        R.string.player_start_this_lesson
-                                    },
-                                ),
-                            )
-                        }
+                            enabled = current == LessonWriting.NotStarted,
+                        ) { Text(stringResource(R.string.player_start_this_lesson)) }
                     }
                 }
 

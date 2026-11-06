@@ -58,7 +58,6 @@ import com.zoonk.android.feature.mock.chooser.MockLeftOutNote
 import com.zoonk.android.feature.mock.mockDaySize
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.plan.lessonsText
-import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.subscription.PlusNotice
@@ -67,6 +66,8 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.characters.TricksterArt
+import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -74,7 +75,6 @@ import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
@@ -277,9 +277,7 @@ internal fun ChallengeMoved(
             TaskActionBar {
                 MoveFailed(ui)
                 TaskActions { width ->
-                    OutlinedButton(onClick = viewModel::undoMove, enabled = !ui.moving) {
-                        PendingLabel(ui.moving, stringResource(R.string.challenge_undo))
-                    }
+                    BusyOutlinedButton(ui.moving, onClick = viewModel::undoMove) { Text(stringResource(R.string.challenge_undo)) }
                     Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
                         Text(stringResource(R.string.challenge_back_to_today))
                     }
@@ -752,7 +750,12 @@ private fun ChallengeFooter(
                     TaskActions { width ->
                         if (movable) {
                             OutlinedButton(onClick = actions::toToday) { Text(stringResource(R.string.challenge_back_to_today)) }
-                            BusyButton(stringResource(R.string.challenge_move), ui.moving, !ui.starting, width, vm::moveToMonday)
+                            BusyButton(
+                                ui.moving,
+                                vm::moveToMonday,
+                                width,
+                                enabled = !ui.starting,
+                            ) { Text(stringResource(R.string.challenge_move)) }
                         } else {
                             Button(
                                 onClick = actions::toToday,
@@ -768,7 +771,7 @@ private fun ChallengeFooter(
 
                 else -> {
                     TaskActions { width ->
-                        BusyButton(stringResource(R.string.challenge_continue), ui.starting, true, width, vm::start)
+                        BusyButton(ui.starting, vm::start, width) { Text(stringResource(R.string.challenge_continue)) }
                     }
                 }
             }
@@ -816,8 +819,8 @@ private fun ChallengeFooter(
         MoveFailed(ui)
         if (movable) {
             TaskActions { width ->
-                OutlinedButton(onClick = vm::moveToMonday, enabled = !ui.moving && !ui.starting, modifier = width) {
-                    PendingLabel(ui.moving, stringResource(R.string.challenge_move))
+                BusyOutlinedButton(ui.moving, onClick = vm::moveToMonday, modifier = width, enabled = !ui.starting) {
+                    Text(stringResource(R.string.challenge_move))
                 }
             }
         }
@@ -850,17 +853,15 @@ private fun StartActions(
     MoveFailed(ui)
     TaskActions { width ->
         if (movable) {
-            OutlinedButton(onClick = vm::moveToMonday, enabled = !ui.moving && !ui.starting) {
-                PendingLabel(ui.moving, stringResource(R.string.challenge_move))
-            }
+            BusyOutlinedButton(
+                ui.moving,
+                onClick = vm::moveToMonday,
+                enabled = !ui.starting,
+            ) { Text(stringResource(R.string.challenge_move)) }
         }
-        val label =
-            when {
-                ui.starting -> stringResource(R.string.challenge_starting)
-                challenge.mock -> stringResource(R.string.challenge_mock_start)
-                else -> stringResource(R.string.challenge_start)
-            }
-        BusyButton(label, ui.starting, !ui.moving, width, vm::start)
+        BusyButton(ui.starting, vm::start, width, enabled = !ui.moving) {
+            Text(stringResource(if (challenge.mock) R.string.challenge_mock_start else R.string.challenge_start))
+        }
     }
 }
 

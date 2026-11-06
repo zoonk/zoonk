@@ -474,6 +474,7 @@ class LessonPlayerReducerTest {
         val typed = LessonAction.SelectAnswer("typed", LessonAnswer.Typed("A map"))
         val checking = play(listOf(typedAnswerStep("typed")), typed, LessonAction.CheckStarted("typed"))
         assertEquals(LessonPhase.Checking, checking.phase)
+        assertEquals(PrimaryAction(isCheck = true, label = PrimaryLabel.Check, busy = true, enabled = false), checking.screen().primary)
 
         val failed = checking.then(LessonAction.CheckFailed("typed"))
         assertEquals(LessonPhase.Playing, failed.phase)

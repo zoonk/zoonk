@@ -26,7 +26,6 @@
   "essay_full_marks": "94b8f50e3c6c107fa114629e26440ac92cd52570c6d502a092c669db967b3e21",
   "essay_grade_rewrite": "90d40264912dd5eda0943fe36d9b33fdb4b624e9347a2da282a14229ae474ed5",
   "essay_grading": "7588371af0744e3cc2129b96705362218a878d5c7c4ebf33afbef02765414684",
-  "essay_grading_button": "9569c00ade57701394e1ff513267c532b9884169f8e89ca7f7419cfa1e194f8d",
   "essay_grading_slow": "22b1485efcedcfe39e2c4b6d6cb957e236a5e06c9b7dc54749b92622418669d7",
   "essay_keep_writing": "bf22bf27cf32f08ae37cd730d1f6eeae538e1df81815ca856e1650ac794f73b6",
   "essay_last_grade": "ea1b91abc672a2d8866d58f4519d9e68fe16349d0929dd97eea735c2b8b429f2",
@@ -113,7 +112,6 @@
     <string name="essay_grading">各評価基準に沿って小論文を評価しています。最大30秒かかります。</string>
     <string name="essay_grading_slow">引き続き採点しています。いつもより時間がかかっています。</string>
     <string name="essay_skip_rewrite">書き直しをスキップする</string>
-    <string name="essay_grading_button">採点しています…</string>
     <string name="essay_grade_rewrite">書き直した文章を採点する</string>
     <string name="essay_send">採点に送る</string>
     <string name="essay_leave_title">いったん中断しますか？</string>

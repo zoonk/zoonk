@@ -21,7 +21,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedCard
@@ -52,9 +51,9 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -180,22 +179,18 @@ private fun Loaded(
             headlineContent = { Text(stringResource(R.string.memory_download)) },
             supportingContent = { Text(stringResource(R.string.memory_download_description)) },
         )
-        OutlinedButton(
+        BusyOutlinedButton(
+            busy = screen.isExporting,
             onClick = { export.launch(EXPORT_FILE_NAME) },
-            enabled = !screen.isExporting,
             modifier =
                 Modifier
                     .align(Alignment.End)
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         ) {
-            if (screen.isExporting) {
-                CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
-            } else {
-                Icon(painterResource(R.drawable.ic_download), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-            }
+            Icon(painterResource(R.drawable.ic_download), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text(stringResource(if (screen.isExporting) R.string.settings_download_preparing else R.string.settings_download))
+            Text(stringResource(R.string.settings_download))
         }
     }
     if (screen.exportFailed) {

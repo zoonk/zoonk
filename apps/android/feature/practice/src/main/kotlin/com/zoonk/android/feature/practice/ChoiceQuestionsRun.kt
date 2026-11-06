@@ -31,6 +31,7 @@ import com.zoonk.android.feature.questions.QuestionAnswer
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.FeedbackSubmissionContext
@@ -145,18 +146,17 @@ internal fun ChoiceQuestionsRun(
                         if (question != null) {
                             NotSureButton(onClick = { onAnswer(question, Answer.DontKnow) }, enabled = !locked, dontKnowYet = true)
                         }
-                        BusyButton(
-                            stringResource(
-                                when {
-                                    question == null -> R.string.practice_finish_now
-                                    shown + 1 >= total -> R.string.practice_finish
-                                    else -> R.string.practice_next
-                                },
-                            ),
-                            busy = pending,
-                            enabled = next != null,
-                            modifier = width,
-                        ) { next?.invoke() }
+                        BusyButton(busy = pending, onClick = { next?.invoke() }, modifier = width, enabled = next != null) {
+                            Text(
+                                stringResource(
+                                    when {
+                                        question == null -> R.string.practice_finish_now
+                                        shown + 1 >= total -> R.string.practice_finish
+                                        else -> R.string.practice_next
+                                    },
+                                ),
+                            )
+                        }
                     }
                 }
             },

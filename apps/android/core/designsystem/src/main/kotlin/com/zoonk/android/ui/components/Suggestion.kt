@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -228,12 +227,12 @@ fun SuggestionAction(
     secondary: Boolean = false,
 ) = SuggestionAction(onClick, enabled = enabled, secondary = secondary) { Text(text) }
 
-/** [content] is the button's label, say with a spinner while its work runs. */
 @Composable
 fun SuggestionAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    busy: Boolean = false,
     secondary: Boolean = false,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -241,9 +240,9 @@ fun SuggestionAction(
     val width = if (presentation == Presentation.Sheet) Modifier.fillMaxWidth() else Modifier
 
     if (secondary || presentation == Presentation.Line) {
-        FilledTonalButton(onClick = onClick, modifier = modifier.then(width), enabled = enabled, content = content)
+        BusyTonalButton(busy, onClick, modifier.then(width), enabled, content = content)
     } else {
-        Button(onClick = onClick, modifier = modifier.then(width), enabled = enabled, content = content)
+        BusyButton(busy, onClick, modifier.then(width), enabled, content = content)
     }
 }
 

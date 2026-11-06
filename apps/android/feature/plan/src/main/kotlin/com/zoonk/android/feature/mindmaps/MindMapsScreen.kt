@@ -72,13 +72,13 @@ import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -532,18 +532,14 @@ private fun RequestTile(
                 }
             } else {
                 val spoken = stringResource(if (failure) R.string.mindmaps_try_again_spoken else R.string.mindmaps_create_spoken, map.title)
-                FilledTonalButton(
+                BusyTonalButton(
+                    busy = local?.pending == true,
                     onClick = { if (failure) actions.retry(map.chapterId) else actions.create(map.chapterId) },
                     modifier = Modifier.semantics { contentDescription = spoken },
-                    enabled = local?.pending != true && !blocked,
+                    enabled = !blocked,
                     // Material's pill, which a label wrapped by large text would round into a circle that cuts off its corners.
                     shape = RoundedCornerShape(ButtonDefaults.MinHeight / 2),
-                ) {
-                    PendingLabel(
-                        local?.pending == true,
-                        stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_create),
-                    )
-                }
+                ) { Text(stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_create)) }
             }
         }
 

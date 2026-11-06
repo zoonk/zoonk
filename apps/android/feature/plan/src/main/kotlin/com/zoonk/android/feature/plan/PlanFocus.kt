@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -33,6 +32,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.theme.zoonk
@@ -137,13 +137,12 @@ internal fun ColumnScope.ChooseFocusBody(
             }
         },
         actions = {
-            Button(
+            BusyButton(
+                busy = pending,
                 onClick = ::save,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = chosen.isNotEmpty() && chosen.toSet() != current.toSet() && !unchanged,
-            ) {
-                Text(stringResource(if (pending) R.string.plan_saving else R.string.plan_focus_on_these))
-            }
+            ) { Text(stringResource(R.string.plan_focus_on_these)) }
             if (save != null && edits.sheetFailed(PlanPart.Focus, save)) SaveFailedText()
         },
     )

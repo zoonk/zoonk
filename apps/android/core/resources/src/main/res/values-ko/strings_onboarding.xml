@@ -151,7 +151,6 @@
   "onboarding_musicianship_title": "be9b34f1ea002ce3ae59a2f4f04d2100bad140cbaee37b4ba21ccc4d54fc0fcd",
   "onboarding_my_notes": "c1bd37b1b595fee7d5b0d5d7f5ecd49f8756d912a1d6a3bc838d3d2145a2cb28",
   "onboarding_no_date": "ccb1243dc877aff6081205e3406750adeb0c22076aa95d21e502684c50af3fc5",
-  "onboarding_opening_explanation": "9ff02bb1fcc39c9468e6116bd6c4312855b7ef83a0e628f97f7ef1ec93ee6bcf",
   "onboarding_paste_link": "a82a6c177b3a19828cbbfccdc876e7ffada69db28a97eb5768ee7f8402e077bc",
   "onboarding_paste_link_placeholder": "a1ed384fdf20c3d2ba7386da4022352e1dd3d45076d279fa453304bccab395e3",
   "onboarding_paste_text": "063721472f8721a770e1dcb119ea7a1f66768ec7ca9a47ed889589818017e031",
@@ -369,8 +368,6 @@
   "onboarding_row_your_role": "a5b7dfcb20e40a960c0b77ab88808e0be83dbd44e23f07f07d4c2d3b74688bb4",
   "onboarding_save": "f9ec73dc195fa19e1d5cdfde540e1503d670a660805be66208d63c6267745ce1",
   "onboarding_save_failed": "c5cacadd1645482e5656e5aa05ecfe0174da710ef9620c8d6d4aaa9888bc7118",
-  "onboarding_saving": "d21b1558592267e01ecd94dabc022b70d3fff5d2a1eb341c2237644e323fd27e",
-  "onboarding_saving_goal": "bfb5258154f31a2548754ffec3c93d8aa252021dfb2b210e09beeb3c5365e2c4",
   "onboarding_schedule_time_label": "3b0f962cbd68711cd48d21678977e2172a7f1cbac678a0888103ddf711ac9804",
   "onboarding_schedule_title": "05af4a62b9f97d4bccc783fabda2afb2f0008166e10eabac25b50768668a5663",
   "onboarding_score_placeholder": "bd30796be1ab8593eeb3cb9e82e8b15f47d8f526ced7d4bbf43f101de5bf0083",
@@ -488,7 +485,6 @@
     <!-- The same, for two or more goals shown just above. -->
     <string name="onboarding_understood_locked_goals">Plus를 이용하면 여러 목표를 동시에 진행할 수 있어요. 그전까지 이 목표들은 내 목표 목록에 남아 있어요.</string>
     <string name="onboarding_looks_right">맞아요</string>
-    <string name="onboarding_saving_goal">목표를 저장하고 있어요…</string>
     <string name="onboarding_fix_something">수정하기</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
     <string name="onboarding_what_you_wrote">내가 쓴 내용</string>
@@ -496,7 +492,6 @@
     <string name="onboarding_read_again">다시 읽기</string>
     <string name="onboarding_cancel">취소</string>
     <string name="onboarding_save">저장</string>
-    <string name="onboarding_saving">저장하고 있어요…</string>
     <!-- Edit button of a fact. %1$s is the fact's label, like "Exam date". -->
     <string name="onboarding_edit_fact">%1$s 수정하기</string>
     <string name="onboarding_use_this_date">이 날짜로 설정하기</string>
@@ -553,7 +548,6 @@
     <!-- After a goal the learner typed turned out to be a question. -->
     <string name="onboarding_explain_description">읽는 데 약 5분 걸리는 짧은 맞춤 설명이에요.</string>
     <string name="onboarding_explain_it">설명 보기</string>
-    <string name="onboarding_opening_explanation">설명을 열고 있어요…</string>
     <string name="onboarding_declined_title">이 목표는 도와드릴 수 없어요</string>
     <string name="onboarding_declined_description">Zoonk는 자신이나 다른 사람에게 해를 끼칠 수 있는 내용이나 도박, 부정행위 방법은 가르치지 않아요. 그 밖에 배우고 싶은 게 있나요?</string>
     <string name="onboarding_try_another_goal">다른 목표 시도하기</string>

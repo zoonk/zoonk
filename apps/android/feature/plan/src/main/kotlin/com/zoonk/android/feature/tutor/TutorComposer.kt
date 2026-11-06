@@ -10,8 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.maxLength
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -38,6 +36,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.BusyFilledIconButton
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 
@@ -127,12 +126,8 @@ private fun SendButton(
 ) {
     val label = stringResource(if (resending) R.string.tutor_retry_last_question else R.string.tutor_send)
 
-    FilledIconButton(onClick = onClick, enabled = enabled, modifier = Modifier.padding(end = 4.dp)) {
-        when {
-            asking -> CircularProgressIndicator(Modifier.size(18.dp).semantics { contentDescription = label }, strokeWidth = 2.dp)
-            resending -> Icon(painterResource(R.drawable.ic_refresh), contentDescription = label)
-            else -> Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = label)
-        }
+    BusyFilledIconButton(asking, onClick, Modifier.padding(end = 4.dp), enabled) {
+        Icon(painterResource(if (resending) R.drawable.ic_refresh else R.drawable.ic_arrow_upward), contentDescription = label)
     }
 }
 

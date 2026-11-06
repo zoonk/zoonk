@@ -14,11 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,6 +54,7 @@ import com.zoonk.android.feature.mock.result.MockResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
@@ -301,7 +299,6 @@ internal fun MockStepStatus(
     }
 }
 
-/** A step's main action. Busy, it keeps its ink and shows a wheel, as main's does. */
 @Composable
 internal fun MockMainButton(
     text: String,
@@ -309,28 +306,7 @@ internal fun MockMainButton(
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-) {
-    val colors =
-        if (busy) {
-            ButtonDefaults.buttonColors(
-                disabledContainerColor = MaterialTheme.colorScheme.primary,
-                disabledContentColor = MaterialTheme.colorScheme.onPrimary,
-            )
-        } else {
-            ButtonDefaults.buttonColors()
-        }
-
-    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier.heightIn(min = 48.dp), colors = colors) {
-        if (busy) {
-            CircularProgressIndicator(
-                Modifier.padding(end = 8.dp).size(18.dp),
-                strokeWidth = 2.dp,
-                color = LocalContentColor.current,
-            )
-        }
-        Text(text)
-    }
-}
+) = BusyButton(busy, onClick, modifier.heightIn(min = 48.dp), enabled) { Text(text) }
 
 /** "Mock exam · Mathematics". */
 @Composable
@@ -376,12 +352,7 @@ private fun MockTimeUp(
         actions = {
             TaskActions { main ->
                 MockMainButton(
-                    text =
-                        when {
-                            handingIn -> stringResource(R.string.mock_handing_in)
-                            isLast -> stringResource(R.string.mock_see_how)
-                            else -> stringResource(R.string.mock_continue_section)
-                        },
+                    text = stringResource(if (isLast) R.string.mock_see_how else R.string.mock_continue_section),
                     busy = handingIn,
                     enabled = !run.pending,
                     onClick = viewModel::submitSection,
@@ -413,7 +384,7 @@ private fun MockHandedIn(
         actions = {
             TaskActions { main ->
                 MockMainButton(
-                    text = stringResource(if (finishing) R.string.mock_grading else R.string.mock_see_how),
+                    text = stringResource(R.string.mock_see_how),
                     busy = finishing,
                     enabled = !run.pending,
                     onClick = viewModel::finish,

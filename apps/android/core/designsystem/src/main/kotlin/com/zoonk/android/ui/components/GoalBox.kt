@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -120,21 +118,7 @@ fun GoalBox(
         Row(verticalAlignment = Alignment.CenterVertically) {
             leading?.invoke()
             Spacer(Modifier.weight(1f))
-            Button(
-                onClick = submit,
-                contentPadding = if (isSubmitting) ButtonDefaults.ButtonWithIconContentPadding else ButtonDefaults.ContentPadding,
-            ) {
-                Text(stringResource(R.string.goal_box_submit))
-
-                if (isSubmitting) {
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(ButtonDefaults.IconSize),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp,
-                    )
-                }
-            }
+            BusyButton(isSubmitting, submit) { Text(stringResource(R.string.goal_box_submit)) }
         }
     }
 }

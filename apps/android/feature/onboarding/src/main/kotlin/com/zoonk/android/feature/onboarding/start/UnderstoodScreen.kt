@@ -58,6 +58,7 @@ import com.zoonk.android.feature.onboarding.setup.TargetDatePicker
 import com.zoonk.android.feature.onboarding.setup.goalZone
 import com.zoonk.android.feature.onboarding.setup.targetDateBounds
 import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.components.TimePickerDialog
 import com.zoonk.android.ui.format.DateStyle
@@ -150,8 +151,8 @@ internal fun ColumnScope.UnderstoodScreen(
         GoalLimitWall(plusLimit, onSeePlus, onOpenPlan)
     } else {
         GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
-            Button(onClick = onConfirm, enabled = !isCreating && !rewriting, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(if (isCreating) R.string.onboarding_saving_goal else R.string.onboarding_looks_right))
+            BusyButton(isCreating, onConfirm, Modifier.fillMaxWidth(), enabled = !rewriting) {
+                Text(stringResource(R.string.onboarding_looks_right))
             }
             TextButton(onClick = { rewriting = true }, enabled = !isCreating && !rewriting, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.onboarding_fix_something))
@@ -376,9 +377,7 @@ private fun TextEditor(
             keyboardActions = KeyboardActions(onDone = { submit() }),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { submit() }, enabled = !saving) {
-                Text(stringResource(if (saving) R.string.onboarding_saving else R.string.onboarding_save))
-            }
+            BusyButton(saving, { submit() }) { Text(stringResource(R.string.onboarding_save)) }
             TextButton(onClick = onCancel, enabled = !saving) { Text(stringResource(R.string.onboarding_cancel)) }
         }
     }

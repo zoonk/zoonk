@@ -59,10 +59,10 @@ import com.zoonk.android.R
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.mock.MockSummaryRow
-import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
@@ -117,12 +117,9 @@ internal fun PracticeChooser(
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
         if (open) {
-            StartButton(
-                if (shown is ChooserStatus.Short) startWith(shown.outcome) else stringResource(R.string.mock_chooser_start),
-                busy,
-                enabled = option != null,
-                modifier.focus(replacementFocus),
-            ) { start() }
+            BusyButton(busy, onClick = { start() }, modifier.focus(replacementFocus), enabled = option != null) {
+                Text(if (shown is ChooserStatus.Short) startWith(shown.outcome) else stringResource(R.string.mock_chooser_start))
+            }
         } else {
             SeePlusButton(navigator, modifier.focus(replacementFocus))
         }
@@ -221,12 +218,9 @@ internal fun PlacementChooser(
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
         if (open) {
-            StartButton(
-                stringResource(R.string.mock_chooser_placement_start),
-                busy,
-                enabled = option != null,
-                modifier.focus(replacementFocus),
-            ) { start() }
+            BusyButton(busy, onClick = { start() }, modifier.focus(replacementFocus), enabled = option != null) {
+                Text(stringResource(R.string.mock_chooser_placement_start))
+            }
         } else {
             SeePlusButton(navigator, modifier.focus(replacementFocus))
         }
@@ -415,23 +409,6 @@ private fun shortText(short: MockStartOutcome.Short): String {
 @Composable
 private fun startWith(short: MockStartOutcome.Short): String =
     pluralStringResource(R.plurals.mock_chooser_start_with, short.questions.toInt(), short.questions.toInt())
-
-@Composable
-private fun StartButton(
-    label: String,
-    busy: Boolean,
-    enabled: Boolean,
-    modifier: Modifier,
-    onClick: () -> Unit,
-) {
-    BusyButton(
-        label = if (busy) stringResource(R.string.mock_chooser_getting_ready) else label,
-        busy = busy,
-        enabled = enabled,
-        modifier = modifier,
-        onClick = onClick,
-    )
-}
 
 private fun Modifier.focus(requester: FocusRequester?): Modifier = requester?.let { focusRequester(it) } ?: this
 

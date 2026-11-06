@@ -9,11 +9,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +52,7 @@ import com.zoonk.android.feature.session.rememberWaitState
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.DockedActionBar
@@ -369,20 +367,7 @@ private fun ActionButton(
     modifier: Modifier,
     onClick: () -> Unit,
 ) {
-    Button(
-        onClick = { if (!busy) onClick() },
-        modifier = modifier.widthIn(min = 160.dp),
-        contentPadding = ButtonDefaults.ContentPadding,
-    ) {
-        if (busy) {
-            CircularProgressIndicator(
-                modifier = Modifier.padding(end = ButtonDefaults.IconSpacing).size(ButtonDefaults.IconSize),
-                color = MaterialTheme.colorScheme.onPrimary,
-                strokeWidth = 2.dp,
-            )
-        }
-        Text(label)
-    }
+    BusyButton(busy, onClick, modifier.widthIn(min = 160.dp)) { Text(label) }
 }
 
 /** Nothing cached yet: the page's title, and a quiet sign it's on its way. */

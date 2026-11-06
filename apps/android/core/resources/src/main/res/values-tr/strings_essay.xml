@@ -26,7 +26,6 @@
   "essay_full_marks": "46f549bcbef9efc7130abb101455443408ff943350692ddc8c887321d957e22f",
   "essay_grade_rewrite": "9f913370c49bd238872a809dae6b488ae0b694c6bab3843bb5dba7c3601d3b6b",
   "essay_grading": "462bc053b5de78ee4f2e70e685058c4a534e275d76da8c19d8ef9392da209205",
-  "essay_grading_button": "50a3615911321a806061619e687d0c4f96eed5a83caacbe52c7693f25fcc9426",
   "essay_grading_slow": "7ce73f075a0f0908668070cdd6522a0b90f57822f2e663d19ba01569516045c6",
   "essay_keep_writing": "b2de857194238bd5307b6d1fefeb4f21aa6233fd81b374472599942c90dc2750",
   "essay_last_grade": "a1ab7f49d59f7d91f18f982e3551e7e9d30f254447033afda7181fca625f4c54",
@@ -114,7 +113,6 @@
     <string name="essay_grading">Kompozisyonunu her ölçüte göre inceliyoruz. Bu işlem 30 saniyeye kadar sürebilir.</string>
     <string name="essay_grading_slow">Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor.</string>
     <string name="essay_skip_rewrite">Yeniden yazmayı atla</string>
-    <string name="essay_grading_button">Değerlendiriyoruz…</string>
     <string name="essay_grade_rewrite">Yeni taslağı değerlendir</string>
     <string name="essay_send">Değerlendirmeye gönder</string>
     <string name="essay_leave_title">Şimdilik çıkmak ister misin?</string>

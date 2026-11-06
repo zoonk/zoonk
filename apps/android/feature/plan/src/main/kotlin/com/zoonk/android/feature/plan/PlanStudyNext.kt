@@ -12,7 +12,6 @@ import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.feature.subscription.ButtonPlusMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -47,16 +46,16 @@ internal fun StudyNextSuggestion(
                 certificates?.let {
                     SuggestionAction(
                         onClick = host.onCertificate,
-                        enabled = !host.claimingCertificate,
+                        busy = host.claimingCertificate,
                         secondary = next.nextLevel != null,
                     ) {
-                        PendingLabel(host.claimingCertificate, it.actionLabel())
+                        Text(it.actionLabel())
                         if (it.unclaimed.isEmpty() && it.earned.any { earned -> earned.locked }) ButtonPlusMark()
                     }
                 }
                 next.nextLevel?.let { level ->
-                    SuggestionAction(onClick = host.onContinue, enabled = !starting) {
-                        PendingLabel(starting, stringResource(R.string.plan_continue_at, courseLevelName(level.level.value)))
+                    SuggestionAction(onClick = host.onContinue, busy = starting) {
+                        Text(stringResource(R.string.plan_continue_at, courseLevelName(level.level.value)))
                     }
                 }
             }
@@ -106,8 +105,8 @@ internal fun CourseCompleteSuggestion(slot: Slot) {
             ?: stringResource(R.string.plan_course_complete)
     val claim =
         @Composable {
-            SuggestionAction(onClick = host.onCertificate, enabled = !host.claimingCertificate) {
-                PendingLabel(host.claimingCertificate, stringResource(R.string.certificates_get))
+            SuggestionAction(onClick = host.onCertificate, busy = host.claimingCertificate) {
+                Text(stringResource(R.string.certificates_get))
             }
         }
 

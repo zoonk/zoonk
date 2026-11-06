@@ -78,7 +78,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.feature.player.leaveTaskFor
-import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.RunColumn
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
@@ -92,6 +91,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -256,19 +256,9 @@ internal fun EssayWrite(
                         ) { Text(stringResource(R.string.essay_skip_rewrite)) }
                     }
                     val pending = ui.send == EssaySend.Pending
-                    BusyButton(
-                        stringResource(
-                            when {
-                                pending -> R.string.essay_grading_button
-                                rewriting -> R.string.essay_grade_rewrite
-                                else -> R.string.essay_send
-                            },
-                        ),
-                        busy = pending,
-                        enabled = ui.canSend && !finishing,
-                        modifier = width,
-                        onClick = viewModel::send,
-                    )
+                    BusyButton(busy = pending, onClick = viewModel::send, modifier = width, enabled = ui.canSend && !finishing) {
+                        Text(stringResource(if (rewriting) R.string.essay_grade_rewrite else R.string.essay_send))
+                    }
                 }
             }
         },

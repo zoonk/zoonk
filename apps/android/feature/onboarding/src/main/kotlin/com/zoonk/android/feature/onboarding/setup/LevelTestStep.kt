@@ -69,10 +69,10 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.components.MediaPending
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formattingLocale
@@ -195,8 +195,8 @@ private fun ColumnScope.LevelTestIntro(
     }
     OnboardingActions {
         FinishFailed(failed)
-        Button(onClick = onStart, enabled = !pending && !starting, modifier = Modifier.fillMaxWidth()) {
-            PendingLabel(starting, stringResource(R.string.onboarding_placement_start))
+        BusyButton(starting, onStart, Modifier.fillMaxWidth(), enabled = !pending) {
+            Text(stringResource(R.string.onboarding_placement_start))
         }
         TextButton(onClick = onSkip, enabled = !pending && !starting, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_skip))

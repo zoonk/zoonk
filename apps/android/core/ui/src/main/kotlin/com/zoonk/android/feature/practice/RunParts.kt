@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -22,7 +21,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -39,11 +37,11 @@ import com.zoonk.android.feature.questions.SetPlace
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.plainItemLine
 import com.zoonk.android.feature.questions.savedAnswerText
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.taskColumn
@@ -245,7 +243,7 @@ fun RunFinished(
                     if (actions != null) {
                         actions()
                     } else {
-                        TaskActions { width -> BusyButton(action, busy = saving, enabled = true, modifier = width, onClick = onClose) }
+                        TaskActions { width -> BusyButton(busy = saving, onClick = onClose, modifier = width) { Text(action) } }
                     }
                 }
             },
@@ -280,22 +278,6 @@ fun ListeningSet(set: ItemSet) {
             )
         }
     }
-}
-
-/** A pending action keeps focus while unavailable, including when its caller disables it during the write. */
-@Composable
-fun BusyButton(
-    label: String,
-    busy: Boolean,
-    enabled: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    Button(
-        onClick = { if (!busy) onClick() },
-        enabled = enabled || busy,
-        modifier = modifier.semantics { if (busy) disabled() },
-    ) { PendingLabel(busy, label) }
 }
 
 /** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */

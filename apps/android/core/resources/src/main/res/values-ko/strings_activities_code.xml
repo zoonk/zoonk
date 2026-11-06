@@ -38,7 +38,6 @@
   "activities_code_run": "b624643dc4b03998eba1704f157113b5e1213324d47812d676f75943f8366a5d",
   "activities_code_run_again": "0360bfe01e6006d4f3aa7535c337073bf32f5e8d4b1c5decf220f630a53c7e51",
   "activities_code_run_to_see": "2e1290bc2c742bea1681ecc2402240e02bed2e5911d43fe3c31e58aebad90fe6",
-  "activities_code_running": "f0ed35002c95c495e86b9443a26e6c3991aa03b9e142382057cb165a6b789eb4",
   "activities_code_runtime_failed": "ce52b75ac6bf6ac784bfa077edada8cf516616722c09c407ea1a53560504a608",
   "activities_code_runtime_loading": "79f99af8b4612fe2f36fed54033d8f20a335194e4fadf47013572e79946df9c6",
   "activities_code_sample_doesnt_match": "b7df0137c34c430853fa5cb0eddc0811005b385900bb666ea2044eee0d2b1e7f",
@@ -104,7 +103,6 @@
     <string name="activities_code_runtime_failed">%1$s 실행 환경을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요.</string>
     <string name="activities_code_run">실행</string>
     <string name="activities_code_run_again">다시 실행하기</string>
-    <string name="activities_code_running">실행 중</string>
     <string name="activities_code_start_over">원래 코드로 다시 시작하기</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">코드</string>

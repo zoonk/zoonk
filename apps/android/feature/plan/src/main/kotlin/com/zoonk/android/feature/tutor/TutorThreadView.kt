@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -68,6 +67,7 @@ import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.AlertDialog
+import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -290,13 +290,7 @@ private fun EarlierQuestions(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        FilledTonalButton(onClick = onLoad, enabled = !state.loadingEarlier) {
-            if (state.loadingEarlier) {
-                CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            }
-            Text(stringResource(R.string.tutor_load_earlier))
-        }
+        BusyTonalButton(state.loadingEarlier, onLoad) { Text(stringResource(R.string.tutor_load_earlier)) }
     }
 }
 

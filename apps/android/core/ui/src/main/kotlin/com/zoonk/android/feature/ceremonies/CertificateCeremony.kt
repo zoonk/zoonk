@@ -76,9 +76,9 @@ import com.zoonk.android.feature.certificates.pictureLabel
 import com.zoonk.android.feature.certificates.pictureUrl
 import com.zoonk.android.feature.certificates.rememberCertificateActions
 import com.zoonk.android.feature.certificates.words
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.SnackbarHost
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
@@ -320,16 +320,15 @@ private fun Words(
                 Row(Modifier.fillMaxWidth().padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     val fileName = top.fileName()
                     val caption = top.caption()
-                    OutlinedButton(
+                    BusyOutlinedButton(
+                        busy = actions.busy == CertificateAction.Share,
                         onClick = { actions.share(top, fileName, caption) },
                         modifier = Modifier.weight(1f),
                         enabled = actions.busy == null,
                     ) {
-                        if (actions.busy != CertificateAction.Share) {
-                            Icon(painterResource(R.drawable.ic_share), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
-                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        }
-                        PendingLabel(actions.busy == CertificateAction.Share, stringResource(R.string.certificates_share))
+                        Icon(painterResource(R.drawable.ic_share), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text(stringResource(R.string.certificates_share))
                     }
                     OutlinedButton(onClick = onAddToLinkedIn, modifier = Modifier.weight(1f)) {
                         Icon(painterResource(R.drawable.ic_north_east), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))

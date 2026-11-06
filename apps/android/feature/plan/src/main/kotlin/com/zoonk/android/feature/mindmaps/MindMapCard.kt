@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,11 +38,11 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LocalPrivatePictures
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.api.models.AllowanceItem
@@ -248,14 +247,8 @@ private fun MindMapRequest(
                 strokeWidth = 2.dp,
             )
         } else {
-            FilledTonalButton(
-                onClick = if (failure) actions.retry else actions.create,
-                enabled = local?.pending != true && !capped,
-            ) {
-                PendingLabel(
-                    local?.pending == true,
-                    stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_card_create),
-                )
+            BusyTonalButton(local?.pending == true, onClick = if (failure) actions.retry else actions.create, enabled = !capped) {
+                Text(stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_card_create))
             }
         }
 

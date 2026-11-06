@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -37,10 +36,11 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LabelChip
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -143,8 +143,7 @@ internal fun ColumnScope.BasesChoices(
                     followed = changed.isEmpty() && shared != null && shared == recommended,
                     isExam = page.isExam,
                     onAsk = {
-                        if (advice == Advice.Pending) return@BasesAdvice
-                        advice = Advice.Pending
+                        advice = Advice.Pending(retry = advice != Advice.Idle)
                         scope.launch { advice = adviceOf(edits.adviseOnBases()) }
                     },
                 )
@@ -163,13 +162,12 @@ internal fun ColumnScope.BasesChoices(
         },
         actions = {
             if (operations.isNotEmpty()) PreviewOutcome(page, check, onRetry = { attempt++ })
-            Button(
+            BusyButton(
+                busy = pending,
                 onClick = { edits.change(PlanPart.Bases, operations) { edits.answerSheet(draft.opening, it) } },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !pending && operations.isNotEmpty() && check is Check.Ready,
-            ) {
-                PendingLabel(pending, stringResource(R.string.plan_save_choices))
-            }
+                enabled = operations.isNotEmpty() && check is Check.Ready,
+            ) { Text(stringResource(R.string.plan_save_choices)) }
             if (edits.sheetFailed(PlanPart.Bases, draft.opening)) SaveFailedText()
         },
     )
@@ -295,7 +293,7 @@ private fun BasesAdvice(
     isExam: Boolean,
     onAsk: () -> Unit,
 ) {
-    val asking = advice == Advice.Pending
+    val retry = advice == Advice.Building || advice == Advice.Failed || (advice is Advice.Pending && advice.retry)
     val answer = remember { FocusRequester() }
 
     LaunchedEffect(advice) { if (advice is Advice.Answered) answer.requestFocus() }
@@ -318,20 +316,11 @@ private fun BasesAdvice(
                 Note(stringResource(R.string.plan_recommendation_failed), live = true)
             }
 
-            Advice.Idle, Advice.Pending -> {}
+            Advice.Idle, is Advice.Pending -> {}
         }
         if (advice !is Advice.Answered) {
-            FilledTonalButton(onClick = onAsk, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
-                PendingLabel(
-                    asking,
-                    stringResource(
-                        when (advice) {
-                            Advice.Pending -> R.string.plan_getting_recommendation
-                            Advice.Building, Advice.Failed -> R.string.load_failed_try_again
-                            else -> R.string.plan_get_recommendation
-                        },
-                    ),
-                )
+            BusyTonalButton(advice is Advice.Pending, onAsk, Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+                Text(stringResource(if (retry) R.string.load_failed_try_again else R.string.plan_get_recommendation))
             }
         }
     }
@@ -389,7 +378,10 @@ private fun Note(
 private sealed interface Advice {
     data object Idle : Advice
 
-    data object Pending : Advice
+    /** Asked again after the advice failed or the plan was still being built, so Try again keeps its words. */
+    data class Pending(
+        val retry: Boolean,
+    ) : Advice
 
     data object Building : Advice
 

@@ -28,7 +28,6 @@
     <string name="player_keep_writing">Keep writing</string>
 
     <string name="player_action_check">Check</string>
-    <string name="player_action_checking">Checking your answer</string>
     <string name="player_action_confirm">Confirm</string>
     <string name="player_action_continue">Continue</string>
     <string name="player_action_next">Next</string>
@@ -59,7 +58,6 @@
     <string name="player_spelled">Spelled:</string>
     <string name="player_correct_answer_label">Answer:</string>
     <string name="player_explain_answer">Explain my answer</string>
-    <string name="player_explaining_answer">Explaining your answer</string>
     <string name="player_explain_answer_failed">We couldn\'t explain it right now. Try again in a moment.</string>
     <string name="player_explain_answer_title">Why that answer misses</string>
     <!-- Heading of the panel that recaps the lesson, not a button. -->
@@ -118,7 +116,6 @@
     <string name="player_not_written_title">This lesson isn\'t written yet</string>
     <string name="player_not_written_description">Zoonk writes it when you start. It takes a few minutes.</string>
     <string name="player_start_this_lesson">Start this lesson</string>
-    <string name="player_starting">Starting…</string>
     <string name="player_writing_lesson">Writing your lesson</string>
     <string name="player_phase_plan">Planning the lesson</string>
     <string name="player_phase_plan_line_1">Choosing what to cover…</string>

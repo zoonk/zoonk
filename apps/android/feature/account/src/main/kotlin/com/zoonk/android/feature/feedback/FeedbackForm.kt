@@ -3,7 +3,6 @@ package com.zoonk.android.feature.feedback
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -12,14 +11,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -52,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.ModalBottomSheet
 import kotlinx.coroutines.flow.first
@@ -116,17 +112,12 @@ fun FeedbackForm(
             FeedbackStatus.Idle, FeedbackStatus.Sending -> {}
         }
 
-        Button(
+        BusyButton(
+            busy = isSending,
             onClick = { form.send(accountEmail) },
-            enabled = form.canSend(accountEmail),
             modifier = Modifier.align(Alignment.End),
-        ) {
-            Text(stringResource(R.string.feedback_send))
-            if (isSending) {
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
-            }
-        }
+            enabled = form.canSend(accountEmail),
+        ) { Text(stringResource(R.string.feedback_send)) }
     }
 }
 

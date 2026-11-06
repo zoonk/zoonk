@@ -24,9 +24,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -70,7 +68,8 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
@@ -344,22 +343,19 @@ private fun ProviderButton(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    OutlinedButton(
+    BusyOutlinedButton(
+        busy = isWorking,
         onClick = onClick,
-        enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
+        enabled = enabled,
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
     ) {
-        if (isWorking) {
-            CircularProgressIndicator(modifier = Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
-        } else {
-            Icon(
-                painter = painterResource(icon),
-                contentDescription = null,
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                tint = if (tinted) LocalContentColor.current else Color.Unspecified,
-            )
-        }
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+            modifier = Modifier.size(ButtonDefaults.IconSize),
+            tint = if (tinted) LocalContentColor.current else Color.Unspecified,
+        )
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Text(text)
     }
@@ -372,17 +368,7 @@ private fun WorkingButton(
     onClick: () -> Unit,
     enabled: Boolean = true,
 ) {
-    Button(onClick = onClick, enabled = enabled, modifier = Modifier.fillMaxWidth()) {
-        Text(text)
-        if (isWorking) {
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            CircularProgressIndicator(
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                color = LocalContentColor.current,
-                strokeWidth = 2.dp,
-            )
-        }
-    }
+    BusyButton(isWorking, onClick, Modifier.fillMaxWidth(), enabled) { Text(text) }
 }
 
 @Composable

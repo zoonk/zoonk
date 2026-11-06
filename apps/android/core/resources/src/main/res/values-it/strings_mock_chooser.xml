@@ -6,7 +6,6 @@
   "mock_chooser_failed": "832c4335d9629159d2a6a74e422b9b2f17c604c8334622af8d3f61cff9af6de3",
   "mock_chooser_full_day_number_without": "377996eacf67ffeb81b44364d33a931fab7b048c6af5e2462e77c5f363445cac",
   "mock_chooser_full_day_without": "5aa3b3f290a3294909f939b34c55ecbf8d48b299b4bbcef03df7f84ae9ffbfb1",
-  "mock_chooser_getting_ready": "0dfdc4d42047f91a39ff4a50946e28ad14e6da4a6ee0d7671c212e2710bc081a",
   "mock_chooser_last_mock": "5f3b91cf3d0667d8ad3f10c5e31df0e3d4c7879ccf0201787ef28dbbd5ebb169",
   "mock_chooser_left_out_choice": "ce5bacf6cb426a7b7c6e1a3557c85b7ff09c14729cd16e111cb871846b9f3203",
   "mock_chooser_left_out_listening": "5946aca9a1258540f06499f9eb1a4266cdc4b5417b0c70077f3d6dfa2ecaa344",
@@ -79,7 +78,6 @@
     <string name="mock_chooser_rule">Vedrai il risultato solo alla fine, come il giorno dell’esame.</string>
     <string name="mock_chooser_pick_free">Scegli quanta parte dell’esame svolgere ora.</string>
     <string name="mock_chooser_start">Inizia</string>
-    <string name="mock_chooser_getting_ready">Stiamo preparando tutto…</string>
     <plurals name="mock_chooser_start_with">
         <item quantity="one">Inizia con %d domanda</item>
         <item quantity="many">Inizia con %d domande</item>

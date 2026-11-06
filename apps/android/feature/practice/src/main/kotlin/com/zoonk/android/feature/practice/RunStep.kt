@@ -75,6 +75,7 @@ import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.SectionLabel
@@ -463,14 +464,11 @@ internal fun AnswerActions(
                     null -> {}
                 }
                 BusyButton(
-                    stringResource(R.string.practice_check),
                     busy = phase == RunPhase.Checking,
-                    enabled =
-                        run.canAnswer && draft != null,
+                    onClick = { draft?.let { controls.submit(question, it) } },
                     modifier = width,
-                ) {
-                    draft?.let { controls.submit(question, it) }
-                }
+                    enabled = run.canAnswer && draft != null,
+                ) { Text(stringResource(R.string.practice_check)) }
                 ask()
             }
         }

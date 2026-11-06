@@ -74,6 +74,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
@@ -82,7 +83,6 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.PendingLabel
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.SuccessEyebrow
@@ -236,8 +236,8 @@ private fun ColumnScope.PlacementIntro(
     mock?.let { MockOfferRow(it, onMock) }
     OnboardingActions {
         FinishFailed(failed)
-        Button(onClick = onStart, enabled = !pending && !starting, modifier = Modifier.fillMaxWidth()) {
-            PendingLabel(starting, stringResource(R.string.onboarding_placement_start))
+        BusyButton(starting, onStart, Modifier.fillMaxWidth(), enabled = !pending) {
+            Text(stringResource(R.string.onboarding_placement_start))
         }
         TextButton(onClick = onScratch, enabled = !pending && !starting, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_skip_basics))

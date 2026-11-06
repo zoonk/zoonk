@@ -21,11 +21,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,6 +70,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.BusyButton
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.fadingHorizontalScroll
@@ -432,27 +431,17 @@ internal fun SandboxRunBar(
                 }
             }
             val content: @Composable RowScope.() -> Unit = {
-                if (isRunning) {
-                    CircularProgressIndicator(Modifier.size(18.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
-                } else {
-                    Icon(painterResource(R.drawable.ic_play_arrow), contentDescription = null, Modifier.size(18.dp))
-                }
+                Icon(painterResource(R.drawable.ic_play_arrow), contentDescription = null, Modifier.size(18.dp))
                 Text(
-                    stringResource(
-                        when {
-                            isRunning -> R.string.activities_code_running
-                            hasRun -> R.string.activities_code_run_again
-                            else -> R.string.activities_code_run
-                        },
-                    ),
+                    stringResource(if (hasRun) R.string.activities_code_run_again else R.string.activities_code_run),
                     Modifier.padding(start = 8.dp),
                 )
             }
             val runModifier = Modifier.weight(1f).heightIn(min = 48.dp)
             if (hasRun) {
-                OutlinedButton(onClick = onRun, modifier = runModifier, enabled = !isRunning, content = content)
+                BusyOutlinedButton(isRunning, onRun, runModifier, content = content)
             } else {
-                Button(onClick = onRun, modifier = runModifier, enabled = !isRunning, content = content)
+                BusyButton(isRunning, onRun, runModifier, content = content)
             }
         }
         if (runtime.status == SandboxRuntimeStatus.Loading) {

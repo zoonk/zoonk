@@ -8,7 +8,6 @@
     <string name="activities_code_runtime_failed">%1$s didn\'t load. Check your connection and try again.</string>
     <string name="activities_code_run">Run</string>
     <string name="activities_code_run_again">Run again</string>
-    <string name="activities_code_running">Running</string>
     <string name="activities_code_start_over">Start over with the original code</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Code</string>

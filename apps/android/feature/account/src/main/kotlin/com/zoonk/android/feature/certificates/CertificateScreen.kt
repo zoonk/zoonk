@@ -18,7 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +42,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyIconButton
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -83,13 +83,11 @@ fun CertificateScreen(
             if (certificate != null && canShare) {
                 val fileName = certificate.fileName()
                 val caption = certificate.caption()
-                IconButton(onClick = { actions.share(certificate, fileName, caption) }, enabled = actions.busy == null) {
-                    if (actions.busy == CertificateAction.Share) {
-                        CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
-                    } else {
-                        Icon(painterResource(R.drawable.ic_share), contentDescription = stringResource(R.string.certificates_share))
-                    }
-                }
+                BusyIconButton(
+                    busy = actions.busy == CertificateAction.Share,
+                    onClick = { actions.share(certificate, fileName, caption) },
+                    enabled = actions.busy == null,
+                ) { Icon(painterResource(R.drawable.ic_share), contentDescription = stringResource(R.string.certificates_share)) }
             }
         },
     ) { padding ->

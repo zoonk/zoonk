@@ -45,7 +45,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.player.LessonTitle
-import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ChoiceQuestionsRun
 import com.zoonk.android.feature.practice.RunFinished
 import com.zoonk.android.feature.practice.RunIntro
@@ -60,6 +59,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -322,13 +322,9 @@ private fun StartActions(
 
         else -> {
             TaskActions { width ->
-                BusyButton(
-                    stringResource(if (ui.starting) R.string.testout_starting else R.string.testout_start),
-                    busy = ui.starting,
-                    enabled = true,
-                    modifier = width.focusRequester(replacementFocus),
-                    onClick = onStart,
-                )
+                BusyButton(busy = ui.starting, onClick = onStart, modifier = width.focusRequester(replacementFocus)) {
+                    Text(stringResource(R.string.testout_start))
+                }
             }
         }
     }

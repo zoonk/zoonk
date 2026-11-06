@@ -4,21 +4,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +36,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.tutor.AnswerText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyTextButton
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -196,13 +192,7 @@ private fun OlderQuestions(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        TextButton(onClick = onLoad, enabled = !isLoading, contentPadding = ButtonDefaults.TextButtonWithIconContentPadding) {
-            if (isLoading) {
-                CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            }
-            Text(stringResource(R.string.earlier_questions_older))
-        }
+        BusyTextButton(isLoading, onLoad) { Text(stringResource(R.string.earlier_questions_older)) }
     }
 }
 

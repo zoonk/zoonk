@@ -24,7 +24,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.PendingLabel
+import com.zoonk.android.ui.components.BusyTonalButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -271,12 +271,10 @@ internal fun MoveDateSwitch(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        FilledTonalButton(onClick = ::move, modifier = Modifier.focusRequester(focus.moveDate)) {
-            PendingLabel(
-                pending = pending,
-                text =
-                    date?.let { stringResource(R.string.plan_move_date_to, formatDate(it, currentLocale(), DateStyle.Long, page.today)) }
-                        ?: stringResource(R.string.plan_move_date),
+        BusyTonalButton(pending, ::move, Modifier.focusRequester(focus.moveDate)) {
+            Text(
+                date?.let { stringResource(R.string.plan_move_date_to, formatDate(it, currentLocale(), DateStyle.Long, page.today)) }
+                    ?: stringResource(R.string.plan_move_date),
             )
         }
         when (outcome) {

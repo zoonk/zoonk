@@ -43,7 +43,6 @@
   "challenge_start": "0966d1fd89f6cf4e4df74ae13bc34806839d123d80337073a6fe58f6042e7e13",
   "challenge_start_failed": "a481ce377b108b27abc286387b18f97ff3950dfd354b4b5f26f2034ca7de7edc",
   "challenge_start_slow": "44b486c8126e6af83843731dec68aa143904b34974e9eb47a0841f8141a42692",
-  "challenge_starting": "04fa1cf1462c6cd3c0430ccf028cc9f144e83db7438d65ee7016663e43b18a6b",
   "challenge_today": "e6d030eeaf4278c6576f3c9fbb2119e392b325cc0ca495a69a086609d48a4822",
   "challenge_tomorrow": "b1da22271010708748f93b89abd2cde45507e5f79ad2d1783ae203aaedc46887",
   "challenge_topic_count": "24172129d4b4c095a832696cb06041aba2131f55fb70d0b68d47e6fb1cfc1af6",
@@ -158,7 +157,6 @@
     </plurals>
     <string name="challenge_call_plus">Rozmowy w ramach wyzwań są dostępne w pakiecie Plus. Bez nich nadal możesz uczyć się zgodnie z planem.</string>
     <string name="challenge_start">Zacznij</string>
-    <string name="challenge_starting">Rozpoczynamy…</string>
     <string name="challenge_start_failed">Nie udało się. Spróbuj ponownie za chwilę.</string>
     <string name="challenge_start_slow">Nadal uruchamiamy wyzwanie. Trwa to dłużej niż zwykle.</string>
     <string name="challenge_continue">Kontynuuj</string>

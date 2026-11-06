@@ -74,6 +74,7 @@ import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
@@ -438,9 +439,7 @@ private fun TaskRow(
             )
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (!locked) {
-                    Button(onClick = onStart, enabled = !busy) {
-                        Text(stringResource(if (starting) R.string.conversation_starting else R.string.speaking_start_task))
-                    }
+                    BusyButton(starting, onStart, enabled = !busy) { Text(stringResource(R.string.speaking_start_task)) }
                 }
                 task.lastTry?.let { last ->
                     OutlinedButton(onClick = { onLastResult(last.conversationId) }) { Text(stringResource(R.string.speaking_last_result)) }

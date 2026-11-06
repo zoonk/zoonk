@@ -140,7 +140,6 @@
   "conversation_start": "4ef51ebeb880fabbccce8e7263f2c958a9344d47aa38727fd122232a07ae287c",
   "conversation_start_failed": "205feb2afaa894f369af98bfb877532d0d0aad6111d4e298f2ec6cb123c412a4",
   "conversation_start_preparing": "8f1883b4f3ddd8725ed316c019cf28e52c069e6d5be04fddb099142a36c3d7e5",
-  "conversation_starting": "b7aff06d443f28711f45d82935c5bfd82f852add5334dcbcc5b8e134af61049e",
   "conversation_still_closing": "a596c85d8053a1bb4496c351226398e0b24d78c7c63f389c9ff7fbd26dd307ca",
   "conversation_still_to_get_across": "b98fe5c26c8208c1576dd7dece0064585a2ba16e164a3b28b3d23fda47f9c136",
   "conversation_study_time_used_up": "f57aa12f975d515d85bfa53c44c581169d4c086a47fa336f25565bd21453c0a5",
@@ -209,7 +208,6 @@
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">Zadzwoń do: %1$s</string>
     <string name="conversation_start">Rozpocznij rozmowę</string>
-    <string name="conversation_starting">Rozpoczynamy…</string>
     <string name="conversation_start_failed">Nie udało się rozpocząć rozmowy. Spróbuj ponownie za chwilę.</string>
     <string name="conversation_challenge_plus">Rozmowy w ramach wyzwań są dostępne w pakiecie Plus. Bez nich nadal możesz uczyć się zgodnie z planem.</string>
     <!-- The microphone permission was denied; the character's name. -->

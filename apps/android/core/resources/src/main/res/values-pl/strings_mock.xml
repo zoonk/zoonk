@@ -20,7 +20,6 @@
   "mock_flagged_count": "c64cf530531238547012bb52968a2da3ecb7596eb6ba823592704847ce779bb1",
   "mock_full_day": "4b2b71f6c1cb2d21036ef79d504b95243d5185f6bd8d9ef0b2414f3e0265072d",
   "mock_full_day_number": "6dbac290e4d256a5f86d7b46a6e2e8c79d460cfcabe6d1f3041f165cbbbf8fda",
-  "mock_grading": "0c11436e0e0fcba31735f61ba7d6f504764fc144ffb342b674e1e60b78c776cf",
   "mock_half_day": "23649151df7a331b280694d109c49e3267c824a9006a3294326bd9056bffda4e",
   "mock_half_day_number": "4563f95aafd9ffd3026a2aea065038618d60b21d031ef95570f64fe37520335b",
   "mock_hand_in": "383cd9ceb6d5d6b91af121f00065916e58a969d4ecdbfc808816ff9be73e83eb",
@@ -31,7 +30,6 @@
   "mock_hand_in_section_title": "5cd0ecd39995acf03848650f223bd4e4bf1c45c6c07c5f09ce0746dc81f4d9f8",
   "mock_handed_in": "fc240141bd2af39789b463eb282c8f045a7313fe51247d9dbe26687ad49b903e",
   "mock_handed_in_title": "e1e2e99dfcf1dbd0f37e76cf30ac39d798836a4d911afaa79e03f7f1df64762c",
-  "mock_handing_in": "7a6df7750e8adcafc7086fd00ec77395f7b507debc106a203319e38a9952901a",
   "mock_keep_answering": "ce9bac9f31a5c3be3277b6d9f2cf859731a0d26843e29469857c06da9bfbd3f1",
   "mock_keep_going": "5de3e8d8b2cff4243c9a63094a70f7cd24b2ffd90ce07053ffd6cb06f6940daa",
   "mock_label": "d1ba71945b457343743bc0e04200f74648fef518e534855ed276652111ccb4a4",
@@ -156,7 +154,6 @@
     <string name="mock_next">Dalej</string>
     <string name="mock_hand_in_mock">Oddaj egzamin próbny</string>
     <string name="mock_hand_in_section">Oddaj tę część</string>
-    <string name="mock_handing_in">Oddajemy…</string>
     <string name="mock_moves_review_any">Przegląd odpowiedzi: możesz wrócić do dowolnego pytania.</string>
     <string name="mock_moves_review_none">Przegląd: nie możesz już zmienić żadnej odpowiedzi.</string>
     <plurals name="mock_moves_review_changes">
@@ -256,7 +253,6 @@
     <string name="mock_step_slow">Wciąż oddajemy egzamin. Trwa to dłużej niż zwykle.</string>
     <string name="mock_handed_in_title">Egzamin próbny oddany</string>
     <string name="mock_see_how">Zobacz, jak poszło</string>
-    <string name="mock_grading">Oceniamy…</string>
     <string name="mock_continue_section">Kontynuuj</string>
     <string name="mock_time_up">Czas minął</string>
     <string name="mock_answers_saved">Zapisano twoje dotychczasowe odpowiedzi.</string>

@@ -43,7 +43,6 @@
   "challenge_start": "1a25bfa6afeab602358d5ef086ad0b45d85f760ecfecbb0d3742fd41692bc72a",
   "challenge_start_failed": "0f7bc3615ae7d686c03bf497b86a3bdcc3deb36bbf5450a193195dbc8aed3a01",
   "challenge_start_slow": "340207e96dc16d38d35e99fbf417a13666f22ad9f61af9ee50ce2938526e8206",
-  "challenge_starting": "6b8a37f8979d7065a407f732fea4badd373c3fe4dd7119d985a529d1e5fa9f8d",
   "challenge_today": "fa10e0227bf51d44cf8677207586f1830909e4ecd62b816e8be7728f035c332d",
   "challenge_tomorrow": "708d9a8b0d5bfef507f78692c6c1a2f97be30f61c776ffa84f3cd5996f56fad5",
   "challenge_topic_count": "66d0b883688741155be2967f6f2cfdbb07f6feaf2f9ff6628bc0e0bc7addadc8",
@@ -151,7 +150,6 @@
     </plurals>
     <string name="challenge_call_plus">O Plus inclui conversas de desafio. Seu plano continua sem elas.</string>
     <string name="challenge_start">Começar</string>
-    <string name="challenge_starting">Começando…</string>
     <string name="challenge_start_failed">Não deu certo. Tente de novo daqui a pouco.</string>
     <string name="challenge_start_slow">Ainda está começando. Está demorando mais que o normal.</string>
     <string name="challenge_continue">Continuar</string>

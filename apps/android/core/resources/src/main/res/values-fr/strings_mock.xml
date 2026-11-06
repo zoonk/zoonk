@@ -20,7 +20,6 @@
   "mock_flagged_count": "b9b260b8917541db6aeda2f3276f62219336691d7e5160cb715b5414bd4f9a9c",
   "mock_full_day": "4e106facff176e31a1a5467a898d9dcc71138941d7696dd4e75a535511a3750b",
   "mock_full_day_number": "631d4d2f6dcb05f620a5a58c296702cef02894002109e6ce30d1c4cdd6049d55",
-  "mock_grading": "7d00bbf54fb0252aa22a9178f0fc0ab8140b44f3dbd715ae946b639fbb108375",
   "mock_half_day": "ed84d25ff00da8eefaf1a16342cdb5925c6b54340da77a9a63e478573e447685",
   "mock_half_day_number": "ba8419fa72d6d5436075d2dd31e66e9952a4955925eb6924d99ed7cb4dad84d0",
   "mock_hand_in": "670022846164c809624907b511352771dd1ecff3fc75eb2783b06f89837f66df",
@@ -31,7 +30,6 @@
   "mock_hand_in_section_title": "4d38ea699499f168c06df5f9dd7c9e8b8a6765ea81a691c0e20b304891300b78",
   "mock_handed_in": "12f5a0450b51e73cb2d8eac4c23a4321084aedbc1fd4ec0c35bcfe6e59dc90c2",
   "mock_handed_in_title": "58924d80565f883b6e54ff713fa565bc60ca0c39e747d1806530747e1719d673",
-  "mock_handing_in": "86236ed082b22e90fc7dd31d3fb25e2b7feccc81eab3e86685167f6ec2c0654f",
   "mock_keep_answering": "1f16f8f62d6de698c8bd10c69dacf0ec6fb868026285080f513e1e93f7c95341",
   "mock_keep_going": "2abd78aa40fd90c56ba69fdb28dc1356378f4d97956fdd80f2c337e7fd5e1074",
   "mock_label": "99ee9836c7b33a07c7a37db48090ba9592ac50f1641910281cceea1ec15e8f02",
@@ -154,7 +152,6 @@
     <string name="mock_next">Suivant</string>
     <string name="mock_hand_in_mock">Rendre l’examen blanc</string>
     <string name="mock_hand_in_section">Rendre cette partie</string>
-    <string name="mock_handing_in">Envoi en cours…</string>
     <string name="mock_moves_review_any">Vérification : tu peux revenir à n’importe quelle question.</string>
     <string name="mock_moves_review_none">Vérification : tu ne peux plus modifier tes réponses.</string>
     <plurals name="mock_moves_review_changes">
@@ -244,7 +241,6 @@
     <string name="mock_step_slow">L’envoi est toujours en cours. Cela prend plus de temps que d’habitude.</string>
     <string name="mock_handed_in_title">Examen blanc rendu</string>
     <string name="mock_see_how">Voir les résultats</string>
-    <string name="mock_grading">Correction en cours…</string>
     <string name="mock_continue_section">Continuer</string>
     <string name="mock_time_up">Temps écoulé</string>
     <string name="mock_answers_saved">Tes réponses données jusqu’ici sont enregistrées.</string>

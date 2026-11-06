@@ -38,6 +38,7 @@ import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.ui.components.BusyButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
@@ -222,9 +223,7 @@ internal fun ColumnScope.ExplainGoal(
     OutcomeIcon(R.drawable.ic_lightbulb)
     OnboardingHeading(question, stringResource(R.string.onboarding_explain_description))
     GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
-        Button(onClick = onStart, enabled = !isStarting, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(if (isStarting) R.string.onboarding_opening_explanation else R.string.onboarding_explain_it))
-        }
+        BusyButton(isStarting, onStart, Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_explain_it)) }
     }
 }
 
@@ -316,9 +315,11 @@ internal fun ColumnScope.InstrumentGoal(
     }
 
     GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
-        Button(onClick = onStartMusicianship, enabled = !isStarting, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(if (isStarting) R.string.onboarding_saving_goal else R.string.onboarding_start_musicianship))
-        }
+        BusyButton(
+            isStarting,
+            onStartMusicianship,
+            Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.onboarding_start_musicianship)) }
         TextButton(
             onClick = onJoinWaitlist,
             enabled = !isJoining && waitlist != WaitlistOutcome.Joined,
