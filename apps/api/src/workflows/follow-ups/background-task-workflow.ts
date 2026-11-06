@@ -1,5 +1,6 @@
 import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import { rememberProposedMemory } from "../_shared/remember-memory";
+import { waitForRunToken } from "../_shared/run-token";
 import {
   askToCancelSecondStorePlusStep,
   checkFactSensitivityStep,
@@ -28,7 +29,6 @@ export type BackgroundTask = Exclude<
   }
 >;
 
-/** One run at a time per thing: each works on one fixed thing, or on the learner's state as of when it runs. */
 export function getBackgroundTaskToken({ key, kind, userId }: BackgroundTask): string {
   return `${kind}:${userId}:${key}`;
 }
@@ -78,9 +78,10 @@ async function runTask(task: BackgroundTask): Promise<void> {
   }
 }
 
-/** One model call per step. */
+/** One model call per step. A run started holding its token goes at once; any other waits its turn. */
 export async function backgroundTaskWorkflow(task: BackgroundTask): Promise<void> {
   "use workflow";
 
+  await waitForRunToken(getBackgroundTaskToken(task));
   await runTask(task);
 }
