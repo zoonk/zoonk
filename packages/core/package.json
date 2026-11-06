@@ -374,6 +374,12 @@
     "./library/marks/tag": "./src/library/marks/tag-lesson-marks.ts",
     "./library/media/check-image": "./src/library/media/check-image-asset.ts",
     "./library/media/lesson-images": "./src/library/media/lesson-images.ts",
+    "./library/products/course": "./src/library/products/product-course.ts",
+    "./library/products/current-release": "./src/library/products/current-release.ts",
+    "./library/products/find": "./src/library/products/find-product.ts",
+    "./library/products/keys": "./src/library/products/product-keys.ts",
+    "./library/products/link-goal": "./src/library/products/link-goal-product.ts",
+    "./library/products/save-research": "./src/library/products/save-product-research.ts",
     "./library/quality/code-checks": "./src/library/quality/lesson-code-checks.ts",
     "./library/quality/later-reviews": "./src/library/quality/later-reviews.ts",
     "./library/quality/program-checks": "./src/library/quality/lesson-program-checks.ts",
@@ -659,6 +665,7 @@
     "quickjs-wasi": "3.6.3",
     "sql.js": "1.15.2",
     "stripe": "23.1.0",
+    "tldts": "7.4.19",
     "ts-fsrs": "6.0.0",
     "undici": "catalog:",
     "zod": "catalog:"
@@ -667,6 +674,7 @@
     "@types/react": "catalog:",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
+    "fast-check": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
