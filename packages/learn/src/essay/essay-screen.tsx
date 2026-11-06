@@ -153,9 +153,8 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
       <TaskActions>
         {drafts.length > 0 && (
           <Button
+            busy={finishing.pending}
             className="shrink-0"
-            disabled={finishing.pending}
-            focusableWhenDisabled
             onClick={() => void finishing.finish()}
             size="xl"
             variant="outline"

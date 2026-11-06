@@ -205,13 +205,7 @@ function NextStopActionBar({
         className={!isReady && alternative ? "max-lg:flex-col max-lg:items-stretch" : undefined}
       >
         {canStop && (
-          <Button
-            disabled={stop.isPending}
-            focusableWhenDisabled
-            onClick={stop.run}
-            size="xl"
-            variant="outline"
-          >
+          <Button busy={stop.isPending} onClick={stop.run} size="xl" variant="outline">
             {t("Stop for today")}
           </Button>
         )}

@@ -3,6 +3,7 @@
 import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
+import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
@@ -160,16 +161,23 @@ function ChangeActions({
 }) {
   const t = useExtracted();
   const keepOfficialDate = useKeepOfficialDateLabel();
+  const pressed = usePressed<Decision>(isPending);
+
+  const choose = (decision: Decision) => {
+    pressed.press(decision);
+    answer(decision);
+  };
 
   if (status === "proposed") {
     return (
       <div className="flex gap-2">
         {canApply && (
           <Button
+            busy={pressed.busy("applied")}
             className="min-w-0 flex-1"
             disabled={isPending}
             focusableWhenDisabled
-            onClick={() => answer("applied")}
+            onClick={() => choose("applied")}
             size="sm"
           >
             <span className="truncate">
@@ -178,10 +186,11 @@ function ChangeActions({
           </Button>
         )}
         <Button
+          busy={pressed.busy("declined")}
           className="min-w-0 flex-1"
           disabled={isPending}
           focusableWhenDisabled
-          onClick={() => answer("declined")}
+          onClick={() => choose("declined")}
           size="sm"
           variant="outline"
         >
@@ -196,9 +205,8 @@ function ChangeActions({
   if (status === "applied" && canUndo) {
     return (
       <Button
+        busy={isPending}
         className="self-start"
-        disabled={isPending}
-        focusableWhenDisabled
         onClick={() => answer("undone")}
         size="sm"
         variant="outline"

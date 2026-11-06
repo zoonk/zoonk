@@ -2,6 +2,7 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button } from "@zoonk/ui/components/button";
+import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -268,6 +269,7 @@ function QuestionsFooter({
   selected: boolean;
 }) {
   const t = useExtracted();
+  const pressed = usePressed<"dontKnow" | "next">(pending);
 
   if (!question) {
     return canFinish ? (
@@ -280,16 +282,27 @@ function QuestionsFooter({
   return (
     <TaskActions>
       <Button
+        busy={pressed.busy("dontKnow")}
         className="shrink-0"
         disabled={pending}
         focusableWhenDisabled
-        onClick={onDontKnow}
+        onClick={() => {
+          pressed.press("dontKnow");
+          onDontKnow();
+        }}
         size="xl"
         variant="outline"
       >
         {t("I don't know yet")}
       </Button>
-      <TaskMainButton busy={pending} disabled={!selected} onClick={onNext}>
+      <TaskMainButton
+        busy={pressed.busy("next")}
+        disabled={!selected || pending}
+        onClick={() => {
+          pressed.press("next");
+          onNext();
+        }}
+      >
         {isLast ? t("Finish") : t("Next")}
       </TaskMainButton>
     </TaskActions>

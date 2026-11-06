@@ -4,6 +4,7 @@ import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
+import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -70,6 +71,7 @@ export function PlanDate() {
   const noteId = useId();
   const { goal, plan, today } = usePlanScreen();
   const { change, failed, isPending } = usePlanChange();
+  const pressed = usePressed<"notice" | "save">(isPending);
   const noticeDayText = useNoticeDayText();
   const { noticeDay, targetDate, targetDateNamedMonth } = plan.schedule;
   const namedMonth = targetDateNamedMonth && targetDate !== null;
@@ -114,6 +116,7 @@ export function PlanDate() {
           event.preventDefault();
 
           if (canSave && !isPending) {
+            pressed.press("save");
             void setDate(value);
           }
         }}
@@ -131,7 +134,13 @@ export function PlanDate() {
           value={value}
         />
         {canSave && (
-          <Button busy={isPending} type="submit" variant="outline">
+          <Button
+            busy={pressed.busy("save")}
+            disabled={isPending}
+            focusableWhenDisabled
+            type="submit"
+            variant="outline"
+          >
             {t("Save")}
           </Button>
         )}
@@ -142,7 +151,14 @@ export function PlanDate() {
           <p className="text-muted-foreground">
             {noticeDayText({ ...noticeDay, document: plan.examDocument })}
           </p>
-          <UseDateButton disabled={isPending} onUse={() => void setDate(noticeDay.date)} />
+          <UseDateButton
+            busy={pressed.busy("notice")}
+            disabled={isPending}
+            onUse={() => {
+              pressed.press("notice");
+              void setDate(noticeDay.date);
+            }}
+          />
         </div>
       )}
 

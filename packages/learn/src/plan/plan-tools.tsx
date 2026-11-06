@@ -127,9 +127,8 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
       ) : (
         <>
           <Button
+            busy={isPending}
             className="self-start"
-            disabled={isPending}
-            focusableWhenDisabled
             onClick={() => {
               chose.current = true;
               holderRef.current?.focus();

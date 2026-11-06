@@ -61,7 +61,7 @@ export function PlanOfferSuggestion({
 
       <SuggestionActions>
         {offer && canApply && (
-          <SuggestionAction disabled={isPending} onClick={apply}>
+          <SuggestionAction busy={isPending} onClick={apply}>
             {t("Apply")}
           </SuggestionAction>
         )}

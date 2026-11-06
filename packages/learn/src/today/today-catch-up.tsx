@@ -64,13 +64,7 @@ export function CatchUpLater() {
             )}
       </p>
 
-      <Button
-        disabled={isPending}
-        focusableWhenDisabled
-        onClick={catchUp}
-        size="sm"
-        variant="outline"
-      >
+      <Button busy={isPending} onClick={catchUp} size="sm" variant="outline">
         {t("Catch up today · +{time}", { time: formatDuration(later.minutes) })}
       </Button>
 

@@ -156,8 +156,7 @@ export function UploadRequestCard({
           </Button>
 
           <Button
-            disabled={isPending}
-            focusableWhenDisabled
+            busy={isPending}
             onClick={() =>
               run(async () => ((await actions.dismiss()) ? null : "failed"), "dismissed")
             }

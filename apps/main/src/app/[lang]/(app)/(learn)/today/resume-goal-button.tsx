@@ -44,7 +44,8 @@ export function ResumeGoalButton({ goalId, goalTitle }: { goalId: string; goalTi
   return (
     <div className="flex min-w-0 flex-col items-stretch gap-2 sm:items-start">
       <Button
-        disabled={isPending || outcome === "saved"}
+        busy={isPending}
+        disabled={outcome === "saved"}
         focusableWhenDisabled
         onClick={resume}
         size="lg"

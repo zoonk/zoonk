@@ -3,6 +3,7 @@
 import { type ExamDocument } from "@zoonk/core/exams/document";
 import { type NoSitting, type NoticeDay } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
+import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { safeAsync } from "@zoonk/utils/error";
 import { CalendarDaysIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -32,16 +33,17 @@ export function useNoticeDayText() {
 }
 
 export function NoSittingWords({
-  disabled,
   noSitting,
   onUse,
+  pending,
 }: {
-  disabled: boolean;
   noSitting: NoSitting;
   onUse: (date: string) => void;
+  pending: boolean;
 }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
+  const pressed = usePressed<string>(pending);
 
   return (
     <>
@@ -50,9 +52,13 @@ export function NoSittingWords({
         <Fragment key={date}>
           <span aria-hidden="true">{" · "}</span>
           <Button
-            disabled={disabled}
+            busy={pressed.busy(date)}
+            disabled={pending}
             focusableWhenDisabled
-            onClick={() => onUse(date)}
+            onClick={() => {
+              pressed.press(date);
+              onUse(date);
+            }}
             type="button"
             variant="link"
           >
@@ -65,11 +71,13 @@ export function NoSittingWords({
 }
 
 export function UseDateButton({
-  disabled,
+  busy,
+  disabled = false,
   onUse,
   variant = "outline",
 }: {
-  disabled: boolean;
+  busy: boolean;
+  disabled?: boolean;
   onUse: () => void;
   variant?: "outline" | "secondary";
 }) {
@@ -77,6 +85,7 @@ export function UseDateButton({
 
   return (
     <Button
+      busy={busy}
       disabled={disabled}
       focusableWhenDisabled
       onClick={onUse}
@@ -126,7 +135,7 @@ function NoticeDayCard({
       <NoticeCardContent>
         <NoticeCardTitle>{text({ ...day, document })}</NoticeCardTitle>
         <NoticeCardActions>
-          <UseDateButton disabled={isPending} onUse={use} variant="secondary" />
+          <UseDateButton busy={isPending} onUse={use} variant="secondary" />
         </NoticeCardActions>
 
         {failed && <ChangeSaveError className="mt-2" />}
@@ -147,6 +156,7 @@ function NoSittingCard({
   const formatDate = useFormatIsoDate();
   const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const pressed = usePressed<string>(isPending);
 
   const use = (date: string) =>
     startTransition(async () => {
@@ -173,10 +183,14 @@ function NoSittingCard({
         <NoticeCardActions>
           {noSitting.closest.map((date) => (
             <Button
+              busy={pressed.busy(date)}
               disabled={isPending}
               focusableWhenDisabled
               key={date}
-              onClick={() => use(date)}
+              onClick={() => {
+                pressed.press(date);
+                use(date);
+              }}
               size="sm"
               type="button"
               variant="secondary"

@@ -27,9 +27,8 @@ export function ExtraTimeButton({
   return (
     <>
       <Button
+        busy={isPending}
         className={cn("w-full", className)}
-        disabled={isPending}
-        focusableWhenDisabled
         onClick={run}
         size="xl"
         variant="ghost"

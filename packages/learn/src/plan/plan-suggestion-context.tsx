@@ -140,7 +140,7 @@ export function SlotUndo({ item }: { item: SlotItem }) {
 
   return (
     <>
-      <SuggestionAction disabled={isPending} onClick={undo} variant="outline">
+      <SuggestionAction busy={isPending} onClick={undo} variant="outline">
         {t("Undo")}
       </SuggestionAction>
       {failed && <SuggestionSaveError />}

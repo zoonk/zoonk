@@ -100,7 +100,7 @@ function BehindChoices({
     adjustTime: link("adjustTime", actions.adjustTimeHref, adjustTimeLabel),
     focus: behind.canFocus && link("focus", actions.chooseFocusHref, t("Choose where to focus")),
     keep: (
-      <SuggestionAction disabled={isPending} key="keep" onClick={keep} variant={variant("keep")}>
+      <SuggestionAction busy={isPending} key="keep" onClick={keep} variant={variant("keep")}>
         {t({
           description: "Keeps the learner's daily study time as it is.",
           message: "Keep my time",

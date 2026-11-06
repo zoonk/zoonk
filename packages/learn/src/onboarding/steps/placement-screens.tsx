@@ -117,7 +117,8 @@ export function PlacementIntro({
           {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
-          disabled={pending || starting}
+          busy={pending}
+          disabled={starting}
           onClick={onScratch}
           variant="ghost"
         >
@@ -148,7 +149,7 @@ function PlacementOutcome({
         {children}
       </OnboardingHeading>
       <OnboardingFooter>
-        <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
+        <OnboardingPrimaryButton autoFocus busy={pending} onClick={onContinue}>
           {t("See my plan")}
         </OnboardingPrimaryButton>
       </OnboardingFooter>
@@ -258,7 +259,7 @@ export function PlacementMockRunning({
         <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
           {t("Continue the mock exam")}
         </LearnLink>
-        <OnboardingSecondaryButton disabled={pending} onClick={onStop} variant="ghost">
+        <OnboardingSecondaryButton busy={pending} onClick={onStop} variant="ghost">
           {t("Stop and see my plan")}
         </OnboardingSecondaryButton>
       </OnboardingFooter>

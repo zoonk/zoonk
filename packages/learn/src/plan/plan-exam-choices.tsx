@@ -3,6 +3,7 @@
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
+import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -108,8 +109,8 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
       {choice.take > 1 ? (
         <ExamChoicePicks
           choice={choice}
-          disabled={isPending}
           onSave={(subjects) => choose({ group: choice.group, subjects })}
+          pending={isPending}
         />
       ) : (
         <OneOptionChoice choice={choice} choose={choose} isPending={isPending} />
@@ -147,6 +148,8 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
     onChange: (change) => setResult({ change, item, text: sentence(change) }),
   });
 
+  const pressed = usePressed<string>(isPending);
+
   const undo = answer && <SlotUndo item={item} />;
 
   return (
@@ -179,16 +182,20 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
             {choice.take > 1 ? (
               <ExamChoicePicks
                 choice={choice}
-                disabled={isPending}
                 onSave={(subjects) => choose({ group: choice.group, subjects })}
+                pending={isPending}
               />
             ) : (
               <SuggestionActions>
                 {choice.options.map((option) => (
                   <SuggestionAction
+                    busy={pressed.busy(option.name)}
                     disabled={isPending}
                     key={option.name}
-                    onClick={() => choose({ group: choice.group, subjects: [option.name] })}
+                    onClick={() => {
+                      pressed.press(option.name);
+                      choose({ group: choice.group, subjects: [option.name] });
+                    }}
                     variant="outline"
                   >
                     {option.shortName ?? option.name}

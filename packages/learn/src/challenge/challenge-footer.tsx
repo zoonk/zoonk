@@ -148,8 +148,9 @@ function MoveToMondayButton({ className, main = false }: { className?: string; m
 
   return (
     <Button
+      busy={move.pending}
       className={cn("shrink-0", className)}
-      disabled={move.pending || start.busy}
+      disabled={start.busy}
       focusableWhenDisabled
       onClick={() => void move.moveToMonday()}
       size="xl"

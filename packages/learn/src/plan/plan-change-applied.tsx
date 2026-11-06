@@ -68,7 +68,7 @@ export function PlanChangeApplied({
       <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
         <Button onClick={onDone}>{t("Done")}</Button>
         {change.canUndo && (
-          <Button disabled={isPending} focusableWhenDisabled onClick={undo} variant="outline">
+          <Button busy={isPending} onClick={undo} variant="outline">
             {t("Undo")}
           </Button>
         )}

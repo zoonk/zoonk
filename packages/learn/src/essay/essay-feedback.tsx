@@ -266,9 +266,8 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
 
   const skip = onRewrite && (
     <Button
+      busy={finishing.pending}
       className="shrink-0"
-      disabled={finishing.pending}
-      focusableWhenDisabled
       onClick={() => void finishing.finish()}
       size="xl"
       variant="outline"

@@ -40,7 +40,7 @@ export function LevelTestPreparing({
       </GenerationWait>
 
       <OnboardingFooter>
-        <OnboardingSecondaryButton disabled={skipping} onClick={onSkip}>
+        <OnboardingSecondaryButton busy={skipping} onClick={onSkip}>
           {t("Skip the test")}
         </OnboardingSecondaryButton>
         <p className="text-muted-foreground text-center text-sm text-pretty">

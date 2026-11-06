@@ -128,12 +128,7 @@ export function DeleteAccountSection({
 
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending}>{t("Cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={isPending}
-              focusableWhenDisabled
-              onClick={deleteAccount}
-              variant="destructive"
-            >
+            <AlertDialogAction busy={isPending} onClick={deleteAccount} variant="destructive">
               {t("Delete my account")}
             </AlertDialogAction>
           </AlertDialogFooter>

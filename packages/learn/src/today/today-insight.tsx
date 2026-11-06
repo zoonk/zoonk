@@ -2,6 +2,7 @@
 
 import { INSIGHT_EVENT_KINDS } from "@zoonk/core/analytics/events";
 import { type MemoryInsightView } from "@zoonk/core/memory/contract";
+import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { safeAsync } from "@zoonk/utils/error";
 import { LightbulbIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -129,6 +130,12 @@ function InsightActions({
   onAnswer: (status: InsightAnswer) => void;
 }) {
   const choices = useInsightChoices(insight);
+  const pressed = usePressed<InsightAnswer>(isPending);
+
+  const answer = (status: InsightAnswer) => {
+    pressed.press(status);
+    onAnswer(status);
+  };
 
   return (
     <SuggestionActions>
@@ -138,8 +145,9 @@ function InsightActions({
         insight.planChange?.status === "applied" ||
         insight.planChange?.canApply) && (
         <SuggestionAction
+          busy={pressed.busy("accepted")}
           disabled={isPending}
-          onClick={() => onAnswer("accepted")}
+          onClick={() => answer("accepted")}
           variant={choices.dismiss ? "default" : "outline"}
         >
           {choices.accept}
@@ -148,8 +156,9 @@ function InsightActions({
 
       {choices.dismiss && (
         <SuggestionAction
+          busy={pressed.busy("dismissed")}
           disabled={isPending}
-          onClick={() => onAnswer("dismissed")}
+          onClick={() => answer("dismissed")}
           variant="outline"
         >
           {choices.dismiss}

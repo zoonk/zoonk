@@ -44,14 +44,7 @@ export function StartPlanForm({
         {t("How much time a day?")}
       </p>
       <DailyTimeField defaultMinutes={DEFAULT_MINUTES} name="dailyMinutes" />
-      <Button
-        aria-keyshortcuts="Enter"
-        className="mt-1"
-        disabled={isPending}
-        focusableWhenDisabled
-        size="lg"
-        type="submit"
-      >
+      <Button aria-keyshortcuts="Enter" busy={isPending} className="mt-1" size="lg" type="submit">
         {t("Start from this plan")}
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
       </Button>

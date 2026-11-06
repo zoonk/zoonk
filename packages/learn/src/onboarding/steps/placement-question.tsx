@@ -6,6 +6,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Label } from "@zoonk/ui/components/label";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { usePressed } from "@zoonk/ui/hooks/pressed";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -150,6 +151,7 @@ function PlacementActions({
   pending: boolean;
 }) {
   const t = useExtracted();
+  const pressed = usePressed<"confirm" | "dontKnow" | "stop">(pending);
 
   return (
     <OnboardingFooter>
@@ -157,10 +159,14 @@ function PlacementActions({
 
       <div className="flex flex-wrap-reverse gap-2">
         <Button
+          busy={pressed.busy("dontKnow")}
           className="grow"
           disabled={pending}
           focusableWhenDisabled
-          onClick={onDontKnow}
+          onClick={() => {
+            pressed.press("dontKnow");
+            onDontKnow();
+          }}
           size="lg"
           type="button"
           variant="outline"
@@ -169,8 +175,10 @@ function PlacementActions({
           {dontKnowLabel}
         </Button>
         <OnboardingPrimaryButton
+          busy={pressed.busy("confirm")}
           className="grow-999 basis-40"
           disabled={!canConfirm || pending}
+          onClick={() => pressed.press("confirm")}
           type="submit"
         >
           {t("Confirm")}
@@ -178,10 +186,14 @@ function PlacementActions({
       </div>
 
       <Button
+        busy={pressed.busy("stop")}
         className="self-center"
         disabled={pending}
         focusableWhenDisabled
-        onClick={onStop}
+        onClick={() => {
+          pressed.press("stop");
+          onStop();
+        }}
         type="button"
         variant="ghost"
       >

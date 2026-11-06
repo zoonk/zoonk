@@ -29,9 +29,8 @@ export function TryCallAgain({
   return (
     <>
       <Button
+        busy={call.isStarting}
         className={TASK_OPTION_CLASS}
-        disabled={call.isStarting}
-        focusableWhenDisabled
         onClick={call.start}
         size="xl"
         variant="ghost"

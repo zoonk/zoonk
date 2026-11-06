@@ -54,7 +54,7 @@ function ContinueAtNextLevel({
 
   return (
     <>
-      <SuggestionAction disabled={isPending} onClick={start}>
+      <SuggestionAction busy={isPending} onClick={start}>
         {t("Continue at {level}", { level: levelName(next.level) })}
       </SuggestionAction>
       {failed && <SuggestionSaveError />}

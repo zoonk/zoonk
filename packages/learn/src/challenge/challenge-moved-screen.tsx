@@ -37,8 +37,8 @@ export function ChallengeMovedScreen({
           <TaskActions>
             <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
             <Button
+              busy={move.pending}
               className="shrink-0"
-              disabled={move.pending}
               onClick={() => void move.undo(changeId)}
               size="xl"
               variant="outline"

@@ -18,14 +18,7 @@ function EditorChangeNote({ change }: { change: PlanChangeView }) {
     <>
       <PlanChangeSummary change={change} icon={SlidersHorizontalIcon} />
       {change.canUndo && (
-        <Button
-          className="self-start"
-          disabled={isPending}
-          focusableWhenDisabled
-          onClick={undo}
-          size="sm"
-          variant="outline"
-        >
+        <Button busy={isPending} className="self-start" onClick={undo} size="sm" variant="outline">
           {t("Undo")}
         </Button>
       )}

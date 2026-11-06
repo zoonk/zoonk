@@ -101,7 +101,8 @@ export function TestIntro({
           {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
-          disabled={pending || starting}
+          busy={pending}
+          disabled={starting}
           onClick={onScratch}
           variant="ghost"
         >
@@ -140,7 +141,7 @@ export function TestDone({
       <LevelBars levels={levels} />
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
+        <OnboardingPrimaryButton autoFocus busy={pending} onClick={onContinue}>
           {t("Build my plan")}
         </OnboardingPrimaryButton>
       </OnboardingFooter>

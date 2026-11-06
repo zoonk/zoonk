@@ -20,9 +20,8 @@ export function UndoButton({
     <>
       {failed && <ChangeSaveError />}
       <Button
+        busy={pending}
         className={TASK_OPTION_CLASS}
-        disabled={pending}
-        focusableWhenDisabled
         onClick={onUndo}
         size="xl"
         variant="ghost"

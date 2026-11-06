@@ -19,7 +19,7 @@ export function PauseSuggestion({ onStop }: { onStop: () => Promise<boolean> }) 
         )}
       </Callout>
 
-      <Button disabled={isPending} focusableWhenDisabled onClick={run} size="sm" variant="outline">
+      <Button busy={isPending} onClick={run} size="sm" variant="outline">
         {t("Stop for today")}
       </Button>
 

@@ -152,7 +152,7 @@ export function OfferPreview({
       <SuggestionActions>
         {/* Never applied without the diff it makes, as Today's proposals. */}
         {!unchanged && effect !== null && (
-          <SuggestionAction disabled={pending} onClick={onApply}>
+          <SuggestionAction busy={pending} onClick={onApply}>
             {t("Apply")}
           </SuggestionAction>
         )}

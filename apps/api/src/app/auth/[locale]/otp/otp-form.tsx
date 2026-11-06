@@ -258,9 +258,8 @@ export function OTPForm({
           // The code box turns off with the code, so focus moves on to what the learner does next.
           <Button
             autoFocus
+            busy={resendCode.status === "sending"}
             className="w-full font-[560]"
-            disabled={resendCode.status === "sending"}
-            focusableWhenDisabled
             onClick={sendNewCode}
             size="lg"
             type="button"
