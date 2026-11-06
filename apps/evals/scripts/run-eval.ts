@@ -23,7 +23,7 @@ import { meetsLatencyBudget } from "@/lib/latency";
 import { calculateAverageScore } from "@/lib/leaderboard";
 import { getModelById, getModelDisplayName } from "@/lib/models";
 import { generateOutputs } from "@/lib/output-generator";
-import { getAllOutputsForTask, removeModelOutputRuns } from "@/lib/output-loader";
+import { getAllOutputsForTask, loadModelOutputs, removeModelOutputRuns } from "@/lib/output-loader";
 import { type TaskStats, getSpent, getStatsFromResults } from "@/lib/stats";
 import { getTestCaseRunId } from "@/lib/test-case-runs";
 import {
@@ -206,6 +206,24 @@ async function generateAndScore({
   return runEval(task, modelId);
 }
 
+/** A model whose every run failed has no scored results, but its failed runs were still paid for. */
+async function loadSavedResults({
+  modelId,
+  task,
+}: {
+  modelId: string;
+  task: RegisteredTask;
+}): Promise<TaskEvalResults> {
+  const results = await getTaskResults(task.id, modelId);
+
+  if (results) {
+    return results;
+  }
+
+  const outputs = await loadModelOutputs(task.id, modelId);
+  return { failedRuns: outputs?.failedRuns, modelId, results: [], taskId: task.id };
+}
+
 async function runModel({
   fresh,
   modelId,
@@ -222,7 +240,7 @@ async function runModel({
   task: RegisteredTask;
 }): Promise<ReportRow> {
   const allResults = saved
-    ? ((await getTaskResults(task.id, modelId)) ?? { modelId, results: [], taskId: task.id })
+    ? await loadSavedResults({ modelId, task })
     : await generateAndScore({ fresh, modelId, runIds, task });
 
   const evalResults: TaskEvalResults = {

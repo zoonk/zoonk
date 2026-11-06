@@ -126,6 +126,11 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
 
   const modelOutputs = await loadModelOutputs(task.id, modelId);
 
+  if (modelOutputs?.outputs.length === 0 && modelOutputs.failedRuns) {
+    logInfo("No outputs to score: every run failed.");
+    return combineOutputsAndResults(task.id, modelId, modelOutputs, []);
+  }
+
   if (!modelOutputs || modelOutputs.outputs.length === 0) {
     throw new Error(`No outputs found for model ${modelId}. Generate outputs first.`);
   }

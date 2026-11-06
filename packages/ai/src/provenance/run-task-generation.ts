@@ -64,12 +64,36 @@ export function startTaskRun({
 function startTaskGeneration(input: TaskGenerationInput) {
   const run = startTaskRun(input);
 
+  const finish = (generation: FinishedGeneration, properties?: AiGeneration["properties"]) =>
+    run.finish((details) => buildTaskProvenance({ ...details, generation }), properties);
+
   return {
-    finish: (generation: FinishedGeneration, properties?: AiGeneration["properties"]) =>
-      run.finish((details) => buildTaskProvenance({ ...details, generation }), properties),
+    /** A failed run has no answer to read its calls from, so it logs the ones the provider billed. */
+    attempt: async <T>(work: () => Promise<T>): Promise<T> => {
+      const billed: GenerationStep[] = [];
+
+      return collectRunCalls(billed, work).catch(async (error: unknown) => {
+        const finalStep = billed.at(-1);
+
+        if (finalStep) {
+          await finish({ finalStep, steps: billed }, FAILED_RUN);
+        }
+
+        throw error;
+      });
+    },
+    finish,
     promptVersion: run.promptVersion,
     runId: run.runId,
   };
+}
+
+/** For a task that logs its own answer: logs what `work` was billed for when it throws. */
+export function logBilledCallsWhenFailed<T>(
+  input: TaskGenerationInput,
+  work: () => Promise<T>,
+): Promise<T> {
+  return startTaskGeneration(input).attempt(work);
 }
 
 /**
@@ -102,24 +126,14 @@ export async function runTaskGeneration<TGeneration extends FinishedGeneration>(
     generate: (rule: { promptTraining: boolean }) => Promise<TGeneration>;
   }): Promise<{ provenance: TaskProvenance; result: TGeneration }> {
   const run = startTaskGeneration(input);
-  const billed: GenerationStep[] = [];
 
-  const result = await collectRunCalls(billed, () =>
+  const result = await run.attempt(() =>
     runUnderPromptTrainingRule({
       contentScope: input.analytics?.contentScope,
       generate,
       libraryInput,
     }),
-  ).catch(async (error: unknown) => {
-    const finalStep = billed.at(-1);
-
-    // A failed run has no answer to read its calls from, so it records the ones the provider billed.
-    if (finalStep) {
-      await run.finish({ finalStep, steps: billed }, FAILED_RUN);
-    }
-
-    throw error;
-  });
+  );
 
   const provenance = await run.finish(result);
 
