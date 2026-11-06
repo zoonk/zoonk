@@ -316,7 +316,7 @@ private struct MockChooser: View {
             : Text(
               "Mock exams come with Plus: whenever you want, and every week in your plan.",
               tableName: "Mock", comment: "Mocks without Plus"),
-          showsSeePlus: false, isInset: true
+          showsSeePlus: false
         )
         .accessibilityElement(children: .combine)
         .accessibilityFocused($isPlusNoticeFocused)

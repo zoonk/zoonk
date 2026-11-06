@@ -72,7 +72,7 @@ struct FarTopicSheet: View {
         }
 
         if request == .limit {
-          PlusNotice(description: Text(Self.limitLine), isInset: true)
+          PlusNotice(description: Text(Self.limitLine))
         } else {
           Button {
             Task { await ask(outline) }

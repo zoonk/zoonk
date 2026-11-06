@@ -6,6 +6,7 @@ import SwiftUI
 /// `barTitleAfterHero(_:)`, so its bar shows the name only once this title scrolls under it.
 struct PageHeader<Trailing: View>: View {
   var eyebrow: Text?
+  private var isEyebrowAsWritten = false
   let title: Text
   var supporting: Text?
   @ViewBuilder let trailing: Trailing
@@ -24,7 +25,7 @@ struct PageHeader<Trailing: View>: View {
     VStack(alignment: .leading, spacing: 4) {
       if let eyebrow {
         eyebrow
-          .typeStyle(.eyebrow)
+          .typeStyle(isEyebrowAsWritten ? .eyebrow.asWritten() : .eyebrow)
           .foregroundStyle(.faint)
       }
 
@@ -47,6 +48,15 @@ struct PageHeader<Trailing: View>: View {
     }
     .padding(.bottom, 8)
     .listRowSeparator(.hidden)
+  }
+}
+
+extension PageHeader {
+  /// Main's `normal-case` eyebrow: a count such as "2 certificates" keeps its case.
+  func eyebrowAsWritten() -> Self {
+    var header = self
+    header.isEyebrowAsWritten = true
+    return header
   }
 }
 

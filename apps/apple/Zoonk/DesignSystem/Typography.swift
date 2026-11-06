@@ -74,7 +74,7 @@ extension TypeStyle {
   /// Over a page's title, in the faint color.
   static let eyebrow = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: .regular, face: .mono, isUppercase: true)
-  /// Uppercase, inside a panel only.
+  /// Uppercase, inside a panel or over a search group only.
   static let label = TypeStyle(
     size: 11.5, relativeTo: .caption2, weight: .medium, tracking: 0.04, isUppercase: true)
   /// A checked answer's verdict, main's `FeedbackVerdict` (550), in its tone's word color.
@@ -113,6 +113,13 @@ extension TypeStyle {
   func monospacedDigit() -> TypeStyle {
     var style = self
     style.isTabular = true
+    return style
+  }
+
+  /// In the case it's written in, as main's `normal-case` on an eyebrow that counts something.
+  func asWritten() -> TypeStyle {
+    var style = self
+    style.isUppercase = false
     return style
   }
 

@@ -277,7 +277,7 @@ struct PracticeQuestionsPreparingView: View {
         }
 
         if isPlusRequired {
-          FreeWeekOverNotice(showsSeePlus: false, isInset: true)
+          FreeWeekOverNotice(showsSeePlus: false)
             .accessibilityElement(children: .combine)
             .accessibilityFocused($focus, equals: .notice)
         } else if failure != nil, limit == nil {

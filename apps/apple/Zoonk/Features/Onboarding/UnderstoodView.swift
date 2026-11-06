@@ -171,7 +171,7 @@ private struct UnderstoodCard: View {
                 comment:
                   "Under the goals the free plan can't follow yet, which wait in the learner's goal list; Plus is the subscription's name, not \"more\""
               ),
-            showsSeePlus: error?.limit?.isPlusLimit != true, isInset: true)
+            showsSeePlus: error?.limit?.isPlusLimit != true)
         }
       }
 

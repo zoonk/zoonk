@@ -9,6 +9,8 @@ struct ListRow<Leading: View, Trailing: View>: View {
   /// Main's `ListRowNumberedTitle`: a place in a list before the title, quiet and mono.
   var number: Int?
   var description: Text?
+  /// `.center` beside a mark taller than its words, such as a certificate's picture.
+  var alignment = VerticalAlignment.firstTextBaseline
   @ViewBuilder let leading: Leading
   @ViewBuilder let trailing: Trailing
 
@@ -17,11 +19,13 @@ struct ListRow<Leading: View, Trailing: View>: View {
 
   init(
     _ title: Text, number: Int? = nil, description: Text? = nil,
+    alignment: VerticalAlignment = .firstTextBaseline,
     @ViewBuilder leading: () -> Leading, @ViewBuilder trailing: () -> Trailing
   ) {
     self.title = title
     self.number = number
     self.description = description
+    self.alignment = alignment
     self.leading = leading()
     self.trailing = trailing()
   }
@@ -30,7 +34,7 @@ struct ListRow<Leading: View, Trailing: View>: View {
     if isStacked, Leading.self == EmptyView.self {
       words
     } else {
-      MarkedRow(stackedSpacing: 4) {
+      MarkedRow(alignment: alignment, stackedSpacing: 4) {
         if Leading.self != EmptyView.self {
           leading
             .foregroundStyle(.mutedForeground)

@@ -140,8 +140,7 @@ private struct SpeakingPaperView: View {
         PlusNotice(
           description: Text(
             "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.",
-            tableName: "Voice", comment: "Speaking practice needs Plus"),
-          isInset: true)
+            tableName: "Voice", comment: "Speaking practice needs Plus"))
       }
     } else if paper.access == .callsPaused {
       Section {
