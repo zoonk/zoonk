@@ -50,7 +50,7 @@ gh project item-add 37 --owner zoonk --url https://github.com/zoonk/zoonk/issues
 gh project item-edit 37 --owner zoonk --url https://github.com/zoonk/zoonk/issues/<n> --field Status --value "In Progress"
 ```
 
-These need the `project` scope on `gh`'s token. If `gh` says it's missing, ask the user to run `gh auth refresh -s project`, carry on with the issue, and set the status once they have.
+These need `gh` 2.97 or newer, which sets a field by name, and the `project` scope on its token. If `gh` says the scope is missing, ask the user to run `gh auth refresh -s project`, carry on with the issue, and set the status once they have.
 
 ## 3. Close it if it's a duplicate
 
