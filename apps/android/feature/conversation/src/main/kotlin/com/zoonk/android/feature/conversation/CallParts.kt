@@ -79,8 +79,7 @@ private val MARK_MIN = 40.dp
  * task aside from `lg`); where there isn't, [content] is told so and shows it inline. On wide
  * windows the main action sits at its own width at the bar's end. With [barUnderAside], an unfolded
  * book's fold docks the bar under [aside], on the page after the fold, as an intro's main action
- * sits under the goals or card it starts. A [lonePage] frame is one decision, such as a problem or
- * a wait: across the fold it keeps to the page before it, its bar with it.
+ * sits under the goals or card it starts.
  */
 @Composable
 internal fun CallFrame(

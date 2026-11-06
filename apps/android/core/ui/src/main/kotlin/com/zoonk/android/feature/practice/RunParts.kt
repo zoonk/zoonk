@@ -189,7 +189,6 @@ fun RunPage(
     }
 }
 
-/** A run's column, scrolled, kept to the page before an unfolded book's fold that crosses it. */
 @Composable
 fun RunColumn(
     modifier: Modifier,
