@@ -1933,6 +1933,44 @@ describe(goalContentWorkflow, () => {
     expect(started).toStrictEqual([[{ courseId: main.id }]]);
   });
 
+  it("starts the release update of a published main course a learner starts while it's behind", async () => {
+    const brand = await brandFixture();
+    const product = await productFixture({ organizationId: brand.id });
+
+    const [older] = await Promise.all([
+      productReleaseFixture({ productId: product.id, releasedAt: new Date("2025-01-10") }),
+      productReleaseFixture({ productId: product.id, releasedAt: new Date("2026-01-10") }),
+    ]);
+
+    const main = await courseFixture({
+      isPublished: true,
+      organizationId: brand.id,
+      productId: product.id,
+      productReleaseId: older.id,
+      visibility: "public",
+    });
+
+    await courseBandsFixture({
+      courseId: main.id,
+      levels: ["overview", "beginner", "intermediate", "advanced"],
+    });
+
+    const { goal } = await newGoal({
+      details: { courseStart: { chapterId: null }, level: "none" },
+      primaryCourseId: main.id,
+    });
+
+    await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+      status: "prepared",
+    });
+
+    const started = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === courseReleaseWorkflow)
+      .map(([, args]) => args);
+
+    expect(started).toStrictEqual([[{ courseId: main.id }]]);
+  });
+
   it("builds an exam's graph at once when onboarding already found its current blueprint, whatever instructions read it", async () => {
     const blueprint = await examBlueprintFixture({
       examDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),

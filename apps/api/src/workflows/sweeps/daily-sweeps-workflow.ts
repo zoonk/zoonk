@@ -4,8 +4,7 @@ import { startOnce } from "../_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-workflow";
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
-import { startCourseReleases } from "../products/product-releases";
-import { listCoursesBehindStep } from "../products/steps/product-releases-steps";
+import { updateCoursesBehind } from "../products/product-releases";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
@@ -48,14 +47,6 @@ async function checkFreshness(): Promise<number> {
   await Promise.all(targets.map((target) => start(freshnessWorkflow, [target])));
 
   return targets.length;
-}
-
-/** Also catches an update whose start failed. */
-async function updateCoursesBehind(): Promise<number> {
-  const courseIds = await listCoursesBehindStep();
-  await startCourseReleases(courseIds);
-
-  return courseIds.length;
 }
 
 /** Owed work whose start failed, such as an API that didn't answer the learner's request. */
@@ -131,6 +122,7 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     purgeExpiredVerificationsStep(),
     purgeExpiredAuthRecordsStep(),
     startOldFollowUps(),
+    // Also catches an update whose start failed.
     updateCoursesBehind(),
   ]);
 

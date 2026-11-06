@@ -2,7 +2,11 @@ import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { claimRunToken, startOnce, waitForRunToken } from "../_shared/run-token";
 import { type ResearchAnalytics } from "../research/_utils/research-analytics";
 import { courseReleaseWorkflow } from "./course-release-workflow";
-import { readProductReleasesStep, saveProductReleasesStep } from "./steps/product-releases-steps";
+import {
+  listCoursesBehindStep,
+  readProductReleasesStep,
+  saveProductReleasesStep,
+} from "./steps/product-releases-steps";
 
 /**
  * Research's refresh of a stale product and the freshness check read a product's releases page
@@ -44,4 +48,15 @@ export async function startCourseReleases(courseIds: readonly string[]): Promise
       startOnce(courseReleaseWorkflow, [{ courseId }], `course-release:${courseId}`),
     ),
   );
+}
+
+/**
+ * Followed main courses, all of them or those among `courseIds`, behind their product's current
+ * release start their update. Returns how many.
+ */
+export async function updateCoursesBehind(courseIds?: string[]): Promise<number> {
+  const behind = await listCoursesBehindStep(courseIds);
+  await startCourseReleases(behind);
+
+  return behind.length;
 }
