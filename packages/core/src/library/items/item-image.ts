@@ -18,6 +18,21 @@ export const itemImageSchema = z
 
 export type ItemImage = z.infer<typeof itemImageSchema>;
 
+/**
+ * A failed check can remove a question's picture after learners were given it: one they already
+ * answered still counts, and any other isn't asked.
+ */
+export function isStillAsked({
+  answered,
+  item,
+}: {
+  answered: boolean;
+  item: { content: object; image?: ItemImage | null };
+}): boolean {
+  const lostPicture = "image" in item.content && Boolean(item.content.image) && !item.image;
+  return answered || !lostPicture;
+}
+
 export function toItemImage({
   content,
   mediaAsset,

@@ -199,12 +199,22 @@ describe("a mock mistake's saved stimulus", () => {
         throw new Error("Expected the mock's first question");
       }
 
-      const audio = await mediaAssetFixture({ durationMs: 3000, kind: "audio" });
+      const [audio, picture] = await Promise.all([
+        mediaAssetFixture({ durationMs: 3000, kind: "audio" }),
+        mediaAssetFixture(),
+      ]);
+
       const content = listeningContent({ uniqueLine: "My booking number is 1234." });
       const set = await listeningSetFixture({ content, mediaAssetId: audio.id });
 
       await prisma.item.update({
-        data: { content: stimulusQuestion(format), format, setId: set.id, setPosition: 0 },
+        data: {
+          content: stimulusQuestion(format),
+          format,
+          mediaAssetId: picture.id,
+          setId: set.id,
+          setPosition: 0,
+        },
         where: { id: itemId },
       });
 

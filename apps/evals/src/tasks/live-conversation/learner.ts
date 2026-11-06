@@ -1,4 +1,3 @@
-import { type ModelCall, toTokenUsage } from "@/lib/types";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { generateText } from "ai";
 import template from "./learner.prompt.md";
@@ -62,12 +61,12 @@ export async function writeLearnerLine({
   step: string;
   systemPrompt: string;
   turns: readonly CallTurn[];
-}): Promise<{ call: ModelCall; text: string }> {
-  const { text, usage } = await generateText({
+}): Promise<string> {
+  const { text } = await generateText({
     instructions: systemPrompt,
     model: LEARNER_MODEL,
     prompt: `The call so far:\n${formatCall(turns)}\n\nDo this now: ${step}`,
   });
 
-  return { call: { modelId: LEARNER_MODEL, usage: toTokenUsage(usage) }, text: text.trim() };
+  return text.trim();
 }

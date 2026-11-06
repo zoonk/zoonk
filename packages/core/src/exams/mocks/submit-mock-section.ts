@@ -1,34 +1,42 @@
 import "server-only";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { isStillAsked } from "../../library/items/item-image";
 import { routeNextModule } from "../scoring/adaptive-routing";
 import { endMock } from "./_utils/end-mock";
 import { readMockAnswer } from "./_utils/mock-answers";
 import { gradeMockItem } from "./_utils/mock-item-grading";
 import { loadMockItems } from "./_utils/mock-items";
 import { type MockSitting, findOwnedMock, getSectionDeadline } from "./_utils/owned-mock";
+import { isMockAnswerPresent } from "./mock-answer-presence";
 import { type MockConditions, type MockTimeZoneInput } from "./mock-contract";
 
 export type SubmitMockSectionResult = {
   status: "expired" | "finished" | "next" | "notFound" | "notRunning" | "unauthorized";
 };
 
-async function countRight({ itemIds, mock }: { itemIds: readonly string[]; mock: MockSitting }) {
+async function scoreModule({ itemIds, mock }: { itemIds: readonly string[]; mock: MockSitting }) {
   const items = await loadMockItems(itemIds);
 
-  return itemIds.filter((itemId) => {
+  const verdicts = itemIds.flatMap((itemId) => {
     const item = items.get(itemId);
     const answer = readMockAnswer(mock.answers.find((draft) => draft.itemId === itemId)?.answer);
 
-    return item
-      ? gradeMockItem({
-          answer,
-          item,
-          mockId: mock.id,
-          partialCredit: mock.conditions.partialCredit,
-        }).isCorrect
-      : false;
-  }).length;
+    if (!item) {
+      return [false];
+    }
+
+    if (!isStillAsked({ answered: isMockAnswerPresent(answer), item })) {
+      return [];
+    }
+
+    return [
+      gradeMockItem({ answer, item, mockId: mock.id, partialCredit: mock.conditions.partialCredit })
+        .isCorrect,
+    ];
+  });
+
+  return { correct: verdicts.filter(Boolean).length, total: verdicts.length };
 }
 
 async function advanceConditions({
@@ -53,10 +61,9 @@ async function advanceConditions({
   }
 
   const itemIds = routeNextModule({
-    correct: await countRight({ itemIds: current.itemIds, mock }),
+    ...(await scoreModule({ itemIds: current.itemIds, mock })),
     questions: next.questions,
     routing: next.routing,
-    total: current.itemIds.length,
   });
 
   return {

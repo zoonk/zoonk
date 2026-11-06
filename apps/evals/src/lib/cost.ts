@@ -1,12 +1,24 @@
 import { priceCall } from "@zoonk/ai/pricing/call-cost";
 import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
-import { average, sum } from "./math";
-import { type ModelCall, type TokenUsage } from "./types";
+import { sum } from "./math";
+import { type ModelConfig } from "./models";
+import { type FailedRun, type ModelCall, type TokenUsage } from "./types";
 
 const RUNS_PER_COST_ESTIMATE = 1000;
 
-export function estimateCostPer1000Runs(runCosts: number[]): number {
-  return average(runCosts) * RUNS_PER_COST_ESTIMATE;
+/** A failed run leaves no output, so what it cost is spread over the runs that left one. */
+export function estimateCostPer1000Runs({
+  failedCost,
+  runCosts,
+}: {
+  failedCost: number;
+  runCosts: number[];
+}): number {
+  if (runCosts.length === 0) {
+    return 0;
+  }
+
+  return ((sum(runCosts) + failedCost) / runCosts.length) * RUNS_PER_COST_ESTIMATE;
 }
 
 /** Throws for unknown model prices so missing pricing cannot make a model look free. */
@@ -40,18 +52,37 @@ export function getCallsCost({
   );
 }
 
-/** The kept answer at the run's model, plus every draft the run wrote and set aside. */
+/**
+ * Every call a run made. The meter sees only text calls through the default provider, so a model
+ * it didn't see (an image, speech, a decision) is priced from the usage its task reported.
+ */
 export function getRunCost({
-  modelId,
+  model,
   prices,
   run,
 }: {
-  modelId: string;
+  model: Pick<ModelConfig, "gatewayModelId">;
   prices: GatewayPrices;
-  run: TokenUsage & { setAside?: ModelCall[] };
+  run: TokenUsage & { calls?: ModelCall[] };
 }): number {
-  return (
-    getCallCost({ modelId, prices, usage: run }) +
-    getCallsCost({ calls: run.setAside ?? [], prices })
-  );
+  const reported = getCallCost({ modelId: model.gatewayModelId, prices, usage: run });
+
+  if (!run.calls) {
+    return reported;
+  }
+
+  const metered = getCallsCost({ calls: run.calls, prices });
+  const sawModel = run.calls.some((call) => call.modelId === model.gatewayModelId);
+
+  return sawModel ? metered : metered + reported;
+}
+
+export function getFailedRunsCost({
+  failedRuns = [],
+  prices,
+}: {
+  failedRuns?: FailedRun[];
+  prices: GatewayPrices;
+}): number {
+  return getCallsCost({ calls: failedRuns.flatMap((run) => run.calls ?? []), prices });
 }

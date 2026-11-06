@@ -248,7 +248,7 @@ describe(replaceImageAsset, () => {
 });
 
 describe(removeImageAsset, () => {
-  it("takes a picture out of use, dropping the questions about it", async () => {
+  it("takes a picture out of use, retiring the questions about it", async () => {
     const { asset, item, step } = await shownPicture();
 
     await removeImageAsset({ assetId: asset.id });
@@ -262,7 +262,7 @@ describe(removeImageAsset, () => {
     expect(stored).toBeNull();
     expect(screen.mediaAssetId).toBeNull();
     expect(screen.pictureAvailableAt).toBeNull();
-    expect(question).toBeNull();
+    expect(question).toMatchObject({ mediaAssetId: null, retiredAt: expect.any(Date) });
   });
 
   it("takes an option's picture out of its question, and does nothing once it's gone", async () => {

@@ -1,6 +1,6 @@
 import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 import { type ClassificationSummary, summarizeClassification } from "./classification-metrics";
-import { estimateCostPer1000Runs, getCallsCost, getRunCost } from "./cost";
+import { estimateCostPer1000Runs, getCallsCost, getFailedRunsCost, getRunCost } from "./cost";
 import { summarizeLatency } from "./latency";
 import { average, sum } from "./math";
 import { getModelById } from "./models";
@@ -35,7 +35,8 @@ export function getStatsFromResults({
     throw new Error(`Model ${evalResults.modelId} not found`);
   }
 
-  const { results } = evalResults;
+  const { failedRuns = [], results } = evalResults;
+  const failedCost = getFailedRunsCost({ failedRuns, prices });
 
   /**
    * Transcription is billed per minute of audio and speech per second of audio or per character,
@@ -44,7 +45,7 @@ export function getStatsFromResults({
   const runCosts =
     model.kind === "transcription" || model.kind === "speech"
       ? []
-      : results.map((result) => getRunCost({ modelId: model.gatewayModelId, prices, run: result }));
+      : results.map((result) => getRunCost({ model, prices, run: result }));
 
   const latency = summarizeLatency(results.map((result) => result.duration));
 
@@ -54,14 +55,14 @@ export function getStatsFromResults({
     classification: summarizeClassification(
       results.flatMap((result) => (result.classification ? [result.classification] : [])),
     ),
-    costPer1000Runs: estimateCostPer1000Runs(runCosts),
+    costPer1000Runs: estimateCostPer1000Runs({ failedCost, runCosts }),
     extraCost: getCallsCost({
-      calls: results.flatMap((result) => result.extraCalls ?? []),
+      calls: [...results, ...failedRuns].flatMap((run) => run.extraCalls ?? []),
       prices,
     }),
     judgeCost: getCallsCost({ calls: results.flatMap((result) => result.judge ?? []), prices }),
     latencyP50: latency.p50,
     latencyP95: latency.p95,
-    runCost: sum(runCosts),
+    runCost: sum(runCosts) + failedCost,
   };
 }

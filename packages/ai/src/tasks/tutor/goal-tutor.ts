@@ -1,7 +1,7 @@
 import "server-only";
 import { generateText, isStepCount, streamText } from "ai";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
-import { runTaskGeneration, startTaskGeneration } from "../../provenance/run-task-generation";
+import { runTaskGeneration, streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { type LessonQuestionPriorTurn } from "../lessons/lesson-question";
@@ -281,28 +281,21 @@ export async function generateGoalTutorAnswer({
 export function streamGoalTutorAnswer({ analytics, ...input }: GoalTutorInput) {
   const context = { contentScope: "personal" as const, ...analytics };
 
-  const run = startTaskGeneration({
+  const { generation, provenance } = streamTaskGeneration({
     analytics: context,
+    stream: () =>
+      streamText({
+        ...createGenerationOptions({
+          ...input,
+          analytics: context,
+          model: GOAL_TUTOR_MODEL,
+          useFallback: true,
+        }),
+        onError: suppressProviderError,
+      }),
     systemPrompt: getSystemPrompt(input),
     task: GOAL_TUTOR_TASK,
   });
-
-  const generation = streamText({
-    ...createGenerationOptions({
-      ...input,
-      analytics: context,
-      model: GOAL_TUTOR_MODEL,
-      useFallback: true,
-    }),
-    onError: suppressProviderError,
-  });
-
-  const provenance = Promise.all([generation.finalStep, generation.steps, generation.usage]).then(
-    ([finalStep, steps, usage]) => run.finish({ finalStep, steps, usage }),
-  );
-
-  // A failed stream rejects this too; nothing else may be waiting for it.
-  void provenance.catch(() => null);
 
   return { generation, provenance: provenance satisfies Promise<TaskProvenance> };
 }
