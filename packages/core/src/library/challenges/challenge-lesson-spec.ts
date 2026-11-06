@@ -19,7 +19,9 @@ export function parseChallengeLessonSpec(spec: unknown): ChallengeLessonSpec | n
   return parsed.success ? parsed.data : null;
 }
 
-const CHALLENGE_IDENTITY_PATTERN = /(?:^|:)challenge:[\da-f-]{36}$/u;
+export const CHALLENGE_KEY_PREFIX = "challenge:";
+
+const CHALLENGE_IDENTITY_PATTERN = new RegExp(`(?:^|:)${CHALLENGE_KEY_PREFIX}[\\da-f-]{36}$`, "u");
 
 export function isChallengeIdentityKey(identityKey: string): boolean {
   return CHALLENGE_IDENTITY_PATTERN.test(identityKey);

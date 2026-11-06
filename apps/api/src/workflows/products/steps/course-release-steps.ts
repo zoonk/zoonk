@@ -73,8 +73,10 @@ export async function compareReleaseStep({
     to: input.to,
   });
 
+  const changed = new Set(data.changed.map(({ lesson }) => lesson - 1));
+
   return {
-    changedLessonIds: data.changed.flatMap(({ lesson }) => input.lessons[lesson - 1]?.id ?? []),
+    keptLessonIds: input.lessons.filter((_, index) => !changed.has(index)).map(({ id }) => id),
     page: { contentHash: input.page.contentHash, sourceId: input.page.sourceId },
     provenance,
     release: input.to,

@@ -365,6 +365,19 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["item.updateMany"],
     },
   ],
+  "library/products/release-advance.ts": [
+    {
+      verdict: "covered",
+      why: "a release's new skills are read only once a chapter teaching them is placed, which marks",
+      writes: ["skill.createMany"],
+    },
+    {
+      fields: ["contentStatus", "specStatus"],
+      verdict: "excluded",
+      why: "generation claims: lessons planned for the old release plan again",
+      writes: ["lesson.updateMany"],
+    },
+  ],
   "library/quality/later-reviews.ts": [
     {
       fields: ["contentStatus"],

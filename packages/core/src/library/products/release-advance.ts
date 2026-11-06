@@ -2,6 +2,7 @@ import "server-only";
 import { type CourseLevel, type TransactionClient, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
+import { CHALLENGE_KEY_PREFIX } from "../challenges/challenge-lesson-spec";
 import { type GoalSkillRef } from "../curriculum/curriculum-scope";
 import { type OutlineKeys } from "../curriculum/save-outline-chapter";
 import { readLessonMap } from "../lessons/lesson-map";
@@ -123,7 +124,8 @@ export type WhatsNew = {
 };
 
 export type ReleaseComparisonResult = {
-  changedLessonIds: string[];
+  /** The lessons the comparison read and found the release leaves as they are. */
+  keptLessonIds: string[];
   /** The page the release notes came from, as compared. */
   page: { contentHash: string; sourceId: string };
   provenance: LibraryProvenance;
@@ -205,52 +207,47 @@ export async function saveWhatsNewSkills({
   return findWhatsNewSkills({ language, releaseId, whatsNew });
 }
 
-async function flagChangedLessons({
-  comparison,
-  courseId,
-  noticeId,
-  tx,
-}: {
-  comparison: ReleaseComparisonResult;
-  courseId: string;
-  noticeId: string;
-  tx: TransactionClient;
-}): Promise<string[]> {
-  const lessons = {
-    homeChapter: { homeCourseId: courseId },
-    id: { in: comparison.changedLessonIds },
-  };
-
-  const changed = await tx.lesson.findMany({ select: { id: true }, where: lessons });
-
-  await tx.contentReviewFlag.createMany({
-    data: changed.map((lesson) => ({ lessonId: lesson.id, noticeId })),
-    skipDuplicates: true,
-  });
-
-  // Each rewrite plans its lesson again, for the release the course teaches now.
-  await tx.lesson.updateMany({ data: { specStatus: "pending" }, where: lessons });
-
-  const flags = await tx.contentReviewFlag.findMany({ select: { id: true }, where: { noticeId } });
-  return flags.map((flag) => flag.id);
-}
+/** A chapter challenge's plan is written by code and names no release. A main course is shared. */
+const CHALLENGE = { identityKey: { startsWith: CHALLENGE_KEY_PREFIX } };
 
 /**
- * A lesson not written yet plans again for the new release, and one being written loses its claim,
- * so it can't publish what it planned for the old one.
+ * A course's lessons are planned for the release it teaches, so moving it keeps only the plans of
+ * `keptLessonIds`, or of its written lessons when there's no comparison. Every other lesson homed
+ * in it plans again, a writer loses its claim so it can't publish what it planned for the old
+ * release, and the written ones are returned to be rewritten, also one written while the
+ * comparison ran.
  */
-async function dropUnwrittenPlans({ courseId, tx }: { courseId: string; tx: TransactionClient }) {
-  const unwritten = {
-    contentStatus: { not: "completed" as const },
-    homeChapter: { homeCourseId: courseId },
-  };
+async function dropOldPlans({
+  courseId,
+  keptLessonIds,
+  tx,
+}: {
+  courseId: string;
+  keptLessonIds: string[] | null;
+  tx: TransactionClient;
+}): Promise<string[]> {
+  const kept = keptLessonIds
+    ? { id: { in: keptLessonIds } }
+    : { contentStatus: "completed" as const };
+
+  const old = { NOT: kept, homeChapter: { homeCourseId: courseId } };
 
   await tx.lesson.updateMany({
     data: { contentStatus: "pending" },
-    where: { ...unwritten, contentStatus: "running" },
+    where: { ...old, contentStatus: "running" },
   });
 
-  await tx.lesson.updateMany({ data: { specStatus: "pending" }, where: unwritten });
+  await tx.lesson.updateMany({
+    data: { specStatus: "pending" },
+    where: { ...old, NOT: [kept, CHALLENGE] },
+  });
+
+  const written = await tx.lesson.findMany({
+    select: { id: true },
+    where: { ...old, contentStatus: "completed" },
+  });
+
+  return written.map((lesson) => lesson.id);
 }
 
 async function replayAdvance(comparison: ReleaseComparisonResult): Promise<string[] | null> {
@@ -264,8 +261,8 @@ async function replayAdvance(comparison: ReleaseComparisonResult): Promise<strin
 
 /**
  * Internal workflow bridge, the update's last write. Moves a main course to `toReleaseId`, only if
- * it still teaches `fromReleaseId`, in the transaction that flags the lessons the comparison found
- * changed, so a rewrite reads the new release. The notice is the release's own, not
+ * it still teaches `fromReleaseId`, in the transaction that flags the lessons to rewrite for it
+ * (`dropOldPlans`), so a rewrite reads the new release. The notice is the release's own, not
  * `createSourceChangeNotice`, which would flag every lesson citing the page, pinned courses'
  * included. Returns the flags; a retry after the commit finds them by the comparison's run. Null
  * when the course moved meanwhile.
@@ -302,7 +299,11 @@ export async function advanceCourseRelease({
       return null;
     }
 
-    await dropUnwrittenPlans({ courseId, tx });
+    const rewrites = await dropOldPlans({
+      courseId,
+      keptLessonIds: comparison?.keptLessonIds ?? null,
+      tx,
+    });
 
     if (!comparison) {
       return [];
@@ -320,6 +321,11 @@ export async function advanceCourseRelease({
       },
     });
 
-    return flagChangedLessons({ comparison, courseId, noticeId: notice.id, tx });
+    const flags = await tx.contentReviewFlag.createManyAndReturn({
+      data: rewrites.map((lessonId) => ({ lessonId, noticeId: notice.id })),
+      select: { id: true },
+    });
+
+    return flags.map((flag) => flag.id);
   });
 }

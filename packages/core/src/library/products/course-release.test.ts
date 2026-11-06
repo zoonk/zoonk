@@ -21,6 +21,7 @@ import {
   loadReleaseComparison,
   saveWhatsNewSkills,
 } from "./release-advance";
+import { saveWhatsNewChapter } from "./release-offers";
 
 const NOW = new Date("2026-11-06T12:00:00Z");
 
@@ -102,7 +103,7 @@ function comparison(
   attrs: Partial<ReleaseComparisonResult> = {},
 ): ReleaseComparisonResult {
   return {
-    changedLessonIds: [],
+    keptLessonIds: [],
     page: { contentHash: page.contentHash, sourceId: page.id },
     provenance: {
       generatedAt: NOW.toISOString(),
@@ -233,7 +234,7 @@ describe(advanceCourseRelease, () => {
 
     const advance = await advanceCourseRelease({
       ...state,
-      comparison: comparison(page, { changedLessonIds: [changed?.id ?? ""] }),
+      comparison: comparison(page, { keptLessonIds: [kept?.id ?? ""] }),
     });
 
     const flags = await prisma.contentReviewFlag.findMany({ where: { id: { in: advance ?? [] } } });
@@ -297,12 +298,104 @@ describe(advanceCourseRelease, () => {
     expect(replans).toStrictEqual(["claimed", "claimed"]);
   });
 
+  it("flags a lesson written while the comparison ran, since nothing compared it", async () => {
+    const { course, first, page, second } = await mainCourse();
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+    const writerRunId = randomUUID();
+    const state = { courseId: course.id, fromReleaseId: first.id, toReleaseId: second.id };
+
+    const writing = await libraryLessonFixture({
+      contentRunId: writerRunId,
+      contentStatus: "running",
+      homeChapterId: chapter.id,
+      specStatus: "completed",
+    });
+
+    const compared = await loadReleaseComparison(state);
+
+    await expect(
+      completeLessonContent({ lessonId: writing.id, workflowRunId: writerRunId }),
+    ).resolves.toBe(true);
+
+    const advance = await advanceCourseRelease({
+      ...state,
+      comparison: comparison(page, { keptLessonIds: compared?.lessons.map(({ id }) => id) }),
+    });
+
+    const flags = await prisma.contentReviewFlag.findMany({ where: { id: { in: advance ?? [] } } });
+
+    expect(flags.map((flag) => flag.lessonId)).toStrictEqual([writing.id]);
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: writing.id } }),
+    ).resolves.toMatchObject({ specStatus: "pending" });
+  });
+
+  it("keeps the plan of a chapter challenge, the new release's What's new one included", async () => {
+    const { course, first, page, second } = await mainCourse();
+    const provenance = comparison(page).provenance;
+
+    const whatsNew = {
+      level: "beginner" as const,
+      offer: "Learn the new export panel.",
+      skills: [{ description: "Export from the new panel.", name: "Export a file" }],
+      title: "What's new in Test Product 2",
+    };
+
+    const skills = await saveWhatsNewSkills({
+      courseId: course.id,
+      provenance,
+      releaseId: second.id,
+      whatsNew,
+    });
+
+    const saved = await saveWhatsNewChapter({
+      chapter: {
+        description: "The new export panel.",
+        lessons: [
+          {
+            canDo: "Export a file from the new panel",
+            description: "Export from the new panel.",
+            estimatedMinutes: 3,
+            skills: ["Export a file"],
+            title: "The export panel",
+          },
+        ],
+        objectives: ["Export a file"],
+        skillKeys: skills.map((skill) => skill.key),
+        title: whatsNew.title,
+        tools: [],
+      },
+      courseId: course.id,
+      level: "beginner",
+      provenance,
+      releaseId: second.id,
+      skills,
+      workflowRunId: randomUUID(),
+    });
+
+    await advanceCourseRelease({
+      comparison: comparison(page),
+      courseId: course.id,
+      fromReleaseId: first.id,
+      toReleaseId: second.id,
+    });
+
+    const claims = await Promise.all(
+      saved.lessonIds.map((id) =>
+        claimLibraryGeneration({ id, target: "lessonSpec", workflowRunId: randomUUID() }),
+      ),
+    );
+
+    expect(claims).toStrictEqual(["claimed", "completed"]);
+  });
+
   it("returns the committed move again on a retry, and nothing for a course that moved", async () => {
     const { course, first, page, second } = await mainCourse();
     const [changed] = await homedLessons(course.id, 1);
     const state = { courseId: course.id, fromReleaseId: first.id, toReleaseId: second.id };
 
-    const compared = comparison(page, { changedLessonIds: [changed?.id ?? ""] });
+    const compared = comparison(page);
 
     const advanced = await advanceCourseRelease({ ...state, comparison: compared });
     const retried = await advanceCourseRelease({ ...state, comparison: compared });
