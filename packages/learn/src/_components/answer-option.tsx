@@ -2,6 +2,7 @@
 
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { SpokenMath } from "../rich-text/spoken-math";
@@ -65,6 +66,7 @@ export function AnswerOption({
   guessed = false,
   layout = "row",
   marker,
+  onKeyDown,
   picked,
   result = null,
   tag,
@@ -102,6 +104,10 @@ export function AnswerOption({
       )}
       data-result={result ?? undefined}
       data-slot="answer-option"
+      onKeyDown={(event) => {
+        ignoreHeldEnter(event);
+        onKeyDown?.(event);
+      }}
       role="radio"
       type="button"
       {...props}
