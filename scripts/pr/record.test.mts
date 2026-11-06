@@ -27,6 +27,9 @@ const NOT_FOUND = 404;
 // sees the answer.
 const SLOW_RESPONSE_MS = 5000;
 const TIMEOUT_MS = 60_000;
+// A fresh CI runner's first Chrome launch reads Chrome from a cold disk and has taken over 60 s (#2126).
+// Playwright's timeout fires first so a launch that hangs fails with its launch log.
+const LAUNCH_TIMEOUT_MS = 180_000;
 
 const checkAnswer: Steps = async ({ page, shot }) => {
   await page.goto("/");
@@ -77,8 +80,12 @@ beforeAll(async () => {
   await once(server, "listening");
   const address = server.address();
   baseUrl = `http://127.0.0.1:${typeof address === "object" ? address?.port : ""}`;
-  browser = await chromium.launch(process.env.CI ? { channel: "chrome" } : {});
-}, TIMEOUT_MS);
+
+  browser = await chromium.launch({
+    ...(process.env.CI ? { channel: "chrome" } : {}),
+    timeout: LAUNCH_TIMEOUT_MS,
+  });
+}, LAUNCH_TIMEOUT_MS + TIMEOUT_MS);
 
 afterAll(async () => {
   await browser?.close();
