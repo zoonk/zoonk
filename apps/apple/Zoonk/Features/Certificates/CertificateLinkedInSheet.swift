@@ -112,10 +112,11 @@ struct CertificateLinkedInSheet: View {
         Button {
           UIPasteboard.general.string = value
           copied = value
+          announcePolitely(String(localized: Self.copiedLine))
         } label: {
           if copied == value {
             Label {
-              Text("Copied", tableName: "Certificates", comment: "A field was just copied")
+              Text(Self.copiedLine)
             } icon: {
               Image(systemName: "checkmark")
             }
@@ -133,5 +134,9 @@ struct CertificateLinkedInSheet: View {
       }
     }
     .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+  }
+
+  private static var copiedLine: LocalizedStringResource {
+    LocalizedStringResource("Copied", table: "Certificates", comment: "A field was just copied")
   }
 }
