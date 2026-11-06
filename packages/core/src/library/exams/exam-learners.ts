@@ -29,13 +29,11 @@ export function countNextEditionGoals({
 
 /** A product's page counts the goals about its product and the learners of its main courses. */
 export async function countActiveSourceGoals(sourceId: string): Promise<number> {
+  const product = { OR: [{ releasesSourceId: sourceId }, { sources: { some: { id: sourceId } } }] };
+
   const mainCourses = await prisma.course.findMany({
     select: { id: true },
-    where: {
-      isPinned: false,
-      product: { OR: [{ releasesSourceId: sourceId }, { sources: { some: { id: sourceId } } }] },
-      userId: null,
-    },
+    where: { isPinned: false, product, userId: null },
   });
 
   return prisma.goal.count({
@@ -43,11 +41,7 @@ export async function countActiveSourceGoals(sourceId: string): Promise<number> 
       OR: [
         { learnerSources: { some: { sourceId } } },
         { examBlueprint: { sourceId } },
-        {
-          product: {
-            OR: [{ releasesSourceId: sourceId }, { sources: { some: { id: sourceId } } }],
-          },
-        },
+        { product },
         ...mainCourses.flatMap((course) => courseFollowersFilter(course.id).OR),
       ],
       status: "active",
