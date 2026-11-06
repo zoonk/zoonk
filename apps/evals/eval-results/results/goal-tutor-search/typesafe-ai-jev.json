@@ -52,6 +52,7 @@
             },
             "lessonSteps": [
               {
+                "answerable": false,
                 "content": {
                   "text": "Em “O envio dos relatórios atrasou”, o que atrasou foi o envio. “Dos relatórios” só diz qual envio. Por isso o verbo fica no singular. Essa palavra central, que guia a concordância, é o núcleo do sujeito."
                 },
@@ -65,6 +66,7 @@
               "kind": "step"
             },
             "step": {
+              "answerable": false,
               "content": {
                 "text": "Em “O envio dos relatórios atrasou”, o que atrasou foi o envio. “Dos relatórios” só diz qual envio. Por isso o verbo fica no singular. Essa palavra central, que guia a concordância, é o núcleo do sujeito."
               },
@@ -129,6 +131,7 @@
             },
             "lessonSteps": [
               {
+                "answerable": false,
                 "content": {
                   "text": "Em “O envio dos relatórios atrasou”, o que atrasou foi o envio. “Dos relatórios” só diz qual envio. Por isso o verbo fica no singular. Essa palavra central, que guia a concordância, é o núcleo do sujeito."
                 },
@@ -142,6 +145,7 @@
               "kind": "step"
             },
             "step": {
+              "answerable": false,
               "content": {
                 "text": "Em “O envio dos relatórios atrasou”, o que atrasou foi o envio. “Dos relatórios” só diz qual envio. Por isso o verbo fica no singular. Essa palavra central, que guia a concordância, é o núcleo do sujeito."
               },
@@ -206,6 +210,7 @@
             },
             "lessonSteps": [
               {
+                "answerable": false,
                 "content": {
                   "text": "Na relação de emprego, os honorários de sucumbência são devidos aos advogados empregados (art. 21 da Lei 8.906/94)."
                 },
@@ -219,6 +224,7 @@
               "kind": "step"
             },
             "step": {
+              "answerable": false,
               "content": {
                 "text": "Na relação de emprego, os honorários de sucumbência são devidos aos advogados empregados (art. 21 da Lei 8.906/94)."
               },
@@ -351,6 +357,7 @@
             },
             "lessonSteps": [
               {
+                "answerable": false,
                 "content": {
                   "text": "For x² + 2x + 5 = 0, b² − 4ac = 4 − 20 = −16. A negative discriminant means the equation has no real solutions."
                 },
@@ -364,6 +371,7 @@
               "kind": "step"
             },
             "step": {
+              "answerable": false,
               "content": {
                 "text": "For x² + 2x + 5 = 0, b² − 4ac = 4 − 20 = −16. A negative discriminant means the equation has no real solutions."
               },
@@ -428,6 +436,7 @@
             },
             "lessonSteps": [
               {
+                "answerable": false,
                 "content": {
                   "text": "Property either spouse acquires during the marriage while domiciled in California is community property (Family Code § 760)."
                 },
@@ -441,6 +450,7 @@
               "kind": "step"
             },
             "step": {
+              "answerable": false,
               "content": {
                 "text": "Property either spouse acquires during the marriage while domiciled in California is community property (Family Code § 760)."
               },

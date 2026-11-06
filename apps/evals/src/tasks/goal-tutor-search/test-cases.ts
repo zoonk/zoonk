@@ -23,7 +23,14 @@ function stepScreen({
   lesson: string;
   text: string;
 }): LessonScopeContext {
-  const step = { content: { text }, kind: "static", sentence: null, stepNumber: 2, word: null };
+  const step = {
+    answerable: false,
+    content: { text },
+    kind: "static",
+    sentence: null,
+    stepNumber: 2,
+    word: null,
+  };
 
   return {
     answer: null,
