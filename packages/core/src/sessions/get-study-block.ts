@@ -12,7 +12,7 @@ import { loadBlockedTestOutChapters } from "../learner/test-out/_utils/offer-eli
 import { readNoticeFormats } from "../library/exams/notice-formats";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { isQuotedItem } from "../library/items/item-content";
-import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
+import { ITEM_IMAGE_INCLUDE, isMissingItsPicture } from "../library/items/item-image";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../library/items/item-sets";
 import { citedSourceSelect, toItemCitation } from "../library/sources/source-citation";
 import { loadDrillLessons, toDrillView } from "../mistakes/drill-lessons";
@@ -168,16 +168,7 @@ export async function loadStudyBlock(
       : new Set<string>(),
   ]);
 
-  const items = rows.map((row) => parseSessionItem(row)).filter((item) => item !== null);
   const answers = restoreCheckpointAnswers({ answers: storedAnswers, payload });
-
-  const timeMachines = await loadTimeMachines({
-    blockId,
-    items,
-    payload,
-    sessionId,
-    userId: owned.userId,
-  });
 
   const answered = new Map(
     answers.flatMap(({ answer, isCorrect, itemId }) =>
@@ -186,6 +177,19 @@ export async function loadStudyBlock(
         : [],
     ),
   );
+
+  const items = rows
+    .map((row) => parseSessionItem(row))
+    .filter((item) => item !== null)
+    .filter((item) => answered.has(item.id) || !isMissingItsPicture(item));
+
+  const timeMachines = await loadTimeMachines({
+    blockId,
+    items,
+    payload,
+    sessionId,
+    userId: owned.userId,
+  });
 
   // A decided duel ends even when some questions remain unasked.
   const questionCount = payload.checkpoint

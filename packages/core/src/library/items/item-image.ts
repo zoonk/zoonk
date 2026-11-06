@@ -18,6 +18,11 @@ export const itemImageSchema = z
 
 export type ItemImage = z.infer<typeof itemImageSchema>;
 
+/** A failed picture check can remove a question's picture after a learner was given it. */
+export function isMissingItsPicture(item: { content: object; image?: ItemImage | null }): boolean {
+  return "image" in item.content && Boolean(item.content.image) && !item.image;
+}
+
 export function toItemImage({
   content,
   mediaAsset,

@@ -105,8 +105,8 @@ model Item {
   model                 String
   promptVersion         String                 @map("prompt_version")
   runId                 String                 @map("run_id")
-  /// Set once no current lesson screen asks it, such as a question a fix replaced: new picks skip
-  /// it, while what already holds it (an open session, a test, an answer) keeps it.
+  /// Set once new picks should skip it: no current lesson screen asks it, or its picture failed its
+  /// check. What already holds it (an open session, a test, an answer) keeps it.
   retiredAt             DateTime?              @map("retired_at")
   generatedAt           DateTime               @default(now()) @map("generated_at")
   createdAt             DateTime               @default(now()) @map("created_at")
