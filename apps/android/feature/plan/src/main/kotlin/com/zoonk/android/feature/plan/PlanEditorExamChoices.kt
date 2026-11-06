@@ -243,7 +243,7 @@ internal fun ExamChoiceSuggestion(
         }
         SuggestionDescription(examChoiceLeftOut(choice))
         if (choice.take > 1) {
-            ExamChoicePicks(choice, pending, onSave = onChoose)
+            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = onChoose)
         } else {
             SuggestionActions {
                 choice.options.forEach { option ->

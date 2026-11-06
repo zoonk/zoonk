@@ -281,11 +281,12 @@ struct PracticeSecondaryButton: View {
 
   let title: LocalizedStringResource
   var systemImage: String?
+  var isBusy = false
   var isDisabled = false
   let action: () -> Void
 
   var body: some View {
-    Button(action: action) {
+    BusyButton(isBusy: isBusy, action: action) {
       Group {
         if let systemImage {
           Label {

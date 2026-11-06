@@ -42,8 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.BusyOutlinedButton
 import com.zoonk.android.ui.components.Meter
-import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -301,9 +301,10 @@ fun NotSureButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    busy: Boolean = false,
     dontKnowYet: Boolean = false,
 ) {
-    OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled) {
+    BusyOutlinedButton(busy, onClick = onClick, modifier = modifier, enabled = enabled) {
         if (!dontKnowYet) {
             Icon(
                 painterResource(R.drawable.ic_help),

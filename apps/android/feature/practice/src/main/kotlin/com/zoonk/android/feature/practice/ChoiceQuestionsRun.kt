@@ -142,7 +142,13 @@ internal fun ChoiceQuestionsRun(
                         if (question != null) {
                             NotSureButton(onClick = { onAnswer(question, Answer.DontKnow) }, enabled = !locked, dontKnowYet = true)
                         }
-                        BusyButton(busy = pending, onClick = { next?.invoke() }, modifier = width, enabled = next != null) {
+                        BusyButton(
+                            busy = pending && question == null,
+                            onClick = { next?.invoke() },
+                            modifier = width,
+                            enabled =
+                                next != null,
+                        ) {
                             Text(
                                 stringResource(
                                     when {

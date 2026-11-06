@@ -447,16 +447,23 @@ internal fun AnswerActions(
 
         else -> {
             if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
+            val checking = phase as? RunPhase.Checking
+            val notSure = checking?.answer == Answer.DontKnow
             TaskActions { width ->
                 when (notSureOffer(question, every = notSureOnEvery)) {
                     NotSure.Drill -> {
-                        NotSureButton(onClick = { controls.submit(question, Answer.DontKnow) }, enabled = run.canAnswer)
+                        NotSureButton(
+                            onClick = { controls.submit(question, Answer.DontKnow) },
+                            enabled = run.canAnswer,
+                            busy = notSure && !run.timedOut,
+                        )
                     }
 
                     NotSure.DontKnowYet -> {
                         NotSureButton(
                             onClick = { controls.submit(question, Answer.DontKnow) },
                             enabled = run.canAnswer,
+                            busy = notSure && !run.timedOut,
                             dontKnowYet = true,
                         )
                     }
@@ -464,7 +471,7 @@ internal fun AnswerActions(
                     null -> {}
                 }
                 BusyButton(
-                    busy = phase == RunPhase.Checking,
+                    busy = checking != null && !notSure,
                     onClick = { draft?.let { controls.submit(question, it) } },
                     modifier = width,
                     enabled = run.canAnswer && draft != null,

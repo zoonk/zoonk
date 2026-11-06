@@ -148,6 +148,14 @@ struct MistakePracticeScreen: View {
     }
   }
 
+  private var checking: (answer: PracticeAnswer, timedOut: Bool)? {
+    if case .checking(let answer, let timedOut) = state.phase {
+      (answer, timedOut)
+    } else {
+      nil
+    }
+  }
+
   private func asked(_ step: MistakePracticeStep) -> PracticeQuestionView {
     PracticeQuestionView(
       question: step.question,
@@ -206,13 +214,14 @@ struct MistakePracticeScreen: View {
             ),
           // As on main, only "I'm not sure" carries the question mark; "I don't know yet" is words.
           systemImage: step.entry.drill.kind == .noGuessing ? "questionmark.circle" : nil,
+          isBusy: checking.map { $0.answer.isDontKnow && !$0.timedOut } ?? false,
           isDisabled: !state.acceptsAnswer
         ) { Task { await check(.dontKnow, timedOut: false) } }
 
         PracticeMainButton(
           title: LocalizedStringResource(
             "Check", table: "Practice", comment: "Sends the answer to be graded."),
-          isBusy: { if case .checking = state.phase { true } else { false } }(),
+          isBusy: checking.map { !$0.answer.isDontKnow } ?? false,
           isDisabled: !state.acceptsAnswer || draft?.complete == nil
         ) {
           if let answer = draft?.complete { Task { await check(answer, timedOut: false) } }
@@ -250,7 +259,7 @@ struct MistakePracticeScreen: View {
           "End practice. What you answered counts.", table: "Practice",
           comment: "VoiceOver label: ends mistake practice early.")
       ) { Task { await end() } }
-      .disabled({ if case .checking = state.phase { true } else { false } }())
+      .disabled(checking != nil)
     }
   }
 

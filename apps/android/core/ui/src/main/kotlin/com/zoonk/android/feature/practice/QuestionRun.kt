@@ -10,7 +10,9 @@ import com.zoonk.api.models.StudyBlockCompletion
 sealed interface RunPhase {
     data object Answering : RunPhase
 
-    data object Checking : RunPhase
+    data class Checking(
+        val answer: Answer,
+    ) : RunPhase
 
     data class Checked(
         val answer: Answer,
@@ -52,7 +54,7 @@ data class QuestionRun(
 ) {
     val canAnswer: Boolean get() = phase == RunPhase.Answering || phase == RunPhase.AnswerFailed
 
-    fun checking() = copy(phase = RunPhase.Checking)
+    fun checking(answer: Answer) = copy(phase = RunPhase.Checking(answer))
 
     /** [blank] answers are neither right nor wrong: a block's blank statement, a practice's honest "I don't know". */
     fun answered(

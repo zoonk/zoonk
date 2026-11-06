@@ -110,8 +110,7 @@ struct GradedAtEndRun: View {
                 "Finish", table: "Practice", comment: "Sends a test's answers to be graded.")
               : LocalizedStringResource(
                 "Next", table: "Practice", comment: "Moves to a test's next question."),
-            isBusy: isPending,
-            isDisabled: draft?.complete == nil || failed
+            isDisabled: draft?.complete == nil || failed || isPending
           ) {
             if let picked = draft?.complete { answer(picked, total: total) }
           }

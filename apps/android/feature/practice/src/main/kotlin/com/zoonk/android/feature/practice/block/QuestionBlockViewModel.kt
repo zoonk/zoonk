@@ -96,7 +96,7 @@ class QuestionBlockViewModel(
     ) {
         val current = run.value ?: return
         if (!current.canAnswer) return
-        run.value = current.checking()
+        run.value = current.checking(answer)
         sent = Submission(question, answer, minDurationMs)
 
         viewModelScope.launch {

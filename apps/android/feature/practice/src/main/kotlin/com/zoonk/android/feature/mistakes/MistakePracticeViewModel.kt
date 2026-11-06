@@ -107,7 +107,7 @@ class MistakePracticeViewModel(
         val current = mutableState.value ?: return
         val mistakeId = question.mistakeId ?: return
         if (!current.run.canAnswer) return
-        mutableState.value = current.copy(run = current.run.checking())
+        mutableState.value = current.copy(run = current.run.checking(answer))
         sent = Submission(question, answer, minDurationMs)
         val attemptId = attempts.getOrPut(current.run.index) { UUID.randomUUID() }
 
@@ -164,7 +164,7 @@ class MistakePracticeViewModel(
                 closing.value = true
             }
 
-            current.run.phase == RunPhase.Checking -> {
+            current.run.phase is RunPhase.Checking -> {
                 leaveWhenChecked = true
             }
 

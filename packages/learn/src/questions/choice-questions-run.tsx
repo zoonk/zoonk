@@ -272,7 +272,9 @@ function QuestionsFooter({
   if (!question) {
     return canFinish ? (
       <TaskActions>
-        <TaskMainButton onClick={onFinish}>{t("Finish with these answers")}</TaskMainButton>
+        <TaskMainButton busy={pending} onClick={onFinish}>
+          {t("Finish with these answers")}
+        </TaskMainButton>
       </TaskActions>
     ) : null;
   }
@@ -289,7 +291,7 @@ function QuestionsFooter({
       >
         {t("I don't know yet")}
       </Button>
-      <TaskMainButton busy={pending} disabled={!selected} onClick={onNext}>
+      <TaskMainButton disabled={!selected || pending} onClick={onNext}>
         {isLast ? t("Finish") : t("Next")}
       </TaskMainButton>
     </TaskActions>

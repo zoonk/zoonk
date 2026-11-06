@@ -90,13 +90,19 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   const retry = phase.kind === "answerFailed" ? phase.answer : null;
   const answer = selected ?? retry;
   const checking = phase.kind === "checking";
+  const notSure = checking && "dontKnow" in phase.answer;
 
   return (
     <>
       {step.entry.drill.kind === "noGuessing" ? (
-        <NotSureButton disabled={checking} onClick={run.notSure} />
+        <NotSureButton
+          busy={notSure && !phase.timedOut}
+          disabled={checking}
+          onClick={run.notSure}
+        />
       ) : (
         <Button
+          busy={notSure && !phase.timedOut}
           disabled={checking}
           focusableWhenDisabled
           onClick={run.notSure}
@@ -108,7 +114,7 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
       )}
 
       <CheckButton
-        busy={checking}
+        busy={checking && !notSure}
         disabled={!answer}
         onCheck={() => (answer ? run.check(answer) : undefined)}
       />
