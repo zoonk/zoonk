@@ -12,7 +12,12 @@ export const owesSourceNotice = {
 
 type OwedColumns = Pick<
   Source,
-  "contentHash" | "noticeFailures" | "unnoticedChangedAt" | "unnoticedChanges" | "unnoticedFromHash"
+  | "contentHash"
+  | "noticeFailures"
+  | "unnoticedChangedAt"
+  | "unnoticedChanges"
+  | "unnoticedFromHash"
+  | "unnoticedRevision"
 >;
 
 export type OwedSourceChange = {
@@ -21,6 +26,7 @@ export type OwedSourceChange = {
   contentHash: string;
   noticeFailures: number;
   previousHash: string;
+  revision: number;
 };
 
 /**
@@ -55,6 +61,7 @@ export async function oweSourceChangeNotice({
       extractedText: true,
       unnoticedChanges: true,
       unnoticedFromHash: true,
+      unnoticedRevision: true,
     },
     where: { id: sourceId },
   });
@@ -72,6 +79,7 @@ export async function oweSourceChangeNotice({
       ? appendTextChange({ earlier: stored.unnoticedChanges, later: change })
       : change,
     unnoticedFromHash: stored.unnoticedFromHash ?? stored.contentHash,
+    unnoticedRevision: stored.unnoticedRevision + 1,
   };
 }
 
@@ -94,5 +102,6 @@ export function getOwedSourceChange(source: OwedColumns): OwedSourceChange | nul
     contentHash: source.contentHash,
     noticeFailures,
     previousHash: unnoticedFromHash,
+    revision: source.unnoticedRevision,
   };
 }

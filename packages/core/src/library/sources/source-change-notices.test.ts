@@ -164,15 +164,11 @@ describe(recordSourceChangeNotice, () => {
     ).resolves.toMatchObject({ unnoticedChangedAt: null, unnoticedChanges: null });
   });
 
-  it("covers a change once, and leaves a newer change owed, though saved in the same millisecond", async () => {
+  it("covers a change once, and leaves a newer change owed, though it reads the same at the same millisecond", async () => {
     const source = await sourceFixture();
     const owed = await unnoticedSourceChangeFixture({ sourceId: source.id });
 
-    const newer = await unnoticedSourceChangeFixture({
-      ...owed,
-      changes: `${owed.changes}\n- Version 5.\n+ Version 6.`,
-      sourceId: source.id,
-    });
+    const newer = await unnoticedSourceChangeFixture({ ...owed, sourceId: source.id });
 
     const covering = { ...DOCS_NOTICE, sourceId: source.id };
 
@@ -192,8 +188,8 @@ describe(recordSourceChangeNotice, () => {
 
   it("counts a failed notice run once, and stops trying after three until the page changes", async () => {
     const source = await sourceFixture();
-    const { changedAt, changes } = await unnoticedSourceChangeFixture({ sourceId: source.id });
-    const failed = { change: changes, changedAt, sourceId: source.id };
+    const { revision } = await unnoticedSourceChangeFixture({ sourceId: source.id });
+    const failed = { revision, sourceId: source.id };
 
     const readOwed = async () =>
       getOwedSourceChange(await prisma.source.findUniqueOrThrow({ where: { id: source.id } }));

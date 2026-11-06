@@ -14,25 +14,25 @@ const MAX_GOAL_NOTICES = 3;
 
 export type SourceNoticeInput = {
   changedAt: Date;
-  changes: string;
   contentHash: string;
   fields: string[];
   language: string;
   message: string;
   previousHash: string;
   provenance: LibraryProvenance;
+  revision: number;
   sourceId: string;
 };
 
 /**
- * Covers the owed `changes` a check read; null when another run already covered them or the page
- * changed again since, which leaves the newer change owed. Record exam notices through
+ * Covers the owed change a check read at `revision`; null when another run already covered it or
+ * the page changed again since, which leaves the newer change owed. Record exam notices through
  * `saveExamBlueprint` so the notice and blueprint commit together.
  */
 export function recordSourceChangeNotice(
   input: SourceNoticeInput,
 ): Promise<SourceChangeNotice | null> {
-  const { changedAt, changes, provenance, ...notice } = input;
+  const { changedAt, provenance, revision, ...notice } = input;
 
   return prisma.$transaction(async (tx) => {
     const { count } = await tx.source.updateMany({
@@ -41,8 +41,9 @@ export function recordSourceChangeNotice(
         unnoticedChangedAt: null,
         unnoticedChanges: null,
         unnoticedFromHash: null,
+        unnoticedRevision: { increment: 1 },
       },
-      where: { id: notice.sourceId, unnoticedChangedAt: changedAt, unnoticedChanges: changes },
+      where: { id: notice.sourceId, unnoticedRevision: revision },
     });
 
     if (count === 0) {
@@ -63,24 +64,17 @@ export function recordSourceChangeNotice(
  * since keeps its fresh attempts.
  */
 export async function recordFailedSourceNotice({
-  change,
-  changedAt,
   noticeFailures,
+  revision,
   sourceId,
 }: {
-  change: string;
-  changedAt: Date;
   noticeFailures: number;
+  revision: number;
   sourceId: string;
 }): Promise<void> {
   await prisma.source.updateMany({
     data: { noticeFailures: noticeFailures + 1 },
-    where: {
-      id: sourceId,
-      noticeFailures,
-      unnoticedChangedAt: changedAt,
-      unnoticedChanges: change,
-    },
+    where: { id: sourceId, noticeFailures, unnoticedRevision: revision },
   });
 }
 

@@ -293,7 +293,12 @@ describe(refreshWebSource, () => {
     await waitForBlockedStatement(holder, SOURCE_WRITE);
 
     const skill = await skillFixture();
-    const fromOldText = await itemFixture({ skillId: skill.id, sourceId: source.id });
+
+    const fromOldText = await itemFixture({
+      generatedAt: new Date(Date.now() - 1),
+      skillId: skill.id,
+      sourceId: source.id,
+    });
 
     held.release();
     await Promise.all([check, held.done]);
@@ -306,13 +311,13 @@ describe(refreshWebSource, () => {
 
     await recordSourceChangeNotice({
       changedAt: owed.changedAt,
-      changes: owed.change,
       contentHash: owed.contentHash,
       fields: ["text"],
       language: "pt",
       message: "A lei mudou: a alíquota agora é de 17%.",
       previousHash: owed.previousHash,
       provenance: { generatedAt: new Date(), model: "test", promptVersion: "v1", runId: "r1" },
+      revision: owed.revision,
       sourceId: source.id,
     });
 

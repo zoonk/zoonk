@@ -35,6 +35,9 @@ model Source {
   /// The latest move that added to `unnoticedChanges`: content written after it was written from the
   /// current text.
   unnoticedChangedAt DateTime?            @map("unnoticed_changed_at")
+  /// Moves on with every save that adds to `unnoticedChanges` and every notice that clears them, so
+  /// a notice clears, and a failed notice run counts against, only the change it read.
+  unnoticedRevision  Int                  @default(0) @map("unnoticed_revision")
   /// Notice runs that failed after their retries since the page last changed; a change whose notice
   /// keeps failing isn't tried again until the page changes.
   noticeFailures     Int                  @default(0) @map("notice_failures")

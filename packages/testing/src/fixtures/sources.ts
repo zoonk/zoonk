@@ -75,14 +75,15 @@ export async function unnoticedSourceChangeFixture({
   previousHash?: string;
   sourceId: string;
 }) {
-  await prisma.source.update({
+  const source = await prisma.source.update({
     data: {
       unnoticedChangedAt: changedAt,
       unnoticedChanges: changes,
       unnoticedFromHash: previousHash,
+      unnoticedRevision: { increment: 1 },
     },
     where: { id: sourceId },
   });
 
-  return { changedAt, changes, previousHash };
+  return { changedAt, previousHash, revision: source.unnoticedRevision };
 }
