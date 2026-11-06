@@ -194,6 +194,7 @@ function combineOutputsAndResults(
       audioSeconds: output.audioSeconds,
       cacheReadTokens: output.cacheReadTokens,
       cacheWriteTokens: output.cacheWriteTokens,
+      calls: output.calls,
       categoryScores: scored.categoryScores,
       classification: scored.classification,
       duration: output.duration,
@@ -203,7 +204,6 @@ function combineOutputsAndResults(
       output: output.output,
       outputTokens: output.outputTokens,
       reasoningTokens: output.reasoningTokens,
-      setAside: output.setAside,
       steps: scored.steps,
       testCase: scored.testCase,
     };

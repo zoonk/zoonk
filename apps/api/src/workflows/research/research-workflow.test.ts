@@ -78,8 +78,6 @@ const TASK_RESULT = {
   userPrompt: "",
 };
 
-const READING_RESULT = { ...TASK_RESULT, formatsProvenance: null };
-
 type RecordedSearch = Awaited<ReturnType<typeof findOfficialSources>>["data"];
 
 function requestedUrl(input: Parameters<typeof fetch>[0]): string {
@@ -122,7 +120,7 @@ async function replayTcdfResearch() {
     data: { ...search, documents },
   });
 
-  vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: extraction });
+  vi.mocked(extractExamBlueprint).mockResolvedValue({ ...TASK_RESULT, data: extraction });
 
   vi.mocked(extractQuestionFormats).mockResolvedValue({
     ...TASK_RESULT,
@@ -345,7 +343,7 @@ describe(researchWorkflow, () => {
     const rules = [{ ...scoring, kind: "other" as const }, passMark];
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...READING_RESULT,
+      ...TASK_RESULT,
       data: { ...extraction, rules },
     });
 
@@ -655,7 +653,7 @@ describe(researchWorkflow, () => {
       readFixture("tcdf-2026-notice.txt"),
     ]);
 
-    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: extraction });
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...TASK_RESULT, data: extraction });
 
     const suffix = randomUUID();
 
@@ -820,7 +818,7 @@ describe(researchWorkflow, () => {
     const passage = extraction.subjects.at(-1)?.passages[0]?.passage ?? "";
     const leftOut = { ...extraction, subjects: extraction.subjects.slice(0, -1) };
 
-    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: leftOut });
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...TASK_RESULT, data: leftOut });
 
     vi.mocked(checkExamReading).mockResolvedValue({
       ...TASK_RESULT,
@@ -1214,7 +1212,7 @@ describe(researchWorkflow, () => {
     });
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...READING_RESULT,
+      ...TASK_RESULT,
       data: {
         ...extraction,
         dates: extraction.dates.map((date) => ({
@@ -1442,7 +1440,7 @@ describe(researchWorkflow, () => {
     const { extraction, plan } = await replayTcdfResearch();
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...READING_RESULT,
+      ...TASK_RESULT,
       data: {
         ...extraction,
         dates: [],

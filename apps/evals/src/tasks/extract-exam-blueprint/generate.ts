@@ -1,4 +1,5 @@
-import { type ModelCall, toModelCall } from "@/lib/types";
+import { toModelCall } from "@/lib/types";
+import { type BilledCall, meterBilledCalls } from "@zoonk/ai/billed-calls";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 import { checkCitedFacts } from "@zoonk/ai/tasks/research/check-cited-facts";
 import { checkExamReading } from "@zoonk/ai/tasks/research/check-exam-reading";
@@ -89,7 +90,7 @@ async function keepCheckedFacts({
 }: {
   documents: ResearchDocument[];
   extraction: BlueprintExtraction;
-}): Promise<Pick<ExtractionEvalOutput, "check" | "kept"> & { calls: ModelCall[] }> {
+}): Promise<Pick<ExtractionEvalOutput, "check" | "kept">> {
   const extractionDocuments = toSources(documents);
   const facts = listBlueprintFacts({ documents: extractionDocuments, extraction });
 
@@ -100,7 +101,6 @@ async function keepCheckedFacts({
   const supportedIds = checks.flatMap((check) => check.data.supportedIds);
 
   return {
-    calls: checks.map((check) => toModelCall(check.provenance)),
     check: {
       claims: facts.length,
       inputTokens: checks.reduce((total, check) => total + (check.usage.inputTokens ?? 0), 0),
@@ -139,19 +139,23 @@ async function readChecked({
   });
 
   const checked = result.data;
+  const checkCalls: BilledCall[] = [];
 
-  const [kept, findings] = await Promise.all([
-    keepCheckedFacts({ documents, extraction: checked }),
-    checkExamReading({
-      documents,
-      exam: input.exam,
-      subjects: checked.subjects.map((subject) => ({
-        name: subject.name,
-        questions: subject.questions,
-      })),
-      total: checked.mock?.totalQuestions ?? checked.edition.questionCount,
-    }),
-  ]);
+  // The app runs these checks in a later step, so they're spent here but aren't the reading's cost.
+  const [kept, findings] = await meterBilledCalls(checkCalls, () =>
+    Promise.all([
+      keepCheckedFacts({ documents, extraction: checked }),
+      checkExamReading({
+        documents,
+        exam: input.exam,
+        subjects: checked.subjects.map((subject) => ({
+          name: subject.name,
+          questions: subject.questions,
+        })),
+        total: checked.mock?.totalQuestions ?? checked.edition.questionCount,
+      }),
+    ]),
+  );
 
   const problems = findReadingProblems({
     checked: checked.subjects,
@@ -161,13 +165,7 @@ async function readChecked({
     read: checked,
   });
 
-  const calls = [
-    ...kept.calls,
-    toModelCall(findings.provenance),
-    ...(result.formatsProvenance ? [toModelCall(result.formatsProvenance)] : []),
-  ];
-
-  return { ...kept, calls, problems, result };
+  return { ...kept, calls: checkCalls.map((call) => toModelCall(call)), problems, result };
 }
 
 export async function generateExtraction(

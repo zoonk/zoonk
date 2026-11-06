@@ -2,9 +2,12 @@ import { randomUUID } from "node:crypto";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { type PromptTrainingInput, runUnderPromptTrainingRule } from "../data-protection";
 import { type AiGenerationContext } from "./ai-generation-event";
-import { captureAiGeneration } from "./ai-generation-sink";
+import { type AiGeneration, captureAiGeneration } from "./ai-generation-sink";
+import { collectRunCalls } from "./billed-calls";
 import {
   type FinishedGeneration,
+  type GenerationStep,
+  type StreamedGeneration,
   type TaskProvenance,
   buildTaskProvenance,
 } from "./task-provenance";
@@ -25,6 +28,8 @@ export type TaskRunDetails = {
   runId: string;
 };
 
+const FAILED_RUN = { $ai_is_error: true } as const;
+
 export function startTaskRun({
   analytics,
   promptVersion,
@@ -36,7 +41,10 @@ export function startTaskRun({
   const version = getPromptVersion({ systemPrompt, version: promptVersion });
 
   return {
-    async finish(build: (details: TaskRunDetails) => TaskProvenance): Promise<TaskProvenance> {
+    async finish(
+      build: (details: TaskRunDetails) => TaskProvenance,
+      properties?: AiGeneration["properties"],
+    ): Promise<TaskProvenance> {
       const provenance = build({
         generatedAt: new Date().toISOString(),
         latencyMs: Math.round(performance.now() - startedAt),
@@ -44,7 +52,7 @@ export function startTaskRun({
         runId,
       });
 
-      await captureAiGeneration({ context: analytics, provenance, task });
+      await captureAiGeneration({ context: analytics, properties, provenance, task });
 
       return provenance;
     },
@@ -53,20 +61,38 @@ export function startTaskRun({
   };
 }
 
-/** Streamed tasks call `finish` from their end callback: the generation ends after they return. */
-export function startTaskGeneration(input: TaskGenerationInput) {
+function startTaskGeneration(input: TaskGenerationInput) {
   const run = startTaskRun(input);
 
   return {
-    finish: (generation: FinishedGeneration): Promise<TaskProvenance> =>
-      run.finish((details) => buildTaskProvenance({ ...details, generation })),
-    /** Known from the start, for rows a streamed task saves before it ends. */
+    finish: (generation: FinishedGeneration, properties?: AiGeneration["properties"]) =>
+      run.finish((details) => buildTaskProvenance({ ...details, generation }), properties),
     promptVersion: run.promptVersion,
     runId: run.runId,
   };
 }
 
-/** Streamed runs (`startTaskGeneration`) always keep the no-training filter. */
+/**
+ * `provenance` resolves once the stream ends, whether or not its output passes, and rejects when
+ * it fails. Streamed runs always keep the no-training filter.
+ */
+export function streamTaskGeneration<TGeneration extends StreamedGeneration>({
+  stream,
+  ...input
+}: TaskGenerationInput & { stream: () => TGeneration }) {
+  const run = startTaskGeneration(input);
+  const generation = stream();
+
+  const provenance = Promise.all([generation.finalStep, generation.steps]).then(
+    ([finalStep, steps]) => run.finish({ finalStep, steps }),
+  );
+
+  // A failed stream rejects this too; nothing else may be waiting for it.
+  void provenance.catch(() => null);
+
+  return { generation, promptVersion: run.promptVersion, provenance, runId: run.runId };
+}
+
 export async function runTaskGeneration<TGeneration extends FinishedGeneration>({
   generate,
   libraryInput,
@@ -76,11 +102,23 @@ export async function runTaskGeneration<TGeneration extends FinishedGeneration>(
     generate: (rule: { promptTraining: boolean }) => Promise<TGeneration>;
   }): Promise<{ provenance: TaskProvenance; result: TGeneration }> {
   const run = startTaskGeneration(input);
+  const billed: GenerationStep[] = [];
 
-  const result = await runUnderPromptTrainingRule({
-    contentScope: input.analytics?.contentScope,
-    generate,
-    libraryInput,
+  const result = await collectRunCalls(billed, () =>
+    runUnderPromptTrainingRule({
+      contentScope: input.analytics?.contentScope,
+      generate,
+      libraryInput,
+    }),
+  ).catch(async (error: unknown) => {
+    const finalStep = billed.at(-1);
+
+    // A failed run has no answer to read its calls from, so it records the ones the provider billed.
+    if (finalStep) {
+      await run.finish({ finalStep, steps: billed }, FAILED_RUN);
+    }
+
+    throw error;
   });
 
   const provenance = await run.finish(result);

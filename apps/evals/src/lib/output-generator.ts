@@ -1,10 +1,13 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
+import { type BilledCall, meterBilledCalls } from "@zoonk/ai/billed-calls";
 import { logError, logInfo } from "@zoonk/utils/logger";
 import { settleWithConcurrency } from "./concurrency";
 import { type ModelConfig, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
 import { getTestCaseRunId } from "./test-case-runs";
 import {
+  type FailedRun,
+  type ModelCall,
   type ModelOutputs,
   type OutputEntry,
   type RegisteredTask,
@@ -40,12 +43,18 @@ function getTaskRunInput({ model, testCase }: { model: ModelConfig; testCase: Te
   };
 }
 
+/**
+ * `failed` holds each run's calls from attempts that failed; a run that succeeds takes them on, so
+ * its cost covers the attempts it took.
+ */
 async function generateOutputForTestCase({
+  failed,
   model,
   runNumber,
   task,
   testCase,
 }: {
+  failed: Map<string, ModelCall[]>;
   model: ModelConfig;
   runNumber: number;
   task: RegisteredTask;
@@ -53,21 +62,38 @@ async function generateOutputForTestCase({
 }): Promise<OutputEntry> {
   logInfo(`Generating output for: ${testCase.id} (run ${runNumber})`);
 
+  const testCaseId = getTestCaseRunId({ runNumber, testCaseId: testCase.id });
   const runTask = getTaskRunner({ model, task });
   const input = getTaskRunInput({ model, testCase });
+  const billed: BilledCall[] = [];
+
+  const toCalls = () => [
+    ...(failed.get(testCaseId) ?? []),
+    ...billed.map((call) => toModelCall(call)),
+  ];
+
   const startTime = performance.now();
-  const result = await runTask(input as never);
+
+  const result = await meterBilledCalls(billed, () => runTask(input as never)).catch(
+    (error: unknown) => {
+      failed.set(testCaseId, toCalls());
+      throw error;
+    },
+  );
+
   const duration = performance.now() - startTime;
+  const calls = toCalls();
+  failed.delete(testCaseId);
 
   return {
     ...toTokenUsage(result.usage),
+    calls,
     duration,
     extraCalls: result.extraCalls,
     output: JSON.stringify(result.data, null, 2),
     probabilities: result.probabilities,
-    setAside: result.setAside?.map((call) => toModelCall(call)),
     systemPrompt: result.systemPrompt,
-    testCaseId: getTestCaseRunId({ runNumber, testCaseId: testCase.id }),
+    testCaseId,
     userPrompt: result.userPrompt,
   };
 }
@@ -119,8 +145,28 @@ function extractSuccessfulOutputs(results: PromiseSettledResult<OutputEntry>[]):
   });
 }
 
-function createModelOutputs(taskId: string, modelId: string, outputs: OutputEntry[]): ModelOutputs {
-  return { generatedAt: new Date().toISOString(), modelId, outputs, taskId };
+function createModelOutputs({
+  failed,
+  modelId,
+  outputs,
+  taskId,
+}: {
+  failed: Map<string, ModelCall[]>;
+  modelId: string;
+  outputs: OutputEntry[];
+  taskId: string;
+}): ModelOutputs {
+  const failedRuns: FailedRun[] = [...failed]
+    .filter(([, calls]) => calls.length > 0)
+    .map(([testCaseId, calls]) => ({ calls, testCaseId }));
+
+  return {
+    failedRuns: failedRuns.length > 0 ? failedRuns : undefined,
+    generatedAt: new Date().toISOString(),
+    modelId,
+    outputs,
+    taskId,
+  };
 }
 
 export async function generateOutputs(
@@ -145,6 +191,10 @@ export async function generateOutputs(
   const existingEntries = existingOutputs?.outputs ?? [];
   logInfo(`Found ${existingEntries.length} existing outputs`);
 
+  const failed = new Map(
+    existingOutputs?.failedRuns?.map((run) => [run.testCaseId, run.calls] as const),
+  );
+
   const runsToExecute = collectTestCaseRuns({
     existingEntries,
     runsPerTestCase,
@@ -155,18 +205,24 @@ export async function generateOutputs(
 
   if (runsToExecute.length === 0) {
     logInfo("All outputs already generated");
-    return existingOutputs ?? createModelOutputs(task.id, modelId, []);
+    return existingOutputs ?? createModelOutputs({ failed, modelId, outputs: [], taskId: task.id });
   }
 
   const results = await settleWithConcurrency({
     concurrency: GENERATION_CONCURRENCY,
     items: runsToExecute,
     run: ({ testCase, runNumber }) =>
-      generateOutputForTestCase({ model, runNumber, task, testCase }),
+      generateOutputForTestCase({ failed, model, runNumber, task, testCase }),
   });
 
   const allOutputs = [...existingEntries, ...extractSuccessfulOutputs(results)];
-  const modelOutputs = createModelOutputs(task.id, modelId, allOutputs);
+
+  const modelOutputs = createModelOutputs({
+    failed,
+    modelId,
+    outputs: allOutputs,
+    taskId: task.id,
+  });
 
   await saveModelOutputs(task.id, modelId, modelOutputs);
   logInfo(`Saved ${allOutputs.length} total outputs`);

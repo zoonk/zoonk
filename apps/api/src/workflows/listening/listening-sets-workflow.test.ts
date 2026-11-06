@@ -71,7 +71,6 @@ describe(listeningSetsWorkflow, () => {
       .mockImplementation(async (params) => ({
         data: { problems: [], set: writtenSet(params.task) },
         provenance: provenance(),
-        setAside: [],
         systemPrompt: "",
         usage: {} as never,
         userPrompt: "",

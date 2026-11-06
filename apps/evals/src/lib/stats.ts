@@ -44,7 +44,7 @@ export function getStatsFromResults({
   const runCosts =
     model.kind === "transcription" || model.kind === "speech"
       ? []
-      : results.map((result) => getRunCost({ modelId: model.gatewayModelId, prices, run: result }));
+      : results.map((result) => getRunCost({ model, prices, run: result }));
 
   const latency = summarizeLatency(results.map((result) => result.duration));
 

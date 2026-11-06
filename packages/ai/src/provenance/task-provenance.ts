@@ -26,17 +26,17 @@ export type TaskProvenance = {
   generatedAt: string;
 };
 
-type GenerationStep = {
+export type GenerationStep = {
   model: { modelId: string; provider: string };
   providerMetadata: ProviderMetadata | undefined;
   response: { modelId: string };
   usage: LanguageModelUsage;
 };
 
-export type FinishedGeneration = {
-  finalStep: GenerationStep;
-  steps: readonly GenerationStep[];
-  usage: LanguageModelUsage;
+export type FinishedGeneration = { finalStep: GenerationStep; steps: readonly GenerationStep[] };
+
+export type StreamedGeneration = {
+  [Key in keyof FinishedGeneration]: PromiseLike<FinishedGeneration[Key]>;
 };
 
 /** AI SDK usage counts cached input tokens inside `inputTokens` for every provider. */
@@ -128,10 +128,21 @@ export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProv
   };
 }
 
+function getServedModel(step: GenerationStep): string {
+  return readGatewayMetadata(step.providerMetadata).servedModel ?? step.response.modelId;
+}
+
+/** What one call cost, at the model that answered it. */
+export type BilledCall = { model: string; usage: TaskUsage };
+
+export function describeStep(step: GenerationStep): BilledCall {
+  return { model: getServedModel(step), usage: toTaskUsage(step.usage) };
+}
+
 /** Steps can differ in fallback model, tier and context length. */
 function priceStep(step: GenerationStep) {
   const gateway = readGatewayMetadata(step.providerMetadata);
-  const model = gateway.servedModel ?? step.response.modelId;
+  const model = getServedModel(step);
 
   return {
     costUsd: computeCallCostUsd({
@@ -179,7 +190,8 @@ export function buildTaskProvenance({
   const gateway = readGatewayMetadata(finalStep.providerMetadata);
   const steps = generation.steps.map(priceStep);
   const costs = steps.map((step) => step.costUsd);
-  const usage = toTaskUsage(generation.usage);
+  // A stream whose later step fails resolves the steps it finished, but not their total usage.
+  const usage = toTaskUsage(sumLanguageModelUsage(generation.steps.map((step) => step.usage)));
 
   return {
     /** A partial sum would hide unpriced steps from the ledger's unknown-cost count. */

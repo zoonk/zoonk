@@ -126,9 +126,7 @@ function calculateModelMetrics({
 }): Pick<BattleLeaderboardEntry, "costPer1000Runs" | "latencyP50" | "latencyP95"> {
   const entries = outputs?.outputs ?? [];
 
-  const costs = entries.map((output) =>
-    getRunCost({ modelId: model.gatewayModelId, prices, run: output }),
-  );
+  const costs = entries.map((output) => getRunCost({ model, prices, run: output }));
 
   const latency = summarizeLatency(entries.map((output) => output.duration));
 

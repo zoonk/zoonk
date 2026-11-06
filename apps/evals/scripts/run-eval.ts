@@ -419,8 +419,7 @@ async function runBattle({
     const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
 
     return (outputs.get(modelId)?.outputs ?? []).reduce(
-      (total, run) =>
-        total + getRunCost({ modelId: model.gatewayModelId, prices: GATEWAY_PRICES, run }),
+      (total, run) => total + getRunCost({ model, prices: GATEWAY_PRICES, run }),
       0,
     );
   };

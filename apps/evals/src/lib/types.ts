@@ -1,3 +1,4 @@
+import { type BilledCall } from "@zoonk/ai/billed-calls";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 import z from "zod";
 import { type RequiredLanguage } from "./case-languages";
@@ -97,9 +98,8 @@ export function toTokenUsage(usage: TaskUsage): TokenUsage {
 type TaskResult<T = unknown> = {
   data: T;
   usage: TaskUsage;
+  /** Calls the eval makes around the task, such as a simulated learner: spent, but not run cost. */
   extraCalls?: ModelCall[];
-  /** Drafts a task wrote and didn't keep: part of what the run cost, unlike `extraCalls`. */
-  setAside?: readonly CallProvenance[];
   userPrompt: string;
   systemPrompt: string;
   probabilities?: Record<string, number>;
@@ -109,18 +109,7 @@ export type ClassificationOutcome = { expected: string; predicted: string | null
 
 export type ModelCall = { modelId: string; usage: TokenUsage };
 
-type CallProvenance = {
-  model: string;
-  usage: {
-    cacheReadTokens?: number;
-    cacheWriteTokens?: number;
-    inputTokens?: number;
-    outputTokens?: number;
-    reasoningTokens?: number;
-  };
-};
-
-export function toModelCall({ model, usage }: CallProvenance): ModelCall {
+export function toModelCall({ model, usage }: BilledCall): ModelCall {
   return {
     modelId: model,
     usage: {
@@ -171,7 +160,7 @@ export type EvalResult = TokenUsage & {
   testCase: TestCase;
   output: string;
   extraCalls?: ModelCall[];
-  setAside?: ModelCall[];
+  calls?: ModelCall[];
   steps: Score["steps"];
   categoryScores?: CategoryScore[];
   classification?: ClassificationOutcome;
@@ -212,18 +201,26 @@ export type OutputEntry = TokenUsage & {
   testCaseId: string;
   output: string;
   extraCalls?: ModelCall[];
-  setAside?: ModelCall[];
+  /**
+   * Every call the run made, including attempts that failed before it. Unset on outputs saved
+   * before runs were metered, which priced only the kept answer.
+   */
+  calls?: ModelCall[];
   duration: number;
   systemPrompt: string;
   userPrompt: string;
   probabilities?: Record<string, number>;
 };
 
+/** A run that failed, kept until a later attempt succeeds and takes on its calls. */
+export type FailedRun = { testCaseId: string; calls: ModelCall[] };
+
 export type ModelOutputs = {
   taskId: string;
   modelId: string;
   generatedAt: string;
   outputs: OutputEntry[];
+  failedRuns?: FailedRun[];
 };
 
 export type TestCaseOutput = OutputEntry & { testCase: TestCase };

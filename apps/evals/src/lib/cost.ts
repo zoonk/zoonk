@@ -1,6 +1,7 @@
 import { priceCall } from "@zoonk/ai/pricing/call-cost";
 import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 import { average, sum } from "./math";
+import { type ModelConfig } from "./models";
 import { type ModelCall, type TokenUsage } from "./types";
 
 const RUNS_PER_COST_ESTIMATE = 1000;
@@ -40,18 +41,24 @@ export function getCallsCost({
   );
 }
 
-/** The kept answer at the run's model, plus every draft the run wrote and set aside. */
+/**
+ * Every call a run made. Calls are metered where the provider answers text, so a model that answers
+ * anything else (an image, speech, a decision) is priced from the usage its task reported.
+ */
 export function getRunCost({
-  modelId,
+  model,
   prices,
   run,
 }: {
-  modelId: string;
+  model: Pick<ModelConfig, "gatewayModelId" | "kind">;
   prices: GatewayPrices;
-  run: TokenUsage & { setAside?: ModelCall[] };
+  run: TokenUsage & { calls?: ModelCall[] };
 }): number {
-  return (
-    getCallCost({ modelId, prices, usage: run }) +
-    getCallsCost({ calls: run.setAside ?? [], prices })
-  );
+  const reported = getCallCost({ modelId: model.gatewayModelId, prices, usage: run });
+
+  if (!run.calls) {
+    return reported;
+  }
+
+  return getCallsCost({ calls: run.calls, prices }) + (model.kind === "generation" ? 0 : reported);
 }
