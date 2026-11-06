@@ -1,6 +1,6 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { noPromptTrainingMiddleware } from "../../data-protection";
+import { readGatewayOptions } from "../_test-utils/gateway-options";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { generateExamResearchPlan } from "./research-plan";
 import { generateSourceResearchPlan } from "./source-research-plan";
@@ -15,9 +15,6 @@ vi.mock("ai", async (importOriginal) => {
   return { ...actual, generateText: vi.fn() };
 });
 
-type TextTransform = NonNullable<typeof noPromptTrainingMiddleware.transformParams>;
-type TextParams = Parameters<TextTransform>[0]["params"];
-
 const PLAN = {
   board: null,
   classTest: false,
@@ -30,17 +27,6 @@ const PLAN = {
   role: null,
   searchTerms: [],
 };
-
-/** What the gateway receives during the call: the filter is set while the task's model runs. */
-async function readGatewayOptions(): Promise<unknown> {
-  const params = await noPromptTrainingMiddleware.transformParams?.({
-    model: { modelId: "google/gemini-3.8-flash" } as Parameters<TextTransform>[0]["model"],
-    params: { prompt: [] } as TextParams,
-    type: "generate",
-  });
-
-  return params?.providerOptions?.gateway;
-}
 
 describe("research plans", () => {
   let gatewayOptions: unknown;

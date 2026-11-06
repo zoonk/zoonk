@@ -73,7 +73,6 @@ export async function findProductPages({
 
   const { isSearched, output, provenance, searchCalls, usage } = await runSearchTask({
     analytics,
-    libraryInput: true,
     maxSteps: MAX_STEPS,
     model,
     reasoning,

@@ -1,5 +1,6 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { readGatewayOptions } from "../_test-utils/gateway-options";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { readProductPages } from "./read-product-pages";
 import type * as Ai from "ai";
@@ -56,5 +57,26 @@ describe(readProductPages, () => {
     const prompt = JSON.stringify(vi.mocked(generateText).mock.lastCall?.[0].prompt);
 
     expect(prompt).toContain("DOCUMENT 1: Releases (https://lumen.example/releases)");
+  });
+
+  it("keeps the learner's words away from providers that train, reading only stored names freely", async () => {
+    const analytics = { contentScope: "shared" as const };
+    const named = { ...HINTS, release: "Orbit Notes 5" };
+    const options: unknown[] = [];
+
+    vi.mocked(generateText).mockImplementation(async () => {
+      options.push(await readGatewayOptions());
+      return createGenerateTextResult({ releases: [] });
+    });
+
+    await readProductPages({ analytics, hints: HINTS, pages: [PAGE] });
+    await readProductPages({ analytics, hints: named, known: true, pages: [PAGE] });
+    await readProductPages({ analytics, hints: HINTS, known: true, pages: [PAGE] });
+
+    expect(options).toStrictEqual([
+      { disallowPromptTraining: true },
+      { disallowPromptTraining: true },
+      undefined,
+    ]);
   });
 });

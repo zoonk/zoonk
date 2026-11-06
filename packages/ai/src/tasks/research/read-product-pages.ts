@@ -90,7 +90,10 @@ function toReading(output: Partial<ProductReading> & Pick<ProductReading, "relea
   } satisfies ProductReading;
 }
 
-/** Public pages and plan hints only, so it may use any provider (`libraryInput`). */
+/**
+ * Hints come from the learner's goal, except a known product's names with no release named: those
+ * are stored product data, so only that reading may use any provider (`libraryInput`).
+ */
 export async function readProductPages({
   analytics,
   hints,
@@ -128,7 +131,7 @@ export async function readProductPages({
         providerOptions,
         reasoning,
       }),
-    libraryInput: true,
+    libraryInput: known && !hasRelease,
     systemPrompt,
     task: "read-product-pages",
   });

@@ -1,5 +1,6 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { readGatewayOptions } from "../_test-utils/gateway-options";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
 import { findProductPages } from "./find-product-pages";
 import type * as SearchTools from "./research-search-tools";
@@ -78,5 +79,29 @@ describe(findProductPages, () => {
     );
 
     expect(known.userPrompt).toContain("KNOWN_WEBSITE: https://lumen.example/orbit");
+  });
+
+  it("keeps the learner's product hints away from providers that train, even for shared research", async () => {
+    let gatewayOptions: unknown;
+
+    vi.mocked(generateText).mockImplementation(async () => {
+      gatewayOptions = await readGatewayOptions();
+
+      return createGenerateTextResult({
+        brandUrl: null,
+        docsUrl: null,
+        productUrl: null,
+        releaseUrl: null,
+        releasesUrl: null,
+      });
+    });
+
+    await findProductPages({
+      analytics: { contentScope: "shared" },
+      hints: { ...HINTS, name: "Aurora, our internal rollout" },
+      officialDomains: [],
+    });
+
+    expect(gatewayOptions).toStrictEqual({ disallowPromptTraining: true });
   });
 });
