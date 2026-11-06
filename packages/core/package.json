@@ -10,7 +10,6 @@
   },
   "exports": {
     "./ai": "./src/ai.ts",
-    "./analytics/auth-events": "./src/analytics/auth-events.ts",
     "./analytics/client": "./src/analytics/client.ts",
     "./analytics/events": "./src/analytics/events.ts",
     "./analytics/posthog-browser": "./src/analytics/posthog-browser.ts",
