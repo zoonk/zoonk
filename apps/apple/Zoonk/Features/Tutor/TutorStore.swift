@@ -309,15 +309,29 @@ final class TutorConversation {
         draft = taken
       }
 
-      await fail(asking: error, session: session)
+      await fail(asking: request, error: error, session: session)
     }
   }
 
-  private func fail(asking error: Error, session: AuthenticatedSession) async {
+  private func fail(
+    asking request: (question: String, suggestion: String?, id: String), error: Error,
+    session: AuthenticatedSession
+  ) async {
     switch error {
     case TutorFailure.conflict:
       unresolved = nil
       await thread.refresh()
+
+      // An earlier question goes first, so this one waits in the composer, still going by its
+      // suggestion.
+      if draft.isEmpty {
+        draft = request.question
+
+        if let suggestion = request.suggestion {
+          draftSuggestion = TutorSuggestion(
+            id: suggestion, label: request.question, lessonSuggestionID: suggestion)
+        }
+      }
     case let failure as TutorFailure:
       unresolved = nil
       askFailure = failure

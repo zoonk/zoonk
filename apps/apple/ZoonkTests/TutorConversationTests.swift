@@ -226,6 +226,41 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertTrue(conversation.hasUnsentQuestion)
   }
 
+  func testAnOfferTheServerTurnsAwayWaitsInTheComposerWithItsSuggestion() async {
+    let api = TutorAPIStub(askFailures: [TutorFailure.conflict], answers: [[.finish]])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+    api.thread = TutorThreadPage(
+      turns: [.fixture(id: "elsewhere", status: .running)], hasMore: false, nextCursor: nil)
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+
+    await conversation.ask(TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true))
+
+    XCTAssertEqual(conversation.turns.map(\.id), ["elsewhere"])
+    XCTAssertEqual(conversation.draft, "Explain it more simply")
+
+    api.thread = TutorThreadPage(
+      turns: [.fixture(id: "elsewhere")], hasMore: false, nextCursor: nil)
+    await conversation.thread.refresh()
+    await conversation.send()
+
+    XCTAssertEqual(api.suggestions, ["simpler", "simpler"])
+  }
+
+  func testAnOfferTheServerTurnsAwayKeepsWhatTheLearnerTypedMeanwhile() async {
+    let api = TutorAPIStub(askFailures: [TutorFailure.conflict])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+    api.beforeAsk = { conversation.draft = "What's a cell wall?" }
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+
+    await conversation.ask(TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true))
+
+    XCTAssertEqual(conversation.draft, "What's a cell wall?")
+  }
+
   func testAnOfferLeftBeforeTheThreadLoadsIsNeverAsked() async {
     let api = TutorAPIStub()
     let conversation = makeConversation(api: api)
