@@ -196,9 +196,8 @@ function ChangeActions({
   if (status === "applied" && canUndo) {
     return (
       <Button
+        busy={isPending}
         className="self-start"
-        disabled={isPending}
-        focusableWhenDisabled
         onClick={() => answer("undone")}
         size="sm"
         variant="outline"

@@ -141,7 +141,7 @@ export function TestDone({
       <LevelBars levels={levels} />
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton autoFocus busy={pending} onClick={onContinue}>
+        <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
           {t("Build my plan")}
         </OnboardingPrimaryButton>
       </OnboardingFooter>

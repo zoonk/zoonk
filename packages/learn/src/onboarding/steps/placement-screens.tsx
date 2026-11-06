@@ -149,7 +149,7 @@ function PlacementOutcome({
         {children}
       </OnboardingHeading>
       <OnboardingFooter>
-        <OnboardingPrimaryButton autoFocus busy={pending} onClick={onContinue}>
+        <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
           {t("See my plan")}
         </OnboardingPrimaryButton>
       </OnboardingFooter>

@@ -189,7 +189,7 @@ function AfterAnswer({
 
   if (state.answer === "applied" && state.answered.canUndo) {
     return (
-      <SuggestionAction disabled={isPending} onClick={() => answer("undone")} variant="outline">
+      <SuggestionAction busy={isPending} onClick={() => answer("undone")} variant="outline">
         {t("Undo")}
       </SuggestionAction>
     );

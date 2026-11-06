@@ -144,7 +144,7 @@ function SuggestedDate({
   return (
     <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
       <UseDateButton
-        disabled={isSaving}
+        busy={isSaving}
         onUse={() =>
           startSaving(async () => {
             setFailed(false);

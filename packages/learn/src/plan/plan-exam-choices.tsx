@@ -108,8 +108,8 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
       {choice.take > 1 ? (
         <ExamChoicePicks
           choice={choice}
-          disabled={isPending}
           onSave={(subjects) => choose({ group: choice.group, subjects })}
+          pending={isPending}
         />
       ) : (
         <OneOptionChoice choice={choice} choose={choose} isPending={isPending} />
@@ -179,8 +179,8 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
             {choice.take > 1 ? (
               <ExamChoicePicks
                 choice={choice}
-                disabled={isPending}
                 onSave={(subjects) => choose({ group: choice.group, subjects })}
+                pending={isPending}
               />
             ) : (
               <SuggestionActions>

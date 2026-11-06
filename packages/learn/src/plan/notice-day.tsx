@@ -65,11 +65,13 @@ export function NoSittingWords({
 }
 
 export function UseDateButton({
-  disabled,
+  busy = false,
+  disabled = false,
   onUse,
   variant = "outline",
 }: {
-  disabled: boolean;
+  busy?: boolean;
+  disabled?: boolean;
   onUse: () => void;
   variant?: "outline" | "secondary";
 }) {
@@ -77,6 +79,7 @@ export function UseDateButton({
 
   return (
     <Button
+      busy={busy}
       disabled={disabled}
       focusableWhenDisabled
       onClick={onUse}
@@ -126,7 +129,7 @@ function NoticeDayCard({
       <NoticeCardContent>
         <NoticeCardTitle>{text({ ...day, document })}</NoticeCardTitle>
         <NoticeCardActions>
-          <UseDateButton disabled={isPending} onUse={use} variant="secondary" />
+          <UseDateButton busy={isPending} onUse={use} variant="secondary" />
         </NoticeCardActions>
 
         {failed && <ChangeSaveError className="mt-2" />}
