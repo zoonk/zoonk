@@ -55,11 +55,7 @@ import { z } from "zod";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
-import {
-  recordedOutput,
-  replayStreamedOutline,
-  taskResult,
-} from "../_test-utils/recorded-outputs";
+import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
 import { getWorkflowWriteMock } from "../_test-utils/workflow-mock";
 import { courseDetailsWorkflow } from "../courses/course-details-workflow";

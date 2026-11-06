@@ -36,11 +36,7 @@ import { getRun, start } from "workflow/api";
 import { mockHookConflict, workflowWriteMock } from "../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../mocks/workflow-runtime";
 import { courseContentNotificationWorkflow } from "../_shared/course-content-notification-workflow";
-import {
-  recordedOutput,
-  replayStreamedOutline,
-  taskResult,
-} from "../_test-utils/recorded-outputs";
+import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { getStartMock } from "../_test-utils/start-mock";
 import { courseDetailsWorkflow, courseIconWorkflow } from "./course-details-workflow";
 import { courseOutlineWorkflow } from "./course-outline-workflow";

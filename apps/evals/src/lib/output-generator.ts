@@ -58,7 +58,11 @@ async function generateOutputForTestCase({
   const startTime = performance.now();
   const result = await runTask(input as never);
   const duration = performance.now() - startTime;
-  const extraCalls = [...(result.extraCalls ?? []), ...(result.setAside ?? []).map((call) => toModelCall(call))];
+
+  const extraCalls = [
+    ...(result.extraCalls ?? []),
+    ...(result.setAside ?? []).map((call) => toModelCall(call)),
+  ];
 
   return {
     ...toTokenUsage(result.usage),
