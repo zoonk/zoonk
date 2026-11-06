@@ -7,12 +7,12 @@ function page({ domain, links }: { domain: string; links: string[] }) {
   return { domain, tags: { iconUrl: null, imageUrl: null, links }, url: `https://${domain}/` };
 }
 
-function readHtml(html: string, base = BASE) {
-  return readPageTags({ base, bytes: new TextEncoder().encode(html) });
+function readHtml(html: string) {
+  return readPageTags({ html, url: BASE });
 }
 
 describe(readPageTags, () => {
-  it("reads absolute links, the touch icon and the share image", async () => {
+  it("reads absolute links, the touch icon and the share image", () => {
     const html = `<html><head>
       <link rel="icon" href="/favicon-32.png" sizes="32x32">
       <link rel='apple-touch-icon' href='/touch.png'>
@@ -21,7 +21,7 @@ describe(readPageTags, () => {
     <a href="../docs#start">Docs</a><a href="https://lumen.example">Lumen</a>
     <a href="mailto:hi@orbit.example">Mail</a><a href=/pricing>Pricing</a></body></html>`;
 
-    await expect(readHtml(html)).resolves.toStrictEqual({
+    expect(readHtml(html)).toStrictEqual({
       iconUrl: "https://orbit.example/touch.png",
       imageUrl: "https://cdn.orbit.example/share.png?a=1&b=2",
       links: [
@@ -32,27 +32,21 @@ describe(readPageTags, () => {
     });
   });
 
-  it("prefers a scalable icon, then the largest bitmap", async () => {
+  it("prefers a scalable icon, then the largest bitmap", () => {
     const icons = `<link rel="icon" href="/16.png" sizes="16x16"><link rel="shortcut icon" href="/64.png" sizes="64x64">`;
 
-    await expect(readHtml(icons)).resolves.toMatchObject({
-      iconUrl: "https://orbit.example/64.png",
-    });
+    expect(readHtml(icons)).toMatchObject({ iconUrl: "https://orbit.example/64.png" });
 
-    await expect(readHtml(`${icons}<link rel="icon" href="/logo.svg">`)).resolves.toMatchObject({
+    expect(readHtml(`${icons}<link rel="icon" href="/logo.svg">`)).toMatchObject({
       iconUrl: "https://orbit.example/logo.svg",
     });
   });
 
-  it("finds nothing in a page without tags", async () => {
-    await expect(readHtml("plain text")).resolves.toStrictEqual({
-      iconUrl: null,
-      imageUrl: null,
-      links: [],
-    });
+  it("finds nothing in a page without tags", () => {
+    expect(readHtml("plain text")).toStrictEqual({ iconUrl: null, imageUrl: null, links: [] });
   });
 
-  it("ignores links no visitor can follow and keeps the visible ones around them", async () => {
+  it("ignores links no visitor can follow and keeps the visible ones around them", () => {
     const html = `<html><body>
       <!-- <a href="https://hidden.example/1">old</a> -->
       <template><!-- </template> --><a href="https://hidden.example/2">x</a></template>
@@ -62,16 +56,46 @@ describe(readPageTags, () => {
       <script type="application/json">"İİİİİİİİİİ"</script><a href="https://visible.example/2">More</a>
       </body></html>`;
 
-    await expect(readHtml(html)).resolves.toMatchObject({
+    expect(readHtml(html)).toMatchObject({
       links: ["https://visible.example/1", "https://visible.example/2"],
     });
   });
 
+  it("keeps a card link around block content and an image-only or SVG-only link", () => {
+    const html = `<a href="https://card.example/"><h2>Product</h2><p>Explore</p></a>
+      <a href="https://image.example/"><img src="/x.png" alt=""></a>
+      <a href="https://svg.example/"><svg viewBox="0 0 1 1"><path d="M0 0h1"/></svg></a>`;
+
+    expect(readHtml(html).links).toStrictEqual([
+      "https://card.example/",
+      "https://image.example/",
+      "https://svg.example/",
+    ]);
+  });
+
+  it("counts a link's address, never a wiki attribute", () => {
+    const html = `<a href="/about" data-wikilink-page="https://hidden.example/">About</a>
+      <a data-wikilink data-target="https://hidden.example/2">Wiki</a>`;
+
+    expect(readHtml(html).links).toStrictEqual(["https://orbit.example/about"]);
+  });
+
+  it("resolves links against the page's base address", () => {
+    expect(
+      readHtml(`<base href="https://cdn.orbit.example/"><a href="docs">Docs</a>`).links,
+    ).toStrictEqual(["https://cdn.orbit.example/docs"]);
+  });
+
   it.each([
+    [
+      "an escaped script",
+      `<script><!--<script></script><a href="https://hidden.example/">X</a></script>`,
+    ],
+    ["plaintext", `<plaintext><a href="https://hidden.example/">X</a>`],
     ["an unterminated comment", "<!-- <a href='https://hidden.example/'>x</a>"],
     ["an unterminated script", "<script>const a = \"<a href='https://hidden.example/'>x</a>\";"],
-  ])("ignores a link inside %s", async (_case, html) => {
-    const { links } = await readHtml(`<html><body>${html}</body></html>`);
+  ])("ignores a link inside %s", (_case, html) => {
+    const { links } = readHtml(`<html><body>${html}</body></html>`);
     expect(links).not.toContain("https://hidden.example/");
   });
 });

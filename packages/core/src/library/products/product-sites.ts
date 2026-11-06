@@ -1,23 +1,19 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { type OfficeContentNode, parseOffice } from "officeparser";
+import { type DefaultTreeAdapterMap, parse } from "parse5";
 import { fetchDocument } from "../sources/fetch-document";
 import { toRegistrableDomain } from "./product-keys";
 
-const LINK_TAG = /<link\b(?<attributes>[^>]*)>/giu;
-
-const ATTRIBUTE =
-  /(?<key>[\w:-]+)\s*=\s*(?:"(?<double>[^"]*)"|'(?<single>[^']*)'|(?<bare>[^\s"'>]+))/gu;
-
 const SIZE = /^(?<width>\d+)x\d+$/iu;
-
 const SVG = /\.svg(?:$|\?)/iu;
 
 /** A scalable icon draws at any size, so it ranks above every bitmap. */
 const SCALABLE = 10_000;
 
+type Element = DefaultTreeAdapterMap["element"];
+
 export type PageTags = {
-  /** Absolute addresses of the links a visitor can follow, without their fragment. */
+  /** Absolute addresses of the page's links, without their fragment. */
   links: string[];
   iconUrl: string | null;
   imageUrl: string | null;
@@ -38,75 +34,75 @@ function toAbsoluteUrl({ base, href }: { base: string; href: string | undefined 
   return url.toString();
 }
 
-function collectLinks(nodes: readonly OfficeContentNode[] | undefined): string[] {
-  return (nodes ?? []).flatMap((node) => [
-    ...(node.metadata && "link" in node.metadata && typeof node.metadata.link === "string"
-      ? [node.metadata.link]
-      : []),
-    ...collectLinks(node.children),
-  ]);
+/**
+ * The document's elements in order. A template's content and a script's text aren't child elements
+ * in the parsed tree, so what no visitor can follow is never listed.
+ */
+function listElements(html: string): Element[] {
+  const elements: Element[] = [];
+  const pending: DefaultTreeAdapterMap["parentNode"][] = [parse(html)];
+
+  for (let node = pending.pop(); node; node = pending.pop()) {
+    const children = node.childNodes.filter((child): child is Element => "tagName" in child);
+    elements.push(...children);
+    pending.push(...children.toReversed());
+  }
+
+  return elements;
 }
 
-function readAttributes(text: string): Map<string, string> {
-  return new Map(
-    [...text.matchAll(ATTRIBUTE)].map(({ groups }) => [
-      groups?.key?.toLowerCase() ?? "",
-      groups?.double ?? groups?.single ?? groups?.bare ?? "",
-    ]),
-  );
+function readAttribute(element: Element, name: string): string | undefined {
+  return element.attrs.find((attribute) => attribute.name === name)?.value;
 }
 
-function rankIcon(attributes: Map<string, string>): number {
-  const href = attributes.get("href") ?? "";
+function hasToken(element: Element, { name, token }: { name: string; token: string }): boolean {
+  return (readAttribute(element, name) ?? "").toLowerCase().split(/\s+/u).includes(token);
+}
 
-  if (attributes.get("type") === "image/svg+xml" || SVG.test(href)) {
+function rankIcon(element: Element): number {
+  const href = readAttribute(element, "href") ?? "";
+
+  if (readAttribute(element, "type") === "image/svg+xml" || SVG.test(href)) {
     return SCALABLE;
   }
 
-  const sizes = (attributes.get("sizes") ?? "").split(/\s+/u);
+  const sizes = (readAttribute(element, "sizes") ?? "").split(/\s+/u);
   return Math.max(0, ...sizes.map((size) => Number(SIZE.exec(size)?.groups?.width ?? 0)));
 }
 
-/**
- * The site's own icon: an apple-touch-icon, else its largest declared icon. Read from the raw tags,
- * since only a logo copy depends on it, never a site's identity.
- */
-function pickIcon({ base, html }: { base: string; html: string }): string | null {
-  const icons = [...html.matchAll(LINK_TAG)]
-    .map(({ groups }) => readAttributes(groups?.attributes ?? ""))
-    .map((attributes) => ({
-      attributes,
-      rels: (attributes.get("rel") ?? "").toLowerCase().split(/\s+/u),
-    }));
+/** The site's own icon: an apple-touch-icon, else its largest declared icon. */
+function pickIcon(links: Element[]): Element | undefined {
+  const touch = links.find((link) => hasToken(link, { name: "rel", token: "apple-touch-icon" }));
 
-  const touch = icons.find((icon) => icon.rels.includes("apple-touch-icon"));
+  const [best] = links
+    .filter((link) => hasToken(link, { name: "rel", token: "icon" }))
+    .toSorted((first, second) => rankIcon(second) - rankIcon(first));
 
-  const [best] = icons
-    .filter((icon) => icon.rels.includes("icon"))
-    .toSorted((first, second) => rankIcon(second.attributes) - rankIcon(first.attributes));
-
-  return toAbsoluteUrl({ base, href: (touch ?? best)?.attributes.get("href") });
+  return touch ?? best;
 }
 
-/**
- * Links come from the same HTML parser that reads pages' text, which leaves out comments, scripts
- * and templates: what no visitor can follow never ties two sites.
- */
-export async function readPageTags({
-  base,
-  bytes,
-}: {
-  base: string;
-  bytes: Uint8Array;
-}): Promise<PageTags> {
-  const ast = await parseOffice(Buffer.from(bytes), { fileType: "html", ignoreComments: true });
-  const shareImage: unknown = ast.metadata.nativeProperties?.["og:image"];
+/** From the parsed document, as a browser builds it, so a link it wouldn't show never counts. */
+export function readPageTags({ html, url }: { html: string; url: string }): PageTags {
+  const elements = listElements(html);
+  const byName = (name: string) => elements.filter((element) => element.tagName === name);
 
-  const links = collectLinks(ast.content).flatMap((href) => toAbsoluteUrl({ base, href }) ?? []);
+  const baseHref = byName("base")
+    .map((element) => readAttribute(element, "href"))
+    .find(Boolean);
+
+  const base = toAbsoluteUrl({ base: url, href: baseHref }) ?? url;
+  const resolve = (href: string | undefined) => toAbsoluteUrl({ base, href });
+
+  const shareImage = byName("meta").find(
+    (meta) => readAttribute(meta, "property")?.toLowerCase() === "og:image",
+  );
+
+  const links = byName("a").flatMap((anchor) => resolve(readAttribute(anchor, "href")) ?? []);
+  const icon = pickIcon(byName("link"));
 
   return {
-    iconUrl: pickIcon({ base, html: new TextDecoder().decode(bytes) }),
-    imageUrl: typeof shareImage === "string" ? toAbsoluteUrl({ base, href: shareImage }) : null,
+    iconUrl: icon ? resolve(readAttribute(icon, "href")) : null,
+    imageUrl: shareImage ? resolve(readAttribute(shareImage, "content")) : null,
     links: [...new Set(links)],
   };
 }
@@ -173,7 +169,7 @@ async function inspectPage(url: string): Promise<InspectedPage | null> {
 
   return {
     domain,
-    tags: await readPageTags({ base: fetched.url, bytes: fetched.bytes }),
+    tags: readPageTags({ html: new TextDecoder().decode(fetched.bytes), url: fetched.url }),
     url: fetched.url,
   };
 }
