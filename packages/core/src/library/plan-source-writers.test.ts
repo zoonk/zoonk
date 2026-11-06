@@ -357,7 +357,7 @@ const REGISTRY: Record<string, Registration[]> = {
     },
   ],
   "library/media/check-image-asset.ts": [
-    { verdict: "marks", why: "removes bank items", writes: ["item.deleteMany"] },
+    { verdict: "marks", why: "retires bank items", writes: ["item.updateMany"] },
     {
       fields: ["updatedAt"],
       verdict: "excluded",
@@ -1285,7 +1285,9 @@ async function pictureCase(): Promise<WriterCase> {
 
   return {
     expectWritten: () =>
-      expect(prisma.item.findUnique({ where: { id: question.id } })).resolves.toBeNull(),
+      expect(
+        prisma.item.findUniqueOrThrow({ select: { retiredAt: true }, where: { id: question.id } }),
+      ).resolves.toStrictEqual({ retiredAt: expect.any(Date) }),
     plan,
     root: skillRoot(skill.id),
     write: () => removeImageAsset({ assetId: asset.id }),

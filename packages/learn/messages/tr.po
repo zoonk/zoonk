@@ -7606,11 +7606,6 @@ msgid "The trap:"
 msgstr "Tuzak:"
 
 #: src/mistakes/drill/drill-controls.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "Okudum. Cevapları göster"
-
-#: src/mistakes/drill/drill-controls.tsx
 msgctxt "XUx7zX"
 msgid "I'm not sure"
 msgstr "Emin değilim"
@@ -12820,6 +12815,11 @@ msgstr "Üst üste birkaç yanlış oldu. Kısa bir mola genelde iyi gelir ve bu
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "Planını sana göre ayarlıyoruz. Buradaki yanlışlar yanlış defterine kaydedilmez."
+
+#: src/session/question-block/question-actions.tsx
+msgctxt "tvAkCd"
+msgid "I've read it. Show the answers"
+msgstr "Okudum. Cevapları göster"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

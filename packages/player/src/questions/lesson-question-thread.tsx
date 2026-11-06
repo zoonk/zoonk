@@ -22,7 +22,11 @@ import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { type OfferedSuggestion } from "./lesson-question-state";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
-import { ThreadViewport, ThreadViewportSkeleton } from "./lesson-question-thread-viewport";
+import {
+  ThreadPanel,
+  ThreadViewport,
+  ThreadViewportSkeleton,
+} from "./lesson-question-thread-viewport";
 import { EarlierTurns, QuestionTurn, SENDING_TURN_ID, SendingTurn } from "./lesson-question-turn";
 import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionController } from "./use-lesson-questions";
@@ -36,7 +40,7 @@ function ThreadLoadError({
   onRetry: () => void;
 }) {
   return (
-    <Empty className="min-h-full p-6">
+    <Empty className="min-h-full">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <MessageSquareTextIcon />
@@ -93,7 +97,7 @@ function EmptyThread({
   const suggestions = lessonSuggestions ? offered : [];
 
   return (
-    <Empty className="min-h-full p-6">
+    <Empty className="min-h-full">
       <EmptyHeader>
         <EmptyMedia aria-hidden="true" className="[&_svg]:size-auto">
           <span className="flex size-12 items-center justify-center *:size-12!">
@@ -117,7 +121,7 @@ function GuestThread() {
   const { loginHref } = useLessonQuestionNavigation();
 
   return (
-    <Empty className="min-h-full p-6">
+    <Empty className="min-h-full">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <MessageSquareTextIcon />
@@ -197,9 +201,9 @@ export function QuestionThread({ identity }: { identity: TutorIdentity }) {
 
   if (!controller.canAskQuestions) {
     return (
-      <ThreadViewport>
+      <ThreadPanel>
         <GuestThread />
-      </ThreadViewport>
+      </ThreadPanel>
     );
   }
 
@@ -209,22 +213,22 @@ export function QuestionThread({ identity }: { identity: TutorIdentity }) {
 
   if (state.error === "load") {
     return (
-      <ThreadViewport>
+      <ThreadPanel>
         <ThreadLoadError error={state.requestError} onRetry={() => void controller.load()} />
-      </ThreadViewport>
+      </ThreadPanel>
     );
   }
 
   if (state.questions.length === 0 && !state.hasMore && !state.creating) {
     return (
-      <ThreadViewport>
+      <ThreadPanel>
         <EmptyThread
           context={state.context}
           identity={identity}
           lessonSuggestions={offersSuggestions ? controller.suggestions : null}
           onSelect={(suggestion) => void controller.sendSuggestion(suggestion)}
         />
-      </ThreadViewport>
+      </ThreadPanel>
     );
   }
 

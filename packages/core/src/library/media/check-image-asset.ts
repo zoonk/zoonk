@@ -266,7 +266,10 @@ export async function listOwedPictureChecks(): Promise<string[]> {
   return pictures.map((picture) => picture.id);
 }
 
-/** Drops the questions about the picture, since they can't be asked without it. */
+/**
+ * Retires the questions about the picture rather than deleting them, so answers learners already
+ * gave still count. Without the picture they're asked no more.
+ */
 export async function removeImageAsset({ assetId }: { assetId: string }): Promise<void> {
   const lessonTags = await findLessonTags(assetId);
   logInfo("[images] Picture taken out of use without a redraw that passed its check", { assetId });
@@ -282,7 +285,7 @@ export async function removeImageAsset({ assetId }: { assetId: string }): Promis
       skillIds: [...new Set(questions.map(({ skillId }) => skillId))],
     });
 
-    await tx.item.deleteMany({ where: { mediaAssetId: assetId } });
+    await tx.item.updateMany({ data: { retiredAt: new Date() }, where: { mediaAssetId: assetId } });
 
     await tx.step.updateMany({
       data: { updatedAt: new Date() },

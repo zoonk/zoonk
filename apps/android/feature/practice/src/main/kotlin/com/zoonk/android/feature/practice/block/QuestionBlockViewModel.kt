@@ -133,6 +133,7 @@ class QuestionBlockViewModel(
     }
 
     override fun next(questions: List<Question>) {
+        if (run.value?.phase == RunPhase.AlreadyAnswered) return reread()
         if (run.value?.phase !is RunPhase.Checked || sessionMove.value.busy) return
         shownAt = now()
         run.update { it?.next(questions) }

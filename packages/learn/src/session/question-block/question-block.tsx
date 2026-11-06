@@ -25,7 +25,7 @@ import {
 } from "./block-question";
 import { getBlockTutorItem, withTutorAside } from "./block-tutor-item";
 import { PauseSuggestion } from "./pause-suggestion";
-import { ContinueButton, QuestionActionsRow } from "./question-actions";
+import { QuestionActionsRow } from "./question-actions";
 import { QuestionBlockClose, QuestionBlockHeader } from "./question-block-header";
 import { type QuestionBlockPhase, type QuestionBlockState } from "./question-block-state";
 import { QuestionBlockStatus } from "./question-block-status";
@@ -96,8 +96,14 @@ function FinishedBlock({
   );
 }
 
-function isAnswerPhase(phase: QuestionBlockPhase): boolean {
-  return phase.kind === "answering" || phase.kind === "checking" || phase.kind === "answerFailed";
+function isQuestionPhase(phase: QuestionBlockPhase): boolean {
+  return (
+    phase.kind === "answering" ||
+    phase.kind === "checking" ||
+    phase.kind === "answerFailed" ||
+    phase.kind === "feedback" ||
+    phase.kind === "alreadyAnswered"
+  );
 }
 
 function getAnswerResult(phase: QuestionBlockPhase): "correct" | "wrong" | null {
@@ -253,7 +259,6 @@ export function QuestionBlock({
       {showsQuestionActions({ phase, stage: blockDrill.stage }) && (
         <TaskActionBar>
           <QuestionBlockStatus
-            onContinue={actions.refresh}
             onRetryAnswer={() => draft.answer && void run.submit(draft.answer)}
             onRetryFinish={run.retryFinish}
             phase={phase}
@@ -261,14 +266,8 @@ export function QuestionBlock({
 
           <FinishReadyActions onFinish={run.retryFinish} phase={phase} />
 
-          {phase.kind === "feedback" && (
-            <QuestionActionsRow ask={askButton}>
-              <ContinueButton onContinue={run.next} />
-            </QuestionActionsRow>
-          )}
-
-          {question && isAnswerPhase(phase) && (
-            <QuestionActionsRow ask={askButton}>
+          {question && isQuestionPhase(phase) && (
+            <QuestionActionsRow ask={phase.kind === "alreadyAnswered" ? null : askButton}>
               <BlockQuestionActions
                 blockDrill={blockDrill}
                 draft={draft}

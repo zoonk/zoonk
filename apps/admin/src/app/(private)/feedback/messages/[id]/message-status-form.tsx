@@ -2,8 +2,8 @@
 
 import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
 import { type FeedbackStatus } from "@zoonk/db";
+import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { MailIcon, MailOpenIcon, ReplyIcon } from "lucide-react";
-import { useActionState } from "react";
 import {
   type UpdateMessageStatusState,
   updateMessageStatusAction,
@@ -24,7 +24,10 @@ export function MessageStatusForm({
   currentStatus: FeedbackStatus;
   messageId: string;
 }) {
-  const [state, formAction] = useActionState(updateMessageStatusAction, INITIAL_STATE);
+  const [state, formAction] = useAdminActionState({
+    action: updateMessageStatusAction,
+    initialState: INITIAL_STATE,
+  });
 
   return (
     <div className="flex flex-col gap-1 md:items-end">

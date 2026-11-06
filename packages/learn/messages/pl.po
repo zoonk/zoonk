@@ -7606,11 +7606,6 @@ msgid "The trap:"
 msgstr "Pułapka:"
 
 #: src/mistakes/drill/drill-controls.tsx
-msgctxt "tvAkCd"
-msgid "I've read it. Show the answers"
-msgstr "Przeczytane. Pokaż odpowiedzi"
-
-#: src/mistakes/drill/drill-controls.tsx
 msgctxt "XUx7zX"
 msgid "I'm not sure"
 msgstr "Nie mam pewności"
@@ -12820,6 +12815,11 @@ msgstr "Kilka pomyłek z rzędu. Krótka przerwa często pomaga, a cała dzisiej
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "Dopracowujemy twój plan. Pomyłki w tym zadaniu nigdy nie trafiają do zeszytu błędów."
+
+#: src/session/question-block/question-actions.tsx
+msgctxt "tvAkCd"
+msgid "I've read it. Show the answers"
+msgstr "Przeczytane. Pokaż odpowiedzi"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"

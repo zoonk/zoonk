@@ -91,6 +91,7 @@ export async function removeModelOutputRuns({
 
   await saveModelOutputs(taskId, modelId, {
     ...outputs,
+    failedRuns: outputs.failedRuns?.filter((run) => !runIds.has(run.testCaseId)),
     outputs: outputs.outputs.filter((output) => !runIds.has(output.testCaseId)),
   });
 }

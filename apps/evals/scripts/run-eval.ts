@@ -10,7 +10,7 @@ import {
   getTestCaseLanguage,
   summarizeByLanguage,
 } from "@/lib/case-languages";
-import { getCallsCost, getRunCost } from "@/lib/cost";
+import { getCallsCost, getFailedRunsCost, getRunCost } from "@/lib/cost";
 import { getTaskResults, removeModelResultRuns, runEval } from "@/lib/eval-runner";
 import {
   formatDollars,
@@ -23,7 +23,7 @@ import { meetsLatencyBudget } from "@/lib/latency";
 import { calculateAverageScore } from "@/lib/leaderboard";
 import { type ModelConfig, getModelById, getModelDisplayName } from "@/lib/models";
 import { generateOutputs } from "@/lib/output-generator";
-import { getAllOutputsForTask, removeModelOutputRuns } from "@/lib/output-loader";
+import { getAllOutputsForTask, loadModelOutputs, removeModelOutputRuns } from "@/lib/output-loader";
 import {
   getMeteredCalls,
   isPricedFromOutputs,
@@ -219,6 +219,24 @@ async function generateAndScore({
   return { results: result, spent: getCallsCost({ calls, prices }) };
 }
 
+/** A model whose every run failed has no scored results, but its failed runs were still paid for. */
+async function loadSavedResults({
+  modelId,
+  task,
+}: {
+  modelId: string;
+  task: RegisteredTask;
+}): Promise<TaskEvalResults> {
+  const results = await getTaskResults(task.id, modelId);
+
+  if (results) {
+    return results;
+  }
+
+  const outputs = await loadModelOutputs(task.id, modelId);
+  return { failedRuns: outputs?.failedRuns, modelId, results: [], taskId: task.id };
+}
+
 async function runModel({
   fresh,
   modelId,
@@ -236,12 +254,11 @@ async function runModel({
 }): Promise<ReportRow> {
   const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
   const run = saved ? null : await generateAndScore({ fresh, model, prices, runIds, task });
-
-  const allResults = run?.results ??
-    (await getTaskResults(task.id, modelId)) ?? { modelId, results: [], taskId: task.id };
+  const allResults = run?.results ?? (await loadSavedResults({ modelId, task }));
 
   const evalResults: TaskEvalResults = {
     ...allResults,
+    failedRuns: allResults.failedRuns?.filter((failed) => runIds.has(failed.testCaseId)),
     results: allResults.results.filter((result) => runIds.has(result.testCase.id)),
   };
 
@@ -369,6 +386,7 @@ function onlyRuns({
               modelId,
               {
                 ...modelOutputs,
+                failedRuns: modelOutputs.failedRuns?.filter((run) => runIds.has(run.testCaseId)),
                 outputs: modelOutputs.outputs.filter((output) => runIds.has(output.testCaseId)),
               },
             ],
@@ -433,11 +451,11 @@ async function runBattle({
 
   const costOf = (modelId: string) => {
     const model = getModelById(modelId) ?? fail(`Unknown model: ${modelId}`);
+    const modelOutputs = outputs.get(modelId);
 
-    return (outputs.get(modelId)?.outputs ?? []).reduce(
-      (total, run) =>
-        total + getRunCost({ modelId: model.gatewayModelId, prices: GATEWAY_PRICES, run }),
-      0,
+    return (modelOutputs?.outputs ?? []).reduce(
+      (total, run) => total + getRunCost({ model, prices: GATEWAY_PRICES, run }),
+      getFailedRunsCost({ failedRuns: modelOutputs?.failedRuns, prices: GATEWAY_PRICES }),
     );
   };
 

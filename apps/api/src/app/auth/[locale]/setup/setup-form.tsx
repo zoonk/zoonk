@@ -16,10 +16,11 @@ import {
 } from "@zoonk/core/auth/hooks/username-availability";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { adoptTextTypedBeforeHydration } from "@zoonk/ui/lib/typed-before-hydration";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
-import { useFormActionState } from "../../_utils/use-form-action-state";
+import { unstable_rethrow } from "next/navigation";
+import { useActionState, useId, useState } from "react";
 import { type SetupState, setupProfileAction } from "./actions";
 
 function UsernameDescription({
@@ -75,19 +76,21 @@ function UsernameLine({ onChange, username }: { onChange: () => void; username: 
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground flex flex-wrap items-center gap-x-1 text-sm">
+    <div className="flex items-center justify-between gap-3 text-sm">
       <input name="username" type="hidden" value={username} />
-      {t("Your username: @{username}", { username })}
-      <span aria-hidden="true">{" · "}</span>
+      {/* Korean's keep-all (globals.css) makes WebKit break between the @ and the username. */}
+      <p className="text-muted-foreground min-w-0 break-normal wrap-break-word">
+        {t("Your username: @{username}", { username })}
+      </p>
       <button
         aria-label={t("Change username")}
-        className="text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 items-center rounded-md px-1 font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]"
+        className="text-foreground focus-visible:ring-ring/50 -me-1 inline-flex min-h-11 shrink-0 items-center rounded-md px-1 font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]"
         onClick={onChange}
         type="button"
       >
         {t("Change")}
       </button>
-    </p>
+    </div>
   );
 }
 
@@ -107,11 +110,14 @@ export function SetupProfileForm({
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
   const [isChangingUsername, setIsChangingUsername] = useState(!defaultUsername);
 
-  const [state, formAction] = useFormActionState<SetupState>({
-    action: setupProfileAction.bind(null, redirectTo),
-    initialState: { status: "idle" },
-    onRejected: () => ({ status: "error" }),
-  });
+  const [state, formAction] = useActionState<SetupState, FormData>(
+    (previous, formData) =>
+      setupProfileAction(redirectTo, previous, formData).catch((error: unknown): SetupState => {
+        unstable_rethrow(error);
+        return { status: "error" };
+      }),
+    { status: "idle" },
+  );
 
   const isNameTooLong = isNameChangeTooLong({ name, savedName: defaultName });
   const canSubmit = !isNameTooLong && (status === "idle" || status === "available");
@@ -129,6 +135,7 @@ export function SetupProfileForm({
           id="name"
           name="name"
           onChange={(event) => setName(event.target.value)}
+          ref={adoptTextTypedBeforeHydration(setName)}
           type="text"
           value={name}
         />
@@ -154,6 +161,7 @@ export function SetupProfileForm({
               minLength={USERNAME_MIN_LENGTH}
               name="username"
               onChange={(event) => setUsername(event.target.value)}
+              ref={adoptTextTypedBeforeHydration(setUsername)}
               required
               spellCheck={false}
               value={username}
