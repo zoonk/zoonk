@@ -1,7 +1,7 @@
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { mockCentralAuthTransport } from "./auth-transport";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 
 test("a guest can create an account after leaving and returning to the app", async ({ page }) => {
   await ensureGuest(page);

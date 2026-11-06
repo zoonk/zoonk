@@ -1,9 +1,9 @@
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 
 const LANGUAGES = "Linguagens";
 const FOREIGN = "Língua Estrangeira";

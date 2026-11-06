@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./hydration";
 
 test.describe("Account data", () => {
   test("deletes the account after a confirmation and signs the learner out", async ({
