@@ -82,12 +82,19 @@ describe(startOnce, () => {
     expect(getStartMock()).toHaveBeenCalledTimes(2);
   });
 
-  it("never stops a holder it can't read, such as one admitted but not yet a run", async () => {
-    holderRun({ readable: false });
+  it("throws instead of returning a holder that was admitted but never became a run", async () => {
+    vi.mocked(getRun).mockReturnValue({ exists: Promise.resolve(false) } as never);
     getStartMock().mockImplementationOnce(() => conflictWith("admitted"));
-    lastHeardFrom("admitted", HOUR_MS);
 
-    await expect(startOnce(writeLesson, ["lesson-1"], TOKEN)).resolves.toBe("admitted");
+    await expect(startOnce(writeLesson, ["lesson-1"], TOKEN)).rejects.toThrow("admitted");
+  });
+
+  it("throws without stopping a holder it can't read", async () => {
+    holderRun({ readable: false });
+    getStartMock().mockImplementationOnce(() => conflictWith("unreadable"));
+    lastHeardFrom("unreadable", HOUR_MS);
+
+    await expect(startOnce(writeLesson, ["lesson-1"], TOKEN)).rejects.toThrow("unreadable");
     expect(cancel).not.toHaveBeenCalled();
   });
 
