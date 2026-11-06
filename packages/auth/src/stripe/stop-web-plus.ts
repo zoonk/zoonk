@@ -17,6 +17,10 @@ export function isUnpaid(subscription: { status: string | null }): boolean {
   return subscription.status !== null && UNPAID_STATUSES.includes(subscription.status);
 }
 
+export function isPendingCancel(subscription: Stripe.Subscription): boolean {
+  return subscription.cancel_at_period_end || subscription.cancel_at !== null;
+}
+
 export function getLatestInvoice(subscription: Stripe.Subscription): Stripe.Invoice | null {
   const invoice = subscription.latest_invoice;
   return invoice && typeof invoice !== "string" ? invoice : null;
