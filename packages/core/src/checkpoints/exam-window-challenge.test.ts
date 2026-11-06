@@ -47,6 +47,7 @@ describe("a challenge before a skill's core is in", () => {
         position: 0,
         scheduledFor: new Date("2020-09-27T00:00:00Z"),
         skillId: first!.id,
+        status: "done",
       }),
       planItemFixture({
         kind: "lesson",
@@ -55,6 +56,7 @@ describe("a challenge before a skill's core is in", () => {
         position: 1,
         scheduledFor: new Date("2020-09-27T00:00:00Z"),
         skillId: second!.id,
+        status: "done",
       }),
       planItemFixture({
         kind: "boss",
@@ -86,6 +88,8 @@ describe("a challenge before a skill's core is in", () => {
         orderBy: { position: "asc" },
         where: { planId: plan.id },
       }),
+      listeningSkillIds: new Set(),
+      phases: [],
       skills: saved.skills,
       today: new Date("2020-09-28T00:00:00Z"),
       userId: user.id,

@@ -983,6 +983,8 @@ describe("language conversations", () => {
       graphSkills: [],
       itemSkillIds: new Map(),
       items: planItems,
+      listeningSkillIds: new Set(),
+      phases: [],
       skills: [],
       today: new Date(),
       userId: user.id,

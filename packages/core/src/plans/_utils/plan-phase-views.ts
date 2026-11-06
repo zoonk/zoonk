@@ -1,5 +1,5 @@
 import { type Goal, type PlanItemStatus } from "@zoonk/db";
-import { getBossTimings } from "../../checkpoints/_utils/boss-reached";
+import { type ChallengeTeaching, getBossTimings } from "../../checkpoints/_utils/boss-reached";
 import { type PlanChapterView, type PlanPhaseView } from "../plan-view-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { isWritingItem } from "../planner/plan-item-rules";
@@ -213,6 +213,13 @@ function getPhaseMinutes({
   return (estimateMinutes * inPhase) / lessons.length;
 }
 
+const NO_TEACHING: ChallengeTeaching = {
+  graphSkills: [],
+  itemSkillIds: new Map(),
+  listeningSkillIds: new Set(),
+  skills: [],
+};
+
 export function buildPhaseViews({
   phaseChallengesRequired = true,
   challengesOpen = true,
@@ -229,6 +236,7 @@ export function buildPhaseViews({
   studiesPastTarget = false,
   targetDate = null,
   taughtSkillIds = new Set(),
+  teaching = NO_TEACHING,
   today = null,
   todayItemKeys = new Set(),
   upNextItemId,
@@ -248,6 +256,7 @@ export function buildPhaseViews({
   studiesPastTarget?: boolean;
   targetDate?: Date | null;
   taughtSkillIds?: ReadonlySet<string>;
+  teaching?: ChallengeTeaching;
   today?: Date | null;
   todayItemKeys?: ReadonlySet<string>;
   upNextItemId: string | null;
@@ -269,7 +278,12 @@ export function buildPhaseViews({
   const timings =
     challengesOpen && today
       ? getBossTimings({
-          items: planItems.map((item) => ({ ...item, id: getPlanReadItemKey(item) })),
+          plan: {
+            ...teaching,
+            goal: { kind: goalKind, targetDate },
+            items: planItems.map((item) => ({ ...item, key: getPlanReadItemKey(item) })),
+            phases,
+          },
           today,
         })
       : new Map();

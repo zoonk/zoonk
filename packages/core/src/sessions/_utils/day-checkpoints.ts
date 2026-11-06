@@ -27,6 +27,7 @@ export async function loadDayBosses({
     itemSkillIds: plan.itemSkillIds,
     items: plan.items,
     listeningSkillIds: plan.listeningSkillIds,
+    phases: plan.phases,
     readSubscription,
     skills: plan.skills,
     today: localDate,

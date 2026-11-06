@@ -14,7 +14,7 @@ import {
   type PlacementQuickFormat,
   getPlacementQuickFormat,
 } from "../learner/placement/placement-quick-format";
-import { parsePlanGraph } from "../plans/planner/plan-state";
+import { parsePlanGraph, parsePlanPhases } from "../plans/planner/plan-state";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { loadExamPrepAccess } from "../sessions/_utils/plus-only-lessons";
 import { getSkippedSkillIds } from "../sessions/_utils/review-skills";
@@ -76,7 +76,10 @@ type ChallengeContext = Awaited<ReturnType<typeof loadChallengeContext>>;
 
 async function loadChallengeContext({ goal, items }: { goal: Goal; items: PlanItem[] }) {
   const [plan, goalPlan, listeningSkillIds, structure] = await Promise.all([
-    prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId: goal.id } }),
+    prisma.plan.findUnique({
+      select: { graph: true, phases: true, settings: true },
+      where: { goalId: goal.id },
+    }),
     loadGoalPlan(goal.id),
     loadListeningSkillIds(goal.id),
     loadExamStructure(goal),
@@ -86,13 +89,14 @@ async function loadChallengeContext({ goal, items }: { goal: Goal; items: PlanIt
   const skipped = getSkippedSkillIds({ graph, settings: plan?.settings });
 
   return {
+    goal,
     graphSkills: graph.skills,
     itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
     items,
     listeningSkillIds,
+    phases: parsePlanPhases(plan?.phases),
     quickFormat: getPlacementQuickFormat(structure),
     skills: goalPlan.skills.filter((skill) => !skipped.has(skill.id)),
-    targetDate: goal.targetDate,
   };
 }
 
@@ -107,7 +111,7 @@ async function loadAskedSkillIds({
   now: Date;
   userId: string;
 }): Promise<string[]> {
-  const { graphSkills, itemSkillIds, items, listeningSkillIds, skills, targetDate } = context;
+  const { goal, graphSkills, itemSkillIds, items, listeningSkillIds, skills } = context;
 
   if (item.kind === "checkpoint") {
     const textSkillIds = skills.flatMap((skill) =>
@@ -123,7 +127,7 @@ async function loadAskedSkillIds({
     itemSkillIds,
     items,
     skills,
-    targetDate,
+    targetDate: goal.targetDate,
   }).filter((skillId) => !listeningSkillIds.has(skillId));
 }
 
@@ -240,25 +244,40 @@ function addDays(date: Date, days: number): Date {
   return new Date(date.getTime() + days * MS_PER_DAY);
 }
 
-function findUpcomingChallenges({ items, today }: { items: readonly PlanItem[]; today: Date }) {
-  const isDueBy = (item: PlanItem, days: number) =>
-    item.scheduledFor !== null && item.scheduledFor <= addDays(today, days);
+function isDueBy({ days, item, today }: { days: number; item: PlanItem; today: Date }) {
+  return item.scheduledFor !== null && item.scheduledFor <= addDays(today, days);
+}
 
-  const bosses = items
-    .filter((item) => item.kind === "boss" && item.status === "todo")
-    .flatMap((boss) => {
-      const reached = isBossReached({ boss, today });
-      return reached || isDueBy(boss, BOSS_AHEAD_DAYS) ? [{ item: boss, later: !reached }] : [];
-    });
+function findUpcomingChallenges({ items, today }: { items: readonly PlanItem[]; today: Date }) {
+  const bosses = items.filter(
+    (item) =>
+      item.kind === "boss" &&
+      item.status === "todo" &&
+      isDueBy({ days: BOSS_AHEAD_DAYS, item, today }),
+  );
 
   const weekly = findNextWeeklyItem(items);
 
   const mixed =
-    weekly?.kind === "checkpoint" && isDueBy(weekly, WEEKLY_AHEAD_DAYS)
-      ? [{ item: weekly, later: !isDueBy(weekly, 0) }]
+    weekly?.kind === "checkpoint" && isDueBy({ days: WEEKLY_AHEAD_DAYS, item: weekly, today })
+      ? [weekly]
       : [];
 
   return [...bosses, ...mixed];
+}
+
+function isLater({
+  context,
+  item,
+  today,
+}: {
+  context: ChallengeContext;
+  item: PlanItem;
+  today: Date;
+}): boolean {
+  return item.kind === "boss"
+    ? !isBossReached({ boss: item, plan: context, today })
+    : !isDueBy({ days: 0, item, today });
 }
 
 /** Internal, for a session's preparation: `userId` must come from the learner's own write. Each challenge claims AI help once, and guests request writing on Start instead. */
@@ -305,8 +324,8 @@ export async function requestUpcomingChallengeQuestionsFor({
   const context = await loadChallengeContext({ goal, items });
 
   const planned = await Promise.all(
-    upcoming.map(async ({ item, later }) => ({
-      later,
+    upcoming.map(async (item) => ({
+      later: isLater({ context, item, today }),
       planItemId: item.id,
       ...(await planWrites({ context, goal, item, now, userId })),
     })),

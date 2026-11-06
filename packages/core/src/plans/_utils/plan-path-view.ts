@@ -12,6 +12,7 @@ type PathInput = Pick<
   | "shortPlan"
   | "skillAreas"
   | "taughtSkillIds"
+  | "teaching"
 > & { challengesOpen: boolean; context: PlanReadContext; todayBlocks: readonly TodayLearnBlock[] };
 
 export function buildPlanPath({ context, todayBlocks, ...input }: PathInput) {
