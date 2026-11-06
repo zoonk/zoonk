@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.steps
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -26,6 +27,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
 
 /** The action bar's main button, for a screen that hands it keyboard focus once its answer is complete. */
@@ -35,10 +37,17 @@ val LocalPrimaryFocus = staticCompositionLocalOf<FocusRequester?> { null }
 val LocalStepViewHeight = compositionLocalOf<Dp?> { null }
 
 /**
- * "I didn't get this" on a knowledge lesson's explanation: opens the buddy on the screen, already
- * asking it to explain it more simply; null where the buddy can't be asked.
+ * "I didn't get this" on a knowledge lesson's explanation, beside the buddy's face ([look], null
+ * until the learner's buddy is known): opens the buddy on the screen, already asking it to explain
+ * it more simply; null where the buddy can't be asked.
  */
-val LocalAskSimpler = compositionLocalOf<(() -> Unit)?> { null }
+@Immutable
+class AskSimpler(
+    val look: BuddyLook?,
+    val ask: () -> Unit,
+)
+
+val LocalAskSimpler = compositionLocalOf<AskSimpler?> { null }
 
 /** What a screen's view can ask the player to do. */
 @Stable

@@ -107,6 +107,7 @@ import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.steps.AskSimpler
 import com.zoonk.android.feature.player.steps.FillsView
 import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.LocalAskSimpler
@@ -439,7 +440,7 @@ fun LessonPlayer(
                     val spread = spreadShows()
                     CompositionLocalProvider(
                         LocalPrimaryFocus provides primaryFocus,
-                        LocalAskSimpler provides askSimpler?.let { asks -> { asks(spread) } },
+                        LocalAskSimpler provides askSimpler?.let { asks -> AskSimpler(tutor.identity.look) { asks(spread) } },
                     ) {
                         Content(
                             state,
