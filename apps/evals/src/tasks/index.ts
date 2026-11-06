@@ -9,6 +9,7 @@ import { checkCitedFactsTask } from "./check-cited-facts/task";
 import { checkExamReadingTask } from "./check-exam-reading/task";
 import { checkWordPronunciationTask } from "./check-word-pronunciation/task";
 import { citeMaterialTask } from "./cite-material/task";
+import { compareReleaseLessonsTask } from "./compare-release-lessons/task";
 import { conversationFeedbackTask } from "./conversation-feedback/task";
 import { conversationObjectivesTask } from "./conversation-objectives/task";
 import { conversationScenarioTask } from "./conversation-scenario/task";
@@ -101,6 +102,7 @@ export const TASKS: readonly RegisteredTask[] = [
   findOfficialSourcesTask,
   findProductPagesTask,
   readProductPagesTask,
+  compareReleaseLessonsTask,
   findExamDateTask,
   findCourseWeightsTask,
   findSubjectQuestionsTask,

@@ -145,6 +145,7 @@
     "./tasks/tutor/goal-tutor-lookup-plan": "./src/tasks/tutor/goal-tutor-lookup-plan.ts",
     "./tasks/tutor/goal-tutor-pages": "./src/tasks/tutor/goal-tutor-pages.ts",
     "./tasks/tutor/goal-tutor-tools": "./src/tasks/tutor/goal-tutor-tools.ts",
+    "./tasks/products/compare-release-lessons": "./src/tasks/products/compare-release-lessons.ts",
     "./tasks/research/changing-facts": "./src/tasks/research/changing-facts.ts",
     "./tasks/research/check-cited-facts": "./src/tasks/research/check-cited-facts.ts",
     "./tasks/research/check-exam-reading": "./src/tasks/research/check-exam-reading.ts",
